@@ -41,7 +41,11 @@ module.exports = (env) => {
                         compress: true,
                     },
                 }),
-                new OptimizeCssAssetsPlugin(),
+                new OptimizeC({
+                    cssProcessorOptions: {
+                        safe: true,
+                    },
+                }),
             ],
             splitChunks: {
                 cacheGroups: {

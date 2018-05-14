@@ -80,8 +80,7 @@ export default class HomeScreen extends React.PureComponent {
                 />
                 <p>
                     <span className={styles.welcomeMessage}>
-                        {_ts('homescreen', 'welcomeText')}
-                        <strong>{_ts('homescreen', 'deepLabel')}</strong>
+                        {_ts('homescreen', 'welcomeText')} <strong>{_ts('homescreen', 'deepLabel')}</strong>
                         <br />
                     </span>
                     {_ts('homescreen', 'message1')}
