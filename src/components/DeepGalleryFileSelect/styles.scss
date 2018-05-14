@@ -1,23 +1,25 @@
 @import '../../stylesheets/base';
-@import '../../stylesheets/modal';
 
+$width-gallery-file-modal: 80vw;
+$width-search-input: 240px;
+$height-modal-body: 60vh;
 
 .add-gallery-file-modal {
-    width: 960px;
+    width: $width-gallery-file-modal;
 
     .modal-header {
         border-bottom: none;
     }
 
     .search-input {
-        width: 240px;
+        width: $width-search-input;
     }
 
     .modal-body {
         position: relative;
         background-color: $color-background-row;
         padding: 0;
-        height: 60vh;
+        height: $height-modal-body;
     }
 
     .file-input {
