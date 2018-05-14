@@ -141,13 +141,13 @@ export default class StringManagement extends React.PureComponent {
                 order: 5,
                 modifier: () => (
                     <Fragment>
-                        <DangerButton
-                            iconName={iconNames.delete}
+                        <WarningButton
+                            iconName={iconNames.edit}
                             transparent
                             smallVerticalPadding
                         />
-                        <WarningButton
-                            iconName={iconNames.edit}
+                        <DangerButton
+                            iconName={iconNames.delete}
                             transparent
                             smallVerticalPadding
                         />
@@ -197,11 +197,18 @@ export default class StringManagement extends React.PureComponent {
                 label: 'Actions',
                 order: 5,
                 modifier: () => (
-                    <WarningButton
-                        iconName={iconNames.edit}
-                        transparent
-                        smallVerticalPadding
-                    />
+                    <Fragment>
+                        <WarningButton
+                            iconName={iconNames.edit}
+                            transparent
+                            smallVerticalPadding
+                        />
+                        <DangerButton
+                            iconName={iconNames.delete}
+                            transparent
+                            smallVerticalPadding
+                        />
+                    </Fragment>
                 ),
             },
         ];
