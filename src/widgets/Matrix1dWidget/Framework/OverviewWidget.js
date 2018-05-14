@@ -234,10 +234,7 @@ export default class Matrix1dOverview extends React.PureComponent {
         }
     }
 
-    handleAddCellButtonClick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
+    handleAddCellButtonClick = () => {
         const newCell = {
             key: randomString(16).toLowerCase(),
             value: '',

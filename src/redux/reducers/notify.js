@@ -19,15 +19,15 @@ export const notifyHideAction = () => ({
 
 // REDUCER
 
-const notifySend = (state, action) => {
-    const newState = [...state];
+const notifySend = (state = {}, action) => {
+    const newState = { ...state };
     newState.notifications = [action.notification];
 
     return newState;
 };
 
-const notifyHide = (state) => {
-    const newState = [...state];
+const notifyHide = (state = {}) => {
+    const newState = { ...state };
     newState.notifications = [];
 
     return newState;
