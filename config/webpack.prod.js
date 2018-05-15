@@ -41,7 +41,7 @@ module.exports = (env) => {
                         compress: true,
                     },
                 }),
-                new OptimizeC({
+                new OptimizeCssAssetsPlugin({
                     cssProcessorOptions: {
                         safe: true,
                     },
