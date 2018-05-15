@@ -8,7 +8,7 @@ const dateWidget = {
     title: 'dateWidgetLabel',
     analysisFramework: {
         listComponent: FrameworkListWidget,
-        listMinSize: { width: 240, height: 48 },
+        listMinSize: { width: 208, height: 48 },
     },
     tagging: {
         listComponent: TaggingListWidget,
