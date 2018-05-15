@@ -272,10 +272,15 @@ export default class ConnectorSelectModal extends React.PureComponent {
     }
 
     render() {
-        const { dataLoading } = this.state;
+        const {
+            dataLoading,
+            selectedLeads,
+        } = this.state;
 
         const Sidebar = this.renderSidebar;
         const Content = this.renderConnectorContent;
+
+        const isSelectionEmpty = selectedLeads.length <= 0;
 
         return (
             <Modal className={styles.modal} >
@@ -304,6 +309,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
                         </DangerButton>
                         <PrimaryButton
                             onClick={this.handleLeadsSelect}
+                            disabled={isSelectionEmpty}
                         >
                             {_ts('addLeads.connectorsSelect', 'modalSelectLabel')}
                         </PrimaryButton>

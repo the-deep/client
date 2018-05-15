@@ -7,10 +7,12 @@ const connectorsSchema = [];
             name: 'ConnectorMini',
             description: 'One of the main entities for lead add',
         },
-        extends: 'dbentity',
         fields: {
+            id: { type: 'uint', required: true },
+            versionId: { type: 'uint', required: true },
             title: { type: 'string', required: true },
             source: { type: 'string', required: true },
+            role: { type: 'string' },
         },
     };
     connectorsSchema.push({ name, schema });
