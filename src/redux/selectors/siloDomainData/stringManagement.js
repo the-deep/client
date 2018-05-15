@@ -103,6 +103,7 @@ export const problemsWithStringsSelector = createSelector(
     usageMapSelector,
     (strings, links, usageMaps) => {
         // Initialize new problems
+        // FIXME: merge keys of usageMaps + currentLanguage
         const newProblems = Object.keys(usageMaps).reduce(
             (acc, key) => {
                 acc[key] = {

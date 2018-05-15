@@ -35,7 +35,7 @@ export default class NumberTaggingList extends React.PureComponent {
     render() {
         const { attribute = {} } = this.props;
         const { value } = attribute;
-        const inputPlaceholder = _ts('af', 'numberPlaceholder');
+        const inputPlaceholder = _ts('framework.numberWidget', 'numberPlaceholder');
         const separatorText = ' ';
 
         return (

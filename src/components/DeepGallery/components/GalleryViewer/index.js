@@ -104,11 +104,11 @@ export default class GalleryViewer extends React.PureComponent {
                 {
                     GalleryViewer.isUrlValid(url) ?
                         <span className={styles.msg}>
-                            {cannotPreviewUrlMessage || _ts('leads', 'cannotPreviewUrl')}
+                            {cannotPreviewUrlMessage || _ts('components.galleryViewer', 'cannotPreviewUrl')}
                         </span>
                         :
                         <span className={styles.msg}>
-                            {invalidUrlMessage || _ts('leads', 'invalidUrl')}
+                            {invalidUrlMessage || _ts('components.galleryViewer', 'invalidUrl')}
                         </span>
                 }
             </div>

@@ -163,7 +163,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                     .errors
                     .join(' ');
                 notify.send({
-                    title: _ts('entry', 'entriesTabLabel'),
+                    title: _ts('entries', 'entriesTabLabel'),
                     type: notify.type.ERROR,
                     message,
                     duration: notify.duration.MEDIUM,
@@ -171,9 +171,9 @@ export default class FilterEntriesForm extends React.PureComponent {
             })
             .fatal(() => {
                 notify.send({
-                    title: _ts('entry', 'entriesTabLabel'),
+                    title: _ts('entries', 'entriesTabLabel'),
                     type: notify.type.ERROR,
-                    message: _ts('entry', 'geoOptionsFatalMessage'),
+                    message: _ts('entries', 'geoOptionsFatalMessage'),
                     duration: notify.duration.MEDIUM,
                 });
             })
@@ -332,9 +332,9 @@ export default class FilterEntriesForm extends React.PureComponent {
                 <SearchInput
                     className="entries-filter"
                     key="search"
-                    label={_ts('entry', 'searchFilterLabel')}
+                    label={_ts('entries', 'searchFilterLabel')}
                     onChange={(value) => { this.handleFilterChange('search', value); }}
-                    placeholder={_ts('entry', 'searchFilterPlaceholder')}
+                    placeholder={_ts('entries', 'searchFilterPlaceholder')}
                     showHintAndError={false}
                     value={filters.search}
                     disabled={this.props.pending}
@@ -345,7 +345,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                     keySelector={FilterEntriesForm.optionKeySelector}
                     labelSelector={FilterEntriesForm.optionLabelSelector}
                     options={createdBy}
-                    label={_ts('entry', 'createdByFilterLabel')}
+                    label={_ts('entries', 'createdByFilterLabel')}
                     onChange={(value) => { this.handleFilterChange('created_by', value); }}
                     showHintAndError={false}
                     value={filters.created_by || emptyList}
@@ -354,7 +354,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                 <DateFilter
                     className="entries-filter"
                     key="created-at"
-                    label={_ts('entry', 'createdAtFilterLabel')}
+                    label={_ts('entries', 'createdAtFilterLabel')}
                     onChange={(value) => { this.handleFilterChange('created_at', value); }}
                     showHintAndError={false}
                     value={filters.created_at}
@@ -368,7 +368,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                             onClick={this.handleApplyFilter}
                             disabled={pending || pristine}
                         >
-                            {_ts('entry', 'applyFilterButtonLabel')}
+                            {_ts('entries', 'applyFilterButtonLabel')}
                         </Button>
                     )
                 }
@@ -377,7 +377,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                     onClick={this.handleClearFilter}
                     disabled={pending || isFilterEmpty}
                 >
-                    {_ts('entry', 'clearFilterButtonLabel')}
+                    {_ts('entries', 'clearFilterButtonLabel')}
                 </DangerButton>
             </div>
         );

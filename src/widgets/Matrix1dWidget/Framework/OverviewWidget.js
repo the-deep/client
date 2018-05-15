@@ -309,7 +309,7 @@ export default class Matrix1dOverview extends React.PureComponent {
                 key={key}
                 onClick={() => this.handleRowClick(key)}
             >
-                { data.title || _ts('af', 'untitledRowTitle') }
+                { data.title || _ts('framework.matrix1dWidget', 'untitledRowTitle') }
             </button>
         );
     }
@@ -344,15 +344,15 @@ export default class Matrix1dOverview extends React.PureComponent {
         return (
             <div className={styles.editRow}>
                 <ColorInput
-                    label={_ts('af', 'colorLabel')}
+                    label={_ts('framework.matrix1dWidget', 'colorLabel')}
                     onChange={newColor => this.handleColorChange(newColor, key)}
                     showHintAndError={false}
                     value={data.color}
                 />
                 <TextInput
                     className={styles.titleInput}
-                    label={_ts('af', 'titleLabel')}
-                    placeholder={_ts('af', 'optionPlaceholder')}
+                    label={_ts('framework.matrix1dWidget', 'titleLabel')}
+                    placeholder={_ts('framework.matrix1dWidget', 'optionPlaceholder')}
                     onChange={value => this.handleRowValueInputChange(key, value, 'title')}
                     value={data.title}
                     showHintAndError={false}
@@ -360,8 +360,8 @@ export default class Matrix1dOverview extends React.PureComponent {
                 />
                 <TextInput
                     className={styles.titleInput}
-                    label={_ts('af', 'tooltipTitle')}
-                    placeholder={_ts('af', 'tooltipPlaceholder')}
+                    label={_ts('framework.matrix1dWidget', 'tooltipTitle')}
+                    placeholder={_ts('framework.matrix1dWidget', 'tooltipPlaceholder')}
                     onChange={value => this.handleRowValueInputChange(key, value, 'tooltip')}
                     showHintAndError={false}
                     value={data.tooltip}
@@ -383,8 +383,8 @@ export default class Matrix1dOverview extends React.PureComponent {
         >
             <TextInput
                 className={styles.titleInput}
-                label={_ts('af', 'titleLabel')}
-                placeholder={_ts('af', 'titlePlaceholderOverview')}
+                label={_ts('framework.matrix1dWidget', 'titleLabel')}
+                placeholder={_ts('framework.matrix1dWidget', 'titlePlaceholderOverview')}
                 onChange={value => this.handleCellValueInputChange(key, value)}
                 showHintAndError={false}
                 value={data.value}
@@ -405,8 +405,8 @@ export default class Matrix1dOverview extends React.PureComponent {
             activeRow,
         } = this.state;
 
-        const headerTitle = _ts('af', 'matrix1DModalTitle');
-        const addCellButtonLabel = _ts('af', 'addCellButtonLabel');
+        const headerTitle = _ts('framework.matrix1dWidget', 'matrix1DModalTitle');
+        const addCellButtonLabel = _ts('framework.matrix1dWidget', 'addCellButtonLabel');
 
         const rowIndex = parentData.rows.findIndex(r => r.key === activeRow);
         let additionalStyle = '';
@@ -464,12 +464,12 @@ export default class Matrix1dOverview extends React.PureComponent {
             return null;
         }
 
-        const headerTitle = _ts('af', 'editRowModalTitle');
-        const addRowButtonLabel = _ts('af', 'addRowButtonLabel');
-        const titleInputLabel = _ts('af', 'titleLabel');
-        const titleInputPlaceholder = _ts('af', 'titlePlaceholderScale');
-        const cancelButtonLabel = _ts('af', 'cancelButtonLabel');
-        const saveButtonLabel = _ts('af', 'saveButtonLabel');
+        const headerTitle = _ts('framework.matrix1dWidget', 'editRowModalTitle');
+        const addRowButtonLabel = _ts('framework.matrix1dWidget', 'addRowButtonLabel');
+        const titleInputLabel = _ts('framework.matrix1dWidget', 'titleLabel');
+        const titleInputPlaceholder = _ts('framework.matrix1dWidget', 'titlePlaceholderScale');
+        const cancelButtonLabel = _ts('framework.matrix1dWidget', 'cancelButtonLabel');
+        const saveButtonLabel = _ts('framework.matrix1dWidget', 'saveButtonLabel');
 
         const RowDetail = this.renderRowEditFields;
         const RowCells = this.renderRowCells;
@@ -525,7 +525,7 @@ export default class Matrix1dOverview extends React.PureComponent {
                                 <RowCells key="row-cells" />,
                             ]) : (
                                 <span className={styles.emptyContainer}>
-                                    {_ts('af', 'noRowSelected')}
+                                    {_ts('framework.matrix1dWidget', 'noRowSelected')}
                                 </span>
                             )}
                         </div>

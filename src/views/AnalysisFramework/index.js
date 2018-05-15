@@ -128,8 +128,8 @@ export default class AnalysisFramework extends React.PureComponent {
                     if (isValueOverriden) {
                         notify.send({
                             type: notify.type.WARNING,
-                            title: _ts('notification', 'afUpdate'),
-                            message: _ts('notification', 'afUpdateOverridden'),
+                            title: _ts('framework', 'afUpdate'),
+                            message: _ts('framework', 'afUpdateOverridden'),
                             duration: notify.duration.SLOW,
                         });
                     }
@@ -155,9 +155,9 @@ export default class AnalysisFramework extends React.PureComponent {
                         analysisFramework: response,
                     });
                     notify.send({
-                        title: _ts('notification', 'afTitle'),
+                        title: _ts('framework', 'afTitle'),
                         type: notify.type.SUCCESS,
-                        message: _ts('notification', 'afSaveSuccess'),
+                        message: _ts('framework', 'afSaveSuccess'),
                         duration: notify.duration.SLOW,
                     });
                 } catch (er) {

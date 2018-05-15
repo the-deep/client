@@ -32,9 +32,9 @@ export default class UserPatchRequest {
                         information: response,
                     });
                     notify.send({
-                        title: _ts('notification', 'userProfileEdit'),
+                        title: _ts('userProfile', 'userProfileEdit'),
                         type: notify.type.SUCCESS,
-                        message: _ts('notification', 'userEditSuccess'),
+                        message: _ts('userProfile', 'userEditSuccess'),
                         duration: notify.duration.MEDIUM,
                     });
                     this.props.handleModalClose();
@@ -44,9 +44,9 @@ export default class UserPatchRequest {
             })
             .failure((response) => {
                 notify.send({
-                    title: _ts('notification', 'userProfileEdit'),
+                    title: _ts('userProfile', 'userProfileEdit'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'userEditFailure'),
+                    message: _ts('userProfile', 'userEditFailure'),
                     duration: notify.duration.MEDIUM,
                 });
                 const faramErrors = alterResponseErrorToFaramError(response.errors);
@@ -54,9 +54,9 @@ export default class UserPatchRequest {
             })
             .fatal(() => {
                 notify.send({
-                    title: _ts('notification', 'userProfileEdit'),
+                    title: _ts('userProfile', 'userProfileEdit'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'userEditFatal'),
+                    message: _ts('userProfile', 'userEditFatal'),
                     duration: notify.duration.MEDIUM,
                 });
                 this.props.setState({

@@ -35,6 +35,8 @@ $radius-border-medium: 3px;
 
                 .title {
                     flex-grow: 1;
+                    margin: 0;
+                    font-family: inherit;
                 }
 
                 .badge {

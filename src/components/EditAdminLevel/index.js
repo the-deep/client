@@ -138,9 +138,9 @@ export default class EditAdminLevel extends React.PureComponent {
                         regionId: data.region,
                     });
                     notify.send({
-                        title: _ts('notification', 'adminLevelEdit'),
+                        title: _ts('components.editAdminLevel', 'adminLevelEdit'),
                         type: notify.type.SUCCESS,
-                        message: _ts('notification', 'adminLevelEditSuccess'),
+                        message: _ts('components.editAdminLevel', 'adminLevelEditSuccess'),
                         duration: notify.duration.MEDIUM,
                     });
                     this.props.onClose();
@@ -180,9 +180,9 @@ export default class EditAdminLevel extends React.PureComponent {
                         regionId: data.region,
                     });
                     notify.send({
-                        title: _ts('notification', 'adminLevelCreate'),
+                        title: _ts('components.editAdminLevel', 'adminLevelCreate'),
                         type: notify.type.SUCCESS,
-                        message: _ts('notification', 'adminLevelCreateSuccess'),
+                        message: _ts('components.editAdminLevel', 'adminLevelCreateSuccess'),
                         duration: notify.duration.MEDIUM,
                     });
                     this.props.onClose();
@@ -193,9 +193,9 @@ export default class EditAdminLevel extends React.PureComponent {
             .failure((response) => {
                 // FIXME: no need to notify with farams
                 notify.send({
-                    title: _ts('notification', 'adminLevelCreate'),
+                    title: _ts('components.editAdminLevel', 'adminLevelCreate'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'adminLevelCreateFailure'),
+                    message: _ts('components.editAdminLevel', 'adminLevelCreateFailure'),
                     duration: notify.duration.MEDIUM,
                 });
                 const faramErrors = alterResponseErrorToFaramError(response.errors);
@@ -204,9 +204,9 @@ export default class EditAdminLevel extends React.PureComponent {
             .fatal(() => {
                 // FIXME: no need to notify with farams
                 notify.send({
-                    title: _ts('notification', 'adminLevelCreate'),
+                    title: _ts('components.editAdminLevel', 'adminLevelCreate'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'adminLevelCreateFatal'),
+                    message: _ts('components.editAdminLevel', 'adminLevelCreateFatal'),
                     duration: notify.duration.SLOW,
                 });
                 this.setState({
@@ -257,9 +257,9 @@ export default class EditAdminLevel extends React.PureComponent {
     handleGeoFileInputChange = (files, { invalidFiles }) => {
         if (invalidFiles > 0) {
             notify.send({
-                title: _ts('notification', 'fileSelection'),
+                title: _ts('components.editAdminLevel', 'fileSelection'),
                 type: notify.type.WARNING,
-                message: _ts('notification', 'invalidFileSelection'),
+                message: _ts('components.editAdminLevel', 'invalidFileSelection'),
                 duration: notify.duration.SLOW,
             });
         }
@@ -327,8 +327,8 @@ export default class EditAdminLevel extends React.PureComponent {
                     <div className={styles.adminLevelDetails} >
                         <TextInput
                             faramElementName="level"
-                            label={_ts('countries', 'adminLevelLabel')}
-                            placeholder={_ts('countries', 'adminLevelPlaceholder')}
+                            label={_ts('components.editAdminLevel', 'adminLevelLabel')}
+                            placeholder={_ts('components.editAdminLevel', 'adminLevelPlaceholder')}
                             className={styles.textInput}
                             type="number"
                             min={0}
@@ -336,32 +336,32 @@ export default class EditAdminLevel extends React.PureComponent {
                         />
                         <TextInput
                             faramElementName="title"
-                            label={_ts('countries', 'adminLevelNameLabel')}
-                            placeholder={_ts('countries', 'adminLevelNamePlaceholder')}
+                            label={_ts('components.editAdminLevel', 'adminLevelNameLabel')}
+                            placeholder={_ts('components.editAdminLevel', 'adminLevelNamePlaceholder')}
                             className={styles.textInput}
                         />
                         <TextInput
                             faramElementName="nameProp"
-                            label={_ts('countries', 'namePropertyLabel')}
-                            placeholder={_ts('countries', 'namePropertyPlaceholder')}
+                            label={_ts('components.editAdminLevel', 'namePropertyLabel')}
+                            placeholder={_ts('components.editAdminLevel', 'namePropertyPlaceholder')}
                             className={styles.textInput}
                         />
                         <TextInput
                             faramElementName="codeProp"
-                            label={_ts('countries', 'pcodePropertyLabel')}
-                            placeholder={_ts('countries', 'pcodePropertyPlaceholder')}
+                            label={_ts('components.editAdminLevel', 'pcodePropertyLabel')}
+                            placeholder={_ts('components.editAdminLevel', 'pcodePropertyPlaceholder')}
                             className={styles.textInput}
                         />
                         <TextInput
                             faramElementName="parentNameProp"
-                            label={_ts('countries', 'parentNamePropLabel')}
-                            placeholder={_ts('countries', 'parentNamePropPlaceholder')}
+                            label={_ts('components.editAdminLevel', 'parentNamePropLabel')}
+                            placeholder={_ts('components.editAdminLevel', 'parentNamePropPlaceholder')}
                             className={styles.textInput}
                         />
                         <TextInput
                             faramElementName="parentCodeProp"
-                            label={_ts('countries', 'parentCodePropLabel')}
-                            placeholder={_ts('countries', 'parentCodePropPlaceholder')}
+                            label={_ts('components.editAdminLevel', 'parentCodePropLabel')}
+                            placeholder={_ts('components.editAdminLevel', 'parentCodePropPlaceholder')}
                             className={styles.textInput}
                         />
                         <SelectInput
@@ -370,15 +370,15 @@ export default class EditAdminLevel extends React.PureComponent {
                             options={adminLevelsOfRegion}
                             showHintAndError={false}
                             faramElementName="parent"
-                            label={_ts('countries', 'parentAdminLevelLabel')}
-                            placeholder={_ts('countries', 'parentAdminLevelPlaceholder')}
+                            label={_ts('components.editAdminLevel', 'parentAdminLevelLabel')}
+                            placeholder={_ts('components.editAdminLevel', 'parentAdminLevelPlaceholder')}
                             className={styles.selectInput}
                         />
                         {
                             faramValues.geoShapeFile ? (
                                 <div className={styles.currentUpload}>
                                     <p>
-                                        {_ts('countries', 'geoFileLabel')}
+                                        {_ts('components.editAdminLevel', 'geoFileLabel')}
                                     </p>
                                     <InternalGallery
                                         onlyFileName
@@ -387,7 +387,7 @@ export default class EditAdminLevel extends React.PureComponent {
                                 </div>
                             ) : (
                                 <p className={styles.noFileUpload}>
-                                    {_ts('countries', 'noFileUploadedLabel')}
+                                    {_ts('components.editAdminLevel', 'noFileUploadedLabel')}
                                 </p>
                             )
                         }
@@ -402,24 +402,24 @@ export default class EditAdminLevel extends React.PureComponent {
                             >
                                 <span className={styles.load}>
                                     <i className={iconNames.uploadFa} />
-                                    {_ts('countries', 'loadGeoShapeFile')}
+                                    {_ts('components.editAdminLevel', 'loadGeoShapeFile')}
                                 </span>
                             </FileInput>
                             <span
                                 className={iconNames.help}
-                                title={_ts('countries', 'geoshapeTooltip')}
+                                title={_ts('components.editAdminLevel', 'geoshapeTooltip')}
                             />
                             <HiddenInput faramElementName="geoShapeFile" />
                         </div>
                         <div className={styles.rightContainer}>
                             <DangerButton onClick={onClose}>
-                                {_ts('countries', 'cancelButtonLabel')}
+                                {_ts('components.editAdminLevel', 'cancelButtonLabel')}
                             </DangerButton>
                             <PrimaryButton
                                 type="submit"
                                 disabled={pending || pristine}
                             >
-                                {_ts('countries', 'saveChangesButtonLabel')}
+                                {_ts('components.editAdminLevel', 'saveChangesButtonLabel')}
                             </PrimaryButton>
                         </div>
                     </div>

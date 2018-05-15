@@ -143,7 +143,7 @@ export default class EntriesListing extends React.PureComponent {
                 <img
                     className={styles.image}
                     src={entry.image}
-                    alt={_ts('entry', 'altLabel')}
+                    alt={_ts('editAssessment.entriesListing', 'altLabel')}
                 />
             );
         }
@@ -193,7 +193,7 @@ export default class EntriesListing extends React.PureComponent {
                         to={linkToEditEntries}
                         className={styles.editEntriesLink}
                     >
-                        {_ts('ary', 'editEntriesText')}
+                        {_ts('editAssessment.entriesListing', 'editEntriesText')}
                     </Link>
                 </div>
             </div>

@@ -15,21 +15,21 @@ export default class AppLoading extends React.PureComponent {
         super(props);
 
         const loadingMessages = [
-            _ts('common', 'loadingMessages1'),
-            _ts('common', 'loadingMessages2'),
-            _ts('common', 'loadingMessages3'),
-            _ts('common', 'loadingMessages4'),
-            _ts('common', 'loadingMessages5'),
-            _ts('common', 'loadingMessages6'),
-            _ts('common', 'loadingMessages7'),
-            _ts('common', 'loadingMessages8'),
-            _ts('common', 'loadingMessages9'),
-            _ts('common', 'loadingMessages10'),
-            _ts('common', 'loadingMessages11'),
-            _ts('common', 'loadingMessages12'),
-            _ts('common', 'loadingMessages13'),
-            _ts('common', 'loadingMessages14'),
-            _ts('common', 'loadingMessages15'),
+            _ts('components.appLoading', 'loadingMessages1'),
+            _ts('components.appLoading', 'loadingMessages2'),
+            _ts('components.appLoading', 'loadingMessages3'),
+            _ts('components.appLoading', 'loadingMessages4'),
+            _ts('components.appLoading', 'loadingMessages5'),
+            _ts('components.appLoading', 'loadingMessages6'),
+            _ts('components.appLoading', 'loadingMessages7'),
+            _ts('components.appLoading', 'loadingMessages8'),
+            _ts('components.appLoading', 'loadingMessages9'),
+            _ts('components.appLoading', 'loadingMessages10'),
+            _ts('components.appLoading', 'loadingMessages11'),
+            _ts('components.appLoading', 'loadingMessages12'),
+            _ts('components.appLoading', 'loadingMessages13'),
+            _ts('components.appLoading', 'loadingMessages14'),
+            _ts('components.appLoading', 'loadingMessages15'),
         ];
 
         // Get a random message from the loading message list

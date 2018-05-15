@@ -89,31 +89,31 @@ export default class NewSubcategoryModal extends React.PureComponent {
                 >
                     <ModalHeader
                         key="header"
-                        title={_ts('ce', 'addNewSubCategoryModalTitle')}
+                        title={_ts('categoryEditor.newSubcategory', 'addNewSubCategoryModalTitle')}
                     />
                     <ModalBody key="body">
                         <TextInput
                             faramElementName="title"
-                            label={_ts('ce', 'addSubCategoryTitleLabel')}
-                            placeholder={_ts('ce', 'addSubCategoryTitlePlaceholder')}
+                            label={_ts('categoryEditor.newSubcategory', 'addSubCategoryTitleLabel')}
+                            placeholder={_ts('categoryEditor.newSubcategory', 'addSubCategoryTitlePlaceholder')}
                             autoFocus
                         />
                         <TextInput
                             faramElementName="description"
-                            label={_ts('ce', 'addSubCategoryDescriptionLabel')}
-                            placeholder={_ts('ce', 'addSubCategoryDescriptionPlaceholder')}
+                            label={_ts('categoryEditor.newSubcategory', 'addSubCategoryDescriptionLabel')}
+                            placeholder={_ts('categoryEditor.newSubcategory', 'addSubCategoryDescriptionPlaceholder')}
                         />
                     </ModalBody>
                     <ModalFooter key="footer">
                         <Button onClick={this.handleModalClose}>
-                            {_ts('ce', 'modalCancel')}
+                            {_ts('categoryEditor.newSubcategory', 'modalCancel')}
                         </Button>
                         <PrimaryButton
                             className={styles.okButton}
                             disabled={pristine}
                             type="submit"
                         >
-                            {_ts('ce', 'modalOk')}
+                            {_ts('categoryEditor.newSubcategory', 'modalOk')}
                         </PrimaryButton>
                     </ModalFooter>
                 </Faram>

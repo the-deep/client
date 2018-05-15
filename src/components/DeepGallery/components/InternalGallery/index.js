@@ -124,7 +124,7 @@ export default class InternalGallery extends React.PureComponent {
                 {
                     onlyFileName &&
                     <span className={styles.label} >
-                        { pendingLabel || _ts('common', 'loadingFileLabel') }
+                        { pendingLabel || _ts('components.internalGallery', 'loadingFileLabel') }
                     </span>
                 }
                 <span className={`${iconNames.loading} ${styles.loadingAnimation}`} />
@@ -138,7 +138,7 @@ export default class InternalGallery extends React.PureComponent {
         return (
             <div className={`${styles.show404} ${onlyFileName ? styles.fileName : ''} ${className}`}>
                 <span className={styles.label}>
-                    {notFoundMessage || _ts('common', 'deepFileNotFound')}
+                    {notFoundMessage || _ts('components.internalGallery', 'deepFileNotFound')}
                 </span>
             </div>
         );

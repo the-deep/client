@@ -140,7 +140,7 @@ export default class SubcategoryPropertyPanel extends React.PureComponent {
 
     handleSubcategoryRemove = () => {
         const { subcategory } = this.props;
-        const confirmText = _ts('ce', 'confirmTextDeleteSubCategory', {
+        const confirmText = _ts('categoryEditor', 'confirmTextDeleteSubCategory', {
             subcategory: subcategory.title,
         });
 
@@ -199,7 +199,7 @@ export default class SubcategoryPropertyPanel extends React.PureComponent {
             return (
                 <div className={styles.propertyPanel}>
                     <p className={styles.empty}>
-                        {_ts('ce', 'nothingHereText')}
+                        {_ts('categoryEditor', 'nothingHereText')}
                     </p>
                 </div>
             );
@@ -217,26 +217,26 @@ export default class SubcategoryPropertyPanel extends React.PureComponent {
             <div className={styles.propertyPanel} >
                 <header className={styles.header} >
                     <h3 className={styles.heading} >
-                        {_ts('ce', 'subCategoryDetailsText')}
+                        {_ts('categoryEditor', 'subCategoryDetailsText')}
                     </h3>
                     <div className={styles.actionButtons}>
                         <DangerButton
                             onClick={this.handleSubcategoryRemove}
                         >
-                            {_ts('ce', 'removeCategoryButtonLabel')}
+                            {_ts('categoryEditor', 'removeCategoryButtonLabel')}
                         </DangerButton>
                     </div>
                 </header>
                 <section className={styles.properties} >
                     <TextInput
-                        label={_ts('ce', 'subCategoryTitleLabel')}
-                        placeholder={_ts('ce', 'subCategoryTitlePlaceholder')}
+                        label={_ts('categoryEditor', 'subCategoryTitleLabel')}
+                        placeholder={_ts('categoryEditor', 'subCategoryTitlePlaceholder')}
                         value={title}
                         onChange={this.handleSubcategoryTitleInputChange}
                     />
                     <TextArea
-                        label={_ts('ce', 'subCategoryDescriptionLabel')}
-                        placeholder={_ts('ce', 'subCategoryDescriptionPlaceholder')}
+                        label={_ts('categoryEditor', 'subCategoryDescriptionLabel')}
+                        placeholder={_ts('categoryEditor', 'subCategoryDescriptionPlaceholder')}
                         value={description}
                         onChange={this.handleSubcategoryDescriptionInputChange}
                     />
@@ -246,7 +246,7 @@ export default class SubcategoryPropertyPanel extends React.PureComponent {
                         {
                             (ngramKeys.length > 0) && (
                                 <h4 className={styles.heading}>
-                                    {_ts('ce', 'numberOfWordsLabel')}
+                                    {_ts('categoryEditor', 'numberOfWordsLabel')}
                                 </h4>
                             )
                         }
@@ -266,7 +266,7 @@ export default class SubcategoryPropertyPanel extends React.PureComponent {
                             />
                         ) : (
                             <div className={styles.empty}>
-                                {_ts('ce', 'noWordsText')}
+                                {_ts('categoryEditor', 'noWordsText')}
                             </div>
                         )
                     }
@@ -274,7 +274,7 @@ export default class SubcategoryPropertyPanel extends React.PureComponent {
                         <PrimaryButton
                             onClick={onNewManualNGram}
                         >
-                            {_ts('ce', 'addWordManuallyButtonLabel')}
+                            {_ts('categoryEditor', 'addWordManuallyButtonLabel')}
                         </PrimaryButton>
                     </div>
                 </section>

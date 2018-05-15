@@ -34,7 +34,7 @@ export default class ConnectorLeadsRequest {
 
     failure = (response) => {
         notify.send({
-            title: _ts('notification', 'connectorSourcesTitle'),
+            title: _ts('addLeads', 'connectorSourcesTitle'),
             type: notify.type.ERROR,
             message: response.error,
             duration: notify.duration.MEDIUM,
@@ -43,9 +43,9 @@ export default class ConnectorLeadsRequest {
 
     fatal = () => {
         notify.send({
-            title: _ts('notification', 'connectorSourcesTitle'),
+            title: _ts('addLeads', 'connectorSourcesTitle'),
             type: notify.type.ERROR,
-            message: _ts('notification', 'connectorSourcesGetFailure'),
+            message: _ts('addLeads', 'connectorSourcesGetFailure'),
             duration: notify.duration.MEDIUM,
         });
     }

@@ -277,7 +277,14 @@ export default class StringManagement extends React.PureComponent {
         // TODO: move to appropriate place
         const linkNames = linkKeys.reduce(
             (acc, b) => {
-                acc[b] = b;
+                const countOfDotOccurence = (b.match(/\./g) || []).length;
+                if (countOfDotOccurence > 0) {
+                    const spaces = '  '.repeat(countOfDotOccurence);
+                    const lastPart = b.substring(b.lastIndexOf('.') + 1, b.length);
+                    acc[b] = `${spaces}›${lastPart}`;
+                } else {
+                    acc[b] = b;
+                }
                 return acc;
             },
             { $all: 'all' },
@@ -303,9 +310,9 @@ export default class StringManagement extends React.PureComponent {
 
                         return (
                             <div className={styles.item}>
-                                <span className={styles.title}>
+                                <pre className={styles.title}>
                                     {data}
-                                </span>
+                                </pre>
                                 { warningCount > 0 &&
                                     <span className={`${styles.badge} ${styles.warning}`}>
                                         {warningCount}

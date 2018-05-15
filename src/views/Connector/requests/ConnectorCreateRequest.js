@@ -36,9 +36,9 @@ export default class ConnectorCreateRequest {
             this.props.addUserConnector({ connector });
 
             notify.send({
-                title: _ts('notification', 'connectorCreateTitle'),
+                title: _ts('connector', 'connectorCreateTitle'),
                 type: notify.type.SUCCESS,
-                message: _ts('notification', 'connectorCreateSuccess'),
+                message: _ts('connector', 'connectorCreateSuccess'),
                 duration: notify.duration.MEDIUM,
             });
             this.props.setState({

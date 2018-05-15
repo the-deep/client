@@ -148,12 +148,12 @@ export default class SimplifiedFilePreview extends React.PureComponent {
             })
             .failure(() => {
                 this.endProcess({
-                    error: _ts('common', 'serverErrorText'),
+                    error: _ts('components.simplifiedFilePreview', 'serverErrorText'),
                 });
             })
             .fatal(() => {
                 this.endProcess({
-                    error: _ts('common', 'connectionFailureText'),
+                    error: _ts('components.simplifiedFilePreview', 'connectionFailureText'),
                 });
             })
             .build()
@@ -177,12 +177,12 @@ export default class SimplifiedFilePreview extends React.PureComponent {
             })
             .failure(() => {
                 this.endProcess({
-                    error: _ts('common', 'serverErrorText'),
+                    error: _ts('components.simplifiedFilePreview', 'serverErrorText'),
                 });
             })
             .fatal(() => {
                 this.endProcess({
-                    error: _ts('common', 'connectionFailureText'),
+                    error: _ts('components.simplifiedFilePreview', 'connectionFailureText'),
                 });
             })
             .build()
@@ -212,7 +212,7 @@ export default class SimplifiedFilePreview extends React.PureComponent {
 
         return (
             <div className={styles.message}>
-                {_ts('common', 'previewNotAvailable')}
+                {_ts('components.simplifiedFilePreview', 'previewNotAvailable')}
             </div>
         );
     }

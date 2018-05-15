@@ -78,8 +78,8 @@ export default class NewCategoryModal extends React.PureComponent {
         } = this.state;
 
         const title = editMode
-            ? _ts('ce', 'editCategoryTooltip')
-            : _ts('ce', 'addCategoryTooltip');
+            ? _ts('categoryEditor.newCategory', 'editCategoryTooltip')
+            : _ts('categoryEditor.newCategory', 'addCategoryTooltip');
 
         return (
             <Modal className={styles.newCategoryModal} >
@@ -98,21 +98,21 @@ export default class NewCategoryModal extends React.PureComponent {
                     <ModalBody key="body">
                         <TextInput
                             faramElementName="title"
-                            label={_ts('ce', 'addCategoryTitleLabel')}
-                            placeholder={_ts('ce', 'addCategoryTitlePlaceholder')}
+                            label={_ts('categoryEditor.newCategory', 'addCategoryTitleLabel')}
+                            placeholder={_ts('categoryEditor.newCategory', 'addCategoryTitlePlaceholder')}
                             autoFocus
                         />
                     </ModalBody>
                     <ModalFooter key="footer">
                         <Button onClick={this.handleModalClose} >
-                            {_ts('ce', 'modalCancel')}
+                            {_ts('categoryEditor.newCategory', 'modalCancel')}
                         </Button>
                         <PrimaryButton
                             className={styles.okButton}
                             disabled={pristine}
                             type="submit"
                         >
-                            {_ts('ce', 'modalOk')}
+                            {_ts('categoryEditor.newCategory', 'modalOk')}
                         </PrimaryButton>
                     </ModalFooter>
                 </Faram>

@@ -24,9 +24,9 @@ export default class ProjectDeleteRequest {
                         projectId,
                     });
                     notify.send({
-                        title: _ts('notification', 'userProjectDelete'),
+                        title: _ts('userProfile', 'userProjectDelete'),
                         type: notify.type.SUCCESS,
-                        message: _ts('notification', 'userProjectDeleteSuccess'),
+                        message: _ts('userProfile', 'userProjectDeleteSuccess'),
                         duration: notify.duration.MEDIUM,
                     });
                 } catch (er) {
@@ -41,17 +41,17 @@ export default class ProjectDeleteRequest {
             })
             .failure(() => {
                 notify.send({
-                    title: _ts('notification', 'userProjectDelete'),
+                    title: _ts('userProfile', 'userProjectDelete'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'userProjectDeleteFailure'),
+                    message: _ts('userProfile', 'userProjectDeleteFailure'),
                     duration: notify.duration.MEDIUM,
                 });
             })
             .fatal(() => {
                 notify.send({
-                    title: _ts('notification', 'userProjectDelete'),
+                    title: _ts('userProfile', 'userProjectDelete'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'userProjectDeleteFatal'),
+                    message: _ts('userProfile', 'userProjectDeleteFatal'),
                     duration: notify.duration.SLOW,
                 });
             })

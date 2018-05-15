@@ -22,9 +22,9 @@ export default class MembershipDeleteRequest {
                 userGroupId,
             });
             notify.send({
-                title: _ts('notification', 'userMembershipDelete'),
+                title: _ts('userGroup', 'userMembershipDelete'),
                 type: notify.type.SUCCESS,
-                message: _ts('notification', 'userMembershipDeleteSuccess'),
+                message: _ts('userGroup', 'userMembershipDeleteSuccess'),
                 duration: notify.duration.MEDIUM,
             });
         } catch (er) {
@@ -34,18 +34,18 @@ export default class MembershipDeleteRequest {
 
     failure = () => {
         notify.send({
-            title: _ts('notification', 'userMembershipDelete'),
+            title: _ts('userGroup', 'userMembershipDelete'),
             type: notify.type.ERROR,
-            message: _ts('notification', 'userMembershipDeleteFailure'),
+            message: _ts('userGroup', 'userMembershipDeleteFailure'),
             duration: notify.duration.MEDIUM,
         });
     }
 
     fatal = () => {
         notify.send({
-            title: _ts('notification', 'userMembershipDelete'),
+            title: _ts('userGroup', 'userMembershipDelete'),
             type: notify.type.ERROR,
-            message: _ts('notification', 'userMembershipDeleteFatal'),
+            message: _ts('userGroup', 'userMembershipDeleteFatal'),
             duration: notify.duration.SLOW,
         });
     }

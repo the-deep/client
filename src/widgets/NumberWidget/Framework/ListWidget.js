@@ -82,11 +82,11 @@ export default class NumberFrameworkList extends React.PureComponent {
             return null;
         }
 
-        const headerTitle = _ts('af', 'editTitleModalHeader');
-        const titleInputLabel = _ts('af', 'titleLabel');
-        const titleInputPlaceholder = _ts('af', 'widgetTitlePlaceholder');
-        const cancelButtonLabel = _ts('af', 'cancelButtonLabel');
-        const saveButtonLabel = _ts('af', 'saveButtonLabel');
+        const headerTitle = _ts('framework.numberWidget', 'editTitleModalHeader');
+        const titleInputLabel = _ts('framework.numberWidget', 'titleLabel');
+        const titleInputPlaceholder = _ts('framework.numberWidget', 'widgetTitlePlaceholder');
+        const cancelButtonLabel = _ts('framework.numberWidget', 'cancelButtonLabel');
+        const saveButtonLabel = _ts('framework.numberWidget', 'saveButtonLabel');
 
         return (
             <Modal>
@@ -122,7 +122,7 @@ export default class NumberFrameworkList extends React.PureComponent {
             <div className={styles.list}>
                 <NumberInput
                     className={styles.input}
-                    placeholder={_ts('af', 'numberPlaceholder')}
+                    placeholder={_ts('framework.numberWidget', 'numberPlaceholder')}
                     showLabel={false}
                     showHintAndError={false}
                     separator={separatorText}

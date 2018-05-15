@@ -231,7 +231,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
                 <header className={styles.header}>
                     <SearchInput
                         onChange={this.handleSearchInputChange}
-                        placeholder={_ts('addLeads', 'searchConnectorPlaceholder')}
+                        placeholder={_ts('addLeads.connectorsSelect', 'searchConnectorPlaceholder')}
                         className={styles.searchInput}
                         value={searchInputValue}
                         showLabel={false}
@@ -257,7 +257,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
         if (connectorsList.length <= 0) {
             return (
                 <div className={styles.empty}>
-                    { _ts('addLeads', 'noConnectorsLabel') }
+                    { _ts('addLeads.connectorsSelect', 'noConnectorsLabel') }
                 </div>
             );
         }
@@ -280,7 +280,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
         return (
             <Modal className={styles.modal} >
                 <ModalHeader
-                    title={_ts('addLeads', 'connectorsLabel')}
+                    title={_ts('addLeads.connectorsSelect', 'connectorsLabel')}
                     rightComponent={
                         <PrimaryButton
                             onClick={this.handleConnectorSelectModalClose}
@@ -300,12 +300,12 @@ export default class ConnectorSelectModal extends React.PureComponent {
                         <DangerButton
                             onClick={this.handleConnectorSelectModalClose}
                         >
-                            {_ts('addLeads', 'modalCancelLabel')}
+                            {_ts('addLeads.connectorsSelect', 'modalCancelLabel')}
                         </DangerButton>
                         <PrimaryButton
                             onClick={this.handleLeadsSelect}
                         >
-                            {_ts('addLeads', 'modalSelectLabel')}
+                            {_ts('addLeads.connectorsSelect', 'modalSelectLabel')}
                         </PrimaryButton>
                     </div>
                 </ModalBody>

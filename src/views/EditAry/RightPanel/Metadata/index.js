@@ -64,8 +64,8 @@ export default class Metadata extends React.PureComponent {
             pending,
         } = this.props;
 
-        const basicInformationTitle = _ts('assessmentMetadata', 'basicInformationTitle');
-        const additionalDocumentsTitle = _ts('assessmentMetadata', 'additionalDocumentsTitle');
+        const basicInformationTitle = _ts('editAssessment.metadata', 'basicInformationTitle');
+        const additionalDocumentsTitle = _ts('editAssessment.metadata', 'additionalDocumentsTitle');
 
         const metadataGroupValues = Object.values(metadataGroups);
 
@@ -94,19 +94,19 @@ export default class Metadata extends React.PureComponent {
                             />
                             <div className={styles.content}>
                                 <Baksa
-                                    label={_ts('assessmentMetadata', 'executiveSummaryTitle')}
+                                    label={_ts('editAssessment.metadata', 'executiveSummaryTitle')}
                                     className={styles.baksa}
                                     faramElementName="executiveSummary"
                                     showPageRange
                                 />
                                 <Baksa
-                                    label={_ts('assessmentMetadata', 'assessmentDatabaseTitle')}
+                                    label={_ts('editAssessment.metadata', 'assessmentDatabaseTitle')}
                                     className={styles.baksa}
                                     faramElementName="assessmentData"
                                     acceptUrl
                                 />
                                 <Baksa
-                                    label={_ts('assessmentMetadata', 'questionnaireTitle')}
+                                    label={_ts('editAssessment.metadata', 'questionnaireTitle')}
                                     className={styles.baksa}
                                     faramElementName="questionnaire"
                                     showPageRange

@@ -14,7 +14,7 @@ import {
 
 const excerptTextWidget = {
     id: 'excerptWidget',
-    // NOTE: used as _ts('af', 'excerptWidgetLabel')
+    // NOTE: used as _ts('widgetTitle', 'excerptWidgetLabel')
     title: 'excerptWidgetLabel',
     analysisFramework: {
         overviewComponent: FrameworkOverviewWidget,

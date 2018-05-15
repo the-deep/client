@@ -4,7 +4,7 @@ import { ViewListWidget } from './View';
 
 const geoWidget = {
     id: 'geoWidget',
-    // NOTE: used as _ts('af', 'geoWidgetLabel')
+    // NOTE: used as _ts('widgetTitle', 'geoWidgetLabel')
     title: 'geoWidgetLabel',
     analysisFramework: {
         listComponent: FrameworkListWidget,

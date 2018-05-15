@@ -339,9 +339,9 @@ export default class ProjectGeneral extends React.PureComponent {
                         project: response,
                     });
                     notify.send({
-                        title: _ts('notification', 'projectDetails'),
+                        title: _ts('project', 'projectDetails'),
                         type: notify.type.SUCCESS,
-                        message: _ts('notification', 'projectDetailsSuccess'),
+                        message: _ts('project', 'projectDetailsSuccess'),
                         duration: notify.duration.MEDIUM,
                     });
                 } catch (er) {
@@ -350,9 +350,9 @@ export default class ProjectGeneral extends React.PureComponent {
             })
             .failure((response) => {
                 notify.send({
-                    title: _ts('notification', 'projectDetails'),
+                    title: _ts('project', 'projectDetails'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'projectDetailsFailure'),
+                    message: _ts('project', 'projectDetailsFailure'),
                     duration: notify.duration.SLOW,
                 });
                 const faramErrors = alterResponseErrorToFaramError(response.errors);
@@ -360,9 +360,9 @@ export default class ProjectGeneral extends React.PureComponent {
             })
             .fatal(() => {
                 notify.send({
-                    title: _ts('notification', 'projectDetails'),
+                    title: _ts('project', 'projectDetails'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'projectDetailsFatal'),
+                    message: _ts('project', 'projectDetailsFatal'),
                     duration: notify.duration.SLOW,
                 });
                 this.setState({

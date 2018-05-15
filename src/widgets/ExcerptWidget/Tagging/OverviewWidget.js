@@ -164,7 +164,7 @@ export default class ExcerptTextOverview extends React.PureComponent {
                 <img
                     className={styles.image}
                     src={attribute.image}
-                    alt={_ts('af', 'altEntryLabel')}
+                    alt={_ts('framework.excerptWidget', 'altEntryLabel')}
                 />
             );
         }
@@ -189,7 +189,7 @@ export default class ExcerptTextOverview extends React.PureComponent {
             return null;
         }
 
-        const buttonTitle = _ts('af', 'formatExcerpt');
+        const buttonTitle = _ts('framework.excerptWidget', 'formatExcerpt');
         return (
             <AccentButton
                 className={styles.formatButton}

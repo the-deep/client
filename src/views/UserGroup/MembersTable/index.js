@@ -75,28 +75,28 @@ export default class MembersTable extends React.PureComponent {
         this.memberHeaders = [
             {
                 key: 'memberName',
-                label: _ts('user', 'tableHeaderName'),
+                label: _ts('userGroup', 'tableHeaderName'),
                 order: 1,
                 sortable: true,
                 comparator: (a, b) => compareString(a.memberName, b.memberName),
             },
             {
                 key: 'memberEmail',
-                label: _ts('user', 'tableHeaderEmail'),
+                label: _ts('userGroup', 'tableHeaderEmail'),
                 order: 2,
                 sortable: true,
                 comparator: (a, b) => compareString(a.memberEmail, b.memberEmail),
             },
             {
                 key: 'role',
-                label: _ts('user', 'tableHeaderRights'),
+                label: _ts('userGroup', 'tableHeaderRights'),
                 order: 3,
                 sortable: true,
                 comparator: (a, b) => compareString(a.role, b.role),
             },
             {
                 key: 'joinedAt',
-                label: _ts('user', 'tableHeaderJoinedAt'),
+                label: _ts('userGroup', 'tableHeaderJoinedAt'),
                 order: 4,
                 sortable: true,
                 comparator: (a, b) => compareDate(a.joinedAt, b.jointedAt),
@@ -104,7 +104,7 @@ export default class MembersTable extends React.PureComponent {
             },
             {
                 key: 'actions',
-                label: _ts('user', 'tableHeaderActions'),
+                label: _ts('userGroup', 'tableHeaderActions'),
                 order: 5,
                 modifier: row => (
                     <ActionButtons
@@ -176,7 +176,7 @@ export default class MembersTable extends React.PureComponent {
     }
 
     handleDeleteMemberClick = (row) => {
-        const confirmText = _ts('user', 'confirmTextRemoveMember', { memberName: row.memberName });
+        const confirmText = _ts('userGroup', 'confirmTextRemoveMember', { memberName: row.memberName });
 
         this.setState({
             confirmText,
@@ -206,8 +206,8 @@ export default class MembersTable extends React.PureComponent {
 
     handleToggleMemberRoleClick = (member) => {
         const confirmText = member.role === 'admin'
-            ? _ts('user', 'confirmTextRevokeAdmin', { memberName: member.memberName })
-            : _ts('user', 'confirmTextGrantAdmin', { memberName: member.memberName });
+            ? _ts('userGroup', 'confirmTextRevokeAdmin', { memberName: member.memberName })
+            : _ts('userGroup', 'confirmTextGrantAdmin', { memberName: member.memberName });
 
         this.setState({
             toggleRoleConfirmShow: true,
@@ -245,11 +245,11 @@ export default class MembersTable extends React.PureComponent {
                 { actionPending && <LoadingAnimation /> }
                 <div className={styles.header}>
                     <h2>
-                        {_ts('user', 'tableHeaderMembers')}
+                        {_ts('userGroup', 'tableHeaderMembers')}
                     </h2>
                     <div className={styles.pusher} />
                     <SearchInput
-                        placeholder={_ts('user', 'placeholderSearch')}
+                        placeholder={_ts('userGroup', 'placeholderSearch')}
                         onChange={this.handleSearchMemberChange}
                         value={searchMemberInputValue}
                         className={styles.searchInput}
@@ -261,7 +261,7 @@ export default class MembersTable extends React.PureComponent {
                         <PrimaryButton
                             onClick={this.handleAddMemberClick}
                         >
-                            {_ts('user', 'addMemberButtonLabel')}
+                            {_ts('userGroup', 'addMemberButtonLabel')}
                         </PrimaryButton>
                     }
                 </div>
@@ -291,7 +291,7 @@ export default class MembersTable extends React.PureComponent {
                         onClose={this.handleAddMemberModalClose}
                     >
                         <ModalHeader
-                            title={_ts('user', 'addMemberButtonLabel')}
+                            title={_ts('userGroup', 'addMemberButtonLabel')}
                             rightComponent={
                                 <PrimaryButton
                                     onClick={this.handleAddMemberModalClose}

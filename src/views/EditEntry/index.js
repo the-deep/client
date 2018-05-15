@@ -175,15 +175,15 @@ export default class EditEntry extends React.PureComponent {
                 if (totalErrors > 0) {
                     notify.send({
                         type: notify.type.ERROR,
-                        title: _ts('notification', 'entrySave'),
-                        message: _ts('notification', 'entrySaveFailure', { errorCount: totalErrors }),
+                        title: _ts('editEntry', 'entrySave'),
+                        message: _ts('editEntry', 'entrySaveFailure', { errorCount: totalErrors }),
                         duration: notify.duration.SLOW,
                     });
                 } else {
                     notify.send({
                         type: notify.type.SUCCESS,
-                        title: _ts('notification', 'entrySave'),
-                        message: _ts('notification', 'entrySaveSuccess'),
+                        title: _ts('editEntry', 'entrySave'),
+                        message: _ts('editEntry', 'entrySaveSuccess'),
                         duration: notify.duration.MEDIUM,
                     });
                 }

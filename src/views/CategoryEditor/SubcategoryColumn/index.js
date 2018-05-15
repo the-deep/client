@@ -157,7 +157,7 @@ export default class SubcategoryColumn extends React.PureComponent {
     render() {
         const {
             subcategories,
-            title = _ts('ce', 'titleLabel'),
+            title = _ts('categoryEditor', 'titleLabel'),
             className,
         } = this.props;
 
@@ -169,7 +169,7 @@ export default class SubcategoryColumn extends React.PureComponent {
                     </h4>
                     <AccentButton
                         onClick={this.handleNewSubcategoryButtonClick}
-                        title={_ts('ce', 'addSubcategory')}
+                        title={_ts('categoryEditor', 'addSubcategory')}
                         iconName={iconNames.add}
                         transparent
                     />

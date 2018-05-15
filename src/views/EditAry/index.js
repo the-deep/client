@@ -198,7 +198,7 @@ export default class EditAry extends React.PureComponent {
             return (
                 <div className={styles.noTemplate}>
                     <p>
-                        {_ts('ary', 'noAryTemplateForProject')}
+                        {_ts('editAssessment', 'noAryTemplateForProject')}
                     </p>
                 </div>
             );

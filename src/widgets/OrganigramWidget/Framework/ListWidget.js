@@ -152,9 +152,9 @@ export default class Organigram extends React.PureComponent {
         const isFatherOrgan = isFalsy(j);
         const nextIndices = isFatherOrgan ? indices : [...indices, j];
 
-        const organPlaceholder = _ts('af', 'organPlaceholder');
-        const addChildButtonTitle = _ts('af', 'addChildButtonTitle');
-        const removeElementButtonTitle = _ts('af', 'removeElementButtonTitle');
+        const organPlaceholder = _ts('framework.organigramWidget', 'organPlaceholder');
+        const addChildButtonTitle = _ts('framework.organigramWidget', 'addChildButtonTitle');
+        const removeElementButtonTitle = _ts('framework.organigramWidget', 'removeElementButtonTitle');
 
         return (
             <div
@@ -216,11 +216,11 @@ export default class Organigram extends React.PureComponent {
             return null;
         }
 
-        const headerTitle = _ts('af', 'editOrganigramModaltitle');
-        const textInputLabel = _ts('af', 'titleLabel');
-        const textInputPlaceholder = _ts('af', 'titlePlaceholderScale');
-        const cancelButtonLabel = _ts('af', 'cancelButtonLabel');
-        const saveButtonLabel = _ts('af', 'saveButtonLabel');
+        const headerTitle = _ts('framework.organigramWidget', 'editOrganigramModaltitle');
+        const textInputLabel = _ts('framework.organigramWidget', 'titleLabel');
+        const textInputPlaceholder = _ts('framework.organigramWidget', 'titlePlaceholderScale');
+        const cancelButtonLabel = _ts('framework.organigramWidget', 'cancelButtonLabel');
+        const saveButtonLabel = _ts('framework.organigramWidget', 'saveButtonLabel');
 
         return (
             <Modal className={styles.editModal}>
@@ -256,7 +256,7 @@ export default class Organigram extends React.PureComponent {
 
     render() {
         const EditModal = this.renderEditModal;
-        const label = _ts('af', 'organigramWidgetLabel');
+        const label = _ts('framework.organigramWidget', 'organigramWidgetLabel');
 
         return ([
             <div

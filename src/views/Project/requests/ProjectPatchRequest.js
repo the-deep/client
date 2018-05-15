@@ -21,9 +21,9 @@ export default class ProjectPatchRequest {
                 regionId: removedRegionId,
             });
             notify.send({
-                title: _ts('notification', 'regionRemove'),
+                title: _ts('project', 'regionRemove'),
                 type: notify.type.SUCCESS,
-                message: _ts('notification', 'regionRemoveSuccess'),
+                message: _ts('project', 'regionRemoveSuccess'),
                 duration: notify.duration.MEDIUM,
             });
         } catch (er) {
@@ -33,18 +33,18 @@ export default class ProjectPatchRequest {
 
     failure = () => {
         notify.send({
-            title: _ts('notification', 'regionRemove'),
+            title: _ts('project', 'regionRemove'),
             type: notify.type.ERROR,
-            message: _ts('notification', 'regionRemoveFailure'),
+            message: _ts('project', 'regionRemoveFailure'),
             duration: notify.duration.SLOW,
         });
     }
 
     fatal = () => {
         notify.send({
-            title: _ts('notification', 'regionRemove'),
+            title: _ts('project', 'regionRemove'),
             type: notify.type.ERROR,
-            message: _ts('notification', 'regionRemoveFatal'),
+            message: _ts('project', 'regionRemoveFatal'),
             duration: notify.duration.SLOW,
         });
     }

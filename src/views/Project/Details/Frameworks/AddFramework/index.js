@@ -84,9 +84,9 @@ export default class AddAnalysisFramework extends React.PureComponent {
                         projectId,
                     });
                     notify.send({
-                        title: _ts('notification', 'afCreate'),
+                        title: _ts('project', 'afCreate'),
                         type: notify.type.SUCCESS,
-                        message: _ts('notification', 'afCreateSuccess'),
+                        message: _ts('project', 'afCreateSuccess'),
                         duration: notify.duration.MEDIUM,
                     });
                     this.props.onModalClose();
@@ -96,9 +96,9 @@ export default class AddAnalysisFramework extends React.PureComponent {
             })
             .failure((response) => {
                 notify.send({
-                    title: _ts('notification', 'afCreate'),
+                    title: _ts('project', 'afCreate'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'afCreateFailure'),
+                    message: _ts('project', 'afCreateFailure'),
                     duration: notify.duration.SLOW,
                 });
                 const faramErrors = alterResponseErrorToFaramError(response.errors);
@@ -106,9 +106,9 @@ export default class AddAnalysisFramework extends React.PureComponent {
             })
             .fatal(() => {
                 notify.send({
-                    title: _ts('notification', 'afCreate'),
+                    title: _ts('project', 'afCreate'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'afCreateFatal'),
+                    message: _ts('project', 'afCreateFatal'),
                     duration: notify.duration.SLOW,
                 });
                 this.setState({

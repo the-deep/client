@@ -4,7 +4,7 @@ import { ViewListWidget } from './View';
 
 const dateWidget = {
     id: 'dateWidget',
-    // NOTE: used as _ts('af', 'dateWidgetLabel')
+    // NOTE: used as _ts('widgetTitle', 'dateWidgetLabel')
     title: 'dateWidgetLabel',
     analysisFramework: {
         listComponent: FrameworkListWidget,

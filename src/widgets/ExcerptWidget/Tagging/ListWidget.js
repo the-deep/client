@@ -62,7 +62,7 @@ export default class ExcerptList extends React.PureComponent {
                         <img
                             className={styles.image}
                             src={attribute.image}
-                            alt={_ts('af', 'altEntryLabel')}
+                            alt={_ts('framework.excerptWidget', 'altEntryLabel')}
                         />
                     ) : (
                         <TextArea

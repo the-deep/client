@@ -31,9 +31,9 @@ export default class UserGroupPostRequest {
                         userGroup: response,
                     });
                     notify.send({
-                        title: _ts('notification', 'userGroupCreate'),
+                        title: _ts('userProfile', 'userGroupCreate'),
                         type: notify.type.SUCCESS,
-                        message: _ts('notification', 'userGroupCreateSuccess'),
+                        message: _ts('userProfile', 'userGroupCreateSuccess'),
                         duration: notify.duration.MEDIUM,
                     });
                     this.props.handleModalClose();
@@ -43,9 +43,9 @@ export default class UserGroupPostRequest {
             })
             .failure((response) => {
                 notify.send({
-                    title: _ts('notification', 'userGroupCreate'),
+                    title: _ts('userProfile', 'userGroupCreate'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'userGroupCreateFailure'),
+                    message: _ts('userProfile', 'userGroupCreateFailure'),
                     duration: notify.duration.MEDIUM,
                 });
                 const faramErrors = alterResponseErrorToFaramError(response.errors);
@@ -53,9 +53,9 @@ export default class UserGroupPostRequest {
             })
             .fatal(() => {
                 notify.send({
-                    title: _ts('notification', 'userGroupCreate'),
+                    title: _ts('userProfile', 'userGroupCreate'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'userGroupCreateFatal'),
+                    message: _ts('userProfile', 'userGroupCreateFatal'),
                     duration: notify.duration.MEDIUM,
                 });
                 this.props.setState({

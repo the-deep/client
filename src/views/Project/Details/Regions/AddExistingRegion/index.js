@@ -129,9 +129,9 @@ export default class AddExistingRegion extends React.PureComponent {
                         project: response,
                     });
                     notify.send({
-                        title: _ts('notification', 'countryCreate'),
+                        title: _ts('project', 'countryCreate'),
                         type: notify.type.SUCCESS,
-                        message: _ts('notification', 'countryCreateSuccess'),
+                        message: _ts('project', 'countryCreateSuccess'),
                         duration: notify.duration.MEDIUM,
                     });
                     if (this.props.onRegionsAdd) {
@@ -144,9 +144,9 @@ export default class AddExistingRegion extends React.PureComponent {
             })
             .failure((response) => {
                 notify.send({
-                    title: _ts('notification', 'countryCreate'),
+                    title: _ts('project', 'countryCreate'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'countryCreateFailure'),
+                    message: _ts('project', 'countryCreateFailure'),
                     duration: notify.duration.MEDIUM,
                 });
                 const faramErrors = alterResponseErrorToFaramError(response.errors);
@@ -154,9 +154,9 @@ export default class AddExistingRegion extends React.PureComponent {
             })
             .fatal(() => {
                 notify.send({
-                    title: _ts('notification', 'countryCreate'),
+                    title: _ts('project', 'countryCreate'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'countryCreateFatal'),
+                    message: _ts('project', 'countryCreateFatal'),
                     duration: notify.duration.MEDIUM,
                 });
                 this.setState({

@@ -165,7 +165,7 @@ export default class List extends React.PureComponent {
             .filter(widget => widget.tagging.listComponent)
             .map(widget => ({
                 id: widget.id,
-                title: _ts('af', widget.title),
+                title: _ts('widgetTitle', widget.title),
                 listComponent: widget.tagging.listComponent,
             }));
 
@@ -225,7 +225,7 @@ export default class List extends React.PureComponent {
     renderActionButtons = (item, entryId) => (
         <div className="apply-buttons">
             <AccentButton
-                title={_ts('entry', 'applyAllButtonTitle')}
+                title={_ts('editEntry', 'applyAllButtonTitle')}
                 onClick={() =>
                     this.setState({
                         showApplyModal: true,
@@ -239,7 +239,7 @@ export default class List extends React.PureComponent {
                 iconName={iconNames.applyAll}
             />
             <WarningButton
-                title={_ts('entry', 'applyAllBelowButtonTitle')}
+                title={_ts('editEntry', 'applyAllBelowButtonTitle')}
                 onClick={() =>
                     this.setState({
                         showApplyModal: true,
@@ -280,14 +280,14 @@ export default class List extends React.PureComponent {
                         to="#/overview"
                         replace
                     >
-                        {_ts('entry', 'gotoOverviewButtonLabel')}
+                        {_ts('editEntry', 'gotoOverviewButtonLabel')}
                     </Link>
                     <SuccessButton
                         onClick={onSaveAll}
                         disabled={saveAllDisabled}
                         className={styles.saveButton}
                     >
-                        {_ts('entry', 'saveButtonLabel')}
+                        {_ts('editEntry', 'saveButtonLabel')}
                     </SuccessButton>
                 </div>
             </header>
@@ -382,7 +382,7 @@ export default class List extends React.PureComponent {
                     (!entries || entries.length <= 0) ? (
                         <div className={styles.noEntryWrapper}>
                             <h2>
-                                {_ts('entry', 'noEntryFound')}
+                                {_ts('editEntry', 'noEntryFound')}
                             </h2>
                         </div>
                     ) : (
@@ -399,8 +399,8 @@ export default class List extends React.PureComponent {
                     <p>
                         {
                             applyMode === APPLY_MODE.all
-                                ? _ts('entry', 'applyToAll')
-                                : _ts('entry', 'applyToAllBelow')
+                                ? _ts('editEntry', 'applyToAll')
+                                : _ts('editEntry', 'applyToAllBelow')
                         }
                     </p>
                 </Confirm>

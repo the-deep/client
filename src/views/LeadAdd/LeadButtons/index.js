@@ -232,9 +232,9 @@ export default class LeadButtons extends React.PureComponent {
     handleLeadAddFromDisk = (files, { invalidFiles }) => {
         if (invalidFiles > 0) {
             notify.send({
-                title: _ts('notification', 'fileSelection'),
+                title: _ts('addLeads.sourceButtons', 'fileSelection'),
                 type: notify.type.WARNING,
-                message: _ts('notification', 'invalidFileSelection'),
+                message: _ts('addLeads.sourceButtons', 'invalidFileSelection'),
                 duration: notify.duration.SLOW,
             });
         }
@@ -391,7 +391,7 @@ export default class LeadButtons extends React.PureComponent {
         return (
             <div className={styles.addLeadButtons}>
                 <h3 className={styles.heading}>
-                    {_ts('addLeads', 'addSourceFromLabel')}
+                    {_ts('addLeads.sourceButtons', 'addSourceFromLabel')}
                 </h3>
                 <GooglePicker
                     className={styles.addLeadBtn}
@@ -405,7 +405,7 @@ export default class LeadButtons extends React.PureComponent {
                 >
                     <span className={iconNames.googleDrive} />
                     <p>
-                        {_ts('addLeads', 'googleDriveLabel')}
+                        {_ts('addLeads.sourceButtons', 'googleDriveLabel')}
                     </p>
                 </GooglePicker>
                 <DropboxChooser
@@ -420,7 +420,7 @@ export default class LeadButtons extends React.PureComponent {
                 >
                     <span className={iconNames.dropbox} />
                     <p>
-                        {_ts('addLeads', 'dropboxLabel')}
+                        {_ts('addLeads.sourceButtons', 'dropboxLabel')}
                     </p>
                 </DropboxChooser>
                 <FileInput
@@ -432,7 +432,7 @@ export default class LeadButtons extends React.PureComponent {
                 >
                     <span className={iconNames.upload} />
                     <p>
-                        {_ts('addLeads', 'localDiskLabel')}
+                        {_ts('addLeads.sourceButtons', 'localDiskLabel')}
                     </p>
                 </FileInput>
                 <Button
@@ -442,7 +442,7 @@ export default class LeadButtons extends React.PureComponent {
                 >
                     <span className={iconNames.globe} />
                     <p>
-                        {_ts('addLeads', 'websiteLabel')}
+                        {_ts('addLeads.sourceButtons', 'websiteLabel')}
                     </p>
                 </Button>
                 <Button
@@ -452,7 +452,7 @@ export default class LeadButtons extends React.PureComponent {
                 >
                     <span className={iconNames.clipboard} />
                     <p>
-                        {_ts('addLeads', 'textLabel')}
+                        {_ts('addLeads.sourceButtons', 'textLabel')}
                     </p>
                 </Button>
                 <Button
@@ -462,7 +462,7 @@ export default class LeadButtons extends React.PureComponent {
                 >
                     <span className={iconNames.link} />
                     <p>
-                        {_ts('addLeads', 'connectorsLabel')}
+                        {_ts('addLeads.sourceButtons', 'connectorsLabel')}
                     </p>
                 </Button>
                 {connectorSelectModalShow &&

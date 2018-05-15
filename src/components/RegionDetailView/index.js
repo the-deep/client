@@ -36,14 +36,14 @@ export default class RegionDetailView extends React.PureComponent {
         super(props);
 
         this.regionDetailMeta = {
-            title: _ts('countries', 'countryNameLabel'),
-            code: _ts('countries', 'countryCodeLabel'),
-            wbRegion: _ts('countries', 'wbRegionLabel'),
-            wbIncomeRegion: _ts('countries', 'wbIncomeRegionLabel'),
-            ochaRegion: _ts('countries', 'ochaRegionLabel'),
-            echoRegion: _ts('countries', 'echoRegionLabel'),
-            unGeoRegion: _ts('countries', 'unGeoRegionLabel'),
-            unGeoSubRegion: _ts('countries', 'unGeoSubregionLabel'),
+            title: _ts('components.regionDetailView', 'countryNameLabel'),
+            code: _ts('components.regionDetailView', 'countryCodeLabel'),
+            wbRegion: _ts('components.regionDetailView', 'wbRegionLabel'),
+            wbIncomeRegion: _ts('components.regionDetailView', 'wbIncomeRegionLabel'),
+            ochaRegion: _ts('components.regionDetailView', 'ochaRegionLabel'),
+            echoRegion: _ts('components.regionDetailView', 'echoRegionLabel'),
+            unGeoRegion: _ts('components.regionDetailView', 'unGeoRegionLabel'),
+            unGeoSubRegion: _ts('components.regionDetailView', 'unGeoSubregionLabel'),
         };
     }
 
@@ -86,7 +86,7 @@ export default class RegionDetailView extends React.PureComponent {
             styles.regionDetailView,
         ];
 
-        const headingText = _ts('countries', 'regionGeneralInfoLabel');
+        const headingText = _ts('components.regionDetailView', 'regionGeneralInfoLabel');
 
         return (
             <div className={classNames.join(' ')}>

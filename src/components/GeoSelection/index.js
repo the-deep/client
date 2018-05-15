@@ -376,19 +376,19 @@ export default class GeoSelection extends React.PureComponent {
                                     <SelectInput
                                         hideClearButton
                                         keySelector={this.regionKeySelector}
-                                        label={_ts('entry', 'regionSelectTitle')}
+                                        label={_ts('components.geoSelection', 'regionSelectTitle')}
                                         labelSelector={this.regionLabelSelector}
                                         onChange={this.handleRegionSelection}
                                         options={regions}
-                                        placeholder={_ts('entry', 'regionSelectPlaceholder')}
+                                        placeholder={_ts('components.geoSelection', 'regionSelectPlaceholder')}
                                         showHintAndError={false}
                                         value={selectedRegion}
                                     />
                                     <MultiSelectInput
-                                        label={_ts('entry', 'locationSelectTitle')}
+                                        label={_ts('components.geoSelection', 'locationSelectTitle')}
                                         onChange={this.handleLocationSelection}
                                         options={locations[selectedRegion]}
-                                        placeholder={_ts('entry', 'locationSelectPlaceholder')}
+                                        placeholder={_ts('components.geoSelection', 'locationSelectPlaceholder')}
                                         showHintAndError={false}
                                         className={styles.mapSelectionSelect}
                                         value={values[selectedRegion]}
@@ -414,10 +414,10 @@ export default class GeoSelection extends React.PureComponent {
                         </ModalBody>
                         <ModalFooter>
                             <Button onClick={this.handleModalCancelButtonClick} >
-                                {_ts('entry', 'cancelGeoSelectionButtonLabel')}
+                                {_ts('components.geoSelection', 'cancelGeoSelectionButtonLabel')}
                             </Button>
                             <PrimaryButton onClick={this.handleModalSetButtonClick} >
-                                {_ts('entry', 'setGeoSelectionButtonLabel')}
+                                {_ts('components.geoSelection', 'setGeoSelectionButtonLabel')}
                             </PrimaryButton>
                         </ModalFooter>
                     </Modal>

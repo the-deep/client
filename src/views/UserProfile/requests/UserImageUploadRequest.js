@@ -28,18 +28,18 @@ export default class UserImageUploadRequest {
             .failure((response) => {
                 console.warn('Failure', response);
                 notify.send({
-                    title: _ts('notification', 'userProfileEdit'),
+                    title: _ts('userProfile', 'userProfileEdit'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'userEditImageUploadFailure'),
+                    message: _ts('userProfile', 'userEditImageUploadFailure'),
                     duration: notify.duration.SLOW,
                 });
             })
             .fatal((response) => {
                 console.warn('Failure', response);
                 notify.send({
-                    title: _ts('notification', 'userProfileEdit'),
+                    title: _ts('userProfile', 'userProfileEdit'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'userEditImageUploadFailure'),
+                    message: _ts('userProfile', 'userEditImageUploadFailure'),
                     duration: notify.duration.SLOW,
                 });
             })

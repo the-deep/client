@@ -18,9 +18,9 @@ export default class RegionDeleteRequest {
         try {
             this.props.unSetRegion({ regionId });
             notify.send({
-                title: _ts('notification', 'countryDelete'),
+                title: _ts('countries', 'countryDelete'),
                 type: notify.type.SUCCESS,
-                message: _ts('notification', 'countryDeleteSuccess'),
+                message: _ts('countries', 'countryDeleteSuccess'),
                 duration: notify.duration.MEDIUM,
             });
         } catch (er) {
@@ -30,18 +30,18 @@ export default class RegionDeleteRequest {
 
     failure = () => {
         notify.send({
-            title: _ts('notification', 'countryDelete'),
+            title: _ts('countries', 'countryDelete'),
             type: notify.type.ERROR,
-            message: _ts('notification', 'countryDeleteFailure'),
+            message: _ts('countries', 'countryDeleteFailure'),
             duration: notify.duration.MEDIUM,
         });
     }
 
     fatal = () => {
         notify.send({
-            title: _ts('notification', 'countryDelete'),
+            title: _ts('countries', 'countryDelete'),
             type: notify.type.ERROR,
-            message: _ts('notification', 'countryDeleteFatal'),
+            message: _ts('countries', 'countryDeleteFatal'),
             duration: notify.duration.SLOW,
         });
     }

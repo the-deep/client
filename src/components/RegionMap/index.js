@@ -106,13 +106,13 @@ export default class RegionMap extends React.PureComponent {
             .failure(() => {
                 this.setState({
                     pending: false,
-                    error: _ts('common', 'serverErrorText'),
+                    error: _ts('components.regionMap', 'serverErrorText'),
                 });
             })
             .fatal(() => {
                 this.setState({
                     pending: false,
-                    error: _ts('common', 'connectionFailureText'),
+                    error: _ts('components.regionMap', 'connectionFailureText'),
                 });
             })
             .build()
@@ -157,13 +157,13 @@ export default class RegionMap extends React.PureComponent {
             .failure(() => {
                 this.setState({
                     pending: false,
-                    error: _ts('common', 'serverErrorText'),
+                    error: _ts('components.regionMap', 'serverErrorText'),
                 });
             })
             .fatal(() => {
                 this.setState({
                     pending: false,
-                    error: _ts('common', 'connectionFailureText'),
+                    error: _ts('components.regionMap', 'connectionFailureText'),
                 });
             })
             .build()
@@ -351,7 +351,7 @@ export default class RegionMap extends React.PureComponent {
 
         return (
             <div className={styles.message}>
-                {_ts('common', 'mapNotAvailable')}
+                {_ts('components.regionMap', 'mapNotAvailable')}
             </div>
         );
     }

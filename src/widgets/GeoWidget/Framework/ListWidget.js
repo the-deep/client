@@ -74,11 +74,11 @@ export default class GeoFrameworkList extends React.PureComponent {
             return null;
         }
 
-        const headerTitle = _ts('af', 'editTitleModalHeader');
-        const titleInputLabel = _ts('af', 'titleLabel');
-        const titleInputPlaceholder = _ts('af', 'widgetTitlePlaceholder');
-        const cancelButtonLabel = _ts('af', 'cancelButtonLabel');
-        const saveButtonLabel = _ts('af', 'saveButtonLabel');
+        const headerTitle = _ts('framework.geoWidget', 'editTitleModalHeader');
+        const titleInputLabel = _ts('framework.geoWidget', 'titleLabel');
+        const titleInputPlaceholder = _ts('framework.geoWidget', 'widgetTitlePlaceholder');
+        const cancelButtonLabel = _ts('framework.geoWidget', 'cancelButtonLabel');
+        const saveButtonLabel = _ts('framework.geoWidget', 'saveButtonLabel');
 
         return (
             <Modal>
@@ -107,7 +107,7 @@ export default class GeoFrameworkList extends React.PureComponent {
     }
 
     render() {
-        const contentText = _ts('af', 'geoAreaButtonLabel');
+        const contentText = _ts('framework.geoWidget', 'geoAreaButtonLabel');
         const EditModal = this.renderEditModal;
 
         return ([

@@ -25,9 +25,9 @@ export default class MembershipPostRequest {
                 userGroupId,
             });
             notify.send({
-                title: _ts('notification', 'userMembershipCreate'),
+                title: _ts('userGroup', 'userMembershipCreate'),
                 type: notify.type.SUCCESS,
-                message: _ts('notification', 'userMembershipCreateSuccess'),
+                message: _ts('userGroup', 'userMembershipCreateSuccess'),
                 duration: notify.duration.MEDIUM,
             });
             this.props.onModalClose();
@@ -43,7 +43,7 @@ export default class MembershipPostRequest {
 
     fatal = () => {
         this.props.setState({
-            faramErrors: { $internal: [_ts('user', 'addMemberErrorText')] },
+            faramErrors: { $internal: [_ts('userGroup', 'addMemberErrorText')] },
         });
     }
 

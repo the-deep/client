@@ -77,13 +77,13 @@ export default class DgSelect extends React.PureComponent {
         this.galleryFilesHeader = [
             {
                 key: 'actions',
-                label: _ts('common', 'tableHeaderSelect'),
+                label: _ts('components.deepGallerySelect', 'tableHeaderSelect'),
                 order: 1,
                 modifier: row => this.renderCheckbox(row),
             },
             {
                 key: 'mimeType',
-                label: _ts('common', 'tableHeaderType'),
+                label: _ts('components.deepGallerySelect', 'tableHeaderType'),
                 order: 2,
                 sortable: true,
                 comparator: (a, b) => compareString(a.mimeType, b.mimeType),
@@ -91,14 +91,14 @@ export default class DgSelect extends React.PureComponent {
             },
             {
                 key: 'title',
-                label: _ts('common', 'tableHeaderName'),
+                label: _ts('components.deepGallerySelect', 'tableHeaderName'),
                 order: 3,
                 sortable: true,
                 comparator: (a, b) => compareString(a.title, b.title),
             },
             {
                 key: 'createdAt',
-                label: _ts('common', 'tableHeaderDateCreated'),
+                label: _ts('components.deepGallerySelect', 'tableHeaderDateCreated'),
                 order: 4,
                 sortable: true,
                 comparator: (a, b) => compareDate(a.createdAt, b.createdAt),
@@ -305,7 +305,7 @@ export default class DgSelect extends React.PureComponent {
 
     renderCheckbox = row => (
         <AccentButton
-            title={row.selected ? _ts('common', 'unselect') : _ts('common', 'select')}
+            title={row.selected ? _ts('components.deepGallerySelect', 'unselect') : _ts('components.deepGallerySelect', 'select')}
             onClick={() => this.handleFileSelection(row)}
             smallVerticalPadding
             transparent
@@ -337,9 +337,9 @@ export default class DgSelect extends React.PureComponent {
                 rightComponent={
                     <SearchInput
                         onChange={this.handleSearchInputChange}
-                        placeholder={_ts('common', 'searchGalleryPlaceholder')}
+                        placeholder={_ts('components.deepGallerySelect', 'searchGalleryPlaceholder')}
                         className={styles.searchInput}
-                        label={_ts('common', 'searchGalleryLabel')}
+                        label={_ts('components.deepGallerySelect', 'searchGalleryLabel')}
                         value={searchInputValue}
                         showLabel={false}
                         showHintAndError={false}
@@ -366,16 +366,16 @@ export default class DgSelect extends React.PureComponent {
                     value=""
                     showStatus={false}
                 >
-                    {_ts('common', 'uploadFileButtonLabel')}
+                    {_ts('components.deepGallerySelect', 'uploadFileButtonLabel')}
                 </FileInput>
                 <Button onClick={this.onClose}>
-                    {_ts('common', 'cancelButtonLabel')}
+                    {_ts('components.deepGallerySelect', 'cancelButtonLabel')}
                 </Button>
                 <PrimaryButton
                     onClick={this.onAdd}
                     disabled={pending}
                 >
-                    {_ts('common', 'addButtonLabel')}
+                    {_ts('components.deepGallerySelect', 'addButtonLabel')}
                 </PrimaryButton>
             </ModalFooter>,
         ]);

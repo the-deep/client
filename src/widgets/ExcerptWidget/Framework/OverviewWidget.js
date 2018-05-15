@@ -77,9 +77,9 @@ export default class ExcerptTextOverview extends React.PureComponent {
             return null;
         }
 
-        const headerTitle = _ts('af', 'editTitleModalHeader');
-        const cancelButtonLabel = _ts('af', 'cancelButtonLabel');
-        const saveButtonLabel = _ts('af', 'saveButtonLabel');
+        const headerTitle = _ts('framework.excerptWidget', 'editTitleModalHeader');
+        const cancelButtonLabel = _ts('framework.excerptWidget', 'cancelButtonLabel');
+        const saveButtonLabel = _ts('framework.excerptWidget', 'saveButtonLabel');
 
         return (
             <Modal className={styles.editOverviewModal}>
@@ -87,9 +87,9 @@ export default class ExcerptTextOverview extends React.PureComponent {
                 <ModalBody>
                     <TextInput
                         autoFocus
-                        label={_ts('af', 'titleLabel')}
+                        label={_ts('framework.excerptWidget', 'titleLabel')}
                         onChange={this.handleWidgetTitleChange}
-                        placeholder={_ts('af', 'widgetTitlePlaceholder')}
+                        placeholder={_ts('framework.excerptWidget', 'widgetTitlePlaceholder')}
                         selectOnFocus
                         showHintAndError={false}
                         value={title}
@@ -109,7 +109,7 @@ export default class ExcerptTextOverview extends React.PureComponent {
 
     render() {
         const EditModal = this.renderEditModal;
-        const contentText = _ts('af', 'textOrImageExcerptWidgetLabel');
+        const contentText = _ts('framework.excerptWidget', 'textOrImageExcerptWidgetLabel');
 
         return [
             <div

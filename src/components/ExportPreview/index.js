@@ -94,13 +94,13 @@ export default class ExportPreview extends React.PureComponent {
             .failure(() => {
                 this.setState({
                     pending: false,
-                    error: _ts('export', 'serverErrorText'),
+                    error: _ts('components.exportPreview', 'serverErrorText'),
                 });
             })
             .fatal(() => {
                 this.setState({
                     pending: false,
-                    error: _ts('export', 'connectionFailureText'),
+                    error: _ts('components.exportPreview', 'connectionFailureText'),
                 });
             })
             .build()
@@ -126,7 +126,7 @@ export default class ExportPreview extends React.PureComponent {
                     url={exportObj.file}
                     mimeType={exportObj.mimeType}
                     canShowIframe={false}
-                    invalidUrlMessage={_ts('export', 'previewNotAvailableLabel')}
+                    invalidUrlMessage={_ts('components.exportPreview', 'previewNotAvailableLabel')}
                     showUrl
                 />
             );
@@ -134,7 +134,7 @@ export default class ExportPreview extends React.PureComponent {
 
         return (
             <div className={styles.message}>
-                {_ts('export', 'previewNotAvailableLabel')}
+                {_ts('components.exportPreview', 'previewNotAvailableLabel')}
             </div>
         );
     }

@@ -153,33 +153,33 @@ export default class LeadFilter extends React.PureComponent {
         return (
             <div className={styles.leadFilters}>
                 <SearchInput
-                    label={_ts('addLeads', 'placeholderSearch')}
+                    label={_ts('addLeads.filters', 'placeholderSearch')}
                     onChange={this.handleSearchChange}
                     value={filters.search}
-                    placeholder={_ts('addLeads', 'placeholderSearch')}
+                    placeholder={_ts('addLeads.filters', 'placeholderSearch')}
                     showHintAndError={false}
                 />
                 <TextInput
-                    label={_ts('addLeads', 'filterPublisher')}
-                    placeholder={_ts('addLeads', 'placeholderAny')}
+                    label={_ts('addLeads.filters', 'filterPublisher')}
+                    placeholder={_ts('addLeads.filters', 'placeholderAny')}
                     value={filters.source}
                     onChange={this.handleLeadSourceFilterChange}
                     showHintAndError={false}
                 />
                 <SelectInput
-                    label={_ts('addLeads', 'filterStatus')}
+                    label={_ts('addLeads.filters', 'filterStatus')}
                     showLabel
                     options={leadStatusFilterOptions}
-                    placeholder={_ts('addLeads', 'placeholderAny')}
+                    placeholder={_ts('addLeads.filters', 'placeholderAny')}
                     value={filters.status}
                     onChange={this.handleLeadStatusFilterChange}
                     showHintAndError={false}
                 />
                 <MultiSelectInput
-                    label={_ts('addLeads', 'filterSourceType')}
+                    label={_ts('addLeads.filters', 'filterSourceType')}
                     showLabel
                     options={leadTypeOptions}
-                    placeholder={_ts('addLeads', 'placeholderAny')}
+                    placeholder={_ts('addLeads.filters', 'placeholderAny')}
                     value={filters.type}
                     onChange={this.handleLeadTypeFilterChange}
                     showHintAndError={false}
@@ -188,7 +188,7 @@ export default class LeadFilter extends React.PureComponent {
                     disabled={isFilterEmpty}
                     onClick={this.handleClearFilters}
                 >
-                    {_ts('addLeads', 'filterClearFilter')}
+                    {_ts('addLeads.filters', 'filterClearFilter')}
                 </DangerButton>
             </div>
         );

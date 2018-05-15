@@ -81,26 +81,26 @@ export default class NewManualNgramModal extends React.PureComponent {
                 >
                     <ModalHeader
                         key="header"
-                        title={_ts('ce', 'addNewWordModalTitle')}
+                        title={_ts('categoryEditor.newNgram', 'addNewWordModalTitle')}
                     />
                     <ModalBody key="body">
                         <TextInput
                             faramElementName="word"
-                            label={_ts('ce', 'addNewWordLabel')}
-                            placeholder={_ts('ce', 'addNewWordPlaceholder')}
+                            label={_ts('categoryEditor.newNgram', 'addNewWordLabel')}
+                            placeholder={_ts('categoryEditor.newNgram', 'addNewWordPlaceholder')}
                             autoFocus
                         />
                     </ModalBody>
                     <ModalFooter key="footer">
                         <Button onClick={this.handleModalClose}>
-                            {_ts('ce', 'modalCancel')}
+                            {_ts('categoryEditor.newNgram', 'modalCancel')}
                         </Button>
                         <PrimaryButton
                             className={styles.okButton}
                             disabled={pristine}
                             type="submit"
                         >
-                            {_ts('ce', 'modalOk')}
+                            {_ts('categoryEditor.newNgram', 'modalOk')}
                         </PrimaryButton>
                     </ModalFooter>
                 </Faram>

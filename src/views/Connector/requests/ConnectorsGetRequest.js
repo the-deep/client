@@ -38,7 +38,7 @@ export default class ConnectorsGetRequest {
 
     failure = (response) => {
         notify.send({
-            title: _ts('notification', 'connectorTitle'),
+            title: _ts('connector', 'connectorTitle'),
             type: notify.type.ERROR,
             message: response.error,
             duration: notify.duration.MEDIUM,
@@ -47,9 +47,9 @@ export default class ConnectorsGetRequest {
 
     fatal = () => {
         notify.send({
-            title: _ts('notification', 'connectorTitle'),
+            title: _ts('connector', 'connectorTitle'),
             type: notify.type.ERROR,
-            message: _ts('notification', 'connectorGetFailure'),
+            message: _ts('connector', 'connectorGetFailure'),
             duration: notify.duration.MEDIUM,
         });
     }

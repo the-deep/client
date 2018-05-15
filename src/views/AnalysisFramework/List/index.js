@@ -204,7 +204,7 @@ export default class List extends React.PureComponent {
             analysisFramework: analysisFrameworkId,
             key: `list-${this.getUniqueKey()}`,
             widgetId: widget.id,
-            title: _ts('af', widget.title),
+            title: _ts('framework', widget.title),
             properties: {
                 overviewGridLayout: widget.overviewComponent && {
                     left: 0,
@@ -283,7 +283,7 @@ export default class List extends React.PureComponent {
                         key={widget.id}
                     >
                         <div className={styles.title}>
-                            {_ts('af', widget.title)}
+                            {_ts('framework', widget.title)}
                         </div>
                         <div className={styles.actions}>
                             <Button
@@ -310,7 +310,7 @@ export default class List extends React.PureComponent {
         } = this.props;
 
         const exitUrl = `${reverseRoute(pathNames.projects, { projectId })}#/frameworks`;
-        const frameworkTitle = analysisFramework.title || _ts('af', 'analysisFramework');
+        const frameworkTitle = analysisFramework.title || _ts('framework', 'analysisFramework');
 
         return (
             <header className={styles.header}>
@@ -322,7 +322,7 @@ export default class List extends React.PureComponent {
                         /
                     </span>
                     <span className={styles.pageType}>
-                        {_ts('af', 'headerList')}
+                        {_ts('framework', 'headerList')}
                     </span>
                 </h2>
                 <div className={styles.actions}>
@@ -330,20 +330,20 @@ export default class List extends React.PureComponent {
                         className={styles.exitLink}
                         to={exitUrl}
                     >
-                        {_ts('af', 'exitButtonLabel')}
+                        {_ts('framework', 'exitButtonLabel')}
                     </Link>
                     <Link
                         className={styles.gotoOverviewLink}
                         to="#/overview"
                         replace
                     >
-                        {_ts('af', 'gotoOverviewButtonLabel')}
+                        {_ts('framework', 'gotoOverviewButtonLabel')}
                     </Link>
                     <SuccessButton
                         className={styles.saveButton}
                         onClick={this.props.onSave}
                     >
-                        {_ts('af', 'saveButtonLabel')}
+                        {_ts('framework', 'saveButtonLabel')}
                     </SuccessButton>
                 </div>
             </header>
@@ -375,7 +375,7 @@ export default class List extends React.PureComponent {
                     show={this.state.showDeleteModal}
                 >
                     <p>
-                        {_ts('af', 'confirmDeletewWidget')}
+                        {_ts('framework', 'confirmDeletewWidget')}
                     </p>
                 </Confirm>
             </div>

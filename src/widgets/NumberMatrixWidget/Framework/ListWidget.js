@@ -19,7 +19,7 @@ export default class NumberMatrixList extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        const contentText = _ts('af', 'numberMatrixWidgetLabel');
+        const contentText = _ts('framework.numberMatrixWidget', 'numberMatrixWidgetLabel');
 
         return (
             <div className={styles.list}>

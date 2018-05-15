@@ -71,15 +71,15 @@ export default class DocumentPanel extends React.PureComponent {
         this.tabs = [
             {
                 key: 'document',
-                title: _ts('ce', 'documentTabLabel'),
+                title: _ts('categoryEditor', 'documentTabLabel'),
             },
             {
                 key: 'simplified',
-                title: _ts('ce', 'simplifiedTabLabel'),
+                title: _ts('categoryEditor', 'simplifiedTabLabel'),
             },
             {
                 key: 'ngrams',
-                title: _ts('ce', 'ngramsTabLabel'),
+                title: _ts('categoryEditor', 'ngramsTabLabel'),
             },
         ];
     }

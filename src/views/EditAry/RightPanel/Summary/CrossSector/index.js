@@ -50,22 +50,22 @@ export default class CrossSector extends React.PureComponent {
         super(props);
 
         this.rowFieldTitles = [
-            _ts('assessmentSummary', 'prioritySector'),
-            _ts('assessmentSummary', 'affectedGroup'),
-            _ts('assessmentSummary', 'specificNeedGroup'),
+            _ts('editAssessment.summary', 'prioritySector'),
+            _ts('editAssessment.summary', 'affectedGroup'),
+            _ts('editAssessment.summary', 'specificNeedGroup'),
         ];
 
         this.columnFieldTitles = [
             ' ',
-            _ts('assessmentSummary', 'moderateAssistancePopulationUnknown'),
-            _ts('assessmentSummary', 'severeAssistancePopulationUnknown'),
-            _ts('assessmentSummary', 'assistancePopulationUnknown'),
+            _ts('editAssessment.summary', 'moderateAssistancePopulationUnknown'),
+            _ts('editAssessment.summary', 'severeAssistancePopulationUnknown'),
+            _ts('editAssessment.summary', 'assistancePopulationUnknown'),
         ];
 
         this.rowSubFieldTitles = [
-            _ts('assessmentSummary', 'rank1Title'),
-            _ts('assessmentSummary', 'rank2Title'),
-            _ts('assessmentSummary', 'rank3Title'),
+            _ts('editAssessment.summary', 'rank1Title'),
+            _ts('editAssessment.summary', 'rank2Title'),
+            _ts('editAssessment.summary', 'rank3Title'),
         ];
     }
 
@@ -134,7 +134,7 @@ export default class CrossSector extends React.PureComponent {
 
         if (selectedSectors.length < 3) {
             const className = this.getClassName(true);
-            const emptyText = _ts('assessmentSummary', 'crossSectorEmptyText');
+            const emptyText = _ts('editAssessment.summary', 'crossSectorEmptyText');
 
             return (
                 <div className={className}>

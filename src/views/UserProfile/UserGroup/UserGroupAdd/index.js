@@ -127,20 +127,20 @@ export default class UserGroupAdd extends React.PureComponent {
                 { pending && <LoadingAnimation /> }
                 <NonFieldErrors faramElement />
                 <TextInput
-                    label={_ts('user', 'addUserGroupModalLabel')}
+                    label={_ts('userProfile', 'addUserGroupModalLabel')}
                     faramElementName="title"
-                    placeholder={_ts('user', 'addUserGroupModalPlaceholder')}
+                    placeholder={_ts('userProfile', 'addUserGroupModalPlaceholder')}
                     autoFocus
                 />
                 <div className={styles.actionButtons}>
                     <DangerButton onClick={this.handleFormClose}>
-                        {_ts('user', 'modalCancel')}
+                        {_ts('userProfile', 'modalCancel')}
                     </DangerButton>
                     <PrimaryButton
                         disabled={pending || !pristine}
                         type="submit"
                     >
-                        {_ts('user', 'modalCreate')}
+                        {_ts('userProfile', 'modalCreate')}
                     </PrimaryButton>
                 </div>
             </Faram>

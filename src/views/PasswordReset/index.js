@@ -144,7 +144,7 @@ export default class PasswordReset extends React.PureComponent {
                             <div className={styles.info}>
                                 <p>
                                     {
-                                        _ts('login', 'checkInboxText', { email: faramValues.email })
+                                        _ts('passwordReset', 'checkInboxText', { email: faramValues.email })
                                     }
                                 </p>
                             </div>
@@ -163,8 +163,8 @@ export default class PasswordReset extends React.PureComponent {
                                 <NonFieldErrors faramElement />
                                 <TextInput
                                     faramElementName="email"
-                                    label={_ts('login', 'emailLabel')}
-                                    placeholder={_ts('login', 'emailPlaceholder')}
+                                    label={_ts('passwordReset', 'emailLabel')}
+                                    placeholder={_ts('passwordReset', 'emailPlaceholder')}
                                 />
                                 <ReCaptcha
                                     ref={(reCaptcha) => { this.reCaptcha = reCaptcha; }}
@@ -173,7 +173,7 @@ export default class PasswordReset extends React.PureComponent {
                                 />
                                 <div className={styles.actionButtons}>
                                     <PrimaryButton type="submit">
-                                        { _ts('login', 'submitForgetPassword') }
+                                        { _ts('passwordReset', 'submitForgetPassword') }
                                     </PrimaryButton>
                                 </div>
                             </Faram>
@@ -184,7 +184,7 @@ export default class PasswordReset extends React.PureComponent {
                             className={styles.goBackLink}
                             to={reverseRoute(pathNames.login, {})}
                         >
-                            {_ts('login', 'goBackToLoginText')}
+                            {_ts('passwordReset', 'goBackToLoginText')}
                         </Link>
                     </div>
                 </div>

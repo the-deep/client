@@ -250,10 +250,10 @@ export default class Navbar extends React.PureComponent {
                         path={logo}
                     />
                     <div className={styles.title}>
-                        {_ts('common', 'deepLabel')}
+                        {_ts('components.navbar', 'deepLabel')}
                     </div>
                     <span className={styles.betaLabel}>
-                        {_ts('common', 'betaLabel')}
+                        {_ts('components.navbar', 'betaLabel')}
                     </span>
                 </Link>
 
@@ -267,7 +267,7 @@ export default class Navbar extends React.PureComponent {
                                 labelSelector={Navbar.projectLabelSelector}
                                 onChange={this.handleProjectChange}
                                 options={userProjects}
-                                placeholder={_ts('common', 'selectEventPlaceholder')}
+                                placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
                                 showHintAndError={false}
                                 showLabel={false}
                                 className={styles.projectSelectInput}

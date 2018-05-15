@@ -99,12 +99,12 @@ export default class DateFrameworkList extends React.PureComponent {
             return null;
         }
 
-        const headerTitle = _ts('af', 'editTitleModalHeader');
-        const titleInputLabel = _ts('af', 'titleLabel');
-        const titleInputPlaceholder = _ts('af', 'widgetTitlePlaceholder');
-        const checkboxLabel = _ts('af', 'informationDateCheckboxLabel');
-        const cancelButtonLabel = _ts('af', 'cancelButtonLabel');
-        const saveButtonLabel = _ts('af', 'saveButtonLabel');
+        const headerTitle = _ts('framework.dateWidget', 'editTitleModalHeader');
+        const titleInputLabel = _ts('framework.dateWidget', 'titleLabel');
+        const titleInputPlaceholder = _ts('framework.dateWidget', 'widgetTitlePlaceholder');
+        const checkboxLabel = _ts('framework.dateWidget', 'informationDateCheckboxLabel');
+        const cancelButtonLabel = _ts('framework.dateWidget', 'cancelButtonLabel');
+        const saveButtonLabel = _ts('framework.dateWidget', 'saveButtonLabel');
 
         return (
             <Modal className={styles.editModal}>
