@@ -22,8 +22,8 @@ const languagesSchema = [];
         fields: {
             code: { type: 'string', required: true },
             title: { type: 'string', required: true },
-            strings: { type: 'array', required: true },
-            links: { type: 'object', required: true },
+            strings: { type: 'array', required: true }, // FIXME: better schema
+            links: { type: 'object', required: true }, // FIXME: better schema
         },
     };
     languagesSchema.push({ name, schema });

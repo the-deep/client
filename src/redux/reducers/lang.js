@@ -1,6 +1,7 @@
 import createReducerWithMap from '../../utils/createReducerWithMap';
 import { LOGOUT_ACTION } from '../reducers/auth';
 import initialLangState from '../initial-state/lang';
+import { listToMap } from '../../vendor/react-store/utils/common';
 import update from '../../vendor/react-store/utils/immutable-update';
 
 export const SET_SELECTED_LANGUAGE_ACTION = 'lang/SET_SELECTED_LANGUAGE';
@@ -51,12 +52,28 @@ const setAvailableLanguages = (state, action) => {
     return update(state, settings);
 };
 
+const transformServerLanguage = lang => ({
+    ...lang,
+    strings: listToMap(lang.strings, str => str.id, str => str.value),
+    links: Object.keys(lang.links).reduce(
+        (acc, linkCollectionName) => {
+            acc[linkCollectionName] = listToMap(
+                lang.links[linkCollectionName],
+                lnk => lnk.key,
+                lnk => lnk.string,
+            );
+            return acc;
+        },
+        {},
+    ),
+});
+
 const setLanguage = (state, action) => {
     const { language } = action;
     const settings = {
         languages: {
             [language.code]: {
-                $set: language,
+                $set: transformServerLanguage(language),
             },
         },
     };
