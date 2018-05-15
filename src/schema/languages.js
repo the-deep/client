@@ -4,12 +4,26 @@ const languagesSchema = [];
     const name = 'languageMini';
     const schema = {
         doc: {
-            name: 'Language',
-            description: '',
+            name: 'Language Mini',
         },
         fields: {
             code: { type: 'string', required: true },
             title: { type: 'string', required: true },
+        },
+    };
+    languagesSchema.push({ name, schema });
+}
+{
+    const name = 'language';
+    const schema = {
+        doc: {
+            name: 'Language',
+        },
+        fields: {
+            code: { type: 'string', required: true },
+            title: { type: 'string', required: true },
+            strings: { type: 'array', required: true },
+            links: { type: 'object', required: true },
         },
     };
     languagesSchema.push({ name, schema });

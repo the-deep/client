@@ -9,9 +9,18 @@ import schema from '../../../schema';
 import { activeProjectIdFromStateSelector } from '../../selectors/siloDomainData/common';
 import { setActiveProjectAction } from '../../reducers/siloDomainData/common';
 import { setUserPreferencesAction } from '../../reducers/auth';
-import { setFallbackLanguageAction, setSelectedLanguageAction } from '../../reducers/lang';
-import { setWaitingForPreferencesAction } from '../../reducers/app';
+import {
+    setFallbackLanguageAction,
+    setSelectedLanguageAction,
+    setLanguageAction,
+} from '../../reducers/lang';
+import {
+    setWaitingForPreferencesAction,
+    setWaitingForLanguageAction,
+} from '../../reducers/app';
 import AbstractTask from '../../../utils/AbstractTask';
+
+import LanguageGet from './LanguageGet';
 
 export default class PreferencesGet extends AbstractTask {
     constructor(store) {
@@ -58,6 +67,19 @@ export default class PreferencesGet extends AbstractTask {
                     store.dispatch(setFallbackLanguageAction(fallbackLanguage));
 
                     store.dispatch(setWaitingForPreferencesAction(false));
+
+                    if (language === '$devLang' || language === undefined) {
+                        store.dispatch(setWaitingForLanguageAction(false));
+                    } else {
+                        const request = new LanguageGet({
+                            setLanguage: lang => store.dispatch(setLanguageAction(lang)),
+                            setWaitingForLanguage: v => store.dispatch(
+                                setWaitingForLanguageAction(v),
+                            ),
+                        });
+                        this.languageGetRequest = request.create(language);
+                        this.languageGetRequest.start();
+                    }
                 } catch (er) {
                     console.error(er);
                 }
@@ -76,6 +98,9 @@ export default class PreferencesGet extends AbstractTask {
     stop = () => {
         if (this.preferencesRequest) {
             this.preferencesRequest.stop();
+        }
+        if (this.languageGetRequest) {
+            this.languageGetRequest.stop();
         }
     }
 }

@@ -17,9 +17,11 @@ import DangerButton from '../../vendor/react-store/components/Action/Button/Dang
 import WarningButton from '../../vendor/react-store/components/Action/Button/WarningButton';
 import VerticalTabs from '../../vendor/react-store/components/View/VerticalTabs';
 import Message from '../../vendor/react-store/components/View/Message';
+import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
 import SelectInput from '../../vendor/react-store/components/Input/SelectInput';
 
 import {
+    setLanguageAction,
     availableLanguagesSelector,
 
     allStringsSelector,
@@ -33,6 +35,7 @@ import {
 } from '../../redux';
 import { iconNames } from '../../constants';
 
+import LanguageGet from './requests/LanguageGet';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -50,8 +53,9 @@ const propTypes = {
     selectedLanguageName: PropTypes.string.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     availableLanguages: PropTypes.array.isRequired,
-    // FIXME: use a page specific setSelectedLanguage
+
     setSelectedLanguage: PropTypes.func.isRequired,
+    setLanguage: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -69,6 +73,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     setSelectedLanguage: params => dispatch(stringMgmtSetSelectedLanguageAction(params)),
+    setLanguage: params => dispatch(setLanguageAction(params)),
 });
 
 const emptyArray = [];
@@ -92,6 +97,10 @@ export default class StringManagement extends React.PureComponent {
 
         this.state = {
             linkName: '$all',
+            pendingLanguage: (
+                props.selectedLanguageName !== undefined &&
+                props.selectedLanguageName !== '$devLang'
+            ),
         };
 
         this.stringsTableHeader = [
@@ -217,6 +226,48 @@ export default class StringManagement extends React.PureComponent {
             key: 'id',
             order: 'asc',
         };
+    }
+
+    componentWillMount() {
+        if (
+            this.props.selectedLanguageName !== undefined &&
+            this.props.selectedLanguageName !== '$devLang'
+        ) {
+            this.createLanguageRequest(this.props.selectedLanguageName);
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.selectedLanguageName !== nextProps.selectedLanguageName) {
+            if (
+                nextProps.selectedLanguageName !== undefined &&
+                nextProps.selectedLanguageName !== '$devLang'
+            ) {
+                this.createLanguageRequest(nextProps.selectedLanguageName);
+            } else if (this.languageRequest) {
+                this.setState({ pendingLanguage: false });
+                this.languageRequest.stop();
+            }
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.languageRequest) {
+            this.languageRequest.stop();
+        }
+    }
+
+    createLanguageRequest = (languageCode) => {
+        if (this.languageRequest) {
+            this.languageRequest.stop();
+        }
+
+        const request = new LanguageGet({
+            setState: params => this.setState(params),
+            setLanguage: this.props.setLanguage,
+        });
+        this.languageRequest = request.create(languageCode);
+        this.languageRequest.start();
     }
 
     renderLeftPane = () => {
@@ -418,9 +469,11 @@ export default class StringManagement extends React.PureComponent {
             availableLanguages,
             selectedLanguageName,
         } = this.props;
+        const { pendingLanguage } = this.state;
 
         return (
             <div className={styles.rightPane}>
+                { pendingLanguage && <LoadingAnimation /> }
                 <header className={styles.header}>
                     <div className={styles.inputs}>
                         <SelectInput

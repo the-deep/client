@@ -58,6 +58,7 @@ $radius-border-medium: 3px;
         @extend %main-content;
         @include background-color($color-background-alt);
         display: flex;
+        position: relative;
         flex-direction: column;
         flex-grow: 1;
 
