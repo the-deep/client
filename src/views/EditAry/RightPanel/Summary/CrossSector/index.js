@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import FaramGroup from '../../../../../vendor/react-store/components/Input/Faram/FaramGroup';
 import SelectInput from '../../../../../vendor/react-store/components/Input/SelectInput';
-import HierarchicalMultiSelectInput from '../../../../../vendor/react-store/components/Input/HierarchicalMultiSelectInput';
+import HiearchicalSelectInput from '../../../../../vendor/react-store/components/Input/HierarchicalSelectInput';
 
 import {
     editArySelectedSectorsSelector,
@@ -94,7 +94,7 @@ export default class CrossSector extends React.PureComponent {
 
         if (row === 0) {
             return (
-                <HierarchicalMultiSelectInput
+                <HiearchicalSelectInput
                     faramElementName={`priority-sector-${subRow}-${column}`}
                     showHintAndError={false}
                     options={prioritySectors}
@@ -105,7 +105,7 @@ export default class CrossSector extends React.PureComponent {
             );
         } else if (row === 1) {
             return (
-                <HierarchicalMultiSelectInput
+                <HiearchicalSelectInput
                     faramElementName={`affected-group-${subRow}-${column}`}
                     showHintAndError={false}
                     options={affectedGroups}
