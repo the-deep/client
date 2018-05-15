@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import FaramGroup from '../../../../../vendor/react-store/components/Input/Faram/FaramGroup';
 import SelectInput from '../../../../../vendor/react-store/components/Input/SelectInput';
-import HierarchicalMultiSelectInput from '../../../../../vendor/react-store/components/Input/HierarchicalMultiSelectInput';
+import HiearchicalSelectInput from '../../../../../vendor/react-store/components/Input/HierarchicalSelectInput';
 
 import {
     priorityIssuesSelector,
@@ -80,7 +80,7 @@ export default class HumanitarianAccess extends React.PureComponent {
 
         if (row === 0) {
             return (
-                <HierarchicalMultiSelectInput
+                <HiearchicalSelectInput
                     faramElementName={`priority-issue-${subRow}-${column}`}
                     showHintAndError={false}
                     options={priorityIssues}
