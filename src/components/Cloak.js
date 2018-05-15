@@ -31,6 +31,7 @@ const propTypes = {
     requireLogin: PropTypes.bool,
     requireDevMode: PropTypes.bool,
     requireAssessmentTemplate: PropTypes.bool,
+    requireAnalysisFramework: PropTypes.bool,
     render: PropTypes.func.isRequired,
 };
 
@@ -42,6 +43,7 @@ const defaultProps = {
     requireLogin: false,
     requireDevMode: false,
     requireAssessmentTemplate: false,
+    requireAnalysisFramework: false,
 };
 
 @connect(mapStateToProps, undefined)
@@ -60,6 +62,7 @@ export default class Cloak extends React.PureComponent {
             requireLogin,
             requireDevMode,
             requireAssessmentTemplate,
+            requireAnalysisFramework,
             render,
         } = this.props;
 
@@ -73,6 +76,8 @@ export default class Cloak extends React.PureComponent {
         } else if (requireAdminRights && !activeUser.isSuperuser) {
             return null;
         } else if (requireAssessmentTemplate && !currentUserActiveProject.assessmentTemplate) {
+            return null;
+        } else if (requireAnalysisFramework && !currentUserActiveProject.analysisFramework) {
             return null;
         }
         return render();

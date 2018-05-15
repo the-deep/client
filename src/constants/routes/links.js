@@ -23,6 +23,7 @@ const prepareSettings = (semantics) => {
         p: { name: 'requireProject', value: true },
         d: { name: 'requireDevMode', value: true },
         A: { name: 'requireAssessmentTemplate', value: true },
+        F: { name: 'requireAnalysisFramework', value: true },
         D: { name: 'disable', value: true },
     };
     const settings = {
@@ -44,19 +45,18 @@ const prepareSettings = (semantics) => {
 
 const commonLinks = {
     leads: 'l,p',
-    entries: 'l,p',
+    entries: 'l,p,F',
     arys: 'l,p,A',
-    projects: 'l',
-    connectors: 'l,d',
-    countries: 'l',
-    export: 'l,p',
+    export: 'l,p,F',
 
     userProfile: 'l',
-    apiDocs: 'l,d',
-    userExports: 'l,p',
+    projects: 'l',
+    countries: 'l',
+    connectors: 'l,d',
 
+    apiDocs: 'l,d',
+    stringManagement: 'l,a',
     adminPanel: 'l,a',
-    stringManagement: 'l,a,d',
 };
 
 export const noLinks = {};

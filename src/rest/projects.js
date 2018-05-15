@@ -20,7 +20,7 @@ export const createUrlForUserGroupProjects = id => (
     `${wsEndpoint}/projects/?${p({ user_group: id })}`
 );
 
-const projectMiniUrlFields = ['id', 'title', 'version_id', 'role', 'assessment_template'];
+const projectMiniUrlFields = ['id', 'title', 'version_id', 'role', 'assessment_template', 'analysis_framework'];
 export const urlForProjects = `${wsEndpoint}/projects/?${p({ fields: projectMiniUrlFields })}`;
 export const urlForProjectCreate = `${wsEndpoint}/projects/`;
 export const urlForProjectMembership = `${wsEndpoint}/project-memberships/`;

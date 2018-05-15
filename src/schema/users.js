@@ -34,6 +34,7 @@ const userSchema = [];
             lastName: { type: 'string', required: true },
             organization: { type: 'string', required: true },
             username: { type: 'string', required: true },
+            language: { type: 'string' },
             // lastActiveProject: { type: 'uint' },
             loginAttempts: { type: 'number' },
         },
@@ -54,11 +55,12 @@ const userSchema = [];
             isSuperuser: { type: 'boolean', required: true },
             lastActiveProject: { type: 'uint' },
             username: { type: 'string', required: true },
+            language: { type: 'string' },
+            fallbackLanguage: { type: 'string' },
         },
     };
     userSchema.push({ name, schema });
 }
-
 
 {
     const name = 'userCreateResponse';

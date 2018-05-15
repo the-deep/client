@@ -9,6 +9,7 @@ import schema from '../../../schema';
 import { activeProjectIdFromStateSelector } from '../../selectors/siloDomainData/common';
 import { setActiveProjectAction } from '../../reducers/siloDomainData/common';
 import { setUserPreferencesAction } from '../../reducers/auth';
+import { setFallbackLanguageAction, setSelectedLanguageAction } from '../../reducers/lang';
 import { setWaitingForPreferencesAction } from '../../reducers/app';
 import AbstractTask from '../../../utils/AbstractTask';
 
@@ -33,6 +34,9 @@ export default class PreferencesGet extends AbstractTask {
                         username,
 
                         lastActiveProject,
+
+                        language,
+                        fallbackLanguage,
                     } = response;
 
                     const activeProjectId = activeProjectIdFromStateSelector(store.getState());
@@ -49,6 +53,9 @@ export default class PreferencesGet extends AbstractTask {
                         displayName,
                         username,
                     }));
+
+                    store.dispatch(setSelectedLanguageAction(language));
+                    store.dispatch(setFallbackLanguageAction(fallbackLanguage));
 
                     store.dispatch(setWaitingForPreferencesAction(false));
                 } catch (er) {

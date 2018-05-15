@@ -3,7 +3,7 @@ import React from 'react';
 
 import AccentButton from '../../../../vendor/react-store/components/Action/Button/AccentButton';
 import TextInput from '../../../../vendor/react-store/components/Input/TextInput';
-import urlRegex from '../../../../vendor/react-store/components/Input/Form/regexForWeburl';
+import urlRegex from '../../../../vendor/react-store/components/Input/Faram/regexForWeburl';
 
 import { galleryMapping, galleryType } from '../../../../config/deepMimeTypes';
 import { iconNames } from '../../../../constants';

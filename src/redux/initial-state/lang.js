@@ -2,8 +2,7 @@ const initialLangState = {
     selectedLanguage: undefined,
     fallbackLanguage: undefined,
     availableLanguages: [
-        { id: 0, code: '$devLang', name: 'DevLang' },
-        { id: 1, code: 'np', name: 'Nepali' },
+        { code: 'np', title: 'Nepali' },
     ],
     languages: {
         np: {

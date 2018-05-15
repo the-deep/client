@@ -10,7 +10,7 @@ import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
 import {
     requiredCondition,
     urlCondition,
-} from '../../../vendor/react-store/components/Input/Form';
+} from '../../../vendor/react-store/components/Input/Faram';
 import Confirm from '../../../vendor/react-store/components/View/Modal/Confirm';
 import ResizableV from '../../../vendor/react-store/components/View/Resizable/ResizableV';
 

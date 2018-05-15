@@ -43,7 +43,7 @@ export default class RegionDetailView extends React.PureComponent {
             ochaRegion: _ts('countries', 'ochaRegionLabel'),
             echoRegion: _ts('countries', 'echoRegionLabel'),
             unGeoRegion: _ts('countries', 'unGeoRegionLabel'),
-            unGeoSubRegion: _ts('countries', 'unGeoSubRegion'),
+            unGeoSubRegion: _ts('countries', 'unGeoSubregionLabel'),
         };
     }
 

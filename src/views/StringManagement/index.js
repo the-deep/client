@@ -20,18 +20,17 @@ import Message from '../../vendor/react-store/components/View/Message';
 import SelectInput from '../../vendor/react-store/components/Input/SelectInput';
 
 import {
+    availableLanguagesSelector,
+
     allStringsSelector,
     linkStringsSelector,
+    linkKeysSelector,
     problemsWithStringsSelector,
     problemCountsWithStringsSelector,
-    linkKeysSelector,
-    availableLanguagesSelector,
+
     selectedLanguageNameSelector,
-    fallbackLanguageNameSelector,
-    setSelectedLanguageAction,
-    setFallbackLanguageAction,
+    stringMgmtSetSelectedLanguageAction,
 } from '../../redux';
-import _ts from '../../ts';
 import { iconNames } from '../../constants';
 
 import styles from './styles.scss';
@@ -49,11 +48,10 @@ const propTypes = {
     linkKeys: PropTypes.array.isRequired,
 
     selectedLanguageName: PropTypes.string.isRequired,
-    fallbackLanguageName: PropTypes.string.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     availableLanguages: PropTypes.array.isRequired,
+    // FIXME: use a page specific setSelectedLanguage
     setSelectedLanguage: PropTypes.func.isRequired,
-    setFallbackLanguage: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -67,12 +65,10 @@ const mapStateToProps = state => ({
     linkKeys: linkKeysSelector(state),
     availableLanguages: availableLanguagesSelector(state),
     selectedLanguageName: selectedLanguageNameSelector(state),
-    fallbackLanguageName: fallbackLanguageNameSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-    setSelectedLanguage: params => dispatch(setSelectedLanguageAction(params)),
-    setFallbackLanguage: params => dispatch(setFallbackLanguageAction(params)),
+    setSelectedLanguage: params => dispatch(stringMgmtSetSelectedLanguageAction(params)),
 });
 
 const emptyArray = [];
@@ -145,11 +141,13 @@ export default class StringManagement extends React.PureComponent {
                             iconName={iconNames.edit}
                             transparent
                             smallVerticalPadding
+                            disabled
                         />
                         <DangerButton
                             iconName={iconNames.delete}
                             transparent
                             smallVerticalPadding
+                            disabled
                         />
                     </Fragment>
                 ),
@@ -202,11 +200,13 @@ export default class StringManagement extends React.PureComponent {
                             iconName={iconNames.edit}
                             transparent
                             smallVerticalPadding
+                            disabled
                         />
                         <DangerButton
                             iconName={iconNames.delete}
                             transparent
                             smallVerticalPadding
+                            disabled
                         />
                     </Fragment>
                 ),
@@ -244,11 +244,11 @@ export default class StringManagement extends React.PureComponent {
                     tabs={linkNames}
                     active={linkName}
                     onClick={(name) => { this.setState({ linkName: name }); }}
-                    modifier={(data) => {
+                    modifier={(key, data) => {
                         const {
                             warningCount,
                             errorCount,
-                        } = this.props.problemCountsWithStrings[data];
+                        } = this.props.problemCountsWithStrings[key];
 
                         return (
                             <div className={styles.item}>
@@ -349,6 +349,15 @@ export default class StringManagement extends React.PureComponent {
                                     transparent
                                     smallVerticalPadding
                                     iconName={iconNames.delete}
+                                    disabled
+                                />
+                            }
+                            { currentProblem.title === 'Unused link' &&
+                                <DangerButton
+                                    transparent
+                                    smallVerticalPadding
+                                    iconName={iconNames.delete}
+                                    disabled
                                 />
                             }
                             { currentProblem.title === 'Undefined link' &&
@@ -356,6 +365,7 @@ export default class StringManagement extends React.PureComponent {
                                     transparent
                                     smallVerticalPadding
                                     iconName={iconNames.add}
+                                    disabled
                                 />
                             }
                             { currentProblem.title === 'Bad link' &&
@@ -363,6 +373,7 @@ export default class StringManagement extends React.PureComponent {
                                     transparent
                                     smallVerticalPadding
                                     iconName={iconNames.edit}
+                                    disabled
                                 />
                             }
                         </div>
@@ -400,14 +411,12 @@ export default class StringManagement extends React.PureComponent {
         const Problems = this.renderProblems;
 
         const keySelector = d => d.code;
-        const labelSelector = d => d.name;
+        const labelSelector = d => d.title;
 
         const {
             setSelectedLanguage,
             availableLanguages,
             selectedLanguageName,
-            setFallbackLanguage,
-            fallbackLanguageName,
         } = this.props;
 
         return (
@@ -422,20 +431,8 @@ export default class StringManagement extends React.PureComponent {
                             onChange={setSelectedLanguage}
                             options={availableLanguages}
                             value={selectedLanguageName}
-                            label="Language"
-                            placeholder="DevLang"
-                            showHintAndError={false}
-                        />
-                        <SelectInput
-                            className={styles.input}
-                            hideClearButton
-                            keySelector={keySelector}
-                            labelSelector={labelSelector}
-                            onChange={setFallbackLanguage}
-                            options={availableLanguages}
-                            value={fallbackLanguageName}
-                            label="Fallback Language"
-                            placeholder="DevLang"
+                            label="Selected Language"
+                            placeholder="Default"
                             showHintAndError={false}
                         />
                     </div>
