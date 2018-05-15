@@ -39,5 +39,16 @@
 
     .checkbox {
         justify-content: center;
+
+        :global .checkmark {
+            margin-right: 0;
+        }
+    }
+
+    .green-checkbox {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        color: $color-success;
     }
 }

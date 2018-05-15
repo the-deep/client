@@ -28,6 +28,7 @@ const connectorsSchema = [];
         fields: {
             title: { type: 'string', required: true },
             source: { type: 'string', required: true },
+            role: { type: 'string' },
             projects: { type: 'array' },
             params: { type: 'object' },
             users: { type: 'array' },
@@ -96,6 +97,7 @@ const connectorsSchema = [];
             publishedOn: { type: 'string' },
             sourceType: { type: 'string' },
             source: { type: 'string' },
+            existing: { type: 'boolean' },
         },
     };
     connectorsSchema.push({ name, schema });

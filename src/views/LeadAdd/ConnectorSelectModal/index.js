@@ -21,6 +21,7 @@ import {
     projectIdFromRouteSelector,
 
     addLeadViewSetConnectorsAction,
+    addLeadViewLeadsSelector,
 } from '../../../redux';
 
 import ConnectorsGetRequest from '../requests/ConnectorsGetRequest';
@@ -35,6 +36,7 @@ const propTypes = {
     setConnectorsOfProject: PropTypes.func.isRequired,
     projectId: PropTypes.number.isRequired,
     onLeadsSelect: PropTypes.func.isRequired,
+    leads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -43,6 +45,7 @@ const defaultProps = {
 const mapStateToProps = state => ({
     projectId: projectIdFromRouteSelector(state),
     connectorsList: addLeadViewConnectorsListSelector(state),
+    leads: addLeadViewLeadsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -60,7 +63,12 @@ export default class ConnectorSelectModal extends React.PureComponent {
 
     constructor(props) {
         super(props);
-        const { connectorsList = emptyList } = props;
+
+        const {
+            connectorsList = emptyList,
+            leads,
+        } = props;
+
         const displayConnectorsList = connectorsList;
         const selectedConnector = displayConnectorsList.length > 0 ?
             displayConnectorsList[0].id : undefined;
@@ -75,6 +83,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
         };
 
         this.views = this.getContentViews(connectorsList);
+        this.leadsUrlMap = this.getLeadsUrlMap(leads);
     }
 
     componentWillMount() {
@@ -84,8 +93,14 @@ export default class ConnectorSelectModal extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        const { connectorsList: newConnectorsList } = nextProps;
-        const { connectorsList: oldConnectorsList } = this.props;
+        const {
+            connectorsList: newConnectorsList,
+            leads: newLeads,
+        } = nextProps;
+        const {
+            connectorsList: oldConnectorsList,
+            leads: oldLeads,
+        } = this.props;
         const { searchInputValue } = this.state;
 
         if (newConnectorsList !== oldConnectorsList) {
@@ -95,12 +110,27 @@ export default class ConnectorSelectModal extends React.PureComponent {
             );
             this.setState({ displayConnectorsList });
         }
+
+        if (newLeads !== oldLeads) {
+            this.leadsUrlMap = this.getLeadsUrlMap(newLeads);
+        }
     }
 
     componentWillUnmount() {
         if (this.requestForConnectors) {
             this.requestForConnectors.stop();
         }
+    }
+
+    getLeadsUrlMap = (leads) => {
+        const leadsUrlMap = {};
+        leads.forEach((l) => {
+            const { faramValues: leadData = {} } = l;
+            if (leadData.url) {
+                leadsUrlMap[leadData.url] = leadData;
+            }
+        });
+        return leadsUrlMap;
     }
 
     getContentViews = (connectors) => {
@@ -119,6 +149,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
                             className={styles.content}
                             setConnectorLeads={this.setConnectorLeads}
                             setConnectorLeadSelection={this.setConnectorLeadSelection}
+                            leadsUrlMap={this.leadsUrlMap}
                         />
                     );
                 },

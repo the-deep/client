@@ -20,6 +20,7 @@ const propTypes = {
     connectorLeads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     connectorId: PropTypes.number.isRequired,
     setConnectorLeads: PropTypes.func.isRequired,
+    leadsUrlMap: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setConnectorLeadSelection: PropTypes.func.isRequired,
     className: PropTypes.string,
 };
@@ -46,19 +47,31 @@ export default class ConnectorContent extends React.PureComponent {
                 key: 'selected',
                 label: _ts('addLeads.connectorsSelect', 'selectLabel'),
                 order: 1,
-                modifier: row => (
-                    <Checkbox
-                        key="checkbox"
-                        label=""
-                        className={styles.checkbox}
-                        value={row.isSelected}
-                        onChange={() => this.props.setConnectorLeadSelection({
-                            key: row.key,
-                            isSelected: !row.isSelected,
-                            connectorId: this.props.connectorId,
-                        })}
-                    />
-                ),
+                modifier: (row) => {
+                    const { leadsUrlMap } = this.props;
+                    if (leadsUrlMap[row.url] || row.existing) {
+                        return (
+                            <span
+                                title={_ts('addLeads', 'leadAlreadyAdded')}
+                                className={`${iconNames.check} ${styles.greenCheckbox}`}
+                            />
+                        );
+                    }
+
+                    return (
+                        <Checkbox
+                            key="checkbox"
+                            label=""
+                            className={styles.checkbox}
+                            value={row.isSelected}
+                            onChange={() => this.props.setConnectorLeadSelection({
+                                key: row.key,
+                                isSelected: !row.isSelected,
+                                connectorId: this.props.connectorId,
+                            })}
+                        />
+                    );
+                },
             },
             {
                 key: 'title',

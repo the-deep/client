@@ -644,6 +644,8 @@ const initialDevLangState = {
         1132: 'Failed to create lead group',
         1133: 'Lead Group',
         1134: 'Lead group created successfully.',
+        1135: 'Test',
+        1136: 'This url is already added.',
     },
     links: {
         browserExtension: {
@@ -1254,6 +1256,13 @@ const initialDevLangState = {
         },
         addLeads: {
             leadGroupCreateFailure: 1132,
+            modalCancelLabel: 61,
+            modalAddLabel: 301,
+            addLeadGroupTitleLabel: 13,
+            addLeadGroupTitlePlaceholder: 1130,
+            addLeadGroupModalTitle: 1131,
+            leadAlreadyAdded: 1136,
+            modalSelectLabel: 9919,
             fileUploadFailText: 7501,
             textLabel: 20,
             titleLabel: 13,
@@ -1563,6 +1572,7 @@ const initialDevLangState = {
             connectorProjectsLabel: 173,
             connectorDetailSaveLabel: 25,
             connectorDetailCancelLabel: 61,
+            connectorDetailTestLabel: 1135,
             connectorTitleLabel: 13,
             noConnectorFoundLabel: 1114,
             tableHeaderTitle: 13,

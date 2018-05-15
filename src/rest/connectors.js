@@ -17,6 +17,8 @@ export const createUrlForConnector = connectorId => `${wsEndpoint}/connectors/${
 export const createUrlForConnectorleads = connectorId => `${wsEndpoint}/connectors/${connectorId}/leads/`;
 export const urlForConnectorSources = `${wsEndpoint}/connector-sources/`;
 
+export const createUrlForRssField = url => `${wsEndpoint}/connector-sources/rss-feed/fields/?feed-url=${url}`;
+
 export const createUrlForConnectorsOfProject = projectId => `${urlForConnectors}&projects=${projectId}`;
 
 export const createParamsForConnectorCreate = data => ({
