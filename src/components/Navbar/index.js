@@ -205,9 +205,10 @@ export default class Navbar extends React.PureComponent {
             'userProfile',
             'projects',
             'countries',
-            'stringManagement',
-            'apiDocs',
             'connectors',
+
+            'apiDocs',
+            'stringManagement',
         ];
 
         this.validNavLinks = Navbar.getValidLinks(navLinks, this.currentPath);

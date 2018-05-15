@@ -13,6 +13,7 @@ import visualizationReducers from './visualization';
 import editAryReducers from './editAry';
 import regionsReducers from './regions';
 import connectorsReducers from './connectors';
+import stringManagement from './stringManagement';
 
 import initialSiloDomainData from '../../initial-state/siloDomainData';
 
@@ -30,6 +31,7 @@ const reducers = {
     ...editAryReducers,
     ...regionsReducers,
     ...connectorsReducers,
+    ...stringManagement,
 };
 
 const reducer = createReducerWithMap(reducers, initialSiloDomainData);

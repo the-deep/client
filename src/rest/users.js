@@ -41,6 +41,7 @@ export const createParamsForUserPatch = ({
     lastName,
     organization,
     displayPicture,
+    language,
 }) => ({
     method: PATCH,
     headers: commonHeaderForPost,
@@ -49,6 +50,7 @@ export const createParamsForUserPatch = ({
         lastName,
         organization,
         displayPicture,
+        language,
     }),
 });
 

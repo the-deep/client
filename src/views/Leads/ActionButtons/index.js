@@ -168,14 +168,21 @@ export default class ActionButtons extends React.PureComponent {
                             )
                         }
                     />
-                    <Link
-                        className={styles.addEntryLink}
-                        tabIndex="-1"
-                        title={_ts('leads', 'addEntryFromLeadButtonTitle')}
-                        to={links.editEntries}
-                    >
-                        <i className={iconNames.forward} />
-                    </Link>
+                    <Cloak
+                        requireAnalysisFramework
+                        render={
+                            () => (
+                                <Link
+                                    className={styles.addEntryLink}
+                                    tabIndex="-1"
+                                    title={_ts('leads', 'addEntryFromLeadButtonTitle')}
+                                    to={links.editEntries}
+                                >
+                                    <i className={iconNames.forward} />
+                                </Link>
+                            )
+                        }
+                    />
                 </div>
             </div>
         );

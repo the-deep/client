@@ -13,15 +13,11 @@ export default class UserPatchRequest {
         this.props = props;
     }
 
-    create = (userId, { firstName, lastName, organization, displayPicture }) => {
+    create = (userId, data) => {
         const urlForUser = createUrlForUserPatch(userId);
         const userPatchRequest = new FgRestBuilder()
             .url(urlForUser)
-            .params(
-                () => createParamsForUserPatch({
-                    firstName, lastName, organization, displayPicture,
-                }),
-            )
+            .params(() => createParamsForUserPatch(data))
             .preLoad(() => {
                 this.props.setState({ pending: true });
             })

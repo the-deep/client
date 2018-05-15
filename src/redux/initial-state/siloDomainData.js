@@ -2,6 +2,10 @@ const initialSiloDomainData = {
     activeProject: undefined,
     activeCountry: undefined,
 
+    stringManagementView: {
+        // selectedLanguage: 'np',
+    },
+
     addLeadView: {
         filters: {
             search: '',

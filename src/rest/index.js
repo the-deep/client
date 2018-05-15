@@ -1,6 +1,7 @@
 import { GET, commonHeaderForGet } from '../config/rest';
 
 export * from './docs';
+export * from './languages';
 export * from './file';
 export * from './leadFilterOptions';
 export * from './entryFilterOptions';
