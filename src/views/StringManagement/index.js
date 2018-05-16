@@ -270,25 +270,11 @@ export default class StringManagement extends React.PureComponent {
         this.languageRequest.start();
     }
 
+    handleTabLinkClick = name => this.setState({ linkName: name });
+
     renderLeftPane = () => {
         const { linkName } = this.state;
         const { linkKeys } = this.props;
-
-        // TODO: move to appropriate place
-        const linkNames = linkKeys.reduce(
-            (acc, b) => {
-                const countOfDotOccurence = (b.match(/\./g) || []).length;
-                if (countOfDotOccurence > 0) {
-                    const spaces = '  '.repeat(countOfDotOccurence);
-                    const lastPart = b.substring(b.lastIndexOf('.') + 1, b.length);
-                    acc[b] = `${spaces}›${lastPart}`;
-                } else {
-                    acc[b] = b;
-                }
-                return acc;
-            },
-            { $all: 'all' },
-        );
 
         return (
             <div className={styles.leftPane}>
@@ -299,34 +285,39 @@ export default class StringManagement extends React.PureComponent {
                 </header>
                 <VerticalTabs
                     className={styles.links}
-                    tabs={linkNames}
+                    tabs={linkKeys}
                     active={linkName}
-                    onClick={(name) => { this.setState({ linkName: name }); }}
-                    modifier={(key, data) => {
-                        const {
-                            warningCount,
-                            errorCount,
-                        } = this.props.problemCountsWithStrings[key];
-
-                        return (
-                            <div className={styles.item}>
-                                <pre className={styles.title}>
-                                    {data}
-                                </pre>
-                                { warningCount > 0 &&
-                                    <span className={`${styles.badge} ${styles.warning}`}>
-                                        {warningCount}
-                                    </span>
-                                }
-                                { errorCount > 0 &&
-                                    <span className={`${styles.badge} ${styles.error}`}>
-                                        {errorCount}
-                                    </span>
-                                }
-                            </div>
-                        );
-                    }}
+                    onClick={this.handleTabLinkClick}
+                    modifier={this.renderTabLink}
                 />
+            </div>
+        );
+    }
+
+    renderTabLink = (key, data) => {
+        const {
+            warningCount,
+            errorCount,
+        } = this.props.problemCountsWithStrings[key] || {};
+
+        return (
+            <div
+                key={key}
+                className={styles.item}
+            >
+                <pre className={styles.title}>
+                    {data}
+                </pre>
+                { warningCount > 0 &&
+                    <span className={`${styles.badge} ${styles.warning}`}>
+                        {warningCount}
+                    </span>
+                }
+                { errorCount > 0 &&
+                    <span className={`${styles.badge} ${styles.error}`}>
+                        {errorCount}
+                    </span>
+                }
             </div>
         );
     }
@@ -375,7 +366,7 @@ export default class StringManagement extends React.PureComponent {
     renderProblem = (k, data) => {
         const { linkName } = this.state;
         const { problemsWithStrings } = this.props;
-        const problems = problemsWithStrings[linkName];
+        const problems = problemsWithStrings[linkName] || [];
         const currentProblem = problems[data];
 
         if (!currentProblem || currentProblem.instances.length === 0) {
@@ -444,7 +435,7 @@ export default class StringManagement extends React.PureComponent {
     renderProblems = () => {
         const { linkName } = this.state;
         const { problemCountsWithStrings } = this.props;
-        const { errorCount, warningCount } = problemCountsWithStrings[linkName];
+        const { errorCount = 0, warningCount = 0 } = problemCountsWithStrings[linkName] || {};
 
         if (errorCount + warningCount <= 0) {
             return (

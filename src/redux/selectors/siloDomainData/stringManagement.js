@@ -265,12 +265,46 @@ export const linkStringsSelector = createSelector(
     },
 );
 
+const indentName = (name) => {
+    const countOfDotOccurence = (name.match(/\./g) || []).length;
+    if (countOfDotOccurence > 0) {
+        const spaces = '  '.repeat(countOfDotOccurence);
+        const lastPart = name.substring(name.lastIndexOf('.') + 1, name.length);
+        return `${spaces}›${lastPart}`;
+    }
+    return name;
+};
+
 export const linkKeysSelector = createSelector(
     usageMapSelector,
-    usedMaps => Object.keys(usedMaps).sort(),
-);
+    (usedMaps) => {
+        const newKeys = {};
+        Object.keys(usedMaps).sort().forEach((key) => {
+            let val = key;
+            let lastIndex;
+            newKeys[val] = indentName(val);
+            do {
+                lastIndex = val.lastIndexOf('.');
+                if (lastIndex !== -1) {
+                    val = val.substring(0, lastIndex);
+                    if (!newKeys[val]) {
+                        newKeys[val] = indentName(val);
+                    }
+                }
+            } while (lastIndex !== -1);
+        });
 
-export const linkNamesSelector = createSelector(
-    usageMapSelector,
-    usedMaps => Object.keys(usedMaps).sort(),
+        const sortedKeys = Object.keys(newKeys).sort().reduce(
+            (acc, key) => {
+                acc[key] = newKeys[key];
+                return acc;
+            },
+            {
+                $all: 'all',
+            },
+        );
+
+        console.warn(sortedKeys);
+        return sortedKeys;
+    },
 );
