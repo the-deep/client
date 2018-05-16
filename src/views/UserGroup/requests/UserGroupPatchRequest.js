@@ -23,9 +23,9 @@ export default class UserGroupPatchRequest {
                 userGroup: response,
             });
             notify.send({
-                title: _ts('notification', 'userGroupEdit'),
+                title: _ts('userGroup', 'userGroupEdit'),
                 type: notify.type.SUCCESS,
-                message: _ts('notification', 'userGroupEditSuccess'),
+                message: _ts('userGroup', 'userGroupEditSuccess'),
                 duration: notify.duration.MEDIUM,
             });
             this.props.handleModalClose();
@@ -41,7 +41,7 @@ export default class UserGroupPatchRequest {
 
     fatal = () => {
         this.props.setState({
-            faramErrors: { $internal: [_ts('user', 'userGroupPatchFatal')] },
+            faramErrors: { $internal: [_ts('userGroup', 'userGroupPatchFatal')] },
         });
     }
 

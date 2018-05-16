@@ -48,7 +48,7 @@ export default class ExcerptTextList extends React.PureComponent {
             return null;
         }
 
-        const altText = _ts('af', 'altEntryLabel');
+        const altText = _ts('framework.excerptWidget', 'altEntryLabel');
 
         return (
             <div className={styles.excerptListView}>

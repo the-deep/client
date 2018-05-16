@@ -124,7 +124,7 @@ export default class DropboxChooser extends React.Component {
                 transparent
             >
                 {
-                    children || _ts('common', 'openDropboxChooserText')
+                    children || _ts('components.dropboxChooser', 'openDropboxChooserText')
                 }
             </Button>
         );

@@ -24,9 +24,9 @@ export default class UserGroupDeleteRequest {
                         userId,
                     });
                     notify.send({
-                        title: _ts('notification', 'userGroupDelete'),
+                        title: _ts('userProfile', 'userGroupDelete'),
                         type: notify.type.SUCCESS,
-                        message: _ts('notification', 'userGroupDeleteSuccess'),
+                        message: _ts('userProfile', 'userGroupDeleteSuccess'),
                         duration: notify.duration.MEDIUM,
                     });
                 } catch (er) {
@@ -41,17 +41,17 @@ export default class UserGroupDeleteRequest {
             })
             .failure(() => {
                 notify.send({
-                    title: _ts('notification', 'userGroupDelete'),
+                    title: _ts('userProfile', 'userGroupDelete'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'userGroupDeleteFailure'),
+                    message: _ts('userProfile', 'userGroupDeleteFailure'),
                     duration: notify.duration.MEDIUM,
                 });
             })
             .fatal(() => {
                 notify.send({
-                    title: _ts('notification', 'userGroupDelete'),
+                    title: _ts('userProfile', 'userGroupDelete'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'userGroupDeleteFatal'),
+                    message: _ts('userProfile', 'userGroupDeleteFatal'),
                     duration: notify.duration.MEDIUM,
                 });
             })

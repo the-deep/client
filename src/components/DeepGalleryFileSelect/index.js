@@ -13,7 +13,6 @@ const propTypes = {
 
 const defaultProps = {
     show: false,
-    galleryFiles: [],
 };
 
 /*

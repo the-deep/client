@@ -97,8 +97,8 @@ export default class Summary extends React.PureComponent {
         this.selectedSectors = selectedSectors;
 
         const tabs = {
-            crossSector: _ts('assessmentSummary', 'crossSectorTitle'),
-            humanitarianAccess: _ts('assessmentSummary', 'humanitarianAccessTitle'),
+            crossSector: _ts('editAssessment.summary', 'crossSectorTitle'),
+            humanitarianAccess: _ts('editAssessment.summary', 'humanitarianAccessTitle'),
             ...selectedSectors,
         };
 

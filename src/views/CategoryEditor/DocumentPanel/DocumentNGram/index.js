@@ -122,7 +122,7 @@ export default class DocumentNGram extends React.PureComponent {
                 />
                 <div className={styles.ngramSelects}>
                     <h4 className={styles.heading}>
-                        {_ts('ce', 'numberOfWordsLabel')}
+                        {_ts('categoryEditor', 'numberOfWordsLabel')}
                     </h4>
                     <ListView
                         className={styles.ngramSelectList}

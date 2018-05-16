@@ -196,8 +196,8 @@ export default class FilterArysForm extends React.PureComponent {
             >
                 <DateFilter
                     faramElementName="created_at"
-                    label={_ts('arys', 'filterDateCreated')}
-                    placeholder={_ts('arys', 'placeholderAnytime')}
+                    label={_ts('assessments', 'filterDateCreated')}
+                    placeholder={_ts('assessments', 'placeholderAnytime')}
                     showHintAndError={false}
                     showLabel
                     className="arys-filter"
@@ -206,17 +206,17 @@ export default class FilterArysForm extends React.PureComponent {
                     className="arys-filter"
                     faramElementName="created_by"
                     keySelector={FilterArysForm.optionKeySelector}
-                    label={_ts('arys', 'createdByFilterLabel')}
+                    label={_ts('assessments', 'createdByFilterLabel')}
                     labelSelector={FilterArysForm.optionLabelSelector}
                     options={createdBy}
-                    placeholder={_ts('arys', 'placeholderAnybody')}
+                    placeholder={_ts('assessments', 'placeholderAnybody')}
                     showHintAndError={false}
                     showLabel
                 />
                 <SearchInput
                     faramElementName="search"
-                    label={_ts('arys', 'placeholderSearch')}
-                    placeholder={_ts('arys', 'placeholderSearch')}
+                    label={_ts('assessments', 'placeholderSearch')}
+                    placeholder={_ts('assessments', 'placeholderSearch')}
                     showHintAndError={false}
                     showLabel
                     className="arys-filter"
@@ -227,7 +227,7 @@ export default class FilterArysForm extends React.PureComponent {
                         disabled={isApplyDisabled}
                         type="submit"
                     >
-                        {_ts('arys', 'filterApplyFilter')}
+                        {_ts('assessments', 'filterApplyFilter')}
                     </Button>
                 }
                 <DangerButton
@@ -235,7 +235,7 @@ export default class FilterArysForm extends React.PureComponent {
                     disabled={isClearDisabled}
                     onClick={this.handleClearFilters}
                 >
-                    {_ts('arys', 'filterClearFilter')}
+                    {_ts('assessments', 'filterClearFilter')}
                 </DangerButton>
             </Faram>
         );

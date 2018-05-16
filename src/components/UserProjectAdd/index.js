@@ -105,9 +105,9 @@ export default class UserProjectAdd extends React.PureComponent {
                         this.props.onProjectAdded(response.id);
                     }
                     notify.send({
-                        title: _ts('notification', 'userProjectCreate'),
+                        title: _ts('components.addProject', 'userProjectCreate'),
                         type: notify.type.SUCCESS,
-                        message: _ts('notification', 'userProjectCreateSuccess'),
+                        message: _ts('components.addProject', 'userProjectCreateSuccess'),
                         duration: notify.duration.MEDIUM,
                     });
                     this.props.handleModalClose();
@@ -118,9 +118,9 @@ export default class UserProjectAdd extends React.PureComponent {
             .failure((response) => {
                 // FIXME: no need to use notify here
                 notify.send({
-                    title: _ts('notification', 'userProjectCreate'),
+                    title: _ts('components.addProject', 'userProjectCreate'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'userProjectCreateFailure'),
+                    message: _ts('components.addProject', 'userProjectCreateFailure'),
                     duration: notify.duration.MEDIUM,
                 });
                 const faramErrors = alterResponseErrorToFaramError(response.errors);
@@ -129,9 +129,9 @@ export default class UserProjectAdd extends React.PureComponent {
             .fatal(() => {
                 // FIXME: no need to use notify here
                 notify.send({
-                    title: _ts('notification', 'userProjectCreate'),
+                    title: _ts('components.addProject', 'userProjectCreate'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'userProjectCreateFatal'),
+                    message: _ts('components.addProject', 'userProjectCreateFatal'),
                     duration: notify.duration.SLOW,
                 });
                 // FIXME: use strings
@@ -194,19 +194,19 @@ export default class UserProjectAdd extends React.PureComponent {
                 <NonFieldErrors faramElement />
                 <TextInput
                     faramElementName="title"
-                    label={_ts('user', 'addProjectModalLabel')}
-                    placeholder={_ts('user', 'addProjectModalPlaceholder')}
+                    label={_ts('components.addProject', 'addProjectModalLabel')}
+                    placeholder={_ts('components.addProject', 'addProjectModalPlaceholder')}
                     autoFocus
                 />
                 <div className={styles.actionButtons}>
                     <DangerButton onClick={this.handleModalClose}>
-                        {_ts('user', 'modalCancel')}
+                        {_ts('components.addProject', 'modalCancel')}
                     </DangerButton>
                     <PrimaryButton
                         type="submit"
                         disabled={pending || !pristine}
                     >
-                        {_ts('user', 'modalCreate')}
+                        {_ts('components.addProject', 'modalCreate')}
                     </PrimaryButton>
                 </div>
             </Faram>

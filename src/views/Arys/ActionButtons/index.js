@@ -55,7 +55,7 @@ export default class ActionButtons extends React.PureComponent {
         return (
             <Fragment>
                 <DangerButton
-                    title={_ts('arys', 'removeAryButtonTitle')}
+                    title={_ts('assessments', 'removeAryButtonTitle')}
                     onClick={() => onRemoveAry(row)}
                     smallVerticalPadding
                     transparent
@@ -64,7 +64,7 @@ export default class ActionButtons extends React.PureComponent {
                 </DangerButton>
                 <Link
                     className={styles.editLink}
-                    title={_ts('arys', 'editAryButtonTitle')}
+                    title={_ts('assessments', 'editAryButtonTitle')}
                     to={links.editAry}
                 >
                     <i className={iconNames.edit} />

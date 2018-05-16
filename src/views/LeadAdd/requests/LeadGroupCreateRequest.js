@@ -29,9 +29,9 @@ export default class LeadGroupsCreateRequest {
             });
             this.props.handleModalClose();
             notify.send({
-                title: _ts('notification', 'leadGroupTitle'),
+                title: _ts('addLeads', 'leadGroupTitle'),
                 type: notify.type.SUCCESS,
-                message: _ts('notification', 'leadGroupCreateSuccess'),
+                message: _ts('addLeads', 'leadGroupCreateSuccess'),
                 duration: notify.duration.MEDIUM,
             });
         } catch (er) {

@@ -10,7 +10,7 @@ import { ViewListWidget } from './View';
 
 const numberMatrixWidget = {
     id: 'numberMatrixWidget',
-    // NOTE: used as _ts('af', 'numberMatrixWidgetLabel')
+    // NOTE: used as _ts('widgetTitle', 'numberMatrixWidgetLabel')
     title: 'numberMatrixWidgetLabel',
     analysisFramework: {
         overviewComponent: FrameworkOverviewWidget,

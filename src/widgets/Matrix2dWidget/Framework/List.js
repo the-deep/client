@@ -19,7 +19,7 @@ export default class Matrix2dList extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        const contentText = _ts('af', 'matrix2DWidgetLabel');
+        const contentText = _ts('framework.matrix2dWidget', 'matrix2DWidgetLabel');
         return (
             <div className={styles.list}>
                 { contentText }

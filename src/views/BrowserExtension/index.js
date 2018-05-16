@@ -55,8 +55,8 @@ export default class Export extends React.PureComponent {
             () => {
                 notify.send({
                     type: notify.type.SUCCESS,
-                    title: _ts('notification', 'browserExtensionSuccessTitle'),
-                    message: _ts('notification', 'browserExtensionSuccessMessage'),
+                    title: _ts('browserExtension', 'browserExtensionSuccessTitle'),
+                    message: _ts('browserExtension', 'browserExtensionSuccessMessage'),
                     duration: notify.duration.SLOW,
                 });
                 this.setState({ pending: false });
@@ -64,8 +64,8 @@ export default class Export extends React.PureComponent {
             () => {
                 notify.send({
                     type: notify.type.ERROR,
-                    title: _ts('notification', 'browserExtensionFailureTitle'),
-                    message: _ts('notification', 'browserExtensionFailureMessage'),
+                    title: _ts('browserExtension', 'browserExtensionFailureTitle'),
+                    message: _ts('browserExtension', 'browserExtensionFailureMessage'),
                     duration: notify.duration.SLOW,
                 });
                 this.setState({ pending: false });

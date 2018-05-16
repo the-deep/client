@@ -57,7 +57,7 @@ export default class LeadPreview extends React.PureComponent {
         return (
             <div className={styles.emptyText}>
                 <h1>
-                    {_ts('entry', 'previewNotAvailableText')}
+                    {_ts('components.leadPreview', 'previewNotAvailableText')}
                 </h1>
             </div>
         );

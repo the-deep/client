@@ -93,14 +93,14 @@ export default class UserGroup extends React.PureComponent {
         this.userGroupsTableHeaders = [
             {
                 key: 'title',
-                label: _ts('user', 'tableHeaderTitle'),
+                label: _ts('userProfile', 'tableHeaderTitle'),
                 order: 1,
                 sortable: true,
                 comparator: (a, b) => compareString(a.title, b.title),
             },
             {
                 key: 'rights',
-                label: _ts('user', 'tableHeaderRights'),
+                label: _ts('userProfile', 'tableHeaderRights'),
                 order: 2,
                 modifier: (row) => {
                     const { userId } = this.props;
@@ -111,7 +111,7 @@ export default class UserGroup extends React.PureComponent {
             },
             {
                 key: 'joinedAt',
-                label: _ts('user', 'tableHeaderJoinedAt'),
+                label: _ts('userProfile', 'tableHeaderJoinedAt'),
                 order: 3,
                 sortable: true,
                 comparator: (a, b) => compareDate(a.joinedAt, b.joinedAt),
@@ -130,7 +130,7 @@ export default class UserGroup extends React.PureComponent {
             },
             {
                 key: 'actions',
-                label: _ts('user', 'tableHeaderActions'),
+                label: _ts('userProfile', 'tableHeaderActions'),
                 order: 4,
                 modifier: (d) => {
                     const { activeUser } = this.props;
@@ -145,7 +145,7 @@ export default class UserGroup extends React.PureComponent {
                     if (!activeUserMembership || activeUserMembership.role !== 'admin') {
                         return (
                             <Link
-                                title={_ts('user', 'viewUsergroupLinkTitle')}
+                                title={_ts('userProfile', 'viewUsergroupLinkTitle')}
                                 to={linkToUserGroup}
                                 className={styles.link}
                             >
@@ -156,7 +156,7 @@ export default class UserGroup extends React.PureComponent {
 
                     return ([
                         <Link
-                            title={_ts('user', 'editUsergroupLinkTitle')}
+                            title={_ts('userProfile', 'editUsergroupLinkTitle')}
                             key="usergroup-panel"
                             to={linkToUserGroup}
                             className={styles.link}
@@ -165,7 +165,7 @@ export default class UserGroup extends React.PureComponent {
                         </Link>,
                         <DangerButton
                             key="delete"
-                            title={_ts('user', 'deleteUsergroupLinkTitle')}
+                            title={_ts('userProfile', 'deleteUsergroupLinkTitle')}
                             onClick={() => this.handleDeleteUserGroupClick(d)}
                             iconName={iconNames.delete}
                             smallVerticalPadding
@@ -239,7 +239,7 @@ export default class UserGroup extends React.PureComponent {
 
     // Delete Click
     handleDeleteUserGroupClick = (userGroup) => {
-        const confirmText = _ts('user', 'confirmTextDeleteUserGroup', {
+        const confirmText = _ts('userProfile', 'confirmTextDeleteUserGroup', {
             title: userGroup.title,
         });
         this.setState({
@@ -281,14 +281,14 @@ export default class UserGroup extends React.PureComponent {
                 {deletePending && <LoadingAnimation />}
                 <div className={styles.header}>
                     <h2>
-                        {_ts('user', 'headerGroups')}
+                        {_ts('userProfile', 'headerGroups')}
                     </h2>
                     {
                         isCurrentUser && (
                             <PrimaryButton
                                 onClick={this.handleAddUserGroupClick}
                             >
-                                {_ts('user', 'addUserGroupButtonLabel')}
+                                {_ts('userProfile', 'addUserGroupButtonLabel')}
                             </PrimaryButton>
                         )
                     }
@@ -299,7 +299,7 @@ export default class UserGroup extends React.PureComponent {
                         onClose={this.handleAddUserGroupClose}
                     >
                         <ModalHeader
-                            title={_ts('user', 'addUserGroupButtonLabel')}
+                            title={_ts('userProfile', 'addUserGroupButtonLabel')}
                             rightComponent={
                                 <PrimaryButton
                                     onClick={this.handleAddUserGroupClose}

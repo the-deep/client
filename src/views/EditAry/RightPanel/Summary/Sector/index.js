@@ -45,22 +45,22 @@ export default class Sector extends React.PureComponent {
         super(props);
 
         this.rowFieldTitles = [
-            _ts('assessmentSummary', 'prioritySector'),
-            _ts('assessmentSummary', 'affectedGroup'),
-            _ts('assessmentSummary', 'specificNeedGroup'),
+            _ts('editAssessment.summary', 'prioritySector'),
+            _ts('editAssessment.summary', 'affectedGroup'),
+            _ts('editAssessment.summary', 'specificNeedGroup'),
         ];
 
         this.columnFieldTitles = [
             ' ',
-            _ts('assessmentSummary', 'moderateAssistancePopulation'),
-            _ts('assessmentSummary', 'severeAssistancePopulation'),
-            _ts('assessmentSummary', 'assistancePopulation'),
+            _ts('editAssessment.summary', 'moderateAssistancePopulation'),
+            _ts('editAssessment.summary', 'severeAssistancePopulation'),
+            _ts('editAssessment.summary', 'assistancePopulation'),
         ];
 
         this.rowSubFieldTitles = [
-            _ts('assessmentSummary', 'rank1Title'),
-            _ts('assessmentSummary', 'rank2Title'),
-            _ts('assessmentSummary', 'rank3Title'),
+            _ts('editAssessment.summary', 'rank1Title'),
+            _ts('editAssessment.summary', 'rank2Title'),
+            _ts('editAssessment.summary', 'rank3Title'),
         ];
     }
 

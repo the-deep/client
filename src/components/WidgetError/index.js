@@ -1,10 +1,10 @@
 import React from 'react';
+
+import _ts from '../../ts';
 import styles from './styles.scss';
 
 export default class WidgetError extends React.PureComponent {
-    getErrorText = () => (
-        'Widget has failed'
-    )
+    getErrorText = () => _ts('components.widgetError', 'problemText')
 
     render() {
         const errorText = this.getErrorText();

@@ -35,6 +35,8 @@ $radius-border-medium: 3px;
 
                 .title {
                     flex-grow: 1;
+                    margin: 0;
+                    font-family: inherit;
                 }
 
                 .badge {
@@ -58,6 +60,7 @@ $radius-border-medium: 3px;
         @extend %main-content;
         @include background-color($color-background-alt);
         display: flex;
+        position: relative;
         flex-direction: column;
         flex-grow: 1;
 

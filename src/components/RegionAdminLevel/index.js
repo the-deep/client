@@ -75,37 +75,37 @@ export default class RegionAdminLevel extends React.PureComponent {
         this.adminLevelHeaders = [
             {
                 key: 'level',
-                label: _ts('countries', 'levelLabel'),
+                label: _ts('components.regionAdminLevel', 'levelLabel'),
                 order: 1,
             },
             {
                 key: 'title',
-                label: _ts('countries', 'adminLevelNameText'),
+                label: _ts('components.regionAdminLevel', 'adminLevelNameText'),
                 order: 2,
             },
             {
                 key: 'nameProp',
-                label: _ts('countries', 'namePropertyLabel'),
+                label: _ts('components.regionAdminLevel', 'namePropertyLabel'),
                 order: 3,
             },
             {
                 key: 'codeProp',
-                label: _ts('countries', 'pcodePropertyLabel'),
+                label: _ts('components.regionAdminLevel', 'pcodePropertyLabel'),
                 order: 4,
             },
             {
                 key: 'parentNameProp',
-                label: _ts('countries', 'parentNamePropLabel'),
+                label: _ts('components.regionAdminLevel', 'parentNamePropLabel'),
                 order: 5,
             },
             {
                 key: 'parentCodeProp',
-                label: _ts('countries', 'parentCodePropLabel'),
+                label: _ts('components.regionAdminLevel', 'parentCodePropLabel'),
                 order: 6,
             },
             {
                 key: 'actions',
-                label: _ts('countries', 'actionsLabel'),
+                label: _ts('components.regionAdminLevel', 'actionsLabel'),
                 order: 7,
                 modifier: row => (
                     <div className="action-btns">
@@ -191,9 +191,9 @@ export default class RegionAdminLevel extends React.PureComponent {
                         regionId,
                     });
                     notify.send({
-                        title: _ts('notification', 'adminLevelDelete'),
+                        title: _ts('components.regionAdminLevel', 'adminLevelDelete'),
                         type: notify.type.SUCCESS,
-                        message: _ts('notification', 'adminLevelDeleteSuccess'),
+                        message: _ts('components.regionAdminLevel', 'adminLevelDeleteSuccess'),
                         duration: notify.duration.MEDIUM,
                     });
                 } catch (er) {
@@ -202,17 +202,17 @@ export default class RegionAdminLevel extends React.PureComponent {
             })
             .failure(() => {
                 notify.send({
-                    title: _ts('notification', 'adminLevelDelete'),
+                    title: _ts('components.regionAdminLevel', 'adminLevelDelete'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'adminLevelDeleteFailure'),
+                    message: _ts('components.regionAdminLevel', 'adminLevelDeleteFailure'),
                     duration: notify.duration.MEDIUM,
                 });
             })
             .fatal(() => {
                 notify.send({
-                    title: _ts('notification', 'adminLevelDelete'),
+                    title: _ts('components.regionAdminLevel', 'adminLevelDelete'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'adminLevelDeleteFatal'),
+                    message: _ts('components.regionAdminLevel', 'adminLevelDeleteFatal'),
                     duration: notify.duration.MEDIUM,
                 });
             })
@@ -283,14 +283,14 @@ export default class RegionAdminLevel extends React.PureComponent {
                 { deletePending && <LoadingAnimation /> }
                 <div className={styles.header}>
                     <h5>
-                        {_ts('countries', 'adminLevelsHeader')}
+                        {_ts('components.regionAdminLevel', 'adminLevelsHeader')}
                     </h5>
                     <PrimaryButton
                         iconName={iconNames.add}
                         disabled={deletePending}
                         onClick={this.addAdminLevel}
                     >
-                        {_ts('countries', 'addAdminLevelButtonLabel')}
+                        {_ts('components.regionAdminLevel', 'addAdminLevelButtonLabel')}
                     </PrimaryButton>
                     { this.state.addAdminLevel &&
                         <Modal
@@ -298,7 +298,7 @@ export default class RegionAdminLevel extends React.PureComponent {
                             onClose={this.handleModalClose}
                         >
                             <ModalHeader
-                                title={_ts('countries', 'addAdminLevelButtonLabel')}
+                                title={_ts('components.regionAdminLevel', 'addAdminLevelButtonLabel')}
                                 rightComponent={
                                     <PrimaryButton
                                         onClick={this.handleModalClose}
@@ -330,7 +330,7 @@ export default class RegionAdminLevel extends React.PureComponent {
                             onClose={this.handleModalClose}
                         >
                             <ModalHeader
-                                title={_ts('countries', 'editAdminLevelModalTitle')}
+                                title={_ts('components.regionAdminLevel', 'editAdminLevelModalTitle')}
                                 rightComponent={
                                     <PrimaryButton
                                         onClick={this.handleModalClose}
@@ -356,7 +356,7 @@ export default class RegionAdminLevel extends React.PureComponent {
                     onClose={this.handleDeleteActiveAdminLevelConfirmClose}
                 >
                     <p>
-                        {_ts('countries', 'removeAdminLevelConfirm', { adminLevel: title })}
+                        {_ts('components.regionAdminLevel', 'removeAdminLevelConfirm', { adminLevel: title })}
                     </p>
                 </Confirm>
             </div>

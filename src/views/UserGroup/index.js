@@ -133,7 +133,7 @@ export default class UserGroup extends React.PureComponent {
             return (
                 <div className={styles.usergroup}>
                     <div className={styles.usergroupAlt}>
-                        {_ts('user', 'userGroupNotFound')}
+                        {_ts('userGroup', 'userGroupNotFound')}
                     </div>
                 </div>
             );
@@ -143,7 +143,7 @@ export default class UserGroup extends React.PureComponent {
             <div className={styles.usergroup}>
                 <header className={styles.header}>
                     <h2>
-                        {_ts('user', 'userGroupTitle')}
+                        {_ts('userGroup', 'userGroupTitle')}
                     </h2>
                 </header>
                 <div className={styles.info}>
@@ -165,7 +165,7 @@ export default class UserGroup extends React.PureComponent {
                 </div>
                 <div className={styles.stats}>
                     <h2>
-                        {_ts('user', 'userGroupActivtyLogTitle')}
+                        {_ts('userGroup', 'userGroupActivtyLogTitle')}
                     </h2>
                 </div>
                 <ProjectsTable
@@ -187,7 +187,7 @@ export default class UserGroup extends React.PureComponent {
                         className={styles.userGroupEditModal}
                     >
                         <ModalHeader
-                            title={_ts('user', 'userGroupEditModalLabel')}
+                            title={_ts('userGroup', 'userGroupEditModalLabel')}
                             rightComponent={
                                 <PrimaryButton
                                     onClick={this.handleUserGroupEditModalClose}

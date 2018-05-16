@@ -27,7 +27,6 @@ const defaultProps = {
     leadId: undefined,
     highlights: [],
     highlightModifier: text => text,
-    onLoad: undefined,
 };
 
 export default class SimplifiedLeadPreview extends React.PureComponent {
@@ -158,13 +157,13 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
             .failure(() => {
                 this.setState({
                     pending: false,
-                    error: _ts('common', 'serverErrorText'),
+                    error: _ts('components.simplifiedLeadPreview', 'serverErrorText'),
                 });
             })
             .fatal(() => {
                 this.setState({
                     pending: false,
-                    error: _ts('common', 'connectionFailureText'),
+                    error: _ts('components.simplifiedLeadPreview', 'connectionFailureText'),
                 });
             })
             .build()
@@ -206,13 +205,13 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
             .failure(() => {
                 this.setState({
                     pending: false,
-                    error: _ts('common', 'serverErrorText'),
+                    error: _ts('components.simplifiedLeadPreview', 'serverErrorText'),
                 });
             })
             .fatal(() => {
                 this.setState({
                     pending: false,
-                    error: _ts('common', 'connectionFailureText'),
+                    error: _ts('components.simplifiedLeadPreview', 'connectionFailureText'),
                 });
             })
             .build()
@@ -262,7 +261,7 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
 
         return (
             <div className={styles.message}>
-                {_ts('common', 'previewNotAvailable')}
+                {_ts('components.simplifiedLeadPreview', 'previewNotAvailable')}
             </div>
         );
     }
@@ -278,7 +277,7 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
                 {
                     pending ? (
                         <LoadingAnimation
-                            message={_ts('common', 'simplifyingLead')}
+                            message={_ts('components.simplifiedLeadPreview', 'simplifyingLead')}
                             small
                         />
                     ) : (

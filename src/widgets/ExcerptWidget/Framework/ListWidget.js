@@ -19,7 +19,7 @@ export default class ExcerptTextList extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        const contentText = _ts('af', 'textOrImageExcerptWidgetLabel');
+        const contentText = _ts('framework.excerptWidget', 'textOrImageExcerptWidgetLabel');
 
         return (
             <div className={styles.list}>

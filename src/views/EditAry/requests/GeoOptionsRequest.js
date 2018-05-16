@@ -38,7 +38,7 @@ export default class GeoOptionsRequest {
                     .errors
                     .join(' ');
                 notify.send({
-                    title: _ts('entry', 'entriesTabLabel'),
+                    title: _ts('editAssessment', 'entriesTabLabel'),
                     type: notify.type.ERROR,
                     message,
                     duration: notify.duration.MEDIUM,
@@ -46,9 +46,9 @@ export default class GeoOptionsRequest {
             })
             .fatal(() => {
                 notify.send({
-                    title: _ts('entry', 'entriesTabLabel'),
+                    title: _ts('editAssessment', 'entriesTabLabel'),
                     type: notify.type.ERROR,
-                    message: _ts('entry', 'geoOptionsFatalMessage'),
+                    message: _ts('editAssessment', 'geoOptionsFatalMessage'),
                     duration: notify.duration.MEDIUM,
                 });
             })

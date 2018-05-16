@@ -163,9 +163,9 @@ export default class ProjectAfDetail extends React.PureComponent {
                         afDetail: response,
                     });
                     notify.send({
-                        title: _ts('notification', 'afFormEdit'),
+                        title: _ts('project', 'afFormEdit'),
                         type: notify.type.SUCCESS,
-                        message: _ts('notification', 'afFormEditSuccess'),
+                        message: _ts('project', 'afFormEditSuccess'),
                         duration: notify.duration.MEDIUM,
                     });
                 } catch (er) {
@@ -174,17 +174,17 @@ export default class ProjectAfDetail extends React.PureComponent {
             })
             .failure(() => {
                 notify.send({
-                    title: _ts('notification', 'afFormEdit'),
+                    title: _ts('project', 'afFormEdit'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'afFormEditFailure'),
+                    message: _ts('project', 'afFormEditFailure'),
                     duration: notify.duration.SLOW,
                 });
             })
             .fatal(() => {
                 notify.send({
-                    title: _ts('notification', 'afFormEdit'),
+                    title: _ts('project', 'afFormEdit'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'afFormEditFatal'),
+                    message: _ts('project', 'afFormEditFatal'),
                     duration: notify.duration.SLOW,
                 });
             })

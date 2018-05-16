@@ -49,7 +49,7 @@ export default class ActionButtons extends React.PureComponent {
     renderLinkToUserProfile = () => (
         <Link
             className={styles.link}
-            title={_ts('user', 'viewMemberLinkTitle')}
+            title={_ts('userGroup', 'viewMemberLinkTitle')}
             to={this.getLinks().userProfile}
         >
             <i className={iconNames.openLink} />
@@ -78,8 +78,8 @@ export default class ActionButtons extends React.PureComponent {
                 <PrimaryButton
                     title={
                         isAdmin
-                            ? _ts('user', 'revokeAdminLinkTitle')
-                            : _ts('user', 'grantAdminLinkTitle')
+                            ? _ts('userGroup', 'revokeAdminLinkTitle')
+                            : _ts('userGroup', 'grantAdminLinkTitle')
                     }
                     onClick={() => onChangeMemberRole(row)}
                     iconName={isAdmin ? iconNames.locked : iconNames.person}
@@ -87,7 +87,7 @@ export default class ActionButtons extends React.PureComponent {
                     transparent
                 />
                 <DangerButton
-                    title={_ts('user', 'deleteMemberLinkTitle')}
+                    title={_ts('userGroup', 'deleteMemberLinkTitle')}
                     onClick={() => onRemoveMember(row)}
                     iconName={iconNames.delete}
                     smallVerticalPadding

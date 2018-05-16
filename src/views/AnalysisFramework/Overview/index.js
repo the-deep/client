@@ -227,7 +227,7 @@ export default class Overview extends React.PureComponent {
             .filter(widget => widget.analysisFramework.overviewComponent)
             .map(widget => ({
                 id: widget.id,
-                title: _ts('af', widget.title),
+                title: _ts('framework', widget.title),
                 overviewComponent: widget.analysisFramework.overviewComponent,
                 listComponent: widget.analysisFramework.listComponent,
                 overviewMinSize: widget.analysisFramework.overviewMinSize,
@@ -248,7 +248,7 @@ export default class Overview extends React.PureComponent {
         } = this.props;
 
         const exitUrl = `${reverseRoute(pathNames.projects, { projectId })}#/frameworks`;
-        const frameworkTitle = analysisFramework.title || _ts('af', 'analysisFramework');
+        const frameworkTitle = analysisFramework.title || _ts('framework', 'analysisFramework');
 
         return (
             <header className={styles.header}>
@@ -260,7 +260,7 @@ export default class Overview extends React.PureComponent {
                         /
                     </span>
                     <span className={styles.pageType}>
-                        {_ts('af', 'headerOverview')}
+                        {_ts('framework', 'headerOverview')}
                     </span>
                 </h2>
                 <div className={styles.actions}>
@@ -268,20 +268,20 @@ export default class Overview extends React.PureComponent {
                         className={styles.exitLink}
                         to={exitUrl}
                     >
-                        {_ts('af', 'exitButtonLabel')}
+                        {_ts('framework', 'exitButtonLabel')}
                     </Link>
                     <Link
                         className={styles.gotoListLink}
                         to="#/list"
                         replace
                     >
-                        {_ts('af', 'gotoListButtonLabel')}
+                        {_ts('framework', 'gotoListButtonLabel')}
                     </Link>
                     <SuccessButton
                         className={styles.saveButton}
                         onClick={this.props.onSave}
                     >
-                        {_ts('af', 'saveButtonLabel')}
+                        {_ts('framework', 'saveButtonLabel')}
                     </SuccessButton>
                 </div>
             </header>

@@ -120,16 +120,16 @@ export default class LeadAdd extends React.PureComponent {
             .postSession((totalErrors) => {
                 if (totalErrors > 0) {
                     notify.send({
-                        title: _ts('notification', 'leadSave'),
+                        title: _ts('addLeads', 'leadSave'),
                         type: notify.type.ERROR,
-                        message: _ts('notification', 'leadSaveFailure', { errorCount: totalErrors }),
+                        message: _ts('addLeads', 'leadSaveFailure', { errorCount: totalErrors }),
                         duration: notify.duration.SLOW,
                     });
                 } else {
                     notify.send({
-                        title: _ts('notification', 'leadSave'),
+                        title: _ts('addLeads', 'leadSave'),
                         type: notify.type.SUCCESS,
-                        message: _ts('notification', 'leadSaveSuccess'),
+                        message: _ts('addLeads', 'leadSaveSuccess'),
                         duration: notify.duration.MEDIUM,
                     });
                 }

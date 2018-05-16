@@ -130,27 +130,27 @@ export default class UserGroupEdit extends React.PureComponent {
                 { pending && <LoadingAnimation /> }
                 <NonFieldErrors faramElementName />
                 <TextInput
-                    label={_ts('user', 'addUserGroupModalLabel')}
+                    label={_ts('userGroup', 'addUserGroupModalLabel')}
                     faramElementName="title"
-                    placeholder={_ts('user', 'addUserGroupModalPlaceholder')}
+                    placeholder={_ts('userGroup', 'addUserGroupModalPlaceholder')}
                     autoFocus
                 />
                 <TextArea
-                    label={_ts('user', 'userGroupModalDescriptionLabel')}
+                    label={_ts('userGroup', 'userGroupModalDescriptionLabel')}
                     faramElementName="description"
                     className={styles.description}
-                    placeholder={_ts('user', 'addUserGroupModalPlaceholder')}
+                    placeholder={_ts('userGroup', 'addUserGroupModalPlaceholder')}
                     rows={3}
                 />
                 <div className={styles.actionButtons}>
                     <DangerButton onClick={this.handleFaramClose}>
-                        {_ts('user', 'modalCancel')}
+                        {_ts('userGroup', 'modalCancel')}
                     </DangerButton>
                     <PrimaryButton
                         disabled={pending || !pristine}
                         type="submit"
                     >
-                        {_ts('user', 'modalSave')}
+                        {_ts('userGroup', 'modalSave')}
                     </PrimaryButton>
                 </div>
             </Faram>

@@ -253,7 +253,7 @@ export default class Entries extends React.PureComponent {
                     .errors
                     .join(' ');
                 notify.send({
-                    title: _ts('entry', 'entriesTabLabel'),
+                    title: _ts('entries', 'entriesTabLabel'),
                     type: notify.type.ERROR,
                     message,
                     duration: notify.duration.MEDIUM,
@@ -261,7 +261,7 @@ export default class Entries extends React.PureComponent {
             })
             .fatal(() => {
                 notify.send({
-                    title: _ts('entry', 'entriesTabLabel'),
+                    title: _ts('entries', 'entriesTabLabel'),
                     type: notify.type.ERROR,
                     message: 'Couldn\'t load entries', // FIXME: strings
                     duration: notify.duration.MEDIUM,
@@ -467,10 +467,10 @@ export default class Entries extends React.PureComponent {
                 <div className={styles.actionButtons}>
                     <Link
                         className={styles.editEntryLink}
-                        title={_ts('entry', 'editEntryLinkTitle')}
+                        title={_ts('entries', 'editEntryLinkTitle')}
                         to={route}
                     >
-                        {_ts('entry', 'editEntryButtonLabel')}
+                        {_ts('entries', 'editEntryButtonLabel')}
                     </Link>
                 </div>
             </header>

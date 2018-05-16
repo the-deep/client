@@ -43,21 +43,21 @@ export default class HumanitarianAccess extends React.PureComponent {
         super(props);
 
         this.rowFieldTitles = [
-            _ts('assessmentSummary', 'priorityIssue'),
-            _ts('assessmentSummary', 'affectedLocation'),
+            _ts('editAssessment.summary', 'priorityIssue'),
+            _ts('editAssessment.summary', 'affectedLocation'),
         ];
 
         this.columnFieldTitles = [
             '',
-            _ts('assessmentSummary', 'limitedAccessPopulation'),
-            _ts('assessmentSummary', 'restrictedAccessPopulation'),
-            _ts('assessmentSummary', 'humanitarianAccessPopulation'),
+            _ts('editAssessment.summary', 'limitedAccessPopulation'),
+            _ts('editAssessment.summary', 'restrictedAccessPopulation'),
+            _ts('editAssessment.summary', 'humanitarianAccessPopulation'),
         ];
 
         this.rowSubFieldTitles = [
-            _ts('assessmentSummary', 'rank1Title'),
-            _ts('assessmentSummary', 'rank2Title'),
-            _ts('assessmentSummary', 'rank3Title'),
+            _ts('editAssessment.summary', 'rank1Title'),
+            _ts('editAssessment.summary', 'rank2Title'),
+            _ts('editAssessment.summary', 'rank3Title'),
         ];
     }
 

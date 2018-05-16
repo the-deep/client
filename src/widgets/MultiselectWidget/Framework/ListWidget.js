@@ -143,8 +143,8 @@ export default class Multiselect extends React.PureComponent {
         >
             <TextInput
                 className={styles.titleInput}
-                label={_ts('af', 'optionLabel')}
-                placeholder={_ts('af', 'optionPlaceholder')}
+                label={_ts('framework.multiselectWidget', 'optionLabel')}
+                placeholder={_ts('framework.multiselectWidget', 'optionPlaceholder')}
                 onChange={(value) => { this.handleValueInputChange(key, value); }}
                 showHintAndError={false}
                 value={data.label}
@@ -178,13 +178,13 @@ export default class Multiselect extends React.PureComponent {
             return null;
         }
 
-        const headerTitle = _ts('af', 'editMultiselectModalTitle');
-        const titleInputLabel = _ts('af', 'titleLabel');
-        const titleInputPlaceholder = _ts('af', 'titlePlaceholderScale');
-        const optionsTitle = _ts('af', 'optionsHeader');
-        const addOptionButtonLabel = _ts('af', 'addOptionButtonLabel');
-        const cancelButtonLabel = _ts('af', 'cancelButtonLabel');
-        const saveButtonLabel = _ts('af', 'saveButtonLabel');
+        const headerTitle = _ts('framework.multiselectWidget', 'editMultiselectModalTitle');
+        const titleInputLabel = _ts('framework.multiselectWidget', 'titleLabel');
+        const titleInputPlaceholder = _ts('framework.multiselectWidget', 'titlePlaceholderScale');
+        const optionsTitle = _ts('framework.multiselectWidget', 'optionsHeader');
+        const addOptionButtonLabel = _ts('framework.multiselectWidget', 'addOptionButtonLabel');
+        const cancelButtonLabel = _ts('framework.multiselectWidget', 'cancelButtonLabel');
+        const saveButtonLabel = _ts('framework.multiselectWidget', 'saveButtonLabel');
 
         return (
             <Modal className={styles.editModal}>

@@ -46,8 +46,8 @@ export default class RegionGetRequest {
             if (regionDetail.pristine && !discard) {
                 notify.send({
                     type: notify.type.WARNING,
-                    title: _ts('notification', 'regionUpdate'),
-                    message: _ts('notification', 'regionUpdateOverridden'),
+                    title: _ts('countries', 'regionUpdate'),
+                    message: _ts('countries', 'regionUpdateOverridden'),
                     duration: notify.duration.SLOW,
                 });
             }

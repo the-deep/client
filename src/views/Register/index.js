@@ -174,24 +174,24 @@ export default class Register extends React.PureComponent {
                 <NonFieldErrors faramElement />
                 <TextInput
                     faramElementName="firstname"
-                    label={_ts('login', 'firstNameLabel')}
-                    placeholder={_ts('login', 'firstNamePlaceholder')}
+                    label={_ts('register', 'firstNameLabel')}
+                    placeholder={_ts('register', 'firstNamePlaceholder')}
                     autoFocus
                 />
                 <TextInput
                     faramElementName="lastname"
-                    label={_ts('login', 'lastNameLabel')}
-                    placeholder={_ts('login', 'lastNamePlaceholder')}
+                    label={_ts('register', 'lastNameLabel')}
+                    placeholder={_ts('register', 'lastNamePlaceholder')}
                 />
                 <TextInput
                     faramElementName="organization"
-                    label={_ts('login', 'organizationLabel')}
-                    placeholder={_ts('login', 'organizationPlaceholder')}
+                    label={_ts('register', 'organizationLabel')}
+                    placeholder={_ts('register', 'organizationPlaceholder')}
                 />
                 <TextInput
                     faramElementName="email"
-                    label={_ts('login', 'emailLabel')}
-                    placeholder={_ts('login', 'emailPlaceholder')}
+                    label={_ts('register', 'emailLabel')}
+                    placeholder={_ts('register', 'emailPlaceholder')}
                 />
                 <ReCaptcha
                     ref={(reCaptcha) => { this.reCaptcha = reCaptcha; }}
@@ -201,7 +201,7 @@ export default class Register extends React.PureComponent {
                 />
                 <div className={styles.actionButtons}>
                     <PrimaryButton type="submit" >
-                        { _ts('login', 'registerLabel')}
+                        { _ts('register', 'registerLabel')}
                     </PrimaryButton>
                 </div>
             </Faram>
@@ -212,7 +212,7 @@ export default class Register extends React.PureComponent {
         const { email } = this.state.faramValues;
         return (
             <div className={styles.registerSuccess}>
-                {_ts('login', 'checkYourEmailText', { email })}
+                {_ts('register', 'checkYourEmailText', { email })}
             </div>
         );
     }
@@ -229,15 +229,15 @@ export default class Register extends React.PureComponent {
                     <div className={styles.loginLinkContainer}>
                         <p>
                             { success ?
-                                _ts('login', 'goBackToLoginText') :
-                                _ts('login', 'alreadyHaveAccountText')
+                                _ts('register', 'goBackToLoginText') :
+                                _ts('register', 'alreadyHaveAccountText')
                             }
                         </p>
                         <Link
                             to={reverseRoute(pathNames.login, {})}
                             className={styles.loginLink}
                         >
-                            {_ts('login', 'loginLabel')}
+                            {_ts('register', 'loginLabel')}
                         </Link>
                     </div>
                 </div>

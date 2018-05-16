@@ -142,7 +142,7 @@ export default class ExternalGallery extends React.PureComponent {
         <div className={`${styles.pendingContainer} ${className}`}>
             <span className={`${iconNames.loading} ${styles.loadingAnimation}`} />
             <span className={styles.waitingText}>
-                {_ts('leads', 'gatheringWebsiteInfoLabel')}
+                {_ts('components.externalGallery', 'gatheringWebsiteInfoLabel')}
             </span>
         </div>
     )

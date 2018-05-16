@@ -24,9 +24,9 @@ export default class MembershipRoleChangeRequest {
                 userGroupId,
             });
             notify.send({
-                title: _ts('notification', 'userMembershipRole'),
+                title: _ts('userGroup', 'userMembershipRole'),
                 type: notify.type.SUCCESS,
-                message: _ts('notification', 'userMembershipRoleSuccess'),
+                message: _ts('userGroup', 'userMembershipRoleSuccess'),
                 duration: notify.duration.MEDIUM,
             });
         } catch (er) {
@@ -36,18 +36,18 @@ export default class MembershipRoleChangeRequest {
 
     failure = () => {
         notify.send({
-            title: _ts('notification', 'userMembershipRole'),
+            title: _ts('userGroup', 'userMembershipRole'),
             type: notify.type.ERROR,
-            message: _ts('notification', 'userMembershipRoleFailure'),
+            message: _ts('userGroup', 'userMembershipRoleFailure'),
             duration: notify.duration.MEDIUM,
         });
     }
 
     fatal = () => {
         notify.send({
-            title: _ts('notification', 'userMembershipRole'),
+            title: _ts('userGroup', 'userMembershipRole'),
             type: notify.type.ERROR,
-            message: _ts('notification', 'userMembershipRoleFatal'),
+            message: _ts('userGroup', 'userMembershipRoleFatal'),
             duration: notify.duration.SLOW,
         });
     }

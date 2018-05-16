@@ -87,28 +87,28 @@ export default class AddUserGroupMembers extends React.PureComponent {
         this.memberHeaders = [
             {
                 key: 'displayName',
-                label: _ts('user', 'tableHeaderName'),
+                label: _ts('userGroup', 'tableHeaderName'),
                 order: 1,
                 sortable: true,
                 comparator: (a, b) => compareString(a.displayName, b.displayName),
             },
             {
                 key: 'email',
-                label: _ts('user', 'tableHeaderEmail'),
+                label: _ts('userGroup', 'tableHeaderEmail'),
                 order: 2,
                 sortable: true,
                 comparator: (a, b) => compareString(a.email, b.email),
             },
             {
                 key: 'actions',
-                label: _ts('user', 'tableHeaderActions'),
+                label: _ts('userGroup', 'tableHeaderActions'),
                 order: 3,
                 modifier: (row) => {
                     const isAdmin = row.role === 'admin';
                     const title = isAdmin ? (
-                        _ts('user', 'revokeAdminLinkTitle')
+                        _ts('userGroup', 'revokeAdminLinkTitle')
                     ) : (
-                        _ts('user', 'grantAdminLinkTitle')
+                        _ts('userGroup', 'grantAdminLinkTitle')
                     );
                     return (
                         <div className="actions">
@@ -269,13 +269,13 @@ export default class AddUserGroupMembers extends React.PureComponent {
                 />
                 <div className={styles.actionButtons}>
                     <DangerButton onClick={this.props.onModalClose}>
-                        {_ts('user', 'modalCancel')}
+                        {_ts('userGroup', 'modalCancel')}
                     </DangerButton>
                     <PrimaryButton
                         disabled={pending || !pristine}
                         type="submit"
                     >
-                        {_ts('user', 'modalSave')}
+                        {_ts('userGroup', 'modalSave')}
                     </PrimaryButton>
                 </div>
             </Faram>

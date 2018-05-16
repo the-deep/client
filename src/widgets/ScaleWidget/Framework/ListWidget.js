@@ -229,10 +229,10 @@ export default class ScaleFrameworkList extends React.PureComponent {
             defaultIconName = iconNames.checkbox;
         }
 
-        const colorInputLabel = _ts('af', 'colorLabel');
-        const titleInputPlaceholder = _ts('af', 'titlePlaceholderScale');
-        const titleInputLabel = _ts('af', 'titleLabel');
-        const defaultButtonLabel = _ts('af', 'defaultButtonLabel');
+        const colorInputLabel = _ts('framework.scaleWidget', 'colorLabel');
+        const titleInputPlaceholder = _ts('framework.scaleWidget', 'titlePlaceholderScale');
+        const titleInputLabel = _ts('framework.scaleWidget', 'titleLabel');
+        const defaultButtonLabel = _ts('framework.scaleWidget', 'defaultButtonLabel');
 
         return (
             <div
@@ -291,12 +291,12 @@ export default class ScaleFrameworkList extends React.PureComponent {
             return null;
         }
 
-        const headerTitle = _ts('af', 'editScaleModalTitle');
-        const addScaleUnitButtonLabel = _ts('af', 'addscaleUnitButtonLabel');
-        const titleInputLabel = _ts('af', 'titleLabel');
-        const titleInputPlaceholder = _ts('af', 'titlePlaceholderScale');
-        const cancelButtonLabel = _ts('af', 'cancelButtonLabel');
-        const saveButtonLabel = _ts('af', 'saveButtonLabel');
+        const headerTitle = _ts('framework.scaleWidget', 'editScaleModalTitle');
+        const addScaleUnitButtonLabel = _ts('framework.scaleWidget', 'addscaleUnitButtonLabel');
+        const titleInputLabel = _ts('framework.scaleWidget', 'titleLabel');
+        const titleInputPlaceholder = _ts('framework.scaleWidget', 'titlePlaceholderScale');
+        const cancelButtonLabel = _ts('framework.scaleWidget', 'cancelButtonLabel');
+        const saveButtonLabel = _ts('framework.scaleWidget', 'saveButtonLabel');
 
         return (
             <Modal className={styles.editModal}>

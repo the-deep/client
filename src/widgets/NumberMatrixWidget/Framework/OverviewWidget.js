@@ -181,8 +181,8 @@ export default class NumberMatrixOverview extends React.PureComponent {
         >
             <TextInput
                 className={styles.titleInput}
-                label={_ts('af', 'titleLabel')}
-                placeholder={_ts('af', 'titlePlaceholderColumn')}
+                label={_ts('framework.numberMatrixWidget', 'titleLabel')}
+                placeholder={_ts('framework.numberMatrixWidget', 'titlePlaceholderColumn')}
                 onChange={(value) => { this.handleUnitInputChange(key, value, 'column', 'title'); }}
                 value={data.title}
                 showHintAndError={false}
@@ -190,8 +190,8 @@ export default class NumberMatrixOverview extends React.PureComponent {
             />
             <TextInput
                 className={styles.titleInput}
-                label={_ts('af', 'tooltipTitle')}
-                placeholder={_ts('af', 'tooltipPlaceholder')}
+                label={_ts('framework.numberMatrixWidget', 'tooltipTitle')}
+                placeholder={_ts('framework.numberMatrixWidget', 'tooltipPlaceholder')}
                 onChange={(value) => { this.handleUnitInputChange(key, value, 'column', 'tooltip'); }}
                 value={data.tooltip}
                 showHintAndError={false}
@@ -220,8 +220,8 @@ export default class NumberMatrixOverview extends React.PureComponent {
         >
             <TextInput
                 className={styles.titleInput}
-                label={_ts('af', 'titleLabel')}
-                placeholder={_ts('af', 'titlePlaceholderRow')}
+                label={_ts('framework.numberMatrixWidget', 'titleLabel')}
+                placeholder={_ts('framework.numberMatrixWidget', 'titlePlaceholderRow')}
                 onChange={(value) => { this.handleUnitInputChange(key, value, 'row', 'title'); }}
                 value={data.title}
                 showHintAndError={false}
@@ -229,8 +229,8 @@ export default class NumberMatrixOverview extends React.PureComponent {
             />
             <TextInput
                 className={styles.titleInput}
-                label={_ts('af', 'tooltipTitle')}
-                placeholder={_ts('af', 'tooltipPlaceholder')}
+                label={_ts('framework.numberMatrixWidget', 'tooltipTitle')}
+                placeholder={_ts('framework.numberMatrixWidget', 'tooltipPlaceholder')}
                 onChange={(value) => { this.handleUnitInputChange(key, value, 'row', 'tooltip'); }}
                 value={data.tooltip}
                 showHintAndError={false}
@@ -262,7 +262,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
         >
             <NumberInput
                 className={styles.numberInput}
-                placeholder={_ts('af', 'numberPlaceholder')}
+                placeholder={_ts('framework.numberMatrixWidget', 'numberPlaceholder')}
                 showLabel={false}
                 showHintAndError={false}
                 separator=" "
@@ -332,12 +332,12 @@ export default class NumberMatrixOverview extends React.PureComponent {
                 className={styles.editModal}
                 onClose={this.handleEditModalClose}
             >
-                <ModalHeader title={_ts('af', 'editNumberMatrixModalTitle')} />
+                <ModalHeader title={_ts('framework.numberMatrixWidget', 'editNumberMatrixModalTitle')} />
                 <ModalBody className={styles.body}>
                     <div className={styles.titleInputContainer}>
                         <TextInput
-                            label={_ts('af', 'titleLabel')}
-                            placeholder={_ts('af', 'titlePlaceholderScale')}
+                            label={_ts('framework.numberMatrixWidget', 'titleLabel')}
+                            placeholder={_ts('framework.numberMatrixWidget', 'titlePlaceholderScale')}
                             onChange={this.handleWidgetTitleChange}
                             value={title}
                             showHintAndError={false}
@@ -348,12 +348,12 @@ export default class NumberMatrixOverview extends React.PureComponent {
                     <div className={styles.modalUnitContainer}>
                         <header className={styles.header}>
                             <h3 className={styles.heading}>
-                                {_ts('af', 'rowsLabel')}
+                                {_ts('framework.numberMatrixWidget', 'rowsLabel')}
                             </h3>
                             <PrimaryButton
                                 iconName={iconNames.add}
                                 onClick={() => this.handleAddButtonClick('row')}
-                                title={_ts('af', 'addRowUnitButtonLabel')}
+                                title={_ts('framework.numberMatrixWidget', 'addRowUnitButtonLabel')}
                                 transparent
                             />
                         </header>
@@ -370,12 +370,12 @@ export default class NumberMatrixOverview extends React.PureComponent {
                     <div className={styles.modalUnitContainer}>
                         <header className={styles.header}>
                             <h3 className={styles.heading}>
-                                {_ts('af', 'columnsLabel')}
+                                {_ts('framework.numberMatrixWidget', 'columnsLabel')}
                             </h3>
                             <PrimaryButton
                                 iconName={iconNames.add}
                                 onClick={() => this.handleAddButtonClick('column')}
-                                title={_ts('af', 'addColumnUnitButtonLabel')}
+                                title={_ts('framework.numberMatrixWidget', 'addColumnUnitButtonLabel')}
                                 transparent
                             />
                         </header>
@@ -394,12 +394,12 @@ export default class NumberMatrixOverview extends React.PureComponent {
                     <Button
                         onClick={this.handleModalCancelButtonClick}
                     >
-                        {_ts('af', 'cancelButtonLabel')}
+                        {_ts('framework.numberMatrixWidget', 'cancelButtonLabel')}
                     </Button>
                     <PrimaryButton
                         onClick={this.handleModalSaveButtonClick}
                     >
-                        {_ts('af', 'saveButtonLabel')}
+                        {_ts('framework.numberMatrixWidget', 'saveButtonLabel')}
                     </PrimaryButton>
                 </ModalFooter>
             </Modal>

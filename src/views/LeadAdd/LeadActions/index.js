@@ -156,9 +156,9 @@ export default class LeadFilter extends React.PureComponent {
         this.props.addLeadViewLeadRemove(leadId);
 
         notify.send({
-            title: _ts('notification', 'leadDiscard'),
+            title: _ts('addLeads.actions', 'leadDiscard'),
             type: notify.type.SUCCESS,
-            message: _ts('notification', 'leadDiscardSuccess'),
+            message: _ts('addLeads.actions', 'leadDiscardSuccess'),
             duration: notify.duration.MEDIUM,
         });
     }
@@ -170,9 +170,9 @@ export default class LeadFilter extends React.PureComponent {
         });
 
         notify.send({
-            title: _ts('notification', 'leadsDiscard'),
+            title: _ts('addLeads.actions', 'leadsDiscard'),
             type: notify.type.SUCCESS,
-            message: _ts('notification', 'leadsDiscardSuccess'),
+            message: _ts('addLeads.actions', 'leadsDiscardSuccess'),
             duration: notify.duration.MEDIUM,
         });
     }
@@ -184,9 +184,9 @@ export default class LeadFilter extends React.PureComponent {
         });
 
         notify.send({
-            title: _ts('notification', 'leadsDiscard'),
+            title: _ts('addLeads.actions', 'leadsDiscard'),
             type: notify.type.SUCCESS,
-            message: _ts('notification', 'leadsDiscardSuccess'),
+            message: _ts('addLeads.actions', 'leadsDiscardSuccess'),
             duration: notify.duration.MEDIUM,
         });
     }
@@ -198,9 +198,9 @@ export default class LeadFilter extends React.PureComponent {
         });
 
         notify.send({
-            title: _ts('notification', 'leadsDiscard'),
+            title: _ts('addLeads.actions', 'leadsDiscard'),
             type: notify.type.SUCCESS,
-            message: _ts('notification', 'leadsDiscardSuccess'),
+            message: _ts('addLeads.actions', 'leadsDiscardSuccess'),
             duration: notify.duration.MEDIUM,
         });
     }
@@ -286,20 +286,20 @@ export default class LeadFilter extends React.PureComponent {
                 <Checkbox
                     value={!this.props.hidePreview}
                     onChange={() => this.props.setPreview(!this.props.hidePreview)}
-                    label={_ts('addLeads', 'showLeadPreviewLabel')}
+                    label={_ts('addLeads.actions', 'showLeadPreviewLabel')}
                 />
                 <div className={styles.movementButtons}>
                     <Button
                         disabled={!addLeadViewCanPrev}
                         onClick={this.handlePrevButtonClick}
                         iconName={iconNames.prev}
-                        title={_ts('addLeads', 'previousButtonLabel')}
+                        title={_ts('addLeads.actions', 'previousButtonLabel')}
                     />
                     <Button
                         disabled={!addLeadViewCanNext}
                         onClick={this.handleNextButtonClick}
                         iconName={iconNames.next}
-                        title={_ts('addLeads', 'nextButtonLabel')}
+                        title={_ts('addLeads.actions', 'nextButtonLabel')}
                     />
                 </div>
                 <Confirm
@@ -309,14 +309,14 @@ export default class LeadFilter extends React.PureComponent {
                     <p>
                         {
                             /* TODO: different message for delete modes */
-                            _ts('addLeads', 'deleteLeadConfirmText')
+                            _ts('addLeads.actions', 'deleteLeadConfirmText')
                         }
                     </p>
                 </Confirm>
                 <DropdownMenu
                     iconName={iconNames.delete}
                     className={styles.removeButtons}
-                    title={_ts('addLeads', 'removeButtonTitle')}
+                    title={_ts('addLeads.actions', 'removeButtonTitle')}
                 >
                     <button
                         className={styles.dropdownButton}
@@ -324,7 +324,7 @@ export default class LeadFilter extends React.PureComponent {
                         disabled={isRemoveDisabledForActive}
                         type="button"
                     >
-                        {_ts('addLeads', 'removeCurrentButtonTitle')}
+                        {_ts('addLeads.actions', 'removeCurrentButtonTitle')}
                     </button>
                     <button
                         className={styles.dropdownButton}
@@ -332,7 +332,7 @@ export default class LeadFilter extends React.PureComponent {
                         disabled={!isRemoveEnabledForFiltered}
                         type="button"
                     >
-                        {_ts('addLeads', 'removeAllFilteredButtonTitle')}
+                        {_ts('addLeads.actions', 'removeAllFilteredButtonTitle')}
                     </button>
                     <button
                         className={styles.dropdownButton}
@@ -340,7 +340,7 @@ export default class LeadFilter extends React.PureComponent {
                         onClick={this.handleSavedRemoveButtonClick}
                         type="button"
                     >
-                        {_ts('addLeads', 'removeAllCompletedButtonTitle')}
+                        {_ts('addLeads.actions', 'removeAllCompletedButtonTitle')}
                     </button>
                     <button
                         className={styles.dropdownButton}
@@ -348,13 +348,13 @@ export default class LeadFilter extends React.PureComponent {
                         disabled={!isRemoveEnabledForAll}
                         type="button"
                     >
-                        {_ts('addLeads', 'removeAllButtonTitle')}
+                        {_ts('addLeads.actions', 'removeAllButtonTitle')}
                     </button>
                 </DropdownMenu>
                 <DropdownMenu
                     iconName={iconNames.save}
                     className={styles.saveButtons}
-                    title={_ts('addLeads', 'saveButtonTitle')}
+                    title={_ts('addLeads.actions', 'saveButtonTitle')}
                 >
                     <button
                         className={styles.dropdownButton}
@@ -362,7 +362,7 @@ export default class LeadFilter extends React.PureComponent {
                         disabled={isSaveDisabledForActive}
                         type="button"
                     >
-                        {_ts('addLeads', 'saveCurrentButtonTitle')}
+                        {_ts('addLeads.actions', 'saveCurrentButtonTitle')}
                     </button>
                     <button
                         className={styles.dropdownButton}
@@ -370,7 +370,7 @@ export default class LeadFilter extends React.PureComponent {
                         disabled={pendingSubmitAll || !isSaveEnabledForFiltered}
                         type="button"
                     >
-                        {_ts('addLeads', 'saveAllFilteredButtonTitle')}
+                        {_ts('addLeads.actions', 'saveAllFilteredButtonTitle')}
                     </button>
                     <button
                         className={styles.dropdownButton}
@@ -378,7 +378,7 @@ export default class LeadFilter extends React.PureComponent {
                         disabled={pendingSubmitAll || !isSaveEnabledForAll}
                         type="button"
                     >
-                        {_ts('addLeads', 'saveAllButtonTitle')}
+                        {_ts('addLeads.actions', 'saveAllButtonTitle')}
                     </button>
                 </DropdownMenu>
             </div>

@@ -55,8 +55,8 @@ export default class ConnectorDetailsGetRequest {
             if (isValueOverriden && !isBeingCancelled) {
                 notify.send({
                     type: notify.type.WARNING,
-                    title: _ts('notification', 'connectorTitle'),
-                    message: _ts('notification', 'connectorUpdateOverriden'),
+                    title: _ts('connector', 'connectorTitle'),
+                    message: _ts('connector', 'connectorUpdateOverriden'),
                     duration: notify.duration.SLOW,
                 });
             }
@@ -68,7 +68,7 @@ export default class ConnectorDetailsGetRequest {
     failure = (response) => {
         // FIXME: Handle error during isBeingCanelled
         notify.send({
-            title: _ts('notification', 'connectorTitle'),
+            title: _ts('connector', 'connectorTitle'),
             type: notify.type.ERROR,
             message: response.error,
             duration: notify.duration.MEDIUM,
@@ -78,9 +78,9 @@ export default class ConnectorDetailsGetRequest {
 
     fatal = () => {
         notify.send({
-            title: _ts('notification', 'connectorTitle'),
+            title: _ts('connector', 'connectorTitle'),
             type: notify.type.ERROR,
-            message: _ts('notification', 'connectorGetFailure'),
+            message: _ts('connector', 'connectorGetFailure'),
             duration: notify.duration.MEDIUM,
         });
     }

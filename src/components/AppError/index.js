@@ -1,10 +1,10 @@
 import React from 'react';
+
+import _ts from '../../ts';
 import styles from './styles.scss';
 
 export default class AppError extends React.PureComponent {
-    getErrorText = () => (
-        'There seems to be some problem with the page'
-    )
+    getErrorText = () => _ts('components.appError', 'problemText')
 
     render() {
         const errorText = this.getErrorText();

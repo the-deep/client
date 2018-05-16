@@ -92,7 +92,7 @@ export default class Overview extends React.PureComponent {
             .filter(widget => widget.tagging.overviewComponent)
             .map(widget => ({
                 id: widget.id,
-                title: _ts('af', widget.title),
+                title: _ts('widgetTitle', widget.title),
                 overviewComponent: widget.tagging.overviewComponent,
             }));
 
@@ -213,7 +213,7 @@ export default class Overview extends React.PureComponent {
                         <div className={styles.entryActions}>
                             <SelectInput
                                 className={styles.selectInput}
-                                placeholder={_ts('entry', 'selectExcerptPlaceholder')}
+                                placeholder={_ts('editEntry', 'selectExcerptPlaceholder')}
                                 showHintAndError={false}
                                 showLabel={false}
                                 hideClearButton
@@ -224,14 +224,14 @@ export default class Overview extends React.PureComponent {
                                 onChange={this.handleEntrySelectChange}
                             />
                             <PrimaryButton
-                                title={_ts('entry', 'addEntryButtonTitle')}
+                                title={_ts('editEntry', 'addEntryButtonTitle')}
                                 onClick={onEntryAdd}
                             >
                                 <i className={iconNames.add} />
                             </PrimaryButton>
                             { selectedEntry && !isMarkedForDelete &&
                                 <DangerButton
-                                    title={_ts('entry', 'removeEntryButtonTitle')}
+                                    title={_ts('editEntry', 'removeEntryButtonTitle')}
                                     onClick={() => onEntryDelete(true)}
                                 >
                                     <i className={iconNames.delete} />
@@ -244,14 +244,14 @@ export default class Overview extends React.PureComponent {
                                 to="#/list"
                                 replace
                             >
-                                {_ts('entry', 'gotoListButtonLabel')}
+                                {_ts('editEntry', 'gotoListButtonLabel')}
                             </Link>
                             <SuccessButton
                                 className={styles.saveButton}
                                 onClick={onSaveAll}
                                 disabled={saveAllDisabled}
                             >
-                                {_ts('entry', 'saveButtonLabel')}
+                                {_ts('editEntry', 'saveButtonLabel')}
                             </SuccessButton>
                         </div>
                     </header>,

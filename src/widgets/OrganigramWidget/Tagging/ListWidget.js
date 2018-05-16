@@ -97,7 +97,7 @@ export default class OrganigramTaggingList extends React.PureComponent {
 
         return (
             <Modal className={styles.orgChartModal}>
-                <ModalHeader title={_ts('af', 'organigramWidgetLabel')} />
+                <ModalHeader title={_ts('framework.organigramWidget', 'organigramWidgetLabel')} />
                 <ModalBody className={styles.body}>
                     <div className={styles.excerpt} >
                         {this.props.api.getEntryExcerpt(this.props.entryId)}
@@ -113,10 +113,10 @@ export default class OrganigramTaggingList extends React.PureComponent {
                 </ModalBody>
                 <ModalFooter>
                     <Button onClick={this.handleCancelClick} >
-                        {_ts('af', 'cancelButtonLabel')}
+                        {_ts('framework.organigramWidget', 'cancelButtonLabel')}
                     </Button>
                     <PrimaryButton onClick={this.handleSaveClick} >
-                        {_ts('af', 'applyButtonLabel')}
+                        {_ts('framework.organigramWidget', 'applyButtonLabel')}
                     </PrimaryButton>
                 </ModalFooter>
             </Modal>

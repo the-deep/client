@@ -294,10 +294,10 @@ export default class RightPanel extends React.PureComponent {
         };
 
         this.tabs = {
-            metadata: _ts('ary', 'metadataTabLabel'),
-            methodology: _ts('ary', 'methodologyTabLabel'),
-            summary: _ts('ary', 'summaryTabLabel'),
-            score: _ts('ary', 'scoreTabLabel'),
+            metadata: _ts('editAssessment', 'metadataTabLabel'),
+            methodology: _ts('editAssessment', 'methodologyTabLabel'),
+            summary: _ts('editAssessment', 'summaryTabLabel'),
+            score: _ts('editAssessment', 'scoreTabLabel'),
         };
 
         this.defaultHash = 'metadata';

@@ -22,12 +22,10 @@ import LoadingAnimation from '../../../vendor/react-store/components/View/Loadin
 import {
     setUserInformationAction,
     availableLanguagesSelector,
-    setAvailableLanguagesAction,
 } from '../../../redux';
 import _ts from '../../../ts';
 import notify from '../../../notify';
 
-import LanguagesGetRequest from '../requests/LanguagesGetRequest';
 import UserPatchRequest from '../requests/UserPatchRequest';
 import UserImageUploadRequest from '../requests/UserImageUploadRequest';
 import styles from './styles.scss';
@@ -42,7 +40,6 @@ const propTypes = {
     userInformation: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     // eslint-disable-next-line react/forbid-prop-types
     availableLanguages: PropTypes.array.isRequired,
-    setAvailableLanguages: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -54,7 +51,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     setUserInformation: params => dispatch(setUserInformationAction(params)),
-    setAvailableLanguages: params => dispatch(setAvailableLanguagesAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -71,7 +67,6 @@ export default class UserEdit extends React.PureComponent {
         this.state = {
             faramErrors: {},
             faramValues: this.props.userInformation,
-            pendingLanguages: true,
             pending: false,
             pristine: false,
             showGalleryImage: true,
@@ -84,13 +79,8 @@ export default class UserEdit extends React.PureComponent {
                 organization: [requiredCondition],
                 displayPicture: [],
                 language: [],
-                // fallbackLanguage: [],
             },
         };
-    }
-
-    componentDidMount() {
-        this.startRequestForLanguages();
     }
 
     componentWillUnmount() {
@@ -99,9 +89,6 @@ export default class UserEdit extends React.PureComponent {
         }
         if (this.userImageUploader) {
             this.userImageUploader.stop();
-        }
-        if (this.languagesRequest) {
-            this.languagesRequest.stop();
         }
     }
 
@@ -116,18 +103,6 @@ export default class UserEdit extends React.PureComponent {
         });
         this.userPatchRequest = userPatchRequest.create(userId, values);
         this.userPatchRequest.start();
-    }
-
-    startRequestForLanguages = () => {
-        if (this.languagesRequest) {
-            this.languagesRequest.stop();
-        }
-        const request = new LanguagesGetRequest({
-            setState: v => this.setState(v),
-            setAvailableLanguages: v => this.props.setAvailableLanguages(v),
-        });
-        this.languagesRequest = request.create();
-        this.languagesRequest.start();
     }
 
     startRequestForUserImageUpload = (file) => {
@@ -168,9 +143,9 @@ export default class UserEdit extends React.PureComponent {
     handleImageInputChange = (files, { invalidFiles }) => {
         if (invalidFiles > 0) {
             notify.send({
-                title: _ts('notification', 'fileSelection'),
+                title: _ts('userProfile', 'fileSelection'),
                 type: notify.type.WARNING,
-                message: _ts('notification', 'invalidFileSelection'),
+                message: _ts('userProfile', 'invalidFileSelection'),
                 duration: notify.duration.SLOW,
             });
         }
@@ -198,10 +173,8 @@ export default class UserEdit extends React.PureComponent {
             faramErrors,
             pristine,
             showGalleryImage,
-            pendingLanguages,
-            pending: pendingRest,
+            pending,
         } = this.state;
-        const pending = pendingLanguages || pendingRest;
 
         const { availableLanguages } = this.props;
 
@@ -235,54 +208,40 @@ export default class UserEdit extends React.PureComponent {
                     accept="image/png, image/jpeg, image/fig, image/gif"
                 />
                 <TextInput
-                    label={_ts('user', 'firstNameLabel')}
+                    label={_ts('userProfile', 'firstNameLabel')}
                     faramElementName="firstName"
-                    placeholder={_ts('user', 'firstNamePlaceholder')}
+                    placeholder={_ts('userProfile', 'firstNamePlaceholder')}
                     autoFocus
                 />
                 <TextInput
-                    label={_ts('user', 'lastNameLabel')}
+                    label={_ts('userProfile', 'lastNameLabel')}
                     faramElementName="lastName"
-                    placeholder={_ts('user', 'lastNamePlaceholder')}
+                    placeholder={_ts('userProfile', 'lastNamePlaceholder')}
                 />
                 <TextInput
-                    label={_ts('user', 'organizationLabel')}
+                    label={_ts('userProfile', 'organizationLabel')}
                     faramElementName="organization"
-                    placeholder={_ts('user', 'organizationPlaceholder')}
+                    placeholder={_ts('userProfile', 'organizationPlaceholder')}
                 />
-                { !pendingLanguages &&
-                    <SelectInput
-                        faramElementName="language"
-                        keySelector={UserEdit.keySelector}
-                        labelSelector={UserEdit.labelSelector}
-                        options={availableLanguages}
-                        // FIXME: Use strings
-                        label="Language"
-                        // FIXME: Use strings
-                        placeholder="Default"
-                    />
-                    /*
-                    <SelectInput
-                        faramElementName="fallbackLanguage"
-                        keySelector={UserEdit.keySelector}
-                        labelSelector={UserEdit.labelSelector}
-                        options={availableLanguages}
-                        // FIXME: Use strings
-                        label="Fallback Language"
-                        // FIXME: Use strings
-                        placeholder="Default"
-                    />
-                    */
-                }
+                <SelectInput
+                    faramElementName="language"
+                    keySelector={UserEdit.keySelector}
+                    labelSelector={UserEdit.labelSelector}
+                    options={availableLanguages}
+                    // FIXME: Use strings
+                    label="Language"
+                    // FIXME: Use strings
+                    placeholder="Default"
+                />
                 <div className={styles.actionButtons}>
                     <DangerButton onClick={this.handleFaramClose}>
-                        {_ts('user', 'modalCancel')}
+                        {_ts('userProfile', 'modalCancel')}
                     </DangerButton>
                     <PrimaryButton
                         disabled={pending || !pristine}
                         type="submit"
                     >
-                        {_ts('user', 'modalSave')}
+                        {_ts('userProfile', 'modalSave')}
                     </PrimaryButton>
                 </div>
             </Faram>

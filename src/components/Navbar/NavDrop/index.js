@@ -130,7 +130,7 @@ export default class Navdrop extends React.PureComponent {
         const userName = (
             userInformation.displayName ||
             activeUser.displayName ||
-            _ts('common', 'anonymousLabel')
+            _ts('components.navbar', 'anonymousLabel')
         );
 
         return (
@@ -161,7 +161,7 @@ export default class Navdrop extends React.PureComponent {
                                     target="_blank"
                                 >
                                     <span className={`${styles.icon} ${iconNames.locked}`} />
-                                    {_ts('common', 'adminPanelLabel')}
+                                    {_ts('components.navbar', 'adminPanelLabel')}
                                 </a>
                             )
                         }
@@ -187,7 +187,7 @@ export default class Navdrop extends React.PureComponent {
                                     onClick={this.handleLogoutButtonClick}
                                 >
                                     <span className={`${styles.icon} ${iconNames.logout}`} />
-                                    {_ts('common', 'logoutLabel')}
+                                    {_ts('components.navbar', 'logoutLabel')}
                                 </button>
                             </DropdownGroup>
                         )

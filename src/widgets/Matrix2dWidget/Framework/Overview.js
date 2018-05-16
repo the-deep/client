@@ -484,8 +484,8 @@ export default class Matrix2dOverview extends React.PureComponent {
 
     renderDimensionTypes = () => {
         const dimensionTypes = [
-            _ts('af', 'dimensionXLabel'),
-            _ts('af', 'dimensionYLabel'),
+            _ts('framework.matrix2dWidget', 'dimensionXLabel'),
+            _ts('framework.matrix2dWidget', 'dimensionYLabel'),
         ];
 
         return (
@@ -505,7 +505,7 @@ export default class Matrix2dOverview extends React.PureComponent {
             classNames.push(styles.active);
         }
 
-        const untitled = _ts('af', 'untitledDimensionTitle');
+        const untitled = _ts('framework.matrix2dWidget', 'untitledDimensionTitle');
 
         return (
             <button
@@ -575,14 +575,14 @@ export default class Matrix2dOverview extends React.PureComponent {
         >
             <div className={styles.inputs}>
                 <TextInput
-                    label={_ts('af', 'title')}
+                    label={_ts('framework.matrix2dWidget', 'title')}
                     value={data.title}
                     showHintAndError={false}
                     onChange={(value) => { this.handleSubdimensionInputValueChange(i, 'title', value); }}
                     autoFocus
                 />
                 <TextInput
-                    label={_ts('af', 'tooltip')}
+                    label={_ts('framework.matrix2dWidget', 'tooltip')}
                     value={data.tooltip}
                     showHintAndError={false}
                     onChange={(value) => { this.handleSubdimensionInputValueChange(i, 'tooltip', value); }}
@@ -612,7 +612,7 @@ export default class Matrix2dOverview extends React.PureComponent {
         if (!dimension) {
             return (
                 <div className={styles.empty}>
-                    { _ts('af', 'empty') }
+                    { _ts('framework.matrix2dWidget', 'empty') }
                 </div>
             );
         }
@@ -623,11 +623,11 @@ export default class Matrix2dOverview extends React.PureComponent {
         const showColorConditions = [false, true];
         const showColorInput = showColorConditions[activeDimensionTypeIndex];
 
-        const titleInputLabel = _ts('af', 'title');
-        const tooltipInputLabel = _ts('af', 'tooltip');
-        const colorInputLabel = _ts('af', 'color');
-        const subdimensionsTitle = _ts('af', 'subdimensions');
-        const addSubdimensionButtonTitle = _ts('af', 'addSubdimensionButtonTitle');
+        const titleInputLabel = _ts('framework.matrix2dWidget', 'title');
+        const tooltipInputLabel = _ts('framework.matrix2dWidget', 'tooltip');
+        const colorInputLabel = _ts('framework.matrix2dWidget', 'color');
+        const subdimensionsTitle = _ts('framework.matrix2dWidget', 'subdimensions');
+        const addSubdimensionButtonTitle = _ts('framework.matrix2dWidget', 'addSubdimensionButtonTitle');
 
         return (
             <div className={styles.dimensionDetail}>
@@ -705,11 +705,11 @@ export default class Matrix2dOverview extends React.PureComponent {
         const DimensionList = this.renderDimensionList;
         const DimensionDetail = this.renderDimensionDetail;
 
-        const editModalTitle = _ts('af', 'editModalTitle');
-        const addDimensionButtonTitle = _ts('af', 'addDimensionButtonTitle');
-        const titleInputLabel = _ts('af', 'title');
-        const cancelButtonTitle = _ts('af', 'cancelButtonTitle');
-        const saveButtonTitle = _ts('af', 'saveButtonTitle');
+        const editModalTitle = _ts('framework.matrix2dWidget', 'editModalTitle');
+        const addDimensionButtonTitle = _ts('framework.matrix2dWidget', 'addDimensionButtonTitle');
+        const titleInputLabel = _ts('framework.matrix2dWidget', 'title');
+        const cancelButtonTitle = _ts('framework.matrix2dWidget', 'cancelButtonTitle');
+        const saveButtonTitle = _ts('framework.matrix2dWidget', 'saveButtonTitle');
 
         return (
             <Modal className={styles.overviewEditModal}>

@@ -128,9 +128,9 @@ export default class AddRegion extends React.PureComponent {
                         });
                     }
                     notify.send({
-                        title: _ts('notification', 'countryCreate'),
+                        title: _ts('components.addRegion', 'countryCreate'),
                         type: notify.type.SUCCESS,
-                        message: _ts('notification', 'countryCreateSuccess'),
+                        message: _ts('components.addRegion', 'countryCreateSuccess'),
                         duration: notify.duration.MEDIUM,
                     });
                 } catch (er) {
@@ -139,9 +139,9 @@ export default class AddRegion extends React.PureComponent {
             })
             .failure((response) => {
                 notify.send({
-                    title: _ts('notification', 'countryCreate'),
+                    title: _ts('components.addRegion', 'countryCreate'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'countryCreateFailure'),
+                    message: _ts('components.addRegion', 'countryCreateFailure'),
                     duration: notify.duration.MEDIUM,
                 });
                 const faramErrors = alterResponseErrorToFaramError(response.errors);
@@ -149,9 +149,9 @@ export default class AddRegion extends React.PureComponent {
             })
             .fatal(() => {
                 notify.send({
-                    title: _ts('notification', 'countryCreate'),
+                    title: _ts('components.addRegion', 'countryCreate'),
                     type: notify.type.ERROR,
-                    message: _ts('notification', 'countryCreateFatal'),
+                    message: _ts('components.addRegion', 'countryCreateFatal'),
                     duration: notify.duration.SLOW,
                 });
                 this.setState({
@@ -223,25 +223,25 @@ export default class AddRegion extends React.PureComponent {
                 { pending && <LoadingAnimation /> }
                 <NonFieldErrors faramElement />
                 <TextInput
-                    label={_ts('project', 'addRegionTitleLabel')}
+                    label={_ts('components.addRegion', 'addRegionTitleLabel')}
                     faramElementName="title"
-                    placeholder={_ts('project', 'addRegionTitlePlaceholder')}
+                    placeholder={_ts('components.addRegion', 'addRegionTitlePlaceholder')}
                     autoFocus
                 />
                 <TextInput
-                    label={_ts('project', 'addRegionCodeLabel')}
+                    label={_ts('components.addRegion', 'addRegionCodeLabel')}
                     faramElementName="code"
-                    placeholder={_ts('project', 'addRegionCodePlaceholder')}
+                    placeholder={_ts('components.addRegion', 'addRegionCodePlaceholder')}
                 />
                 <div className={styles.actionButtons}>
                     <DangerButton onClick={this.props.onModalClose}>
-                        {_ts('countries', 'cancelButtonLabel')}
+                        {_ts('components.addRegion', 'cancelButtonLabel')}
                     </DangerButton>
                     <PrimaryButton
                         type="submit"
                         disabled={pending || !pristine}
                     >
-                        {_ts('countries', 'addRegionButtonLabel')}
+                        {_ts('components.addRegion', 'addRegionButtonLabel')}
                     </PrimaryButton>
                 </div>
             </Faram>

@@ -52,7 +52,7 @@ export default class EntriesListing extends React.PureComponent {
                 <img
                     className={styles.image}
                     src={values.image}
-                    alt={_ts('entry', 'altLabel')}
+                    alt={_ts('editEntry', 'altLabel')}
                 />
             );
         }
@@ -107,7 +107,7 @@ export default class EntriesListing extends React.PureComponent {
                             className={styles.removeButton}
                             onClick={() => onEntryDelete(false, key)}
                             iconName={iconNames.undo}
-                            title={_ts('entry', 'removeEntryButtonTitle')}
+                            title={_ts('editEntry', 'removeEntryButtonTitle')}
                         />
                     ) : (
                         <DangerButton
@@ -115,7 +115,7 @@ export default class EntriesListing extends React.PureComponent {
                             className={styles.removeButton}
                             onClick={() => onEntryDelete(true, key)}
                             iconName={iconNames.delete}
-                            title={_ts('entry', 'undoRemoveEntryButtonTitle')}
+                            title={_ts('editEntry', 'undoRemoveEntryButtonTitle')}
                         />
                     )
                 }

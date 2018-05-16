@@ -160,14 +160,14 @@ export default class DocumentSelect extends React.PureComponent {
                         className={styles.button}
                         onClick={this.handleSelectFromGallery}
                     >
-                        {_ts('ce', 'selectFromGalleryButtonLabel')}
+                        {_ts('categoryEditor', 'selectFromGalleryButtonLabel')}
                     </Button>
                     <PrimaryButton
                         className={styles.button}
                         onClick={this.handleApply}
                         disabled={pending || !pristine}
                     >
-                        {_ts('ce', 'applyButtonLabel')}
+                        {_ts('categoryEditor', 'applyButtonLabel')}
                     </PrimaryButton>
                 </div>
                 <DeepGalleryFileSelect

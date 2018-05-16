@@ -28,7 +28,7 @@ export default class UserProjectsGetRequest {
 
     failure = (response) => {
         notify.send({
-            title: _ts('notification', 'projectsTitle'),
+            title: _ts('connector', 'projectsTitle'),
             type: notify.type.ERROR,
             message: response.error,
             duration: notify.duration.MEDIUM,
@@ -37,9 +37,9 @@ export default class UserProjectsGetRequest {
 
     fatal = () => {
         notify.send({
-            title: _ts('notification', 'projectsTitle'),
+            title: _ts('connector', 'projectsTitle'),
             type: notify.type.ERROR,
-            message: _ts('notification', 'projectsGetFailure'),
+            message: _ts('connector', 'projectsGetFailure'),
             duration: notify.duration.MEDIUM,
         });
     }

@@ -84,8 +84,8 @@ export default class LeadRequest {
                 }
                 notify.send({
                     type: notify.type.WARNING,
-                    title: _ts('notification', 'entryUpdate'),
-                    message: _ts('notification', 'entryUpdateOverridden'),
+                    title: _ts('editEntry', 'entryUpdate'),
+                    message: _ts('editEntry', 'entryUpdateOverridden'),
                     duration: notify.duration.SLOW,
                 });
 

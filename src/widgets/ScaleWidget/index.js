@@ -4,7 +4,7 @@ import { ViewListWidget } from './View';
 
 const scaleWidget = {
     id: 'scaleWidget',
-    // NOTE: used as _ts('af', 'scaleWidgetLabel')
+    // NOTE: used as _ts('widgetTitle', 'scaleWidgetLabel')
     title: 'scaleWidgetLabel',
     analysisFramework: {
         listComponent: FrameworkListWidget,

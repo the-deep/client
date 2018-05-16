@@ -109,7 +109,7 @@ export default class AddLeadGroup extends React.PureComponent {
 
         return (
             <Modal>
-                <ModalHeader title={_ts('addLeads', 'addLeadGroupModalTitle')} />
+                <ModalHeader title={_ts('addLeads.addLeadGroup', 'addLeadGroupModalTitle')} />
                 <ModalBody>
                     {pending && <LoadingAnimation />}
                     <Faram
@@ -124,20 +124,20 @@ export default class AddLeadGroup extends React.PureComponent {
                     >
                         <NonFieldErrors faramElement />
                         <TextInput
-                            label={_ts('addLeads', 'addLeadGroupTitleLabel')}
+                            label={_ts('addLeads.addLeadGroup', 'addLeadGroupTitleLabel')}
                             faramElementName="title"
-                            placeholder={_ts('addLeads', 'addLeadGroupTitlePlaceholder')}
+                            placeholder={_ts('addLeads.addLeadGroup', 'addLeadGroupTitlePlaceholder')}
                             autoFocus
                         />
                         <div className={styles.actionButtons}>
                             <DangerButton onClick={this.props.onModalClose}>
-                                {_ts('addLeads', 'modalCancelLabel')}
+                                {_ts('addLeads.addLeadGroup', 'modalCancelLabel')}
                             </DangerButton>
                             <PrimaryButton
                                 disabled={pending || !pristine}
                                 type="submit"
                             >
-                                {_ts('addLeads', 'modalAddLabel')}
+                                {_ts('addLeads.addLeadGroup', 'modalAddLabel')}
                             </PrimaryButton>
                         </div>
                     </Faram>

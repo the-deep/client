@@ -89,14 +89,14 @@ export default class Arys extends React.PureComponent {
         this.headers = [
             {
                 key: 'lead__title',
-                label: _ts('arys', 'titleLabel'),
+                label: _ts('assessments', 'titleLabel'),
                 order: 1,
                 sortable: true,
                 modifier: row => row.leadTitle,
             },
             {
                 key: 'created_at',
-                label: _ts('arys', 'createdAt'),
+                label: _ts('assessments', 'createdAt'),
                 order: 2,
                 sortable: true,
                 modifier: row => (
@@ -108,7 +108,7 @@ export default class Arys extends React.PureComponent {
             },
             {
                 key: 'created_by',
-                label: _ts('arys', 'createdByFilterLabel'),
+                label: _ts('assessments', 'createdByFilterLabel'),
                 order: 3,
                 sortable: true,
                 modifier: row => (
@@ -122,7 +122,7 @@ export default class Arys extends React.PureComponent {
             },
             {
                 key: 'actions',
-                label: _ts('arys', 'tableHeaderActions'),
+                label: _ts('assessments', 'tableHeaderActions'),
                 order: 4,
                 sortable: false,
                 modifier: row => (
@@ -349,7 +349,7 @@ export default class Arys extends React.PureComponent {
                     onClose={this.handleDeleteModalClose}
                 >
                     <p>
-                        {_ts('arys', 'aryDeleteConfirmText')}
+                        {_ts('assessments', 'aryDeleteConfirmText')}
                     </p>
                 </Confirm>
             </div>

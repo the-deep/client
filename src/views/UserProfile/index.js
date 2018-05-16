@@ -134,7 +134,7 @@ export default class UserProfile extends React.PureComponent {
             return (
                 <div className={styles.userProfile}>
                     <div className={styles.userDetailAlt}>
-                        {_ts('user', 'userNotFound')}
+                        {_ts('userProfile', 'userNotFound')}
                     </div>
                 </div>
             );
@@ -149,7 +149,7 @@ export default class UserProfile extends React.PureComponent {
                     {/* FIXME: add a default image in img */}
                     <InternalGallery
                         galleryId={userInformation.displayPicture}
-                        notFoundMessage={_ts('user', 'userImageNotFound')}
+                        notFoundMessage={_ts('userProfile', 'userImageNotFound')}
                         className={styles.displayPicture}
                     />
                     <div className={styles.detail}>
@@ -178,7 +178,7 @@ export default class UserProfile extends React.PureComponent {
                                     className={styles.userProfileEditModal}
                                 >
                                     <ModalHeader
-                                        title={_ts('user', 'editProfileModalHeader')}
+                                        title={_ts('userProfile', 'editProfileModalHeader')}
                                         rightComponent={
                                             <PrimaryButton
                                                 onClick={this.handleEditProfileClose}

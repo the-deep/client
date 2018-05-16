@@ -132,22 +132,22 @@ export default class Methodology extends React.PureComponent {
             pending,
         } = this.props;
 
-        const focusesTitle = _ts('assessmentMethodology', 'focusesTitle');
-        const sectorsTitle = _ts('assessmentMethodology', 'sectorsTitle');
-        const affectedGroupsTitle = _ts('assessmentMethodology', 'affectedGroupsTitle');
-        const locationsTitle = _ts('assessmentMethodology', 'locationsTitle');
-        const methodologyContentTitle = _ts('assessmentMethodology', 'methodologyContentTitle');
-        const attributesTitle = _ts('assessmentMethodology', 'attributesTitle');
+        const focusesTitle = _ts('editAssessment.methodology', 'focusesTitle');
+        const sectorsTitle = _ts('editAssessment.methodology', 'sectorsTitle');
+        const affectedGroupsTitle = _ts('editAssessment.methodology', 'affectedGroupsTitle');
+        const locationsTitle = _ts('editAssessment.methodology', 'locationsTitle');
+        const methodologyContentTitle = _ts('editAssessment.methodology', 'methodologyContentTitle');
+        const attributesTitle = _ts('editAssessment.methodology', 'attributesTitle');
 
-        const objectivesTitle = _ts('assessmentMethodology', 'objectivesTitle');
-        const dataCollectionTechniquesTitle = _ts('assessmentMethodology', 'dataCollectionTechniquesTitle');
-        const samplingTitle = _ts('assessmentMethodology', 'samplingTitle');
-        const limitationsTitle = _ts('assessmentMethodology', 'limitationsTitle');
+        const objectivesTitle = _ts('editAssessment.methodology', 'objectivesTitle');
+        const dataCollectionTechniquesTitle = _ts('editAssessment.methodology', 'dataCollectionTechniquesTitle');
+        const samplingTitle = _ts('editAssessment.methodology', 'samplingTitle');
+        const limitationsTitle = _ts('editAssessment.methodology', 'limitationsTitle');
 
-        const objectivesPlaceholder = _ts('assessmentMethodology', 'objectivesPlaceholder');
-        const dataCollectionTechniquesPlaceholder = _ts('assessmentMethodology', 'dataCollectionTechniquesPlaceholder');
-        const samplingPlaceholder = _ts('assessmentMethodology', 'samplingPlaceholder');
-        const limitationsPlaceholder = _ts('assessmentMethodology', 'limitationsPlaceholder');
+        const objectivesPlaceholder = _ts('editAssessment.methodology', 'objectivesPlaceholder');
+        const dataCollectionTechniquesPlaceholder = _ts('editAssessment.methodology', 'dataCollectionTechniquesPlaceholder');
+        const samplingPlaceholder = _ts('editAssessment.methodology', 'samplingPlaceholder');
+        const limitationsPlaceholder = _ts('editAssessment.methodology', 'limitationsPlaceholder');
 
         const attributesTemplateKeys = Object.keys(attributesTemplate);
 

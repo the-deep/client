@@ -31,9 +31,9 @@ export default class UsersGetRequest {
     failure = (response) => {
         console.warn('FAILURE:', response);
         notify.send({
-            title: _ts('notification', 'userMembershipCreate'),
+            title: _ts('userGroup', 'userMembershipCreate'),
             type: notify.type.ERROR,
-            message: _ts('notification', 'usersPullFailure'),
+            message: _ts('userGroup', 'usersPullFailure'),
             duration: notify.duration.MEDIUM,
         });
     }
@@ -41,9 +41,9 @@ export default class UsersGetRequest {
     fatal = (response) => {
         console.warn('FATAL:', response);
         notify.send({
-            title: _ts('notification', 'userMembershipCreate'),
+            title: _ts('userGroup', 'userMembershipCreate'),
             type: notify.type.ERROR,
-            message: _ts('notification', 'usersPullFailure'),
+            message: _ts('userGroup', 'usersPullFailure'),
             duration: notify.duration.SLOW,
         });
     }

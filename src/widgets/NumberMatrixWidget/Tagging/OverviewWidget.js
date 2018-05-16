@@ -108,7 +108,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                 key={`${rowKey}-${key}`}
             >
                 <NumberInput
-                    placeholder={_ts('af', 'numberPlaceholder')}
+                    placeholder={_ts('framework.numberMatrixWidget', 'numberPlaceholder')}
                     showLabel={false}
                     onChange={newValue => this.onChangeNumberField(rowKey, key, newValue)}
                     value={value}

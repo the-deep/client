@@ -36,7 +36,7 @@ export default class GalleryImage extends React.PureComponent {
                 {
                     imageUrl ? (
                         <img
-                            alt={_ts('common', 'altUser')}
+                            alt={_ts('components.galleryImage', 'altUser')}
                             className={`image ${styles.image}`}
                             src={imageUrl}
                         />

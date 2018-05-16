@@ -22,9 +22,9 @@ export default class ProjectDeleteRequest {
                 userId,
             });
             notify.send({
-                title: _ts('notification', 'userProjectDelete'),
+                title: _ts('userGroup', 'userProjectDelete'),
                 type: notify.type.SUCCESS,
-                message: _ts('notification', 'userProjectDeleteSuccess'),
+                message: _ts('userGroup', 'userProjectDeleteSuccess'),
                 duration: notify.duration.MEDIUM,
             });
             this.props.setState({ showDeleteProjectModal: false });
@@ -36,9 +36,9 @@ export default class ProjectDeleteRequest {
     failure = (response) => {
         console.warn('FAILURE:', response);
         notify.send({
-            title: _ts('notification', 'userProjectDelete'),
+            title: _ts('userGroup', 'userProjectDelete'),
             type: notify.type.ERROR,
-            message: _ts('notification', 'userProjectDeleteFailure'),
+            message: _ts('userGroup', 'userProjectDeleteFailure'),
             duration: notify.duration.MEDIUM,
         });
     }
@@ -46,9 +46,9 @@ export default class ProjectDeleteRequest {
     fatal = (response) => {
         console.warn('FATAL:', response);
         notify.send({
-            title: _ts('notification', 'userProjectDelete'),
+            title: _ts('userGroup', 'userProjectDelete'),
             type: notify.type.ERROR,
-            message: _ts('notification', 'userProjectDeleteFailure'),
+            message: _ts('userGroup', 'userProjectDeleteFailure'),
             duration: notify.duration.SLOW,
         });
     }

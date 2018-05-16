@@ -36,9 +36,9 @@ export default class ConnectorPatchRequest {
                 connectorId: formattedConnector.id,
             });
             notify.send({
-                title: _ts('notification', 'connectorTitle'),
+                title: _ts('connector', 'connectorTitle'),
                 type: notify.type.SUCCESS,
-                message: _ts('notification', 'connectorPatchSuccess'),
+                message: _ts('connector', 'connectorPatchSuccess'),
                 duration: notify.duration.MEDIUM,
             });
         } catch (er) {

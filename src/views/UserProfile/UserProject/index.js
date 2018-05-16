@@ -94,14 +94,14 @@ export default class UserProject extends React.PureComponent {
         this.projectTableHeaders = [
             {
                 key: 'title',
-                label: _ts('user', 'tableHeaderTitle'),
+                label: _ts('userProfile', 'tableHeaderTitle'),
                 order: 1,
                 sortable: true,
                 comparator: (a, b) => compareString(a.title, b.title),
             },
             {
                 key: 'rights',
-                label: _ts('user', 'tableHeaderRights'),
+                label: _ts('userProfile', 'tableHeaderRights'),
                 order: 2,
                 sortable: true,
                 comparator: (a, b) => compareString(a.role, b.role),
@@ -109,7 +109,7 @@ export default class UserProject extends React.PureComponent {
             },
             {
                 key: 'createdAt',
-                label: _ts('user', 'tableHeaderCreatedAt'),
+                label: _ts('userProfile', 'tableHeaderCreatedAt'),
                 order: 3,
                 sortable: true,
                 comparator: (a, b) => compareDate(a.createdAt, b.createdAt),
@@ -122,7 +122,7 @@ export default class UserProject extends React.PureComponent {
             },
             {
                 key: 'modifiedAt',
-                label: _ts('user', 'tableHeaderLastModifiedAt'),
+                label: _ts('userProfile', 'tableHeaderLastModifiedAt'),
                 order: 4,
                 sortable: true,
                 comparator: (a, b) => compareDate(a.modifiedAt, b.modifiedAt),
@@ -135,13 +135,13 @@ export default class UserProject extends React.PureComponent {
             },
             {
                 key: 'status',
-                label: _ts('user', 'tableHeaderStatus'),
+                label: _ts('userProfile', 'tableHeaderStatus'),
                 order: 5,
                 modifier: () => 'Active', // NOTE: Show 'Active' for now
             },
             {
                 key: 'members',
-                label: _ts('user', 'tableHeaderMembers'),
+                label: _ts('userProfile', 'tableHeaderMembers'),
                 order: 6,
                 sortable: true,
                 comparator: (a, b) => compareLength(a.memberships, b.memberships),
@@ -149,7 +149,7 @@ export default class UserProject extends React.PureComponent {
             },
             {
                 key: 'actions',
-                label: _ts('user', 'tableHeaderActions'),
+                label: _ts('userProfile', 'tableHeaderActions'),
                 order: 7,
                 modifier: (d) => {
                     const { activeUser } = this.props;
@@ -159,7 +159,7 @@ export default class UserProject extends React.PureComponent {
                     if (!activeUserMembership || activeUserMembership.role !== 'admin') {
                         return (
                             <Link
-                                title={_ts('user', 'viewProjectLinkTitle')}
+                                title={_ts('userProfile', 'viewProjectLinkTitle')}
                                 to={reverseRoute(pathNames.projects, { projectId: d.id })}
                                 className={styles.link}
                             >
@@ -170,7 +170,7 @@ export default class UserProject extends React.PureComponent {
 
                     return ([
                         <Link
-                            title={_ts('user', 'editProjectLinkTitle')}
+                            title={_ts('userProfile', 'editProjectLinkTitle')}
                             key="project-panel"
                             to={reverseRoute(pathNames.projects, { projectId: d.id })}
                             className={styles.link}
@@ -178,7 +178,7 @@ export default class UserProject extends React.PureComponent {
                             <span className={iconNames.edit} />
                         </Link>,
                         <DangerButton
-                            title={_ts('user', 'deleteProjectLinkTitle')}
+                            title={_ts('userProfile', 'deleteProjectLinkTitle')}
                             key="delete"
                             onClick={() => this.handleDeleteProjectClick(d)}
                             iconName={iconNames.delete}
@@ -246,7 +246,7 @@ export default class UserProject extends React.PureComponent {
 
     // Delete Click
     handleDeleteProjectClick = (project) => {
-        const confirmText = _ts('user', 'confirmTextDeleteProject', {
+        const confirmText = _ts('userProfile', 'confirmTextDeleteProject', {
             title: project.title,
         });
 
@@ -289,13 +289,13 @@ export default class UserProject extends React.PureComponent {
                 { deletePending && <LoadingAnimation /> }
                 <div className={styles.header}>
                     <h2>
-                        {_ts('user', 'headerProjects')}
+                        {_ts('userProfile', 'headerProjects')}
                     </h2>
                     {
 
                         isCurrentUser && (
                             <PrimaryButton onClick={this.handleAddProjectClick} >
-                                {_ts('user', 'addProjectButtonLabel')}
+                                {_ts('userProfile', 'addProjectButtonLabel')}
                             </PrimaryButton>
                         )
                     }
@@ -306,7 +306,7 @@ export default class UserProject extends React.PureComponent {
                         onClose={this.handleAddProjectClose}
                     >
                         <ModalHeader
-                            title={_ts('user', 'addProjectButtonLabel')}
+                            title={_ts('userProfile', 'addProjectButtonLabel')}
                             rightComponent={
                                 <PrimaryButton
                                     onClick={this.handleAddProjectClose}

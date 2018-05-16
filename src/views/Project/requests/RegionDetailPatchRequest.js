@@ -35,8 +35,8 @@ export default class RegionDetailPatchRequest {
             });
             notify.send({
                 type: notify.type.SUCCESS,
-                title: _ts('notification', 'regionSave'),
-                message: _ts('notification', 'regionSaveSuccess'),
+                title: _ts('project', 'regionSave'),
+                message: _ts('project', 'regionSaveSuccess'),
                 duration: notify.duration.MEDIUM,
             });
         } catch (er) {
