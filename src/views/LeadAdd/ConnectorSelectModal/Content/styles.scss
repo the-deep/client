@@ -15,6 +15,12 @@
         padding: $spacing-extra-small $spacing-small;
 
         .right-container {
+            display: flex;
+
+            .button {
+                font-size: $font-size-large;
+            }
+
             .settings-link {
                 display: block;
                 padding: $spacing-small;
@@ -28,15 +34,19 @@
 
         :global {
             .selected {
-                width: 56px;
+                >div {
+                    padding-top: $spacing-small-alt;
+                    padding-bottom: $spacing-small-alt;
+                }
             }
 
-            .publishedOn {
-                width: 108px;
+            .title {
+                width: 100%;
             }
         }
     }
 
+    .select-all-checkbox,
     .checkbox {
         justify-content: center;
 
@@ -45,10 +55,7 @@
         }
     }
 
-    .green-checkbox {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        color: $color-success;
+    .published-date {
+        white-space: nowrap;
     }
 }

@@ -7,6 +7,7 @@ import LoadingAnimation from '../../../../../src/vendor/react-store/components/V
 import Table from '../../../../vendor/react-store/components/View/Table';
 import FormattedDate from '../../../../vendor/react-store/components/View/FormattedDate';
 import Checkbox from '../../../../vendor/react-store/components/Input/Checkbox';
+import AccentButton from '../../../../vendor/react-store/components/Action/Button/AccentButton';
 import {
     iconNames,
     pathNames,
@@ -22,6 +23,7 @@ const propTypes = {
     setConnectorLeads: PropTypes.func.isRequired,
     leadsUrlMap: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setConnectorLeadSelection: PropTypes.func.isRequired,
+    onSelectAllClick: PropTypes.func.isRequired,
     className: PropTypes.string,
 };
 
@@ -38,22 +40,54 @@ export default class ConnectorContent extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = {
-            connectorLeadsLoading: true,
-        };
+        this.state = { connectorLeadsLoading: true };
 
         this.connectorLeadsHeader = [
             {
                 key: 'selected',
-                label: _ts('addLeads.connectorsSelect', 'selectLabel'),
                 order: 1,
+                labelModifier: () => {
+                    const {
+                        connectorLeads,
+                        leadsUrlMap,
+                    } = this.props;
+
+                    const newLeads = connectorLeads.filter(d => (
+                        !(d.existing || leadsUrlMap[d.url])
+                    ));
+                    const selectedNewLeads = newLeads.filter(d => d.isSelected);
+
+                    const selectAllSelected = (
+                        selectedNewLeads.length !== 0
+                        && newLeads.length === selectedNewLeads.length
+                    );
+
+                    return (
+                        <Checkbox
+                            key="selectAll"
+                            label=""
+                            className={styles.selectAllCheckbox}
+                            value={selectAllSelected}
+                            onChange={() => this.props.onSelectAllClick({
+                                connectorId: this.props.connectorId,
+                                isSelected: !selectAllSelected,
+                            })}
+                        />
+                    );
+                },
+                sortable: false,
                 modifier: (row) => {
                     const { leadsUrlMap } = this.props;
                     if (leadsUrlMap[row.url] || row.existing) {
                         return (
-                            <span
-                                title={_ts('addLeads', 'leadAlreadyAdded')}
-                                className={`${iconNames.check} ${styles.greenCheckbox}`}
+                            <Checkbox
+                                title={_ts('addLeads.connectorsSelect', 'leadAlreadyAdded')}
+                                key="checkbox"
+                                label=""
+                                className={styles.checkbox}
+                                value
+                                disabled
+                                onChange={() => {}}
                             />
                         );
                     }
@@ -84,6 +118,7 @@ export default class ConnectorContent extends React.PureComponent {
                 order: 3,
                 modifier: row => (
                     <FormattedDate
+                        className={styles.publishedDate}
                         date={row.publishedOn}
                         mode="dd-MM-yyyy"
                     />
@@ -116,6 +151,12 @@ export default class ConnectorContent extends React.PureComponent {
         this.requestForConnectorLeads.start();
     }
 
+    handleRefreshButtonClick = () => {
+        if (this.props.connectorId) {
+            this.startConnectorLeadsGetRequest(this.props.connectorId);
+        }
+    }
+
     render() {
         const {
             connectorLeads = [],
@@ -123,13 +164,19 @@ export default class ConnectorContent extends React.PureComponent {
             connectorId,
         } = this.props;
         const { connectorLeadsLoading } = this.state;
-
         const classNames = `${styles.connectorContent} ${className}`;
+
         return (
             <div className={classNames} >
                 { connectorLeadsLoading && <LoadingAnimation large /> }
                 <header className={styles.header} >
                     <div className={styles.rightContainer}>
+                        <AccentButton
+                            iconName={iconNames.refresh}
+                            onClick={this.handleRefreshButtonClick}
+                            className={styles.button}
+                            transparent
+                        />
                         <Link
                             className={styles.settingsLink}
                             target="_blank"
