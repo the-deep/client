@@ -1,5 +1,11 @@
 const initialDevLangState = {
     strings: {
+        // For testing edit
+        98161: 'Apple',
+        98162: 'Ball',
+        98163: 'Mango',
+        98164: 'Orange',
+
         1: 'Owner',
         2: 'Created',
         3: 'Published',
@@ -653,6 +659,13 @@ const initialDevLangState = {
         1136: 'This url is already added.',
     },
     links: {
+        'acorn.fruits': {
+            appleLabel: 98161,
+            ballLabel: 98162,
+            mangoLabel: 98163,
+            orangeLabel: 98164,
+        },
+
         browserExtension: {
             browserExtensionSuccessTitle: 2000,
             browserExtensionSuccessMessage: 2001,
