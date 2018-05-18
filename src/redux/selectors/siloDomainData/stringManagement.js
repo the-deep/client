@@ -7,122 +7,109 @@ import {
 import { unique, mapToList } from '../../../vendor/react-store/utils/common';
 import update from '../../../vendor/react-store/utils/immutable-update';
 
-const patchStrings = (strings, stateStrings) => {
-    const actions = [];
+const emptyObject = {};
+const emptyArray = [];
 
+// Identify valid changes and invalid changes to strings
+const patchStrings = (strings, stateStrings) => {
     const unset = [];
     const set = {};
+    const changes = {};
 
-    // DELETE
-    strings
-        .filter(string => string.action === 'delete')
-        .forEach((stringAction) => {
-            const { id, oldValue } = stringAction;
+    strings.forEach((stringAction, index) => {
+        const { id, oldValue, value, action } = stringAction;
+        switch (action) {
+            case 'delete':
+                if (stateStrings[id] === undefined) {
+                    changes[index] = { message: { $set: 'String does not exist' } };
+                } else if (stateStrings[id] !== oldValue) {
+                    changes[index] = { message: { $set: 'String has changed' } };
+                } else {
+                    unset.push(id);
+                }
+                break;
+            case 'edit':
+                if (stateStrings[id] === undefined) {
+                    changes[index] = { message: { $set: 'String does not exist' } };
+                } else if (stateStrings[id] !== oldValue) {
+                    changes[index] = { message: { $set: 'String has changed' } };
+                } else {
+                    set[id] = { $set: value };
+                }
+                break;
+            case 'add':
+                if (stateStrings[id] !== undefined) {
+                    changes[index] = { message: { $set: 'String already exists' } };
+                } else {
+                    set[id] = { $set: value };
+                }
+                break;
+            default:
+                console.warn(`Patch String: Unrecognized action '${action}'`);
+                break;
+        }
+    });
 
-            if (stateStrings[id] === undefined) {
-                console.warn('FAIL: String Delete: Non-existing string');
-            } else if (stateStrings[id] !== oldValue) {
-                console.warn('FAIL: String Delete: Changed string');
-            } else {
-                unset.push(id);
-            }
-        });
-
-    // EDIT
-    strings
-        .filter(string => string.action === 'edit')
-        .forEach((stringAction) => {
-            const { id, oldValue, value } = stringAction;
-
-            if (stateStrings[id] === undefined) {
-                console.warn('FAIL: String Edit: Non-existing string');
-            } else if (stateStrings[id] !== oldValue) {
-                console.warn('FAIL: String Edit: Changed string');
-            } else {
-                set[id] = { $set: value };
-            }
-        });
-
-    // ADD
-    strings
-        .filter(string => string.action === 'add')
-        .forEach((stringAction) => {
-            const { id, value } = stringAction;
-
-            if (stateStrings[id] !== undefined) {
-                console.warn('FAIL: String Add: Existing string');
-            } else {
-                set[id] = { $set: value };
-            }
-        });
-
+    const actions = [];
     if (unset.length > 0) {
         actions.push({ $unset: unset });
     }
     if (Object.keys(set).length > 0) {
         actions.push(set);
     }
-    return actions;
+    return { actions, changes };
 };
 
+// Identify valid changes and invalid changes to linkCollection
 const patchLinkCollection = (links, stateLinks) => {
-    const actions = [];
-
     const unset = [];
     const set = {};
+    const changes = {};
 
-    // DELETE
-    links
-        .filter(link => link.action === 'delete')
-        .forEach((linkAction) => {
-            const { key, oldString } = linkAction;
+    links.forEach((linkAction, index) => {
+        const { key, string, oldString, action } = linkAction;
+        switch (action) {
+            case 'delete':
+                // TODO: currently link only looks at change in link value
+                // but not on value of strings the link are pointing
+                if (stateLinks === undefined || stateLinks[key] === undefined) {
+                    changes[index] = { message: { $set: 'Link does not exist' } };
+                } else if (stateLinks[key] !== oldString) {
+                    changes[index] = { message: { $set: 'Link has changed' } };
+                } else {
+                    unset.push(key);
+                }
+                break;
+            case 'edit':
+                if (stateLinks === undefined || stateLinks[key] === undefined) {
+                    changes[index] = { message: { $set: 'Link does not exist' } };
+                } else if (stateLinks[key] !== oldString) {
+                    changes[index] = { message: { $set: 'Link has changed' } };
+                } else {
+                    set[key] = { $set: string };
+                }
+                break;
+            case 'add':
+                if (stateLinks !== undefined && stateLinks[key] !== undefined) {
+                    changes[index] = { message: { $set: 'Link already exists' } };
+                } else {
+                    set[key] = { $set: string };
+                }
+                break;
+            default:
+                console.warn(`Patch Link: Unrecognized action '${action}'`);
+                break;
+        }
+    });
 
-            // TODO: currently link only looks at change in link value
-            // but not on value of strings the link are pointing
-            if (stateLinks === undefined || stateLinks[key] === undefined) {
-                console.warn('FAIL: Link Delete: Non-existing link');
-            } else if (stateLinks[key] !== oldString) {
-                console.warn('FAIL: Link Delete: Changed link');
-            } else {
-                unset.push(key);
-            }
-        });
-
-    // EDIT
-    links
-        .filter(link => link.action === 'edit')
-        .forEach((linkAction) => {
-            const { key, oldString, string } = linkAction;
-
-            if (stateLinks === undefined || stateLinks[key] === undefined) {
-                console.warn('FAIL: Link Edit: Non-existing link');
-            } else if (stateLinks[key] !== oldString) {
-                console.warn('FAIL: Link Edit: Changed link');
-            } else {
-                set[key] = { $set: string };
-            }
-        });
-
-    // ADD
-    links
-        .filter(link => link.action === 'add')
-        .forEach((linkAction) => {
-            const { key, string } = linkAction;
-
-            if (stateLinks !== undefined && stateLinks[key] !== undefined) {
-                console.warn('FAIL: Link Add: Existing link');
-            } else {
-                set[key] = { $set: string };
-            }
-        });
-
+    const actions = [];
     if (unset.length > 0) {
         actions.push({ $unset: unset });
     }
     if (Object.keys(set).length > 0) {
         actions.push(set);
     }
-    return actions;
+    return { actions, changes };
 };
 
 // Extract the last part of name, where part is separated by '.'
@@ -137,24 +124,45 @@ const indentName = (name) => {
     return name;
 };
 
-const emptyObject = {};
-const emptyArray = [];
+// Accessor functions
+const getStringRefsInCode = (usageMap, linkCollectionName, stringName) => (
+    (usageMap[linkCollectionName] && usageMap[linkCollectionName][stringName])
+        ? usageMap[linkCollectionName][stringName].length
+        : 0
+);
+const getLinkCollectionFromLinks = (links = {}, linkName) => (
+    links[linkName] || {}
+);
+const getLinkCollectionFromUsageMap = (usageMaps = {}, linkName) => (
+    usageMaps[linkName] || {}
+);
+const getStringNameFromLinkCollection = (linkCollection = {}, linkName) => (
+    linkCollection[linkName]
+);
+const getStringFromStrings = (strings = {}, stringName) => (
+    strings[stringName]
+);
+
+// COMMON SELECTORS
 
 const stringManagementViewSelector = ({ siloDomainData }) => siloDomainData.stringManagementView;
-
-export const selectedLanguageNameSelector = createSelector(
-    stringManagementViewSelector,
-    stringManagementView => stringManagementView.selectedLanguage || '$devLang',
-);
-export const selectedLinkCollectionNameSelector = createSelector(
-    stringManagementViewSelector,
-    stringManagementView => stringManagementView.selectedLinkCollectionName || '$all',
-);
 
 const languageChangesSelector = createSelector(
     stringManagementViewSelector,
     stringManagementView => stringManagementView.languageChanges || emptyObject,
 );
+
+export const selectedLanguageNameSelector = createSelector(
+    stringManagementViewSelector,
+    stringManagementView => stringManagementView.selectedLanguage || '$devLang',
+);
+
+export const selectedLinkCollectionNameSelector = createSelector(
+    stringManagementViewSelector,
+    stringManagementView => stringManagementView.selectedLinkCollectionName || '$all',
+);
+
+// SELECTED LANGUAGE CHANGES
 
 const selectedLanguageChangesSelector = createSelector(
     languageChangesSelector,
@@ -164,37 +172,81 @@ const selectedLanguageChangesSelector = createSelector(
     ),
 );
 
-const selectedLanguageStringsChangesSelector = createSelector(
+const selectedLanguageStringsChangesUnfilteredSelector = createSelector(
     selectedLanguageChangesSelector,
     languageChanges => languageChanges.strings,
 );
-const selectedLanguageLinksChangesSelector = createSelector(
+const selectedLanguageLinksChangesUnfilteredSelector = createSelector(
     selectedLanguageChangesSelector,
     languageChanges => languageChanges.links,
 );
 
-const selectedLanguageSelector = createFooLanguageSelector(selectedLanguageNameSelector);
+// SELECTED LANGUAGE
 
+const selectedLanguageSelector = createFooLanguageSelector(selectedLanguageNameSelector);
 const selectedStringsUnfilteredSelector = createFooStringsSelector(selectedLanguageSelector);
+const selectedLinksUnfilteredSelector = createFooLinksSelector(selectedLanguageSelector);
+
+// Filtered
+
+const selectedLanguageStringsChangesSelector = createSelector(
+    selectedStringsUnfilteredSelector,
+    selectedLanguageStringsChangesUnfilteredSelector,
+    (strings, stringsChanges) => {
+        if (stringsChanges === undefined) {
+            return undefined;
+        }
+        const { changes } = patchStrings(stringsChanges, strings);
+        if (Object.keys(changes).length < 0) {
+            return stringsChanges;
+        }
+        return update(stringsChanges, changes);
+    },
+);
+
+const selectedLanguageLinksChangesSelector = createSelector(
+    selectedLinksUnfilteredSelector,
+    selectedLanguageLinksChangesUnfilteredSelector,
+    (links, linksChanges) => {
+        if (linksChanges === undefined) {
+            return undefined;
+        }
+
+        const linksSetting = {};
+        Object.keys(linksChanges).forEach((linkCollectionName) => {
+            const { changes } = patchLinkCollection(
+                linksChanges[linkCollectionName],
+                links[linkCollectionName],
+            );
+            if (Object.keys(changes).length > 0) {
+                linksSetting[linkCollectionName] = changes;
+            }
+        });
+
+        if (Object.keys(linksSetting).length < 0) {
+            return linksChanges;
+        }
+        return update(linksChanges, linksSetting);
+    },
+);
+
 const selectedStringsSelector = createSelector(
     selectedStringsUnfilteredSelector,
-    selectedLanguageStringsChangesSelector,
+    selectedLanguageStringsChangesUnfilteredSelector,
     (strings, stringsChanges) => {
         if (stringsChanges === undefined) {
             return strings;
         }
-        const actions = patchStrings(stringsChanges, strings);
+        const { actions } = patchStrings(stringsChanges, strings);
         if (actions.length < 0) {
             return strings;
         }
         return update(strings, { $bulk: actions });
     },
 );
-
-const selectedLinksUnfilteredSelector = createFooLinksSelector(selectedLanguageSelector);
 const selectedLinksSelector = createSelector(
     selectedLinksUnfilteredSelector,
-    selectedLanguageLinksChangesSelector,
+    selectedLanguageLinksChangesUnfilteredSelector,
     (links, linksChanges) => {
         if (linksChanges === undefined) {
             return links;
@@ -202,7 +254,7 @@ const selectedLinksSelector = createSelector(
 
         const linksSetting = {};
         Object.keys(linksChanges).forEach((linkCollectionName) => {
-            const actions = patchLinkCollection(
+            const { actions } = patchLinkCollection(
                 linksChanges[linkCollectionName],
                 links[linkCollectionName],
             );
@@ -225,24 +277,7 @@ const selectedLinkCollectionSelector = createSelector(
     (links, linkCollectionName) => links[linkCollectionName] || emptyArray,
 );
 
-// Accessor functions
-const getStringRefsInCode = (usageMap, linkCollectionName, stringName) => (
-    (usageMap[linkCollectionName] && usageMap[linkCollectionName][stringName])
-        ? usageMap[linkCollectionName][stringName].length
-        : 0
-);
-const getLinkCollectionFromLinks = (links = {}, linkName) => (
-    links[linkName] || {}
-);
-const getLinkCollectionFromUsageMap = (usageMaps = {}, linkName) => (
-    usageMaps[linkName] || {}
-);
-const getStringNameFromLinkCollection = (linkCollection = {}, linkName) => (
-    linkCollection[linkName]
-);
-const getStringFromStrings = (strings = {}, stringName) => (
-    strings[stringName]
-);
+// STATS
 
 const usageMapSelector = () => {
     try {
@@ -388,27 +423,21 @@ const problemCollectionsSelector = createSelector(
 
         // Identify strings changes
         newProblems.$all.addStrings.instances = stringsChanges
-            .filter(v => v.action === 'add')
-            .map(v => `${v.id}: ${v.value}`);
+            .filter(v => v.action === 'add');
         newProblems.$all.deleteStrings.instances = stringsChanges
-            .filter(v => v.action === 'delete')
-            .map(v => `${v.id}: ${v.oldValue}`);
+            .filter(v => v.action === 'delete');
         newProblems.$all.editStrings.instances = stringsChanges
-            .filter(v => v.action === 'edit')
-            .map(v => `${v.id}: ${v.oldValue} → ${v.value}`);
+            .filter(v => v.action === 'edit');
 
         // Identify links changes
         Object.keys(linksChanges).forEach((linkCollectionName) => {
             const alias = newProblems[linkCollectionName];
             alias.addLinks.instances = linksChanges[linkCollectionName]
-                .filter(v => v.action === 'add')
-                .map(v => `${v.key}: ${v.string}`);
+                .filter(v => v.action === 'add');
             alias.deleteLinks.instances = linksChanges[linkCollectionName]
-                .filter(v => v.action === 'delete')
-                .map(v => `${v.key}: ${v.oldString}`);
+                .filter(v => v.action === 'delete');
             alias.editLinks.instances = linksChanges[linkCollectionName]
-                .filter(v => v.action === 'edit')
-                .map(v => `${v.key}: ${v.oldString} → ${v.string}`);
+                .filter(v => v.action === 'edit');
         });
 
         // Identify strings not linked by any linkCollection
@@ -431,7 +460,7 @@ const problemCollectionsSelector = createSelector(
 
         Object.keys(stringNameReferenced).forEach((key) => {
             if (!stringNameReferenced[key]) {
-                newProblems.$all.unusedStrings.instances.push(`${key}: ${strings[key]}`);
+                newProblems.$all.unusedStrings.instances.push({ key, value: strings[key] });
             }
         });
 

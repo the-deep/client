@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -36,66 +36,174 @@ export default class InfoPane extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = d => d;
+    // static keyExtractor = d => d;
 
-    renderActions = (type) => {
-        switch (type) {
+    renderProblem = currentProblem => (key, d, i) => {
+        let child = null;
+        switch (currentProblem.title) {
             case 'Unused string':
-            case 'Unused link':
-                return (
-                    <DangerButton
-                        transparent
-                        smallVerticalPadding
-                        iconName={iconNames.delete}
-                        disabled
-                    />
+                child = (
+                    <Fragment>
+                        <span>{d.key}: {d.value}</span>
+                        <DangerButton
+                            transparent
+                            smallVerticalPadding
+                            iconName={iconNames.delete}
+                            disabled
+                        />
+                    </Fragment>
                 );
-            case 'Undefined link':
-                return (
-                    <SuccessButton
-                        transparent
-                        smallVerticalPadding
-                        iconName={iconNames.add}
-                        disabled
-                    />
-                );
-            case 'Bad link':
-                return (
-                    <WarningButton
-                        transparent
-                        smallVerticalPadding
-                        iconName={iconNames.edit}
-                        disabled
-                    />
-                );
-            case 'Added link':
-            case 'Deleted link':
-            case 'Edited link':
-            case 'Added string':
-            case 'Deleted string':
-            case 'Edited string':
-                return (
-                    <DangerButton
-                        transparent
-                        smallVerticalPadding
-                        iconName={iconNames.delete}
-                        disabled
-                    />
-                );
-            default:
-                return null;
-        }
-    }
+                break;
 
-    // FIXME: separate component
-    renderProblem = currentProblem => (key, d) => (
-        <div key={key} className={styles.item}>
-            <span>
-                {d}
-            </span>
-            { this.renderActions(currentProblem.title) }
-        </div>
-    )
+            case 'Unused link':
+                child = (
+                    <Fragment>
+                        <span>{d}</span>
+                        <DangerButton
+                            transparent
+                            smallVerticalPadding
+                            iconName={iconNames.delete}
+                            disabled
+                        />
+                    </Fragment>
+                );
+                break;
+            case 'Undefined link':
+                child = (
+                    <Fragment>
+                        <span>{d}</span>
+                        <SuccessButton
+                            transparent
+                            smallVerticalPadding
+                            iconName={iconNames.add}
+                            disabled
+                        />
+                    </Fragment>
+                );
+                break;
+            case 'Bad link':
+                child = (
+                    <Fragment>
+                        <span>{d}</span>
+                        <WarningButton
+                            transparent
+                            smallVerticalPadding
+                            iconName={iconNames.edit}
+                            disabled
+                        />
+                    </Fragment>
+                );
+                break;
+
+            case 'Added link':
+                child = (
+                    <Fragment>
+                        <span>{d.key}: {d.string}</span>
+                        <DangerButton
+                            transparent
+                            smallVerticalPadding
+                            iconName={iconNames.delete}
+                            disabled
+                        />
+                        { d.message !== undefined &&
+                            <div>{d.message}</div>
+                        }
+                    </Fragment>
+                );
+                break;
+            case 'Deleted link':
+                child = (
+                    <Fragment>
+                        <span>{d.key}: {d.oldString}</span>
+                        <DangerButton
+                            transparent
+                            smallVerticalPadding
+                            iconName={iconNames.delete}
+                            disabled
+                        />
+                        { d.message !== undefined &&
+                            <div>{d.message}</div>
+                        }
+                    </Fragment>
+                );
+                break;
+            case 'Edited link':
+                child = (
+                    <Fragment>
+                        <span>{d.key}: {d.oldString} → {d.string}</span>
+                        <DangerButton
+                            transparent
+                            smallVerticalPadding
+                            iconName={iconNames.delete}
+                            disabled
+                        />
+                        { d.message !== undefined &&
+                            <div>{d.message}</div>
+                        }
+                    </Fragment>
+                );
+                break;
+            case 'Added string':
+                child = (
+                    <Fragment>
+                        <span>{d.id}: {d.value}</span>
+                        <DangerButton
+                            transparent
+                            smallVerticalPadding
+                            iconName={iconNames.delete}
+                            disabled
+                        />
+                        { d.message !== undefined &&
+                            <div>{d.message}</div>
+                        }
+                    </Fragment>
+                );
+                break;
+            case 'Deleted string':
+                child = (
+                    <Fragment>
+                        <span>{d.id}: {d.oldValue}</span>
+                        <DangerButton
+                            transparent
+                            smallVerticalPadding
+                            iconName={iconNames.delete}
+                            disabled
+                        />
+                        { d.message !== undefined &&
+                            <div>{d.message}</div>
+                        }
+                    </Fragment>
+                );
+                break;
+            case 'Edited string':
+                child = (
+                    <Fragment>
+                        <span>{d.id}: {d.oldValue} → {d.value}</span>
+                        <DangerButton
+                            transparent
+                            smallVerticalPadding
+                            iconName={iconNames.delete}
+                            disabled
+                        />
+                        { d.message !== undefined &&
+                            <div>{d.message}</div>
+                        }
+                    </Fragment>
+                );
+                break;
+            default:
+                break;
+        }
+
+        return (
+            <div
+                key={i}
+                className={styles.item}
+            >
+                {child}
+            </div>
+        );
+    }
 
     renderProblemGroup = (k, data) => {
         const { problemCollection } = this.props;
@@ -116,7 +224,7 @@ export default class InfoPane extends React.PureComponent {
                 <ListView
                     className={styles.instances}
                     data={currentProblem.instances}
-                    keyExtractor={InfoPane.keyExtractor}
+                    // keyExtractor={InfoPane.keyExtractor}
                     modifier={this.renderProblem(currentProblem)}
                 />
             </div>
@@ -141,6 +249,7 @@ export default class InfoPane extends React.PureComponent {
         }
 
         const problemKeys = Object.keys(this.props.problemCollection);
+
         return (
             <ListView
                 className={styles.problems}
