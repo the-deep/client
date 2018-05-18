@@ -12,6 +12,7 @@ import {
 
     projectDetailsSelector,
     leadIdFromRouteSelector,
+    // leadGroupIdFromRouteSelector,
     editAryVersionIdSelector,
 } from '../../redux';
 import _ts from '../../ts';
@@ -26,7 +27,8 @@ import RightPanel from './RightPanel';
 import styles from './styles.scss';
 
 const propTypes = {
-    activeLeadId: PropTypes.number.isRequired,
+    activeLeadId: PropTypes.number,
+    // activeLeadGroupId: PropTypes.number,
     activeProject: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 
     setAryTemplate: PropTypes.func.isRequired,
@@ -39,10 +41,14 @@ const propTypes = {
 const defaultProps = {
     activeProject: {},
     editAryVersionId: undefined,
+
+    activeLeadId: undefined,
+    // activeLeadGroupId: undefined,
 };
 
 const mapStateToProps = state => ({
     activeLeadId: leadIdFromRouteSelector(state),
+    // activeLeadGroupId: leadGroupIdFromRouteSelector(state),
     activeProject: projectDetailsSelector(state),
     editAryVersionId: editAryVersionIdSelector(state),
 });
@@ -67,7 +73,6 @@ export default class EditAry extends React.PureComponent {
             pendingAry: true,
             pendingGeo: true,
 
-            pending: true,
             noTemplate: false,
 
             activeSector: undefined,
@@ -213,13 +218,17 @@ export default class EditAry extends React.PureComponent {
                 className={styles.assessments}
                 leftContainerClassName={styles.left}
                 rightContainerClassName={styles.right}
-                leftChild={<LeftPanel
-                    lead={lead}
-                    activeSector={activeSector}
-                />}
-                rightChild={<RightPanel
-                    onActiveSectorChange={this.handleActiveSectorChange}
-                />}
+                leftChild={
+                    <LeftPanel
+                        lead={lead}
+                        activeSector={activeSector}
+                    />
+                }
+                rightChild={
+                    <RightPanel
+                        onActiveSectorChange={this.handleActiveSectorChange}
+                    />
+                }
             />
         );
     }

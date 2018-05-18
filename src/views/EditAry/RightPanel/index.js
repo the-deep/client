@@ -378,7 +378,7 @@ export default class RightPanel extends React.PureComponent {
 
     handleFaramChange = (faramValues, faramErrors, shouldChangePristine) => {
         this.props.changeAry({
-            lead: this.props.activeLeadId,
+            leadId: this.props.activeLeadId,
             faramValues,
             faramErrors,
             shouldChangePristine,
@@ -399,7 +399,7 @@ export default class RightPanel extends React.PureComponent {
 
     handleFaramValidationFailure = (faramErrors) => {
         this.props.setErrorAry({
-            lead: this.props.activeLeadId,
+            leadId: this.props.activeLeadId,
             faramErrors,
         });
     };

@@ -1,10 +1,13 @@
 import { createSelector } from 'reselect';
+import { isFalsy } from '../../vendor/react-store/utils/common';
 
 const emptyObject = {};
 
 export const routeUrlSelector = ({ route }) => (
     route.url
 );
+
+export const propsSelector = (state, props) => props;
 
 export const routeParamsSelector = ({ route }) => (
     route.params || emptyObject
@@ -14,37 +17,23 @@ export const routeStateSelector = ({ route }) => (
     route.routeState || emptyObject
 );
 
-export const afIdFromRouteSelector = createSelector(
+const createRouteSelector = name => createSelector(
+    propsSelector,
     routeParamsSelector,
-    routeParams => routeParams.analysisFrameworkId,
+    (props, routeParams) => {
+        if (!isFalsy(props) && !isFalsy(props[name])) {
+            return props[name];
+        }
+        return routeParams[name];
+    },
 );
 
-export const ceIdFromRouteSelector = createSelector(
-    routeParamsSelector,
-    routeParams => routeParams.categoryEditorId,
-);
-
-export const countryIdFromRouteSelector = createSelector(
-    routeParamsSelector,
-    routeParams => routeParams.countryId,
-);
-export const groupIdFromRouteSelector = createSelector(
-    routeParamsSelector,
-    routeParams => routeParams.userGroupId,
-);
-export const leadIdFromRouteSelector = createSelector(
-    routeParamsSelector,
-    routeParams => routeParams.leadId,
-);
-export const projectIdFromRouteSelector = createSelector(
-    routeParamsSelector,
-    routeParams => routeParams.projectId,
-);
-export const connectorIdFromRouteSelector = createSelector(
-    routeParamsSelector,
-    routeParams => routeParams.connectorId,
-);
-export const userIdFromRouteSelector = createSelector(
-    routeParamsSelector,
-    routeParams => routeParams.userId,
-);
+export const afIdFromRouteSelector = createRouteSelector('analysisFrameworkId');
+export const ceIdFromRouteSelector = createRouteSelector('categoryEditorId');
+export const connectorIdFromRouteSelector = createRouteSelector('connectorId');
+export const countryIdFromRouteSelector = createRouteSelector('countryId');
+export const groupIdFromRouteSelector = createRouteSelector('userGroupId');
+export const leadIdFromRouteSelector = createRouteSelector('leadId');
+export const leadGroupIdFromRouteSelector = createRouteSelector('leadGroupId');
+export const projectIdFromRouteSelector = createRouteSelector('projectId');
+export const userIdFromRouteSelector = createRouteSelector('userId');

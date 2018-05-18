@@ -26,7 +26,7 @@ export default class AryPutRequest {
                 try {
                     schema.validate(response, 'aryPutResponse');
                     this.setAry({
-                        lead: response.lead,
+                        leadId: response.lead,
                         serverId: response.id,
                         versionId: response.versionId,
                         metadata: response.metadata,

@@ -136,6 +136,14 @@ export const routes = {
         links: allLinksWithProjectDisabled,
     }, // _ts('pageTitle', 'editAry');
 
+    editLeadGroupAssessment: {
+        order: 51,
+        type: ROUTE.private,
+        path: '/projects/:projectId/lead-group/:leadGroupId/edit-ary/',
+        loader: () => import('../../views/EditAry'),
+        links: allLinksWithProjectDisabled,
+    }, // _ts('pageTitle', 'editLeadGroupAssessment');
+
     export: {
         order: 60,
         type: ROUTE.private,

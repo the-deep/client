@@ -1,7 +1,16 @@
-import {
-    analyzeErrors,
-} from '../../../vendor/react-store/components/Input/Faram/validator';
+import { analyzeErrors } from '../../../vendor/react-store/components/Input/Faram/validator';
+import { isTruthy } from '../../../vendor/react-store/utils/common';
 import update from '../../../vendor/react-store/utils/immutable-update';
+
+// FIXME: copy this to common place
+const getNamespacedId = (leadId, leadGroupId) => {
+    if (isTruthy(leadGroupId)) {
+        return `lead-group-${leadGroupId}`;
+    } else if (isTruthy(leadId)) {
+        return `lead-${leadId}`;
+    }
+    return undefined;
+};
 
 // TYPE
 
@@ -14,14 +23,18 @@ export const EDIT_ARY__SET_ENTRIES = 'siloDomainData/EDIT_ARY__SET_ENTRIES';
 // ACTION-CREATOR
 
 export const setAryForEditAryAction = ({
-    lead, serverId, versionId,
+    leadId,
+    leadGroupId,
+
+    serverId,
+    versionId,
     metadata,
     methodology,
     summary,
     score,
 }) => ({
     type: EDIT_ARY__SET_ARY,
-    lead,
+    id: getNamespacedId(leadId, leadGroupId),
     serverId,
     versionId,
     metadata,
@@ -30,33 +43,47 @@ export const setAryForEditAryAction = ({
     score,
 });
 
-export const saveAryForEditAryAction = ({ lead }) => ({
+// NOTE: flagged for removal, may not be used
+export const saveAryForEditAryAction = ({ leadId, leadGroupId }) => ({
     type: EDIT_ARY__SAVE_ARY,
-    lead,
+    id: getNamespacedId(leadId, leadGroupId),
 });
 
 export const changeAryForEditAryAction = ({
-    lead, faramValues, faramErrors, shouldChangePristine,
+    leadId,
+    leadGroupId,
+    faramValues,
+    faramErrors,
+    shouldChangePristine,
 }) => ({
     type: EDIT_ARY__CHANGE_ARY,
-    lead,
+    id: getNamespacedId(leadId, leadGroupId),
     faramValues,
     faramErrors,
     shouldChangePristine,
 });
 
 export const setErrorAryForEditAryAction = ({
-    lead, faramErrors,
+    leadId,
+    leadGroupId,
+    faramErrors,
 }) => ({
     type: EDIT_ARY__SET_ERROR_ARY,
-    lead,
+    id: getNamespacedId(leadId, leadGroupId),
     faramErrors,
 });
 
 
-export const setEntriesForEditAryAction = ({ leadId, lead, entries }) => ({
-    type: EDIT_ARY__SET_ENTRIES,
+export const setEntriesForEditAryAction = ({
     leadId,
+    leadGroupId,
+
+    lead,
+    entries,
+}) => ({
+    type: EDIT_ARY__SET_ENTRIES,
+    id: getNamespacedId(leadId, leadGroupId),
+
     lead,
     entries,
 });
@@ -65,7 +92,7 @@ export const setEntriesForEditAryAction = ({ leadId, lead, entries }) => ({
 
 const setAry = (state, action) => {
     const {
-        lead,
+        id,
 
         serverId,
         versionId,
@@ -77,7 +104,7 @@ const setAry = (state, action) => {
 
     const settings = {
         editAry: {
-            [lead]: { $auto: {
+            [id]: { $auto: {
                 serverId: { $set: serverId },
                 versionId: { $set: versionId },
                 hasErrors: { $set: false },
@@ -97,7 +124,7 @@ const setAry = (state, action) => {
 
 const changeAry = (state, action) => {
     const {
-        lead,
+        id,
         faramValues,
         faramErrors,
         shouldChangePristine,
@@ -107,7 +134,7 @@ const changeAry = (state, action) => {
 
     const settings = {
         editAry: {
-            [lead]: { $auto: {
+            [id]: { $auto: {
                 $if: [
                     !shouldChangePristine,
                     { isPristine: { $set: false } },
@@ -123,14 +150,14 @@ const changeAry = (state, action) => {
 
 const setErrorAry = (state, action) => {
     const {
-        lead,
+        id,
         faramErrors,
     } = action;
 
     const hasErrors = analyzeErrors(faramErrors);
     const settings = {
         editAry: {
-            [lead]: { $auto: {
+            [id]: { $auto: {
                 hasErrors: { $set: hasErrors },
                 isPristine: { $set: false },
                 faramErrors: { $set: faramErrors },
@@ -142,11 +169,11 @@ const setErrorAry = (state, action) => {
 
 // FIXME: add new versionId and stuffs here
 const saveAry = (state, action) => {
-    const { lead } = action;
+    const { id } = action;
 
     const settings = {
         editAry: {
-            [lead]: { $auto: {
+            [id]: { $auto: {
                 hasErrors: { $set: false },
                 isPristine: { $set: true },
                 faramErrors: { $set: {} },
@@ -157,10 +184,10 @@ const saveAry = (state, action) => {
 };
 
 const setEntries = (state, action) => {
-    const { leadId, entries, lead } = action;
+    const { id, entries, lead } = action;
     const settings = {
         editAry: {
-            [leadId]: { $auto: {
+            [id]: { $auto: {
                 lead: { $set: lead },
                 entries: { $set: entries },
             } },

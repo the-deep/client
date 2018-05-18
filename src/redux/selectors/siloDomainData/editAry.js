@@ -1,8 +1,22 @@
 import { createSelector } from 'reselect';
-import { leadIdFromRoute } from '../domainData';
+import {
+    leadIdFromRouteSelector,
+    leadGroupIdFromRouteSelector,
+} from '../route';
+import { isTruthy } from '../../../vendor/react-store/utils/common';
 
 const emptyObject = {};
 const emptyList = [];
+
+// FIXME: copy this to common place
+const getNamespacedId = (leadId, leadGroupId) => {
+    if (isTruthy(leadGroupId)) {
+        return `lead-group-${leadGroupId}`;
+    } else if (isTruthy(leadId)) {
+        return `lead-${leadId}`;
+    }
+    return undefined;
+};
 
 // ARY VIEW SELECTORS
 
@@ -12,8 +26,12 @@ const editArySelector = ({ siloDomainData }) => (
 
 const editAryFromRouteSelector = createSelector(
     editArySelector,
-    leadIdFromRoute,
-    (view, id) => view[id] || emptyObject,
+    leadGroupIdFromRouteSelector,
+    leadIdFromRouteSelector,
+    (view, leadGroupId, leadId) => {
+        const id = getNamespacedId(leadId, leadGroupId);
+        return view[id] || emptyObject;
+    },
 );
 
 export const editAryServerIdSelector = createSelector(

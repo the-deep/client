@@ -38,7 +38,7 @@ export default class AryGetRequest {
                     if (shouldSetValue) {
                         this.setAry({
                             serverId: response.id,
-                            lead: response.lead,
+                            leadId: response.lead,
                             versionId: response.versionId,
                             metadata: response.metadata,
                             methodology: response.methodology,
