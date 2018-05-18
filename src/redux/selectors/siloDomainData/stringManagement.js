@@ -174,11 +174,11 @@ const selectedLanguageChangesSelector = createSelector(
 
 const selectedLanguageStringsChangesUnfilteredSelector = createSelector(
     selectedLanguageChangesSelector,
-    languageChanges => languageChanges.strings,
+    languageChanges => languageChanges.strings || emptyArray,
 );
 const selectedLanguageLinksChangesUnfilteredSelector = createSelector(
     selectedLanguageChangesSelector,
-    languageChanges => languageChanges.links,
+    languageChanges => languageChanges.links || emptyObject,
 );
 
 // SELECTED LANGUAGE
@@ -193,9 +193,6 @@ const selectedLanguageStringsChangesSelector = createSelector(
     selectedStringsUnfilteredSelector,
     selectedLanguageStringsChangesUnfilteredSelector,
     (strings, stringsChanges) => {
-        if (stringsChanges === undefined) {
-            return undefined;
-        }
         const { changes } = patchStrings(stringsChanges, strings);
         if (Object.keys(changes).length < 0) {
             return stringsChanges;
@@ -208,10 +205,6 @@ const selectedLanguageLinksChangesSelector = createSelector(
     selectedLinksUnfilteredSelector,
     selectedLanguageLinksChangesUnfilteredSelector,
     (links, linksChanges) => {
-        if (linksChanges === undefined) {
-            return undefined;
-        }
-
         const linksSetting = {};
         Object.keys(linksChanges).forEach((linkCollectionName) => {
             const { changes } = patchLinkCollection(
@@ -234,9 +227,6 @@ const selectedStringsSelector = createSelector(
     selectedStringsUnfilteredSelector,
     selectedLanguageStringsChangesUnfilteredSelector,
     (strings, stringsChanges) => {
-        if (stringsChanges === undefined) {
-            return strings;
-        }
         const { actions } = patchStrings(stringsChanges, strings);
         if (actions.length < 0) {
             return strings;
@@ -248,10 +238,6 @@ const selectedLinksSelector = createSelector(
     selectedLinksUnfilteredSelector,
     selectedLanguageLinksChangesUnfilteredSelector,
     (links, linksChanges) => {
-        if (linksChanges === undefined) {
-            return links;
-        }
-
         const linksSetting = {};
         Object.keys(linksChanges).forEach((linkCollectionName) => {
             const { actions } = patchLinkCollection(

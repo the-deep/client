@@ -1,10 +1,12 @@
 const initialDevLangState = {
     strings: {
+        /*
         // For testing edit
         98161: 'Apple',
         98162: 'Ball',
         98163: 'Mango',
         98164: 'Orange',
+        */
 
         1: 'Owner',
         2: 'Created',
@@ -267,6 +269,7 @@ const initialDevLangState = {
         509: 'Go to Overview',
         511: 'Go to List',
         512: 'Entry',
+        513: 'There was a problem while fetching leads.',
         514: 'Excerpt',
         515: 'Format excerpt',
         517: 'Assisted',
@@ -568,6 +571,28 @@ const initialDevLangState = {
         7000: 'Do you want to mark the lead as pending?',
         8001: 'Do you want to mark the lead as processed?',
         8002: 'Are you sure you want to continue?',
+
+        8050: 'Failed to change lead status.',
+        8051: 'Lead status changed successfully.',
+
+        8060: 'Chord Diagram',
+        8061: 'Collapsible Tree View',
+        8062: 'Correlation Matrix',
+        8063: 'Forced Directed Graph',
+        8064: 'Keyword Correlation',
+        8065: 'Radial Dendogram',
+        8066: 'Sunburst',
+        8067: 'Topic Correlation',
+        8068: 'Topic Modeling',
+        8069: 'Tree Map',
+        8070: 'Show Table',
+        8071: 'No leads found',
+        8072: 'Try with different fitlers',
+        8073: 'Failed to get Keyword Correlation',
+        8074: 'Failed to get NER',
+        8075: 'Failed to get Topic Correlation',
+        8076: 'Failed to get Topic Modeling',
+
         253: 'Under Construction',
 
         1005: 'Edit entries',
@@ -659,12 +684,14 @@ const initialDevLangState = {
         1136: 'This url is already added.',
     },
     links: {
+        /*
         'acorn.fruits': {
             appleLabel: 98161,
             ballLabel: 98162,
             mangoLabel: 98163,
             orangeLabel: 98164,
         },
+        */
 
         browserExtension: {
             browserExtensionSuccessTitle: 2000,
@@ -1274,6 +1301,31 @@ const initialDevLangState = {
             leadConfirmText: 8002,
             leadMarkPendingConfirmText: 7000,
             leadMarkProcessedConfirmText: 8001,
+            leadsGetFailure: 513,
+            leadsPatchFailure: 8050,
+            leadsPatchSuccess: 8051,
+        },
+        leadsViz: {
+            chordDiagram: 8060,
+            collapsibleTreeView: 8061,
+            correlationMatrix: 8062,
+            forcedDirectedGraph: 8063,
+            keywordCorrelation: 8064,
+            radialDendogram: 8065,
+            sunburst: 8066,
+            topicCorrelation: 8067,
+            topicModeling: 8068,
+            treeMap: 8069,
+            showTable: 8070,
+            leads: 641,
+            leadsGetFailure: 513,
+            noLeadsFoundHeader: 8071,
+            noLeadsFoundDescription: 8072,
+            ner: 540,
+            keywordCorrelationGetFailure: 8073,
+            nerGetFailure: 8074,
+            topicCorrelationGetFailure: 8075,
+            topicModelingFailure: 8076,
         },
         addLeads: {
             leadGroupCreateFailure: 1132,

@@ -6,30 +6,41 @@ const initialSiloDomainData = {
         // selectedLanguage: 'np',
         selectedLinkCollectionName: undefined,
         languageChanges: {
+            /*
             $devLang: {
                 strings: [
-                    { action: 'delete', id: 98165 }, // can't delete, non-existing string
-                    { action: 'delete', id: 98164, oldValue: 'Blue Orange' }, // can't delete, has changed
+                    // can't delete, non-existing string
+                    { action: 'delete', id: 98165 },
+                    // can't delete, has changed
+                    { action: 'delete', id: 98164, oldValue: 'Blue Orange' },
                     { action: 'delete', id: 98164, oldValue: 'Orange' },
 
-                    { action: 'edit', id: 98165, value: 'Lemon' }, //  can't edit, non-existing string
-                    { action: 'edit', id: 98163, value: 'Lemon', oldValue: 'Red Mango' }, //  can't edit, has changed
+                    //  can't edit, non-existing string
+                    { action: 'edit', id: 98165, value: 'Lemon' },
+                    //  can't edit, has changed
+                    { action: 'edit', id: 98163, value: 'Lemon', oldValue: 'Red Mango' },
                     { action: 'edit', id: 98163, value: 'Lemon', oldValue: 'Mango' },
 
-                    { action: 'add', id: 98161, value: 'Pineapple' }, // can't add, duplicate id
+                    // can't add, duplicate id
+                    { action: 'add', id: 98161, value: 'Pineapple' },
                     { action: 'add', id: 98165, value: 'Pineapple' },
                 ],
                 links: {
                     'acorn.fruits': [
-                        { action: 'delete', key: 'lemonLabel' }, // can't delete, non-existing link
-                        { action: 'delete', key: 'orangeLabel', oldString: 98163 }, // can't delete, has changed
+                        // can't delete, non-existing link
+                        { action: 'delete', key: 'lemonLabel' },
+                        // can't delete, has changed
+                        { action: 'delete', key: 'orangeLabel', oldString: 98163 },
                         { action: 'delete', key: 'orangeLabel', oldString: 98164 },
 
-                        { action: 'edit', key: 'lemonLabel', string: 98161 }, // can't edit, non-existing link
-                        { action: 'edit', key: 'mangoLabel', string: 98162, oldString: 98164 }, // can't edit, has changed
+                        // can't edit, non-existing link
+                        { action: 'edit', key: 'lemonLabel', string: 98161 },
+                        // can't edit, has changed
+                        { action: 'edit', key: 'mangoLabel', string: 98162, oldString: 98164 },
                         { action: 'edit', key: 'mangoLabel', string: 98162, oldString: 98163 },
 
-                        { action: 'add', key: 'ballLabel', string: 98162 }, // can't add, duplicate id
+                        // can't add, duplicate id
+                        { action: 'add', key: 'ballLabel', string: 98162 },
                         { action: 'add', key: 'pineappleLabel', string: 98161 },
                     ],
                     'acorn.vegetables': [
@@ -37,6 +48,7 @@ const initialSiloDomainData = {
                     ],
                 },
             },
+            */
         },
     },
 
