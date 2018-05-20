@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 
 import MultiViewContainer from '../../../vendor/react-store/components/View/MultiViewContainer';
+import Message from '../../../vendor/react-store/components/View/Message';
 import FixedTabs from '../../../vendor/react-store/components/View/FixedTabs';
 import SelectInput from '../../../vendor/react-store/components/Input/SelectInput';
 import Label from '../../../vendor/react-store/components/Input/Label';
@@ -185,7 +186,7 @@ export default class LeftPanel extends React.PureComponent {
             component: () => (
                 <div className={styles.entriesListContainer}>
                     <EntriesListing
-                        leadId={this.props.leadId}
+                        leadId={this.state.currentLeadId}
                         activeSector={this.props.activeSector}
                     />
                 </div>
@@ -283,9 +284,9 @@ export default class LeftPanel extends React.PureComponent {
         // If there is no tabs, the lead must have unrecognized type
         if (!tabs) {
             return (
-                <p>
+                <Message>
                     {_ts('editAssessment', 'unrecognizedLeadMessage')}
-                </p>
+                </Message>
             );
         }
 

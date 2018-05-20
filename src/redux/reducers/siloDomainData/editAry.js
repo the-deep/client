@@ -76,13 +76,13 @@ export const setErrorAryForEditAryAction = ({
 
 export const setEntriesForEditAryAction = ({
     leadId,
-    leadGroupId,
+    // leadGroupId,
 
     lead,
     entries,
 }) => ({
     type: EDIT_ARY__SET_ENTRIES,
-    id: getNamespacedId(leadId, leadGroupId),
+    id: getNamespacedId(leadId, undefined),
 
     lead,
     entries,
