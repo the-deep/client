@@ -99,8 +99,12 @@ export default class NumberMatrixOverview extends React.PureComponent {
     )
 
     renderColElement = (key, data, rowKey) => {
-        const { attribute } = this.props;
+        const {
+            attribute,
+            api,
+        } = this.props;
         const value = (attribute[rowKey] || emptyObject)[key];
+        const disabled = isFalsy(api.getEntry());
 
         return (
             <td
@@ -114,6 +118,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                     value={value}
                     showHintAndError={false}
                     separator=" "
+                    disabled={disabled}
                 />
             </td>
         );
