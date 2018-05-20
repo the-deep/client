@@ -14,6 +14,7 @@ export const urlForArys = `${wsEndpoint}/assessments/`;
 export const createUrlForAryTemplate = id => `${wsEndpoint}/assessment-templates/${id}/`;
 export const createUrlForAry = id => `${wsEndpoint}/assessments/${id}/`;
 export const createUrlForLeadAry = leadId => `${wsEndpoint}/lead-assessments/${leadId}/`;
+export const createUrlForLeadGroupAry = leadGroupId => `${wsEndpoint}/lead-group-assessments/${leadGroupId}/`;
 
 export const createUrlForAryDelete = createUrlForAry;
 

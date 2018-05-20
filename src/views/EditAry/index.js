@@ -12,12 +12,13 @@ import {
 
     projectDetailsSelector,
     leadIdFromRouteSelector,
-    // leadGroupIdFromRouteSelector,
+    leadGroupIdFromRouteSelector,
     editAryVersionIdSelector,
 } from '../../redux';
 import _ts from '../../ts';
 
 import LeadRequest from './requests/LeadRequest';
+import LeadGroupRequest from './requests/LeadGroupRequest';
 import AryTemplateRequest from './requests/AryTemplateRequest';
 import AryGetRequest from './requests/AryGetRequest';
 import GeoOptionsRequest from './requests/GeoOptionsRequest';
@@ -28,7 +29,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     activeLeadId: PropTypes.number,
-    // activeLeadGroupId: PropTypes.number,
+    activeLeadGroupId: PropTypes.number,
     activeProject: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 
     setAryTemplate: PropTypes.func.isRequired,
@@ -43,12 +44,12 @@ const defaultProps = {
     editAryVersionId: undefined,
 
     activeLeadId: undefined,
-    // activeLeadGroupId: undefined,
+    activeLeadGroupId: undefined,
 };
 
 const mapStateToProps = state => ({
     activeLeadId: leadIdFromRouteSelector(state),
-    // activeLeadGroupId: leadGroupIdFromRouteSelector(state),
+    activeLeadGroupId: leadGroupIdFromRouteSelector(state),
     activeProject: projectDetailsSelector(state),
     editAryVersionId: editAryVersionIdSelector(state),
 });
@@ -77,19 +78,48 @@ export default class EditAry extends React.PureComponent {
 
             activeSector: undefined,
         };
+
+        this.leadGroup = new LeadGroupRequest({
+            setState: d => this.setState(d),
+        });
     }
 
     componentWillMount() {
-        const { activeProject: { id: projectId }, activeLeadId: leadId } = this.props;
+        const {
+            activeProject: { id: projectId },
+            activeLeadId: leadId,
+            activeLeadGroupId: leadGroupId,
+        } = this.props;
+
+        console.warn(leadId, leadGroupId);
+
+        if (leadId) {
+            this.startAryGetRequest(leadId);
+            this.startLeadRequest(leadId);
+            console.warn('Requesting lead for assessment');
+        } else {
+            this.startAryGetRequest(leadGroupId, true);
+            this.leadGroup.createRequest(leadGroupId);
+            this.leadGroup.request.start();
+            console.warn('Requesting lead group for assessment');
+        }
+
         this.startAryTemplateRequest(projectId);
-        this.startAryGetRequest(leadId);
-        this.startLeadRequest(leadId);
         this.startGeoOptionsRequest(projectId);
     }
 
     componentWillReceiveProps(nextProps) {
-        const { activeProject: { id: oldProjectId }, activeLeadId: oldLeadId } = this.props;
-        const { activeProject: { id: projectId }, activeLeadId: leadId } = nextProps;
+        const {
+            activeProject: { id: oldProjectId },
+            activeLeadId: oldLeadId,
+            activeLeadGroupId: oldLeadGroupId,
+        } = this.props;
+
+        const {
+            activeProject: { id: projectId },
+            activeLeadId: leadId,
+            activeLeadGroupId: newLeadGroupId,
+        } = nextProps;
 
         if (oldProjectId !== projectId) {
             this.startAryTemplateRequest(projectId);
@@ -99,6 +129,14 @@ export default class EditAry extends React.PureComponent {
         if (oldLeadId !== leadId) {
             this.startAryGetRequest(leadId);
             this.startLeadRequest(leadId);
+        }
+
+        if (oldLeadGroupId !== newLeadGroupId) {
+            this.startAryGetRequest(newLeadGroupId, true);
+
+            this.leadGroup.request.stop();
+            this.leadGroup.createRequest(newLeadGroupId);
+            this.leadGroup.request.start();
         }
     }
 
@@ -137,7 +175,7 @@ export default class EditAry extends React.PureComponent {
         this.leadRequest.start();
     }
 
-    startAryGetRequest = (leadId) => {
+    startAryGetRequest = (leadId, isLeadGroup) => {
         if (isFalsy(leadId)) {
             return;
         }
@@ -152,7 +190,7 @@ export default class EditAry extends React.PureComponent {
             setState: params => this.setState(params),
             getAryVersionId: () => this.props.editAryVersionId,
         });
-        this.aryGetRequest = aryGetRequest.create(leadId);
+        this.aryGetRequest = aryGetRequest.create(leadId, isLeadGroup);
         this.aryGetRequest.start();
     }
 
@@ -196,6 +234,7 @@ export default class EditAry extends React.PureComponent {
             pendingAry,
             noTemplate,
             lead,
+            leadGroup,
             activeSector,
         } = this.state;
 
@@ -221,6 +260,7 @@ export default class EditAry extends React.PureComponent {
                 leftChild={
                     <LeftPanel
                         lead={lead}
+                        leadGroup={leadGroup}
                         activeSector={activeSector}
                     />
                 }

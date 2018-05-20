@@ -1,6 +1,7 @@
 import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
 import { checkVersion } from '../../../vendor/react-store/utils/common';
 import {
+    createUrlForLeadGroupAry,
     createUrlForLeadAry,
     createParamsForGet,
 } from '../../../rest';
@@ -19,9 +20,16 @@ export default class AryGetRequest {
         this.getAryVersionId = getAryVersionId;
     }
 
-    create = (id) => { // id is lead id
-        const aryPutRequest = new FgRestBuilder()
-            .url(createUrlForLeadAry(id))
+    create = (id, isLeadGroup = false) => { // id is lead id or lead group id
+        let url;
+        console.warn('isLeadGroup', isLeadGroup);
+        if (isLeadGroup) {
+            url = createUrlForLeadGroupAry(id);
+        } else {
+            url = createUrlForLeadAry(id);
+        }
+        const aryGetRequest = new FgRestBuilder()
+            .url(url)
             .params(createParamsForGet)
             .preLoad(() => { this.setState({ pendingAry: true }); })
             .postLoad(() => { this.setState({ pendingAry: false }); })
@@ -39,6 +47,7 @@ export default class AryGetRequest {
                         this.setAry({
                             serverId: response.id,
                             leadId: response.lead,
+                            leadGroupId: response.leadGroupId,
                             versionId: response.versionId,
                             metadata: response.metadata,
                             methodology: response.methodology,
@@ -68,6 +77,6 @@ export default class AryGetRequest {
                 console.info('FATAL:', response);
             })
             .build();
-        return aryPutRequest;
+        return aryGetRequest;
     }
 }

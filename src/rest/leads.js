@@ -16,7 +16,9 @@ export const createUrlForLeadDelete = leadId => `${urlForLead}${leadId}/`;
 
 // Lead Groups
 const leadGroupsMiniFields = ['id', 'title', 'project', 'version_id'];
+export const urlForLeadGroup = `${wsEndpoint}/lead-groups`;
 export const urlForLeadGroups = `${wsEndpoint}/lead-groups/?${p({ fields: leadGroupsMiniFields })}`;
+export const createUrlForLeadGroup = leadGroupId => `${urlForLeadGroup}/${leadGroupId}/`;
 export const createUrlForLeadGroupsOfProject = projectId => `${urlForLeadGroups}&project=${projectId}`;
 
 // GET [For cache response]
