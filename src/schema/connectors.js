@@ -7,10 +7,12 @@ const connectorsSchema = [];
             name: 'ConnectorMini',
             description: 'One of the main entities for lead add',
         },
-        extends: 'dbentity',
         fields: {
+            id: { type: 'uint', required: true },
+            versionId: { type: 'uint', required: true },
             title: { type: 'string', required: true },
             source: { type: 'string', required: true },
+            role: { type: 'string' },
         },
     };
     connectorsSchema.push({ name, schema });
@@ -26,6 +28,7 @@ const connectorsSchema = [];
         fields: {
             title: { type: 'string', required: true },
             source: { type: 'string', required: true },
+            role: { type: 'string' },
             projects: { type: 'array' },
             params: { type: 'object' },
             users: { type: 'array' },
@@ -94,6 +97,7 @@ const connectorsSchema = [];
             publishedOn: { type: 'string' },
             sourceType: { type: 'string' },
             source: { type: 'string' },
+            existing: { type: 'boolean' },
         },
     };
     connectorsSchema.push({ name, schema });

@@ -1,7 +1,7 @@
 import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
 import {
     createParamsForGet,
-    urlForConnectors,
+    urlForConnectorsForAdmin,
 } from '../../../rest';
 import _ts from '../../../ts';
 import schema from '../../../schema';
@@ -56,7 +56,7 @@ export default class ConnectorsGetRequest {
 
     create = () => {
         const connectorsRequest = new FgRestBuilder()
-            .url(urlForConnectors)
+            .url(urlForConnectorsForAdmin)
             .params(createParamsForGet)
             .preLoad(() => { this.props.setState({ dataLoading: true }); })
             .postLoad(() => { this.props.setState({ dataLoading: false }); })

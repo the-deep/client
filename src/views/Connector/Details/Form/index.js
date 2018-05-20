@@ -19,6 +19,7 @@ import LoadingAnimation from '../../../../vendor/react-store/components/View/Loa
 import List from '../../../../vendor/react-store/components/View/List';
 import FormattedDate from '../../../../vendor/react-store/components/View/FormattedDate';
 import PrimaryButton from '../../../../vendor/react-store/components/Action/Button/PrimaryButton';
+import AccentButton from '../../../../vendor/react-store/components/Action/Button/AccentButton';
 import DangerButton from '../../../../vendor/react-store/components/Action/Button/DangerButton';
 import SuccessButton from '../../../../vendor/react-store/components/Action/Button/SuccessButton';
 
@@ -115,6 +116,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             userDataLoading: true,
             projectDataLoading: true,
             connectorDataLoading: false,
+            testConnectorLoading: false,
             pending: false,
             schema: this.createSchema(props),
         };
@@ -564,6 +566,8 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         this.startConnectorDetailsRequest(this.props.connectorId);
     };
 
+    handleConnectorTestClick = () => { };
+
     renderParamInput = (key, data) => {
         if (data.fieldType === 'string' || data.fieldType === 'url') {
             return (
@@ -582,6 +586,8 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             schema,
             pending,
             connectorDataLoading,
+            projectDataLoading,
+            testConnectorLoading,
             userDataLoading,
         } = this.state;
 
@@ -600,7 +606,11 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             projectsOptions,
         } = this;
 
-        const loading = userDataLoading || connectorDataLoading || pending;
+        const loading =
+            userDataLoading ||
+            connectorDataLoading ||
+            projectDataLoading ||
+            pending;
 
         return (
             <Faram
@@ -652,6 +662,12 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                     </Fragment>
                 }
                 <div className={styles.actionButtons}>
+                    <AccentButton
+                        onClick={this.handleConnectorTestClick}
+                        disabled={testConnectorLoading || true}
+                    >
+                        {_ts('connector', 'connectorDetailTestLabel')}
+                    </AccentButton>
                     <DangerButton
                         onClick={this.handleFormCancel}
                         disabled={loading || !pristine}

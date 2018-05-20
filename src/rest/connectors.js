@@ -2,16 +2,24 @@ import {
     wsEndpoint,
     POST,
     PATCH,
+    p,
     commonHeaderForPost,
 } from '../config/rest';
 
-export const urlForConnectors = `${wsEndpoint}/connectors/?fields=id,title,version_id,source,created_at,modified_at`;
+const connectorsMiniFields = ['id', 'title', 'version_id', 'source', 'role'];
+export const urlForConnectors = `${wsEndpoint}/connectors/?${p({ fields: connectorsMiniFields })}`;
+export const urlForConnectorsForAdmin = `${wsEndpoint}/connectors/?${p({
+    fields: connectorsMiniFields,
+    role: ['admin'],
+})}`;
 export const urlForConnectorsFull = `${wsEndpoint}/connectors/`;
 export const createUrlForConnector = connectorId => `${wsEndpoint}/connectors/${connectorId}/`;
 export const createUrlForConnectorleads = connectorId => `${wsEndpoint}/connectors/${connectorId}/leads/`;
 export const urlForConnectorSources = `${wsEndpoint}/connector-sources/`;
 
-export const createUrlForConnectorsOfProject = projectId => `${urlForConnectors}&project=${projectId}`;
+export const createUrlForRssField = url => `${wsEndpoint}/connector-sources/rss-feed/fields/?feed-url=${url}`;
+
+export const createUrlForConnectorsOfProject = projectId => `${urlForConnectors}&projects=${projectId}`;
 
 export const createParamsForConnectorCreate = data => ({
     method: POST,
