@@ -56,6 +56,7 @@ const propTypes = {
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setUserConnectorDetails: PropTypes.func.isRequired,
     setUsers: PropTypes.func.isRequired,
+    onTestButtonClick: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -558,7 +559,9 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         this.startConnectorDetailsRequest(this.props.connectorId);
     };
 
-    handleConnectorTestClick = () => { };
+    handleConnectorTestClick = () => {
+        this.props.onTestButtonClick();
+    };
 
     renderParamInput = (key, data) => {
         if (data.fieldType === 'string' || data.fieldType === 'url') {
@@ -656,7 +659,6 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                 <div className={styles.actionButtons}>
                     <AccentButton
                         onClick={this.handleConnectorTestClick}
-                        disabled={testConnectorLoading || true}
                     >
                         {_ts('connector', 'connectorDetailTestLabel')}
                     </AccentButton>

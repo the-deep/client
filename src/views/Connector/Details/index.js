@@ -9,7 +9,6 @@ import {
     connectorsListSelector,
     connectorIdFromRouteSelector,
     connectorDetailsSelector,
-    connectorSourceSelector,
 
     setUserConnectorDetailsAction,
 } from '#redux';
@@ -18,6 +17,7 @@ import _ts from '#ts';
 import ConnectorDetailsGetRequest from '../requests/ConnectorDetailsGetRequest';
 
 import DetailsForm from './Form';
+import TestResults from './TestResults';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -30,13 +30,11 @@ const propTypes = {
 const defaultProps = {
     className: '',
     connectorDetails: {},
-    connectorSource: {},
     connectorId: undefined,
 };
 
 const mapStateToProps = state => ({
     connectorDetails: connectorDetailsSelector(state),
-    connectorSource: connectorSourceSelector(state),
     connectorsList: connectorsListSelector(state),
     connectorId: connectorIdFromRouteSelector(state),
 });
@@ -56,6 +54,7 @@ export default class ConnectorDetails extends React.PureComponent {
         super(props);
 
         this.state = {
+            showTestResults: false,
             connectorDataLoading: true,
             requestFailure: false,
         };
@@ -103,6 +102,10 @@ export default class ConnectorDetails extends React.PureComponent {
         `;
     }
 
+    handleConnectorTestClick = () => {
+        this.setState({ showTestResults: true });
+    }
+
     startConnectorDetailsRequest = (connectorId, connectorDetails) => {
         if (this.requestForConnectorDetails) {
             this.requestForConnectorDetails.stop();
@@ -120,6 +123,7 @@ export default class ConnectorDetails extends React.PureComponent {
     renderDetails = () => {
         const {
             requestFailure,
+            showTestResults,
         } = this.state;
 
         const { faramValues: connectorDetails = {} } = this.props.connectorDetails;
@@ -140,7 +144,15 @@ export default class ConnectorDetails extends React.PureComponent {
                         {connectorDetails.title}
                     </h3>
                 </header>
-                <DetailsForm connectorId={connectorId} />
+                <DetailsForm
+                    connectorId={connectorId}
+                    onTestButtonClick={this.handleConnectorTestClick}
+                />
+                { showTestResults &&
+                    <TestResults
+                        connectorId={connectorId}
+                    />
+                }
             </Fragment>
         );
     }
