@@ -45,9 +45,10 @@ export default class Sector extends React.PureComponent {
         super(props);
 
         this.rowFieldTitles = [
-            _ts('editAssessment.summary', 'prioritySector'),
-            _ts('editAssessment.summary', 'affectedGroup'),
-            _ts('editAssessment.summary', 'specificNeedGroup'),
+            _ts('editAssessment.summary', 'outcomes'),
+            _ts('editAssessment.summary', 'underlyingFactors'),
+            _ts('editAssessment.summary', 'affectedGroups'),
+            _ts('editAssessment.summary', 'specificNeedGroups'),
         ];
 
         this.columnFieldTitles = [
@@ -61,6 +62,12 @@ export default class Sector extends React.PureComponent {
             _ts('editAssessment.summary', 'rank1Title'),
             _ts('editAssessment.summary', 'rank2Title'),
             _ts('editAssessment.summary', 'rank3Title'),
+        ];
+
+        this.columnKeys = [
+            'moderateAssistancePopulation',
+            'severeAssistancePopulation',
+            'assistancePopulation',
         ];
     }
 
@@ -84,14 +91,21 @@ export default class Sector extends React.PureComponent {
         if (row === 0) {
             return (
                 <TextInput
-                    faramElementName={`priority-sector-${subRow}-${column}`}
+                    faramElementName={`outcomes-${subRow}-${this.columnKeys[column]}`}
                     showHintAndError={false}
                 />
             );
         } else if (row === 1) {
             return (
+                <TextInput
+                    faramElementName={`underlying-factors-${subRow}-${this.columnKeys[column]}`}
+                    showHintAndError={false}
+                />
+            );
+        } else if (row === 2) {
+            return (
                 <HiearchicalSelectInput
-                    faramElementName={`affected-group-${subRow}-${column}`}
+                    faramElementName={`affected-group-${subRow}-${this.columnKeys[column]}`}
                     showHintAndError={false}
                     options={affectedGroups}
                     keySelector={Sector.nodeIdSelector}
@@ -99,10 +113,10 @@ export default class Sector extends React.PureComponent {
                     childrenSelector={Sector.nodeChildrenSelector}
                 />
             );
-        } else if (row === 2) {
+        } else if (row === 3) {
             return (
                 <SelectInput
-                    faramElementName={`specific-need-group-${subRow}-${column}`}
+                    faramElementName={`specific-need-group-${subRow}-${this.columnKeys[column]}`}
                     showHintAndError={false}
                     options={specificNeedGroups}
                     labelSelector={Sector.nodeLabelSelector}

@@ -334,6 +334,36 @@ export const assessmentScoreBucketsSelector = createSelector(
     ),
 );
 
+export const assessmentMinScaleValueSelector = createSelector(
+    assessmentScoreScalesSelector,
+    scales => Math.min(...scales.map(s => s.value)),
+);
+
+export const assessmentMaxScaleValueSelector = createSelector(
+    assessmentScoreScalesSelector,
+    scales => Math.max(...scales.map(s => s.value)),
+);
+
+export const assessmentMinScaleColorSelector = createSelector(
+    assessmentScoreScalesSelector,
+    scales => scales.reduce((s1, s2) => ((s1.value < s2.value) ? s1 : s2)).color,
+);
+
+export const assessmentMaxScaleColorSelector = createSelector(
+    assessmentScoreScalesSelector,
+    scales => scales.reduce((s1, s2) => ((s1.value > s2.value) ? s1 : s2)).color,
+);
+
+export const assessmentMinFinalScoreSelector = createSelector(
+    assessmentScoreBucketsSelector,
+    buckets => Math.min(...buckets.map(s => s[2])),
+);
+
+export const assessmentMaxFinalScoreSelector = createSelector(
+    assessmentScoreBucketsSelector,
+    buckets => Math.max(...buckets.map(s => s[2])),
+);
+
 // afIdFromRoute
 export const analysisFrameworkDetailSelector = createSelector(
     analysisFrameworksSelector,

@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 import FaramGroup from '../../../../vendor/react-store/components/Input/Faram/FaramGroup';
 import iconNames from '../../../../constants/iconNames';
-import Numeral from '../../../../vendor/react-store/components/View/Numeral';
 import List from '../../../../vendor/react-store/components/View/List';
 import ListView from '../../../../vendor/react-store/components/View/List/ListView';
 import ScaleInput from '../../../../vendor/react-store/components/Input/ScaleInput';
@@ -13,11 +12,18 @@ import {
     assessmentPillarsSelector,
     assessmentMatrixPillarsSelector,
     assessmentScoreScalesSelector,
+    assessmentMinScaleValueSelector,
+    assessmentMaxScaleValueSelector,
+    assessmentMinScaleColorSelector,
+    assessmentMaxScaleColorSelector,
+    assessmentMinFinalScoreSelector,
+    assessmentMaxFinalScoreSelector,
     editArySelectedSectorsSelector,
     assessmentSectorsSelector,
 } from '../../../../redux';
 
 import ScaleMatrixInput from './ScaleMatrixInput';
+import ScoreItem from './ScoreItem';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -32,7 +38,15 @@ const propTypes = {
     selectedSectors: PropTypes.array.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     sectors: PropTypes.array.isRequired,
+
+    minScaleValue: PropTypes.number.isRequired,
+    maxScaleValue: PropTypes.number.isRequired,
+    minFinalScore: PropTypes.number.isRequired,
+    maxFinalScore: PropTypes.number.isRequired,
+    minScaleColor: PropTypes.string.isRequired,
+    maxScaleColor: PropTypes.string.isRequired,
 };
+
 const defaultProps = {
     className: '',
 };
@@ -43,6 +57,13 @@ const mapStateToProps = state => ({
     assessmentScoreScales: assessmentScoreScalesSelector(state),
     selectedSectors: editArySelectedSectorsSelector(state),
     sectors: assessmentSectorsSelector(state),
+
+    minScaleValue: assessmentMinScaleValueSelector(state),
+    maxScaleValue: assessmentMaxScaleValueSelector(state),
+    minFinalScore: assessmentMinFinalScoreSelector(state),
+    maxFinalScore: assessmentMaxFinalScoreSelector(state),
+    minScaleColor: assessmentMinScaleColorSelector(state),
+    maxScaleColor: assessmentMaxScaleColorSelector(state),
 });
 
 @connect(mapStateToProps, undefined)
@@ -163,35 +184,49 @@ export default class Score extends React.PureComponent {
         );
     }
 
-    renderSummaryItem = (k, data) => (
-        <div
-            className={styles.item}
-            key={data.id}
-        >
-            <Numeral
-                className={styles.number}
-                faramElementName={`${data.id}-score`}
-            />
-            <div className={styles.title}>
-                { data.title }
-            </div>
-        </div>
-    )
+    renderSummaryItem = (k, data) => {
+        const {
+            minScaleValue,
+            maxScaleValue,
+            minScaleColor,
+            maxScaleColor,
+        } = this.props;
 
-    renderMatrixSummaryItem = (k, data) => (
-        <div
-            className={styles.item}
-            key={data.id}
-        >
-            <Numeral
-                className={styles.number}
-                faramElementName={`${data.id}-matrix-score`}
+        return (
+            <ScoreItem
+                className={styles.scaleItem}
+                key={data.id}
+                title={data.title}
+                faramElementName={`${data.id}-score`}
+                minValue={data.questions.length * minScaleValue}
+                maxValue={data.questions.length * maxScaleValue}
+                minColor={minScaleColor}
+                maxColor={maxScaleColor}
             />
-            <div className={styles.title}>
-                { data.title }
-            </div>
-        </div>
-    )
+        );
+    }
+
+    renderMatrixSummaryItem = (k, data) => {
+        const {
+            minScaleValue,
+            maxScaleValue,
+            minScaleColor,
+            maxScaleColor,
+        } = this.props;
+
+        return (
+            <ScoreItem
+                className={styles.scaleItem}
+                key={data.id}
+                title={data.title}
+                faramElementName={`${data.id}-matrix-score`}
+                minValue={minScaleValue * 5}
+                maxValue={maxScaleValue * 5}
+                minColor={minScaleColor}
+                maxColor={maxScaleColor}
+            />
+        );
+    }
 
     renderMatrixQuestion = (pillarData, sectorId) => {
         const { sectors } = this.props;
@@ -247,6 +282,10 @@ export default class Score extends React.PureComponent {
         const {
             assessmentPillars,
             assessmentMatrixPillars,
+            minFinalScore,
+            maxFinalScore,
+            minScaleColor,
+            maxScaleColor,
         } = this.props;
 
         const className = this.getClassName();
@@ -266,16 +305,16 @@ export default class Score extends React.PureComponent {
                             />
                         </div>
                         <div className={styles.right}>
-                            <div className={styles.item}>
-                                <Numeral
-                                    className={styles.number}
-                                    faramElementName="finalScore"
-                                />
-                                {/* FIXME: use strings */}
-                                <div className={styles.title}>
-                                    Final Score
-                                </div>
-                            </div>
+                            {/* FIXME: use strings */}
+                            <ScoreItem
+                                className={styles.finalScoreItem}
+                                title="Final score"
+                                faramElementName="finalScore"
+                                minValue={minFinalScore}
+                                maxValue={maxFinalScore}
+                                minColor={minScaleColor}
+                                maxColor={maxScaleColor}
+                            />
                         </div>
                     </div>
                     <div className={styles.content}>

@@ -27,16 +27,13 @@ $width-table: 320px;
             flex-shrink: 0;
         }
 
-        .item {
-            padding: $spacing-small $spacing-medium;
+        .scale-item {
+            margin-right: $spacing-extra-small;
+        }
 
-            .title {
-                color: $color-text-label;
-            }
-
-            .number {
-                font-size: $font-size-large;
-            }
+        .final-score-item {
+            border: $width-separator-thin solid $color-foreground;
+            box-shadow: 0 0 $radius-blur-small $color-shadow-medium;
         }
     }
 
