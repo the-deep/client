@@ -91,17 +91,13 @@ export default class EditAry extends React.PureComponent {
             activeLeadGroupId: leadGroupId,
         } = this.props;
 
-        console.warn(leadId, leadGroupId);
-
         if (leadId) {
             this.startAryGetRequest(leadId);
             this.startLeadRequest(leadId);
-            console.warn('Requesting lead for assessment');
         } else {
             this.startAryGetRequest(leadGroupId, true);
             this.leadGroup.createRequest(leadGroupId);
             this.leadGroup.request.start();
-            console.warn('Requesting lead group for assessment');
         }
 
         this.startAryTemplateRequest(projectId);

@@ -142,7 +142,7 @@ export default class LeftPanel extends React.PureComponent {
                         onEntryAdd={() => { /* FIXME: add real function */ }}
                         className={styles.assistedTagging}
                         leadId={currentLeadId}
-                        projectId={lead.projectId}
+                        projectId={lead.project}
                     />
                 );
             },

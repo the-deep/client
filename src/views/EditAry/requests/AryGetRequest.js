@@ -22,7 +22,6 @@ export default class AryGetRequest {
 
     create = (id, isLeadGroup = false) => { // id is lead id or lead group id
         let url;
-        console.warn('isLeadGroup', isLeadGroup);
         if (isLeadGroup) {
             url = createUrlForLeadGroupAry(id);
         } else {
