@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import MultiViewContainer from '../../../vendor/react-store/components/View/MultiViewContainer';
@@ -12,9 +13,15 @@ import ListView from '../../../../src/vendor/react-store/components/View/List/Li
 import LoadingAnimation from '../../../../src/vendor/react-store/components/View/LoadingAnimation';
 import ListItem from '../../../../src/vendor/react-store/components/View/List/ListItem';
 import SearchInput from '../../../vendor/react-store/components/Input/SearchInput';
-import { caseInsensitiveSubmatch } from '../../../vendor/react-store/utils/common';
+import {
+    caseInsensitiveSubmatch,
+    reverseRoute,
+} from '../../../vendor/react-store/utils/common';
 import update from '../../../vendor/react-store/utils/immutable-update';
-import { iconNames } from '../../../constants';
+import {
+    iconNames,
+    pathNames,
+} from '../../../constants';
 
 import {
     addLeadViewConnectorsListSelector,
@@ -146,6 +153,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
                         <ConnectorContent
                             connectorId={selectedConnector}
                             connectorLeads={connectorsLeads[selectedConnector]}
+                            projectId={this.props.projectId}
                             className={styles.content}
                             setConnectorLeads={this.setConnectorLeads}
                             selectedLeads={this.state.selectedLeads[selectedConnector]}
@@ -377,12 +385,21 @@ export default class ConnectorSelectModal extends React.PureComponent {
                 <ModalHeader
                     title={_ts('addLeads.connectorsSelect', 'connectorsLabel')}
                     rightComponent={
-                        <PrimaryButton
-                            onClick={this.handleConnectorSelectModalClose}
-                            transparent
-                        >
-                            <span className={iconNames.close} />
-                        </PrimaryButton>
+                        <div className={styles.rightButtons} >
+                            <Link
+                                className={styles.settingsLink}
+                                target="_blank"
+                                to={reverseRoute(pathNames.connectors, { })}
+                            >
+                                <span className={iconNames.settings} />
+                            </Link>
+                            <PrimaryButton
+                                onClick={this.handleConnectorSelectModalClose}
+                                transparent
+                            >
+                                <span className={iconNames.close} />
+                            </PrimaryButton>
+                        </div>
                     }
                 />
                 <ModalBody className={styles.modalBody} >

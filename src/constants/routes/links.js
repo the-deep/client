@@ -52,7 +52,7 @@ const commonLinks = {
     userProfile: 'l',
     projects: 'l',
     countries: 'l',
-    connectors: 'l,d',
+    connectors: 'l',
 
     apiDocs: 'l,d',
     stringManagement: 'l,a',
