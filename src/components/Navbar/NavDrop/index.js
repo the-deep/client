@@ -133,11 +133,19 @@ export default class Navdrop extends React.PureComponent {
             _ts('components.navbar', 'anonymousLabel')
         );
 
+        const displayPicture = (
+            userInformation.displayPicture ||
+            activeUser.displayPicture
+        );
+
         return (
             <DropdownMenu
                 className={className}
                 leftComponent={
-                    <DisplayPicture className={styles.displayPicture} />
+                    <DisplayPicture
+                        className={styles.displayPicture}
+                        galleryId={displayPicture}
+                    />
                 }
                 title={userName}
                 dropdownClassName={styles.userDropdown}
