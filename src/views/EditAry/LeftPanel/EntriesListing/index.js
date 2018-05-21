@@ -4,13 +4,12 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '../../../../vendor/react-store/utils/common';
+import Label from '../../../../vendor/react-store/components/Input/Label';
 import ListView from '../../../../vendor/react-store/components/View/List/ListView';
 import LoadingAnimation from '../../../../vendor/react-store/components/View/LoadingAnimation';
 
 import {
-    leadIdFromRouteSelector,
     editAryEntriesSelector,
-    editAryLeadSelector,
     setEntriesForEditAryAction,
     projectIdFromRouteSelector,
 } from '../../../../redux';
@@ -21,10 +20,8 @@ import EntriesRequest from './requests/EntriesRequest';
 import styles from './styles.scss';
 
 const propTypes = {
-    activeLeadId: PropTypes.number.isRequired,
     leadId: PropTypes.number.isRequired,
     entries: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setEntries: PropTypes.func.isRequired,
     activeProjectId: PropTypes.number.isRequired,
     activeSector: PropTypes.string,
@@ -35,9 +32,7 @@ const defaultProps = {
 };
 
 const mapStateToProps = state => ({
-    activeLeadId: leadIdFromRouteSelector(state),
     entries: editAryEntriesSelector(state),
-    lead: editAryLeadSelector(state),
     activeProjectId: projectIdFromRouteSelector(state),
 });
 
@@ -105,7 +100,10 @@ export default class EntriesListing extends React.PureComponent {
                 this.entriesRequest.stop();
             }
 
-            const request = new EntriesRequest();
+            const request = new EntriesRequest({
+                setState: params => this.setState(params),
+                setEntries: this.props.setEntries,
+            });
             this.entriesRequest = request.create(nextProps.leadId);
             this.entriesRequest.start();
         }
@@ -172,9 +170,11 @@ export default class EntriesListing extends React.PureComponent {
             pathNames.editEntries,
             {
                 projectId: this.props.activeProjectId,
-                leadId: this.props.activeLeadId,
+                leadId: this.props.leadId,
             },
         );
+        const { entries = [] } = this.state;
+        const noOfEntries = entries.length;
 
         return (
             <div className={styles.entriesListing}>
@@ -186,8 +186,13 @@ export default class EntriesListing extends React.PureComponent {
                     keyExtractor={EntriesListing.calcEntryKey}
                 />
                 <div className={styles.leadDetail}>
-                    <div className={styles.title}>
-                        { this.props.lead.title }
+                    <div className={styles.noOfEntriesWrap}>
+                        <Label
+                            className={styles.label}
+                            show
+                            text={_ts('editAssessment.entriesListing', 'noOfEntriesText')}
+                        />
+                        {noOfEntries}
                     </div>
                     <Link
                         to={linkToEditEntries}

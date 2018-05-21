@@ -105,6 +105,7 @@ const leadSchema = [];
             project: { type: 'uint' },
             title: { type: 'string', required: true },
             versionId: { type: 'uint', required: true },
+            leads: { type: 'array', required: false },
         },
     };
     leadSchema.push({ name, schema });

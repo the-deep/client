@@ -45,18 +45,35 @@
 
     .lead-detail {
         display: flex;
+        align-items: center;
         flex-shrink: 0;
         border-top: $width-separator-thin solid $color-accent;
+        padding: $spacing-medium;
 
-        .title {
+        .no-of-entries-wrap {
+            display: flex;
+            align-items: baseline;
             flex-grow: 1;
-            padding: $spacing-medium;
+            padding: 0 $spacing-medium;
+
+            .label {
+                flex-shrink: 0;
+                padding-right: $spacing-small;
+                width: auto;
+
+                &:after {
+                    content: ':';
+                }
+            }
+
+            .lead-select-input {
+                flex-grow: 1;
+            }
         }
 
         .edit-entries-link {
+            @include button-like-link($color-accent);
             flex-shrink: 0;
-            padding: $spacing-medium;
-            color: $color-accent;
         }
     }
 }

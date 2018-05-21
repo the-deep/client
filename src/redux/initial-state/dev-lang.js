@@ -565,6 +565,7 @@ const initialDevLangState = {
         253: 'Under Construction',
 
         1005: 'Edit entries',
+        1006: 'No of Entries',
         9000: 'Priority humanitarian access issues',
         9001: 'Settings facing most humanitarian access issues',
         9002: 'Population with limited/intermittent access',
@@ -1087,6 +1088,7 @@ const initialDevLangState = {
         'editAssessment.entriesListing': {
             altLabel: 512,
             editEntriesText: 1005,
+            noOfEntriesText: 1006,
         },
         entries: {
             applyFilterButtonLabel: 427,

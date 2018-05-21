@@ -23,12 +23,13 @@ export const clearRouteStateAction = () => ({
 // REDUCER
 
 const urlValues = [
-    'projectId',
-    'connectorId',
-    'leadId',
     'analysisFrameworkId',
     'categoryEditorId',
+    'connectorId',
     'countryId',
+    'leadGroupId',
+    'leadId',
+    'projectId',
     'userGroupId',
     'userId',
 ];

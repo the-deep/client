@@ -14,6 +14,8 @@ import { median, sum, bucket } from '../../../vendor/react-store/utils/stats';
 
 import {
     leadIdFromRouteSelector,
+    leadGroupIdFromRouteSelector,
+
     aryTemplateMetadataSelector,
     aryTemplateMethodologySelector,
     assessmentPillarsSelector,
@@ -29,6 +31,7 @@ import {
     editAryFaramErrorsSelector,
     editAryHasErrorsSelector,
     editAryIsPristineSelector,
+
 } from '../../../redux';
 import _ts from '../../../ts';
 import Baksa from '../../../components/Baksa';
@@ -45,7 +48,8 @@ import styles from './styles.scss';
 const emptyObject = {};
 
 const propTypes = {
-    activeLeadId: PropTypes.number.isRequired,
+    activeLeadId: PropTypes.number,
+    activeLeadGroupId: PropTypes.number,
     aryTemplateMetadata: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     aryTemplateMethodology: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     scorePillars: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -72,10 +76,14 @@ const defaultProps = {
     editAryFaramErrors: {},
     editAryFaramValues: {},
     onActiveSectorChange: undefined,
+
+    activeLeadId: undefined,
+    activeLeadGroupId: undefined,
 };
 
 const mapStateToProps = state => ({
     activeLeadId: leadIdFromRouteSelector(state),
+    activeLeadGroupId: leadGroupIdFromRouteSelector(state),
     aryTemplateMetadata: aryTemplateMetadataSelector(state),
     aryTemplateMethodology: aryTemplateMethodologySelector(state),
     scorePillars: assessmentPillarsSelector(state),
@@ -377,12 +385,21 @@ export default class RightPanel extends React.PureComponent {
     }
 
     handleFaramChange = (faramValues, faramErrors, shouldChangePristine) => {
-        this.props.changeAry({
-            lead: this.props.activeLeadId,
-            faramValues,
-            faramErrors,
-            shouldChangePristine,
-        });
+        if (this.props.activeLeadId) {
+            this.props.changeAry({
+                leadId: this.props.activeLeadId,
+                faramValues,
+                faramErrors,
+                shouldChangePristine,
+            });
+        } else {
+            this.props.changeAry({
+                leadGroupId: this.props.activeLeadGroupId,
+                faramValues,
+                faramErrors,
+                shouldChangePristine,
+            });
+        }
     }
 
     handleFaramValidationSuccess = (value) => {
@@ -393,15 +410,23 @@ export default class RightPanel extends React.PureComponent {
             setState: params => this.setState(params),
             setAry: this.props.setAry,
         });
+        // TODO: add condition for ary put in case of lead group
         this.aryPutRequest = request.create(this.props.activeLeadId, value);
         this.aryPutRequest.start();
     };
 
     handleFaramValidationFailure = (faramErrors) => {
-        this.props.setErrorAry({
-            lead: this.props.activeLeadId,
-            faramErrors,
-        });
+        if (this.props.activeLeadId) {
+            this.props.setErrorAry({
+                leadId: this.props.activeLeadId,
+                faramErrors,
+            });
+        } else {
+            this.props.setErrorAry({
+                leadGroupId: this.props.activeLeadGroupId,
+                faramErrors,
+            });
+        }
     };
 
     renderTab = (tabKey) => {
