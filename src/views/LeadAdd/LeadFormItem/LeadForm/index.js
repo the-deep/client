@@ -230,6 +230,9 @@ export default class LeadForm extends React.PureComponent {
 
         const isApplyAllDisabled = isFormDisabled || isBulkActionDisabled;
 
+        // Implemented to hide imcomplete feature
+        const showLeadGroup = false;
+
         return (
             <Faram
                 ref={(ref) => { this.formRef = ref; }}
@@ -320,31 +323,33 @@ export default class LeadForm extends React.PureComponent {
                         placeholder={_ts('addLeads', 'publisherPlaceHolderLabel')}
                     />
                 </ApplyAll>
-                <div className={styles.leadGroupContainer}>
-                    <ApplyAll
-                        className={styles.leadGroup}
-                        disabled={isApplyAllDisabled}
-                        identiferName="leadGroup"
-                        onApplyAllClick={this.handleApplyAllClick}
-                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                    >
-                        <SelectInput
-                            faramElementName="leadGroup"
-                            keySelector={LeadForm.keySelector}
-                            label={_ts('addLeads', 'leadGroupLabel')}
-                            labelSelector={LeadForm.labelSelector}
-                            options={leadOptions.leadGroup}
-                            placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
-                            showHintAndError
-                            showLabel
+                {showLeadGroup &&
+                    <div className={styles.leadGroupContainer}>
+                        <ApplyAll
+                            className={styles.leadGroup}
+                            disabled={isApplyAllDisabled}
+                            identiferName="leadGroup"
+                            onApplyAllClick={this.handleApplyAllClick}
+                            onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                        >
+                            <SelectInput
+                                faramElementName="leadGroup"
+                                keySelector={LeadForm.keySelector}
+                                label={_ts('addLeads', 'leadGroupLabel')}
+                                labelSelector={LeadForm.labelSelector}
+                                options={leadOptions.leadGroup}
+                                placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
+                                showHintAndError
+                                showLabel
+                            />
+                        </ApplyAll>
+                        <Button
+                            onClick={this.handleAddLeadGroupClick}
+                            iconName={iconNames.add}
+                            transparent
                         />
-                    </ApplyAll>
-                    <Button
-                        onClick={this.handleAddLeadGroupClick}
-                        iconName={iconNames.add}
-                        transparent
-                    />
-                </div>
+                    </div>
+                }
                 <ApplyAll
                     className={styles.confidentiality}
                     disabled={isApplyAllDisabled}
