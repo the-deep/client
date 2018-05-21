@@ -1,0 +1,13 @@
+@import '../../../../../stylesheets/base';
+
+.score-item {
+    padding: $spacing-small $spacing-medium;
+
+    .title {
+        opacity: .8;
+    }
+
+    .number {
+        font-size: $font-size-large;
+    }
+}

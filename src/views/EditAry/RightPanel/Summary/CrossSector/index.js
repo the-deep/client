@@ -50,22 +50,28 @@ export default class CrossSector extends React.PureComponent {
         super(props);
 
         this.rowFieldTitles = [
-            _ts('editAssessment.summary', 'prioritySector'),
-            _ts('editAssessment.summary', 'affectedGroup'),
-            _ts('editAssessment.summary', 'specificNeedGroup'),
+            _ts('editAssessment.summary', 'prioritySectors'),
+            _ts('editAssessment.summary', 'affectedGroups'),
+            _ts('editAssessment.summary', 'specificNeedGroups'),
         ];
 
         this.columnFieldTitles = [
             ' ',
-            _ts('editAssessment.summary', 'moderateAssistancePopulationUnknown'),
-            _ts('editAssessment.summary', 'severeAssistancePopulationUnknown'),
-            _ts('editAssessment.summary', 'assistancePopulationUnknown'),
+            _ts('editAssessment.summary', 'moderateAssistancePopulation'),
+            _ts('editAssessment.summary', 'severeAssistancePopulation'),
+            _ts('editAssessment.summary', 'assistancePopulation'),
         ];
 
         this.rowSubFieldTitles = [
             _ts('editAssessment.summary', 'rank1Title'),
             _ts('editAssessment.summary', 'rank2Title'),
             _ts('editAssessment.summary', 'rank3Title'),
+        ];
+
+        this.columnKeys = [
+            'moderateAssistancePopulation',
+            'severeAssistancePopulation',
+            'assistancePopulation',
         ];
     }
 
@@ -92,10 +98,12 @@ export default class CrossSector extends React.PureComponent {
             specificNeedGroups,
         } = this.props;
 
+        const columnKey = this.columnKeys[column];
+
         if (row === 0) {
             return (
                 <HiearchicalSelectInput
-                    faramElementName={`priority-sector-${subRow}-${column}`}
+                    faramElementName={`priority-sector-${subRow}-${columnKey}`}
                     showHintAndError={false}
                     options={prioritySectors}
                     keySelector={CrossSector.nodeIdSelector}
@@ -106,7 +114,7 @@ export default class CrossSector extends React.PureComponent {
         } else if (row === 1) {
             return (
                 <HiearchicalSelectInput
-                    faramElementName={`affected-group-${subRow}-${column}`}
+                    faramElementName={`affected-group-${subRow}-${columnKey}`}
                     showHintAndError={false}
                     options={affectedGroups}
                     keySelector={CrossSector.nodeIdSelector}
@@ -117,7 +125,7 @@ export default class CrossSector extends React.PureComponent {
         } else if (row === 2) {
             return (
                 <SelectInput
-                    faramElementName={`specific-need-group-${subRow}-${column}`}
+                    faramElementName={`specific-need-group-${subRow}-${columnKey}`}
                     showHintAndError={false}
                     options={specificNeedGroups}
                     labelSelector={CrossSector.nodeLabelSelector}

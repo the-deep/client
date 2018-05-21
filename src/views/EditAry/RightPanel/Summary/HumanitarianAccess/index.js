@@ -59,6 +59,12 @@ export default class HumanitarianAccess extends React.PureComponent {
             _ts('editAssessment.summary', 'rank2Title'),
             _ts('editAssessment.summary', 'rank3Title'),
         ];
+
+        this.columnKeys = [
+            'limitedAccessPopulation',
+            'restrictedAccessPopulation',
+            'humanitarianAccessPopulation',
+        ];
     }
 
     getClassName = () => {
@@ -78,10 +84,12 @@ export default class HumanitarianAccess extends React.PureComponent {
             affectedLocations,
         } = this.props;
 
+        const columnKey = this.columnKeys[column];
+
         if (row === 0) {
             return (
                 <HiearchicalSelectInput
-                    faramElementName={`priority-issue-${subRow}-${column}`}
+                    faramElementName={`priority-issue-${subRow}-${columnKey}`}
                     showHintAndError={false}
                     options={priorityIssues}
                     keySelector={HumanitarianAccess.nodeIdSelector}
@@ -92,7 +100,7 @@ export default class HumanitarianAccess extends React.PureComponent {
         } else if (row === 1) {
             return (
                 <SelectInput
-                    faramElementName={`affected-location-${subRow}-${column}`}
+                    faramElementName={`affected-location-${subRow}-${columnKey}`}
                     showHintAndError={false}
                     options={affectedLocations}
                     labelSelector={HumanitarianAccess.nodeLabelSelector}
