@@ -227,7 +227,7 @@ export default class Overview extends React.PureComponent {
             .filter(widget => widget.analysisFramework.overviewComponent)
             .map(widget => ({
                 id: widget.id,
-                title: _ts('framework', widget.title),
+                title: _ts('widgetTitle', widget.title),
                 overviewComponent: widget.analysisFramework.overviewComponent,
                 listComponent: widget.analysisFramework.listComponent,
                 overviewMinSize: widget.analysisFramework.overviewMinSize,

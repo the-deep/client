@@ -204,7 +204,7 @@ export default class List extends React.PureComponent {
             analysisFramework: analysisFrameworkId,
             key: `list-${this.getUniqueKey()}`,
             widgetId: widget.id,
-            title: _ts('framework', widget.title),
+            title: widget.title,
             properties: {
                 overviewGridLayout: widget.overviewComponent && {
                     left: 0,
@@ -260,7 +260,7 @@ export default class List extends React.PureComponent {
             .filter(widget => widget.analysisFramework.listComponent)
             .map(widget => ({
                 id: widget.id,
-                title: widget.title,
+                title: _ts('widgetTitle', widget.title),
                 overviewComponent: widget.analysisFramework.overviewComponent,
                 listComponent: widget.analysisFramework.listComponent,
                 overviewMinSize: widget.analysisFramework.overviewMinSize,
@@ -283,7 +283,7 @@ export default class List extends React.PureComponent {
                         key={widget.id}
                     >
                         <div className={styles.title}>
-                            {_ts('framework', widget.title)}
+                            {widget.title}
                         </div>
                         <div className={styles.actions}>
                             <Button
