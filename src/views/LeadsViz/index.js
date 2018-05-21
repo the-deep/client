@@ -231,16 +231,10 @@ export default class LeadsViz extends React.PureComponent {
     renderNoLeadFound = () => (
         <div className={styles.noLeadFound}>
             <h3>
-                {
-                    // No leads found
-                    _ts('leadsViz', 'noLeadsFoundHeader')
-                }
+                { _ts('leadsViz', 'noLeadsFoundHeader') }
             </h3>
             <p>
-                {
-                    // Try with different filters
-                    _ts('leadsViz', 'noLeadsFoundDescription')
-                }
+                { _ts('leadsViz', 'noLeadsFoundDescription') }
             </p>
         </div>
     )
@@ -352,10 +346,7 @@ export default class LeadsViz extends React.PureComponent {
                         to={reverseRoute(pathNames.leads, { projectId: activeProject.id })}
                         replace
                     >
-                        {
-                            // Show Table
-                            _ts('leadsViz', 'showTable')
-                        }
+                        { _ts('leadsViz', 'showTable') }
                     </Link>
                 </footer>
             </div>
