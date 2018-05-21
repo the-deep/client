@@ -18,7 +18,7 @@
     .title,
     .lead-group-container,
     .source {
-        flex-basis: calc(100% / 3 - #{$spacing-medium});
+        flex-basis: calc(100% / 2 - #{$spacing-medium});
         padding: $spacing-medium 0;
     }
 
