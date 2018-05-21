@@ -15,7 +15,7 @@ import ModalBody from '../../vendor/react-store/components/View/Modal/Body';
 import ModalHeader from '../../vendor/react-store/components/View/Modal/Header';
 import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
 
-import { InternalGallery } from '../../components/DeepGallery';
+import DisplayPicture from '../../components/DisplayPicture';
 import {
     userInformationSelector,
     setUserInformationAction,
@@ -147,11 +147,7 @@ export default class UserProfile extends React.PureComponent {
                 </header>
                 <div className={styles.info}>
                     {/* FIXME: add a default image in img */}
-                    <InternalGallery
-                        galleryId={userInformation.displayPicture}
-                        notFoundMessage={_ts('userProfile', 'userImageNotFound')}
-                        className={styles.displayPicture}
-                    />
+                    <DisplayPicture className={styles.displayPicture} />
                     <div className={styles.detail}>
                         <div className={styles.name}>
                             <div>

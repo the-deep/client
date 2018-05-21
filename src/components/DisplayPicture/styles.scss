@@ -1,0 +1,26 @@
+@import '../../stylesheets/base';
+
+.display-picture {
+    margin: 0 $spacing-extra-small;
+    border-radius: 50%;
+    overflow: hidden;
+
+    :global {
+        .gallery-image {
+            overflow: unset;
+        }
+
+        .image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
+        }
+    }
+}
+
+.default-user {
+    path {
+        fill: $color-text;
+    }
+}
