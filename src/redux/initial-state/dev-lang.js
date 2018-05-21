@@ -517,8 +517,9 @@ const initialDevLangState = {
         2007: 'Discard',
         2008: 'No GEO file uploaded.',
         2009: 'GEO File',
-        2010: 'There seems to be some problem with this page!',
+        2010: 'Something went wrong with loading this page. Please logout and try again.',
         2011: 'Widget has failed!',
+        2012: 'Component has failed!',
         5551: 'Selected',
         5552: 'All',
         5553: 'Filtered',
@@ -883,6 +884,9 @@ const initialDevLangState = {
         },
         'components.widgetError': {
             problemText: 2011,
+        },
+        'components.componentError': {
+            problemText: 2012,
         },
         'components.externalGallery': {
             gatheringWebsiteInfoLabel: 49,
