@@ -178,7 +178,6 @@ const initialDevLangState = {
         200: 'Description',
         201: 'User Group',
         202: 'Activity Log',
-        203: 'Profile Image Missing',
         204: 'Failed to save user group.',
         205: 'Region Remove',
         206: 'Region removed successfully.',
@@ -1487,6 +1486,7 @@ const initialDevLangState = {
             entries: 15,
             arys: 5562,
             editAry: 5563,
+            editLeadGroupAssessment: 5563,
             export: 600,
 
             editEntries: 1005,
@@ -1760,7 +1760,6 @@ const initialDevLangState = {
             confirmTextDeleteUserGroup: 194,
             confirmTextDeleteProject: 193,
             userNotFound: 199,
-            userImageNotFound: 203,
 
             // notification
             userGroupDelete: 904,
