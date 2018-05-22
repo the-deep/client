@@ -348,7 +348,7 @@ export default class List extends React.PureComponent {
                     {/* FIXME: use strings */}
                     <Link
                         onClick={handleEdit}
-                        to="/overview"
+                        to="#/overview"
                         replace
                         className={styles.editLink}
                         title="Edit Entry"

@@ -52,7 +52,8 @@ export const analysisFrameworkForProjectSelector = createSelector(
     },
 );
 
-// Test
+// REMOVE ALL OF THESE LATER
+
 export const widgetsSelector = createSelector(
     () => widgetStore
         .filter(widget => widget.view.listComponent)
@@ -63,7 +64,8 @@ export const widgetsSelector = createSelector(
         })),
 );
 
-export const itemsForProjectSelector = createSelector(
+// widgets
+const itemsForProjectSelector = createSelector(
     analysisFrameworkForProjectSelector,
     widgetsSelector,
     (analysisFramework, widgets) => {
@@ -76,6 +78,7 @@ export const itemsForProjectSelector = createSelector(
     },
 );
 
+// items
 export const maxHeightForProjectSelector = createSelector(
     itemsForProjectSelector,
     items => items.reduce(
@@ -87,6 +90,7 @@ export const maxHeightForProjectSelector = createSelector(
     ),
 );
 
+// items
 export const filtersForProjectSelector = createSelector(
     analysisFrameworkForProjectSelector,
     itemsForProjectSelector,
@@ -100,7 +104,6 @@ export const filtersForProjectSelector = createSelector(
     },
 );
 
-
 const getAttribute = (attributes = [], widgetId) => {
     const attribute = attributes.find(attr => attr.widget === widgetId);
     return attribute ? attribute.data : undefined;
@@ -113,6 +116,7 @@ const getMiniEntry = entry => ({
     entryType: entry.entryType,
 });
 
+// items
 export const gridItemsForProjectSelector = createSelector(
     entriesForProjectSelector,
     itemsForProjectSelector,
