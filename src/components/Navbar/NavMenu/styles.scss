@@ -28,6 +28,10 @@ $color-text-on-primary: get-text-color($color-primary);
             color: $color-accent;
             // color: $color-text-on-navbar;
         }
+
+        &.disabled {
+            pointer-events: none;
+        }
     }
 
     .overflow-menu {
@@ -36,6 +40,10 @@ $color-text-on-primary: get-text-color($color-primary);
 
         >button {
             padding: $spacing-small;
+        }
+
+        &.disabled {
+            pointer-events: none;
         }
     }
 }

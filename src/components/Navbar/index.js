@@ -260,7 +260,7 @@ export default class Navbar extends React.PureComponent {
                 <Cloak
                     {...projectSelectInputLink}
                     render={
-                        () => (
+                        ({ disabled }) => (
                             <SelectInput
                                 hideClearButton
                                 keySelector={Navbar.projectKeySelector}
@@ -272,7 +272,7 @@ export default class Navbar extends React.PureComponent {
                                 showLabel={false}
                                 className={styles.projectSelectInput}
                                 disabled={
-                                    userProjects.length <= 0 || projectSelectInputLink.disable
+                                    userProjects.length <= 0 || disabled
                                 }
                                 value={activeProject}
                             />

@@ -145,18 +145,16 @@ export default class NavMenu extends React.PureComponent {
             <Cloak
                 {...item}
                 key={key}
-                render={
-                    () => (
-                        <NavLink
-                            activeClassName={styles.active}
-                            to={route}
-                            className={className}
-                            exact
-                        >
-                            { _ts('pageTitle', key) }
-                        </NavLink>
-                    )
-                }
+                render={({ disabled }) => (
+                    <NavLink
+                        activeClassName={styles.active}
+                        to={route}
+                        className={`${className} ${disabled ? styles.disabled : ''}`}
+                        exact
+                    >
+                        { _ts('pageTitle', key) }
+                    </NavLink>
+                )}
             />
         );
     }

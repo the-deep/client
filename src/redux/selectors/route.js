@@ -1,10 +1,20 @@
 import { createSelector } from 'reselect';
-import { isFalsy } from '../../vendor/react-store/utils/common';
+import { isFalsy, getKeyByValue } from '../../vendor/react-store/utils/common';
+import { pathNames } from '../../constants/routes';
 
 const emptyObject = {};
 
 export const routeUrlSelector = ({ route }) => (
     route.url
+);
+
+export const routePathSelector = ({ route }) => (
+    route.path
+);
+
+export const routePathKeySelector = createSelector(
+    routePathSelector,
+    path => getKeyByValue(pathNames, path),
 );
 
 export const propsSelector = (state, props) => props;

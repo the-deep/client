@@ -1,47 +1,17 @@
 import {
     mapObjectToObject,
     mapObjectToArray,
-    prepareSettings,
 } from '../utils/common';
 
-const commonLinks = {
-    leads: 'l,p',
-    entries: 'l,p,F',
-    arys: 'l,p,A',
-    export: 'l,p,F',
-
-    userProfile: 'l',
-    projects: 'l',
-    countries: 'l',
-    connectors: 'l,d',
-
-    apiDocs: 'l,d',
-    stringManagement: 'l,a',
-    adminPanel: 'l,a',
-};
-
-const noLinks = {
-};
-const allLinks = mapObjectToObject(
-    {
-        ...commonLinks,
-        projectSelect: 'l',
-    },
-    prepareSettings,
-);
-const allLinksWithProjectDisabled = mapObjectToObject(
-    {
-        ...commonLinks,
-        projectSelect: 'l,D',
-    },
-    prepareSettings,
-);
+import { allLinks, noLinks } from './linksAcl';
 
 export const ROUTE = {
     exclusivelyPublic: 'exclusively-public',
     public: 'public',
     private: 'private',
 };
+
+// Routes
 
 export const routes = {
     // NOTE: Do not remove the immediate line
@@ -52,7 +22,7 @@ export const routes = {
         type: ROUTE.private,
         path: '/browser-extension/',
         loader: () => import('../views/BrowserExtension'),
-        links: allLinksWithProjectDisabled,
+        links: allLinks,
     }, // _ts('pageTitle', 'browserExtension');
 
     login: {
@@ -130,7 +100,7 @@ export const routes = {
         type: ROUTE.private,
         path: '/projects/:projectId/leads/add/',
         loader: () => import('../views/LeadAdd'),
-        links: allLinksWithProjectDisabled,
+        links: allLinks,
     }, // _ts('pageTitle', 'addLeads');
 
     entries: {
@@ -146,7 +116,7 @@ export const routes = {
         type: ROUTE.private,
         path: '/projects/:projectId/leads/:leadId/edit-entries/',
         loader: () => import('../views/EditEntry'),
-        links: allLinksWithProjectDisabled,
+        links: allLinks,
     }, // _ts('pageTitle', 'editEntries');
 
     arys: {
@@ -162,7 +132,7 @@ export const routes = {
         type: ROUTE.private,
         path: '/projects/:projectId/leads/:leadId/edit-ary/',
         loader: () => import('../views/EditAry'),
-        links: allLinksWithProjectDisabled,
+        links: allLinks,
     }, // _ts('pageTitle', 'editAry');
 
     editLeadGroupAssessment: {
@@ -170,7 +140,7 @@ export const routes = {
         type: ROUTE.private,
         path: '/projects/:projectId/lead-group/:leadGroupId/edit-ary/',
         loader: () => import('../views/EditAry'),
-        links: allLinksWithProjectDisabled,
+        links: allLinks,
     }, // _ts('pageTitle', 'editLeadGroupAssessment');
 
     export: {
@@ -194,7 +164,7 @@ export const routes = {
         type: ROUTE.private,
         path: '/countries/:countryId?/',
         loader: () => import('../views/Country'),
-        links: allLinksWithProjectDisabled,
+        links: allLinks,
     }, // _ts('pageTitle', 'countries');
 
     userProfile: {
@@ -202,7 +172,7 @@ export const routes = {
         type: ROUTE.private,
         path: '/user/:userId/',
         loader: () => import('../views/UserProfile'),
-        links: allLinksWithProjectDisabled,
+        links: allLinks,
     }, // _ts('pageTitle', 'userProfile');
 
     userGroup: {
@@ -210,7 +180,7 @@ export const routes = {
         type: ROUTE.private,
         path: '/user-group/:userGroupId/',
         loader: () => import('../views/UserGroup'),
-        links: allLinksWithProjectDisabled,
+        links: allLinks,
     }, // _ts('pageTitle', 'userGroup');
 
     analysisFramework: {
@@ -218,7 +188,7 @@ export const routes = {
         type: ROUTE.private,
         path: '/analysis-framework/:analysisFrameworkId/',
         loader: () => import('../views/AnalysisFramework'),
-        links: allLinksWithProjectDisabled,
+        links: allLinks,
     }, // _ts('pageTitle', 'analysisFramework');
 
     categoryEditor: {
@@ -226,7 +196,7 @@ export const routes = {
         type: ROUTE.private,
         path: '/category-editor/:categoryEditorId/',
         loader: () => import('../views/CategoryEditor'),
-        links: allLinksWithProjectDisabled,
+        links: allLinks,
     }, // _ts('pageTitle', 'categoryEditor');
 
     weeklySnapshot: {
@@ -234,7 +204,7 @@ export const routes = {
         type: ROUTE.private,
         path: '/weekly-snapshot/',
         loader: () => import('../views/WeeklySnapshot'),
-        links: allLinksWithProjectDisabled,
+        links: allLinks,
     }, // _ts('pageTitle', 'weeklySnapshot');
 
     apiDocs: {
@@ -242,7 +212,7 @@ export const routes = {
         type: ROUTE.private,
         path: '/api-docs/',
         loader: () => import('../views/ApiDocs'),
-        links: allLinksWithProjectDisabled,
+        links: allLinks,
     }, // _ts('pageTitle', 'apiDocs');
 
     homeScreen: {
@@ -258,7 +228,7 @@ export const routes = {
         type: ROUTE.private,
         path: '/string-management/',
         loader: () => import('../views/StringManagement'),
-        links: allLinksWithProjectDisabled,
+        links: allLinks,
     }, // _ts('pageTitle', 'stringManagement');
 
     fourHundredFour: {
@@ -267,7 +237,7 @@ export const routes = {
         path: undefined,
         loader: () => import('../views/FourHundredFour'),
         hideNavbar: true,
-        links: noLinks,
+        links: allLinks,
     }, // _ts('pageTitle', 'fourHundredFour');
 };
 

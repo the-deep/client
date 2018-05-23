@@ -6,12 +6,14 @@ import {
     activeUserSelector,
     currentUserProjectsSelector,
     activeProjectFromStateSelector,
+    routePathKeySelector,
 } from '../redux';
 
 const mapStateToProps = state => ({
     activeUser: activeUserSelector(state),
     userProjects: currentUserProjectsSelector(state),
     currentUserActiveProject: activeProjectFromStateSelector(state),
+    routePathKey: routePathKeySelector(state),
 });
 
 const propTypes = {
@@ -24,6 +26,8 @@ const propTypes = {
             name: PropTypes.string,
         }),
     ),
+    routePathKey: PropTypes.string.isRequired,
+
     // eslint-disable-next-line react/forbid-prop-types
     currentUserActiveProject: PropTypes.object.isRequired,
     requireAdminRights: PropTypes.bool,
@@ -33,11 +37,16 @@ const propTypes = {
     requireAssessmentTemplate: PropTypes.bool,
     requireAnalysisFramework: PropTypes.bool,
     render: PropTypes.func.isRequired,
+    renderOnCloak: PropTypes.func,
+    disable: PropTypes.func,
 };
 
 const defaultProps = {
     activeUser: {},
     userProjects: [],
+    disable: undefined,
+    renderOnCloak: undefined,
+
     requireAdminRights: false,
     requireProject: false,
     requireLogin: false,
@@ -56,6 +65,7 @@ export default class Cloak extends React.PureComponent {
             activeUser,
             userProjects,
             currentUserActiveProject,
+            routePathKey,
 
             requireAdminRights,
             requireProject,
@@ -63,23 +73,25 @@ export default class Cloak extends React.PureComponent {
             requireDevMode,
             requireAssessmentTemplate,
             requireAnalysisFramework,
-            render,
+            disable,
+
+            render: Child,
+            renderOnCloak,
         } = this.props;
 
 
-        if (requireDevMode && process.env.NODE_ENV !== 'development') {
-            return null;
-        } if (requireProject && userProjects.length <= 0) {
-            return null;
-        } else if (requireLogin && !activeUser.userId) {
-            return null;
-        } else if (requireAdminRights && !activeUser.isSuperuser) {
-            return null;
-        } else if (requireAssessmentTemplate && !currentUserActiveProject.assessmentTemplate) {
-            return null;
-        } else if (requireAnalysisFramework && !currentUserActiveProject.analysisFramework) {
-            return null;
+        if (
+            (requireDevMode && process.env.NODE_ENV !== 'development') ||
+            (requireProject && userProjects.length <= 0) ||
+            (requireLogin && !activeUser.userId) ||
+            (requireAdminRights && !activeUser.isSuperuser) ||
+            (requireAssessmentTemplate && !currentUserActiveProject.assessmentTemplate) ||
+            (requireAnalysisFramework && !currentUserActiveProject.analysisFramework)
+        ) {
+            return renderOnCloak ? renderOnCloak() : null;
         }
-        return render();
+
+        const disabled = disable ? disable({ pathKey: routePathKey }) : false;
+        return (<Child disabled={disabled} />);
     }
 }
