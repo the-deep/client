@@ -38,7 +38,7 @@ module.exports = (env) => {
                     parallel: true,
                     uglifyOptions: {
                         mangle: true,
-                        compress: true,
+                        compress: { typeofs: false },
                     },
                 }),
                 new OptimizeCssAssetsPlugin({
