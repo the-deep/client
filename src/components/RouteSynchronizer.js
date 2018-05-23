@@ -17,7 +17,7 @@ import {
     setActiveCountryAction,
     setRouteParamsAction,
 } from '../redux';
-import { pathNames } from '../constants';
+import { pathNames } from '../constants/routes';
 import _ts from '../ts';
 
 const propTypes = {

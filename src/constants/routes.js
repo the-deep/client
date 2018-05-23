@@ -1,12 +1,41 @@
-import React from 'react';
-import RouteSynchronizer from '../../components/RouteSynchronizer';
 import {
-    allLinksWithProjectDisabled,
-    noLinks,
-    allLinks,
     mapObjectToObject,
     mapObjectToArray,
-} from './links';
+    prepareSettings,
+} from '../utils/common';
+
+const commonLinks = {
+    leads: 'l,p',
+    entries: 'l,p,F',
+    arys: 'l,p,A',
+    export: 'l,p,F',
+
+    userProfile: 'l',
+    projects: 'l',
+    countries: 'l',
+    connectors: 'l,d',
+
+    apiDocs: 'l,d',
+    stringManagement: 'l,a',
+    adminPanel: 'l,a',
+};
+
+const noLinks = {
+};
+const allLinks = mapObjectToObject(
+    {
+        ...commonLinks,
+        projectSelect: 'l',
+    },
+    prepareSettings,
+);
+const allLinksWithProjectDisabled = mapObjectToObject(
+    {
+        ...commonLinks,
+        projectSelect: 'l,D',
+    },
+    prepareSettings,
+);
 
 export const ROUTE = {
     exclusivelyPublic: 'exclusively-public',
@@ -22,7 +51,7 @@ export const routes = {
         order: 0,
         type: ROUTE.private,
         path: '/browser-extension/',
-        loader: () => import('../../views/BrowserExtension'),
+        loader: () => import('../views/BrowserExtension'),
         links: allLinksWithProjectDisabled,
     }, // _ts('pageTitle', 'browserExtension');
 
@@ -32,7 +61,7 @@ export const routes = {
         redirectTo: '/',
         path: '/login/',
         hideNavbar: true,
-        loader: () => import('../../views/Login'),
+        loader: () => import('../views/Login'),
         links: noLinks,
     }, // _ts('pageTitle', 'login');
 
@@ -41,7 +70,7 @@ export const routes = {
         type: ROUTE.exclusivelyPublic,
         redirectTo: '/',
         path: '/register/',
-        loader: () => import('../../views/Register'),
+        loader: () => import('../views/Register'),
         hideNavbar: true,
         links: noLinks,
     }, // _ts('pageTitle', 'register');
@@ -51,7 +80,7 @@ export const routes = {
         type: ROUTE.exclusivelyPublic,
         redirectTo: '/',
         path: '/password-reset/',
-        loader: () => import('../../views/PasswordReset'),
+        loader: () => import('../views/PasswordReset'),
         hideNavbar: true,
         links: noLinks,
     }, // _ts('pageTitle', 'passwordReset');
@@ -60,7 +89,7 @@ export const routes = {
         order: 20,
         type: ROUTE.private,
         path: '/projects/:projectId?/',
-        loader: () => import('../../views/Project'),
+        loader: () => import('../views/Project'),
         links: allLinks,
     }, // _ts('pageTitle', 'projects');
 
@@ -68,7 +97,7 @@ export const routes = {
         order: 21,
         type: ROUTE.private,
         path: '/projects/:projectId/dashboard/',
-        loader: () => import('../../views/Dashboard'),
+        loader: () => import('../views/Dashboard'),
         links: allLinks,
     }, // _ts('pageTitle', 'dashboard');
 
@@ -76,7 +105,7 @@ export const routes = {
         order: 22,
         type: ROUTE.private,
         path: '/connectors/:connectorId?/',
-        loader: () => import('../../views/Connector'),
+        loader: () => import('../views/Connector'),
         links: allLinks,
     }, // _ts('pageTitle', 'connectors');
 
@@ -84,7 +113,7 @@ export const routes = {
         order: 30,
         type: ROUTE.private,
         path: '/projects/:projectId/leads/',
-        loader: () => import('../../views/Leads'),
+        loader: () => import('../views/Leads'),
         links: allLinks,
     }, // _ts('pageTitle', 'leads');
 
@@ -92,7 +121,7 @@ export const routes = {
         order: 31,
         type: ROUTE.private,
         path: '/projects/:projectId/leads/viz',
-        loader: () => import('../../views/LeadsViz'),
+        loader: () => import('../views/LeadsViz'),
         links: allLinks,
     }, // _ts('pageTitle', 'leadsViz');
 
@@ -100,7 +129,7 @@ export const routes = {
         order: 32,
         type: ROUTE.private,
         path: '/projects/:projectId/leads/add/',
-        loader: () => import('../../views/LeadAdd'),
+        loader: () => import('../views/LeadAdd'),
         links: allLinksWithProjectDisabled,
     }, // _ts('pageTitle', 'addLeads');
 
@@ -108,7 +137,7 @@ export const routes = {
         order: 40,
         type: ROUTE.private,
         path: '/projects/:projectId/entries/',
-        loader: () => import('../../views/Entries/'),
+        loader: () => import('../views/Entries/'),
         links: allLinks,
     }, // _ts('pageTitle', 'entries');
 
@@ -116,7 +145,7 @@ export const routes = {
         order: 41,
         type: ROUTE.private,
         path: '/projects/:projectId/leads/:leadId/edit-entries/',
-        loader: () => import('../../views/EditEntry'),
+        loader: () => import('../views/EditEntry'),
         links: allLinksWithProjectDisabled,
     }, // _ts('pageTitle', 'editEntries');
 
@@ -124,7 +153,7 @@ export const routes = {
         order: 50,
         type: ROUTE.private,
         path: '/projects/:projectId/arys/',
-        loader: () => import('../../views/Arys/'),
+        loader: () => import('../views/Arys/'),
         links: allLinks,
     }, // _ts('pageTitle', 'arys');
 
@@ -132,7 +161,7 @@ export const routes = {
         order: 51,
         type: ROUTE.private,
         path: '/projects/:projectId/leads/:leadId/edit-ary/',
-        loader: () => import('../../views/EditAry'),
+        loader: () => import('../views/EditAry'),
         links: allLinksWithProjectDisabled,
     }, // _ts('pageTitle', 'editAry');
 
@@ -140,7 +169,7 @@ export const routes = {
         order: 51,
         type: ROUTE.private,
         path: '/projects/:projectId/lead-group/:leadGroupId/edit-ary/',
-        loader: () => import('../../views/EditAry'),
+        loader: () => import('../views/EditAry'),
         links: allLinksWithProjectDisabled,
     }, // _ts('pageTitle', 'editLeadGroupAssessment');
 
@@ -148,7 +177,7 @@ export const routes = {
         order: 60,
         type: ROUTE.private,
         path: '/projects/:projectId/export/',
-        loader: () => import('../../views/Export'),
+        loader: () => import('../views/Export'),
         links: allLinks,
     }, // _ts('pageTitle', 'export');
 
@@ -156,7 +185,7 @@ export const routes = {
         order: 61,
         type: ROUTE.private,
         path: '/projects/:projectId/exports/',
-        loader: () => import('../../views/UserExports'),
+        loader: () => import('../views/UserExports'),
         links: allLinks,
     }, // _ts('pageTitle', 'userExports');
 
@@ -164,7 +193,7 @@ export const routes = {
         order: 70,
         type: ROUTE.private,
         path: '/countries/:countryId?/',
-        loader: () => import('../../views/Country'),
+        loader: () => import('../views/Country'),
         links: allLinksWithProjectDisabled,
     }, // _ts('pageTitle', 'countries');
 
@@ -172,7 +201,7 @@ export const routes = {
         order: 80,
         type: ROUTE.private,
         path: '/user/:userId/',
-        loader: () => import('../../views/UserProfile'),
+        loader: () => import('../views/UserProfile'),
         links: allLinksWithProjectDisabled,
     }, // _ts('pageTitle', 'userProfile');
 
@@ -180,7 +209,7 @@ export const routes = {
         order: 90,
         type: ROUTE.private,
         path: '/user-group/:userGroupId/',
-        loader: () => import('../../views/UserGroup'),
+        loader: () => import('../views/UserGroup'),
         links: allLinksWithProjectDisabled,
     }, // _ts('pageTitle', 'userGroup');
 
@@ -188,7 +217,7 @@ export const routes = {
         order: 100,
         type: ROUTE.private,
         path: '/analysis-framework/:analysisFrameworkId/',
-        loader: () => import('../../views/AnalysisFramework'),
+        loader: () => import('../views/AnalysisFramework'),
         links: allLinksWithProjectDisabled,
     }, // _ts('pageTitle', 'analysisFramework');
 
@@ -196,7 +225,7 @@ export const routes = {
         order: 110,
         type: ROUTE.private,
         path: '/category-editor/:categoryEditorId/',
-        loader: () => import('../../views/CategoryEditor'),
+        loader: () => import('../views/CategoryEditor'),
         links: allLinksWithProjectDisabled,
     }, // _ts('pageTitle', 'categoryEditor');
 
@@ -204,7 +233,7 @@ export const routes = {
         order: 120,
         type: ROUTE.private,
         path: '/weekly-snapshot/',
-        loader: () => import('../../views/WeeklySnapshot'),
+        loader: () => import('../views/WeeklySnapshot'),
         links: allLinksWithProjectDisabled,
     }, // _ts('pageTitle', 'weeklySnapshot');
 
@@ -212,7 +241,7 @@ export const routes = {
         order: 130,
         type: ROUTE.private,
         path: '/api-docs/',
-        loader: () => import('../../views/ApiDocs'),
+        loader: () => import('../views/ApiDocs'),
         links: allLinksWithProjectDisabled,
     }, // _ts('pageTitle', 'apiDocs');
 
@@ -220,7 +249,7 @@ export const routes = {
         order: 140,
         type: ROUTE.private,
         path: '/',
-        loader: () => import('../../views/HomeScreen'),
+        loader: () => import('../views/HomeScreen'),
         links: allLinks,
     }, // _ts('pageTitle', 'homeScreen');
 
@@ -228,7 +257,7 @@ export const routes = {
         order: 150,
         type: ROUTE.private,
         path: '/string-management/',
-        loader: () => import('../../views/StringManagement'),
+        loader: () => import('../views/StringManagement'),
         links: allLinksWithProjectDisabled,
     }, // _ts('pageTitle', 'stringManagement');
 
@@ -236,7 +265,7 @@ export const routes = {
         order: 990,
         type: ROUTE.public,
         path: undefined,
-        loader: () => import('../../views/FourHundredFour'),
+        loader: () => import('../views/FourHundredFour'),
         hideNavbar: true,
         links: noLinks,
     }, // _ts('pageTitle', 'fourHundredFour');
@@ -254,10 +283,3 @@ export const routesOrder = mapObjectToArray(
 )
     .sort((a, b) => a.order - b.order)
     .map(row => row.key);
-
-export const views = mapObjectToObject(
-    routes,
-    (route, name) => props => (
-        <RouteSynchronizer {...props} load={route.loader} name={name} />
-    ),
-);

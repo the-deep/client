@@ -83,7 +83,7 @@ export default class UserProjectAdd extends React.PureComponent {
     }
 
     createRequestForProjectCreate = ({ title }) => {
-        const userGroups = this.props.userGroups;
+        const { userGroups } = this.props;
 
         const projectCreateRequest = new FgRestBuilder()
             .url(urlForProjectCreate)

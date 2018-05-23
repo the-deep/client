@@ -15,7 +15,7 @@ export const mapObjectToArray = (obj, fn) => {
     return newArray;
 };
 
-const prepareSettings = (semantics) => {
+export const prepareSettings = (semantics) => {
     const mapCharacterToSettingMap = {
         x: { name: 'requireLogin', value: false },
         l: { name: 'requireLogin', value: true },
@@ -42,35 +42,3 @@ const prepareSettings = (semantics) => {
     });
     return settings;
 };
-
-const commonLinks = {
-    leads: 'l,p',
-    entries: 'l,p,F',
-    arys: 'l,p,A',
-    export: 'l,p,F',
-
-    userProfile: 'l',
-    projects: 'l',
-    countries: 'l',
-    connectors: 'l,d',
-
-    apiDocs: 'l,d',
-    stringManagement: 'l,a',
-    adminPanel: 'l,a',
-};
-
-export const noLinks = {};
-export const allLinks = mapObjectToObject(
-    {
-        ...commonLinks,
-        projectSelect: 'l',
-    },
-    prepareSettings,
-);
-export const allLinksWithProjectDisabled = mapObjectToObject(
-    {
-        ...commonLinks,
-        projectSelect: 'l,D',
-    },
-    prepareSettings,
-);

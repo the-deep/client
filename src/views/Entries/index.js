@@ -11,6 +11,7 @@ import ListView from '../../vendor/react-store/components/View/List/ListView';
 import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
 import Pager from '../../vendor/react-store/components/View/Pager';
 import BoundError from '../../vendor/react-store/components/General/BoundError';
+import widgetStore from '../../widgets';
 
 import AppError from '../../components/AppError';
 import {
@@ -26,9 +27,10 @@ import {
     analysisFrameworkForProjectSelector,
     unsetEntriesViewFilterAction,
 
-    gridItemsForProjectSelector,
-    widgetsSelector,
-    maxHeightForProjectSelector,
+    // Here
+    // gridItemsForProjectSelector,
+    // maxHeightForProjectSelector,
+    // widgetsSelector,
 
     projectIdFromRouteSelector,
 
@@ -57,12 +59,15 @@ const mapStateToProps = (state, props) => ({
     entries: entriesForProjectSelector(state, props),
     analysisFramework: analysisFrameworkForProjectSelector(state, props),
     entriesFilter: entriesViewFilterSelector(state, props),
-    gridItems: gridItemsForProjectSelector(state, props),
-    widgets: widgetsSelector(state, props),
-    maxHeight: maxHeightForProjectSelector(state, props),
     projectId: projectIdFromRouteSelector(state, props),
     activePage: entriesViewActivePageSelector(state, props),
     totalEntriesCount: totalEntriesCountForProjectSelector(state, props),
+
+    /*
+    gridItems: gridItemsForProjectSelector(state, props),
+    widgets: widgetsSelector(state, props),
+    maxHeight: maxHeightForProjectSelector(state, props),
+    */
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -81,24 +86,33 @@ const propTypes = {
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     projectId: PropTypes.number.isRequired,
     setEntries: PropTypes.func.isRequired,
-
     entriesFilter: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     unsetEntriesViewFilter: PropTypes.func.isRequired,
+    totalEntriesCount: PropTypes.number,
+    setEntriesViewActivePage: PropTypes.func.isRequired,
 
+    /*
     gridItems: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     maxHeight: PropTypes.number,
-    totalEntriesCount: PropTypes.number,
-    setEntriesViewActivePage: PropTypes.func.isRequired,
+    */
 };
 
 const defaultProps = {
-    maxHeight: 0,
+    // maxHeight: 0,
     totalEntriesCount: 0,
 };
 
 const MAX_ENTRIES_PER_REQUEST = 5;
 const emptyList = [];
+
+const widgetsFromStore = widgetStore
+    .filter(widget => widget.view.listComponent)
+    .map(widget => ({
+        id: widget.id,
+        title: widget.title,
+        listComponent: widget.view.listComponent,
+    }));
 
 @BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
@@ -106,6 +120,64 @@ export default class Entries extends React.PureComponent {
     static leadKeyExtractor = d => d.id;
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static calcualteItems = (analysisFramework) => {
+        if (!analysisFramework.widgets) {
+            return emptyList;
+        }
+        return analysisFramework.widgets
+            .filter(w => widgetsFromStore.find(ws => ws.id === w.widgetId));
+    }
+
+    static calculateMaxHeight = items => (
+        items.reduce(
+            (acc, item) => {
+                const { height, top } = item.properties.listGridLayout;
+                return Math.max(acc, height + top + 4);
+            },
+            0,
+        )
+    )
+
+    static calculateFilters = (analysisFramework, items) => {
+        if (!analysisFramework.filters) {
+            return emptyList;
+        }
+        return analysisFramework.filters
+            .filter(f => items.find(item => item.key === f.widgetKey));
+    }
+
+    static getAttribute = (attributes = [], widgetId) => {
+        const attribute = attributes.find(attr => attr.widget === widgetId);
+        return attribute ? attribute.data : undefined;
+    };
+
+    static getMiniEntry = entry => ({
+        id: entry.id,
+        excerpt: entry.excerpt,
+        image: entry.image,
+        entryType: entry.entryType,
+    });
+
+    static calculateGridItems = (entries, items) => {
+        const gridItems = {};
+        entries.forEach((entryGroup) => {
+            entryGroup.entries.forEach((entry) => {
+                gridItems[entry.id] = items.map(
+                    item => ({
+                        key: item.key,
+                        widgetId: item.widgetId,
+                        title: item.title,
+                        layout: item.properties.listGridLayout,
+                        attribute: Entries.getAttribute(entry.attributes, item.id),
+                        entry: Entries.getMiniEntry(entry),
+                        data: item.properties.data,
+                    }),
+                );
+            });
+        });
+        return gridItems;
+    }
 
     constructor(props) {
         super(props);
@@ -116,6 +188,11 @@ export default class Entries extends React.PureComponent {
         };
 
         this.leadEntries = React.createRef();
+
+        this.items = Entries.calcualteItems(this.props.analysisFramework);
+        this.maxHeight = Entries.calcualteItems(this.props.analysisFramework, this.items);
+        this.filters = Entries.calculateFilters(this.props.analysisFramework, this.items);
+        this.gridItems = Entries.calculateGridItems(this.props.entries, this.items);
     }
 
     componentWillMount() {
@@ -134,14 +211,15 @@ export default class Entries extends React.PureComponent {
             analysisFramework: oldAf,
             entriesFilter: oldFilter,
             activePage: oldActivePage,
+            entries: oldEntries,
         } = this.props;
         const {
             projectId: newProjectId,
             analysisFramework: newAf,
             entriesFilter: newFilter,
             activePage: newActivePage,
+            entries: newEntries,
         } = nextProps;
-
 
         if (oldProjectId !== newProjectId) {
             // NOTE: If projects is changed; af, filter and entries will also changed
@@ -163,6 +241,15 @@ export default class Entries extends React.PureComponent {
             this.projectRequest = this.createRequestForProject(newProjectId);
             this.projectRequest.start();
             return;
+        }
+
+        if (oldAf !== newAf) {
+            this.items = Entries.calcualteItems(newAf);
+            this.maxHeight = Entries.calcualteItems(newAf, this.items);
+            this.filters = Entries.calculateFilters(newAf, this.items);
+        }
+        if (oldAf !== newAf || newEntries !== oldEntries) {
+            this.gridItems = Entries.calculateGridItems(newEntries, this.items);
         }
 
         if (oldAf !== newAf && (!oldAf || !newAf || oldAf.versionId !== newAf.versionId)) {
@@ -406,8 +493,7 @@ export default class Entries extends React.PureComponent {
     }
 
     renderItemView = (item) => {
-        const { widgets } = this.props;
-        const widget = widgets.find(w => w.id === item.widgetId);
+        const widget = widgetsFromStore.find(w => w.id === item.widgetId);
         const ListComponent = widget.listComponent;
         return (
             <ListComponent
@@ -418,26 +504,19 @@ export default class Entries extends React.PureComponent {
         );
     }
 
-    renderEntries = (key, data) => {
-        const {
-            maxHeight,
-            gridItems,
-        } = this.props;
-
-        return (
-            <div
-                key={data.id}
-                className={styles.entry}
-                style={{ height: maxHeight }}
-            >
-                <GridLayout
-                    modifier={this.renderItemView}
-                    items={gridItems[data.id] || emptyList}
-                    viewOnly
-                />
-            </div>
-        );
-    }
+    renderEntries = (key, data) => (
+        <div
+            key={data.id}
+            className={styles.entry}
+            style={{ height: this.maxHeight }}
+        >
+            <GridLayout
+                modifier={this.renderItemView}
+                items={this.gridItems[data.id] || emptyList}
+                viewOnly
+            />
+        </div>
+    )
 
     renderLeadGroupedEntriesHeader = ({
         leadId,
@@ -561,7 +640,10 @@ export default class Entries extends React.PureComponent {
 
         return (
             <div className={styles.entriesView}>
-                <FilterEntriesForm pending={pendingAf} />
+                <FilterEntriesForm
+                    pending={pendingAf}
+                    filters={this.filters}
+                />
                 <LeadEntries />
                 <Footer />
             </div>

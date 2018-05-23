@@ -164,8 +164,8 @@ export const currentUserProjectsSelector = createSelector(
     currentUserSelector,
     projectsSelector,
     (user, projects) => (
-        (user.projects && user.projects.map(projectId =>
-            projects[projectId] || emptyObject,
+        (user.projects && user.projects.map(
+            projectId => projects[projectId] || emptyObject,
         )) || emptyList
     ),
 );

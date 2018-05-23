@@ -42,7 +42,7 @@ const noOp = () => {};
 
 if (process.env.NODE_ENV !== 'test') {
     // eslint-disable-next-line global-require
-    const tokenSelector = require('./redux/selectors/auth').tokenSelector;
+    const { tokenSelector } = require('./redux/selectors/auth');
 
     let currentAccess;
     let currentRefresh;

@@ -16,7 +16,6 @@ import {
     entriesViewFilterSelector,
     setEntriesViewFilterAction,
     unsetEntriesViewFilterAction,
-    filtersForProjectSelector,
 
     projectDetailsSelector,
     entryFilterOptionsForProjectSelector,
@@ -40,7 +39,6 @@ import GeoSelection from '../../components/GeoSelection';
 const mapStateToProps = (state, props) => ({
     activeProject: activeProjectIdFromStateSelector(state),
     entriesFilters: entriesViewFilterSelector(state, props),
-    filters: filtersForProjectSelector(state, props),
     projectDetails: projectDetailsSelector(state, props),
     entryFilterOptions: entryFilterOptionsForProjectSelector(state, props),
     geoOptions: geoOptionsForProjectSelector(state, props),

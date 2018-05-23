@@ -1,6 +1,5 @@
 import update from '../../../vendor/react-store/utils/immutable-update';
 import { isEqualAndTruthy } from '../../../vendor/react-store/utils/common';
-import widgetStore from '../../../widgets';
 
 // TYPE
 
@@ -81,14 +80,9 @@ const getHeightOfWidget = layoutKey => widget => (
 // Validate an analysis framework and returns new one with
 // updated widgets.
 const getValidatedAnalysisFramework = (analysisFramework) => {
-    let widgets = analysisFramework.widgets;
+    let { widgets } = analysisFramework;
 
-    // Collect the widgets of overview page
-    const overviewWidgetIds = widgetStore.filter(
-        widget => widget.analysisFramework.overviewComponent,
-    ).map(widget => widget.id);
-
-    let overviewWidgets = widgets.filter(w => overviewWidgetIds.indexOf(w.widgetId) >= 0);
+    let overviewWidgets = widgets.filter(w => w.properties.overviewGridLayout);
 
     // Get max height of all widgets
     let maxOverviewHeight = Math.max(
@@ -125,11 +119,7 @@ const getValidatedAnalysisFramework = (analysisFramework) => {
     }
 
     // Do the same for list widgets
-    const listWidgetIds = widgetStore.filter(
-        widget => widget.analysisFramework.listComponent,
-    ).map(widget => widget.id);
-
-    let listWidgets = widgets.filter(w => listWidgetIds.indexOf(w.widgetId) >= 0);
+    let listWidgets = widgets.filter(w => w.properties.listGridLayout);
     let maxListHeight = Math.max(
         ...listWidgets.map(getHeightOfWidget('listGridLayout')),
     );

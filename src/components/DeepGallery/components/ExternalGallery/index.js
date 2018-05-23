@@ -56,8 +56,8 @@ export default class ExternalGallery extends React.PureComponent {
     }
 
     getHeaderValue = (headers, header) => {
-        const tHeader = Object.keys(headers).find(key =>
-            key.toLowerCase() === header.toLowerCase(),
+        const tHeader = Object.keys(headers).find(
+            key => key.toLowerCase() === header.toLowerCase(),
         );
         return headers[tHeader];
     }

@@ -100,7 +100,7 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
             pending: false,
             error: undefined,
             extractedText: null,
-            extractedImages: [],
+            // extractedImages: [],
             highlights: [],
         };
     }
@@ -193,7 +193,7 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
                         pending: false,
                         error: undefined,
                         extractedText: response.text,
-                        extractedImages: response.images,
+                        // extractedImages: response.images,
                     }, () => {
                         this.calculateHighlights(this.props);
                     });

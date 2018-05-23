@@ -63,16 +63,16 @@ export const selectedSubcategorySelector = createSelector(
         }
         const activeCategory = categories.find(d => d.id === activeCategoryId);
 
-        const selectedSubcategories = activeCategory.selectedSubcategories;
+        const { selectedSubcategories } = activeCategory;
         if (selectedSubcategories.length === 0) {
             return undefined;
         }
 
         let subcategory = {};
-        let subcategories = activeCategory.subcategories;
+        let { subcategories } = activeCategory;
         selectedSubcategories.forEach((selected) => {
             subcategory = subcategories.find(d => d.id === selected);
-            subcategories = subcategory.subcategories;
+            ({ subcategories } = subcategory);
         });
         return subcategory;
     },
