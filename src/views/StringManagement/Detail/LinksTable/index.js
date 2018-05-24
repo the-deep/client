@@ -8,6 +8,12 @@ import {
     compareNumber,
 } from '../../../../vendor/react-store/utils/common';
 import Table from '../../../../vendor/react-store/components/View/Table';
+import Modal from '../../../../vendor/react-store/components/View/Modal';
+import Confirm from '../../../../vendor/react-store/components/View/Modal/Confirm';
+import ModalHeader from '../../../../vendor/react-store/components/View/Modal/Header';
+import ModalBody from '../../../../vendor/react-store/components/View/Modal/Body';
+import ModalFooter from '../../../../vendor/react-store/components/View/Modal/Footer';
+import Button from '../../../../vendor/react-store/components/Action/Button';
 import DangerButton from '../../../../vendor/react-store/components/Action/Button/DangerButton';
 import WarningButton from '../../../../vendor/react-store/components/Action/Button/WarningButton';
 import {
@@ -16,6 +22,7 @@ import {
 
 import { iconNames } from '../../../../constants';
 
+import DeleteConfirm from '../../DeleteConfirm';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -39,6 +46,13 @@ export default class LinksTable extends React.PureComponent {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            editStringId: undefined,
+            deleteStringId: undefined,
+            showDeleteStringConfirmModal: false,
+            showEditStringModal: false,
+        };
 
         this.linksTableHeader = [
             {
@@ -75,19 +89,19 @@ export default class LinksTable extends React.PureComponent {
                 key: 'actions',
                 label: 'Actions',
                 order: 5,
-                modifier: () => (
+                modifier: data => (
                     <Fragment>
                         <WarningButton
+                            onClick={() => { this.handleEditButtonClick(data.stringId); }}
                             iconName={iconNames.edit}
                             transparent
                             smallVerticalPadding
-                            disabled
                         />
                         <DangerButton
+                            onClick={() => { this.handleDeleteButtonClick(data.stringId); }}
                             iconName={iconNames.delete}
                             transparent
                             smallVerticalPadding
-                            disabled
                         />
                     </Fragment>
                 ),
@@ -100,17 +114,47 @@ export default class LinksTable extends React.PureComponent {
         };
     }
 
+    handleEditButtonClick = (stringId) => {
+        this.setState({
+            editStringId: stringId,
+            showEditStringModal: true,
+        });
+    }
+
+    handleDeleteButtonClick = (stringId) => {
+        this.setState({
+            deleteStringId: stringId,
+            showDeleteStringConfirmModal: true,
+        });
+    }
+
+    handleDeleteStringConfirmClose = () => {
+        this.setState({ showDeleteStringConfirmModal: false });
+    }
+
     render() {
         const { linkCollection } = this.props;
+        const {
+            showDeleteStringConfirmModal,
+            deleteStringId,
+        } = this.state;
 
         return (
-            <Table
-                className={styles.linksTable}
-                data={linkCollection}
-                headers={this.linksTableHeader}
-                keyExtractor={LinksTable.keyExtractor}
-                defaultSort={this.linksTableDefaultSort}
-            />
+            <React.Fragment>
+                <Table
+                    className={styles.linksTable}
+                    data={linkCollection}
+                    headers={this.linksTableHeader}
+                    keyExtractor={LinksTable.keyExtractor}
+                    defaultSort={this.linksTableDefaultSort}
+                />
+                <DeleteConfirm
+                    show={showDeleteStringConfirmModal}
+                    deleteStringId={deleteStringId}
+                    type="link"
+                    onClose={this.handleDeleteStringConfirmClose}
+                />
+            </React.Fragment>
         );
     }
 }

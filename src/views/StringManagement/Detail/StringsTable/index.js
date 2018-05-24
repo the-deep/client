@@ -14,6 +14,8 @@ import DangerButton from '../../../../vendor/react-store/components/Action/Butto
 import WarningButton from '../../../../vendor/react-store/components/Action/Button/WarningButton';
 import { allStringsSelector } from '../../../../redux';
 
+import DeleteConfirm from '../../DeleteConfirm';
+
 import { iconNames } from '../../../../constants';
 
 import styles from './styles.scss';
@@ -39,6 +41,13 @@ export default class StringsTable extends React.PureComponent {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            editStringId: undefined,
+            deleteStringId: undefined,
+            showDeleteStringConfirmModal: false,
+            showEditStringModal: false,
+        };
 
         this.stringsTableHeader = [
             {
@@ -108,15 +117,27 @@ export default class StringsTable extends React.PureComponent {
 
     render() {
         const { allStrings } = this.props;
+        const {
+            showDeleteStringConfirmModal,
+            deleteStringId,
+        } = this.state;
 
         return (
-            <Table
-                className={styles.stringsTable}
-                data={allStrings}
-                headers={this.stringsTableHeader}
-                keyExtractor={StringsTable.keyExtractor}
-                defaultSort={this.stringsTableDefaultSort}
-            />
+            <React.Fragment>
+                <Table
+                    className={styles.stringsTable}
+                    data={allStrings}
+                    headers={this.stringsTableHeader}
+                    keyExtractor={StringsTable.keyExtractor}
+                    defaultSort={this.stringsTableDefaultSort}
+                />
+                <DeleteConfirm
+                    show={showDeleteStringConfirmModal}
+                    deleteStringId={deleteStringId}
+                    type="link"
+                    onClose={this.handleDeleteStringConfirmClose}
+                />
+            </React.Fragment>
         );
     }
 }
