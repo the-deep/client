@@ -194,6 +194,14 @@ export default class FilterArysForm extends React.PureComponent {
                 schema={this.schema}
                 value={faramValues}
             >
+                <SearchInput
+                    faramElementName="search"
+                    label={_ts('assessments', 'placeholderSearch')}
+                    placeholder={_ts('assessments', 'placeholderSearch')}
+                    showHintAndError={false}
+                    showLabel
+                    className="arys-filter"
+                />
                 <DateFilter
                     faramElementName="created_at"
                     label={_ts('assessments', 'filterDateCreated')}
@@ -212,14 +220,6 @@ export default class FilterArysForm extends React.PureComponent {
                     placeholder={_ts('assessments', 'placeholderAnybody')}
                     showHintAndError={false}
                     showLabel
-                />
-                <SearchInput
-                    faramElementName="search"
-                    label={_ts('assessments', 'placeholderSearch')}
-                    placeholder={_ts('assessments', 'placeholderSearch')}
-                    showHintAndError={false}
-                    showLabel
-                    className="arys-filter"
                 />
                 { !applyOnChange &&
                     <Button

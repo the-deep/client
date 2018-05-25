@@ -241,6 +241,22 @@ export default class FilterLeadsForm extends React.PureComponent {
                 schema={this.schema}
                 value={faramValues}
             >
+                <SearchInput
+                    faramElementName="search"
+                    label={_ts('leads', 'placeholderSearch')}
+                    placeholder={_ts('leads', 'placeholderSearch')}
+                    showHintAndError={false}
+                    showLabel
+                    className="leads-filter"
+                />
+                <DateFilter
+                    faramElementName="published_on"
+                    label={_ts('leads', 'filterDatePublished')}
+                    placeholder={_ts('leads', 'placeholderAnytime')}
+                    showHintAndError={false}
+                    showLabel
+                    className="leads-filter"
+                />
                 <MultiSelectInput
                     faramElementName="assignee"
                     keySelector={FilterLeadsForm.optionKeySelector}
@@ -255,14 +271,6 @@ export default class FilterLeadsForm extends React.PureComponent {
                 <DateFilter
                     faramElementName="created_at"
                     label={_ts('leads', 'filterDateCreated')}
-                    placeholder={_ts('leads', 'placeholderAnytime')}
-                    showHintAndError={false}
-                    showLabel
-                    className="leads-filter"
-                />
-                <DateFilter
-                    faramElementName="published_on"
-                    label={_ts('leads', 'filterDatePublished')}
                     placeholder={_ts('leads', 'placeholderAnytime')}
                     showHintAndError={false}
                     showLabel
@@ -286,14 +294,6 @@ export default class FilterLeadsForm extends React.PureComponent {
                     labelSelector={FilterLeadsForm.optionLabelSelector}
                     options={status}
                     placeholder={_ts('leads', 'placeholderAny')}
-                    showHintAndError={false}
-                    showLabel
-                    className="leads-filter"
-                />
-                <SearchInput
-                    faramElementName="search"
-                    label={_ts('leads', 'placeholderSearch')}
-                    placeholder={_ts('leads', 'placeholderSearch')}
                     showHintAndError={false}
                     showLabel
                     className="leads-filter"
