@@ -8,12 +8,6 @@ import {
     compareNumber,
 } from '../../../../vendor/react-store/utils/common';
 import Table from '../../../../vendor/react-store/components/View/Table';
-import Modal from '../../../../vendor/react-store/components/View/Modal';
-import Confirm from '../../../../vendor/react-store/components/View/Modal/Confirm';
-import ModalHeader from '../../../../vendor/react-store/components/View/Modal/Header';
-import ModalBody from '../../../../vendor/react-store/components/View/Modal/Body';
-import ModalFooter from '../../../../vendor/react-store/components/View/Modal/Footer';
-import Button from '../../../../vendor/react-store/components/Action/Button';
 import DangerButton from '../../../../vendor/react-store/components/Action/Button/DangerButton';
 import WarningButton from '../../../../vendor/react-store/components/Action/Button/WarningButton';
 import {
@@ -23,6 +17,7 @@ import {
 import { iconNames } from '../../../../constants';
 
 import DeleteConfirm from '../../DeleteConfirm';
+import EditLinkModal from './EditLinkModal';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -114,16 +109,16 @@ export default class LinksTable extends React.PureComponent {
         };
     }
 
-    handleEditButtonClick = (stringId) => {
+    handleEditButtonClick = (id) => {
         this.setState({
-            editLinkId: stringId,
+            editLinkId: id,
             showEditLinkModal: true,
         });
     }
 
-    handleDeleteButtonClick = (stringId) => {
+    handleDeleteButtonClick = (id) => {
         this.setState({
-            deleteLinkId: stringId,
+            deleteLinkId: id,
             showDeleteLinkConfirmModal: true,
         });
     }
@@ -132,11 +127,17 @@ export default class LinksTable extends React.PureComponent {
         this.setState({ showDeleteLinkConfirmModal: false });
     }
 
+    handleEditLinkModalClose = () => {
+        this.setState({ showEditLinkModal: false });
+    }
+
     render() {
         const { linkCollection } = this.props;
         const {
             showDeleteLinkConfirmModal,
             deleteLinkId,
+            showEditLinkModal,
+            editLinkId,
         } = this.state;
 
         return (
@@ -153,6 +154,11 @@ export default class LinksTable extends React.PureComponent {
                     deleteId={deleteLinkId}
                     type="link"
                     onClose={this.handleDeleteLinkConfirmClose}
+                />
+                <EditLinkModal
+                    show={showEditLinkModal}
+                    editLinkId={editLinkId}
+                    onClose={this.handleEditLinkModalClose}
                 />
             </React.Fragment>
         );
