@@ -48,10 +48,10 @@ export default class LinksTable extends React.PureComponent {
         super(props);
 
         this.state = {
-            editStringId: undefined,
-            deleteStringId: undefined,
-            showDeleteStringConfirmModal: false,
-            showEditStringModal: false,
+            editLinkId: undefined,
+            deleteLinkId: undefined,
+            showDeleteLinkConfirmModal: false,
+            showEditLinkModal: false,
         };
 
         this.linksTableHeader = [
@@ -116,27 +116,27 @@ export default class LinksTable extends React.PureComponent {
 
     handleEditButtonClick = (stringId) => {
         this.setState({
-            editStringId: stringId,
-            showEditStringModal: true,
+            editLinkId: stringId,
+            showEditLinkModal: true,
         });
     }
 
     handleDeleteButtonClick = (stringId) => {
         this.setState({
-            deleteStringId: stringId,
-            showDeleteStringConfirmModal: true,
+            deleteLinkId: stringId,
+            showDeleteLinkConfirmModal: true,
         });
     }
 
-    handleDeleteStringConfirmClose = () => {
-        this.setState({ showDeleteStringConfirmModal: false });
+    handleDeleteLinkConfirmClose = () => {
+        this.setState({ showDeleteLinkConfirmModal: false });
     }
 
     render() {
         const { linkCollection } = this.props;
         const {
-            showDeleteStringConfirmModal,
-            deleteStringId,
+            showDeleteLinkConfirmModal,
+            deleteLinkId,
         } = this.state;
 
         return (
@@ -149,10 +149,10 @@ export default class LinksTable extends React.PureComponent {
                     defaultSort={this.linksTableDefaultSort}
                 />
                 <DeleteConfirm
-                    show={showDeleteStringConfirmModal}
-                    deleteStringId={deleteStringId}
+                    show={showDeleteLinkConfirmModal}
+                    deleteId={deleteLinkId}
                     type="link"
-                    onClose={this.handleDeleteStringConfirmClose}
+                    onClose={this.handleDeleteLinkConfirmClose}
                 />
             </React.Fragment>
         );

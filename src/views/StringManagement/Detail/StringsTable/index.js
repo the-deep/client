@@ -168,7 +168,7 @@ export default class StringsTable extends React.PureComponent {
                 />
                 <DeleteConfirm
                     show={showDeleteStringConfirmModal}
-                    deleteStringId={deleteStringId}
+                    deleteId={deleteStringId}
                     type="all"
                     onClose={this.handleDeleteStringConfirmClose}
                 />

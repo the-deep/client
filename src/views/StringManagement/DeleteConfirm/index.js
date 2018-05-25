@@ -16,7 +16,7 @@ import ListView from '../../../vendor/react-store/components/View/List/ListView'
 import styles from './styles.scss';
 
 const propTypes = {
-    deleteStringId: PropTypes.oneOfType([
+    deleteId: PropTypes.oneOfType([
         PropTypes.number,
         PropTypes.string,
     ]),
@@ -34,7 +34,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    deleteStringId: undefined,
+    deleteId: undefined,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -58,7 +58,7 @@ export default class DeleteConfirm extends React.PureComponent {
     handleDeleteStringConfirmClose = (result) => {
         const {
             type,
-            deleteStringId,
+            deleteId,
             selectedLanguageName,
 
             allStrings,
@@ -69,10 +69,10 @@ export default class DeleteConfirm extends React.PureComponent {
         } = this.props;
         if (result && type === 'all') {
             const value = allStrings.find(
-                str => str.id === deleteStringId,
+                str => str.id === deleteId,
             ).string;
             const change = {
-                id: deleteStringId,
+                id: deleteId,
                 oldValue: value,
                 action: 'delete',
             };
@@ -81,12 +81,11 @@ export default class DeleteConfirm extends React.PureComponent {
                 languageName: selectedLanguageName,
             });
         } else if (result && type === 'link') {
-            // NOTE: deleteStringId is deleteLinkId
             const value = linkCollection.find(
-                lnk => lnk.id === deleteStringId,
+                lnk => lnk.id === deleteId,
             ).stringId;
             const change = {
-                key: deleteStringId,
+                key: deleteId,
                 oldString: value,
                 action: 'delete',
             };
@@ -118,7 +117,7 @@ export default class DeleteConfirm extends React.PureComponent {
     renderMessageDetails = () => {
         const {
             type,
-            deleteStringId: id,
+            deleteId: id,
             linkCollection,
             allStrings,
         } = this.props;
