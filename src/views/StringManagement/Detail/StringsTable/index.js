@@ -15,6 +15,7 @@ import WarningButton from '../../../../vendor/react-store/components/Action/Butt
 import { allStringsSelector } from '../../../../redux';
 
 import DeleteConfirm from '../../DeleteConfirm';
+import EditStringModal from './EditStringModal';
 
 import { iconNames } from '../../../../constants';
 
@@ -90,19 +91,19 @@ export default class StringsTable extends React.PureComponent {
                 key: 'actions',
                 label: 'Actions',
                 order: 5,
-                modifier: () => (
+                modifier: data => (
                     <Fragment>
                         <WarningButton
+                            onClick={() => { this.handleEditButtonClick(data.id); }}
                             iconName={iconNames.edit}
                             transparent
                             smallVerticalPadding
-                            disabled
                         />
                         <DangerButton
+                            onClick={() => { this.handleDeleteButtonClick(data.id); }}
                             iconName={iconNames.delete}
                             transparent
                             smallVerticalPadding
-                            disabled
                         />
                     </Fragment>
                 ),
@@ -115,11 +116,39 @@ export default class StringsTable extends React.PureComponent {
         };
     }
 
+    handleEditButtonClick = (stringId) => {
+        this.setState({
+            editStringId: stringId,
+            showEditStringModal: true,
+        });
+    }
+
+    handleDeleteButtonClick = (stringId) => {
+        this.setState({
+            deleteStringId: stringId,
+            showDeleteStringConfirmModal: true,
+        });
+    }
+
+    handleDeleteStringConfirmClose = () => {
+        this.setState({
+            showDeleteStringConfirmModal: false,
+        });
+    }
+
+    handleEditStringClose = () => {
+        this.state({
+            showEditStringModal: false,
+        });
+    }
+
     render() {
         const { allStrings } = this.props;
         const {
             showDeleteStringConfirmModal,
             deleteStringId,
+            editStringId,
+            showEditStringModal,
         } = this.state;
 
         return (
@@ -134,8 +163,13 @@ export default class StringsTable extends React.PureComponent {
                 <DeleteConfirm
                     show={showDeleteStringConfirmModal}
                     deleteStringId={deleteStringId}
-                    type="link"
+                    type="all"
                     onClose={this.handleDeleteStringConfirmClose}
+                />
+                <EditStringModal
+                    show={showEditStringModal}
+                    editStringId={editStringId}
+                    onClose={this.handleEditStringClose}
                 />
             </React.Fragment>
         );

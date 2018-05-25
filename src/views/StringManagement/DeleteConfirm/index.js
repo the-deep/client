@@ -8,10 +8,14 @@ import {
 } from '../../../redux';
 
 import Confirm from '../../../vendor/react-store/components/View/Modal/Confirm';
+import ListView from '../../../vendor/react-store/components/View/List/ListView';
 import styles from './styles.scss';
 
 const propTypes = {
-    deleteStringId: PropTypes.number,
+    deleteStringId: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string,
+    ]),
     onClose: PropTypes.func.isRequired,
     show: PropTypes.bool.isRequired,
     type: PropTypes.string.isRequired,
@@ -47,6 +51,20 @@ export default class DeleteConfirm extends React.PureComponent {
         onClose(result);
     }
 
+    renderProperty = (k, property) => (
+        <div
+            className={styles.property}
+            key={property.label}
+        >
+            <div className={styles.label}>
+                { property.label }
+            </div>
+            <div className={styles.value}>
+                { property.value }
+            </div>
+        </div>
+    );
+
     renderMessageDetails = () => {
         const {
             type,
@@ -57,50 +75,46 @@ export default class DeleteConfirm extends React.PureComponent {
 
         const strings = {
             link: linkCollection,
+            all: allStrings,
         };
+
+        let properties = [];
 
         switch (type) {
             case 'link': {
-                const string = strings[type].find(d => d.stringId === id);
-
-                if (!string) {
-                    return null;
+                const string = strings[type].find(d => String(d.stringId) === String(id));
+                if (string) {
+                    properties = [
+                        { label: 'ID', value: string.id },
+                        { label: 'String ID', value: string.stringId },
+                        { label: 'String', value: string.string },
+                    ];
                 }
-                const properties = [
-                    { label: 'ID', value: string.id },
-                    { label: 'String ID', value: string.stringId },
-                    { label: 'String', value: string.string },
-                ];
-
-                return (
-                    <div className={styles.properties}>
-                        {
-                            properties.map(property => (
-                                <div
-                                    className={styles.property}
-                                    key={property.label}
-                                >
-                                    <div className={styles.label}>
-                                        { property.label }
-                                    </div>
-                                    <div className={styles.value}>
-                                        { property.value }
-                                    </div>
-                                </div>
-                            ))
-                        }
-                    </div>
-                );
+                break;
             }
-
             case 'all': {
-                console.warn(allStrings);
-                return null;
+                console.warn(strings[type]);
+                const string = strings[type].find(d => String(d.id) === String(id));
+                if (string) {
+                    properties = [
+                        { label: 'ID', value: string.id },
+                        { label: 'String', value: string.string },
+                    ];
+                }
+                break;
             }
 
             default:
                 return null;
         }
+
+        return (
+            <ListView
+                className={styles.properties}
+                data={properties}
+                modifier={this.renderProperty}
+            />
+        );
     };
 
     render() {

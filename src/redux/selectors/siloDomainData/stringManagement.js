@@ -294,7 +294,7 @@ const duplicatedStringsSelector = createSelector(
                 duplicatedStrings[stringName] = firstEncounteredStringName;
             } else {
                 // memorize to identify duplicates
-                memory[value] = stringName;
+                memory[value] = +stringName;
             }
         });
 
@@ -539,7 +539,7 @@ export const allStringsSelector = createSelector(
     (strings, duplicatedStrings, stringsReferenceCount) => mapToList(
         strings,
         (stringValue, stringName) => ({
-            id: stringName,
+            id: +stringName,
             string: stringValue,
             refs: stringsReferenceCount[stringName],
             duplicates: duplicatedStrings[stringName],
@@ -558,7 +558,7 @@ export const linkCollectionSelector = createSelector(
         (stringName, linkName) => ({
             id: linkName,
             string: getStringFromStrings(strings, stringName),
-            stringId: stringName,
+            stringId: +stringName,
             refs: getStringRefsInCode(usedMaps, linkCollectionName, linkName),
         }),
     ),
