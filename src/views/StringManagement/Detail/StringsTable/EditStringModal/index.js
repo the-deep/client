@@ -6,6 +6,7 @@ import Modal from '../../../../../vendor/react-store/components/View/Modal';
 import ModalHeader from '../../../../../vendor/react-store/components/View/Modal/Header';
 import ModalBody from '../../../../../vendor/react-store/components/View/Modal/Body';
 import ModalFooter from '../../../../../vendor/react-store/components/View/Modal/Footer';
+import ListView from '../../../../../vendor/react-store/components/View/List/ListView';
 import Button from '../../../../../vendor/react-store/components/Action/Button';
 import SuccessButton from '../../../../../vendor/react-store/components/Action/Button/SuccessButton';
 import TextInput from '../../../../../vendor/react-store/components/Input/TextInput';
@@ -52,19 +53,85 @@ export default class EditStringModal extends React.PureComponent {
         };
     }
 
+    componentWillReceiveProps(nextProps) {
+        const {
+            allStrings: newAllStrings,
+            editStringId: newEditStringId,
+        } = nextProps;
+        const {
+            allStrings: oldAllStrings,
+            editStringId: oldEditStringId,
+        } = this.props;
+
+        if (newEditStringId) {
+            const allStringsChanged = newAllStrings !== oldAllStrings;
+            const editStringIdChanged = newEditStringId !== oldEditStringId;
+
+            if (allStringsChanged || editStringIdChanged) {
+                const string = newAllStrings.find(d => d.id === newEditStringId) || {};
+                this.setState({
+                    string,
+                    inputValue: string.string || '',
+                });
+            }
+        }
+    }
+
     handleInputValueChange = (value) => {
         this.setState({ inputValue: value });
     }
 
-    render() {
+    handleSaveButtonClick = () => {
         const {
-            allStrings,
-            editStringId,
             onClose,
-            show,
+            editStringId,
         } = this.props;
 
+        const { inputValue } = this.state;
+        onClose(true, editStringId, inputValue);
+    }
+
+    handleCancelButtonClick = () => {
+        const { onClose } = this.props;
+        onClose(false);
+    }
+
+    renderProperty = (k, property) => (
+        <div
+            className={styles.property}
+            key={property.label}
+        >
+            <div className={styles.label}>
+                { property.label }
+            </div>
+            <div className={styles.value}>
+                { property.value }
+            </div>
+        </div>
+    );
+
+    renderProperties = () => {
+        const { string } = this.state;
+
+        const properties = [
+            { label: 'ID', value: string.id },
+            { label: 'References', value: string.refs },
+        ];
+
+        return (
+            <ListView
+                className={styles.properties}
+                data={properties}
+                modifier={this.renderProperty}
+            />
+        );
+    }
+
+    render() {
+        const { show } = this.props;
+
         const {
+            string,
             inputValue,
         } = this.state;
 
@@ -75,20 +142,31 @@ export default class EditStringModal extends React.PureComponent {
         const title = 'Edit string';
         const saveButtonTitle = 'Save';
         const cancelButtonTitle = 'Cancel';
+        const inputTitle = 'String';
+
+        const saveButtonDisabled = inputValue.length === 0 || inputValue === string.string;
+
+        const Properties = this.renderProperties;
 
         return (
             <Modal>
                 <ModalHeader title={title} />
                 <ModalBody>
                     <TextInput
+                        label={inputTitle}
                         value={inputValue}
+                        onChange={this.handleInputValueChange}
                     />
+                    <Properties />
                 </ModalBody>
                 <ModalFooter>
-                    <Button>
+                    <Button onClick={this.handleCancelButtonClick}>
                         { cancelButtonTitle }
                     </Button>
-                    <SuccessButton>
+                    <SuccessButton
+                        onClick={this.handleSaveButtonClick}
+                        disabled={saveButtonDisabled}
+                    >
                         { saveButtonTitle }
                     </SuccessButton>
                 </ModalFooter>

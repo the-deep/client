@@ -136,8 +136,14 @@ export default class StringsTable extends React.PureComponent {
         });
     }
 
-    handleEditStringClose = () => {
-        this.state({
+    handleEditStringClose = (status, id, value) => {
+        if (status) {
+            // TODO: update string
+            // updateString({ id, value });
+            console.warn('change string', id, value);
+        }
+
+        this.setState({
             showEditStringModal: false,
         });
     }
