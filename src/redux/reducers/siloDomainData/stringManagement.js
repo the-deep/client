@@ -25,40 +25,40 @@ export const stringMgmtSetSelectedLinkCollectionNameAction = linkCollectionName 
     linkCollectionName,
 });
 
-export const stringMgmtAddLinkChange = ({ change, languageName, linkCollectionName }) => ({
+export const stringMgmtAddLinkChangeAction = ({ change, languageName, linkCollectionName }) => ({
     type: SM__ADD_LINK_CHANGE,
     change,
     languageName,
     linkCollectionName,
 });
 
-export const stringMgmtEditLinkChange = ({ change, languageName, linkCollectionName }) => ({
+export const stringMgmtEditLinkChangeAction = ({ change, languageName, linkCollectionName }) => ({
     type: SM__EDIT_LINK_CHANGE,
     change,
     languageName,
     linkCollectionName,
 });
 
-export const stringMgmtRemoveLinkChange = ({ change, languageName, linkCollectionName }) => ({
+export const stringMgmtRemoveLinkChangeAction = ({ change, languageName, linkCollectionName }) => ({
     type: SM__REMOVE_LINK_CHANGE,
     change,
     languageName,
     linkCollectionName,
 });
 
-export const stringMgmtAddStringChange = ({ change, languageName }) => ({
+export const stringMgmtAddStringChangeAction = ({ change, languageName }) => ({
     type: SM__ADD_STRING_CHANGE,
     change,
     languageName,
 });
 
-export const stringMgmtEditStringChange = ({ change, languageName }) => ({
+export const stringMgmtEditStringChangeAction = ({ change, languageName }) => ({
     type: SM__EDIT_STRING_CHANGE,
     change,
     languageName,
 });
 
-export const stringMgmtRemoveStringChange = ({ change, languageName }) => ({
+export const stringMgmtRemoveStringChangeAction = ({ change, languageName }) => ({
     type: SM__REMOVE_STRING_CHANGE,
     change,
     languageName,
@@ -120,7 +120,7 @@ const editLinkChange = (state, action) => {
         languageChanges[languageName].links &&
         languageChanges[languageName].links[linkCollectionName]
     ) {
-        index = languageChanges[languageName].links[linkCollectionName].find(
+        index = languageChanges[languageName].links[linkCollectionName].findIndex(
             l => change.action === l.action && change.key === l.key,
         );
     }
@@ -153,7 +153,7 @@ const removeLinkChange = (state, action) => {
         languageChanges[languageName].links &&
         languageChanges[languageName].links[linkCollectionName]
     ) {
-        index = languageChanges[languageName].links[linkCollectionName].find(
+        index = languageChanges[languageName].links[linkCollectionName].findIndex(
             l => change.action === l.action && change.key === l.key,
         );
     }
@@ -183,6 +183,7 @@ const addStringChange = (state, action) => {
         change,
         languageName,
     } = action;
+
     const settings = {
         stringManagementView: {
             languageChanges: {
@@ -206,7 +207,7 @@ const editStringChange = (state, action) => {
         languageChanges[languageName] &&
         languageChanges[languageName].strings
     ) {
-        index = languageChanges[languageName].strings.find(
+        index = languageChanges[languageName].strings.findIndex(
             l => change.action === l.action && change.id === l.id,
         );
     }
@@ -236,7 +237,7 @@ const removeStringChange = (state, action) => {
         languageChanges[languageName] &&
         languageChanges[languageName].strings
     ) {
-        index = languageChanges[languageName].strings.find(
+        index = languageChanges[languageName].strings.findIndex(
             l => change.action === l.action && change.id === l.id,
         );
     }

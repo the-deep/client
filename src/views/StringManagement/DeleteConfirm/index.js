@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import {
     linkCollectionSelector,
     allStringsSelector,
+    selectedLanguageNameSelector,
+    stringMgmtAddStringChangeAction,
 } from '../../../redux';
 
 import Confirm from '../../../vendor/react-store/components/View/Modal/Confirm';
@@ -23,6 +25,8 @@ const propTypes = {
     linkCollection: PropTypes.array.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     allStrings: PropTypes.array.isRequired,
+    selectedLanguageName: PropTypes.string.isRequired,
+    addStringChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -32,19 +36,40 @@ const defaultProps = {
 const mapStateToProps = (state, props) => ({
     linkCollection: linkCollectionSelector(state, props),
     allStrings: allStringsSelector(state),
+    selectedLanguageName: selectedLanguageNameSelector(state),
 });
 
-@connect(mapStateToProps)
+
+const mapDispatchToProps = dispatch => ({
+    addStringChange: params => dispatch(stringMgmtAddStringChangeAction(params)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class DeleteConfirm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
     handleDeleteStringConfirmClose = (result) => {
-        if (result) {
-            const { deleteStringId } = this.state;
-            // TODO add real delete action
-            // deleteString(deleteStringId);
-            console.warn('Delete string', deleteStringId);
+        const {
+            type,
+            allStrings,
+            deleteStringId,
+            selectedLanguageName,
+            addStringChange,
+        } = this.props;
+        if (result && type === 'all') {
+            const value = allStrings.find(
+                str => str.id === deleteStringId,
+            ).string;
+            const change = {
+                id: deleteStringId,
+                oldValue: value,
+                action: 'delete',
+            };
+            addStringChange({
+                change,
+                languageName: selectedLanguageName,
+            });
         }
 
         const { onClose } = this.props;
