@@ -167,6 +167,7 @@ export default class EditStringModal extends React.PureComponent {
 
         const saveButtonDisabled = inputValue === string.id;
         const Properties = this.renderProperties;
+        console.warn(inputValue, editLinkId);
 
         return (
             <Modal>
