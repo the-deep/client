@@ -98,11 +98,11 @@ const addLinkChange = (state, action) => {
         stringManagementView: {
             languageChanges: {
                 [languageName]: { $auto: {
-                    links: {
+                    links: { $auto: {
                         [linkCollectionName]: { $autoArray: {
                             $push: [change],
                         } },
-                    },
+                    } },
                 } },
             },
         },

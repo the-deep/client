@@ -7,6 +7,8 @@ import {
     allStringsSelector,
     selectedLanguageNameSelector,
     stringMgmtAddStringChangeAction,
+    stringMgmtAddLinkChangeAction,
+    selectedLinkCollectionNameSelector,
 } from '../../../redux';
 
 import Confirm from '../../../vendor/react-store/components/View/Modal/Confirm';
@@ -26,7 +28,9 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     allStrings: PropTypes.array.isRequired,
     selectedLanguageName: PropTypes.string.isRequired,
+    selectedLinkCollectionName: PropTypes.string.isRequired,
     addStringChange: PropTypes.func.isRequired,
+    addLinkChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -37,11 +41,13 @@ const mapStateToProps = (state, props) => ({
     linkCollection: linkCollectionSelector(state, props),
     allStrings: allStringsSelector(state),
     selectedLanguageName: selectedLanguageNameSelector(state),
+    selectedLinkCollectionName: selectedLinkCollectionNameSelector(state),
 });
 
 
 const mapDispatchToProps = dispatch => ({
     addStringChange: params => dispatch(stringMgmtAddStringChangeAction(params)),
+    addLinkChange: params => dispatch(stringMgmtAddLinkChangeAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -52,10 +58,14 @@ export default class DeleteConfirm extends React.PureComponent {
     handleDeleteStringConfirmClose = (result) => {
         const {
             type,
-            allStrings,
             deleteStringId,
             selectedLanguageName,
+
+            allStrings,
+            linkCollection,
+
             addStringChange,
+            addLinkChange,
         } = this.props;
         if (result && type === 'all') {
             const value = allStrings.find(
@@ -68,6 +78,21 @@ export default class DeleteConfirm extends React.PureComponent {
             };
             addStringChange({
                 change,
+                languageName: selectedLanguageName,
+            });
+        } else if (result && type === 'link') {
+            // NOTE: deleteStringId is deleteLinkId
+            const value = linkCollection.find(
+                lnk => lnk.id === deleteStringId,
+            ).stringId;
+            const change = {
+                key: deleteStringId,
+                oldString: value,
+                action: 'delete',
+            };
+            addLinkChange({
+                change,
+                linkCollectionName: this.props.selectedLinkCollectionName,
                 languageName: selectedLanguageName,
             });
         }
