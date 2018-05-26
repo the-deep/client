@@ -67,10 +67,9 @@ export default class DeleteConfirm extends React.PureComponent {
             addStringChange,
             addLinkChange,
         } = this.props;
+
         if (result && type === 'all') {
-            const value = allStrings.find(
-                str => str.id === deleteId,
-            ).string;
+            const value = allStrings.find(str => str.id === deleteId).string;
             const change = {
                 id: deleteId,
                 oldValue: value,
@@ -81,9 +80,7 @@ export default class DeleteConfirm extends React.PureComponent {
                 languageName: selectedLanguageName,
             });
         } else if (result && type === 'link') {
-            const value = linkCollection.find(
-                lnk => lnk.id === deleteId,
-            ).stringId;
+            const value = linkCollection.find(lnk => lnk.id === deleteId).stringId;
             const change = {
                 key: deleteId,
                 oldString: value,
@@ -122,16 +119,11 @@ export default class DeleteConfirm extends React.PureComponent {
             allStrings,
         } = this.props;
 
-        const strings = {
-            link: linkCollection,
-            all: allStrings,
-        };
-
         let properties = [];
 
         switch (type) {
             case 'link': {
-                const string = strings[type].find(d => String(d.stringId) === String(id));
+                const string = linkCollection.find(d => d.id === id);
                 if (string) {
                     properties = [
                         { label: 'ID', value: string.id },
@@ -142,8 +134,7 @@ export default class DeleteConfirm extends React.PureComponent {
                 break;
             }
             case 'all': {
-                console.warn(strings[type]);
-                const string = strings[type].find(d => String(d.id) === String(id));
+                const string = allStrings.find(d => d.id === id);
                 if (string) {
                     properties = [
                         { label: 'ID', value: string.id },

@@ -155,11 +155,12 @@ export default class LinksTable extends React.PureComponent {
                     type="link"
                     onClose={this.handleDeleteLinkConfirmClose}
                 />
-                <EditLinkModal
-                    show={showEditLinkModal}
-                    editLinkId={editLinkId}
-                    onClose={this.handleEditLinkModalClose}
-                />
+                { showEditLinkModal &&
+                    <EditLinkModal
+                        editLinkId={editLinkId}
+                        onClose={this.handleEditLinkModalClose}
+                    />
+                }
             </React.Fragment>
         );
     }

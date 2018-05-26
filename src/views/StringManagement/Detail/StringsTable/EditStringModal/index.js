@@ -11,7 +11,11 @@ import Button from '../../../../../vendor/react-store/components/Action/Button';
 import SuccessButton from '../../../../../vendor/react-store/components/Action/Button/SuccessButton';
 import TextInput from '../../../../../vendor/react-store/components/Input/TextInput';
 
-import { allStringsSelector } from '../../../../../redux';
+import {
+    allStringsSelector,
+    selectedLanguageNameSelector,
+    stringMgmtAddStringChangeAction,
+} from '../../../../../redux';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -23,6 +27,8 @@ const propTypes = {
     ]),
     onClose: PropTypes.func.isRequired,
     show: PropTypes.bool.isRequired,
+    selectedLanguageName: PropTypes.string.isRequired,
+    addStringChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -31,9 +37,14 @@ const defaultProps = {
 
 const mapStateToProps = state => ({
     allStrings: allStringsSelector(state),
+    selectedLanguageName: selectedLanguageNameSelector(state),
 });
 
-@connect(mapStateToProps)
+const mapDispatchToProps = dispatch => ({
+    addStringChange: params => dispatch(stringMgmtAddStringChangeAction(params)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class EditStringModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -85,9 +96,26 @@ export default class EditStringModal extends React.PureComponent {
         const {
             onClose,
             editStringId,
+            allStrings,
+
+            selectedLanguageName,
+            addStringChange,
         } = this.props;
 
         const { inputValue } = this.state;
+        const val = allStrings.find(d => d.id === editStringId).string;
+        const change = {
+            action: 'edit',
+            id: editStringId,
+            value: inputValue,
+            oldValue: val,
+        };
+
+        addStringChange({
+            change,
+            languageName: selectedLanguageName,
+        });
+
         onClose(true, editStringId, inputValue);
     }
 

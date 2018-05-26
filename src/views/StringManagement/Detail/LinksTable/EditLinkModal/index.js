@@ -14,6 +14,9 @@ import SelectInput from '../../../../../vendor/react-store/components/Input/Sele
 import {
     linkCollectionSelector,
     allStringsSelector,
+    selectedLanguageNameSelector,
+    stringMgmtAddLinkChangeAction,
+    selectedLinkCollectionNameSelector,
 } from '../../../../../redux';
 import styles from './styles.scss';
 
@@ -29,7 +32,9 @@ const propTypes = {
         PropTypes.string,
     ]),
     onClose: PropTypes.func.isRequired,
-    show: PropTypes.bool.isRequired,
+    selectedLanguageName: PropTypes.string.isRequired,
+    selectedLinkCollectionName: PropTypes.string.isRequired,
+    addLinkChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -39,9 +44,15 @@ const defaultProps = {
 const mapStateToProps = state => ({
     linkCollection: linkCollectionSelector(state),
     allStrings: allStringsSelector(state),
+    selectedLanguageName: selectedLanguageNameSelector(state),
+    selectedLinkCollectionName: selectedLinkCollectionNameSelector(state),
 });
 
-@connect(mapStateToProps)
+const mapDispatchToProps = dispatch => ({
+    addLinkChange: params => dispatch(stringMgmtAddLinkChangeAction(params)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class EditStringModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -49,20 +60,20 @@ export default class EditStringModal extends React.PureComponent {
     constructor(props) {
         super(props);
         const {
-            allStrings,
             editLinkId,
             linkCollection,
         } = props;
 
-        const string = allStrings.find(d => d.id === editLinkId) || {};
-        const link = linkCollection.find(d => d.stringId === editLinkId) || {};
+        // const string = allStrings.find(d => d.id === editLinkId) || {};
+        const link = linkCollection.find(d => d.id === editLinkId) || {};
 
         this.state = {
-            string,
-            inputValue: string.id,
+            link,
+            inputValue: link.stringId,
         };
     }
 
+    /*
     componentWillReceiveProps(nextProps) {
         const {
             allStrings: newAllStrings,
@@ -90,6 +101,7 @@ export default class EditStringModal extends React.PureComponent {
             }
         }
     }
+    */
 
     handleInputValueChange = (value) => {
         this.setState({ inputValue: value });
@@ -99,9 +111,28 @@ export default class EditStringModal extends React.PureComponent {
         const {
             onClose,
             editLinkId,
+            selectedLanguageName,
+            selectedLinkCollectionName,
+            addLinkChange,
         } = this.props;
+        const {
+            link,
+            inputValue,
+        } = this.state;
 
-        const { inputValue } = this.state;
+        const change = {
+            action: 'edit',
+            key: link.id,
+            string: inputValue,
+            oldString: link.stringId,
+        };
+
+        addLinkChange({
+            change,
+            languageName: selectedLanguageName,
+            linkCollectionName: selectedLinkCollectionName,
+        });
+
         onClose(true, editLinkId, inputValue);
     }
 
@@ -125,14 +156,11 @@ export default class EditStringModal extends React.PureComponent {
     );
 
     renderProperties = () => {
-        const {
-            string,
-            link = {},
-        } = this.state;
+        const { link } = this.state;
 
         const properties = [
             { label: 'ID', value: link.id },
-            { label: 'String id', value: string.id },
+            { label: 'String ID', value: link.stringId },
         ];
 
         return (
@@ -146,26 +174,20 @@ export default class EditStringModal extends React.PureComponent {
 
     render() {
         const {
-            show,
             allStrings,
-            editLinkId,
         } = this.props;
 
         const {
-            string,
+            link,
             inputValue,
         } = this.state;
-
-        if (!show) {
-            return null;
-        }
 
         const title = 'Edit string';
         const saveButtonTitle = 'Save';
         const cancelButtonTitle = 'Cancel';
         const inputTitle = 'String';
 
-        const saveButtonDisabled = inputValue === string.id;
+        const saveButtonDisabled = inputValue === link.string;
         const Properties = this.renderProperties;
         console.warn(inputValue, editLinkId);
 

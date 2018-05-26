@@ -88,6 +88,8 @@ const setSelectedLinkCollectionName = (state, action) => {
 
 // LINK CHANGE
 
+// TODO: fix for link as we did for string
+
 const addLinkChange = (state, action) => {
     const {
         change,
@@ -112,7 +114,7 @@ const addLinkChange = (state, action) => {
 
 const editLinkChange = (state, action) => {
     const { change, languageName, linkCollectionName } = action;
-    const { languageChanges } = state;
+    const { stringManagementView: { languageChanges } } = state;
 
     let index = -1;
     if (
@@ -145,7 +147,7 @@ const editLinkChange = (state, action) => {
 
 const removeLinkChange = (state, action) => {
     const { change, languageName, linkCollectionName } = action;
-    const { languageChanges } = state;
+    const { stringManagementView: { languageChanges } } = state;
 
     let index = -1;
     if (
@@ -178,59 +180,51 @@ const removeLinkChange = (state, action) => {
 
 // STRING CHANGE
 
-const addStringChange = (state, action) => {
-    const {
-        change,
-        languageName,
-    } = action;
-
-    const settings = {
-        stringManagementView: {
-            languageChanges: {
-                [languageName]: { $auto: {
-                    strings: { $autoArray: {
-                        $push: [change],
-                    } },
-                } },
-            },
-        },
-    };
-    return update(state, settings);
-};
-
 const editStringChange = (state, action) => {
-    const { change, languageName } = action;
-    const { languageChanges } = state;
+    const { change: originalChange, languageName } = action;
+    const { stringManagementView: { languageChanges } } = state;
 
+    let change = originalChange;
     let index = -1;
     if (
+        languageChanges &&
         languageChanges[languageName] &&
         languageChanges[languageName].strings
     ) {
         index = languageChanges[languageName].strings.findIndex(
-            l => change.action === l.action && change.id === l.id,
+            l => change.id === l.id,
         );
+        if (index !== -1) {
+            const oldChange = languageChanges[languageName].strings[index];
+            change = {
+                ...originalChange,
+                oldValue: oldChange.oldValue,
+            };
+        }
     }
-    if (index === -1) {
-        return state;
-    }
+
     const settings = {
         stringManagementView: {
-            languageChanges: {
-                [languageName]: {
-                    strings: {
-                        $splice: [[index, 1, change]],
-                    },
-                },
-            },
+            languageChanges: { $auto: {
+                [languageName]: { $auto: {
+                    strings: { $autoArray: {
+                        $if: [
+                            index === -1,
+                            { $push: [change] },
+                            { $splice: [[index, 1, change]] },
+                        ],
+                    } },
+                } },
+            } },
         },
     };
     return update(state, settings);
 };
+const addStringChange = editStringChange;
 
 const removeStringChange = (state, action) => {
     const { change, languageName } = action;
-    const { languageChanges } = state;
+    const { stringManagementView: { languageChanges } } = state;
 
     let index = -1;
     if (
