@@ -2,17 +2,17 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { reverseRoute } from '../../../../vendor/react-store/utils/common';
-import LoadingAnimation from '../../../../../src/vendor/react-store/components/View/LoadingAnimation';
-import Table from '../../../../vendor/react-store/components/View/Table';
-import FormattedDate from '../../../../vendor/react-store/components/View/FormattedDate';
-import Checkbox from '../../../../vendor/react-store/components/Input/Checkbox';
-import AccentButton from '../../../../vendor/react-store/components/Action/Button/AccentButton';
+import { reverseRoute } from '#rs/utils/common';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Table from '#rs/components/View/Table';
+import FormattedDate from '#rs/components/View/FormattedDate';
+import Checkbox from '#rs/components/Input/Checkbox';
+import AccentButton from '#rs/components/Action/Button/AccentButton';
 import {
     iconNames,
     pathNames,
-} from '../../../../constants';
-import _ts from '../../../../ts';
+} from '#constants';
+import _ts from '#ts';
 
 import ConnectorLeadsGetRequest from '../../requests/ConnectorLeadsGetRequest';
 import styles from './styles.scss';

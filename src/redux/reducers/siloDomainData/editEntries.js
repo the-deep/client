@@ -1,10 +1,10 @@
-import { isFalsy, getElementAround } from '../../../vendor/react-store/utils/common';
-import update from '../../../vendor/react-store/utils/immutable-update';
+import { isFalsy, getElementAround } from '#rs/utils/common';
+import update from '#rs/utils/immutable-update';
 import {
     createEntry,
     calcNewEntries,
     entryAccessor,
-} from '../../../entities/entry';
+} from '#entities/entry';
 
 // TYPE
 

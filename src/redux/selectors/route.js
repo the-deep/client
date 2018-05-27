@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
-import { isFalsy, getKeyByValue } from '../../vendor/react-store/utils/common';
-import { pathNames } from '../../constants/routes';
+import { isFalsy, getKeyByValue } from '#rs/utils/common';
+import { pathNames } from '#constants/routes';
 
 const emptyObject = {};
 

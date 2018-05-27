@@ -2,13 +2,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { isObjectEmpty } from '../../../vendor/react-store/utils/common';
-import Button from '../../../vendor/react-store/components/Action/Button';
-import DangerButton from '../../../vendor/react-store/components/Action/Button/DangerButton';
-import Faram from '../../../vendor/react-store/components/Input/Faram';
-import SearchInput from '../../../vendor/react-store/components/Input/SearchInput';
-import DateFilter from '../../../vendor/react-store/components/Input/DateFilter';
-import MultiSelectInput from '../../../vendor/react-store/components/Input/MultiSelectInput';
+import { isObjectEmpty } from '#rs/utils/common';
+import Button from '#rs/components/Action/Button';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import Faram from '#rs/components/Input/Faram';
+import SearchInput from '#rs/components/Input/SearchInput';
+import DateFilter from '#rs/components/Input/DateFilter';
+import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
 
 import {
     activeProjectIdFromStateSelector,
@@ -18,8 +18,8 @@ import {
     unsetAryPageFilterAction,
     aryFilterOptionsForProjectSelector,
     setAryFilterOptionsAction,
-} from '../../../redux';
-import _ts from '../../../ts';
+} from '#redux';
+import _ts from '#ts';
 
 import AryFilterOptionsGetRequest from './requests/AryFilterOptionsGetRequest';
 

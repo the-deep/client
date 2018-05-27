@@ -3,26 +3,26 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import GridLayout from '../../../vendor/react-store/components/View/GridLayout';
-import LoadingAnimation from '../../../vendor/react-store/components/View/LoadingAnimation';
-import Confirm from '../../../vendor/react-store/components/View/Modal/Confirm';
-import DangerButton from '../../../vendor/react-store/components/Action/Button/DangerButton';
-import AccentButton from '../../../vendor/react-store/components/Action/Button/AccentButton';
-import WarningButton from '../../../vendor/react-store/components/Action/Button/WarningButton';
-import SuccessButton from '../../../vendor/react-store/components/Action/Button/SuccessButton';
-import Pager from '../../../vendor/react-store/components/View/Pager';
+import GridLayout from '#rs/components/View/GridLayout';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Confirm from '#rs/components/View/Modal/Confirm';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import AccentButton from '#rs/components/Action/Button/AccentButton';
+import WarningButton from '#rs/components/Action/Button/WarningButton';
+import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import Pager from '#rs/components/View/Pager';
 
 import {
     editEntryCurrentLeadSelector,
     markForDeleteEntryAction,
 
     setActiveEntryAction,
-} from '../../../redux';
-import _ts from '../../../ts';
-import { iconNames } from '../../../constants';
-import { entryAccessor } from '../../../entities/entry';
+} from '#redux';
+import _ts from '#ts';
+import { iconNames } from '#constants';
+import { entryAccessor } from '#entities/entry';
 
-import widgetStore from '../../../widgets';
+import widgetStore from '#widgets';
 import styles from './styles.scss';
 
 const propTypes = {

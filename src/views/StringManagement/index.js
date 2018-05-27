@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import {
     setLanguageAction,
     selectedLanguageNameSelector,
-} from '../../redux';
+} from '#redux';
 
 import Detail from './Detail';
 import LeftPane from './LeftPane';

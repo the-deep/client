@@ -1,10 +1,10 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
-import notify from '../../../notify';
+import { FgRestBuilder } from '#rs/utils/rest';
+import notify from '#notify';
 import {
     createUrlForLeadTopicModeling,
     createParamsForLeadTopicModeling,
-} from '../../../rest';
-import _ts from '../../../ts';
+} from '#rest';
+import _ts from '#ts';
 
 export default class LeadTopicModelingRequest {
     constructor(params) {

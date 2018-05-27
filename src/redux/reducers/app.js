@@ -1,5 +1,5 @@
-import update from '../../vendor/react-store/utils/immutable-update';
-import createReducerWithMap from '../../utils/createReducerWithMap';
+import update from '#rs/utils/immutable-update';
+import createReducerWithMap from '#utils/createReducerWithMap';
 import initialAppState from '../initial-state/app';
 import { LOGOUT_ACTION } from '../reducers/auth';
 

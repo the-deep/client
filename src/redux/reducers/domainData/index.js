@@ -1,4 +1,4 @@
-import createReducerWithMap from '../../../utils/createReducerWithMap';
+import createReducerWithMap from '#utils/createReducerWithMap';
 
 import analysisFrameworksReducers from './analysisFrameworks';
 import categoryEditorsReducers from './categoryEditors';

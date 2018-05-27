@@ -5,7 +5,7 @@ import {
     DELETE,
     p,
     commonHeaderForPost,
-} from '../config/rest';
+} from '#config/rest';
 
 export const urlForEntry = `${wsEndpoint}/entries/`;
 export const urlForEntryCreate = `${wsEndpoint}/entries/`;

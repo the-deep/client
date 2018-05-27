@@ -1,10 +1,10 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
-import update from '../../../vendor/react-store/utils/immutable-update';
+import { FgRestBuilder } from '#rs/utils/rest';
+import update from '#rs/utils/immutable-update';
 import {
     createUrlForDeleteEntry,
     createParamsForDeleteEntry,
-} from '../../../rest';
-import { entryAccessor } from '../../../entities/entry';
+} from '#rest';
+import { entryAccessor } from '#entities/entry';
 
 export default class DeleteEntryRequest {
     constructor(params) {

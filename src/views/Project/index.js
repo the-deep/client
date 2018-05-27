@@ -6,27 +6,27 @@ import { connect } from 'react-redux';
 import {
     reverseRoute,
     caseInsensitiveSubmatch,
-} from '../../vendor/react-store/utils/common';
-import Modal from '../../vendor/react-store/components/View/Modal';
-import ModalBody from '../../vendor/react-store/components/View/Modal/Body';
-import ModalHeader from '../../vendor/react-store/components/View/Modal/Header';
-import ListView from '../../vendor/react-store/components/View/List/ListView';
-import SearchInput from '../../vendor/react-store/components/Input/SearchInput';
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
+} from '#rs/utils/common';
+import Modal from '#rs/components/View/Modal';
+import ModalBody from '#rs/components/View/Modal/Body';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import ListView from '#rs/components/View/List/ListView';
+import SearchInput from '#rs/components/Input/SearchInput';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 
-import UserProjectAdd from '../../components/UserProjectAdd';
-import BoundError from '../../vendor/react-store/components/General/BoundError';
-import AppError from '../../components/AppError';
+import UserProjectAdd from '#components/UserProjectAdd';
+import BoundError from '#rs/components/General/BoundError';
+import AppError from '#components/AppError';
 import {
     currentUserAdminProjectsSelector,
     setActiveProjectAction,
     projectIdFromRouteSelector,
-} from '../../redux';
+} from '#redux';
 import {
     iconNames,
     pathNames,
-} from '../../constants';
-import _ts from '../../ts';
+} from '#constants';
+import _ts from '#ts';
 
 import Details from './Details';
 import styles from './styles.scss';

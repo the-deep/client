@@ -9,10 +9,10 @@ import {
     stringMgmtAddStringChangeAction,
     stringMgmtAddLinkChangeAction,
     selectedLinkCollectionNameSelector,
-} from '../../../redux';
+} from '#redux';
 
-import Confirm from '../../../vendor/react-store/components/View/Modal/Confirm';
-import ListView from '../../../vendor/react-store/components/View/List/ListView';
+import Confirm from '#rs/components/View/Modal/Confirm';
+import ListView from '#rs/components/View/List/ListView';
 import styles from './styles.scss';
 
 const propTypes = {

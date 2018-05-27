@@ -1,24 +1,23 @@
-import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import WarningButton from '#rs/components/Action/Button/WarningButton';
+import Table from '#rs/components/View/Table';
 import {
     compareBoolean,
+    compareNumber,
+    compareString,
     compareStringAsNumber,
     compareStringByWordCount,
-    compareString,
-    compareNumber,
-} from '../../../../vendor/react-store/utils/common';
-import Table from '../../../../vendor/react-store/components/View/Table';
-import DangerButton from '../../../../vendor/react-store/components/Action/Button/DangerButton';
-import WarningButton from '../../../../vendor/react-store/components/Action/Button/WarningButton';
-import { allStringsSelector } from '../../../../redux';
+} from '#rs/utils/common';
+
+import { iconNames } from '#constants';
+import { allStringsSelector } from '#redux';
 
 import DeleteConfirm from '../../DeleteConfirm';
 import EditStringModal from './EditStringModal';
-
-import { iconNames } from '../../../../constants';
-
 import styles from './styles.scss';
 
 const propTypes = {

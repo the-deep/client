@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import FaramGroup from '../../../../vendor/react-store/components/Input/Faram/FaramGroup';
-import iconNames from '../../../../constants/iconNames';
-import List from '../../../../vendor/react-store/components/View/List';
-import ListView from '../../../../vendor/react-store/components/View/List/ListView';
-import ScaleInput from '../../../../vendor/react-store/components/Input/ScaleInput';
+import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
+import iconNames from '#constants/iconNames';
+import List from '#rs/components/View/List';
+import ListView from '#rs/components/View/List/ListView';
+import ScaleInput from '#rs/components/Input/ScaleInput';
 
 import {
     assessmentPillarsSelector,
@@ -20,7 +20,7 @@ import {
     assessmentMaxFinalScoreSelector,
     editArySelectedSectorsSelector,
     assessmentSectorsSelector,
-} from '../../../../redux';
+} from '#redux';
 
 import ScaleMatrixInput from './ScaleMatrixInput';
 import ScoreItem from './ScoreItem';

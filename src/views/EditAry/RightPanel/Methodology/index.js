@@ -2,18 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import FaramGroup from '../../../../vendor/react-store/components/Input/Faram/FaramGroup';
-import FaramList from '../../../../vendor/react-store/components/Input/Faram/FaramList';
-import LoadingAnimation from '../../../../vendor/react-store/components/View/LoadingAnimation';
-import List from '../../../../vendor/react-store/components/View/List';
-import ListView from '../../../../vendor/react-store/components/View/List/ListView';
-import TextArea from '../../../../vendor/react-store/components/Input/TextArea';
-import CheckGroup from '../../../../vendor/react-store/components/Input/CheckGroup';
-import PrimaryButton from '../../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import DangerButton from '../../../../vendor/react-store/components/Action/Button/DangerButton';
+import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
+import FaramList from '#rs/components/Input/Faram/FaramList';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import List from '#rs/components/View/List';
+import ListView from '#rs/components/View/List/ListView';
+import TextArea from '#rs/components/Input/TextArea';
+import CheckGroup from '#rs/components/Input/CheckGroup';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
 
-import _ts from '../../../../ts';
-import { iconNames } from '../../../../constants';
+import _ts from '#ts';
+import { iconNames } from '#constants';
 import {
     aryTemplateMethodologySelector,
     assessmentSectorsSelector,
@@ -22,9 +22,9 @@ import {
 
     projectDetailsSelector,
     geoOptionsForProjectSelector,
-} from '../../../../redux';
-import OrganigramWithList from '../../../../components/OrganigramWithList/';
-import GeoListInput from '../../../../components/GeoListInput/';
+} from '#redux';
+import OrganigramWithList from '#components/OrganigramWithList/';
+import GeoListInput from '#components/GeoListInput/';
 
 import Header from '../Header';
 import { renderWidget } from '../widgetUtils';

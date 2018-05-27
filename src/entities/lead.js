@@ -1,6 +1,6 @@
-import FormattedDate from '../vendor/react-store/components/View/FormattedDate';
-import update from '../vendor/react-store/utils/immutable-update';
-import iconNames from '../constants/iconNames';
+import FormattedDate from '#rs/components/View/FormattedDate';
+import update from '#rs/utils/immutable-update';
+import iconNames from '#constants/iconNames';
 
 export const LEAD_TYPE = {
     dropbox: 'dropbox',

@@ -2,15 +2,15 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
-import { reverseRoute } from '../../../../vendor/react-store/utils/common';
-import DangerButton from '../../../../vendor/react-store/components/Action/Button/DangerButton';
-import PrimaryButton from '../../../../vendor/react-store/components/Action/Button/PrimaryButton';
+import { reverseRoute } from '#rs/utils/common';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 
 import {
     iconNames,
     pathNames,
-} from '../../../../constants/';
-import _ts from '../../../../ts';
+} from '#constants/';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 

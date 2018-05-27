@@ -2,14 +2,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import GeoSelection from '../../../components/GeoSelection';
-import BoundError from '../../../vendor/react-store/components/General/BoundError';
-import WidgetError from '../../../components/WidgetError';
+import GeoSelection from '#components/GeoSelection';
+import BoundError from '#rs/components/General/BoundError';
+import WidgetError from '#components/WidgetError';
 
 import {
     geoOptionsForProjectSelector,
     regionsForProjectSelector,
-} from '../../../redux';
+} from '#redux';
 
 import styles from './styles.scss';
 

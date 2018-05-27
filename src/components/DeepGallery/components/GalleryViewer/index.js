@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import AccentButton from '../../../../vendor/react-store/components/Action/Button/AccentButton';
-import TextInput from '../../../../vendor/react-store/components/Input/TextInput';
-import urlRegex from '../../../../vendor/react-store/components/Input/Faram/regexForWeburl';
+import AccentButton from '#rs/components/Action/Button/AccentButton';
+import TextInput from '#rs/components/Input/TextInput';
+import urlRegex from '#rs/components/Input/Faram/regexForWeburl';
 
-import { galleryMapping, galleryType } from '../../../../config/deepMimeTypes';
-import { iconNames } from '../../../../constants';
-import notify from '../../../../notify';
-import _ts from '../../../../ts';
+import { galleryMapping, galleryType } from '#config/deepMimeTypes';
+import { iconNames } from '#constants';
+import notify from '#notify';
+import _ts from '#ts';
 
 import Screenshot from '../../../Screenshot';
 import GalleryImage from '../GalleryImage';

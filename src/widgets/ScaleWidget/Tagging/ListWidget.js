@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import ScaleInput from '../../../vendor/react-store/components/Input/ScaleInput';
+import ScaleInput from '#rs/components/Input/ScaleInput';
 
-import BoundError from '../../../vendor/react-store/components/General/BoundError';
-import WidgetError from '../../../components/WidgetError';
+import BoundError from '#rs/components/General/BoundError';
+import WidgetError from '#components/WidgetError';
 
 const propTypes = {
     id: PropTypes.number.isRequired,

@@ -1,6 +1,6 @@
-import update from '../../vendor/react-store/utils/immutable-update';
-import { entryAccessor } from '../../entities/entry';
-import widgetStore, { entryUpdater } from '../../widgets';
+import update from '#rs/utils/immutable-update';
+import { entryAccessor } from '#entities/entry';
+import widgetStore, { entryUpdater } from '#widgets';
 
 const DEFAULT_HIGHLIGHT_COLOR = '#a0a0a0';
 

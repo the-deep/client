@@ -2,13 +2,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { caseInsensitiveSubmatch, compareString } from '../../vendor/react-store/utils/common';
-import SearchInput from '../../vendor/react-store/components/Input/SearchInput';
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
-import ListView from '../../vendor/react-store/components/View/List/ListView';
-import Modal from '../../vendor/react-store/components/View/Modal';
-import ModalHeader from '../../vendor/react-store/components/View/Modal/Header';
-import ModalBody from '../../vendor/react-store/components/View/Modal/Body';
+import { caseInsensitiveSubmatch, compareString } from '#rs/utils/common';
+import SearchInput from '#rs/components/Input/SearchInput';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import ListView from '#rs/components/View/List/ListView';
+import Modal from '#rs/components/View/Modal';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import ModalBody from '#rs/components/View/Modal/Body';
 
 import {
     regionsListSelector,
@@ -16,13 +16,13 @@ import {
 
     setRegionsAction,
     activeUserSelector,
-} from '../../redux';
-import _ts from '../../ts';
-import { iconNames } from '../../constants';
-import AddRegion from '../../components/AddRegion';
+} from '#redux';
+import _ts from '#ts';
+import { iconNames } from '#constants';
+import AddRegion from '#components/AddRegion';
 
-import BoundError from '../../vendor/react-store/components/General/BoundError';
-import AppError from '../../components/AppError';
+import BoundError from '#rs/components/General/BoundError';
+import AppError from '#components/AppError';
 
 import CountriesGetRequest from './requests/CountriesGetRequest';
 

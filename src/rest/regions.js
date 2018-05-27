@@ -5,7 +5,7 @@ import {
     DELETE,
     p,
     commonHeaderForPost,
-} from '../config/rest';
+} from '#config/rest';
 
 export const urlForRegionCreate = `${wsEndpoint}/regions/`;
 export const urlForAdminLevels = `${wsEndpoint}/admin-levels/`;

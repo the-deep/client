@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
 
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 
 const propTypes = {
     className: PropTypes.string,

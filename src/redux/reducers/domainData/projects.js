@@ -1,5 +1,5 @@
-import update from '../../../vendor/react-store/utils/immutable-update';
-import { isTruthy, compareString } from '../../../vendor/react-store/utils/common';
+import update from '#rs/utils/immutable-update';
+import { isTruthy, compareString } from '#rs/utils/common';
 
 // TYPE
 

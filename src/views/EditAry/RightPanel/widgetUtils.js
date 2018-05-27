@@ -1,9 +1,9 @@
 import React from 'react';
-import MultiSelectInput from '../../../vendor/react-store/components/Input/MultiSelectInput';
-import DateInput from '../../../vendor/react-store/components/Input/DateInput';
-import SelectInput from '../../../vendor/react-store/components/Input/SelectInput';
-import NumberInput from '../../../vendor/react-store/components/Input/NumberInput';
-import TextInput from '../../../vendor/react-store/components/Input/TextInput';
+import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
+import DateInput from '#rs/components/Input/DateInput';
+import SelectInput from '#rs/components/Input/SelectInput';
+import NumberInput from '#rs/components/Input/NumberInput';
+import TextInput from '#rs/components/Input/TextInput';
 
 const widgets = {
     string: TextInput,

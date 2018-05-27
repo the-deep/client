@@ -1,10 +1,10 @@
-import { FgRestBuilder } from '../../../../../vendor/react-store/utils/rest';
+import { FgRestBuilder } from '#rs/utils/rest';
 import {
     createUrlForEntriesOfLead,
     createParamsForGet,
-} from '../../../../../rest';
+} from '#rest';
 
-import schema from '../../../../../schema';
+import schema from '#schema';
 
 export default class EntriesRequest {
     constructor(params) {

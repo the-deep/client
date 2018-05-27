@@ -2,20 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import ListView from '../../../../vendor/react-store/components/View/List/ListView';
-import Button from '../../../../vendor/react-store/components/Action/Button';
-import PrimaryButton from '../../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import DangerButton from '../../../../vendor/react-store/components/Action/Button/DangerButton';
+import ListView from '#rs/components/View/List/ListView';
+import Button from '#rs/components/Action/Button';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
 
 import {
     categoryEditorDocumentsSelector,
     setCeFilesAction,
     ceIdFromRouteSelector,
     categoryEditorProjectsSelector,
-} from '../../../../redux';
-import DeepGalleryFileSelect from '../../../../components/DeepGalleryFileSelect';
-import { iconNames } from '../../../../constants';
-import _ts from '../../../../ts';
+} from '#redux';
+import DeepGalleryFileSelect from '#components/DeepGalleryFileSelect';
+import { iconNames } from '#constants';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 

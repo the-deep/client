@@ -7,7 +7,7 @@ import {
     currentUserProjectsSelector,
     activeProjectFromStateSelector,
     routePathKeySelector,
-} from '../redux';
+} from '#redux';
 
 const mapStateToProps = state => ({
     activeUser: activeUserSelector(state),
@@ -56,7 +56,7 @@ const defaultProps = {
 };
 
 @connect(mapStateToProps, undefined)
-export default class Cloak extends React.PureComponent {
+export default class Cloak extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -78,7 +78,6 @@ export default class Cloak extends React.PureComponent {
             render: Child,
             renderOnCloak,
         } = this.props;
-
 
         if (
             (requireDevMode && process.env.NODE_ENV !== 'development') ||

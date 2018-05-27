@@ -3,21 +3,20 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { isFalsy, reverseRoute } from '../../vendor/react-store/utils/common';
-import { FgRestBuilder } from '../../vendor/react-store/utils/rest';
-import FormattedDate from '../../vendor/react-store/components/View/FormattedDate';
-import GridLayout from '../../vendor/react-store/components/View/GridLayout';
-import ListView from '../../vendor/react-store/components/View/List/ListView';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
-import Pager from '../../vendor/react-store/components/View/Pager';
-import BoundError from '../../vendor/react-store/components/General/BoundError';
-import widgetStore from '../../widgets';
+import { isFalsy, reverseRoute } from '#rs/utils/common';
+import { FgRestBuilder } from '#rs/utils/rest';
+import FormattedDate from '#rs/components/View/FormattedDate';
+import GridLayout from '#rs/components/View/GridLayout';
+import ListView from '#rs/components/View/List/ListView';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Pager from '#rs/components/View/Pager';
+import BoundError from '#rs/components/General/BoundError';
 
-import AppError from '../../components/AppError';
+import AppError from '#components/AppError';
 import {
     iconNames,
     pathNames,
-} from '../../constants';
+} from '#constants';
 import {
     setEntriesAction,
     setProjectAction,
@@ -37,7 +36,7 @@ import {
     entriesViewActivePageSelector,
     totalEntriesCountForProjectSelector,
     setEntriesViewActivePageAction,
-} from '../../redux';
+} from '#redux';
 import {
     createUrlForFilteredEntries,
 
@@ -47,10 +46,11 @@ import {
     createUrlForProject,
 
     transformResponseErrorToFormError,
-} from '../../rest';
-import _ts from '../../ts';
-import schema from '../../schema';
-import notify from '../../notify';
+} from '#rest';
+import _ts from '#ts';
+import schema from '#schema';
+import notify from '#notify';
+import widgetStore from '#widgets';
 
 import FilterEntriesForm from './FilterEntriesForm';
 import styles from './styles.scss';

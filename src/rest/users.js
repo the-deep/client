@@ -4,7 +4,7 @@ import {
     PATCH,
     p,
     commonHeaderForPost,
-} from '../config/rest';
+} from '#config/rest';
 
 export const createUrlForUsers = (fields) => {
     if (fields) {

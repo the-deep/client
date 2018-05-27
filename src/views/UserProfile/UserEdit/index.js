@@ -7,24 +7,24 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { InternalGallery } from '../../../components/DeepGallery';
+import { InternalGallery } from '#components/DeepGallery';
 
-import Faram, { requiredCondition } from '../../../vendor/react-store/components/Input/Faram';
-import SelectInput from '../../../vendor/react-store/components/Input/SelectInput';
-import NonFieldErrors from '../../../vendor/react-store/components/Input/NonFieldErrors';
-import ImageInput from '../../../vendor/react-store/components/Input/FileInput/ImageInput';
-import TextInput from '../../../vendor/react-store/components/Input/TextInput';
-import HiddenInput from '../../../vendor/react-store/components/Input/HiddenInput';
-import DangerButton from '../../../vendor/react-store/components/Action/Button/DangerButton';
-import PrimaryButton from '../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import LoadingAnimation from '../../../vendor/react-store/components/View/LoadingAnimation';
+import Faram, { requiredCondition } from '#rs/components/Input/Faram';
+import SelectInput from '#rs/components/Input/SelectInput';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import ImageInput from '#rs/components/Input/FileInput/ImageInput';
+import TextInput from '#rs/components/Input/TextInput';
+import HiddenInput from '#rs/components/Input/HiddenInput';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 
 import {
     setUserInformationAction,
     availableLanguagesSelector,
-} from '../../../redux';
-import _ts from '../../../ts';
-import notify from '../../../notify';
+} from '#redux';
+import _ts from '#ts';
+import notify from '#notify';
 
 import UserPatchRequest from '../requests/UserPatchRequest';
 import UserImageUploadRequest from '../requests/UserImageUploadRequest';

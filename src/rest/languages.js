@@ -1,6 +1,6 @@
 import {
     wsEndpoint,
-} from '../config/rest';
+} from '#config/rest';
 
 export const urlForLanguages = `${wsEndpoint}/languages/`;
 

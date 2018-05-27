@@ -1,8 +1,7 @@
-import store from './store';
+import { NOTIFICATION } from '#rs/components/View/Toast';
 
-import { notifySendAction } from './redux';
-
-import { NOTIFICATION } from './vendor/react-store/components/View/Toast';
+import { notifySendAction } from '#redux';
+import store from '#store';
 
 const notify = {
     type: NOTIFICATION,

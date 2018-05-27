@@ -1,18 +1,18 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import OrgChart from '../../vendor/react-store/components/Visualization/OrgChart';
-import Button from '../../vendor/react-store/components/Action/Button';
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
-import AccentButton from '../../vendor/react-store/components/Action/Button/AccentButton';
-import Modal from '../../vendor/react-store/components/View/Modal';
-import ModalHeader from '../../vendor/react-store/components/View/Modal/Header';
-import ModalBody from '../../vendor/react-store/components/View/Modal/Body';
-import ModalFooter from '../../vendor/react-store/components/View/Modal/Footer';
-import ListInput from '../../vendor/react-store/components/Input/ListInput';
-import FaramElement from '../../vendor/react-store/components/Input/Faram/FaramElement';
+import OrgChart from '#rs/components/Visualization/OrgChart';
+import Button from '#rs/components/Action/Button';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import AccentButton from '#rs/components/Action/Button/AccentButton';
+import Modal from '#rs/components/View/Modal';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import ModalBody from '#rs/components/View/Modal/Body';
+import ModalFooter from '#rs/components/View/Modal/Footer';
+import ListInput from '#rs/components/Input/ListInput';
+import FaramElement from '#rs/components/Input/Faram/FaramElement';
 
-import { iconNames } from '../../constants';
+import { iconNames } from '#constants';
 import styles from './styles.scss';
 
 

@@ -1,12 +1,12 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { FgRestBuilder } from '#rs/utils/rest';
 import {
     urlForUserMembership,
     createParamsForUserMembershipCreate,
     alterResponseErrorToFaramError,
-} from '../../../rest';
-import schema from '../../../schema';
-import notify from '../../../notify';
-import _ts from '../../../ts';
+} from '#rest';
+import schema from '#schema';
+import notify from '#notify';
+import _ts from '#ts';
 
 /*
  * props: setState, setUsersMembership, onModalClose

@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Button from '../../vendor/react-store/components/Action/Button';
+import Button from '#rs/components/Action/Button';
 
-import { iconNames } from '../../constants';
+import { iconNames } from '#constants';
 import { InternalGallery } from '../DeepGallery';
 
 import styles from './styles.scss';

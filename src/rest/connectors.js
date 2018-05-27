@@ -4,7 +4,7 @@ import {
     PATCH,
     p,
     commonHeaderForPost,
-} from '../config/rest';
+} from '#config/rest';
 
 const connectorsMiniFields = ['id', 'title', 'version_id', 'source', 'role'];
 export const urlForConnectors = `${wsEndpoint}/connectors/?${p({ fields: connectorsMiniFields })}`;

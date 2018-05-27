@@ -1,4 +1,4 @@
-import createReducerWithMap from '../../../utils/createReducerWithMap';
+import createReducerWithMap from '#utils/createReducerWithMap';
 
 import commonReducers from './common';
 import addLeadsReducers from './addLeads';

@@ -1,5 +1,7 @@
 import { persistCombineReducers } from 'redux-persist';
 
+import storeConfig from '#config/store';
+
 import authReducer from './auth';
 import notifyReducer from './notify';
 import routeReducer from './route';
@@ -7,8 +9,6 @@ import domainDataReducer from './domainData';
 import langReducer from './lang';
 import appReducer from './app';
 import siloDomainDataReducer from './siloDomainData';
-
-import storeConfig from '../../config/store';
 
 const reducers = {
     notify: notifyReducer,

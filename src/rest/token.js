@@ -3,7 +3,7 @@ import {
     POST,
     commonHeaderForPost,
     commonHeaderForPostExternal,
-} from '../config/rest';
+} from '#config/rest';
 
 export const urlForTokenCreate = `${wsEndpoint}/token/`;
 export const createParamsForTokenCreate = ({ username, password, recaptchaResponse }) => ({

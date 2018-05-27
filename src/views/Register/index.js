@@ -5,27 +5,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { FgRestBuilder } from '../../vendor/react-store/utils/rest';
-import { reverseRoute } from '../../vendor/react-store/utils/common';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
-import NonFieldErrors from '../../vendor/react-store/components/Input/NonFieldErrors';
-import TextInput from '../../vendor/react-store/components/Input/TextInput';
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
-import ReCaptcha from '../../vendor/react-store/components/Input/ReCaptcha';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import Faram, {
-    requiredCondition,
     emailCondition,
-} from '../../vendor/react-store/components/Input/Faram';
+    requiredCondition,
+} from '#rs/components/Input/Faram';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import ReCaptcha from '#rs/components/Input/ReCaptcha';
+import TextInput from '#rs/components/Input/TextInput';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import { reverseRoute } from '#rs/utils/common';
+import { FgRestBuilder } from '#rs/utils/rest';
 
+import { reCaptchaSiteKey } from '#config/reCaptcha';
+import { pathNames } from '#constants';
+import schema from '#schema';
 import {
     alterResponseErrorToFaramError,
     createParamsForUserCreate,
     urlForUserCreate,
-} from '../../rest';
-import { pathNames } from '../../constants';
-import { reCaptchaSiteKey } from '../../config/reCaptcha';
-import schema from '../../schema';
-import _ts from '../../ts';
+} from '#rest';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -46,7 +46,6 @@ export default class Register extends React.PureComponent {
             faramErrors: {},
             faramValues: {},
             pending: false,
-            pristine: false,
             success: false,
         };
 
@@ -77,7 +76,6 @@ export default class Register extends React.PureComponent {
         this.setState({
             faramValues,
             faramErrors,
-            pristine: true,
         });
     };
 
@@ -116,7 +114,7 @@ export default class Register extends React.PureComponent {
                 recaptchaResponse,
             }))
             .preLoad(() => {
-                this.setState({ pending: true, pristine: false });
+                this.setState({ pending: true });
             })
             .postLoad(() => {
                 if (this.reCaptcha) {

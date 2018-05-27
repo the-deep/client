@@ -1,6 +1,11 @@
 import { createSelector } from 'reselect';
-import { connectorIdFromRoute, connectorSourcesSelector } from '../domainData';
-import { compareString } from '../../../vendor/react-store/utils/common';
+
+import { compareString } from '#rs/utils/common';
+
+import {
+    connectorIdFromRoute,
+    connectorSourcesSelector,
+} from '../domainData';
 
 const emptyObject = {};
 

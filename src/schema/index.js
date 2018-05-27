@@ -1,5 +1,5 @@
-import dict from '../vendor/ravl/schema';
-import attachValidator from '../vendor/ravl/attachValidator';
+import dict from '#ravl/schema';
+import attachValidator from '#ravl/attachValidator';
 
 import leads from './leads';
 import leadsViz from './leadsViz';

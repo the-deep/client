@@ -2,32 +2,32 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import MultiViewContainer from '../../../vendor/react-store/components/View/MultiViewContainer';
-import Modal from '../../../vendor/react-store/components/View/Modal';
-import ModalBody from '../../../vendor/react-store/components/View/Modal/Body';
-import ModalHeader from '../../../vendor/react-store/components/View/Modal/Header';
-import PrimaryButton from '../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import DangerButton from '../../../vendor/react-store/components/Action/Button/DangerButton';
-import ListView from '../../../../src/vendor/react-store/components/View/List/ListView';
-import LoadingAnimation from '../../../../src/vendor/react-store/components/View/LoadingAnimation';
-import ListItem from '../../../../src/vendor/react-store/components/View/List/ListItem';
-import SearchInput from '../../../vendor/react-store/components/Input/SearchInput';
-import { caseInsensitiveSubmatch } from '../../../vendor/react-store/utils/common';
-import update from '../../../vendor/react-store/utils/immutable-update';
-import { iconNames } from '../../../constants';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import SearchInput from '#rs/components/Input/SearchInput';
+import ListItem from '#rs/components/View/List/ListItem';
+import ListView from '#rs/components/View/List/ListView';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Modal from '#rs/components/View/Modal';
+import ModalBody from '#rs/components/View/Modal/Body';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import MultiViewContainer from '#rs/components/View/MultiViewContainer';
+import { caseInsensitiveSubmatch } from '#rs/utils/common';
+import update from '#rs/utils/immutable-update';
 
+import { iconNames } from '#constants';
 import {
     addLeadViewConnectorsListSelector,
     projectIdFromRouteSelector,
 
     addLeadViewSetConnectorsAction,
     addLeadViewLeadsSelector,
-} from '../../../redux';
+} from '#redux';
+import _ts from '#ts';
 
 import ConnectorsGetRequest from '../requests/ConnectorsGetRequest';
-import ConnectorContent from './Content';
-import _ts from '../../../ts';
 
+import ConnectorContent from './Content';
 import styles from './styles.scss';
 
 const propTypes = {

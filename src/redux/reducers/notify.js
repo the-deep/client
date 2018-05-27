@@ -1,4 +1,4 @@
-import createReducerWithMap from '../../utils/createReducerWithMap';
+import createReducerWithMap from '#utils/createReducerWithMap';
 import initialNotifyState from '../initial-state/notify';
 
 // TYPE

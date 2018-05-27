@@ -6,15 +6,15 @@ import {
     compareStringByWordCount,
     compareString,
     compareNumber,
-} from '../../../../vendor/react-store/utils/common';
-import Table from '../../../../vendor/react-store/components/View/Table';
-import DangerButton from '../../../../vendor/react-store/components/Action/Button/DangerButton';
-import WarningButton from '../../../../vendor/react-store/components/Action/Button/WarningButton';
+} from '#rs/utils/common';
+import Table from '#rs/components/View/Table';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import WarningButton from '#rs/components/Action/Button/WarningButton';
 import {
     linkCollectionSelector,
-} from '../../../../redux';
+} from '#redux';
 
-import { iconNames } from '../../../../constants';
+import { iconNames } from '#constants';
 
 import DeleteConfirm from '../../DeleteConfirm';
 import EditLinkModal from './EditLinkModal';

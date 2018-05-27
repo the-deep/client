@@ -1,6 +1,6 @@
-import { analyzeErrors } from '../../../vendor/react-store/components/Input/Faram/validator';
-import { isTruthy } from '../../../vendor/react-store/utils/common';
-import update from '../../../vendor/react-store/utils/immutable-update';
+import { analyzeErrors } from '#rs/components/Input/Faram/validator';
+import { isTruthy } from '#rs/utils/common';
+import update from '#rs/utils/immutable-update';
 
 // FIXME: copy this to common place
 const getNamespacedId = (leadId, leadGroupId) => {

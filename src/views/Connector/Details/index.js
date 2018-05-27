@@ -3,7 +3,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 
-import LoadingAnimation from '../../../vendor/react-store/components/View/LoadingAnimation';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 
 import {
     connectorsListSelector,
@@ -12,8 +12,8 @@ import {
     connectorSourceSelector,
 
     setUserConnectorDetailsAction,
-} from '../../../redux';
-import _ts from '../../../ts';
+} from '#redux';
+import _ts from '#ts';
 
 import ConnectorDetailsGetRequest from '../requests/ConnectorDetailsGetRequest';
 

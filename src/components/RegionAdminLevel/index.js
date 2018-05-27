@@ -2,32 +2,32 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { BgRestBuilder } from '../../vendor/react-store/utils/rest';
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
-import DangerButton from '../../vendor/react-store/components/Action/Button/DangerButton';
-import Confirm from '../../vendor/react-store/components/View/Modal/Confirm';
-import Modal from '../../vendor/react-store/components/View/Modal';
-import ModalHeader from '../../vendor/react-store/components/View/Modal/Header';
-import ModalBody from '../../vendor/react-store/components/View/Modal/Body';
-import Table from '../../vendor/react-store/components/View/Table';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
+import { BgRestBuilder } from '#rs/utils/rest';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import Confirm from '#rs/components/View/Modal/Confirm';
+import Modal from '#rs/components/View/Modal';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import ModalBody from '#rs/components/View/Modal/Body';
+import Table from '#rs/components/View/Table';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 
 import {
     createUrlForAdminLevelsForRegion,
     createParamsForGet,
     createParamsForAdminLevelDelete,
     createUrlForAdminLevel,
-} from '../../rest';
+} from '#rest';
 import {
     adminLevelForRegionSelector,
     setAdminLevelsForRegionAction,
     unsetAdminLevelForRegionAction,
-} from '../../redux';
-import schema from '../../schema';
-import { iconNames } from '../../constants';
-import _ts from '../../ts';
+} from '#redux';
+import schema from '#schema';
+import { iconNames } from '#constants';
+import _ts from '#ts';
 
-import notify from '../../notify';
+import notify from '#notify';
 import EditAdminLevel from '../EditAdminLevel';
 import styles from './styles.scss';
 

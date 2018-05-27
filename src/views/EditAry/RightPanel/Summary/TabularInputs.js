@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import List from '../../../../vendor/react-store/components/View/List';
+import List from '#rs/components/View/List';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types

@@ -3,10 +3,10 @@ import React from 'react';
 import ReactSVG from 'react-svg';
 import { connect } from 'react-redux';
 
-import { currentUserActiveProjectSelector } from '../../redux';
-import logo from '../../resources/img/deep-logo.svg';
-import BoundError from '../../vendor/react-store/components/General/BoundError';
-import AppError from '../../components/AppError';
+import { currentUserActiveProjectSelector } from '#redux';
+import logo from '#resources/img/deep-logo.svg';
+import BoundError from '#rs/components/General/BoundError';
+import AppError from '#components/AppError';
 
 import styles from './styles.scss';
 

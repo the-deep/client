@@ -1,6 +1,8 @@
-import createReducerWithMap from '../../utils/createReducerWithMap';
+import { isTruthy } from '#rs/utils/common';
+
+import createReducerWithMap from '#utils/createReducerWithMap';
+
 import initialRouteState from '../initial-state/route';
-import { isTruthy } from '../../vendor/react-store/utils/common';
 
 // TYPE
 

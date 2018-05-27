@@ -7,11 +7,21 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { randomString } from '../../../vendor/react-store/utils/common';
-import Button from '../../../vendor/react-store/components/Action/Button';
-import FileInput from '../../../vendor/react-store/components/Input/FileInput';
-import FormattedDate from '../../../vendor/react-store/components/View/FormattedDate';
+import Button from '#rs/components/Action/Button';
+import FileInput from '#rs/components/Input/FileInput';
+import FormattedDate from '#rs/components/View/FormattedDate';
+import { randomString } from '#rs/utils/common';
 
+import DropboxChooser from '#components/DropboxChooser';
+import GooglePicker from '#components/GooglePicker';
+import { dropboxAppKey } from '#config/dropbox';
+import {
+    googleDriveClientId,
+    googleDriveDeveloperKey,
+} from '#config/google-drive';
+import { iconNames } from '#constants';
+import { LEAD_TYPE, leadAccessor } from '#entities/lead';
+import notify from '#notify';
 import {
     addLeadViewAddLeadsAction,
     activeProjectIdFromStateSelector,
@@ -22,33 +32,28 @@ import {
     addLeadViewSetLeadDriveRestsAction,
     addLeadViewSetLeadDropboxRestsAction,
     addLeadViewLeadsSelector,
-} from '../../../redux';
-import DropboxChooser from '../../../components/DropboxChooser';
-import GooglePicker from '../../../components/GooglePicker';
+} from '#redux';
+import _ts from '#ts';
+
 import ConnectorSelectModal from '../ConnectorSelectModal';
-import notify from '../../../notify';
-import _ts from '../../../ts';
-import { iconNames } from '../../../constants';
-import { LEAD_TYPE, leadAccessor } from '../../../entities/lead';
-import { dropboxAppKey } from '../../../config/dropbox';
-import {
-    googleDriveClientId,
-    googleDriveDeveloperKey,
-} from '../../../config/google-drive';
 
 import DropboxRequest from '../requests/DropboxRequest';
 import FileUploadRequest from '../requests/FileUploadRequest';
 import GoogleDriveRequest from '../requests/GoogleDriveRequest';
+
 import styles from './styles.scss';
 
 const supportedGoogleDriveMimeTypes = [
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/rtf', 'text/plain', 'font/otf', 'application/pdf',
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    'application/vnd.ms-powerpoint', 'application/vnd.ms-excel',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'text/csv', 'image/png', 'image/jpeg', 'image/fig',
     'application/json', 'application/xml', 'application/msword',
+    'application/rtf', 'text/plain', 'font/otf', 'application/pdf',
+    'application/vnd.ms-powerpoint', 'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'image/fig',
+    'image/jpeg',
+    'image/png',
+    'text/csv',
 ];
 
 const supportedDropboxExtension = [

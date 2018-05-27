@@ -1,5 +1,5 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
-import schema from '../../../schema';
+import { FgRestBuilder } from '#rs/utils/rest';
+import schema from '#schema';
 
 import {
     alterResponseErrorToFaramError,
@@ -8,9 +8,9 @@ import {
     createUrlForLeadEdit,
     createParamsForLeadEdit,
     createParamsForLeadCreate,
-} from '../../../rest';
+} from '#rest';
 
-import { leadAccessor } from '../../../entities/lead';
+import { leadAccessor } from '#entities/lead';
 
 export default class FormSaveRequest {
     constructor(params) {

@@ -2,16 +2,16 @@ import {
     listToMap,
     getElementAround,
     getNumbers,
-} from '../../../vendor/react-store/utils/common';
-import { analyzeErrors } from '../../../vendor/react-store/components/Input/Faram/validator';
-import update from '../../../vendor/react-store/utils/immutable-update';
+} from '#rs/utils/common';
+import { analyzeErrors } from '#rs/components/Input/Faram/validator';
+import update from '#rs/utils/immutable-update';
 
 import {
     createLead,
     leadAccessor,
     calcLeadState,
     LEAD_STATUS,
-} from '../../../entities/lead';
+} from '#entities/lead';
 
 // ACTION-TYPE
 

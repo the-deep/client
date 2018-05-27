@@ -1,10 +1,10 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { FgRestBuilder } from '#rs/utils/rest';
 import {
     createUrlForProject,
     createParamsForProjectDelete,
-} from '../../../rest';
-import notify from '../../../notify';
-import _ts from '../../../ts';
+} from '#rest';
+import notify from '#notify';
+import _ts from '#ts';
 
 /*
  * props: setState, unSetProject

@@ -1,9 +1,11 @@
 import { createSelector } from 'reselect';
+
+import { isTruthy } from '#rs/utils/common';
+
 import {
     leadIdFromRouteSelector,
     leadGroupIdFromRouteSelector,
 } from '../route';
-import { isTruthy } from '../../../vendor/react-store/utils/common';
 
 const emptyObject = {};
 const emptyList = [];

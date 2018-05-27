@@ -2,15 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import MultiViewContainer from '../../../vendor/react-store/components/View/MultiViewContainer';
-import FixedTabs from '../../../vendor/react-store/components/View/FixedTabs';
-import SuccessButton from '../../../vendor/react-store/components/Action/Button/SuccessButton';
+import MultiViewContainer from '#rs/components/View/MultiViewContainer';
+import FixedTabs from '#rs/components/View/FixedTabs';
+import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import Faram, {
     requiredCondition,
     dateCondition,
-} from '../../../vendor/react-store/components/Input/Faram';
-import { getObjectChildren } from '../../../vendor/react-store/utils/common';
-import { median, sum, bucket } from '../../../vendor/react-store/utils/stats';
+} from '#rs/components/Input/Faram';
+import { getObjectChildren } from '#rs/utils/common';
+import { median, sum, bucket } from '#rs/utils/stats';
 
 import {
     leadIdFromRouteSelector,
@@ -32,9 +32,9 @@ import {
     editAryHasErrorsSelector,
     editAryIsPristineSelector,
 
-} from '../../../redux';
-import _ts from '../../../ts';
-import Baksa from '../../../components/Baksa';
+} from '#redux';
+import _ts from '#ts';
+import Baksa from '#components/Baksa';
 
 import AryPutRequest from '../requests/AryPutRequest';
 

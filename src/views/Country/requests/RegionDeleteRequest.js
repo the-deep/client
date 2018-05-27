@@ -1,10 +1,10 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { FgRestBuilder } from '#rs/utils/rest';
 import {
     createUrlForRegion,
     createParamsForCountryDelete,
-} from '../../../rest';
-import notify from '../../../notify';
-import _ts from '../../../ts';
+} from '#rest';
+import notify from '#notify';
+import _ts from '#ts';
 
 /*
  * setState, unSetRegion

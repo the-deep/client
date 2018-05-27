@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import WidgetEmptyComponent from '../../../components/WidgetEmptyComponent';
-import ListView from '../../../vendor/react-store/components/View/List/ListView';
-import BoundError from '../../../vendor/react-store/components/General/BoundError';
-import WidgetError from '../../../components/WidgetError';
+import WidgetEmptyComponent from '#components/WidgetEmptyComponent';
+import ListView from '#rs/components/View/List/ListView';
+import BoundError from '#rs/components/General/BoundError';
+import WidgetError from '#components/WidgetError';
 
 import styles from './styles.scss';
 

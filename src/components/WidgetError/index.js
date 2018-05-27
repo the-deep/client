@@ -1,6 +1,6 @@
 import React from 'react';
 
-import _ts from '../../ts';
+import _ts from '#ts';
 import styles from './styles.scss';
 
 export default class WidgetError extends React.PureComponent {

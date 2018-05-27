@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { getRandomFromList } from '../../vendor/react-store/utils/common';
-import _ts from '../../ts';
+import { getRandomFromList } from '#rs/utils/common';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 

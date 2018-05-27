@@ -1,25 +1,25 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import update from '../../vendor/react-store/utils/immutable-update';
-import Modal from '../../vendor/react-store/components/View/Modal';
-import ModalHeader from '../../vendor/react-store/components/View/Modal/Header';
-import ModalBody from '../../vendor/react-store/components/View/Modal/Body';
-import ModalFooter from '../../vendor/react-store/components/View/Modal/Footer';
-import ListView from '../../vendor/react-store/components/View/List/ListView';
-import SelectInput from '../../vendor/react-store/components/Input/SelectInput';
-import MultiSelectInput from '../../vendor/react-store/components/Input/MultiSelectInput';
-import Button from '../../vendor/react-store/components/Action/Button';
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
-import AccentButton from '../../vendor/react-store/components/Action/Button/AccentButton';
-import DangerButton from '../../vendor/react-store/components/Action/Button/DangerButton';
-import FaramElement from '../../vendor/react-store/components/Input/Faram/FaramElement';
+import Button from '#rs/components/Action/Button';
+import AccentButton from '#rs/components/Action/Button/AccentButton';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import FaramElement from '#rs/components/Input/Faram/FaramElement';
+import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
+import SelectInput from '#rs/components/Input/SelectInput';
+import ListView from '#rs/components/View/List/ListView';
+import Modal from '#rs/components/View/Modal';
+import ModalBody from '#rs/components/View/Modal/Body';
+import ModalFooter from '#rs/components/View/Modal/Footer';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import update from '#rs/utils/immutable-update';
 
-import WidgetEmptyComponent from '../WidgetEmptyComponent';
-import _ts from '../../ts';
+import { iconNames } from '#constants';
+import _ts from '#ts';
 
-import { iconNames } from '../../constants';
 import RegionMap from '../RegionMap';
+import WidgetEmptyComponent from '../WidgetEmptyComponent';
 import styles from './styles.scss';
 
 const propTypes = {

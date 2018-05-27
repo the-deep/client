@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Button from '../../vendor/react-store/components/Action/Button';
-import _ts from '../../ts';
+import Button from '#rs/components/Action/Button';
+import _ts from '#ts';
 
 const propTypes = {
     className: PropTypes.string,

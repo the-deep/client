@@ -2,14 +2,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { compareString } from '../../../../vendor/react-store/utils/common';
-import Faram, { requiredCondition } from '../../../../vendor/react-store/components/Input/Faram';
-import update from '../../../../vendor/react-store/utils/immutable-update';
-import NonFieldErrors from '../../../../vendor/react-store/components/Input/NonFieldErrors';
-import DangerButton from '../../../../vendor/react-store/components/Action/Button/DangerButton';
-import PrimaryButton from '../../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import LoadingAnimation from '../../../../vendor/react-store/components/View/LoadingAnimation';
-import TabularSelectInput from '../../../../vendor/react-store/components/Input/TabularSelectInput';
+import { compareString } from '#rs/utils/common';
+import Faram, { requiredCondition } from '#rs/components/Input/Faram';
+import update from '#rs/utils/immutable-update';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import TabularSelectInput from '#rs/components/Input/TabularSelectInput';
 
 import {
     usersInformationListSelector,
@@ -17,9 +17,9 @@ import {
 
     groupSelector,
     setUsersMembershipAction,
-} from '../../../../redux';
-import _ts from '../../../../ts';
-import { iconNames } from '../../../../constants';
+} from '#redux';
+import _ts from '#ts';
+import { iconNames } from '#constants';
 
 import UsersGetRequest from '../../requests/UsersGetRequest';
 import MembershipPostRequest from '../../requests/MembershipPostRequest';

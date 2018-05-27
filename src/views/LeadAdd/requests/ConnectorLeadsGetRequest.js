@@ -1,12 +1,12 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
-import { randomString } from '../../../vendor/react-store/utils/common';
+import { FgRestBuilder } from '#rs/utils/rest';
+import { randomString } from '#rs/utils/common';
 import {
     createParamsForGet,
     createUrlForConnectorleads,
-} from '../../../rest';
-import _ts from '../../../ts';
-import schema from '../../../schema';
-import notify from '../../../notify';
+} from '#rest';
+import _ts from '#ts';
+import schema from '#schema';
+import notify from '#notify';
 
 export default class ConnectorLeadsRequest {
     constructor(props) {

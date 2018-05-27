@@ -1,13 +1,13 @@
 import stringFormat from 'string-format';
-import devLang from './redux/initial-state/dev-lang';
+import devLang from '#redux/initial-state/dev-lang';
 
 import {
     selectedLinksSelector,
     selectedStringsSelector,
     fallbackLinksSelector,
     fallbackStringsSelector,
-} from './redux';
-import store from './store';
+} from '#redux';
+import store from '#store';
 
 const getString = (strings, links, namespace, identifier) => {
     const namedLinkStrings = links[namespace];

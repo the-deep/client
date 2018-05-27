@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import update from '../../../vendor/react-store/utils/immutable-update';
-import ListView from '../../../vendor/react-store/components/View/List/ListView';
+import BoundError from '#rs/components/General/BoundError';
+import ListView from '#rs/components/View/List/ListView';
+import update from '#rs/utils/immutable-update';
+
+import WidgetError from '#components/WidgetError';
 
 import MatrixRow from './MatrixRow';
-import BoundError from '../../../vendor/react-store/components/General/BoundError';
-import WidgetError from '../../../components/WidgetError';
-
 import styles from './styles.scss';
 
 const propTypes = {

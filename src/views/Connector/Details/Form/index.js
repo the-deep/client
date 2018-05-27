@@ -2,34 +2,22 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
-import {
-    compareString,
-    compareDate,
-} from '../../../../vendor/react-store/utils/common';
-import update from '../../../../vendor/react-store/utils/immutable-update';
-import Faram, {
-    requiredCondition,
-    urlCondition,
-} from '../../../../vendor/react-store/components/Input/Faram';
-import FaramGroup from '../../../../vendor/react-store/components/Input/Faram/FaramGroup';
-import NonFieldErrors from '../../../../vendor/react-store/components/Input/NonFieldErrors';
-import TextInput from '../../../../vendor/react-store/components/Input/TextInput';
-import TabularSelectInput from '../../../../vendor/react-store/components/Input/TabularSelectInput';
-import LoadingAnimation from '../../../../vendor/react-store/components/View/LoadingAnimation';
-import List from '../../../../vendor/react-store/components/View/List';
-import FormattedDate from '../../../../vendor/react-store/components/View/FormattedDate';
-import PrimaryButton from '../../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import AccentButton from '../../../../vendor/react-store/components/Action/Button/AccentButton';
-import DangerButton from '../../../../vendor/react-store/components/Action/Button/DangerButton';
-import SuccessButton from '../../../../vendor/react-store/components/Action/Button/SuccessButton';
+import AccentButton from '#rs/components/Action/Button/AccentButton';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import Faram, { requiredCondition, urlCondition } from '#rs/components/Input/Faram';
+import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import TabularSelectInput from '#rs/components/Input/TabularSelectInput';
+import TextInput from '#rs/components/Input/TextInput';
+import FormattedDate from '#rs/components/View/FormattedDate';
+import List from '#rs/components/View/List';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import { compareString, compareDate } from '#rs/utils/common';
+import update from '#rs/utils/immutable-update';
 
-import _ts from '../../../../ts';
-
-import ConnectorPatchRequest from '../../requests/ConnectorPatchRequest';
-import ConnectorDetailsGetRequest from '../../requests/ConnectorDetailsGetRequest';
-import UserListGetRequest from '../../requests/UserListGetRequest';
-import UserProjectsGetRequest from '../../requests/UserProjectsGetRequest';
-
+import { iconNames } from '#constants';
 import {
     connectorDetailsSelector,
     connectorSourceSelector,
@@ -41,9 +29,13 @@ import {
     changeUserConnectorDetailsAction,
     setErrorUserConnectorDetailsAction,
     setUserConnectorDetailsAction,
-} from '../../../../redux';
+} from '#redux';
+import _ts from '#ts';
 
-import { iconNames } from '../../../../constants';
+import ConnectorDetailsGetRequest from '../../requests/ConnectorDetailsGetRequest';
+import ConnectorPatchRequest from '../../requests/ConnectorPatchRequest';
+import UserListGetRequest from '../../requests/UserListGetRequest';
+import UserProjectsGetRequest from '../../requests/UserProjectsGetRequest';
 
 import styles from './styles.scss';
 

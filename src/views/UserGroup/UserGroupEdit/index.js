@@ -6,16 +6,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Faram, { requiredCondition } from '../../../vendor/react-store/components/Input/Faram';
-import NonFieldErrors from '../../../vendor/react-store/components/Input/NonFieldErrors';
-import DangerButton from '../../../vendor/react-store/components/Action/Button/DangerButton';
-import PrimaryButton from '../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import LoadingAnimation from '../../../vendor/react-store/components/View/LoadingAnimation';
-import TextInput from '../../../vendor/react-store/components/Input/TextInput';
-import TextArea from '../../../vendor/react-store/components/Input/TextArea';
+import Faram, { requiredCondition } from '#rs/components/Input/Faram';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import TextInput from '#rs/components/Input/TextInput';
+import TextArea from '#rs/components/Input/TextArea';
 
-import _ts from '../../../ts';
-import { setUserGroupAction } from '../../../redux';
+import _ts from '#ts';
+import { setUserGroupAction } from '#redux';
 
 import UserGroupPatchRequest from '../requests/UserGroupPatchRequest';
 

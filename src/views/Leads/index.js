@@ -6,21 +6,19 @@ import {
     Redirect,
 } from 'react-router-dom';
 
-import {
-    reverseRoute,
-} from '../../vendor/react-store/utils/common';
-import Confirm from '../../vendor/react-store/components/View/Modal/Confirm';
-import FormattedDate from '../../vendor/react-store/components/View/FormattedDate';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
-import SelectInput from '../../vendor/react-store/components/Input/SelectInput';
-import Pager from '../../vendor/react-store/components/View/Pager';
-import RawTable from '../../vendor/react-store/components/View/RawTable';
-import TableHeader from '../../vendor/react-store/components/View/TableHeader';
+import BoundError from '#rs/components/General/BoundError';
+import SelectInput from '#rs/components/Input/SelectInput';
+import FormattedDate from '#rs/components/View/FormattedDate';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Confirm from '#rs/components/View/Modal/Confirm';
+import Pager from '#rs/components/View/Pager';
+import RawTable from '#rs/components/View/RawTable';
+import TableHeader from '#rs/components/View/TableHeader';
+import { reverseRoute } from '#rs/utils/common';
 
-import BoundError from '../../vendor/react-store/components/General/BoundError';
-import AppError from '../../components/AppError';
-import ActionButtons from './ActionButtons';
-
+import AppError from '#components/AppError';
+import { iconNames, pathNames } from '#constants/';
+import { leadTypeIconMap } from '#entities/lead';
 import {
     activeProjectIdFromStateSelector,
     leadsForProjectSelector,
@@ -42,18 +40,16 @@ import {
 
     removeLeadAction,
     patchLeadAction,
-} from '../../redux';
-import {
-    iconNames,
-    pathNames,
-} from '../../constants/';
-import _ts from '../../ts';
-import { leadTypeIconMap } from '../../entities/lead';
+} from '#redux';
+import _ts from '#ts';
 
+import ActionButtons from './ActionButtons';
+import FilterLeadsForm from './FilterLeadsForm';
+
+import DeleteLeadRequest from './requests/DeleteLeadRequest';
 import LeadsRequest from './requests/LeadsRequest';
 import PatchLeadRequest from './requests/PatchLeadRequest';
-import DeleteLeadRequest from './requests/DeleteLeadRequest';
-import FilterLeadsForm from './FilterLeadsForm';
+
 import styles from './styles.scss';
 
 const propTypes = {

@@ -1,24 +1,24 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import styles from './styles.scss';
-import iconNames from '../../vendor/react-store/constants/iconNames';
-import DropZone from '../../vendor/react-store/components/Input/DropZone';
-import FileInput from '../../vendor/react-store/components/Input/FileInput';
-import TextInput from '../../vendor/react-store/components/Input/TextInput';
-import NumberInput from '../../vendor/react-store/components/Input/NumberInput';
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
-import DangerButton from '../../vendor/react-store/components/Action/Button/DangerButton';
-import { UploadBuilder } from '../../vendor/react-store/utils/upload';
-import { isTruthy, isFalsy } from '../../vendor/react-store/utils/common';
-import FaramElement from '../../vendor/react-store/components/Input/Faram/FaramElement';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DropZone from '#rs/components/Input/DropZone';
+import FaramElement from '#rs/components/Input/Faram/FaramElement';
+import FileInput from '#rs/components/Input/FileInput';
+import NumberInput from '#rs/components/Input/NumberInput';
+import TextInput from '#rs/components/Input/TextInput';
+import iconNames from '#rs/constants/iconNames';
+import { isTruthy, isFalsy } from '#rs/utils/common';
+import { UploadBuilder } from '#rs/utils/upload';
 
 import {
     urlForUpload,
     createParamsForFileUpload,
     transformAndCombineResponseErrors,
-} from '../../rest';
+} from '#rest';
 
+import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,

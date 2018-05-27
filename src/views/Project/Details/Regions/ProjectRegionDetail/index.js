@@ -2,37 +2,36 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
-import Confirm from '../../../../../vendor/react-store/components/View/Modal/Confirm';
-import WarningButton from '../../../../../vendor/react-store/components/Action/Button/WarningButton';
-import SuccessButton from '../../../../../vendor/react-store/components/Action/Button/SuccessButton';
-import DangerButton from '../../../../../vendor/react-store/components/Action/Button/DangerButton';
-import PrimaryButton from '../../../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import LoadingAnimation from '../../../../../vendor/react-store/components/View/LoadingAnimation';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import WarningButton from '#rs/components/Action/Button/WarningButton';
 import Faram, {
     requiredCondition,
-} from '../../../../../vendor/react-store/components/Input/Faram';
+} from '#rs/components/Input/Faram';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Confirm from '#rs/components/View/Modal/Confirm';
 
+import RegionAdminLevel from '#components/RegionAdminLevel';
+import RegionDetail from '#components/RegionDetail';
+import RegionDetailView from '#components/RegionDetailView';
+import RegionMap from '#components/RegionMap';
 import {
     activeProjectIdFromStateSelector,
-    regionDetailSelector,
-    projectDetailsSelector,
-    setRegionDetailsAction,
-    changeRegionDetailsAction,
-    setRegionDetailsErrorsAction,
-    removeProjectRegionAction,
     addNewRegionAction,
-} from '../../../../../redux';
-import _ts from '../../../../../ts';
+    changeRegionDetailsAction,
+    projectDetailsSelector,
+    regionDetailSelector,
+    removeProjectRegionAction,
+    setRegionDetailsAction,
+    setRegionDetailsErrorsAction,
+} from '#redux';
+import _ts from '#ts';
 
-import RegionGetRequest from '../../../requests/RegionGetRequest';
 import ProjectPatchRequest from '../../../requests/ProjectPatchRequest';
 import RegionCloneRequest from '../../../requests/RegionCloneRequest';
 import RegionDetailPatchRequest from '../../../requests/RegionDetailPatchRequest';
-
-import RegionMap from '../../../../../components/RegionMap';
-import RegionDetail from '../../../../../components/RegionDetail';
-import RegionDetailView from '../../../../../components/RegionDetailView';
-import RegionAdminLevel from '../../../../../components/RegionAdminLevel';
+import RegionGetRequest from '../../../requests/RegionGetRequest';
 
 import styles from './styles.scss';
 

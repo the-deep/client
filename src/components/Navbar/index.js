@@ -9,17 +9,17 @@ import {
 } from 'react-router-dom';
 
 
-import { BgRestBuilder } from '../../vendor/react-store/utils/rest';
+import { BgRestBuilder } from '#rs/utils/rest';
 import {
     isTruthy,
     reverseRoute,
-} from '../../vendor/react-store/utils/common';
-import SelectInput from '../../vendor/react-store/components/Input/SelectInput';
+} from '#rs/utils/common';
+import SelectInput from '#rs/components/Input/SelectInput';
 
 import {
     createUrlForSetUserProject,
     createParamsForSetUserProject,
-} from '../../rest';
+} from '#rest';
 import {
     setActiveProjectAction,
 
@@ -27,15 +27,15 @@ import {
     activeProjectIdFromStateSelector,
     activeUserSelector,
     currentUserProjectsSelector,
-} from '../../redux';
-import _ts from '../../ts';
+} from '#redux';
+import _ts from '#ts';
 
 import {
     pathNames,
     validLinks,
     hideNavbar,
-} from '../../constants';
-import logo from '../../resources/img/deep-logo-simplified.svg';
+} from '#constants';
+import logo from '#resources/img/deep-logo-simplified.svg';
 
 import Cloak from '../Cloak';
 import NavMenu from './NavMenu';

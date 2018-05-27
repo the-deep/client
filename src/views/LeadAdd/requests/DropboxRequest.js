@@ -1,11 +1,11 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
-import schema from '../../../schema';
-import { leadAccessor } from '../../../entities/lead';
+import { FgRestBuilder } from '#rs/utils/rest';
+import schema from '#schema';
+import { leadAccessor } from '#entities/lead';
 
 import {
     urlForDropboxFileUpload,
     createHeaderForDropboxUpload,
-} from '../../../rest';
+} from '#rest';
 
 export default class DropboxRequest {
     constructor(params) {

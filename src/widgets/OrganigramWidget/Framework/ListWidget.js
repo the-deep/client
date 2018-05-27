@@ -4,20 +4,20 @@ import React from 'react';
 import {
     randomString,
     isFalsy,
-} from '../../../vendor/react-store/utils/common';
-import update from '../../../vendor/react-store/utils/immutable-update';
-import TextInput from '../../../vendor/react-store/components/Input/TextInput';
-import Button from '../../../vendor/react-store/components/Action/Button';
-import PrimaryButton from '../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import DangerButton from '../../../vendor/react-store/components/Action/Button/DangerButton';
-import Modal from '../../../vendor/react-store/components/View/Modal';
-import ModalHeader from '../../../vendor/react-store/components/View/Modal/Header';
-import ModalBody from '../../../vendor/react-store/components/View/Modal/Body';
-import ModalFooter from '../../../vendor/react-store/components/View/Modal/Footer';
-import BoundError from '../../../vendor/react-store/components/General/BoundError';
+} from '#rs/utils/common';
+import update from '#rs/utils/immutable-update';
+import TextInput from '#rs/components/Input/TextInput';
+import Button from '#rs/components/Action/Button';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import Modal from '#rs/components/View/Modal';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import ModalBody from '#rs/components/View/Modal/Body';
+import ModalFooter from '#rs/components/View/Modal/Footer';
+import BoundError from '#rs/components/General/BoundError';
 
-import WidgetError from '../../../components/WidgetError';
-import _ts from '../../../ts';
+import WidgetError from '#components/WidgetError';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 

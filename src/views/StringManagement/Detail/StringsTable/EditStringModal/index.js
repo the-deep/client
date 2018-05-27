@@ -2,20 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import Modal from '../../../../../vendor/react-store/components/View/Modal';
-import ModalHeader from '../../../../../vendor/react-store/components/View/Modal/Header';
-import ModalBody from '../../../../../vendor/react-store/components/View/Modal/Body';
-import ModalFooter from '../../../../../vendor/react-store/components/View/Modal/Footer';
-import ListView from '../../../../../vendor/react-store/components/View/List/ListView';
-import Button from '../../../../../vendor/react-store/components/Action/Button';
-import SuccessButton from '../../../../../vendor/react-store/components/Action/Button/SuccessButton';
-import TextInput from '../../../../../vendor/react-store/components/Input/TextInput';
+import Modal from '#rs/components/View/Modal';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import ModalBody from '#rs/components/View/Modal/Body';
+import ModalFooter from '#rs/components/View/Modal/Footer';
+import ListView from '#rs/components/View/List/ListView';
+import Button from '#rs/components/Action/Button';
+import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import TextInput from '#rs/components/Input/TextInput';
 
 import {
     allStringsSelector,
     selectedLanguageNameSelector,
     stringMgmtAddStringChangeAction,
-} from '../../../../../redux';
+} from '#redux';
 import styles from './styles.scss';
 
 const propTypes = {

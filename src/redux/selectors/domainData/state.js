@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { compareString } from '../../../vendor/react-store/utils/common';
+import { compareString } from '#rs/utils/common';
 
 const emptyList = [];
 const emptyObject = {};

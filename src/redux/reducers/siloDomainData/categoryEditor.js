@@ -1,5 +1,5 @@
-import { getLinkedListNode, getElementAround } from '../../../vendor/react-store/utils/common';
-import update from '../../../vendor/react-store/utils/immutable-update';
+import { getLinkedListNode, getElementAround } from '#rs/utils/common';
+import update from '#rs/utils/immutable-update';
 
 // TYPE
 

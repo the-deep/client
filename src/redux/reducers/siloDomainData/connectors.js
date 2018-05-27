@@ -1,7 +1,7 @@
 import {
     analyzeErrors,
-} from '../../../vendor/react-store/components/Input/Faram/validator';
-import update from '../../../vendor/react-store/utils/immutable-update';
+} from '#rs/components/Input/Faram/validator';
+import update from '#rs/utils/immutable-update';
 
 export const SET_USER_CONNECTORS = 'siloDomainData/SET_USER_CONNECTORS';
 export const SET_USER_CONNECTOR_DETAILS = 'siloDomainData/SET_USER_CONNECTOR_DETAILS';

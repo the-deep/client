@@ -6,7 +6,7 @@ import {
     Prompt,
 } from 'react-router-dom';
 
-import BoundError from '../../vendor/react-store/components/General/BoundError';
+import BoundError from '#rs/components/General/BoundError';
 import {
     isTruthy,
     checkVersion,
@@ -14,14 +14,14 @@ import {
     trimWhitespace,
     splitInWhitespace,
     reverseRoute,
-} from '../../vendor/react-store/utils/common';
-import { FgRestBuilder } from '../../vendor/react-store/utils/rest';
-import SelectInput from '../../vendor/react-store/components/Input/SelectInput';
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
-import DangerButton from '../../vendor/react-store/components/Action/Button/DangerButton';
-import SuccessButton from '../../vendor/react-store/components/Action/Button/SuccessButton';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
-import Confirm from '../../vendor/react-store/components/View/Modal/Confirm';
+} from '#rs/utils/common';
+import { FgRestBuilder } from '#rs/utils/rest';
+import SelectInput from '#rs/components/Input/SelectInput';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Confirm from '#rs/components/View/Modal/Confirm';
 
 import {
     categoryEditorViewTitleSelector,
@@ -43,21 +43,21 @@ import {
 
     ceIdFromRouteSelector,
     activeProjectIdFromStateSelector,
-} from '../../redux';
+} from '#redux';
 import {
     createUrlForCategoryEditor,
     createParamsForGet,
     createParamsForCeViewPatch,
     transformResponseErrorToFormError,
-} from '../../rest';
+} from '#rest';
 import {
     iconNames,
     pathNames,
-} from '../../constants';
-import schema from '../../schema';
-import notify from '../../notify';
-import _ts from '../../ts';
-import AppError from '../../components/AppError';
+} from '#constants';
+import schema from '#schema';
+import notify from '#notify';
+import _ts from '#ts';
+import AppError from '#components/AppError';
 
 import DocumentPanel from './DocumentPanel';
 import NewCategoryModal from './NewCategoryModal';

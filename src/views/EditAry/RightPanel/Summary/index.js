@@ -1,23 +1,23 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 
-import LoadingAnimation from '../../../../vendor/react-store/components/View/LoadingAnimation';
-import VerticalTabs from '../../../../vendor/react-store/components/View/VerticalTabs/';
-import styles from './styles.scss';
-import { listToMap } from '../../../../vendor/react-store/utils/common';
-
-import FaramGroup from '../../../../vendor/react-store/components/Input/Faram/FaramGroup';
+import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import VerticalTabs from '#rs/components/View/VerticalTabs/';
+import { listToMap } from '#rs/utils/common';
 
 import {
-    editArySelectedSectorsSelector,
     assessmentSectorsSelector,
-} from '../../../../redux';
-import _ts from '../../../../ts';
+    editArySelectedSectorsSelector,
+} from '#redux';
+import _ts from '#ts';
 
 import CrossSector from './CrossSector';
 import HumanitarianAccess from './HumanitarianAccess';
 import Sector from './Sector';
+
+import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,

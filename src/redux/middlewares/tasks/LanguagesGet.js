@@ -1,13 +1,14 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { FgRestBuilder } from '#rs/utils/rest';
+
 import {
     urlForLanguages,
     createParamsForGet,
-} from '../../../rest';
+} from '#rest';
+import schema from '#schema';
+import AbstractTask from '#utils/AbstractTask';
 
-import AbstractTask from '../../../utils/AbstractTask';
 import { setAvailableLanguagesAction } from '../../reducers/lang';
 import { setWaitingForAvailableLanguagesAction } from '../../reducers/app';
-import schema from '../../../schema';
 
 // NOTE: languages is pulled only at app initialization
 export default class LanguagesGet extends AbstractTask {

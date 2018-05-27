@@ -2,20 +2,20 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { caseInsensitiveSubmatch, compareString } from '../../../../vendor/react-store/utils/common';
-import AccentButton from '../../../../vendor/react-store/components/Action/Button/AccentButton';
-import SearchInput from '../../../../vendor/react-store/components/Input/SearchInput';
-import RadioInput from '../../../../vendor/react-store/components/Input/RadioInput';
-import ListView from '../../../../vendor/react-store/components/View/List/ListView';
-import ListItem from '../../../../vendor/react-store/components/View/List/ListItem';
-import Modal from '../../../../vendor/react-store/components/View/Modal';
-import ModalHeader from '../../../../vendor/react-store/components/View/Modal/Header';
-import ModalBody from '../../../../vendor/react-store/components/View/Modal/Body';
+import { caseInsensitiveSubmatch, compareString } from '#rs/utils/common';
+import AccentButton from '#rs/components/Action/Button/AccentButton';
+import SearchInput from '#rs/components/Input/SearchInput';
+import RadioInput from '#rs/components/Input/RadioInput';
+import ListView from '#rs/components/View/List/ListView';
+import ListItem from '#rs/components/View/List/ListItem';
+import Modal from '#rs/components/View/Modal';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import ModalBody from '#rs/components/View/Modal/Body';
 
-import { projectDetailsSelector } from '../../../../redux';
-import { iconNames } from '../../../../constants';
-import _ts from '../../../../ts';
-import AddRegion from '../../../../components/AddRegion';
+import { projectDetailsSelector } from '#redux';
+import { iconNames } from '#constants';
+import _ts from '#ts';
+import AddRegion from '#components/AddRegion';
 
 import AddExistingRegion from './AddExistingRegion';
 import ProjectRegionDetail from './ProjectRegionDetail';

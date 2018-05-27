@@ -1,11 +1,11 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { FgRestBuilder } from '#rs/utils/rest';
 import {
     createParamsForGet,
     urlForConnectorSources,
-} from '../../../rest';
-import _ts from '../../../ts';
-import schema from '../../../schema';
-import notify from '../../../notify';
+} from '#rest';
+import _ts from '#ts';
+import schema from '#schema';
+import notify from '#notify';
 
 export default class ConnectorsGetRequest {
     constructor(props) {

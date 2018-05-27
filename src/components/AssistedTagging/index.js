@@ -1,34 +1,32 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import {
-    getHexFromString,
-} from '../../vendor/react-store/utils/common';
-import { FgRestBuilder } from '../../vendor/react-store/utils/rest';
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
-import SuccessButton from '../../vendor/react-store/components/Action/Button/SuccessButton';
-import WarningButton from '../../vendor/react-store/components/Action/Button/WarningButton';
-import SegmentButton from '../../vendor/react-store/components/Action/SegmentButton';
-import FloatingContainer from '../../vendor/react-store/components/View/FloatingContainer';
-import ListView from '../../vendor/react-store/components/View/List/ListView';
-import MultiSelectInput from '../../vendor/react-store/components/Input/MultiSelectInput';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import WarningButton from '#rs/components/Action/Button/WarningButton';
+import SegmentButton from '#rs/components/Action/SegmentButton';
+import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
+import FloatingContainer from '#rs/components/View/FloatingContainer';
+import ListView from '#rs/components/View/List/ListView';
+import { getHexFromString } from '#rs/utils/common';
+import { FgRestBuilder } from '#rs/utils/rest';
 
+import { iconNames } from '#constants';
+import notify from '#notify';
 import {
+    createParamsForCeClassify,
+    createParamsForFeedback,
+    createParamsForLeadClassify,
+    createParamsForNer,
+    createUrlForCeClassify,
+    urlForFeedback,
     urlForLeadClassify,
     urlForNer,
-    urlForFeedback,
-    createUrlForCeClassify,
-    createParamsForLeadClassify,
-    createParamsForCeClassify,
-    createParamsForNer,
-    createParamsForFeedback,
-} from '../../rest';
-import { iconNames } from '../../constants';
-import notify from '../../notify';
-import schema from '../../schema';
-import SimplifiedLeadPreview from '../SimplifiedLeadPreview';
-import _ts from '../../ts';
+} from '#rest';
+import schema from '#schema';
+import _ts from '#ts';
 
+import SimplifiedLeadPreview from '../SimplifiedLeadPreview';
 import styles from './styles.scss';
 
 const propTypes = {

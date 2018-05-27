@@ -3,29 +3,29 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
-import TextInput from '../../vendor/react-store/components/Input/TextInput';
-import Faram, { requiredCondition } from '../../vendor/react-store/components/Input/Faram';
-import NonFieldErrors from '../../vendor/react-store/components/Input/NonFieldErrors';
-import DangerButton from '../../vendor/react-store/components/Action/Button/DangerButton';
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
+import TextInput from '#rs/components/Input/TextInput';
+import Faram, { requiredCondition } from '#rs/components/Input/Faram';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 
-import { FgRestBuilder } from '../../vendor/react-store/utils/rest';
-import { reverseRoute } from '../../vendor/react-store/utils/common';
+import { FgRestBuilder } from '#rs/utils/rest';
+import { reverseRoute } from '#rs/utils/common';
 
-import { pathNames } from '../../constants';
+import { pathNames } from '#constants';
 
 import {
     alterResponseErrorToFaramError,
     createParamsForRegionCreate,
     urlForRegionCreate,
-} from '../../rest';
+} from '#rest';
 import {
     addNewRegionAction,
-} from '../../redux';
-import notify from '../../notify';
-import schema from '../../schema';
-import _ts from '../../ts';
+} from '#redux';
+import notify from '#notify';
+import schema from '#schema';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 

@@ -2,23 +2,23 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { BgRestBuilder } from '../../vendor/react-store/utils/rest';
-import { UploadBuilder } from '../../vendor/react-store/utils/upload';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
-import DangerButton from '../../vendor/react-store/components/Action/Button/DangerButton';
-import TextInput from '../../vendor/react-store/components/Input/TextInput';
-import NonFieldErrors from '../../vendor/react-store/components/Input/NonFieldErrors';
-import HiddenInput from '../../vendor/react-store/components/Input/HiddenInput';
-import FileInput from '../../vendor/react-store/components/Input/FileInput';
-import SelectInput from '../../vendor/react-store/components/Input/SelectInput';
+import { BgRestBuilder } from '#rs/utils/rest';
+import { UploadBuilder } from '#rs/utils/upload';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import TextInput from '#rs/components/Input/TextInput';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import HiddenInput from '#rs/components/Input/HiddenInput';
+import FileInput from '#rs/components/Input/FileInput';
+import SelectInput from '#rs/components/Input/SelectInput';
 import Faram, {
     greaterThanOrEqualToCondition,
     requiredCondition,
     integerCondition,
-} from '../../vendor/react-store/components/Input/Faram';
+} from '#rs/components/Input/Faram';
 
-import { InternalGallery } from '../../components/DeepGallery';
+import { InternalGallery } from '#components/DeepGallery';
 import {
     alterResponseErrorToFaramError,
     createParamsForAdminLevelsForRegionPOST,
@@ -27,13 +27,13 @@ import {
     createUrlForAdminLevel,
     urlForAdminLevels,
     urlForUpload,
-} from '../../rest';
-import { addAdminLevelForRegionAction } from '../../redux';
-import schema from '../../schema';
-import { iconNames } from '../../constants';
-import _ts from '../../ts';
+} from '#rest';
+import { addAdminLevelForRegionAction } from '#redux';
+import schema from '#schema';
+import { iconNames } from '#constants';
+import _ts from '#ts';
 
-import notify from '../../notify';
+import notify from '#notify';
 import styles from './styles.scss';
 
 const propTypes = {

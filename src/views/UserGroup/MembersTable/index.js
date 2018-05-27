@@ -6,24 +6,24 @@ import {
     caseInsensitiveSubmatch,
     compareString,
     compareDate,
-} from '../../../vendor/react-store/utils/common';
-import PrimaryButton from '../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import LoadingAnimation from '../../../vendor/react-store/components/View/LoadingAnimation';
-import Confirm from '../../../vendor/react-store/components/View/Modal/Confirm';
-import FormattedDate from '../../../vendor/react-store/components/View/FormattedDate';
-import Modal from '../../../vendor/react-store/components/View/Modal';
-import ModalBody from '../../../vendor/react-store/components/View/Modal/Body';
-import ModalHeader from '../../../vendor/react-store/components/View/Modal/Header';
-import Table from '../../../vendor/react-store/components/View/Table';
-import SearchInput from '../../../vendor/react-store/components/Input/SearchInput';
+} from '#rs/utils/common';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Confirm from '#rs/components/View/Modal/Confirm';
+import FormattedDate from '#rs/components/View/FormattedDate';
+import Modal from '#rs/components/View/Modal';
+import ModalBody from '#rs/components/View/Modal/Body';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import Table from '#rs/components/View/Table';
+import SearchInput from '#rs/components/Input/SearchInput';
 
 import {
     unSetMembershipAction,
     setUsersMembershipAction,
     setUserMembershipAction,
-} from '../../../redux';
-import _ts from '../../../ts';
-import { iconNames } from '../../../constants';
+} from '#redux';
+import _ts from '#ts';
+import { iconNames } from '#constants';
 
 import MembershipRoleChangeRequest from '../requests/MembershipRoleChangeRequest';
 import MembershipDeleteRequest from '../requests/MembershipDeleteRequest';

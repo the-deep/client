@@ -2,7 +2,7 @@ import {
     POST,
     commonHeaderForPostExternal,
     p,
-} from '../config/rest';
+} from '#config/rest';
 
 const deeplEndPoint = 'https://deepl.togglecorp.com';
 export const urlForNer = `${deeplEndPoint}/api/ner/`;

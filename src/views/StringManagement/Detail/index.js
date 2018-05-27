@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import PrimaryButton from '../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import SuccessButton from '../../../vendor/react-store/components/Action/Button/SuccessButton';
-import DangerButton from '../../../vendor/react-store/components/Action/Button/DangerButton';
-import LoadingAnimation from '../../../vendor/react-store/components/View/LoadingAnimation';
-import SelectInput from '../../../vendor/react-store/components/Input/SelectInput';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import SelectInput from '#rs/components/Input/SelectInput';
 
 import {
     setLanguageAction,
@@ -15,7 +15,7 @@ import {
     availableLanguagesSelector,
     selectedLanguageNameSelector,
     selectedLinkCollectionNameSelector,
-} from '../../../redux';
+} from '#redux';
 
 import StringsTable from './StringsTable';
 import LinksTable from './LinksTable';

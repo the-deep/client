@@ -1,4 +1,4 @@
-// import { p } from './rest';
+// import { p } from '#rest';
 
 const responseType = 'token';
 const scope = 'profile';

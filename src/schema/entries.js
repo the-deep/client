@@ -1,5 +1,5 @@
-import { isFalsy } from '../vendor/ravl/common';
-import { RavlError } from '../vendor/ravl/error';
+import { isFalsy } from '#ravl/common';
+import { RavlError } from '#ravl/error';
 
 const entrySchema = [];
 

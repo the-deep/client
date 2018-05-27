@@ -1,4 +1,4 @@
-import { DIFF_ACTION } from '../../../entities/entry';
+import { DIFF_ACTION } from '#entities/entry';
 import reducers, {
     EE__ADD_ENTRY,
     EE__REMOVE_ENTRY,

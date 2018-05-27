@@ -1,20 +1,20 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 
-import MultiViewContainer from '../../../../vendor/react-store/components/View/MultiViewContainer';
-import Message from '../../../../vendor/react-store/components/View/Message';
-import FixedTabs from '../../../../vendor/react-store/components/View/FixedTabs';
+import MultiViewContainer from '#rs/components/View/MultiViewContainer';
+import Message from '#rs/components/View/Message';
+import FixedTabs from '#rs/components/View/FixedTabs';
 
 import {
     LEAD_TYPE,
     LEAD_PANE_TYPE,
     leadPaneTypeMap,
-} from '../../../../entities/lead';
-import _ts from '../../../../ts';
-import SimplifiedLeadPreview from '../../../../components/SimplifiedLeadPreview';
-import LeadPreview from '../../../../components/LeadPreview';
-import AssistedTagging from '../../../../components/AssistedTagging';
-import ImagesGrid from '../../../../components/ImagesGrid';
+} from '#entities/lead';
+import _ts from '#ts';
+import SimplifiedLeadPreview from '#components/SimplifiedLeadPreview';
+import LeadPreview from '#components/LeadPreview';
+import AssistedTagging from '#components/AssistedTagging';
+import ImagesGrid from '#components/ImagesGrid';
 
 import EntriesListing from './EntriesListing';
 import styles from './styles.scss';

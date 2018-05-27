@@ -7,14 +7,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Button from '../../../vendor/react-store/components/Action/Button';
-import Checkbox from '../../../vendor/react-store/components/Input/Checkbox';
-import DropdownMenu from '../../../vendor/react-store/components/Action/DropdownMenu';
-import Confirm from '../../../vendor/react-store/components/View/Modal/Confirm';
+import Button from '#rs/components/Action/Button';
+import Checkbox from '#rs/components/Input/Checkbox';
+import DropdownMenu from '#rs/components/Action/DropdownMenu';
+import Confirm from '#rs/components/View/Modal/Confirm';
 
-import { iconNames } from '../../../constants';
-import _ts from '../../../ts';
-import notify from '../../../notify';
+import { iconNames } from '#constants';
+import _ts from '#ts';
+import notify from '#notify';
 import {
     addLeadViewActiveLeadIdSelector,
 
@@ -34,7 +34,7 @@ import {
 
     addLeadViewHidePreviewSelector,
     addLeadViewSetPreviewAction,
-} from '../../../redux';
+} from '#redux';
 
 import styles from './styles.scss';
 

@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
-import ListView from '../../vendor/react-store/components/View/List/ListView';
-import Modal from '../../vendor/react-store/components/View/Modal';
-import ModalHeader from '../../vendor/react-store/components/View/Modal/Header';
-import ModalBody from '../../vendor/react-store/components/View/Modal/Body';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import ListView from '#rs/components/View/List/ListView';
+import Modal from '#rs/components/View/Modal';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import ModalBody from '#rs/components/View/Modal/Body';
 
-import { iconNames } from '../../constants';
+import { iconNames } from '#constants';
 import styles from './styles.scss';
 
 const propTypes = {

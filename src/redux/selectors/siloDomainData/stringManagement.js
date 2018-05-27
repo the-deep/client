@@ -1,11 +1,12 @@
 import { createSelector } from 'reselect';
+import { unique, mapToList } from '#rs/utils/common';
+import update from '#rs/utils/immutable-update';
+
 import {
     createFooLanguageSelector,
     createFooStringsSelector,
     createFooLinksSelector,
 } from '../lang';
-import { unique, mapToList } from '../../../vendor/react-store/utils/common';
-import update from '../../../vendor/react-store/utils/immutable-update';
 
 const emptyObject = {};
 const emptyArray = [];

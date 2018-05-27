@@ -1,4 +1,18 @@
-import update from '../../../vendor/react-store/utils/immutable-update';
+import update from '#rs/utils/immutable-update';
+
+// TODO
+// # Resolve action
+//
+// ## Delete
+// - String does't exist
+// - String has changed => change oldValue
+//
+// ## Edit
+// - String doesn't exist
+// - String has changed => change oldValue
+//
+// ## Add
+// - String already exist => change action to edit
 
 // TYPE
 
@@ -88,21 +102,47 @@ const setSelectedLinkCollectionName = (state, action) => {
 
 // LINK CHANGE
 
-// TODO: fix for link as we did for string
-
-const addLinkChange = (state, action) => {
+const editLinkChange = (state, action) => {
     const {
-        change,
+        stringManagementView: { languageChanges },
+    } = state;
+    const {
+        change: originalChange,
         languageName,
         linkCollectionName,
     } = action;
+
+    let change = originalChange;
+    let index = -1;
+    if (
+        languageChanges &&
+        languageChanges[languageName] &&
+        languageChanges[languageName].links &&
+        languageChanges[languageName].links[linkCollectionName]
+    ) {
+        index = languageChanges[languageName].links[linkCollectionName].findIndex(
+            l => change.action === l.action && change.key === l.key,
+        );
+        if (index !== -1) {
+            const oldChange = languageChanges[languageName].links[linkCollectionName][index];
+            change = {
+                ...originalChange,
+                oldString: oldChange.oldString,
+            };
+        }
+    }
+
     const settings = {
         stringManagementView: {
             languageChanges: {
                 [languageName]: { $auto: {
                     links: { $auto: {
                         [linkCollectionName]: { $autoArray: {
-                            $push: [change],
+                            $if: [
+                                index === -1,
+                                { $push: [change] },
+                                { $splice: [[index, 1, change]] },
+                            ],
                         } },
                     } },
                 } },
@@ -111,39 +151,7 @@ const addLinkChange = (state, action) => {
     };
     return update(state, settings);
 };
-
-const editLinkChange = (state, action) => {
-    const { change, languageName, linkCollectionName } = action;
-    const { stringManagementView: { languageChanges } } = state;
-
-    let index = -1;
-    if (
-        languageChanges[languageName] &&
-        languageChanges[languageName].links &&
-        languageChanges[languageName].links[linkCollectionName]
-    ) {
-        index = languageChanges[languageName].links[linkCollectionName].findIndex(
-            l => change.action === l.action && change.key === l.key,
-        );
-    }
-    if (index === -1) {
-        return state;
-    }
-    const settings = {
-        stringManagementView: {
-            languageChanges: {
-                [languageName]: {
-                    links: {
-                        [linkCollectionName]: {
-                            $splice: [[index, 1, change]],
-                        },
-                    },
-                },
-            },
-        },
-    };
-    return update(state, settings);
-};
+const addLinkChange = editLinkChange;
 
 const removeLinkChange = (state, action) => {
     const { change, languageName, linkCollectionName } = action;
@@ -151,6 +159,7 @@ const removeLinkChange = (state, action) => {
 
     let index = -1;
     if (
+        languageChanges &&
         languageChanges[languageName] &&
         languageChanges[languageName].links &&
         languageChanges[languageName].links[linkCollectionName]
@@ -181,8 +190,13 @@ const removeLinkChange = (state, action) => {
 // STRING CHANGE
 
 const editStringChange = (state, action) => {
-    const { change: originalChange, languageName } = action;
-    const { stringManagementView: { languageChanges } } = state;
+    const {
+        stringManagementView: { languageChanges },
+    } = state;
+    const {
+        change: originalChange,
+        languageName,
+    } = action;
 
     let change = originalChange;
     let index = -1;
@@ -228,6 +242,7 @@ const removeStringChange = (state, action) => {
 
     let index = -1;
     if (
+        languageChanges &&
         languageChanges[languageName] &&
         languageChanges[languageName].strings
     ) {
@@ -251,20 +266,6 @@ const removeStringChange = (state, action) => {
     };
     return update(state, settings);
 };
-
-// TODO
-// Resolve for action
-// Delete
-//  String does't exist
-//  String has changed => change oldValue
-//
-//  Edit
-//  String doesn't exist
-//  String has changed => change oldValue
-//
-//  Add
-//  String already exist => change it to edit
-
 
 // REDUCER MAP
 const reducers = {

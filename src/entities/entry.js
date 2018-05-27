@@ -1,11 +1,11 @@
-import update from '../vendor/react-store/utils/immutable-update';
+import update from '#rs/utils/immutable-update';
 import {
     listToMap,
     randomString,
     compareDate,
     compareNumber,
     isTruthy,
-} from '../vendor/react-store/utils/common';
+} from '#rs/utils/common';
 
 export const ENTRY_STATUS = {
     // A rest request is in session

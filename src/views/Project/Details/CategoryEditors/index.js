@@ -2,30 +2,30 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '../../../../vendor/react-store/utils/rest';
-import { caseInsensitiveSubmatch, compareString } from '../../../../vendor/react-store/utils/common';
-import AccentButton from '../../../../vendor/react-store/components/Action/Button/AccentButton';
-import SearchInput from '../../../../vendor/react-store/components/Input/SearchInput';
-import ListView from '../../../../vendor/react-store/components/View/List/ListView';
-import ListItem from '../../../../vendor/react-store/components/View/List/ListItem';
-import LoadingAnimation from '../../../../vendor/react-store/components/View/LoadingAnimation';
-import Modal from '../../../../vendor/react-store/components/View/Modal';
-import ModalHeader from '../../../../vendor/react-store/components/View/Modal/Header';
-import ModalBody from '../../../../vendor/react-store/components/View/Modal/Body';
+import { FgRestBuilder } from '#rs/utils/rest';
+import { caseInsensitiveSubmatch, compareString } from '#rs/utils/common';
+import AccentButton from '#rs/components/Action/Button/AccentButton';
+import SearchInput from '#rs/components/Input/SearchInput';
+import ListView from '#rs/components/View/List/ListView';
+import ListItem from '#rs/components/View/List/ListItem';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Modal from '#rs/components/View/Modal';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import ModalBody from '#rs/components/View/Modal/Body';
 
 import {
     urlForCategoryEditors,
     createParamsForGet,
-} from '../../../../rest';
+} from '#rest';
 import {
     categoryEditorListSelector,
     projectDetailsSelector,
 
     setCategoryEditorsAction,
-} from '../../../../redux';
-import _ts from '../../../../ts';
-import schema from '../../../../schema';
-import { iconNames } from '../../../../constants';
+} from '#redux';
+import _ts from '#ts';
+import schema from '#schema';
+import { iconNames } from '#constants';
 
 import Details from './Details';
 import AddCategoryEditor from './AddCategoryEditor';

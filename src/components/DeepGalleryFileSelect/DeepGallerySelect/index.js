@@ -2,25 +2,31 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import Button from '#rs/components/Action/Button';
+import AccentButton from '#rs/components/Action/Button/AccentButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import FileInput from '#rs/components/Input/FileInput';
+import SearchInput from '#rs/components/Input/SearchInput';
+import FormattedDate from '#rs/components/View/FormattedDate';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import ModalBody from '#rs/components/View/Modal/Body';
+import ModalFooter from '#rs/components/View/Modal/Footer';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import Table from '#rs/components/View/Table';
 import {
     caseInsensitiveSubmatch,
     compareString,
     compareDate,
-} from '../../../vendor/react-store/utils/common';
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
-import { UploadBuilder } from '../../../vendor/react-store/utils/upload';
-import FileInput from '../../../vendor/react-store/components/Input/FileInput';
-import Table from '../../../vendor/react-store/components/View/Table';
-import LoadingAnimation from '../../../vendor/react-store/components/View/LoadingAnimation';
-import ModalHeader from '../../../vendor/react-store/components/View/Modal/Header';
-import ModalBody from '../../../vendor/react-store/components/View/Modal/Body';
-import ModalFooter from '../../../vendor/react-store/components/View/Modal/Footer';
-import FormattedDate from '../../../vendor/react-store/components/View/FormattedDate';
-import Button from '../../../vendor/react-store/components/Action/Button';
-import PrimaryButton from '../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import AccentButton from '../../../vendor/react-store/components/Action/Button/AccentButton';
-import SearchInput from '../../../vendor/react-store/components/Input/SearchInput';
+} from '#rs/utils/common';
+import { FgRestBuilder } from '#rs/utils/rest';
+import { UploadBuilder } from '#rs/utils/upload';
 
+import { iconNames } from '#constants';
+import { leadTypeIconMap } from '#entities/lead';
+import {
+    userGalleryFilesSelector,
+    setUserGalleryFilesAction,
+} from '#redux';
 import {
     createUrlForGalleryFiles,
     createParamsForGet,
@@ -28,14 +34,8 @@ import {
     urlForUpload,
     createParamsForFileUpload,
     transformAndCombineResponseErrors,
-} from '../../../rest';
-import {
-    userGalleryFilesSelector,
-    setUserGalleryFilesAction,
-} from '../../../redux';
-import { iconNames } from '../../../constants';
-import { leadTypeIconMap } from '../../../entities/lead';
-import _ts from '../../../ts';
+} from '#rest';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 

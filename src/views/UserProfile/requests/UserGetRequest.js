@@ -1,9 +1,9 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { FgRestBuilder } from '#rs/utils/rest';
 import {
     createUrlForUser,
     createParamsForGet,
-} from '../../../rest';
-import schema from '../../../schema';
+} from '#rest';
+import schema from '#schema';
 
 export default class UserGetResponse {
     constructor(props) {

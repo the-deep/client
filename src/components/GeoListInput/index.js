@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import AccentButton from '../../vendor/react-store/components/Action/Button/AccentButton';
-import ListInput from '../../vendor/react-store/components/Input/ListInput';
-import FaramElement from '../../vendor/react-store/components/Input/Faram/FaramElement';
-import { iconNames } from '../../constants';
+import AccentButton from '#rs/components/Action/Button/AccentButton';
+import ListInput from '#rs/components/Input/ListInput';
+import FaramElement from '#rs/components/Input/Faram/FaramElement';
+import { iconNames } from '#constants';
 
 import GeoModal from '../GeoModal';
 import styles from './styles.scss';

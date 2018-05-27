@@ -6,7 +6,7 @@ import {
     DELETE,
     commonHeaderForPost,
     p,
-} from '../config/rest';
+} from '#config/rest';
 
 // do no use this, use urlForLead instead
 export const urlForLead = `${wsEndpoint}/leads/`;

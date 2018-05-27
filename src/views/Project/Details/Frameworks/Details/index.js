@@ -3,20 +3,20 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { reverseRoute } from '../../../../../vendor/react-store/utils/common';
-import { FgRestBuilder } from '../../../../../vendor/react-store/utils/rest';
-import AccentButton from '../../../../../vendor/react-store/components/Action/Button/AccentButton';
-import WarningButton from '../../../../../vendor/react-store/components/Action/Button/WarningButton';
-import LoadingAnimation from '../../../../../vendor/react-store/components/View/LoadingAnimation';
-import Confirm from '../../../../../vendor/react-store/components/View/Modal/Confirm';
+import { reverseRoute } from '#rs/utils/common';
+import { FgRestBuilder } from '#rs/utils/rest';
+import AccentButton from '#rs/components/Action/Button/AccentButton';
+import WarningButton from '#rs/components/Action/Button/WarningButton';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Confirm from '#rs/components/View/Modal/Confirm';
 import Faram, {
     requiredCondition,
-} from '../../../../../vendor/react-store/components/Input/Faram';
-import DangerButton from '../../../../../vendor/react-store/components/Action/Button/DangerButton';
-import SuccessButton from '../../../../../vendor/react-store/components/Action/Button/SuccessButton';
-import NonFieldErrors from '../../../../../vendor/react-store/components/Input/NonFieldErrors';
-import TextInput from '../../../../../vendor/react-store/components/Input/TextInput';
-import TextArea from '../../../../../vendor/react-store/components/Input/TextArea';
+} from '#rs/components/Input/Faram';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import TextInput from '#rs/components/Input/TextInput';
+import TextArea from '#rs/components/Input/TextArea';
 
 import {
     createParamsForProjectPatch,
@@ -25,21 +25,21 @@ import {
     createParamsForAfClone,
     createParamsForAnalysisFrameworkEdit,
     createUrlForAnalysisFramework,
-} from '../../../../../rest';
+} from '#rest';
 import {
     analysisFrameworkDetailSelector,
     projectDetailsSelector,
     setProjectAfAction,
     setAfDetailAction,
     addNewAfAction,
-} from '../../../../../redux';
+} from '#redux';
 import {
     iconNames,
     pathNames,
-} from '../../../../../constants';
-import schema from '../../../../../schema';
-import notify from '../../../../../notify';
-import _ts from '../../../../../ts';
+} from '#constants';
+import schema from '#schema';
+import notify from '#notify';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 

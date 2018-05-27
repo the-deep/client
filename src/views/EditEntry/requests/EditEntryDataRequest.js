@@ -1,16 +1,16 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { FgRestBuilder } from '#rs/utils/rest';
 import {
     createUrlEditEntryGet,
     createParamsForGet,
-} from '../../../rest';
+} from '#rest';
 import {
     calcEntriesDiff,
     getApplicableDiffCount,
     getApplicableAndModifyingDiffCount,
-} from '../../../entities/entry';
-import notify from '../../../notify';
-import _ts from '../../../ts';
-// import schema from '../../../schema';
+} from '#entities/entry';
+import notify from '#notify';
+import _ts from '#ts';
+// import schema from '#schema';
 
 export default class LeadRequest {
     constructor(params) {

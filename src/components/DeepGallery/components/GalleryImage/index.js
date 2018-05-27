@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { iconNames } from '../../../../constants';
-import _ts from '../../../../ts';
+import { iconNames } from '#constants';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
-export { galleryImageMimeType as supportedMimeType } from '../../../../config/deepMimeTypes';
+export { galleryImageMimeType as supportedMimeType } from '#config/deepMimeTypes';
 
 const propTypes = {
     className: PropTypes.string,

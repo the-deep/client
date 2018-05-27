@@ -1,4 +1,4 @@
-import SiloTasksManager from '../../utils/SiloTasksManager';
+import SiloTasksManager from '#utils/SiloTasksManager';
 
 import TokenRefresher from './tasks/TokenRefresher';
 import ProjectGet from './tasks/ProjectGet';

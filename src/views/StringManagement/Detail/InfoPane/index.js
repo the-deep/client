@@ -2,17 +2,17 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import ListView from '../../../../vendor/react-store/components/View/List/ListView';
-import SuccessButton from '../../../../vendor/react-store/components/Action/Button/SuccessButton';
-import DangerButton from '../../../../vendor/react-store/components/Action/Button/DangerButton';
-import WarningButton from '../../../../vendor/react-store/components/Action/Button/WarningButton';
-import Message from '../../../../vendor/react-store/components/View/Message';
+import ListView from '#rs/components/View/List/ListView';
+import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import WarningButton from '#rs/components/Action/Button/WarningButton';
+import Message from '#rs/components/View/Message';
 
 import {
     problemCollectionSelector,
     problemCollectionStatsSelector,
-} from '../../../../redux';
-import { iconNames } from '../../../../constants';
+} from '#redux';
+import { iconNames } from '#constants';
 
 import styles from './styles.scss';
 

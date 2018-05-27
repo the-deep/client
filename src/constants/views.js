@@ -1,6 +1,6 @@
 import React from 'react';
-import RouteSynchronizer from '../components/RouteSynchronizer';
-import { mapObjectToObject } from '../utils/common';
+import RouteSynchronizer from '#components/RouteSynchronizer';
+import { mapObjectToObject } from '#utils/common';
 import { routes } from './routes';
 
 const views = mapObjectToObject(

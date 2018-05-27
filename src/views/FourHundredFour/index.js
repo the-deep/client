@@ -2,12 +2,12 @@ import React from 'react';
 import ReactSVG from 'react-svg';
 import { Link } from 'react-router-dom';
 
-import BoundError from '../../vendor/react-store/components/General/BoundError';
+import BoundError from '#rs/components/General/BoundError';
 
-import _ts from '../../ts';
-import AppError from '../../components/AppError';
-import { pathNames } from '../../constants';
-import logo from '../../resources/img/deep-logo.svg';
+import _ts from '#ts';
+import AppError from '#components/AppError';
+import { pathNames } from '#constants';
+import logo from '#resources/img/deep-logo.svg';
 
 import styles from './styles.scss';
 

@@ -6,26 +6,26 @@ import {
     Link,
 } from 'react-router-dom';
 
-import DisplayPicture from '../../../components/DisplayPicture';
-import { reverseRoute } from '../../../vendor/react-store/utils/common';
-import List from '../../../vendor/react-store/components/View/List';
-import DropdownMenu from '../../../vendor/react-store/components/Action/DropdownMenu';
-import DropdownGroup from '../../../vendor/react-store/components/Action/DropdownMenu/Group';
+import DisplayPicture from '#components/DisplayPicture';
+import { reverseRoute } from '#rs/utils/common';
+import List from '#rs/components/View/List';
+import DropdownMenu from '#rs/components/Action/DropdownMenu';
+import DropdownGroup from '#rs/components/Action/DropdownMenu/Group';
 
-import { stopSiloBackgroundTasksAction } from '../../../redux/middlewares/siloBackgroundTasks';
-import { adminEndpoint } from '../../../config/rest';
+import { stopSiloBackgroundTasksAction } from '#redux/middlewares/siloBackgroundTasks';
+import { adminEndpoint } from '#config/rest';
 import {
     logoutAction,
     activeCountryIdFromStateSelector,
     activeProjectIdFromStateSelector,
     activeUserSelector,
     currentUserInformationSelector,
-} from '../../../redux';
+} from '#redux';
 import {
     iconNames,
     pathNames,
-} from '../../../constants';
-import _ts from '../../../ts';
+} from '#constants';
+import _ts from '#ts';
 
 import Cloak from '../../Cloak';
 import styles from './styles.scss';

@@ -1,4 +1,4 @@
-import Locker from '../vendor/react-store/utils/Locker';
+import Locker from '#rs/utils/Locker';
 
 import AbstractTask from './AbstractTask';
 

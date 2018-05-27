@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import List from '../../../../../vendor/react-store/components/View/List';
-import FaramElement from '../../../../../vendor/react-store/components/Input/Faram/FaramElement';
-import { getColorOnBgColor } from '../../../../../vendor/react-store/utils/common.js';
+import List from '#rs/components/View/List';
+import FaramElement from '#rs/components/Input/Faram/FaramElement';
+import { getColorOnBgColor } from '#rs/utils/common.js';
 
 import styles from './styles.scss';
 
