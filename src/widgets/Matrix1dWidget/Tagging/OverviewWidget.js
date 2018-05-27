@@ -5,7 +5,6 @@ import update from '../../../vendor/react-store/utils/immutable-update';
 import ListView from '../../../vendor/react-store/components/View/List/ListView';
 
 import MatrixRow from './MatrixRow';
-import { updateAttribute } from './utils';
 import BoundError from '../../../vendor/react-store/components/General/BoundError';
 import WidgetError from '../../../components/WidgetError';
 
@@ -36,7 +35,6 @@ export default class Matrix1dOverview extends React.PureComponent {
         this.state = {
             data,
         };
-        updateAttribute(props);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -45,10 +43,6 @@ export default class Matrix1dOverview extends React.PureComponent {
             this.setState({
                 data,
             });
-        }
-
-        if (this.props.attribute !== nextProps.attribute) {
-            updateAttribute(nextProps);
         }
     }
 
@@ -69,6 +63,7 @@ export default class Matrix1dOverview extends React.PureComponent {
 
         api.getEntryModifier()
             .setAttribute(id, newAttribute)
+            .setShouldUpdate()
             .apply();
     }
 
@@ -90,6 +85,7 @@ export default class Matrix1dOverview extends React.PureComponent {
             api.selectEntry(existing.data.id);
             api.getEntryModifier(existing.data.id)
                 .setAttribute(id, attribute)
+                .setShouldUpdate()
                 .apply();
         } else {
             const attribute = {

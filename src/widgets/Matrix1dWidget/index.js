@@ -7,6 +7,8 @@ import {
     TaggingListWidget,
 } from './Tagging';
 import { ViewListWidget } from './View';
+import entryUpdater from './entryUpdater';
+
 
 const excerptWidget = {
     id: 'matrix1dWidget',
@@ -25,6 +27,7 @@ const excerptWidget = {
     view: {
         listComponent: ViewListWidget,
     },
+    entryUpdater,
 };
 
 export default excerptWidget;

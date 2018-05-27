@@ -1,5 +1,6 @@
 import update from '../../vendor/react-store/utils/immutable-update';
 import { entryAccessor } from '../../entities/entry';
+import widgetStore, { entryUpdater } from '../../widgets';
 
 const DEFAULT_HIGHLIGHT_COLOR = '#a0a0a0';
 
@@ -7,13 +8,14 @@ const DEFAULT_HIGHLIGHT_COLOR = '#a0a0a0';
 class EntryModifier {
     constructor(
         entry,
-        changeEntryValues,
+        api,
     ) {
         this.entry = entry;
         this.modified = false;
         this.values = entry && entryAccessor.getValues(entry);
         this.colors = entry && entryAccessor.getColors(entry);
-        this.changeEntryValues = changeEntryValues;
+        this.api = api;
+        this.shouldUpdate = false;
     }
 
     setExcerpt(excerpt) {
@@ -122,9 +124,28 @@ class EntryModifier {
         return this;
     }
 
+    setShouldUpdate(shouldUpdate = true) {
+        this.shouldUpdate = shouldUpdate;
+        return this;
+    }
+
     apply() {
         if (this.entry) {
-            this.changeEntryValues(
+            if (this.shouldUpdate) {
+                const newEntry = {
+                    ...this.entry,
+                    widget: {
+                        ...this.entry.widget,
+                        values: this.values,
+                    },
+                };
+
+                widgetStore.forEach((widget) => {
+                    entryUpdater(widget, this, newEntry, this.api.analysisFramework);
+                });
+            }
+
+            this.api.changeEntryValues(
                 entryAccessor.getKey(this.entry),
                 this.values,
                 this.colors,
@@ -136,8 +157,8 @@ class EntryModifier {
 
 
 class EntryBuilder {
-    constructor(addEntry) {
-        this.addEntry = addEntry;
+    constructor(api) {
+        this.api = api;
         this.attributes = [];
         this.filterData = [];
         this.exportData = [];
@@ -183,7 +204,7 @@ class EntryBuilder {
             exportData: this.exportData,
         };
 
-        this.addEntry(values);
+        this.api.addEntry(values);
     }
 }
 
@@ -215,6 +236,20 @@ export default class API {
         this.entries = entries;
     }
 
+    setAnalysisFramework(analysisFramework) {
+        this.analysisFramework = analysisFramework;
+    }
+
+    updateEntries(entries) {
+        entries.forEach((entry) => {
+            const modifier = this.getEntryModifier(entry.data.id);
+            widgetStore.forEach((widget) => {
+                entryUpdater(widget, modifier, entry, this.analysisFramework);
+            });
+            modifier.apply();
+        });
+    }
+
     setProject(project) {
         this.project = project;
     }
@@ -234,11 +269,11 @@ export default class API {
 
     getEntryModifier(id = undefined) {
         const entry = this.getEntry(id);
-        return new EntryModifier(entry, this.changeEntryValues);
+        return new EntryModifier(entry, this);
     }
 
     getEntryBuilder() {
-        return new EntryBuilder(this.addEntry);
+        return new EntryBuilder(this);
     }
 
     setEntryData(data, id = undefined) {

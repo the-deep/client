@@ -1,6 +1,6 @@
 const emptyObject = {};
 
-export const createHighlightColor = (attribute, data) => {
+const createHighlightColor = (attribute, data) => {
     const selectedKey = Object.keys(attribute || emptyObject).find(d => (
         Object.keys(attribute[d]).find(s => (
             Object.keys(attribute[d][s]).length > 0
@@ -16,15 +16,13 @@ export const createHighlightColor = (attribute, data) => {
     return undefined;
 };
 
-export const updateAttribute = ({ id, entryId, api, attribute, data }) => {
+const entryUpdater = (modifier, id, attribute, data) => {
     if (!attribute || !data) {
-        api.getEntryModifier(entryId)
-            .setHighlightColor(id, undefined)
-            .apply();
+        modifier.setHighlightColor(id, undefined);
         return;
     }
 
-    api.getEntryModifier(entryId)
-        .setHighlightColor(id, createHighlightColor(attribute, data))
-        .apply();
+    modifier.setHighlightColor(id, createHighlightColor(attribute, data));
 };
+
+export default entryUpdater;

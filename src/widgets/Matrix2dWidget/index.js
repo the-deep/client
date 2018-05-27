@@ -7,8 +7,10 @@ import {
     TaggingListWidget,
 } from './Tagging';
 import { ViewListWidget } from './View';
+import entryUpdater from './entryUpdater';
 
-const excerptWidget = {
+
+const matrix2dWidget = {
     id: 'matrix2dWidget',
     // NOTE: used as _ts('widgetTitle', 'matrix2DWidgetLabel')
     title: 'matrix2DWidgetLabel',
@@ -25,6 +27,7 @@ const excerptWidget = {
     view: {
         listComponent: ViewListWidget,
     },
+    entryUpdater,
 };
 
-export default excerptWidget;
+export default matrix2dWidget;
