@@ -65,7 +65,10 @@ export default class EditStringModal extends React.PureComponent {
         } = props;
 
         // const string = allStrings.find(d => d.id === editLinkId) || {};
+        console.warn(linkCollection, editLinkId);
         const link = linkCollection.find(d => d.id === editLinkId) || {};
+
+        console.warn(link);
 
         this.state = {
             link,

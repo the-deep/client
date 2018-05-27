@@ -87,7 +87,7 @@ export default class LinksTable extends React.PureComponent {
                 modifier: data => (
                     <Fragment>
                         <WarningButton
-                            onClick={() => { this.handleEditButtonClick(data.stringId); }}
+                            onClick={() => { this.handleEditButtonClick(data.id); }}
                             iconName={iconNames.edit}
                             transparent
                             smallVerticalPadding

@@ -19,6 +19,8 @@ import update from '#rs/utils/immutable-update';
 export const SM__SET_SELECTED_LANGUAGE = 'siloDomainData/SM__SET_SELECTED_LANGUAGE ';
 export const SM__SET_SELECTED_LINK_COLLECTION_NAME = 'siloDomainData/SM__SET_SELECTED_LINK_COLLECTION_NAME';
 
+export const SM__CLEAR_CHANGES = 'siloDomainData/SM__CLEAR_CHANGES';
+
 export const SM__ADD_LINK_CHANGE = 'siloDomainData/SM__ADD_LINK_CHANGE ';
 export const SM__EDIT_LINK_CHANGE = 'siloDomainData/SM__EDIT_LINK_CHANGE ';
 export const SM__REMOVE_LINK_CHANGE = 'siloDomainData/SM__REMOVE_LINK_CHANGE ';
@@ -75,6 +77,11 @@ export const stringMgmtEditStringChangeAction = ({ change, languageName }) => ({
 export const stringMgmtRemoveStringChangeAction = ({ change, languageName }) => ({
     type: SM__REMOVE_STRING_CHANGE,
     change,
+    languageName,
+});
+
+export const stringMgmtClearChangesAction = languageName => ({
+    type: SM__CLEAR_CHANGES,
     languageName,
 });
 
@@ -267,6 +274,21 @@ const removeStringChange = (state, action) => {
     return update(state, settings);
 };
 
+// CHANGES
+
+const clearChanges = (state, action) => {
+    const { languageName } = action;
+
+    const settings = {
+        stringManagementView: {
+            languageChanges: {
+                [languageName]: { $set: undefined },
+            },
+        },
+    };
+    return update(state, settings);
+};
+
 // REDUCER MAP
 const reducers = {
     [SM__SET_SELECTED_LANGUAGE]: setSelectedLanguage,
@@ -279,5 +301,7 @@ const reducers = {
     [SM__ADD_STRING_CHANGE]: addStringChange,
     [SM__EDIT_STRING_CHANGE]: editStringChange,
     [SM__REMOVE_STRING_CHANGE]: removeStringChange,
+
+    [SM__CLEAR_CHANGES]: clearChanges,
 };
 export default reducers;

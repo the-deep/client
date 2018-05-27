@@ -135,13 +135,7 @@ export default class StringsTable extends React.PureComponent {
         });
     }
 
-    handleEditStringClose = (status, id, value) => {
-        if (status) {
-            // TODO: update string
-            // updateString({ id, value });
-            console.warn('change string', id, value);
-        }
-
+    handleEditStringClose = () => {
         this.setState({
             showEditStringModal: false,
         });
@@ -171,11 +165,12 @@ export default class StringsTable extends React.PureComponent {
                     type="all"
                     onClose={this.handleDeleteStringConfirmClose}
                 />
-                <EditStringModal
-                    show={showEditStringModal}
-                    editStringId={editStringId}
-                    onClose={this.handleEditStringClose}
-                />
+                { showEditStringModal &&
+                    <EditStringModal
+                        editStringId={editStringId}
+                        onClose={this.handleEditStringClose}
+                    />
+                }
             </React.Fragment>
         );
     }

@@ -6,6 +6,7 @@ import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Confirm from '#rs/components/View/Modal/Confirm';
 import SelectInput from '#rs/components/Input/SelectInput';
 
 import {
@@ -15,8 +16,12 @@ import {
     availableLanguagesSelector,
     selectedLanguageNameSelector,
     selectedLinkCollectionNameSelector,
+    stringMgmtClearChangesAction,
+
+    hasSelectedLanguageChangesSelector,
 } from '#redux';
 
+import AddStringModal from './AddStringModal';
 import StringsTable from './StringsTable';
 import LinksTable from './LinksTable';
 import InfoPane from './InfoPane';
@@ -31,6 +36,8 @@ const propTypes = {
     setSelectedLanguage: PropTypes.func.isRequired,
     pendingLanguage: PropTypes.bool.isRequired,
     linkCollectionName: PropTypes.string.isRequired,
+    clearChanges: PropTypes.func.isRequired,
+    hasSelectedLanguageChanges: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -40,17 +47,48 @@ const mapStateToProps = state => ({
     availableLanguages: availableLanguagesSelector(state),
     selectedLanguageName: selectedLanguageNameSelector(state),
     linkCollectionName: selectedLinkCollectionNameSelector(state),
+    hasSelectedLanguageChanges: hasSelectedLanguageChangesSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
     setSelectedLanguage: params => dispatch(stringMgmtSetSelectedLanguageAction(params)),
     setLanguage: params => dispatch(setLanguageAction(params)),
+    clearChanges: params => dispatch(stringMgmtClearChangesAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class StringManagement extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            showAddStringModal: false,
+            showDiscardModal: false,
+        };
+    }
+
+    handleAddButtonClick = () => {
+        this.setState({ showAddStringModal: true });
+    }
+
+    handleAddStringClose = () => {
+        this.setState({ showAddStringModal: false });
+    }
+
+    handleDiscardButtonClick = () => {
+        this.setState({ showDiscardModal: true });
+    }
+
+    handleDiscardConfirmClose = (confirm) => {
+        if (confirm) {
+            const { selectedLanguageName } = this.props;
+            this.props.clearChanges(selectedLanguageName);
+        }
+        this.setState({ showDiscardModal: false });
+    }
 
     renderHeader = () => {
         const keySelector = d => d.code;
@@ -61,7 +99,13 @@ export default class StringManagement extends React.PureComponent {
             availableLanguages,
             selectedLanguageName,
             linkCollectionName,
+            hasSelectedLanguageChanges,
         } = this.props;
+
+        const {
+            showAddStringModal,
+            showDiscardModal,
+        } = this.state;
 
         return (
             <header className={styles.header}>
@@ -83,20 +127,35 @@ export default class StringManagement extends React.PureComponent {
                         hideClearButton
                     />
                     <PrimaryButton
-                        disabled
+                        onClick={this.handleAddButtonClick}
                     >
                         Add new string
                     </PrimaryButton>
                     <DangerButton
-                        disabled
+                        onClick={this.handleDiscardButtonClick}
+                        disabled={!hasSelectedLanguageChanges}
                     >
                         Discard
                     </DangerButton>
                     <SuccessButton
-                        disabled
+                        disabled={!hasSelectedLanguageChanges}
                     >
                         Save
                     </SuccessButton>
+                    { showAddStringModal &&
+                        <AddStringModal
+                            onClose={this.handleAddStringClose}
+                        />
+                    }
+                    <Confirm
+                        show={showDiscardModal}
+                        closeOnEscape
+                        onClose={this.handleDiscardConfirmClose}
+                    >
+                        <p>
+                            Do you want to discard all changes?
+                        </p>
+                    </Confirm>
                 </div>
             </header>
         );

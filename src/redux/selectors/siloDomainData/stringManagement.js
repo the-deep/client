@@ -182,6 +182,16 @@ const selectedLanguageLinksChangesUnfilteredSelector = createSelector(
     languageChanges => languageChanges.links || emptyObject,
 );
 
+export const hasSelectedLanguageChangesSelector = createSelector(
+    selectedLanguageStringsChangesUnfilteredSelector,
+    selectedLanguageLinksChangesUnfilteredSelector,
+    (strings, links) => (
+        strings.length > 0
+            || Object.keys(links)
+                .some(key => links[key] && links[key].length > 0)
+    ),
+);
+
 // SELECTED LANGUAGE
 
 const selectedLanguageSelector = createFooLanguageSelector(selectedLanguageNameSelector);

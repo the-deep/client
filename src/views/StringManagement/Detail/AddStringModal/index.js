@@ -6,36 +6,25 @@ import Modal from '#rs/components/View/Modal';
 import ModalHeader from '#rs/components/View/Modal/Header';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
-import ListView from '#rs/components/View/List/ListView';
 import Button from '#rs/components/Action/Button';
 import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import TextInput from '#rs/components/Input/TextInput';
 
 import {
-    allStringsSelector,
     selectedLanguageNameSelector,
     stringMgmtAddStringChangeAction,
 } from '#redux';
-import styles from './styles.scss';
 
 const propTypes = {
-    // eslint-disable-next-line react/forbid-prop-types
-    allStrings: PropTypes.array.isRequired,
-    editStringId: PropTypes.oneOfType([
-        PropTypes.number,
-        PropTypes.string,
-    ]),
     onClose: PropTypes.func.isRequired,
     selectedLanguageName: PropTypes.string.isRequired,
     addStringChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
-    editStringId: undefined,
 };
 
 const mapStateToProps = state => ({
-    allStrings: allStringsSelector(state),
     selectedLanguageName: selectedLanguageNameSelector(state),
 });
 
@@ -44,50 +33,16 @@ const mapDispatchToProps = dispatch => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class EditStringModal extends React.PureComponent {
+export default class AddStringModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
-        const {
-            allStrings,
-            editStringId,
-        } = props;
-
-        const string = allStrings.find(d => d.id === editStringId) || {};
-
         this.state = {
-            string,
-            inputValue: string.string || '',
+            inputValue: '',
         };
     }
-
-    /*
-    componentWillReceiveProps(nextProps) {
-        const {
-            allStrings: newAllStrings,
-            editStringId: newEditStringId,
-        } = nextProps;
-        const {
-            allStrings: oldAllStrings,
-            editStringId: oldEditStringId,
-        } = this.props;
-
-        if (newEditStringId) {
-            const allStringsChanged = newAllStrings !== oldAllStrings;
-            const editStringIdChanged = newEditStringId !== oldEditStringId;
-
-            if (allStringsChanged || editStringIdChanged) {
-                const string = newAllStrings.find(d => d.id === newEditStringId) || {};
-                this.setState({
-                    string,
-                    inputValue: string.string || '',
-                });
-            }
-        }
-    }
-    */
 
     handleInputValueChange = (value) => {
         this.setState({ inputValue: value });
@@ -96,20 +51,16 @@ export default class EditStringModal extends React.PureComponent {
     handleSaveButtonClick = () => {
         const {
             onClose,
-            editStringId,
-            allStrings,
 
             selectedLanguageName,
             addStringChange,
         } = this.props;
 
         const { inputValue } = this.state;
-        const val = allStrings.find(d => d.id === editStringId).string;
         const change = {
-            action: 'edit',
-            id: editStringId,
+            action: 'add',
+            id: Math.floor(-100000000 * Math.random()),
             value: inputValue,
-            oldValue: val,
         };
 
         addStringChange({
@@ -117,7 +68,7 @@ export default class EditStringModal extends React.PureComponent {
             languageName: selectedLanguageName,
         });
 
-        onClose(true, editStringId, inputValue);
+        onClose(true, inputValue);
     }
 
     handleCancelButtonClick = () => {
@@ -125,51 +76,16 @@ export default class EditStringModal extends React.PureComponent {
         onClose(false);
     }
 
-    renderProperty = (k, property) => (
-        <div
-            className={styles.property}
-            key={property.label}
-        >
-            <div className={styles.label}>
-                { property.label }
-            </div>
-            <div className={styles.value}>
-                { property.value }
-            </div>
-        </div>
-    );
-
-    renderProperties = () => {
-        const { string } = this.state;
-
-        const properties = [
-            { label: 'ID', value: string.id },
-            { label: 'References', value: string.refs },
-        ];
-
-        return (
-            <ListView
-                className={styles.properties}
-                data={properties}
-                modifier={this.renderProperty}
-            />
-        );
-    }
 
     render() {
-        const {
-            string,
-            inputValue,
-        } = this.state;
+        const { inputValue } = this.state;
 
-        const title = 'Edit string';
+        const title = 'Add string';
         const saveButtonTitle = 'Save';
         const cancelButtonTitle = 'Cancel';
         const inputTitle = 'String';
 
-        const saveButtonDisabled = inputValue.length === 0 || inputValue === string.string;
-
-        const Properties = this.renderProperties;
+        const saveButtonDisabled = inputValue.length === 0 || inputValue === '';
 
         return (
             <Modal>
@@ -180,7 +96,6 @@ export default class EditStringModal extends React.PureComponent {
                         value={inputValue}
                         onChange={this.handleInputValueChange}
                     />
-                    <Properties />
                 </ModalBody>
                 <ModalFooter>
                     <Button onClick={this.handleCancelButtonClick}>
