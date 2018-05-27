@@ -63,32 +63,6 @@ export default class EditStringModal extends React.PureComponent {
         };
     }
 
-    /*
-    componentWillReceiveProps(nextProps) {
-        const {
-            allStrings: newAllStrings,
-            editStringId: newEditStringId,
-        } = nextProps;
-        const {
-            allStrings: oldAllStrings,
-            editStringId: oldEditStringId,
-        } = this.props;
-
-        if (newEditStringId) {
-            const allStringsChanged = newAllStrings !== oldAllStrings;
-            const editStringIdChanged = newEditStringId !== oldEditStringId;
-
-            if (allStringsChanged || editStringIdChanged) {
-                const string = newAllStrings.find(d => d.id === newEditStringId) || {};
-                this.setState({
-                    string,
-                    inputValue: string.string || '',
-                });
-            }
-        }
-    }
-    */
-
     handleInputValueChange = (value) => {
         this.setState({ inputValue: value });
     }

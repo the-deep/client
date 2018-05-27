@@ -123,59 +123,63 @@ export default class InfoPane extends React.PureComponent {
         let child = null;
         switch (currentProblem.title) {
             case 'Unused string':
-                // TODO: remove string
                 child = (
                     <Fragment>
                         <span>{d.key}: {d.value}</span>
+                        {/* TODO: remove string
                         <DangerButton
                             transparent
                             smallVerticalPadding
                             iconName={iconNames.delete}
                             disabled
                         />
+                        */}
                     </Fragment>
                 );
                 break;
 
             case 'Unused link':
-                // TODO: remove link
                 child = (
                     <Fragment>
                         <span>{d}</span>
+                        {/* TODO: remove link
                         <DangerButton
                             transparent
                             smallVerticalPadding
                             iconName={iconNames.delete}
                             disabled
                         />
+                        */}
                     </Fragment>
                 );
                 break;
             case 'Undefined link':
-                // TODO: remove link
                 child = (
                     <Fragment>
                         <span>{d}</span>
+                        {/* TODO: add link
                         <SuccessButton
                             transparent
                             smallVerticalPadding
                             iconName={iconNames.add}
                             disabled
                         />
+                        */}
                     </Fragment>
                 );
                 break;
             case 'Bad link':
-                // TODO: remove link
                 child = (
                     <Fragment>
                         <span>{d}</span>
+                        {/* TODO: edit link
                         <WarningButton
                             transparent
                             smallVerticalPadding
                             iconName={iconNames.edit}
                             disabled
                         />
+                        */}
                     </Fragment>
                 );
                 break;

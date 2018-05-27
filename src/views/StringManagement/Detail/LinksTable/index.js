@@ -16,8 +16,8 @@ import {
 
 import { iconNames } from '#constants';
 
-import DeleteConfirm from '../../DeleteConfirm';
-import EditLinkModal from './EditLinkModal';
+import DeleteConfirm from '../DeleteConfirm';
+import EditLinkModal from '../EditLinkModal';
 import styles from './styles.scss';
 
 const propTypes = {

@@ -16,8 +16,8 @@ import {
 import { iconNames } from '#constants';
 import { allStringsSelector } from '#redux';
 
-import DeleteConfirm from '../../DeleteConfirm';
-import EditStringModal from './EditStringModal';
+import DeleteConfirm from '../DeleteConfirm';
+import EditStringModal from '../EditStringModal';
 import styles from './styles.scss';
 
 const propTypes = {
