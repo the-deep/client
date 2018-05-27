@@ -21,7 +21,7 @@ import {
     hasSelectedLanguageChangesSelector,
 } from '#redux';
 
-import AddStringModal from './AddStringModal';
+import EditStringModal from './EditStringModal';
 import StringsTable from './StringsTable';
 import LinksTable from './LinksTable';
 import InfoPane from './InfoPane';
@@ -143,7 +143,7 @@ export default class StringManagement extends React.PureComponent {
                         Save
                     </SuccessButton>
                     { showAddStringModal &&
-                        <AddStringModal
+                        <EditStringModal
                             onClose={this.handleAddStringClose}
                         />
                     }

@@ -20,6 +20,7 @@ import {
 } from '#redux';
 import { iconNames } from '#constants';
 
+import EditLinkModal from '../EditLinkModal';
 /*
 eslint css-modules/no-unused-class: [
     1,
@@ -72,7 +73,21 @@ export default class InfoPane extends React.PureComponent {
         this.state = {
             showConfirm: false,
             confirmData: {},
+
+            showEditLinkModal: false,
+            editLinkId: undefined,
         };
+    }
+
+    handleEditLinkButtonClick = (id) => {
+        this.setState({
+            editLinkId: id,
+            showEditLinkModal: true,
+        });
+    }
+
+    handleEditLinkModalClose = () => {
+        this.setState({ showEditLinkModal: false });
     }
 
     handleStringChangeDeleteButtonClick = (id) => {
@@ -157,14 +172,12 @@ export default class InfoPane extends React.PureComponent {
                 child = (
                     <Fragment>
                         <span>{d}</span>
-                        {/* TODO: add link
                         <SuccessButton
                             transparent
                             smallVerticalPadding
                             iconName={iconNames.add}
-                            disabled
+                            onClick={() => this.handleEditLinkButtonClick(d)}
                         />
-                        */}
                     </Fragment>
                 );
                 break;
@@ -329,7 +342,11 @@ export default class InfoPane extends React.PureComponent {
 
     render() {
         const { problemCollectionStats } = this.props;
-        const { showConfirm } = this.state;
+        const {
+            showConfirm,
+            showEditLinkModal,
+            editLinkId,
+        } = this.state;
 
         const {
             errorCount = 0,
@@ -363,6 +380,12 @@ export default class InfoPane extends React.PureComponent {
                         Do you want to discard this change?
                     </p>
                 </Confirm>
+                { showEditLinkModal &&
+                    <EditLinkModal
+                        editLinkId={editLinkId}
+                        onClose={this.handleEditLinkModalClose}
+                    />
+                }
             </Fragment>
         );
     }

@@ -53,7 +53,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class EditStringModal extends React.PureComponent {
+export default class EditLinkModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -64,15 +64,11 @@ export default class EditStringModal extends React.PureComponent {
             linkCollection,
         } = props;
 
-        // const string = allStrings.find(d => d.id === editLinkId) || {};
-        console.warn(linkCollection, editLinkId);
-        const link = linkCollection.find(d => d.id === editLinkId) || {};
-
-        console.warn(link);
+        const link = linkCollection.find(d => d.id === editLinkId);
 
         this.state = {
             link,
-            inputValue: link.stringId,
+            inputValue: link ? link.stringId : '',
         };
     }
 
@@ -94,10 +90,10 @@ export default class EditStringModal extends React.PureComponent {
         } = this.state;
 
         const change = {
-            action: 'edit',
-            key: link.id,
+            action: link ? 'edit' : 'add',
+            key: editLinkId,
             string: inputValue,
-            oldString: link.stringId,
+            oldString: link ? link.stringId : undefined,
         };
 
         addLinkChange({
@@ -131,9 +127,14 @@ export default class EditStringModal extends React.PureComponent {
     renderProperties = () => {
         const { link } = this.state;
 
+        if (!link) {
+            return null;
+        }
+
         const properties = [
             { label: 'ID', value: link.id },
-            { label: 'String ID', value: link.stringId },
+            { label: 'String ID', value: this.state.inputValue },
+            { label: 'References', value: link.refs },
         ];
 
         return (
@@ -155,18 +156,19 @@ export default class EditStringModal extends React.PureComponent {
             inputValue,
         } = this.state;
 
-        const title = 'Edit string';
+        const title = link ? 'Edit string' : 'Add string';
         const saveButtonTitle = 'Save';
         const cancelButtonTitle = 'Cancel';
         const inputTitle = 'String';
 
-        const saveButtonDisabled = inputValue === link.string;
+        const saveButtonDisabled = (link && inputValue === link.stringId) || inputValue === '';
         const Properties = this.renderProperties;
 
         return (
             <Modal>
                 <ModalHeader title={title} />
                 <ModalBody>
+                    <Properties />
                     <SelectInput
                         label={inputTitle}
                         value={inputValue}
@@ -175,7 +177,6 @@ export default class EditStringModal extends React.PureComponent {
                         keySelector={d => d.id}
                         labelSelector={d => d.string}
                     />
-                    <Properties />
                 </ModalBody>
                 <ModalFooter>
                     <Button onClick={this.handleCancelButtonClick}>
