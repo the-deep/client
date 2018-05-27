@@ -300,7 +300,7 @@ const addLeadViewRemoveSavedLeads = (state) => {
     const { addLeadView: { leads } } = newState;
     let newActiveLead = leads.find(lead => leadAccessor.getKey(lead) === activeLeadId);
     if (!newActiveLead && leads.length > 0) {
-        newActiveLead = leads[0];
+        [newActiveLead] = leads;
     }
     const newActiveLeadId = newActiveLead ? leadAccessor.getKey(newActiveLead) : undefined;
 

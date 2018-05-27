@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { activeProjectIdFromStateSelector } from '../siloDomainData';
+import { activeProjectIdFromStateSelector } from '../siloDomainData/common';
 
 const emptyObject = {};
 const emptyhierarchialData = {

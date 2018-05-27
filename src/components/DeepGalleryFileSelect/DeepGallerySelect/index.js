@@ -6,20 +6,20 @@ import {
     caseInsensitiveSubmatch,
     compareString,
     compareDate,
-} from '../../vendor/react-store/utils/common';
-import { FgRestBuilder } from '../../vendor/react-store/utils/rest';
-import { UploadBuilder } from '../../vendor/react-store/utils/upload';
-import FileInput from '../../vendor/react-store/components/Input/FileInput';
-import Table from '../../vendor/react-store/components/View/Table';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
-import ModalHeader from '../../vendor/react-store/components/View/Modal/Header';
-import ModalBody from '../../vendor/react-store/components/View/Modal/Body';
-import ModalFooter from '../../vendor/react-store/components/View/Modal/Footer';
-import FormattedDate from '../../vendor/react-store/components/View/FormattedDate';
-import Button from '../../vendor/react-store/components/Action/Button';
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
-import AccentButton from '../../vendor/react-store/components/Action/Button/AccentButton';
-import SearchInput from '../../vendor/react-store/components/Input/SearchInput';
+} from '../../../vendor/react-store/utils/common';
+import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { UploadBuilder } from '../../../vendor/react-store/utils/upload';
+import FileInput from '../../../vendor/react-store/components/Input/FileInput';
+import Table from '../../../vendor/react-store/components/View/Table';
+import LoadingAnimation from '../../../vendor/react-store/components/View/LoadingAnimation';
+import ModalHeader from '../../../vendor/react-store/components/View/Modal/Header';
+import ModalBody from '../../../vendor/react-store/components/View/Modal/Body';
+import ModalFooter from '../../../vendor/react-store/components/View/Modal/Footer';
+import FormattedDate from '../../../vendor/react-store/components/View/FormattedDate';
+import Button from '../../../vendor/react-store/components/Action/Button';
+import PrimaryButton from '../../../vendor/react-store/components/Action/Button/PrimaryButton';
+import AccentButton from '../../../vendor/react-store/components/Action/Button/AccentButton';
+import SearchInput from '../../../vendor/react-store/components/Input/SearchInput';
 
 import {
     createUrlForGalleryFiles,
@@ -28,14 +28,14 @@ import {
     urlForUpload,
     createParamsForFileUpload,
     transformAndCombineResponseErrors,
-} from '../../rest';
+} from '../../../rest';
 import {
     userGalleryFilesSelector,
     setUserGalleryFilesAction,
-} from '../../redux';
-import { iconNames } from '../../constants';
-import { leadTypeIconMap } from '../../entities/lead';
-import _ts from '../../ts';
+} from '../../../redux';
+import { iconNames } from '../../../constants';
+import { leadTypeIconMap } from '../../../entities/lead';
+import _ts from '../../../ts';
 
 import styles from './styles.scss';
 

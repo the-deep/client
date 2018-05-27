@@ -1,33 +1,7 @@
 @import '../../stylesheets/base';
 
 $width-gallery-file-modal: 80vw;
-$width-search-input: 240px;
-$height-modal-body: 60vh;
 
 .add-gallery-file-modal {
     width: $width-gallery-file-modal;
-
-    .modal-header {
-        border-bottom: none;
-    }
-
-    .search-input {
-        width: $width-search-input;
-    }
-
-    .modal-body {
-        position: relative;
-        background-color: $color-background-row;
-        padding: 0;
-        height: $height-modal-body;
-    }
-
-    .file-input {
-        width: auto;
-
-        :global .label {
-            @include button-like-link($color-foreground);
-        }
-    }
 }
-

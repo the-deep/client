@@ -325,7 +325,7 @@ const ceUpdateSelectedSubcategories = (state, action) => {
         d => getCategoryIdFromCategory(d) === activeCategoryId,
     );
     const category = categories[categoryIndex];
-    const length = category.selectedSubcategories.length;
+    const { length } = category.selectedSubcategories;
 
     const settings = {
         categoryEditorView: {
@@ -390,7 +390,7 @@ const ceAddNewSubcategory = (state, action) => {
 
     // Set new category as selected category
     const selectedCategory = categories[indices[0]];
-    const length = selectedCategory.selectedSubcategories.length;
+    const { length } = selectedCategory.selectedSubcategories;
 
     settings
         .categoryEditorView[categoryEditorId]

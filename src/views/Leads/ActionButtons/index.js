@@ -155,33 +155,29 @@ export default class ActionButtons extends React.PureComponent {
                 <div className={styles.actionGroup}>
                     <Cloak
                         requireAssessmentTemplate
-                        render={
-                            () => (
-                                <Link
-                                    className={styles.addAssessmentLink}
-                                    tabIndex="-1"
-                                    title={_ts('leads', 'addAssessmentFromLeadButtonTitle')}
-                                    to={links.addAssessment}
-                                >
-                                    <i className={iconNames.forward} />
-                                </Link>
-                            )
-                        }
+                        render={({ disabled }) => (
+                            <Link
+                                className={`${styles.addAssessmentLink} ${disabled ? styles.disabled : ''}`}
+                                tabIndex="-1"
+                                title={_ts('leads', 'addAssessmentFromLeadButtonTitle')}
+                                to={links.addAssessment}
+                            >
+                                <i className={iconNames.forward} />
+                            </Link>
+                        )}
                     />
                     <Cloak
                         requireAnalysisFramework
-                        render={
-                            () => (
-                                <Link
-                                    className={styles.addEntryLink}
-                                    tabIndex="-1"
-                                    title={_ts('leads', 'addEntryFromLeadButtonTitle')}
-                                    to={links.editEntries}
-                                >
-                                    <i className={iconNames.forward} />
-                                </Link>
-                            )
-                        }
+                        render={({ disabled }) => (
+                            <Link
+                                className={`${styles.addEntryLink} ${disabled ? styles.disabled : ''}`}
+                                tabIndex="-1"
+                                title={_ts('leads', 'addEntryFromLeadButtonTitle')}
+                                to={links.editEntries}
+                            >
+                                <i className={iconNames.forward} />
+                            </Link>
+                        )}
                     />
                 </div>
             </div>

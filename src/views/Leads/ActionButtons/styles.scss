@@ -33,10 +33,18 @@
 
         .add-entry-link {
             color: $color-accent;
+
+            &.disabled {
+                pointer-events: none;
+            }
         }
 
         .add-assessment-link {
             color: $color-info;
+
+            &.disabled {
+                pointer-events: none;
+            }
         }
     }
 }

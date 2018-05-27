@@ -30,7 +30,7 @@ const getHierarchialTopic = (keywords) => {
 };
 
 const getHierarchialData = (hierarchial = {}) => {
-    const keywords = hierarchial.keywords;
+    const { keywords } = hierarchial;
 
     if (!keywords) {
         return Object.values(hierarchial).map(d => (
@@ -38,7 +38,7 @@ const getHierarchialData = (hierarchial = {}) => {
         )).filter(f => f.size === undefined || f.size > 0);
     }
 
-    const subtopics = hierarchial.subtopics;
+    const { subtopics } = hierarchial;
     const topic = getHierarchialTopic(keywords, subtopics);
     const children = getHierarchialData(subtopics);
 
@@ -89,7 +89,7 @@ const getGeoPointsData = (geoPoints) => {
     const points = [];
     geoPoints.forEach((p) => {
         const { info } = p;
-        const geometry = info.geometry;
+        const { geometry } = info;
         if (geometry) {
             const { lat, lng } = geometry.location;
             points.push({

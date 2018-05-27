@@ -57,7 +57,7 @@ export default class NavMenu extends React.PureComponent {
 
         for (let i = 0; i < links.length; i += 1) {
             links[i].style.display = 'inline-flex';
-            const width = links[i].getBoundingClientRect().width;
+            const { width } = links[i].getBoundingClientRect();
             linkWidths.push(width);
             totalWidth += width;
         }
@@ -91,11 +91,6 @@ export default class NavMenu extends React.PureComponent {
         }
 
         return overflowMenuLinks;
-        /*
-        this.setState({
-            overflowMenuLinks,
-        });
-        */
     }
 
     constructor(props) {
@@ -150,18 +145,16 @@ export default class NavMenu extends React.PureComponent {
             <Cloak
                 {...item}
                 key={key}
-                render={
-                    () => (
-                        <NavLink
-                            activeClassName={styles.active}
-                            to={route}
-                            className={className}
-                            exact
-                        >
-                            { _ts('pageTitle', key) }
-                        </NavLink>
-                    )
-                }
+                render={({ disabled }) => (
+                    <NavLink
+                        activeClassName={styles.active}
+                        to={route}
+                        className={`${className} ${disabled ? styles.disabled : ''}`}
+                        exact
+                    >
+                        { _ts('pageTitle', key) }
+                    </NavLink>
+                )}
             />
         );
     }

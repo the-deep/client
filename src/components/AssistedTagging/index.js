@@ -343,7 +343,7 @@ export default class AssistedTagging extends React.PureComponent {
     }
 
     extractNlpClassifications = (data) => {
-        const classification = data.classification;
+        const { classification } = data;
         const nlpSectorOptions = classification.map(c => ({
             key: c[0],
             label: c[0],
@@ -392,7 +392,7 @@ export default class AssistedTagging extends React.PureComponent {
     }
 
     extractCeClassifications = (data) => {
-        const classifications = data.classifications;
+        const { classifications } = data;
         const ceSectorOptions = classifications.map(c => ({
             key: c.title,
             label: c.title,

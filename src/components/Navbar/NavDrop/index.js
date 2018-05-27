@@ -105,10 +105,10 @@ export default class Navdrop extends React.PureComponent {
             <Cloak
                 {...item}
                 key={key}
-                render={() => (
+                render={({ disabled }) => (
                     <Link
                         to={reverseRoute(pathNames[key], params)}
-                        className={styles.dropdownItem}
+                        className={`${styles.dropdownItem} ${disabled ? styles.disabled : ''}`}
                     >
                         { iconName && <span className={`${iconName} ${styles.icon}`} />}
                         { _ts('pageTitle', key) }
@@ -158,18 +158,16 @@ export default class Navdrop extends React.PureComponent {
                     />
                     <Cloak
                         {...adminPanelLink}
-                        render={
-                            () => (
-                                <a
-                                    className={styles.dropdownItem}
-                                    href={adminEndpoint}
-                                    target="_blank"
-                                >
-                                    <span className={`${styles.icon} ${iconNames.locked}`} />
-                                    {_ts('components.navbar', 'adminPanelLabel')}
-                                </a>
-                            )
-                        }
+                        render={({ disabled }) => (
+                            <a
+                                className={`${styles.dropdownItem} ${disabled ? styles.disabled : ''}`}
+                                href={adminEndpoint}
+                                target="_blank"
+                            >
+                                <span className={`${styles.icon} ${iconNames.locked}`} />
+                                {_ts('components.navbar', 'adminPanelLabel')}
+                            </a>
+                        )}
                     />
                 </DropdownGroup>
                 <Link
@@ -184,19 +182,18 @@ export default class Navdrop extends React.PureComponent {
                 </Link>
                 <Cloak
                     requireLogin
-                    render={
-                        () => (
-                            <DropdownGroup>
-                                <button
-                                    className={styles.dropdownItem}
-                                    onClick={this.handleLogoutButtonClick}
-                                >
-                                    <span className={`${styles.icon} ${iconNames.logout}`} />
-                                    {_ts('components.navbar', 'logoutLabel')}
-                                </button>
-                            </DropdownGroup>
-                        )
-                    }
+                    render={({ disabled }) => (
+                        <DropdownGroup>
+                            <button
+                                className={styles.dropdownItem}
+                                onClick={this.handleLogoutButtonClick}
+                                disabled={disabled}
+                            >
+                                <span className={`${styles.icon} ${iconNames.logout}`} />
+                                {_ts('components.navbar', 'logoutLabel')}
+                            </button>
+                        </DropdownGroup>
+                    )}
                 />
             </DropdownMenu>
         );

@@ -49,6 +49,8 @@ module.exports = (env) => {
             watchOptions: {
                 ignored: /node_modules/,
             },
+            // Don't show warnings in browser console
+            clientLogLevel: 'none',
         },
 
         module: {

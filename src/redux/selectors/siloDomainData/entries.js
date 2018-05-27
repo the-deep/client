@@ -4,7 +4,6 @@ import {
     projectsSelector,
     projectIdFromRoute,
 } from '../domainData';
-import widgetStore from '../../../widgets';
 
 const emptyList = [];
 const emptyObject = {};
@@ -49,94 +48,5 @@ export const analysisFrameworkForProjectSelector = createSelector(
             return emptyObject;
         }
         return analysisFrameworks[projects[projectId].analysisFramework] || emptyObject;
-    },
-);
-
-// REMOVE ALL OF THESE LATER
-
-export const widgetsSelector = createSelector(
-    () => widgetStore
-        .filter(widget => widget.view.listComponent)
-        .map(widget => ({
-            id: widget.id,
-            title: widget.title,
-            listComponent: widget.view.listComponent,
-        })),
-);
-
-// widgets
-const itemsForProjectSelector = createSelector(
-    analysisFrameworkForProjectSelector,
-    widgetsSelector,
-    (analysisFramework, widgets) => {
-        if (!analysisFramework.widgets) {
-            return [];
-        }
-        return analysisFramework.widgets.filter(
-            w => widgets.find(w1 => w1.id === w.widgetId),
-        );
-    },
-);
-
-// items
-export const maxHeightForProjectSelector = createSelector(
-    itemsForProjectSelector,
-    items => items.reduce(
-        (acc, item) => {
-            const { height, top } = item.properties.listGridLayout;
-            return Math.max(acc, height + top + 4);
-        },
-        0,
-    ),
-);
-
-// items
-export const filtersForProjectSelector = createSelector(
-    analysisFrameworkForProjectSelector,
-    itemsForProjectSelector,
-    (analysisFramework, items) => {
-        if (!analysisFramework.filters) {
-            return [];
-        }
-        return analysisFramework.filters.filter(
-            f => items.find(item => item.key === f.widgetKey),
-        );
-    },
-);
-
-const getAttribute = (attributes = [], widgetId) => {
-    const attribute = attributes.find(attr => attr.widget === widgetId);
-    return attribute ? attribute.data : undefined;
-};
-
-const getMiniEntry = entry => ({
-    id: entry.id,
-    excerpt: entry.excerpt,
-    image: entry.image,
-    entryType: entry.entryType,
-});
-
-// items
-export const gridItemsForProjectSelector = createSelector(
-    entriesForProjectSelector,
-    itemsForProjectSelector,
-    (entries, items) => {
-        const gridItems = {};
-        entries.forEach((entryGroup) => {
-            entryGroup.entries.forEach((entry) => {
-                gridItems[entry.id] = items.map(
-                    item => ({
-                        key: item.key,
-                        widgetId: item.widgetId,
-                        title: item.title,
-                        layout: item.properties.listGridLayout,
-                        attribute: getAttribute(entry.attributes, item.id),
-                        entry: getMiniEntry(entry),
-                        data: item.properties.data,
-                    }),
-                );
-            });
-        });
-        return gridItems;
     },
 );

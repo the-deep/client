@@ -264,7 +264,7 @@ export default class RegionMap extends React.PureComponent {
                     .params(createParamsForGet)
                     .success((response) => {
                         // FIXME: write schema
-                        const bounds = response.bounds;
+                        const { bounds } = response;
                         const geoJsonBounds = {
                             [adminLevel.id]: bounds && [[
                                 bounds.minX,
