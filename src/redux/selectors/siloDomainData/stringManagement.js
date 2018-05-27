@@ -488,11 +488,16 @@ const problemCollectionsSelector = createSelector(
                 linkCollectionName,
             );
             const linkCollection = getLinkCollectionFromLinks(links, linkCollectionName);
-            Object.keys(linkCollectionFromUsage).forEach((linkName) => {
+
+            // Only iterate over keys that are not present in linkCollection
+            const usageLinkCollectionNames = Object.keys(linkCollectionFromUsage)
+                .filter(key => !linkCollection[key]);
+
+            usageLinkCollectionNames.forEach((linkName) => {
                 // Identify bad references in link (not available in links or strings)
                 const stringName = getStringNameFromLinkCollection(linkCollection, linkName);
                 const string = getStringFromStrings(strings, stringName);
-                if (!stringName || !string) {
+                if (stringName === undefined || string === undefined) {
                     newProblems[linkCollectionName].undefinedLink.instances.push(linkName);
                 }
             });
