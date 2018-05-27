@@ -234,6 +234,16 @@ const selectedLanguageLinksChangesSelector = createSelector(
     },
 );
 
+export const hasInvalidChangesSelector = createSelector(
+    selectedLanguageStringsChangesSelector,
+    selectedLanguageLinksChangesSelector,
+    (strings, links) => (
+        strings.find(string => !!string.message)
+            || Object.keys(links)
+                .some(key => !!links[key] && links[key].find(link => !!link.message))
+    ),
+);
+
 const selectedStringsSelector = createSelector(
     selectedStringsUnfilteredSelector,
     selectedLanguageStringsChangesUnfilteredSelector,

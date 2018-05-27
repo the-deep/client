@@ -19,6 +19,7 @@ import {
     stringMgmtClearChangesAction,
 
     hasSelectedLanguageChangesSelector,
+    hasInvalidChangesSelector,
 } from '#redux';
 
 import EditStringModal from './EditStringModal';
@@ -38,6 +39,7 @@ const propTypes = {
     linkCollectionName: PropTypes.string.isRequired,
     clearChanges: PropTypes.func.isRequired,
     hasSelectedLanguageChanges: PropTypes.bool.isRequired,
+    hasInvalidChanges: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -48,6 +50,7 @@ const mapStateToProps = state => ({
     selectedLanguageName: selectedLanguageNameSelector(state),
     linkCollectionName: selectedLinkCollectionNameSelector(state),
     hasSelectedLanguageChanges: hasSelectedLanguageChangesSelector(state),
+    hasInvalidChanges: hasInvalidChangesSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -100,6 +103,7 @@ export default class StringManagement extends React.PureComponent {
             selectedLanguageName,
             linkCollectionName,
             hasSelectedLanguageChanges,
+            hasInvalidChanges,
         } = this.props;
 
         const {
@@ -138,7 +142,7 @@ export default class StringManagement extends React.PureComponent {
                         Discard
                     </DangerButton>
                     <SuccessButton
-                        disabled={!hasSelectedLanguageChanges}
+                        disabled={!hasSelectedLanguageChanges || hasInvalidChanges}
                     >
                         Save
                     </SuccessButton>

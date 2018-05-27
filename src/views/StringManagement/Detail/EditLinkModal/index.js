@@ -126,16 +126,15 @@ export default class EditLinkModal extends React.PureComponent {
 
     renderProperties = () => {
         const { link } = this.state;
-
-        if (!link) {
-            return null;
-        }
+        const { editLinkId } = this.props;
 
         const properties = [
-            { label: 'ID', value: link.id },
+            { label: 'ID', value: editLinkId },
             { label: 'String ID', value: this.state.inputValue },
-            { label: 'References', value: link.refs },
         ];
+        if (link) {
+            properties.push({ label: 'References', value: link ? link.refs : 0 });
+        }
 
         return (
             <ListView

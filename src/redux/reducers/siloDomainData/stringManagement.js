@@ -13,6 +13,13 @@ import update from '#rs/utils/immutable-update';
 //
 // ## Add
 // - String already exist => change action to edit
+//
+// # Remove nullifying actions
+// - Add action followed by Delete action
+//
+// # Remove/Edit string/link from info pane
+// # Save language
+// # Load language (on language change in string management)
 
 // TYPE
 
@@ -128,7 +135,7 @@ const editLinkChange = (state, action) => {
         languageChanges[languageName].links[linkCollectionName]
     ) {
         index = languageChanges[languageName].links[linkCollectionName].findIndex(
-            l => change.action === l.action && change.key === l.key,
+            l => change.key === l.key,
         );
         if (index !== -1) {
             const oldChange = languageChanges[languageName].links[linkCollectionName][index];
