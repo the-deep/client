@@ -10,9 +10,9 @@ const leadSchema = [];
         extends: 'dbentity',
         fields: {
             sourceType: { type: 'string' }, // set is required later
-            assignee: { type: 'array.uint' },
+            assignee: { type: 'uint' },
             leadGroup: { type: 'uint' },
-            assigneeDetails: { type: 'array.user-s' },
+            assigneeDetails: { type: 'user-s' },
             attachment: { type: 'object' }, // file url
             confidentiality: { type: 'string', required: true },
             noOfEntries: { type: 'int' },

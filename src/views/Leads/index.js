@@ -181,17 +181,15 @@ export default class Leads extends React.PureComponent {
                 key: 'assignee',
                 label: _ts('leads', 'assignee'),
                 order: 6,
-                sortable: false,
-                modifier: row => (
-                    (row.assigneeDetails || []).map(person => (
-                        <Link
-                            key={person.id}
-                            className={styles.assigneeLink}
-                            to={reverseRoute(pathNames.userProfile, { userId: person.id })}
-                        >
-                            {person.displayName}
-                        </Link>
-                    ))
+                sortable: true,
+                modifier: ({ assigneeDetails: person }) => (
+                    <Link
+                        key={person.id}
+                        className={styles.assigneeLink}
+                        to={reverseRoute(pathNames.userProfile, { userId: person.id })}
+                    >
+                        {person.displayName}
+                    </Link>
                 ),
             },
             {
