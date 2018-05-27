@@ -55,9 +55,9 @@ export const stringMgmtEditLinkChangeAction = ({ change, languageName, linkColle
     linkCollectionName,
 });
 
-export const stringMgmtRemoveLinkChangeAction = ({ change, languageName, linkCollectionName }) => ({
+export const stringMgmtRemoveLinkChangeAction = ({ key, languageName, linkCollectionName }) => ({
     type: SM__REMOVE_LINK_CHANGE,
-    change,
+    key,
     languageName,
     linkCollectionName,
 });
@@ -74,9 +74,9 @@ export const stringMgmtEditStringChangeAction = ({ change, languageName }) => ({
     languageName,
 });
 
-export const stringMgmtRemoveStringChangeAction = ({ change, languageName }) => ({
+export const stringMgmtRemoveStringChangeAction = ({ id, languageName }) => ({
     type: SM__REMOVE_STRING_CHANGE,
-    change,
+    id,
     languageName,
 });
 
@@ -161,7 +161,7 @@ const editLinkChange = (state, action) => {
 const addLinkChange = editLinkChange;
 
 const removeLinkChange = (state, action) => {
-    const { change, languageName, linkCollectionName } = action;
+    const { key, languageName, linkCollectionName } = action;
     const { stringManagementView: { languageChanges } } = state;
 
     let index = -1;
@@ -172,7 +172,7 @@ const removeLinkChange = (state, action) => {
         languageChanges[languageName].links[linkCollectionName]
     ) {
         index = languageChanges[languageName].links[linkCollectionName].findIndex(
-            l => change.action === l.action && change.key === l.key,
+            l => l.key === key,
         );
     }
     if (index === -1) {
@@ -244,7 +244,7 @@ const editStringChange = (state, action) => {
 const addStringChange = editStringChange;
 
 const removeStringChange = (state, action) => {
-    const { change, languageName } = action;
+    const { id, languageName } = action;
     const { stringManagementView: { languageChanges } } = state;
 
     let index = -1;
@@ -254,7 +254,7 @@ const removeStringChange = (state, action) => {
         languageChanges[languageName].strings
     ) {
         index = languageChanges[languageName].strings.findIndex(
-            l => change.action === l.action && change.id === l.id,
+            l => l.id === id,
         );
     }
     if (index === -1) {
