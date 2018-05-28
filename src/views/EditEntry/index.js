@@ -241,6 +241,13 @@ export default class EditEntry extends React.PureComponent {
     }
 
     componentWillMount() {
+        // Update all entries once for calculations such as colors
+        if (this.props.entries && this.props.analysisFramework) {
+            this.api.setEntries(this.props.entries);
+            this.api.setAnalysisFramework(this.props.analysisFramework);
+            this.api.updateEntries(this.props.entries, this.props.analysisFramework);
+        }
+
         const anotherRequest = new EditEntryDataRequest({
             api: this.api,
             setLead: this.props.setLead,
@@ -274,12 +281,23 @@ export default class EditEntry extends React.PureComponent {
         const {
             entries,
             selectedEntryId,
+            analysisFramework,
         } = nextProps;
 
         const { pendingSaveAll } = nextState;
 
         this.api.setEntries(entries);
+        this.api.setAnalysisFramework(analysisFramework);
         this.api.setSelectedId(selectedEntryId);
+
+        // Update for new entries
+        if (this.props.entries.length !== entries.length) {
+            // TODO: maybe optimize this
+            const newEntries = entries.filter(e => (
+                !this.props.entries.find(pe => pe.data.id === e.data.id)
+            ));
+            this.api.updateEntries(newEntries);
+        }
 
         this.choices = EditEntry.calcChoices(nextProps, nextState);
 

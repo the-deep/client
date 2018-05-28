@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import update from '../../../vendor/react-store/utils/immutable-update';
 import { getColorOnBgColor } from '../../../vendor/react-store/utils/common';
 
-import { updateAttribute } from './utils';
 import BoundError from '../../../vendor/react-store/components/General/BoundError';
 import WidgetError from '../../../components/WidgetError';
 import styles from './styles.scss';
@@ -26,22 +25,6 @@ export default class Matrix2dOverview extends React.PureComponent {
     static rowKeyExtractor = d => d.key;
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    constructor(props) {
-        super(props);
-        updateAttribute(props);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (this.props.data !== nextProps.data) {
-            this.setState({
-                rows: nextProps.data || [],
-            });
-        }
-        if (this.props.attribute !== nextProps.attribute) {
-            updateAttribute(nextProps);
-        }
-    }
 
     isCellActive = (dimensionId, subdimensionId, sectorId) => {
         const {
@@ -86,6 +69,7 @@ export default class Matrix2dOverview extends React.PureComponent {
 
         api.getEntryModifier()
             .setAttribute(id, newAttribute)
+            .setShouldUpdate()
             .apply();
     }
 
@@ -124,6 +108,7 @@ export default class Matrix2dOverview extends React.PureComponent {
             api.selectEntry(existing.data.id);
             api.getEntryModifier(existing.data.id)
                 .setAttribute(id, attribute)
+                .setShouldUpdate()
                 .apply();
         } else {
             const attribute = {

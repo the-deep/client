@@ -24,3 +24,28 @@ const widgetStore = [
 ];
 
 export default widgetStore;
+
+export const entryUpdater = (widget, modifier, entry, analysisFramework) => {
+    if (!widget.entryUpdater) {
+        return;
+    }
+
+    const widgets = analysisFramework.widgets.filter(
+        w => w.widgetId === widget.id,
+    );
+    const attributes = entry.widget.values.attributes.reduce(
+        (acc, a) => {
+            acc[a.widget] = a;
+            return acc;
+        },
+        {},
+    );
+
+    widgets.forEach((w) => {
+        const attr = attributes[w.id];
+        const attribute = attr && attr.data;
+        const { data } = w.properties;
+
+        widget.entryUpdater(modifier, w.id, attribute, data);
+    });
+};
