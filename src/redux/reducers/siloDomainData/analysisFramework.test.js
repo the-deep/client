@@ -62,9 +62,6 @@ test('should skip adding widget', () => {
     expect(reducers[AF__VIEW_ADD_WIDGET](state, action)).toEqual(after);
 });
 
-/*
-    // FIXME: @bibek.dahal
-    // this test has failed, exception raised at getValidatedAnalysisFramework
 test('should add widget', () => {
     const state = {
         analysisFrameworkView: {
@@ -73,20 +70,19 @@ test('should add widget', () => {
     };
 
     const action = addAfViewWidgetAction({
-        widget: { key: '1', name: 'widget1' },
+        widget: { key: '1', name: 'widget1', properties: {} },
         analysisFrameworkId: 1,
     });
     const after = {
         analysisFrameworkView: {
             analysisFramework: {
                 id: 1,
-                widgets: [{ key: '1', name: 'widget1' }],
+                widgets: [{ key: '1', name: 'widget1', properties: {} }],
             },
         },
     };
     expect(reducers[AF__VIEW_ADD_WIDGET](state, action)).toEqual(after);
 });
-*/
 
 test('should remove widget', () => {
     const state = {

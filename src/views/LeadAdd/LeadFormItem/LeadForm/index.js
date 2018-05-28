@@ -98,7 +98,7 @@ export default class LeadForm extends React.PureComponent {
             leadOptions && leadOptions.assignee && leadOptions.assignee.length > 0 &&
             leadOptions.assignee.find(user => LeadForm.keySelector(user) === activeUserId)
         ) {
-            newValues.assignee = [activeUserId];
+            newValues.assignee = activeUserId;
             valuesChanged = true;
         }
 
@@ -371,7 +371,7 @@ export default class LeadForm extends React.PureComponent {
                     onApplyAllClick={this.handleApplyAllClick}
                     onApplyAllBelowClick={this.handleApplyAllBelowClick}
                 >
-                    <MultiSelectInput
+                    <SelectInput
                         faramElementName="assignee"
                         keySelector={LeadForm.keySelector}
                         label={_ts('addLeads', 'assigneeLabel')}
