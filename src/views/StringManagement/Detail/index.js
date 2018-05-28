@@ -20,8 +20,12 @@ import {
 
     hasSelectedLanguageChangesSelector,
     hasInvalidChangesSelector,
+
+    selectedLanguageStringsChangesSelector,
+    selectedLanguageLinksChangesSelector,
 } from '#redux';
 
+import LanguagePut from '../requests/LanguagePut';
 import EditStringModal from './EditStringModal';
 import StringsTable from './StringsTable';
 import LinksTable from './LinksTable';
@@ -40,6 +44,13 @@ const propTypes = {
     clearChanges: PropTypes.func.isRequired,
     hasSelectedLanguageChanges: PropTypes.bool.isRequired,
     hasInvalidChanges: PropTypes.bool.isRequired,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    selectedLanguageStringsChanges: PropTypes.array.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    selectedLanguageLinksChanges: PropTypes.object.isRequired,
+
+    setLanguage: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -51,6 +62,8 @@ const mapStateToProps = state => ({
     linkCollectionName: selectedLinkCollectionNameSelector(state),
     hasSelectedLanguageChanges: hasSelectedLanguageChangesSelector(state),
     hasInvalidChanges: hasInvalidChangesSelector(state),
+    selectedLanguageStringsChanges: selectedLanguageStringsChangesSelector(state),
+    selectedLanguageLinksChanges: selectedLanguageLinksChangesSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -70,7 +83,37 @@ export default class StringManagement extends React.PureComponent {
         this.state = {
             showAddStringModal: false,
             showDiscardModal: false,
+            pendingLanguagePut: false,
         };
+    }
+
+    componentWillUnmount() {
+        if (this.languageRequest) {
+            this.languageRequest.stop();
+        }
+    }
+
+    createLanguageRequest = (languageCode, strings, links) => {
+        if (this.languageRequest) {
+            this.languageRequest.stop();
+        }
+
+        const request = new LanguagePut({
+            setState: params => this.setState(params),
+            setLanguage: this.props.setLanguage,
+            clearChanges: () => this.props.clearChanges(languageCode),
+        });
+        this.languageRequest = request.create(languageCode, strings, links);
+        this.languageRequest.start();
+    }
+
+    handleSaveButtonClick = () => {
+        const {
+            selectedLanguageName: languageCode,
+            selectedLanguageStringsChanges: strings,
+            selectedLanguageLinksChanges: links,
+        } = this.props;
+        this.createLanguageRequest(languageCode, strings, links);
     }
 
     handleAddButtonClick = () => {
@@ -109,6 +152,7 @@ export default class StringManagement extends React.PureComponent {
         const {
             showAddStringModal,
             showDiscardModal,
+            pendingLanguagePut,
         } = this.state;
 
         return (
@@ -129,20 +173,30 @@ export default class StringManagement extends React.PureComponent {
                         placeholder="Default"
                         showHintAndError={false}
                         hideClearButton
+                        disabled={pendingLanguagePut}
                     />
                     <PrimaryButton
                         onClick={this.handleAddButtonClick}
+                        disabled={pendingLanguagePut}
                     >
                         Add new string
                     </PrimaryButton>
                     <DangerButton
                         onClick={this.handleDiscardButtonClick}
-                        disabled={!hasSelectedLanguageChanges}
+                        disabled={
+                            !hasSelectedLanguageChanges
+                                || pendingLanguagePut
+                        }
                     >
                         Discard
                     </DangerButton>
                     <SuccessButton
-                        disabled={!hasSelectedLanguageChanges || hasInvalidChanges}
+                        disabled={
+                            !hasSelectedLanguageChanges
+                                || hasInvalidChanges
+                                || pendingLanguagePut
+                        }
+                        onClick={this.handleSaveButtonClick}
                     >
                         Save
                     </SuccessButton>
@@ -170,12 +224,15 @@ export default class StringManagement extends React.PureComponent {
             pendingLanguage,
             linkCollectionName,
         } = this.props;
+        const {
+            pendingLanguagePut,
+        } = this.state;
 
         const Header = this.renderHeader;
 
         return (
             <div className={styles.rightPane}>
-                { pendingLanguage && <LoadingAnimation /> }
+                { (pendingLanguage || pendingLanguagePut) && <LoadingAnimation /> }
                 <Header />
                 <div className={styles.content}>
                     <div className={styles.scrollWrapper}>

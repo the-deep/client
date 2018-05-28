@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import SuccessButton from '#rs/components/Action/Button/SuccessButton';
-import WarningButton from '#rs/components/Action/Button/WarningButton';
 import ListView from '#rs/components/View/List/ListView';
 import Message from '#rs/components/View/Message';
 import Confirm from '#rs/components/View/Modal/Confirm';

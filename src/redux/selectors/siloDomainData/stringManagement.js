@@ -200,7 +200,7 @@ const selectedLinksUnfilteredSelector = createFooLinksSelector(selectedLanguageS
 
 // Filtered
 
-const selectedLanguageStringsChangesSelector = createSelector(
+export const selectedLanguageStringsChangesSelector = createSelector(
     selectedStringsUnfilteredSelector,
     selectedLanguageStringsChangesUnfilteredSelector,
     (strings, stringsChanges) => {
@@ -212,7 +212,7 @@ const selectedLanguageStringsChangesSelector = createSelector(
     },
 );
 
-const selectedLanguageLinksChangesSelector = createSelector(
+export const selectedLanguageLinksChangesSelector = createSelector(
     selectedLinksUnfilteredSelector,
     selectedLanguageLinksChangesUnfilteredSelector,
     (links, linksChanges) => {

@@ -18,8 +18,6 @@ import update from '#rs/utils/immutable-update';
 // - Add action followed by Delete action
 //
 // # Remove/Edit string/link from info pane
-// # Save language
-// # Load language (on language change in string management)
 
 // TYPE
 
