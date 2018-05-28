@@ -103,7 +103,7 @@ export default class CrossSector extends React.PureComponent {
         if (row === 0) {
             return (
                 <HiearchicalSelectInput
-                    faramElementName={`priority-sector-${subRow}-${columnKey}`}
+                    faramElementName={`prioritySector-${subRow}-${columnKey}`}
                     showHintAndError={false}
                     options={prioritySectors}
                     keySelector={CrossSector.nodeIdSelector}
@@ -114,7 +114,7 @@ export default class CrossSector extends React.PureComponent {
         } else if (row === 1) {
             return (
                 <HiearchicalSelectInput
-                    faramElementName={`affected-group-${subRow}-${columnKey}`}
+                    faramElementName={`affectedGroup-${subRow}-${columnKey}`}
                     showHintAndError={false}
                     options={affectedGroups}
                     keySelector={CrossSector.nodeIdSelector}
@@ -125,7 +125,7 @@ export default class CrossSector extends React.PureComponent {
         } else if (row === 2) {
             return (
                 <SelectInput
-                    faramElementName={`specific-need-group-${subRow}-${columnKey}`}
+                    faramElementName={`specificNeedGroup-${subRow}-${columnKey}`}
                     showHintAndError={false}
                     options={specificNeedGroups}
                     labelSelector={CrossSector.nodeLabelSelector}
