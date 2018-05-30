@@ -1,9 +1,9 @@
-import { FgRestBuilder } from '../../../../vendor/react-store/utils/rest';
-import schema from '../../../../schema';
+import { FgRestBuilder } from '#rs/utils/rest';
+import schema from '#schema';
 import {
     createUrlForAryFilterOptions,
     createParamsForGet,
-} from '../../../../rest';
+} from '#rest';
 
 export default class AryFilterOptionsGetRequest {
     constructor(params) {

@@ -1,11 +1,11 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
-import notify from '../../../notify';
+import { FgRestBuilder } from '#rs/utils/rest';
+import notify from '#notify';
 import {
     createUrlForLeadEdit,
     createParamsForLeadPatch,
     transformResponseErrorToFormError,
-} from '../../../rest';
-import _ts from '../../../ts';
+} from '#rest';
+import _ts from '#ts';
 
 export default class PatchLeadRequest {
     constructor(params) {

@@ -3,7 +3,7 @@ import {
     POST,
     commonHeaderForPost,
     p,
-} from '../config/rest';
+} from '#config/rest';
 import {
     processEntryFilters,
 } from './entries';

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import _ts from '../../../../ts';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 

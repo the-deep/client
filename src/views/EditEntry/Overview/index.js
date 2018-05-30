@@ -3,22 +3,22 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import DangerButton from '../../../vendor/react-store/components/Action/Button/DangerButton';
-import PrimaryButton from '../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import SuccessButton from '../../../vendor/react-store/components/Action/Button/SuccessButton';
-import LoadingAnimation from '../../../vendor/react-store/components/View/LoadingAnimation';
-import ResizableH from '../../../vendor/react-store/components/View/Resizable/ResizableH';
-import SelectInput from '../../../vendor/react-store/components/Input/SelectInput';
-import GridLayout from '../../../vendor/react-store/components/View/GridLayout';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import ResizableH from '#rs/components/View/Resizable/ResizableH';
+import SelectInput from '#rs/components/Input/SelectInput';
+import GridLayout from '#rs/components/View/GridLayout';
 
 import {
     setActiveEntryAction,
     editEntryCurrentLeadSelector,
-} from '../../../redux';
-import { iconNames } from '../../../constants';
-import _ts from '../../../ts';
-import widgetStore from '../../../widgets';
-import { entryAccessor } from '../../../entities/entry';
+} from '#redux';
+import { iconNames } from '#constants';
+import _ts from '#ts';
+import widgetStore from '#widgets';
+import { entryAccessor } from '#entities/entry';
 
 import LeftPanel from './LeftPanel';
 import styles from './styles.scss';

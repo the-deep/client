@@ -2,18 +2,18 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { reverseRoute } from '../../../vendor/react-store/utils/common';
-import Button from '../../../vendor/react-store/components/Action/Button';
-import DangerButton from '../../../vendor/react-store/components/Action/Button/DangerButton';
-import SuccessButton from '../../../vendor/react-store/components/Action/Button/SuccessButton';
-import WarningButton from '../../../vendor/react-store/components/Action/Button/WarningButton';
+import { reverseRoute } from '#rs/utils/common';
+import Button from '#rs/components/Action/Button';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import WarningButton from '#rs/components/Action/Button/WarningButton';
 
 import {
     iconNames,
     pathNames,
-} from '../../../constants/';
-import Cloak from '../../../components/Cloak';
-import _ts from '../../../ts';
+} from '#constants/';
+import Cloak from '#components/Cloak';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 

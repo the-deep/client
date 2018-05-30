@@ -2,23 +2,23 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import _ts from '../../ts';
+import _ts from '#ts';
 
 import {
     reverseRoute,
     isObjectEmpty,
-} from '../../vendor/react-store/utils/common';
+} from '#rs/utils/common';
 
-import SunBurstView from '../../vendor/react-store/components/Visualization/SunBurstView';
-import ChordDiagramView from '../../vendor/react-store/components/Visualization/ChordDiagramView';
-import TreeMapView from '../../vendor/react-store/components/Visualization/TreeMapView';
-import CorrelationMatrixView from '../../vendor/react-store/components/Visualization/CorrelationMatrixView';
-import ForceDirectedGraphView from '../../vendor/react-store/components/Visualization/ForceDirectedGraphView';
-import CollapsibleTreeView from '../../vendor/react-store/components/Visualization/CollapsibleTreeView';
-import RadialDendrogramView from '../../vendor/react-store/components/Visualization/RadialDendrogramView';
-import GeoReferencedMap from '../../vendor/react-store/components/Visualization/GeoReferencedMap';
-import BoundError from '../../vendor/react-store/components/General/BoundError';
-import AppError from '../../components/AppError';
+import SunBurstView from '#rs/components/Visualization/SunBurstView';
+import ChordDiagramView from '#rs/components/Visualization/ChordDiagramView';
+import TreeMapView from '#rs/components/Visualization/TreeMapView';
+import CorrelationMatrixView from '#rs/components/Visualization/CorrelationMatrixView';
+import ForceDirectedGraphView from '#rs/components/Visualization/ForceDirectedGraphView';
+import CollapsibleTreeView from '#rs/components/Visualization/CollapsibleTreeView';
+import RadialDendrogramView from '#rs/components/Visualization/RadialDendrogramView';
+import GeoReferencedMap from '#rs/components/Visualization/GeoReferencedMap';
+import BoundError from '#rs/components/General/BoundError';
+import AppError from '#components/AppError';
 
 import {
     projectDetailsSelector,
@@ -30,8 +30,8 @@ import {
     correlationDataSelector,
     forceDirectedDataSelector,
     geoPointsDataSelector,
-} from '../../redux';
-import { pathNames } from '../../constants/';
+} from '#redux';
+import { pathNames } from '#constants/';
 
 import LeadKeywordCorrelationRequest from './requests/LeadKeywordCorrelationRequest';
 import LeadTopicCorrelationRequest from './requests/LeadTopicCorrelationRequest';

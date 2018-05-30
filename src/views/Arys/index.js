@@ -6,16 +6,16 @@ import {
     Link,
 } from 'react-router-dom';
 
-import { reverseRoute } from '../../vendor/react-store/utils/common';
-import Confirm from '../../vendor/react-store/components/View/Modal/Confirm';
-import FormattedDate from '../../vendor/react-store/components/View/FormattedDate';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
-import Pager from '../../vendor/react-store/components/View/Pager';
-import RawTable from '../../vendor/react-store/components/View/RawTable';
-import TableHeader from '../../vendor/react-store/components/View/TableHeader';
-import BoundError from '../../vendor/react-store/components/General/BoundError';
+import { reverseRoute } from '#rs/utils/common';
+import Confirm from '#rs/components/View/Modal/Confirm';
+import FormattedDate from '#rs/components/View/FormattedDate';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Pager from '#rs/components/View/Pager';
+import RawTable from '#rs/components/View/RawTable';
+import TableHeader from '#rs/components/View/TableHeader';
+import BoundError from '#rs/components/General/BoundError';
 
-import AppError from '../../components/AppError';
+import AppError from '#components/AppError';
 import {
     activeProjectIdFromStateSelector,
 
@@ -28,9 +28,9 @@ import {
     setArysAction,
     setAryPageActivePageAction,
     setAryPageActiveSortAction,
-} from '../../redux';
-import { pathNames } from '../../constants/';
-import _ts from '../../ts';
+} from '#redux';
+import { pathNames } from '#constants/';
+import _ts from '#ts';
 
 import ActionButtons from './ActionButtons';
 import FilterArysForm from './FilterArysForm';

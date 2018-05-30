@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { FgRestBuilder } from '../../../../vendor/react-store/utils/rest';
+import { FgRestBuilder } from '#rs/utils/rest';
 
-import { iconNames } from '../../../../constants';
+import { iconNames } from '#constants';
 import {
     createUrlForWebsiteFetch,
     createParamsForGet,
-} from '../../../../rest';
-import _ts from '../../../../ts';
+} from '#rest';
+import _ts from '#ts';
 
 import GalleryViewer from '../GalleryViewer';
 import styles from './styles.scss';

@@ -7,16 +7,16 @@ import {
     listToMap,
     compareString,
     compareDate,
-} from '../../vendor/react-store/utils/common';
-import { getFiltersForRequest } from '../../entities/lead';
-import update from '../../vendor/react-store/utils/immutable-update';
-import { FgRestBuilder } from '../../vendor/react-store/utils/rest';
-import AccentButton from '../../vendor/react-store/components/Action/Button/AccentButton';
-import Table from '../../vendor/react-store/components/View/Table';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
-import FormattedDate from '../../vendor/react-store/components/View/FormattedDate';
+} from '#rs/utils/common';
+import { getFiltersForRequest } from '#entities/lead';
+import update from '#rs/utils/immutable-update';
+import { FgRestBuilder } from '#rs/utils/rest';
+import AccentButton from '#rs/components/Action/Button/AccentButton';
+import Table from '#rs/components/View/Table';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import FormattedDate from '#rs/components/View/FormattedDate';
 
-import ExportPreview from '../../components/ExportPreview';
+import ExportPreview from '#components/ExportPreview';
 import {
     createUrlForProject,
     createUrlForAnalysisFramework,
@@ -25,7 +25,7 @@ import {
     createUrlForLeadsOfProject,
 
     transformResponseErrorToFormError,
-} from '../../rest';
+} from '#rest';
 import {
     entriesViewFilterSelector,
     analysisFrameworkForProjectSelector,
@@ -33,14 +33,14 @@ import {
     leadPageFilterSelector,
     setAnalysisFrameworkAction,
     setProjectAction,
-} from '../../redux';
-import { iconNames } from '../../constants';
-import notify from '../../notify';
-import schema from '../../schema';
-import BoundError from '../../vendor/react-store/components/General/BoundError';
+} from '#redux';
+import { iconNames } from '#constants';
+import notify from '#notify';
+import schema from '#schema';
+import BoundError from '#rs/components/General/BoundError';
 
-import _ts from '../../ts';
-import AppError from '../../components/AppError';
+import _ts from '#ts';
+import AppError from '#components/AppError';
 import FilterLeadsForm from '../Leads/FilterLeadsForm';
 import FilterEntriesForm from '../Entries/FilterEntriesForm';
 

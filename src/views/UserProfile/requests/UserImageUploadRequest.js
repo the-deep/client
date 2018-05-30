@@ -1,10 +1,10 @@
-import { UploadBuilder } from '../../../vendor/react-store/utils/upload';
+import { UploadBuilder } from '#rs/utils/upload';
 import {
     urlForUpload,
     createParamsForFileUpload,
-} from '../../../rest';
-import notify from '../../../notify';
-import _ts from '../../../ts';
+} from '#rest';
+import notify from '#notify';
+import _ts from '#ts';
 
 export default class UserImageUploadRequest {
     constructor(props) {

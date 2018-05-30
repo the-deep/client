@@ -1,7 +1,7 @@
 import {
     mapObjectToObject,
     mapObjectToArray,
-} from '../utils/common';
+} from '#utils/common';
 
 import { allLinks, noLinks } from './linksAcl';
 

@@ -5,19 +5,19 @@ import { Redirect } from 'react-router-dom';
 
 import Faram, {
     requiredCondition,
-} from '../../../vendor/react-store/components/Input/Faram';
-import NonFieldErrors from '../../../vendor/react-store/components/Input/NonFieldErrors';
-import TextInput from '../../../vendor/react-store/components/Input/TextInput';
-import SelectInput from '../../../vendor/react-store/components/Input/SelectInput';
-import LoadingAnimation from '../../../vendor/react-store/components/View/LoadingAnimation';
-import DangerButton from '../../../vendor/react-store/components/Action/Button/DangerButton';
-import PrimaryButton from '../../../vendor/react-store/components/Action/Button/PrimaryButton';
+} from '#rs/components/Input/Faram';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import TextInput from '#rs/components/Input/TextInput';
+import SelectInput from '#rs/components/Input/SelectInput';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 
-import _ts from '../../../ts';
+import _ts from '#ts';
 import {
     connectorSourcesListSelector,
     addUserConnectorAction,
-} from '../../../redux';
+} from '#redux';
 
 import ConnectorCreateRequest from '../requests/ConnectorCreateRequest';
 

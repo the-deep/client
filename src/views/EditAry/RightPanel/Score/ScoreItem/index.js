@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Numeral from '../../../../../vendor/react-store/components/View/Numeral';
-import FaramElement from '../../../../../vendor/react-store/components/Input/Faram/FaramElement';
-import { getColorOnBgColor } from '../../../../../vendor/react-store/utils/common';
+import Numeral from '#rs/components/View/Numeral';
+import FaramElement from '#rs/components/Input/Faram/FaramElement';
+import { getColorOnBgColor } from '#rs/utils/common';
 
 import styles from './styles.scss';
 

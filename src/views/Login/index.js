@@ -4,47 +4,47 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactSVG from 'react-svg';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import ReactSVG from 'react-svg';
 
 import {
     FgRestBuilder,
     RestRequest,
-} from '../../vendor/react-store/utils/rest';
-import { reverseRoute } from '../../vendor/react-store/utils/common';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
-import NonFieldErrors from '../../vendor/react-store/components/Input/NonFieldErrors';
-import TextInput from '../../vendor/react-store/components/Input/TextInput';
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
-import ReCaptcha from '../../vendor/react-store/components/Input/ReCaptcha';
+} from '#rs/utils/rest';
+
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import Faram, {
     requiredCondition,
     emailCondition,
     lengthGreaterThanCondition,
-} from '../../vendor/react-store/components/Input/Faram';
+} from '#rs/components/Input/Faram';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import ReCaptcha from '#rs/components/Input/ReCaptcha';
+import TextInput from '#rs/components/Input/TextInput';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import { reverseRoute } from '#rs/utils/common';
 
+import { hidUrl } from '#config/hid';
+import { reCaptchaSiteKey } from '#config/reCaptcha';
+import { pathNames } from '#constants';
+import logo from '#resources/img/deep-logo.svg';
+import hidLogo from '#resources/img/hid-logo.png';
 import {
     alterResponseErrorToFaramError,
     createParamsForTokenCreate,
     urlForTokenCreate,
     createParamsForTokenCreateHid,
     urlForTokenCreateHid,
-} from '../../rest';
+} from '#rest';
 import {
     loginAction,
     authenticateAction,
-} from '../../redux';
-import { startSiloBackgroundTasksAction } from '../../redux/middlewares/siloBackgroundTasks';
-import { pathNames } from '../../constants';
-import schema from '../../schema';
-import { hidUrl } from '../../config/hid';
-import { reCaptchaSiteKey } from '../../config/reCaptcha';
+} from '#redux';
+import { startSiloBackgroundTasksAction } from '#redux/middlewares/siloBackgroundTasks';
+import schema from '#schema';
+import _ts from '#ts';
 
-import logo from '../../resources/img/deep-logo.svg';
-import hidLogo from '../../resources/img/hid-logo.png';
-
-import _ts from '../../ts';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -102,7 +102,6 @@ export default class Login extends React.PureComponent {
             faramErrors: {},
             faramValues: {},
             pending: false,
-            pristine: false,
             showReCaptcha: false,
             schema: Login.schema,
         };
@@ -147,7 +146,6 @@ export default class Login extends React.PureComponent {
         this.setState({
             faramValues,
             faramErrors,
-            pristine: true,
         });
     };
 
@@ -184,7 +182,7 @@ export default class Login extends React.PureComponent {
             .url(url)
             .params(params)
             .preLoad(() => {
-                this.setState({ pending: true, pristine: false });
+                this.setState({ pending: true });
             })
             .postLoad(() => {
                 if (this.reCaptcha) {

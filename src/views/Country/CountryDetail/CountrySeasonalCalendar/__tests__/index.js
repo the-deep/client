@@ -1,12 +1,25 @@
 import React from 'react';
 import { shallow } from 'enzyme';
+import configureStore from 'redux-mock-store';
+import { Provider } from 'react-redux';
+
 import CountrySeasonalCalendar from '../';
 
+const initialState = {
+};
+
 describe('<CountrySeasonalCalendar />', () => {
+    const mockStore = configureStore();
+    const store = mockStore(initialState);
+
     const wrapper = shallow(
-        <CountrySeasonalCalendar
-            countryId={12}
-        />,
+        <Provider
+            store={store}
+        >
+            <CountrySeasonalCalendar
+                countryId={12}
+            />
+        </Provider>,
     );
 
     it('renders properly', () => {

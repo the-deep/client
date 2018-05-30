@@ -1,10 +1,10 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { FgRestBuilder } from '#rs/utils/rest';
 import {
     createUrlForLeadAry,
     createParamsForAryEdit,
-} from '../../../rest';
-import notify from '../../../notify';
-import schema from '../../../schema';
+} from '#rest';
+import notify from '#notify';
+import schema from '#schema';
 
 export default class AryPutRequest {
     constructor(params) {

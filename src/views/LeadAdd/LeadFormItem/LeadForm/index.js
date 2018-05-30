@@ -6,27 +6,27 @@ import Faram, {
     requiredCondition,
     urlCondition,
     dateCondition,
-} from '../../../../vendor/react-store/components/Input/Faram';
-import NonFieldErrors from '../../../../vendor/react-store/components/Input/NonFieldErrors';
-import SelectInput from '../../../../vendor/react-store/components/Input/SelectInput';
-import MultiSelectInput from '../../../../vendor/react-store/components/Input/MultiSelectInput';
-import TextInput from '../../../../vendor/react-store/components/Input/TextInput';
-import TextArea from '../../../../vendor/react-store/components/Input/TextArea';
-import HiddenInput from '../../../../vendor/react-store/components/Input/HiddenInput';
-import DateInput from '../../../../vendor/react-store/components/Input/DateInput';
-import LoadingAnimation from '../../../../vendor/react-store/components/View/LoadingAnimation';
-import Button from '../../../../vendor/react-store/components/Action/Button';
-import FormattedDate from '../../../../vendor/react-store/components/View/FormattedDate';
+} from '#rs/components/Input/Faram';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import SelectInput from '#rs/components/Input/SelectInput';
+import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
+import TextInput from '#rs/components/Input/TextInput';
+import TextArea from '#rs/components/Input/TextArea';
+import HiddenInput from '#rs/components/Input/HiddenInput';
+import DateInput from '#rs/components/Input/DateInput';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Button from '#rs/components/Action/Button';
+import FormattedDate from '#rs/components/View/FormattedDate';
 
 import {
     LEAD_TYPE,
     ATTACHMENT_TYPES,
     leadAccessor,
-} from '../../../../entities/lead';
-import { InternalGallery } from '../../../../components/DeepGallery';
-import { activeUserSelector } from '../../../../redux';
-import { iconNames } from '../../../../constants';
-import _ts from '../../../../ts';
+} from '#entities/lead';
+import { InternalGallery } from '#components/DeepGallery';
+import { activeUserSelector } from '#redux';
+import { iconNames } from '#constants';
+import _ts from '#ts';
 
 import ApplyAll, { ExtractThis } from './ApplyAll';
 import styles from './styles.scss';

@@ -5,30 +5,30 @@ import { Link } from 'react-router-dom';
 
 import { connect } from 'react-redux';
 
-import GridLayout from '../../../vendor/react-store/components/View/GridLayout';
-import Confirm from '../../../vendor/react-store/components/View/Modal/Confirm';
-import Button from '../../../vendor/react-store/components/Action/Button';
-import DangerButton from '../../../vendor/react-store/components/Action/Button/DangerButton';
-import SuccessButton from '../../../vendor/react-store/components/Action/Button/SuccessButton';
+import GridLayout from '#rs/components/View/GridLayout';
+import Confirm from '#rs/components/View/Modal/Confirm';
+import Button from '#rs/components/Action/Button';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import {
     randomString,
     reverseRoute,
-} from '../../../vendor/react-store/utils/common';
+} from '#rs/utils/common';
 
 import {
     iconNames,
     pathNames,
-} from '../../../constants';
+} from '#constants';
 import {
     addAfViewWidgetAction,
     removeAfViewWidgetAction,
     updateAfViewWidgetAction,
 
     activeProjectIdFromStateSelector,
-} from '../../../redux';
-import _ts from '../../../ts';
+} from '#redux';
+import _ts from '#ts';
 
-import widgetStore from '../../../widgets';
+import widgetStore from '#widgets';
 import styles from './styles.scss';
 
 const propTypes = {

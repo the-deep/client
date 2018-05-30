@@ -1,12 +1,12 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { FgRestBuilder } from '#rs/utils/rest';
 import {
     urlForUserGroups,
     createParamsForUserGroupsCreate,
     alterResponseErrorToFaramError,
-} from '../../../rest';
-import notify from '../../../notify';
-import schema from '../../../schema';
-import _ts from '../../../ts';
+} from '#rest';
+import notify from '#notify';
+import schema from '#schema';
+import _ts from '#ts';
 
 export default class UserGroupPostRequest {
     constructor(props) {

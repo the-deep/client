@@ -1,15 +1,15 @@
-import { reverseRoute } from '../../../vendor/react-store/utils/common';
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { reverseRoute } from '#rs/utils/common';
+import { FgRestBuilder } from '#rs/utils/rest';
 
 import {
     createParamsForConnectorCreate,
     alterResponseErrorToFaramError,
     urlForConnectorsFull,
-} from '../../../rest';
-import { pathNames } from '../../../constants';
-import _ts from '../../../ts';
-import schema from '../../../schema';
-import notify from '../../../notify';
+} from '#rest';
+import { pathNames } from '#constants';
+import _ts from '#ts';
+import schema from '#schema';
+import notify from '#notify';
 
 export default class ConnectorCreateRequest {
     constructor(props) {

@@ -2,22 +2,22 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Modal from '../../../../vendor/react-store/components/View/Modal';
-import ModalHeader from '../../../../vendor/react-store/components/View/Modal/Header';
-import ModalBody from '../../../../vendor/react-store/components/View/Modal/Body';
-import NonFieldErrors from '../../../../vendor/react-store/components/Input/NonFieldErrors';
-import TextInput from '../../../../vendor/react-store/components/Input/TextInput';
-import LoadingAnimation from '../../../../vendor/react-store/components/View/LoadingAnimation';
-import DangerButton from '../../../../vendor/react-store/components/Action/Button/DangerButton';
-import PrimaryButton from '../../../../vendor/react-store/components/Action/Button/PrimaryButton';
+import Modal from '#rs/components/View/Modal';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import ModalBody from '#rs/components/View/Modal/Body';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import TextInput from '#rs/components/Input/TextInput';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import Faram, {
     requiredCondition,
-} from '../../../../vendor/react-store/components/Input/Faram';
+} from '#rs/components/Input/Faram';
 import {
     addLeadGroupOfProjectAction,
-} from '../../../../redux';
+} from '#redux';
 
-import _ts from '../../../../ts';
+import _ts from '#ts';
 import LeadGroupCreateRequest from '../../requests/LeadGroupCreateRequest';
 
 import styles from './styles.scss';

@@ -5,15 +5,15 @@ import {
     NavLink,
 } from 'react-router-dom';
 
-import { reverseRoute } from '../../../vendor/react-store/utils/common';
-import List from '../../../vendor/react-store/components/View/List';
-import DropdownMenu from '../../../vendor/react-store/components/Action/DropdownMenu';
+import { reverseRoute } from '#rs/utils/common';
+import List from '#rs/components/View/List';
+import DropdownMenu from '#rs/components/Action/DropdownMenu';
 
 import {
     iconNames,
     pathNames,
-} from '../../../constants';
-import _ts from '../../../ts';
+} from '#constants';
+import _ts from '#ts';
 
 import Cloak from '../../Cloak';
 import styles from './styles.scss';

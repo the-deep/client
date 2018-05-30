@@ -1,14 +1,14 @@
 import React from 'react';
 
-import BoundError from '../../vendor/react-store/components/General/BoundError';
-import AppError from '../../components/AppError';
-import { FgRestBuilder } from '../../vendor/react-store/utils/rest';
-import { isObjectEmpty, compareString } from '../../vendor/react-store/utils/common';
-import List from '../../vendor/react-store/components/View/List';
-import ListView from '../../vendor/react-store/components/View/List/ListView';
+import BoundError from '#rs/components/General/BoundError';
+import AppError from '#components/AppError';
+import { FgRestBuilder } from '#rs/utils/rest';
+import { isObjectEmpty, compareString } from '#rs/utils/common';
+import List from '#rs/components/View/List';
+import ListView from '#rs/components/View/List/ListView';
 
-import _ts from '../../ts';
-import { urlForApiDocs } from '../../rest';
+import _ts from '#ts';
+import { urlForApiDocs } from '#rest';
 
 import styles from './styles.scss';
 

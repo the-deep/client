@@ -2,15 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import FaramGroup from '../../../../../vendor/react-store/components/Input/Faram/FaramGroup';
-import SelectInput from '../../../../../vendor/react-store/components/Input/SelectInput';
-import HiearchicalSelectInput from '../../../../../vendor/react-store/components/Input/HierarchicalSelectInput';
+import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
+import SelectInput from '#rs/components/Input/SelectInput';
+import HiearchicalSelectInput from '#rs/components/Input/HierarchicalSelectInput';
 
 import {
     priorityIssuesSelector,
     affectedLocationsSelector,
-} from '../../../../../redux';
-import _ts from '../../../../../ts';
+} from '#redux';
+import _ts from '#ts';
 
 import TabularInputs from '../TabularInputs';
 import styles from './styles.scss';

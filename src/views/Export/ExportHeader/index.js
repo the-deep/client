@@ -2,18 +2,18 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { reverseRoute } from '../../../vendor/react-store/utils/common';
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
-import Button from '../../../vendor/react-store/components/Action/Button';
-import PrimaryButton from '../../../vendor/react-store/components/Action/Button/PrimaryButton';
+import { reverseRoute } from '#rs/utils/common';
+import { FgRestBuilder } from '#rs/utils/rest';
+import Button from '#rs/components/Action/Button';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 
 import {
     urlForExportTrigger,
     createParamsForExportTrigger,
-} from '../../../rest';
-import { pathNames } from '../../../constants';
-import _ts from '../../../ts';
-import notify from '../../../notify';
+} from '#rest';
+import { pathNames } from '#constants';
+import _ts from '#ts';
+import notify from '#notify';
 
 import styles from './styles.scss';
 

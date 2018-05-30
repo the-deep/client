@@ -5,7 +5,7 @@ import ReactResizeDetector from 'react-resize-detector';
 import { brush as d3Brush } from 'd3-brush';
 import { select, event } from 'd3-selection';
 
-import { getScreenshot } from '../../utils/browserExtension';
+import { getScreenshot } from '#utils/browserExtension';
 import styles from './styles.scss';
 
 const propTypes = {

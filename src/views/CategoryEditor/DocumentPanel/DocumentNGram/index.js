@@ -5,11 +5,11 @@ import { connect } from 'react-redux';
 import {
     trimWhitespace,
     splitInWhitespace,
-} from '../../../../vendor/react-store/utils/common';
-import ListView from '../../../../vendor/react-store/components/View/List/ListView';
+} from '#rs/utils/common';
+import ListView from '#rs/components/View/List/ListView';
 
-import _ts from '../../../../ts';
-import { categoryEditorNgramsSelector } from '../../../../redux';
+import _ts from '#ts';
+import { categoryEditorNgramsSelector } from '#redux';
 
 import styles from './styles.scss';
 

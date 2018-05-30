@@ -1,9 +1,9 @@
 import jwtDecode from 'jwt-decode';
 
-import update from '../../vendor/react-store/utils/immutable-update';
+import update from '#rs/utils/immutable-update';
 
-import createReducerWithMap from '../../utils/createReducerWithMap';
-import schema from '../../schema';
+import createReducerWithMap from '#utils/createReducerWithMap';
+import schema from '#schema';
 import initialAuthState from '../initial-state/auth';
 
 

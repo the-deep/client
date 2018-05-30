@@ -5,7 +5,7 @@ import {
     PUT,
     commonHeaderForPost,
     p,
-} from '../config/rest';
+} from '#config/rest';
 
 const cesUrlFields = ['id', 'title', 'version_id', 'created_at', 'modified_at',
     'is_admin'];

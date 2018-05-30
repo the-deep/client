@@ -1,15 +1,15 @@
-import { BgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { BgRestBuilder } from '#rs/utils/rest';
 
-import schema from '../../../schema';
 import {
     createParamsForGet,
     urlForProjects,
-} from '../../../rest';
+} from '#rest';
+import schema from '#schema';
+import AbstractTask from '#utils/AbstractTask';
 
 import { activeUserSelector } from '../../selectors/auth';
 import { setUserProjectsAction } from '../../reducers/domainData/projects';
 import { setWaitingForProjectAction } from '../../reducers/app';
-import AbstractTask from '../../../utils/AbstractTask';
 
 export default class ProjectGet extends AbstractTask {
     constructor(store) {

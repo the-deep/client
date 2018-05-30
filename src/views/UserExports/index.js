@@ -10,37 +10,37 @@ import {
     compareString,
     compareBoolean,
     compareDate,
-} from '../../vendor/react-store/utils/common';
-import { FgRestBuilder } from '../../vendor/react-store/utils/rest';
-import Table from '../../vendor/react-store/components/View/Table';
-import FormattedDate from '../../vendor/react-store/components/View/FormattedDate';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
+} from '#rs/utils/common';
+import { FgRestBuilder } from '#rs/utils/rest';
+import Table from '#rs/components/View/Table';
+import FormattedDate from '#rs/components/View/FormattedDate';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 
-import BoundError from '../../vendor/react-store/components/General/BoundError';
-import AppError from '../../components/AppError';
+import BoundError from '#rs/components/General/BoundError';
+import AppError from '#components/AppError';
 import {
     createUrlForExport,
-    createParamsForUserGet,
+    createParamsForGet,
     createUrlForExportsOfProject,
 
     transformResponseErrorToFormError,
-} from '../../rest';
+} from '#rest';
 import {
     userExportsListSelector,
     setUserExportsAction,
     setUserExportAction,
 
     projectIdFromRouteSelector,
-} from '../../redux';
+} from '#redux';
 import {
     pathNames,
     iconNames,
-} from '../../constants';
-import { leadTypeIconMap } from '../../entities/lead';
-import schema from '../../schema';
-import notify from '../../notify';
-import _ts from '../../ts';
-import ExportPreview from '../../components/ExportPreview';
+} from '#constants';
+import { leadTypeIconMap } from '#entities/lead';
+import schema from '#schema';
+import notify from '#notify';
+import _ts from '#ts';
+import ExportPreview from '#components/ExportPreview';
 
 import styles from './styles.scss';
 
@@ -247,7 +247,7 @@ export default class UserExports extends React.PureComponent {
     createUserExportsRequest = (projectId) => {
         const userExportsRequest = new FgRestBuilder()
             .url(createUrlForExportsOfProject(projectId))
-            .params(() => createParamsForUserGet())
+            .params(() => createParamsForGet())
             .preLoad(() => {
                 this.setState({ pendingExports: true });
             })
@@ -292,7 +292,7 @@ export default class UserExports extends React.PureComponent {
     createExportPollRequest = (exportId) => {
         const userExportsRequest = new FgRestBuilder()
             .url(createUrlForExport(exportId))
-            .params(() => createParamsForUserGet())
+            .params(() => createParamsForGet())
             .pollTime(2000)
             .maxPollAttempts(200)
             .shouldPoll(response => response.pending === true)

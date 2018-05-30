@@ -1,13 +1,13 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
-import update from '../../../vendor/react-store/utils/immutable-update';
+import { FgRestBuilder } from '#rs/utils/rest';
+import update from '#rs/utils/immutable-update';
 import {
     createParamsForEntryCreate,
     createParamsForEntryEdit,
     createUrlForEntryEdit,
     urlForEntryCreate,
-} from '../../../rest';
-import { entryAccessor } from '../../../entities/entry';
-import schema from '../../../schema';
+} from '#rest';
+import { entryAccessor } from '#entities/entry';
+import schema from '#schema';
 
 export default class SaveEntryRequest {
     constructor(params) {

@@ -5,7 +5,7 @@ import {
     DELETE,
     commonHeaderForPost,
     p,
-} from '../config/rest';
+} from '#config/rest';
 
 export const createUrlForProject = projectId => `${wsEndpoint}/projects/${projectId}/`;
 export const createUrlForProjectOptions = projectId => `${wsEndpoint}/project-options/?${p({ project: projectId })}`;

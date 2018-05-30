@@ -6,24 +6,24 @@ import {
     reverseRoute,
     compareString,
     compareDate,
-} from '../../../../vendor/react-store/utils/common';
-import update from '../../../../vendor/react-store/utils/immutable-update';
-import PrimaryButton from '../../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import FormattedDate from '../../../../vendor/react-store/components/View/FormattedDate';
-import DangerButton from '../../../../vendor/react-store/components/Action/Button/DangerButton';
-import { FgRestBuilder } from '../../../../vendor/react-store/utils/rest';
-import LoadingAnimation from '../../../../vendor/react-store/components/View/LoadingAnimation';
-import SuccessButton from '../../../../vendor/react-store/components/Action/Button/SuccessButton';
-import NonFieldErrors from '../../../../vendor/react-store/components/Input/NonFieldErrors';
-import TextInput from '../../../../vendor/react-store/components/Input/TextInput';
-import SelectInputWithList from '../../../../vendor/react-store/components/Input/SelectInputWithList';
-import TabularSelectInput from '../../../../vendor/react-store/components/Input/TabularSelectInput';
-import DateInput from '../../../../vendor/react-store/components/Input/DateInput';
-import TextArea from '../../../../vendor/react-store/components/Input/TextArea';
+} from '#rs/utils/common';
+import update from '#rs/utils/immutable-update';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import FormattedDate from '#rs/components/View/FormattedDate';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import { FgRestBuilder } from '#rs/utils/rest';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import TextInput from '#rs/components/Input/TextInput';
+import SelectInputWithList from '#rs/components/Input/SelectInputWithList';
+import TabularSelectInput from '#rs/components/Input/TabularSelectInput';
+import DateInput from '#rs/components/Input/DateInput';
+import TextArea from '#rs/components/Input/TextArea';
 import Faram, {
     requiredCondition,
     dateCondition,
-} from '../../../../vendor/react-store/components/Input/Faram';
+} from '#rs/components/Input/Faram';
 
 import {
     alterResponseErrorToFaramError,
@@ -31,7 +31,7 @@ import {
     createUrlForProject,
     createParamsForGet,
     createUrlForUsers,
-} from '../../../../rest';
+} from '#rest';
 import {
     usersInformationListSelector,
 
@@ -42,14 +42,14 @@ import {
     unsetUserProjectMembershipAction,
     setUsersInformationAction,
     setProjectAction,
-} from '../../../../redux';
-import schema from '../../../../schema';
-import notify from '../../../../notify';
-import _ts from '../../../../ts';
+} from '#redux';
+import schema from '#schema';
+import notify from '#notify';
+import _ts from '#ts';
 import {
     pathNames,
     iconNames,
-} from '../../../../constants';
+} from '#constants';
 
 import styles from './styles.scss';
 

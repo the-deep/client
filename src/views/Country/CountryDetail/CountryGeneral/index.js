@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 
 import {
     countryDetailSelector,
-} from '../../../../redux';
+} from '#redux';
 
-import RegionDetail from '../../../../components/RegionDetail';
-import RegionAdminLevel from '../../../../components/RegionAdminLevel';
-import RegionMap from '../../../../components/RegionMap';
+import RegionDetail from '#components/RegionDetail';
+import RegionAdminLevel from '#components/RegionAdminLevel';
+import RegionMap from '#components/RegionMap';
 
 import styles from './styles.scss';
 

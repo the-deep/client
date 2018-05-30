@@ -1,13 +1,13 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { FgRestBuilder } from '#rs/utils/rest';
 import {
     alterResponseErrorToFaramError,
 
     createParamsForConnectorPatch,
     createUrlForConnector,
-} from '../../../rest';
-import _ts from '../../../ts';
-import schema from '../../../schema';
-import notify from '../../../notify';
+} from '#rest';
+import _ts from '#ts';
+import schema from '#schema';
+import notify from '#notify';
 
 export default class ConnectorPatchRequest {
     constructor(props) {

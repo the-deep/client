@@ -1,24 +1,25 @@
-import { BgRestBuilder } from '../../../vendor/react-store/utils/rest';
-import { isFalsy } from '../../../vendor/react-store/utils/common';
+import { BgRestBuilder } from '#rs/utils/rest';
+import { isFalsy } from '#rs/utils/common';
 
 import {
     createParamsForGet,
     urlForUserPreferences,
-} from '../../../rest';
-import schema from '../../../schema';
-import { activeProjectIdFromStateSelector } from '../../selectors/siloDomainData/common';
-import { setActiveProjectAction } from '../../reducers/siloDomainData/common';
+} from '#rest';
+import schema from '#schema';
+import AbstractTask from '#utils/AbstractTask';
+
 import { setUserPreferencesAction } from '../../reducers/auth';
 import {
-    setFallbackLanguageAction,
-    setSelectedLanguageAction,
-    setLanguageAction,
-} from '../../reducers/lang';
-import {
-    setWaitingForPreferencesAction,
     setWaitingForLanguageAction,
+    setWaitingForPreferencesAction,
 } from '../../reducers/app';
-import AbstractTask from '../../../utils/AbstractTask';
+import {
+    setFallbackLanguageAction,
+    setLanguageAction,
+    setSelectedLanguageAction,
+} from '../../reducers/lang';
+import { setActiveProjectAction } from '../../reducers/siloDomainData/common';
+import { activeProjectIdFromStateSelector } from '../../selectors/siloDomainData/common';
 
 import LanguageGet from './LanguageGet';
 

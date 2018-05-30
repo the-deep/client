@@ -1,10 +1,10 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
-import notify from '../../../notify';
+import { FgRestBuilder } from '#rs/utils/rest';
+import notify from '#notify';
 import {
     createUrlForAryDelete,
     createParamsForAryDelete,
     transformResponseErrorToFormError,
-} from '../../../rest';
+} from '#rest';
 
 export default class AryDeleteRequest {
     constructor(params) {

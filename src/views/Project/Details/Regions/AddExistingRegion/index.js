@@ -2,31 +2,31 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '../../../../../vendor/react-store/utils/rest';
-import { compareString, compareNumber } from '../../../../../vendor/react-store/utils/common';
-import LoadingAnimation from '../../../../../vendor/react-store/components/View/LoadingAnimation';
-import DangerButton from '../../../../../vendor/react-store/components/Action/Button/DangerButton';
-import PrimaryButton from '../../../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import NonFieldErrors from '../../../../../vendor/react-store/components/Input/NonFieldErrors';
-import TabularSelectInput from '../../../../../vendor/react-store/components/Input/TabularSelectInput';
+import { FgRestBuilder } from '#rs/utils/rest';
+import { compareString, compareNumber } from '#rs/utils/common';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import TabularSelectInput from '#rs/components/Input/TabularSelectInput';
 import Faram, {
     requiredCondition,
-} from '../../../../../vendor/react-store/components/Input/Faram';
+} from '#rs/components/Input/Faram';
 
 import {
     alterResponseErrorToFaramError,
     createParamsForProjectPatch,
     createUrlForProject,
-} from '../../../../../rest';
+} from '#rest';
 import {
     projectDetailsSelector,
     projectOptionsSelector,
 
     setProjectAction,
-} from '../../../../../redux';
-import notify from '../../../../../notify';
-import schema from '../../../../../schema';
-import _ts from '../../../../../ts';
+} from '#redux';
+import notify from '#notify';
+import schema from '#schema';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 

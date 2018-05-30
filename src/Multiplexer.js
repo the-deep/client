@@ -7,23 +7,23 @@ import {
 } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import ExclusivelyPublicRoute from './vendor/react-store/components/General/ExclusivelyPublicRoute';
-import PrivateRoute from './vendor/react-store/components/General/PrivateRoute';
-import Toast from './vendor/react-store/components/View/Toast';
+import ExclusivelyPublicRoute from '#rs/components/General/ExclusivelyPublicRoute';
+import PrivateRoute from '#rs/components/General/PrivateRoute';
+import Toast from '#rs/components/View/Toast';
 
-import Navbar from './components/Navbar';
+import Navbar from '#components/Navbar';
 import {
     pathNames,
     views,
     routesOrder,
     routes,
-} from './constants';
+} from '#constants';
 
 import {
     authenticatedSelector,
     lastNotifySelector,
     notifyHideAction,
-} from './redux';
+} from '#redux';
 
 const ROUTE = {
     exclusivelyPublic: 'exclusively-public',

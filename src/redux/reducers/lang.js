@@ -1,8 +1,10 @@
-import createReducerWithMap from '../../utils/createReducerWithMap';
-import { LOGOUT_ACTION } from '../reducers/auth';
+import createReducerWithMap from '#utils/createReducerWithMap';
+
+import { listToMap } from '#rs/utils/common';
+import update from '#rs/utils/immutable-update';
+
 import initialLangState from '../initial-state/lang';
-import { listToMap } from '../../vendor/react-store/utils/common';
-import update from '../../vendor/react-store/utils/immutable-update';
+import { LOGOUT_ACTION } from '../reducers/auth';
 
 export const SET_SELECTED_LANGUAGE_ACTION = 'lang/SET_SELECTED_LANGUAGE';
 export const SET_FALLBACK_LANGUAGE_ACTION = 'lang/SET_FALLBACK_LANGUAGE';

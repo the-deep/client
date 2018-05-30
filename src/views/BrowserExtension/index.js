@@ -6,10 +6,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { tokenSelector } from '../../redux';
-import { sendToken } from '../../utils/browserExtension';
-import _ts from '../../ts';
-import notify from '../../notify';
+import { tokenSelector } from '#redux';
+import { sendToken } from '#utils/browserExtension';
+import _ts from '#ts';
+import notify from '#notify';
 
 const mapStateToProps = state => ({
     token: tokenSelector(state),

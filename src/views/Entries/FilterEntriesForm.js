@@ -2,14 +2,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '../../vendor/react-store/utils/rest';
-import { isObjectEmpty } from '../../vendor/react-store/utils/common';
-import SearchInput from '../../vendor/react-store/components/Input/SearchInput';
-import DateFilter from '../../vendor/react-store/components/Input/DateFilter';
-import RangeFilter from '../../vendor/react-store/components/Input/RangeFilter';
-import MultiSelectInput from '../../vendor/react-store/components/Input/MultiSelectInput';
-import Button from '../../vendor/react-store/components/Action/Button';
-import DangerButton from '../../vendor/react-store/components/Action/Button/DangerButton';
+import { FgRestBuilder } from '#rs/utils/rest';
+import { isObjectEmpty } from '#rs/utils/common';
+import SearchInput from '#rs/components/Input/SearchInput';
+import DateFilter from '#rs/components/Input/DateFilter';
+import RangeFilter from '#rs/components/Input/RangeFilter';
+import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
+import Button from '#rs/components/Action/Button';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
 
 import {
     activeProjectIdFromStateSelector,
@@ -22,7 +22,7 @@ import {
     setEntryFilterOptionsAction,
     setGeoOptionsAction,
     geoOptionsForProjectSelector,
-} from '../../redux';
+} from '#redux';
 import {
     createUrlForGeoOptions,
 
@@ -30,11 +30,11 @@ import {
     createUrlForEntryFilterOptions,
 
     transformResponseErrorToFormError,
-} from '../../rest';
-import schema from '../../schema';
-import notify from '../../notify';
-import _ts from '../../ts';
-import GeoSelection from '../../components/GeoSelection';
+} from '#rest';
+import schema from '#schema';
+import notify from '#notify';
+import _ts from '#ts';
+import GeoSelection from '#components/GeoSelection';
 
 const mapStateToProps = (state, props) => ({
     activeProject: activeProjectIdFromStateSelector(state),

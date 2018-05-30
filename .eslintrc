@@ -12,8 +12,14 @@
     },
     "plugins": [
         "react",
+        "import",
         "css-modules"
     ],
+    "settings": {
+        "import/resolver": {
+            "babel-module": {}
+        }
+    },
     "rules": {
         "strict": 0,
         "indent": ["error", 4, { "SwitchCase": 1 }],
@@ -50,8 +56,8 @@
 
         "react/no-unused-state": "warn",
         "react/default-props-match-prop-types": ["warn", {
-                "allowRequiredDefaults": true
-            }],
+            "allowRequiredDefaults": true
+        }]
     },
     "parser": "babel-eslint",
     "parserOptions": {

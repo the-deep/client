@@ -3,10 +3,10 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 
-import { CoordinatorBuilder } from '../../vendor/react-store/utils/coordinate';
-import { randomString } from '../../vendor/react-store/utils/common';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
-import MultiViewContainer from '../../vendor/react-store/components/View/MultiViewContainer';
+import { CoordinatorBuilder } from '#rs/utils/coordinate';
+import { randomString } from '#rs/utils/common';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import MultiViewContainer from '#rs/components/View/MultiViewContainer';
 
 import {
     leadIdFromRoute,
@@ -31,14 +31,14 @@ import {
     removeAllEntriesAction,
 
     routeUrlSelector,
-} from '../../redux';
+} from '#redux';
 import {
     ENTRY_STATUS,
     entryAccessor,
     calcEntryState,
-} from '../../entities/entry';
-import notify from '../../notify';
-import _ts from '../../ts';
+} from '#entities/entry';
+import notify from '#notify';
+import _ts from '#ts';
 
 import EditEntryDataRequest from './requests/EditEntryDataRequest';
 import SaveEntryRequest from './requests/SaveEntryRequest';

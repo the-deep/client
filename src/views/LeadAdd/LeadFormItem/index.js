@@ -6,33 +6,33 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { FgRestBuilder } from '#rs/utils/rest';
 import {
     requiredCondition,
     urlCondition,
-} from '../../../vendor/react-store/components/Input/Faram';
-import Confirm from '../../../vendor/react-store/components/View/Modal/Confirm';
-import ResizableV from '../../../vendor/react-store/components/View/Resizable/ResizableV';
+} from '#rs/components/Input/Faram';
+import Confirm from '#rs/components/View/Modal/Confirm';
+import ResizableV from '#rs/components/View/Resizable/ResizableV';
 
 import {
     InternalGallery,
     ExternalGallery,
-} from '../../../components/DeepGallery';
+} from '#components/DeepGallery';
 import {
     addLeadViewLeadChangeAction,
     addLeadViewCopyAllBelowAction,
     addLeadViewCopyAllAction,
     addLeadViewHidePreviewSelector,
-} from '../../../redux';
+} from '#redux';
 import {
     LEAD_TYPE,
     leadAccessor,
-} from '../../../entities/lead';
+} from '#entities/lead';
 import {
     urlForWebInfo,
     createParamsForWebInfo,
-} from '../../../rest';
-import _ts from '../../../ts';
+} from '#rest';
+import _ts from '#ts';
 
 import LeadForm from './LeadForm';
 import AddLeadGroup from './AddLeadGroup';

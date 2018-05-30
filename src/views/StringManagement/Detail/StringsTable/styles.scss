@@ -31,6 +31,10 @@
             .duplicates {
                 font-family: $font-family-monospace;
             }
+
+            .actions {
+                white-space: nowrap;
+            }
         }
     }
 }

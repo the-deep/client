@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import VerticalTabs from '../../../vendor/react-store/components/View/VerticalTabs';
-import SearchInput from '../../../vendor/react-store/components/Input/SearchInput';
+import VerticalTabs from '#rs/components/View/VerticalTabs';
+import SearchInput from '#rs/components/Input/SearchInput';
 
 import {
     stringMgmtSetSelectedLinkCollectionNameAction,
@@ -11,7 +11,7 @@ import {
     linkKeysSelector,
     problemCollectionsStatsSelector,
     selectedLinkCollectionNameSelector,
-} from '../../../redux';
+} from '#redux';
 
 import styles from './styles.scss';
 

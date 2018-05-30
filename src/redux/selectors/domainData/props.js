@@ -1,4 +1,4 @@
-import { isFalsy } from '../../../vendor/react-store/utils/common';
+import { isFalsy } from '#rs/utils/common';
 
 const getFromProps = identifier => ({ route }, props) => {
     if (!isFalsy(props) && !isFalsy(props[identifier])) {

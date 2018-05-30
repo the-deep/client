@@ -1,11 +1,12 @@
 import { createSelector } from 'reselect';
+import { unique, mapToList } from '#rs/utils/common';
+import update from '#rs/utils/immutable-update';
+
 import {
     createFooLanguageSelector,
     createFooStringsSelector,
     createFooLinksSelector,
 } from '../lang';
-import { unique, mapToList } from '../../../vendor/react-store/utils/common';
-import update from '../../../vendor/react-store/utils/immutable-update';
 
 const emptyObject = {};
 const emptyArray = [];
@@ -181,6 +182,16 @@ const selectedLanguageLinksChangesUnfilteredSelector = createSelector(
     languageChanges => languageChanges.links || emptyObject,
 );
 
+export const hasSelectedLanguageChangesSelector = createSelector(
+    selectedLanguageStringsChangesUnfilteredSelector,
+    selectedLanguageLinksChangesUnfilteredSelector,
+    (strings, links) => (
+        strings.length > 0
+            || Object.keys(links)
+                .some(key => links[key] && links[key].length > 0)
+    ),
+);
+
 // SELECTED LANGUAGE
 
 const selectedLanguageSelector = createFooLanguageSelector(selectedLanguageNameSelector);
@@ -189,7 +200,7 @@ const selectedLinksUnfilteredSelector = createFooLinksSelector(selectedLanguageS
 
 // Filtered
 
-const selectedLanguageStringsChangesSelector = createSelector(
+export const selectedLanguageStringsChangesSelector = createSelector(
     selectedStringsUnfilteredSelector,
     selectedLanguageStringsChangesUnfilteredSelector,
     (strings, stringsChanges) => {
@@ -201,7 +212,7 @@ const selectedLanguageStringsChangesSelector = createSelector(
     },
 );
 
-const selectedLanguageLinksChangesSelector = createSelector(
+export const selectedLanguageLinksChangesSelector = createSelector(
     selectedLinksUnfilteredSelector,
     selectedLanguageLinksChangesUnfilteredSelector,
     (links, linksChanges) => {
@@ -221,6 +232,16 @@ const selectedLanguageLinksChangesSelector = createSelector(
         }
         return update(linksChanges, linksSetting);
     },
+);
+
+export const hasInvalidChangesSelector = createSelector(
+    selectedLanguageStringsChangesSelector,
+    selectedLanguageLinksChangesSelector,
+    (strings, links) => (
+        strings.find(string => !!string.message)
+            || Object.keys(links)
+                .some(key => !!links[key] && links[key].find(link => !!link.message))
+    ),
 );
 
 const selectedStringsSelector = createSelector(
@@ -294,7 +315,7 @@ const duplicatedStringsSelector = createSelector(
                 duplicatedStrings[stringName] = firstEncounteredStringName;
             } else {
                 // memorize to identify duplicates
-                memory[value] = stringName;
+                memory[value] = +stringName;
             }
         });
 
@@ -477,11 +498,16 @@ const problemCollectionsSelector = createSelector(
                 linkCollectionName,
             );
             const linkCollection = getLinkCollectionFromLinks(links, linkCollectionName);
-            Object.keys(linkCollectionFromUsage).forEach((linkName) => {
+
+            // Only iterate over keys that are not present in linkCollection
+            const usageLinkCollectionNames = Object.keys(linkCollectionFromUsage)
+                .filter(key => !linkCollection[key]);
+
+            usageLinkCollectionNames.forEach((linkName) => {
                 // Identify bad references in link (not available in links or strings)
                 const stringName = getStringNameFromLinkCollection(linkCollection, linkName);
                 const string = getStringFromStrings(strings, stringName);
-                if (!stringName || !string) {
+                if (stringName === undefined || string === undefined) {
                     newProblems[linkCollectionName].undefinedLink.instances.push(linkName);
                 }
             });
@@ -539,7 +565,7 @@ export const allStringsSelector = createSelector(
     (strings, duplicatedStrings, stringsReferenceCount) => mapToList(
         strings,
         (stringValue, stringName) => ({
-            id: stringName,
+            id: +stringName,
             string: stringValue,
             refs: stringsReferenceCount[stringName],
             duplicates: duplicatedStrings[stringName],
@@ -558,7 +584,7 @@ export const linkCollectionSelector = createSelector(
         (stringName, linkName) => ({
             id: linkName,
             string: getStringFromStrings(strings, stringName),
-            stringId: stringName,
+            stringId: +stringName,
             refs: getStringRefsInCode(usedMaps, linkCollectionName, linkName),
         }),
     ),

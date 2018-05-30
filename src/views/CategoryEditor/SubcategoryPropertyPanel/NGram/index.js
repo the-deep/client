@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import ListView from '../../../../vendor/react-store/components/View/List/ListView';
-import DangerButton from '../../../../vendor/react-store/components/Action/Button/DangerButton';
+import ListView from '#rs/components/View/List/ListView';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
 
-import { iconNames } from '../../../../constants';
+import { iconNames } from '#constants';
 
 import styles from './styles.scss';
 

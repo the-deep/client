@@ -1,15 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import WarningButton from '../../../../vendor/react-store/components/Action/Button/WarningButton';
-import { isTruthy } from '../../../../vendor/react-store/utils/common';
+import WarningButton from '#rs/components/Action/Button/WarningButton';
+import { isTruthy } from '#rs/utils/common';
 
 import {
     LEAD_TYPE,
     LEAD_STATUS,
     leadAccessor,
-} from '../../../../entities/lead';
-import { iconNames } from '../../../../constants';
+} from '#entities/lead';
+import { iconNames } from '#constants';
 
 import styles from './styles.scss';
 

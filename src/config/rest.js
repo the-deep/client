@@ -1,4 +1,4 @@
-import { RestRequest } from '../vendor/react-store/utils/rest';
+import { RestRequest } from '#rs/utils/rest';
 
 // Alias for prepareQueryParams
 export const p = RestRequest.prepareUrlParams;

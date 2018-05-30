@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import FaramGroup from '../../../../vendor/react-store/components/Input/Faram/FaramGroup';
-import LoadingAnimation from '../../../../vendor/react-store/components/View/LoadingAnimation';
-import ListView from '../../../../vendor/react-store/components/View/List/ListView';
+import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import ListView from '#rs/components/View/List/ListView';
 
-import { aryTemplateMetadataSelector } from '../../../../redux';
-import _ts from '../../../../ts';
-import Baksa from '../../../../components/Baksa';
+import { aryTemplateMetadataSelector } from '#redux';
+import _ts from '#ts';
+import Baksa from '#components/Baksa';
 
 import { renderWidget } from '../widgetUtils';
 import Header from '../Header';

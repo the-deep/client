@@ -5,19 +5,19 @@ import { connect } from 'react-redux';
 import {
     isTruthy,
     isObjectEmpty,
-} from '../../vendor/react-store/utils/common';
-import { FgRestBuilder } from '../../vendor/react-store/utils/rest';
-import Button from '../../vendor/react-store/components/Action/Button';
-import DangerButton from '../../vendor/react-store/components/Action/Button/DangerButton';
-import Faram from '../../vendor/react-store/components/Input/Faram';
-import SearchInput from '../../vendor/react-store/components/Input/SearchInput';
-import DateFilter from '../../vendor/react-store/components/Input/DateFilter';
-import MultiSelectInput from '../../vendor/react-store/components/Input/MultiSelectInput';
+} from '#rs/utils/common';
+import { FgRestBuilder } from '#rs/utils/rest';
+import Button from '#rs/components/Action/Button';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import Faram from '#rs/components/Input/Faram';
+import SearchInput from '#rs/components/Input/SearchInput';
+import DateFilter from '#rs/components/Input/DateFilter';
+import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
 
 import {
     createParamsForGet,
     createUrlForLeadFilterOptions,
-} from '../../rest';
+} from '#rest';
 import {
     activeProjectIdFromStateSelector,
     leadFilterOptionsForProjectSelector,
@@ -27,9 +27,9 @@ import {
     leadPageFilterSelector,
     setLeadFilterOptionsAction,
     unsetLeadPageFilterAction,
-} from '../../redux';
-import _ts from '../../ts';
-import schema from '../../schema';
+} from '#redux';
+import _ts from '#ts';
+import schema from '#schema';
 
 
 const propTypes = {
@@ -241,6 +241,22 @@ export default class FilterLeadsForm extends React.PureComponent {
                 schema={this.schema}
                 value={faramValues}
             >
+                <SearchInput
+                    faramElementName="search"
+                    label={_ts('leads', 'placeholderSearch')}
+                    placeholder={_ts('leads', 'placeholderSearch')}
+                    showHintAndError={false}
+                    showLabel
+                    className="leads-filter"
+                />
+                <DateFilter
+                    faramElementName="published_on"
+                    label={_ts('leads', 'filterDatePublished')}
+                    placeholder={_ts('leads', 'placeholderAnytime')}
+                    showHintAndError={false}
+                    showLabel
+                    className="leads-filter"
+                />
                 <MultiSelectInput
                     faramElementName="assignee"
                     keySelector={FilterLeadsForm.optionKeySelector}
@@ -255,14 +271,6 @@ export default class FilterLeadsForm extends React.PureComponent {
                 <DateFilter
                     faramElementName="created_at"
                     label={_ts('leads', 'filterDateCreated')}
-                    placeholder={_ts('leads', 'placeholderAnytime')}
-                    showHintAndError={false}
-                    showLabel
-                    className="leads-filter"
-                />
-                <DateFilter
-                    faramElementName="published_on"
-                    label={_ts('leads', 'filterDatePublished')}
                     placeholder={_ts('leads', 'placeholderAnytime')}
                     showHintAndError={false}
                     showLabel
@@ -286,14 +294,6 @@ export default class FilterLeadsForm extends React.PureComponent {
                     labelSelector={FilterLeadsForm.optionLabelSelector}
                     options={status}
                     placeholder={_ts('leads', 'placeholderAny')}
-                    showHintAndError={false}
-                    showLabel
-                    className="leads-filter"
-                />
-                <SearchInput
-                    faramElementName="search"
-                    label={_ts('leads', 'placeholderSearch')}
-                    placeholder={_ts('leads', 'placeholderSearch')}
                     showHintAndError={false}
                     showLabel
                     className="leads-filter"

@@ -1,12 +1,12 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
-import notify from '../../../notify';
-import schema from '../../../schema';
-import { getFiltersForRequest } from '../../../entities/lead';
+import { FgRestBuilder } from '#rs/utils/rest';
+import notify from '#notify';
+import schema from '#schema';
+import { getFiltersForRequest } from '#entities/lead';
 import {
     createUrlForArysOfProject,
     createParamsForGet,
     transformResponseErrorToFormError,
-} from '../../../rest';
+} from '#rest';
 
 export default class ArysGetRequest {
     constructor(params) {

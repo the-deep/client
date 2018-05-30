@@ -1,9 +1,9 @@
 import React from 'react';
 
-import BoundError from '../../../vendor/react-store/components/General/BoundError';
+import BoundError from '#rs/components/General/BoundError';
 
-import WidgetError from '../../../components/WidgetError';
-import _ts from '../../../ts';
+import WidgetError from '#components/WidgetError';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 

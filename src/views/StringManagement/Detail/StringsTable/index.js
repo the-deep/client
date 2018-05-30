@@ -1,21 +1,23 @@
-import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import WarningButton from '#rs/components/Action/Button/WarningButton';
+import Table from '#rs/components/View/Table';
 import {
     compareBoolean,
+    compareNumber,
+    compareString,
     compareStringAsNumber,
     compareStringByWordCount,
-    compareString,
-    compareNumber,
-} from '../../../../vendor/react-store/utils/common';
-import Table from '../../../../vendor/react-store/components/View/Table';
-import DangerButton from '../../../../vendor/react-store/components/Action/Button/DangerButton';
-import WarningButton from '../../../../vendor/react-store/components/Action/Button/WarningButton';
-import { allStringsSelector } from '../../../../redux';
+} from '#rs/utils/common';
 
-import { iconNames } from '../../../../constants';
+import { iconNames } from '#constants';
+import { allStringsSelector } from '#redux';
 
+import DeleteConfirm from '../DeleteConfirm';
+import EditStringModal from '../EditStringModal';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -39,6 +41,13 @@ export default class StringsTable extends React.PureComponent {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            editStringId: undefined,
+            deleteStringId: undefined,
+            showDeleteStringConfirmModal: false,
+            showEditStringModal: false,
+        };
 
         this.stringsTableHeader = [
             {
@@ -81,19 +90,19 @@ export default class StringsTable extends React.PureComponent {
                 key: 'actions',
                 label: 'Actions',
                 order: 5,
-                modifier: () => (
+                modifier: data => (
                     <Fragment>
                         <WarningButton
+                            onClick={() => { this.handleEditButtonClick(data.id); }}
                             iconName={iconNames.edit}
                             transparent
                             smallVerticalPadding
-                            disabled
                         />
                         <DangerButton
+                            onClick={() => { this.handleDeleteButtonClick(data.id); }}
                             iconName={iconNames.delete}
                             transparent
                             smallVerticalPadding
-                            disabled
                         />
                     </Fragment>
                 ),
@@ -106,17 +115,63 @@ export default class StringsTable extends React.PureComponent {
         };
     }
 
+    handleEditButtonClick = (stringId) => {
+        this.setState({
+            editStringId: stringId,
+            showEditStringModal: true,
+        });
+    }
+
+    handleDeleteButtonClick = (stringId) => {
+        this.setState({
+            deleteStringId: stringId,
+            showDeleteStringConfirmModal: true,
+        });
+    }
+
+    handleDeleteStringConfirmClose = () => {
+        this.setState({
+            showDeleteStringConfirmModal: false,
+        });
+    }
+
+    handleEditStringClose = () => {
+        this.setState({
+            showEditStringModal: false,
+        });
+    }
+
     render() {
         const { allStrings } = this.props;
+        const {
+            showDeleteStringConfirmModal,
+            deleteStringId,
+            editStringId,
+            showEditStringModal,
+        } = this.state;
 
         return (
-            <Table
-                className={styles.stringsTable}
-                data={allStrings}
-                headers={this.stringsTableHeader}
-                keyExtractor={StringsTable.keyExtractor}
-                defaultSort={this.stringsTableDefaultSort}
-            />
+            <React.Fragment>
+                <Table
+                    className={styles.stringsTable}
+                    data={allStrings}
+                    headers={this.stringsTableHeader}
+                    keyExtractor={StringsTable.keyExtractor}
+                    defaultSort={this.stringsTableDefaultSort}
+                />
+                <DeleteConfirm
+                    show={showDeleteStringConfirmModal}
+                    deleteId={deleteStringId}
+                    type="all"
+                    onClose={this.handleDeleteStringConfirmClose}
+                />
+                { showEditStringModal &&
+                    <EditStringModal
+                        editStringId={editStringId}
+                        onClose={this.handleEditStringClose}
+                    />
+                }
+            </React.Fragment>
         );
     }
 }

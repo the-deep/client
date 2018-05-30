@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Button from '../../../../../vendor/react-store/components/Action/Button';
-import DangerButton from '../../../../../vendor/react-store/components/Action/Button/DangerButton';
-import ListView from '../../../../../vendor/react-store/components/View/List/ListView';
+import Button from '#rs/components/Action/Button';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import ListView from '#rs/components/View/List/ListView';
 
-import { entryAccessor, ENTRY_STATUS } from '../../../../../entities/entry';
-import { iconNames } from '../../../../../constants';
-import _ts from '../../../../../ts';
+import { entryAccessor, ENTRY_STATUS } from '#entities/entry';
+import { iconNames } from '#constants';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 

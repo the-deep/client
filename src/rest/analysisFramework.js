@@ -4,7 +4,7 @@ import {
     PUT,
     commonHeaderForPost,
     p,
-} from '../config/rest';
+} from '#config/rest';
 
 const afsUrlFields = ['id', 'title', 'version_id', 'created_at', 'modified_at',
     'is_admin', 'description', 'snapshot_one', 'snapshot_two'];

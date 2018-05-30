@@ -2,20 +2,15 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
-import Modal from '../../vendor/react-store/components/View/Modal';
-import ModalBody from '../../vendor/react-store/components/View/Modal/Body';
-import ModalHeader from '../../vendor/react-store/components/View/Modal/Header';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
-import BoundError from '../../vendor/react-store/components/General/BoundError';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import BoundError from '#rs/components/General/BoundError';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Modal from '#rs/components/View/Modal';
+import ModalBody from '#rs/components/View/Modal/Body';
+import ModalHeader from '#rs/components/View/Modal/Header';
 
-import AppError from '../../components/AppError';
-import _ts from '../../ts';
-
-import MembersTable from './MembersTable';
-import ProjectsTable from './ProjectsTable';
-import UserGroupEdit from './UserGroupEdit';
-
+import AppError from '#components/AppError';
+import { iconNames } from '#constants';
 import {
     groupSelector,
     setUserGroupAction,
@@ -23,9 +18,12 @@ import {
 
     activeUserSelector,
     groupIdFromRouteSelector,
-} from '../../redux';
-import { iconNames } from '../../constants';
+} from '#redux';
+import _ts from '#ts';
 
+import MembersTable from './MembersTable';
+import ProjectsTable from './ProjectsTable';
+import UserGroupEdit from './UserGroupEdit';
 import UserGroupGetRequest from './requests/UserGroupGetRequest';
 
 import styles from './styles.scss';

@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import AccentButton from '../../../vendor/react-store/components/Action/Button/AccentButton';
-import ListView from '../../../vendor/react-store/components/View/List/ListView';
+import AccentButton from '#rs/components/Action/Button/AccentButton';
+import ListView from '#rs/components/View/List/ListView';
 
-import _ts from '../../../ts';
-import { iconNames } from '../../../constants';
+import _ts from '#ts';
+import { iconNames } from '#constants';
 
 import styles from './styles.scss';
 

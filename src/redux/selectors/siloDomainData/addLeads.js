@@ -1,19 +1,22 @@
 import { createSelector } from 'reselect';
+
 import {
     isObjectEmpty,
     compareString,
     caseInsensitiveSubmatch,
-} from '../../../vendor/react-store/utils/common';
-import {
-    projectIdFromRoute,
-    connectorIdFromRoute,
-} from '../domainData';
+} from '#rs/utils/common';
+
 import {
     LEAD_FILTER_STATUS,
     LEAD_STATUS,
     calcLeadState,
     leadAccessor,
-} from '../../../entities/lead';
+} from '#entities/lead';
+
+import {
+    projectIdFromRoute,
+    connectorIdFromRoute,
+} from '../domainData';
 
 const emptyList = [];
 const emptyObject = {};

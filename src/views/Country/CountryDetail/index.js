@@ -3,14 +3,14 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 
-import Faram, { requiredCondition } from '../../../vendor/react-store/components/Input/Faram';
-import DangerButton from '../../../vendor/react-store/components/Action/Button/DangerButton';
-import FixedTabs from '../../../vendor/react-store/components/View/FixedTabs';
-import MultiViewContainer from '../../../vendor/react-store/components/View/MultiViewContainer';
-import Confirm from '../../../vendor/react-store/components/View/Modal/Confirm';
-import SuccessButton from '../../../vendor/react-store/components/Action/Button/SuccessButton';
-import WarningButton from '../../../vendor/react-store/components/Action/Button/WarningButton';
-import LoadingAnimation from '../../../vendor/react-store/components/View/LoadingAnimation';
+import Faram, { requiredCondition } from '#rs/components/Input/Faram';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import FixedTabs from '#rs/components/View/FixedTabs';
+import MultiViewContainer from '#rs/components/View/MultiViewContainer';
+import Confirm from '#rs/components/View/Modal/Confirm';
+import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import WarningButton from '#rs/components/Action/Button/WarningButton';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import {
     countryDetailSelector,
     regionDetailSelector,
@@ -20,10 +20,10 @@ import {
     changeRegionDetailsAction,
     setRegionDetailsErrorsAction,
     routeUrlSelector,
-} from '../../../redux';
-import _ts from '../../../ts';
-import RegionDetailView from '../../../components/RegionDetailView';
-import RegionMap from '../../../components/RegionMap';
+} from '#redux';
+import _ts from '#ts';
+import RegionDetailView from '#components/RegionDetailView';
+import RegionMap from '#components/RegionMap';
 
 import RegionDeleteRequest from '../requests/RegionDeleteRequest';
 import RegionGetRequest from '../requests/RegionGetRequest';

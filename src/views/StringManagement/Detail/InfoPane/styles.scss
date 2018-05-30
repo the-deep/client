@@ -49,8 +49,12 @@ $width-error-pane: 320px;
         font-family: $font-family-monospace;
 
         .item {
-            padding: $spacing-small;
             border-bottom: $width-separator-thin solid $color-separator;
+            padding: $spacing-small;
+
+            .message {
+                color: $color-text-label;
+            }
         }
     }
 }

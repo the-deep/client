@@ -1,12 +1,12 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
-import { checkVersion } from '../../../vendor/react-store/utils/common';
+import { FgRestBuilder } from '#rs/utils/rest';
+import { checkVersion } from '#rs/utils/common';
 import {
     createUrlForLeadGroupAry,
     createUrlForLeadAry,
     createParamsForGet,
-} from '../../../rest';
-import notify from '../../../notify';
-import schema from '../../../schema';
+} from '#rest';
+import notify from '#notify';
+import schema from '#schema';
 
 export default class AryGetRequest {
     constructor(params) {

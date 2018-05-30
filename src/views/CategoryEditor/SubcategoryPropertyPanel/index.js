@@ -2,22 +2,22 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { bound } from '../../../vendor/react-store/utils/common';
-import ListView from '../../../vendor/react-store/components/View/List/ListView';
-import PrimaryButton from '../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import DangerButton from '../../../vendor/react-store/components/Action/Button/DangerButton';
-import TextInput from '../../../vendor/react-store/components/Input/TextInput';
-import TextArea from '../../../vendor/react-store/components/Input/TextArea';
-import Confirm from '../../../vendor/react-store/components/View/Modal/Confirm';
+import { bound } from '#rs/utils/common';
+import ListView from '#rs/components/View/List/ListView';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import TextInput from '#rs/components/Input/TextInput';
+import TextArea from '#rs/components/Input/TextArea';
+import Confirm from '#rs/components/View/Modal/Confirm';
 
-import _ts from '../../../ts';
+import _ts from '#ts';
 import {
     selectedSubcategorySelector,
     updateSelectedSubcategoryAction,
     removeSelectedSubcategoryAction,
     removeSubcategoryNGramAction,
     ceIdFromRouteSelector,
-} from '../../../redux';
+} from '#redux';
 
 import styles from './styles.scss';
 import NGram from './NGram';

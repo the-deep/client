@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import styles from './styles.scss';
 
-import ListView from '../../../vendor/react-store/components/View/List/ListView';
+import ListView from '#rs/components/View/List/ListView';
 
 import MatrixCell from './MatrixCell';
+import styles from './styles.scss';
 
 const propTypes = {
     title: PropTypes.string,

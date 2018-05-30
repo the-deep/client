@@ -1,7 +1,7 @@
 import React from 'react';
 
-import BoundError from '../../vendor/react-store/components/General/BoundError';
-import AppError from '../../components/AppError';
+import BoundError from '#rs/components/General/BoundError';
+import AppError from '#components/AppError';
 
 const propTypes = {
 };

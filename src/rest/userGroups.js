@@ -1,4 +1,4 @@
-import { wsEndpoint, POST, DELETE, PATCH, commonHeaderForPost, p } from '../config/rest';
+import { wsEndpoint, POST, DELETE, PATCH, commonHeaderForPost, p } from '#config/rest';
 
 export const urlForUserMembership = `${wsEndpoint}/group-memberships/`;
 

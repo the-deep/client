@@ -1,22 +1,22 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { FgRestBuilder } from '../../vendor/react-store/utils/rest';
-import SegmentButton from '../../vendor/react-store/components/Action/SegmentButton';
-import Button from '../../vendor/react-store/components/Action/Button';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
+import Button from '#rs/components/Action/Button';
+import SegmentButton from '#rs/components/Action/SegmentButton';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import { FgRestBuilder } from '#rs/utils/rest';
 
+import { iconNames } from '#constants';
 import {
     createParamsForGet,
     createUrlForAdminLevelsForRegion,
     createUrlForGeoAreasLoadTrigger,
     createUrlForGeoJsonMap,
     createUrlForGeoJsonBounds,
-} from '../../rest';
-import { iconNames } from '../../constants';
-import GeoJsonMap from '../GeoJsonMap';
-import _ts from '../../ts';
+} from '#rest';
+import _ts from '#ts';
 
+import GeoJsonMap from '../GeoJsonMap';
 import styles from './styles.scss';
 
 const propTypes = {

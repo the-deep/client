@@ -1,10 +1,10 @@
-import { BgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { BgRestBuilder } from '#rs/utils/rest';
 
 import {
     createParamsForGet,
     createUrlForLanguage,
-} from '../../../rest';
-import schema from '../../../schema';
+} from '#rest';
+import schema from '#schema';
 
 export default class LanguageGet {
     constructor(props) {

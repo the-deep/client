@@ -3,30 +3,30 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
-import { FgRestBuilder } from './vendor/react-store/utils/rest';
-import AppLoading from './components/AppLoading';
+import { FgRestBuilder } from '#rs/utils/rest';
+import AppLoading from '#components/AppLoading';
 import {
     initializeGa,
     setGaUserId,
-} from './config/google-analytics';
+} from '#config/google-analytics';
 import {
     createParamsForTokenRefresh,
     urlForTokenRefresh,
-} from './rest';
+} from '#rest';
 import {
     startSiloBackgroundTasksAction,
     stopSiloBackgroundTasksAction,
-} from './redux/middlewares/siloBackgroundTasks';
+} from '#redux/middlewares/siloBackgroundTasks';
 import {
     setAccessTokenAction,
     logoutAction,
     tokenSelector,
     activeUserSelector,
     readySelector,
-} from './redux';
-import getUserConfirmation from './utils/getUserConfirmation';
+} from '#redux';
+import getUserConfirmation from '#utils/getUserConfirmation';
 
-import schema from './schema';
+import schema from '#schema';
 
 import Multiplexer from './Multiplexer';
 

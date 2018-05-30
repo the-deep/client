@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import ListView from '../../vendor/react-store/components/View/List/ListView';
+import ListView from '#rs/components/View/List/ListView';
 
-import { generalDetailsForRegionSelector } from '../../redux';
-import _ts from '../../ts';
+import { generalDetailsForRegionSelector } from '#redux';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 

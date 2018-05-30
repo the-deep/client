@@ -2,23 +2,23 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
-import FixedTabs from '../../../vendor/react-store/components/View/FixedTabs';
-import MultiViewContainer from '../../../vendor/react-store/components/View/MultiViewContainer';
-import LoadingAnimation from '../../../vendor/react-store/components/View/LoadingAnimation';
+import { FgRestBuilder } from '#rs/utils/rest';
+import FixedTabs from '#rs/components/View/FixedTabs';
+import MultiViewContainer from '#rs/components/View/MultiViewContainer';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 
 import {
     createParamsForGet,
     createUrlForProject,
     createUrlForProjectOptions,
-} from '../../../rest';
+} from '#rest';
 import {
     projectDetailsSelector,
     setProjectAction,
     setProjectOptionsAction,
-} from '../../../redux';
-import schema from '../../../schema';
-import _ts from '../../../ts';
+} from '#redux';
+import schema from '#schema';
+import _ts from '#ts';
 
 import General from './General';
 import Regions from './Regions';

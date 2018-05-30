@@ -2,27 +2,27 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '../../vendor/react-store/utils/rest';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
-import MultiViewContainer from '../../vendor/react-store/components/View/MultiViewContainer';
-import { checkVersion } from '../../vendor/react-store/utils/common';
+import { FgRestBuilder } from '#rs/utils/rest';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import MultiViewContainer from '#rs/components/View/MultiViewContainer';
+import { checkVersion } from '#rs/utils/common';
 
-import BoundError from '../../vendor/react-store/components/General/BoundError';
-import AppError from '../../components/AppError';
+import BoundError from '#rs/components/General/BoundError';
+import AppError from '#components/AppError';
 import {
     createParamsForGet,
     createParamsForAnalysisFrameworkEdit,
     createUrlForAnalysisFramework,
-} from '../../rest';
+} from '#rest';
 import {
     afIdFromRoute,
     setAfViewAnalysisFrameworkAction,
 
     afViewCurrentAnalysisFrameworkSelector,
-} from '../../redux';
-import notify from '../../notify';
-import schema from '../../schema';
-import _ts from '../../ts';
+} from '#redux';
+import notify from '#notify';
+import schema from '#schema';
+import _ts from '#ts';
 
 import Overview from './Overview';
 import List from './List';

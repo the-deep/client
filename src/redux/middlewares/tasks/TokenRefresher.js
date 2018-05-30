@@ -1,14 +1,14 @@
-import { BgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { BgRestBuilder } from '#rs/utils/rest';
 
-import schema from '../../../schema';
 import {
     createParamsForTokenRefresh,
     urlForTokenRefresh,
-} from '../../../rest';
+} from '#rest';
+import schema from '#schema';
+import AbstractTask from '#utils/AbstractTask';
 
-import { tokenSelector } from '../../selectors/auth';
 import { setAccessTokenAction } from '../../reducers/auth';
-import AbstractTask from '../../../utils/AbstractTask';
+import { tokenSelector } from '../../selectors/auth';
 
 const REFRESH_TIME = 1000 * 60 * 10;
 const REFRESH_CHECK_TIME = 1000;

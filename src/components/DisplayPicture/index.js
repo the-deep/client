@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import ReactSVG from 'react-svg';
 
-import defaultUser from '../../resources/img/default-user.svg';
+import defaultUser from '#resources/img/default-user.svg';
 
 import { InternalGallery } from '../DeepGallery';
 import styles from './styles.scss';

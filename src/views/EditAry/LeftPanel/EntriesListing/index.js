@@ -3,18 +3,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { reverseRoute } from '../../../../vendor/react-store/utils/common';
-import Label from '../../../../vendor/react-store/components/Input/Label';
-import ListView from '../../../../vendor/react-store/components/View/List/ListView';
-import LoadingAnimation from '../../../../vendor/react-store/components/View/LoadingAnimation';
+import { reverseRoute } from '#rs/utils/common';
+import Label from '#rs/components/Input/Label';
+import ListView from '#rs/components/View/List/ListView';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 
 import {
     editAryEntriesSelector,
     setEntriesForEditAryAction,
     projectIdFromRouteSelector,
-} from '../../../../redux';
-import { pathNames } from '../../../../constants';
-import _ts from '../../../../ts';
+} from '#redux';
+import { pathNames } from '#constants';
+import _ts from '#ts';
 
 import EntriesRequest from './requests/EntriesRequest';
 import styles from './styles.scss';

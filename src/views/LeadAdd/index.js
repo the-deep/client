@@ -11,13 +11,13 @@ import { Prompt } from 'react-router-dom';
 import {
     isTruthy,
     randomString,
-} from '../../vendor/react-store/utils/common';
-import { CoordinatorBuilder } from '../../vendor/react-store/utils/coordinate';
-import List from '../../vendor/react-store/components/View/List';
-import Message from '../../vendor/react-store/components/View/Message';
-import BoundError from '../../vendor/react-store/components/General/BoundError';
+} from '#rs/utils/common';
+import { CoordinatorBuilder } from '#rs/utils/coordinate';
+import List from '#rs/components/View/List';
+import Message from '#rs/components/View/Message';
+import BoundError from '#rs/components/General/BoundError';
 
-import AppError from '../../components/AppError';
+import AppError from '#components/AppError';
 import {
     routeStateSelector,
     leadFilterOptionsSelector,
@@ -33,10 +33,10 @@ import {
     addLeadViewRemoveSavedLeadsAction,
     addLeadViewSetLeadRestsAction,
     addLeadViewButtonStatesSelector,
-} from '../../redux';
-import { leadAccessor } from '../../entities/lead';
-import _ts from '../../ts';
-import notify from '../../notify';
+} from '#redux';
+import { leadAccessor } from '#entities/lead';
+import _ts from '#ts';
+import notify from '#notify';
 
 import FormSaveRequest from './requests/FormSaveRequest';
 

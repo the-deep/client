@@ -7,24 +7,24 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import BoundError from '../../vendor/react-store/components/General/BoundError';
-import AppError from '../../components/AppError';
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
-import Modal from '../../vendor/react-store/components/View/Modal';
-import ModalBody from '../../vendor/react-store/components/View/Modal/Body';
-import ModalHeader from '../../vendor/react-store/components/View/Modal/Header';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
+import BoundError from '#rs/components/General/BoundError';
+import AppError from '#components/AppError';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import Modal from '#rs/components/View/Modal';
+import ModalBody from '#rs/components/View/Modal/Body';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 
-import DisplayPicture from '../../components/DisplayPicture';
+import DisplayPicture from '#components/DisplayPicture';
 import {
     userInformationSelector,
     setUserInformationAction,
     unsetUserAction,
     activeUserSelector,
     userIdFromRouteSelector,
-} from '../../redux';
-import _ts from '../../ts';
-import { iconNames } from '../../constants';
+} from '#redux';
+import _ts from '#ts';
+import { iconNames } from '#constants';
 
 import UserGetRequest from './requests/UserGetRequest';
 import UserProject from './UserProject';

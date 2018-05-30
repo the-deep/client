@@ -7,12 +7,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { BgRestBuilder } from '../../../vendor/react-store/utils/rest';
-import MultiSelectInput from '../../../vendor/react-store/components/Input/MultiSelectInput';
-import SelectInput from '../../../vendor/react-store/components/Input/SelectInput';
-import TextInput from '../../../vendor/react-store/components/Input/TextInput';
-import SearchInput from '../../../vendor/react-store/components/Input/SearchInput';
-import DangerButton from '../../../vendor/react-store/components/Action/Button/DangerButton';
+import { BgRestBuilder } from '#rs/utils/rest';
+import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
+import SelectInput from '#rs/components/Input/SelectInput';
+import TextInput from '#rs/components/Input/TextInput';
+import SearchInput from '#rs/components/Input/SearchInput';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
 
 import {
     activeProjectIdFromStateSelector,
@@ -21,17 +21,17 @@ import {
     addLeadViewFiltersSelector,
     addLeadViewIsFilterEmptySelector,
     setLeadFilterOptionsAction,
-} from '../../../redux';
+} from '#redux';
 import {
     createParamsForGet,
     createUrlForLeadFilterOptions,
-} from '../../../rest';
+} from '#rest';
 import {
     LEAD_TYPE,
     LEAD_FILTER_STATUS,
-} from '../../../entities/lead';
-import _ts from '../../../ts';
-import schema from '../../../schema';
+} from '#entities/lead';
+import _ts from '#ts';
+import schema from '#schema';
 
 import styles from './styles.scss';
 

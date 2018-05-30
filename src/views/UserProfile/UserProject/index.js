@@ -14,16 +14,16 @@ import {
     compareDate,
     compareLength,
     compareString,
-} from '../../../vendor/react-store/utils/common';
-import DangerButton from '../../../vendor/react-store/components/Action/Button/DangerButton';
-import PrimaryButton from '../../../vendor/react-store/components/Action/Button/PrimaryButton';
-import LoadingAnimation from '../../../vendor/react-store/components/View/LoadingAnimation';
-import Confirm from '../../../vendor/react-store/components/View/Modal/Confirm';
-import FormattedDate from '../../../vendor/react-store/components/View/FormattedDate';
-import Modal from '../../../vendor/react-store/components/View/Modal';
-import ModalBody from '../../../vendor/react-store/components/View/Modal/Body';
-import ModalHeader from '../../../vendor/react-store/components/View/Modal/Header';
-import Table from '../../../vendor/react-store/components/View/Table';
+} from '#rs/utils/common';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Confirm from '#rs/components/View/Modal/Confirm';
+import FormattedDate from '#rs/components/View/FormattedDate';
+import Modal from '#rs/components/View/Modal';
+import ModalBody from '#rs/components/View/Modal/Body';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import Table from '#rs/components/View/Table';
 
 import {
     userProjectsSelector,
@@ -31,13 +31,13 @@ import {
     activeUserSelector,
     unSetProjectAction,
     userIdFromRouteSelector,
-} from '../../../redux';
+} from '#redux';
 import {
     iconNames,
     pathNames,
-} from '../../../constants';
-import _ts from '../../../ts';
-import UserProjectAdd from '../../../components/UserProjectAdd';
+} from '#constants';
+import _ts from '#ts';
+import UserProjectAdd from '#components/UserProjectAdd';
 
 import UserProjectsGetRequest from '../requests/UserProjectsGetRequest';
 import ProjectDeleteRequest from '../requests/ProjectDeleteRequest';

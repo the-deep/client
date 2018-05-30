@@ -4,7 +4,7 @@ import {
     commonHeaderForPost,
     authorizationHeaderForPost,
     p,
-} from '../config/rest';
+} from '#config/rest';
 
 export const urlForUpload = `${wsEndpoint}/files/`;
 export const urlForGoogleDriveFileUpload = `${wsEndpoint}/files-google-drive/`;

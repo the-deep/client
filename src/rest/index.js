@@ -1,4 +1,4 @@
-import { GET, commonHeaderForGet } from '../config/rest';
+import { GET, commonHeaderForGet } from '#config/rest';
 
 export * from './docs';
 export * from './languages';

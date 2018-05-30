@@ -3,10 +3,10 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { shallow } from 'enzyme';
 import UserProject from '../index';
-import Modal from '../../../../vendor/react-store/components/View/Modal';
-import ModalBody from '../../../../vendor/react-store/components/View/Modal/Body';
-import ModalHeader from '../../../../vendor/react-store/components/View/Modal/Header';
-import Table from '../../../../vendor/react-store/components/View/Table';
+import Modal from '#rs/components/View/Modal';
+import ModalBody from '#rs/components/View/Modal/Body';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import Table from '#rs/components/View/Table';
 
 const initialState = {
 };

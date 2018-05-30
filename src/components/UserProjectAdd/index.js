@@ -6,29 +6,29 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '../../vendor/react-store/utils/rest';
+import { FgRestBuilder } from '#rs/utils/rest';
 import Faram, {
     requiredCondition,
-} from '../../vendor/react-store/components/Input/Faram';
-import NonFieldErrors from '../../vendor/react-store/components/Input/NonFieldErrors';
-import TextInput from '../../vendor/react-store/components/Input/TextInput';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
-import DangerButton from '../../vendor/react-store/components/Action/Button/DangerButton';
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
+} from '#rs/components/Input/Faram';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import TextInput from '#rs/components/Input/TextInput';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 
 import {
     alterResponseErrorToFaramError,
     createParamsForProjectCreate,
     urlForProjectCreate,
-} from '../../rest';
+} from '#rest';
 import {
     setProjectAction,
     activeUserSelector,
-} from '../../redux';
-import schema from '../../schema';
+} from '#redux';
+import schema from '#schema';
 
-import _ts from '../../ts';
-import notify from '../../notify';
+import _ts from '#ts';
+import notify from '#notify';
 import styles from './styles.scss';
 
 const propTypes = {

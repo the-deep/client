@@ -5,7 +5,7 @@ import {
     commonHeaderForPost,
     p,
     wsEndpoint,
-} from '../config/rest';
+} from '#config/rest';
 
 
 export const urlForAryTemplates = `${wsEndpoint}/assessment-templates/`;

@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import TextArea from '../../../vendor/react-store/components/Input/TextArea';
-import AccentButton from '../../../vendor/react-store/components/Action/Button/AccentButton';
-import { formatPdfText } from '../../../vendor/react-store/utils/common';
-import BoundError from '../../../vendor/react-store/components/General/BoundError';
+import TextArea from '#rs/components/Input/TextArea';
+import AccentButton from '#rs/components/Action/Button/AccentButton';
+import { formatPdfText } from '#rs/utils/common';
+import BoundError from '#rs/components/General/BoundError';
 
-import { iconNames } from '../../../constants';
-import _ts from '../../../ts';
-import WidgetError from '../../../components/WidgetError';
+import { iconNames } from '#constants';
+import _ts from '#ts';
+import WidgetError from '#components/WidgetError';
 
 import styles from './styles.scss';
 

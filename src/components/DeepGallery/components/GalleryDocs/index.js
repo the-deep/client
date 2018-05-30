@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { createUrlForGoogleViewer } from '../../../../rest/external';
+import { createUrlForGoogleViewer } from '#rest/external';
 import styles from './styles.scss';
 
-export { galleryDocsMimeType as supportedMimeType } from '../../../../config/deepMimeTypes';
+export { galleryDocsMimeType as supportedMimeType } from '#config/deepMimeTypes';
 
 const propTypes = {
     className: PropTypes.string,

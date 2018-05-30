@@ -3,31 +3,31 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import Modal from '../../vendor/react-store/components/View/Modal';
-import ModalBody from '../../vendor/react-store/components/View/Modal/Body';
-import ModalHeader from '../../vendor/react-store/components/View/Modal/Header';
-import BoundError from '../../vendor/react-store/components/General/BoundError';
-import SearchInput from '../../vendor/react-store/components/Input/SearchInput';
-import PrimaryButton from '../../vendor/react-store/components/Action/Button/PrimaryButton';
-import ListView from '../../../src/vendor/react-store/components/View/List/ListView';
+import Modal from '#rs/components/View/Modal';
+import ModalBody from '#rs/components/View/Modal/Body';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import BoundError from '#rs/components/General/BoundError';
+import SearchInput from '#rs/components/Input/SearchInput';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import ListView from '#rs/components/View/List/ListView';
 import {
     reverseRoute,
     caseInsensitiveSubmatch,
-} from '../../vendor/react-store/utils/common';
+} from '#rs/utils/common';
 
-import AppError from '../../components/AppError';
+import AppError from '#components/AppError';
 import {
     connectorsListSelector,
     connectorIdFromRouteSelector,
 
     setConnectorSourcesAction,
     setUserConnectorsAction,
-} from '../../redux';
+} from '#redux';
 import {
     iconNames,
     pathNames,
-} from '../../constants';
-import _ts from '../../ts';
+} from '#constants';
+import _ts from '#ts';
 
 import ConnectorsGetRequest from './requests/ConnectorsGetRequest';
 import ConnectorSourcesGetRequest from './requests/ConnectorSourcesGetRequest';

@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import LoadingAnimation from '../../../../vendor/react-store/components/View/LoadingAnimation';
-import FaramGroup from '../../../../vendor/react-store/components/Input/Faram/FaramGroup';
-import TextInput from '../../../../vendor/react-store/components/Input/TextInput';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
+import TextInput from '#rs/components/Input/TextInput';
 
-import { iconNames } from '../../../../constants';
-import _ts from '../../../../ts';
+import { iconNames } from '#constants';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 

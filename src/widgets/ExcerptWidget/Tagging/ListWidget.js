@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import TextArea from '../../../vendor/react-store/components/Input/TextArea';
+import TextArea from '#rs/components/Input/TextArea';
 
-import BoundError from '../../../vendor/react-store/components/General/BoundError';
+import BoundError from '#rs/components/General/BoundError';
 
-import WidgetError from '../../../components/WidgetError';
-import _ts from '../../../ts';
+import WidgetError from '#components/WidgetError';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 

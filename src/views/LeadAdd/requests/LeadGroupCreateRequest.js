@@ -1,13 +1,13 @@
-import { FgRestBuilder } from '../../../vendor/react-store/utils/rest';
+import { FgRestBuilder } from '#rs/utils/rest';
 import {
     urlForLeadGroups,
     createParamsForLeadGroupCreate,
     alterResponseErrorToFaramError,
-} from '../../../rest';
-import _ts from '../../../ts';
+} from '#rest';
+import _ts from '#ts';
 
-import schema from '../../../schema';
-import notify from '../../../notify';
+import schema from '#schema';
+import notify from '#notify';
 
 export default class LeadGroupsCreateRequest {
     constructor(props) {

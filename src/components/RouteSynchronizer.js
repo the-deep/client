@@ -3,13 +3,15 @@ import Helmet from 'react-helmet';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
-import viewsAcl from '../constants/viewsAcl';
-import { routes } from '../constants';
+import Bundle from '#rs/components/General/Bundle';
+import withTracker from '#rs/components/General/withTracker';
+import {
+    reverseRoute,
+} from '#rs/utils/common';
 
-import Cloak from '../components/Cloak';
-import Bundle from '../vendor/react-store/components/General/Bundle';
-import withTracker from '../vendor/react-store/components/General/withTracker';
-import { reverseRoute } from '../vendor/react-store/utils/common';
+import Cloak from '#components/Cloak';
+import { routes } from '#constants/routes';
+import viewsAcl from '#constants/viewsAcl';
 
 import {
     activeProjectIdFromStateSelector,
@@ -17,9 +19,8 @@ import {
     setActiveProjectAction,
     setActiveCountryAction,
     setRouteParamsAction,
-    routePathKeySelector,
-} from '../redux';
-import _ts from '../ts';
+} from '#redux';
+import _ts from '#ts';
 
 const propTypes = {
     match: PropTypes.shape({
@@ -42,8 +43,6 @@ const propTypes = {
     activeCountryId: PropTypes.number,
     setRouteParams: PropTypes.func.isRequired,
 
-    routePathKey: PropTypes.string.isRequired,
-
     name: PropTypes.string.isRequired,
 };
 
@@ -55,7 +54,6 @@ const defaultProps = {
 const mapStateToProps = state => ({
     activeProjectId: activeProjectIdFromStateSelector(state),
     activeCountryId: activeCountryIdFromStateSelector(state),
-    routePathKey: routePathKeySelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -195,7 +193,7 @@ class RouteSynchronizer extends React.PureComponent {
     renderBundle = () => {
         const {
             match, // eslint-disable-line no-unused-vars
-            routePathKey,
+            name,
             ...otherProps
         } = this.props;
 
@@ -204,26 +202,26 @@ class RouteSynchronizer extends React.PureComponent {
                 <Helmet>
                     <meta charSet="utf-8" />
                     <title>
-                        { _ts('pageTitle', routePathKey) }
+                        { _ts('pageTitle', name) }
                     </title>
                 </Helmet>
-                <Bundle {...otherProps} />
+                <Bundle name={name} {...otherProps} />
             </Fragment>
         );
     }
 
     renderBundleOnCloak = () => {
-        const routePathKey = 'fourHundredFour';
+        const name = 'fourHundredFour';
         return (
             <Fragment>
                 <Helmet>
                     <meta charSet="utf-8" />
                     <title>
-                        { _ts('pageTitle', routePathKey) }
+                        { _ts('pageTitle', name) }
                     </title>
                 </Helmet>
                 <Bundle
-                    load={routes[routePathKey].loader}
+                    load={routes[name].loader}
                 />
             </Fragment>
         );

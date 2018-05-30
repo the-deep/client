@@ -4,18 +4,18 @@ import ReactSVG from 'react-svg';
 import { connect } from 'react-redux';
 import { Redirect, Link } from 'react-router-dom';
 
-import { reverseRoute } from '../../vendor/react-store/utils/common';
-import BoundError from '../../vendor/react-store/components/General/BoundError';
+import { reverseRoute } from '#rs/utils/common';
+import BoundError from '#rs/components/General/BoundError';
 
 import {
     activeProjectIdFromStateSelector,
     activeUserSelector,
     currentUserProjectsSelector,
-} from '../../redux';
-import AppError from '../../components/AppError';
-import { pathNames } from '../../constants';
-import _ts from '../../ts';
-import logo from '../../resources/img/deep-logo.svg';
+} from '#redux';
+import AppError from '#components/AppError';
+import { pathNames } from '#constants';
+import _ts from '#ts';
+import logo from '#resources/img/deep-logo.svg';
 
 import styles from './styles.scss';
 

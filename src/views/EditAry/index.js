@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types'; import { connect } from 'react-redux';
 
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
-import ResizableH from '../../vendor/react-store/components/View/Resizable/ResizableH';
-import { isFalsy } from '../../vendor/react-store/utils/common';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import ResizableH from '#rs/components/View/Resizable/ResizableH';
+import { isFalsy } from '#rs/utils/common';
 
 import {
     setAryTemplateAction,
@@ -14,8 +14,8 @@ import {
     leadIdFromRouteSelector,
     leadGroupIdFromRouteSelector,
     editAryVersionIdSelector,
-} from '../../redux';
-import _ts from '../../ts';
+} from '#redux';
+import _ts from '#ts';
 
 import LeadRequest from './requests/LeadRequest';
 import LeadGroupRequest from './requests/LeadGroupRequest';

@@ -1,11 +1,11 @@
-import { UploadBuilder } from '../../../vendor/react-store/utils/upload';
-import { leadAccessor } from '../../../entities/lead';
+import { UploadBuilder } from '#rs/utils/upload';
+import { leadAccessor } from '#entities/lead';
 
 import {
     urlForUpload,
     createParamsForFileUpload,
-} from '../../../rest';
-import _ts from '../../../ts';
+} from '#rest';
+import _ts from '#ts';
 
 export default class FileUploadRequest {
     constructor(params) {

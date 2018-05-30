@@ -2,25 +2,25 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '../../../../../vendor/react-store/utils/rest';
-import NonFieldErrors from '../../../../../vendor/react-store/components/Input/NonFieldErrors';
-import TextInput from '../../../../../vendor/react-store/components/Input/TextInput';
-import LoadingAnimation from '../../../../../vendor/react-store/components/View/LoadingAnimation';
-import DangerButton from '../../../../../vendor/react-store/components/Action/Button/DangerButton';
-import PrimaryButton from '../../../../../vendor/react-store/components/Action/Button/PrimaryButton';
+import { FgRestBuilder } from '#rs/utils/rest';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import TextInput from '#rs/components/Input/TextInput';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import Faram, {
     requiredCondition,
-} from '../../../../../vendor/react-store/components/Input/Faram';
+} from '#rs/components/Input/Faram';
 
 import {
     alterResponseErrorToFaramError,
     createParamsForAfCreate,
     urlForAfCreate,
-} from '../../../../../rest';
-import { addNewAfAction } from '../../../../../redux';
-import _ts from '../../../../../ts';
-import notify from '../../../../../notify';
-import schema from '../../../../../schema';
+} from '#rest';
+import { addNewAfAction } from '#redux';
+import _ts from '#ts';
+import notify from '#notify';
+import schema from '#schema';
 
 import styles from './styles.scss';
 

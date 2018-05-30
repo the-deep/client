@@ -1,0 +1,31 @@
+@import '../../../../stylesheets/base';
+
+.message {
+    margin-bottom: $spacing-medium;
+    font-weight: $font-weight-bold;
+}
+
+.properties {
+    display: table;
+    width: 100%;
+
+    .property {
+        @extend %background-alternating-row;
+        display: table-row;
+
+        .label {
+            display: table-cell;
+            padding: $spacing-small;
+            text-transform: uppercase;
+            white-space: nowrap;
+            color: $color-text-label;
+            font-size: $font-size-small;
+        }
+
+        .value {
+            display: table-cell;
+            padding: $spacing-small;
+            width: 100%;
+        }
+    }
+}

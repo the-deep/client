@@ -14,27 +14,37 @@
                 "polyfill": false,
                 "regenerator": true
             }
+        ],
+        [
+            "module-resolver",
+            {
+                "root": ["."],
+                "alias": {
+                    "#rs": "./src/vendor/react-store",
+                    "#ravl": "./src/vendor/ravl",
+
+                    "#components": "./src/components",
+                    "#config": "./src/config",
+                    "#entities": "./src/entities",
+                    "#constants": "./src/constants",
+                    "#redux": "./src/redux",
+                    "#resources": "./src/resources",
+                    "#rest": "./src/rest",
+                    "#schema": "./src/schema",
+                    "#utils": "./src/utils",
+                    "#widgets": "./src/widgets",
+
+                    "#notify": "./src/notify",
+                    "#store": "./src/store",
+                    "#ts": "./src/ts"
+                }
+            }
         ]
     ],
     "env": {
         "test": {
-            "presets": [
-                "@babel/preset-env",
-                "@babel/preset-react",
-                [
-                    "@babel/preset-stage-2",
-                    { "decoratorsLegacy": true }
-                ]
-            ],
             "plugins": [
-                "babel-plugin-dynamic-import-node",
-                [
-                    "@babel/plugin-transform-runtime",
-                    {
-                        "polyfill": false,
-                        "regenerator": true
-                    }
-                ],
+                "babel-plugin-dynamic-import-node"
             ]
         }
     }

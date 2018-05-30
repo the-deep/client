@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { FgRestBuilder } from '../../vendor/react-store/utils/rest';
-import { isFalsy } from '../../vendor/react-store/utils/common';
-import LoadingAnimation from '../../vendor/react-store/components/View/LoadingAnimation';
+import { FgRestBuilder } from '#rs/utils/rest';
+import { isFalsy } from '#rs/utils/common';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 
 import {
     createParamsForGet,
     createUrlForLeadExtractionTrigger,
     createUrlForSimplifiedLeadPreview,
-} from '../../rest';
-import _ts from '../../ts';
+} from '#rest';
+import _ts from '#ts';
 
 import HighlightedText from '../HighlightedText';
 import styles from './styles.scss';
