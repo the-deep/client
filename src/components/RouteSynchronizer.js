@@ -10,7 +10,7 @@ import {
 } from '#rs/utils/common';
 
 import Cloak from '#components/Cloak';
-import routes from '#constants/routes';
+import { routes } from '#constants/routes';
 import viewsAcl from '#constants/viewsAcl';
 
 import {
