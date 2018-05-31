@@ -57,6 +57,7 @@ const propTypes = {
     setUserConnectorDetails: PropTypes.func.isRequired,
     setUsers: PropTypes.func.isRequired,
     onTestButtonClick: PropTypes.func.isRequired,
+    connectorTestLoading: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -64,6 +65,7 @@ const defaultProps = {
     connectorSource: {},
     userProjects: [],
     connectorId: undefined,
+    connectorTestLoading: false,
 };
 
 const mapStateToProps = state => ({
@@ -109,7 +111,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             userDataLoading: true,
             projectDataLoading: true,
             connectorDataLoading: false,
-            testConnectorLoading: false,
+            disableTest: false,
             pending: false,
             schema: this.createSchema(props),
         };
@@ -542,6 +544,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             faramErrors,
             connectorId: this.props.connectorId,
         });
+        this.setState({ disableTest: false });
     };
 
     handleValidationFailure = (faramErrors) => {
@@ -560,7 +563,11 @@ export default class ConnectorDetailsForm extends React.PureComponent {
     };
 
     handleConnectorTestClick = () => {
-        this.props.onTestButtonClick();
+        const {
+            faramValues = {},
+        } = this.props.connectorDetails;
+        this.props.onTestButtonClick(faramValues.params);
+        this.setState({ disableTest: true });
     };
 
     renderParamInput = (key, data) => {
@@ -582,8 +589,8 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             pending,
             connectorDataLoading,
             projectDataLoading,
-            testConnectorLoading,
             userDataLoading,
+            disableTest,
         } = this.state;
 
         const {
@@ -592,7 +599,10 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             pristine,
         } = this.props.connectorDetails;
 
-        const { connectorSource } = this.props;
+        const {
+            connectorSource,
+            connectorTestLoading,
+        } = this.props;
 
         const {
             usersHeader,
@@ -606,6 +616,11 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             connectorDataLoading ||
             projectDataLoading ||
             pending;
+
+        const disableTestButton =
+            connectorTestLoading ||
+            disableTest;
+
 
         return (
             <Faram
@@ -659,6 +674,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                 <div className={styles.actionButtons}>
                     <AccentButton
                         onClick={this.handleConnectorTestClick}
+                        disabled={disableTestButton}
                     >
                         {_ts('connector', 'connectorDetailTestLabel')}
                     </AccentButton>

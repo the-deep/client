@@ -18,10 +18,17 @@ export const createUrlForConnectorleads = connectorId => `${wsEndpoint}/connecto
 export const urlForConnectorSources = `${wsEndpoint}/connector-sources/`;
 
 export const createUrlForRssField = url => `${wsEndpoint}/connector-sources/rss-feed/fields/?feed-url=${url}`;
+export const createUrlForConnectorTest = source => `${urlForConnectorSources}${source}/leads/`;
 
 export const createUrlForConnectorsOfProject = projectId => `${urlForConnectors}&projects=${projectId}`;
 
 export const createParamsForConnectorCreate = data => ({
+    method: POST,
+    headers: commonHeaderForPost,
+    body: JSON.stringify(data),
+});
+
+export const createParamsForConnectorTest = data => ({
     method: POST,
     headers: commonHeaderForPost,
     body: JSON.stringify(data),

@@ -57,6 +57,7 @@ export default class ConnectorDetails extends React.PureComponent {
             showTestResults: false,
             connectorDataLoading: true,
             requestFailure: false,
+            paramsForTest: {},
         };
     }
 
@@ -102,8 +103,11 @@ export default class ConnectorDetails extends React.PureComponent {
         `;
     }
 
-    handleConnectorTestClick = () => {
-        this.setState({ showTestResults: true });
+    handleConnectorTestClick = (paramsForTest) => {
+        this.setState({
+            showTestResults: true,
+            paramsForTest,
+        });
     }
 
     startConnectorDetailsRequest = (connectorId, connectorDetails) => {
@@ -124,6 +128,7 @@ export default class ConnectorDetails extends React.PureComponent {
         const {
             requestFailure,
             showTestResults,
+            paramsForTest,
         } = this.state;
 
         const { faramValues: connectorDetails = {} } = this.props.connectorDetails;
@@ -151,6 +156,7 @@ export default class ConnectorDetails extends React.PureComponent {
                 { showTestResults &&
                     <TestResults
                         connectorId={connectorId}
+                        paramsForTest={paramsForTest}
                     />
                 }
             </Fragment>
