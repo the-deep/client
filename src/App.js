@@ -10,6 +10,10 @@ import {
     setGaUserId,
 } from '#config/google-analytics';
 import {
+    ravenInitialize,
+    setRavenUser,
+} from '#config/sentry';
+import {
     createParamsForTokenRefresh,
     urlForTokenRefresh,
 } from '#rest';
@@ -60,6 +64,8 @@ export default class App extends React.PureComponent {
     componentWillMount() {
         // Initialize google analytics
         initializeGa();
+        // Initialize sentry
+        ravenInitialize();
 
         // If there is no refresh token, no need to get a new access token
         const { token: { refresh: refreshToken } } = this.props;
@@ -75,8 +81,9 @@ export default class App extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.activeUser !== nextProps.activeUser) {
-            const { userId } = nextProps.activeUser;
-            setGaUserId(userId);
+            const { activeUser } = nextProps;
+            setGaUserId(activeUser.userId);
+            setRavenUser(activeUser);
         }
     }
 
