@@ -98,14 +98,14 @@ export default class Sector extends React.PureComponent {
         } else if (row === 1) {
             return (
                 <TextInput
-                    faramElementName={`underlying-factors-${subRow}-${this.columnKeys[column]}`}
+                    faramElementName={`underlyingFactors-${subRow}-${this.columnKeys[column]}`}
                     showHintAndError={false}
                 />
             );
         } else if (row === 2) {
             return (
                 <HiearchicalSelectInput
-                    faramElementName={`affected-group-${subRow}-${this.columnKeys[column]}`}
+                    faramElementName={`affectedGroup-${subRow}-${this.columnKeys[column]}`}
                     showHintAndError={false}
                     options={affectedGroups}
                     keySelector={Sector.nodeIdSelector}
@@ -116,7 +116,7 @@ export default class Sector extends React.PureComponent {
         } else if (row === 3) {
             return (
                 <SelectInput
-                    faramElementName={`specific-need-group-${subRow}-${this.columnKeys[column]}`}
+                    faramElementName={`specificNeedGroup-${subRow}-${this.columnKeys[column]}`}
                     showHintAndError={false}
                     options={specificNeedGroups}
                     labelSelector={Sector.nodeLabelSelector}

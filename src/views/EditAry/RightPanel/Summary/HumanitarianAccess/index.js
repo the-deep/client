@@ -89,7 +89,7 @@ export default class HumanitarianAccess extends React.PureComponent {
         if (row === 0) {
             return (
                 <HiearchicalSelectInput
-                    faramElementName={`priority-issue-${subRow}-${columnKey}`}
+                    faramElementName={`priorityIssue-${subRow}-${columnKey}`}
                     showHintAndError={false}
                     options={priorityIssues}
                     keySelector={HumanitarianAccess.nodeIdSelector}
@@ -100,7 +100,7 @@ export default class HumanitarianAccess extends React.PureComponent {
         } else if (row === 1) {
             return (
                 <SelectInput
-                    faramElementName={`affected-location-${subRow}-${columnKey}`}
+                    faramElementName={`affectedLocation-${subRow}-${columnKey}`}
                     showHintAndError={false}
                     options={affectedLocations}
                     labelSelector={HumanitarianAccess.nodeLabelSelector}
