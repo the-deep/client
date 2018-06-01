@@ -1,6 +1,7 @@
 import createReducerWithMap from '#utils/createReducerWithMap';
 
 import commonReducers from './common';
+import discoverProjectsReducers from './discoverProjects';
 import addLeadsReducers from './addLeads';
 import analysisFrameworkReducers from './analysisFramework';
 import assessmentRegistryReducers from './assessmentRegistry';
@@ -32,6 +33,7 @@ const reducers = {
     ...regionsReducers,
     ...connectorsReducers,
     ...stringManagement,
+    ...discoverProjectsReducers,
 };
 
 const reducer = createReducerWithMap(reducers, initialSiloDomainData);

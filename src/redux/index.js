@@ -13,6 +13,7 @@ export * from './reducers/auth';
 export * from './reducers/notify';
 export * from './reducers/route';
 export * from './reducers/siloDomainData/common';
+export * from './reducers/siloDomainData/discoverProjects';
 export * from './reducers/siloDomainData/leads';
 export * from './reducers/siloDomainData/entries';
 export * from './reducers/siloDomainData/addLeads';

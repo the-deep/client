@@ -7,6 +7,8 @@ import {
     p,
 } from '#config/rest';
 
+export const urlForProjectList = `${wsEndpoint}/projects/`;
+
 export const createUrlForProject = projectId => `${wsEndpoint}/projects/${projectId}/`;
 export const createUrlForProjectOptions = projectId => `${wsEndpoint}/project-options/?${p({ project: projectId })}`;
 
