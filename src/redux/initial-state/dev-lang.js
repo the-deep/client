@@ -644,6 +644,7 @@ const initialDevLangState = {
 
 
         9919: 'Select',
+        9920: 'Report this error',
 
         1100: 'Connectors',
         1101: 'Search Connectors',
@@ -924,9 +925,11 @@ const initialDevLangState = {
         },
         'components.appError': {
             problemText: 2010,
+            reportErrorTitle: 9920,
         },
         'components.widgetError': {
             problemText: 2011,
+            reportErrorTitle: 9920,
         },
         'components.externalGallery': {
             gatheringWebsiteInfoLabel: 49,

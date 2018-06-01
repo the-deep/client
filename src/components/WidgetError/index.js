@@ -1,6 +1,6 @@
 import React from 'react';
 
-import PrimaryButton from '#rs/components/Action/Button';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 
 import { handleException, handleReport } from '#config/sentry';
 import _ts from '#ts';
@@ -11,16 +11,17 @@ export default class WidgetError extends React.PureComponent {
 
     render() {
         const errorText = _ts('components.widgetError', 'problemText');
+        const reportErrorTitle = _ts('components.widgetError', 'reportErrorTitle');
 
         return (
             <div className={styles.messageContainer}>
                 { errorText }
                 <PrimaryButton
-                    // FIXME: style
-                    // FIXME: Use cloak for development mode
+                    // Use cloak for development
                     onClick={handleReport}
+                    className={styles.button}
                 >
-                    Report problem
+                    {reportErrorTitle}
                 </PrimaryButton>
             </div>
         );
