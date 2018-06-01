@@ -6,16 +6,6 @@
     flex-direction: column;
     height: 100%;
 
-    .header {
-        border-bottom: $width-separator-thin solid $color-separator;
-        background-color: $color-background-header;
-        padding: $spacing-medium;
-
-        .heading {
-            margin: 0;
-        }
-    }
-
     .no-connector-found {
         @include background-color-with-disabled-text($color-foreground-alt);
         display: flex;
@@ -25,4 +15,20 @@
         height: 100%;
         font-size: $font-size-extra-large;
     }
+
+    .form {
+        flex-basis: 100%;
+        flex-shrink: 0;
+
+        &.form-with-test {
+            flex-basis: 70%;
+        }
+    }
+
+    .test-results {
+        flex-basis: 30%;
+        flex-shrink: 0;
+        overflow-y: auto;
+    }
+
 }

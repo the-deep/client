@@ -1,6 +1,19 @@
 @import '../../../../stylesheets/base';
 
 .test-results {
+    display: flex;
     position: relative;
+    flex-direction: column;
     border-top: $width-separator-thin solid $color-separator;
+
+    .header {
+        flex-shrink: 0;
+        background-color: $color-background-header;
+        padding: $spacing-small;
+    }
+
+    .table-container {
+        flex-grow: 1;
+        overflow-y: auto;
+    }
 }

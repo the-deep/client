@@ -58,12 +58,14 @@ const propTypes = {
     setUsers: PropTypes.func.isRequired,
     onTestButtonClick: PropTypes.func.isRequired,
     connectorTestLoading: PropTypes.bool,
+    className: PropTypes.string,
 };
 
 const defaultProps = {
     connectorDetails: {},
     connectorSource: {},
     userProjects: [],
+    className: '',
     connectorId: undefined,
     connectorTestLoading: false,
 };
@@ -600,6 +602,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         } = this.props.connectorDetails;
 
         const {
+            className,
             connectorSource,
             connectorTestLoading,
         } = this.props;
@@ -621,10 +624,9 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             connectorTestLoading ||
             disableTest;
 
-
         return (
             <Faram
-                className={styles.connectorDetailsForm}
+                className={`${styles.connectorDetailsForm} ${className}`}
                 onChange={this.handleFaramChange}
                 onValidationFailure={this.handleValidationFailure}
                 onValidationSuccess={this.handleValidationSuccess}
@@ -634,62 +636,74 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                 disabled={loading}
             >
                 { loading && <LoadingAnimation /> }
-                <NonFieldErrors faramElement />
-                <TextInput
-                    faramElementName="title"
-                    label={_ts('connector', 'connectorTitleLabel')}
-                    placeholder="Relief Web"
-                    autoFocus
-                />
-                <FaramGroup faramElementName="params">
-                    <List
-                        data={connectorSource.options}
-                        modifier={this.renderParamInput}
+                <header className={styles.header} >
+                    <h3 className={styles.heading} >
+                        {faramValues.title}
+                    </h3>
+                    <div className={styles.actionButtons}>
+                        <AccentButton
+                            onClick={this.handleConnectorTestClick}
+                            disabled={disableTestButton}
+                        >
+                            {_ts('connector', 'connectorDetailTestLabel')}
+                        </AccentButton>
+                        <DangerButton
+                            onClick={this.handleFormCancel}
+                            disabled={loading || !pristine}
+                        >
+                            {_ts('connector', 'connectorDetailCancelLabel')}
+                        </DangerButton>
+                        <SuccessButton
+                            type="submit"
+                            disabled={loading || !pristine}
+                        >
+                            {_ts('connector', 'connectorDetailSaveLabel')}
+                        </SuccessButton>
+                    </div>
+                </header>
+                <div className={styles.content} >
+                    <NonFieldErrors
+                        faramElement
+                        className={styles.errors}
                     />
-                </FaramGroup>
-                {!(userDataLoading || connectorDataLoading) &&
-                    <Fragment>
-                        <TabularSelectInput
-                            faramElementName="users"
-                            options={usersOptions}
-                            label={_ts('connector', 'connectorUsersLabel')}
-                            labelSelector={ConnectorDetailsForm.userLabelSelector}
-                            keySelector={ConnectorDetailsForm.userKeySelector}
-                            tableHeaders={usersHeader}
-                            hideRemoveFromListButton
-                            hideSelectAllButton
+                    <div className={styles.normalInputs} >
+                        <TextInput
+                            faramElementName="title"
+                            label={_ts('connector', 'connectorTitleLabel')}
+                            placeholder="Relief Web"
+                            autoFocus
                         />
-                        <TabularSelectInput
-                            faramElementName="projects"
-                            options={projectsOptions}
-                            label={_ts('connector', 'connectorProjectsLabel')}
-                            labelSelector={ConnectorDetailsForm.projectLabelSelector}
-                            keySelector={ConnectorDetailsForm.projectKeySelector}
-                            tableHeaders={projectsHeader}
-                            hideRemoveFromListButton
-                            hideSelectAllButton
-                        />
-                    </Fragment>
-                }
-                <div className={styles.actionButtons}>
-                    <AccentButton
-                        onClick={this.handleConnectorTestClick}
-                        disabled={disableTestButton}
-                    >
-                        {_ts('connector', 'connectorDetailTestLabel')}
-                    </AccentButton>
-                    <DangerButton
-                        onClick={this.handleFormCancel}
-                        disabled={loading || !pristine}
-                    >
-                        {_ts('connector', 'connectorDetailCancelLabel')}
-                    </DangerButton>
-                    <SuccessButton
-                        type="submit"
-                        disabled={loading || !pristine}
-                    >
-                        {_ts('connector', 'connectorDetailSaveLabel')}
-                    </SuccessButton>
+                        <FaramGroup faramElementName="params">
+                            <List
+                                data={connectorSource.options}
+                                modifier={this.renderParamInput}
+                            />
+                        </FaramGroup>
+                    </div>
+                    {!(userDataLoading || connectorDataLoading) &&
+                        <div className={styles.tabularSelectInputs} >
+                            <TabularSelectInput
+                                faramElementName="users"
+                                options={usersOptions}
+                                label={_ts('connector', 'connectorUsersLabel')}
+                                labelSelector={ConnectorDetailsForm.userLabelSelector}
+                                keySelector={ConnectorDetailsForm.userKeySelector}
+                                tableHeaders={usersHeader}
+                                hideRemoveFromListButton
+                                hideSelectAllButton
+                            />
+                            <TabularSelectInput
+                                faramElementName="projects"
+                                options={projectsOptions}
+                                label={_ts('connector', 'connectorProjectsLabel')}
+                                labelSelector={ConnectorDetailsForm.projectLabelSelector}
+                                keySelector={ConnectorDetailsForm.projectKeySelector}
+                                tableHeaders={projectsHeader}
+                                hideRemoveFromListButton
+                                hideSelectAllButton
+                            />
+                        </div>
+                    }
                 </div>
             </Faram>
         );

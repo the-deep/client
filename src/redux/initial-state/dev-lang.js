@@ -683,10 +683,10 @@ const initialDevLangState = {
         1134: 'Lead group created successfully.',
         1135: 'Test',
         1136: 'This url is already added.',
-
+        1137: 'Failed to test connector.',
+        1138: 'Test results',
         7627: 'Admins',
         7628: 'Activity',
-
         7629: 'Discover projects',
     },
     links: {
@@ -1689,6 +1689,13 @@ const initialDevLangState = {
             tableHeaderActions: 16,
             modalCancel: 61,
             modalCreate: 179,
+            datePublishedLabel: 3,
+            websiteLabel: 33,
+            sourceLabel: 83,
+            urlLabel: 32,
+            titleLabel: 13,
+            testResultsHeading: 1138,
+            connectorTestFailure: 1137,
 
             // notification
             connectorTitle: 1113,

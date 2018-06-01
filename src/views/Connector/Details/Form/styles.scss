@@ -4,15 +4,51 @@
     display: flex;
     position: relative;
     flex-direction: column;
-    padding: $spacing-extra-small $spacing-extra-large;
-    height: 100%;
 
-    .action-buttons {
+    .header {
         display: flex;
-        justify-content: flex-end;
+        align-items: center;
+        flex-shrink: 0;
+        border-bottom: $width-separator-thin solid $color-separator;
+        background-color: $color-background-header;
+        padding: $spacing-small;
 
-        button {
-            margin-left: $spacing-medium;
+        .heading {
+            flex-grow: 1;
+            margin: 0;
+        }
+
+        .action-buttons {
+            flex-shrink: 0;
+
+            button {
+                margin-left: $spacing-medium;
+            }
+        }
+    }
+
+    .content {
+        display: flex;
+        align-content: flex-start;
+        align-items: flex-start;
+        flex-direction: row;
+        flex-grow: 1;
+        flex-wrap: wrap;
+        padding: 0 $spacing-small;
+        overflow-y: auto;
+
+        .errors {
+            flex-basis: 100%;
+        }
+
+        .normal-inputs {
+            flex-basis: 40%;
+            padding: $spacing-small;
+        }
+
+        .tabular-select-inputs {
+            flex-basis: 60%;
+            padding: $spacing-small;
         }
     }
 }

@@ -2,9 +2,11 @@ import { FgRestBuilder } from '#rs/utils/rest';
 
 import {
     createParamsForConnectorTest,
-    alterResponseErrorToFaramError,
     createUrlForConnectorTest,
 } from '#rest';
+import {
+    randomString,
+} from '#rs/utils/common';
 import _ts from '#ts';
 import schema from '#schema';
 import notify from '#notify';
@@ -16,24 +18,32 @@ export default class ConnectorTestRequest {
 
     success = (response) => {
         try {
-            console.warn(response);
             schema.validate(response, 'connectorLeads');
+            const testLeads = response.results.map(l => ({
+                key: randomString(),
+                ...l,
+            }));
+            this.props.setState({ testLeads });
         } catch (er) {
             console.error(er);
         }
     }
 
     failure = (response) => {
-        const faramErrors = alterResponseErrorToFaramError(response.errors);
-        this.props.setState({
-            faramErrors,
-            pending: false,
+        notify.send({
+            title: _ts('connector', 'connectorTitle'),
+            type: notify.type.ERROR,
+            message: response.error,
+            duration: notify.duration.MEDIUM,
         });
     }
 
     fatal = () => {
-        this.props.setState({
-            faramErrors: { $internal: [_ts('connector', 'connectorCreateFailure')] },
+        notify.send({
+            title: _ts('connector', 'connectorTitle'),
+            type: notify.type.ERROR,
+            message: _ts('connector', 'connectorTestFailure'),
+            duration: notify.duration.MEDIUM,
         });
     }
 
@@ -41,8 +51,14 @@ export default class ConnectorTestRequest {
         const connectorsRequest = new FgRestBuilder()
             .url(createUrlForConnectorTest(source))
             .params(createParamsForConnectorTest(paramsForTest))
-            .preLoad(() => { this.props.setState({ connectorTestLoading: true }); })
-            .postLoad(() => { this.props.setState({ connectorTestLoading: false }); })
+            .preLoad(() => {
+                this.props.setState({ connectorTestLoading: true });
+                this.props.onConnectorTestLoading(true);
+            })
+            .postLoad(() => {
+                this.props.setState({ connectorTestLoading: false });
+                this.props.onConnectorTestLoading(false);
+            })
             .success(this.success)
             .failure(this.failure)
             .fatal(this.fatal)
