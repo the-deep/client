@@ -1,0 +1,5 @@
+@import '../../stylesheets/base';
+
+.discover-projects {
+    @extend %main-content;
+}

@@ -55,6 +55,24 @@ export const routes = {
         links: noLinks,
     }, // _ts('pageTitle', 'passwordReset');
 
+    discoverProjects: {
+        order: 13,
+        type: ROUTE.private,
+        path: '/discover/projects/',
+        loader: () => import('../views/DiscoverProjects'),
+        links: allLinks,
+    },
+
+    /*
+    discoverUserGroups: {
+        order: 14,
+        type: ROUTE.private,
+        path: '/discover/user-groups/',
+        loader: () => import('../views/DiscoverUserGroups'),
+        links: allLinks,
+    },
+    */
+
     projects: {
         order: 20,
         type: ROUTE.private,
@@ -170,7 +188,7 @@ export const routes = {
     userProfile: {
         order: 80,
         type: ROUTE.private,
-        path: '/user/:userId/',
+        path: '/users/:userId/',
         loader: () => import('../views/UserProfile'),
         links: allLinks,
     }, // _ts('pageTitle', 'userProfile');
@@ -178,7 +196,7 @@ export const routes = {
     userGroup: {
         order: 90,
         type: ROUTE.private,
-        path: '/user-group/:userGroupId/',
+        path: '/user-groups/:userGroupId/',
         loader: () => import('../views/UserGroup'),
         links: allLinks,
     }, // _ts('pageTitle', 'userGroup');
@@ -186,7 +204,7 @@ export const routes = {
     analysisFramework: {
         order: 100,
         type: ROUTE.private,
-        path: '/analysis-framework/:analysisFrameworkId/',
+        path: '/frameworks/:analysisFrameworkId/',
         loader: () => import('../views/AnalysisFramework'),
         links: allLinks,
     }, // _ts('pageTitle', 'analysisFramework');
@@ -194,7 +212,7 @@ export const routes = {
     categoryEditor: {
         order: 110,
         type: ROUTE.private,
-        path: '/category-editor/:categoryEditorId/',
+        path: '/category-editors/:categoryEditorId/',
         loader: () => import('../views/CategoryEditor'),
         links: allLinks,
     }, // _ts('pageTitle', 'categoryEditor');

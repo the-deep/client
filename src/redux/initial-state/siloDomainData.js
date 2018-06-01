@@ -122,6 +122,13 @@ const initialSiloDomainData = {
         },
     },
 
+    discoverProjectsView: {
+        /*
+        projectList: [],
+        filters: {},
+        */
+    },
+
     // i specifies project
     leadPage: {
         /*
