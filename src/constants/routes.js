@@ -61,7 +61,7 @@ export const routes = {
         path: '/discover/projects/',
         loader: () => import('../views/DiscoverProjects'),
         links: allLinks,
-    },
+    }, //  _ts('pageTitle', 'discoverProjects');
 
     /*
     discoverUserGroups: {
@@ -70,7 +70,7 @@ export const routes = {
         path: '/discover/user-groups/',
         loader: () => import('../views/DiscoverUserGroups'),
         links: allLinks,
-    },
+    }, //  _ts('pageTitle', 'discoverUserGroups');
     */
 
     projects: {

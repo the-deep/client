@@ -2,7 +2,7 @@ import update from '#rs/utils/immutable-update';
 
 // TYPE
 
-export const DP__SET_PROJECT_LIST = 'siloDomainData/DP__SET_LEADS';
+export const DP__SET_PROJECT_LIST = 'siloDomainData/DP__SET_PROJECT_LIST';
 
 // ACTION-CREATOR
 
