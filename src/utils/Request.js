@@ -1,6 +1,8 @@
 import { RestRequest } from '#rs/utils/rest';
+import schema from '#schema';
+import { alterResponseErrorToFaramError } from '#rest';
 
-const requestNotCreatedMessage = 'Request -> start() called before it was created';
+const requestNotCreatedMessage = 'Request.start() called before it was initialized/';
 
 export default class Request {
     constructor(parent) {
@@ -9,6 +11,8 @@ export default class Request {
 
         this.retryTime = 1000;
         this.maxRetryAttempts = 5;
+
+        this.schemaName = undefined;
     }
 
     start = () => {
@@ -36,11 +40,33 @@ export default class Request {
 
         const paramFn = () => createParams(params);
 
+        const successInterceptor = (response) => {
+            if (this.schemaName !== undefined) {
+                try {
+                    schema.validate(response, this.schemaName);
+                } catch (e) {
+                    console.error(e);
+                }
+                this.handleSuccess(response);
+            } else {
+                console.warn('Validation is not defined');
+                this.handleSuccess(response);
+            }
+        };
+
+        const failureInterceptor = (response) => {
+            const newResponse = alterResponseErrorToFaramError(response);
+            this.handleFailure(newResponse);
+        };
+
+        const handleSuccess = this.handleSuccess ? successInterceptor : undefined;
+        const handleFailure = this.handleFailure ? failureInterceptor : undefined;
+
         const request = new RestRequest(
             url,
             paramFn,
-            this.handleSuccess,
-            this.handleFailure,
+            handleSuccess,
+            handleFailure,
             this.handleFatal,
             this.handleAbort,
             this.handlePreLoad,

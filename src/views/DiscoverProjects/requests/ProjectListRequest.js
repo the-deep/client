@@ -7,6 +7,8 @@ import {
 } from '#rest';
 
 export default class ProjectListRequest extends Request {
+    schemaName = 'projectsGetResponse'
+
     handlePreLoad = () => {
         this.parent.setState({ pendingProjectList: true });
     }
@@ -21,7 +23,7 @@ export default class ProjectListRequest extends Request {
         });
     }
 
-    create = () => {
+    init = () => {
         this.createDefault({
             url: urlForProjectList,
             createParams: createParamsForGet,
