@@ -1,26 +1,26 @@
 import React from 'react';
-import Raven from 'raven-js';
 
 import PrimaryButton from '#rs/components/Action/Button';
 
+import { handleException, handleReport } from '#config/sentry';
 import _ts from '#ts';
 import styles from './styles.scss';
 
 export default class WidgetError extends React.PureComponent {
-    getErrorText = () => _ts('components.widgetError', 'problemText')
+    static handleException = handleException;
 
     render() {
-        const errorText = this.getErrorText();
+        const errorText = _ts('components.widgetError', 'problemText');
 
-        // FIXME: style
         return (
             <div className={styles.messageContainer}>
                 { errorText }
                 <PrimaryButton
-                    // NOTE: Only works after Raven is initialized
-                    onClick={() => Raven.lastEventId() && Raven.showReportDialog()}
+                    // FIXME: style
+                    // FIXME: Use cloak for development mode
+                    onClick={handleReport}
                 >
-                    Report
+                    Report problem
                 </PrimaryButton>
             </div>
         );
