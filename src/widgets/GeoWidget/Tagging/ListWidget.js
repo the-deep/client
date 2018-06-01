@@ -38,7 +38,7 @@ const emptyList = [];
 @BoundError(WidgetError)
 @connect(mapStateToProps)
 export default class GeoTaggingList extends React.PureComponent {
-    static valueKeyExtractor = d => d.key;
+    static valueKeyExtractor = d => String(d.key);
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 

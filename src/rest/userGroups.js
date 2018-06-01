@@ -8,7 +8,7 @@ export const createUrlForUserMembership = userMembershipId =>
     `${wsEndpoint}/group-memberships/${userMembershipId}/`;
 
 export const createUrlForUserGroupsOfUser = userId => (
-    `${wsEndpoint}/user-groups/?${p({ user: userId })}`
+    `${wsEndpoint}/user-groups/member-of/?${p({ user: userId })}`
 );
 
 export const urlForUserGroups = `${wsEndpoint}/user-groups/`;

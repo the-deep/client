@@ -15,8 +15,11 @@ const projectSchema = [];
             title: { type: 'string', required: true },
             description: { type: 'string', required: false },
             analysisFramework: { type: 'uint', required: false },
+            analysisFrameworkTitle: { type: 'string' },
             assessmentTemplate: { type: 'uint', required: false },
+            assessmentTemplateTitle: { type: 'string' },
             categoryEditor: { type: 'uint', required: false },
+            categoryEditorTitle: { type: 'string' },
             userGroups: { type: 'array.userGroupBase' },
             startDate: { type: 'string' }, // date
             endDate: { type: 'string' }, // date

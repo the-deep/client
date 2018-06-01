@@ -156,7 +156,7 @@ export default class UserProject extends React.PureComponent {
                     const activeUserMembership = (d.memberships || [])
                         .find(e => e.member === activeUser.userId);
 
-                    if (!activeUserMembership || activeUserMembership.role !== 'admin') {
+                    if (activeUserMembership && activeUserMembership.role === 'normal') {
                         return (
                             <Link
                                 title={_ts('userProfile', 'viewProjectLinkTitle')}
@@ -168,24 +168,28 @@ export default class UserProject extends React.PureComponent {
                         );
                     }
 
-                    return ([
-                        <Link
-                            title={_ts('userProfile', 'editProjectLinkTitle')}
-                            key="project-panel"
-                            to={reverseRoute(pathNames.projects, { projectId: d.id })}
-                            className={styles.link}
-                        >
-                            <span className={iconNames.edit} />
-                        </Link>,
-                        <DangerButton
-                            title={_ts('userProfile', 'deleteProjectLinkTitle')}
-                            key="delete"
-                            onClick={() => this.handleDeleteProjectClick(d)}
-                            iconName={iconNames.delete}
-                            smallVerticalPadding
-                            transparent
-                        />,
-                    ]);
+                    if (activeUserMembership && activeUserMembership.role === 'admin') {
+                        return ([
+                            <Link
+                                title={_ts('userProfile', 'editProjectLinkTitle')}
+                                key="project-panel"
+                                to={reverseRoute(pathNames.projects, { projectId: d.id })}
+                                className={styles.link}
+                            >
+                                <span className={iconNames.edit} />
+                            </Link>,
+                            <DangerButton
+                                title={_ts('userProfile', 'deleteProjectLinkTitle')}
+                                key="delete"
+                                onClick={() => this.handleDeleteProjectClick(d)}
+                                iconName={iconNames.delete}
+                                smallVerticalPadding
+                                transparent
+                            />,
+                        ]);
+                    }
+
+                    return null;
                 },
             },
         ];

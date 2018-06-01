@@ -15,7 +15,7 @@ export const createUrlForProjectOptions = projectId => `${wsEndpoint}/project-op
 export const createUrlForProjectAryTemplate = projectId => `${wsEndpoint}/projects/${projectId}/assessment-template/`;
 
 export const createUrlForProjectsOfUser = userId => (
-    `${wsEndpoint}/projects/?${p({ user: userId })}`
+    `${wsEndpoint}/projects/member-of/?${p({ user: userId })}`
 );
 
 export const createUrlForUserGroupProjects = id => (
@@ -23,7 +23,7 @@ export const createUrlForUserGroupProjects = id => (
 );
 
 const projectMiniUrlFields = ['id', 'title', 'version_id', 'role', 'assessment_template', 'analysis_framework'];
-export const urlForProjects = `${wsEndpoint}/projects/?${p({ fields: projectMiniUrlFields })}`;
+export const urlForProjects = `${wsEndpoint}/projects/member-of/?${p({ fields: projectMiniUrlFields })}`;
 export const urlForProjectCreate = `${wsEndpoint}/projects/`;
 export const urlForProjectMembership = `${wsEndpoint}/project-memberships/`;
 export const createUrlForUserProjectMembership = membershipId =>
