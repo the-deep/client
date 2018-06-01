@@ -16,7 +16,9 @@ export const setDiscoverProjectsProjectListAction = ({ projectList }) => ({
 const setProjects = (state, action) => {
     const { projectList } = action;
     const settings = {
-        projectList: { $set: projectList },
+        discoverProjectsView: { $auto: {
+            projectList: { $set: projectList },
+        } },
     };
     return update(state, settings);
 };

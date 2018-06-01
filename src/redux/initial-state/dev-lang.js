@@ -682,6 +682,11 @@ const initialDevLangState = {
         1134: 'Lead group created successfully.',
         1135: 'Test',
         1136: 'This url is already added.',
+
+        7627: 'Admins',
+        7628: 'Activity',
+
+        7629: 'Discover projects',
     },
     links: {
         /*
@@ -698,6 +703,21 @@ const initialDevLangState = {
             browserExtensionSuccessMessage: 2001,
             browserExtensionFailureTitle: 2000,
             browserExtensionFailureMessage: 2002,
+        },
+        'discoverProjects.table': {
+            titleTitle: 13,
+            descriptionTitle: 200,
+            createdAtTitle: 2,
+            adminsTitle: 7627,
+            frameworkTitle: 379,
+            regionsTitle: 336,
+            numberOfUsersTitle: 1119,
+            numberOfLeadsTitle: 641,
+            numberOfEntriesTitle: 15,
+            activityTitle: 7628,
+            statusTitle: 8,
+            actionsTitle: 16,
+
         },
         framework: {
             analysisFramework: 379,
@@ -1483,6 +1503,7 @@ const initialDevLangState = {
             homeScreen: 5559,
             dashboard: 5560,
 
+            discoverProjects: 7629,
             leads: 641,
             leadsViz: 5561,
             addLeads: 12,
