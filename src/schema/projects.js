@@ -24,6 +24,10 @@ const projectSchema = [];
             startDate: { type: 'string' }, // date
             endDate: { type: 'string' }, // date
             role: { type: 'string', required: true },
+            isDefault: { type: 'boolean' },
+            numberOfUsers: { type: 'uint' },
+            numberOfLeads: { type: 'uint' },
+            numberOfEntries: { type: 'uint' },
             // extra: { type: 'projectsExtra', required: false },
         },
     };
