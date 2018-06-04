@@ -109,7 +109,6 @@ export default class HomeScreen extends React.PureComponent {
 
     render() {
         const { projectList } = this.props;
-        console.warn('render man', projectList);
         const projectKeyExtractor = d => d.id;
 
         return (

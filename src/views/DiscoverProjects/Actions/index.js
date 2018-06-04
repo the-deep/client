@@ -1,54 +1,87 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import Button from '#rs/components/Action/Button';
+import Confirm from '#rs/components/View/Modal/Confirm';
 import WarningButton from '#rs/components/Action/Button/WarningButton';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import { iconNames } from '#constants/';
 import _ts from '#ts';
 
+import {
+    deleteDiscoverProjectsProjectAction,
+} from '#redux';
+
+import ProjectDeleteRequest from '../requests/ProjectDeleteRequest';
 import styles from './styles.scss';
 
 const propTypes = {
-    className: PropTypes.string,
+    // className: PropTypes.string,
     project: PropTypes.shape({
         id: PropTypes.number,
         role: PropTypes.string,
     }).isRequired,
+
+    deleteProject: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
-    className: '',
+    // className: '',
 };
 
+const mapDispatchToProps = dispatch => ({
+    deleteProject: params => dispatch(deleteDiscoverProjectsProjectAction(params)),
+});
+
+@connect(undefined, mapDispatchToProps)
 export default class Actions extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getClassName = () => {
-        const { className } = this.props;
+    constructor(props) {
+        super(props);
 
-        const classNames = [
-            className,
-            styles.actions,
-        ];
+        this.state = {
+            pendingProjectDelete: false,
+            showProjectDeleteConfirm: false,
+        };
 
-        return classNames.join(' ');
+        this.projectDeleteRequest = new ProjectDeleteRequest({
+            setState: d => this.setState(d),
+            deleteProject: props.deleteProject,
+        });
     }
 
-    render() {
-        const className = this.getClassName();
+    handleDeleteProjectButtonClick = () => {
+        this.setState({ showProjectDeleteConfirm: true });
+    }
+
+    handleProjectDeleteConfirmClose = (result) => {
         const { project } = this.props;
 
-        return (
-            <div className={className}>
-                {project.role === 'null' && (
+        if (result) {
+            this.projectDeleteRequest.create(project.id);
+            this.projectDeleteRequest.start();
+        }
+
+        this.setState({ showProjectDeleteConfirm: false });
+    }
+
+    renderButtons = () => {
+        const { project } = this.props;
+
+        switch (project.role) {
+            case 'null':
+                return (
                     <Button
                         iconName={iconNames.add}
                         title={_ts('discoverProjects.table', 'joinProjectTooltip')}
                         transparent
                     />
-                )}
-                {project.role === 'admin' && (
+                );
+
+            case 'admin':
+                return (
                     <React.Fragment>
                         <WarningButton
                             iconName={iconNames.edit}
@@ -56,13 +89,43 @@ export default class Actions extends React.PureComponent {
                             transparent
                         />
                         <DangerButton
+                            onClick={this.handleDeleteProjectButtonClick}
                             iconName={iconNames.delete}
                             title={_ts('discoverProjects.table', 'deleteProjectTooltip')}
                             transparent
                         />
                     </React.Fragment>
-                )}
-            </div>
+                );
+            case 'pending':
+                return (
+                    <span>Pending</span>
+                );
+            default:
+                return null;
+        }
+    }
+
+    render() {
+        const {
+            showProjectDeleteConfirm,
+        } = this.state;
+
+        const { project } = this.props;
+
+        const Buttons = this.renderButtons;
+
+        return (
+            <React.Fragment>
+                <Buttons />
+                <Confirm
+                    show={showProjectDeleteConfirm}
+                    onClose={this.handleProjectDeleteConfirmClose}
+                >
+                    <p>
+                        Are you sure to delete {project.title}?
+                    </p>
+                </Confirm>
+            </React.Fragment>
         );
     }
 }
