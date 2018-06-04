@@ -26,6 +26,7 @@ $radius-button-border: 2px;
             display: flex;
             flex-basis: 30%;
             flex-direction: column;
+            flex-shrink: 0;
             border-right: $width-separator-thin solid $color-separator;
             background-color: $color-foreground-alt;
             overflow-y: hidden;

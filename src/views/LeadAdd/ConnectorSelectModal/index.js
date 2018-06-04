@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import DangerButton from '#rs/components/Action/Button/DangerButton';
@@ -7,15 +8,22 @@ import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import SearchInput from '#rs/components/Input/SearchInput';
 import ListItem from '#rs/components/View/List/ListItem';
 import ListView from '#rs/components/View/List/ListView';
+import Message from '#rs/components/View/Message';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalHeader from '#rs/components/View/Modal/Header';
 import MultiViewContainer from '#rs/components/View/MultiViewContainer';
-import { caseInsensitiveSubmatch } from '#rs/utils/common';
+import {
+    caseInsensitiveSubmatch,
+    reverseRoute,
+} from '#rs/utils/common';
 import update from '#rs/utils/immutable-update';
 
-import { iconNames } from '#constants';
+import {
+    iconNames,
+    pathNames,
+} from '#constants';
 import {
     addLeadViewConnectorsListSelector,
     projectIdFromRouteSelector,
@@ -145,6 +153,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
                     return (
                         <ConnectorContent
                             connectorId={selectedConnector}
+                            projectId={this.props.projectId}
                             connectorLeads={connectorsLeads[selectedConnector]}
                             className={styles.content}
                             setConnectorLeads={this.setConnectorLeads}
@@ -349,9 +358,16 @@ export default class ConnectorSelectModal extends React.PureComponent {
 
         if (connectorsList.length <= 0) {
             return (
-                <div className={styles.empty}>
+                <Message className={styles.empty}>
                     { _ts('addLeads.connectorsSelect', 'noConnectorsLabel') }
-                </div>
+                    <Link
+                        className={styles.settingsLink}
+                        target="_blank"
+                        to={reverseRoute(pathNames.connectors, { })}
+                    >
+                        <span className={iconNames.settings} />
+                    </Link>
+                </Message>
             );
         }
 
@@ -377,12 +393,21 @@ export default class ConnectorSelectModal extends React.PureComponent {
                 <ModalHeader
                     title={_ts('addLeads.connectorsSelect', 'connectorsLabel')}
                     rightComponent={
-                        <PrimaryButton
-                            onClick={this.handleConnectorSelectModalClose}
-                            transparent
-                        >
-                            <span className={iconNames.close} />
-                        </PrimaryButton>
+                        <div className={styles.rightButtons} >
+                            <Link
+                                className={styles.settingsLink}
+                                target="_blank"
+                                to={reverseRoute(pathNames.connectors, { })}
+                            >
+                                <span className={iconNames.settings} />
+                            </Link>
+                            <PrimaryButton
+                                onClick={this.handleConnectorSelectModalClose}
+                                transparent
+                            >
+                                <span className={iconNames.close} />
+                            </PrimaryButton>
+                        </div>
                     }
                 />
                 <ModalBody className={styles.modalBody} >

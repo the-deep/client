@@ -20,6 +20,7 @@ import styles from './styles.scss';
 const propTypes = {
     connectorLeads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     connectorId: PropTypes.number.isRequired,
+    projectId: PropTypes.number.isRequired,
     setConnectorLeads: PropTypes.func.isRequired,
     leadsUrlMap: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setConnectorLeadSelection: PropTypes.func.isRequired,
@@ -128,8 +129,12 @@ export default class ConnectorContent extends React.PureComponent {
     }
 
     componentWillMount() {
-        if (this.props.connectorId) {
-            this.startConnectorLeadsGetRequest(this.props.connectorId);
+        const {
+            connectorId,
+            projectId,
+        } = this.props;
+        if (connectorId) {
+            this.startConnectorLeadsGetRequest(connectorId, projectId);
         }
     }
 
@@ -139,7 +144,7 @@ export default class ConnectorContent extends React.PureComponent {
         }
     }
 
-    startConnectorLeadsGetRequest = (connectorId) => {
+    startConnectorLeadsGetRequest = (connectorId, projectId) => {
         if (this.requestForConnectorLeads) {
             this.requestForConnectorLeads.stop();
         }
@@ -147,13 +152,17 @@ export default class ConnectorContent extends React.PureComponent {
             setState: v => this.setState(v),
             setConnectorLeads: this.props.setConnectorLeads,
         });
-        this.requestForConnectorLeads = requestForConnectorLeads.create(connectorId);
+        this.requestForConnectorLeads = requestForConnectorLeads.create(connectorId, projectId);
         this.requestForConnectorLeads.start();
     }
 
     handleRefreshButtonClick = () => {
-        if (this.props.connectorId) {
-            this.startConnectorLeadsGetRequest(this.props.connectorId);
+        const {
+            connectorId,
+            projectId,
+        } = this.props;
+        if (connectorId) {
+            this.startConnectorLeadsGetRequest(connectorId, projectId);
         }
     }
 
@@ -171,12 +180,6 @@ export default class ConnectorContent extends React.PureComponent {
                 { connectorLeadsLoading && <LoadingAnimation large /> }
                 <header className={styles.header} >
                     <div className={styles.rightContainer}>
-                        <AccentButton
-                            iconName={iconNames.refresh}
-                            onClick={this.handleRefreshButtonClick}
-                            className={styles.button}
-                            transparent
-                        />
                         <Link
                             className={styles.settingsLink}
                             target="_blank"
@@ -184,6 +187,12 @@ export default class ConnectorContent extends React.PureComponent {
                         >
                             <span className={iconNames.settings} />
                         </Link>
+                        <AccentButton
+                            iconName={iconNames.refresh}
+                            onClick={this.handleRefreshButtonClick}
+                            className={styles.button}
+                            transparent
+                        />
                     </div>
                 </header>
                 <Table
