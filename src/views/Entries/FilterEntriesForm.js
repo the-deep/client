@@ -196,11 +196,9 @@ export default class FilterEntriesForm extends React.PureComponent {
             .url(urlForProjectFilterOptions)
             .params(createParamsForGet)
             .preLoad(() => {
-                // FIXME: use this
                 this.setState({ loadingEntryFilters: true });
             })
             .postLoad(() => {
-                // FIXME: use this
                 this.setState({ loadingEntryFilters: false });
             })
             .success((response) => {

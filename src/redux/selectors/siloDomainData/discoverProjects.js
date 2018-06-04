@@ -10,7 +10,6 @@ export const discoverProjectsProjectListSelector = createSelector(
     discoverProjects => discoverProjects.projectList || emptyList,
 );
 
-// fake selector
 export const discoverProjectsFiltersSelector = createSelector(
     pageSelector,
     discoverProjects => discoverProjects.filters || emptyObject,

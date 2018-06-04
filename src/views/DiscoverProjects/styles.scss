@@ -1,5 +1,89 @@
 @import '../../stylesheets/base';
+@import '../../vendor/react-store/stylesheets/input-label';
 
 .discover-projects {
     @extend %main-content;
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: space-between;
+        background-color: $color-foreground;
+        padding: $spacing-small;
+
+        .filters {
+            display: flex;
+            flex-grow: 1;
+
+            :global {
+                .projects-filter {
+                    margin: $spacing-small;
+                }
+
+                .button {
+                    align-self: flex-end;
+                    flex-shrink: 0;
+                    margin: $spacing-small;
+                }
+            }
+        }
+    }
+
+    .table-container {
+        display: flex;
+        position: relative;
+        flex-direction: column;
+        flex-grow: 1;
+        background-color: $color-background-row;
+
+        .scroll-wrapper {
+            flex-grow: 1;
+            overflow: auto;
+
+            .projects-table {
+                .header {
+                    position: sticky;
+                    top: 0;
+                }
+            }
+        }
+    }
+
+    .footer {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: space-between;
+        border-top: $width-separator-thin solid $color-separator;
+        background-color: $color-foreground-alt;
+        padding: $spacing-small $spacing-medium-alt;
+
+        .pager {
+            display: flex;
+            justify-content: center;
+        }
+
+        .link-container {
+            display: flex;
+            align-items: baseline;
+
+            .label {
+                @extend %input-label;
+                margin-right: $spacing-small;
+                width: auto;
+            }
+
+            .projects-per-page-input {
+                width: 46px;
+            }
+        }
+
+        .pager-container {
+            display: flex;
+        }
+    }
+
 }
