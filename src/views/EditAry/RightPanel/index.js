@@ -128,7 +128,7 @@ export default class RightPanel extends React.PureComponent {
         return schema;
     }
 
-    static createScoreSchema = (scorePillars, scoreMatrixPillars) => {
+    static createScoreSchema = (scorePillars = [], scoreMatrixPillars = []) => {
         const scoreSchema = {
             fields: {
                 pillars: [],
@@ -148,7 +148,12 @@ export default class RightPanel extends React.PureComponent {
         return scoreSchema;
     }
 
-    static createComputeSchema = (scorePillars, scoreMatrixPillars, scoreScales, scoreBuckets) => {
+    static createComputeSchema = (
+        scorePillars = [],
+        scoreMatrixPillars = [],
+        scoreScales = [],
+        scoreBuckets = [],
+    ) => {
         if (scoreScales.length === 0) {
             return {};
         }
@@ -159,7 +164,7 @@ export default class RightPanel extends React.PureComponent {
 
         scorePillars.forEach((pillar) => {
             scoreSchema[`${pillar.id}-score`] = (data, score) => {
-                const pillarObj = getObjectChildren(score, ['pillars', pillar.id], emptyObject);
+                const pillarObj = getObjectChildren(score, ['pillars', pillar.id]) || emptyObject;
                 const pillarValues = Object.values(pillarObj).map(v => getScaleVal(v));
                 return sum(pillarValues);
             };
@@ -173,7 +178,7 @@ export default class RightPanel extends React.PureComponent {
             const getMatrixScaleVal = v => scales.find(s => String(s.id) === String(v)).value;
 
             scoreSchema[`${pillar.id}-matrix-score`] = (data, score) => {
-                const pillarObj = getObjectChildren(score, ['matrixPillars', pillar.id], emptyObject);
+                const pillarObj = getObjectChildren(score, ['matrixPillars', pillar.id]) || emptyObject;
                 const pillarValues = Object.values(pillarObj).map(v => getMatrixScaleVal(v));
                 return median(pillarValues) * 5;
             };
@@ -181,10 +186,10 @@ export default class RightPanel extends React.PureComponent {
 
         scoreSchema.finalScore = (data, score) => {
             const pillarScores = scorePillars.map(
-                p => getObjectChildren(score, [`${p.id}-score`], 0) * p.weight,
+                p => (getObjectChildren(score, [`${p.id}-score`]) || 0) * p.weight,
             );
             const matrixPillarScores = scoreMatrixPillars.map(
-                p => getObjectChildren(score, [`${p.id}-matrix-score`], 0) * p.weight,
+                p => (getObjectChildren(score, [`${p.id}-matrix-score`]) || 0) * p.weight,
             );
 
             const average = sum([...pillarScores, ...matrixPillarScores]);
