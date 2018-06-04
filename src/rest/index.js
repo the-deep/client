@@ -1,4 +1,9 @@
-import { GET, commonHeaderForGet } from '#config/rest';
+import {
+    GET,
+    DELETE,
+    commonHeaderForGet,
+    commonHeaderForPost,
+} from '#config/rest';
 
 export * from './docs';
 export * from './languages';
@@ -22,6 +27,11 @@ export * from './export';
 export const createParamsForGet = () => ({
     method: GET,
     headers: commonHeaderForGet,
+});
+
+export const createParamsForDelete = () => ({
+    method: DELETE,
+    header: commonHeaderForPost,
 });
 
 export const transformResponseErrorToFormError = (errors) => {
