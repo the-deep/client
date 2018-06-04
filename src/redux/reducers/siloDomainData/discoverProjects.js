@@ -30,7 +30,6 @@ const setProjects = (state, action) => {
 };
 
 const deleteProject = (state, action) => {
-    console.warn(state);
     const { projectId } = action;
     const { discoverProjectsView } = state;
     const { projectList } = discoverProjectsView;
