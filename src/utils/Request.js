@@ -2,7 +2,9 @@ import { RestRequest } from '#rs/utils/rest';
 import schema from '#schema';
 import { alterResponseErrorToFaramError } from '#rest';
 
-const requestNotCreatedMessage = 'Request.start() called before it was initialized/';
+const requestNotCreatedForStartMessage = 'REQUEST: start() called before init()';
+const requestNotCreatedForStopMessage = 'REQUEST: stop() called before init()';
+const validationNotDefinedMessage = 'REQUEST: Validation is not defined';
 
 export default class Request {
     constructor(parent) {
@@ -19,14 +21,37 @@ export default class Request {
         if (this.request) {
             this.request.start();
         } else {
-            console.warn(requestNotCreatedMessage);
+            console.error(requestNotCreatedForStartMessage);
         }
     }
 
     stop = () => {
         if (this.request) {
             this.request.stop();
+        } else {
+            console.error(requestNotCreatedForStopMessage);
         }
+    }
+
+    successInterceptor = (response) => {
+        if (this.schemaName !== undefined) {
+            try {
+                schema.validate(response, this.schemaName);
+            } catch (e) {
+                this.handleFatal({ errorMessage: e, errroCode: null });
+                console.error(e);
+                return;
+            }
+        } else {
+            console.warn(validationNotDefinedMessage);
+        }
+
+        this.handleSuccess(response);
+    }
+
+    failureInterceptor = (response) => {
+        const newResponse = alterResponseErrorToFaramError(response);
+        this.handleFailure(newResponse);
     }
 
     createDefault = (createOptions) => {
@@ -34,39 +59,15 @@ export default class Request {
 
         const {
             url,
-            createParams,
             params,
+            // FIXME: removed paramsFn
         } = createOptions;
-
-        const paramFn = () => createParams(params);
-
-        const successInterceptor = (response) => {
-            if (this.schemaName !== undefined) {
-                try {
-                    schema.validate(response, this.schemaName);
-                } catch (e) {
-                    console.error(e);
-                }
-                this.handleSuccess(response);
-            } else {
-                console.warn('Validation is not defined');
-                this.handleSuccess(response);
-            }
-        };
-
-        const failureInterceptor = (response) => {
-            const newResponse = alterResponseErrorToFaramError(response);
-            this.handleFailure(newResponse);
-        };
-
-        const handleSuccess = this.handleSuccess ? successInterceptor : undefined;
-        const handleFailure = this.handleFailure ? failureInterceptor : undefined;
 
         const request = new RestRequest(
             url,
-            paramFn,
-            handleSuccess,
-            handleFailure,
+            params,
+            this.handleSuccess ? this.successInterceptor : undefined,
+            this.handleFailure ? this.failureInterceptor : undefined,
             this.handleFatal,
             this.handleAbort,
             this.handlePreLoad,
