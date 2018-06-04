@@ -15,12 +15,19 @@ const projectSchema = [];
             title: { type: 'string', required: true },
             description: { type: 'string', required: false },
             analysisFramework: { type: 'uint', required: false },
+            analysisFrameworkTitle: { type: 'string' },
             assessmentTemplate: { type: 'uint', required: false },
+            assessmentTemplateTitle: { type: 'string' },
             categoryEditor: { type: 'uint', required: false },
+            categoryEditorTitle: { type: 'string' },
             userGroups: { type: 'array.userGroupBase' },
             startDate: { type: 'string' }, // date
             endDate: { type: 'string' }, // date
             role: { type: 'string', required: true },
+            isDefault: { type: 'boolean' },
+            numberOfUsers: { type: 'uint' },
+            numberOfLeads: { type: 'uint' },
+            numberOfEntries: { type: 'uint' },
             // extra: { type: 'projectsExtra', required: false },
         },
     };
