@@ -1,10 +1,9 @@
 import {
     wsEndpoint,
-    POST,
-    PUT,
-    PATCH,
-    DELETE,
-    commonHeaderForPost,
     p,
 } from '#config/rest';
 
+// eslint-disable-next-line import/prefer-default-export
+export const createUrlForProjectList = params => (
+    `${wsEndpoint}/projects/?${p(params)}`
+);

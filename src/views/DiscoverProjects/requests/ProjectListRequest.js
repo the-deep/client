@@ -1,10 +1,11 @@
 // import schema from '#schema';
 import Request from '#utils/Request';
 import {
-    urlForProjectList,
+    createUrlForProjectList,
     createParamsForGet,
     // transformResponseErrorToFormError,
 } from '#rest';
+import { getFiltersForRequest } from '#entities/lead';
 
 export default class ProjectListRequest extends Request {
     schemaName = 'projectsGetResponse'
@@ -20,13 +21,30 @@ export default class ProjectListRequest extends Request {
     handleSuccess = (response) => {
         this.parent.setProjectList({
             projectList: response.results,
+            totalProjectsCount: response.count,
         });
     }
 
-    init = () => {
+    init = ({
+        activeSort,
+        filters,
+        activePage,
+        projectsPerPage,
+    }) => {
+        const sanitizedFilters = getFiltersForRequest(filters);
+        const projectListRequestOffset = (activePage - 1) * projectsPerPage;
+        const projectListRequestLimit = projectsPerPage;
+
+        const urlForProjectList = createUrlForProjectList({
+            ...sanitizedFilters,
+            ordering: activeSort,
+            offset: projectListRequestOffset,
+            limit: projectListRequestLimit,
+        });
+
         this.createDefault({
             url: urlForProjectList,
-            createParams: createParamsForGet,
+            params: createParamsForGet,
         });
     }
 }

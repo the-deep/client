@@ -14,7 +14,7 @@ const headers = [
         sortable: true,
     },
     {
-        key: 'createdAt',
+        key: 'created_at',
         title: _ts('discoverProjects.table', 'createdAtTitle'),
         order: 3,
         sortable: true,
@@ -26,7 +26,7 @@ const headers = [
         sortable: false,
     },
     {
-        key: 'analysisFrameworkTitle',
+        key: 'analysis_framework_title',
         title: _ts('discoverProjects.table', 'frameworkTitle'),
         order: 5,
         sortable: true,
@@ -38,19 +38,19 @@ const headers = [
         sortable: false,
     },
     {
-        key: 'numberOfUsers',
+        key: 'number_of_users',
         title: _ts('discoverProjects.table', 'numberOfUsersTitle'),
         order: 7,
         sortable: true,
     },
     {
-        key: 'numberOfLeads',
+        key: 'number_of_leads',
         title: _ts('discoverProjects.table', 'numberOfLeadsTitle'),
         order: 8,
         sortable: true,
     },
     {
-        key: 'numberOfEntries',
+        key: 'number_of_entries',
         title: _ts('discoverProjects.table', 'numberOfEntriesTitle'),
         order: 9,
         sortable: true,

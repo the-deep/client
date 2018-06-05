@@ -55,6 +55,8 @@ export default class Request {
     }
 
     createDefault = (createOptions) => {
+        this.stop();
+
         this.createOptions = createOptions;
 
         const {

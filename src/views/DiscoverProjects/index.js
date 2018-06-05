@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import BoundError from '#rs/components/General/BoundError';
 import SelectInput from '#rs/components/Input/SelectInput';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Pager from '#rs/components/View/Pager';
 import RawTable from '#rs/components/View/RawTable';
 import TableHeader from '#rs/components/View/TableHeader';
@@ -11,8 +12,17 @@ import FormattedDate from '#rs/components/View/FormattedDate';
 import _ts from '#ts';
 
 import {
+    discoverProjectsTotalProjectsCountSelector,
     discoverProjectsProjectListSelector,
+    discoverProjectsActivePageSelector,
+    discoverProjectsActiveSortSelector,
+    discoverProjectsProjectsPerPageSelector,
+    discoverProjectsFiltersSelector,
+
     setDiscoverProjectsProjectListAction,
+    setDiscoverProjectsActiveSortAction,
+    setDiscoverProjectsActivePageAction,
+    setDiscoverProjectsProjectPerPageAction,
 } from '#redux';
 
 import AppError from '#components/AppError';
@@ -28,17 +38,38 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     projectList: PropTypes.array.isRequired,
     setProjectList: PropTypes.func.isRequired,
+    totalProjectsCount: PropTypes.number.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    filters: PropTypes.object.isRequired,
+
+    activePage: PropTypes.number.isRequired,
+    activeSort: PropTypes.string.isRequired,
+    projectsPerPage: PropTypes.number.isRequired,
+
+    setActiveSort: PropTypes.func.isRequired,
+    setActivePage: PropTypes.func.isRequired,
+    setProjectPerPage: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
+    filters: {},
 };
 
 const mapStateToProps = state => ({
+    filters: discoverProjectsFiltersSelector(state),
     projectList: discoverProjectsProjectListSelector(state),
+    totalProjectsCount: discoverProjectsTotalProjectsCountSelector(state),
+    activePage: discoverProjectsActivePageSelector(state),
+    activeSort: discoverProjectsActiveSortSelector(state),
+    projectsPerPage: discoverProjectsProjectsPerPageSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
     setProjectList: params => dispatch(setDiscoverProjectsProjectListAction(params)),
+
+    setActiveSort: params => dispatch(setDiscoverProjectsActiveSortAction(params)),
+    setActivePage: params => dispatch(setDiscoverProjectsActivePageAction(params)),
+    setProjectPerPage: params => dispatch(setDiscoverProjectsProjectPerPageAction(params)),
 });
 
 @BoundError(AppError)
@@ -58,7 +89,7 @@ export default class DiscoverProjects extends React.PureComponent {
         super(props);
 
         this.state = {
-            activeSort: undefined,
+            pendingProjectList: false,
         };
 
         this.projectListRequest = new ProjectListRequest({
@@ -68,8 +99,44 @@ export default class DiscoverProjects extends React.PureComponent {
     }
 
     componentDidMount() {
-        this.projectListRequest.init();
+        const {
+            activeSort,
+            filters,
+            activePage,
+            projectsPerPage,
+        } = this.props;
+
+        this.projectListRequest.init({
+            activeSort,
+            filters,
+            activePage,
+            projectsPerPage,
+        });
         this.projectListRequest.start();
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const {
+            activeSort,
+            filters,
+            activePage,
+            projectsPerPage,
+        } = nextProps;
+
+        if (
+            this.props.activeSort !== activeSort ||
+            this.props.filters !== filters ||
+            this.props.activePage !== activePage ||
+            this.props.projectsPerPage !== projectsPerPage
+        ) {
+            this.projectListRequest.init({
+                activeSort,
+                filters,
+                activePage,
+                projectsPerPage,
+            });
+            this.projectListRequest.start();
+        }
     }
 
     componentWillUnmount() {
@@ -77,7 +144,7 @@ export default class DiscoverProjects extends React.PureComponent {
     }
 
     headerModifier = (headerData) => {
-        const { activeSort } = this.state;
+        const { activeSort } = this.props;
 
         let sortOrder = '';
         if (activeSort === headerData.key) {
@@ -101,22 +168,54 @@ export default class DiscoverProjects extends React.PureComponent {
                     .filter(d => d.role === 'admin')
                     .map(d => d.memberName)
                     .join(', ');
-            case 'createdAt':
+            case 'created_at':
                 return (
                     <FormattedDate
                         date={project.createdAt}
                         mode="dd-MM-yyyy"
                     />
                 );
-            case 'numberOfProjects':
+            case 'analysis_framework_title':
+                return project.analysisFrameworkTitle;
+            case 'number_of_users':
+                return project.numberOfUsers;
+            case 'number_of_leads':
+                return project.numberOfLeads;
+            case 'number_of_entries':
+                return project.numberOfEntries;
+            case 'number_of_projects':
                 return project.memberships.length;
             case 'regions':
-                return project.regions.map(d => d.title).join(', ');
+                return project.regions.map(d => d.title).join(', ') || '-';
             case 'actions':
                 return <Actions project={project} />;
             default:
                 return project[columnKey];
         }
+    }
+
+    handlePageClick = (page) => {
+        this.props.setActivePage(page);
+    }
+
+    handleProjectsPerPageChange = (pageCount) => {
+        this.props.setProjectPerPage(pageCount);
+    }
+
+    handleTableHeaderClick = (key) => {
+        const headerData = headers.find(h => h.key === key);
+        // prevents click on 'actions' column
+        if (!headerData.sortable) {
+            return;
+        }
+
+        let { activeSort } = this.props;
+        if (activeSort === key) {
+            activeSort = `-${key}`;
+        } else {
+            activeSort = key;
+        }
+        this.props.setActiveSort(activeSort);
     }
 
     renderHeader = () => (
@@ -126,16 +225,11 @@ export default class DiscoverProjects extends React.PureComponent {
     )
 
     renderFooter = () => {
-        /*
         const {
             totalProjectsCount,
             activePage,
             projectsPerPage,
         } = this.props;
-        */
-        const activePage = 1;
-        const totalProjectsCount = 202;
-        const projectsPerPage = 25;
 
         return (
             <footer className={styles.footer}>
@@ -150,7 +244,7 @@ export default class DiscoverProjects extends React.PureComponent {
                         showHintAndError={false}
                         options={DiscoverProjects.projectsPerPageOptions}
                         value={projectsPerPage}
-                        // onChange={this.handleProjectsPerPageChange}
+                        onChange={this.handleProjectsPerPageChange}
                     />
                 </div>
                 <div className={styles.pagerContainer}>
@@ -159,7 +253,7 @@ export default class DiscoverProjects extends React.PureComponent {
                         className={styles.pager}
                         itemsCount={totalProjectsCount}
                         maxItemsPerPage={projectsPerPage}
-                        // onPageClick={this.handlePageClick}
+                        onPageClick={this.handlePageClick}
                     />
                 </div>
             </footer>
@@ -168,6 +262,8 @@ export default class DiscoverProjects extends React.PureComponent {
 
     render() {
         const { projectList } = this.props;
+        const { pendingProjectList } = this.state;
+
         const projectKeyExtractor = d => d.id;
 
         const Header = this.renderHeader;
@@ -180,13 +276,14 @@ export default class DiscoverProjects extends React.PureComponent {
                     <div className={styles.scrollWrapper}>
                         <RawTable
                             data={projectList}
+                            headers={headers}
                             dataModifier={this.dataModifier}
                             headerModifier={this.headerModifier}
-                            headers={headers}
                             onHeaderClick={this.handleTableHeaderClick}
                             keyExtractor={projectKeyExtractor}
                             className={styles.projectsTable}
                         />
+                        { pendingProjectList && <LoadingAnimation large /> }
                     </div>
                 </div>
                 <Footer />

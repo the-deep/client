@@ -5,24 +5,25 @@ import {
     commonHeaderForPost,
 } from '#config/rest';
 
-export * from './docs';
-export * from './languages';
-export * from './file';
-export * from './leadFilterOptions';
-export * from './entryFilterOptions';
-export * from './leads';
-export * from './entries';
-export * from './external';
-export * from './projects';
+export * from './analysisFramework';
+export * from './assessmentRegistry';
+export * from './categoryEditor';
 export * from './connectors';
+export * from './discoverProjects';
+export * from './docs';
+export * from './entries';
+export * from './entryFilterOptions';
+export * from './export';
+export * from './external';
+export * from './file';
+export * from './languages';
+export * from './leadFilterOptions';
+export * from './leads';
+export * from './projects';
 export * from './regions';
 export * from './token';
 export * from './userGroups';
 export * from './users';
-export * from './analysisFramework';
-export * from './assessmentRegistry';
-export * from './categoryEditor';
-export * from './export';
 
 export const createParamsForGet = () => ({
     method: GET,
@@ -34,6 +35,7 @@ export const createParamsForDelete = () => ({
     header: commonHeaderForPost,
 });
 
+// FIXME: remove this
 export const transformResponseErrorToFormError = (errors) => {
     const { nonFieldErrors = [], ...formFieldErrorList } = errors;
 
@@ -50,6 +52,7 @@ export const transformResponseErrorToFormError = (errors) => {
     return { formFieldErrors, formErrors };
 };
 
+// FIXME: remove this
 export const transformAndCombineResponseErrors = (errors) => {
     const transformedErrors = transformResponseErrorToFormError(errors);
     return [
@@ -59,7 +62,6 @@ export const transformAndCombineResponseErrors = (errors) => {
 };
 
 
-// XXX: Uses Faram API
 export const alterResponseErrorToFaramError = (errors) => {
     const { nonFieldErrors = [], ...formFieldErrorList } = errors;
 
@@ -74,7 +76,6 @@ export const alterResponseErrorToFaramError = (errors) => {
     );
 };
 
-// XXX: Uses Faram API
 export const alterAndCombineResponseError = errors => (
     Object.values(alterResponseErrorToFaramError(errors))
 );
