@@ -15,8 +15,13 @@ import {
 
     setDiscoverProjectsFilterAction,
     unsetDiscoverProjectsFilterAction,
+
+    setDiscoverProjectsProjectOptionsAction,
+    discoverProjectsProjectOptionsSelector,
 } from '#redux';
 import _ts from '#ts';
+
+import ProjectOptionsRequest from './requests/ProjectOptionsRequest';
 
 const propTypes = {
     className: PropTypes.string,
@@ -27,6 +32,10 @@ const propTypes = {
 
     setDiscoverProjectFilter: PropTypes.func.isRequired,
     unsetDiscoverProjectFilter: PropTypes.func.isRequired,
+    setDiscoverProjectProjectOptions: PropTypes.func.isRequired,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    projectOptions: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -37,6 +46,7 @@ const defaultProps = {
 
 const mapStateToProps = state => ({
     filters: discoverProjectsFiltersSelector(state),
+    projectOptions: discoverProjectsProjectOptionsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -45,6 +55,9 @@ const mapDispatchToProps = dispatch => ({
     ),
     unsetDiscoverProjectFilter: params => dispatch(
         unsetDiscoverProjectsFilterAction(params),
+    ),
+    setDiscoverProjectProjectOptions: params => dispatch(
+        setDiscoverProjectsProjectOptionsAction(params),
     ),
 });
 
@@ -58,10 +71,11 @@ export default class FilterProjectsForm extends React.PureComponent {
 
     constructor(props) {
         super(props);
+
         this.state = {
             faramValues: this.props.filters,
             pristine: true,
-            loadingProjectFilters: false,
+            pendingProjectOptionss: false,
         };
 
         this.schema = {
@@ -71,6 +85,16 @@ export default class FilterProjectsForm extends React.PureComponent {
                 involvement: [],
             },
         };
+
+        this.projectOptionsRequest = new ProjectOptionsRequest({
+            setState: d => this.setState(d),
+            setProjectOptions: this.props.setDiscoverProjectProjectOptions,
+        });
+    }
+
+    componentDidMount() {
+        this.projectOptionsRequest.init();
+        this.projectOptionsRequest.start();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -81,6 +105,10 @@ export default class FilterProjectsForm extends React.PureComponent {
                 pristine: true,
             });
         }
+    }
+
+    componentWillUnmount() {
+        this.projectOptionsRequest.stop();
     }
 
     // UI
@@ -118,28 +146,19 @@ export default class FilterProjectsForm extends React.PureComponent {
             className,
             filters,
             applyOnChange,
+            projectOptions,
         } = this.props;
 
         const {
             faramValues,
             pristine,
-            loadingProjectFilters,
+            pendingProjectOptionss,
         } = this.state;
 
         const isApplyDisabled = pristine;
 
         const isFilterEmpty = isObjectEmpty(filters);
         const isClearDisabled = isFilterEmpty && pristine;
-
-        const status = [
-            { key: 'active', value: 'Active' },
-            { key: 'inactive', value: 'Inactive' },
-            { key: 'archived', value: 'Archived' },
-        ];
-        const involvement = [
-            { key: 'myProjects', value: 'My projects' },
-            { key: 'notMyProjects', value: 'Not my projects' },
-        ];
 
         return (
             <Faram
@@ -149,7 +168,7 @@ export default class FilterProjectsForm extends React.PureComponent {
                 onChange={this.handleFaramChange}
                 schema={this.schema}
                 value={faramValues}
-                disabled={loadingProjectFilters}
+                disabled={pendingProjectOptionss}
             >
                 <SearchInput
                     faramElementName="search"
@@ -164,7 +183,7 @@ export default class FilterProjectsForm extends React.PureComponent {
                     keySelector={FilterProjectsForm.optionKeySelector}
                     labelSelector={FilterProjectsForm.optionLabelSelector}
                     label={_ts('discoverProjects.filter', 'projects')}
-                    options={involvement}
+                    options={projectOptions.involvement}
                     placeholder={_ts('discoverProjects.filter', 'placeholderAny')}
                     showHintAndError={false}
                     showLabel
@@ -175,7 +194,7 @@ export default class FilterProjectsForm extends React.PureComponent {
                     keySelector={FilterProjectsForm.optionKeySelector}
                     labelSelector={FilterProjectsForm.optionLabelSelector}
                     label={_ts('discoverProjects.filter', 'status')}
-                    options={status}
+                    options={projectOptions.status}
                     placeholder={_ts('discoverProjects.filter', 'placeholderAny')}
                     showHintAndError={false}
                     showLabel
@@ -184,7 +203,7 @@ export default class FilterProjectsForm extends React.PureComponent {
                 { !applyOnChange &&
                     <Button
                         className="button apply-filter-button"
-                        disabled={isApplyDisabled || loadingProjectFilters}
+                        disabled={isApplyDisabled || pendingProjectOptionss}
                         type="submit"
                     >
                         {_ts('discoverProjects.filter', 'filterApplyFilter')}
@@ -192,7 +211,7 @@ export default class FilterProjectsForm extends React.PureComponent {
                 }
                 <DangerButton
                     className="button clear-filter-button"
-                    disabled={isClearDisabled || loadingProjectFilters}
+                    disabled={isClearDisabled || pendingProjectOptionss}
                     onClick={this.handleClearFilters}
                 >
                     {_ts('discoverProjects.filter', 'filterClearFilter')}

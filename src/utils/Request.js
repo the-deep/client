@@ -17,6 +17,10 @@ export default class Request {
         this.schemaName = undefined;
     }
 
+    handleFatal = (error) => {
+        console.warn(error);
+    }
+
     start = () => {
         if (this.request) {
             this.request.start();
@@ -62,7 +66,6 @@ export default class Request {
         const {
             url,
             params,
-            // FIXME: removed paramsFn
         } = createOptions;
 
         const request = new RestRequest(

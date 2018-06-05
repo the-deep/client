@@ -12,6 +12,8 @@ export const DP__SET_ACTIVE_PAGE = 'siloDomainData/DP__SET_ACTIVE_PAGE';
 export const DP__SET_ACTIVE_SORT = 'siloDomainData/DP__SET_ACTIVE_SORT';
 export const DP__SET_PROJECTS_PER_PAGE = 'siloDomainData/DP__SET_PROJECTS_PER_PAGE';
 
+export const DP__SET_PROJECT_OPTIONS = 'siloDomainData/DP__SET_PROJECT_OPTIONS';
+
 // ACTION-CREATOR
 
 export const setDiscoverProjectsProjectListAction = ({ projectList, totalProjectsCount }) => ({
@@ -48,6 +50,11 @@ export const setDiscoverProjectsActiveSortAction = activeSort => ({
 export const setDiscoverProjectsProjectPerPageAction = projectsPerPage => ({
     type: DP__SET_PROJECTS_PER_PAGE,
     projectsPerPage,
+});
+
+export const setDiscoverProjectsProjectOptionsAction = projectOptions => ({
+    type: DP__SET_PROJECT_OPTIONS,
+    projectOptions,
 });
 
 // REDUCER
@@ -132,6 +139,17 @@ const setProjectsPerPage = (state, action) => {
     return update(state, settings);
 };
 
+const setProjectOptions = (state, action) => {
+    const { projectOptions } = action;
+    const settings = {
+        discoverProjectsView: {
+            projectOptions: { $set: projectOptions },
+        },
+    };
+    return update(state, settings);
+};
+
+
 // REDUCER MAP
 
 const reducers = {
@@ -142,6 +160,7 @@ const reducers = {
     [DP__SET_ACTIVE_PAGE]: setActivePage,
     [DP__SET_ACTIVE_SORT]: setActiveSort,
     [DP__SET_PROJECTS_PER_PAGE]: setProjectsPerPage,
+    [DP__SET_PROJECT_OPTIONS]: setProjectOptions,
 };
 
 export default reducers;

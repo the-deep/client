@@ -35,3 +35,8 @@ export const discoverProjectsTotalProjectsCountSelector = createSelector(
     pageSelector,
     discoverProjects => discoverProjects.totalProjectsCount || 0,
 );
+
+export const discoverProjectsProjectOptionsSelector = createSelector(
+    pageSelector,
+    discoverProjects => discoverProjects.projectOptions || emptyObject,
+);

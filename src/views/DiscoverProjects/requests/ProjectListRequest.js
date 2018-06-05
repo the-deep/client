@@ -19,6 +19,7 @@ export default class ProjectListRequest extends Request {
     }
 
     handleSuccess = (response) => {
+        // FIXME: write schema
         this.parent.setProjectList({
             projectList: response.results,
             totalProjectsCount: response.count,

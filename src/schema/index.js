@@ -74,6 +74,20 @@ const userDefinedSchemas = [];
     };
     userDefinedSchemas.push({ name, schema });
 }
+{
+    const name = 'timevalue';
+    const schema = {
+        doc: {
+            name: 'Time Value',
+            description: 'Array of timevalue represents a timeseries',
+        },
+        fields: {
+            date: { type: 'string', required: true }, // date
+            count: { type: 'uint', required: true },
+        },
+    };
+    userDefinedSchemas.push({ name, schema });
+}
 
 [
     ...userDefinedSchemas,
