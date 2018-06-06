@@ -1,0 +1,43 @@
+@import '../../stylesheets/base';
+
+.cluster {
+    @extend %main-content;
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        @include background-color($color-background-header);
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: space-between;
+        border-bottom: $width-separator-thin solid $color-separator-alt;
+        padding: $spacing-small;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: row;
+
+        .forced-directed-graph {
+            display: flex;
+        }
+
+        .table {
+            display: flex;
+        }
+    }
+
+    .footer {
+        @include background-color($color-foreground);
+        display: flex;
+        flex-shrink: 0;
+        justify-content: space-between;
+        border-top: $width-separator-thin solid $color-separator;
+        padding: $spacing-small $spacing-medium-alt;
+
+        .link {
+            @include button-like-link($color-accent);
+        }
+    }
+}
