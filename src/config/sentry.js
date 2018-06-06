@@ -5,7 +5,7 @@ const enableRaven = process.env.NODE_ENV === 'production';
 // Sentry Config For BoundError
 export const ravenInitialize = () => {
     if (enableRaven) {
-        Raven.config('https://2ab54c5cc4b24ebd8efca460aeb15e07@sentry.io/1216180').install();
+        Raven.config('https://9a60f35c6a1c45fe999727c5f6f7229c@sentry.io/1220157').install();
     }
 };
 
