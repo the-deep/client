@@ -56,7 +56,7 @@ export default class HomeScreen extends React.PureComponent {
     }
 
     componentDidMount() {
-        this.projectListRequest.create();
+        this.projectListRequest.init();
         this.projectListRequest.start();
     }
 
