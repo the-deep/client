@@ -225,6 +225,7 @@ export default class FilterLeadsForm extends React.PureComponent {
         const {
             faramValues,
             pristine,
+            loadingLeadFilters,
         } = this.state;
 
         const isApplyDisabled = pristine;
@@ -240,6 +241,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                 onChange={this.handleFaramChange}
                 schema={this.schema}
                 value={faramValues}
+                disabled={loadingLeadFilters}
             >
                 <SearchInput
                     faramElementName="search"
@@ -301,7 +303,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                 { !applyOnChange &&
                     <Button
                         className="button apply-filter-button"
-                        disabled={isApplyDisabled}
+                        disabled={isApplyDisabled || loadingLeadFilters}
                         type="submit"
                     >
                         {_ts('leads', 'filterApplyFilter')}
@@ -309,7 +311,7 @@ export default class FilterLeadsForm extends React.PureComponent {
                 }
                 <DangerButton
                     className="button clear-filter-button"
-                    disabled={isClearDisabled}
+                    disabled={isClearDisabled || loadingLeadFilters}
                     onClick={this.handleClearFilters}
                 >
                     {_ts('leads', 'filterClearFilter')}

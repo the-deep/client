@@ -1,10 +1,10 @@
 import {
     wsEndpoint,
-    POST,
-    PUT,
-    PATCH,
-    DELETE,
-    commonHeaderForPost,
     p,
 } from '#config/rest';
 
+export const urlForProjectOptions = `${wsEndpoint}/project-options/`;
+
+export const createUrlForProjectList = params => (
+    `${wsEndpoint}/projects/?${p(params)}`
+);

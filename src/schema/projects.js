@@ -28,7 +28,9 @@ const projectSchema = [];
             numberOfUsers: { type: 'uint' },
             numberOfLeads: { type: 'uint' },
             numberOfEntries: { type: 'uint' },
-            // extra: { type: 'projectsExtra', required: false },
+            entriesActivity: { type: 'array.timevalue' },
+            leadsActivity: { type: 'array.timevalue' },
+            status: { type: 'uint' },
         },
     };
     projectSchema.push({ name, schema });
@@ -41,11 +43,12 @@ const projectSchema = [];
             description: 'Defines all mapping between Project and User',
         },
         fields: {
+            addedBy: { type: 'uint' },
             id: { type: 'uint', required: true },
             joinedAt: { type: 'string' }, // date
             member: { type: 'uint', required: true },
-            memberName: { type: 'string' },
             memberEmail: { type: 'email' },
+            memberName: { type: 'string' },
             project: { type: 'uint', required: true },
             role: { type: 'string' }, // enum: normal, admin
         },

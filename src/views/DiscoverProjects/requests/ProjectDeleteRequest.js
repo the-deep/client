@@ -24,7 +24,7 @@ export default class ProjectDeleteRequest extends Request {
 
         this.createDefault({
             url,
-            createParams: createParamsForDelete,
+            params: createParamsForDelete,
         });
     }
 }

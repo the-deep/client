@@ -124,6 +124,7 @@ const initialSiloDomainData = {
 
     discoverProjectsView: {
         /*
+        totalProjectsCount: 0,
         projectList: [],
         filters: {},
         */

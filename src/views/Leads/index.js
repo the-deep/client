@@ -328,6 +328,19 @@ export default class Leads extends React.PureComponent {
         }
     }
 
+    getModalText = (action) => {
+        switch (action) {
+            case ACTION.delete:
+                return _ts('leads', 'leadDeleteConfirmText');
+            case ACTION.markAsPending:
+                return _ts('leads', 'leadMarkPendingConfirmText');
+            case ACTION.markAsProcessed:
+                return _ts('leads', 'leadMarkProcessedConfirmText');
+            default:
+                return _ts('leads', 'leadConfirmText');
+        }
+    }
+
     // UI
 
     handleSearchSimilarLead = (row) => {
@@ -565,19 +578,6 @@ export default class Leads extends React.PureComponent {
         const Header = this.renderHeader;
         const Footer = this.renderFooter;
 
-        const getModalText = (action) => {
-            switch (action) {
-                case ACTION.delete:
-                    return _ts('leads', 'leadDeleteConfirmText');
-                case ACTION.markAsPending:
-                    return _ts('leads', 'leadMarkPendingConfirmText');
-                case ACTION.markAsProcessed:
-                    return _ts('leads', 'leadMarkProcessedConfirmText');
-                default:
-                    return _ts('leads', 'leadConfirmText');
-            }
-        };
-
         return (
             <div className={styles.leads}>
                 <Header />
@@ -602,7 +602,7 @@ export default class Leads extends React.PureComponent {
                     onClose={this.handleModalClose}
                 >
                     <p>
-                        {getModalText(leadAction)}
+                        {this.getModalText(leadAction)}
                     </p>
                 </Confirm>
             </div>

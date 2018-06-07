@@ -567,6 +567,7 @@ const initialDevLangState = {
         802: 'Mark as pending',
         804: 'Mark as processed',
         1999: 'Leads per page',
+        7634: 'Projects per page',
         7000: 'Do you want to mark the lead as pending?',
         8001: 'Do you want to mark the lead as processed?',
         8002: 'Are you sure you want to continue?',
@@ -717,7 +718,17 @@ const initialDevLangState = {
             activityTitle: 7628,
             statusTitle: 8,
             actionsTitle: 16,
-
+        },
+        'discoverProjects.filter': {
+            status: 8,
+            projects: 173,
+            placeholderAny: 14,
+            placeholderSearch: 9,
+            filterApplyFilter: 10,
+            filterClearFilter: 11,
+        },
+        'discoverProjects.footer': {
+            projectsPerPage: 7634,
         },
         framework: {
             analysisFramework: 379,
