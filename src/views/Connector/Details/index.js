@@ -9,7 +9,6 @@ import {
     connectorsListSelector,
     connectorIdFromRouteSelector,
     connectorDetailsSelector,
-    connectorSourceSelector,
 
     setUserConnectorDetailsAction,
 } from '#redux';
@@ -18,6 +17,7 @@ import _ts from '#ts';
 import ConnectorDetailsGetRequest from '../requests/ConnectorDetailsGetRequest';
 
 import DetailsForm from './Form';
+import TestResults from './TestResults';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -30,13 +30,11 @@ const propTypes = {
 const defaultProps = {
     className: '',
     connectorDetails: {},
-    connectorSource: {},
     connectorId: undefined,
 };
 
 const mapStateToProps = state => ({
     connectorDetails: connectorDetailsSelector(state),
-    connectorSource: connectorSourceSelector(state),
     connectorsList: connectorsListSelector(state),
     connectorId: connectorIdFromRouteSelector(state),
 });
@@ -56,8 +54,11 @@ export default class ConnectorDetails extends React.PureComponent {
         super(props);
 
         this.state = {
+            showTestResults: false,
             connectorDataLoading: true,
+            connectorTestLoading: false,
             requestFailure: false,
+            paramsForTest: {},
         };
     }
 
@@ -97,10 +98,22 @@ export default class ConnectorDetails extends React.PureComponent {
 
     getClassName = () => {
         const { className } = this.props;
-        return `
-            ${className}
-            ${styles.details}
-        `;
+        const classNames = [];
+        classNames.push(styles.details);
+        classNames.push(className);
+
+        return classNames.join(' ');
+    }
+
+    handleConnectorTestClick = (paramsForTest) => {
+        this.setState({
+            showTestResults: true,
+            paramsForTest,
+        });
+    }
+
+    handleConnectorTestLoading = (connectorTestLoading) => {
+        this.setState({ connectorTestLoading });
     }
 
     startConnectorDetailsRequest = (connectorId, connectorDetails) => {
@@ -120,9 +133,11 @@ export default class ConnectorDetails extends React.PureComponent {
     renderDetails = () => {
         const {
             requestFailure,
+            showTestResults,
+            paramsForTest,
+            connectorTestLoading,
         } = this.state;
 
-        const { faramValues: connectorDetails = {} } = this.props.connectorDetails;
         const { connectorId } = this.props;
 
         if (requestFailure) {
@@ -133,14 +148,27 @@ export default class ConnectorDetails extends React.PureComponent {
             );
         }
 
+        const formClassName = [styles.form];
+        if (showTestResults) {
+            formClassName.push(styles.formWithTest);
+        }
+
         return (
             <Fragment>
-                <header className={styles.header} >
-                    <h3 className={styles.heading} >
-                        {connectorDetails.title}
-                    </h3>
-                </header>
-                <DetailsForm connectorId={connectorId} />
+                <DetailsForm
+                    className={formClassName.join(' ')}
+                    connectorId={connectorId}
+                    onTestButtonClick={this.handleConnectorTestClick}
+                    connectorTestLoading={connectorTestLoading}
+                />
+                { showTestResults &&
+                    <TestResults
+                        className={styles.testResults}
+                        connectorId={connectorId}
+                        paramsForTest={paramsForTest}
+                        onConnectorTestLoading={this.handleConnectorTestLoading}
+                    />
+                }
             </Fragment>
         );
     }

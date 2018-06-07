@@ -5,6 +5,7 @@ import update from '#rs/utils/immutable-update';
 import NumberInput from '#rs/components/Input/NumberInput';
 import List from '#rs/components/View/List';
 import BoundError from '#rs/components/General/BoundError';
+import { isFalsy } from '#ravl/common';
 
 import WidgetError from '#components/WidgetError';
 import _ts from '#ts';
@@ -99,8 +100,12 @@ export default class NumberMatrixOverview extends React.PureComponent {
     )
 
     renderColElement = (key, data, rowKey) => {
-        const { attribute } = this.props;
+        const {
+            attribute,
+            api,
+        } = this.props;
         const value = (attribute[rowKey] || emptyObject)[key];
+        const disabled = isFalsy(api.getEntry());
 
         return (
             <td
@@ -114,6 +119,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                     value={value}
                     showHintAndError={false}
                     separator=" "
+                    disabled={disabled}
                 />
             </td>
         );

@@ -50,9 +50,9 @@ export default class ConnectorLeadsRequest {
         });
     }
 
-    create = (connectorId) => {
+    create = (connectorId, projectId) => {
         const connectorLeadsRequest = new FgRestBuilder()
-            .url(createUrlForConnectorleads(connectorId))
+            .url(createUrlForConnectorleads(connectorId, projectId))
             .params(createParamsForGet)
             .preLoad(() => { this.props.setState({ connectorLeadsLoading: true }); })
             .postLoad(() => { this.props.setState({ connectorLeadsLoading: false }); })

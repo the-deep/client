@@ -6,6 +6,16 @@ $width-connectors-list: 240px;
     width: 80vw;
     height: 80vh;
 
+    .right-buttons {
+        display: flex;
+
+        .settings-link {
+            display: block;
+            padding: $spacing-small;
+            font-size: $font-size-large;
+        }
+    }
+
     .modal-body {
         display: flex;
         position: relative;
@@ -48,14 +58,20 @@ $width-connectors-list: 240px;
 
             .empty {
                 display: flex;
-                align-items: center;
+                flex-direction: column;
                 flex-grow: 1;
-                justify-content: center;
+                height: auto;
+
+                .settings-link {
+                    margin-top: $spacing-medium;
+                    font-size: $font-size-super-large-alt;
+                }
             }
         }
 
         .footer {
             display: flex;
+            flex-shrink: 0;
             justify-content: flex-end;
             border-top: $width-separator-thin solid $color-separator;
             padding: $spacing-small $spacing-medium-alt;
