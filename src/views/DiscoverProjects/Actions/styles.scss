@@ -1,0 +1,16 @@
+@import '../../../stylesheets/base';
+
+%base {
+    display: inline-block;
+    padding: $spacing-extra-small $spacing-small;
+}
+
+%link {
+    @extend %base;
+    color: $color-text-label;
+}
+
+.edit-link {
+    @extend %link;
+    color: $color-warning;
+}

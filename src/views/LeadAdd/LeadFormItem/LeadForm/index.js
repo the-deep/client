@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import Faram, {
@@ -9,7 +9,6 @@ import Faram, {
 } from '#rs/components/Input/Faram';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import SelectInput from '#rs/components/Input/SelectInput';
-import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
 import TextInput from '#rs/components/Input/TextInput';
 import TextArea from '#rs/components/Input/TextArea';
 import HiddenInput from '#rs/components/Input/HiddenInput';
@@ -17,6 +16,8 @@ import DateInput from '#rs/components/Input/DateInput';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Button from '#rs/components/Action/Button';
 import FormattedDate from '#rs/components/View/FormattedDate';
+
+import Cloak from '#components/Cloak';
 
 import {
     LEAD_TYPE,
@@ -320,29 +321,38 @@ export default class LeadForm extends React.PureComponent {
                         placeholder={_ts('addLeads', 'publisherPlaceHolderLabel')}
                     />
                 </ApplyAll>
+
                 <div className={styles.leadGroupContainer}>
-                    <ApplyAll
-                        className={styles.leadGroup}
-                        disabled={isApplyAllDisabled}
-                        identiferName="leadGroup"
-                        onApplyAllClick={this.handleApplyAllClick}
-                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                    >
-                        <SelectInput
-                            faramElementName="leadGroup"
-                            keySelector={LeadForm.keySelector}
-                            label={_ts('addLeads', 'leadGroupLabel')}
-                            labelSelector={LeadForm.labelSelector}
-                            options={leadOptions.leadGroup}
-                            placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
-                            showHintAndError
-                            showLabel
-                        />
-                    </ApplyAll>
-                    <Button
-                        onClick={this.handleAddLeadGroupClick}
-                        iconName={iconNames.add}
-                        transparent
+                    <Cloak
+                        requireDevMode
+                        render={({ disabled }) => (
+                            <Fragment>
+                                <ApplyAll
+                                    className={styles.leadGroup}
+                                    disabled={disabled || isApplyAllDisabled}
+                                    identiferName="leadGroup"
+                                    onApplyAllClick={this.handleApplyAllClick}
+                                    onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                                >
+                                    <SelectInput
+                                        faramElementName="leadGroup"
+                                        keySelector={LeadForm.keySelector}
+                                        label={_ts('addLeads', 'leadGroupLabel')}
+                                        labelSelector={LeadForm.labelSelector}
+                                        options={leadOptions.leadGroup}
+                                        placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
+                                        showHintAndError
+                                        showLabel
+                                    />
+                                </ApplyAll>
+                                <Button
+                                    onClick={this.handleAddLeadGroupClick}
+                                    iconName={iconNames.add}
+                                    transparent
+                                    disabled={disabled}
+                                />
+                            </Fragment>
+                        )}
                     />
                 </div>
                 <ApplyAll

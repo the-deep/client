@@ -3,7 +3,6 @@ import update from '#rs/utils/immutable-update';
 // TYPE
 
 export const DP__SET_PROJECT_LIST = 'siloDomainData/DP__SET_PROJECT_LIST';
-export const DP__DELETE_PROJECT = 'siloDomainData/DP__DELETE_PROJECT';
 
 export const DP__SET_FILTERS = 'siloDomainData/DP__SET_FILTERS';
 export const DP__UNSET_FILTERS = 'siloDomainData/DP__UNSET_FILTERS';
@@ -20,11 +19,6 @@ export const setDiscoverProjectsProjectListAction = ({ projectList, totalProject
     type: DP__SET_PROJECT_LIST,
     projectList,
     totalProjectsCount,
-});
-
-export const deleteDiscoverProjectsProjectAction = ({ projectId }) => ({
-    type: DP__DELETE_PROJECT,
-    projectId,
 });
 
 export const setDiscoverProjectsFilterAction = filters => ({
@@ -66,21 +60,6 @@ const setProjects = (state, action) => {
             projectList: { $set: projectList },
             totalProjectsCount: { $set: totalProjectsCount },
         } },
-    };
-    return update(state, settings);
-};
-
-const deleteProject = (state, action) => {
-    const { projectId } = action;
-    const { discoverProjectsView } = state;
-    const { projectList } = discoverProjectsView;
-
-    const projectIndex = projectList.findIndex(d => d.id === projectId);
-
-    const settings = {
-        discoverProjectsView: {
-            projectList: { $splice: [[projectIndex, 1]] },
-        },
     };
     return update(state, settings);
 };
@@ -154,7 +133,6 @@ const setProjectOptions = (state, action) => {
 
 const reducers = {
     [DP__SET_PROJECT_LIST]: setProjects,
-    [DP__DELETE_PROJECT]: deleteProject,
     [DP__SET_FILTERS]: setFilters,
     [DP__UNSET_FILTERS]: unsetFilters,
     [DP__SET_ACTIVE_PAGE]: setActivePage,

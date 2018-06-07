@@ -3,6 +3,9 @@ import React from 'react';
 import mapboxgl from 'mapbox-gl';
 
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import BoundError from '#rs/components/General/BoundError';
+
+import ComponentError from '#components/ComponentError';
 
 const propTypes = {
     className: PropTypes.string,
@@ -67,6 +70,7 @@ const createPointFilter = (selections, operator = 'in') => {
 };
 
 
+@BoundError(ComponentError)
 export default class GeoJsonMap extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
