@@ -3,6 +3,7 @@ import update from '#rs/utils/immutable-update';
 // TYPE
 
 export const DP__SET_PROJECT_LIST = 'siloDomainData/DP__SET_PROJECT_LIST';
+export const DP__SET_PROJECT_JOIN = 'siloDomainData/DP__SET_PROJECT_JOIN';
 
 export const DP__SET_FILTERS = 'siloDomainData/DP__SET_FILTERS';
 export const DP__UNSET_FILTERS = 'siloDomainData/DP__UNSET_FILTERS';
@@ -19,6 +20,12 @@ export const setDiscoverProjectsProjectListAction = ({ projectList, totalProject
     type: DP__SET_PROJECT_LIST,
     projectList,
     totalProjectsCount,
+});
+
+export const setDiscoverProjectsProjectJoinAction = ({ projectId, isJoining }) => ({
+    type: DP__SET_PROJECT_JOIN,
+    projectId,
+    isJoining,
 });
 
 export const setDiscoverProjectsFilterAction = filters => ({
@@ -60,6 +67,25 @@ const setProjects = (state, action) => {
             projectList: { $set: projectList },
             totalProjectsCount: { $set: totalProjectsCount },
         } },
+    };
+    return update(state, settings);
+};
+
+const setProjectJoin = (state, action) => {
+    console.warn(action);
+
+    const { discoverProjectsView: { projectList = [] } } = state;
+    const { projectId, isJoining } = action;
+
+    const index = projectList.findIndex(project => project.id === projectId);
+    const newRole = isJoining ? 'pending' : 'none';
+
+    const settings = {
+        discoverProjectsView: {
+            projectList: {
+                [index]: { role: { $set: newRole } },
+            },
+        },
     };
     return update(state, settings);
 };
@@ -139,6 +165,7 @@ const reducers = {
     [DP__SET_ACTIVE_SORT]: setActiveSort,
     [DP__SET_PROJECTS_PER_PAGE]: setProjectsPerPage,
     [DP__SET_PROJECT_OPTIONS]: setProjectOptions,
+    [DP__SET_PROJECT_JOIN]: setProjectJoin,
 };
 
 export default reducers;
