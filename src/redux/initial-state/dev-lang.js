@@ -689,6 +689,8 @@ const initialDevLangState = {
         7627: 'Admins',
         7628: 'Activity',
         7629: 'Discover projects',
+        7630: 'Leads activity',
+        7631: 'Entries activity',
     },
     links: {
         /*
@@ -716,7 +718,8 @@ const initialDevLangState = {
             numberOfUsersTitle: 1119,
             numberOfLeadsTitle: 641,
             numberOfEntriesTitle: 15,
-            activityTitle: 7628,
+            leadsActivityTitle: 7630,
+            entriesActivityTitle: 7631,
             statusTitle: 8,
             actionsTitle: 16,
         },

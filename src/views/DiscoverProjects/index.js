@@ -9,6 +9,7 @@ import Pager from '#rs/components/View/Pager';
 import RawTable from '#rs/components/View/RawTable';
 import TableHeader from '#rs/components/View/TableHeader';
 import FormattedDate from '#rs/components/View/FormattedDate';
+import SparkLines from '#rs/components/Visualization/SparkLines';
 import _ts from '#ts';
 
 import {
@@ -19,6 +20,7 @@ import {
     discoverProjectsProjectsPerPageSelector,
     discoverProjectsFiltersSelector,
 
+    setDiscoverProjectsProjectJoinAction,
     setDiscoverProjectsProjectListAction,
     setDiscoverProjectsActiveSortAction,
     setDiscoverProjectsActivePageAction,
@@ -28,6 +30,8 @@ import {
 import AppError from '#components/AppError';
 
 import ProjectListRequest from './requests/ProjectListRequest';
+import ProjectJoinRequest from './requests/ProjectJoinRequest';
+import ProjectJoinCancelRequest from './requests/ProjectJoinCancelRequest';
 
 import FilterProjectsForm from './FilterProjectsForm';
 import headers from './headers';
@@ -49,6 +53,7 @@ const propTypes = {
     setActiveSort: PropTypes.func.isRequired,
     setActivePage: PropTypes.func.isRequired,
     setProjectPerPage: PropTypes.func.isRequired,
+    setProjectJoin: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -66,11 +71,13 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     setProjectList: params => dispatch(setDiscoverProjectsProjectListAction(params)),
+    setProjectJoin: params => dispatch(setDiscoverProjectsProjectJoinAction(params)),
 
     setActiveSort: params => dispatch(setDiscoverProjectsActiveSortAction(params)),
     setActivePage: params => dispatch(setDiscoverProjectsActivePageAction(params)),
     setProjectPerPage: params => dispatch(setDiscoverProjectsProjectPerPageAction(params)),
 });
+
 
 @BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
@@ -90,11 +97,23 @@ export default class DiscoverProjects extends React.PureComponent {
 
         this.state = {
             pendingProjectList: false,
+            pendingProjectJoin: false,
+            pendingProjectJoinCancel: false,
         };
 
         this.projectListRequest = new ProjectListRequest({
             setState: d => this.setState(d),
             setProjectList: props.setProjectList,
+        });
+
+        this.projectJoinRequest = new ProjectJoinRequest({
+            setState: d => this.setState(d),
+            setProjectJoin: this.props.setProjectJoin,
+        });
+
+        this.projectJoinCancelRequest = new ProjectJoinCancelRequest({
+            setState: d => this.setState(d),
+            setProjectJoin: this.props.setProjectJoin,
         });
     }
 
@@ -141,6 +160,8 @@ export default class DiscoverProjects extends React.PureComponent {
 
     componentWillUnmount() {
         this.projectListRequest.stop();
+        this.projectJoinRequest.stop();
+        this.projectJoinCancelRequest.stop();
     }
 
     headerModifier = (headerData) => {
@@ -187,8 +208,28 @@ export default class DiscoverProjects extends React.PureComponent {
                 return project.memberships.length;
             case 'regions':
                 return project.regions.map(d => d.title).join(', ') || '-';
+            case 'leads_activity':
+                return (<SparkLines
+                    className={styles.sparkLine}
+                    data={project.leadsActivity}
+                    valueAccessor={activity => activity.count}
+                    lineColor=""
+                />);
+            case 'entries_activity':
+                return (<SparkLines
+                    className={styles.sparkLine}
+                    data={project.entriesActivity}
+                    valueAccessor={activity => activity.count}
+                    lineColor=""
+                />);
             case 'actions':
-                return <Actions project={project} />;
+                return (
+                    <Actions
+                        project={project}
+                        onProjectJoin={this.handleProjectJoin}
+                        onProjectJoinCancel={this.handleProjectJoinCancel}
+                    />
+                );
             default:
                 return project[columnKey];
         }
@@ -216,6 +257,20 @@ export default class DiscoverProjects extends React.PureComponent {
             activeSort = key;
         }
         this.props.setActiveSort(activeSort);
+    }
+
+    handleProjectJoin = (projectId) => {
+        this.projectJoinRequest.init({
+            projectId,
+        });
+        this.projectJoinRequest.start();
+    }
+
+    handleProjectJoinCancel = (projectId) => {
+        this.projectJoinCancelRequest.init({
+            projectId,
+        });
+        this.projectJoinCancelRequest.start();
     }
 
     renderHeader = () => (
@@ -262,7 +317,9 @@ export default class DiscoverProjects extends React.PureComponent {
 
     render() {
         const { projectList } = this.props;
-        const { pendingProjectList } = this.state;
+        const { pendingProjectList, pendingProjectJoin, pendingProjectJoinCancel } = this.state;
+
+        const pending = pendingProjectList || pendingProjectJoin || pendingProjectJoinCancel;
 
         const projectKeyExtractor = d => d.id;
 
@@ -283,7 +340,7 @@ export default class DiscoverProjects extends React.PureComponent {
                             keyExtractor={projectKeyExtractor}
                             className={styles.projectsTable}
                         />
-                        { pendingProjectList && <LoadingAnimation large /> }
+                        { pending && <LoadingAnimation large /> }
                     </div>
                 </div>
                 <Footer />

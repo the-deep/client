@@ -3,7 +3,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '#rs/utils/common';
-import Button from '#rs/components/Action/Button';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import WarningButton from '#rs/components/Action/Button/WarningButton';
 
 import {
     iconNames,
@@ -19,6 +20,8 @@ const propTypes = {
         id: PropTypes.number,
         role: PropTypes.string,
     }).isRequired,
+    onProjectJoin: PropTypes.func.isRequired,
+    onProjectJoinCancel: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -35,10 +38,11 @@ export default class Actions extends React.PureComponent {
         switch (project.role) {
             case 'none':
                 return (
-                    <Button
+                    <PrimaryButton
                         iconName={iconNames.add}
                         title={_ts('discoverProjects.table', 'joinProjectTooltip')}
                         transparent
+                        onClick={() => this.props.onProjectJoin(project.id)}
                     />
                 );
             case 'admin': {
@@ -58,7 +62,12 @@ export default class Actions extends React.PureComponent {
                 );
             } case 'pending':
                 return (
-                    <span>Pending</span>
+                    <WarningButton
+                        iconName={iconNames.undo}
+                        title={_ts('discoverProjects.table', 'joinCancelProjectTooltip')}
+                        transparent
+                        onClick={() => this.props.onProjectJoinCancel(project.id)}
+                    />
                 );
             case 'rejected':
                 return (

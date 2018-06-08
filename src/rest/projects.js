@@ -8,6 +8,8 @@ import {
 } from '#config/rest';
 
 export const createUrlForProject = projectId => `${wsEndpoint}/projects/${projectId}/`;
+export const createUrlForProjectJoin = projectId => `${wsEndpoint}/projects/${projectId}/join/`;
+export const createUrlForProjectJoinCancel = projectId => `${wsEndpoint}/projects/${projectId}/join/cancel/`;
 export const createUrlForProjectOptions = projectId => `${wsEndpoint}/project-options/?${p({ project: projectId })}`;
 
 export const createUrlForProjectAryTemplate = projectId => `${wsEndpoint}/projects/${projectId}/assessment-template/`;
@@ -26,6 +28,16 @@ export const urlForProjectCreate = `${wsEndpoint}/projects/`;
 export const urlForProjectMembership = `${wsEndpoint}/project-memberships/`;
 export const createUrlForUserProjectMembership = membershipId =>
     `${wsEndpoint}/project-memberships/${membershipId}/`;
+
+export const createParamsForProjectJoin = () => ({
+    method: POST,
+    headers: commonHeaderForPost,
+});
+
+export const createParamsForProjectJoinCancel = () => ({
+    method: POST,
+    headers: commonHeaderForPost,
+});
 
 export const createParamsForProjectPatch = data => ({
     method: PATCH,
