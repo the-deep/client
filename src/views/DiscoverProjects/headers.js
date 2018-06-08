@@ -50,19 +50,24 @@ const headers = [
         order: 9,
     },
     {
-        key: 'activity',
-        title: _ts('discoverProjects.table', 'activityTitle'),
+        key: 'leads_activity',
+        title: _ts('discoverProjects.table', 'leadsActivityTitle'),
         order: 10,
+    },
+    {
+        key: 'entries_activity',
+        title: _ts('discoverProjects.table', 'entriesActivityTitle'),
+        order: 11,
     },
     {
         key: 'status',
         title: _ts('discoverProjects.table', 'statusTitle'),
-        order: 11,
+        order: 12,
     },
     {
         key: 'actions',
         title: _ts('discoverProjects.table', 'actionsTitle'),
-        order: 11,
+        order: 13,
     },
 ];
 
