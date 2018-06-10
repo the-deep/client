@@ -140,11 +140,6 @@ export default class UserProfile extends React.PureComponent {
             );
         }
 
-        const displayPicture = (
-            userInformation.displayPicture ||
-            activeUser.displayPicture
-        );
-
         return (
             <div className={styles.userProfile}>
                 <header className={styles.header}>
@@ -154,7 +149,7 @@ export default class UserProfile extends React.PureComponent {
                     {/* FIXME: add a default image in img */}
                     <DisplayPicture
                         className={styles.displayPicture}
-                        galleryId={displayPicture}
+                        galleryId={userInformation.displayPicture}
                     />
                     <div className={styles.detail}>
                         <div className={styles.name}>

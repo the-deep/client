@@ -19,6 +19,7 @@ export * from './file';
 export * from './languages';
 export * from './leadFilterOptions';
 export * from './leads';
+export * from './notifications';
 export * from './projects';
 export * from './regions';
 export * from './token';

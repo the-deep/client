@@ -516,6 +516,7 @@ const initialDevLangState = {
         1302: 'Upload file',
         1928: 'Fail to update users list, Please check your network connection and try again',
         1929: 'Notifications',
+        1930: 'requested to join the project',
         2000: 'Browser Extension',
         2001: 'Your extension has been successfully set up.',
         2002: 'An error occured while setting up the extension. Please make sure you have installed and enabled the extension.',
@@ -1833,6 +1834,13 @@ const initialDevLangState = {
             userEditImageUploadFailure: 7500,
             fileSelection: 5557,
             invalidFileSelection: 5556,
+        },
+        notifications: {
+            notificationHeaderTitle: 1929,
+        },
+        'notifications.projectJoin': {
+            requestedToJoin: 1930,
+            date: 704,
         },
         'components.addProject': {
             addProjectModalLabel: 180,

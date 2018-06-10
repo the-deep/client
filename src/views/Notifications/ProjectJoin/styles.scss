@@ -1,0 +1,71 @@
+@import '../../../stylesheets/base';
+
+.project-join-item {
+    display: flex;
+    border-bottom: $width-separator-thin solid $color-separator;
+    padding: $spacing-extra-small $spacing-medium;
+    width: 520px;
+    margin: auto;
+
+    .display-picture {
+        flex-shrink: 0;
+        margin: $spacing-medium 0;
+        border: $width-separator-thin solid $color-accent;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+    }
+
+    .details {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: $spacing-medium;
+
+        .description {
+            padding: $spacing-extra-small $spacing-medium;
+
+            .display-name {
+                margin: 0;
+                margin-right: $spacing-extra-small-alt;
+                color: $color-accent;
+            }
+
+            .project-title {
+                margin: 0;
+                margin-left: $spacing-extra-small-alt;
+                color: $color-accent;
+
+                &:after {
+                    color: $color-text;
+                    content: '.';
+                }
+            }
+        }
+
+        .date {
+            padding: $spacing-extra-small $spacing-medium;
+            color: $color-text-label;
+            font-size: $font-size-small;
+
+            .label {
+                margin-right: $spacing-extra-small;
+                text-transform: uppercase;
+
+                &:after {
+                    content: ':';
+                }
+            }
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            padding: $spacing-small $spacing-medium;
+
+            .button {
+                margin-right: $spacing-medium;
+            }
+        }
+    }
+}
