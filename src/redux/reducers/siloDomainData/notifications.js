@@ -34,7 +34,6 @@ const setNotifications = (state, action) => {
 const setProjectJoinStatus = (state, action) => {
     const { notificationsView: { notifications = [] } } = state;
     const { newNotificationDetails } = action;
-    console.warn(newNotificationDetails);
 
     const index = notifications.findIndex(n => (n.details || {}).id === newNotificationDetails.id);
 

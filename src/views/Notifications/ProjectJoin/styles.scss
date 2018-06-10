@@ -3,7 +3,7 @@
 $width-notification: 520px;
 $display-picture-size: 48px;
 
-%link {
+.link {
     margin: 0;
     color: $color-accent;
 }
@@ -33,53 +33,6 @@ $display-picture-size: 48px;
 
         .description {
             padding: $spacing-extra-small $spacing-medium;
-
-            .display-name {
-                @extend %link;
-                margin-right: $spacing-extra-small-alt;
-            }
-
-            .project-title {
-                @extend %link;
-                margin-left: $spacing-extra-small-alt;
-
-                &:after {
-                    color: $color-text;
-                    content: '.';
-                }
-            }
-        }
-
-        .responded-description {
-            .responded-for {
-                @extend %link;
-                margin-right: $spacing-extra-small-alt;
-
-                &:after {
-                    text-transform: lowercase;
-                    color: $color-text;
-                    content: "'s";
-                }
-            }
-
-            .responded-by {
-                @extend %link;
-                margin-left: $spacing-extra-small-alt;
-
-                &:after {
-                    color: $color-text;
-                    content: '.';
-                }
-            }
-
-            .project-title {
-                margin-right: $spacing-extra-small-alt;
-
-                &:after {
-                    color: $color-text;
-                    content: '';
-                }
-            }
         }
 
         .date {

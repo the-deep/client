@@ -97,21 +97,26 @@ export default class ProjectJoinItem extends React.PureComponent {
         return (
             <Fragment>
                 <div className={styles.description} >
-                    <Link
-                        className={styles.displayName}
-                        target="_blank"
-                        to={reverseRoute(pathNames.userProfile, { userId: requestedBy.id })}
-                    >
-                        {requestedBy.displayName}
-                    </Link>
-                    {_ts('notifications.projectJoin', 'requestedToJoin')}
-                    <Link
-                        className={styles.projectTitle}
-                        target="_blank"
-                        to={reverseRoute(pathNames.projects, { projectId: project.id })}
-                    >
-                        {project.title}
-                    </Link>
+                    {_ts('notifications.projectJoin', 'requestedToJoin', {
+                        requestedBy: (
+                            <Link
+                                className={styles.link}
+                                target="_blank"
+                                to={reverseRoute(pathNames.userProfile, { userId: requestedBy.id })}
+                            >
+                                {requestedBy.displayName}
+                            </Link>
+                        ),
+                        project: (
+                            <Link
+                                className={styles.link}
+                                target="_blank"
+                                to={reverseRoute(pathNames.projects, { projectId: project.id })}
+                            >
+                                {project.title}
+                            </Link>
+                        ),
+                    })}
                 </div>
                 <div className={styles.date} >
                     <span className={styles.label} >
@@ -151,37 +156,43 @@ export default class ProjectJoinItem extends React.PureComponent {
             status,
         } = data.details;
 
-        let approvalText = _ts('notifications.projectJoin', 'requestAcceptedBy');
+        let approvalText = 'acceptedText';
         if (status === 'rejected') {
-            approvalText = _ts('notifications.projectJoin', 'requestRejectedBy');
+            approvalText = 'rejectedText';
         }
 
         return (
             <Fragment>
                 <div className={`${styles.respondedDescription} ${styles.description}`} >
-                    <Link
-                        className={styles.respondedFor}
-                        target="_blank"
-                        to={reverseRoute(pathNames.userProfile, { userId: requestedBy.id })}
-                    >
-                        {requestedBy.displayName}
-                    </Link>
-                    {_ts('notifications.projectJoin', 'requestRespondedIn')}
-                    <Link
-                        className={styles.projectTitle}
-                        target="_blank"
-                        to={reverseRoute(pathNames.projects, { projectId: project.id })}
-                    >
-                        {project.title}
-                    </Link>
-                    {approvalText}
-                    <Link
-                        className={styles.respondedBy}
-                        target="_blank"
-                        to={reverseRoute(pathNames.userProfile, { userId: respondedBy.id })}
-                    >
-                        {respondedBy.displayName}
-                    </Link>
+                    {_ts('notifications.projectJoin', approvalText, {
+                        requestedBy: (
+                            <Link
+                                className={styles.link}
+                                target="_blank"
+                                to={reverseRoute(pathNames.userProfile, { userId: requestedBy.id })}
+                            >
+                                {requestedBy.displayName}
+                            </Link>
+                        ),
+                        project: (
+                            <Link
+                                className={styles.link}
+                                target="_blank"
+                                to={reverseRoute(pathNames.projects, { projectId: project.id })}
+                            >
+                                {project.title}
+                            </Link>
+                        ),
+                        respondedBy: (
+                            <Link
+                                className={styles.link}
+                                target="_blank"
+                                to={reverseRoute(pathNames.userProfile, { userId: respondedBy.id })}
+                            >
+                                {respondedBy.displayName}
+                            </Link>
+                        ),
+                    })}
                 </div>
                 <div className={styles.date} >
                     <span className={styles.label} >

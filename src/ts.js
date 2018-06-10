@@ -1,6 +1,7 @@
 import React from 'react';
 import devLang from '#redux/initial-state/dev-lang';
 
+import { randomString } from '#rs/utils/common';
 import {
     selectedLinksSelector,
     selectedStringsSelector,
@@ -34,8 +35,9 @@ const stringFormat = (str, params) => {
                 value: params[test[1]],
             };
         }
+
         return {
-            key: split,
+            key: randomString(16).toLowerCase(),
             value: split,
         };
     });
