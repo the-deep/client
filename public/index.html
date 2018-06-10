@@ -45,14 +45,12 @@
             cursor: pointer;
         }
 
+        /*
         .issue-collector button#finance-a-feature {
             background: #ffc200;
         }
-        /*
-        .issue-collector button#finance-a-feature {
-            background-color: #d0d0d0;
-        }
         */
+
     </style>
   </head>
   <body style="background-color: #f0f0f0;">
@@ -66,12 +64,14 @@
     </div>
 
     <div class="issue-collector">
-        <button id="report-a-bug">
+        <button id="report-a-bug" onClick="zE && zE.activate({hideOnClose: true});">
             Feedback or Bug?
         </button>
+        <!--
         <button id="finance-a-feature">
             Finance a feature <span class="fa fa-money"></span>
         </button>
+        -->
     </div>
 
     <!-- External icons and css -->
@@ -81,30 +81,15 @@
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.41.0/mapbox-gl.css' rel='stylesheet' />
     <!-- End -->
 
-    <!-- Jira Collector -->
-    <script type="text/javascript" src="https://togglecorp.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/-adfe5m/b/8/a44af77267a987a660377e5c46e0fb64/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=82f773fc"></script>
-    <script type="text/javascript" src="https://togglecorp.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e-T/c8vwe6/b/a/7ebd7d8b8f8cafb14c7b0966803e5701/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&collectorId=13c893d9"></script>
+    <!-- Start of deephelp Zendesk Widget -->
+    <script>/*<![CDATA[*/window.zE||(function(e,t,s){var n=window.zE=window.zEmbed=function(){n._.push(arguments)}, a=n.s=e.createElement(t),r=e.getElementsByTagName(t)[0];n.set=function(e){ n.set._.push(e)},n._=[],n.set._=[],a.async=true,a.setAttribute("charset","utf-8"), a.src="https://static.zdassets.com/ekr/asset_composer.js?key="+s, n.t=+new Date,a.type="text/javascript",r.parentNode.insertBefore(a,r)})(document,"script","c203955c-2d20-4d54-814b-4247caf4340f");/*]]>*/</script>
     <script type="text/javascript">
-        window.ATL_JQ_PAGE_PROPS = $.extend(window.ATL_JQ_PAGE_PROPS,{
-            '82f773fc': {
-                triggerFunction: function(showCollectorDialog) {
-                    document.getElementById('report-a-bug').onclick = function(e) {
-                        e.preventDefault();
-                        showCollectorDialog();
-                    };
-                },
-            },
-            '13c893d9': {
-                triggerFunction: function(showCollectorDialog) {
-                    $('#finance-a-feature').click(function(e) {
-                        e.preventDefault();
-                        showCollectorDialog();
-                    });
-                },
-            },
+        window.zESettings = { };
+        zE(function() {
+            zE.hide();
         });
     </script>
-    <!-- End -->
+    <!-- End of deephelp Zendesk Widget -->
 
     <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
     <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
