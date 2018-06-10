@@ -23,6 +23,9 @@ import {
 
     selectedLanguageStringsChangesSelector,
     selectedLanguageLinksChangesSelector,
+
+    selectedStringsFilteredSelector,
+    selectedLinksFilteredSelector,
 } from '#redux';
 
 import LanguagePut from '../requests/LanguagePut';
@@ -50,6 +53,11 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     selectedLanguageLinksChanges: PropTypes.object.isRequired,
 
+    // eslint-disable-next-line react/forbid-prop-types
+    selectedLanguageStrings: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    selectedLanguageLinks: PropTypes.object.isRequired,
+
     setLanguage: PropTypes.func.isRequired,
 };
 
@@ -64,6 +72,9 @@ const mapStateToProps = state => ({
     hasInvalidChanges: hasInvalidChangesSelector(state),
     selectedLanguageStringsChanges: selectedLanguageStringsChangesSelector(state),
     selectedLanguageLinksChanges: selectedLanguageLinksChangesSelector(state),
+
+    selectedLanguageStrings: selectedStringsFilteredSelector(state),
+    selectedLanguageLinks: selectedLinksFilteredSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -116,6 +127,19 @@ export default class StringManagement extends React.PureComponent {
         this.createLanguageRequest(languageCode, strings, links);
     }
 
+    handleExportButtonClick = () => {
+        const {
+            selectedLanguageStrings: strings,
+            selectedLanguageLinks: links,
+        } = this.props;
+
+        const content = encodeURIComponent(
+            JSON.stringify({ strings, links }, undefined, 4),
+        );
+
+        window.open(`data:application/txt,${content}`, '_self');
+    }
+
     handleAddButtonClick = () => {
         this.setState({ showAddStringModal: true });
     }
@@ -136,7 +160,7 @@ export default class StringManagement extends React.PureComponent {
         this.setState({ showDiscardModal: false });
     }
 
-    renderHeader = () => {
+    renderHeader = ({ disabled, showExport }) => {
         const keySelector = d => d.code;
         const labelSelector = d => d.title;
 
@@ -177,7 +201,7 @@ export default class StringManagement extends React.PureComponent {
                     />
                     <PrimaryButton
                         onClick={this.handleAddButtonClick}
-                        disabled={pendingLanguagePut}
+                        disabled={disabled || pendingLanguagePut}
                     >
                         Add new string
                     </PrimaryButton>
@@ -186,20 +210,31 @@ export default class StringManagement extends React.PureComponent {
                         disabled={
                             !hasSelectedLanguageChanges
                                 || pendingLanguagePut
+                                || disabled
                         }
                     >
                         Discard
                     </DangerButton>
-                    <SuccessButton
-                        disabled={
-                            !hasSelectedLanguageChanges
-                                || hasInvalidChanges
-                                || pendingLanguagePut
-                        }
-                        onClick={this.handleSaveButtonClick}
-                    >
-                        Save
-                    </SuccessButton>
+                    { showExport ? (
+                        <SuccessButton
+                            onClick={this.handleExportButtonClick}
+                            disabled={disabled}
+                        >
+                            Export
+                        </SuccessButton>
+                    ) : (
+                        <SuccessButton
+                            disabled={
+                                !hasSelectedLanguageChanges
+                                    || hasInvalidChanges
+                                    || pendingLanguagePut
+                                    || disabled
+                            }
+                            onClick={this.handleSaveButtonClick}
+                        >
+                            Save
+                        </SuccessButton>
+                    )}
                     { showAddStringModal &&
                         <EditStringModal
                             onClose={this.handleAddStringClose}
@@ -223,6 +258,7 @@ export default class StringManagement extends React.PureComponent {
         const {
             pendingLanguage,
             linkCollectionName,
+            selectedLanguageName,
         } = this.props;
         const {
             pendingLanguagePut,
@@ -230,15 +266,27 @@ export default class StringManagement extends React.PureComponent {
 
         const Header = this.renderHeader;
 
+        const isDevLangSelected = selectedLanguageName === '$devLang';
+        const disabled = isDevLangSelected &&
+            (process.env.NODE_ENV !== 'production');
+        const showExport = isDevLangSelected;
+
         return (
             <div className={styles.rightPane}>
                 { (pendingLanguage || pendingLanguagePut) && <LoadingAnimation /> }
-                <Header />
+                <Header
+                    disabled={disabled}
+                    showExport={showExport}
+                />
                 <div className={styles.content}>
                     <div className={styles.scrollWrapper}>
-                        { linkCollectionName === '$all' ? <StringsTable /> : <LinksTable /> }
+                        {
+                            linkCollectionName === '$all'
+                                ? <StringsTable disabled={disabled} />
+                                : <LinksTable disabled={disabled} />
+                        }
                     </div>
-                    <InfoPane />
+                    <InfoPane disabled={disabled} />
                 </div>
             </div>
         );

@@ -43,6 +43,8 @@ const propTypes = {
     selectedLanguageName: PropTypes.string.isRequired,
     removeStringChange: PropTypes.func.isRequired,
     removeLinkChange: PropTypes.func.isRequired,
+
+    disabled: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -176,6 +178,7 @@ export default class InfoPane extends React.PureComponent {
                             smallVerticalPadding
                             iconName={iconNames.add}
                             onClick={() => this.handleEditLinkButtonClick(d)}
+                            disabled={this.props.disabled}
                         />
                     </Fragment>
                 );
@@ -205,6 +208,7 @@ export default class InfoPane extends React.PureComponent {
                             smallVerticalPadding
                             iconName={iconNames.delete}
                             onClick={() => this.handleLinkChangeDeleteButtonClick(d.key)}
+                            disabled={this.props.disabled}
                         />
                         { d.message !== undefined &&
                             <div className={styles.message}>
@@ -223,6 +227,7 @@ export default class InfoPane extends React.PureComponent {
                             smallVerticalPadding
                             iconName={iconNames.delete}
                             onClick={() => this.handleLinkChangeDeleteButtonClick(d.key)}
+                            disabled={this.props.disabled}
                         />
                         { d.message !== undefined &&
                             <div className={styles.message}>
@@ -241,6 +246,7 @@ export default class InfoPane extends React.PureComponent {
                             smallVerticalPadding
                             iconName={iconNames.delete}
                             onClick={() => this.handleLinkChangeDeleteButtonClick(d.key)}
+                            disabled={this.props.disabled}
                         />
                         { d.message !== undefined &&
                             <div>{d.message}</div>
@@ -257,6 +263,7 @@ export default class InfoPane extends React.PureComponent {
                             smallVerticalPadding
                             iconName={iconNames.delete}
                             onClick={() => this.handleStringChangeDeleteButtonClick(d.id)}
+                            disabled={this.props.disabled}
                         />
                         { d.message !== undefined &&
                             <div className={styles.message}>
@@ -275,6 +282,7 @@ export default class InfoPane extends React.PureComponent {
                             smallVerticalPadding
                             iconName={iconNames.delete}
                             onClick={() => this.handleStringChangeDeleteButtonClick(d.id)}
+                            disabled={this.props.disabled}
                         />
                         { d.message !== undefined &&
                             <div>{d.message}</div>
@@ -291,6 +299,7 @@ export default class InfoPane extends React.PureComponent {
                             smallVerticalPadding
                             iconName={iconNames.delete}
                             onClick={() => this.handleStringChangeDeleteButtonClick(d.id)}
+                            disabled={this.props.disabled}
                         />
                         { d.message !== undefined &&
                             <div className={styles.message}>

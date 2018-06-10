@@ -23,6 +23,7 @@ import styles from './styles.scss';
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     linkCollection: PropTypes.array.isRequired,
+    disabled: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -91,12 +92,14 @@ export default class LinksTable extends React.PureComponent {
                             iconName={iconNames.edit}
                             transparent
                             smallVerticalPadding
+                            disabled={this.props.disabled}
                         />
                         <DangerButton
                             onClick={() => { this.handleDeleteButtonClick(data.id); }}
                             iconName={iconNames.delete}
                             transparent
                             smallVerticalPadding
+                            disabled={this.props.disabled}
                         />
                     </Fragment>
                 ),

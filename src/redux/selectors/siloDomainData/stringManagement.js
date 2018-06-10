@@ -244,7 +244,7 @@ export const hasInvalidChangesSelector = createSelector(
     ),
 );
 
-const selectedStringsSelector = createSelector(
+export const selectedStringsFilteredSelector = createSelector(
     selectedStringsUnfilteredSelector,
     selectedLanguageStringsChangesUnfilteredSelector,
     (strings, stringsChanges) => {
@@ -255,7 +255,7 @@ const selectedStringsSelector = createSelector(
         return update(strings, { $bulk: actions });
     },
 );
-const selectedLinksSelector = createSelector(
+export const selectedLinksFilteredSelector = createSelector(
     selectedLinksUnfilteredSelector,
     selectedLanguageLinksChangesUnfilteredSelector,
     (links, linksChanges) => {
@@ -279,7 +279,7 @@ const selectedLinksSelector = createSelector(
 );
 
 const selectedLinkCollectionSelector = createSelector(
-    selectedLinksSelector,
+    selectedLinksFilteredSelector,
     selectedLinkCollectionNameSelector,
     (links, linkCollectionName) => links[linkCollectionName] || emptyArray,
 );
@@ -300,7 +300,7 @@ const usageMapSelector = () => {
 };
 
 const duplicatedStringsSelector = createSelector(
-    selectedStringsSelector,
+    selectedStringsFilteredSelector,
     (strings) => {
         // Get duplicated strings
         const duplicatedStrings = {};
@@ -324,8 +324,8 @@ const duplicatedStringsSelector = createSelector(
 );
 
 const referenceCountOfStringsSelector = createSelector(
-    selectedStringsSelector,
-    selectedLinksSelector,
+    selectedStringsFilteredSelector,
+    selectedLinksFilteredSelector,
     usageMapSelector,
     (strings, links, usageMaps) => {
         // Initialize reference count for string
@@ -351,8 +351,8 @@ const referenceCountOfStringsSelector = createSelector(
 
 // List all the problems with links and strings
 const problemCollectionsSelector = createSelector(
-    selectedStringsSelector,
-    selectedLinksSelector,
+    selectedStringsFilteredSelector,
+    selectedLinksFilteredSelector,
     usageMapSelector,
     selectedLanguageStringsChangesSelector,
     selectedLanguageLinksChangesSelector,
@@ -559,7 +559,7 @@ export const problemCollectionStatsSelector = createSelector(
 
 // Get strings for tabular view
 export const allStringsSelector = createSelector(
-    selectedStringsSelector,
+    selectedStringsFilteredSelector,
     duplicatedStringsSelector,
     referenceCountOfStringsSelector,
     (strings, duplicatedStrings, stringsReferenceCount) => mapToList(
@@ -575,7 +575,7 @@ export const allStringsSelector = createSelector(
 
 // Get linkCollection for tabular view
 export const linkCollectionSelector = createSelector(
-    selectedStringsSelector,
+    selectedStringsFilteredSelector,
     selectedLinkCollectionSelector,
     usageMapSelector,
     selectedLinkCollectionNameSelector,
@@ -596,7 +596,7 @@ export const linkCollectionSelector = createSelector(
 // Sort the keys alphabetically
 export const linkKeysSelector = createSelector(
     usageMapSelector,
-    selectedLinksSelector,
+    selectedLinksFilteredSelector,
     (usedMaps, links) => {
         // keys must be of both usage and language
         const keys = unique([...Object.keys(usedMaps), ...Object.keys(links)]).sort();
