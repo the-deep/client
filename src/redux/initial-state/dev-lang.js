@@ -517,6 +517,9 @@ const initialDevLangState = {
         1928: 'Fail to update users list, Please check your network connection and try again',
         1929: 'Notifications',
         1930: 'requested to join the project',
+        1931: 'request to join the project',
+        1932: 'was accepted by',
+        1933: 'was rejected by',
         2000: 'Browser Extension',
         2001: 'Your extension has been successfully set up.',
         2002: 'An error occured while setting up the extension. Please make sure you have installed and enabled the extension.',
@@ -1840,6 +1843,9 @@ const initialDevLangState = {
         },
         'notifications.projectJoin': {
             requestedToJoin: 1930,
+            requestRespondedIn: 1931,
+            requestAcceptedBy: 1932,
+            requestRejectedBy: 1933,
             date: 704,
         },
         'components.addProject': {

@@ -1,19 +1,28 @@
 @import '../../../stylesheets/base';
 
+$width-notification: 520px;
+$display-picture-size: 48px;
+
+%link {
+    margin: 0;
+    color: $color-accent;
+}
+
 .project-join-item {
     display: flex;
+    position: relative;
+    margin: auto;
     border-bottom: $width-separator-thin solid $color-separator;
     padding: $spacing-extra-small $spacing-medium;
-    width: 520px;
-    margin: auto;
+    width: $width-notification;
 
     .display-picture {
         flex-shrink: 0;
         margin: $spacing-medium 0;
         border: $width-separator-thin solid $color-accent;
         border-radius: 50%;
-        width: 48px;
-        height: 48px;
+        width: $display-picture-size;
+        height: $display-picture-size;
     }
 
     .details {
@@ -26,19 +35,49 @@
             padding: $spacing-extra-small $spacing-medium;
 
             .display-name {
-                margin: 0;
+                @extend %link;
                 margin-right: $spacing-extra-small-alt;
-                color: $color-accent;
             }
 
             .project-title {
-                margin: 0;
+                @extend %link;
                 margin-left: $spacing-extra-small-alt;
-                color: $color-accent;
 
                 &:after {
                     color: $color-text;
                     content: '.';
+                }
+            }
+        }
+
+        .responded-description {
+            .responded-for {
+                @extend %link;
+                margin-right: $spacing-extra-small-alt;
+
+                &:after {
+                    text-transform: lowercase;
+                    color: $color-text;
+                    content: "'s";
+                }
+            }
+
+            .responded-by {
+                @extend %link;
+                margin-left: $spacing-extra-small-alt;
+
+                &:after {
+                    color: $color-text;
+                    content: '.';
+                }
+            }
+
+            .project-title {
+                margin-right: $spacing-extra-small-alt;
+
+                &:after {
+                    color: $color-text;
+                    content: '';
                 }
             }
         }
@@ -64,7 +103,7 @@
             padding: $spacing-small $spacing-medium;
 
             .button {
-                margin-right: $spacing-medium;
+                margin-left: $spacing-medium;
             }
         }
     }

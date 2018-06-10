@@ -1,94 +1,234 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import FormattedDate from '#rs/components/View/FormattedDate';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import { reverseRoute } from '#rs/utils/common';
 
 import DisplayPicture from '#components/DisplayPicture';
+import {
+    setProjectJoinStatusAction,
+} from '#redux';
 
 import {
     pathNames,
     iconNames,
 } from '#constants';
-
 import _ts from '#ts';
+
+import ProjectJoinResponseRequest from '../requests/ProjectJoinResponseRequest';
 
 import styles from './styles.scss';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     data: PropTypes.object.isRequired,
+    setProjectJoinStatus: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
 };
 
+const mapDispatchToProps = dispatch => ({
+    setProjectJoinStatus: params => dispatch(setProjectJoinStatusAction(params)),
+});
+
+@connect(null, mapDispatchToProps)
 export default class ProjectJoinItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    render() {
-        const {
-            data,
-        } = this.props;
+    constructor(props) {
+        super(props);
 
+        this.state = { approvalLoading: false };
+    }
+
+    componentWillUnmount() {
+        if (this.requestForProjectJoinResponse) {
+            this.requestForProjectJoinResponse.stop();
+        }
+    }
+
+    startProjectJoinResponseRequest = (projectId, requestId, approval) => {
+        let response = 'reject';
+        if (approval) {
+            response = 'accept';
+        }
+
+        if (this.requestForProjectJoinResponse) {
+            this.requestForProjectJoinResponse.stop();
+        }
+
+        const requestForProjectJoinResponse = new ProjectJoinResponseRequest({
+            setState: v => this.setState(v),
+            setProjectJoinStatus: this.props.setProjectJoinStatus,
+        });
+
+        this.requestForProjectJoinResponse = requestForProjectJoinResponse.create(
+            projectId,
+            requestId,
+            response,
+        );
+        this.requestForProjectJoinResponse.start();
+    }
+
+    handleRequestApproval = (approval) => {
+        const { data } = this.props;
         const {
             id,
             project,
+        } = data.details;
+
+        this.startProjectJoinResponseRequest(project.id, id, approval);
+    }
+
+    renderPendingDescription = () => {
+        const { data } = this.props;
+        const {
+            project,
             requestedBy,
-            status,
         } = data.details;
 
         return (
+            <Fragment>
+                <div className={styles.description} >
+                    <Link
+                        className={styles.displayName}
+                        target="_blank"
+                        to={reverseRoute(pathNames.userProfile, { userId: requestedBy.id })}
+                    >
+                        {requestedBy.displayName}
+                    </Link>
+                    {_ts('notifications.projectJoin', 'requestedToJoin')}
+                    <Link
+                        className={styles.projectTitle}
+                        target="_blank"
+                        to={reverseRoute(pathNames.projects, { projectId: project.id })}
+                    >
+                        {project.title}
+                    </Link>
+                </div>
+                <div className={styles.date} >
+                    <span className={styles.label} >
+                        {_ts('notifications.projectJoin', 'date')}
+                    </span>
+                    <FormattedDate
+                        date={data.date}
+                        mode="dd-MM-yyyy"
+                    />
+                </div>
+                <div className={styles.actionButtons} >
+                    <DangerButton
+                        className={styles.button}
+                        iconName={iconNames.close}
+                        onClick={() => this.handleRequestApproval(false)}
+                    >
+                        Reject
+                    </DangerButton>
+                    <SuccessButton
+                        className={styles.button}
+                        iconName={iconNames.check}
+                        onClick={() => this.handleRequestApproval(true)}
+                    >
+                        Accept
+                    </SuccessButton>
+                </div>
+            </Fragment>
+        );
+    }
+
+    renderRespondedDescription = () => {
+        const { data } = this.props;
+        const {
+            project,
+            requestedBy,
+            respondedBy,
+            status,
+        } = data.details;
+
+        let approvalText = _ts('notifications.projectJoin', 'requestAcceptedBy');
+        if (status === 'rejected') {
+            approvalText = _ts('notifications.projectJoin', 'requestRejectedBy');
+        }
+
+        return (
+            <Fragment>
+                <div className={`${styles.respondedDescription} ${styles.description}`} >
+                    <Link
+                        className={styles.respondedFor}
+                        target="_blank"
+                        to={reverseRoute(pathNames.userProfile, { userId: requestedBy.id })}
+                    >
+                        {requestedBy.displayName}
+                    </Link>
+                    {_ts('notifications.projectJoin', 'requestRespondedIn')}
+                    <Link
+                        className={styles.projectTitle}
+                        target="_blank"
+                        to={reverseRoute(pathNames.projects, { projectId: project.id })}
+                    >
+                        {project.title}
+                    </Link>
+                    {approvalText}
+                    <Link
+                        className={styles.respondedBy}
+                        target="_blank"
+                        to={reverseRoute(pathNames.userProfile, { userId: respondedBy.id })}
+                    >
+                        {respondedBy.displayName}
+                    </Link>
+                </div>
+                <div className={styles.date} >
+                    <span className={styles.label} >
+                        {_ts('notifications.projectJoin', 'date')}
+                    </span>
+                    <FormattedDate
+                        date={data.date}
+                        mode="dd-MM-yyyy"
+                    />
+                </div>
+            </Fragment>
+        );
+    }
+
+    renderDescription = () => {
+        const { data } = this.props;
+        const { status } = data.details;
+
+        const PendingDescription = this.renderPendingDescription;
+        const RespondedDescription = this.renderRespondedDescription;
+
+        if (status === 'pending') {
+            return (
+                <PendingDescription />
+            );
+        }
+        return (
+            <RespondedDescription />
+        );
+    }
+
+    render() {
+        const { data } = this.props;
+        const { requestedBy } = data.details;
+        const { approvalLoading } = this.state;
+
+        const Description = this.renderDescription;
+
+        return (
             <div className={styles.projectJoinItem} >
+                { approvalLoading && <LoadingAnimation />}
                 <DisplayPicture
                     className={styles.displayPicture}
                     galleryId={requestedBy.displayPicture}
                 />
                 <div className={styles.details}>
-                    <div className={styles.description} >
-                        <Link
-                            className={styles.displayName}
-                            target="_blank"
-                            to={reverseRoute(pathNames.userProfile, { userId: requestedBy.id })}
-                        >
-                            {requestedBy.displayName}
-                        </Link>
-                        {_ts('notifications.projectJoin', 'requestedToJoin')}
-                        <Link
-                            className={styles.projectTitle}
-                            target="_blank"
-                            to={reverseRoute(pathNames.projects, { projectId: project.id })}
-                        >
-                            {project.title}
-                        </Link>
-                    </div>
-                    <div className={styles.date} >
-                        <span className={styles.label} >
-                            {_ts('notifications.projectJoin', 'date')}
-                        </span>
-                        <FormattedDate
-                            date={data.date}
-                            mode="dd-MM-yyyy"
-                        />
-                    </div>
-                    <div className={styles.actionButtons} >
-                        <SuccessButton
-                            className={styles.button}
-                            iconName={iconNames.check}
-                        >
-                            Accept
-                        </SuccessButton>
-                        <DangerButton
-                            className={styles.button}
-                            iconName={iconNames.close}
-                        >
-                            Reject
-                        </DangerButton>
-                    </div>
+                    <Description />
                 </div>
             </div>
         );
