@@ -268,7 +268,7 @@ export default class StringManagement extends React.PureComponent {
 
         const isDevLangSelected = selectedLanguageName === '$devLang';
         const disabled = isDevLangSelected &&
-            (process.env.NODE_ENV !== 'production');
+            (process.env.NODE_ENV !== 'development');
         const showExport = isDevLangSelected;
 
         return (
