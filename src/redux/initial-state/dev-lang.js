@@ -687,7 +687,6 @@ const initialDevLangState = {
         1137: 'Failed to test connector.',
         1138: 'Test results',
         7627: 'Admins',
-        7628: 'Activity',
         7629: 'Discover projects',
         7630: 'Leads activity',
         7631: 'Entries activity',
