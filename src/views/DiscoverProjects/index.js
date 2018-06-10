@@ -78,6 +78,7 @@ const mapDispatchToProps = dispatch => ({
     setProjectPerPage: params => dispatch(setDiscoverProjectsProjectPerPageAction(params)),
 });
 
+
 @BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class DiscoverProjects extends React.PureComponent {
@@ -212,12 +213,14 @@ export default class DiscoverProjects extends React.PureComponent {
                     className={styles.sparkLine}
                     data={project.leadsActivity}
                     valueAccessor={activity => activity.count}
+                    lineColor=""
                 />);
             case 'entries_activity':
                 return (<SparkLines
                     className={styles.sparkLine}
                     data={project.entriesActivity}
                     valueAccessor={activity => activity.count}
+                    lineColor=""
                 />);
             case 'actions':
                 return (

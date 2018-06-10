@@ -33,6 +33,8 @@ import {
     addLeadViewRemoveSavedLeadsAction,
     addLeadViewSetLeadRestsAction,
     addLeadViewButtonStatesSelector,
+
+    routeUrlSelector,
 } from '#redux';
 import { leadAccessor } from '#entities/lead';
 import _ts from '#ts';
@@ -56,6 +58,7 @@ const mapStateToProps = state => ({
     addLeadViewLeads: addLeadViewLeadsSelector(state),
     leadStates: addLeadViewLeadStatesSelector(state),
     buttonStates: addLeadViewButtonStatesSelector(state),
+    routeUrl: routeUrlSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -89,6 +92,8 @@ const propTypes = {
     setLeadRests: PropTypes.func.isRequired,
     leadStates: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     buttonStates: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+
+    routeUrl: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -248,8 +253,17 @@ export default class LeadAdd extends React.PureComponent {
         return (
             <div className={styles.addLead}>
                 <Prompt
-                    when={isSaveEnabledForAll}
-                    message={_ts('common', 'youHaveUnsavedChanges')}
+                    message={
+                        (location) => {
+                            const { routeUrl } = this.props;
+                            if (location.pathname === routeUrl) {
+                                return true;
+                            } else if (!isSaveEnabledForAll) {
+                                return true;
+                            }
+                            return _ts('common', 'youHaveUnsavedChanges');
+                        }
+                    }
                 />
                 <header className={styles.header}>
                     <LeadFilter />
