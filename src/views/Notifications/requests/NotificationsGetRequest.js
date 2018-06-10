@@ -8,6 +8,8 @@ import {
 } from '#rest';
 
 export default class NotificationsGetRequest extends Request {
+    schemaName = 'notifications'
+
     handlePreLoad = () => {
         this.parent.setState({ notificationsLoading: true });
     }
@@ -17,7 +19,6 @@ export default class NotificationsGetRequest extends Request {
     }
 
     handleSuccess = (response) => {
-        // FIXME: write schema
         const notifications = [];
         response.results.forEach((n) => {
             notifications.push({

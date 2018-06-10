@@ -3,9 +3,11 @@ import { FgRestBuilder } from '#rs/utils/rest';
 import {
     createParamsForProjectJoinResponse,
     createUrlForProjectJoinResponse,
+    transformAndCombineResponseErrors,
 } from '#rest';
 
-import schema from '#schema';
+import _ts from '#ts';
+import notify from '#notify';
 
 export default class ProjectJoinResponseRequest {
     constructor(props) {
@@ -14,7 +16,6 @@ export default class ProjectJoinResponseRequest {
 
     success = (response) => {
         try {
-            console.warn(response);
             this.props.setProjectJoinStatus({ newNotificationDetails: response });
         } catch (er) {
             console.error(er);
@@ -22,11 +23,22 @@ export default class ProjectJoinResponseRequest {
     }
 
     failure = (response) => {
-        console.warn(response);
+        const message = transformAndCombineResponseErrors(response.errors);
+        notify.send({
+            title: _ts('notifications', 'projectJoinResponse'),
+            type: notify.type.ERROR,
+            message,
+            duration: notify.duration.MEDIUM,
+        });
     }
 
     fatal = () => {
-        console.warn('fata');
+        notify.send({
+            title: _ts('notifications', 'projectJoinResponse'),
+            type: notify.type.ERROR,
+            message: _ts('notifications', 'projectJoinResponseFailure'),
+            duration: notify.duration.MEDIUM,
+        });
     }
 
     create = (projectId, requestId, response) => {

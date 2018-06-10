@@ -520,6 +520,8 @@ const initialDevLangState = {
         1931: 'request to join the project',
         1932: 'was accepted by',
         1933: 'was rejected by',
+        1934: 'Project Join Response',
+        1935: 'Project Join Failure',
         2000: 'Browser Extension',
         2001: 'Your extension has been successfully set up.',
         2002: 'An error occured while setting up the extension. Please make sure you have installed and enabled the extension.',
@@ -1840,6 +1842,8 @@ const initialDevLangState = {
         },
         notifications: {
             notificationHeaderTitle: 1929,
+            projectJoinResponse: 1934,
+            projectJoinResponseFailure: 1935,
         },
         'notifications.projectJoin': {
             requestedToJoin: 1930,

@@ -3,6 +3,7 @@ import { randomString } from '#rs/utils/common';
 import {
     createParamsForGet,
     createUrlForConnectorleads,
+    transformAndCombineResponseErrors,
 } from '#rest';
 import _ts from '#ts';
 import schema from '#schema';
@@ -33,10 +34,11 @@ export default class ConnectorLeadsRequest {
     }
 
     failure = (response) => {
+        const message = transformAndCombineResponseErrors(response.errors);
         notify.send({
             title: _ts('addLeads', 'connectorSourcesTitle'),
             type: notify.type.ERROR,
-            message: response.error,
+            message,
             duration: notify.duration.MEDIUM,
         });
     }

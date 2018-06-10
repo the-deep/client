@@ -9,13 +9,13 @@ import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import AppError from '#components/AppError';
 
 import {
-    totalNotificationsSelector,
     notificationsSelector,
     notificationsActivePageSelector,
     notificationsPerPageSelector,
 
     setNotificationsAction,
 } from '#redux';
+import _ts from '#ts';
 
 import NotificationsGetRequest from './requests/NotificationsGetRequest';
 import ProjectJoin from './ProjectJoin';
@@ -25,7 +25,6 @@ import styles from './styles.scss';
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     notifications: PropTypes.array.isRequired,
-    totalNotifications: PropTypes.number.isRequired,
 
     activePage: PropTypes.number.isRequired,
     notificationsPerPage: PropTypes.number.isRequired,
@@ -38,7 +37,6 @@ const defaultProps = {
 
 const mapStateToProps = state => ({
     notifications: notificationsSelector(state),
-    totalNotifications: totalNotificationsSelector(state),
     activePage: notificationsActivePageSelector(state),
     notificationsPerPage: notificationsPerPageSelector(state),
 });
@@ -95,17 +93,13 @@ export default class Notifications extends React.PureComponent {
 
     render() {
         const { notificationsLoading } = this.state;
-        const {
-            notifications,
-            totalNotifications,
-        } = this.props;
-
+        const { notifications } = this.props;
         return (
             <div className={styles.notifications} >
                 {notificationsLoading && <LoadingAnimation />}
                 <header className={styles.header} >
                     <h2 className={styles.heading} >
-                        Notifications
+                        {_ts('notifications', 'notificationHeaderTitle')}
                     </h2>
                 </header>
                 <ListView

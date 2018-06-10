@@ -2,6 +2,7 @@ import { FgRestBuilder } from '#rs/utils/rest';
 import {
     createParamsForGet,
     createUrlForConnectorsOfProject,
+    transformAndCombineResponseErrors,
 } from '#rest';
 import _ts from '#ts';
 
@@ -32,11 +33,12 @@ export default class ConnectorsGetRequest {
         }
     }
 
-    failure = () => {
+    failure = (response) => {
+        const message = transformAndCombineResponseErrors(response.errors);
         notify.send({
             title: _ts('addLeads', 'connectorTitle'),
             type: notify.type.ERROR,
-            message: _ts('addLeads', 'connectorGetFailure'),
+            message,
             duration: notify.duration.MEDIUM,
         });
     }

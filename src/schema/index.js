@@ -16,6 +16,7 @@ import assessmentRegistry from './assessmentRegistry';
 import categoryEditors from './categoryEditors';
 import galleryFile from './galleryFile';
 import langauges from './languages';
+import notifications from './notifications';
 
 // ATTACHING BEHAVIORS
 attachValidator(dict);
@@ -106,6 +107,7 @@ const userDefinedSchemas = [];
     ...categoryEditors,
     ...galleryFile,
     ...langauges,
+    ...notifications,
 ].forEach(({ name, schema }) => dict.put(name, schema));
 
 export default dict;
