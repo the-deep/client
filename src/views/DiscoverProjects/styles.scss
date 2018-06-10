@@ -52,6 +52,10 @@
                 .spark-line {
                     width: 128px;
                     height: 26px;
+
+                    path {
+                        stroke: $color-accent;
+                    }
                 }
             }
         }
