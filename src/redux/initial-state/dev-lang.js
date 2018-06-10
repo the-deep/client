@@ -515,6 +515,7 @@ const initialDevLangState = {
         1301: 'Oops! File Not Found',
         1302: 'Upload file',
         1928: 'Fail to update users list, Please check your network connection and try again',
+        1929: 'Notifications',
         2000: 'Browser Extension',
         2001: 'Your extension has been successfully set up.',
         2002: 'An error occured while setting up the extension. Please make sure you have installed and enabled the extension.',
@@ -1548,6 +1549,8 @@ const initialDevLangState = {
 
             apiDocs: 5570,
             userExports: 621,
+
+            notifications: 1929,
 
             fourHundredFour: 5571,
 
