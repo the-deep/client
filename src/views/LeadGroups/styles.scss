@@ -1,0 +1,5 @@
+@import '../../stylesheets/base';
+
+.lead-groups {
+    @extend %main-content;
+}

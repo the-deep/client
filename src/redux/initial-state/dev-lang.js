@@ -699,6 +699,8 @@ const initialDevLangState = {
         7630: 'Leads activity',
         7631: 'Entries activity',
         7632: 'Discover',
+        11000: 'Lead Groups',
+        11001: 'Show lead groups',
     },
     links: {
         /*
@@ -1343,6 +1345,7 @@ const initialDevLangState = {
             leadDeleteFailure: 979,
             leadDelete: 191,
             showViz: 801,
+            showLeadGroups: 11001,
             markAsPendingTitle: 802,
             markAsProcessedTitle: 804,
             leadsPerPage: 1999,
@@ -1533,6 +1536,7 @@ const initialDevLangState = {
             discoverProjects: 7629,
             leads: 641,
             leadsViz: 5561,
+            leadGroups: 11000,
             addLeads: 12,
             entries: 15,
             arys: 5562,

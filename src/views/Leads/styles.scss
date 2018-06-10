@@ -155,6 +155,7 @@
             .link {
                 @extend %button-like-link;
                 @include background-color($color-accent);
+                margin-right: $spacing-extra-small;
             }
 
             .label {
