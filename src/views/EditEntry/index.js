@@ -452,6 +452,7 @@ export default class EditEntry extends React.PureComponent {
                     message={
                         (location) => {
                             const { routeUrl } = this.props;
+                            console.warn(location.pathname, routeUrl);
                             if (location.pathname === routeUrl) {
                                 return true;
                             } else if (this.isSaveAllDisabled) {
