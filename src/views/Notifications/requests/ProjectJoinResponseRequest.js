@@ -3,7 +3,7 @@ import { FgRestBuilder } from '#rs/utils/rest';
 import {
     createParamsForProjectJoinResponse,
     createUrlForProjectJoinResponse,
-    transformAndCombineResponseErrors,
+    alterAndCombineResponseErrors,
 } from '#rest';
 
 import _ts from '#ts';
@@ -15,15 +15,11 @@ export default class ProjectJoinResponseRequest {
     }
 
     success = (response) => {
-        try {
-            this.props.setProjectJoinStatus({ newNotificationDetails: response });
-        } catch (er) {
-            console.error(er);
-        }
+        this.props.setProjectJoinStatus({ newNotificationDetails: response });
     }
 
     failure = (response) => {
-        const message = transformAndCombineResponseErrors(response.errors);
+        const message = alterAndCombineResponseErrors(response.errors);
         notify.send({
             title: _ts('notifications', 'projectJoinResponse'),
             type: notify.type.ERROR,

@@ -521,6 +521,8 @@ const initialDevLangState = {
         1933: '{requestedBy}\'s request to join the project {project} was rejected by {respondedBy}.',
         1934: 'Project Join Response',
         1935: 'Project Join Failure',
+        1936: 'Accept',
+        1937: 'Reject',
         2000: 'Browser Extension',
         2001: 'Your extension has been successfully set up.',
         2002: 'An error occured while setting up the extension. Please make sure you have installed and enabled the extension.',
@@ -1848,6 +1850,8 @@ const initialDevLangState = {
             requestedToJoin: 1930,
             acceptedText: 1932,
             rejectedText: 1933,
+            acceptButton: 1936,
+            rejectButton: 1937,
             date: 704,
         },
         'components.addProject': {

@@ -133,14 +133,14 @@ export default class ProjectJoinItem extends React.PureComponent {
                         iconName={iconNames.close}
                         onClick={() => this.handleRequestApproval(false)}
                     >
-                        Reject
+                        {_ts('notifications.projectJoin', 'rejectButton')}
                     </DangerButton>
                     <SuccessButton
                         className={styles.button}
                         iconName={iconNames.check}
                         onClick={() => this.handleRequestApproval(true)}
                     >
-                        Accept
+                        {_ts('notifications.projectJoin', 'acceptButton')}
                     </SuccessButton>
                 </div>
             </Fragment>
@@ -156,10 +156,7 @@ export default class ProjectJoinItem extends React.PureComponent {
             status,
         } = data.details;
 
-        let approvalText = 'acceptedText';
-        if (status === 'rejected') {
-            approvalText = 'rejectedText';
-        }
+        const approvalText = status === 'rejected' ? 'rejectedText' : 'acceptedText';
 
         return (
             <Fragment>

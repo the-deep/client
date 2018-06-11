@@ -44,7 +44,6 @@ export default class NotificationsGetRequest extends Request {
             offset: notificationsRequestOffset,
             limit: notificationsRequestLimit,
         });
-        console.warn(urlForNotifications);
 
         this.createDefault({
             url: urlForNotifications,

@@ -1,7 +1,6 @@
 import React from 'react';
 import devLang from '#redux/initial-state/dev-lang';
 
-import { randomString } from '#rs/utils/common';
 import {
     selectedLinksSelector,
     selectedStringsSelector,
@@ -27,7 +26,7 @@ const stringFormat = (str, params) => {
 
     // Generate a list of {key, value} from the splits
     // replacing the templates with params.
-    const results = splits.map((split) => {
+    const results = splits.map((split, index) => {
         const test = testRegex.exec(split);
         if (test) {
             return {
@@ -37,7 +36,7 @@ const stringFormat = (str, params) => {
         }
 
         return {
-            key: randomString(16).toLowerCase(),
+            key: `${split}-${index}`,
             value: split,
         };
     });

@@ -3,7 +3,7 @@ import { randomString } from '#rs/utils/common';
 import {
     createParamsForGet,
     createUrlForConnectorleads,
-    transformAndCombineResponseErrors,
+    alterAndCombineResponseErrors,
 } from '#rest';
 import _ts from '#ts';
 import schema from '#schema';
@@ -34,7 +34,7 @@ export default class ConnectorLeadsRequest {
     }
 
     failure = (response) => {
-        const message = transformAndCombineResponseErrors(response.errors);
+        const message = alterAndCombineResponseErrors(response.errors);
         notify.send({
             title: _ts('addLeads', 'connectorSourcesTitle'),
             type: notify.type.ERROR,

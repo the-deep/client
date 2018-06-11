@@ -35,6 +35,7 @@ const setProjectJoinStatus = (state, action) => {
     const { notificationsView: { notifications = [] } } = state;
     const { newNotificationDetails } = action;
 
+    // TODO: Write better check
     const index = notifications.findIndex(n => (n.details || {}).id === newNotificationDetails.id);
 
     const settings = {
