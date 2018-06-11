@@ -53,6 +53,7 @@ const acl = {
         disable: ({ pathKey }) => ![
             'projects',
             'dashboard',
+            'leadGroups',
             'leads',
             'leadsViz',
             'entries',

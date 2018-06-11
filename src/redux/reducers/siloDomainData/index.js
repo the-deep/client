@@ -16,6 +16,7 @@ import regionsReducers from './regions';
 import connectorsReducers from './connectors';
 import notificationsReducers from './notifications';
 import stringManagement from './stringManagement';
+import leadGroupsReducers from './leadGroups';
 
 import initialSiloDomainData from '../../initial-state/siloDomainData';
 
@@ -35,6 +36,7 @@ const reducers = {
     ...connectorsReducers,
     ...notificationsReducers,
     ...stringManagement,
+    ...leadGroupsReducers,
     ...discoverProjectsReducers,
 };
 

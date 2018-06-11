@@ -1,6 +1,6 @@
 import { FgRestBuilder } from '#rs/utils/rest';
 import {
-    urlForLeadGroups,
+    urlForLeadGroupsForLeadAdd,
     createParamsForLeadGroupCreate,
     alterResponseErrorToFaramError,
 } from '#rest';
@@ -56,7 +56,7 @@ export default class LeadGroupsCreateRequest {
 
     create = (newLeadGroup) => {
         const leadGroupCreateRequest = new FgRestBuilder()
-            .url(urlForLeadGroups)
+            .url(urlForLeadGroupsForLeadAdd)
             .params(createParamsForLeadGroupCreate(newLeadGroup))
             .preLoad(() => { this.props.setState({ pending: true }); })
             .postLoad(() => { this.props.setState({ pending: false }); })

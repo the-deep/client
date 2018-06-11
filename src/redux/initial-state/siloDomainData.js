@@ -154,6 +154,16 @@ const initialSiloDomainData = {
         */
     },
 
+    leadGroupsView: {
+        1: {
+            activeSort: '',
+            activePage: 1,
+            filters: {},
+            leadGroups: [],
+            totalLeadGroupsCount: 20,
+        },
+    },
+
     // i specifies project
     aryPage: {
         /*

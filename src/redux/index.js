@@ -28,6 +28,7 @@ export * from './reducers/siloDomainData/notifications';
 export * from './reducers/siloDomainData/regions';
 export * from './reducers/siloDomainData/connectors';
 export * from './reducers/siloDomainData/stringManagement';
+export * from './reducers/siloDomainData/leadGroups';
 export * from './reducers/domainData/analysisFrameworks';
 export * from './reducers/domainData/leadFilter';
 export * from './reducers/domainData/entryFilter';

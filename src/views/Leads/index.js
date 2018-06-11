@@ -522,6 +522,11 @@ export default class Leads extends React.PureComponent {
             { projectId: activeProject },
         );
 
+        const showLeadGroupsLink = reverseRoute(
+            pathNames.leadGroups,
+            { projectId: activeProject },
+        );
+
         return (
             <footer className={styles.footer}>
                 <div className={styles.linkContainer}>
@@ -531,6 +536,13 @@ export default class Leads extends React.PureComponent {
                         replace
                     >
                         {_ts('leads', 'showViz')}
+                    </Link>
+                    <Link
+                        className={styles.link}
+                        to={showLeadGroupsLink}
+                        replace
+                    >
+                        {_ts('leads', 'showLeadGroups')}
                     </Link>
                     <span className={styles.label}>
                         {_ts('leads', 'leadsPerPage')}

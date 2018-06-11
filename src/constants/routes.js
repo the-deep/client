@@ -108,7 +108,7 @@ export const routes = {
     leadsViz: {
         order: 31,
         type: ROUTE.private,
-        path: '/projects/:projectId/leads/viz',
+        path: '/projects/:projectId/leads/viz/',
         loader: () => import('../views/LeadsViz'),
         links: allLinks,
     }, // _ts('pageTitle', 'leadsViz');
@@ -120,6 +120,14 @@ export const routes = {
         loader: () => import('../views/LeadAdd'),
         links: allLinks,
     }, // _ts('pageTitle', 'addLeads');
+
+    leadGroups: {
+        order: 33,
+        type: ROUTE.private,
+        path: '/projects/:projectId/leads/groups/',
+        loader: () => import('../views/LeadGroups'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'leadGroups');
 
     entries: {
         order: 40,

@@ -24,6 +24,7 @@ export * from './projects';
 export * from './regions';
 export * from './token';
 export * from './userGroups';
+export * from './leadGroups';
 export * from './users';
 
 export const createParamsForGet = () => ({

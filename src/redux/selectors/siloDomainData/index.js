@@ -13,4 +13,5 @@ export * from './leads';
 export * from './notifications';
 export * from './regions';
 export * from './connectors';
+export * from './leadGroups';
 export * from './stringManagement';
