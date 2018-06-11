@@ -73,10 +73,16 @@
     .footer {
         display: flex;
         flex-shrink: 0;
-        justify-content: flex-end;
+        justify-content: space-between;
         border-top: $width-separator-thin solid $color-separator;
         background-color: $color-foreground-alt;
         padding: $spacing-small $spacing-medium-alt;
+
+        .link {
+            @extend %button-like-link;
+            @include background-color($color-accent);
+            margin-right: $spacing-extra-small;
+        }
 
         .pager {
             display: flex;

@@ -704,6 +704,8 @@ const initialDevLangState = {
         11002: 'No Of Leads',
         11003: 'Lead group deleted successfully.',
         11004: 'Are you sure you want to delete this lead group?',
+        11005: 'Show leads',
+        11006: 'Failed to delete lead group.',
     },
     links: {
         /*
@@ -1371,7 +1373,7 @@ const initialDevLangState = {
             topicCorrelation: 8067,
             topicModeling: 8068,
             treeMap: 8069,
-            showTable: 8070,
+            showTable: 11005,
             leads: 641,
             leadsGetFailure: 513,
             noLeadsFoundHeader: 8071,
@@ -1385,6 +1387,8 @@ const initialDevLangState = {
         leadGroups: {
             leadGroupsTitle: 11000,
             leadGroupDeleteSuccess: 11003,
+            leadGroupDeleteFailure: 11006,
+            showLeads: 11005,
             titleLabel: 13,
             createdAt: 163,
             createdBy: 538,

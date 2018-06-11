@@ -52,9 +52,9 @@ export default class LeadGroupDeleteRequest {
             })
             .fatal(() => {
                 notify.send({
-                    title: 'Arys', // FIXME: strings
+                    title: _ts('leadGroups', 'leadGroupsTitle'),
                     type: notify.type.ERROR,
-                    message: 'Ary Delete Failure', // FIXME: strings
+                    message: _ts('leadGroups', 'leadGroupDeleteFailure'),
                     duration: notify.duration.MEDIUM,
                 });
             })

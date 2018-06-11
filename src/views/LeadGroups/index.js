@@ -292,10 +292,23 @@ export default class LeadGroups extends React.PureComponent {
         const {
             totalLeadGroupsCount,
             activePage,
+            activeProject,
         } = this.props;
+
+        const showLeadsPageLink = reverseRoute(
+            pathNames.leads,
+            { projectId: activeProject },
+        );
 
         return (
             <footer className={styles.footer}>
+                <Link
+                    className={styles.link}
+                    to={showLeadsPageLink}
+                    replace
+                >
+                    {_ts('leadGroups', 'showLeads')}
+                </Link>
                 <Pager
                     activePage={activePage}
                     className={styles.pager}
