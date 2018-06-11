@@ -10,21 +10,21 @@ export const LG__SET_ACTIVE_SORT = 'siloDomainData/LG__SET_ACTIVE_SORT';
 
 // ACTION-CREATOR
 
-export const setLeadGroupsPageFilterAction = ({ filters }) => ({
+export const setLeadGroupsFilterAction = ({ filters }) => ({
     type: LG__SET_FILTER,
     filters,
 });
 
-export const unsetLeadGroupsPageFilterAction = () => ({
+export const unsetLeadGroupsFilterAction = () => ({
     type: LG__UNSET_FILTER,
 });
 
-export const setLeadGroupsPageActivePageAction = ({ activePage }) => ({
+export const setLeadGroupsActivePageAction = ({ activePage }) => ({
     type: LG__SET_ACTIVE_PAGE,
     activePage,
 });
 
-export const setLeadGroupsPageActiveSortAction = ({ activeSort }) => ({
+export const setLeadGroupsActiveSortAction = ({ activeSort }) => ({
     type: LG__SET_ACTIVE_SORT,
     activeSort,
 });

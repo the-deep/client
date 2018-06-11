@@ -701,6 +701,9 @@ const initialDevLangState = {
         7632: 'Discover',
         11000: 'Lead Groups',
         11001: 'Show lead groups',
+        11002: 'No Of Leads',
+        11003: 'Lead group deleted successfully.',
+        11004: 'Are you sure you want to delete this lead group?',
     },
     links: {
         /*
@@ -1378,6 +1381,19 @@ const initialDevLangState = {
             nerGetFailure: 8074,
             topicCorrelationGetFailure: 8075,
             topicModelingFailure: 8076,
+        },
+        leadGroups: {
+            leadGroupsTitle: 11000,
+            leadGroupDeleteSuccess: 11003,
+            titleLabel: 13,
+            createdAt: 163,
+            createdBy: 538,
+            noOfLeadsTitle: 11002,
+            tableHeaderActions: 16,
+            leadGroupDeleteConfirmText: 11004,
+            placeholderSearch: 9,
+            filterApplyFilter: 10,
+            filterClearFilter: 11,
         },
         addLeads: {
             leadGroupCreateFailure: 1132,
