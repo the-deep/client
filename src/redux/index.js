@@ -24,6 +24,7 @@ export * from './reducers/siloDomainData/assessmentRegistry';
 export * from './reducers/siloDomainData/editAry';
 export * from './reducers/siloDomainData/galleryFiles';
 export * from './reducers/siloDomainData/visualization';
+export * from './reducers/siloDomainData/notifications';
 export * from './reducers/siloDomainData/regions';
 export * from './reducers/siloDomainData/connectors';
 export * from './reducers/siloDomainData/stringManagement';

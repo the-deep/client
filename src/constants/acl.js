@@ -38,6 +38,10 @@ const acl = {
         requireLogin: true,
         requireAdminRights: true,
     },
+    notifications: {
+        requireLogin: true,
+        requireDevMode: true,
+    },
     adminPanel: {
         requireLogin: true,
         requireAdminRights: true,

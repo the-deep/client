@@ -14,6 +14,7 @@ import visualizationReducers from './visualization';
 import editAryReducers from './editAry';
 import regionsReducers from './regions';
 import connectorsReducers from './connectors';
+import notificationsReducers from './notifications';
 import stringManagement from './stringManagement';
 
 import initialSiloDomainData from '../../initial-state/siloDomainData';
@@ -32,6 +33,7 @@ const reducers = {
     ...editAryReducers,
     ...regionsReducers,
     ...connectorsReducers,
+    ...notificationsReducers,
     ...stringManagement,
     ...discoverProjectsReducers,
 };

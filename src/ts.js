@@ -26,7 +26,7 @@ const stringFormat = (str, params) => {
 
     // Generate a list of {key, value} from the splits
     // replacing the templates with params.
-    const results = splits.map((split) => {
+    const results = splits.map((split, index) => {
         const test = testRegex.exec(split);
         if (test) {
             return {
@@ -34,8 +34,9 @@ const stringFormat = (str, params) => {
                 value: params[test[1]],
             };
         }
+
         return {
-            key: split,
+            key: `${split}-${index}`,
             value: split,
         };
     });

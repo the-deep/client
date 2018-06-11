@@ -515,6 +515,14 @@ const initialDevLangState = {
         1301: 'Oops! File Not Found',
         1302: 'Upload file',
         1928: 'Fail to update users list, Please check your network connection and try again',
+        1929: 'Notifications',
+        1930: '{requestedBy} requested to join the project {project}.',
+        1932: '{requestedBy}\'s request to join the project {project} was accepted by {respondedBy}.',
+        1933: '{requestedBy}\'s request to join the project {project} was rejected by {respondedBy}.',
+        1934: 'Project Join Response',
+        1935: 'Project Join Failure',
+        1936: 'Accept',
+        1937: 'Reject',
         2000: 'Browser Extension',
         2001: 'Your extension has been successfully set up.',
         2002: 'An error occured while setting up the extension. Please make sure you have installed and enabled the extension.',
@@ -690,6 +698,7 @@ const initialDevLangState = {
         7629: 'Discover projects',
         7630: 'Leads activity',
         7631: 'Entries activity',
+        7632: 'Discover',
     },
     links: {
         /*
@@ -1549,6 +1558,8 @@ const initialDevLangState = {
             apiDocs: 5570,
             userExports: 621,
 
+            notifications: 1929,
+
             fourHundredFour: 5571,
 
             browserExtension: 2000,
@@ -1561,6 +1572,7 @@ const initialDevLangState = {
             frameworkCreateFailure: 1128,
             headerProjects: 173,
             addProjectButtonLabel: 301,
+            discoverProjectButtonLabel: 7632,
             searchProjectPlaceholder: 302,
             addProjectModalTitle: 303,
             noProjectText: 304,
@@ -1830,6 +1842,19 @@ const initialDevLangState = {
             userEditImageUploadFailure: 7500,
             fileSelection: 5557,
             invalidFileSelection: 5556,
+        },
+        notifications: {
+            notificationHeaderTitle: 1929,
+            projectJoinResponse: 1934,
+            projectJoinResponseFailure: 1935,
+        },
+        'notifications.projectJoin': {
+            requestedToJoin: 1930,
+            acceptedText: 1932,
+            rejectedText: 1933,
+            acceptButton: 1936,
+            rejectButton: 1937,
+            date: 704,
         },
         'components.addProject': {
             addProjectModalLabel: 180,

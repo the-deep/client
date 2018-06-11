@@ -3,6 +3,7 @@ import { checkVersion } from '#rs/utils/common';
 import {
     createParamsForGet,
     createUrlForConnector,
+    transformAndCombineResponseErrors,
 } from '#rest';
 import _ts from '#ts';
 import schema from '#schema';
@@ -66,11 +67,11 @@ export default class ConnectorDetailsGetRequest {
     }
 
     failure = (response) => {
-        // FIXME: Handle error during isBeingCanelled
+        const message = transformAndCombineResponseErrors(response.errors);
         notify.send({
             title: _ts('connector', 'connectorTitle'),
             type: notify.type.ERROR,
-            message: response.error,
+            message,
             duration: notify.duration.MEDIUM,
         });
         this.props.setState({ requestFailure: true });

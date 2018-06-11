@@ -77,6 +77,7 @@ export default class Navdrop extends React.PureComponent {
         projects: iconNames.map,
         countries: iconNames.globe,
         connectors: iconNames.link,
+        notifications: iconNames.notifications,
     };
 
     static getDropItemKey = item => item.key

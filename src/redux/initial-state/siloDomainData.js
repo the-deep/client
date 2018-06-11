@@ -130,6 +130,15 @@ const initialSiloDomainData = {
         */
     },
 
+    notificationsView: {
+        /*
+        totalNotifications: 0,
+        notificationsPerPage: 0,
+        activePage: 1,
+        notifications: [],
+        */
+    },
+
     // i specifies project
     leadPage: {
         /*

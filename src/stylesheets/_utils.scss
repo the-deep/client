@@ -109,6 +109,7 @@ $radius-button-border: 2px;
 
 %button-like-link {
     @include background-color($color-foreground);
+    @include shadow-button;
     border: 0;
     border-radius: $radius-button-border;
     padding: $spacing-small $spacing-small-alt;

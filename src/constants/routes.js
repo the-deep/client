@@ -249,6 +249,14 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'stringManagement');
 
+    notifications: {
+        order: 160,
+        type: ROUTE.private,
+        path: '/notifications/',
+        loader: () => import('../views/Notifications'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'notifications');
+
     fourHundredFour: {
         order: 990,
         type: ROUTE.public,
