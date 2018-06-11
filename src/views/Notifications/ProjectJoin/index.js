@@ -211,14 +211,7 @@ export default class ProjectJoinItem extends React.PureComponent {
         const PendingDescription = this.renderPendingDescription;
         const RespondedDescription = this.renderRespondedDescription;
 
-        if (status === 'pending') {
-            return (
-                <PendingDescription />
-            );
-        }
-        return (
-            <RespondedDescription />
-        );
+        return status === 'pending' ? <PendingDescription /> : <RespondedDescription />;
     }
 
     render() {

@@ -16,6 +16,7 @@ import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 
 import UserProjectAdd from '#components/UserProjectAdd';
 import BoundError from '#rs/components/General/BoundError';
+import Cloak from '#components/Cloak';
 import AppError from '#components/AppError';
 import {
     currentUserAdminProjectsSelector,
@@ -70,7 +71,6 @@ export default class ProjectPanel extends React.PureComponent {
         this.state = {
             showAddProjectModal: false,
             displayUserProjects: this.props.userProjects,
-            isSidebarVisible: false,
             searchInputValue: '',
         };
     }
@@ -156,6 +156,18 @@ export default class ProjectPanel extends React.PureComponent {
                         <h3 className={styles.heading}>
                             {_ts('project', 'headerProjects')}
                         </h3>
+                        <Cloak
+                            requireDevMode
+                            render={() => (
+                                <Link
+                                    to={reverseRoute(pathNames.discoverProjects, { })}
+                                    className={styles.link}
+                                >
+                                    <span className={`${iconNames.discover} ${styles.discoverIcon}`} />
+                                    {_ts('project', 'discoverProjectButtonLabel')}
+                                </Link>
+                            )}
+                        />
                         <PrimaryButton
                             onClick={this.handleAddProjectClick}
                             iconName={iconNames.add}

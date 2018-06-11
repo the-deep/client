@@ -17,6 +17,7 @@ const iconNames = {
     code: 'ion-code',
     codeWorking: 'ion-code-working',
     download: 'fa fa-download',
+    discover: 'fa fa-binoculars',
     delete: 'ion-android-delete',
     refresh: 'ion-android-refresh',
     calendar: 'ion-ios-calendar-outline',

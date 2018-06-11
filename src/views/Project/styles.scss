@@ -34,6 +34,15 @@ $width-project-bar: 240px;
                 flex-basis: 100%;
                 padding: 0;
             }
+
+            .link {
+                @include button-like-link($color-accent);
+                margin-right: $spacing-small;
+
+                .discover-icon {
+                    padding-right: $spacing-small;
+                }
+            }
         }
 
         .project-list {

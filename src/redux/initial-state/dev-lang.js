@@ -698,6 +698,7 @@ const initialDevLangState = {
         7629: 'Discover projects',
         7630: 'Leads activity',
         7631: 'Entries activity',
+        7632: 'Discover',
     },
     links: {
         /*
@@ -1571,6 +1572,7 @@ const initialDevLangState = {
             frameworkCreateFailure: 1128,
             headerProjects: 173,
             addProjectButtonLabel: 301,
+            discoverProjectButtonLabel: 7632,
             searchProjectPlaceholder: 302,
             addProjectModalTitle: 303,
             noProjectText: 304,
