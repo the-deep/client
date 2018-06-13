@@ -48,7 +48,7 @@ export default class ConnectorAddForm extends React.PureComponent {
 
         this.state = {
             faramErrors: {},
-            faramValues: {},
+            faramValues: { source: 'rss-feed' },
             pending: false,
             success: false,
             dataLoading: false,

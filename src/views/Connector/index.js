@@ -260,6 +260,7 @@ export default class Connector extends React.PureComponent {
             <ConnectorDetails
                 className={styles.connectorDetails}
                 connectorId={connectorId}
+                key={connectorId}
             />
         );
     }
