@@ -323,36 +323,28 @@ export default class LeadForm extends React.PureComponent {
                 </ApplyAll>
 
                 <div className={styles.leadGroupContainer}>
-                    <Cloak
-                        requireDevMode
-                        render={({ disabled }) => (
-                            <Fragment>
-                                <ApplyAll
-                                    className={styles.leadGroup}
-                                    disabled={disabled || isApplyAllDisabled}
-                                    identiferName="leadGroup"
-                                    onApplyAllClick={this.handleApplyAllClick}
-                                    onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                                >
-                                    <SelectInput
-                                        faramElementName="leadGroup"
-                                        keySelector={LeadForm.keySelector}
-                                        label={_ts('addLeads', 'leadGroupLabel')}
-                                        labelSelector={LeadForm.labelSelector}
-                                        options={leadOptions.leadGroup}
-                                        placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
-                                        showHintAndError
-                                        showLabel
-                                    />
-                                </ApplyAll>
-                                <Button
-                                    onClick={this.handleAddLeadGroupClick}
-                                    iconName={iconNames.add}
-                                    transparent
-                                    disabled={disabled}
-                                />
-                            </Fragment>
-                        )}
+                    <ApplyAll
+                        className={styles.leadGroup}
+                        disabled={isApplyAllDisabled}
+                        identiferName="leadGroup"
+                        onApplyAllClick={this.handleApplyAllClick}
+                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                    >
+                        <SelectInput
+                            faramElementName="leadGroup"
+                            keySelector={LeadForm.keySelector}
+                            label={_ts('addLeads', 'leadGroupLabel')}
+                            labelSelector={LeadForm.labelSelector}
+                            options={leadOptions.leadGroup}
+                            placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
+                            showHintAndError
+                            showLabel
+                        />
+                    </ApplyAll>
+                    <Button
+                        onClick={this.handleAddLeadGroupClick}
+                        iconName={iconNames.add}
+                        transparent
                     />
                 </div>
                 <ApplyAll
