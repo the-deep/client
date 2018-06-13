@@ -102,6 +102,12 @@ export default class ConnectorTestResults extends React.PureComponent {
         }
     }
 
+    componentWillUnmount() {
+        if (this.requestForConnectorTest) {
+            this.requestForConnectorTest.stop();
+        }
+    }
+
     startConnectorTestRequest = (source, params) => {
         if (this.requestForConnectorTest) {
             this.requestForConnectorTest.stop();
