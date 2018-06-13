@@ -4,6 +4,7 @@
     @extend %main-content;
     display: flex;
     flex-direction: column;
+    height: 100%;
 
     .header {
         @include background-color($color-background-header);
@@ -17,14 +18,19 @@
 
     .container {
         display: flex;
-        flex-direction: row;
+        position: relative;
+        flex-grow: 1;
 
         .forced-directed-graph {
-            display: flex;
+            flex-grow: 1;
+            height: auto;
+            overflow: auto;
         }
 
-        .table {
-            display: flex;
+        .tables {
+            flex-basis: 320px;
+            flex-shrink: 0;
+            overflow-y: auto;
         }
     }
 

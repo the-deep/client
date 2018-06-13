@@ -521,8 +521,8 @@ export default class Leads extends React.PureComponent {
             pathNames.leadsViz,
             { projectId: activeProject },
         );
-        const showClusteringLink = reverseRoute(
-            pathNames.cluster,
+        const showClusterVisualizationLink = reverseRoute(
+            pathNames.clusterViz,
             { projectId: activeProject },
         );
 
@@ -543,7 +543,7 @@ export default class Leads extends React.PureComponent {
                     </Link>
                     <Link
                         className={styles.link}
-                        to={showClusteringLink}
+                        to={showClusterVisualizationLink}
                         replace
                     >
                         {_ts('leads', 'showCluster')}

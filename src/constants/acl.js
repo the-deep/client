@@ -55,7 +55,7 @@ const acl = {
             'leadGroups',
             'leads',
             'leadsViz',
-            'cluster',
+            'clusterViz',
             'entries',
             'arys',
             'export',

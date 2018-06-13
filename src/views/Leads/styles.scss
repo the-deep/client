@@ -153,6 +153,7 @@
             align-items: baseline;
 
             .link {
+                margin: 0 $spacing-small;
                 @extend %button-like-link;
                 @include background-color($color-accent);
                 margin-right: $spacing-extra-small;

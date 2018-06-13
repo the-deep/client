@@ -17,6 +17,7 @@ import categoryEditors from './categoryEditors';
 import galleryFile from './galleryFile';
 import langauges from './languages';
 import notifications from './notifications';
+import clusterViz from './clusterViz';
 
 // ATTACHING BEHAVIORS
 attachValidator(dict);
@@ -108,6 +109,7 @@ const userDefinedSchemas = [];
     ...galleryFile,
     ...langauges,
     ...notifications,
+    ...clusterViz,
 ].forEach(({ name, schema }) => dict.put(name, schema));
 
 export default dict;

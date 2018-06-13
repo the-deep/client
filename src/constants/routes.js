@@ -129,13 +129,13 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'leadGroups');
 
-    cluster: {
+    clusterViz: {
         order: 34,
         type: ROUTE.private,
-        path: '/projects/:projectId/cluster',
-        loader: () => import('../views/Clustering'),
+        path: '/projects/:projectId/clusterviz',
+        loader: () => import('../views/ClusterViz'),
         links: allLinks,
-    }, // _ts('pageTitle', 'cluster');
+    }, // _ts('pageTitle', 'clusterViz');
 
     entries: {
         order: 40,
