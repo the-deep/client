@@ -53,8 +53,16 @@
                     width: 128px;
                     height: 26px;
 
-                    path {
-                        stroke: $color-accent;
+
+                    :global {
+                        .fill {
+                            opacity: 0.3;
+                            fill: $color-accent;
+                            stroke: $color-accent;
+                        }
+                        .line {
+                            stroke: $color-accent;
+                        }
                     }
                 }
             }
