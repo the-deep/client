@@ -258,9 +258,10 @@ export default class Connector extends React.PureComponent {
         }
         return (
             <ConnectorDetails
+                // clears local state when connectorId is changed
+                key={connectorId}
                 className={styles.connectorDetails}
                 connectorId={connectorId}
-                key={connectorId}
             />
         );
     }
