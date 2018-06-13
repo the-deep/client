@@ -209,19 +209,23 @@ export default class DiscoverProjects extends React.PureComponent {
             case 'regions':
                 return project.regions.map(d => d.title).join(', ') || '-';
             case 'leads_activity':
-                return (<SparkLines
-                    className={styles.sparkLine}
-                    data={project.leadsActivity}
-                    valueAccessor={activity => activity.count}
-                    lineColor=""
-                />);
+                return (
+                    <SparkLines
+                        className={styles.sparkLine}
+                        data={project.leadsActivity}
+                        valueAccessor={activity => activity.count}
+                        fill
+                    />
+                );
             case 'entries_activity':
-                return (<SparkLines
-                    className={styles.sparkLine}
-                    data={project.entriesActivity}
-                    valueAccessor={activity => activity.count}
-                    lineColor=""
-                />);
+                return (
+                    <SparkLines
+                        className={styles.sparkLine}
+                        data={project.entriesActivity}
+                        valueAccessor={activity => activity.count}
+                        fill
+                    />
+                );
             case 'actions':
                 return (
                     <Actions
