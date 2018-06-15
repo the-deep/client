@@ -3,6 +3,7 @@ import notify from '#notify';
 import schema from '#schema';
 
 import {
+    alterAndCombineResponseErrors,
     createUrlForInitClusterRequest,
     createParamsForInitClusterRequest,
 } from '#rest';
@@ -32,10 +33,11 @@ export default class InitProjectClusterRequest {
     }
 
     failure = (response) => {
+        const message = alterAndCombineResponseErrors(response.errors);
         notify.send({
             title: _ts('clusterViz', 'clusterVizTitle'),
             type: notify.type.ERROR,
-            message: response.error,
+            message,
             duration: notify.duration.MEDIUM,
         });
     }

@@ -1,9 +1,11 @@
 import { FgRestBuilder } from '#rs/utils/rest';
 import notify from '#notify';
 import {
+    alterAndCombineResponseErrors,
     createUrlForProjectClusterData,
     createParamsForProjectClusterData,
 } from '#rest';
+import schema from '#schema';
 import _ts from '#ts';
 
 export default class ProjectClusterDataRequest {
@@ -18,7 +20,7 @@ export default class ProjectClusterDataRequest {
 
     success = projectId => (response) => {
         try {
-            // FIXME: write schema
+            schema.validate(response, 'clusterDataResponse');
             this.setProjectClusterData({ projectId, clusterData: response.data });
         } catch (err) {
             console.error(err);
@@ -26,10 +28,11 @@ export default class ProjectClusterDataRequest {
     }
 
     failure = (response) => {
+        const message = alterAndCombineResponseErrors(response.errors);
         notify.send({
             title: _ts('clusterViz', 'clusterVizTitle'),
             type: notify.type.ERROR,
-            message: response.error,
+            message,
             duration: notify.duration.MEDIUM,
         });
     }

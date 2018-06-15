@@ -7,7 +7,7 @@ const clusterVizSchema = [];
             name: 'Project Cluster Start Request',
             description: 'start clustering for project',
         },
-        // TODO: convert to camelCase when bewakes api.
+        // TODO: convert to camelCase when bewakes@togglecorp.com fixes the api.
         fields: {
             cluster_model_id: { type: 'number', required: true },
             message: { type: 'string' },
@@ -39,9 +39,10 @@ const clusterVizSchema = [];
             name: 'Project Cluster Data Response',
             description: 'Response of project clustering',
         },
+        // TODO: convert to camelCase when bewakes@togglecorp.com fixes the api.
         fields: {
-            clusterData: { type: 'array.cluster' },
-            message: { type: 'string' },
+            data: { type: 'array.cluster', required: 'true' },
+            full_clustered: { type: 'boolean' },
         },
     };
     clusterVizSchema.push({ name, schema });

@@ -1,4 +1,5 @@
 @import '../../stylesheets/base';
+$table-width: 400px;
 
 .cluster {
     @extend %main-content;
@@ -27,10 +28,15 @@
             overflow: auto;
         }
 
-        .tables {
-            flex-basis: 320px;
+        .table-container {
+            flex-basis: $table-width;
             flex-shrink: 0;
             overflow-y: auto;
+
+            .table-header {
+                @include background-color($color-foreground);
+                padding: $spacing-small;
+            }
         }
     }
 
