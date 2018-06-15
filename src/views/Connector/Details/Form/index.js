@@ -233,7 +233,6 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                                 title={deleteTitle}
                                 onClick={() => this.handleDeleteProjectClick(row)}
                                 iconName={iconNames.delete}
-                                disabled={!isProjectAdmin}
                                 transparent
                             />
                         </Fragment>
@@ -308,7 +307,10 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             return members;
         }
 
-        const finalOptions = [...members];
+        const finalOptions = members.map(m => ({
+            ...m,
+            sortKey: `${m.displayName}-${m.id}`,
+        }));
 
         users.forEach((u) => {
             const memberIndex = members.findIndex(m => m.user === u.id);
@@ -318,11 +320,12 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                     email: u.email,
                     role: 'normal',
                     user: u.id,
+                    sortKey: `${u.displayName}-${u.id}`,
                 });
             }
         });
 
-        return finalOptions.sort((a, b) => compareString(a.displayName, b.displayName));
+        return finalOptions.sort((a, b) => compareString(a.sortKey, b.sortKey));
     }
 
     getOptionsForProjects = (allProjects, connectorProjects) => {
@@ -334,7 +337,10 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             return connectorProjects;
         }
 
-        const finalOptions = [...connectorProjects];
+        const finalOptions = connectorProjects.map(m => ({
+            ...m,
+            sortKey: `${m.title}-${m.id}`,
+        }));
 
         allProjects.forEach((a) => {
             const memberIndex = connectorProjects.findIndex(m => m.project === a.id);
@@ -344,13 +350,14 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                     role: 'self',
                     project: a.id,
                     admin: a.role,
+                    sortKey: `${a.title}-${a.id}`,
                 });
             } else {
                 finalOptions[memberIndex].admin = a.role;
             }
         });
 
-        return finalOptions.sort((a, b) => compareString(a.title, b.title));
+        return finalOptions.sort((a, b) => compareString(a.sortKey, b.sortKey));
     }
 
     createSchema = (props) => {
