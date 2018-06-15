@@ -129,6 +129,14 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'leadGroups');
 
+    clusterViz: {
+        order: 34,
+        type: ROUTE.private,
+        path: '/projects/:projectId/clusterviz',
+        loader: () => import('../views/ClusterViz'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'clusterViz');
+
     entries: {
         order: 40,
         type: ROUTE.private,

@@ -572,6 +572,7 @@ const initialDevLangState = {
         1003: 'Failed to save region detail.',
         1004: 'Please wait while we process the text for this lead. It can take some time depending on the size of the lead.',
         251: 'DEEP supports .json, .geojson and shapefiles compressed in .zip',
+        800: 'Show Clustering',
         801: 'Show Visualization',
         802: 'Mark as pending',
         804: 'Mark as processed',
@@ -706,6 +707,12 @@ const initialDevLangState = {
         11004: 'Are you sure you want to delete this lead group?',
         11005: 'Show leads',
         11006: 'Failed to delete lead group.',
+        3000: 'Cluster Visualization',
+        3001: 'Show Table',
+        3002: 'Score',
+        3003: 'Title',
+        3004: 'Cannot initialize cluster creation for project. Please check your network connection and try again',
+        3005: 'Cannot fetch data for given cluster. Please check your network connection and try again',
     },
     links: {
         /*
@@ -1351,6 +1358,7 @@ const initialDevLangState = {
             leadDelete: 191,
             showViz: 801,
             showLeadGroups: 11001,
+            showCluster: 800,
             markAsPendingTitle: 802,
             markAsProcessedTitle: 804,
             leadsPerPage: 1999,
@@ -1975,6 +1983,14 @@ const initialDevLangState = {
             connectionFailureText: 501,
             previewNotAvailable: 132,
             simplifyingLead: 1004,
+        },
+        clusterViz: {
+            clusterVizTitle: 3000,
+            showTable: 3001,
+            tableScoreLabel: 3002,
+            tableValueLabel: 3003,
+            clusterInitRequestFatal: 3004,
+            clusterDataRequestFatal: 3005,
         },
     },
 };

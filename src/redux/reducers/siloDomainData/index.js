@@ -17,6 +17,7 @@ import connectorsReducers from './connectors';
 import notificationsReducers from './notifications';
 import stringManagement from './stringManagement';
 import leadGroupsReducers from './leadGroups';
+import clusterVizReducers from './clusterViz';
 
 import initialSiloDomainData from '../../initial-state/siloDomainData';
 
@@ -38,6 +39,7 @@ const reducers = {
     ...stringManagement,
     ...leadGroupsReducers,
     ...discoverProjectsReducers,
+    ...clusterVizReducers,
 };
 
 const reducer = createReducerWithMap(reducers, initialSiloDomainData);

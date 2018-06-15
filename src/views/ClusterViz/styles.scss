@@ -1,0 +1,55 @@
+@import '../../stylesheets/base';
+$table-width: 400px;
+
+.cluster {
+    @extend %main-content;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .header {
+        @include background-color($color-background-header);
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: space-between;
+        border-bottom: $width-separator-thin solid $color-separator-alt;
+        padding: $spacing-small;
+    }
+
+    .container {
+        display: flex;
+        position: relative;
+        flex-grow: 1;
+
+        .forced-directed-graph {
+            flex-grow: 1;
+            height: auto;
+            overflow: auto;
+        }
+
+        .table-container {
+            flex-basis: $table-width;
+            flex-shrink: 0;
+            overflow-y: auto;
+
+            .table-header {
+                @include background-color($color-foreground);
+                padding: $spacing-small;
+            }
+        }
+    }
+
+    .footer {
+        @include background-color($color-foreground);
+        display: flex;
+        flex-shrink: 0;
+        justify-content: space-between;
+        border-top: $width-separator-thin solid $color-separator;
+        padding: $spacing-small $spacing-medium-alt;
+
+        .link {
+            @include button-like-link($color-accent);
+        }
+    }
+}

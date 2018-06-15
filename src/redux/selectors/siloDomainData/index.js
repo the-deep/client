@@ -7,6 +7,7 @@ export * from './editEntries';
 export * from './entries';
 export * from './galleryFiles';
 export * from './visualization';
+export * from './clusterViz';
 export * from './editAry';
 export * from './discoverProjects';
 export * from './leads';

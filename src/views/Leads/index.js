@@ -521,6 +521,10 @@ export default class Leads extends React.PureComponent {
             pathNames.leadsViz,
             { projectId: activeProject },
         );
+        const showClusterVisualizationLink = reverseRoute(
+            pathNames.clusterViz,
+            { projectId: activeProject },
+        );
 
         const showLeadGroupsLink = reverseRoute(
             pathNames.leadGroups,
@@ -536,6 +540,13 @@ export default class Leads extends React.PureComponent {
                         replace
                     >
                         {_ts('leads', 'showViz')}
+                    </Link>
+                    <Link
+                        className={styles.link}
+                        to={showClusterVisualizationLink}
+                        replace
+                    >
+                        {_ts('leads', 'showCluster')}
                     </Link>
                     <Link
                         className={styles.link}

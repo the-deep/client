@@ -278,6 +278,14 @@ const initialSiloDomainData = {
 
     userGalleryFiles: [],
 
+    clusterVisualization: {
+        /* index is project id
+         * 1: {
+         *     clusterData: [],
+         * }
+         */
+    },
+
     visualization: {
         // index is project id
         4: {
