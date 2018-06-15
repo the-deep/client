@@ -13,6 +13,7 @@ import {
 } from '#rs/components/Input/Faram';
 import Confirm from '#rs/components/View/Modal/Confirm';
 import ResizableV from '#rs/components/View/Resizable/ResizableV';
+import update from '#rs/utils/immutable-update';
 
 import {
     InternalGallery,
@@ -244,6 +245,37 @@ export default class LeadFormItem extends React.PureComponent {
         this.setState({ showAddLeadGroupModal: false });
     }
 
+    handleLeadGroupAdd = (newLeadGroup) => {
+        const {
+            lead = {},
+            leadKey: leadId,
+            addLeadViewLeadChange,
+        } = this.props;
+
+        const settings = {
+            faramErrors: {
+                $internal: { $set: undefined },
+                leadGroup: { $set: undefined },
+            },
+            faramValues: {
+                leadGroup: { $set: newLeadGroup.key },
+            },
+        };
+        const newLeadData = update(lead, settings);
+
+        const {
+            faramErrors,
+            faramValues,
+        } = newLeadData;
+
+        addLeadViewLeadChange({
+            leadId,
+            faramValues,
+            faramErrors,
+            uiState: { pristine: true, serverError: false },
+        });
+    }
+
     handleApplyModal = (confirm) => {
         if (confirm) {
             const {
@@ -355,6 +387,7 @@ export default class LeadFormItem extends React.PureComponent {
         return (
             <AddLeadGroup
                 onModalClose={this.handleAddLeadGroupModalClose}
+                onLeadGroupAdd={this.handleLeadGroupAdd}
                 projectId={leadValues.project}
             />
         );

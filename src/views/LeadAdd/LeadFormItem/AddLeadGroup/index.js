@@ -27,6 +27,7 @@ const propTypes = {
     projectId: PropTypes.number,
     onModalClose: PropTypes.func.isRequired,
     addLeadGroup: PropTypes.func.isRequired,
+    onLeadGroupAdd: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -71,6 +72,7 @@ export default class AddLeadGroup extends React.PureComponent {
             setState: v => this.setState(v),
             handleModalClose: this.props.onModalClose,
             addLeadGroup: this.props.addLeadGroup,
+            onLeadGroupAdd: this.props.onLeadGroupAdd,
         });
         this.requestForLeadGroupCreate = requestForLeadGroupCreate.create(newLeadGroup);
         this.requestForLeadGroupCreate.start();
