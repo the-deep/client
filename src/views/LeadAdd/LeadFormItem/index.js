@@ -396,7 +396,7 @@ export default class LeadFormItem extends React.PureComponent {
     render() {
         const {
             active,
-            lead,
+            lead = {},
             leadKey, // eslint-disable-line no-unused-vars
             onFormSubmitFailure, // eslint-disable-line no-unused-vars
             onFormSubmitSuccess, // eslint-disable-line no-unused-vars
@@ -417,6 +417,9 @@ export default class LeadFormItem extends React.PureComponent {
         const LeadPreview = this.renderLeadPreview;
         const AddLeadGroupModal = this.renderAddLeadGroupModal;
 
+        const { faramValues = {} } = lead;
+        const projectId = faramValues.project;
+
         return (
             <ResizableV
                 className={`${styles.right} ${!active ? styles.hidden : ''}`}
@@ -429,6 +432,7 @@ export default class LeadFormItem extends React.PureComponent {
                             ref={this.referenceForLeadDetail}
                             className={styles.addLeadForm}
                             lead={lead}
+                            projectId={projectId}
                             onChange={this.handleFormChange}
                             onFailure={this.handleFormFailure}
                             onSuccess={this.handleFormSuccess}

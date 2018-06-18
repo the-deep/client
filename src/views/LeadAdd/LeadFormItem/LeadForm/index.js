@@ -24,7 +24,10 @@ import {
 } from '#entities/lead';
 import { InternalGallery } from '#components/DeepGallery';
 import Cloak from '#components/Cloak';
-import { activeUserSelector } from '#redux';
+import {
+    activeUserSelector,
+    projectDetailsSelector,
+} from '#redux';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
@@ -44,6 +47,8 @@ const propTypes = {
     leadOptions: PropTypes.shape({
         dummy: PropTypes.string,
     }).isRequired,
+
+    projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
     onSuccess: PropTypes.func.isRequired,
     onFailure: PropTypes.func.isRequired,
@@ -66,8 +71,9 @@ const defaultProps = {
     className: '',
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, props) => ({
     activeUser: activeUserSelector(state),
+    projectDetails: projectDetailsSelector(state, props),
 });
 
 @connect(mapStateToProps, null, null, { withRef: true })
@@ -222,6 +228,7 @@ export default class LeadForm extends React.PureComponent {
             isExtractionDisabled,
             isExtractionLoading,
             onExtractClick,
+            projectDetails,
         } = this.props;
 
         const values = leadAccessor.getFaramValues(lead);
@@ -300,7 +307,7 @@ export default class LeadForm extends React.PureComponent {
                 />
 
                 <Cloak
-                    requireAssessmentTemplate
+                    when={!projectDetails.assessmentTemplate}
                     render={({ disabled }) => (
                         <div className={styles.leadGroupContainer}>
                             <ApplyAll
