@@ -39,6 +39,7 @@ const propTypes = {
     render: PropTypes.func.isRequired,
     renderOnCloak: PropTypes.func,
     disable: PropTypes.func,
+    when: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -53,6 +54,7 @@ const defaultProps = {
     requireDevMode: false,
     requireAssessmentTemplate: false,
     requireAnalysisFramework: false,
+    when: false,
 };
 
 @connect(mapStateToProps, undefined)
@@ -74,12 +76,14 @@ export default class Cloak extends React.Component {
             requireAssessmentTemplate,
             requireAnalysisFramework,
             disable,
+            when,
 
             render: Child,
             renderOnCloak,
         } = this.props;
 
         if (
+            when ||
             (requireDevMode && process.env.NODE_ENV !== 'development') ||
             (requireProject && userProjects.length <= 0) ||
             (requireLogin && !activeUser.userId) ||

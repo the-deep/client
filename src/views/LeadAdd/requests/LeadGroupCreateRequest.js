@@ -27,7 +27,10 @@ export default class LeadGroupsCreateRequest {
                 projectId,
                 newLeadGroup,
             });
+
+            this.props.onLeadGroupAdd(newLeadGroup);
             this.props.handleModalClose();
+
             notify.send({
                 title: _ts('addLeads', 'leadGroupTitle'),
                 type: notify.type.SUCCESS,

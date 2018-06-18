@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import Faram, {
@@ -23,7 +23,11 @@ import {
     leadAccessor,
 } from '#entities/lead';
 import { InternalGallery } from '#components/DeepGallery';
-import { activeUserSelector } from '#redux';
+import Cloak from '#components/Cloak';
+import {
+    activeUserSelector,
+    projectDetailsSelector,
+} from '#redux';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
@@ -43,6 +47,8 @@ const propTypes = {
     leadOptions: PropTypes.shape({
         dummy: PropTypes.string,
     }).isRequired,
+
+    projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
     onSuccess: PropTypes.func.isRequired,
     onFailure: PropTypes.func.isRequired,
@@ -65,8 +71,9 @@ const defaultProps = {
     className: '',
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, props) => ({
     activeUser: activeUserSelector(state),
+    projectDetails: projectDetailsSelector(state, props),
 });
 
 @connect(mapStateToProps, null, null, { withRef: true })
@@ -221,6 +228,7 @@ export default class LeadForm extends React.PureComponent {
             isExtractionDisabled,
             isExtractionLoading,
             onExtractClick,
+            projectDetails,
         } = this.props;
 
         const values = leadAccessor.getFaramValues(lead);
@@ -297,9 +305,40 @@ export default class LeadForm extends React.PureComponent {
                     showLabel
                     className={styles.project}
                 />
-                <div
-                    className={styles.lineBreak}
+
+                <Cloak
+                    when={!projectDetails.assessmentTemplate}
+                    render={({ disabled }) => (
+                        <div className={styles.leadGroupContainer}>
+                            <ApplyAll
+                                className={styles.leadGroup}
+                                disabled={isApplyAllDisabled}
+                                identiferName="leadGroup"
+                                onApplyAllClick={this.handleApplyAllClick}
+                                onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                            >
+                                <SelectInput
+                                    faramElementName="leadGroup"
+                                    keySelector={LeadForm.keySelector}
+                                    label={_ts('addLeads', 'leadGroupLabel')}
+                                    labelSelector={LeadForm.labelSelector}
+                                    options={leadOptions.leadGroup}
+                                    placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
+                                    showHintAndError
+                                    showLabel
+                                />
+                            </ApplyAll>
+                            <Button
+                                onClick={this.handleAddLeadGroupClick}
+                                iconName={iconNames.add}
+                                transparent
+                                disabled={disabled}
+                            />
+                        </div>
+                    )}
+                    renderOnCloak={() => <div className={styles.leadGroupContainer} />}
                 />
+
                 <TextInput
                     className={styles.title}
                     faramElementName="title"
@@ -320,31 +359,6 @@ export default class LeadForm extends React.PureComponent {
                     />
                 </ApplyAll>
 
-                <div className={styles.leadGroupContainer}>
-                    <ApplyAll
-                        className={styles.leadGroup}
-                        disabled={isApplyAllDisabled}
-                        identiferName="leadGroup"
-                        onApplyAllClick={this.handleApplyAllClick}
-                        onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                    >
-                        <SelectInput
-                            faramElementName="leadGroup"
-                            keySelector={LeadForm.keySelector}
-                            label={_ts('addLeads', 'leadGroupLabel')}
-                            labelSelector={LeadForm.labelSelector}
-                            options={leadOptions.leadGroup}
-                            placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
-                            showHintAndError
-                            showLabel
-                        />
-                    </ApplyAll>
-                    <Button
-                        onClick={this.handleAddLeadGroupClick}
-                        iconName={iconNames.add}
-                        transparent
-                    />
-                </div>
                 <ApplyAll
                     className={styles.confidentiality}
                     disabled={isApplyAllDisabled}
@@ -396,6 +410,7 @@ export default class LeadForm extends React.PureComponent {
                         placeholder={_ts('addLeads', 'datePublishedPlaceholderLabel')}
                     />
                 </ApplyAll>
+
                 {
                     // one of drive, dropbox, or file
                     ATTACHMENT_TYPES.indexOf(type) !== -1 && ([
