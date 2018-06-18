@@ -204,22 +204,14 @@ export const getFiltersForRequest = (filters) => {
         switch (key) {
             case 'created_at':
                 if (filter) {
-                    requestFilters.created_at__gt = FormattedDate.format(
-                        new Date(filter.startDate), 'yyyy-MM-dd',
-                    );
-                    requestFilters.created_at__lt = FormattedDate.format(
-                        new Date(filter.endDate), 'yyyy-MM-dd',
-                    );
+                    requestFilters.created_at__gt = filter.startDate;
+                    requestFilters.created_at__lt = filter.endDate;
                 }
                 break;
             case 'published_on':
                 if (filter) {
-                    requestFilters.published_on__gt = FormattedDate.format(
-                        new Date(filter.startDate), 'yyyy-MM-dd',
-                    );
-                    requestFilters.published_on__lt = FormattedDate.format(
-                        new Date(filter.endDate), 'yyyy-MM-dd',
-                    );
+                    requestFilters.published_on__gt = filter.startDate;
+                    requestFilters.published_on__lt = filter.endDate;
                 }
                 break;
             default:
