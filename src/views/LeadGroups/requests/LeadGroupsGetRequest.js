@@ -17,7 +17,6 @@ export default class LeadGroupsGetRequest {
 
     success = projectId => (response) => {
         try {
-            console.warn(response);
             this.props.setLeadGroups({
                 projectId,
                 leadGroups: response.results,

@@ -28,11 +28,11 @@ export const processEntryFilters = (filters) => {
         if (typeof filter[1] === 'object' && filter[1].startDate) {
             result.push([
                 `${filter[0]}__gt`,
-                Math.round(filter[1].startDate / ONE_DAY),
+                Math.round(new Date(filter[1].startDate).getTime() / ONE_DAY),
             ]);
             result.push([
                 `${filter[0]}__lt`,
-                Math.round(filter[1].endDate / ONE_DAY),
+                Math.round(new Date(filter[1].endDate).getTime() / ONE_DAY),
             ]);
         } else {
             result.push(filter);

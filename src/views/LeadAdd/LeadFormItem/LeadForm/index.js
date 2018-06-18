@@ -17,8 +17,6 @@ import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Button from '#rs/components/Action/Button';
 import FormattedDate from '#rs/components/View/FormattedDate';
 
-import Cloak from '#components/Cloak';
-
 import {
     LEAD_TYPE,
     ATTACHMENT_TYPES,
