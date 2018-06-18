@@ -16,9 +16,8 @@
     }
 
     .title,
-    .lead-group-container,
     .source {
-        flex-basis: calc(100% / 3 - #{$spacing-medium});
+        flex-basis: calc(100% / 2 - #{$spacing-medium});
         padding: $spacing-medium 0;
     }
 
@@ -47,13 +46,10 @@
         flex-basis: calc(50% - #{$spacing-medium});
     }
 
-    .project {
-        flex-basis: calc(100% / 3 - #{$spacing-medium});
+    .project,
+    .lead-group-container {
+        flex-basis: calc(100% / 2 - #{$spacing-medium});
         padding: $spacing-medium 0;
-    }
-
-    .line-break {
-        flex-basis: calc(200% / 3 - #{$spacing-medium});
     }
 
     .text {

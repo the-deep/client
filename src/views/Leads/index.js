@@ -16,6 +16,7 @@ import RawTable from '#rs/components/View/RawTable';
 import TableHeader from '#rs/components/View/TableHeader';
 import { reverseRoute } from '#rs/utils/common';
 
+import Cloak from '#components/Cloak';
 import AppError from '#components/AppError';
 import { iconNames, pathNames } from '#constants/';
 import { leadTypeIconMap } from '#entities/lead';
@@ -541,20 +542,30 @@ export default class Leads extends React.PureComponent {
                     >
                         {_ts('leads', 'showViz')}
                     </Link>
-                    <Link
-                        className={styles.link}
-                        to={showClusterVisualizationLink}
-                        replace
-                    >
-                        {_ts('leads', 'showCluster')}
-                    </Link>
-                    <Link
-                        className={styles.link}
-                        to={showLeadGroupsLink}
-                        replace
-                    >
-                        {_ts('leads', 'showLeadGroups')}
-                    </Link>
+                    <Cloak
+                        requireDevMode
+                        render={() => (
+                            <Link
+                                className={styles.link}
+                                to={showClusterVisualizationLink}
+                                replace
+                            >
+                                {_ts('leads', 'showCluster')}
+                            </Link>
+                        )}
+                    />
+                    <Cloak
+                        requireAssessmentTemplate
+                        render={() => (
+                            <Link
+                                className={styles.link}
+                                to={showLeadGroupsLink}
+                                replace
+                            >
+                                {_ts('leads', 'showLeadGroups')}
+                            </Link>
+                        )}
+                    />
                     <span className={styles.label}>
                         {_ts('leads', 'leadsPerPage')}
                     </span>
