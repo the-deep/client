@@ -125,7 +125,7 @@ export default class LeadGroups extends React.PureComponent {
                 label: _ts('leadGroups', 'noOfLeadsTitle'),
                 order: 4,
                 sortable: true,
-                modifier: row => row.leads.length,
+                modifier: row => row.noOfLeads,
             },
             {
                 key: 'actions',
