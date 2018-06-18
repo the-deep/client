@@ -1,0 +1,25 @@
+@import '../../stylesheets/base';
+
+.edit-entry {
+    @extend %main-content;
+
+    display: flex;
+    position: relative;
+    flex-direction: row;
+
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        border-right: $width-separator-thin solid $color-separator;
+    }
+
+    .main {
+        padding: $spacing-medium;
+
+        .widget {
+            margin-top: $spacing-medium;
+            background-color: $color-foreground;
+            padding: $spacing-small;
+        }
+    }
+}

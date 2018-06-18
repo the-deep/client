@@ -137,6 +137,14 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'clusterViz');
 
+    editEntriesBetter: {
+        order: 39,
+        type: ROUTE.private,
+        path: '/leads/:leadId/edit-entries/',
+        loader: () => import('../views/EditEntryBetter'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'editEntriesBetter');
+
     entries: {
         order: 40,
         type: ROUTE.private,

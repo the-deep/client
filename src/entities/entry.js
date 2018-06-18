@@ -32,8 +32,16 @@ export const DIFF_ACTION = {
 };
 
 export const entryAccessor = {
-    isMarkedForDelete: entry => entry.markedForDelete,
+    isMarkedForDelete: () => false,
 
+    // getData: entry => entry.localData,
+    getKey: entry => entry.localData && entry.localData.id,
+    getServerId: entry => entry.data && entry.data.id,
+    getVersionId: entry => entry.serverData && entry.serverData.id,
+    getValues: entry => entry.data,
+
+
+    /*
     getData: entry => entry.data,
     getKey: entry => entry.data && entry.data.id,
     getServerId: entry => entry.data && entry.data.serverId,
@@ -46,45 +54,58 @@ export const entryAccessor = {
     getUiState: entry => entry.uiState,
     getError: entry => entry.uiState && entry.uiState.error,
     getPristine: entry => entry.uiState && entry.uiState.pristine,
+    */
 };
 
 const entryReference = {
-    data: {
-        id: 'entry-0',
-        serverId: undefined,
-        versionId: undefined,
-    },
-    widget: {
-        values: { },
-    },
-    uiState: {
+    localData: {
+        id: undefined,
+        color: undefined,
+        pristine: true,
         error: false,
-        pristine: false,
+    },
+    serverData: {
+        serverId: undefined,
+    },
+    data: {
+        id: undefined, // serverId
+        order: 0,
     },
 };
 
 export const createEntry = ({
-    id, serverId, versionId, values = {}, pristine = false, error = false,
-}, order = undefined, excerpt = undefined) => {
+    id,
+    serverId,
+    versionId,
+    values = {},
+    pristine = false,
+    error = false,
+    order,
+    excerpt,
+}) => {
     let newValues = values;
+    if (isTruthy(serverId)) {
+        newValues = { ...newValues, id: serverId };
+    }
     if (isTruthy(order)) {
         newValues = { ...newValues, order };
     }
     if (isTruthy(excerpt)) {
         newValues = { ...newValues, excerpt };
     }
+
     const settings = {
-        data: {
+        localData: {
             id: { $set: id },
-            serverId: { $set: serverId },
-            versionId: { $set: versionId },
-        },
-        widget: {
-            values: { $set: newValues },
-        },
-        uiState: {
+            color: { $set: undefined },
             pristine: { $set: pristine },
             error: { $set: error },
+        },
+        serverData: {
+            versionId: { $set: versionId },
+        },
+        data: {
+            $set: newValues,
         },
     };
     return update(entryReference, settings);
