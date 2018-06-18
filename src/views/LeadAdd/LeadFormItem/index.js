@@ -272,7 +272,7 @@ export default class LeadFormItem extends React.PureComponent {
             leadId,
             faramValues,
             faramErrors,
-            uiState: { pristine: true, serverError: false },
+            uiState: { pristine: false, serverError: false },
         });
     }
 
