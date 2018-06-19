@@ -13,11 +13,10 @@ export default class DefaultWidget extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
+        const { name } = this.props;
         return (
             <div>
-                <div>
-                    {this.props.name}
-                </div>
+                {name}
             </div>
         );
     }

@@ -22,6 +22,7 @@ export default class NumberWidget extends React.PureComponent {
             <div>
                 <NumberInput
                     faramElementName="value"
+                    // faramInfo={{ action: 'newEntry' }}
                     placeholder={_ts('framework.numberWidget', 'numberPlaceholder')}
                     showLabel={false}
                     separator={separatorText}

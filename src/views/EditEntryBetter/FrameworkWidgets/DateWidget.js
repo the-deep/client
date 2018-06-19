@@ -20,6 +20,7 @@ export default class DateWidget extends React.PureComponent {
             <div>
                 <DateInput
                     faramElementName="value"
+                    // faramInfo={{ action: 'editEntry' }}
                     showLabel={false}
                 />
             </div>

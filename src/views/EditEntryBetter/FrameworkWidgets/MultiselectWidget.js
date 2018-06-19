@@ -22,13 +22,7 @@ export default class MultiselectWidget extends React.PureComponent {
 
     render() {
         const {
-            widget: {
-                properties: {
-                    data: {
-                        options,
-                    },
-                },
-            },
+            widget: { properties: { data: { options } } },
         } = this.props;
         return (
             <div>

@@ -25,6 +25,7 @@ export default class ExcerptWidget extends React.PureComponent {
             image,
         } = this.props;
 
+        // FIXME: use translation
         const alt = 'Excerpt image';
 
         return (

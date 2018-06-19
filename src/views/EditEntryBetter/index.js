@@ -135,7 +135,7 @@ const widgetStore = [
     {
         widgetId: 'scaleWidget',
         type: 'list',
-        loader: () => import('./FrameworkWidgets/DefaultWidget'),
+        loader: () => import('./FrameworkWidgets/ScaleWidget'),
     },
 ];
 
@@ -215,7 +215,7 @@ export default class EditEntry extends React.PureComponent {
 
         this.state = {
             pendingEditEntryData: true,
-            viewMode: 'overview',
+            viewMode: 'list',
             pending: false,
 
             selectedEntryId: undefined,
@@ -301,7 +301,21 @@ export default class EditEntry extends React.PureComponent {
         });
     }
 
-    handleChange = (faramValues, faramErrors) => {
+    handleChange = (faramValues, faramErrors, faramInfo) => {
+        console.warn('onChange', faramValues);
+        switch (faramInfo.action) {
+            case 'newEntry':
+                console.warn('Should create new entry');
+                break;
+            case 'editEntry':
+                console.warn('Should edit entry');
+                break;
+            case undefined:
+                break;
+            default:
+                console.error('Unrecognized action');
+        }
+
         const entryIndex = this.getSelectedEntryIndex();
 
         const newEntries = { $auto: {
@@ -315,6 +329,7 @@ export default class EditEntry extends React.PureComponent {
             entries: update(this.state.entries, newEntries),
             entryErrors: update(this.state.entryErrors, newEntryErrors),
         };
+
         this.setState(newState);
     }
 
