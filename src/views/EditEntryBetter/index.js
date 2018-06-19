@@ -10,10 +10,10 @@ import Bundle from '#rs/components/General/Bundle';
 import Faram, { requiredCondition } from '#rs/components/Input/Faram';
 import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
 import List from '#rs/components/View/List';
+import GridViewLayout from '#rs/components/View/GridViewLayout';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import { listToMap } from '#rs/utils/common';
 import update from '#rs/utils/immutable-update';
-
 
 import WidgetError from '#components/WidgetError';
 import {
@@ -353,7 +353,16 @@ export default class EditEntry extends React.PureComponent {
         );
     };
 
-    renderWidget = (k, widget) => {
+    renderWidgetHeader = (d) => {
+        const { title } = d;
+        return (
+            <div className={styles.header}>
+                { d.title }
+            </div>
+        );
+    }
+
+    renderWidgetContent = (widget) => {
         const { viewMode, entries } = this.state;
         const { id, key, widgetId, title } = widget;
 
@@ -373,15 +382,9 @@ export default class EditEntry extends React.PureComponent {
         }
 
         return (
-            <div
-                key={key}
-                className={styles.widget}
-            >
+            <div className={styles.content}>
                 {/* FIXME: Bundle causes re-rendering of List (ie parent) */}
                 <FaramGroup faramElementName={String(id)}>
-                    <h4>
-                        {title}
-                    </h4>
                     <FaramGroup faramElementName="data">
                         <Widget
                             entryType={entryType}
@@ -394,6 +397,7 @@ export default class EditEntry extends React.PureComponent {
             </div>
         );
     }
+
 
     render() {
         const {
@@ -421,6 +425,8 @@ export default class EditEntry extends React.PureComponent {
         const entry = entries[entryIndex];
         const entryError = entryErrors[entryIndex];
 
+        console.warn(widgets);
+
         return (
             <div className={styles.editEntry}>
                 <div className={styles.sidebar}>
@@ -447,14 +453,16 @@ export default class EditEntry extends React.PureComponent {
                                 <SuccessButton type="submit">
                                     Save
                                 </SuccessButton>
-                                <PrimaryButton
-                                    onClick={this.handleModeToggle}
-                                >
+                                <PrimaryButton onClick={this.handleModeToggle}>
                                     {viewMode}
                                 </PrimaryButton>
-                                <List
+                                <GridViewLayout
                                     data={widgets}
-                                    modifier={this.renderWidget}
+                                    layoutSelector={d => d.properties.listGridLayout}
+                                    itemHeaderModifier={this.renderWidgetHeader}
+                                    itemContentModifier={this.renderWidgetContent}
+                                    keySelector={d => d.key}
+                                    itemClassName={styles.widget}
                                 />
                             </FaramGroup>
                         </FaramGroup>
