@@ -20,8 +20,12 @@
         overflow: auto;
 
         .widget {
+            border: 1px solid red;
             background-color: $color-foreground;
-            padding: $spacing-small;
+
+            .header {
+                border-bottom: 1px solid blue;
+            }
         }
     }
 }

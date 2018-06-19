@@ -93,6 +93,11 @@ const widgetStore = [
         loader: () => import('./FrameworkWidgets/DefaultWidget'),
     },
     {
+        widgetId: 'matrix2dWidget',
+        type: 'list',
+        loader: () => import('./FrameworkWidgets/DefaultWidget'),
+    },
+    {
         widgetId: 'matrix1dWidget',
         type: 'list',
         loader: () => import('./FrameworkWidgets/DefaultWidget'),
@@ -368,23 +373,18 @@ export default class EditEntry extends React.PureComponent {
         );
     };
 
-    renderWidgetHeader = (d) => {
-        const { title } = d;
+    renderWidgetHeader = (widget) => {
+        const { title } = widget;
         return (
             <div className={styles.header}>
-                { d.title }
+                { title }
             </div>
         );
     }
 
     renderWidgetContent = (widget) => {
         const { viewMode, entries } = this.state;
-        const { id, key, widgetId, title } = widget;
-
-        const Widget = widgetStoreView[`${viewMode}:${widgetId}`];
-        if (!Widget) {
-            return null;
-        }
+        const { id, widgetId } = widget;
 
         const entryIndex = this.getSelectedEntryIndex();
         const entry = entries[entryIndex];
@@ -395,6 +395,8 @@ export default class EditEntry extends React.PureComponent {
         if (entry) {
             ({ entryType, excerpt, image } = entryAccessor.getValues(entry));
         }
+
+        const Widget = widgetStoreView[`${viewMode}:${widgetId}`];
 
         return (
             <div className={styles.content}>
@@ -412,7 +414,6 @@ export default class EditEntry extends React.PureComponent {
             </div>
         );
     }
-
 
     render() {
         const {
@@ -440,7 +441,9 @@ export default class EditEntry extends React.PureComponent {
         const entry = entries[entryIndex];
         const entryError = entryErrors[entryIndex];
 
-        console.warn(widgets);
+        const filteredWidgets = widgets.filter(
+            widget => !!widgetStoreView[`${viewMode}:${widget.widgetId}`],
+        );
 
         return (
             <div className={styles.editEntry}>
@@ -472,11 +475,16 @@ export default class EditEntry extends React.PureComponent {
                                     {viewMode}
                                 </PrimaryButton>
                                 <GridViewLayout
-                                    data={widgets}
-                                    layoutSelector={d => d.properties.listGridLayout}
+                                    data={filteredWidgets}
+                                    layoutSelector={
+                                        d => (viewMode === 'list'
+                                            ? d.properties.listGridLayout
+                                            : d.properties.overviewGridLayout
+                                        )
+                                    }
                                     itemHeaderModifier={this.renderWidgetHeader}
                                     itemContentModifier={this.renderWidgetContent}
-                                    keySelector={d => d.key}
+                                    keySelector={widget => widget.key}
                                     itemClassName={styles.widget}
                                 />
                             </FaramGroup>
