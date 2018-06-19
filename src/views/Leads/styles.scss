@@ -31,8 +31,12 @@
                 .leads-filter {
                     margin: $spacing-small;
                 }
+            }
+        }
 
-                .button {
+        :global {
+            .leads-filters {
+                >.button {
                     align-self: flex-end;
                     flex-shrink: 0;
                     margin: $spacing-small;
@@ -82,7 +86,7 @@
 
                 :global {
                     .cell {
-                        padding: $spacing-extra-small $spacing-small;
+                        padding: $spacing-small;
 
                         &.created_by,
                         &.assignee {

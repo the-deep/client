@@ -142,19 +142,24 @@ $radius-button-border: 2px;
 }
 
 %transparent-button-like-link {
-    @include background-color($color-foreground);
     border: 0;
-    border-radius: $radius-button-border;
     background-color: transparent;
+    cursor: pointer;
     padding: $spacing-small $spacing-small-alt;
     text-transform: uppercase;
     color: $color-text;
     font-family: inherit;
     font-size: $font-size-small;
+    font-weight: $font-weight-bold;
 
     &:active {
         transform: translateY(1px);
     }
+}
+
+@mixin transparent-button-like-link($color) {
+    @extend %transparent-button-like-link;
+    color: $color;
 }
 
 %background-alternating-row {
