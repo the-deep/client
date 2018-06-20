@@ -9,89 +9,77 @@ import {
     getApplicableAndModifyingDiffCount,
 } from '#entities/entry';
 import notify from '#notify';
+import Request from '#utils/Request';
 import _ts from '#ts';
 // import schema from '#schema';
 
-export default class EditEntryDataRequest {
-    constructor(params) {
-        const {
-            setState,
-            setLead,
-            getAf,
-            removeAllEntries,
-            setAnalysisFramework,
-            getEntries,
-            diffEntries,
-            setGeoOptions,
-            setRegions,
-        } = params;
-        this.setState = setState;
-        this.setLead = setLead;
-        this.getAf = getAf;
-        this.removeAllEntries = removeAllEntries;
-        this.setAnalysisFramework = setAnalysisFramework;
-        this.getEntries = getEntries;
-        this.diffEntries = diffEntries;
-        this.setGeoOptions = setGeoOptions;
-        this.setRegions = setRegions;
+export default class EditEntryDataRequest extends Request {
+    handlePreLoad = () => {
+        this.parent.setState({ pendingEditEntryData: true });
     }
 
-    create = (leadId) => {
-        const request = new FgRestBuilder()
-            .url(createUrlEditEntryGet(leadId))
-            .params(createParamsForGet)
-            .preLoad(() => this.setState({ pendingEditEntryData: true }))
-            .postLoad(() => this.setState({ pendingEditEntryData: false }))
-            .success((response) => {
-                const {
-                    lead,
-                    geoOptions,
-                    analysisFramework,
-                    entries,
-                    regions,
-                } = response;
+    handleAfterLoad = () => {
+        this.parent.setState({ pendingEditEntryData: false });
+    }
 
-                this.setLead({ lead });
+    handleSuccess = (response) => {
+        const {
+            lead,
+            geoOptions,
+            analysisFramework,
+            entries,
+            regions,
+        } = response;
+        const { leadId } = this;
 
-                // TODO: notify that analysis framework changed and history cleared
-                const oldAf = this.getAf();
-                if (oldAf.versionId < analysisFramework.versionId) {
-                    this.removeAllEntries({ leadId });
-                }
-                this.setAnalysisFramework({ analysisFramework });
+        this.parent.setLead({ lead });
 
-                this.setGeoOptions({
-                    projectId: lead.project,
-                    locations: geoOptions,
-                });
+        // TODO: notify that analysis framework changed and history cleared
+        const oldAf = this.parent.getAf();
+        if (oldAf.versionId < analysisFramework.versionId) {
+            this.parent.removeAllEntries({ leadId });
+        }
+        this.parent.setAnalysisFramework({ analysisFramework });
 
-                this.setRegions({
-                    projectId: lead.project,
-                    regions,
-                });
+        this.parent.setGeoOptions({
+            projectId: lead.project,
+            locations: geoOptions,
+        });
 
-                const diffs = calcEntriesDiff(this.getEntries(), entries);
+        this.parent.setRegions({
+            projectId: lead.project,
+            regions,
+        });
 
-                if (getApplicableDiffCount(diffs) <= 0) {
-                    return;
-                }
+        const diffs = calcEntriesDiff(this.parent.getEntries(), entries);
 
-                this.diffEntries({ leadId, diffs });
+        if (getApplicableDiffCount(diffs) <= 0) {
+            return;
+        }
 
-                if (getApplicableAndModifyingDiffCount(diffs) <= 0) {
-                    return;
-                }
+        this.parent.diffEntries({ leadId, diffs });
 
-                notify.send({
-                    type: notify.type.WARNING,
-                    title: _ts('editEntry', 'entryUpdate'),
-                    message: _ts('editEntry', 'entryUpdateOverridden'),
-                    duration: notify.duration.SLOW,
-                });
+        if (getApplicableAndModifyingDiffCount(diffs) <= 0) {
+            return;
+        }
 
-                this.setState({ pendingEditEntryData: false });
-            })
-            .build();
-        return request;
+        notify.send({
+            type: notify.type.WARNING,
+            title: _ts('editEntry', 'entryUpdate'),
+            message: _ts('editEntry', 'entryUpdateOverridden'),
+            duration: notify.duration.SLOW,
+        });
+
+        this.parent.setState({ pendingEditEntryData: false });
+    }
+
+    init = ({ leadId }) => {
+        const url = createUrlEditEntryGet(leadId);
+        this.leadId = leadId;
+
+        this.createDefault({
+            url,
+            params: createParamsForGet,
+        });
     }
 }

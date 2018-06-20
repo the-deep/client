@@ -30,10 +30,11 @@ import styles from './styles.scss';
 
 const propTypes = {
     leadId: PropTypes.number.isRequired,
+
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    setLead: PropTypes.func.isRequired,
 
     setAnalysisFramework: PropTypes.func.isRequired,
-    setLead: PropTypes.func.isRequired,
     setGeoOptions: PropTypes.func.isRequired,
     setRegions: PropTypes.func.isRequired,
 };
@@ -44,12 +45,16 @@ const defaultProps = {
 
 const mapStateToProps = (state, props) => ({
     leadId: leadIdFromRoute(state, props),
+
+    // Rewrite this
     analysisFramework: editEntryCurrentAnalysisFrameworkSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
-    setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
+    // Rewrite this
     setLead: params => dispatch(setEditEntryLeadAction(params)),
+
+    setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
     setRegions: params => dispatch(setRegionsForProjectAction(params)),
 });
@@ -77,10 +82,8 @@ export default class EditEntry extends React.PureComponent {
             entries: [],
             entryErrors: [],
         };
-    }
 
-    componentWillMount() {
-        const request = new EditEntryDataRequest({
+        this.editEntryDataRequest = new EditEntryDataRequest({
             diffEntries: this.handleDiffEntries,
             getAf: () => this.props.analysisFramework,
             getEntries: () => this.state.entries,
@@ -91,9 +94,20 @@ export default class EditEntry extends React.PureComponent {
             setRegions: this.props.setRegions,
             setState: params => this.setState(params),
         });
+    }
 
-        this.editEntryDataRequest = request.create(this.props.leadId);
+    componentWillMount() {
+        const { leadId } = this.props;
+        this.editEntryDataRequest.init({ leadId });
         this.editEntryDataRequest.start();
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { leadId } = nextProps;
+        if (this.props.leadId !== leadId && leadId) {
+            this.editEntryDataRequest.init({ leadId });
+            this.editEntryDataRequest.start();
+        }
     }
 
     componentWillUnmount() {
@@ -189,10 +203,9 @@ export default class EditEntry extends React.PureComponent {
     }
 
     handleValidationFailure = (faramErrors, entryKey) => {
-        console.error('Failure', faramErrors);
+        console.error('Failure', faramErrors, entryKey);
 
         const entryIndex = EditEntry.getSelectedEntryIndex(this.state.entries, entryKey);
-
         const newEntryErrors = { $auto: {
             [entryIndex]: { $set: faramErrors },
         } };

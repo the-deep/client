@@ -202,6 +202,10 @@ const initialSiloDomainData = {
         */
     },
 
+    // i specifies lead
+    editEntriesBetter: {
+    },
+
     analysisFrameworkView: {
         analysisFramework: {
             /*

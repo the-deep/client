@@ -117,9 +117,9 @@ export default class EntryFaram extends React.PureComponent {
         this.props.onChange(faramValues, faramErrors, faramInfo, entryKey);
     }
 
-    handleValidationFailure = (faramErrors, faramInfo) => {
+    handleValidationFailure = (faramErrors) => {
         const entryKey = entryAccessor.key(this.props.entry);
-        this.props.onValidationFailure(faramErrors, faramInfo, entryKey);
+        this.props.onValidationFailure(faramErrors, entryKey);
     }
 
     handleValidationSuccess = (faramValues) => {
