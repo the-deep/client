@@ -2,10 +2,15 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Button from '#rs/components/Action/Button';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import List from '#rs/components/View/List';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import { iconNames } from '#constants';
+import Button from '#rsca/Button';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import SuccessButton from '#rsca/Button/SuccessButton';
+import DangerButton from '#rsca/Button/DangerButton';
+import List from '#rscv/List';
+import FixedTabs from '#rscv/FixedTabs';
+import MultiViewContainer from '#rscv/MultiViewContainer';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import update from '#rs/utils/immutable-update';
 
 import {
@@ -13,6 +18,7 @@ import {
 } from '#entities/entry';
 import {
     leadIdFromRoute,
+    editEntriesLeadSelector,
 
     editEntriesAnalysisFrameworkSelector,
     editEntriesSetLeadAction,
@@ -27,10 +33,14 @@ import { hasWidget } from './widgets';
 import entryAccessor from './entryAccessor';
 import EditEntryDataRequest from './requests/EditEntryDataRequest';
 
+import Overview from './Overview';
+import Listing from './List';
+
 import styles from './styles.scss';
 
 const propTypes = {
     leadId: PropTypes.number.isRequired,
+    lead: PropTypes.object.isRequired,
 
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setLead: PropTypes.func.isRequired,
@@ -46,6 +56,7 @@ const defaultProps = {
 
 const mapStateToProps = (state, props) => ({
     leadId: leadIdFromRoute(state, props),
+    lead: editEntriesLeadSelector(state),
 
     // Rewrite this
     analysisFramework: editEntriesAnalysisFrameworkSelector(state, props),
@@ -249,7 +260,7 @@ export default class EditEntry extends React.PureComponent {
         );
     };
 
-    render() {
+    renderOld() {
         const {
             pendingEditEntryData,
             entries,
@@ -258,6 +269,7 @@ export default class EditEntry extends React.PureComponent {
             selectedEntryKey,
         } = this.state;
         const {
+            lead,
             analysisFramework: {
                 widgets = [],
             },
@@ -270,6 +282,8 @@ export default class EditEntry extends React.PureComponent {
                 </div>
             );
         }
+
+        console.warn(lead);
 
         const entryIndex = EditEntry.getSelectedEntryIndex(entries, selectedEntryKey);
         const entry = entries[entryIndex];
@@ -303,6 +317,76 @@ export default class EditEntry extends React.PureComponent {
                     onValidationFailure={this.handleValidationFailure}
                     onValidationSuccess={this.handleValidationSuccess}
                     onExcerptChange={this.handleExcerptChange}
+                />
+            </div>
+        );
+    }
+
+    render() {
+        const {
+            lead: {
+                title: leadTitle,
+            },
+        } = this.props;
+
+        const views = {
+            overview: {
+                component: Overview,
+                wrapContainer: true,
+                lazyMount: true,
+            },
+
+            list: {
+                component: Listing,
+                wrapContainer: true,
+                lazyMount: true,
+            },
+        };
+
+        // FIXME: use strings
+        const tabs = {
+            overview: 'Overview',
+            list: 'List',
+        };
+
+        const defaultHash = 'overview';
+
+        const cancelButtonTitle = 'Cancel';
+        const saveButtonTitle = 'Save';
+        const backButtonTooltip = 'Back to hell';
+
+        return (
+            <div className={styles.editEntriesBetter}>
+                <header className={styles.header}>
+                    <Button
+                        className={styles.backButton}
+                        title={backButtonTooltip}
+                        iconName={iconNames.back}
+                        transparent
+                    />
+                    <h4 className={styles.heading}>
+                        { leadTitle }
+                    </h4>
+                    <FixedTabs
+                        className={styles.tabs}
+                        tabs={tabs}
+                        useHash
+                        deafultHash={defaultHash}
+                    />
+                    <div className={styles.actionButtons}>
+                        <DangerButton>
+                            { cancelButtonTitle }
+                        </DangerButton>
+                        <SuccessButton>
+                            { saveButtonTitle }
+                        </SuccessButton>
+                    </div>
+                </header>
+                <MultiViewContainer
+                    views={views}
+                    useHash
+                    containerClassName={styles.content}
+                    activeClassName={styles.active}
                 />
             </div>
         );

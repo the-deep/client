@@ -92,6 +92,8 @@ const iconNames = {
     textFormat: 'ion-ios-circle-filled',
     chrome: 'ion-social-chrome',
     settings: 'ion-android-settings',
+
+    back: 'ion-android-arrow-back',
 };
 
 export default iconNames;
