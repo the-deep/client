@@ -12,20 +12,4 @@
         flex-direction: column;
         border-right: $width-separator-thin solid $color-separator;
     }
-
-    .main {
-        padding: $spacing-medium;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-
-        .widget {
-            border: 1px solid red;
-            background-color: $color-foreground;
-
-            .header {
-                border-bottom: 1px solid blue;
-            }
-        }
-    }
 }

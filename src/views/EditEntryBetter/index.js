@@ -3,22 +3,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Button from '#rs/components/Action/Button';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import BoundError from '#rs/components/General/BoundError';
-import Bundle from '#rs/components/General/Bundle';
-import Faram, { requiredCondition } from '#rs/components/Input/Faram';
-import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
 import List from '#rs/components/View/List';
-import GridViewLayout from '#rs/components/View/GridViewLayout';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import { listToMap } from '#rs/utils/common';
 import update from '#rs/utils/immutable-update';
 
-import WidgetError from '#components/WidgetError';
 import {
     calcNewEntries,
-    entryAccessor,
 } from '#entities/entry';
 import {
     leadIdFromRoute,
@@ -30,6 +21,9 @@ import {
     setRegionsForProjectAction,
 } from '#redux';
 
+import WidgetFaram from './WidgetFaram';
+import { hasWidget } from './widgets';
+import entryAccessor from './entryAccessor';
 import EditEntryDataRequest from './requests/EditEntryDataRequest';
 
 import styles from './styles.scss';
@@ -61,158 +55,14 @@ const mapDispatchToProps = dispatch => ({
 });
 
 
-const widgetStore = [
-    {
-        widgetId: 'dateWidget',
-        type: 'list',
-        loader: () => import('./widgets/Date'),
-    },
-    {
-        widgetId: 'excerptWidget',
-        type: 'overview',
-        loader: () => import('./widgets/Excerpt'),
-    },
-    {
-        widgetId: 'excerptWidget',
-        type: 'list',
-        loader: () => import('./widgets/Excerpt'),
-    },
-    {
-        widgetId: 'geoWidget',
-        type: 'list',
-        loader: () => import('./widgets/Default'),
-    },
-    {
-        widgetId: 'matrix1dWidget',
-        type: 'overview',
-        loader: () => import('./widgets/Default'),
-    },
-    {
-        widgetId: 'matrix2dWidget',
-        type: 'overview',
-        loader: () => import('./widgets/Default'),
-    },
-    {
-        widgetId: 'matrix2dWidget',
-        type: 'list',
-        loader: () => import('./widgets/Default'),
-    },
-    {
-        widgetId: 'matrix1dWidget',
-        type: 'list',
-        loader: () => import('./widgets/Default'),
-    },
-    {
-        widgetId: 'matrix1dWidget',
-        type: 'overview',
-        loader: () => import('./widgets/Default'),
-    },
-    {
-        widgetId: 'matrix1dWidget',
-        type: 'list',
-        loader: () => import('./widgets/Default'),
-    },
-    {
-        widgetId: 'multiselectWidget',
-        type: 'list',
-        loader: () => import('./widgets/MultiSelect'),
-    },
-    {
-        widgetId: 'numberMatrixWidget',
-        type: 'overview',
-        loader: () => import('./widgets/Default'),
-    },
-    {
-        widgetId: 'numberMatrixWidget',
-        type: 'list',
-        loader: () => import('./widgets/Default'),
-    },
-    {
-        widgetId: 'numberWidget',
-        type: 'list',
-        loader: () => import('./widgets/Number'),
-    },
-    {
-        widgetId: 'organigramWidget',
-        type: 'list',
-        loader: () => import('./widgets/Default'),
-    },
-    {
-        widgetId: 'scaleWidget',
-        type: 'list',
-        loader: () => import('./widgets/Scale'),
-    },
-];
-
-const BoundWidgetError = BoundError(WidgetError);
-const decorator = Component => BoundWidgetError(Component);
-
-const widgetStoreView = listToMap(
-    widgetStore,
-    widget => `${widget.type}:${widget.widgetId}`,
-    (widget, name) => props => (
-        <Bundle
-            name={name}
-            load={widget.loader}
-            decorator={decorator}
-            {...props}
-        />
-    ),
-);
-
 @connect(mapStateToProps, mapDispatchToProps)
 export default class EditEntry extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static createSchemaForWidget = (widget) => {
-        switch (widget.widgetId) {
-            // add case for date to identify good date with bad date
-            case 'numberWidget':
-                return {
-                    fields: {
-                        value: [requiredCondition],
-                    },
-                };
-            default:
-                return [];
-        }
-    }
-
-    static createSchema = (widgets) => {
-        const schema = {
-            fields: {
-                data: {
-                    fields: {
-                        analysisFramework: [],
-                        attributes: {
-                            fields: {
-                            },
-                        },
-                        createdAt: [],
-                        entryType: [],
-                        excerpt: [],
-                        exportData: [],
-                        filterData: [],
-                        id: [],
-                        image: [],
-                        lead: [],
-                        order: [],
-                    },
-                },
-                localData: [],
-                serverData: [],
-            },
-        };
-        widgets.forEach((widget) => {
-            schema.fields.data.fields.attributes.fields[widget.id] = {
-                fields: {
-                    data: EditEntry.createSchemaForWidget(widget),
-                    id: [],
-                },
-            };
-        });
-        return schema;
+    static getSelectedEntryIndex = (entries, entryKey) => {
+        const entry = entries.findIndex(e => (entryAccessor.key(e) === entryKey));
+        return entry;
     }
 
     constructor(props) {
@@ -223,17 +73,10 @@ export default class EditEntry extends React.PureComponent {
             viewMode: 'list',
             pending: false,
 
-            selectedEntryId: undefined,
+            selectedEntryKey: undefined,
             entries: [],
             entryErrors: [],
         };
-
-        const {
-            analysisFramework: {
-                widgets = [],
-            },
-        } = this.props;
-        this.schema = EditEntry.createSchema(widgets);
     }
 
     componentWillMount() {
@@ -253,33 +96,8 @@ export default class EditEntry extends React.PureComponent {
         this.editEntryDataRequest.start();
     }
 
-    componentWillReceiveProps(nextProps) {
-        const {
-            analysisFramework: {
-                widgets: newWidgets = [],
-            },
-        } = nextProps;
-        const {
-            analysisFramework: {
-                widgets: oldWidgets = [],
-            },
-        } = this.props;
-        if (oldWidgets !== newWidgets) {
-            this.schema = EditEntry.createSchema(newWidgets);
-        }
-    }
-
     componentWillUnmount() {
         this.editEntryDataRequest.stop();
-    }
-
-    // FIXME: make this static
-    getSelectedEntryIndex = () => {
-        const { entries, selectedEntryId } = this.state;
-        const entry = entries.findIndex(
-            e => entryAccessor.getKey(e) === selectedEntryId,
-        );
-        return entry;
     }
 
     handleDiffEntries = ({ diffs }) => {
@@ -287,17 +105,19 @@ export default class EditEntry extends React.PureComponent {
 
         // TODO:
         // If last selected was delete, set first item as selected
-        const selectedEntryId = entryAccessor.getKey(newEntries[0]);
+        const selectedEntryKey = entryAccessor.key(newEntries[0]);
 
-        this.setState({ entries: newEntries, selectedEntryId });
+        this.setState({ entries: newEntries, selectedEntryKey });
     }
 
     handleRemoveAllEntries = () => {
         this.setState({ entries: [] });
     }
 
-    handleEntrySelect = (selectedEntryId) => {
-        this.setState({ selectedEntryId });
+    // UI
+
+    handleEntrySelect = (selectedEntryKey) => {
+        this.setState({ selectedEntryKey });
     }
 
     handleModeToggle = () => {
@@ -306,8 +126,10 @@ export default class EditEntry extends React.PureComponent {
         });
     }
 
-    handleExcerptChange = ({ entryType, excerpt, image }) => {
-        const entryIndex = this.getSelectedEntryIndex();
+    // REDUX
+
+    handleExcerptChange = ({ entryType, excerpt, image }, entryKey) => {
+        const entryIndex = EditEntry.getSelectedEntryIndex(this.state.entries, entryKey);
 
         const settings = {
             [entryIndex]: {
@@ -326,8 +148,7 @@ export default class EditEntry extends React.PureComponent {
         this.setState(newState);
     }
 
-    handleChange = (faramValues, faramErrors, faramInfo) => {
-        console.warn(faramInfo);
+    handleChange = (faramValues, faramErrors, faramInfo, entryKey) => {
         let newFaramValues = faramValues;
         switch (faramInfo.action) {
             case 'newEntry':
@@ -343,7 +164,6 @@ export default class EditEntry extends React.PureComponent {
                 };
                 // FIXME: clear other errors
                 newFaramValues = update(newFaramValues, settings);
-                console.warn(newFaramValues);
                 break;
             } case undefined:
                 break;
@@ -351,7 +171,7 @@ export default class EditEntry extends React.PureComponent {
                 console.error('Unrecognized action');
         }
 
-        const entryIndex = this.getSelectedEntryIndex();
+        const entryIndex = EditEntry.getSelectedEntryIndex(this.state.entries, entryKey);
 
         const newEntries = { $auto: {
             [entryIndex]: { $set: newFaramValues },
@@ -368,10 +188,10 @@ export default class EditEntry extends React.PureComponent {
         this.setState(newState);
     }
 
-    handleValidationFailure = (faramErrors) => {
-        console.warn('Failure', faramErrors);
+    handleValidationFailure = (faramErrors, entryKey) => {
+        console.error('Failure', faramErrors);
 
-        const entryIndex = this.getSelectedEntryIndex();
+        const entryIndex = EditEntry.getSelectedEntryIndex(this.state.entries, entryKey);
 
         const newEntryErrors = { $auto: {
             [entryIndex]: { $set: faramErrors },
@@ -383,76 +203,37 @@ export default class EditEntry extends React.PureComponent {
         this.setState(newState);
     }
 
-    handleValidationSuccess = (values) => {
-        console.warn('success', values);
+    handleValidationSuccess = (values, entryKey) => {
+        console.warn('success', values, entryKey);
     }
 
-    renderEntry = (k, entry) => {
-        const key = entryAccessor.getKey(entry);
-        const { excerpt } = entryAccessor.getValues(entry);
+    // LIST
 
-        const selected = this.state.selectedEntryId === key;
+    renderEntry = (k, entry) => {
+        const key = entryAccessor.key(entry);
+        const { entryType, excerpt, image } = entryAccessor.data(entry) || {};
+
+        const selected = this.state.selectedEntryKey === key;
+
         return (
             <Button
                 key={key}
                 onClick={() => this.handleEntrySelect(key)}
                 disabled={selected}
             >
-                {excerpt}
+                {
+                    entryType === 'image' ? (
+                        <img
+                            src={image}
+                            alt={excerpt}
+                        />
+                    ) : (
+                        excerpt
+                    )
+                }
             </Button>
         );
     };
-
-    renderWidgetHeader = (widget) => {
-        const { title } = widget;
-        return (
-            <div className={styles.header}>
-                { title }
-            </div>
-        );
-    }
-
-    renderWidgetContent = (widget) => {
-        const { viewMode, entries } = this.state;
-        const { id, widgetId } = widget;
-
-        const entryIndex = this.getSelectedEntryIndex();
-        const entry = entries[entryIndex];
-
-        let entryType;
-        let excerpt;
-        let image;
-        if (entry) {
-            ({ entryType, excerpt, image } = entryAccessor.getValues(entry));
-        }
-
-        const Widget = widgetStoreView[`${viewMode}:${widgetId}`];
-
-        return (
-            <div className={styles.content}>
-                {/* FIXME: Bundle causes re-rendering of List (ie parent) */}
-                <FaramGroup faramElementName={String(id)}>
-                    <FaramGroup faramElementName="data">
-                        {
-                            widgetId === 'excerptWidget' ? (
-                                <Widget
-                                    entryType={entryType}
-                                    excerpt={excerpt}
-                                    image={image}
-                                    widget={widget}
-                                    onExcerptChange={this.handleExcerptChange}
-                                />
-                            ) : (
-                                <Widget
-                                    widget={widget}
-                                />
-                            )
-                        }
-                    </FaramGroup>
-                </FaramGroup>
-            </div>
-        );
-    }
 
     render() {
         const {
@@ -461,6 +242,7 @@ export default class EditEntry extends React.PureComponent {
             entryErrors,
             viewMode,
             pending,
+            selectedEntryKey,
         } = this.state;
         const {
             analysisFramework: {
@@ -476,60 +258,39 @@ export default class EditEntry extends React.PureComponent {
             );
         }
 
-        const entryIndex = this.getSelectedEntryIndex();
+        const entryIndex = EditEntry.getSelectedEntryIndex(entries, selectedEntryKey);
         const entry = entries[entryIndex];
         const entryError = entryErrors[entryIndex];
 
+        // move this somewhere
         const filteredWidgets = widgets.filter(
-            widget => !!widgetStoreView[`${viewMode}:${widget.widgetId}`],
+            widget => hasWidget(viewMode, widget.widgetId),
         );
 
         return (
             <div className={styles.editEntry}>
                 <div className={styles.sidebar}>
+                    <PrimaryButton onClick={this.handleModeToggle}>
+                        {viewMode}
+                    </PrimaryButton>
                     <List
                         data={entries}
                         modifier={this.renderEntry}
                     />
                 </div>
-                { entryIndex !== 1 &&
-                    <Faram
-                        className={styles.main}
+                <WidgetFaram
+                    entry={entry}
+                    widgets={filteredWidgets}
+                    entryError={entryError}
+                    pending={pending}
+                    viewMode={viewMode}
+                    analysisFramework={this.props.analysisFramework}
 
-                        onChange={this.handleChange}
-                        onValidationFailure={this.handleValidationFailure}
-                        onValidationSuccess={this.handleValidationSuccess}
-
-                        schema={this.schema}
-                        value={entry}
-                        error={entryError}
-                        disabled={pending}
-                    >
-                        <FaramGroup faramElementName="data">
-                            <FaramGroup faramElementName="attributes">
-                                <SuccessButton type="submit">
-                                    Save
-                                </SuccessButton>
-                                <PrimaryButton onClick={this.handleModeToggle}>
-                                    {viewMode}
-                                </PrimaryButton>
-                                <GridViewLayout
-                                    data={filteredWidgets}
-                                    layoutSelector={
-                                        d => (viewMode === 'list'
-                                            ? d.properties.listGridLayout
-                                            : d.properties.overviewGridLayout
-                                        )
-                                    }
-                                    itemHeaderModifier={this.renderWidgetHeader}
-                                    itemContentModifier={this.renderWidgetContent}
-                                    keySelector={widget => widget.key}
-                                    itemClassName={styles.widget}
-                                />
-                            </FaramGroup>
-                        </FaramGroup>
-                    </Faram>
-                }
+                    onChange={this.handleChange}
+                    onValidationFailure={this.handleValidationFailure}
+                    onValidationSuccess={this.handleValidationSuccess}
+                    onExcerptChange={this.handleExcerptChange}
+                />
             </div>
         );
     }
