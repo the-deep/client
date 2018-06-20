@@ -65,82 +65,82 @@ const widgetStore = [
     {
         widgetId: 'dateWidget',
         type: 'list',
-        loader: () => import('./FrameworkWidgets/DateWidget'),
+        loader: () => import('./widgets/Date'),
     },
     {
         widgetId: 'excerptWidget',
         type: 'overview',
-        loader: () => import('./FrameworkWidgets/ExcerptWidget'),
+        loader: () => import('./widgets/Excerpt'),
     },
     {
         widgetId: 'excerptWidget',
         type: 'list',
-        loader: () => import('./FrameworkWidgets/ExcerptWidget'),
+        loader: () => import('./widgets/Excerpt'),
     },
     {
         widgetId: 'geoWidget',
         type: 'list',
-        loader: () => import('./FrameworkWidgets/DefaultWidget'),
+        loader: () => import('./widgets/Default'),
     },
     {
         widgetId: 'matrix1dWidget',
         type: 'overview',
-        loader: () => import('./FrameworkWidgets/DefaultWidget'),
+        loader: () => import('./widgets/Default'),
     },
     {
         widgetId: 'matrix2dWidget',
         type: 'overview',
-        loader: () => import('./FrameworkWidgets/DefaultWidget'),
+        loader: () => import('./widgets/Default'),
     },
     {
         widgetId: 'matrix2dWidget',
         type: 'list',
-        loader: () => import('./FrameworkWidgets/DefaultWidget'),
+        loader: () => import('./widgets/Default'),
     },
     {
         widgetId: 'matrix1dWidget',
         type: 'list',
-        loader: () => import('./FrameworkWidgets/DefaultWidget'),
+        loader: () => import('./widgets/Default'),
     },
     {
         widgetId: 'matrix1dWidget',
         type: 'overview',
-        loader: () => import('./FrameworkWidgets/DefaultWidget'),
+        loader: () => import('./widgets/Default'),
     },
     {
         widgetId: 'matrix1dWidget',
         type: 'list',
-        loader: () => import('./FrameworkWidgets/DefaultWidget'),
+        loader: () => import('./widgets/Default'),
     },
     {
         widgetId: 'multiselectWidget',
         type: 'list',
-        loader: () => import('./FrameworkWidgets/MultiselectWidget'),
+        loader: () => import('./widgets/MultiSelect'),
     },
     {
         widgetId: 'numberMatrixWidget',
         type: 'overview',
-        loader: () => import('./FrameworkWidgets/DefaultWidget'),
+        loader: () => import('./widgets/Default'),
     },
     {
         widgetId: 'numberMatrixWidget',
         type: 'list',
-        loader: () => import('./FrameworkWidgets/DefaultWidget'),
+        loader: () => import('./widgets/Default'),
     },
     {
         widgetId: 'numberWidget',
         type: 'list',
-        loader: () => import('./FrameworkWidgets/NumberWidget'),
+        loader: () => import('./widgets/Number'),
     },
     {
         widgetId: 'organigramWidget',
         type: 'list',
-        loader: () => import('./FrameworkWidgets/DefaultWidget'),
+        loader: () => import('./widgets/Default'),
     },
     {
         widgetId: 'scaleWidget',
         type: 'list',
-        loader: () => import('./FrameworkWidgets/ScaleWidget'),
+        loader: () => import('./widgets/Scale'),
     },
 ];
 
