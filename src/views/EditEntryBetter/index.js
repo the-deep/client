@@ -143,15 +143,15 @@ export default class EditEntry extends React.PureComponent {
 
     // REDUX
 
-    handleExcerptChange = ({ entryType, excerpt, image }, entryKey) => {
+    handleExcerptChange = ({ type, value }, entryKey) => {
         const entryIndex = EditEntry.getSelectedEntryIndex(this.state.entries, entryKey);
 
         const settings = {
             [entryIndex]: {
                 data: {
-                    entryType: { $set: entryType },
-                    excerpt: { $set: excerpt },
-                    image: { $set: image },
+                    entryType: { $set: type },
+                    excerpt: { $set: type === 'excerpt' ? value : undefined },
+                    image: { $set: type === 'image' ? value : undefined },
                 },
             },
         };
