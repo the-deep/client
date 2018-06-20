@@ -69,8 +69,6 @@ export default class EditEntryDataRequest extends Request {
             message: _ts('editEntry', 'entryUpdateOverridden'),
             duration: notify.duration.SLOW,
         });
-
-        this.parent.setState({ pendingEditEntryData: false });
     }
 
     init = ({ leadId }) => {

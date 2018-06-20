@@ -14,9 +14,10 @@ import {
 import {
     leadIdFromRoute,
 
-    editEntryCurrentAnalysisFrameworkSelector,
+    editEntriesAnalysisFrameworkSelector,
+    editEntriesSetLeadAction,
+
     setAnalysisFrameworkAction,
-    setEditEntryLeadAction,
     setGeoOptionsAction,
     setRegionsForProjectAction,
 } from '#redux';
@@ -47,12 +48,12 @@ const mapStateToProps = (state, props) => ({
     leadId: leadIdFromRoute(state, props),
 
     // Rewrite this
-    analysisFramework: editEntryCurrentAnalysisFrameworkSelector(state, props),
+    analysisFramework: editEntriesAnalysisFrameworkSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
     // Rewrite this
-    setLead: params => dispatch(setEditEntryLeadAction(params)),
+    setLead: params => dispatch(editEntriesSetLeadAction(params)),
 
     setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
@@ -75,8 +76,8 @@ export default class EditEntry extends React.PureComponent {
 
         this.state = {
             pendingEditEntryData: true,
+
             viewMode: 'list',
-            pending: false,
 
             selectedEntryKey: undefined,
             entries: [],
@@ -254,7 +255,6 @@ export default class EditEntry extends React.PureComponent {
             entries,
             entryErrors,
             viewMode,
-            pending,
             selectedEntryKey,
         } = this.state;
         const {
@@ -295,7 +295,7 @@ export default class EditEntry extends React.PureComponent {
                     entry={entry}
                     widgets={filteredWidgets}
                     entryError={entryError}
-                    pending={pending}
+                    pending={pendingEditEntryData}
                     viewMode={viewMode}
                     analysisFramework={this.props.analysisFramework}
 
