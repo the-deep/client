@@ -4,10 +4,8 @@ import { connect } from 'react-redux';
 
 import { iconNames } from '#constants';
 import Button from '#rsca/Button';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerButton from '#rsca/Button/DangerButton';
-import List from '#rscv/List';
 import FixedTabs from '#rscv/FixedTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -28,8 +26,6 @@ import {
     setRegionsForProjectAction,
 } from '#redux';
 
-import WidgetFaram from './WidgetFaram';
-import { hasWidget } from './widgets';
 import entryAccessor from './entryAccessor';
 import EditEntryDataRequest from './requests/EditEntryDataRequest';
 
@@ -40,9 +36,9 @@ import styles from './styles.scss';
 
 const propTypes = {
     leadId: PropTypes.number.isRequired,
-    lead: PropTypes.object.isRequired,
-
+    lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+
     setLead: PropTypes.func.isRequired,
 
     setAnalysisFramework: PropTypes.func.isRequired,
@@ -88,12 +84,63 @@ export default class EditEntry extends React.PureComponent {
         this.state = {
             pendingEditEntryData: true,
 
-            viewMode: 'list',
-
             selectedEntryKey: undefined,
             entries: [],
-            entryErrors: [],
         };
+
+        this.views = {
+            overview: {
+                component: () => {
+                    const { entries, selectedEntryKey } = this.state;
+                    const entryIndex = EditEntry.getSelectedEntryIndex(entries, selectedEntryKey);
+                    const entry = entries[entryIndex];
+                    return (
+                        <Overview
+                            entries={this.state.entries}
+                            selectedEntrykey={this.state.selectedEntryKey}
+                            widgets={(this.props.analysisFramework || {}).widgets}
+                            entry={entry}
+                            pending={this.state.pendingEditEntryData}
+                            onEntrySelect={this.handleEntrySelect}
+
+                            // injected inside WidgetFaram
+                            onChange={this.handleChange}
+                            onValidationFailure={this.handleValidationFailure}
+                            onValidationSuccess={this.handleValidationSuccess}
+                            onExcerptChange={this.handleExcerptChange}
+                        />
+                    );
+                },
+                wrapContainer: true,
+                lazyMount: true,
+            },
+
+            list: {
+                component: () => (
+                    <Listing
+                        widgets={(this.props.analysisFramework || {}).widgets}
+                        entries={this.state.entries}
+                        pending={this.state.pendingEditEntryData}
+
+                        // injected inside WidgetFaram
+                        onChange={this.handleChange}
+                        onValidationFailure={this.handleValidationFailure}
+                        onValidationSuccess={this.handleValidationSuccess}
+                        onExcerptChange={this.handleExcerptChange}
+                    />
+                ),
+                wrapContainer: true,
+                lazyMount: true,
+            },
+        };
+
+        // FIXME: use strings
+        this.tabs = {
+            overview: 'Overview',
+            list: 'List',
+        };
+
+        this.defaultHash = 'overview';
 
         this.editEntryDataRequest = new EditEntryDataRequest({
             diffEntries: this.handleDiffEntries,
@@ -126,6 +173,8 @@ export default class EditEntry extends React.PureComponent {
         this.editEntryDataRequest.stop();
     }
 
+    // REDUX
+
     handleDiffEntries = ({ diffs }) => {
         const newEntries = calcNewEntries(this.state.entries, diffs);
 
@@ -140,25 +189,18 @@ export default class EditEntry extends React.PureComponent {
         this.setState({ entries: [] });
     }
 
-    // UI
-
     handleEntrySelect = (selectedEntryKey) => {
         this.setState({ selectedEntryKey });
     }
-
-    handleModeToggle = () => {
-        this.setState({
-            viewMode: this.state.viewMode === 'overview' ? 'list' : 'overview',
-        });
-    }
-
-    // REDUX
 
     handleExcerptChange = ({ type, value }, entryKey) => {
         const entryIndex = EditEntry.getSelectedEntryIndex(this.state.entries, entryKey);
 
         const settings = {
             [entryIndex]: {
+                localData: {
+                    isPristine: { $set: false },
+                },
                 data: {
                     entryType: { $set: type },
                     excerpt: { $set: type === 'excerpt' ? value : undefined },
@@ -176,20 +218,29 @@ export default class EditEntry extends React.PureComponent {
 
     handleChange = (faramValues, faramErrors, faramInfo, entryKey) => {
         let newFaramValues = faramValues;
+
+        const errorSettings = { $auto: {
+            localData: {
+                isPristine: { $set: false },
+                error: { $set: faramErrors },
+                // hasError must be calculated
+            },
+        } };
+        newFaramValues = update(newFaramValues, errorSettings);
+
         switch (faramInfo.action) {
             case 'newEntry':
                 console.warn('Should create new entry');
                 break;
             case 'editEntry': {
-                const settings = {
+                const excerptSettings = {
                     data: {
                         entryType: { $set: faramInfo.entryType },
                         excerpt: { $set: faramInfo.excerpt },
                         image: { $set: faramInfo.image },
                     },
                 };
-                // FIXME: clear other errors
-                newFaramValues = update(newFaramValues, settings);
+                newFaramValues = update(newFaramValues, excerptSettings);
                 break;
             } case undefined:
                 break;
@@ -202,28 +253,29 @@ export default class EditEntry extends React.PureComponent {
         const newEntries = { $auto: {
             [entryIndex]: { $set: newFaramValues },
         } };
-        const newEntryErrors = { $auto: {
-            [entryIndex]: { $set: faramErrors },
-        } };
 
         const newState = {
             entries: update(this.state.entries, newEntries),
-            entryErrors: update(this.state.entryErrors, newEntryErrors),
         };
 
         this.setState(newState);
     }
 
     handleValidationFailure = (faramErrors, entryKey) => {
-        console.error('Failure', faramErrors, entryKey);
-
         const entryIndex = EditEntry.getSelectedEntryIndex(this.state.entries, entryKey);
-        const newEntryErrors = { $auto: {
-            [entryIndex]: { $set: faramErrors },
+
+        const settings = { $auto: {
+            [entryIndex]: { $auto: {
+                localData: { $auto: {
+                    error: { $auto: {
+                        $set: faramErrors,
+                    } },
+                } },
+            } },
         } };
 
         const newState = {
-            entryErrors: update(this.state.entryErrors, newEntryErrors),
+            entries: update(this.state.entries, settings),
         };
         this.setState(newState);
     }
@@ -232,128 +284,26 @@ export default class EditEntry extends React.PureComponent {
         console.warn('success', values, entryKey);
     }
 
-    // LIST
-
-    renderEntry = (k, entry) => {
-        const key = entryAccessor.key(entry);
-        const { entryType, excerpt, image } = entryAccessor.data(entry) || {};
-
-        const selected = this.state.selectedEntryKey === key;
-
-        return (
-            <Button
-                key={key}
-                onClick={() => this.handleEntrySelect(key)}
-                disabled={selected}
-            >
-                {
-                    entryType === 'image' ? (
-                        <img
-                            src={image}
-                            alt={excerpt}
-                        />
-                    ) : (
-                        excerpt
-                    )
-                }
-            </Button>
-        );
-    };
-
-    renderOld() {
+    render() {
+        const {
+            lead: { title: leadTitle } = {},
+        } = this.props;
         const {
             pendingEditEntryData,
-            entries,
-            entryErrors,
-            viewMode,
-            selectedEntryKey,
         } = this.state;
-        const {
-            lead,
-            analysisFramework: {
-                widgets = [],
-            },
-        } = this.props;
 
         if (pendingEditEntryData) {
             return (
-                <div className={styles.editEntry} >
+                <div className={styles.editEntriesBetter} >
                     <LoadingAnimation large />
                 </div>
             );
         }
 
-        console.warn(lead);
-
-        const entryIndex = EditEntry.getSelectedEntryIndex(entries, selectedEntryKey);
-        const entry = entries[entryIndex];
-        const entryError = entryErrors[entryIndex];
-
-        // move this somewhere
-        const filteredWidgets = widgets.filter(
-            widget => hasWidget(viewMode, widget.widgetId),
-        );
-
-        return (
-            <div className={styles.editEntry}>
-                <div className={styles.sidebar}>
-                    <PrimaryButton onClick={this.handleModeToggle}>
-                        {viewMode}
-                    </PrimaryButton>
-                    <List
-                        data={entries}
-                        modifier={this.renderEntry}
-                    />
-                </div>
-                <WidgetFaram
-                    entry={entry}
-                    widgets={filteredWidgets}
-                    entryError={entryError}
-                    pending={pendingEditEntryData}
-                    viewMode={viewMode}
-                    analysisFramework={this.props.analysisFramework}
-
-                    onChange={this.handleChange}
-                    onValidationFailure={this.handleValidationFailure}
-                    onValidationSuccess={this.handleValidationSuccess}
-                    onExcerptChange={this.handleExcerptChange}
-                />
-            </div>
-        );
-    }
-
-    render() {
-        const {
-            lead: {
-                title: leadTitle,
-            },
-        } = this.props;
-
-        const views = {
-            overview: {
-                component: Overview,
-                wrapContainer: true,
-                lazyMount: true,
-            },
-
-            list: {
-                component: Listing,
-                wrapContainer: true,
-                lazyMount: true,
-            },
-        };
-
         // FIXME: use strings
-        const tabs = {
-            overview: 'Overview',
-            list: 'List',
-        };
-
-        const defaultHash = 'overview';
-
         const cancelButtonTitle = 'Cancel';
         const saveButtonTitle = 'Save';
-        const backButtonTooltip = 'Back to hell';
+        const backButtonTooltip = 'Back to murica';
 
         return (
             <div className={styles.editEntriesBetter}>
@@ -363,27 +313,32 @@ export default class EditEntry extends React.PureComponent {
                         title={backButtonTooltip}
                         iconName={iconNames.back}
                         transparent
+                        disabled={pendingEditEntryData}
                     />
                     <h4 className={styles.heading}>
                         { leadTitle }
                     </h4>
                     <FixedTabs
                         className={styles.tabs}
-                        tabs={tabs}
+                        tabs={this.tabs}
                         useHash
-                        deafultHash={defaultHash}
+                        deafultHash={this.defaultHash}
                     />
                     <div className={styles.actionButtons}>
-                        <DangerButton>
+                        <DangerButton
+                            disabled={pendingEditEntryData}
+                        >
                             { cancelButtonTitle }
                         </DangerButton>
-                        <SuccessButton>
+                        <SuccessButton
+                            disabled={pendingEditEntryData}
+                        >
                             { saveButtonTitle }
                         </SuccessButton>
                     </div>
                 </header>
                 <MultiViewContainer
-                    views={views}
+                    views={this.views}
                     useHash
                     containerClassName={styles.content}
                     activeClassName={styles.active}

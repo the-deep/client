@@ -52,8 +52,8 @@ export const entryAccessor = {
     getColors: entry => entry.widget && entry.widget.colors,
 
     getUiState: entry => entry.uiState,
-    getError: entry => entry.uiState && entry.uiState.error,
-    getPristine: entry => entry.uiState && entry.uiState.pristine,
+    hasError: entry => entry.uiState && entry.uiState.error,
+    isPristine: entry => entry.uiState && entry.uiState.pristine,
     */
 };
 
@@ -61,8 +61,9 @@ const entryReference = {
     localData: {
         id: undefined,
         color: undefined,
-        pristine: true,
-        error: false,
+        isPristine: true,
+        hasError: false,
+        error: undefined,
     },
     serverData: {
         serverId: undefined,
@@ -78,8 +79,9 @@ export const createEntry = ({
     serverId,
     versionId,
     values = {},
-    pristine = false,
-    error = false,
+    isPristine = false,
+    hasError = false,
+    error,
     order,
     excerpt,
 }) => {
@@ -98,7 +100,8 @@ export const createEntry = ({
         localData: {
             id: { $set: id },
             color: { $set: undefined },
-            pristine: { $set: pristine },
+            isPristine: { $set: isPristine },
+            hasError: { $set: hasError },
             error: { $set: error },
         },
         serverData: {
@@ -114,8 +117,8 @@ export const createEntry = ({
 // Get the current state of a entry with rest-request information
 export const calcEntryState = ({ entry, rest, deleteRest }) => {
     const serverId = entryAccessor.getServerId(entry);
-    const pristine = entryAccessor.getPristine(entry);
-    const error = entryAccessor.getError(entry);
+    const pristine = entryAccessor.isPristine(entry);
+    const error = entryAccessor.hasError(entry);
 
     if ((rest && rest.pending) || (deleteRest && deleteRest.pending)) {
         return ENTRY_STATUS.requesting;
@@ -176,8 +179,8 @@ export const calcEntriesDiff = (locals, remotes) => {
                     serverId: remoteServerId,
                     versionId: remoteVersionId,
                     values: remoteValues,
-                    pristine: true,
-                    error: false,
+                    isPristine: true,
+                    hasError: false,
                 });
                 acc.push({
                     serverId: remoteServerId,
@@ -221,20 +224,20 @@ export const calcEntriesDiff = (locals, remotes) => {
                     serverId: localServerId, // here
                     versionId: remoteVersionId,
                     values: remoteValues,
-                    pristine: true,
-                    error: false,
+                    isPristine: true,
+                    hasError: false,
                 });
 
-                const localPristine = entryAccessor.getPristine(localEntry);
-                const localError = entryAccessor.getError(localEntry);
+                const localPristine = entryAccessor.isPristine(localEntry);
+                const localError = entryAccessor.hasError(localEntry);
                 const localValues = entryAccessor.getValues(localEntry);
                 const newEntryOnSkip = createEntry({
                     id: localId,
                     serverId: localServerId,
                     versionId: remoteVersionId,
                     values: localValues,
-                    state: localPristine,
-                    error: localError,
+                    isPristine: localPristine,
+                    hasError: localError,
                 });
                 arr.push({
                     id: localId,

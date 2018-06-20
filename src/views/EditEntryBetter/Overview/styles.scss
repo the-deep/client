@@ -8,6 +8,16 @@
         background-color: $color-foreground-alt;
         width: 30%;
         height: 100%;
+
+        .side-pane {
+            display: flex;
+            flex-direction: column;
+
+            .image {
+                width: 33%;
+                height: auto;
+            }
+        }
     }
 
     .right {

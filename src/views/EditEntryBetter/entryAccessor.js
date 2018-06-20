@@ -4,5 +4,6 @@ const entryAccessor = {
     data: (entry = {}) => entry.data,
 
     key: (entry = {}) => (entry.localData || {}).id,
+    error: (entry = {}) => (entry.localData || {}).error,
 };
 export default entryAccessor;

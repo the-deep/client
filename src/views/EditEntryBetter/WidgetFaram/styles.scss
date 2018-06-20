@@ -3,17 +3,18 @@
 .main {
     padding: $spacing-medium;
     width: 100%;
-    height: 100%;
     overflow: auto;
 
     .widget {
-        border: 1px solid red;
+        // border: 1px solid red;
         background-color: $color-foreground;
 
         $height-header: 18px;
 
         .header {
-            border-bottom: 1px solid blue;
+            // border-bottom: 1px solid blue;
+            background-color: $color-background-alt;
+            text-transform: uppercase;
         }
 
         .content {

@@ -12,9 +12,7 @@ import entryAccessor from '../entryAccessor';
 import styles from './styles.scss';
 
 const propTypes = {
-    analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    entryError: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     pending: PropTypes.bool,
     viewMode: PropTypes.string.isRequired,
@@ -26,11 +24,12 @@ const propTypes = {
 };
 
 const defaultProps = {
-    analysisFramework: undefined,
     entry: undefined,
-    entryError: undefined,
     widgets: [],
     pending: false,
+    onChange: () => {},
+    onValidationFailure: () => {},
+    onValidationSuccess: () => {},
 };
 
 export default class EntryFaram extends React.PureComponent {
@@ -92,19 +91,13 @@ export default class EntryFaram extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const {
-            analysisFramework: { widgets = [] } = {},
-        } = this.props;
+        const { widgets } = this.props;
         this.schema = EntryFaram.createSchema(widgets);
     }
 
     componentWillReceiveProps(nextProps) {
-        const {
-            analysisFramework: { widgets: newWidgets = [] } = {},
-        } = nextProps;
-        const {
-            analysisFramework: { widgets: oldWidgets = [] } = [],
-        } = this.props;
+        const { widgets: newWidgets } = nextProps;
+        const { widgets: oldWidgets } = this.props;
         if (oldWidgets !== newWidgets) {
             this.schema = EntryFaram.createSchema(newWidgets);
         }
@@ -193,10 +186,11 @@ export default class EntryFaram extends React.PureComponent {
     render() {
         const {
             entry,
-            entryError,
             pending,
             widgets,
         } = this.props;
+
+        const error = entryAccessor.error(entry);
 
         return (
             <Faram
@@ -208,14 +202,11 @@ export default class EntryFaram extends React.PureComponent {
 
                 schema={this.schema}
                 value={entry}
-                error={entryError}
+                error={error}
                 disabled={pending}
             >
                 <FaramGroup faramElementName="data">
                     <FaramGroup faramElementName="attributes">
-                        <SuccessButton type="submit">
-                            Save
-                        </SuccessButton>
                         <GridViewLayout
                             data={widgets}
                             layoutSelector={this.layoutSelector}
@@ -224,6 +215,9 @@ export default class EntryFaram extends React.PureComponent {
                             keySelector={widget => widget.key}
                             itemClassName={styles.widget}
                         />
+                        <SuccessButton type="submit">
+                            Save
+                        </SuccessButton>
                     </FaramGroup>
                 </FaramGroup>
             </Faram>
