@@ -7,14 +7,17 @@
     overflow: auto;
 
     .widget {
-        border: $width-separator-thin solid $color-separator;
+        border: 1px solid red;
         background-color: $color-foreground;
 
+        $height-header: 18px;
+
         .header {
-            background-color: $color-foreground-alt;
+            border-bottom: 1px solid blue;
         }
+
         .content {
-            padding: 0;
+            height: calc(100% - #{$height-header});
         }
     }
 }
