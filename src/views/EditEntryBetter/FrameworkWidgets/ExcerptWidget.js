@@ -7,6 +7,7 @@ const propTypes = {
     entryType: PropTypes.string.isRequired,
     excerpt: PropTypes.string,
     image: PropTypes.string,
+    onExcerptChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -17,6 +18,16 @@ const defaultProps = {
 export default class ExcerptWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    handleExcerptChange = (value) => {
+        const { entryType } = this.props;
+        if (entryType === 'excerpt') {
+            this.props.onExcerptChange({
+                entryType,
+                excerpt: value,
+            });
+        }
+    }
 
     render() {
         const {
@@ -38,8 +49,9 @@ export default class ExcerptWidget extends React.PureComponent {
                         />
                     ) : (
                         <TextArea
-                            showHintAndError={false}
+                            showLabel={false}
                             value={excerpt}
+                            onChange={this.handleExcerptChange}
                         />
                     )
                 }

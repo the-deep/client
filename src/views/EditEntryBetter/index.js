@@ -306,16 +306,46 @@ export default class EditEntry extends React.PureComponent {
         });
     }
 
+    handleExcerptChange = ({ entryType, excerpt, image }) => {
+        const entryIndex = this.getSelectedEntryIndex();
+
+        const settings = {
+            [entryIndex]: {
+                data: {
+                    entryType: { $set: entryType },
+                    excerpt: { $set: excerpt },
+                    image: { $set: image },
+                },
+            },
+        };
+
+        const newState = {
+            entries: update(this.state.entries, settings),
+        };
+
+        this.setState(newState);
+    }
+
     handleChange = (faramValues, faramErrors, faramInfo) => {
-        console.warn('onChange', faramValues);
+        console.warn(faramInfo);
+        let newFaramValues = faramValues;
         switch (faramInfo.action) {
             case 'newEntry':
                 console.warn('Should create new entry');
                 break;
-            case 'editEntry':
-                console.warn('Should edit entry');
+            case 'editEntry': {
+                const settings = {
+                    data: {
+                        entryType: { $set: faramInfo.entryType },
+                        excerpt: { $set: faramInfo.excerpt },
+                        image: { $set: faramInfo.image },
+                    },
+                };
+                // FIXME: clear other errors
+                newFaramValues = update(newFaramValues, settings);
+                console.warn(newFaramValues);
                 break;
-            case undefined:
+            } case undefined:
                 break;
             default:
                 console.error('Unrecognized action');
@@ -324,7 +354,7 @@ export default class EditEntry extends React.PureComponent {
         const entryIndex = this.getSelectedEntryIndex();
 
         const newEntries = { $auto: {
-            [entryIndex]: { $set: faramValues },
+            [entryIndex]: { $set: newFaramValues },
         } };
         const newEntryErrors = { $auto: {
             [entryIndex]: { $set: faramErrors },
@@ -403,12 +433,21 @@ export default class EditEntry extends React.PureComponent {
                 {/* FIXME: Bundle causes re-rendering of List (ie parent) */}
                 <FaramGroup faramElementName={String(id)}>
                     <FaramGroup faramElementName="data">
-                        <Widget
-                            entryType={entryType}
-                            excerpt={excerpt}
-                            image={image}
-                            widget={widget}
-                        />
+                        {
+                            widgetId === 'excerptWidget' ? (
+                                <Widget
+                                    entryType={entryType}
+                                    excerpt={excerpt}
+                                    image={image}
+                                    widget={widget}
+                                    onExcerptChange={this.handleExcerptChange}
+                                />
+                            ) : (
+                                <Widget
+                                    widget={widget}
+                                />
+                            )
+                        }
                     </FaramGroup>
                 </FaramGroup>
             </div>
