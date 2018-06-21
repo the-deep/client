@@ -5,7 +5,6 @@ import Faram, { requiredCondition } from '#rs/components/Input/Faram';
 import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
 import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import GridViewLayout from '#rs/components/View/GridViewLayout';
-import List from '#rs/components/View/List';
 
 import { entryAccessor } from '#entities/editEntriesBetter';
 import { fetchWidget } from '../widgets';
@@ -43,8 +42,9 @@ export default class WidgetFaram extends React.PureComponent {
 
     static createSchemaForWidget = (widget) => {
         switch (widget.widgetId) {
-            // add case for date to identify good date with bad date
+            // TODO: add case for date to identify good date with bad date
             case 'numberWidget':
+                // FIXME: for test purpose only
                 return {
                     fields: {
                         value: [requiredCondition],
@@ -58,33 +58,16 @@ export default class WidgetFaram extends React.PureComponent {
     static createSchema = (widgets) => {
         const schema = {
             fields: {
-                data: {
-                    fields: {
-                        analysisFramework: [],
-                        attributes: {
-                            fields: {
-                            },
-                        },
-                        createdAt: [],
-                        entryType: [],
-                        excerpt: [],
-                        exportData: [],
-                        filterData: [],
-                        id: [],
-                        image: [],
-                        lead: [],
-                        order: [],
-                    },
-                },
-                localData: [],
-                serverData: [],
+                // put fields here
             },
         };
+
+        // iterate over each widget to get static schema
         widgets.forEach((widget) => {
-            schema.fields.data.fields.attributes.fields[widget.id] = {
+            schema.fields[widget.id] = {
                 fields: {
-                    data: WidgetFaram.createSchemaForWidget(widget),
                     id: [],
+                    data: WidgetFaram.createSchemaForWidget(widget),
                 },
             };
         });
@@ -162,7 +145,6 @@ export default class WidgetFaram extends React.PureComponent {
         const { id, widgetId } = widget;
         const Widget = fetchWidget(widgetType, widgetId);
 
-        // FIXME: Bundle causes re-rendering of parent
         return (
             <div className={styles.content}>
                 <FaramGroup faramElementName={String(id)}>
@@ -191,7 +173,7 @@ export default class WidgetFaram extends React.PureComponent {
 
     render() {
         const {
-            entry,
+            entry = {},
             pending,
             widgets,
             className: classNameFromProps,
@@ -204,7 +186,11 @@ export default class WidgetFaram extends React.PureComponent {
             'widget-faram'
         `;
 
-        console.warn(entry);
+        const {
+            data: {
+                attributes,
+            } = {},
+        } = entry;
 
         return (
             <Faram
@@ -213,25 +199,21 @@ export default class WidgetFaram extends React.PureComponent {
                 onValidationFailure={this.handleValidationFailure}
                 onValidationSuccess={this.handleValidationSuccess}
                 schema={this.schema}
-                value={entry}
+                value={attributes}
                 error={error}
                 disabled={pending}
             >
-                <FaramGroup faramElementName="data">
-                    <FaramGroup faramElementName="attributes">
-                        <GridViewLayout
-                            data={widgets}
-                            layoutSelector={this.layoutSelector}
-                            itemHeaderModifier={this.renderWidgetHeader}
-                            itemContentModifier={this.renderWidgetContent}
-                            keySelector={WidgetFaram.keySelector}
-                            itemClassName={styles.widget}
-                        />
-                        <SuccessButton type="submit">
-                            Save
-                        </SuccessButton>
-                    </FaramGroup>
-                </FaramGroup>
+                <GridViewLayout
+                    data={widgets}
+                    layoutSelector={this.layoutSelector}
+                    itemHeaderModifier={this.renderWidgetHeader}
+                    itemContentModifier={this.renderWidgetContent}
+                    keySelector={WidgetFaram.keySelector}
+                    itemClassName={styles.widget}
+                />
+                <SuccessButton type="submit">
+                    Save
+                </SuccessButton>
             </Faram>
         );
     }

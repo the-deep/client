@@ -187,6 +187,7 @@ export default class EditEntry extends React.PureComponent {
     }
 
     handleValidationFailure = (faramErrors, entryKey) => {
+        console.warn(faramErrors);
         this.props.setEntryError({
             leadId: this.props.leadId,
             key: entryKey,

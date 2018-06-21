@@ -144,6 +144,9 @@ const setEntryExcerpt = (state, action) => {
 
     // TODO: check if key is undefined, create new entry if undefined
 
+    const excerpt = excerptType === 'excerpt' ? excerptValue : undefined;
+    const image = excerptType === 'image' ? excerptValue : undefined;
+
     const entryIndex = entries.findIndex(entry => entryAccessor.key(entry) === key);
     const settings = {
         editEntries: {
@@ -152,8 +155,8 @@ const setEntryExcerpt = (state, action) => {
                     [entryIndex]: {
                         data: {
                             entryType: { $set: excerptType },
-                            excerpt: { $set: excerptType === 'excerpt' ? excerptValue : undefined },
-                            image: { $set: excerptType === 'image' ? excerptValue : undefined },
+                            excerpt: { $set: excerpt },
+                            image: { $set: image },
                         },
                     },
                 },
@@ -173,48 +176,65 @@ const setEntryData = (state, action) => {
         entry => entryAccessor.key(entry) === key,
     );
 
-    let newFaramValues = values;
+    let newState = state;
 
-    const errorSettings = { $auto: {
-        localData: {
-            isPristine: { $set: false },
-            error: { $set: errors },
-            // TODO: hasError must be calculated
-        },
-    } };
-    newFaramValues = update(newFaramValues, errorSettings);
-
+    // Handle actions from info
     switch (info.action) {
         case 'newEntry':
-            console.warn('Should create new entry');
+            console.warn('TODO: Should create new entry');
             break;
-        case 'editEntry': {
-            const excerptSettings = {
-                data: {
-                    entryType: { $set: info.entryType },
-                    excerpt: { $set: info.excerpt },
-                    image: { $set: info.image },
+        case 'changeExcerpt': {
+            const excerpt = info.type === 'excerpt' ? info.value : undefined;
+            const image = info.type === 'image' ? info.value : undefined;
+
+            const settings = {
+                editEntries: {
+                    [leadId]: {
+                        entries: {
+                            [entryIndex]: {
+                                data: {
+                                    entryType: { $set: info.type },
+                                    excerpt: { $set: excerpt },
+                                    image: { $set: image },
+                                },
+                            },
+                        },
+                    },
                 },
             };
-            newFaramValues = update(newFaramValues, excerptSettings);
+
+            newState = update(newState, settings);
             break;
-        } case undefined:
-            break;
+        }
         default:
-            console.error('Unrecognized action');
+            break;
     }
 
-    const settings = {
-        editEntries: {
-            [leadId]: {
-                entries: {
-                    [entryIndex]: { $set: newFaramValues },
+    if (info.action !== 'newEntry') {
+        const settings = {
+            editEntries: {
+                [leadId]: {
+                    entries: {
+                        [entryIndex]: {
+                            data: {
+                                attributes: {
+                                    $set: values,
+                                },
+                            },
+                            localData: {
+                                isPristine: { $set: false },
+                                error: { $set: errors },
+                                // TODO: hasError must be calculated
+                            },
+                        },
+                    },
                 },
             },
-        },
-    };
+        };
+        newState = update(newState, settings);
+    }
 
-    return update(state, settings);
+    return newState;
 };
 
 const setEntryError = (state, action) => {

@@ -40,7 +40,12 @@ export default class ScaleWidget extends React.PureComponent {
             <ScaleInput
                 className={styles.scaleWidget}
                 faramElementName="selectedScale"
-                faramInfo={{ action: 'editEntry', entryType: 'excerpt', excerpt: 'Lana Del Ray rocks.' }}
+                // FIXME: for test purpose only
+                faramInfo={{
+                    action: 'changeExcerpt',
+                    type: 'excerpt',
+                    value: 'Lana Del Ray rocks.',
+                }}
                 showLabel={false}
                 hideClearButton
                 options={scaleUnits}

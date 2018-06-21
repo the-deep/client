@@ -36,11 +36,27 @@ const mapStateToProps = state => ({
 });
 
 class WidgetFaramWrapper extends React.PureComponent {
+    static propTypes = {
+        entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+        widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+        pending: PropTypes.bool,
+        className: PropTypes.string,
+        widgetType: PropTypes.string.isRequired,
+        entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    };
+    static defaultProps = {
+        entries: [],
+        widgets: [],
+        pending: false,
+        className: '',
+        entry: undefined,
+    };
+
     render() {
         const {
+            widgets, // eslint-disable-line no-unused-vars
             className,
             pending,
-            widgets, // eslint-disable-line no-unused-vars
             widgetType,
             entry,
 
