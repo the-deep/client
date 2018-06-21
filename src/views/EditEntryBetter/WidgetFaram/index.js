@@ -16,7 +16,8 @@ const propTypes = {
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     pending: PropTypes.bool,
-    viewMode: PropTypes.string.isRequired,
+    /* type: the view type: list, overview */
+    type: PropTypes.string.isRequired,
 
     onExcerptChange: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
@@ -34,7 +35,7 @@ const defaultProps = {
     onValidationSuccess: () => {},
 };
 
-export default class EntryFaram extends React.PureComponent {
+export default class WidgetFaram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -82,7 +83,7 @@ export default class EntryFaram extends React.PureComponent {
         widgets.forEach((widget) => {
             schema.fields.data.fields.attributes.fields[widget.id] = {
                 fields: {
-                    data: EntryFaram.createSchemaForWidget(widget),
+                    data: WidgetFaram.createSchemaForWidget(widget),
                     id: [],
                 },
             };
@@ -90,18 +91,20 @@ export default class EntryFaram extends React.PureComponent {
         return schema;
     }
 
+    static keySelector = widget => widget.key
+
     constructor(props) {
         super(props);
 
         const { widgets } = this.props;
-        this.schema = EntryFaram.createSchema(widgets);
+        this.schema = WidgetFaram.createSchema(widgets);
     }
 
     componentWillReceiveProps(nextProps) {
         const { widgets: newWidgets } = nextProps;
         const { widgets: oldWidgets } = this.props;
         if (oldWidgets !== newWidgets) {
-            this.schema = EntryFaram.createSchema(newWidgets);
+            this.schema = WidgetFaram.createSchema(newWidgets);
         }
     }
 
@@ -130,14 +133,14 @@ export default class EntryFaram extends React.PureComponent {
     // Grid View Layout
 
     layoutSelector = (widget = {}) => {
-        const { viewMode } = this.props;
+        const { type } = this.props;
         const {
             properties: {
                 listGridLayout,
                 overviewGridLayout,
             } = {},
         } = widget;
-        return (viewMode === 'list' ? listGridLayout : overviewGridLayout);
+        return (type === 'list' ? listGridLayout : overviewGridLayout);
     }
 
     renderWidgetHeader = (widget) => {
@@ -151,13 +154,14 @@ export default class EntryFaram extends React.PureComponent {
 
     renderWidgetContent = (widget) => {
         const {
-            viewMode,
+            type,
             entry,
         } = this.props;
 
         const { entryType, excerpt, image } = entryAccessor.data(entry) || {};
+
         const { id, widgetId } = widget;
-        const Widget = fetchWidget(viewMode, widgetId);
+        const Widget = fetchWidget(type, widgetId);
 
         // FIXME: Bundle causes re-rendering of parent
         return (
@@ -165,6 +169,7 @@ export default class EntryFaram extends React.PureComponent {
                 <FaramGroup faramElementName={String(id)}>
                     <FaramGroup faramElementName="data">
                         {
+                            // NOTE: excerptWidget is a special case
                             widgetId === 'excerptWidget' ? (
                                 <Widget
                                     entryType={entryType}
@@ -218,14 +223,12 @@ export default class EntryFaram extends React.PureComponent {
                             layoutSelector={this.layoutSelector}
                             itemHeaderModifier={this.renderWidgetHeader}
                             itemContentModifier={this.renderWidgetContent}
-                            keySelector={widget => widget.key}
+                            keySelector={WidgetFaram.keySelector}
                             itemClassName={styles.widget}
                         />
-                        {/*
                         <SuccessButton type="submit">
                             Save
                         </SuccessButton>
-                        */}
                     </FaramGroup>
                 </FaramGroup>
             </Faram>

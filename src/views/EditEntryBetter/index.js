@@ -9,7 +9,6 @@ import DangerButton from '#rsca/Button/DangerButton';
 import FixedTabs from '#rscv/FixedTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import update from '#rs/utils/immutable-update';
 
 import {
     leadIdFromRoute,
@@ -20,15 +19,15 @@ import {
     editEntriesEntriesSelector,
     editEntriesSetEntriesAction,
     editEntriesClearEntriesAction,
-    editEntriesSetSelectedEntryKeyAction,
-    editEntriesSelectedEntryKeySelector,
+    editEntriesSetExcerptAction,
+    editEntriesSetEntryDataAction,
+    editEntriesSetEntryErrorsAction,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
     setRegionsForProjectAction,
 } from '#redux';
 
-import { entryAccessor } from '#entities/editEntriesBetter';
 import EditEntryDataRequest from './requests/EditEntryDataRequest';
 
 import Overview from './Overview';
@@ -50,34 +49,36 @@ const propTypes = {
     setGeoOptions: PropTypes.func.isRequired,
     setRegions: PropTypes.func.isRequired,
 
-    setSelectedEntryKey: PropTypes.func.isRequired,
-    selectedEntryKey: PropTypes.string,
+    setExcerpt: PropTypes.func.isRequired,
+    setEntryData: PropTypes.func.isRequired,
+    setEntryError: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     analysisFramework: undefined,
     entries: [],
-    selectedEntryKey: undefined,
 };
 
-const mapStateToProps = (state, props) => ({
-    leadId: leadIdFromRoute(state, props),
+const mapStateToProps = state => ({
+    leadId: leadIdFromRoute(state),
     lead: editEntriesLeadSelector(state),
     entries: editEntriesEntriesSelector(state),
 
-    analysisFramework: editEntriesAnalysisFrameworkSelector(state, props),
-    selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
+    analysisFramework: editEntriesAnalysisFrameworkSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
     setLead: params => dispatch(editEntriesSetLeadAction(params)),
     setEntries: params => dispatch(editEntriesSetEntriesAction(params)),
     clearEntries: params => dispatch(editEntriesClearEntriesAction(params)),
-    setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
 
     setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
     setRegions: params => dispatch(setRegionsForProjectAction(params)),
+    setExcerpt: params => dispatch(editEntriesSetExcerptAction(params)),
+
+    setEntryData: params => dispatch(editEntriesSetEntryDataAction(params)),
+    setEntryError: params => dispatch(editEntriesSetEntryErrorsAction(params)),
 });
 
 
@@ -85,11 +86,6 @@ const mapDispatchToProps = dispatch => ({
 export default class EditEntry extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    static getSelectedEntryIndex = (entries, entryKey) => {
-        const entry = entries.findIndex(e => (entryAccessor.key(e) === entryKey));
-        return entry;
-    }
 
     constructor(props) {
         super(props);
@@ -100,32 +96,17 @@ export default class EditEntry extends React.PureComponent {
 
         this.views = {
             overview: {
-                component: () => {
-                    const {
-                        entries,
-                        selectedEntryKey,
-                        analysisFramework = {},
-                    } = this.props;
-                    const { widgets } = analysisFramework;
-                    const entryIndex = EditEntry.getSelectedEntryIndex(entries, selectedEntryKey);
-                    const entry = entries[entryIndex];
-                    return (
-                        <Overview
-                            entries={entries}
-                            selectedEntryKey={selectedEntryKey}
-                            widgets={widgets}
-                            entry={entry}
-                            pending={this.state.pendingEditEntryData}
-                            onEntrySelect={this.handleEntrySelect}
+                component: () => (
+                    <Overview
+                        pending={this.state.pendingEditEntryData}
 
-                            // injected inside WidgetFaram
-                            onChange={this.handleChange}
-                            onValidationFailure={this.handleValidationFailure}
-                            onValidationSuccess={this.handleValidationSuccess}
-                            onExcerptChange={this.handleExcerptChange}
-                        />
-                    );
-                },
+                        // injected inside WidgetFaram
+                        onChange={this.handleChange}
+                        onValidationFailure={this.handleValidationFailure}
+                        onValidationSuccess={this.handleValidationSuccess}
+                        onExcerptChange={this.handleExcerptChange}
+                    />
+                ),
                 wrapContainer: true,
                 lazyMount: true,
             },
@@ -133,8 +114,6 @@ export default class EditEntry extends React.PureComponent {
             list: {
                 component: () => (
                     <Listing
-                        widgets={(this.props.analysisFramework || {}).widgets}
-                        entries={this.props.entries}
                         pending={this.state.pendingEditEntryData}
 
                         // injected inside WidgetFaram
@@ -158,10 +137,10 @@ export default class EditEntry extends React.PureComponent {
         this.defaultHash = 'overview';
 
         this.editEntryDataRequest = new EditEntryDataRequest({
-            diffEntries: this.handleDiffEntries,
+            setEntries: this.props.setEntries,
             getAf: () => this.props.analysisFramework,
             getEntries: () => this.props.entries,
-            removeAllEntries: this.handleRemoveAllEntries,
+            clearEntries: this.props.clearEntries,
             setAnalysisFramework: this.props.setAnalysisFramework,
             setGeoOptions: this.props.setGeoOptions,
             setLead: this.props.setLead,
@@ -188,108 +167,31 @@ export default class EditEntry extends React.PureComponent {
         this.editEntryDataRequest.stop();
     }
 
-    handleDiffEntries = ({ diffs }) => {
-        this.props.setEntries({ leadId: this.props.leadId, entryActions: diffs });
-    }
-
-    handleRemoveAllEntries = () => {
-        this.props.clearEntries({ leadId: this.props.leadId });
-    }
-
-    handleEntrySelect = (selectedEntryKey) => {
-        this.props.setSelectedEntryKey({
-            key: selectedEntryKey,
+    handleExcerptChange = ({ type, value }, entryKey) => {
+        this.props.setExcerpt({
             leadId: this.props.leadId,
+            key: entryKey,
+            excerptType: type,
+            excerptValue: value,
         });
     }
 
-    // REDUX
-
-    handleExcerptChange = ({ type, value }, entryKey) => {
-        const entryIndex = EditEntry.getSelectedEntryIndex(this.props.entries, entryKey);
-
-        const settings = {
-            [entryIndex]: {
-                localData: {
-                    isPristine: { $set: false },
-                },
-                data: {
-                    entryType: { $set: type },
-                    excerpt: { $set: type === 'excerpt' ? value : undefined },
-                    image: { $set: type === 'image' ? value : undefined },
-                },
-            },
-        };
-
-        const newState = {
-            entries: update(this.state.entries, settings),
-        };
-
-        this.setState(newState);
-    }
-
     handleChange = (faramValues, faramErrors, faramInfo, entryKey) => {
-        let newFaramValues = faramValues;
-
-        const errorSettings = { $auto: {
-            localData: {
-                isPristine: { $set: false },
-                error: { $set: faramErrors },
-                // hasError must be calculated
-            },
-        } };
-        newFaramValues = update(newFaramValues, errorSettings);
-
-        switch (faramInfo.action) {
-            case 'newEntry':
-                console.warn('Should create new entry');
-                break;
-            case 'editEntry': {
-                const excerptSettings = {
-                    data: {
-                        entryType: { $set: faramInfo.entryType },
-                        excerpt: { $set: faramInfo.excerpt },
-                        image: { $set: faramInfo.image },
-                    },
-                };
-                newFaramValues = update(newFaramValues, excerptSettings);
-                break;
-            } case undefined:
-                break;
-            default:
-                console.error('Unrecognized action');
-        }
-
-        const entryIndex = EditEntry.getSelectedEntryIndex(this.props.entries, entryKey);
-
-        const newEntries = { $auto: {
-            [entryIndex]: { $set: newFaramValues },
-        } };
-
-        const newState = {
-            entries: update(this.state.entries, newEntries),
-        };
-
-        this.setState(newState);
+        this.props.setEntryData({
+            leadId: this.props.leadId,
+            key: entryKey,
+            values: faramValues,
+            errors: faramErrors,
+            info: faramInfo,
+        });
     }
 
     handleValidationFailure = (faramErrors, entryKey) => {
-        const entryIndex = EditEntry.getSelectedEntryIndex(this.props.entries, entryKey);
-
-        const settings = { $auto: {
-            [entryIndex]: { $auto: {
-                localData: { $auto: {
-                    error: { $auto: {
-                        $set: faramErrors,
-                    } },
-                } },
-            } },
-        } };
-
-        const newState = {
-            entries: update(this.state.entries, settings),
-        };
-        this.setState(newState);
+        this.props.setEntryError({
+            leadId: this.props.leadId,
+            key: entryKey,
+            errors: faramErrors,
+        });
     }
 
     handleValidationSuccess = (values, entryKey) => {

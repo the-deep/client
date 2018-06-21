@@ -1,4 +1,7 @@
 import { createSelector } from 'reselect';
+
+import { entryAccessor } from '#entities/editEntriesBetter';
+
 import {
     analysisFrameworksSelector,
     projectsSelector,
@@ -34,6 +37,19 @@ export const editEntriesSelectedEntryKeySelector = createSelector(
     editEntry => editEntry.selectedEntryKey,
 );
 
+export const editEntriesSelectedEntrySelector = createSelector(
+    editEntriesEntriesSelector,
+    editEntriesSelectedEntryKeySelector,
+    (entries, selectedEntryKey) => {
+        if (selectedEntryKey === undefined) {
+            return undefined;
+        }
+        return entries.find(
+            entry => entryAccessor.key(entry) === selectedEntryKey,
+        );
+    },
+);
+
 export const editEntriesProjectSelector = createSelector(
     editEntriesLeadSelector,
     projectsSelector,
@@ -46,4 +62,9 @@ export const editEntriesAnalysisFrameworkSelector = createSelector(
     (project, analysisFrameworks) => (
         (project.analysisFramework && analysisFrameworks[project.analysisFramework]) || emptyObject
     ),
+);
+
+export const editEntriesWidgetsSelector = createSelector(
+    editEntriesAnalysisFrameworkSelector,
+    analysisFramework => analysisFramework.widgets || emptyArray,
 );

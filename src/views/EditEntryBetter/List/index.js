@@ -1,13 +1,19 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-
-import { iconNames } from '#constants';
+import { connect } from 'react-redux';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import ListView from '#rscv/List/ListView';
 
+import {
+    editEntriesEntriesSelector,
+    editEntriesWidgetsSelector,
+} from '#redux';
+import { iconNames } from '#constants';
+
 import { entryAccessor } from '#entities/editEntriesBetter';
+
 import WidgetFaram from '../WidgetFaram';
 import { hasWidget } from '../widgets';
 import styles from './styles.scss';
@@ -24,14 +30,20 @@ const defaultProps = {
     pending: false,
 };
 
+const mapStateToProps = state => ({
+    entries: editEntriesEntriesSelector(state),
+    widgets: editEntriesWidgetsSelector(state),
+});
+
+@connect(mapStateToProps)
 export default class Listing extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static viewMode = 'list'
+    static type = 'list'
 
     static filterWidgets = widgets => widgets.filter(
-        widget => hasWidget(Listing.viewMode, widget.widgetId),
+        widget => hasWidget(Listing.type, widget.widgetId),
     );
 
     constructor(props) {
@@ -68,7 +80,7 @@ export default class Listing extends React.PureComponent {
                     entry={entry}
                     widgets={this.widgets}
                     pending={pending}
-                    viewMode={Listing.viewMode}
+                    type={Listing.type}
                     {...otherProps}
                 />
                 <div className={styles.actionButtons}>

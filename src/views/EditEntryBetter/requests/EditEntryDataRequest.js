@@ -36,7 +36,7 @@ export default class EditEntryDataRequest extends Request {
         // TODO: notify that analysis framework changed and history cleared
         const oldAf = this.parent.getAf();
         if (oldAf.versionId < analysisFramework.versionId) {
-            this.parent.removeAllEntries({ leadId });
+            this.parent.clearEntries({ leadId });
         }
         this.parent.setAnalysisFramework({ analysisFramework });
 
@@ -56,7 +56,7 @@ export default class EditEntryDataRequest extends Request {
             return;
         }
 
-        this.parent.diffEntries({ leadId, diffs });
+        this.parent.setEntries({ leadId, entryActions: diffs });
 
         if (getApplicableAndModifyingDiffCount(diffs) <= 0) {
             return;

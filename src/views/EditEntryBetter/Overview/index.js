@@ -1,9 +1,20 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import Button from '#rsca/Button';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import List from '#rscv/List';
+
+
+import {
+    leadIdFromRoute,
+    editEntriesSelectedEntryKeySelector,
+    editEntriesEntriesSelector,
+    editEntriesWidgetsSelector,
+    editEntriesSelectedEntrySelector,
+    editEntriesSetSelectedEntryKeyAction,
+} from '#redux';
 
 import { entryAccessor } from '#entities/editEntriesBetter';
 import WidgetFaram from '../WidgetFaram';
@@ -12,12 +23,13 @@ import { hasWidget } from '../widgets';
 import styles from './styles.scss';
 
 const propTypes = {
+    leadId: PropTypes.number.isRequired,
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     pending: PropTypes.bool,
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     selectedEntryKey: PropTypes.string,
-    onEntrySelect: PropTypes.func.isRequired,
+    setSelectedEntryKey: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -28,14 +40,28 @@ const defaultProps = {
     pending: false,
 };
 
+
+const mapStateToProps = state => ({
+    leadId: leadIdFromRoute(state),
+    entries: editEntriesEntriesSelector(state),
+    widgets: editEntriesWidgetsSelector(state),
+    selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
+    entry: editEntriesSelectedEntrySelector(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+    setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class Overview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static viewMode = 'overview'
+    static type = 'overview'
 
     static filterWidgets = widgets => widgets.filter(
-        widget => hasWidget(Overview.viewMode, widget.widgetId),
+        widget => hasWidget(Overview.type, widget.widgetId),
     );
 
     constructor(props) {
@@ -55,12 +81,18 @@ export default class Overview extends React.PureComponent {
         const key = entryAccessor.key(entry);
         const { entryType, excerpt, image } = entryAccessor.data(entry) || {};
 
-        const selected = this.props.selectedEntryKey === key;
+        const {
+            selectedEntryKey,
+            setSelectedEntryKey,
+            leadId,
+        } = this.props;
+
+        const selected = selectedEntryKey === key;
 
         return (
             <Button
                 key={key}
-                onClick={() => this.props.onEntrySelect(key)}
+                onClick={() => setSelectedEntryKey({ leadId, key })}
                 disabled={selected}
                 transparent
             >
@@ -84,9 +116,10 @@ export default class Overview extends React.PureComponent {
             pending,
             entry,
             entries,
+            leadId, // eslint-disable-line no-unused-vars
             widgets, // eslint-disable-line no-unused-vars
             selectedEntryKey, // eslint-disable-line no-unused-vars
-            onEntrySelect, // eslint-disable-line no-unused-vars
+            setSelectedEntryKey, // eslint-disable-line no-unused-vars
 
             ...otherProps
         } = this.props;
@@ -107,7 +140,7 @@ export default class Overview extends React.PureComponent {
                         entry={entry}
                         widgets={this.widgets}
                         pending={pending}
-                        viewMode={Overview.viewMode}
+                        type={Overview.type}
                         {...otherProps}
                     />
                 }
