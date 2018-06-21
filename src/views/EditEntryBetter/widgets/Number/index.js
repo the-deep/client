@@ -19,14 +19,12 @@ export default class NumberWidget extends React.PureComponent {
     render() {
         const separatorText = ' ';
         return (
-            <div>
-                <NumberInput
-                    faramElementName="value"
-                    placeholder={_ts('framework.numberWidget', 'numberPlaceholder')}
-                    showLabel={false}
-                    separator={separatorText}
-                />
-            </div>
+            <NumberInput
+                faramElementName="value"
+                placeholder={_ts('framework.numberWidget', 'numberPlaceholder')}
+                showLabel={false}
+                separator={separatorText}
+            />
         );
     }
 }

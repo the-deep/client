@@ -1,7 +1,32 @@
 @import '../../../stylesheets/base';
+@import '../../../stylesheets/widget';
+
+$width-action-buttons: 36px;
 
 .list {
     padding: 0;
     height: 100%;
     overflow-y: auto;
+
+    .widget-container {
+        display: flex;
+
+        .widget {
+            width: calc(100% - #{$width-action-buttons});
+            overflow-x: auto;
+        }
+
+        .action-buttons {
+            flex-shrink: 0;
+            border-left: $width-separator-thin solid $color-separator;
+            background-color: $color-foreground;
+            padding: $spacing-small;
+            width: $width-action-buttons;
+
+            >button {
+                margin-bottom: $spacing-small;
+                width: 100%;
+            }
+        }
+    }
 }

@@ -1,0 +1,14 @@
+%widget {
+    $height-header: 18px;
+
+    .header {
+        background-color: $color-background-header;
+        text-transform: uppercase;
+        font-size: $font-size-small;
+    }
+
+    .content {
+        background-color: $color-foreground-alt;
+        height: calc(100% - #{$height-header});
+    }
+}

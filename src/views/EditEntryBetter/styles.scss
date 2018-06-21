@@ -10,6 +10,7 @@ $height-header: 42px;
     .header {
         display: flex;
         align-items: center;
+        border-bottom: $width-separator-thin solid $color-separator-alt;
         background-color: $color-background-header;
         height: $height-header;
 

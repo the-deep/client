@@ -1,10 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { iconNames } from '#constants';
+
+import DangerButton from '#rsca/Button/DangerButton';
+import WarningButton from '#rsca/Button/WarningButton';
+
 import WidgetFaram from '../WidgetFaram';
 import { hasWidget } from '../widgets';
 import entryAccessor from '../entryAccessor';
-
 import styles from './styles.scss';
 
 const propTypes = {
@@ -42,14 +46,25 @@ export default class List extends React.PureComponent {
         return (
             <div className={styles.list}>
                 {entries.map(entry => (
-                    <WidgetFaram
-                        key={entryAccessor.key(entry)}
-                        entry={entry}
-                        widgets={filteredWidgets}
-                        pending={pending}
-                        viewMode={viewMode}
-                        {...otherProps}
-                    />
+                    <div className={styles.widgetContainer}>
+                        <WidgetFaram
+                            className={styles.widget}
+                            key={entryAccessor.key(entry)}
+                            entry={entry}
+                            widgets={filteredWidgets}
+                            pending={pending}
+                            viewMode={viewMode}
+                            {...otherProps}
+                        />
+                        <div className={styles.actionButtons}>
+                            <DangerButton
+                                iconName={iconNames.delete}
+                            />
+                            <WarningButton
+                                iconName={iconNames.edit}
+                            />
+                        </div>
+                    </div>
                 ))}
             </div>
         );

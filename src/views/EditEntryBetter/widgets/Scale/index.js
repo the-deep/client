@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import ScaleInput from '#rs/components/Input/ScaleInput';
+import styles from './styles.scss';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
@@ -36,19 +37,18 @@ export default class ScaleWidget extends React.PureComponent {
         } = this.props;
 
         return (
-            <div>
-                <ScaleInput
-                    faramElementName="selectedScale"
-                    faramInfo={{ action: 'editEntry', entryType: 'excerpt', excerpt: 'Lana Del Ray rocks.' }}
-                    showLabel={false}
-                    hideClearButton
-                    options={scaleUnits}
-                    keySelector={ScaleWidget.keySelector}
-                    labelSelector={ScaleWidget.labelSelector}
-                    colorSelector={ScaleWidget.colorSelector}
-                    isDefaultSelector={this.isDefaultSelector}
-                />
-            </div>
+            <ScaleInput
+                className={styles.scaleWidget}
+                faramElementName="selectedScale"
+                faramInfo={{ action: 'editEntry', entryType: 'excerpt', excerpt: 'Lana Del Ray rocks.' }}
+                showLabel={false}
+                hideClearButton
+                options={scaleUnits}
+                keySelector={ScaleWidget.keySelector}
+                labelSelector={ScaleWidget.labelSelector}
+                colorSelector={ScaleWidget.colorSelector}
+                isDefaultSelector={this.isDefaultSelector}
+            />
         );
     }
 }

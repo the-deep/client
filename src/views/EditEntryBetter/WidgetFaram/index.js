@@ -12,6 +12,7 @@ import entryAccessor from '../entryAccessor';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     pending: PropTypes.bool,
@@ -24,6 +25,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     entry: undefined,
     widgets: [],
     pending: false,
@@ -188,18 +190,22 @@ export default class EntryFaram extends React.PureComponent {
             entry,
             pending,
             widgets,
+            className: classNameFromProps,
         } = this.props;
 
         const error = entryAccessor.error(entry);
+        const className = `
+            ${classNameFromProps}
+            ${styles.widgetFaram}
+            'widget-faram'
+        `;
 
         return (
             <Faram
-                className={styles.main}
-
+                className={className}
                 onChange={this.handleChange}
                 onValidationFailure={this.handleValidationFailure}
                 onValidationSuccess={this.handleValidationSuccess}
-
                 schema={this.schema}
                 value={entry}
                 error={error}
@@ -215,9 +221,11 @@ export default class EntryFaram extends React.PureComponent {
                             keySelector={widget => widget.key}
                             itemClassName={styles.widget}
                         />
+                        {/*
                         <SuccessButton type="submit">
                             Save
                         </SuccessButton>
+                        */}
                     </FaramGroup>
                 </FaramGroup>
             </Faram>

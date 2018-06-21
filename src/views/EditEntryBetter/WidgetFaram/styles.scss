@@ -1,24 +1,11 @@
 @import '../../../stylesheets/base';
+@import '../../../stylesheets/widget';
 
-.main {
-    padding: $spacing-medium;
+.widget-faram {
     width: 100%;
-    overflow: auto;
 
     .widget {
-        // border: 1px solid red;
-        background-color: $color-foreground;
-
-        $height-header: 18px;
-
-        .header {
-            // border-bottom: 1px solid blue;
-            background-color: $color-background-alt;
-            text-transform: uppercase;
-        }
-
-        .content {
-            height: calc(100% - #{$height-header});
-        }
+        @extend %widget;
+        padding: $spacing-extra-small;
     }
 }
