@@ -5,6 +5,7 @@ import Faram, { requiredCondition } from '#rs/components/Input/Faram';
 import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
 import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import GridViewLayout from '#rs/components/View/GridViewLayout';
+import List from '#rs/components/View/List';
 
 import { entryAccessor } from '#entities/editEntriesBetter';
 import { fetchWidget } from '../widgets';
@@ -16,8 +17,7 @@ const propTypes = {
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     pending: PropTypes.bool,
-    /* type: the view type: list, overview */
-    type: PropTypes.string.isRequired,
+    widgetType: PropTypes.string.isRequired,
 
     onExcerptChange: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
@@ -133,14 +133,14 @@ export default class WidgetFaram extends React.PureComponent {
     // Grid View Layout
 
     layoutSelector = (widget = {}) => {
-        const { type } = this.props;
+        const { widgetType } = this.props;
         const {
             properties: {
                 listGridLayout,
                 overviewGridLayout,
             } = {},
         } = widget;
-        return (type === 'list' ? listGridLayout : overviewGridLayout);
+        return (widgetType === 'list' ? listGridLayout : overviewGridLayout);
     }
 
     renderWidgetHeader = (widget) => {
@@ -154,14 +154,13 @@ export default class WidgetFaram extends React.PureComponent {
 
     renderWidgetContent = (widget) => {
         const {
-            type,
+            widgetType,
             entry,
         } = this.props;
 
         const { entryType, excerpt, image } = entryAccessor.data(entry) || {};
-
         const { id, widgetId } = widget;
-        const Widget = fetchWidget(type, widgetId);
+        const Widget = fetchWidget(widgetType, widgetId);
 
         // FIXME: Bundle causes re-rendering of parent
         return (
@@ -204,6 +203,8 @@ export default class WidgetFaram extends React.PureComponent {
             ${styles.widgetFaram}
             'widget-faram'
         `;
+
+        console.warn(entry);
 
         return (
             <Faram

@@ -58,11 +58,13 @@ export default class Overview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static type = 'overview'
+    static widgetType = 'overview'
 
-    static filterWidgets = widgets => widgets.filter(
-        widget => hasWidget(Overview.type, widget.widgetId),
-    );
+    static filterWidgets = widgets => (
+        widgets.filter(
+            widget => hasWidget(Overview.widgetType, widget.widgetId),
+        )
+    )
 
     constructor(props) {
         super(props);
@@ -140,7 +142,7 @@ export default class Overview extends React.PureComponent {
                         entry={entry}
                         widgets={this.widgets}
                         pending={pending}
-                        type={Overview.type}
+                        widgetType={Overview.widgetType}
                         {...otherProps}
                     />
                 }

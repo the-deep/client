@@ -35,15 +35,51 @@ const mapStateToProps = state => ({
     widgets: editEntriesWidgetsSelector(state),
 });
 
+class WidgetFaramWrapper extends React.PureComponent {
+    render() {
+        const {
+            className,
+            pending,
+            widgets, // eslint-disable-line no-unused-vars
+            widgetType,
+            entry,
+
+            ...otherProps
+        } = this.props;
+
+        return (
+            <div className={className}>
+                <WidgetFaram
+                    className={styles.widget}
+                    entry={entry}
+                    widgets={widgets}
+                    pending={pending}
+                    widgetType={widgetType}
+                    {...otherProps}
+                />
+                <div className={styles.actionButtons}>
+                    <DangerButton
+                        iconName={iconNames.delete}
+                    />
+                    <WarningButton
+                        iconName={iconNames.edit}
+                    />
+                </div>
+            </div>
+        );
+    }
+}
+
+// eslint-disable-next-line react/no-multi-comp
 @connect(mapStateToProps)
 export default class Listing extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static type = 'list'
+    static widgetType = 'list'
 
     static filterWidgets = widgets => widgets.filter(
-        widget => hasWidget(Listing.type, widget.widgetId),
+        widget => hasWidget(Listing.widgetType, widget.widgetId),
     );
 
     constructor(props) {
@@ -59,40 +95,18 @@ export default class Listing extends React.PureComponent {
         }
     }
 
-    widgetFaramModifier = (entry) => {
-        const {
-            pending,
-            entries, // eslint-disable-line no-unused-vars
-            widgets, // eslint-disable-line no-unused-vars
+    keySelector = entry => entryAccessor.key(entry)
 
+    rendererParams = (key, entry) => {
+        const {
+            entries, // eslint-disable-line
             ...otherProps
         } = this.props;
-
-        const key = entryAccessor.key(entry);
-
-        return (
-            <div
-                className={styles.widgetContainer}
-                key={key}
-            >
-                <WidgetFaram
-                    className={styles.widget}
-                    entry={entry}
-                    widgets={this.widgets}
-                    pending={pending}
-                    type={Listing.type}
-                    {...otherProps}
-                />
-                <div className={styles.actionButtons}>
-                    <DangerButton
-                        iconName={iconNames.delete}
-                    />
-                    <WarningButton
-                        iconName={iconNames.edit}
-                    />
-                </div>
-            </div>
-        );
+        return {
+            entry,
+            widgetType: Listing.widgetType,
+            ...otherProps,
+        };
     }
 
     render() {
@@ -102,7 +116,10 @@ export default class Listing extends React.PureComponent {
             <ListView
                 className={styles.list}
                 data={entries}
-                modifier={this.widgetFaramModifier}
+                renderer={WidgetFaramWrapper}
+                rendererParams={this.rendererParams}
+                rendererClassName={styles.widgetContainer}
+                keyExtractor={this.keySelector}
             />
         );
     }

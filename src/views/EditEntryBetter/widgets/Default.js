@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const propTypes = {
-    name: PropTypes.string.isRequired,
+    widgetName: PropTypes.string.isRequired,
+    widgetType: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -13,10 +14,10 @@ export default class DefaultWidget extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        const { name } = this.props;
+        const { widgetName, widgetType } = this.props;
         return (
             <div>
-                {name}
+                {widgetType}: {widgetName}
             </div>
         );
     }
