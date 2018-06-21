@@ -32,6 +32,25 @@ export default class Overview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static viewMode = 'list'
+
+    static filterWidgets = widgets => widgets.filter(
+        widget => hasWidget(Overview.viewMode, widget.widgetId),
+    );
+
+    constructor(props) {
+        super(props);
+        this.widgets = Overview.filterWidgets(props.widgets);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { widgets: oldWidgets } = this.props;
+        const { widgets: newWidgets } = nextProps;
+        if (newWidgets !== oldWidgets) {
+            this.widgets = Overview.filterWidgets(newWidgets);
+        }
+    }
+
     renderEntry = (k, entry) => {
         const key = entryAccessor.key(entry);
         const { entryType, excerpt, image } = entryAccessor.data(entry) || {};
@@ -64,20 +83,13 @@ export default class Overview extends React.PureComponent {
         const {
             pending,
             entry,
-            widgets,
             entries,
+            widgets, // eslint-disable-line no-unused-vars
             selectedEntryKey, // eslint-disable-line no-unused-vars
             onEntrySelect, // eslint-disable-line no-unused-vars
 
             ...otherProps
         } = this.props;
-
-        const viewMode = 'overview';
-
-        // TODO: move this to componentWillReceiveProps
-        const filteredWidgets = widgets.filter(
-            widget => hasWidget(viewMode, widget.widgetId),
-        );
 
         return (
             <ResizableH
@@ -93,9 +105,9 @@ export default class Overview extends React.PureComponent {
                 rightChild={
                     <WidgetFaram
                         entry={entry}
-                        widgets={filteredWidgets}
+                        widgets={this.widgets}
                         pending={pending}
-                        viewMode={viewMode}
+                        viewMode={Overview.viewMode}
                         {...otherProps}
                     />
                 }

@@ -5,6 +5,7 @@ import { iconNames } from '#constants';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
+import ListView from '#rscv/List/ListView';
 
 import WidgetFaram from '../WidgetFaram';
 import { hasWidget } from '../widgets';
@@ -23,50 +24,70 @@ const defaultProps = {
     pending: false,
 };
 
-export default class List extends React.PureComponent {
+export default class Listing extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    render() {
+    static viewMode = 'list'
+
+    static filterWidgets = widgets => widgets.filter(
+        widget => hasWidget(Listing.viewMode, widget.widgetId),
+    );
+
+    constructor(props) {
+        super(props);
+        this.widgets = Listing.filterWidgets(props.widgets);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { widgets: oldWidgets } = this.props;
+        const { widgets: newWidgets } = nextProps;
+        if (newWidgets !== oldWidgets) {
+            this.widgets = Listing.filterWidgets(newWidgets);
+        }
+    }
+
+    widgetFaramModifier = (entry) => {
         const {
             pending,
-            entries,
-            widgets,
+            entries, // eslint-disable-line no-unused-vars
+            widgets, // eslint-disable-line no-unused-vars
 
             ...otherProps
         } = this.props;
 
-        const viewMode = 'list';
-
-        // TODO: move this to componentWillReceiveProps
-        const filteredWidgets = widgets.filter(
-            widget => hasWidget(viewMode, widget.widgetId),
+        return (
+            <div className={styles.widgetContainer}>
+                <WidgetFaram
+                    className={styles.widget}
+                    key={entryAccessor.key(entry)}
+                    entry={entry}
+                    widgets={this.widgets}
+                    pending={pending}
+                    viewMode={Listing.viewMode}
+                    {...otherProps}
+                />
+                <div className={styles.actionButtons}>
+                    <DangerButton
+                        iconName={iconNames.delete}
+                    />
+                    <WarningButton
+                        iconName={iconNames.edit}
+                    />
+                </div>
+            </div>
         );
+    }
+
+    render() {
+        const { entries } = this.props;
 
         return (
-            <div className={styles.list}>
-                {entries.map(entry => (
-                    <div className={styles.widgetContainer}>
-                        <WidgetFaram
-                            className={styles.widget}
-                            key={entryAccessor.key(entry)}
-                            entry={entry}
-                            widgets={filteredWidgets}
-                            pending={pending}
-                            viewMode={viewMode}
-                            {...otherProps}
-                        />
-                        <div className={styles.actionButtons}>
-                            <DangerButton
-                                iconName={iconNames.delete}
-                            />
-                            <WarningButton
-                                iconName={iconNames.edit}
-                            />
-                        </div>
-                    </div>
-                ))}
-            </div>
+            <ListView
+                className={styles.list}
+                data={entries}
+                modifier={this.widgetFaramModifier}
+            />
         );
     }
 }
