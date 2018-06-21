@@ -8,7 +8,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    entryType: PropTypes.string.isRequired,
+    entryType: PropTypes.string,
     excerpt: PropTypes.string,
     image: PropTypes.string,
     onExcerptChange: PropTypes.func.isRequired,
@@ -16,6 +16,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    entryType: undefined,
     excerpt: undefined,
     image: undefined,
 };

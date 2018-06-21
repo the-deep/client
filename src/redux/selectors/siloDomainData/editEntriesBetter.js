@@ -6,6 +6,7 @@ import {
 } from '../domainData';
 
 const emptyObject = {};
+const emptyArray = [];
 
 const editEntriesSelector = ({ siloDomainData }) => (
     siloDomainData.editEntries || emptyObject
@@ -21,6 +22,16 @@ export const editEntriesForLeadSelector = createSelector(
 export const editEntriesLeadSelector = createSelector(
     editEntriesForLeadSelector,
     editEntry => editEntry.lead || emptyObject,
+);
+
+export const editEntriesEntriesSelector = createSelector(
+    editEntriesForLeadSelector,
+    editEntry => editEntry.entries || emptyArray,
+);
+
+export const editEntriesSelectedEntryKeySelector = createSelector(
+    editEntriesForLeadSelector,
+    editEntry => editEntry.selectedEntryKey,
 );
 
 export const editEntriesProjectSelector = createSelector(

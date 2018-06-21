@@ -7,9 +7,9 @@ import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import ListView from '#rscv/List/ListView';
 
+import { entryAccessor } from '#entities/editEntriesBetter';
 import WidgetFaram from '../WidgetFaram';
 import { hasWidget } from '../widgets';
-import entryAccessor from '../entryAccessor';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -56,11 +56,15 @@ export default class Listing extends React.PureComponent {
             ...otherProps
         } = this.props;
 
+        const key = entryAccessor.key(entry);
+
         return (
-            <div className={styles.widgetContainer}>
+            <div
+                className={styles.widgetContainer}
+                key={key}
+            >
                 <WidgetFaram
                     className={styles.widget}
-                    key={entryAccessor.key(entry)}
                     entry={entry}
                     widgets={this.widgets}
                     pending={pending}

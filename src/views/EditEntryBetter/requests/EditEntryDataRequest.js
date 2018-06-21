@@ -1,13 +1,12 @@
-import { FgRestBuilder } from '#rs/utils/rest';
 import {
     createUrlEditEntryGet,
     createParamsForGet,
 } from '#rest';
 import {
-    calcEntriesDiff,
+    createDiff,
     getApplicableDiffCount,
     getApplicableAndModifyingDiffCount,
-} from '#entities/entry';
+} from '#entities/editEntriesBetter';
 import notify from '#notify';
 import Request from '#utils/Request';
 import _ts from '#ts';
@@ -51,7 +50,7 @@ export default class EditEntryDataRequest extends Request {
             regions,
         });
 
-        const diffs = calcEntriesDiff(this.parent.getEntries(), entries);
+        const diffs = createDiff(this.parent.getEntries(), entries);
 
         if (getApplicableDiffCount(diffs) <= 0) {
             return;

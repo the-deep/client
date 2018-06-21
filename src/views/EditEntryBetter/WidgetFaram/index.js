@@ -6,8 +6,8 @@ import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
 import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import GridViewLayout from '#rs/components/View/GridViewLayout';
 
+import { entryAccessor } from '#entities/editEntriesBetter';
 import { fetchWidget } from '../widgets';
-import entryAccessor from '../entryAccessor';
 
 import styles from './styles.scss';
 

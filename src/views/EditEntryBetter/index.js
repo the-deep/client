@@ -12,21 +12,23 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import update from '#rs/utils/immutable-update';
 
 import {
-    calcNewEntries,
-} from '#entities/entry';
-import {
     leadIdFromRoute,
     editEntriesLeadSelector,
 
     editEntriesAnalysisFrameworkSelector,
     editEntriesSetLeadAction,
+    editEntriesEntriesSelector,
+    editEntriesSetEntriesAction,
+    editEntriesClearEntriesAction,
+    editEntriesSetSelectedEntryKeyAction,
+    editEntriesSelectedEntryKeySelector,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
     setRegionsForProjectAction,
 } from '#redux';
 
-import entryAccessor from './entryAccessor';
+import { entryAccessor } from '#entities/editEntriesBetter';
 import EditEntryDataRequest from './requests/EditEntryDataRequest';
 
 import Overview from './Overview';
@@ -38,29 +40,40 @@ const propTypes = {
     leadId: PropTypes.number.isRequired,
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 
     setLead: PropTypes.func.isRequired,
+    setEntries: PropTypes.func.isRequired,
+    clearEntries: PropTypes.func.isRequired,
 
     setAnalysisFramework: PropTypes.func.isRequired,
     setGeoOptions: PropTypes.func.isRequired,
     setRegions: PropTypes.func.isRequired,
+
+    setSelectedEntryKey: PropTypes.func.isRequired,
+    selectedEntryKey: PropTypes.string,
 };
 
 const defaultProps = {
     analysisFramework: undefined,
+    entries: [],
+    selectedEntryKey: undefined,
 };
 
 const mapStateToProps = (state, props) => ({
     leadId: leadIdFromRoute(state, props),
     lead: editEntriesLeadSelector(state),
+    entries: editEntriesEntriesSelector(state),
 
-    // Rewrite this
     analysisFramework: editEntriesAnalysisFrameworkSelector(state, props),
+    selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-    // Rewrite this
     setLead: params => dispatch(editEntriesSetLeadAction(params)),
+    setEntries: params => dispatch(editEntriesSetEntriesAction(params)),
+    clearEntries: params => dispatch(editEntriesClearEntriesAction(params)),
+    setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
 
     setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
@@ -83,22 +96,24 @@ export default class EditEntry extends React.PureComponent {
 
         this.state = {
             pendingEditEntryData: true,
-
-            selectedEntryKey: undefined,
-            entries: [],
         };
 
         this.views = {
             overview: {
                 component: () => {
-                    const { entries, selectedEntryKey } = this.state;
+                    const {
+                        entries,
+                        selectedEntryKey,
+                        analysisFramework = {},
+                    } = this.props;
+                    const { widgets } = analysisFramework;
                     const entryIndex = EditEntry.getSelectedEntryIndex(entries, selectedEntryKey);
                     const entry = entries[entryIndex];
                     return (
                         <Overview
-                            entries={this.state.entries}
-                            selectedEntrykey={this.state.selectedEntryKey}
-                            widgets={(this.props.analysisFramework || {}).widgets}
+                            entries={entries}
+                            selectedEntryKey={selectedEntryKey}
+                            widgets={widgets}
                             entry={entry}
                             pending={this.state.pendingEditEntryData}
                             onEntrySelect={this.handleEntrySelect}
@@ -119,7 +134,7 @@ export default class EditEntry extends React.PureComponent {
                 component: () => (
                     <Listing
                         widgets={(this.props.analysisFramework || {}).widgets}
-                        entries={this.state.entries}
+                        entries={this.props.entries}
                         pending={this.state.pendingEditEntryData}
 
                         // injected inside WidgetFaram
@@ -145,7 +160,7 @@ export default class EditEntry extends React.PureComponent {
         this.editEntryDataRequest = new EditEntryDataRequest({
             diffEntries: this.handleDiffEntries,
             getAf: () => this.props.analysisFramework,
-            getEntries: () => this.state.entries,
+            getEntries: () => this.props.entries,
             removeAllEntries: this.handleRemoveAllEntries,
             setAnalysisFramework: this.props.setAnalysisFramework,
             setGeoOptions: this.props.setGeoOptions,
@@ -173,28 +188,25 @@ export default class EditEntry extends React.PureComponent {
         this.editEntryDataRequest.stop();
     }
 
-    // REDUX
-
     handleDiffEntries = ({ diffs }) => {
-        const newEntries = calcNewEntries(this.state.entries, diffs);
-
-        // TODO:
-        // If last selected was delete, set first item as selected
-        const selectedEntryKey = entryAccessor.key(newEntries[0]);
-
-        this.setState({ entries: newEntries, selectedEntryKey });
+        this.props.setEntries({ leadId: this.props.leadId, entryActions: diffs });
     }
 
     handleRemoveAllEntries = () => {
-        this.setState({ entries: [] });
+        this.props.clearEntries({ leadId: this.props.leadId });
     }
 
     handleEntrySelect = (selectedEntryKey) => {
-        this.setState({ selectedEntryKey });
+        this.props.setSelectedEntryKey({
+            key: selectedEntryKey,
+            leadId: this.props.leadId,
+        });
     }
 
+    // REDUX
+
     handleExcerptChange = ({ type, value }, entryKey) => {
-        const entryIndex = EditEntry.getSelectedEntryIndex(this.state.entries, entryKey);
+        const entryIndex = EditEntry.getSelectedEntryIndex(this.props.entries, entryKey);
 
         const settings = {
             [entryIndex]: {
@@ -248,7 +260,7 @@ export default class EditEntry extends React.PureComponent {
                 console.error('Unrecognized action');
         }
 
-        const entryIndex = EditEntry.getSelectedEntryIndex(this.state.entries, entryKey);
+        const entryIndex = EditEntry.getSelectedEntryIndex(this.props.entries, entryKey);
 
         const newEntries = { $auto: {
             [entryIndex]: { $set: newFaramValues },
@@ -262,7 +274,7 @@ export default class EditEntry extends React.PureComponent {
     }
 
     handleValidationFailure = (faramErrors, entryKey) => {
-        const entryIndex = EditEntry.getSelectedEntryIndex(this.state.entries, entryKey);
+        const entryIndex = EditEntry.getSelectedEntryIndex(this.props.entries, entryKey);
 
         const settings = { $auto: {
             [entryIndex]: { $auto: {

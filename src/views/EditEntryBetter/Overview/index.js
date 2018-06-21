@@ -5,7 +5,7 @@ import Button from '#rsca/Button';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import List from '#rscv/List';
 
-import entryAccessor from '../entryAccessor';
+import { entryAccessor } from '#entities/editEntriesBetter';
 import WidgetFaram from '../WidgetFaram';
 import { hasWidget } from '../widgets';
 
@@ -32,7 +32,7 @@ export default class Overview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static viewMode = 'list'
+    static viewMode = 'overview'
 
     static filterWidgets = widgets => widgets.filter(
         widget => hasWidget(Overview.viewMode, widget.widgetId),
