@@ -1,0 +1,285 @@
+import PropTypes from 'prop-types';
+import React, { Fragment } from 'react';
+import { connect } from 'react-redux';
+
+import MultiViewContainer from '#rs/components/View/MultiViewContainer';
+import Message from '#rs/components/View/Message';
+import FixedTabs from '#rs/components/View/FixedTabs';
+
+
+import {
+    editEntriesLeadSelector,
+    editEntriesEntriesSelector,
+    editEntriesSelectedEntryKeySelector,
+    editEntriesSetSelectedEntryKeyAction,
+} from '#redux';
+
+import {
+    LEAD_TYPE,
+    LEAD_PANE_TYPE,
+    leadPaneTypeMap,
+} from '#entities/lead';
+
+import _ts from '#ts';
+
+import SimplifiedLeadPreview from '#components/SimplifiedLeadPreview';
+import LeadPreview from '#components/LeadPreview';
+import AssistedTagging from '#components/AssistedTagging';
+import ImagesGrid from '#components/ImagesGrid';
+
+import EntriesList from './EntriesList';
+import styles from './styles.scss';
+
+const propTypes = {
+    lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    selectedEntryKey: PropTypes.string,
+    setSelectedEntryKey: PropTypes.func.isRequired,
+};
+
+const defaultProps = {
+    entries: [],
+    selectedEntryKey: undefined,
+};
+
+const mapStateToProps = state => ({
+    lead: editEntriesLeadSelector(state),
+    entries: editEntriesEntriesSelector(state),
+    selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+    setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
+export default class LeftPane extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
+    static getPaneType = (lead) => {
+        if (!lead) {
+            return undefined;
+        }
+        const {
+            sourceType: type,
+            attachment,
+        } = lead;
+
+        if (type === LEAD_TYPE.text) {
+            return LEAD_PANE_TYPE.text;
+        } else if (type === LEAD_TYPE.website) {
+            return LEAD_PANE_TYPE.website;
+        }
+        if (!attachment) {
+            return undefined;
+        }
+        const { mimeType } = attachment;
+        return leadPaneTypeMap[mimeType];
+    }
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            images: [],
+            currentTab: undefined,
+        };
+
+        this.views = this.calculateTabComponents();
+    }
+
+    calculateTabComponents = () => ({
+        'simplified-preview': {
+            component: () => (
+                <SimplifiedLeadPreview
+                    className={styles.simplifiedPreview}
+                    leadId={this.props.lead.id}
+                    highlights={this.calculateHighlights()}
+                    highlightModifier={this.highlightSimplifiedExcerpt}
+                    onLoad={this.handleLoadImages}
+                />
+            ),
+            mount: true,
+            wrapContainer: true,
+        },
+        'assisted-tagging': {
+            component: () => (
+                <AssistedTagging
+                    className={styles.assistedTagging}
+                    leadId={this.props.lead.id}
+                    projectId={this.props.lead.project}
+                    onEntryAdd={this.handleEntryAdd}
+                />
+            ),
+            mount: true,
+            lazyMount: true,
+            wrapContainer: true,
+        },
+        'original-preview': {
+            component: () => (
+                <div className={styles.originalPreview}>
+                    <LeadPreview
+                        lead={this.props.lead}
+                        handleScreenshot={this.handleScreenshot}
+                    />
+                </div>
+            ),
+            mount: true,
+            lazyMount: true,
+            wrapContainer: true,
+        },
+        'images-preview': {
+            component: () => (
+                <ImagesGrid
+                    className={styles.imagesPreview}
+                    images={this.state.images}
+                />
+            ),
+            mount: true,
+            wrapContainer: true,
+        },
+        'entries-listing': {
+            component: () => (
+                <div className={styles.entriesListContainer}>
+                    <EntriesList
+                        leadId={this.props.lead.id}
+                        entries={this.props.entries}
+                        selectedEntryKey={this.props.selectedEntryKey}
+                        setSelectedEntryKey={this.props.setSelectedEntryKey}
+                    />
+                </div>
+            ),
+            mount: true,
+            wrapContainer: true,
+        },
+    })
+
+    calculateTabsForLead = (lead, images) => {
+        const leadPaneType = LeftPane.getPaneType(lead);
+
+        let tabs;
+        switch (leadPaneType) {
+            case LEAD_PANE_TYPE.spreadsheet:
+                tabs = {
+                    'original-preview': _ts('editEntry', 'tabularTabLabel'),
+                    'images-preview': _ts('editEntry', 'imagesTabLabel'),
+                };
+                break;
+            case LEAD_PANE_TYPE.image:
+                tabs = {
+                    'original-preview': _ts('editEntry', 'imagesTabLabel'),
+                    'images-preview': _ts('editEntry', 'imagesTabLabel'),
+                };
+                break;
+            case LEAD_PANE_TYPE.text:
+                tabs = {
+                    'simplified-preview': _ts('editEntry', 'simplifiedTabLabel'),
+                    'assisted-tagging': _ts('editEntry', 'assistedTabLabel'),
+                    'images-preview': _ts('editEntry', 'imagesTabLabel'),
+                };
+                break;
+            case LEAD_PANE_TYPE.word:
+            case LEAD_PANE_TYPE.pdf:
+            case LEAD_PANE_TYPE.presentation:
+            case LEAD_PANE_TYPE.website:
+                tabs = {
+                    'simplified-preview': _ts('editEntry', 'simplifiedTabLabel'),
+                    'assisted-tagging': _ts('editEntry', 'assistedTabLabel'),
+                    'original-preview': _ts('editEntry', 'originalTabLabel'),
+                    'images-preview': _ts('editEntry', 'imagesTabLabel'),
+                };
+                break;
+            default:
+                return undefined;
+        }
+        if (!images || images.length <= 0) {
+            tabs['images-preview'] = undefined;
+        }
+        tabs['entries-listing'] = _ts('editEntry', 'entriesTabLabel');
+        return tabs;
+    }
+
+    handleTabClick = (key) => {
+        if (key === this.state.currentTab) {
+            return;
+        }
+        this.setState({ currentTab: key });
+    }
+
+    // Simplified Lead Preview
+
+    calculateHighlights = () => ([
+        // TODO: send highlights prop
+    ])
+
+    highlightSimplifiedExcerpt = (highlight, text, actualStr) => (
+        SimplifiedLeadPreview.highlightModifier(
+            highlight,
+            text,
+            actualStr,
+            this.handleHighlightClick,
+        )
+    );
+
+    handleHighlightClick = (e, { text }) => {
+        console.warn('TODO: should handle highlight click', text);
+    }
+
+    handleLoadImages = (response) => {
+        if (response.images) {
+            this.setState({ images: response.images });
+        }
+    }
+
+    // Assisted Tagging
+
+    handleEntryAdd = (text) => {
+        console.warn('TODO: should add entry', text);
+    }
+
+    // Lead Preview
+
+    handleScreenshot = (image) => {
+        console.warn('TODO: should take screenshot');
+    }
+
+    render() {
+        const { lead } = this.props;
+        const { images } = this.state;
+        let { currentTab } = this.state;
+
+        // FIXME: move this to componentWillUpdate
+        const tabs = this.calculateTabsForLead(lead, images);
+
+        // If there is no tabs, the lead must have unrecognized type
+        if (!tabs) {
+            return (
+                <Message>
+                    {_ts('editEntry', 'unrecognizedLeadMessage')}
+                </Message>
+            );
+        }
+
+        // If there is no currentTab, get first visible tab
+        if (!currentTab) {
+            const tabKeys = Object.keys(tabs).filter(a => !!tabs[a]);
+            currentTab = tabKeys.length > 0 ? Object.keys(tabs)[0] : undefined;
+        }
+
+        return (
+            <Fragment>
+                <FixedTabs
+                    className={styles.tabs}
+                    active={currentTab}
+                    tabs={tabs}
+                    onClick={this.handleTabClick}
+                />
+                <MultiViewContainer
+                    active={currentTab}
+                    views={this.views}
+                />
+            </Fragment>
+        );
+    }
+}
