@@ -14,6 +14,10 @@ import {
     setRavenUser,
 } from '#config/sentry';
 import {
+    setZeUser,
+    setZeLang,
+} from '#config/zE';
+import {
     createParamsForTokenRefresh,
     urlForTokenRefresh,
 } from '#rest';
@@ -27,6 +31,7 @@ import {
     tokenSelector,
     activeUserSelector,
     readySelector,
+    globalSelectedLanguageNameSelector,
 } from '#redux';
 import getUserConfirmation from '#utils/getUserConfirmation';
 
@@ -36,6 +41,7 @@ import Multiplexer from './Multiplexer';
 
 const mapStateToProps = state => ({
     activeUser: activeUserSelector(state),
+    selectedLanguageName: globalSelectedLanguageNameSelector(state),
     token: tokenSelector(state),
     ready: readySelector(state),
 });
@@ -49,6 +55,7 @@ const mapDispatchToProps = dispatch => ({
 
 const propTypes = {
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    selectedLanguageName: PropTypes.string.isRequired,
     setAccessToken: PropTypes.func.isRequired,
     startSiloTasks: PropTypes.func.isRequired,
     stopSiloTasks: PropTypes.func.isRequired,
@@ -80,10 +87,14 @@ export default class App extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.activeUser !== nextProps.activeUser) {
-            const { activeUser } = nextProps;
+        const { activeUser, selectedLanguageName } = nextProps;
+        if (this.props.activeUser !== activeUser) {
             setGaUserId(activeUser.userId);
             setRavenUser(activeUser);
+            setZeUser(activeUser);
+        }
+        if (this.props.selectedLanguageName !== selectedLanguageName) {
+            setZeLang(selectedLanguageName);
         }
     }
 
