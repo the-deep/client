@@ -1,7 +1,6 @@
 import { FgRestBuilder } from '#rs/utils/rest';
 import notify from '#notify';
 import {
-    alterAndCombineResponseErrors,
     createUrlForProjectClusterData,
     createParamsForProjectClusterData,
 } from '#rest';
@@ -28,11 +27,10 @@ export default class ProjectClusterDataRequest {
     }
 
     failure = (response) => {
-        const message = alterAndCombineResponseErrors(response.errors);
         notify.send({
             title: _ts('clusterViz', 'clusterVizTitle'),
             type: notify.type.ERROR,
-            message,
+            message: response.message,
             duration: notify.duration.MEDIUM,
         });
     }
