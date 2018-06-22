@@ -111,7 +111,7 @@ export default class ActionButtons extends React.PureComponent {
         return (
             <div className={containerClassName}>
                 <div className={styles.actionGroup}>
-                    <SuccessButton
+                    <Button
                         tabIndex="-1"
                         title={_ts('leads', 'markAsProcessedTitle')}
                         iconName={iconNames.check}
@@ -119,7 +119,7 @@ export default class ActionButtons extends React.PureComponent {
                         transparent
                         disabled={row.status !== 'pending'}
                     />
-                    <WarningButton
+                    <Button
                         tabIndex="-1"
                         title={_ts('leads', 'markAsPendingTitle')}
                         iconName={iconNames.undo}

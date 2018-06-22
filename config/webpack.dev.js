@@ -75,9 +75,15 @@ module.exports = (env) => {
                                 modules: true,
                                 camelCase: true,
                                 localIdentName: '[name]_[local]_[hash:base64]',
+                                sourceMap: true,
                             },
                         },
-                        require.resolve('sass-loader'),
+                        {
+                            loader: require.resolve('sass-loader'),
+                            options: {
+                                sourceMap: true,
+                            },
+                        },
                     ],
                 },
                 {

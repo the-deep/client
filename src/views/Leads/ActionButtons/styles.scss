@@ -17,15 +17,18 @@
         flex-shrink: 0;
 
         &:not(:last-child) {
-            border-right: $width-separator-thin solid $color-separator;
-            padding: 0 $spacing-extra-small;
+            padding: 0 $spacing-small;
         }
 
         button {
             @extend %base;
         }
 
-        .edit-link,
+        .edit-link {
+            @extend %link;
+            @include transparent-button-like-link($color-warning);
+        }
+
         .add-entry-link,
         .add-assessment-link {
             @extend %link;
