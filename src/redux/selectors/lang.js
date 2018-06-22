@@ -32,10 +32,11 @@ export const createFooLinksSelector = languageSelector => createSelector(
 );
 
 
-const selectedLanguageNameSelector = ({ lang }) => (
+// FIXME: using globalS.. for now, duplicate selector name
+export const globalSelectedLanguageNameSelector = ({ lang }) => (
     lang.selectedLanguage || '$devLang'
 );
-const selectedLanguageSelector = createFooLanguageSelector(selectedLanguageNameSelector);
+const selectedLanguageSelector = createFooLanguageSelector(globalSelectedLanguageNameSelector);
 export const selectedStringsSelector = createFooStringsSelector(selectedLanguageSelector);
 export const selectedLinksSelector = createFooLinksSelector(selectedLanguageSelector);
 
