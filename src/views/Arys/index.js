@@ -302,6 +302,7 @@ export default class Arys extends React.PureComponent {
                     itemsCount={totalArysCount}
                     maxItemsPerPage={MAX_ARYS_PER_REQUEST}
                     onPageClick={this.handlePageClick}
+                    showItemsPerPageChange={false}
                 />
             </footer>
         );

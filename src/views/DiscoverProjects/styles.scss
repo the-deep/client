@@ -83,21 +83,6 @@
             justify-content: center;
         }
 
-        .link-container {
-            display: flex;
-            align-items: baseline;
-
-            .label {
-                @extend %input-label;
-                margin-right: $spacing-small;
-                width: auto;
-            }
-
-            .projects-per-page-input {
-                width: 46px;
-            }
-        }
-
         .pager-container {
             display: flex;
         }

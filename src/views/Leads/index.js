@@ -111,13 +111,6 @@ export default class Leads extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static leadsPerPageOptions = [
-        { label: '25', key: 25 },
-        { label: '50', key: 50 },
-        { label: '75', key: 75 },
-        { label: '100', key: 100 },
-    ];
-
     static leadKeyExtractor = lead => String(lead.id)
 
     constructor(props) {
@@ -566,18 +559,6 @@ export default class Leads extends React.PureComponent {
                             </Link>
                         )}
                     />
-                    <span className={styles.label}>
-                        {_ts('leads', 'leadsPerPage')}
-                    </span>
-                    <SelectInput
-                        className={styles.leadsPerPageInput}
-                        hideClearButton
-                        showLabel={false}
-                        showHintAndError={false}
-                        options={Leads.leadsPerPageOptions}
-                        value={this.props.leadsPerPage}
-                        onChange={this.handleLeadsPerPageChange}
-                    />
                 </div>
                 <div className={styles.pagerContainer}>
                     <Pager
@@ -586,6 +567,7 @@ export default class Leads extends React.PureComponent {
                         itemsCount={totalLeadsCount}
                         maxItemsPerPage={this.props.leadsPerPage}
                         onPageClick={this.handlePageClick}
+                        onItemsPerPageChange={this.handleLeadsPerPageChange}
                     />
                 </div>
             </footer>

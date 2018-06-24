@@ -292,20 +292,7 @@ export default class DiscoverProjects extends React.PureComponent {
 
         return (
             <footer className={styles.footer}>
-                <div className={styles.linkContainer}>
-                    <span className={styles.label}>
-                        {_ts('discoverProjects.footer', 'projectsPerPage')}
-                    </span>
-                    <SelectInput
-                        className={styles.projectsPerPageInput}
-                        hideClearButton
-                        showLabel={false}
-                        showHintAndError={false}
-                        options={DiscoverProjects.projectsPerPageOptions}
-                        value={projectsPerPage}
-                        onChange={this.handleProjectsPerPageChange}
-                    />
-                </div>
+                <div />
                 <div className={styles.pagerContainer}>
                     <Pager
                         activePage={activePage}
@@ -313,6 +300,7 @@ export default class DiscoverProjects extends React.PureComponent {
                         itemsCount={totalProjectsCount}
                         maxItemsPerPage={projectsPerPage}
                         onPageClick={this.handlePageClick}
+                        onItemsPerPageChange={this.handleProjectsPerPageChange}
                     />
                 </div>
             </footer>

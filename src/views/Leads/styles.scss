@@ -154,7 +154,6 @@
 
         .link-container {
             display: flex;
-            align-items: baseline;
 
             .link {
                 margin: 0 $spacing-small;
@@ -162,20 +161,26 @@
                 @include background-color($color-accent);
                 margin-right: $spacing-extra-small;
             }
-
-            .label {
-                @extend %input-label;
-                margin: 0 $spacing-small;
-                width: auto;
-            }
-
-            .leads-per-page-input {
-                width: 46px;
-            }
         }
 
         .pager-container {
             display: flex;
+            align-items: baseline;
+
+            .label {
+                margin-right: $spacing-small;
+            }
+
+            .leads-per-page-input {
+                width: 46px;
+
+                :global {
+                    .input {
+                        // border-bottom: $width-separator-medium solid transparent;
+                        direction: rtl;
+                    }
+                }
+            }
         }
     }
 }

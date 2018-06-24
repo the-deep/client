@@ -315,6 +315,7 @@ export default class LeadGroups extends React.PureComponent {
                     itemsCount={totalLeadGroupsCount}
                     maxItemsPerPage={MAX_LEADGROUPS_PER_REQUEST}
                     onPageClick={this.handlePageClick}
+                    showItemsPerPageChange={false}
                 />
             </footer>
         );
