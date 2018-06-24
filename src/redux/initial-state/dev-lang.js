@@ -576,7 +576,7 @@ const initialDevLangState = {
         801: 'Show Visualization',
         802: 'Mark as pending',
         804: 'Mark as processed',
-        1999: 'Leads per page',
+        1999: 'leads per page',
         7634: 'Projects per page',
         7000: 'Do you want to mark the lead as pending?',
         8001: 'Do you want to mark the lead as processed?',

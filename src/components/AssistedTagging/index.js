@@ -55,6 +55,7 @@ export default class AssistedTagging extends React.PureComponent {
 
         this.state = {
             showAssistant: false,
+            showAssistantOptions: false,
             activeHighlightRef: undefined,
             activeHighlightDetails: emptyObject,
             nlpSectorOptions: emptyList,
@@ -186,6 +187,8 @@ export default class AssistedTagging extends React.PureComponent {
         }
         this.nerClassifyRequest = this.createNerClassifyRequest(leadPreview.text);
         this.nerClassifyRequest.start();
+
+        this.setState({ showAssistantOptions: true });
     }
 
     createNlpClassifyRequest = (docId) => {
@@ -561,6 +564,7 @@ export default class AssistedTagging extends React.PureComponent {
         const {
             activeHighlightDetails,
             showAssistant,
+            showAssistantOptions,
             nlpSectorOptions,
             nlpSelectedSectors,
             ceSectorOptions,
@@ -580,6 +584,8 @@ export default class AssistedTagging extends React.PureComponent {
             classNames.push(styles.assistantShown);
         }
 
+        // TODO: fix styling when showAssistantOptions is false
+
         return (
             <div
                 ref={(el) => { this.primaryContainer = el; }}
@@ -592,54 +598,56 @@ export default class AssistedTagging extends React.PureComponent {
                     highlightModifier={this.highlightSimplifiedExcerpt}
                     onLoad={this.handleLeadPreviewLoad}
                 />
-                <div className={`assistant-options ${styles.assistantOptions}`}>
-                    <SegmentButton
-                        className={styles.assistedSourceChangeBtn}
-                        data={this.assitedTaggingSources}
-                        selected={selectedAssitedTaggingSource}
-                        onChange={this.handleAssitedTaggingSourceChange}
-                        backgroundHighlight
-                    />
-                    {
-                        selectedAssitedTaggingSource === 'nlp' && (
-                            <MultiSelectInput
-                                disabled={this.state.pendingNlpClassify}
-                                label={_ts('components.assistedTagging', 'showSuggestionText')}
-                                className={styles.selectInput}
-                                options={nlpSectorOptions}
-                                showHintAndError={false}
-                                value={nlpSelectedSectors}
-                                onChange={this.handleNlpSectorSelect}
-                            />
-                        )
-                    }
-                    {
-                        selectedAssitedTaggingSource === 'ce' && (
-                            <MultiSelectInput
-                                disabled={this.state.pendingCeClassify}
-                                label={_ts('components.assistedTagging', 'showSuggestionText')}
-                                className={styles.selectInput}
-                                options={ceSectorOptions}
-                                showHintAndError={false}
-                                value={ceSelectedSectors}
-                                onChange={this.handleCeSectorSelect}
-                            />
-                        )
-                    }
-                    {
-                        selectedAssitedTaggingSource === 'ner' && (
-                            <MultiSelectInput
-                                disabled={this.state.pendingNerClassify}
-                                label={_ts('components.assistedTagging', 'showSuggestionText')}
-                                className={styles.selectInput}
-                                options={nerSectorOptions}
-                                showHintAndError={false}
-                                value={nerSelectedSectors}
-                                onChange={this.handleNerSectorSelect}
-                            />
-                        )
-                    }
-                </div>
+                { showAssistantOptions &&
+                    <div className={`assistant-options ${styles.assistantOptions}`}>
+                        <SegmentButton
+                            className={styles.assistedSourceChangeBtn}
+                            data={this.assitedTaggingSources}
+                            selected={selectedAssitedTaggingSource}
+                            onChange={this.handleAssitedTaggingSourceChange}
+                            backgroundHighlight
+                        />
+                        {
+                            selectedAssitedTaggingSource === 'nlp' && (
+                                <MultiSelectInput
+                                    disabled={this.state.pendingNlpClassify}
+                                    label={_ts('components.assistedTagging', 'showSuggestionText')}
+                                    className={styles.selectInput}
+                                    options={nlpSectorOptions}
+                                    showHintAndError={false}
+                                    value={nlpSelectedSectors}
+                                    onChange={this.handleNlpSectorSelect}
+                                />
+                            )
+                        }
+                        {
+                            selectedAssitedTaggingSource === 'ce' && (
+                                <MultiSelectInput
+                                    disabled={this.state.pendingCeClassify}
+                                    label={_ts('components.assistedTagging', 'showSuggestionText')}
+                                    className={styles.selectInput}
+                                    options={ceSectorOptions}
+                                    showHintAndError={false}
+                                    value={ceSelectedSectors}
+                                    onChange={this.handleCeSectorSelect}
+                                />
+                            )
+                        }
+                        {
+                            selectedAssitedTaggingSource === 'ner' && (
+                                <MultiSelectInput
+                                    disabled={this.state.pendingNerClassify}
+                                    label={_ts('components.assistedTagging', 'showSuggestionText')}
+                                    className={styles.selectInput}
+                                    options={nerSectorOptions}
+                                    showHintAndError={false}
+                                    value={nerSelectedSectors}
+                                    onChange={this.handleNerSectorSelect}
+                                />
+                            )
+                        }
+                    </div>
+                }
                 {showAssistant &&
                     <FloatingContainer
                         parent={this.state.activeHighlightRef}

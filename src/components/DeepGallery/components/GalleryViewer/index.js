@@ -124,6 +124,8 @@ export default class GalleryViewer extends React.PureComponent {
                         key="screenshot-done"
                         iconName={iconNames.check}
                         onClick={this.handleScreenshotDone}
+                        // FIXME: use strings
+                        title="Save screenshot"
                         transparent
                     />
                 ),
@@ -131,6 +133,8 @@ export default class GalleryViewer extends React.PureComponent {
                     key="screenshot-close"
                     iconName={iconNames.close}
                     onClick={this.handleScreenshotClose}
+                    // FIXME: use strings
+                    title="Discard screenshot"
                     transparent
                 />,
             ]);
@@ -141,6 +145,8 @@ export default class GalleryViewer extends React.PureComponent {
                 iconName={iconNames.camera}
                 onClick={() => { this.setState({ screenshotMode: true }); }}
                 transparent
+                // FIXME: use strings
+                title="Take screenshot"
             />
         );
     }
@@ -167,6 +173,8 @@ export default class GalleryViewer extends React.PureComponent {
                             className={styles.openLink}
                             href={url}
                             target="_blank"
+                            // FIXME: use strings
+                            title="Open link in new tab"
                         >
                             <span className={iconNames.openLink} />
                         </a>

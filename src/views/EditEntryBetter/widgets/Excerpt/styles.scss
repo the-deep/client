@@ -26,4 +26,19 @@
             }
         }
     }
+
+    .format-button {
+        @include transition-medium;
+        position: absolute;
+        right: $spacing-large;
+        bottom: $spacing-small-alt;
+        opacity: .2;
+        font-size: $font-size-extra-large;
+    }
+
+    &:hover {
+        .format-button {
+            opacity: 1;
+        }
+    }
 }

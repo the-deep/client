@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 
 import TextArea from '#rsci/TextArea';
+import AccentButton from '#rs/components/Action/Button/AccentButton';
+import { formatPdfText } from '#rs/utils/common';
+
+import { iconNames } from '#constants';
+import _ts from '#ts';
 
 import DropContainer from './DropContainer';
 import styles from './styles.scss';
@@ -57,6 +62,11 @@ export default class Excerpt extends React.PureComponent {
         this.handleExcerptChange(TEXT, value);
     }
 
+    handleFormatText = () => {
+        const { excerpt } = this.props;
+        this.handleTextChange(formatPdfText(excerpt));
+    }
+
     handleDragDrop = (e) => {
         e.preventDefault();
         const transferredData = e.dataTransfer.getData('text');
@@ -67,7 +77,7 @@ export default class Excerpt extends React.PureComponent {
         } catch (ex) {
             formattedData = {
                 type: TEXT,
-                transferredData,
+                data: transferredData,
             };
         }
 
@@ -126,14 +136,27 @@ export default class Excerpt extends React.PureComponent {
             text
         `;
 
+        const buttonTitle = _ts('framework.excerptWidget', 'formatExcerpt');
+
         return (
-            <TextArea
-                className={className}
-                showLabel={false}
-                showHintAndError={false}
-                value={excerpt}
-                onChange={this.handleTextChange}
-            />
+            <Fragment>
+                <TextArea
+                    className={className}
+                    showLabel={false}
+                    showHintAndError={false}
+                    value={excerpt}
+                    onChange={this.handleTextChange}
+                />
+                <AccentButton
+                    className={styles.formatButton}
+                    iconName={iconNames.textFormat}
+                    onClick={this.handleFormatText}
+                    title={buttonTitle}
+                    smallVerticalPadding
+                    smallHorizontalPadding
+                    transparent
+                />
+            </Fragment>
         );
     }
 
