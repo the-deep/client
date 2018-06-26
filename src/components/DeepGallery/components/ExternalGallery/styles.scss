@@ -2,17 +2,6 @@
 
 .pending-container {
     display: flex;
-    align-items: center;
+    position: relative;
     flex-grow: 1;
-    justify-content: center;
-
-    .loading-animation {
-        display: inline-block;
-        margin-right: $spacing-small;
-        animation: spin 1s linear infinite;
-    }
-
-    .waiting-text {
-        color: $color-text-disabled;
-    }
 }

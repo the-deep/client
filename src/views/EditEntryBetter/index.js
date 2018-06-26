@@ -260,6 +260,7 @@ export default class EditEntry extends React.PureComponent {
                         className={styles.tabs}
                         tabs={this.tabs}
                         useHash
+                        replaceHistory
                         deafultHash={this.defaultHash}
                     />
                     <div className={styles.actionButtons}>
