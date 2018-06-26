@@ -3,14 +3,19 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import ResizableH from '#rscv/Resizable/ResizableH';
-// import List from '#rscv/List';
+import SelectInput from '#rsci/SelectInput';
+import SuccessButton from '#rsca/Button/SuccessButton';
+import DangerButton from '#rsca/Button/DangerButton';
 
+import { entryAccessor } from '#entities/editEntriesBetter';
 
 import {
     leadIdFromRoute,
-    editEntriesSelectedEntryKeySelector,
     editEntriesWidgetsSelector,
     editEntriesSelectedEntrySelector,
+
+    editEntriesSelectedEntryKeySelector,
+    editEntriesEntriesSelector,
     editEntriesSetSelectedEntryKeyAction,
 } from '#redux';
 
@@ -21,24 +26,37 @@ import LeadPane from './LeadPane';
 import styles from './styles.scss';
 
 const propTypes = {
+    leadId: PropTypes.number.isRequired,
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     pending: PropTypes.bool,
+    selectedEntryKey: PropTypes.string,
+    entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    setSelectedEntryKey: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     entry: undefined,
     widgets: [],
+    entries: [],
     pending: false,
+    selectedEntryKey: undefined,
 };
 
 
 const mapStateToProps = state => ({
+    leadId: leadIdFromRoute(state),
     widgets: editEntriesWidgetsSelector(state),
     entry: editEntriesSelectedEntrySelector(state),
+    selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
+    entries: editEntriesEntriesSelector(state),
 });
 
-@connect(mapStateToProps)
+const mapDispatchToProps = dispatch => ({
+    setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class Overview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -50,6 +68,13 @@ export default class Overview extends React.PureComponent {
             widget => hasWidget(Overview.widgetType, widget.widgetId),
         )
     )
+
+    static entryKeySelector = entry => entryAccessor.key(entry)
+    static entryLabelSelector = (entry) => {
+        const values = entryAccessor.data(entry);
+        const { excerpt, order } = values;
+        return excerpt || `Excerpt ${order}`;
+    };
 
     constructor(props) {
         super(props);
@@ -64,11 +89,21 @@ export default class Overview extends React.PureComponent {
         }
     }
 
+    handleEntrySelect = (entryKey) => {
+        this.props.setSelectedEntryKey({
+            leadId: this.props.leadId,
+            key: entryKey,
+        });
+    }
+
     render() {
         const {
             pending,
             entry,
+            leadId, // eslint-disable-line no-unused-vars
             widgets, // eslint-disable-line no-unused-vars
+            entries, // eslint-disable-line no-unused-vars
+            selectedEntryKey, // eslint-disable-line no-unused-vars
 
             ...otherProps
         } = this.props;
@@ -80,13 +115,38 @@ export default class Overview extends React.PureComponent {
                     <LeadPane />
                 }
                 rightChild={
-                    <WidgetFaram
-                        entry={entry}
-                        widgets={this.widgets}
-                        pending={pending}
-                        widgetType={Overview.widgetType}
-                        {...otherProps}
-                    />
+                    <React.Fragment>
+                        <header className={styles.header}>
+                            <SelectInput
+                                className={styles.entrySelectInput}
+                                hideClearButton
+                                keySelector={Overview.entryKeySelector}
+                                labelSelector={Overview.entryLabelSelector}
+                                onChange={this.handleEntrySelect}
+                                options={this.props.entries}
+                                placeholder="Select entry"
+                                showHintAndError={false}
+                                showLabel={false}
+                                value={this.props.selectedEntryKey}
+                            />
+                            <div className={styles.actionButtons}>
+                                <SuccessButton>
+                                    Add entry
+                                </SuccessButton>
+                                <DangerButton>
+                                    Remove entry
+                                </DangerButton>
+                            </div>
+                        </header>
+                        <WidgetFaram
+                            className={styles.content}
+                            entry={entry}
+                            widgets={this.widgets}
+                            pending={pending}
+                            widgetType={Overview.widgetType}
+                            {...otherProps}
+                        />
+                    </React.Fragment>
                 }
                 leftContainerClassName={styles.left}
                 rightContainerClassName={styles.right}

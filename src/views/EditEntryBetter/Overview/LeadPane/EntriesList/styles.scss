@@ -7,7 +7,7 @@
         position: relative;
         border-bottom: $width-separator-thin solid $color-separator;
         border-left: $width-separator-thick solid transparent;
-        padding: $spacing-small;
+        // padding: $spacing-small;
 
         &.active {
             border-left: $width-separator-thick solid $color-accent;
@@ -21,7 +21,7 @@
             border: 0;
             background-color: transparent;
             cursor: pointer;
-            padding: $spacing-small;
+            padding: $spacing-medium;
             width: 100%;
             text-align: left;
             font-family: inherit;

@@ -148,6 +148,7 @@ export default class Excerpt extends React.PureComponent {
                     onChange={this.handleTextChange}
                 />
                 <AccentButton
+                    tabIndex="-1"
                     className={styles.formatButton}
                     iconName={iconNames.textFormat}
                     onClick={this.handleFormatText}

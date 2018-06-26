@@ -9,6 +9,19 @@ import {
     pick,
 } from '#utils/common';
 
+export const ENTRY_STATUS = {
+    // A rest request is in session
+    requesting: 'requesting',
+    // Error occured and it cannot be recovered
+    invalid: 'invalid',
+    // Some changed has occured
+    nonPristine: 'nonPristine',
+    // No change has occured and saved in server
+    complete: 'complete',
+    // Some change has occured
+    pristine: 'pristine',
+};
+
 export const DIFF_ACTION = {
     // do nothing to the local state
     noop: 'noop',

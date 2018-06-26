@@ -5,8 +5,7 @@ import Button from '#rs/components/Action/Button';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import ListView from '#rs/components/View/List/ListView';
 
-import { ENTRY_STATUS } from '#entities/entry';
-import { entryAccessor } from '#entities/editEntriesBetter';
+import { entryAccessor, ENTRY_STATUS } from '#entities/editEntriesBetter';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
@@ -44,12 +43,18 @@ export default class EntriesListing extends React.PureComponent {
 
     renderEntryLabel = (entry) => {
         const values = entryAccessor.data(entry);
+        const {
+            entryType,
+            excerpt,
+            order,
+            image,
+        } = values;
 
-        if (values.entryType === 'image') {
+        if (entryType === 'image') {
             return (
                 <img
                     className={styles.image}
-                    src={values.image}
+                    src={image}
                     alt={_ts('editEntry', 'altLabel')}
                 />
             );
@@ -57,7 +62,7 @@ export default class EntriesListing extends React.PureComponent {
         // FIXME: use strings
         return (
             <div className={styles.entryExcerpt}>
-                {values.excerpt || `Excerpt ${values.order}`}
+                {excerpt || `Excerpt ${order}`}
             </div>
         );
     }
@@ -99,6 +104,7 @@ export default class EntriesListing extends React.PureComponent {
                     className={styles.addEntryListItem}
                     onClick={() => handleEntryItemClick(currentEntryId)}
                     disabled={isMarkedForDelete}
+                    type="button"
                 >
                     {this.renderEntryLabel(entry)}
                     <div className={styles.statusIcons}>

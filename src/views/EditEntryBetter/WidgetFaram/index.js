@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Faram, { requiredCondition } from '#rs/components/Input/Faram';
+import Faram from '#rs/components/Input/Faram';
 import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import GridViewLayout from '#rs/components/View/GridViewLayout';
 
 import { entryAccessor } from '#entities/editEntriesBetter';
@@ -15,13 +14,14 @@ const propTypes = {
     className: PropTypes.string,
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    schema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     pending: PropTypes.bool,
     widgetType: PropTypes.string.isRequired,
 
     onExcerptChange: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
-    onValidationFailure: PropTypes.func.isRequired,
-    onValidationSuccess: PropTypes.func.isRequired,
+    // onValidationFailure: PropTypes.func.isRequired,
+    // onValidationSuccess: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -30,66 +30,16 @@ const defaultProps = {
     widgets: [],
     pending: false,
     onChange: () => {},
-    onValidationFailure: () => {},
-    onValidationSuccess: () => {},
+    // onValidationFailure: () => {},
+    // onValidationSuccess: () => {},
+    schema: {},
 };
 
 export default class WidgetFaram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    // Schema
-
-    static createSchemaForWidget = (widget) => {
-        switch (widget.widgetId) {
-            // TODO: add case for date to identify good date with bad date
-            case 'numberWidget':
-                // FIXME: for test purpose only
-                return {
-                    fields: {
-                        value: [requiredCondition],
-                    },
-                };
-            default:
-                return [];
-        }
-    }
-
-    static createSchema = (widgets) => {
-        const schema = {
-            fields: {
-                // put fields here
-            },
-        };
-
-        // iterate over each widget to get static schema
-        widgets.forEach((widget) => {
-            schema.fields[widget.id] = {
-                fields: {
-                    id: [],
-                    data: WidgetFaram.createSchemaForWidget(widget),
-                },
-            };
-        });
-        return schema;
-    }
-
     static keySelector = widget => widget.key
-
-    constructor(props) {
-        super(props);
-
-        const { widgets } = this.props;
-        this.schema = WidgetFaram.createSchema(widgets);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { widgets: newWidgets } = nextProps;
-        const { widgets: oldWidgets } = this.props;
-        if (oldWidgets !== newWidgets) {
-            this.schema = WidgetFaram.createSchema(newWidgets);
-        }
-    }
 
     // Faram
 
@@ -98,6 +48,7 @@ export default class WidgetFaram extends React.PureComponent {
         this.props.onChange(faramValues, faramErrors, faramInfo, entryKey);
     }
 
+    /*
     handleValidationFailure = (faramErrors) => {
         const entryKey = entryAccessor.key(this.props.entry);
         this.props.onValidationFailure(faramErrors, entryKey);
@@ -107,6 +58,7 @@ export default class WidgetFaram extends React.PureComponent {
         const entryKey = entryAccessor.key(this.props.entry);
         this.props.onValidationSuccess(faramValues, entryKey);
     }
+    */
 
     handleExcerptChange = (excerptData) => {
         const entryKey = entryAccessor.key(this.props.entry);
@@ -177,6 +129,7 @@ export default class WidgetFaram extends React.PureComponent {
             pending,
             widgets,
             className: classNameFromProps,
+            schema,
         } = this.props;
 
         const error = entryAccessor.error(entry);
@@ -196,9 +149,9 @@ export default class WidgetFaram extends React.PureComponent {
             <Faram
                 className={className}
                 onChange={this.handleChange}
-                onValidationFailure={this.handleValidationFailure}
-                onValidationSuccess={this.handleValidationSuccess}
-                schema={this.schema}
+                // onValidationFailure={this.handleValidationFailure}
+                // onValidationSuccess={this.handleValidationSuccess}
+                schema={schema}
                 value={attributes}
                 error={error}
                 disabled={pending}
@@ -211,9 +164,6 @@ export default class WidgetFaram extends React.PureComponent {
                     keySelector={WidgetFaram.keySelector}
                     itemClassName={styles.widget}
                 />
-                <SuccessButton type="submit">
-                    Save
-                </SuccessButton>
             </Faram>
         );
     }

@@ -2,14 +2,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { iconNames } from '#constants';
 import Button from '#rsca/Button';
-import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerButton from '#rsca/Button/DangerButton';
+import SuccessButton from '#rsca/Button/SuccessButton';
 import FixedTabs from '#rscv/FixedTabs';
-import MultiViewContainer from '#rscv/MultiViewContainer';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import MultiViewContainer from '#rscv/MultiViewContainer';
+import { detachedFaram } from '#rsci/Faram';
 
+import { entryAccessor } from '#entities/editEntriesBetter';
+import { iconNames } from '#constants';
 import {
     leadIdFromRoute,
     editEntriesLeadSelector,
@@ -22,6 +24,7 @@ import {
     editEntriesSetExcerptAction,
     editEntriesSetEntryDataAction,
     editEntriesSetEntryErrorsAction,
+    editEntriesSchemaSelector,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
@@ -40,6 +43,7 @@ const propTypes = {
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    schema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 
     setLead: PropTypes.func.isRequired,
     setEntries: PropTypes.func.isRequired,
@@ -57,6 +61,7 @@ const propTypes = {
 const defaultProps = {
     analysisFramework: undefined,
     entries: [],
+    schema: {},
 };
 
 const mapStateToProps = state => ({
@@ -65,6 +70,7 @@ const mapStateToProps = state => ({
     entries: editEntriesEntriesSelector(state),
 
     analysisFramework: editEntriesAnalysisFrameworkSelector(state),
+    schema: editEntriesSchemaSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -102,9 +108,10 @@ export default class EditEntry extends React.PureComponent {
 
                         // injected inside WidgetFaram
                         onChange={this.handleChange}
-                        onValidationFailure={this.handleValidationFailure}
-                        onValidationSuccess={this.handleValidationSuccess}
+                        // onValidationFailure={this.handleValidationFailure}
+                        // onValidationSuccess={this.handleValidationSuccess}
                         onExcerptChange={this.handleExcerptChange}
+                        schema={this.props.schema}
                     />
                 ),
                 wrapContainer: true,
@@ -118,9 +125,10 @@ export default class EditEntry extends React.PureComponent {
 
                         // injected inside WidgetFaram
                         onChange={this.handleChange}
-                        onValidationFailure={this.handleValidationFailure}
-                        onValidationSuccess={this.handleValidationSuccess}
+                        // onValidationFailure={this.handleValidationFailure}
+                        // onValidationSuccess={this.handleValidationSuccess}
                         onExcerptChange={this.handleExcerptChange}
+                        schema={this.props.schema}
                     />
                 ),
                 wrapContainer: true,
@@ -187,7 +195,6 @@ export default class EditEntry extends React.PureComponent {
     }
 
     handleValidationFailure = (faramErrors, entryKey) => {
-        console.warn(faramErrors);
         this.props.setEntryError({
             leadId: this.props.leadId,
             key: entryKey,
@@ -197,6 +204,22 @@ export default class EditEntry extends React.PureComponent {
 
     handleValidationSuccess = (values, entryKey) => {
         console.warn('success', values, entryKey);
+    }
+
+    handleSave = () => {
+        this.props.entries.forEach((entry) => {
+            const entryKey = entryAccessor.key(entry);
+            detachedFaram({
+                value: entry.data.attributes,
+                schema: this.props.schema,
+                error: entry.localData.error,
+                onChange: this.handleChange,
+
+
+                onValidationFailure: errors => this.handleValidationFailure(errors, entryKey),
+                onValidationSuccess: values => this.handleValidationSuccess(values, entryKey),
+            });
+        });
     }
 
     render() {
@@ -247,6 +270,7 @@ export default class EditEntry extends React.PureComponent {
                         </DangerButton>
                         <SuccessButton
                             disabled={pendingEditEntryData}
+                            onClick={this.handleSave}
                         >
                             { saveButtonTitle }
                         </SuccessButton>

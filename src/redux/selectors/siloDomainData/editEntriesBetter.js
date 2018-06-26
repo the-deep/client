@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 
+import { requiredCondition } from '#rs/components/Input/Faram';
 import { entryAccessor } from '#entities/editEntriesBetter';
 
 import {
@@ -67,4 +68,41 @@ export const editEntriesAnalysisFrameworkSelector = createSelector(
 export const editEntriesWidgetsSelector = createSelector(
     editEntriesAnalysisFrameworkSelector,
     analysisFramework => analysisFramework.widgets || emptyArray,
+);
+
+const getSchemaForWidget = (widget) => {
+    switch (widget.widgetId) {
+        // TODO; add schema for dateWidget
+        case 'numberWidget': {
+            // FIXME: this is a test
+            return {
+                fields: {
+                    value: [requiredCondition],
+                },
+            };
+        }
+        default:
+            return [];
+    }
+};
+
+export const editEntriesSchemaSelector = createSelector(
+    editEntriesWidgetsSelector,
+    (widgets) => {
+        const schema = {
+            fields: {
+                // put fields here
+            },
+        };
+        widgets.forEach((widget) => {
+            schema.fields[widget.id] = {
+                fields: {
+                    id: [],
+                    data: getSchemaForWidget(widget),
+                },
+            };
+        });
+
+        return schema;
+    },
 );
