@@ -305,6 +305,7 @@ export default class LeadsViz extends React.PureComponent {
                 <CorrelationMatrixView
                     className={`${styles.correlationMatrix} ${styles.viz}`}
                     data={correlationData}
+                    colorSchemeType="continuous"
                     headerText={_ts('leadsViz', 'correlationMatrix')}
                     loading={loadingLeads || correlationDataPending}
                     vizContainerClass={styles.chartContainer}
