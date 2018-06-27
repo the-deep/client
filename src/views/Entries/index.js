@@ -602,6 +602,7 @@ export default class Entries extends React.PureComponent {
                     itemsCount={totalEntriesCount}
                     maxItemsPerPage={MAX_ENTRIES_PER_REQUEST}
                     onPageClick={this.handlePageClick}
+                    showItemsPerPageChange={false}
                 />
             </footer>
         );

@@ -255,10 +255,12 @@ export default class List extends React.PureComponent {
     )
 
     renderHeader = () => {
+        const { activePage } = this.state;
         const {
             leadDetails,
             onSaveAll,
             saveAllDisabled,
+            entries,
         } = this.props;
 
         return (
@@ -267,12 +269,13 @@ export default class List extends React.PureComponent {
                     {leadDetails.title}
                 </h3>
                 <div className={styles.actionButtons}>
-                    { this.props.entries && this.props.entries.length > ENTRIES_PER_PAGE &&
+                    {
                         <Pager
-                            itemsCount={this.props.entries.length}
+                            itemsCount={entries.length}
                             maxItemsPerPage={ENTRIES_PER_PAGE}
-                            activePage={this.state.activePage}
+                            activePage={activePage}
                             onPageClick={this.handlePageClick}
+                            showItemsPerPageChange={false}
                         />
                     }
                     <Link
