@@ -9,15 +9,17 @@ import {
     isObjectEmpty,
 } from '#rs/utils/common';
 
-import SunBurstView from '#rs/components/Visualization/SunBurstView';
-import ChordDiagramView from '#rs/components/Visualization/ChordDiagramView';
-import TreeMapView from '#rs/components/Visualization/TreeMapView';
-import CorrelationMatrixView from '#rs/components/Visualization/CorrelationMatrixView';
-import ForceDirectedGraphView from '#rs/components/Visualization/ForceDirectedGraphView';
-import CollapsibleTreeView from '#rs/components/Visualization/CollapsibleTreeView';
-import RadialDendrogramView from '#rs/components/Visualization/RadialDendrogramView';
+import wrapViz from '#rs/components/Visualization/VizWrapper';
+import SunBurst from '#rs/components/Visualization/SunBurst';
+import ChordDiagram from '#rs/components/Visualization/ChordDiagram';
+import TreeMap from '#rs/components/Visualization/TreeMap';
+import CorrelationMatrix from '#rs/components/Visualization/CorrelationMatrix';
+import ForceDirectedGraph from '#rs/components/Visualization/ForceDirectedGraph';
+import CollapsibleTree from '#rs/components/Visualization/CollapsibleTree';
+import RadialDendrogram from '#rs/components/Visualization/RadialDendrogram';
 import GeoReferencedMap from '#rs/components/Visualization/GeoReferencedMap';
 import BoundError from '#rs/components/General/BoundError';
+import VizError from '#components/VizError';
 import AppError from '#components/AppError';
 
 import {
@@ -75,6 +77,14 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     setLeadVisualization: parms => dispatch(setLeadVisualizationAction(parms)),
 });
+
+const ChordDiagramView = BoundError(VizError)(wrapViz(ChordDiagram));
+const SunBurstView = BoundError(VizError)(wrapViz(SunBurst));
+const CorrelationMatrixView = BoundError(VizError)(wrapViz(CorrelationMatrix));
+const RadialDendrogramView = BoundError(VizError)(wrapViz(RadialDendrogram));
+const TreeMapView = BoundError(VizError)(wrapViz(TreeMap));
+const ForceDirectedGraphView = BoundError(VizError)(wrapViz(ForceDirectedGraph));
+const CollapsibleTreeView = BoundError(VizError)(wrapViz(CollapsibleTree));
 
 @BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)

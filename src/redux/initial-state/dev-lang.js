@@ -988,6 +988,10 @@ const initialDevLangState = {
             problemText: 2011,
             reportErrorTitle: 9920,
         },
+        'components.vizError': {
+            problemText: 2012,
+            reportErrorTitle: 9920,
+        },
         'components.componentError': {
             problemText: 2012,
             reportErrorTitle: 9920,
