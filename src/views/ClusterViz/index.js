@@ -9,7 +9,8 @@ import BoundError from '#rs/components/General/BoundError';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Table from '#rs/components/View/Table';
 import List from '#rs/components/View/List';
-import ForceDirectedGraphView from '#rs/components/Visualization/ForceDirectedGraphView';
+import ForceDirectedGraph from '#rs/components/Visualization/ForceDirectedGraph';
+import wrapViz from '#rs/components/Visualization/VizWrapper';
 
 import {
     reverseRoute,
@@ -19,6 +20,7 @@ import {
     compareNumber,
 } from '#rs/utils/common';
 
+import VizError from '#components/VizError';
 import AppError from '#components/AppError';
 
 import _ts from '#ts';
@@ -56,6 +58,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     setProjectClusterData: params => dispatch(setProjectClusterDataAction(params)),
 });
+
+const ForceDirectedGraphView = BoundError(VizError)(wrapViz(ForceDirectedGraph));
 
 @BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
