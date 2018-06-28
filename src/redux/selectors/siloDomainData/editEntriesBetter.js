@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 
-import { requiredCondition } from '#rs/components/Input/Faram';
+import { dateCondition } from '#rs/components/Input/Faram';
 import { entryAccessor } from '#entities/editEntriesBetter';
 
 import {
@@ -73,11 +73,11 @@ export const editEntriesWidgetsSelector = createSelector(
 const getSchemaForWidget = (widget) => {
     switch (widget.widgetId) {
         // TODO; add schema for dateWidget
-        case 'numberWidget': {
+        case 'dateWidget': {
             // FIXME: this is a test
             return {
                 fields: {
-                    value: [requiredCondition],
+                    value: [dateCondition],
                 },
             };
         }

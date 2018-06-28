@@ -17,6 +17,7 @@ const propTypes = {
     excerpt: PropTypes.string,
     image: PropTypes.string,
     onExcerptChange: PropTypes.func.isRequired,
+    onExcerptCreate: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -38,12 +39,19 @@ export default class Excerpt extends React.PureComponent {
         this.state = { isBeingDraggedOver: false };
     }
 
-    handleExcerptChange = (type, value) => {
-        const { onExcerptChange } = this.props;
-        onExcerptChange({
-            type,
-            value,
-        });
+    handleExcerptChange = (type, value, createMode = false) => {
+        const { onExcerptChange, onExcerptCreate } = this.props;
+        if (createMode) {
+            onExcerptCreate({
+                type,
+                value,
+            });
+        } else {
+            onExcerptChange({
+                type,
+                value,
+            });
+        }
     }
 
     handleDragEnter = () => {
@@ -86,7 +94,19 @@ export default class Excerpt extends React.PureComponent {
             data,
         } = formattedData;
 
-        this.handleExcerptChange(type, data);
+        const {
+            entryType,
+            image,
+            excerpt,
+        } = this.props;
+
+        const hasExcerpt = (entryType === IMAGE && image) || (entryType === TEXT && excerpt);
+        if (hasExcerpt) {
+            // create new entry if entry has excerpt
+            this.handleExcerptChange(type, data, true);
+        } else {
+            this.handleExcerptChange(type, data, false);
+        }
 
         this.setState({ isBeingDraggedOver: false });
     }

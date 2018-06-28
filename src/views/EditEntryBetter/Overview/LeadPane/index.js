@@ -32,6 +32,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    onExcerptCreate: PropTypes.func.isRequired,
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     selectedEntryKey: PropTypes.string,
     setSelectedEntryKey: PropTypes.func.isRequired,
@@ -210,6 +211,7 @@ export default class LeftPane extends React.PureComponent {
     // Simplified Lead Preview
 
     calculateHighlights = () => ([
+        // this.props.api.getEntryHighlights()
         // TODO: send highlights prop
     ])
 
@@ -223,7 +225,10 @@ export default class LeftPane extends React.PureComponent {
     );
 
     handleHighlightClick = (e, { text }) => {
-        console.warn('TODO: should handle highlight click', text);
+        console.warn('this should handle highlight click', text);
+        // TODO:
+        // const existing = api.getEntryForExcerpt(text);
+        // api.selectEntry(existing.data.id);
     }
 
     handleLoadImages = (response) => {
@@ -235,13 +240,19 @@ export default class LeftPane extends React.PureComponent {
     // Assisted Tagging
 
     handleEntryAdd = (text) => {
-        console.warn('TODO: should add entry', text);
+        this.props.onExcerptCreate({
+            type: 'excerpt',
+            value: text,
+        });
     }
 
     // Lead Preview
 
     handleScreenshot = (image) => {
-        console.warn('TODO: should take screenshot');
+        this.props.onExcerptCreate({
+            type: 'image',
+            value: image,
+        });
     }
 
     render() {

@@ -19,9 +19,8 @@ const propTypes = {
     widgetType: PropTypes.string.isRequired,
 
     onExcerptChange: PropTypes.func.isRequired,
+    onExcerptCreate: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
-    // onValidationFailure: PropTypes.func.isRequired,
-    // onValidationSuccess: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -30,8 +29,6 @@ const defaultProps = {
     widgets: [],
     pending: false,
     onChange: () => {},
-    // onValidationFailure: () => {},
-    // onValidationSuccess: () => {},
     schema: {},
 };
 
@@ -48,21 +45,13 @@ export default class WidgetFaram extends React.PureComponent {
         this.props.onChange(faramValues, faramErrors, faramInfo, entryKey);
     }
 
-    /*
-    handleValidationFailure = (faramErrors) => {
-        const entryKey = entryAccessor.key(this.props.entry);
-        this.props.onValidationFailure(faramErrors, entryKey);
-    }
-
-    handleValidationSuccess = (faramValues) => {
-        const entryKey = entryAccessor.key(this.props.entry);
-        this.props.onValidationSuccess(faramValues, entryKey);
-    }
-    */
-
     handleExcerptChange = (excerptData) => {
         const entryKey = entryAccessor.key(this.props.entry);
         this.props.onExcerptChange(excerptData, entryKey);
+    }
+
+    handleExcerptCreate = (excerptData) => {
+        this.props.onExcerptCreate(excerptData);
     }
 
     // Grid View Layout
@@ -110,6 +99,7 @@ export default class WidgetFaram extends React.PureComponent {
                                     image={image}
                                     widget={widget}
                                     onExcerptChange={this.handleExcerptChange}
+                                    onExcerptCreate={this.handleExcerptCreate}
                                 />
                             ) : (
                                 <Widget

@@ -33,6 +33,7 @@ const propTypes = {
     selectedEntryKey: PropTypes.string,
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     setSelectedEntryKey: PropTypes.func.isRequired,
+    onExcerptCreate: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -96,6 +97,11 @@ export default class Overview extends React.PureComponent {
         });
     }
 
+    handleEmptyExcerptCreate = () => {
+        // NOTE: onExcerptCreate should be passed to widgetfaram as well
+        this.props.onExcerptCreate({ type: 'excerpt', value: '' });
+    }
+
     render() {
         const {
             pending,
@@ -112,7 +118,9 @@ export default class Overview extends React.PureComponent {
             <ResizableH
                 className={styles.overview}
                 leftChild={
-                    <LeadPane />
+                    <LeadPane
+                        onExcerptCreate={this.props.onExcerptCreate}
+                    />
                 }
                 rightChild={
                     <React.Fragment>
@@ -130,7 +138,9 @@ export default class Overview extends React.PureComponent {
                                 value={this.props.selectedEntryKey}
                             />
                             <div className={styles.actionButtons}>
-                                <SuccessButton>
+                                <SuccessButton
+                                    onClick={this.handleEmptyExcerptCreate}
+                                >
                                     Add entry
                                 </SuccessButton>
                                 <DangerButton>

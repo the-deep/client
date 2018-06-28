@@ -6,10 +6,11 @@ import { Link } from 'react-router-dom';
 // import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
+import { detachedFaram } from '#rsci/Faram';
 import FixedTabs from '#rscv/FixedTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import { detachedFaram } from '#rsci/Faram';
+import { CoordinatorBuilder } from '#rsu/coordinate';
 
 import { reverseRoute } from '#rs/utils/common';
 
@@ -31,11 +32,14 @@ import {
     editEntriesSetEntryDataAction,
     editEntriesSetEntryErrorsAction,
     editEntriesSchemaSelector,
+    editEntriesAddEntryAction,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
     setRegionsForProjectAction,
 } from '#redux';
+import notify from '#notify';
+import _ts from '#ts';
 
 import EditEntryDataRequest from './requests/EditEntryDataRequest';
 
@@ -62,6 +66,7 @@ const propTypes = {
     setExcerpt: PropTypes.func.isRequired,
     setEntryData: PropTypes.func.isRequired,
     setEntryError: PropTypes.func.isRequired,
+    addEntry: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -91,11 +96,12 @@ const mapDispatchToProps = dispatch => ({
 
     setEntryData: params => dispatch(editEntriesSetEntryDataAction(params)),
     setEntryError: params => dispatch(editEntriesSetEntryErrorsAction(params)),
+    addEntry: params => dispatch(editEntriesAddEntryAction(params)),
 });
 
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class EditEntry extends React.PureComponent {
+export default class EditEntryBetter extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -104,6 +110,7 @@ export default class EditEntry extends React.PureComponent {
 
         this.state = {
             pendingEditEntryData: true,
+            pendingSaveAll: false,
         };
 
         this.views = {
@@ -114,9 +121,8 @@ export default class EditEntry extends React.PureComponent {
 
                         // injected inside WidgetFaram
                         onChange={this.handleChange}
-                        // onValidationFailure={this.handleValidationFailure}
-                        // onValidationSuccess={this.handleValidationSuccess}
                         onExcerptChange={this.handleExcerptChange}
+                        onExcerptCreate={this.handleExcerptCreate}
                         schema={this.props.schema}
                     />
                 ),
@@ -131,9 +137,8 @@ export default class EditEntry extends React.PureComponent {
 
                         // injected inside WidgetFaram
                         onChange={this.handleChange}
-                        // onValidationFailure={this.handleValidationFailure}
-                        // onValidationSuccess={this.handleValidationSuccess}
                         onExcerptChange={this.handleExcerptChange}
+                        onExcerptCreate={this.handleExcerptCreate}
                         schema={this.props.schema}
                     />
                 ),
@@ -149,6 +154,31 @@ export default class EditEntry extends React.PureComponent {
         };
 
         this.defaultHash = 'overview';
+
+        this.saveRequestCoordinator = new CoordinatorBuilder()
+            .maxActiveActors(3)
+            .preSession(() => {
+                this.setState({ pendingSaveAll: true });
+            })
+            .postSession((totalErrors) => {
+                if (totalErrors > 0) {
+                    notify.send({
+                        type: notify.type.ERROR,
+                        title: _ts('editEntry', 'entrySave'),
+                        message: _ts('editEntry', 'entrySaveFailure', { errorCount: totalErrors }),
+                        duration: notify.duration.SLOW,
+                    });
+                } else {
+                    notify.send({
+                        type: notify.type.SUCCESS,
+                        title: _ts('editEntry', 'entrySave'),
+                        message: _ts('editEntry', 'entrySaveSuccess'),
+                        duration: notify.duration.MEDIUM,
+                    });
+                }
+                this.setState({ pendingSaveAll: false });
+            })
+            .build();
 
         this.editEntryDataRequest = new EditEntryDataRequest({
             setEntries: this.props.setEntries,
@@ -179,6 +209,8 @@ export default class EditEntry extends React.PureComponent {
 
     componentWillUnmount() {
         this.editEntryDataRequest.stop();
+
+        this.saveRequestCoordinator.stop();
     }
 
     handleExcerptChange = ({ type, value }, entryKey) => {
@@ -190,26 +222,61 @@ export default class EditEntry extends React.PureComponent {
         });
     }
 
-    handleChange = (faramValues, faramErrors, faramInfo, entryKey) => {
-        this.props.setEntryData({
+    handleExcerptCreate = ({ type, value }) => {
+        this.props.addEntry({
             leadId: this.props.leadId,
-            key: entryKey,
-            values: faramValues,
-            errors: faramErrors,
-            info: faramInfo,
+            entry: {
+                analysisFramework: this.props.analysisFramework.id,
+                entryType: type,
+                entryValue: value,
+            },
         });
+    }
+
+    handleChange = (faramValues, faramErrors, faramInfo, entryKey) => {
+        if (faramInfo.action === 'newEntry' || entryKey === undefined) {
+            this.props.addEntry({
+                leadId: this.props.leadId,
+                entry: {
+                    lead: this.props.leadId,
+                    attributes: faramValues,
+                    analysisFramework: this.props.analysisFramework.id,
+                },
+            });
+        } else {
+            this.props.setEntryData({
+                leadId: this.props.leadId,
+                key: entryKey,
+                values: faramValues,
+                errors: faramErrors,
+                info: faramInfo,
+            });
+        }
     }
 
     handleValidationFailure = (faramErrors, entryKey) => {
-        this.props.setEntryError({
-            leadId: this.props.leadId,
-            key: entryKey,
-            errors: faramErrors,
-        });
+        const proxyRequest = {
+            start: () => {
+                this.props.setEntryError({
+                    leadId: this.props.leadId,
+                    key: entryKey,
+                    errors: faramErrors,
+                });
+                this.saveRequestCoordinator.notifyComplete(entryKey, true);
+            },
+            stop: () => {},
+        };
+        this.saveRequestCoordinator.add(entryKey, proxyRequest);
     }
 
     handleValidationSuccess = (values, entryKey) => {
-        console.warn('success', values, entryKey);
+        const request = {
+            start: () => {
+                this.saveRequestCoordinator.notifyComplete(entryKey, false);
+            },
+            stop: () => {},
+        };
+        this.saveRequestCoordinator.add(entryKey, request);
     }
 
     handleSave = () => {
@@ -221,11 +288,12 @@ export default class EditEntry extends React.PureComponent {
                 error: entry.localData.error,
                 onChange: this.handleChange,
 
-
                 onValidationFailure: errors => this.handleValidationFailure(errors, entryKey),
                 onValidationSuccess: values => this.handleValidationSuccess(values, entryKey),
             });
+            // FIXME: add conditions for delete later
         });
+        this.saveRequestCoordinator.start();
     }
 
     render() {
@@ -237,6 +305,7 @@ export default class EditEntry extends React.PureComponent {
         } = this.props;
         const {
             pendingEditEntryData,
+            pendingSaveAll,
         } = this.state;
 
         if (pendingEditEntryData) {
@@ -263,7 +332,6 @@ export default class EditEntry extends React.PureComponent {
                         className={styles.backLink}
                         title={backButtonTooltip}
                         to={exitPath}
-                        disabled={pendingEditEntryData}
                     >
                         <i className={iconNames.back} />
                     </Link>
@@ -279,12 +347,12 @@ export default class EditEntry extends React.PureComponent {
                     />
                     <div className={styles.actionButtons}>
                         <DangerButton
-                            disabled={pendingEditEntryData}
+                            disabled={pendingEditEntryData || pendingSaveAll}
                         >
                             { cancelButtonTitle }
                         </DangerButton>
                         <SuccessButton
-                            disabled={pendingEditEntryData}
+                            disabled={pendingEditEntryData || pendingSaveAll}
                             onClick={this.handleSave}
                         >
                             { saveButtonTitle }

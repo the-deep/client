@@ -53,11 +53,12 @@ export const createEntry = ({
         'image',
         'entryType',
         'lead',
+        'order',
+
         'analysisFramework',
         'attributes',
         'exportData',
         'filterData',
-        'order',
         'createdAt',
     ];
     const pickedData = pick(data, keysToPick);

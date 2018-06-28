@@ -1,5 +1,6 @@
 import update from '#rs/utils/immutable-update';
-import { applyDiff, entryAccessor } from '#entities/editEntriesBetter';
+import { isFalsy, randomString } from '#rs/utils/common';
+import { applyDiff, entryAccessor, createEntry } from '#entities/editEntriesBetter';
 
 const getNewSelectedEntryKey = (entries, selectedEntryKey) => {
     if (entries.length <= 0) {
@@ -27,6 +28,13 @@ export const EEB__SET_SELECTED_ENTRY_KEY = 'siloDomainData/EEB__SET_SELECTED_ENT
 export const EEB__SET_ENTRY_EXCERPT = 'siloDomainData/EEB__SET_ENTRY_EXCERPT';
 export const EEB__SET_ENTRY_DATA = 'siloDomainData/EEB__SET_ENTRY_DATA';
 export const EEB__SET_ENTRY_ERROR = 'siloDomainData/EEB__SET_ENTRY_ERROR';
+export const EEB__ADD_ENTRY = 'siloDomainData/EEB__ADD_ENTRY';
+
+export const editEntriesAddEntryAction = ({ leadId, entry }) => ({
+    type: EEB__ADD_ENTRY,
+    leadId,
+    entry,
+});
 
 export const editEntriesSetLeadAction = ({ lead }) => ({
     type: EEB__SET_LEAD,
@@ -166,6 +174,60 @@ const setEntryExcerpt = (state, action) => {
     return update(state, settings);
 };
 
+const addEntry = (state, action) => {
+    const { entry, leadId } = action;
+    const {
+        editEntries: { [leadId]: { entries = [] } = {} } = {},
+    } = state;
+
+    const {
+        entryType,
+        entryValue,
+        ...otherEntry
+    } = entry;
+
+    // Add order to entries during creation
+    const maxEntryOrder = entries.reduce(
+        (acc, e) => {
+            const val = entryAccessor.data(e) || {};
+            const entryOrder = val.order;
+            if (isFalsy(entryOrder)) {
+                return acc;
+            }
+            return Math.max(acc, entryOrder);
+        },
+        0,
+    );
+
+    // Get random key for new entry
+    const localId = randomString();
+
+    const newData = {
+        ...otherEntry,
+        entryType,
+        excerpt: entryType === 'excerpt' ? entryValue : undefined,
+        image: entryType === 'image' ? entryValue : undefined,
+        lead: leadId,
+        order: maxEntryOrder + 1,
+    };
+    const newEntry = createEntry({
+        key: localId,
+        data: newData,
+    });
+
+    const settings = {
+        editEntries: {
+            [leadId]: { $auto: {
+                selectedEntryKey: { $set: localId },
+                entries: { $autoArray: {
+                    $push: [newEntry],
+                } },
+            } },
+        },
+    };
+    return update(state, settings);
+};
+
 const setEntryData = (state, action) => {
     const { leadId, key, values, errors, info } = action;
     const {
@@ -178,61 +240,50 @@ const setEntryData = (state, action) => {
 
     let newState = state;
 
-    // Handle actions from info
-    switch (info.action) {
-        case 'newEntry':
-            console.warn('TODO: Should create new entry');
-            break;
-        case 'changeExcerpt': {
-            const excerpt = info.type === 'excerpt' ? info.value : undefined;
-            const image = info.type === 'image' ? info.value : undefined;
+    if (info.action === 'changeEntry') {
+        const excerpt = info.type === 'excerpt' ? info.value : undefined;
+        const image = info.type === 'image' ? info.value : undefined;
 
-            const settings = {
-                editEntries: {
-                    [leadId]: {
-                        entries: {
-                            [entryIndex]: {
-                                data: {
-                                    entryType: { $set: info.type },
-                                    excerpt: { $set: excerpt },
-                                    image: { $set: image },
-                                },
-                            },
-                        },
-                    },
-                },
-            };
-
-            newState = update(newState, settings);
-            break;
-        }
-        default:
-            break;
-    }
-
-    if (info.action !== 'newEntry') {
         const settings = {
             editEntries: {
                 [leadId]: {
                     entries: {
                         [entryIndex]: {
                             data: {
-                                attributes: {
-                                    $set: values,
-                                },
-                            },
-                            localData: {
-                                isPristine: { $set: false },
-                                error: { $set: errors },
-                                // TODO: hasError must be calculated
+                                entryType: { $set: info.type },
+                                excerpt: { $set: excerpt },
+                                image: { $set: image },
                             },
                         },
                     },
                 },
             },
         };
+
         newState = update(newState, settings);
     }
+
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entries: {
+                    [entryIndex]: {
+                        data: {
+                            attributes: {
+                                $set: values,
+                            },
+                        },
+                        localData: {
+                            isPristine: { $set: false },
+                            error: { $set: errors },
+                            // TODO: hasError must be calculated
+                        },
+                    },
+                },
+            },
+        },
+    };
+    newState = update(newState, settings);
 
     return newState;
 };
@@ -271,5 +322,6 @@ const reducers = {
     [EEB__SET_ENTRY_EXCERPT]: setEntryExcerpt,
     [EEB__SET_ENTRY_DATA]: setEntryData,
     [EEB__SET_ENTRY_ERROR]: setEntryError,
+    [EEB__ADD_ENTRY]: addEntry,
 };
 export default reducers;

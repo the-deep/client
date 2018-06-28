@@ -10,9 +10,10 @@ import {
 import notify from '#notify';
 import Request from '#utils/Request';
 import _ts from '#ts';
-// import schema from '#schema';
 
 export default class EditEntryDataRequest extends Request {
+    // TODO: write schema
+
     handlePreLoad = () => {
         this.parent.setState({ pendingEditEntryData: true });
     }
