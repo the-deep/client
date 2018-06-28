@@ -12,7 +12,7 @@ import {
 import { entryAccessor } from '#entities/editEntriesBetter';
 
 import { hasWidget } from '../widgets';
-import WidgetFaramWrapper from './WidgetFaramWrapper';
+import WidgetFaramContainer from './WidgetFaramContainer';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -49,6 +49,10 @@ export default class Listing extends React.PureComponent {
         this.widgets = Listing.filterWidgets(props.widgets);
     }
 
+    componentDidMount() {
+        window.addEventListener('scroll', this.handleScroll, true);
+    }
+
     componentWillReceiveProps(nextProps) {
         const { widgets: oldWidgets } = this.props;
         const { widgets: newWidgets } = nextProps;
@@ -57,7 +61,15 @@ export default class Listing extends React.PureComponent {
         }
     }
 
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.handleScroll, true);
+    }
+
     keySelector = entry => entryAccessor.key(entry)
+
+    handleScroll = (e) => {
+        console.warn(e);
+    }
 
     rendererParams = (key, entry) => {
         const {
@@ -78,7 +90,7 @@ export default class Listing extends React.PureComponent {
             <ListView
                 className={styles.list}
                 data={entries}
-                renderer={WidgetFaramWrapper}
+                renderer={WidgetFaramContainer}
                 rendererParams={this.rendererParams}
                 rendererClassName={styles.widgetContainer}
                 keyExtractor={this.keySelector}
