@@ -6,6 +6,6 @@
     overflow: auto;
 
     .widget-container {
-        position: relative;
+        border-bottom: $width-separator-thin solid $color-separator;
     }
 }

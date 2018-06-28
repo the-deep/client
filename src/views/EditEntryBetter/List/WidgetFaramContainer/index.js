@@ -87,21 +87,18 @@ export default class WidgetFaramWrapper extends React.PureComponent {
             ${styles.widgetFaramContainer}
         `;
 
+        const headerClassName = `
+            widget-container-header
+            ${styles.header}
+        `;
+
         // FIXME: use strings
         const deleteButtonTooltip = 'Delete entry';
         const editButtonTooltip = 'Edit entry';
 
         return (
             <div className={className}>
-                <WidgetFaram
-                    className={styles.widget}
-                    entry={entry}
-                    widgets={widgets}
-                    pending={pending}
-                    widgetType={widgetType}
-                    {...otherProps}
-                />
-                <div className={styles.actionButtons}>
+                <header className={headerClassName}>
                     <DangerButton
                         iconName={iconNames.delete}
                         title={deleteButtonTooltip}
@@ -112,7 +109,15 @@ export default class WidgetFaramWrapper extends React.PureComponent {
                         title={editButtonTooltip}
                         iconName={iconNames.edit}
                     />
-                </div>
+                </header>
+                <WidgetFaram
+                    className="widget"
+                    entry={entry}
+                    widgets={widgets}
+                    pending={pending}
+                    widgetType={widgetType}
+                    {...otherProps}
+                />
             </div>
         );
     }

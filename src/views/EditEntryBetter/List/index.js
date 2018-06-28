@@ -68,7 +68,10 @@ export default class Listing extends React.PureComponent {
     keySelector = entry => entryAccessor.key(entry)
 
     handleScroll = (e) => {
-        console.warn(e);
+        const headers = e.target.getElementsByClassName('widget-container-header');
+        for (let i = 0; i < headers.length; i += 1) {
+            headers[i].style.transform = `translateX(${e.target.scrollLeft}px)`;
+        }
     }
 
     rendererParams = (key, entry) => {
