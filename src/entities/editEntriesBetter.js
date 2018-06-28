@@ -40,8 +40,11 @@ export const entryAccessor = {
 
     key: (entry = {}) => (entry.localData || {}).id,
     error: (entry = {}) => (entry.localData || {}).error,
+    isMarkedAsDeleted: (entry = {}) => (entry.localData || {}).isMarkedAsDeleted,
+
     order: (entry = {}) => (entry.data || {}).order,
     serverId: (entry = {}) => (entry.data || {}).id,
+
     versionId: (entry = {}) => (entry.serverData || {}).versionId,
 };
 
@@ -70,6 +73,7 @@ export const createEntry = ({
             isPristine: true,
             hasError: false,
             error: undefined,
+            isMarkedAsDeleted: false,
         },
         serverData: {
             versionId: undefined,

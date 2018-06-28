@@ -16,6 +16,7 @@ const propTypes = {
     entries: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     setSelectedEntryKey: PropTypes.func.isRequired,
     leadId: PropTypes.number.isRequired,
+    markAsDeletedEntry: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -74,53 +75,67 @@ export default class EntriesListing extends React.PureComponent {
             // choices,
         } = this.props;
 
-        const onEntryDelete = (deleteOrUndo, k) => {
-            console.warn('TODO: delete or undo', k);
-        };
         const handleEntryItemClick = (currentEntryId) => {
             this.props.setSelectedEntryKey({ leadId: this.props.leadId, key: currentEntryId });
+        };
+        const handleMarkAsDeletedEntry = (currentEntryId, value) => {
+            this.props.markAsDeletedEntry({
+                leadId: this.props.leadId,
+                key: currentEntryId,
+                value,
+            });
         };
 
         const currentEntryId = EntriesListing.calcEntryKey(entry);
         const isActive = currentEntryId === selectedEntryKey;
         /*
-        // const status = choices[key].choice;
+        const status = choices[key].choice;
+        */
+        /*
         const selectedEntry = entries.find(
             e => entryAccessor.key(e) === currentEntryId,
         );
-        const isMarkedForDelete = entryAccessor.isMarkedForDelete(selectedEntry);
         */
-        const isMarkedForDelete = false;
+        const isMarkedAsDeleted = entryAccessor.isMarkedAsDeleted(entry);
 
-        const isSelectedEntryMarkedForDelete = false;
-        // const isSelectedEntryMarkedForDelete = entryAccessor.isMarkedForDelete(entry);
+        // const isSelectedEntryMarkedForDelete = false;
+        // const isSelectedEntryMarkedForDelete = entryAccessor.isMarkedAsDeleted(entry);
 
+        const classNames = [
+            styles.entriesListItem,
+        ];
+        if (isActive) {
+            classNames.push(styles.active);
+        }
+        if (isMarkedAsDeleted) {
+            classNames.push(styles.markedForDelete);
+        }
         return (
             <div
-                className={`${styles.entriesListItem} ${isActive ? styles.active : ''}`}
+                className={classNames.join(' ')}
                 key={key}
             >
                 <button
                     className={styles.addEntryListItem}
                     onClick={() => handleEntryItemClick(currentEntryId)}
-                    disabled={isMarkedForDelete}
+                    disabled={isMarkedAsDeleted}
                     type="button"
                 >
                     {this.renderEntryLabel(entry)}
                     <div className={styles.statusIcons}>
                         {
-                            isSelectedEntryMarkedForDelete &&
+                            isMarkedAsDeleted &&
                             <span className={EntriesListing.iconMap.markedForRemoval} />
                         }
                         {/* this.renderIcon(status) */}
                     </div>
                 </button>
                 {
-                    isMarkedForDelete ? (
+                    isMarkedAsDeleted ? (
                         <Button
                             key="undo-button"
                             className={styles.removeButton}
-                            onClick={() => onEntryDelete(false, key)}
+                            onClick={() => handleMarkAsDeletedEntry(currentEntryId, false)}
                             iconName={iconNames.undo}
                             title={_ts('editEntry', 'removeEntryButtonTitle')}
                         />
@@ -128,7 +143,7 @@ export default class EntriesListing extends React.PureComponent {
                         <DangerButton
                             key="remove-button"
                             className={styles.removeButton}
-                            onClick={() => onEntryDelete(true, key)}
+                            onClick={() => handleMarkAsDeletedEntry(currentEntryId, true)}
                             iconName={iconNames.delete}
                             title={_ts('editEntry', 'undoRemoveEntryButtonTitle')}
                         />

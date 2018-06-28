@@ -33,6 +33,13 @@ export const editEntriesEntriesSelector = createSelector(
     editEntry => editEntry.entries || emptyArray,
 );
 
+export const editEntriesFilteredEntriesSelector = createSelector(
+    editEntriesEntriesSelector,
+    entries => entries.filter(
+        entry => !entryAccessor.isMarkedAsDeleted(entry),
+    ),
+);
+
 export const editEntriesSelectedEntryKeySelector = createSelector(
     editEntriesForLeadSelector,
     editEntry => editEntry.selectedEntryKey,

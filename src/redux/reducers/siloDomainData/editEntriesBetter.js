@@ -1,5 +1,5 @@
 import update from '#rs/utils/immutable-update';
-import { isFalsy, randomString } from '#rs/utils/common';
+import { isFalsy, randomString, getDefinedElementAround } from '#rs/utils/common';
 import { applyDiff, entryAccessor, createEntry } from '#entities/editEntriesBetter';
 
 const getNewSelectedEntryKey = (entries, selectedEntryKey) => {
@@ -29,6 +29,7 @@ export const EEB__SET_ENTRY_EXCERPT = 'siloDomainData/EEB__SET_ENTRY_EXCERPT';
 export const EEB__SET_ENTRY_DATA = 'siloDomainData/EEB__SET_ENTRY_DATA';
 export const EEB__SET_ENTRY_ERROR = 'siloDomainData/EEB__SET_ENTRY_ERROR';
 export const EEB__ADD_ENTRY = 'siloDomainData/EEB__ADD_ENTRY';
+export const EEB__MARK_AS_DELETED_ENTRY = 'siloDomainData/EEB__MARK_AS_DELETED_ENTRY';
 
 export const editEntriesAddEntryAction = ({ leadId, entry }) => ({
     type: EEB__ADD_ENTRY,
@@ -80,6 +81,13 @@ export const editEntriesSetEntryErrorsAction = ({ leadId, key, errors }) => ({
     leadId,
     key,
     errors,
+});
+
+export const editEntriesMarkAsDeletedEntryAction = ({ leadId, key, value }) => ({
+    type: EEB__MARK_AS_DELETED_ENTRY,
+    leadId,
+    key,
+    value,
 });
 
 const setLead = (state, action) => {
@@ -314,6 +322,52 @@ const setEntryError = (state, action) => {
     return update(state, settings);
 };
 
+const markAsDeletedEntry = (state, action) => {
+    const { leadId, key, value } = action;
+    const {
+        editEntries: { [leadId]: { entries = [], selectedEntryKey } = {} } = {},
+    } = state;
+
+    const entryIndex = entries.findIndex(
+        entry => entryAccessor.key(entry) === key,
+    );
+
+    let newSelectedEntryKey = selectedEntryKey;
+    if (value) {
+        const filteredEntries = entries.map(
+            e => (
+                entryAccessor.isMarkedAsDeleted(e) || entryAccessor.key(e) === selectedEntryKey
+                    ? undefined
+                    : e
+            ),
+        );
+        if (filteredEntries[entryIndex] === undefined) {
+            const newSelectedEntry = getDefinedElementAround(filteredEntries, entryIndex);
+            newSelectedEntryKey = newSelectedEntry
+                ? entryAccessor.key(newSelectedEntry)
+                : undefined;
+        }
+    } else {
+        newSelectedEntryKey = key;
+    }
+
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                selectedEntryKey: { $set: newSelectedEntryKey },
+                entries: {
+                    [entryIndex]: {
+                        localData: {
+                            isMarkedAsDeleted: { $set: value },
+                        },
+                    },
+                },
+            },
+        },
+    };
+    return update(state, settings);
+};
+
 const reducers = {
     [EEB__SET_LEAD]: setLead,
     [EEB__SET_ENTRIES]: setEntries,
@@ -323,5 +377,6 @@ const reducers = {
     [EEB__SET_ENTRY_DATA]: setEntryData,
     [EEB__SET_ENTRY_ERROR]: setEntryError,
     [EEB__ADD_ENTRY]: addEntry,
+    [EEB__MARK_AS_DELETED_ENTRY]: markAsDeletedEntry,
 };
 export default reducers;

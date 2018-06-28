@@ -12,6 +12,7 @@ import {
     editEntriesEntriesSelector,
     editEntriesSelectedEntryKeySelector,
     editEntriesSetSelectedEntryKeyAction,
+    editEntriesMarkAsDeletedEntryAction,
 } from '#redux';
 
 import {
@@ -36,6 +37,7 @@ const propTypes = {
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     selectedEntryKey: PropTypes.string,
     setSelectedEntryKey: PropTypes.func.isRequired,
+    markAsDeletedEntry: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -51,6 +53,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
+    markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -148,6 +151,7 @@ export default class LeftPane extends React.PureComponent {
                         entries={this.props.entries}
                         selectedEntryKey={this.props.selectedEntryKey}
                         setSelectedEntryKey={this.props.setSelectedEntryKey}
+                        markAsDeletedEntry={this.props.markAsDeletedEntry}
                     />
                 </div>
             ),

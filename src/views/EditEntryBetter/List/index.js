@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import ListView from '#rscv/List/ListView';
 
 import {
-    editEntriesEntriesSelector,
+    editEntriesFilteredEntriesSelector,
     editEntriesWidgetsSelector,
 } from '#redux';
 
@@ -28,7 +28,7 @@ const defaultProps = {
 };
 
 const mapStateToProps = state => ({
-    entries: editEntriesEntriesSelector(state),
+    entries: editEntriesFilteredEntriesSelector(state),
     widgets: editEntriesWidgetsSelector(state),
 });
 

@@ -9,6 +9,7 @@ import { iconNames } from '#constants';
 import {
     editEntriesSetSelectedEntryKeyAction,
     leadIdFromRoute,
+    editEntriesMarkAsDeletedEntryAction,
 } from '#redux';
 
 import WidgetFaram from '../../WidgetFaram';
@@ -23,6 +24,7 @@ const propTypes = {
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setSelectedEntryKey: PropTypes.func.isRequired,
     leadId: PropTypes.number.isRequired,
+    markAsDeletedEntry: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -39,6 +41,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
+    markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -55,6 +58,18 @@ export default class WidgetFaramWrapper extends React.PureComponent {
         window.location.replace('#/overview');
         e.preventDefault();
     };
+
+    handleEntryDelete = () => {
+        const { entry } = this.props;
+        if (!entry) {
+            return;
+        }
+        this.props.markAsDeletedEntry({
+            leadId: this.props.leadId,
+            key: entryAccessor.key(entry),
+            value: true,
+        });
+    }
 
     render() {
         const {
@@ -90,6 +105,7 @@ export default class WidgetFaramWrapper extends React.PureComponent {
                     <DangerButton
                         iconName={iconNames.delete}
                         title={deleteButtonTooltip}
+                        onClick={this.handleEntryDelete}
                     />
                     <WarningButton
                         onClick={this.handleEdit}

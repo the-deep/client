@@ -15,8 +15,9 @@ import {
     editEntriesSelectedEntrySelector,
 
     editEntriesSelectedEntryKeySelector,
-    editEntriesEntriesSelector,
+    editEntriesFilteredEntriesSelector,
     editEntriesSetSelectedEntryKeyAction,
+    editEntriesMarkAsDeletedEntryAction,
 } from '#redux';
 
 import WidgetFaram from '../WidgetFaram';
@@ -34,6 +35,7 @@ const propTypes = {
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     setSelectedEntryKey: PropTypes.func.isRequired,
     onExcerptCreate: PropTypes.func.isRequired,
+    markAsDeletedEntry: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -50,11 +52,12 @@ const mapStateToProps = state => ({
     widgets: editEntriesWidgetsSelector(state),
     entry: editEntriesSelectedEntrySelector(state),
     selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
-    entries: editEntriesEntriesSelector(state),
+    entries: editEntriesFilteredEntriesSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
     setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
+    markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -102,6 +105,18 @@ export default class Overview extends React.PureComponent {
         this.props.onExcerptCreate({ type: 'excerpt', value: '' });
     }
 
+    handleEntryDelete = () => {
+        const { entry } = this.props;
+        if (!entry) {
+            return;
+        }
+        this.props.markAsDeletedEntry({
+            leadId: this.props.leadId,
+            key: entryAccessor.key(entry),
+            value: true,
+        });
+    }
+
     render() {
         const {
             pending,
@@ -143,7 +158,10 @@ export default class Overview extends React.PureComponent {
                                 >
                                     Add entry
                                 </SuccessButton>
-                                <DangerButton>
+                                <DangerButton
+                                    onClick={this.handleEntryDelete}
+                                    disabled={!entry}
+                                >
                                     Remove entry
                                 </DangerButton>
                             </div>

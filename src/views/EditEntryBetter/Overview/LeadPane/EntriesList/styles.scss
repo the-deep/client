@@ -82,8 +82,6 @@
         }
 
         &:hover {
-            background-color: $color-background-hover;
-
             .add-entry-list-item {
                 .status-icons {
                     opacity: 0;
@@ -94,6 +92,12 @@
                 display: initial;
                 opacity: 1;
                 animation: fade .5s linear;
+            }
+        }
+
+        &:not(.marked-for-delete) {
+            &:hover {
+                background-color: $color-background-hover;
             }
         }
     }
