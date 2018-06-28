@@ -13,17 +13,22 @@ const defaultProps = {
     widget: undefined,
 };
 
-// eslint-disable-next-line react/prefer-stateless-function
-export default class MultiselectWidget extends React.PureComponent {
-    static valueKeyExtractor = d => d.key;
+const emptyArray = [];
+const getOptions = (widget = {}) => {
+    const { properties: { data: { options = emptyArray } = {} } = {} } = widget;
+    return options;
+};
 
+// eslint-disable-next-line react/prefer-stateless-function
+export default class MultiSelectWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+    static valueKeyExtractor = d => d.key;
 
     render() {
-        const {
-            widget: { properties: { data: { options } } },
-        } = this.props;
+        const { widget } = this.props;
+        const options = getOptions(widget);
+
         return (
             <div>
                 <SelectInputWithList

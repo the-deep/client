@@ -13,6 +13,17 @@ const defaultProps = {
     widget: undefined,
 };
 
+const emptyArray = [];
+const getOptions = (widget = {}) => {
+    const { properties: { data: { scaleUnits = emptyArray } = {} } = {} } = widget;
+    return scaleUnits;
+};
+
+const getValue = (widget = {}) => {
+    const { properties: { data: { value } = {} } = {} } = widget;
+    return value;
+};
+
 export default class ScaleWidget extends React.PureComponent {
     static valueKeyExtractor = d => d.key;
 
@@ -24,17 +35,14 @@ export default class ScaleWidget extends React.PureComponent {
     static colorSelector = option => option.color;
 
     isDefaultSelector = (option) => {
-        const {
-            widget: { properties: { data: { value } } },
-        } = this.props;
-
+        const { widget } = this.props;
+        const value = getValue(widget);
         return option.key === value;
     };
 
     render() {
-        const {
-            widget: { properties: { data: { scaleUnits } } },
-        } = this.props;
+        const { widget } = this.props;
+        const options = getOptions(widget);
 
         return (
             <ScaleInput
@@ -42,7 +50,7 @@ export default class ScaleWidget extends React.PureComponent {
                 faramElementName="selectedScale"
                 showLabel={false}
                 hideClearButton
-                options={scaleUnits}
+                options={options}
                 keySelector={ScaleWidget.keySelector}
                 labelSelector={ScaleWidget.labelSelector}
                 colorSelector={ScaleWidget.colorSelector}
