@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
-import Button from '#rsca/Button';
+// import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import FixedTabs from '#rscv/FixedTabs';
@@ -10,8 +11,13 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { detachedFaram } from '#rsci/Faram';
 
+import { reverseRoute } from '#rs/utils/common';
+
 import { entryAccessor } from '#entities/editEntriesBetter';
-import { iconNames } from '#constants';
+import {
+    iconNames,
+    routes,
+} from '#constants';
 import {
     leadIdFromRoute,
     editEntriesLeadSelector,
@@ -224,7 +230,10 @@ export default class EditEntry extends React.PureComponent {
 
     render() {
         const {
-            lead: { title: leadTitle } = {},
+            lead: {
+                title: leadTitle,
+                project: projectId,
+            } = {},
         } = this.props;
         const {
             pendingEditEntryData,
@@ -241,18 +250,23 @@ export default class EditEntry extends React.PureComponent {
         // FIXME: use strings
         const cancelButtonTitle = 'Cancel';
         const saveButtonTitle = 'Save';
-        const backButtonTooltip = 'Back to murica';
+        const backButtonTooltip = 'Back to leads page';
+
+        const exitPath = reverseRoute(routes.leads.path, {
+            projectId,
+        });
 
         return (
             <div className={styles.editEntriesBetter}>
                 <header className={styles.header}>
-                    <Button
-                        className={styles.backButton}
+                    <Link
+                        className={styles.backLink}
                         title={backButtonTooltip}
-                        iconName={iconNames.back}
-                        transparent
+                        to={exitPath}
                         disabled={pendingEditEntryData}
-                    />
+                    >
+                        <i className={iconNames.back} />
+                    </Link>
                     <h4 className={styles.heading}>
                         { leadTitle }
                     </h4>
