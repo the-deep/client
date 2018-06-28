@@ -39,9 +39,17 @@ export default class Excerpt extends React.PureComponent {
         this.state = { isBeingDraggedOver: false };
     }
 
-    handleExcerptChange = (type, value, createMode = false) => {
-        const { onExcerptChange, onExcerptCreate } = this.props;
-        if (createMode) {
+    handleExcerptChange = (type, value) => {
+        const {
+            entryType,
+            image,
+            excerpt,
+            onExcerptChange,
+            onExcerptCreate,
+        } = this.props;
+
+        const hasExcerpt = (entryType === IMAGE && image) || (entryType === TEXT && excerpt);
+        if (!entryType || hasExcerpt) {
             onExcerptCreate({
                 type,
                 value,
@@ -94,34 +102,13 @@ export default class Excerpt extends React.PureComponent {
             data,
         } = formattedData;
 
-        const {
-            entryType,
-            image,
-            excerpt,
-        } = this.props;
-
-        const hasExcerpt = (entryType === IMAGE && image) || (entryType === TEXT && excerpt);
-        if (hasExcerpt) {
-            // create new entry if entry has excerpt
-            this.handleExcerptChange(type, data, true);
-        } else {
-            this.handleExcerptChange(type, data, false);
-        }
+        this.handleExcerptChange(type, data);
 
         this.setState({ isBeingDraggedOver: false });
     }
 
     renderImage = () => {
-        const {
-            entryType,
-            image,
-        } = this.props;
-
-        const { isBeingDraggedOver } = this.state;
-
-        if (isBeingDraggedOver || entryType !== IMAGE) {
-            return null;
-        }
+        const { image } = this.props;
 
         const className = `
             ${styles.image}
@@ -140,16 +127,7 @@ export default class Excerpt extends React.PureComponent {
     }
 
     renderText = () => {
-        const {
-            entryType,
-            excerpt,
-        } = this.props;
-
-        const { isBeingDraggedOver } = this.state;
-
-        if (isBeingDraggedOver || entryType !== TEXT) {
-            return null;
-        }
+        const { entryType, excerpt } = this.props;
 
         const className = `
             ${styles.text}
@@ -167,22 +145,24 @@ export default class Excerpt extends React.PureComponent {
                     value={excerpt}
                     onChange={this.handleTextChange}
                 />
-                <AccentButton
-                    tabIndex="-1"
-                    className={styles.formatButton}
-                    iconName={iconNames.textFormat}
-                    onClick={this.handleFormatText}
-                    title={buttonTitle}
-                    smallVerticalPadding
-                    smallHorizontalPadding
-                    transparent
-                />
+                { entryType &&
+                    <AccentButton
+                        tabIndex="-1"
+                        className={styles.formatButton}
+                        iconName={iconNames.textFormat}
+                        onClick={this.handleFormatText}
+                        title={buttonTitle}
+                        smallVerticalPadding
+                        smallHorizontalPadding
+                        transparent
+                    />
+                }
             </Fragment>
         );
     }
 
     render() {
-        const { className: classNameFromProps } = this.props;
+        const { className: classNameFromProps, entryType } = this.props;
         const { isBeingDraggedOver } = this.state;
 
         const Image = this.renderImage;
@@ -203,8 +183,9 @@ export default class Excerpt extends React.PureComponent {
                 onDrop={this.handleDragDrop}
             >
                 <DropContainer show={isBeingDraggedOver} />
-                <Text />
-                <Image />
+                { !isBeingDraggedOver && (
+                    entryType === IMAGE ? <Image /> : <Text />
+                ) }
             </div>
         );
     }

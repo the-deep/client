@@ -214,12 +214,17 @@ export default class EditEntryBetter extends React.PureComponent {
     }
 
     handleExcerptChange = ({ type, value }, entryKey) => {
-        this.props.setExcerpt({
-            leadId: this.props.leadId,
-            key: entryKey,
-            excerptType: type,
-            excerptValue: value,
-        });
+        if (!entryKey) {
+            console.error('This should not occur');
+            // this.handleExcerptCreate({ type, value });
+        } else {
+            this.props.setExcerpt({
+                leadId: this.props.leadId,
+                key: entryKey,
+                excerptType: type,
+                excerptValue: value,
+            });
+        }
     }
 
     handleExcerptCreate = ({ type, value }) => {
