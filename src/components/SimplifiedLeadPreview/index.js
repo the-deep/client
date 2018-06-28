@@ -3,7 +3,8 @@ import React from 'react';
 
 import { FgRestBuilder } from '#rs/utils/rest';
 import { isFalsy } from '#rs/utils/common';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import Message from '#rscv/Message';
 
 import {
     createParamsForGet,
@@ -240,13 +241,18 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
             error,
             extractedText,
             highlights,
+            pending,
         } = this.state;
+
+        if (pending) {
+            return null;
+        }
 
         if (error) {
             return (
-                <div className={styles.message}>
+                <Message className={styles.message}>
                     { error }
-                </div>
+                </Message>
             );
         } else if (extractedText) {
             return (
@@ -260,9 +266,9 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
         }
 
         return (
-            <div className={styles.message}>
+            <Message className={styles.message}>
                 {_ts('components.simplifiedLeadPreview', 'previewNotAvailable')}
-            </div>
+            </Message>
         );
     }
 
@@ -274,16 +280,14 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
 
         return (
             <div className={`${className} ${styles.leadPreview}`}>
-                {
-                    pending ? (
-                        <LoadingAnimation
-                            message={_ts('components.simplifiedLeadPreview', 'simplifyingLead')}
-                            small
-                        />
-                    ) : (
-                        <Content />
-                    )
-                }
+                { pending && (
+                    <LoadingAnimation
+                        className={styles.loadingAnimation}
+                        message={_ts('components.simplifiedLeadPreview', 'simplifyingLead')}
+                        small
+                    />
+                )}
+                <Content />
             </div>
         );
     }

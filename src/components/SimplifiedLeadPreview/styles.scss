@@ -7,14 +7,23 @@
     overflow-x: hidden;
     overflow-y: auto;
 
-    .message {
+    .loading-animation {
         display: flex;
         align-items: center;
-        flex-grow: 1;
+        flex-direction: column;
         justify-content: center;
-        color: $color-text-disabled;
-        font-size: $font-size-large;
-        font-weight: $font-weight-medium;
+        padding: $spacing-medium;
+
+        :global {
+            .loading-icon {
+                margin-bottom: $spacing-medium;
+                font-size: $font-size-super-large;
+            }
+        }
+    }
+
+    .message {
+        flex-grow: 1;
     }
 
     .highlighted-text {
