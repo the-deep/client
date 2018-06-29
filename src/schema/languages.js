@@ -63,8 +63,8 @@ const languagesSchema = [];
         fields: {
             code: { type: 'string', required: true },
             title: { type: 'string', required: true },
-            strings: { type: 'array.languageString', required: true }, // FIXME: better schema
-            links: { type: 'languageLinkCollection', required: true }, // FIXME: better schema
+            strings: { type: 'array.languageString', required: true },
+            links: { type: 'languageLinkCollection', required: true },
         },
     };
     languagesSchema.push({ name, schema });

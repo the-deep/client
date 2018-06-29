@@ -3,7 +3,6 @@ export * from './analysisFramework';
 export * from './categoryEditor';
 export * from './assessmentRegistry';
 export * from './common';
-export * from './editEntries';
 export * from './editEntriesBetter';
 export * from './entries';
 export * from './galleryFiles';

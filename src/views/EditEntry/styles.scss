@@ -1,7 +1,0 @@
-@import '../../stylesheets/base';
-@import '../../stylesheets/grid-item';
-
-.edit-entry {
-    @extend %main-content;
-    position: relative;
-}

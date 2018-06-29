@@ -121,7 +121,7 @@ const HeaderComponent = ({ attributeKey, attributeData }) => (
 );
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class EditEntryBetter extends React.PureComponent {
+export default class EditEntries extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 

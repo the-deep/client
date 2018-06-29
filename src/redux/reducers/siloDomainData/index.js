@@ -6,7 +6,6 @@ import addLeadsReducers from './addLeads';
 import analysisFrameworkReducers from './analysisFramework';
 import assessmentRegistryReducers from './assessmentRegistry';
 import categoryEditorReducers from './categoryEditor';
-import editEntriesReducers from './editEntries';
 import editEntriesBetterReducers from './editEntriesBetter';
 import entriesReducers from './entries';
 import leadsReducers from './leads';
@@ -28,7 +27,6 @@ const reducers = {
     ...assessmentRegistryReducers,
     ...categoryEditorReducers,
     ...commonReducers,
-    ...editEntriesReducers,
     ...editEntriesBetterReducers,
     ...entriesReducers,
     ...leadsReducers,
