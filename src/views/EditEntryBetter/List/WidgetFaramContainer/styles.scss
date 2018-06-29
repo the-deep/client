@@ -9,6 +9,7 @@ $width-action-buttons: 40px;
         flex-shrink: 0;
         justify-content: flex-end;
         width: 100%;
+        // border-top: $width-separator-thin solid $color-separator;
 
         >* {
             border-radius: 0;

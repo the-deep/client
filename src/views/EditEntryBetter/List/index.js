@@ -95,7 +95,6 @@ export default class Listing extends React.PureComponent {
                 data={entries}
                 renderer={WidgetFaramContainer}
                 rendererParams={this.rendererParams}
-                rendererClassName={styles.widgetContainer}
                 keyExtractor={this.keySelector}
             />
         );

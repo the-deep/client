@@ -21,6 +21,7 @@ const propTypes = {
     onExcerptChange: PropTypes.func.isRequired,
     onExcerptCreate: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
+    actionComponent: PropTypes.func,
 };
 
 const defaultProps = {
@@ -30,6 +31,7 @@ const defaultProps = {
     pending: false,
     onChange: () => {},
     schema: {},
+    actionComponent: undefined,
 };
 
 export default class WidgetFaram extends React.PureComponent {
@@ -68,10 +70,30 @@ export default class WidgetFaram extends React.PureComponent {
     }
 
     renderWidgetHeader = (widget) => {
-        const { title } = widget;
+        const { title, id } = widget;
+
+        const {
+            actionComponent: ActionComponent,
+            entry,
+        } = this.props;
+
+        const {
+            data: { attributes: { [id]: { data } = {} } = {} } = {},
+        } = entry || {};
+
         return (
             <div className={styles.header}>
-                { title }
+                <h5 className={styles.heading}>
+                    { title }
+                </h5>
+                { ActionComponent && entry &&
+                    <div className={styles.actionButtons}>
+                        <ActionComponent
+                            attributeKey={id}
+                            attributeData={data}
+                        />
+                    </div>
+                }
             </div>
         );
     }
@@ -130,17 +152,13 @@ export default class WidgetFaram extends React.PureComponent {
         `;
 
         const {
-            data: {
-                attributes,
-            } = {},
+            data: { attributes } = {},
         } = entry;
 
         return (
             <Faram
                 className={className}
                 onChange={this.handleChange}
-                // onValidationFailure={this.handleValidationFailure}
-                // onValidationSuccess={this.handleValidationSuccess}
                 schema={schema}
                 value={attributes}
                 error={error}
