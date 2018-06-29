@@ -6,7 +6,7 @@ import {
     createDiff,
     getApplicableDiffCount,
     getApplicableAndModifyingDiffCount,
-} from '#entities/editEntriesBetter';
+} from '#entities/editEntries';
 import notify from '#notify';
 import Request from '#utils/Request';
 import _ts from '#ts';

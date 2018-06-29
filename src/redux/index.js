@@ -17,7 +17,7 @@ export * from './reducers/siloDomainData/discoverProjects';
 export * from './reducers/siloDomainData/leads';
 export * from './reducers/siloDomainData/entries';
 export * from './reducers/siloDomainData/addLeads';
-export * from './reducers/siloDomainData/editEntriesBetter';
+export * from './reducers/siloDomainData/editEntries';
 export * from './reducers/siloDomainData/analysisFramework';
 export * from './reducers/siloDomainData/categoryEditor';
 export * from './reducers/siloDomainData/assessmentRegistry';

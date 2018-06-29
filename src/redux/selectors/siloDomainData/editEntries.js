@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
 import { dateCondition } from '#rs/components/Input/Faram';
-import { entryAccessor } from '#entities/editEntriesBetter';
+import { entryAccessor } from '#entities/editEntries';
 
 import {
     analysisFrameworksSelector,

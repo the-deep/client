@@ -15,7 +15,7 @@ import { CoordinatorBuilder } from '#rsu/coordinate';
 
 import { reverseRoute } from '#rs/utils/common';
 
-import { entryAccessor } from '#entities/editEntriesBetter';
+import { entryAccessor } from '#entities/editEntries';
 import {
     iconNames,
     routes,
@@ -338,7 +338,7 @@ export default class EditEntries extends React.PureComponent {
 
         if (pendingEditEntryData) {
             return (
-                <div className={styles.editEntriesBetter} >
+                <div className={styles.editEntries} >
                     <LoadingAnimation large />
                 </div>
             );
@@ -354,7 +354,7 @@ export default class EditEntries extends React.PureComponent {
         });
 
         return (
-            <div className={styles.editEntriesBetter}>
+            <div className={styles.editEntries}>
                 <header className={styles.header}>
                     <Link
                         className={styles.backLink}

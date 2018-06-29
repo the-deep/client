@@ -1,6 +1,6 @@
 import update from '#rs/utils/immutable-update';
 import { isFalsy, randomString, getDefinedElementAround } from '#rs/utils/common';
-import { applyDiff, entryAccessor, createEntry } from '#entities/editEntriesBetter';
+import { applyDiff, entryAccessor, createEntry } from '#entities/editEntries';
 
 const getNewSelectedEntryKey = (entries, selectedEntryKey) => {
     if (entries.length <= 0) {

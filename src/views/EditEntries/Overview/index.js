@@ -7,7 +7,7 @@ import SelectInput from '#rsci/SelectInput';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerButton from '#rsca/Button/DangerButton';
 
-import { entryAccessor } from '#entities/editEntriesBetter';
+import { entryAccessor } from '#entities/editEntries';
 
 import {
     leadIdFromRoute,

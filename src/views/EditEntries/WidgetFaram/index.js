@@ -5,7 +5,7 @@ import Faram from '#rs/components/Input/Faram';
 import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
 import GridViewLayout from '#rs/components/View/GridViewLayout';
 
-import { entryAccessor } from '#entities/editEntriesBetter';
+import { entryAccessor } from '#entities/editEntries';
 import { fetchWidget } from '../widgets';
 
 import styles from './styles.scss';

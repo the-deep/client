@@ -9,7 +9,7 @@ import {
     editEntriesWidgetsSelector,
 } from '#redux';
 
-import { entryAccessor } from '#entities/editEntriesBetter';
+import { entryAccessor } from '#entities/editEntries';
 
 import { hasWidget } from '../widgets';
 import WidgetFaramContainer from './WidgetFaramContainer';

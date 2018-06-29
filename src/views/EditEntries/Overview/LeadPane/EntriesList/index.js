@@ -5,7 +5,7 @@ import Button from '#rs/components/Action/Button';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import ListView from '#rs/components/View/List/ListView';
 
-import { entryAccessor, ENTRY_STATUS } from '#entities/editEntriesBetter';
+import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 

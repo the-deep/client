@@ -190,7 +190,7 @@ const initialSiloDomainData = {
     },
 
     // i specifies lead
-    editEntriesBetter: {
+    editEntries: {
         /*
         1: {
             lead: {},
