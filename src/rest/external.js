@@ -8,7 +8,8 @@ import {
 
 // NOTE: deeplEndPoint might not support clustering.  Please talk to bewakes@togglecorp.com.
 // FIXME: use separate url for alpha and beta. tnagorra@togglecorp.com.
-const deeplEndPoint = 'https://deepl.togglecorp.com';
+//deepl alpha endpoint:  https://deepl-alpha.thedeep.io/
+const deeplEndPoint = 'https://deepl.togglecorp.com/';
 export const urlForNer = `${deeplEndPoint}/api/ner/`;
 export const urlForFeedback = `${deeplEndPoint}/api/v2/recommendation/`;
 

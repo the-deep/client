@@ -20,13 +20,61 @@ const clusterVizSchema = [];
     const name = 'cluster';
     const schema = {
         doc: {
-            name: 'Sigle cluster data',
-            description: 'Sigle cluster data',
+            name: 'Single cluster data',
+            description: 'Single cluster data',
         },
         fields: {
             value: { type: 'string' },
             cluster: { type: 'uint' },
             score: { type: 'uint' },
+        },
+    };
+    clusterVizSchema.push({ name, schema });
+}
+
+{
+    const name = 'clusterDocs';
+    const schema = {
+        doc: {
+            name: 'Cluster Docs',
+            description: 'Map of document id',
+        },
+        fields: {
+            '*': { type: 'array.number', required: true },
+        },
+    };
+    clusterVizSchema.push({ name, schema });
+}
+
+{
+    const name = 'leadsDetail';
+    const schema = {
+        doc: {
+            name: 'Lead',
+            description: 'Single lead data',
+        },
+        fields: {
+            id: { type: 'uint', required: true },
+            title: { type: 'string', required: true },
+            classifiedDocId: { type: 'uint' },
+            createdAt: { type: 'string' },
+        },
+    };
+    clusterVizSchema.push({ name, schema });
+}
+
+{
+    const name = 'leadsDetailForClusterDocs';
+    const schema = {
+        doc: {
+            name: 'Filtered leads',
+            description: 'Filtered leads data',
+        },
+        fields: {
+            count: { type: 'uint', required: true },
+            next: { type: 'string' },
+            previous: { type: 'string' },
+            results: { type: 'array.leadDetails', required: true },
         },
     };
     clusterVizSchema.push({ name, schema });
@@ -41,8 +89,9 @@ const clusterVizSchema = [];
         },
         // TODO: convert to camelCase when bewakes@togglecorp.com fixes the api.
         fields: {
-            data: { type: 'array.cluster', required: 'true' },
+            keywords: { type: 'array.cluster', required: true },
             full_clustered: { type: 'boolean' },
+            docs: { type: 'clusterDocs', required: true },
         },
     };
     clusterVizSchema.push({ name, schema });

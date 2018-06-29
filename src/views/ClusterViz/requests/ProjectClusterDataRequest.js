@@ -6,6 +6,8 @@ import {
 } from '#rest';
 import schema from '#schema';
 import _ts from '#ts';
+import { unique } from '#rs/utils/common';
+import LeadInfoForDocumentRequest from './LeadInfoForDocumentRequest';
 
 export default class ProjectClusterDataRequest {
     constructor(params) {
@@ -17,10 +19,34 @@ export default class ProjectClusterDataRequest {
         this.setProjectClusterData = setProjectClusterData;
     }
 
+    startRequestForLeadsData = (projectId, documents, keywords) => {
+        this.stopRequestForLeadsData();
+        const leadsDataRequest = new LeadInfoForDocumentRequest({
+            projectId,
+            documents,
+            keywords,
+            setProjectClusterData: this.setProjectClusterData,
+            setState: this.setState,
+        });
+
+        const docs = Object.keys(documents)
+            .reduce((arr, i) => arr.concat(documents[i]), []);
+
+        const uniquedocs = unique(docs);
+        this.leadsDataRequest = leadsDataRequest.create(projectId, uniquedocs);
+        this.leadsDataRequest.start();
+    }
+
+    stopRequestForLeadsData = () => {
+        if (this.leadsDataRequest) {
+            this.leadsDataRequest.stop();
+        }
+    }
+
     success = projectId => (response) => {
         try {
             schema.validate(response, 'clusterDataResponse');
-            this.setProjectClusterData({ projectId, clusterData: response.data });
+            this.startRequestForLeadsData(projectId, response.docs, response.keywords);
         } catch (err) {
             console.error(err);
         }
@@ -51,9 +77,6 @@ export default class ProjectClusterDataRequest {
             .maxPollAttempts(50)
             .pollTime(2000)
             .shouldPoll((response, status) => status !== 200)
-            .postLoad(() => {
-                this.setState({ clusterDataPending: false });
-            })
             .success(this.success(projectId))
             .failure(this.failure)
             .fatal(this.fatal)

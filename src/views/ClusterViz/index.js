@@ -18,6 +18,7 @@ import {
     groupList,
     compareString,
     compareNumber,
+    compareDate,
 } from '#rs/utils/common';
 
 import VizError from '#components/VizError';
@@ -35,6 +36,7 @@ import { pathNames } from '#constants/';
 
 import ProjectClusterDataRequest from './requests/ProjectClusterDataRequest';
 import InitProjectClusterRequest from './requests/InitProjectClusterRequest';
+import LeadInfoForDocumentRequest from './requests/LeadInfoForDocumentRequest';
 
 import styles from './styles.scss';
 
@@ -76,14 +78,16 @@ export default class ClusterViz extends PureComponent {
     static valueAccessor = d => d.value;
 
     static getTableKey = data => data.id;
-    static clusterTableExtractor = row => row.value;
+    static keywordTableKeyExtractor = row => row.value;
+    static documentTableKeyExtractor = row => row.id;
 
     static calculateNodesAndLinks = (projectClusterData) => {
-        const clusters = projectClusterData.clusterData || [];
+        const keywords = projectClusterData.keywords || [];
+        const documents = projectClusterData.documents || [];
 
-        const clusterGroup = groupList(clusters, d => d.cluster);
+        const clusterGroup = groupList(keywords, d => d.cluster);
 
-        const nodes = clusters.map(cluster => ({
+        const nodes = keywords.map(cluster => ({
             id: cluster.value,
             group: cluster.cluster,
         }));
@@ -109,8 +113,15 @@ export default class ClusterViz extends PureComponent {
 
         const clusterGroupList = mapToList(
             clusterGroup,
-            (data, key) => ({ id: key, clusters: data }),
+            (data, key) => (
+                {
+                    id: key,
+                    clusters: data,
+                    documents: documents[key],
+                }
+            ),
         );
+
         return { nodesAndLinks: { links, nodes }, clusterGroupList };
     }
 
@@ -120,20 +131,44 @@ export default class ClusterViz extends PureComponent {
             createClusterPending: true,
             clusterDataPending: true,
         };
-        this.headers = [
+        this.keywordHeader = [
             {
                 key: 'value',
-                label: _ts('clusterViz', 'tableValueLabel'),
+                label: _ts('clusterViz', 'keywordTableValueLabel'),
                 order: 1,
                 sortable: true,
                 comparator: (a, b) => compareString(a.value, b.value),
             },
             {
                 key: 'score',
-                label: _ts('clusterViz', 'tableScoreLabel'),
+                label: _ts('clusterViz', 'keywordTableScoreLabel'),
                 order: 2,
                 sortable: true,
                 comparator: (a, b) => compareNumber(a.score, b.score),
+            },
+        ];
+
+        this.documentHeader = [
+            {
+                key: 'title',
+                label: _ts('clusterViz', 'documentTableTitleLabel'),
+                order: 1,
+                sortable: true,
+                comparator: (a, b) => compareString(a.value, b.value),
+            },
+            {
+                key: 'classifiedDocId',
+                label: _ts('clusterViz', 'documentTableClassifiedDocIdLabel'),
+                order: 2,
+                sortable: true,
+                comparator: (a, b) => compareNumber(a.classifiedDocId, b.classifiedDocId),
+            },
+            {
+                key: 'createdAt',
+                label: _ts('clusterViz', 'documentTableCreatedAtLabel'),
+                order: 3,
+                sortable: true,
+                comaparator: (a, b) => compareDate(a.createdAt, b.createdAt),
             },
         ];
     }
@@ -209,6 +244,21 @@ export default class ClusterViz extends PureComponent {
         }
     }
 
+    startRequestForLeadsData = (documents, projectId) => {
+        this.stopRequestForLeadsData();
+        const leadsDataRequest = new LeadInfoForDocumentRequest({
+            setProjectClusterData: this.props.setProjectClusterData,
+            setState: params => this.setState(params),
+        });
+        this.leadsDataRequest = leadsDataRequest.create(documents, projectId);
+        this.leadsDataRequest.start();
+    }
+
+    stopRequestForLeadsData = () => {
+        if (this.leadsDataRequest) {
+            this.leadsDataRequest.stop();
+        }
+    }
     stopRequestForInitCluster = () => {
         if (this.createClusterRequest) {
             this.createClusterRequest.stop();
@@ -223,10 +273,16 @@ export default class ClusterViz extends PureComponent {
                 <h3>cluster-{key}</h3>
             </header>
             <Table
-                key={`table-${key}`}
+                key={`document--${key}`}
+                data={value.documents}
+                headers={this.documentHeader}
+                keyExtractor={ClusterViz.documentTableKeyExtractor}
+            />
+            <Table
+                key={`keywords-${key}`}
                 data={value.clusters}
-                headers={this.headers}
-                keyExtractor={ClusterViz.clusterTableExtractor}
+                headers={this.keywordHeader}
+                keyExtractor={ClusterViz.keywordTableKeyExtractor}
             />
         </div>
     )
@@ -256,9 +312,10 @@ export default class ClusterViz extends PureComponent {
                         className={styles.forcedDirectedGraph}
                         data={this.nodesAndLinks}
                         idAccessor={ClusterViz.idAccessor}
-                        useVoronoi={false}
+                        useVoronoi
                         groupAccessor={ClusterViz.groupAccessor}
                         valueAccessor={ClusterViz.valueAccessor}
+                        headerText="Clusters"
                     />
                     <div className={styles.tableContainer}>
                         <List
