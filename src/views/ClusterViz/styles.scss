@@ -28,14 +28,23 @@ $table-width: 400px;
             overflow: auto;
         }
 
-        .table-container {
+        .tables {
             flex-basis: $table-width;
             flex-shrink: 0;
             overflow-y: auto;
 
-            .table-header {
-                @include background-color($color-foreground);
-                padding: $spacing-small;
+            .table-container {
+                transition: $duration-transition-medium border-color ease-in-out;
+                border: $width-separator-thin solid transparent;
+
+                .table-header {
+                    @include background-color($color-foreground);
+                    padding: $spacing-small;
+                }
+
+                &.active-cluster {
+                    border-color: $color-accent;
+                }
             }
         }
     }

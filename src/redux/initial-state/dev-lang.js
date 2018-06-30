@@ -716,6 +716,8 @@ const initialDevLangState = {
         3006: 'Title',
         3007: 'Classified Doc Id',
         3008: 'Created At',
+        3009: 'Clusters',
+        3010: 'Cluster',
     },
     links: {
         /*
@@ -2001,6 +2003,8 @@ const initialDevLangState = {
             documentTableTitleLabel: 3006,
             documentTableClassifiedDocIdLabel: 3007,
             documentTableCreatedAtLabel: 3008,
+            clusterVizGraph: 3009,
+            tableHeader: 3010,
         },
     },
 };
