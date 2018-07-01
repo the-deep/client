@@ -1,66 +1,74 @@
 const acl = {
     leads: {
-        requireLogin: true,
-        requireProject: true,
+        hide: ({ isLoggedIn }) => !isLoggedIn,
+        disable: ({ hasProjects }) => !hasProjects,
     },
     entries: {
-        requireLogin: true,
-        requireProject: true,
-        requireAnalysisFramework: true,
+        hide: ({ isLoggedIn }) => !isLoggedIn,
+        disable: ({ hasProjects, hasAnalysisFramework }) => (
+            !hasProjects || !hasAnalysisFramework
+        ),
     },
     arys: {
-        requireLogin: true,
-        requireProject: true,
-        requireAssessmentTemplate: true,
+        hide: ({ isLoggedIn }) => !isLoggedIn,
+        disable: ({ hasProjects, hasAssessmentTemplate }) => (
+            !hasProjects || !hasAssessmentTemplate
+        ),
     },
     export: {
-        requireLogin: true,
-        requireProject: true,
-        requireAnalysisFramework: true,
+        hide: ({ isLoggedIn }) => !isLoggedIn,
+        disable: ({ hasProjects, hasAnalysisFramework }) => (
+            !hasProjects || !hasAnalysisFramework
+        ),
     },
     userProfile: {
-        requireLogin: true,
+        hide: ({ isLoggedIn }) => !isLoggedIn,
     },
     projects: {
-        requireLogin: true,
+        hide: ({ isLoggedIn }) => !isLoggedIn,
     },
     countries: {
-        requireLogin: true,
+        hide: ({ isLoggedIn }) => !isLoggedIn,
     },
     connectors: {
-        requireLogin: true,
+        hide: ({ isLoggedIn }) => !isLoggedIn,
     },
     apiDocs: {
-        requireLogin: true,
-        requireDevMode: true,
+        hide: ({ isLoggedIn, isDevMode }) => (
+            !isLoggedIn || !isDevMode
+        ),
     },
     stringManagement: {
-        requireLogin: true,
-        requireAdminRights: true,
+        hide: ({ isLoggedIn, isAdmin }) => (
+            !isLoggedIn || !isAdmin
+        ),
     },
     notifications: {
-        requireLogin: true,
+        hide: ({ isLoggedIn }) => !isLoggedIn,
     },
     adminPanel: {
-        requireLogin: true,
-        requireAdminRights: true,
+        hide: ({ isLoggedIn, isAdmin }) => (
+            !isLoggedIn || !isAdmin
+        ),
     },
 
     // this is an element
     projectSelect: {
-        requireLogin: true,
-        disable: ({ pathKey }) => ![
-            'projects',
-            'dashboard',
-            'leadGroups',
-            'leads',
-            'leadsViz',
-            'clusterViz',
-            'entries',
-            'arys',
-            'export',
-            'userExports',
-        ].includes(pathKey),
+        hide: ({ isLoggedIn }) => !isLoggedIn,
+        disable: ({ pathKey, hasProjects }) => (
+            ![
+                'projects',
+                'dashboard',
+                'leadGroups',
+                'leads',
+                'leadsViz',
+                'clusterViz',
+                'entries',
+                'arys',
+                'export',
+                'userExports',
+            ].includes(pathKey) || !hasProjects
+        ),
     },
 };
 

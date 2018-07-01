@@ -307,7 +307,7 @@ export default class LeadForm extends React.PureComponent {
                 />
 
                 <Cloak
-                    when={!projectDetails.assessmentTemplate}
+                    hide={() => !projectDetails.assessmentTemplate}
                     render={({ disabled }) => (
                         <div className={styles.leadGroupContainer}>
                             <ApplyAll

@@ -71,6 +71,11 @@ export default class Score extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static scaleLabelSelector = option => option.title;
+    static scaleColorSelector = option => option.color;
+    static scaleKeySelector = option => option.value;
+    static scaleIsDefaultSelector = option => !!option.default;
+
     getClassName = () => {
         const { className } = this.props;
 
@@ -118,10 +123,10 @@ export default class Score extends React.PureComponent {
                     <ScaleInput
                         faramElementName={String(id)}
                         options={this.props.assessmentScoreScales}
-                        keySelector={option => option.value}
-                        labelSelector={option => option.title}
-                        colorSelector={option => option.color}
-                        isDefaultSelector={option => !!option.default}
+                        keySelector={Score.scaleKeySelector}
+                        labelSelector={Score.scaleLabelSelector}
+                        colorSelector={Score.scaleColorSelector}
+                        isDefaultSelector={Score.scaleIsDefaultSelector}
                     />
                 </td>
             </tr>
@@ -217,8 +222,8 @@ export default class Score extends React.PureComponent {
                     columns={pillarData.columns}
                     scaleValues={this.props.assessmentScoreScales}
                     scales={pillarData.scales}
-                    keySelector={option => option.value}
-                    colorSelector={option => option.color}
+                    keySelector={Score.scaleKeySelector}
+                    colorSelector={Score.scaleColorSelector}
                 />
             </div>
         );

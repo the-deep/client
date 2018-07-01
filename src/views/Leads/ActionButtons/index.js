@@ -154,26 +154,28 @@ export default class ActionButtons extends React.PureComponent {
                 </div>
                 <div className={styles.actionGroup}>
                     <Cloak
-                        requireAssessmentTemplate
+                        hide={({ hasAssessmentTemplate }) => !hasAssessmentTemplate}
                         render={({ disabled }) => (
                             <Link
                                 className={`${styles.addAssessmentLink} ${disabled ? styles.disabled : ''}`}
                                 tabIndex="-1"
                                 title={_ts('leads', 'addAssessmentFromLeadButtonTitle')}
                                 to={links.addAssessment}
+                                disabled={disabled}
                             >
                                 <i className={iconNames.forward} />
                             </Link>
                         )}
                     />
                     <Cloak
-                        requireAnalysisFramework
+                        hide={({ hasAssessmentTemplate }) => !hasAssessmentTemplate}
                         render={({ disabled }) => (
                             <Link
                                 className={`${styles.addEntryLink} ${disabled ? styles.disabled : ''}`}
                                 tabIndex="-1"
                                 title={_ts('leads', 'addEntryFromLeadButtonTitle')}
                                 to={links.editEntries}
+                                disabled={disabled}
                             >
                                 <i className={iconNames.forward} />
                             </Link>

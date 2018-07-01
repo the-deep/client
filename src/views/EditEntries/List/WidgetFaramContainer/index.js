@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import WarningButton from '#rs/components/Action/Button/WarningButton';
+import { findDifferenceInObject } from '#rs/utils/common';
+
 import { entryAccessor } from '#entities/editEntries';
 import { iconNames } from '#constants';
 import {
@@ -16,7 +18,6 @@ import WidgetFaram from '../../WidgetFaram';
 import styles from './styles.scss';
 
 const propTypes = {
-    entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     pending: PropTypes.bool,
     className: PropTypes.string,
@@ -28,7 +29,6 @@ const propTypes = {
 };
 
 const defaultProps = {
-    entries: [],
     widgets: [],
     pending: false,
     className: '',
@@ -45,7 +45,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class WidgetFaramWrapper extends React.PureComponent {
+export default class WidgetFaramContainer extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 

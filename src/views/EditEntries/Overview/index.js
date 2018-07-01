@@ -142,26 +142,29 @@ export default class Overview extends React.PureComponent {
                         <header className={styles.header}>
                             <SelectInput
                                 className={styles.entrySelectInput}
-                                hideClearButton
+                                // FIXME: use strings
+                                placeholder="Select entry"
                                 keySelector={Overview.entryKeySelector}
                                 labelSelector={Overview.entryLabelSelector}
                                 onChange={this.handleEntrySelect}
                                 options={this.props.entries}
-                                placeholder="Select entry"
+                                value={this.props.selectedEntryKey}
                                 showHintAndError={false}
                                 showLabel={false}
-                                value={this.props.selectedEntryKey}
+                                hideClearButton
                             />
                             <div className={styles.actionButtons}>
                                 <SuccessButton
                                     onClick={this.handleEmptyExcerptCreate}
                                 >
+                                    {/* FIXME: use strings */}
                                     Add entry
                                 </SuccessButton>
                                 <DangerButton
                                     onClick={this.handleEntryDelete}
                                     disabled={!entry}
                                 >
+                                    {/* FIXME: use strings */}
                                     Remove entry
                                 </DangerButton>
                             </div>

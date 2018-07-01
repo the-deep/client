@@ -272,9 +272,7 @@ export default class Navbar extends React.PureComponent {
                                 showHintAndError={false}
                                 showLabel={false}
                                 className={styles.projectSelectInput}
-                                disabled={
-                                    userProjects.length <= 0 || disabled
-                                }
+                                disabled={disabled}
                                 value={activeProject}
                             />
                         )

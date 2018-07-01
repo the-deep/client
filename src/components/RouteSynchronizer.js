@@ -190,12 +190,17 @@ class RouteSynchronizer extends React.PureComponent {
         }
     }
 
-    renderBundle = () => {
+    renderBundle = ({ disabled }) => {
         const {
             match, // eslint-disable-line no-unused-vars
             name,
             ...otherProps
         } = this.props;
+
+        // NOTE: dont' show page if it is disabled as well
+        if (disabled) {
+            return this.renderBundleOnCloak();
+        }
 
         return (
             <Fragment>
@@ -229,16 +234,13 @@ class RouteSynchronizer extends React.PureComponent {
 
     render() {
         const { name } = this.props;
-        if (viewsAcl[name]) {
-            return (
-                <Cloak
-                    {...viewsAcl[name]}
-                    render={this.renderBundle}
-                    renderOnCloak={this.renderBundleOnCloak}
-                />
-            );
-        }
-        return this.renderBundle();
+        return (
+            <Cloak
+                {...viewsAcl[name]}
+                render={this.renderBundle}
+                renderOnCloak={this.renderBundleOnCloak}
+            />
+        );
     }
 }
 

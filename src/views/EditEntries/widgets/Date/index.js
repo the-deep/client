@@ -19,6 +19,7 @@ export default class DateWidget extends React.PureComponent {
         return (
             <DateInput
                 faramElementName="value"
+                // FIXME: remove this later (this is example of faramInfo)
                 faramInfo={{
                     action: 'changeExcerpt',
                     type: 'excerpt',
