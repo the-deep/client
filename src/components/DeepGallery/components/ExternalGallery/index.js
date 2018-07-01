@@ -2,8 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { FgRestBuilder } from '#rs/utils/rest';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 
-import { iconNames } from '#constants';
+// import { iconNames } from '#constants';
 import {
     createUrlForWebsiteFetch,
     createParamsForGet,
@@ -138,15 +139,6 @@ export default class ExternalGallery extends React.PureComponent {
         return urlRequest;
     }
 
-    renderPendingScreen = className => (
-        <div className={`${styles.pendingContainer} ${className}`}>
-            <span className={`${iconNames.loading} ${styles.loadingAnimation}`} />
-            <span className={styles.waitingText}>
-                {_ts('components.externalGallery', 'gatheringWebsiteInfoLabel')}
-            </span>
-        </div>
-    )
-
     render() {
         const {
             pending,
@@ -161,8 +153,14 @@ export default class ExternalGallery extends React.PureComponent {
         } = this.props;
 
         if (pending) {
-            // show pending
-            return this.renderPendingScreen(className);
+            return (
+                <div className={`${styles.pendingContainer} ${className}`}>
+                    <LoadingAnimation
+                        message={_ts('components.externalGallery', 'gatheringWebsiteInfoLabel')}
+                        small
+                    />
+                </div>
+            );
         }
 
         // use supported doc viewer component

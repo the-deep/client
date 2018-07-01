@@ -30,31 +30,21 @@ const propTypes = {
 
     // eslint-disable-next-line react/forbid-prop-types
     currentUserActiveProject: PropTypes.object.isRequired,
-    requireAdminRights: PropTypes.bool,
-    requireProject: PropTypes.bool,
-    requireLogin: PropTypes.bool,
-    requireDevMode: PropTypes.bool,
-    requireAssessmentTemplate: PropTypes.bool,
-    requireAnalysisFramework: PropTypes.bool,
     render: PropTypes.func.isRequired,
     renderOnCloak: PropTypes.func,
+
     disable: PropTypes.func,
-    when: PropTypes.bool,
+    hide: PropTypes.func,
 };
 
 const defaultProps = {
+    disable: undefined,
+    hide: undefined,
+
     activeUser: {},
     userProjects: [],
-    disable: undefined,
-    renderOnCloak: undefined,
 
-    requireAdminRights: false,
-    requireProject: false,
-    requireLogin: false,
-    requireDevMode: false,
-    requireAssessmentTemplate: false,
-    requireAnalysisFramework: false,
-    when: false,
+    renderOnCloak: undefined,
 };
 
 @connect(mapStateToProps, undefined)
@@ -69,32 +59,44 @@ export default class Cloak extends React.Component {
             currentUserActiveProject,
             routePathKey,
 
-            requireAdminRights,
-            requireProject,
-            requireLogin,
-            requireDevMode,
-            requireAssessmentTemplate,
-            requireAnalysisFramework,
             disable,
-            when,
+            hide,
 
             render: Child,
             renderOnCloak,
         } = this.props;
 
-        if (
-            when ||
-            (requireDevMode && process.env.NODE_ENV !== 'development') ||
-            (requireProject && userProjects.length <= 0) ||
-            (requireLogin && !activeUser.userId) ||
-            (requireAdminRights && !activeUser.isSuperuser) ||
-            (requireAssessmentTemplate && !currentUserActiveProject.assessmentTemplate) ||
-            (requireAnalysisFramework && !currentUserActiveProject.analysisFramework)
-        ) {
+        const isDevMode = process.env.NODE_ENV === 'development';
+        const isLoggedIn = !!activeUser.userId;
+        const isAdmin = activeUser.isSuperuser;
+        const hasProjects = userProjects.length > 0;
+        const hasAssessmentTemplate = !!currentUserActiveProject.assessmentTemplate;
+        const hasAnalysisFramework = !!currentUserActiveProject.analysisFramework;
+        const pathKey = routePathKey;
+
+        const hidden = hide && hide({
+            isDevMode,
+            hasProjects,
+            isLoggedIn,
+            isAdmin,
+            hasAssessmentTemplate,
+            hasAnalysisFramework,
+            pathKey,
+        });
+
+        if (hidden) {
             return renderOnCloak ? renderOnCloak() : null;
         }
 
-        const disabled = disable ? disable({ pathKey: routePathKey }) : false;
-        return (<Child disabled={disabled} />);
+        const disabled = disable && disable({
+            isDevMode,
+            hasProjects,
+            isLoggedIn,
+            isAdmin,
+            hasAssessmentTemplate,
+            hasAnalysisFramework,
+            pathKey,
+        });
+        return <Child disabled={disabled} />;
     }
 }

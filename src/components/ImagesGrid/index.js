@@ -74,14 +74,14 @@ export default class ImagesGrid extends React.PureComponent {
 
         return (
             <img
-                className={styles.image}
+                key={key}
+                alt={key}
                 src={source}
                 role="presentation"
-                onClick={() => this.handleImageClick(source)}
                 draggable
+                className={styles.image}
+                onClick={() => this.handleImageClick(source)}
                 onDragStart={this.handleOnDragStart(source)}
-                alt={key}
-                key={key}
             />
         );
     }

@@ -20,7 +20,7 @@
                 border: $width-separator-thin solid $color-separator;
                 border-radius: 3px;
                 background-color: $color-foreground;
-                padding: $spacing-small $spacing-extra-small;
+                padding: $spacing-small $spacing-small;
             }
         }
 
@@ -57,22 +57,7 @@
 }
 
 .error-url {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    margin: auto;
-    padding: $spacing-medium;
-    height: 100%;
-    text-align: center;
-
-    .url {
-        display: inline-block;
-        text-transform: lowercase;
-        color: $color-accent;
-    }
-
-    .msg {
-        color: $color-danger;
-    }
+    flex-grow: 1;
+    height: auto;
+    color: $color-danger;
 }

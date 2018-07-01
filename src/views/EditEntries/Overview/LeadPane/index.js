@@ -1,45 +1,63 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
+import { connect } from 'react-redux';
 
 import MultiViewContainer from '#rs/components/View/MultiViewContainer';
 import Message from '#rs/components/View/Message';
 import FixedTabs from '#rs/components/View/FixedTabs';
+
+
+import {
+    editEntriesLeadSelector,
+    editEntriesEntriesSelector,
+    editEntriesSelectedEntryKeySelector,
+    editEntriesSetSelectedEntryKeyAction,
+    editEntriesMarkAsDeletedEntryAction,
+} from '#redux';
 
 import {
     LEAD_TYPE,
     LEAD_PANE_TYPE,
     leadPaneTypeMap,
 } from '#entities/lead';
+
 import _ts from '#ts';
+
 import SimplifiedLeadPreview from '#components/SimplifiedLeadPreview';
 import LeadPreview from '#components/LeadPreview';
 import AssistedTagging from '#components/AssistedTagging';
 import ImagesGrid from '#components/ImagesGrid';
 
-import EntriesListing from './EntriesListing';
+import EntriesList from './EntriesList';
 import styles from './styles.scss';
 
 const propTypes = {
-    api: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    selectedEntryId: PropTypes.string,
-    entries: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-
-    choices: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-
-    onEntryDelete: PropTypes.func.isRequired,
-    setActiveEntry: PropTypes.func.isRequired,
-
-    saveAllPending: PropTypes.bool.isRequired,
+    onExcerptCreate: PropTypes.func.isRequired,
+    entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    selectedEntryKey: PropTypes.string,
+    setSelectedEntryKey: PropTypes.func.isRequired,
+    markAsDeletedEntry: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
-    selectedEntryId: undefined,
-    widgetDisabled: false,
+    entries: [],
+    selectedEntryKey: undefined,
 };
 
-export default class LeftPanel extends React.PureComponent {
+const mapStateToProps = state => ({
+    lead: editEntriesLeadSelector(state),
+    entries: editEntriesEntriesSelector(state),
+    selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+    setSelectedEntryKey: params => dispatch(editEntriesSetSelectedEntryKeyAction(params)),
+    markAsDeletedEntry: params => dispatch(editEntriesMarkAsDeletedEntryAction(params)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
+export default class LeftPane extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -47,16 +65,20 @@ export default class LeftPanel extends React.PureComponent {
         if (!lead) {
             return undefined;
         }
-        const type = lead.sourceType;
+        const {
+            sourceType: type,
+            attachment,
+        } = lead;
+
         if (type === LEAD_TYPE.text) {
             return LEAD_PANE_TYPE.text;
         } else if (type === LEAD_TYPE.website) {
             return LEAD_PANE_TYPE.website;
         }
-        if (!lead.attachment) {
+        if (!attachment) {
             return undefined;
         }
-        const mimeType = lead.attachment.mimeType;
+        const { mimeType } = attachment;
         return leadPaneTypeMap[mimeType];
     }
 
@@ -71,31 +93,13 @@ export default class LeftPanel extends React.PureComponent {
         this.views = this.calculateTabComponents();
     }
 
-    componentWillReceiveProps(nextProps) {
-        const { saveAllPending: oldSaveAllPending, entries: oldEntries } = this.props;
-        const { saveAllPending: newSaveAllPending, entries: newEntries } = nextProps;
-        const { currentTab } = this.state;
-
-        if (
-            oldSaveAllPending !== newSaveAllPending &&
-            newSaveAllPending &&
-            currentTab !== 'entries-listing'
-        ) {
-            this.setState({ currentTab: 'entries-listing' });
-        }
-
-        if (oldEntries !== newEntries) {
-            this.highlights = nextProps.api.getEntryHighlights();
-        }
-    }
-
     calculateTabComponents = () => ({
         'simplified-preview': {
             component: () => (
                 <SimplifiedLeadPreview
                     className={styles.simplifiedPreview}
                     leadId={this.props.lead.id}
-                    highlights={this.props.api.getEntryHighlights()}
+                    highlights={this.calculateHighlights()}
                     highlightModifier={this.highlightSimplifiedExcerpt}
                     onLoad={this.handleLoadImages}
                 />
@@ -142,12 +146,12 @@ export default class LeftPanel extends React.PureComponent {
         'entries-listing': {
             component: () => (
                 <div className={styles.entriesListContainer}>
-                    <EntriesListing
-                        selectedEntryId={this.props.selectedEntryId}
+                    <EntriesList
+                        leadId={this.props.lead.id}
                         entries={this.props.entries}
-                        choices={this.props.choices}
-                        onEntryDelete={this.props.onEntryDelete}
-                        handleEntryItemClick={this.handleEntryItemClick}
+                        selectedEntryKey={this.props.selectedEntryKey}
+                        setSelectedEntryKey={this.props.setSelectedEntryKey}
+                        markAsDeletedEntry={this.props.markAsDeletedEntry}
                     />
                 </div>
             ),
@@ -157,7 +161,7 @@ export default class LeftPanel extends React.PureComponent {
     })
 
     calculateTabsForLead = (lead, images) => {
-        const leadPaneType = LeftPanel.getPaneType(lead);
+        const leadPaneType = LeftPane.getPaneType(lead);
 
         let tabs;
         switch (leadPaneType) {
@@ -210,6 +214,11 @@ export default class LeftPanel extends React.PureComponent {
 
     // Simplified Lead Preview
 
+    calculateHighlights = () => ([
+        // this.props.api.getEntryHighlights()
+        // TODO: send highlights prop
+    ])
+
     highlightSimplifiedExcerpt = (highlight, text, actualStr) => (
         SimplifiedLeadPreview.highlightModifier(
             highlight,
@@ -220,11 +229,10 @@ export default class LeftPanel extends React.PureComponent {
     );
 
     handleHighlightClick = (e, { text }) => {
-        const { api } = this.props;
-        const existing = api.getEntryForExcerpt(text);
-        if (existing) {
-            api.selectEntry(existing.data.id);
-        }
+        console.warn('this should handle highlight click', text);
+        // TODO:
+        // const existing = api.getEntryForExcerpt(text);
+        // api.selectEntry(existing.data.id);
     }
 
     handleLoadImages = (response) => {
@@ -236,32 +244,18 @@ export default class LeftPanel extends React.PureComponent {
     // Assisted Tagging
 
     handleEntryAdd = (text) => {
-        const { api } = this.props;
-
-        const existing = api.getEntryForExcerpt(text);
-        if (existing) {
-            api.selectEntry(existing.data.id);
-        } else {
-            api.getEntryBuilder()
-                .setExcerpt(text)
-                .apply();
-        }
+        this.props.onExcerptCreate({
+            type: 'excerpt',
+            value: text,
+        });
     }
 
     // Lead Preview
 
     handleScreenshot = (image) => {
-        this.props.api.getEntryBuilder()
-            .setImage(image)
-            .apply();
-    }
-
-    // Entries
-
-    handleEntryItemClick = (value) => {
-        this.props.setActiveEntry({
-            leadId: this.props.lead.id,
-            entryId: value,
+        this.props.onExcerptCreate({
+            type: 'image',
+            value: image,
         });
     }
 

@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import AccentButton from '#rs/components/Action/Button/AccentButton';
 import TextInput from '#rs/components/Input/TextInput';
+import Message from '#rs/components/View/Message';
 import urlRegex from '#rs/components/Input/Faram/regexForWeburl';
 
 import { galleryMapping, galleryType } from '#config/deepMimeTypes';
@@ -100,40 +101,43 @@ export default class GalleryViewer extends React.PureComponent {
             cannotPreviewUrlMessage,
         } = this.props;
         return (
-            <div className={styles.errorUrl}>
+            <Message className={styles.errorUrl}>
                 {
-                    GalleryViewer.isUrlValid(url) ?
-                        <span className={styles.msg}>
-                            {cannotPreviewUrlMessage || _ts('components.galleryViewer', 'cannotPreviewUrl')}
-                        </span>
-                        :
-                        <span className={styles.msg}>
-                            {invalidUrlMessage || _ts('components.galleryViewer', 'invalidUrl')}
-                        </span>
+                    GalleryViewer.isUrlValid(url) ? (
+                        cannotPreviewUrlMessage || _ts('components.galleryViewer', 'cannotPreviewUrl')
+                    ) : (
+                        invalidUrlMessage || _ts('components.galleryViewer', 'invalidUrl')
+                    )
                 }
-            </div>
+            </Message>
         );
     }
 
     renderScreenshotButton = () => {
         const { screenshotMode, currentScreenshot } = this.state;
         if (screenshotMode) {
-            return ([
-                currentScreenshot && (
+            return (
+                <Fragment>
+                    {
+                        currentScreenshot && (
+                            <AccentButton
+                                iconName={iconNames.check}
+                                onClick={this.handleScreenshotDone}
+                                // FIXME: use strings
+                                title="Save screenshot"
+                                transparent
+                            />
+                        )
+                    }
                     <AccentButton
-                        key="screenshot-done"
-                        iconName={iconNames.check}
-                        onClick={this.handleScreenshotDone}
+                        iconName={iconNames.close}
+                        onClick={this.handleScreenshotClose}
+                        // FIXME: use strings
+                        title="Discard screenshot"
                         transparent
                     />
-                ),
-                <AccentButton
-                    key="screenshot-close"
-                    iconName={iconNames.close}
-                    onClick={this.handleScreenshotClose}
-                    transparent
-                />,
-            ]);
+                </Fragment>
+            );
         }
 
         return (
@@ -141,6 +145,8 @@ export default class GalleryViewer extends React.PureComponent {
                 iconName={iconNames.camera}
                 onClick={() => { this.setState({ screenshotMode: true }); }}
                 transparent
+                // FIXME: use strings
+                title="Take screenshot"
             />
         );
     }
@@ -167,6 +173,8 @@ export default class GalleryViewer extends React.PureComponent {
                             className={styles.openLink}
                             href={url}
                             target="_blank"
+                            // FIXME: use strings
+                            title="Open link in new tab"
                         >
                             <span className={iconNames.openLink} />
                         </a>

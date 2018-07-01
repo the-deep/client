@@ -125,6 +125,7 @@ $radius-button-border: 2px;
 @mixin button-like-link($background-color) {
     @include shadow-button;
     @include background-color($background-color);
+    display: inline-block;
     border-radius: $radius-button-border;
     padding: $spacing-small $spacing-small-alt;
     text-transform: uppercase;
@@ -159,6 +160,7 @@ $radius-button-border: 2px;
 
 @mixin transparent-button-like-link($color) {
     @extend %transparent-button-like-link;
+    display: inline-block;
     color: $color;
 }
 

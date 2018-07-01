@@ -150,6 +150,7 @@ export default class NavMenu extends React.PureComponent {
                         activeClassName={styles.active}
                         to={route}
                         className={`${className} ${disabled ? styles.disabled : ''}`}
+                        disabled={disabled}
                         exact
                     >
                         { _ts('pageTitle', key) }

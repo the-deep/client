@@ -71,38 +71,10 @@ export default class Score extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static calculateScaleValues = (assessmentScoreScales = {}) => (
-        assessmentScoreScales.reduce(
-            (acc, row) => {
-                acc[row.value] = {
-                    title: row.title,
-                    color: row.color,
-                    default: row.default,
-                };
-
-                return acc;
-            },
-            {},
-        )
-    )
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            scaleValues: Score.calculateScaleValues(props.assessmentScoreScales),
-        };
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { assessmentScoreScales: newAssessmentScoreScales } = nextProps;
-        const { assessmentScoreScales: oldAssessmentScoreScales } = this.props;
-
-        if (newAssessmentScoreScales !== oldAssessmentScoreScales) {
-            const scaleValues = Score.calculateScaleValues(newAssessmentScoreScales);
-            this.setState({ scaleValues });
-        }
-    }
+    static scaleLabelSelector = option => option.title;
+    static scaleColorSelector = option => option.color;
+    static scaleKeySelector = option => option.value;
+    static scaleIsDefaultSelector = option => !!option.default;
 
     getClassName = () => {
         const { className } = this.props;
@@ -121,8 +93,6 @@ export default class Score extends React.PureComponent {
             description,
             id,
         } = data;
-
-        const { scaleValues } = this.state;
 
         const iconClassName = [
             styles.infoIcon,
@@ -152,7 +122,11 @@ export default class Score extends React.PureComponent {
                 <td className={styles.cell}>
                     <ScaleInput
                         faramElementName={String(id)}
-                        options={scaleValues}
+                        options={this.props.assessmentScoreScales}
+                        keySelector={Score.scaleKeySelector}
+                        labelSelector={Score.scaleLabelSelector}
+                        colorSelector={Score.scaleColorSelector}
+                        isDefaultSelector={Score.scaleIsDefaultSelector}
                     />
                 </td>
             </tr>
@@ -230,8 +204,6 @@ export default class Score extends React.PureComponent {
 
     renderMatrixQuestion = (pillarData, sectorId) => {
         const { sectors } = this.props;
-        const { scaleValues } = this.state;
-
         const currentSector = sectors.find(d => String(d.id) === String(sectorId));
 
         return (
@@ -248,8 +220,10 @@ export default class Score extends React.PureComponent {
                     faramElementName={String(sectorId)}
                     rows={pillarData.rows}
                     columns={pillarData.columns}
-                    scaleValues={scaleValues}
+                    scaleValues={this.props.assessmentScoreScales}
                     scales={pillarData.scales}
+                    keySelector={Score.scaleKeySelector}
+                    colorSelector={Score.scaleColorSelector}
                 />
             </div>
         );

@@ -1,0 +1,15 @@
+@import '../../../../../stylesheets/base';
+
+.dropdown-container {
+    display: flex;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    outline: $width-separator-medium dashed $color-separator;
+    outline-offset: -$spacing-small-alt;
+    background-color: $color-foreground-alt;
+    width: 100%;
+    height: 100%;
+    color: $color-text-placeholder;
+    pointer-events: none;
+}

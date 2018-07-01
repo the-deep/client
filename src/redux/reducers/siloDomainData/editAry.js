@@ -54,13 +54,13 @@ export const changeAryForEditAryAction = ({
     leadGroupId,
     faramValues,
     faramErrors,
-    shouldChangePristine,
+    isPristine,
 }) => ({
     type: EDIT_ARY__CHANGE_ARY,
     id: getNamespacedId(leadId, leadGroupId),
     faramValues,
     faramErrors,
-    shouldChangePristine,
+    isPristine,
 });
 
 export const setErrorAryForEditAryAction = ({
@@ -127,7 +127,7 @@ const changeAry = (state, action) => {
         id,
         faramValues,
         faramErrors,
-        shouldChangePristine,
+        isPristine,
     } = action;
 
     const hasErrors = analyzeErrors(faramErrors);
@@ -135,10 +135,7 @@ const changeAry = (state, action) => {
     const settings = {
         editAry: {
             [id]: { $auto: {
-                $if: [
-                    !shouldChangePristine,
-                    { isPristine: { $set: false } },
-                ],
+                isPristine: { $set: isPristine },
                 faramValues: { $set: faramValues },
                 faramErrors: { $set: faramErrors },
                 hasErrors: { $set: hasErrors },

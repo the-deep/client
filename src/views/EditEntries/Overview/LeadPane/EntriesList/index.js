@@ -5,24 +5,22 @@ import Button from '#rs/components/Action/Button';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import ListView from '#rs/components/View/List/ListView';
 
-import { entryAccessor, ENTRY_STATUS } from '#entities/entry';
+import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import styles from './styles.scss';
 
 const propTypes = {
-    selectedEntryId: PropTypes.string,
+    selectedEntryKey: PropTypes.string,
     entries: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    choices: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-
-    onEntryDelete: PropTypes.func.isRequired,
-
-    handleEntryItemClick: PropTypes.func.isRequired,
+    setSelectedEntryKey: PropTypes.func.isRequired,
+    leadId: PropTypes.number.isRequired,
+    markAsDeletedEntry: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
-    selectedEntryId: undefined,
+    selectedEntryKey: undefined,
 };
 
 export default class EntriesListing extends React.PureComponent {
@@ -37,7 +35,7 @@ export default class EntriesListing extends React.PureComponent {
         markedForRemoval: `${iconNames.removeCircle} ${styles.error}`,
     };
 
-    static calcEntryKey = entry => entryAccessor.getKey(entry);
+    static calcEntryKey = entry => entryAccessor.key(entry);
 
     renderIcon = (status) => {
         const className = EntriesListing.iconMap[status] || '';
@@ -45,13 +43,19 @@ export default class EntriesListing extends React.PureComponent {
     }
 
     renderEntryLabel = (entry) => {
-        const values = entryAccessor.getValues(entry);
+        const values = entryAccessor.data(entry);
+        const {
+            entryType,
+            excerpt,
+            order,
+            image,
+        } = values;
 
-        if (values.entryType === 'image') {
+        if (entryType === 'image') {
             return (
                 <img
                     className={styles.image}
-                    src={values.image}
+                    src={image}
                     alt={_ts('editEntry', 'altLabel')}
                 />
             );
@@ -59,53 +63,79 @@ export default class EntriesListing extends React.PureComponent {
         // FIXME: use strings
         return (
             <div className={styles.entryExcerpt}>
-                {values.excerpt || `Excerpt ${values.order}`}
+                {excerpt || `Excerpt ${order}`}
             </div>
         );
     }
 
     renderEntryItem = (key, entry) => {
         const {
-            selectedEntryId,
-            entries,
-            onEntryDelete,
-            choices,
+            selectedEntryKey,
+            // entries,
+            // choices,
         } = this.props;
 
+        const handleEntryItemClick = (currentEntryId) => {
+            this.props.setSelectedEntryKey({ leadId: this.props.leadId, key: currentEntryId });
+        };
+        const handleMarkAsDeletedEntry = (currentEntryId, value) => {
+            this.props.markAsDeletedEntry({
+                leadId: this.props.leadId,
+                key: currentEntryId,
+                value,
+            });
+        };
+
         const currentEntryId = EntriesListing.calcEntryKey(entry);
-        const isActive = currentEntryId === selectedEntryId;
+        const isActive = currentEntryId === selectedEntryKey;
+        /*
         const status = choices[key].choice;
+        */
+        /*
         const selectedEntry = entries.find(
-            e => entryAccessor.getKey(e) === currentEntryId,
+            e => entryAccessor.key(e) === currentEntryId,
         );
+        */
+        const isMarkedAsDeleted = entryAccessor.isMarkedAsDeleted(entry);
 
-        const isMarkedForDelete = entryAccessor.isMarkedForDelete(selectedEntry);
+        // const isSelectedEntryMarkedForDelete = false;
+        // const isSelectedEntryMarkedForDelete = entryAccessor.isMarkedAsDeleted(entry);
 
+        const classNames = [
+            styles.entriesListItem,
+        ];
+        if (isActive) {
+            classNames.push(styles.active);
+        }
+        if (isMarkedAsDeleted) {
+            classNames.push(styles.markedForDelete);
+        }
         return (
             <div
-                className={`${styles.entriesListItem} ${isActive ? styles.active : ''}`}
+                className={classNames.join(' ')}
                 key={key}
             >
                 <button
                     className={styles.addEntryListItem}
-                    onClick={() => this.props.handleEntryItemClick(currentEntryId)}
-                    disabled={isMarkedForDelete}
+                    onClick={() => handleEntryItemClick(currentEntryId)}
+                    disabled={isMarkedAsDeleted}
+                    type="button"
                 >
                     {this.renderEntryLabel(entry)}
                     <div className={styles.statusIcons}>
                         {
-                            entryAccessor.isMarkedForDelete(entry) &&
+                            isMarkedAsDeleted &&
                             <span className={EntriesListing.iconMap.markedForRemoval} />
                         }
-                        {this.renderIcon(status)}
+                        {/* this.renderIcon(status) */}
                     </div>
                 </button>
                 {
-                    isMarkedForDelete ? (
+                    isMarkedAsDeleted ? (
                         <Button
                             key="undo-button"
                             className={styles.removeButton}
-                            onClick={() => onEntryDelete(false, key)}
+                            onClick={() => handleMarkAsDeletedEntry(currentEntryId, false)}
                             iconName={iconNames.undo}
                             title={_ts('editEntry', 'removeEntryButtonTitle')}
                         />
@@ -113,7 +143,7 @@ export default class EntriesListing extends React.PureComponent {
                         <DangerButton
                             key="remove-button"
                             className={styles.removeButton}
-                            onClick={() => onEntryDelete(true, key)}
+                            onClick={() => handleMarkAsDeletedEntry(currentEntryId, true)}
                             iconName={iconNames.delete}
                             title={_ts('editEntry', 'undoRemoveEntryButtonTitle')}
                         />

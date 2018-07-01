@@ -20,6 +20,12 @@
             {
                 "root": ["."],
                 "alias": {
+                    "#rsca": "./src/vendor/react-store/components/Action",
+                    "#rscg": "./src/vendor/react-store/components/General",
+                    "#rsci": "./src/vendor/react-store/components/Input",
+                    "#rscv": "./src/vendor/react-store/components/View",
+                    "#rscz": "./src/vendor/react-store/components/Visualization",
+                    "#rsu": "./src/vendor/react-store/utils",
                     "#rs": "./src/vendor/react-store",
                     "#ravl": "./src/vendor/ravl",
 

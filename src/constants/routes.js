@@ -149,7 +149,7 @@ export const routes = {
         order: 41,
         type: ROUTE.private,
         path: '/projects/:projectId/leads/:leadId/edit-entries/',
-        loader: () => import('../views/EditEntry'),
+        loader: () => import('../views/EditEntries'),
         links: allLinks,
     }, // _ts('pageTitle', 'editEntries');
 

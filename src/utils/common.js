@@ -14,3 +14,9 @@ export const mapObjectToArray = (obj, fn) => {
     });
     return newArray;
 };
+
+
+export const pick = (obj, keys) => keys.reduce(
+    (acc, key) => ({ ...acc, [key]: obj[key] }),
+    {},
+);

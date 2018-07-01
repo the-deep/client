@@ -157,11 +157,12 @@ export default class ProjectPanel extends React.PureComponent {
                             {_ts('project', 'headerProjects')}
                         </h3>
                         <Cloak
-                            requireDevMode
-                            render={() => (
+                            hide={({ isDevMode }) => !isDevMode}
+                            render={({ disabled }) => (
                                 <Link
                                     to={reverseRoute(pathNames.discoverProjects, { })}
                                     className={styles.link}
+                                    disabled={disabled}
                                 >
                                     <span className={`${iconNames.discover} ${styles.discoverIcon}`} />
                                     {_ts('project', 'discoverProjectButtonLabel')}

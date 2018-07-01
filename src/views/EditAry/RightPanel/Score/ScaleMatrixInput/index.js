@@ -19,6 +19,9 @@ const propTypes = {
     scaleValues: PropTypes.object,
     value: PropTypes.number,
     onChange: PropTypes.func,
+
+    keySelector: PropTypes.func.isRequired,
+    colorSelector: PropTypes.func.isRequired,
 };
 const defaultProps = {
     className: '',
@@ -128,7 +131,13 @@ export default class ScaleMatrixInput extends React.PureComponent {
         } = this.state;
 
         const scale = scales[rowKey][columnKey];
-        const scaleValue = scaleValues[scale.value];
+
+        const scaleValue = scaleValues.find(
+            sv => scale.value === this.props.keySelector(sv),
+        );
+        const scaleValueColor = this.props.colorSelector(scaleValue);
+
+        // const scaleValue = scaleValues[scale.value];
 
         const title = `${rowTitles[rowKey]}\n\n${columnTitles[columnKey]}`;
 
@@ -138,8 +147,8 @@ export default class ScaleMatrixInput extends React.PureComponent {
             style = {};
         } else {
             style = {
-                backgroundColor: scaleValue.color,
-                color: getColorOnBgColor(scaleValue.color),
+                backgroundColor: scaleValueColor,
+                color: getColorOnBgColor(scaleValueColor),
             };
         }
 

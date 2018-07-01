@@ -389,20 +389,22 @@ export default class RightPanel extends React.PureComponent {
         }
     }
 
-    handleFaramChange = (faramValues, faramErrors, shouldChangePristine) => {
+    handleFaramChange = (faramValues, faramErrors, faramInfo) => {
+        const isPristine = faramInfo.isComputed;
+
         if (this.props.activeLeadId) {
             this.props.changeAry({
                 leadId: this.props.activeLeadId,
                 faramValues,
                 faramErrors,
-                shouldChangePristine,
+                isPristine,
             });
         } else {
             this.props.changeAry({
                 leadGroupId: this.props.activeLeadGroupId,
                 faramValues,
                 faramErrors,
-                shouldChangePristine,
+                isPristine,
             });
         }
     }

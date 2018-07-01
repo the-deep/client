@@ -1,9 +1,21 @@
 @import '../../stylesheets/base';
 
+$height-assistant-options: 58px;
+
 .assisted-tagging {
     &.assistant-shown {
         filter: brightness(70%);
         pointer-events: none;
+    }
+
+    .preview {
+        height: calc(100% - #{$height-assistant-options});
+    }
+
+    &:not(.assistant-options-shown) {
+        .preview {
+            height: 100%;
+        }
     }
 
     .assistant-options {
@@ -11,6 +23,8 @@
         align-items: flex-end;
         border-top: $width-separator-thin solid $color-separator;
         padding: $spacing-medium-alt;
+        height: $height-assistant-options;
+        @include background-color($color-background-header);
 
         .assisted-source-change-btn {
             flex-basis: 60%;

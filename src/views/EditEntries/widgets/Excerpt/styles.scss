@@ -1,0 +1,44 @@
+@import '../../../../stylesheets/base';
+
+.excerpt {
+    position: relative;
+    padding: 0;
+    height: 100%;
+
+    .image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center center;
+    }
+
+    .text {
+        width: 100%;
+        height: 100%;
+        resize: none;
+
+        :global {
+            .input {
+                padding: $spacing-small;
+                width: 100%;
+                height: 100%;
+                resize: none;
+            }
+        }
+    }
+
+    .format-button {
+        @include transition-medium;
+        position: absolute;
+        right: $spacing-large;
+        bottom: $spacing-small-alt;
+        opacity: .2;
+        font-size: $font-size-extra-large;
+    }
+
+    &:hover {
+        .format-button {
+            opacity: 1;
+        }
+    }
+}

@@ -1,53 +1,115 @@
 import { createSelector } from 'reselect';
+
+import { dateCondition } from '#rs/components/Input/Faram';
+import { entryAccessor } from '#entities/editEntries';
+
 import {
     analysisFrameworksSelector,
     projectsSelector,
     leadIdFromRoute,
 } from '../domainData';
 
-const emptyList = [];
 const emptyObject = {};
+const emptyArray = [];
 
-const editEntrySelector = ({ siloDomainData }) => (
-    siloDomainData.editEntry || emptyObject
+const editEntriesSelector = ({ siloDomainData }) => (
+    siloDomainData.editEntries || emptyObject
 );
 
-export const editEntryForLeadIdSelector = createSelector(
+// get edit entries for current lead (get lead from url)
+export const editEntriesForLeadSelector = createSelector(
     leadIdFromRoute,
-    editEntrySelector,
+    editEntriesSelector,
     (leadId, editEntry) => editEntry[leadId] || emptyObject,
 );
 
-export const editEntryCurrentLeadSelector = createSelector(
-    editEntryForLeadIdSelector,
+export const editEntriesLeadSelector = createSelector(
+    editEntriesForLeadSelector,
     editEntry => editEntry.lead || emptyObject,
 );
 
-export const editEntrySelectedEntryIdSelector = createSelector(
-    editEntryForLeadIdSelector,
-    editEntry => editEntry.selectedEntryId,
+export const editEntriesEntriesSelector = createSelector(
+    editEntriesForLeadSelector,
+    editEntry => editEntry.entries || emptyArray,
 );
 
-export const editEntryEntriesSelector = createSelector(
-    editEntryForLeadIdSelector,
-    editEntry => editEntry.entries || emptyList,
+export const editEntriesFilteredEntriesSelector = createSelector(
+    editEntriesEntriesSelector,
+    entries => entries.filter(
+        entry => !entryAccessor.isMarkedAsDeleted(entry),
+    ),
 );
 
-export const editEntryFilteredEntriesSelector = createSelector(
-    editEntryEntriesSelector,
-    entries => entries.filter(e => !e.markedForDelete),
+export const editEntriesSelectedEntryKeySelector = createSelector(
+    editEntriesForLeadSelector,
+    editEntry => editEntry.selectedEntryKey,
 );
 
-export const editEntryCurrentProjectSelector = createSelector(
-    editEntryCurrentLeadSelector,
+export const editEntriesSelectedEntrySelector = createSelector(
+    editEntriesEntriesSelector,
+    editEntriesSelectedEntryKeySelector,
+    (entries, selectedEntryKey) => {
+        if (selectedEntryKey === undefined) {
+            return undefined;
+        }
+        return entries.find(
+            entry => entryAccessor.key(entry) === selectedEntryKey,
+        );
+    },
+);
+
+export const editEntriesProjectSelector = createSelector(
+    editEntriesLeadSelector,
     projectsSelector,
     (lead, projects) => (lead.project && projects[lead.project]) || emptyObject,
 );
 
-export const editEntryCurrentAnalysisFrameworkSelector = createSelector(
-    editEntryCurrentProjectSelector,
+export const editEntriesAnalysisFrameworkSelector = createSelector(
+    editEntriesProjectSelector,
     analysisFrameworksSelector,
     (project, analysisFrameworks) => (
         (project.analysisFramework && analysisFrameworks[project.analysisFramework]) || emptyObject
     ),
+);
+
+export const editEntriesWidgetsSelector = createSelector(
+    editEntriesAnalysisFrameworkSelector,
+    analysisFramework => analysisFramework.widgets || emptyArray,
+);
+
+const getSchemaForWidget = (widget) => {
+    switch (widget.widgetId) {
+        // TODO; add schema for dateWidget
+        case 'dateWidget': {
+            // FIXME: this is a test
+            return {
+                fields: {
+                    value: [dateCondition],
+                },
+            };
+        }
+        default:
+            return [];
+    }
+};
+
+export const editEntriesSchemaSelector = createSelector(
+    editEntriesWidgetsSelector,
+    (widgets) => {
+        const schema = {
+            fields: {
+                // put fields here
+            },
+        };
+        widgets.forEach((widget) => {
+            schema.fields[widget.id] = {
+                fields: {
+                    id: [],
+                    data: getSchemaForWidget(widget),
+                },
+            };
+        });
+
+        return schema;
+    },
 );

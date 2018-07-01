@@ -536,24 +536,27 @@ export default class Leads extends React.PureComponent {
                         {_ts('leads', 'showViz')}
                     </Link>
                     <Cloak
-                        requireDevMode
-                        render={() => (
+                        hide={({ isDevMode }) => !isDevMode}
+                        render={({ disabled }) => (
                             <Link
                                 className={styles.link}
                                 to={showClusterVisualizationLink}
                                 replace
+                                disabled={disabled}
                             >
                                 {_ts('leads', 'showCluster')}
                             </Link>
                         )}
                     />
                     <Cloak
+                        hide={({ hasAssessmentTemplate }) => !hasAssessmentTemplate}
                         requireAssessmentTemplate
-                        render={() => (
+                        render={({ disabled }) => (
                             <Link
                                 className={styles.link}
                                 to={showLeadGroupsLink}
                                 replace
+                                disabled={disabled}
                             >
                                 {_ts('leads', 'showLeadGroups')}
                             </Link>

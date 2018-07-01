@@ -190,12 +190,11 @@ const initialSiloDomainData = {
     },
 
     // i specifies lead
-    editEntry: {
+    editEntries: {
         /*
         1: {
-            leadId: 1,
             lead: {},
-            selectedEntryId: undefined,
+            selectedEntryKey: undefined,
             entries: [
             ],
         },

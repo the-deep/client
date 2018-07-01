@@ -110,6 +110,7 @@ export default class Navdrop extends React.PureComponent {
                     <Link
                         to={reverseRoute(pathNames[key], params)}
                         className={`${styles.dropdownItem} ${disabled ? styles.disabled : ''}`}
+                        disabled={disabled}
                     >
                         { iconName && <span className={`${iconName} ${styles.icon}`} />}
                         { _ts('pageTitle', key) }
@@ -164,6 +165,7 @@ export default class Navdrop extends React.PureComponent {
                                 className={`${styles.dropdownItem} ${disabled ? styles.disabled : ''}`}
                                 href={adminEndpoint}
                                 target="_blank"
+                                disabled={disabled}
                             >
                                 <span className={`${styles.icon} ${iconNames.locked}`} />
                                 {_ts('components.navbar', 'adminPanelLabel')}
@@ -182,7 +184,7 @@ export default class Navdrop extends React.PureComponent {
                     </span>
                 </Link>
                 <Cloak
-                    requireLogin
+                    hide={({ isLoggedIn }) => !isLoggedIn}
                     render={({ disabled }) => (
                         <DropdownGroup>
                             <button
