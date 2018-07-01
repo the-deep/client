@@ -536,7 +536,7 @@ export default class Leads extends React.PureComponent {
                         {_ts('leads', 'showViz')}
                     </Link>
                     <Cloak
-                        hide={({ isDevMode }) => !isDevMode}
+                        hide={({ isBeta }) => isBeta}
                         render={({ disabled }) => (
                             <Link
                                 className={styles.link}
