@@ -42,6 +42,9 @@ export const entryAccessor = {
     error: (entry = {}) => (entry.localData || {}).error,
     isMarkedAsDeleted: (entry = {}) => (entry.localData || {}).isMarkedAsDeleted,
 
+    dataAttribute: (entry = {}, attributeId) => (
+        (((entry.data || {}).attributes || {})[attributeId]).data
+    ),
     order: (entry = {}) => (entry.data || {}).order,
     serverId: (entry = {}) => (entry.data || {}).id,
 

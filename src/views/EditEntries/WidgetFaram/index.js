@@ -80,6 +80,7 @@ export default class WidgetFaram extends React.PureComponent {
         const {
             data: { attributes: { [id]: { data } = {} } = {} } = {},
         } = entry || {};
+        const entryKey = entryAccessor.key(entry);
 
         return (
             <div className={styles.header}>
@@ -91,6 +92,7 @@ export default class WidgetFaram extends React.PureComponent {
                         <ActionComponent
                             attributeKey={id}
                             attributeData={data}
+                            entryKey={entryKey}
                         />
                     </div>
                 )}

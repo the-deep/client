@@ -13,6 +13,7 @@ import {
     editEntriesMarkAsDeletedEntryAction,
 } from '#redux';
 
+import HeaderComponent from './HeaderComponent';
 import WidgetFaram from '../../WidgetFaram';
 import styles from './styles.scss';
 
@@ -117,6 +118,7 @@ export default class WidgetFaramContainer extends React.PureComponent {
                     widgets={widgets}
                     pending={pending}
                     widgetType={widgetType}
+                    actionComponent={HeaderComponent}
                     {...otherProps}
                 />
             </div>

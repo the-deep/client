@@ -1,10 +1,8 @@
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import WarningConfirmButton from '#rsca/ConfirmButton/WarningConfirmButton';
-import AccentConfirmButton from '#rsca/ConfirmButton/AccentConfirmButton';
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import { detachedFaram } from '#rsci/Faram';
@@ -104,25 +102,6 @@ const mapDispatchToProps = dispatch => ({
 });
 
 
-const HeaderComponent = ({ attributeKey, attributeData }) => (
-    <Fragment>
-        <AccentConfirmButton
-            title={_ts('editEntry', 'applyAllButtonTitle')}
-            tabIndex="-1"
-            transparent
-            iconName={iconNames.applyAll}
-            confirmationMessage={_ts('editEntry', 'applyToAll')}
-        />
-        <WarningConfirmButton
-            title={_ts('editEntry', 'applyAllBelowButtonTitle')}
-            tabIndex="-1"
-            transparent
-            iconName={iconNames.applyAllBelow}
-            confirmationMessage={_ts('editEntry', 'applyToAllBelow')}
-        />
-    </Fragment>
-);
-
 @connect(mapStateToProps, mapDispatchToProps)
 export default class EditEntries extends React.PureComponent {
     static propTypes = propTypes;
@@ -164,7 +143,6 @@ export default class EditEntries extends React.PureComponent {
                         onExcerptChange={this.handleExcerptChange}
                         onExcerptCreate={this.handleExcerptCreate}
                         schema={this.props.schema}
-                        actionComponent={HeaderComponent}
                     />
                 ),
                 wrapContainer: true,

@@ -126,7 +126,6 @@ export default class Listing extends React.PureComponent {
                 data={entries}
                 itemHeight={this.viewHeight}
                 renderer={WidgetFaramContainer}
-                itemHeight={260}
                 rendererParams={this.rendererParams}
                 keyExtractor={this.keySelector}
             />
