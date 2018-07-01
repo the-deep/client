@@ -34,6 +34,7 @@ import {
     editEntriesSetEntryErrorsAction,
     editEntriesSchemaSelector,
     editEntriesAddEntryAction,
+    editEntriesRemoveLocalEntriesAction,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
@@ -68,6 +69,7 @@ const propTypes = {
     setEntryData: PropTypes.func.isRequired,
     setEntryError: PropTypes.func.isRequired,
     addEntry: PropTypes.func.isRequired,
+    removeLocalEntries: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -98,6 +100,7 @@ const mapDispatchToProps = dispatch => ({
     setEntryData: params => dispatch(editEntriesSetEntryDataAction(params)),
     setEntryError: params => dispatch(editEntriesSetEntryErrorsAction(params)),
     addEntry: params => dispatch(editEntriesAddEntryAction(params)),
+    removeLocalEntries: params => dispatch(editEntriesRemoveLocalEntriesAction(params)),
 });
 
 
@@ -300,6 +303,18 @@ export default class EditEntries extends React.PureComponent {
     handleValidationSuccess = (values, entryKey) => {
         const request = {
             start: () => {
+                // FIXME: create a save request
+                this.saveRequestCoordinator.notifyComplete(entryKey, false);
+            },
+            stop: () => {},
+        };
+        this.saveRequestCoordinator.add(entryKey, request);
+    }
+
+    handleDeleteEntry = (entry, entryKey) => {
+        const request = {
+            start: () => {
+                // FIXME: create a delete request
                 this.saveRequestCoordinator.notifyComplete(entryKey, false);
             },
             stop: () => {},
@@ -308,8 +323,17 @@ export default class EditEntries extends React.PureComponent {
     }
 
     handleSave = () => {
+        this.props.removeLocalEntries({
+            leadId: this.props.leadId,
+        });
+
         this.props.entries.forEach((entry) => {
             const entryKey = entryAccessor.key(entry);
+
+            if (entryAccessor.isMarkedAsDeleted(entry)) {
+                this.handleDeleteEntry(entry, entryKey);
+            }
+
             detachedFaram({
                 value: entry.data.attributes,
                 schema: this.props.schema,
@@ -319,8 +343,8 @@ export default class EditEntries extends React.PureComponent {
                 onValidationFailure: errors => this.handleValidationFailure(errors, entryKey),
                 onValidationSuccess: values => this.handleValidationSuccess(values, entryKey),
             });
-            // FIXME: add conditions for delete later
         });
+
         this.saveRequestCoordinator.start();
     }
 

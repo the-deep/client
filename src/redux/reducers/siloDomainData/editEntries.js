@@ -29,12 +29,18 @@ export const EEB__SET_ENTRY_EXCERPT = 'siloDomainData/EEB__SET_ENTRY_EXCERPT';
 export const EEB__SET_ENTRY_DATA = 'siloDomainData/EEB__SET_ENTRY_DATA';
 export const EEB__SET_ENTRY_ERROR = 'siloDomainData/EEB__SET_ENTRY_ERROR';
 export const EEB__ADD_ENTRY = 'siloDomainData/EEB__ADD_ENTRY';
+export const EEB__REMOVE_LOCAL_ENTRIES = 'siloDomainData/EEB__REMOVE_LOCAL_ENTRIES';
 export const EEB__MARK_AS_DELETED_ENTRY = 'siloDomainData/EEB__MARK_AS_DELETED_ENTRY';
 
 export const editEntriesAddEntryAction = ({ leadId, entry }) => ({
     type: EEB__ADD_ENTRY,
     leadId,
     entry,
+});
+
+export const editEntriesRemoveLocalEntriesAction = ({ leadId }) => ({
+    type: EEB__REMOVE_LOCAL_ENTRIES,
+    leadId,
 });
 
 export const editEntriesSetLeadAction = ({ lead }) => ({
@@ -312,9 +318,31 @@ const setEntryError = (state, action) => {
                 entries: {
                     [entryIndex]: {
                         localData: {
+                            // TODO: hasError must be calculated
                             error: { $set: errors },
                         },
                     },
+                },
+            },
+        },
+    };
+    return update(state, settings);
+};
+
+// Remove all entries that are marked as deleted
+// and don't have serverId
+const removeLocalEntries = (state, action) => {
+    const { leadId } = action;
+    // NOTE: no need to get new selectedEntryKey
+    // a new selectedEntryKey is calculated on mark as delete
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entries: {
+                    $filter: entry => !(
+                        entryAccessor.isMarkedAsDeleted(entry) &&
+                        !entryAccessor.serverId(entry)
+                    ),
                 },
             },
         },
@@ -377,6 +405,7 @@ const reducers = {
     [EEB__SET_ENTRY_DATA]: setEntryData,
     [EEB__SET_ENTRY_ERROR]: setEntryError,
     [EEB__ADD_ENTRY]: addEntry,
+    [EEB__REMOVE_LOCAL_ENTRIES]: removeLocalEntries,
     [EEB__MARK_AS_DELETED_ENTRY]: markAsDeletedEntry,
 };
 export default reducers;

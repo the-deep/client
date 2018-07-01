@@ -99,11 +99,13 @@ export default class WidgetFaramContainer extends React.PureComponent {
             <div className={className}>
                 <header className={headerClassName}>
                     <DangerButton
+                        transparent
                         iconName={iconNames.delete}
                         title={deleteButtonTooltip}
                         onClick={this.handleEntryDelete}
                     />
                     <WarningButton
+                        transparent
                         onClick={this.handleEdit}
                         title={editButtonTooltip}
                         iconName={iconNames.edit}

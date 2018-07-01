@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import ListView from '#rscv/List/ListView';
 import VirtualizedListView from '#rscv/VirtualizedListView';
 
 import {
@@ -127,6 +126,7 @@ export default class Listing extends React.PureComponent {
                 data={entries}
                 itemHeight={this.viewHeight}
                 renderer={WidgetFaramContainer}
+                itemHeight={260}
                 rendererParams={this.rendererParams}
                 keyExtractor={this.keySelector}
             />
