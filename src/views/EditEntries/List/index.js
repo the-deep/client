@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import ListView from '#rscv/List/ListView';
+import VirtualizedListView from '#rscv/VirtualizedListView';
 
 import {
     editEntriesFilteredEntriesSelector,
@@ -32,6 +33,33 @@ const mapStateToProps = state => ({
     widgets: editEntriesWidgetsSelector(state),
 });
 
+const calculateMaxWidgetHeight = (widgets) => {
+    if (widgets.length === 0) {
+        return 0;
+    }
+
+    let maxH = 0;
+    widgets.forEach((widget) => {
+        const {
+            properties: {
+                listGridLayout: {
+                    top,
+                    height,
+                },
+            } = {},
+        } = widget;
+
+        const bottom = top + height;
+
+        if (maxH < bottom) {
+            maxH = bottom;
+        }
+    });
+
+    return maxH;
+};
+
+
 // eslint-disable-next-line react/no-multi-comp
 @connect(mapStateToProps)
 export default class Listing extends React.PureComponent {
@@ -47,6 +75,9 @@ export default class Listing extends React.PureComponent {
     constructor(props) {
         super(props);
         this.widgets = Listing.filterWidgets(props.widgets);
+
+        // TODO: Find better solution for height calcuation
+        this.viewHeight = calculateMaxWidgetHeight(props.widgets) + 20;
     }
 
     componentDidMount() {
@@ -58,6 +89,7 @@ export default class Listing extends React.PureComponent {
         const { widgets: newWidgets } = nextProps;
         if (newWidgets !== oldWidgets) {
             this.widgets = Listing.filterWidgets(newWidgets);
+            this.viewHeight = calculateMaxWidgetHeight(newWidgets) + 20;
         }
     }
 
@@ -90,9 +122,10 @@ export default class Listing extends React.PureComponent {
         const { entries } = this.props;
 
         return (
-            <ListView
+            <VirtualizedListView
                 className={styles.list}
                 data={entries}
+                itemHeight={this.viewHeight}
                 renderer={WidgetFaramContainer}
                 rendererParams={this.rendererParams}
                 keyExtractor={this.keySelector}

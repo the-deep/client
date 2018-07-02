@@ -22,8 +22,8 @@
 
             .action-buttons {
                 flex-shrink: 0;
-                opacity: 0;
                 transition: $duration-transition-medium opacity ease-in-out;
+                opacity: 0;
 
                 >* {
                     padding: $spacing-extra-small $spacing-extra-small-alt;
@@ -38,6 +38,5 @@
                 }
             }
         }
-
     }
 }

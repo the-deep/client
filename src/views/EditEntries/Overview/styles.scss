@@ -36,10 +36,13 @@ $width-right-min: 370px;
 
             .action-buttons {
                 flex-shrink: 0;
-                padding: 0 $spacing-medium;
 
-                button:not(:last-child) {
-                    margin-right: $spacing-small;
+                button {
+                    margin-right: $spacing-medium;
+                }
+
+                .add-new-entry-button {
+                    margin-left: $spacing-large;
                 }
             }
         }

@@ -86,14 +86,14 @@ export default class WidgetFaram extends React.PureComponent {
                 <h5 className={styles.heading}>
                     { title }
                 </h5>
-                { ActionComponent && entry &&
+                { ActionComponent && entry && (
                     <div className={styles.actionButtons}>
                         <ActionComponent
                             attributeKey={id}
                             attributeData={data}
                         />
                     </div>
-                }
+                )}
             </div>
         );
     }
@@ -124,9 +124,7 @@ export default class WidgetFaram extends React.PureComponent {
                                     onExcerptCreate={this.handleExcerptCreate}
                                 />
                             ) : (
-                                <Widget
-                                    widget={widget}
-                                />
+                                <Widget widget={widget} />
                             )
                         }
                     </FaramGroup>
