@@ -6,10 +6,12 @@ export const CV__SET_PROJECT_CLUSTER_VISUALIZATION = 'siloDomainData/SET_PROJECT
 
 export const setProjectClusterDataAction = ({
     projectId,
-    clusterData,
+    keywords,
+    documents,
 }) => ({
     projectId,
-    clusterData,
+    keywords,
+    documents,
     type: CV__SET_PROJECT_CLUSTER_VISUALIZATION,
 });
 
@@ -18,14 +20,18 @@ export const setProjectClusterDataAction = ({
 const setProjectClusterData = (state, action) => {
     const {
         projectId,
-        clusterData,
+        keywords,
+        documents,
     } = action;
 
     const settings = {
         clusterVisualization: {
             [projectId]: { $auto: {
-                clusterData: { $autoArray: {
-                    $set: clusterData,
+                keywords: { $autoArray: {
+                    $set: keywords,
+                } },
+                documents: { $autoArray: {
+                    $set: documents,
                 } },
             } },
         },

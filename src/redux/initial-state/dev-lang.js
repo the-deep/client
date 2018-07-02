@@ -713,6 +713,11 @@ const initialDevLangState = {
         3003: 'Title',
         3004: 'Cannot initialize cluster creation for project. Please check your network connection and try again',
         3005: 'Cannot fetch data for given cluster. Please check your network connection and try again',
+        3006: 'Title',
+        3007: 'Classified Doc Id',
+        3008: 'Created At',
+        3009: 'Clusters',
+        3010: 'Cluster',
     },
     links: {
         /*
@@ -1991,10 +1996,15 @@ const initialDevLangState = {
         clusterViz: {
             clusterVizTitle: 3000,
             showTable: 3001,
-            tableScoreLabel: 3002,
-            tableValueLabel: 3003,
+            keywordTableScoreLabel: 3002,
+            keywordTableValueLabel: 3003,
             clusterInitRequestFatal: 3004,
             clusterDataRequestFatal: 3005,
+            documentTableTitleLabel: 3006,
+            documentTableClassifiedDocIdLabel: 3007,
+            documentTableCreatedAtLabel: 3008,
+            clusterVizGraph: 3009,
+            tableHeader: 3010,
         },
     },
 };
