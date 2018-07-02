@@ -157,7 +157,7 @@ export default class ProjectPanel extends React.PureComponent {
                             {_ts('project', 'headerProjects')}
                         </h3>
                         <Cloak
-                            hide={({ isDevMode }) => !isDevMode}
+                            hide={({ isBeta }) => isBeta}
                             render={({ disabled }) => (
                                 <Link
                                     to={reverseRoute(pathNames.discoverProjects, { })}

@@ -1,10 +1,8 @@
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import WarningConfirmButton from '#rsca/ConfirmButton/WarningConfirmButton';
-import AccentConfirmButton from '#rsca/ConfirmButton/AccentConfirmButton';
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import { detachedFaram } from '#rsci/Faram';
@@ -34,6 +32,7 @@ import {
     editEntriesSetEntryErrorsAction,
     editEntriesSchemaSelector,
     editEntriesAddEntryAction,
+    editEntriesRemoveLocalEntriesAction,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
@@ -68,6 +67,7 @@ const propTypes = {
     setEntryData: PropTypes.func.isRequired,
     setEntryError: PropTypes.func.isRequired,
     addEntry: PropTypes.func.isRequired,
+    removeLocalEntries: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -98,27 +98,9 @@ const mapDispatchToProps = dispatch => ({
     setEntryData: params => dispatch(editEntriesSetEntryDataAction(params)),
     setEntryError: params => dispatch(editEntriesSetEntryErrorsAction(params)),
     addEntry: params => dispatch(editEntriesAddEntryAction(params)),
+    removeLocalEntries: params => dispatch(editEntriesRemoveLocalEntriesAction(params)),
 });
 
-
-const HeaderComponent = ({ attributeKey, attributeData }) => (
-    <Fragment>
-        <AccentConfirmButton
-            title={_ts('editEntry', 'applyAllButtonTitle')}
-            tabIndex="-1"
-            transparent
-            iconName={iconNames.applyAll}
-            confirmationMessage={_ts('editEntry', 'applyToAll')}
-        />
-        <WarningConfirmButton
-            title={_ts('editEntry', 'applyAllBelowButtonTitle')}
-            tabIndex="-1"
-            transparent
-            iconName={iconNames.applyAllBelow}
-            confirmationMessage={_ts('editEntry', 'applyToAllBelow')}
-        />
-    </Fragment>
-);
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class EditEntries extends React.PureComponent {
@@ -161,7 +143,6 @@ export default class EditEntries extends React.PureComponent {
                         onExcerptChange={this.handleExcerptChange}
                         onExcerptCreate={this.handleExcerptCreate}
                         schema={this.props.schema}
-                        actionComponent={HeaderComponent}
                     />
                 ),
                 wrapContainer: true,
@@ -300,6 +281,18 @@ export default class EditEntries extends React.PureComponent {
     handleValidationSuccess = (values, entryKey) => {
         const request = {
             start: () => {
+                // FIXME: create a save request
+                this.saveRequestCoordinator.notifyComplete(entryKey, false);
+            },
+            stop: () => {},
+        };
+        this.saveRequestCoordinator.add(entryKey, request);
+    }
+
+    handleDeleteEntry = (entry, entryKey) => {
+        const request = {
+            start: () => {
+                // FIXME: create a delete request
                 this.saveRequestCoordinator.notifyComplete(entryKey, false);
             },
             stop: () => {},
@@ -308,8 +301,17 @@ export default class EditEntries extends React.PureComponent {
     }
 
     handleSave = () => {
+        this.props.removeLocalEntries({
+            leadId: this.props.leadId,
+        });
+
         this.props.entries.forEach((entry) => {
             const entryKey = entryAccessor.key(entry);
+
+            if (entryAccessor.isMarkedAsDeleted(entry)) {
+                this.handleDeleteEntry(entry, entryKey);
+            }
+
             detachedFaram({
                 value: entry.data.attributes,
                 schema: this.props.schema,
@@ -319,8 +321,8 @@ export default class EditEntries extends React.PureComponent {
                 onValidationFailure: errors => this.handleValidationFailure(errors, entryKey),
                 onValidationSuccess: values => this.handleValidationSuccess(values, entryKey),
             });
-            // FIXME: add conditions for delete later
         });
+
         this.saveRequestCoordinator.start();
     }
 

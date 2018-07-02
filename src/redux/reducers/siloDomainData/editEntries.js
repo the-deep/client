@@ -29,12 +29,37 @@ export const EEB__SET_ENTRY_EXCERPT = 'siloDomainData/EEB__SET_ENTRY_EXCERPT';
 export const EEB__SET_ENTRY_DATA = 'siloDomainData/EEB__SET_ENTRY_DATA';
 export const EEB__SET_ENTRY_ERROR = 'siloDomainData/EEB__SET_ENTRY_ERROR';
 export const EEB__ADD_ENTRY = 'siloDomainData/EEB__ADD_ENTRY';
+export const EEB__REMOVE_LOCAL_ENTRIES = 'siloDomainData/EEB__REMOVE_LOCAL_ENTRIES';
 export const EEB__MARK_AS_DELETED_ENTRY = 'siloDomainData/EEB__MARK_AS_DELETED_ENTRY';
+export const EEB__APPLY_TO_ALL_ENTRIES = 'siloDomainData/EEB__APPLY_TO_ALL_ENTRIES';
+export const EEB__APPLY_TO_ALL_ENTRIES_BELOW = 'siloDomainData/EEB__APPLY_TO_ALL_ENTRIES_BELOW';
+
+
+export const editEntriesApplyToAllEntriesAction = ({ leadId, key, value, entryKey }) => ({
+    type: EEB__APPLY_TO_ALL_ENTRIES,
+    leadId,
+    key,
+    value,
+    entryKey,
+});
+
+export const editEntriesApplyToAllEntriesBelowAction = ({ leadId, key, value, entryKey }) => ({
+    type: EEB__APPLY_TO_ALL_ENTRIES_BELOW,
+    leadId,
+    key,
+    value,
+    entryKey,
+});
 
 export const editEntriesAddEntryAction = ({ leadId, entry }) => ({
     type: EEB__ADD_ENTRY,
     leadId,
     entry,
+});
+
+export const editEntriesRemoveLocalEntriesAction = ({ leadId }) => ({
+    type: EEB__REMOVE_LOCAL_ENTRIES,
+    leadId,
 });
 
 export const editEntriesSetLeadAction = ({ lead }) => ({
@@ -312,9 +337,31 @@ const setEntryError = (state, action) => {
                 entries: {
                     [entryIndex]: {
                         localData: {
+                            // TODO: hasError must be calculated
                             error: { $set: errors },
                         },
                     },
+                },
+            },
+        },
+    };
+    return update(state, settings);
+};
+
+// Remove all entries that are marked as deleted
+// and don't have serverId
+const removeLocalEntries = (state, action) => {
+    const { leadId } = action;
+    // NOTE: no need to get new selectedEntryKey
+    // a new selectedEntryKey is calculated on mark as delete
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entries: {
+                    $filter: entry => !(
+                        entryAccessor.isMarkedAsDeleted(entry) &&
+                        !entryAccessor.serverId(entry)
+                    ),
                 },
             },
         },
@@ -368,6 +415,76 @@ const markAsDeletedEntry = (state, action) => {
     return update(state, settings);
 };
 
+const applyToAllEntries = mode => (state, action) => {
+    // attribute key and value
+    const { leadId, key, value, entryKey } = action;
+    const {
+        editEntries: { [leadId]: { entries = [] } = {} } = {},
+    } = state;
+
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entries: {},
+            },
+        },
+    };
+
+
+    // eslint-disable-next-line
+    debugger;
+    // NOTE: setting entry to undefined instead of using filter to preserve index
+    let iterableEntries;
+    if (mode === 'all-below') {
+        const entryIndex = entries.findIndex(entry => entryAccessor.key(entry) === entryKey);
+        console.warn(entryIndex);
+        // set all entries before current entry to undefined
+        iterableEntries = entries.map((entry, i) => (i < entryIndex ? undefined : entry));
+    } else if (mode === 'all') {
+        iterableEntries = entries;
+    }
+    const stringifiedValue = JSON.stringify(value);
+    iterableEntries = iterableEntries.map((entry) => {
+        if (
+            entry === undefined ||
+            // set current entry to undefined
+            key === entryAccessor.key(entry) ||
+            // deep compare data and set same elements to undefined
+            JSON.stringify(entryAccessor.dataAttribute(entry, key)) === stringifiedValue
+        ) {
+            return undefined;
+        }
+        return entry;
+    });
+
+    iterableEntries.forEach((entry, i) => {
+        if (entry === undefined) {
+            return;
+        }
+        settings.editEntries[leadId].entries[i] = {
+            data: {
+                attributes: { $auto: {
+                    [key]: { $auto: {
+                        data: { $set: value },
+                    } },
+                } },
+            },
+            localData: {
+                isPristine: { $set: false },
+                error: { $auto: {
+                    attributes: { $auto: {
+                        [key]: { $auto: {
+                            data: { $set: undefined },
+                        } },
+                    } },
+                } },
+                // TODO: hasError must be calculated
+            },
+        };
+    });
+    return update(state, settings);
+};
+
 const reducers = {
     [EEB__SET_LEAD]: setLead,
     [EEB__SET_ENTRIES]: setEntries,
@@ -377,6 +494,9 @@ const reducers = {
     [EEB__SET_ENTRY_DATA]: setEntryData,
     [EEB__SET_ENTRY_ERROR]: setEntryError,
     [EEB__ADD_ENTRY]: addEntry,
+    [EEB__REMOVE_LOCAL_ENTRIES]: removeLocalEntries,
     [EEB__MARK_AS_DELETED_ENTRY]: markAsDeletedEntry,
+    [EEB__APPLY_TO_ALL_ENTRIES]: applyToAllEntries('all'),
+    [EEB__APPLY_TO_ALL_ENTRIES_BELOW]: applyToAllEntries('all-below'),
 };
 export default reducers;

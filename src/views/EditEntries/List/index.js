@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import ListView from '#rscv/List/ListView';
 import VirtualizedListView from '#rscv/VirtualizedListView';
 
 import {
