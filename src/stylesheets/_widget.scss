@@ -3,12 +3,18 @@
 
     .header {
         background-color: $color-background-header;
+        height: $height-header;
         text-transform: uppercase;
         font-size: $font-size-small;
+
+        .heading {
+            color: $color-accent;
+            font-weight: $font-weight-bold;
+        }
     }
 
     .content {
-        background-color: $color-foreground-alt;
+        background-color: $color-foreground;
         height: calc(100% - #{$height-header});
     }
 }

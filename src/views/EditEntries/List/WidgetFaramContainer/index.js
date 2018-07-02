@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import WarningButton from '#rs/components/Action/Button/WarningButton';
-import { findDifferenceInObject } from '#rs/utils/common';
 
 import { entryAccessor } from '#entities/editEntries';
 import { iconNames } from '#constants';

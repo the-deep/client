@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import ResizableH from '#rscv/Resizable/ResizableH';
 import SelectInput from '#rsci/SelectInput';
-import SuccessButton from '#rsca/Button/SuccessButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 
 import { entryAccessor } from '#entities/editEntries';
@@ -154,19 +154,20 @@ export default class Overview extends React.PureComponent {
                                 hideClearButton
                             />
                             <div className={styles.actionButtons}>
-                                <SuccessButton
-                                    onClick={this.handleEmptyExcerptCreate}
-                                >
-                                    {/* FIXME: use strings */}
-                                    Add entry
-                                </SuccessButton>
                                 <DangerButton
                                     onClick={this.handleEntryDelete}
                                     disabled={!entry}
                                 >
                                     {/* FIXME: use strings */}
-                                    Remove entry
+                                    Remove
                                 </DangerButton>
+                                <PrimaryButton
+                                    onClick={this.handleEmptyExcerptCreate}
+                                    className={styles.addNewEntryButton}
+                                >
+                                    {/* FIXME: use strings */}
+                                    Add new
+                                </PrimaryButton>
                             </div>
                         </header>
                         <WidgetFaram
