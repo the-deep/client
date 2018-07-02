@@ -137,6 +137,14 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'clusterViz');
 
+    visualization: {
+        order: 170,
+        type: ROUTE.private,
+        path: '/visualization',
+        loader: () => import('../views/Visualization'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'Visualization');
+
     entries: {
         order: 40,
         type: ROUTE.private,
