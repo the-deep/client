@@ -11,6 +11,7 @@ import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import TabularSelectInput from '#rs/components/Input/TabularSelectInput';
 import TextInput from '#rs/components/Input/TextInput';
+import SelectInput from '#rs/components/Input/SelectInput';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import List from '#rs/components/View/List';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
@@ -586,6 +587,15 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                     key={data.key}
                     faramElementName={data.key}
                     label={data.title}
+                />
+            );
+        } else if (data.fieldType === 'select') {
+            return (
+                <SelectInput
+                    key={data.key}
+                    faramElementName={data.key}
+                    label={data.title}
+                    options={data.options}
                 />
             );
         }
