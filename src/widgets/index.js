@@ -26,7 +26,7 @@ const widgetStore = [
 export default widgetStore;
 
 export const entryUpdater = (widget, modifier, entry, analysisFramework) => {
-    if (!widget.entryUpdater) {
+    if (!widget.entryUpdater || !analysisFramework.widgets) {
         return;
     }
 
