@@ -39,29 +39,6 @@ export default class Excerpt extends React.PureComponent {
         this.state = { isBeingDraggedOver: false };
     }
 
-    handleExcerptChange = (type, value) => {
-        const {
-            entryType,
-            image,
-            excerpt,
-            onExcerptChange,
-            onExcerptCreate,
-        } = this.props;
-
-        const hasExcerpt = (entryType === IMAGE && image) || (entryType === TEXT && excerpt);
-        if (!entryType || hasExcerpt) {
-            onExcerptCreate({
-                type,
-                value,
-            });
-        } else {
-            onExcerptChange({
-                type,
-                value,
-            });
-        }
-    }
-
     handleDragEnter = () => {
         this.setState({ isBeingDraggedOver: true });
     }
@@ -75,7 +52,26 @@ export default class Excerpt extends React.PureComponent {
     }
 
     handleTextChange = (value) => {
-        this.handleExcerptChange(TEXT, value);
+        const type = TEXT;
+        const {
+            entryType,
+            onExcerptChange,
+            onExcerptCreate,
+        } = this.props;
+
+        const hasEntry = !!entryType;
+
+        if (!hasEntry) {
+            onExcerptCreate({
+                type,
+                value,
+            });
+        } else {
+            onExcerptChange({
+                type,
+                value,
+            });
+        }
     }
 
     handleFormatText = () => {
@@ -86,8 +82,8 @@ export default class Excerpt extends React.PureComponent {
     handleDragDrop = (e) => {
         e.preventDefault();
         const transferredData = e.dataTransfer.getData('text');
-        let formattedData;
 
+        let formattedData;
         try {
             formattedData = JSON.parse(transferredData);
         } catch (ex) {
@@ -96,13 +92,33 @@ export default class Excerpt extends React.PureComponent {
                 data: transferredData,
             };
         }
-
         const {
             type,
             data,
         } = formattedData;
 
-        this.handleExcerptChange(type, data);
+        const {
+            entryType,
+            image,
+            excerpt,
+            onExcerptChange,
+            onExcerptCreate,
+        } = this.props;
+
+        const hasEntry = !!entryType;
+        const hasExcerpt = (entryType === IMAGE && !!image) || (entryType === TEXT && !!excerpt);
+
+        if (!hasEntry || hasExcerpt) {
+            onExcerptCreate({
+                type,
+                value: data,
+            });
+        } else {
+            onExcerptChange({
+                type,
+                value: data,
+            });
+        }
 
         this.setState({ isBeingDraggedOver: false });
     }
@@ -112,7 +128,7 @@ export default class Excerpt extends React.PureComponent {
 
         const className = `
             ${styles.image}
-            image 
+            image
         `;
 
         // FIXME: use translation
