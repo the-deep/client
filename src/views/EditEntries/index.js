@@ -3,6 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import update from '#rs/utils/immutable-update';
+import { reverseRoute } from '#rs/utils/common';
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import { detachedFaram } from '#rsci/Faram';
@@ -10,8 +12,6 @@ import FixedTabs from '#rscv/FixedTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { CoordinatorBuilder } from '#rsu/coordinate';
-
-import { reverseRoute } from '#rs/utils/common';
 
 import { entryAccessor } from '#entities/editEntries';
 import {
@@ -41,6 +41,7 @@ import {
 import notify from '#notify';
 import _ts from '#ts';
 
+import EditEntrySaveRequest from './requests/EditEntrySaveRequest';
 import EditEntryDataRequest from './requests/EditEntryDataRequest';
 
 import Overview from './Overview';
@@ -206,6 +207,8 @@ export default class EditEntries extends React.PureComponent {
     componentWillReceiveProps(nextProps) {
         const { leadId } = nextProps;
         if (this.props.leadId !== leadId && leadId) {
+            this.saveRequestCoordinator.stop();
+
             this.editEntryDataRequest.init({ leadId });
             this.editEntryDataRequest.start();
         }
@@ -278,17 +281,35 @@ export default class EditEntries extends React.PureComponent {
     }
 
     handleValidationSuccess = (values, entryKey) => {
-        const request = {
-            start: () => {
-                // FIXME: create a save request
-                this.saveRequestCoordinator.notifyComplete(entryKey, false);
+        const entry = this.props.entries.find(
+            e => entryAccessor.key(e) === entryKey,
+        );
+
+        // NOTE: update attributes in entry to get newEntry
+        const settings = {
+            data: {
+                attributes: { $set: values },
             },
-            stop: () => {},
         };
+        const newEntry = update(entry, settings);
+
+        const request = new EditEntrySaveRequest({
+            setPending: undefined,
+            saveEntry: undefined,
+            setEntryError: undefined,
+            getCoordinator: () => this.saveRequestCoordinator,
+        });
+        request.init({
+            leadId: this.props.leadId,
+            entryKey: entryAccessor.key(newEntry),
+            entryData: entryAccessor.data(newEntry),
+            serverId: entryAccessor.serverId(newEntry),
+        });
         this.saveRequestCoordinator.add(entryKey, request);
     }
 
     handleDeleteEntry = (entry, entryKey) => {
+        // FIXME: check if entry is disabled
         const request = {
             start: () => {
                 // FIXME: create a delete request
