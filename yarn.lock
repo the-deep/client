@@ -3271,6 +3271,13 @@ cyclist@~0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-0.2.2.tgz#1b33792e11e914a2fd6d6ed6447464444e5fa640"
 
+d3-area-label@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/d3-area-label/-/d3-area-label-1.4.0.tgz#a6049740a368fae9c79d0a927ebb4b51084dfdaf"
+  dependencies:
+    d3-array "^1.2.1"
+    d3-scale "^2.0.0"
+
 d3-array@1, d3-array@^1.2.0, d3-array@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-1.2.1.tgz#d1ca33de2f6ac31efadb8e050a021d7e2396d5dc"
@@ -3296,7 +3303,7 @@ d3-chord@^1.0.4:
     d3-array "1"
     d3-path "1"
 
-d3-collection@1:
+d3-collection@1, d3-collection@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/d3-collection/-/d3-collection-1.0.4.tgz#342dfd12837c90974f33f1cc0a785aea570dcdc2"
 
@@ -3349,6 +3356,14 @@ d3-path@1:
 d3-quadtree@1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/d3-quadtree/-/d3-quadtree-1.0.3.tgz#ac7987e3e23fe805a990f28e1b50d38fcb822438"
+
+d3-sankey@^0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/d3-sankey/-/d3-sankey-0.7.1.tgz#d229832268fc69a7fec84803e96c2256a614c521"
+  dependencies:
+    d3-array "1"
+    d3-collection "1"
+    d3-shape "^1.2.0"
 
 d3-scale-chromatic@^1.2.0:
   version "1.2.0"

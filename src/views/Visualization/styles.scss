@@ -1,89 +1,104 @@
+@import '../../stylesheets/base';
+
 .visualization {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 
     .header{
-        
+        @include background-color($color-background-header);
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: space-between;
+        border-bottom: $width-separator-thin solid $color-separator-alt;
+        padding: $spacing-small;
     }
 
     .container {
+        flex: 1;
+        overflow: auto;
+
+        %viz {
+            @include background-color($color-background-header);
+            margin-bottom: $spacing-small;
+            height: 800px;
+        }
 
         .sunburst {
-            
+            @extend %viz;
         }
 
         .correlation-matrix {
-            
+            @extend %viz;
         }
 
         .dendrogram {
-            
+            @extend %viz;
         }
 
         .radial-dendrogram {
-            
+            @extend %viz;
         }
 
         .treemap {
-            
+            @extend %viz;
         }
 
         .chord-diagram {
-            
+            @extend %viz;
         }
 
         .horizontal-bar {
-            
+            @extend %viz;
         }
 
         .force-directed-graph {
-            
+            @extend %viz;
         }
 
         .force-directed-graph-voronoi {
-            
-        }
-
-        .clustered-force-layout {
-            
+            @extend %viz;
         }
 
         .collapsible-tree-view {
-            
+            @extend %viz;
         }
 
         .org-chart {
-            
+            @extend %viz;
         }
 
         .pie-chart {
-            
+            @extend %viz;
         }
 
         .donut-chart {
-            
+            @extend %viz;
         }
 
         .organigram {
-            
+            @extend %viz;
         }
 
         .stacked-bar-chart {
-            
+            @extend %viz;
         }
 
         .stream-graph {
-            
+            @extend %viz;
         }
 
         .sankey {
-            
+            @extend %viz;
         }
 
         .sparklines {
-            
+            @extend %viz;
         }
 
         .parallel-coordinates {
-            
+            @extend %viz;
         }
     }
 }

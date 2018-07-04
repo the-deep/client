@@ -16,7 +16,6 @@ import PieChart from '#rs/components/Visualization/PieChart';
 import DonutChart from '#rs/components/Visualization/DonutChart';
 import Sankey from '#rs/components/Visualization/Sankey';
 import ParallelCoordinates from '#rs/components/Visualization/ParallelCoordinates';
-import ClusteredForceLayout from '#rs/components/Visualization/ClusteredForceLayout';
 import StreamGraph from '#rs/components/Visualization/StreamGraph';
 import StackedBarChart from '#rs/components/Visualization/StackedBarChart';
 import SparkLines from '#rs/components/Visualization/SparkLines';
@@ -39,6 +38,8 @@ import {
     streamData,
 } from './dummyData';
 
+import styles from './styles.scss';
+
 const ChordDiagramView = BoundError(VizError)(wrapViz(ChordDiagram));
 const SunBurstView = BoundError(VizError)(wrapViz(SunBurst));
 const CorrelationMatrixView = BoundError(VizError)(wrapViz(CorrelationMatrix));
@@ -58,7 +59,6 @@ const DonutChartView = BoundError(VizError)(wrapViz(DonutChart));
 const OrganigramView = BoundError(VizError)(wrapViz(Organigram));
 const ParallelCoordinatesView = BoundError(VizError)(wrapViz(ParallelCoordinates));
 
-
 @BoundError(AppError)
 export default class Visualization extends React.PureComponent {
     render() {
@@ -73,28 +73,33 @@ export default class Visualization extends React.PureComponent {
                         data={hierarchicalData}
                         valueAccessor={d => d.size}
                         labelAccessor={d => d.name}
+                        headerText={_ts('visualization', 'sunburst')}
                     />
                     <CorrelationMatrixView
                         className={styles.correlationMatrix}
                         data={correlationData}
                         colorSchemeType="continuous"
+                        headerText={_ts('visualization', 'correlationMatrix')}
                     />
                     <DendrogramView
                         className={styles.dendrogram}
                         data={hierarchicalData}
                         labelAccessor={d => d.name}
                         valueAccessor={d => d.size}
+                        headerText={_ts('visualization', 'dendrogram')}
                     />
                     <RadialDendrogramView
                         className={styles.radialDendrogram}
                         data={hierarchicalData}
                         labelAccessor={d => d.name}
+                        headerText={_ts('visualization', 'radialDendrogram')}
                     />
                     <TreeMapView
                         className={styles.treemap}
                         data={hierarchicalData}
                         valueAccessor={d => d.size}
                         labelAccessor={d => d.name}
+                        headerText={_ts('visualization', 'treemap')}
                     />
                     <TreeMapView
                         className={styles.treemap}
@@ -102,6 +107,7 @@ export default class Visualization extends React.PureComponent {
                         valueAccessor={d => d.size}
                         zoomable={false}
                         labelAccessor={d => d.name}
+                        headerText={_ts('visualization', 'zoomableTreemap')}
                     />
                     <ChordDiagramView
                         className={styles.chordDiagram}
@@ -109,12 +115,14 @@ export default class Visualization extends React.PureComponent {
                         labelsData={chordData.labels}
                         valueAccessor={d => d.size}
                         labelAccessor={d => d.name}
+                        headerText={_ts('visualization', 'chordDiagram')}
                     />
                     <HorizontalBarView
                         className={styles.horizontalBar}
                         data={barData.data}
                         valueAccessor={d => d.value}
                         labelAccessor={d => d.label}
+                        headerText={_ts('visualization', 'horizontalBar')}
                     />
                     <ForceDirectedGraphView
                         className={styles.forceDirectedGraph}
@@ -122,6 +130,7 @@ export default class Visualization extends React.PureComponent {
                         idAccessor={d => d.id}
                         groupAccessor={d => d.group}
                         valueAccessor={d => d.value}
+                        headerText={_ts('visualization', 'forcedDirectedGraph')}
                     />
                     <ForceDirectedGraphView
                         className={styles.forceDirectedGraphVoronoi}
@@ -130,69 +139,73 @@ export default class Visualization extends React.PureComponent {
                         groupAccessor={d => d.group}
                         valueAccessor={d => d.value}
                         useVoronoi={false}
-                    />
-                    <ClusteredForceLayout
-                        className={styles.clusteredForceLayout}
-                        data={forceDirectedData}
-                        idAccessor={d => d.id}
-                        groupAccessor={d => d.group}
-                        valueAccessor={d => d.value}
+                        headerText={_ts('visualization', 'forceDirectedGraphVoronoi')}
                     />
                     <CollapsibleTreeView
                         className={styles.collapsibleTreeView}
                         data={hierarchicalData}
                         labelAccessor={d => d.name}
+                        headerText={_ts('visualization', 'collapsibleTree')}
                     />
                     <OrgChartView
                         className={styles.orgChart}
                         data={hierarchicalData}
                         idAccessor={d => d.name}
+                        headerText={_ts('visualization', 'orgChart')}
                     />
                     <PieChartView
                         className={styles.pieChart}
                         data={barData.data}
                         valueAccessor={d => d.value}
                         labelAccessor={d => d.label}
+                        headerText={_ts('visualization', 'pieChart')}
                     />
                     <DonutChartView
                         className={styles.donutChart}
                         data={barData.data}
                         valueAccessor={d => d.value}
                         labelAccessor={d => d.label}
+                        headerText={_ts('visualization', 'donutChart')}
                     />
                     <OrganigramView
                         className={styles.organigram}
                         data={hierarchicalData}
                         idAccessor={d => d.name}
+                        headerText={_ts('visualization', 'organigram')}
                     />
                     <StackedBarChartView
                         className={styles.stackedBarChart}
                         data={stackedData}
                         labelName="month"
                         labelAccessor={d => d.month}
+                        headerText={_ts('visualization', 'stackedBarChart')}
                     />
                     <StreamGraphView
                         className={styles.streamGraph}
                         data={streamData}
                         labelName="time"
                         labelAccessor={d => d.time}
+                        headerText={_ts('visualization', 'streamGraph')}
                     />
                     <SankeyView
                         className={styles.sankey}
                         data={sankeyData}
                         valueAccessor={d => d.value}
                         labelAccessor={d => d.name}
+                        headerText={_ts('visualization', 'sankey')}
                     />
                     <SparkLinesView
                         className={styles.sparklines}
                         data={lineData.data}
                         valueAccessor={d => d.value}
+                        headerText={_ts('visualization', 'sparklines')}
                     />
                     <ParallelCoordinatesView
                         className={styles.parallelCoordinates}
                         data={parallelData}
                         labelName="name"
                         labelAccessor={d => d.name}
+                        headerText={_ts('visualization', 'parallelCoordinates')}
                     />
                 </div>
             </div>

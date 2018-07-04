@@ -1,12 +1,12 @@
 const initialDevLangState = {
     strings: {
         /*
-        // For testing edit
-        98161: 'Apple',
-        98162: 'Ball',
-        98163: 'Mango',
-        98164: 'Orange',
-        */
+           // For testing edit
+           98161: 'Apple',
+           98162: 'Ball',
+           98163: 'Mango',
+           98164: 'Orange',
+         */
 
         1: 'Owner',
         2: 'Created',
@@ -718,16 +718,37 @@ const initialDevLangState = {
         3008: 'Created At',
         3009: 'Clusters',
         3010: 'Cluster',
+        4000: 'Visualization',
+        4001: 'Sunburst',
+        4002: 'CorrelationMatrix',
+        4003: 'Dendrogram',
+        4004: 'Radialdendrogram',
+        4005: 'Treemap',
+        4006: 'Zoomabletreemap',
+        4007: 'Chorddiagram',
+        4008: 'Horizontalbar',
+        4009: 'Forceddirectedgraph',
+        4010: 'Forcedirectedgraphvoronoi',
+        4011: 'Collapsibletree',
+        4012: 'Orgchart',
+        4013: 'Piechart',
+        4014: 'Donutchart',
+        4015: 'Organigram',
+        4016: 'Stackedbarchart',
+        4017: 'Streamgraph',
+        4018: 'Sankey',
+        4019: 'Sparklines',
+        4020: 'Parallelcoordinates',
     },
     links: {
         /*
-        'acorn.fruits': {
-            appleLabel: 98161,
-            ballLabel: 98162,
-            mangoLabel: 98163,
-            orangeLabel: 98164,
-        },
-        */
+           'acorn.fruits': {
+           appleLabel: 98161,
+           ballLabel: 98162,
+           mangoLabel: 98163,
+           orangeLabel: 98164,
+           },
+         */
 
         browserExtension: {
             browserExtensionSuccessTitle: 2000,
@@ -1605,6 +1626,8 @@ const initialDevLangState = {
 
             browserExtension: 2000,
             stringManagement: 5572,
+            clusterViz: 3000,
+            visualization: 4000,
         },
         project: {
             addRegionButtonLabel: 301,
@@ -2005,6 +2028,29 @@ const initialDevLangState = {
             documentTableCreatedAtLabel: 3008,
             clusterVizGraph: 3009,
             tableHeader: 3010,
+        },
+        visualization: {
+            visualizationTitle: 4000,
+            sunburst: 4001,
+            correlationMatrix: 4002,
+            dendrogram: 4003,
+            radialDendrogram: 4004,
+            treemap: 4005,
+            zoomableTreemap: 4006,
+            chordDiagram: 4007,
+            horizontalBar: 4008,
+            forcedDirectedGraph: 4009,
+            forceDirectedGraphVoronoi: 4010,
+            collapsibleTree: 4011,
+            orgChart: 4012,
+            pieChart: 4013,
+            donutChart: 4014,
+            organigram: 4015,
+            stackedBarChart: 4016,
+            streamGraph: 4017,
+            sankey: 4018,
+            sparklines: 4019,
+            parallelCoordinates: 4020,
         },
     },
 };
