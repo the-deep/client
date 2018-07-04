@@ -5,6 +5,8 @@ import NumberInput from '#rs/components/Input/NumberInput';
 
 import _ts from '#ts';
 
+import styles from './styles.scss';
+
 const propTypes = {
 };
 
@@ -19,12 +21,21 @@ export default class NumberWidget extends React.PureComponent {
     render() {
         const separatorText = ' ';
         return (
-            <NumberInput
-                faramElementName="value"
-                placeholder={_ts('framework.numberWidget', 'numberPlaceholder')}
-                showLabel={false}
-                separator={separatorText}
-            />
+            <div className={styles.number}>
+                <NumberInput
+                    faramElementName="value"
+                    placeholder={_ts('framework.numberWidget', 'numberPlaceholder')}
+                    separator={separatorText}
+                    showLabel={false}
+                    showHintAndError={false}
+                    // FIXME: remove this later (this is example of faramInfo)
+                    faramInfo={{
+                        action: 'changeExcerpt',
+                        type: 'excerpt',
+                        value: 'This excerpt was changed as a side effect.',
+                    }}
+                />
+            </div>
         );
     }
 }

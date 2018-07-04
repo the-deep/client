@@ -213,7 +213,6 @@ export default class EditEntries extends React.PureComponent {
 
     componentWillUnmount() {
         this.editEntryDataRequest.stop();
-
         this.saveRequestCoordinator.stop();
     }
 

@@ -9,6 +9,26 @@ import {
     pick,
 } from '#utils/common';
 
+export const entryAccessor = {
+    localData: (entry = {}) => entry.localData,
+    data: (entry = {}) => entry.data,
+    serverData: (entry = {}) => entry.serverData,
+
+    key: (entry = {}) => (entry.localData || {}).id,
+    error: (entry = {}) => (entry.localData || {}).error,
+    isMarkedAsDeleted: (entry = {}) => !!(entry.localData || {}).isMarkedAsDeleted,
+    isPristine: (entry = {}) => !!(entry.localData || {}).isPristine,
+    hasError: (entry = {}) => !!(entry.localData || {}).hasError,
+
+    dataAttribute: (entry = {}, attributeId) => (
+        (((entry.data || {}).attributes || {})[attributeId]).data
+    ),
+    order: (entry = {}) => (entry.data || {}).order,
+    serverId: (entry = {}) => (entry.data || {}).id,
+
+    versionId: (entry = {}) => (entry.serverData || {}).versionId,
+};
+
 export const ENTRY_STATUS = {
     // A rest request is in session
     requesting: 'requesting',
@@ -18,8 +38,25 @@ export const ENTRY_STATUS = {
     nonPristine: 'nonPristine',
     // No change has occured and saved in server
     complete: 'complete',
-    // Some change has occured
+    // No change has occured, and not saved in server
     pristine: 'pristine',
+};
+
+export const calculateEntryState = ({ entry, rest }) => {
+    const serverId = entryAccessor.serverId(entry);
+    const pristine = entryAccessor.isPristine(entry);
+    const error = entryAccessor.hasError(entry);
+
+    if (rest && rest.pending) {
+        return ENTRY_STATUS.requesting;
+    } else if (error) {
+        return ENTRY_STATUS.invalid;
+    } else if (!pristine) {
+        return ENTRY_STATUS.nonPristine;
+    } else if (serverId) {
+        return ENTRY_STATUS.complete;
+    }
+    return ENTRY_STATUS.pristine;
 };
 
 export const DIFF_ACTION = {
@@ -31,24 +68,6 @@ export const DIFF_ACTION = {
     remove: 'remove',
     // update it to the list of entry in local state
     replace: 'replace',
-};
-
-export const entryAccessor = {
-    localData: (entry = {}) => entry.localData,
-    data: (entry = {}) => entry.data,
-    serverData: (entry = {}) => entry.serverData,
-
-    key: (entry = {}) => (entry.localData || {}).id,
-    error: (entry = {}) => (entry.localData || {}).error,
-    isMarkedAsDeleted: (entry = {}) => (entry.localData || {}).isMarkedAsDeleted,
-
-    dataAttribute: (entry = {}, attributeId) => (
-        (((entry.data || {}).attributes || {})[attributeId]).data
-    ),
-    order: (entry = {}) => (entry.data || {}).order,
-    serverId: (entry = {}) => (entry.data || {}).id,
-
-    versionId: (entry = {}) => (entry.serverData || {}).versionId,
 };
 
 export const createEntry = ({

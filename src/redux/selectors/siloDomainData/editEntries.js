@@ -1,7 +1,9 @@
 import { createSelector } from 'reselect';
 
 import { dateCondition } from '#rs/components/Input/Faram';
-import { entryAccessor } from '#entities/editEntries';
+import { listToMap } from '#rs/utils/common';
+
+import { entryAccessor, calculateEntryState } from '#entities/editEntries';
 
 import {
     analysisFrameworksSelector,
@@ -37,6 +39,15 @@ export const editEntriesFilteredEntriesSelector = createSelector(
     editEntriesEntriesSelector,
     entries => entries.filter(
         entry => !entryAccessor.isMarkedAsDeleted(entry),
+    ),
+);
+
+export const editEntriesStatusesSelector = createSelector(
+    editEntriesEntriesSelector,
+    entries => listToMap(
+        entries,
+        entry => entryAccessor.key(entry),
+        entry => calculateEntryState({ entry }),
     ),
 );
 

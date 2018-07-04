@@ -48,8 +48,6 @@ export default class ScaleWidget extends React.PureComponent {
             <ScaleInput
                 className={styles.scaleWidget}
                 faramElementName="selectedScale"
-                showLabel={false}
-                hideClearButton
                 options={options}
                 keySelector={ScaleWidget.keySelector}
                 labelSelector={ScaleWidget.labelSelector}

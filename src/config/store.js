@@ -13,6 +13,11 @@ const myTransform = createTransform(
 
             removeModal: undefined,
         },
+        editEntries: {
+            ...inboundState.editEntries,
+            entrySaveRests: undefined,
+            // post, patch and delete
+        },
     }),
     undefined,
     { whitelist: ['siloDomainData'] },

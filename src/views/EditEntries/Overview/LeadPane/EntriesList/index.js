@@ -14,6 +14,7 @@ import styles from './styles.scss';
 const propTypes = {
     selectedEntryKey: PropTypes.string,
     entries: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setSelectedEntryKey: PropTypes.func.isRequired,
     leadId: PropTypes.number.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
@@ -21,6 +22,7 @@ const propTypes = {
 
 const defaultProps = {
     selectedEntryKey: undefined,
+    statuses: {},
 };
 
 export default class EntriesListing extends React.PureComponent {
@@ -60,10 +62,12 @@ export default class EntriesListing extends React.PureComponent {
                 />
             );
         }
+
         // FIXME: use strings
+        const excerptTitle = excerpt || `Excerpt ${order}`;
         return (
             <div className={styles.entryExcerpt}>
-                {excerpt || `Excerpt ${order}`}
+                {excerptTitle}
             </div>
         );
     }
@@ -71,35 +75,25 @@ export default class EntriesListing extends React.PureComponent {
     renderEntryItem = (key, entry) => {
         const {
             selectedEntryKey,
-            // entries,
-            // choices,
+            statuses,
         } = this.props;
 
-        const handleEntryItemClick = (currentEntryId) => {
-            this.props.setSelectedEntryKey({ leadId: this.props.leadId, key: currentEntryId });
+        const handleEntryItemClick = (currentEntryKey) => {
+            this.props.setSelectedEntryKey({ leadId: this.props.leadId, key: currentEntryKey });
         };
-        const handleMarkAsDeletedEntry = (currentEntryId, value) => {
+        const handleMarkAsDeletedEntry = (currentEntryKey, value) => {
             this.props.markAsDeletedEntry({
                 leadId: this.props.leadId,
-                key: currentEntryId,
+                key: currentEntryKey,
                 value,
             });
         };
 
-        const currentEntryId = EntriesListing.calcEntryKey(entry);
-        const isActive = currentEntryId === selectedEntryKey;
-        /*
-        const status = choices[key].choice;
-        */
-        /*
-        const selectedEntry = entries.find(
-            e => entryAccessor.key(e) === currentEntryId,
-        );
-        */
+        const currentEntryKey = EntriesListing.calcEntryKey(entry);
+        const isActive = currentEntryKey === selectedEntryKey;
         const isMarkedAsDeleted = entryAccessor.isMarkedAsDeleted(entry);
 
-        // const isSelectedEntryMarkedForDelete = false;
-        // const isSelectedEntryMarkedForDelete = entryAccessor.isMarkedAsDeleted(entry);
+        const status = statuses[currentEntryKey];
 
         const classNames = [
             styles.entriesListItem,
@@ -110,6 +104,7 @@ export default class EntriesListing extends React.PureComponent {
         if (isMarkedAsDeleted) {
             classNames.push(styles.markedForDelete);
         }
+
         return (
             <div
                 className={classNames.join(' ')}
@@ -117,7 +112,7 @@ export default class EntriesListing extends React.PureComponent {
             >
                 <button
                     className={styles.addEntryListItem}
-                    onClick={() => handleEntryItemClick(currentEntryId)}
+                    onClick={() => handleEntryItemClick(currentEntryKey)}
                     disabled={isMarkedAsDeleted}
                     type="button"
                 >
@@ -127,7 +122,7 @@ export default class EntriesListing extends React.PureComponent {
                             isMarkedAsDeleted &&
                             <span className={EntriesListing.iconMap.markedForRemoval} />
                         }
-                        {/* this.renderIcon(status) */}
+                        {this.renderIcon(status)}
                     </div>
                 </button>
                 {
@@ -135,7 +130,7 @@ export default class EntriesListing extends React.PureComponent {
                         <Button
                             key="undo-button"
                             className={styles.removeButton}
-                            onClick={() => handleMarkAsDeletedEntry(currentEntryId, false)}
+                            onClick={() => handleMarkAsDeletedEntry(currentEntryKey, false)}
                             iconName={iconNames.undo}
                             title={_ts('editEntry', 'removeEntryButtonTitle')}
                         />
@@ -143,7 +138,7 @@ export default class EntriesListing extends React.PureComponent {
                         <DangerButton
                             key="remove-button"
                             className={styles.removeButton}
-                            onClick={() => handleMarkAsDeletedEntry(currentEntryId, true)}
+                            onClick={() => handleMarkAsDeletedEntry(currentEntryKey, true)}
                             iconName={iconNames.delete}
                             title={_ts('editEntry', 'undoRemoveEntryButtonTitle')}
                         />

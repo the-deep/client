@@ -1,6 +1,7 @@
-import update from '#rs/utils/immutable-update';
-import { isFalsy, randomString, getDefinedElementAround } from '#rs/utils/common';
 import { applyDiff, entryAccessor, createEntry } from '#entities/editEntries';
+import { analyzeErrors } from '#rs/components/Input/Faram/validator';
+import { isFalsy, randomString, getDefinedElementAround } from '#rs/utils/common';
+import update from '#rs/utils/immutable-update';
 
 const getNewSelectedEntryKey = (entries, selectedEntryKey) => {
     if (entries.length <= 0) {
@@ -183,8 +184,6 @@ const setEntryExcerpt = (state, action) => {
         editEntries: { [leadId]: { entries = [] } = {} } = {},
     } = state;
 
-    // TODO: check if key is undefined, create new entry if undefined
-
     const excerpt = excerptType === 'excerpt' ? excerptValue : undefined;
     const image = excerptType === 'image' ? excerptValue : undefined;
 
@@ -198,6 +197,9 @@ const setEntryExcerpt = (state, action) => {
                             entryType: { $set: excerptType },
                             excerpt: { $set: excerpt },
                             image: { $set: image },
+                        },
+                        localData: {
+                            isPristine: { $set: false },
                         },
                     },
                 },
@@ -273,7 +275,7 @@ const setEntryData = (state, action) => {
 
     let newState = state;
 
-    if (info.action === 'changeEntry') {
+    if (info.action === 'changeExcerpt') {
         const excerpt = info.type === 'excerpt' ? info.value : undefined;
         const image = info.type === 'image' ? info.value : undefined;
 
@@ -286,6 +288,9 @@ const setEntryData = (state, action) => {
                                 entryType: { $set: info.type },
                                 excerpt: { $set: excerpt },
                                 image: { $set: image },
+                            },
+                            localData: {
+                                isPristine: { $set: false },
                             },
                         },
                     },
@@ -309,7 +314,7 @@ const setEntryData = (state, action) => {
                         localData: {
                             isPristine: { $set: false },
                             error: { $set: errors },
-                            // TODO: hasError must be calculated
+                            hasError: { $set: analyzeErrors(errors) },
                         },
                     },
                 },
@@ -337,8 +342,8 @@ const setEntryError = (state, action) => {
                 entries: {
                     [entryIndex]: {
                         localData: {
-                            // TODO: hasError must be calculated
                             error: { $set: errors },
+                            hasError: { $set: analyzeErrors(errors) },
                         },
                     },
                 },
@@ -430,9 +435,6 @@ const applyToAllEntries = mode => (state, action) => {
         },
     };
 
-
-    // eslint-disable-next-line
-    debugger;
     // NOTE: setting entry to undefined instead of using filter to preserve index
     let iterableEntries;
     if (mode === 'all-below') {
@@ -478,11 +480,34 @@ const applyToAllEntries = mode => (state, action) => {
                         } },
                     } },
                 } },
-                // TODO: hasError must be calculated
             },
         };
     });
-    return update(state, settings);
+    const newState = update(state, settings);
+
+    // re-calculate errors
+    const newSettings = {
+        editEntries: {
+            [leadId]: {
+                entries: {},
+            },
+        },
+    };
+
+    const {
+        editEntries: { [leadId]: { entries: newEntries = [] } = {} } = {},
+    } = newState;
+
+    newEntries.forEach((entry, i) => {
+        const { localData: { error } = {} } = entry || {};
+        settings.editEntries[leadId].entries[i] = {
+            localData: {
+                hasError: { $set: analyzeErrors(error) },
+            },
+        };
+    });
+
+    return update(newState, newSettings);
 };
 
 const reducers = {
