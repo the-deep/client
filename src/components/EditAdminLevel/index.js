@@ -286,7 +286,7 @@ export default class EditAdminLevel extends React.PureComponent {
             .success((response) => {
                 this.setState({
                     faramValues: { ...this.state.faramValues, geoShapeFile: response.id },
-                    pristine: true,
+                    pristine: false,
                 });
             })
             .progress((progress) => {

@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import AccentButton from '#rs/components/Action/Button/AccentButton';
-import WarningButton from '#rs/components/Action/Button/WarningButton';
+import AccentConfirmButton from '#rs/components/Action/ConfirmButton/AccentConfirmButton';
+import WarningConfirmButton from '#rs/components/Action/ConfirmButton/WarningConfirmButton';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';
@@ -40,26 +40,26 @@ export default class ApplyAll extends React.PureComponent {
             <div className={`${styles.applyInput} ${className}`}>
                 { children }
                 <div className={styles.applyButtons}>
-                    <AccentButton
+                    <AccentConfirmButton
                         className={styles.applyButton}
                         transparent
                         title={_ts('addLeads', 'applyAllButtonTitle')}
                         disabled={disabled}
                         onClick={() => onApplyAllClick(identiferName)}
                         tabIndex="-1"
-                    >
-                        <span className={iconNames.applyAll} />
-                    </AccentButton>
-                    <WarningButton
+                        iconName={iconNames.applyAll}
+                        confirmationMessage={_ts('addLeads', 'applyToAll')}
+                    />
+                    <WarningConfirmButton
                         className={styles.applyButton}
                         transparent
                         title={_ts('addLeads', 'applyAllBelowButtonTitle')}
                         disabled={disabled}
                         onClick={() => onApplyAllBelowClick(identiferName)}
                         tabIndex="-1"
-                    >
-                        <span className={iconNames.applyAllBelow} />
-                    </WarningButton>
+                        iconName={iconNames.applyAllBelow}
+                        confirmationMessage={_ts('addLeads', 'applyToAllBelow')}
+                    />
                 </div>
             </div>
         );

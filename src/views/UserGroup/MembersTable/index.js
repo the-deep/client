@@ -9,7 +9,6 @@ import {
 } from '#rs/utils/common';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import Confirm from '#rs/components/View/Modal/Confirm';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
@@ -63,9 +62,6 @@ export default class MembersTable extends React.PureComponent {
 
         this.state = {
             showAddMemberModal: false,
-            toggleRoleConfirmShow: false,
-            deleteMemberConfirmShow: false,
-            confirmText: '',
             searchMemberInputValue: '',
             memberData: this.props.memberData,
             actionPending: false,
@@ -153,7 +149,7 @@ export default class MembersTable extends React.PureComponent {
         if (this.membershipDeleteRequest) {
             this.membershipDeleteRequest.stop();
         }
-        const userGroupId = this.props.userGroupId;
+        const { userGroupId } = this.props;
         const membershipDeleteRequest = new MembershipDeleteRequest({
             unSetMembership: this.props.unSetMembership,
             setState: v => this.setState(v),
@@ -164,34 +160,17 @@ export default class MembersTable extends React.PureComponent {
         this.membershipDeleteRequest.start();
     }
 
-    handleAddMemberClick = (row) => {
-        this.setState({
-            editRow: row,
-            showAddMemberModal: true,
-        });
+    handleAddMemberClick = () => {
+        this.setState({ showAddMemberModal: true });
     }
 
     handleAddMemberModalClose = () => {
         this.setState({ showAddMemberModal: false });
     }
 
-    handleDeleteMemberClick = (row) => {
-        const confirmText = _ts('userGroup', 'confirmTextRemoveMember', { memberName: row.memberName });
-
-        this.setState({
-            confirmText,
-            selectedMember: row,
-            deleteMemberConfirmShow: true,
-        });
+    handleDeleteMemberClick = (selectedMember) => {
+        this.startRequestForMembershipDelete(selectedMember.id);
     };
-
-    handleDeleteMemberClose = (confirm) => {
-        const { selectedMember } = this.state;
-        if (confirm) {
-            this.startRequestForMembershipDelete(selectedMember.id);
-        }
-        this.setState({ deleteMemberConfirmShow: false });
-    }
 
     handleSearchMemberChange = (value) => {
         const { memberData } = this.props;
@@ -204,27 +183,11 @@ export default class MembersTable extends React.PureComponent {
         });
     }
 
-    handleToggleMemberRoleClick = (member) => {
-        const confirmText = member.role === 'admin'
-            ? _ts('userGroup', 'confirmTextRevokeAdmin', { memberName: member.memberName })
-            : _ts('userGroup', 'confirmTextGrantAdmin', { memberName: member.memberName });
-
-        this.setState({
-            toggleRoleConfirmShow: true,
-            confirmText,
-            selectedMember: member,
+    handleToggleMemberRoleClick = (selectedMember) => {
+        this.startRequestForMembershipRoleChange({
+            membershipId: selectedMember.id,
+            newRole: selectedMember.role === 'admin' ? 'normal' : 'admin',
         });
-    }
-
-    handleToggleMemberRole = (confirm) => {
-        const { selectedMember } = this.state;
-        if (confirm) {
-            this.startRequestForMembershipRoleChange({
-                membershipId: selectedMember.id,
-                newRole: selectedMember.role === 'admin' ? 'normal' : 'admin',
-            });
-        }
-        this.setState({ toggleRoleConfirmShow: false });
     }
 
     calcMemberKey = member => member.id;
@@ -232,11 +195,8 @@ export default class MembersTable extends React.PureComponent {
     render() {
         const {
             memberData,
-            deleteMemberConfirmShow,
-            toggleRoleConfirmShow,
             searchMemberInputValue,
             showAddMemberModal,
-            confirmText,
             actionPending,
         } = this.state;
 
@@ -271,18 +231,6 @@ export default class MembersTable extends React.PureComponent {
                         headers={this.memberHeaders}
                         keyExtractor={this.calcMemberKey}
                     />
-                    <Confirm
-                        show={deleteMemberConfirmShow}
-                        onClose={this.handleDeleteMemberClose}
-                    >
-                        <p>{confirmText}</p>
-                    </Confirm>
-                    <Confirm
-                        show={toggleRoleConfirmShow}
-                        onClose={this.handleToggleMemberRole}
-                    >
-                        <p>{confirmText}</p>
-                    </Confirm>
                 </div>
                 { showAddMemberModal &&
                     <Modal

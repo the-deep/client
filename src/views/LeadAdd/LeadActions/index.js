@@ -302,6 +302,7 @@ export default class LeadFilter extends React.PureComponent {
                         title={_ts('addLeads.actions', 'nextButtonLabel')}
                     />
                 </div>
+                {/* FIXME: use ConfirmButton */}
                 <Confirm
                     onClose={this.handleRemoveLeadModalClose}
                     show={!!show}

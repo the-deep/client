@@ -6,9 +6,8 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import GridLayout from '#rs/components/View/GridLayout';
-import Confirm from '#rs/components/View/Modal/Confirm';
 import Button from '#rs/components/Action/Button';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
 import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import {
     randomString,
@@ -63,10 +62,6 @@ export default class Overview extends React.PureComponent {
         this.updateAnalysisFramework(props.analysisFramework);
 
         this.widgetEditActions = {};
-
-        this.state = {
-            showDeleteModal: false,
-        };
     }
 
     componentWillReceiveProps(nextProps) {
@@ -96,14 +91,21 @@ export default class Overview extends React.PureComponent {
         headerRightComponent: (
             <div className="action-buttons">
                 <Button
+                    // FIXME: use strings
+                    title="Edit widget"
                     onClick={() => this.handleWidgetEditButtonClick(item.key)}
                     transparent
                     iconName={iconNames.edit}
                 />
-                <DangerButton
-                    onClick={() => this.handleWidgetRemoveButtonClick(item.key)}
+                <DangerConfirmButton
+                    // FIXME: use strings
+                    title="Remove widget"
+                    onClick={() => this.handleWidgetClose(item.key)}
                     transparent
                     iconName={iconNames.close}
+                    // FIXME: use strings
+                    confirmationTitle="Remove widget"
+                    confirmationMessage={_ts('framework', 'confirmDeletewWidget')}
                 />
             </div>
         ),
@@ -126,41 +128,24 @@ export default class Overview extends React.PureComponent {
         );
     };
 
-    handleWidgetClose = (y) => {
-        if (y) {
-            const {
-                analysisFramework,
-                removeWidget,
-            } = this.props;
-            const {
-                deleteKey: id,
-            } = this.state;
+    handleWidgetClose = (id) => {
+        const {
+            analysisFramework,
+            removeWidget,
+        } = this.props;
 
-            const widgetData = {
-                analysisFrameworkId: analysisFramework.id,
-                widgetId: id,
-            };
+        const widgetData = {
+            analysisFrameworkId: analysisFramework.id,
+            widgetId: id,
+        };
 
-            removeWidget(widgetData);
-        }
-
-        this.setState({
-            showDeleteModal: false,
-            deleteKey: undefined,
-        });
+        removeWidget(widgetData);
     }
 
     handleWidgetEditButtonClick = (id) => {
         if (this.widgetEditActions[id]) {
             (this.widgetEditActions[id])();
         }
-    }
-
-    handleWidgetRemoveButtonClick = (key) => {
-        this.setState({
-            showDeleteModal: true,
-            deleteKey: key,
-        });
     }
 
     handleAddWidgetButtonClick = (id) => {
@@ -327,16 +312,6 @@ export default class Overview extends React.PureComponent {
                                 onLayoutChange={this.handleLayoutChange}
                             />
                         </div>
-                        <Confirm
-                            title="Remove widget" // FIXME: strings
-                            onClose={this.handleWidgetClose}
-                            show={this.state.showDeleteModal}
-                        >
-                            <p>
-                                Do you want to remove this widget?
-                            </p>
-                        </Confirm>
-                        {/* FIXME: strings */}
                     </div>
                 </div>
             </div>

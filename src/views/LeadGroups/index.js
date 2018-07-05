@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { reverseRoute } from '#rs/utils/common';
-import Confirm from '#rs/components/View/Modal/Confirm';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Pager from '#rs/components/View/Pager';
@@ -145,7 +144,6 @@ export default class LeadGroups extends React.PureComponent {
         this.state = {
             deleteLeadGroupPending: false,
             dataLoading: true,
-            showDeleteModal: false,
         };
     }
 
@@ -217,31 +215,16 @@ export default class LeadGroups extends React.PureComponent {
         return leadGroup[columnKey];
     }
 
-    handleRemoveLeadGroup = (row) => {
-        this.setState({
-            showDeleteModal: true,
-            leadGroupToDelete: row,
-        });
-    }
-
-    handleDeleteModalClose = (confirm) => {
-        if (confirm) {
-            const { leadGroupToDelete } = this.state;
-            if (this.leadGroupDeleteRequest) {
-                this.leadGroupDeleteRequest.stop();
-            }
-            const leadGroupDeleteRequest = new LeadGroupDeleteRequest({
-                setState: params => this.setState(params),
-                pullLeadGroups: this.startLeadGroupsRequest,
-            });
-            this.leadGroupDeleteRequest = leadGroupDeleteRequest.create(leadGroupToDelete);
-            this.leadGroupDeleteRequest.start();
+    handleRemoveLeadGroup = (leadGroupToDelete) => {
+        if (this.leadGroupDeleteRequest) {
+            this.leadGroupDeleteRequest.stop();
         }
-
-        this.setState({
-            showDeleteModal: false,
-            leadGroupToDelete: undefined,
+        const leadGroupDeleteRequest = new LeadGroupDeleteRequest({
+            setState: params => this.setState(params),
+            pullLeadGroups: this.startLeadGroupsRequest,
         });
+        this.leadGroupDeleteRequest = leadGroupDeleteRequest.create(leadGroupToDelete);
+        this.leadGroupDeleteRequest.start();
     }
 
     handlePageClick = (page) => {
@@ -331,7 +314,6 @@ export default class LeadGroups extends React.PureComponent {
         const Footer = this.renderFooter;
 
         const {
-            showDeleteModal,
             deleteLeadGroupPending,
             dataLoading,
         } = this.state;
@@ -354,15 +336,6 @@ export default class LeadGroups extends React.PureComponent {
                     />
                 </div>
                 <Footer />
-                <Confirm
-                    show={showDeleteModal}
-                    closeOnEscape
-                    onClose={this.handleDeleteModalClose}
-                >
-                    <p>
-                        {_ts('leadGroups', 'leadGroupDeleteConfirmText')}
-                    </p>
-                </Confirm>
             </div>
         );
     }

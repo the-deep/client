@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -15,10 +15,9 @@ import {
     compareLength,
     compareString,
 } from '#rs/utils/common';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import Confirm from '#rs/components/View/Modal/Confirm';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
@@ -82,12 +81,7 @@ export default class UserProject extends React.PureComponent {
             addProject: false,
 
             // Delete Modal state
-            deleteProject: false,
             deletePending: false,
-            confirmText: '',
-
-            // Active Delete state
-            selectedProject: null,
         };
 
         // TABLE component
@@ -169,24 +163,29 @@ export default class UserProject extends React.PureComponent {
                     }
 
                     if (activeUserMembership && activeUserMembership.role === 'admin') {
-                        return ([
-                            <Link
-                                title={_ts('userProfile', 'editProjectLinkTitle')}
-                                key="project-panel"
-                                to={reverseRoute(pathNames.projects, { projectId: d.id })}
-                                className={styles.link}
-                            >
-                                <span className={iconNames.edit} />
-                            </Link>,
-                            <DangerButton
-                                title={_ts('userProfile', 'deleteProjectLinkTitle')}
-                                key="delete"
-                                onClick={() => this.handleDeleteProjectClick(d)}
-                                iconName={iconNames.delete}
-                                smallVerticalPadding
-                                transparent
-                            />,
-                        ]);
+                        const confirmMsg = _ts('userProfile', 'confirmTextDeleteProject', {
+                            title: (<b>{d.title}</b>),
+                        });
+
+                        return (
+                            <Fragment>
+                                <Link
+                                    title={_ts('userProfile', 'editProjectLinkTitle')}
+                                    to={reverseRoute(pathNames.projects, { projectId: d.id })}
+                                    className={styles.link}
+                                >
+                                    <span className={iconNames.edit} />
+                                </Link>
+                                <DangerConfirmButton
+                                    title={_ts('userProfile', 'deleteProjectLinkTitle')}
+                                    onClick={() => this.handleDeleteProjectClick(d)}
+                                    iconName={iconNames.delete}
+                                    smallVerticalPadding
+                                    transparent
+                                    confirmationMessage={confirmMsg}
+                                />
+                            </Fragment>
+                        );
                     }
 
                     return null;
@@ -218,7 +217,6 @@ export default class UserProject extends React.PureComponent {
         }
         const projectsRequest = new UserProjectsGetRequest({
             setUserProjects: this.props.setUserProjects,
-            // setState: v => this.setState(v),
         });
         this.projectsRequest = projectsRequest.create(userId);
         this.projectsRequest.start();
@@ -248,27 +246,9 @@ export default class UserProject extends React.PureComponent {
 
     // Table Actions
 
-    // Delete Click
-    handleDeleteProjectClick = (project) => {
-        const confirmText = _ts('userProfile', 'confirmTextDeleteProject', {
-            title: project.title,
-        });
-
-        this.setState({
-            deleteProject: true,
-            selectedProject: project,
-            confirmText,
-        });
-    }
-
-    // Delete Close
-    handleDeleteProjectClose = (confirm) => {
-        if (confirm) {
-            const { selectedProject } = this.state;
-            const { userId } = this.props.activeUser;
-            this.startRequestForProjectDelete(selectedProject.id, userId);
-        }
-        this.setState({ deleteProject: false });
+    handleDeleteProjectClick = (selectedProject) => {
+        const { userId } = this.props.activeUser;
+        this.startRequestForProjectDelete(selectedProject.id, userId);
     }
 
     render() {
@@ -281,9 +261,7 @@ export default class UserProject extends React.PureComponent {
 
         const {
             addProject,
-            deleteProject,
             deletePending,
-            confirmText,
         } = this.state;
 
         const isCurrentUser = userId === activeUser.userId;
@@ -325,12 +303,6 @@ export default class UserProject extends React.PureComponent {
                         </ModalBody>
                     </Modal>
                 }
-                <Confirm
-                    onClose={this.handleDeleteProjectClose}
-                    show={deleteProject}
-                >
-                    <p>{confirmText}</p>
-                </Confirm>
                 <div className={styles.projectsTable}>
                     <Table
                         data={userProjects}

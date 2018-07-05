@@ -3,7 +3,7 @@ import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '#rs/utils/common';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
 
 import {
     iconNames,
@@ -54,14 +54,14 @@ export default class ActionButtons extends React.PureComponent {
 
         return (
             <Fragment>
-                <DangerButton
+                <DangerConfirmButton
                     title={_ts('assessments', 'removeAryButtonTitle')}
                     onClick={() => onRemoveAry(row)}
                     smallVerticalPadding
                     transparent
-                >
-                    <i className={iconNames.delete} />
-                </DangerButton>
+                    iconName={iconNames.delete}
+                    confirmationMessage={_ts('assessments', 'aryDeleteConfirmText')}
+                />
                 <Link
                     className={styles.editLink}
                     title={_ts('assessments', 'editAryButtonTitle')}

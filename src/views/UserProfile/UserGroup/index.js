@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -14,10 +14,9 @@ import {
     compareString,
     compareDate,
 } from '#rs/utils/common';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import Confirm from '#rs/components/View/Modal/Confirm';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
@@ -81,13 +80,7 @@ export default class UserGroup extends React.PureComponent {
             // Add Modal state
             addUserGroup: false,
 
-            // Delete Modal state
-            deleteUserGroup: false,
             deletePending: false,
-
-            // Active Delete state
-            activeUserGroup: {},
-            confirmText: '',
         };
 
         this.userGroupsTableHeaders = [
@@ -154,24 +147,29 @@ export default class UserGroup extends React.PureComponent {
                         );
                     }
 
-                    return ([
-                        <Link
-                            title={_ts('userProfile', 'editUsergroupLinkTitle')}
-                            key="usergroup-panel"
-                            to={linkToUserGroup}
-                            className={styles.link}
-                        >
-                            <span className={iconNames.edit} />
-                        </Link>,
-                        <DangerButton
-                            key="delete"
-                            title={_ts('userProfile', 'deleteUsergroupLinkTitle')}
-                            onClick={() => this.handleDeleteUserGroupClick(d)}
-                            iconName={iconNames.delete}
-                            smallVerticalPadding
-                            transparent
-                        />,
-                    ]);
+                    const confirmText = _ts('userProfile', 'confirmTextDeleteUserGroup', {
+                        title: (<b>{d.title}</b>),
+                    });
+
+                    return (
+                        <Fragment>
+                            <Link
+                                title={_ts('userProfile', 'editUsergroupLinkTitle')}
+                                to={linkToUserGroup}
+                                className={styles.link}
+                            >
+                                <span className={iconNames.edit} />
+                            </Link>
+                            <DangerConfirmButton
+                                title={_ts('userProfile', 'deleteUsergroupLinkTitle')}
+                                onClick={() => this.handleDeleteUserGroupClick(d)}
+                                iconName={iconNames.delete}
+                                smallVerticalPadding
+                                confirmationMessage={confirmText}
+                                transparent
+                            />
+                        </Fragment>
+                    );
                 },
             },
         ];
@@ -205,7 +203,6 @@ export default class UserGroup extends React.PureComponent {
         }
         const userGroupsRequest = new UserGroupGetRequest({
             setUserGroups: this.props.setUserGroups,
-            // setState: v => this.setState(v),
         });
         this.userGroupsRequest = userGroupsRequest.create(userId);
         this.userGroupsRequest.start();
@@ -235,28 +232,12 @@ export default class UserGroup extends React.PureComponent {
         this.setState({ addUserGroup: false });
     }
 
-    // Table Actions
-
-    // Delete Click
-    handleDeleteUserGroupClick = (userGroup) => {
-        const confirmText = _ts('userProfile', 'confirmTextDeleteUserGroup', {
-            title: userGroup.title,
-        });
-        this.setState({
-            deleteUserGroup: true,
-            activeUserGroup: userGroup,
-            confirmText,
-        });
-    }
-
     // Delete Close
-    handleDeleteUserGroupClose = (confirm) => {
-        if (confirm) {
-            const { id } = this.state.activeUserGroup;
-            const userId = this.props.activeUser.userId;
-            this.startRequestForUserGroupDelete(id, userId);
-        }
-        this.setState({ deleteUserGroup: false });
+    handleDeleteUserGroupClick = (userGroup) => {
+        const { userId } = this.props.activeUser;
+
+        const { id } = userGroup;
+        this.startRequestForUserGroupDelete(id, userId);
     }
 
     render() {
@@ -269,9 +250,7 @@ export default class UserGroup extends React.PureComponent {
 
         const {
             addUserGroup,
-            deleteUserGroup,
             deletePending,
-            confirmText,
         } = this.state;
 
         const isCurrentUser = userId === activeUser.userId;
@@ -316,12 +295,6 @@ export default class UserGroup extends React.PureComponent {
                         </ModalBody>
                     </Modal>
                 }
-                <Confirm
-                    onClose={this.handleDeleteUserGroupClose}
-                    show={deleteUserGroup}
-                >
-                    <p>{confirmText}</p>
-                </Confirm>
                 <div className={styles.usergroupTable}>
                     <Table
                         data={userGroups}

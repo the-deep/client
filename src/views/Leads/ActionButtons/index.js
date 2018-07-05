@@ -4,9 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '#rs/utils/common';
 import Button from '#rs/components/Action/Button';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
-import WarningButton from '#rs/components/Action/Button/WarningButton';
+import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
 
 import {
     iconNames,
@@ -136,12 +134,13 @@ export default class ActionButtons extends React.PureComponent {
                         transparent
                         iconName={iconNames.search}
                     />
-                    <DangerButton
+                    <DangerConfirmButton
                         tabIndex="-1"
                         title={_ts('leads', 'removeLeadLeadButtonTitle')}
                         onClick={() => onRemoveLead(row)}
                         transparent
                         iconName={iconNames.delete}
+                        confirmationMessage={_ts('leads', 'leadDeleteConfirmText')}
                     />
                     <Link
                         className={styles.editLink}

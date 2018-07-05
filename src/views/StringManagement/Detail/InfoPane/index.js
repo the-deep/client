@@ -2,11 +2,10 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
 import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import ListView from '#rs/components/View/List/ListView';
 import Message from '#rs/components/View/Message';
-import Confirm from '#rs/components/View/Modal/Confirm';
 
 import {
     problemCollectionSelector,
@@ -72,9 +71,6 @@ export default class InfoPane extends React.PureComponent {
         super(props);
 
         this.state = {
-            showConfirm: false,
-            confirmData: {},
-
             showEditLinkModal: false,
             editLinkId: undefined,
         };
@@ -92,46 +88,17 @@ export default class InfoPane extends React.PureComponent {
     }
 
     handleStringChangeDeleteButtonClick = (id) => {
-        this.setState({
-            showConfirm: true,
-            confirmData: {
-                type: 'string',
-                action: 'delete',
-                identifier: id,
-            },
+        this.props.removeStringChange({
+            id,
+            languageName: this.props.selectedLanguageName,
         });
     }
 
     handleLinkChangeDeleteButtonClick = (key) => {
-        this.setState({
-            showConfirm: true,
-            confirmData: {
-                type: 'link',
-                action: 'delete',
-                identifier: key,
-            },
-        });
-    }
-
-    handleConfirmClose = (confirm) => {
-        const { confirmData } = this.state;
-
-        if (confirm && confirmData.action === 'delete' && confirmData.type === 'string') {
-            this.props.removeStringChange({
-                id: confirmData.identifier,
-                languageName: this.props.selectedLanguageName,
-            });
-        } else if (confirm && confirmData.action === 'delete' && confirmData.type === 'link') {
-            this.props.removeLinkChange({
-                key: confirmData.identifier,
-                languageName: this.props.selectedLanguageName,
-                linkCollectionName: this.props.selectedLinkCollectionName,
-            });
-        }
-
-        this.setState({
-            showConfirm: false,
-            confirmData: {},
+        this.props.removeLinkChange({
+            key,
+            languageName: this.props.selectedLanguageName,
+            linkCollectionName: this.props.selectedLinkCollectionName,
         });
     }
 
@@ -203,11 +170,12 @@ export default class InfoPane extends React.PureComponent {
                 child = (
                     <Fragment>
                         <span>{d.key}: {d.string}</span>
-                        <DangerButton
+                        <DangerConfirmButton
                             transparent
                             smallVerticalPadding
                             iconName={iconNames.delete}
                             onClick={() => this.handleLinkChangeDeleteButtonClick(d.key)}
+                            confirmationMessage="Do you want to discard this change"
                             disabled={this.props.disabled}
                         />
                         { d.message !== undefined &&
@@ -222,11 +190,12 @@ export default class InfoPane extends React.PureComponent {
                 child = (
                     <Fragment>
                         <span>{d.key}: {d.oldString}</span>
-                        <DangerButton
+                        <DangerConfirmButton
                             transparent
                             smallVerticalPadding
                             iconName={iconNames.delete}
                             onClick={() => this.handleLinkChangeDeleteButtonClick(d.key)}
+                            confirmationMessage="Do you want to discard this change"
                             disabled={this.props.disabled}
                         />
                         { d.message !== undefined &&
@@ -241,11 +210,12 @@ export default class InfoPane extends React.PureComponent {
                 child = (
                     <Fragment>
                         <span>{d.key}: {d.oldString} → {d.string}</span>
-                        <DangerButton
+                        <DangerConfirmButton
                             transparent
                             smallVerticalPadding
                             iconName={iconNames.delete}
                             onClick={() => this.handleLinkChangeDeleteButtonClick(d.key)}
+                            confirmationMessage="Do you want to discard this change"
                             disabled={this.props.disabled}
                         />
                         { d.message !== undefined &&
@@ -258,11 +228,12 @@ export default class InfoPane extends React.PureComponent {
                 child = (
                     <Fragment>
                         <span>{d.id}: {d.value}</span>
-                        <DangerButton
+                        <DangerConfirmButton
                             transparent
                             smallVerticalPadding
                             iconName={iconNames.delete}
                             onClick={() => this.handleStringChangeDeleteButtonClick(d.id)}
+                            confirmationMessage="Do you want to discard this change"
                             disabled={this.props.disabled}
                         />
                         { d.message !== undefined &&
@@ -277,11 +248,12 @@ export default class InfoPane extends React.PureComponent {
                 child = (
                     <Fragment>
                         <span>{d.id}: {d.oldValue}</span>
-                        <DangerButton
+                        <DangerConfirmButton
                             transparent
                             smallVerticalPadding
                             iconName={iconNames.delete}
                             onClick={() => this.handleStringChangeDeleteButtonClick(d.id)}
+                            confirmationMessage="Do you want to discard this change"
                             disabled={this.props.disabled}
                         />
                         { d.message !== undefined &&
@@ -294,11 +266,12 @@ export default class InfoPane extends React.PureComponent {
                 child = (
                     <Fragment>
                         <span>{d.id}: {d.oldValue} → {d.value}</span>
-                        <DangerButton
+                        <DangerConfirmButton
                             transparent
                             smallVerticalPadding
                             iconName={iconNames.delete}
                             onClick={() => this.handleStringChangeDeleteButtonClick(d.id)}
+                            confirmationMessage="Do you want to discard this change"
                             disabled={this.props.disabled}
                         />
                         { d.message !== undefined &&
@@ -351,7 +324,6 @@ export default class InfoPane extends React.PureComponent {
     render() {
         const { problemCollectionStats } = this.props;
         const {
-            showConfirm,
             showEditLinkModal,
             editLinkId,
         } = this.state;
@@ -365,7 +337,7 @@ export default class InfoPane extends React.PureComponent {
         if (errorCount + warningCount + infoCount <= 0) {
             return (
                 <Message className={styles.noProblems}>
-                    Everything looks good
+                    Everything looks good.
                 </Message>
             );
         }
@@ -379,15 +351,6 @@ export default class InfoPane extends React.PureComponent {
                     data={problemKeys}
                     modifier={this.renderProblemGroup}
                 />
-                <Confirm
-                    show={showConfirm}
-                    closeOnEscape
-                    onClose={this.handleConfirmClose}
-                >
-                    <p>
-                        Do you want to discard this change?
-                    </p>
-                </Confirm>
                 { showEditLinkModal &&
                     <EditLinkModal
                         editLinkId={editLinkId}

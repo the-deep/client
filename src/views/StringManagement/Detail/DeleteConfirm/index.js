@@ -168,6 +168,7 @@ export default class DeleteConfirm extends React.PureComponent {
         const confirmationMessage = 'Are you sure you want to delete the string?';
         const MessageDetails = this.renderMessageDetails;
 
+        // FIXME: use ConfirmButton
         return (
             <Confirm
                 show

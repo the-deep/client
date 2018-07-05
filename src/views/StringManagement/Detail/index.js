@@ -4,9 +4,8 @@ import { connect } from 'react-redux';
 
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import SuccessButton from '#rs/components/Action/Button/SuccessButton';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import Confirm from '#rs/components/View/Modal/Confirm';
 import SelectInput from '#rs/components/Input/SelectInput';
 
 import {
@@ -93,7 +92,6 @@ export default class StringManagement extends React.PureComponent {
 
         this.state = {
             showAddStringModal: false,
-            showDiscardModal: false,
             pendingLanguagePut: false,
         };
     }
@@ -149,15 +147,8 @@ export default class StringManagement extends React.PureComponent {
     }
 
     handleDiscardButtonClick = () => {
-        this.setState({ showDiscardModal: true });
-    }
-
-    handleDiscardConfirmClose = (confirm) => {
-        if (confirm) {
-            const { selectedLanguageName } = this.props;
-            this.props.clearChanges(selectedLanguageName);
-        }
-        this.setState({ showDiscardModal: false });
+        const { selectedLanguageName } = this.props;
+        this.props.clearChanges(selectedLanguageName);
     }
 
     renderHeader = ({ disabled, showExport }) => {
@@ -175,7 +166,6 @@ export default class StringManagement extends React.PureComponent {
 
         const {
             showAddStringModal,
-            showDiscardModal,
             pendingLanguagePut,
         } = this.state;
 
@@ -205,16 +195,17 @@ export default class StringManagement extends React.PureComponent {
                     >
                         Add new string
                     </PrimaryButton>
-                    <DangerButton
+                    <DangerConfirmButton
                         onClick={this.handleDiscardButtonClick}
                         disabled={
                             !hasSelectedLanguageChanges
                                 || pendingLanguagePut
                                 || disabled
                         }
+                        confirmationMessage="Do you want to discard all changes?"
                     >
                         Discard
-                    </DangerButton>
+                    </DangerConfirmButton>
                     { showExport ? (
                         <SuccessButton
                             onClick={this.handleExportButtonClick}
@@ -240,15 +231,6 @@ export default class StringManagement extends React.PureComponent {
                             onClose={this.handleAddStringClose}
                         />
                     }
-                    <Confirm
-                        show={showDiscardModal}
-                        closeOnEscape
-                        onClose={this.handleDiscardConfirmClose}
-                    >
-                        <p>
-                            Do you want to discard all changes?
-                        </p>
-                    </Confirm>
                 </div>
             </header>
         );

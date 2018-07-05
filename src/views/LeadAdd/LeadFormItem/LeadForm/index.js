@@ -1,21 +1,21 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
+import Button from '#rs/components/Action/Button';
+import DateInput from '#rs/components/Input/DateInput';
 import Faram, {
     requiredCondition,
     urlCondition,
     dateCondition,
 } from '#rs/components/Input/Faram';
+import HiddenInput from '#rs/components/Input/HiddenInput';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import SelectInput from '#rs/components/Input/SelectInput';
-import TextInput from '#rs/components/Input/TextInput';
 import TextArea from '#rs/components/Input/TextArea';
-import HiddenInput from '#rs/components/Input/HiddenInput';
-import DateInput from '#rs/components/Input/DateInput';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import Button from '#rs/components/Action/Button';
+import TextInput from '#rs/components/Input/TextInput';
 import FormattedDate from '#rs/components/View/FormattedDate';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 
 import {
     LEAD_TYPE,
@@ -198,9 +198,9 @@ export default class LeadForm extends React.PureComponent {
         }
     }
 
-    handleApplyAllClick = name => this.props.onApplyAllClick(name);
+    handleApplyAllClick = attrName => this.props.onApplyAllClick(attrName);
 
-    handleApplyAllBelowClick= name => this.props.onApplyAllBelowClick(name);
+    handleApplyAllBelowClick = attrName => this.props.onApplyAllBelowClick(attrName);
 
     handleAddLeadGroupClick = () => this.props.onAddLeadGroupClick();
 
@@ -413,26 +413,24 @@ export default class LeadForm extends React.PureComponent {
 
                 {
                     // one of drive, dropbox, or file
-                    ATTACHMENT_TYPES.indexOf(type) !== -1 && ([
-                        <div
-                            key="title"
-                            className={styles.fileTitle}
-                        >
-                            {
-                                values.attachment && (
-                                    <InternalGallery
-                                        onlyFileName
-                                        galleryId={values.attachment.id}
-                                    />
-                                )
-                            }
-                        </div>,
-                        <HiddenInput
-                            faramElementName="attachment"
-                            key="input"
-                            value={values.attachment || ''}
-                        />,
-                    ])
+                    ATTACHMENT_TYPES.indexOf(type) !== -1 && (
+                        <Fragment>
+                            <div className={styles.fileTitle}>
+                                {
+                                    values.attachment && (
+                                        <InternalGallery
+                                            onlyFileName
+                                            galleryId={values.attachment.id}
+                                        />
+                                    )
+                                }
+                            </div>
+                            <HiddenInput
+                                faramElementName="attachment"
+                                value={values.attachment || ''}
+                            />
+                        </Fragment>
+                    )
                 }
             </Faram>
         );

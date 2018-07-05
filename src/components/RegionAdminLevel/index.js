@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 
 import { BgRestBuilder } from '#rs/utils/rest';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import Confirm from '#rs/components/View/Modal/Confirm';
+import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
 import Modal from '#rs/components/View/Modal';
 import ModalHeader from '#rs/components/View/Modal/Header';
 import ModalBody from '#rs/components/View/Modal/Body';
@@ -113,16 +112,15 @@ export default class RegionAdminLevel extends React.PureComponent {
                             onClick={() => this.editAdminLevel(row)}
                             smallVerticalPadding
                             transparent
-                        >
-                            <span className={iconNames.edit} />
-                        </PrimaryButton>
-                        <DangerButton
+                            iconName={iconNames.edit}
+                        />
+                        <DangerConfirmButton
+                            confirmationMessage={_ts('components.regionAdminLevel', 'removeAdminLevelConfirm', { adminLevel: row.title })}
                             onClick={() => this.handleDeleteAdminLevel(row)}
                             smallVerticalPadding
                             transparent
-                        >
-                            <span className={iconNames.delete} />
-                        </DangerButton>
+                            iconName={iconNames.delete}
+                        />
                     </div>
                 ),
             },
@@ -133,8 +131,6 @@ export default class RegionAdminLevel extends React.PureComponent {
             clickedAdminLevel: {},
             editAdminLevel: false,
             deletePending: false,
-            showDeleteModal: false,
-            activeAdminLevelDelete: {},
         };
 
         this.requestForAdminLevelsForRegion = this.createAlsForRegionRequest(props.countryId);
@@ -239,29 +235,14 @@ export default class RegionAdminLevel extends React.PureComponent {
     };
 
     handleDeleteAdminLevel = (row) => {
-        this.setState({
-            showDeleteModal: true,
-            activeAdminLevelDelete: row,
-        });
-    }
-
-    handleDeleteActiveAdminLevelConfirmClose = (confirm) => {
-        if (confirm) {
-            if (this.requestForAlDelete) {
-                this.requestForAlDelete.stop();
-            }
-            const { activeAdminLevelDelete } = this.state;
-            this.requestForAlDelete = this.createAlDeleteRequest(
-                activeAdminLevelDelete.id,
-                this.props.countryId,
-            );
-            this.requestForAlDelete.start();
+        if (this.requestForAlDelete) {
+            this.requestForAlDelete.stop();
         }
-
-        this.setState({
-            showDeleteModal: false,
-            activeAdminLevelDelete: {},
-        });
+        this.requestForAlDelete = this.createAlDeleteRequest(
+            row.id,
+            this.props.countryId,
+        );
+        this.requestForAlDelete.start();
     }
 
     keyExtractor = rowData => rowData.id
@@ -273,8 +254,6 @@ export default class RegionAdminLevel extends React.PureComponent {
             countryId,
         } = this.props;
         const {
-            activeAdminLevelDelete: { title },
-            showDeleteModal,
             deletePending,
         } = this.state;
 
@@ -350,15 +329,6 @@ export default class RegionAdminLevel extends React.PureComponent {
                         </Modal>
                     }
                 </div>
-                <Confirm
-                    show={showDeleteModal}
-                    closeOnEscape
-                    onClose={this.handleDeleteActiveAdminLevelConfirmClose}
-                >
-                    <p>
-                        {_ts('components.regionAdminLevel', 'removeAdminLevelConfirm', { adminLevel: title })}
-                    </p>
-                </Confirm>
             </div>
         );
     }
