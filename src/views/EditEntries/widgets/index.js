@@ -11,6 +11,7 @@ import NumberWidget from './Number';
 import ScaleWidget from './Scale';
 import MultiSelectWidget from './MultiSelect';
 import Matrix1dOverviewWidget from './Matrix1dOverview';
+import OrganigramWidget from './Organigram';
 
 const WidgetList = [
     {
@@ -76,7 +77,7 @@ const WidgetList = [
     {
         widgetId: 'organigramWidget',
         type: 'list',
-        component: DefaultWidget,
+        component: OrganigramWidget,
     },
     {
         widgetId: 'scaleWidget',

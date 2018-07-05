@@ -6,10 +6,10 @@ import Button from '#rs/components/Action/Button';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import AccentButton from '#rs/components/Action/Button/AccentButton';
 import Modal from '#rs/components/View/Modal';
+import SelectInputWithList from '#rs/components/Input/SelectInputWithList';
 import ModalHeader from '#rs/components/View/Modal/Header';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
-import ListInput from '#rs/components/Input/ListInput';
 import FaramElement from '#rs/components/Input/Faram/FaramElement';
 
 import { iconNames } from '#constants';
@@ -22,6 +22,11 @@ const propTypes = {
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
     onChange: PropTypes.func,
     value: PropTypes.arrayOf(PropTypes.object),
+    idSelector: PropTypes.func,
+    labelSelector: PropTypes.func,
+    childSelector: PropTypes.func,
+    valueKeySelector: PropTypes.func,
+    showHeader: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -29,33 +34,85 @@ const defaultProps = {
     title: 'Organigram', // FIXME: use strings
     onChange: undefined,
     value: [],
+    showHeader: true,
+    idSelector: organ => organ.id,
+    labelSelector: organ => organ.title,
+    childSelector: organ => organ.children,
+
+    valueKeySelector: item => item.id,
 };
 
 const emptyObject = {};
+
+const getOptionsForSelect = (params) => {
+    const {
+        data,
+        idSelector,
+        labelSelector,
+        childSelector,
+    } = params;
+
+    let options = [];
+
+    if (!data || data.length === 0) {
+        return [];
+    }
+
+    data.forEach((d) => {
+        options.push({
+            id: idSelector(d),
+            name: labelSelector(d),
+        });
+        options = [
+            ...options,
+            ...getOptionsForSelect({
+                data: childSelector(d),
+                idSelector,
+                labelSelector,
+                childSelector,
+            }),
+        ];
+    });
+
+    return options;
+};
 
 @FaramElement('input')
 export default class OrganigramWithList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static idSelector = organ => organ.id;
-    static labelSelector = organ => organ.title;
-    static childSelector = organ => organ.children;
-
-    static valueKeySelector = item => item.id;
-    static valueLabelSelector = item => item.name;
+    static selectIdSelector = item => item.id;
+    static selectLabelSelector = item => item.name;
 
     constructor(props) {
         super(props);
+        const {
+            valueKeySelector,
+            idSelector,
+            labelSelector,
+            childSelector,
+            data,
+        } = this.props;
+
         this.state = {
             value: props.value,
             showOrgChartModal: false,
         };
+
+        this.selectValues = props.value.map(v => valueKeySelector(v));
+        this.options = getOptionsForSelect({
+            idSelector,
+            labelSelector,
+            childSelector,
+            data,
+        });
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.value !== this.props.value) {
             this.setState({ value: nextProps.value });
+            this.selectValues = nextProps.value.map(v => nextProps.valueKeySelector(v));
         }
     }
 
@@ -87,6 +144,19 @@ export default class OrganigramWithList extends React.PureComponent {
         });
     }
 
+    handleSelectChange = (newValues) => {
+        const value = [];
+        newValues.forEach((nv) => {
+            value.push({
+                id: nv,
+                name: (this.options.find(o => o.id === nv) || {}).name,
+            });
+        });
+        if (this.props.onChange) {
+            this.props.onChange(value);
+        }
+    }
+
     handleSelection = (value) => {
         this.setState({ value });
     }
@@ -97,7 +167,13 @@ export default class OrganigramWithList extends React.PureComponent {
 
     renderOrgChartModal = () => {
         const { showOrgChartModal, value } = this.state;
-        const { title, data } = this.props;
+        const {
+            title,
+            data,
+            idSelector,
+            labelSelector,
+            childSelector,
+        } = this.props;
 
         if (!showOrgChartModal) {
             return null;
@@ -111,9 +187,9 @@ export default class OrganigramWithList extends React.PureComponent {
                     <OrgChart
                         className={styles.orgchart}
                         data={data[0] || emptyObject}
-                        labelAccessor={OrganigramWithList.labelSelector}
-                        idAccessor={OrganigramWithList.idSelector}
-                        childAccessor={OrganigramWithList.childSelector}
+                        labelAccessor={labelSelector}
+                        idAccessor={idSelector}
+                        childAccessor={childSelector}
                         onSelection={this.handleSelection}
                         value={value}
                     />
@@ -133,8 +209,7 @@ export default class OrganigramWithList extends React.PureComponent {
     render() {
         const {
             title,
-            value,
-            onChange,
+            showHeader,
         } = this.props;
 
         const titleClassName = `${styles.title} title`;
@@ -143,23 +218,35 @@ export default class OrganigramWithList extends React.PureComponent {
 
         return (
             <div className={this.getClassName()}>
-                <header className={headerClassName}>
-                    <div className={titleClassName}>
-                        { title }
-                    </div>
-                    <AccentButton
-                        className={styles.action}
-                        iconName={iconNames.chart}
-                        onClick={this.handleShowModal}
-                        transparent
-                    />
-                </header>
-                <ListInput
-                    className={styles.listInput}
-                    labelSelector={OrganigramWithList.valueLabelSelector}
-                    keySelector={OrganigramWithList.valueKeySelector}
-                    onChange={onChange}
-                    value={value}
+                {showHeader &&
+                    <header className={headerClassName}>
+                        <div className={titleClassName}>
+                            { title }
+                        </div>
+                        <AccentButton
+                            className={styles.action}
+                            iconName={iconNames.chart}
+                            onClick={this.handleShowModal}
+                            transparent
+                        />
+                    </header>
+                }
+                <SelectInputWithList
+                    value={this.selectValues}
+                    onChange={this.handleSelectChange}
+                    options={this.options}
+                    labelSelector={OrganigramWithList.selectLabelSelector}
+                    keySelector={OrganigramWithList.selectIdSelector}
+                    showHintAndError={false}
+                    topRightChild={!showHeader &&
+                        <AccentButton
+                            className={styles.action}
+                            iconName={iconNames.chart}
+                            onClick={this.handleShowModal}
+                            transparent
+                        />
+                    }
+                    hideSelectAllButton
                 />
                 <OrgChartModal />
             </div>
