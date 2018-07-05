@@ -197,6 +197,7 @@ const initialSiloDomainData = {
             selectedEntryKey: undefined,
             entries: [
             ],
+            entryRests: {},
         },
         */
     },

@@ -15,8 +15,8 @@ const myTransform = createTransform(
         },
         editEntries: {
             ...inboundState.editEntries,
-            entrySaveRests: undefined,
             // post, patch and delete
+            entryRests: undefined,
         },
     }),
     undefined,

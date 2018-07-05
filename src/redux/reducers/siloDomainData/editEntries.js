@@ -34,7 +34,22 @@ export const EEB__REMOVE_LOCAL_ENTRIES = 'siloDomainData/EEB__REMOVE_LOCAL_ENTRI
 export const EEB__MARK_AS_DELETED_ENTRY = 'siloDomainData/EEB__MARK_AS_DELETED_ENTRY';
 export const EEB__APPLY_TO_ALL_ENTRIES = 'siloDomainData/EEB__APPLY_TO_ALL_ENTRIES';
 export const EEB__APPLY_TO_ALL_ENTRIES_BELOW = 'siloDomainData/EEB__APPLY_TO_ALL_ENTRIES_BELOW';
+export const EEB__SET_PENDING = 'siloDomainData/EEB__SET_PENDING';
+export const EEB__SAVE_ENTRY = 'siloDomainData/EEB__SAVE_ENTRY';
 
+export const editEntriesSaveEntryAction = ({ leadId, entryKey, response }) => ({
+    type: EEB__SAVE_ENTRY,
+    leadId,
+    entryKey,
+    response,
+});
+
+export const editEntriesSetPendingAction = ({ leadId, entryKey, pending }) => ({
+    type: EEB__SET_PENDING,
+    leadId,
+    entryKey,
+    pending,
+});
 
 export const editEntriesApplyToAllEntriesAction = ({ leadId, key, value, entryKey }) => ({
     type: EEB__APPLY_TO_ALL_ENTRIES,
@@ -510,6 +525,58 @@ const applyToAllEntries = mode => (state, action) => {
     return update(newState, newSettings);
 };
 
+const setPending = (state, action) => {
+    const { leadId, entryKey, pending } = action;
+    const settings = {
+        editEntries: { $auto: {
+            [leadId]: { $auto: {
+                entryRests: { $auto: {
+                    [entryKey]: { $set: pending },
+                } },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
+const saveEntry = (state, action) => {
+    const { leadId, entryKey, response } = action;
+
+    // NOTE: create new entry from remoteEntry
+    const remoteEntry = response;
+    const {
+        id: remoteServerId,
+        versionId: remoteVersionId,
+    } = remoteEntry;
+    const newEntry = createEntry({
+        key: entryKey,
+        serverId: remoteServerId,
+        versionId: remoteVersionId,
+        data: remoteEntry,
+        isPristine: true,
+        hasError: false,
+    });
+
+    const {
+        editEntries: { [leadId]: { entries = [] } = {} } = {},
+    } = state;
+    const entryIndex = entries.findIndex(
+        entry => entryAccessor.key(entry) === entryKey,
+    );
+
+    const settings = {
+        editEntries: { $auto: {
+            [leadId]: { $auto: {
+                entries: { $auto: {
+                    [entryIndex]: { $set: newEntry },
+                } },
+            } },
+        } },
+    };
+
+    return update(state, settings);
+};
+
 const reducers = {
     [EEB__SET_LEAD]: setLead,
     [EEB__SET_ENTRIES]: setEntries,
@@ -523,5 +590,7 @@ const reducers = {
     [EEB__MARK_AS_DELETED_ENTRY]: markAsDeletedEntry,
     [EEB__APPLY_TO_ALL_ENTRIES]: applyToAllEntries('all'),
     [EEB__APPLY_TO_ALL_ENTRIES_BELOW]: applyToAllEntries('all-below'),
+    [EEB__SET_PENDING]: setPending,
+    [EEB__SAVE_ENTRY]: saveEntry,
 };
 export default reducers;

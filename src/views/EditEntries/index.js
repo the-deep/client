@@ -13,7 +13,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { CoordinatorBuilder } from '#rsu/coordinate';
 
-import { entryAccessor } from '#entities/editEntries';
+import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
 import {
     iconNames,
     routes,
@@ -33,6 +33,9 @@ import {
     editEntriesSchemaSelector,
     editEntriesAddEntryAction,
     editEntriesRemoveLocalEntriesAction,
+    editEntriesSetPendingAction,
+    editEntriesStatusesSelector,
+    editEntriesSaveEntryAction,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
@@ -54,6 +57,7 @@ const propTypes = {
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     schema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 
     setLead: PropTypes.func.isRequired,
@@ -69,11 +73,14 @@ const propTypes = {
     setEntryError: PropTypes.func.isRequired,
     addEntry: PropTypes.func.isRequired,
     removeLocalEntries: PropTypes.func.isRequired,
+    setPending: PropTypes.func.isRequired,
+    saveEntry: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     analysisFramework: undefined,
     entries: [],
+    statuses: {},
     schema: {},
 };
 
@@ -81,6 +88,7 @@ const mapStateToProps = state => ({
     leadId: leadIdFromRoute(state),
     lead: editEntriesLeadSelector(state),
     entries: editEntriesEntriesSelector(state),
+    statuses: editEntriesStatusesSelector(state),
 
     analysisFramework: editEntriesAnalysisFrameworkSelector(state),
     schema: editEntriesSchemaSelector(state),
@@ -90,6 +98,8 @@ const mapDispatchToProps = dispatch => ({
     setLead: params => dispatch(editEntriesSetLeadAction(params)),
     setEntries: params => dispatch(editEntriesSetEntriesAction(params)),
     clearEntries: params => dispatch(editEntriesClearEntriesAction(params)),
+    setPending: params => dispatch(editEntriesSetPendingAction(params)),
+    saveEntry: params => dispatch(editEntriesSaveEntryAction(params)),
 
     setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
@@ -294,9 +304,12 @@ export default class EditEntries extends React.PureComponent {
         const newEntry = update(entry, settings);
 
         const request = new EditEntrySaveRequest({
-            setPending: undefined,
-            saveEntry: undefined,
-            setEntryError: undefined,
+            setPending: this.props.setPending,
+            saveEntry: this.props.saveEntry,
+            setEntryServerError: (data) => {
+                // TODO:
+                console.warn('error entry:', data);
+            },
             getCoordinator: () => this.saveRequestCoordinator,
         });
         request.init({
@@ -309,10 +322,9 @@ export default class EditEntries extends React.PureComponent {
     }
 
     handleDeleteEntry = (entry, entryKey) => {
-        // FIXME: check if entry is disabled
         const request = {
             start: () => {
-                // FIXME: create a delete request
+                // TODO: create a delete request
                 this.saveRequestCoordinator.notifyComplete(entryKey, false);
             },
             stop: () => {},
@@ -327,20 +339,26 @@ export default class EditEntries extends React.PureComponent {
 
         this.props.entries.forEach((entry) => {
             const entryKey = entryAccessor.key(entry);
+            const status = this.props.statuses[entryKey];
 
-            if (entryAccessor.isMarkedAsDeleted(entry)) {
+            // NOTE: only delete if not requesting
+            if (entryAccessor.isMarkedAsDeleted(entry) && status !== ENTRY_STATUS.requesting) {
                 this.handleDeleteEntry(entry, entryKey);
+                return;
             }
 
-            detachedFaram({
-                value: entry.data.attributes,
-                schema: this.props.schema,
-                error: entry.localData.error,
-                onChange: this.handleChange,
+            // NOTE: only submit if non pristine
+            if (status === ENTRY_STATUS.nonPristine) {
+                detachedFaram({
+                    value: entry.data.attributes,
+                    schema: this.props.schema,
+                    error: entry.localData.error,
+                    onChange: this.handleChange,
 
-                onValidationFailure: errors => this.handleValidationFailure(errors, entryKey),
-                onValidationSuccess: values => this.handleValidationSuccess(values, entryKey),
-            });
+                    onValidationFailure: errors => this.handleValidationFailure(errors, entryKey),
+                    onValidationSuccess: values => this.handleValidationSuccess(values, entryKey),
+                });
+            }
         });
 
         this.saveRequestCoordinator.start();

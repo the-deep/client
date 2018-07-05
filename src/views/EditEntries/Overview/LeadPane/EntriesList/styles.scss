@@ -58,8 +58,11 @@
                     animation: spin 1s linear infinite;
                 }
 
+                .warning {
+                    color: $color-warning;
+                }
+
                 .error {
-                    margin-left: 0;
                     color: $color-danger;
                 }
 

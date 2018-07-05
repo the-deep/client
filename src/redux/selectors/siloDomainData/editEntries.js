@@ -35,6 +35,11 @@ export const editEntriesEntriesSelector = createSelector(
     editEntry => editEntry.entries || emptyArray,
 );
 
+export const editEntriesRestsSelector = createSelector(
+    editEntriesForLeadSelector,
+    editEntry => editEntry.entryRests || emptyObject,
+);
+
 export const editEntriesFilteredEntriesSelector = createSelector(
     editEntriesEntriesSelector,
     entries => entries.filter(
@@ -44,10 +49,11 @@ export const editEntriesFilteredEntriesSelector = createSelector(
 
 export const editEntriesStatusesSelector = createSelector(
     editEntriesEntriesSelector,
-    entries => listToMap(
+    editEntriesRestsSelector,
+    (entries, rests) => listToMap(
         entries,
         entry => entryAccessor.key(entry),
-        entry => calculateEntryState({ entry }),
+        (entry, key) => calculateEntryState({ entry, restPending: !!rests[key] }),
     ),
 );
 

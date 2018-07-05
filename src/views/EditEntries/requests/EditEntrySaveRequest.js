@@ -24,20 +24,20 @@ export default class EditEntrySaveRequest extends Request {
         this.parent.saveEntry({
             leadId,
             entryKey,
-            serverData: { versionId: response.versionId, serverId: response.id },
+            response,
         });
         this.parent.getCoordinator().notifyComplete(entryKey);
     }
 
     handleFailure = () => {
         const { leadId, entryKey } = this;
-        this.parent.setEntryError({ leadId, entryKey });
+        this.parent.setEntryServerError({ leadId, entryKey });
         this.parent.getCoordinator().notifyComplete(entryKey, true);
     }
 
     handleFatal = () => {
         const { leadId, entryKey } = this;
-        this.parent.setEntryError({ leadId, entryKey });
+        this.parent.setEntryServerError({ leadId, entryKey });
         this.parent.getCoordinator().notifyComplete(entryKey, true);
     }
 

@@ -42,12 +42,12 @@ export const ENTRY_STATUS = {
     pristine: 'pristine',
 };
 
-export const calculateEntryState = ({ entry, rest }) => {
+export const calculateEntryState = ({ entry, restPending }) => {
     const serverId = entryAccessor.serverId(entry);
     const pristine = entryAccessor.isPristine(entry);
     const error = entryAccessor.hasError(entry);
 
-    if (rest && rest.pending) {
+    if (restPending) {
         return ENTRY_STATUS.requesting;
     } else if (error) {
         return ENTRY_STATUS.invalid;

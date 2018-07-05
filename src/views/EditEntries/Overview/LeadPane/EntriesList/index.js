@@ -34,7 +34,7 @@ export default class EntriesListing extends React.PureComponent {
         [ENTRY_STATUS.invalid]: `${iconNames.error} ${styles.error}`,
         [ENTRY_STATUS.nonPristine]: `${iconNames.codeWorking} ${styles.pristine}`,
         [ENTRY_STATUS.complete]: `${iconNames.checkCircle} ${styles.complete}`,
-        markedForRemoval: `${iconNames.removeCircle} ${styles.error}`,
+        markedForRemoval: `${iconNames.removeCircle} ${styles.warning}`,
     };
 
     static calcEntryKey = entry => entryAccessor.key(entry);

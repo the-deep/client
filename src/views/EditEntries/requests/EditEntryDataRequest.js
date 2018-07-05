@@ -12,7 +12,7 @@ import Request from '#utils/Request';
 import _ts from '#ts';
 
 export default class EditEntryDataRequest extends Request {
-    // TODO: write schema
+    schemaName = 'entriesForEditEntriesGetResponse';
 
     handlePreLoad = () => {
         this.parent.setState({ pendingEditEntryData: true });
