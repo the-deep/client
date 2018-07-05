@@ -47,7 +47,7 @@ const clusterVizSchema = [];
 }
 
 {
-    const name = 'leadsDetail';
+    const name = 'leadDetails';
     const schema = {
         doc: {
             name: 'Lead',
