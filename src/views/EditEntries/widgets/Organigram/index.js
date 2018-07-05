@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import OrganigramWithList from '#components/OrganigramWithList';
+import OrganigramInput from '#components/OrganigramInput';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -34,7 +34,7 @@ export default class OrganigramWidget extends React.PureComponent {
         const data = getData(widget);
 
         return (
-            <OrganigramWithList
+            <OrganigramInput
                 faramElementName="values"
                 data={data}
                 childSelector={OrganigramWidget.childSelector}
