@@ -11,6 +11,7 @@ import NumberWidget from './Number';
 import ScaleWidget from './Scale';
 import MultiSelectWidget from './MultiSelect';
 import OrganigramWidget from './Organigram';
+import GeoWidget from './Geo';
 
 const WidgetList = [
     {
@@ -31,7 +32,7 @@ const WidgetList = [
     {
         widgetId: 'geoWidget',
         type: 'list',
-        component: DefaultWidget,
+        component: GeoWidget,
     },
     {
         widgetId: 'matrix1dWidget',
