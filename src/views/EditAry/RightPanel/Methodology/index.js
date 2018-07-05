@@ -67,9 +67,6 @@ export default class Methodology extends React.PureComponent {
     static orgLabelSelector = organ => organ.title;
     static orgChildSelector = organ => organ.children;
 
-    static orgValueKeySelector = item => item.id;
-    static orgValueLabelSelector = item => item.name;
-
     renderAttributeHeader = (k, key) => {
         const { aryTemplateMethodology: attributesTemplate } = this.props;
         const methodologyGroup = attributesTemplate[key];
@@ -216,8 +213,6 @@ export default class Methodology extends React.PureComponent {
                             childSelector={Methodology.orgChildSelector}
                             labelSelector={Methodology.orgLabelSelector}
                             idSelector={Methodology.orgIdSelector}
-                            valueKeySelector={Methodology.orgValueKeySelector}
-                            valueLabelSelector={Methodology.orgValueLabelSelector}
                         />
                         <GeoListInput
                             faramElementName="locations"

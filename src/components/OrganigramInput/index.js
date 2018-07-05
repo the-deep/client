@@ -21,11 +21,10 @@ const propTypes = {
     title: PropTypes.string,
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
     onChange: PropTypes.func,
-    value: PropTypes.arrayOf(PropTypes.object),
+    value: PropTypes.arrayOf(PropTypes.string),
     idSelector: PropTypes.func,
     labelSelector: PropTypes.func,
     childSelector: PropTypes.func,
-    valueKeySelector: PropTypes.func,
     showHeader: PropTypes.bool,
 };
 
@@ -38,8 +37,6 @@ const defaultProps = {
     idSelector: organ => organ.id,
     labelSelector: organ => organ.title,
     childSelector: organ => organ.children,
-
-    valueKeySelector: item => item.id,
 };
 
 const emptyObject = {};
@@ -88,7 +85,6 @@ export default class OrganigramInput extends React.PureComponent {
     constructor(props) {
         super(props);
         const {
-            valueKeySelector,
             idSelector,
             labelSelector,
             childSelector,
@@ -100,7 +96,6 @@ export default class OrganigramInput extends React.PureComponent {
             showOrgChartModal: false,
         };
 
-        this.selectValues = props.value.map(v => valueKeySelector(v));
         this.options = getOptionsForSelect({
             idSelector,
             labelSelector,
@@ -112,7 +107,6 @@ export default class OrganigramInput extends React.PureComponent {
     componentWillReceiveProps(nextProps) {
         if (nextProps.value !== this.props.value) {
             this.setState({ value: nextProps.value });
-            this.selectValues = nextProps.value.map(v => nextProps.valueKeySelector(v));
         }
     }
 
@@ -145,15 +139,8 @@ export default class OrganigramInput extends React.PureComponent {
     }
 
     handleSelectChange = (newValues) => {
-        const value = [];
-        newValues.forEach((nv) => {
-            value.push({
-                id: nv,
-                name: (this.options.find(o => o.id === nv) || {}).name,
-            });
-        });
         if (this.props.onChange) {
-            this.props.onChange(value);
+            this.props.onChange(newValues);
         }
     }
 
@@ -209,6 +196,7 @@ export default class OrganigramInput extends React.PureComponent {
     render() {
         const {
             title,
+            value,
             showHeader,
         } = this.props;
 
@@ -232,8 +220,9 @@ export default class OrganigramInput extends React.PureComponent {
                     </header>
                 }
                 <SelectInputWithList
-                    value={this.selectValues}
+                    value={value}
                     onChange={this.handleSelectChange}
+                    className={styles.selectInput}
                     options={this.options}
                     labelSelector={OrganigramInput.selectLabelSelector}
                     keySelector={OrganigramInput.selectIdSelector}

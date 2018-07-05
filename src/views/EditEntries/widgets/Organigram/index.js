@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import OrganigramInput from '#components/OrganigramInput';
-import styles from './styles.scss';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
@@ -27,7 +26,6 @@ export default class OrganigramWidget extends React.PureComponent {
     static childSelector = d => d.organs;
     static labelSelector = d => d.title;
     static idSelector = d => d.key;
-    static valueKeySelector = d => d.id;
 
     render() {
         const { widget } = this.props;
@@ -40,7 +38,6 @@ export default class OrganigramWidget extends React.PureComponent {
                 childSelector={OrganigramWidget.childSelector}
                 labelSelector={OrganigramWidget.labelSelector}
                 idSelector={OrganigramWidget.idSelector}
-                valueKeySelector={OrganigramWidget.valueKeySelector}
                 showHeader={false}
             />
         );
