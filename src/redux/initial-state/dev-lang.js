@@ -707,6 +707,7 @@ const initialDevLangState = {
         11004: 'Are you sure you want to delete this lead group?',
         11005: 'Show leads',
         11006: 'Failed to delete lead group.',
+        2999: 'clusterVisualization',
         3000: 'Cluster Visualization',
         3001: 'Show Table',
         3002: 'Score',
@@ -718,6 +719,7 @@ const initialDevLangState = {
         3008: 'Created At',
         3009: 'Clusters',
         3010: 'Cluster',
+        3999: 'visualization',
         4000: 'Visualization',
         4001: 'Sunburst',
         4002: 'CorrelationMatrix',
@@ -1626,8 +1628,8 @@ const initialDevLangState = {
 
             browserExtension: 2000,
             stringManagement: 5572,
-            clusterViz: 3000,
-            visualization: 4000,
+            clusterViz: 2999,
+            visualization: 3999,
         },
         project: {
             addRegionButtonLabel: 301,

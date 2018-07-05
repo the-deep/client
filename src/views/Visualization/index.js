@@ -25,18 +25,16 @@ import BoundError from '#rs/components/General/BoundError';
 import VizError from '#components/VizError';
 import AppError from '#components/AppError';
 
-import {
-    hierarchicalData,
-    chordData,
-    barData,
-    lineData,
-    forceDirectedData,
-    correlationData,
-    sankeyData,
-    parallelData,
-    stackedData,
-    streamData,
-} from './dummyData';
+import barData from './dummydata/barData';
+import chordData from './dummydata/chordData';
+import correlationData from './dummydata/correlationData';
+import forceDirectedData from './dummydata/forceDirectedData';
+import hierarchicalData from './dummydata/hierarchical';
+import lineData from './dummydata/lineData';
+import parallelData from './dummydata/parallelData';
+import sankeyData from './dummydata/sankeyData';
+import stackedData from './dummydata/stackedData';
+import streamData from './dummydata/streamData';
 
 import styles from './styles.scss';
 
