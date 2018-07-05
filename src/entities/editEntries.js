@@ -21,7 +21,7 @@ export const entryAccessor = {
     hasError: (entry = {}) => !!(entry.localData || {}).hasError,
 
     dataAttribute: (entry = {}, attributeId) => (
-        (((entry.data || {}).attributes || {})[attributeId]).data
+        (((entry.data || {}).attributes || {})[attributeId] || {}).data
     ),
     order: (entry = {}) => (entry.data || {}).order,
     serverId: (entry = {}) => (entry.data || {}).id,

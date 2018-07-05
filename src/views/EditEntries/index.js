@@ -3,8 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import update from '#rs/utils/immutable-update';
 import { reverseRoute } from '#rs/utils/common';
+import update from '#rs/utils/immutable-update';
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import { detachedFaram } from '#rsci/Faram';
@@ -20,22 +20,24 @@ import {
 } from '#constants';
 import {
     leadIdFromRoute,
-    editEntriesLeadSelector,
 
     editEntriesAnalysisFrameworkSelector,
-    editEntriesSetLeadAction,
     editEntriesEntriesSelector,
-    editEntriesSetEntriesAction,
+    editEntriesLeadSelector,
+    editEntriesSchemaSelector,
+    editEntriesStatusesSelector,
+
+    editEntriesAddEntryAction,
     editEntriesClearEntriesAction,
-    editEntriesSetExcerptAction,
+    editEntriesRemoveEntryAction,
+    editEntriesRemoveLocalEntriesAction,
+    editEntriesSaveEntryAction,
+    editEntriesSetEntriesAction,
     editEntriesSetEntryDataAction,
     editEntriesSetEntryErrorsAction,
-    editEntriesSchemaSelector,
-    editEntriesAddEntryAction,
-    editEntriesRemoveLocalEntriesAction,
+    editEntriesSetExcerptAction,
+    editEntriesSetLeadAction,
     editEntriesSetPendingAction,
-    editEntriesStatusesSelector,
-    editEntriesSaveEntryAction,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
@@ -44,8 +46,9 @@ import {
 import notify from '#notify';
 import _ts from '#ts';
 
-import EditEntrySaveRequest from './requests/EditEntrySaveRequest';
 import EditEntryDataRequest from './requests/EditEntryDataRequest';
+import EditEntryDeleteRequest from './requests/EditEntryDeleteRequest';
+import EditEntrySaveRequest from './requests/EditEntrySaveRequest';
 
 import Overview from './Overview';
 import Listing from './List';
@@ -53,28 +56,27 @@ import Listing from './List';
 import styles from './styles.scss';
 
 const propTypes = {
-    leadId: PropTypes.number.isRequired,
-    lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    leadId: PropTypes.number.isRequired,
     schema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 
-    setLead: PropTypes.func.isRequired,
-    setEntries: PropTypes.func.isRequired,
+    addEntry: PropTypes.func.isRequired,
     clearEntries: PropTypes.func.isRequired,
-
+    removeEntry: PropTypes.func.isRequired,
+    removeLocalEntries: PropTypes.func.isRequired,
+    saveEntry: PropTypes.func.isRequired,
     setAnalysisFramework: PropTypes.func.isRequired,
-    setGeoOptions: PropTypes.func.isRequired,
-    setRegions: PropTypes.func.isRequired,
-
-    setExcerpt: PropTypes.func.isRequired,
+    setEntries: PropTypes.func.isRequired,
     setEntryData: PropTypes.func.isRequired,
     setEntryError: PropTypes.func.isRequired,
-    addEntry: PropTypes.func.isRequired,
-    removeLocalEntries: PropTypes.func.isRequired,
+    setExcerpt: PropTypes.func.isRequired,
+    setGeoOptions: PropTypes.func.isRequired,
+    setLead: PropTypes.func.isRequired,
     setPending: PropTypes.func.isRequired,
-    saveEntry: PropTypes.func.isRequired,
+    setRegions: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -85,31 +87,29 @@ const defaultProps = {
 };
 
 const mapStateToProps = state => ({
-    leadId: leadIdFromRoute(state),
-    lead: editEntriesLeadSelector(state),
-    entries: editEntriesEntriesSelector(state),
-    statuses: editEntriesStatusesSelector(state),
-
     analysisFramework: editEntriesAnalysisFrameworkSelector(state),
+    entries: editEntriesEntriesSelector(state),
+    lead: editEntriesLeadSelector(state),
+    leadId: leadIdFromRoute(state),
     schema: editEntriesSchemaSelector(state),
+    statuses: editEntriesStatusesSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-    setLead: params => dispatch(editEntriesSetLeadAction(params)),
-    setEntries: params => dispatch(editEntriesSetEntriesAction(params)),
+    addEntry: params => dispatch(editEntriesAddEntryAction(params)),
     clearEntries: params => dispatch(editEntriesClearEntriesAction(params)),
-    setPending: params => dispatch(editEntriesSetPendingAction(params)),
+    removeEntry: params => dispatch(editEntriesRemoveEntryAction(params)),
+    removeLocalEntries: params => dispatch(editEntriesRemoveLocalEntriesAction(params)),
     saveEntry: params => dispatch(editEntriesSaveEntryAction(params)),
-
     setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
-    setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
-    setRegions: params => dispatch(setRegionsForProjectAction(params)),
-    setExcerpt: params => dispatch(editEntriesSetExcerptAction(params)),
-
+    setEntries: params => dispatch(editEntriesSetEntriesAction(params)),
     setEntryData: params => dispatch(editEntriesSetEntryDataAction(params)),
     setEntryError: params => dispatch(editEntriesSetEntryErrorsAction(params)),
-    addEntry: params => dispatch(editEntriesAddEntryAction(params)),
-    removeLocalEntries: params => dispatch(editEntriesRemoveLocalEntriesAction(params)),
+    setExcerpt: params => dispatch(editEntriesSetExcerptAction(params)),
+    setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
+    setLead: params => dispatch(editEntriesSetLeadAction(params)),
+    setPending: params => dispatch(editEntriesSetPendingAction(params)),
+    setRegions: params => dispatch(setRegionsForProjectAction(params)),
 });
 
 
@@ -196,11 +196,11 @@ export default class EditEntries extends React.PureComponent {
             .build();
 
         this.editEntryDataRequest = new EditEntryDataRequest({
-            setEntries: this.props.setEntries,
+            clearEntries: this.props.clearEntries,
             getAf: () => this.props.analysisFramework,
             getEntries: () => this.props.entries,
-            clearEntries: this.props.clearEntries,
             setAnalysisFramework: this.props.setAnalysisFramework,
+            setEntries: this.props.setEntries,
             setGeoOptions: this.props.setGeoOptions,
             setLead: this.props.setLead,
             setRegions: this.props.setRegions,
@@ -290,11 +290,7 @@ export default class EditEntries extends React.PureComponent {
         this.saveRequestCoordinator.add(entryKey, proxyRequest);
     }
 
-    handleValidationSuccess = (values, entryKey) => {
-        const entry = this.props.entries.find(
-            e => entryAccessor.key(e) === entryKey,
-        );
-
+    handleValidationSuccess = (values, entryKey, entry) => {
         // NOTE: update attributes in entry to get newEntry
         const settings = {
             data: {
@@ -321,14 +317,21 @@ export default class EditEntries extends React.PureComponent {
         this.saveRequestCoordinator.add(entryKey, request);
     }
 
-    handleDeleteEntry = (entry, entryKey) => {
-        const request = {
-            start: () => {
-                // TODO: create a delete request
-                this.saveRequestCoordinator.notifyComplete(entryKey, false);
+    handleDeleteEntry = (entryKey, entry) => {
+        const request = new EditEntryDeleteRequest({
+            setPending: this.props.setPending,
+            removeEntry: this.props.removeEntry,
+            setEntryServerError: (data) => {
+                // TODO:
+                console.warn('error entry:', data);
             },
-            stop: () => {},
-        };
+            getCoordinator: () => this.saveRequestCoordinator,
+        });
+        request.init({
+            leadId: this.props.leadId,
+            entryKey: entryAccessor.key(entry),
+            serverId: entryAccessor.serverId(entry),
+        });
         this.saveRequestCoordinator.add(entryKey, request);
     }
 
@@ -343,7 +346,7 @@ export default class EditEntries extends React.PureComponent {
 
             // NOTE: only delete if not requesting
             if (entryAccessor.isMarkedAsDeleted(entry) && status !== ENTRY_STATUS.requesting) {
-                this.handleDeleteEntry(entry, entryKey);
+                this.handleDeleteEntry(entryKey, entry);
                 return;
             }
 
@@ -355,8 +358,12 @@ export default class EditEntries extends React.PureComponent {
                     error: entry.localData.error,
                     onChange: this.handleChange,
 
-                    onValidationFailure: errors => this.handleValidationFailure(errors, entryKey),
-                    onValidationSuccess: values => this.handleValidationSuccess(values, entryKey),
+                    onValidationFailure: (errors) => {
+                        this.handleValidationFailure(errors, entryKey, entry);
+                    },
+                    onValidationSuccess: (values) => {
+                        this.handleValidationSuccess(values, entryKey, entry);
+                    },
                 });
             }
         });

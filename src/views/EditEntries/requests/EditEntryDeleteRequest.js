@@ -1,14 +1,10 @@
 import {
-    createParamsForEntryCreate,
-    createParamsForEntryEdit,
-    createUrlForEntryEdit,
-    urlForEntryCreate,
+    createUrlForDeleteEntry,
+    createParamsForDeleteEntry,
 } from '#rest';
 import Request from '#utils/Request';
 
-export default class EditEntrySaveRequest extends Request {
-    schemaName = 'entry';
-
+export default class EditEntryDeleteRequest extends Request {
     handlePreLoad = () => {
         const { leadId, entryKey } = this;
         this.parent.setPending({ leadId, entryKey, pending: true });
@@ -19,12 +15,11 @@ export default class EditEntrySaveRequest extends Request {
         this.parent.setPending({ leadId, entryKey, pending: false });
     }
 
-    handleSuccess = (response) => {
+    handleSuccess = () => {
         const { leadId, entryKey } = this;
-        this.parent.saveEntry({
+        this.parent.removeEntry({
             leadId,
-            entryKey,
-            response,
+            key: entryKey,
         });
         this.parent.getCoordinator().notifyComplete(entryKey);
     }
@@ -41,24 +36,13 @@ export default class EditEntrySaveRequest extends Request {
         this.parent.getCoordinator().notifyComplete(entryKey, true);
     }
 
-    init = ({ leadId, entryKey, entryData, serverId }) => {
+    init = ({ leadId, entryKey, serverId }) => {
         this.leadId = leadId;
         this.entryKey = entryKey;
 
-        let urlForEntry;
-        let paramsForEntry;
-
-        if (serverId) {
-            urlForEntry = createUrlForEntryEdit(serverId);
-            paramsForEntry = () => createParamsForEntryEdit(entryData);
-        } else {
-            urlForEntry = urlForEntryCreate;
-            paramsForEntry = () => createParamsForEntryCreate(entryData);
-        }
-
         this.createDefault({
-            url: urlForEntry,
-            params: paramsForEntry,
+            url: createUrlForDeleteEntry(serverId),
+            params: createParamsForDeleteEntry,
         });
     }
 }

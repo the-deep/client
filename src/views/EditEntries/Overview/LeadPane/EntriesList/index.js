@@ -39,11 +39,6 @@ export default class EntriesListing extends React.PureComponent {
 
     static calcEntryKey = entry => entryAccessor.key(entry);
 
-    renderIcon = (status) => {
-        const className = EntriesListing.iconMap[status] || '';
-        return <span className={className} />;
-    }
-
     renderEntryLabel = (entry) => {
         const values = entryAccessor.data(entry);
         const {
@@ -118,11 +113,10 @@ export default class EntriesListing extends React.PureComponent {
                 >
                     {this.renderEntryLabel(entry)}
                     <div className={styles.statusIcons}>
-                        {
-                            isMarkedAsDeleted &&
+                        { isMarkedAsDeleted &&
                             <span className={EntriesListing.iconMap.markedForRemoval} />
                         }
-                        {this.renderIcon(status)}
+                        <span className={EntriesListing.iconMap[status] || ''} />
                     </div>
                 </button>
                 {
