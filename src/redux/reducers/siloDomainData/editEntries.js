@@ -1,6 +1,7 @@
-import update from '#rs/utils/immutable-update';
-import { isFalsy, randomString, getDefinedElementAround } from '#rs/utils/common';
 import { applyDiff, entryAccessor, createEntry } from '#entities/editEntries';
+import { analyzeErrors } from '#rs/components/Input/Faram/validator';
+import { isFalsy, randomString, getDefinedElementAround } from '#rs/utils/common';
+import update from '#rs/utils/immutable-update';
 
 const getNewSelectedEntryKey = (entries, selectedEntryKey) => {
     if (entries.length <= 0) {
@@ -29,11 +30,27 @@ export const EEB__SET_ENTRY_EXCERPT = 'siloDomainData/EEB__SET_ENTRY_EXCERPT';
 export const EEB__SET_ENTRY_DATA = 'siloDomainData/EEB__SET_ENTRY_DATA';
 export const EEB__SET_ENTRY_ERROR = 'siloDomainData/EEB__SET_ENTRY_ERROR';
 export const EEB__ADD_ENTRY = 'siloDomainData/EEB__ADD_ENTRY';
+export const EEB__REMOVE_ENTRY = 'siloDomainData/EEB__REMOVE_ENTRY';
 export const EEB__REMOVE_LOCAL_ENTRIES = 'siloDomainData/EEB__REMOVE_LOCAL_ENTRIES';
 export const EEB__MARK_AS_DELETED_ENTRY = 'siloDomainData/EEB__MARK_AS_DELETED_ENTRY';
 export const EEB__APPLY_TO_ALL_ENTRIES = 'siloDomainData/EEB__APPLY_TO_ALL_ENTRIES';
 export const EEB__APPLY_TO_ALL_ENTRIES_BELOW = 'siloDomainData/EEB__APPLY_TO_ALL_ENTRIES_BELOW';
+export const EEB__SET_PENDING = 'siloDomainData/EEB__SET_PENDING';
+export const EEB__SAVE_ENTRY = 'siloDomainData/EEB__SAVE_ENTRY';
 
+export const editEntriesSaveEntryAction = ({ leadId, entryKey, response }) => ({
+    type: EEB__SAVE_ENTRY,
+    leadId,
+    entryKey,
+    response,
+});
+
+export const editEntriesSetPendingAction = ({ leadId, entryKey, pending }) => ({
+    type: EEB__SET_PENDING,
+    leadId,
+    entryKey,
+    pending,
+});
 
 export const editEntriesApplyToAllEntriesAction = ({ leadId, key, value, entryKey }) => ({
     type: EEB__APPLY_TO_ALL_ENTRIES,
@@ -55,6 +72,12 @@ export const editEntriesAddEntryAction = ({ leadId, entry }) => ({
     type: EEB__ADD_ENTRY,
     leadId,
     entry,
+});
+
+export const editEntriesRemoveEntryAction = ({ leadId, key }) => ({
+    type: EEB__REMOVE_ENTRY,
+    leadId,
+    key,
 });
 
 export const editEntriesRemoveLocalEntriesAction = ({ leadId }) => ({
@@ -183,8 +206,6 @@ const setEntryExcerpt = (state, action) => {
         editEntries: { [leadId]: { entries = [] } = {} } = {},
     } = state;
 
-    // TODO: check if key is undefined, create new entry if undefined
-
     const excerpt = excerptType === 'excerpt' ? excerptValue : undefined;
     const image = excerptType === 'image' ? excerptValue : undefined;
 
@@ -198,6 +219,9 @@ const setEntryExcerpt = (state, action) => {
                             entryType: { $set: excerptType },
                             excerpt: { $set: excerpt },
                             image: { $set: image },
+                        },
+                        localData: {
+                            isPristine: { $set: false },
                         },
                     },
                 },
@@ -273,7 +297,7 @@ const setEntryData = (state, action) => {
 
     let newState = state;
 
-    if (info.action === 'changeEntry') {
+    if (info.action === 'changeExcerpt') {
         const excerpt = info.type === 'excerpt' ? info.value : undefined;
         const image = info.type === 'image' ? info.value : undefined;
 
@@ -286,6 +310,9 @@ const setEntryData = (state, action) => {
                                 entryType: { $set: info.type },
                                 excerpt: { $set: excerpt },
                                 image: { $set: image },
+                            },
+                            localData: {
+                                isPristine: { $set: false },
                             },
                         },
                     },
@@ -309,7 +336,7 @@ const setEntryData = (state, action) => {
                         localData: {
                             isPristine: { $set: false },
                             error: { $set: errors },
-                            // TODO: hasError must be calculated
+                            hasError: { $set: analyzeErrors(errors) },
                         },
                     },
                 },
@@ -337,10 +364,26 @@ const setEntryError = (state, action) => {
                 entries: {
                     [entryIndex]: {
                         localData: {
-                            // TODO: hasError must be calculated
                             error: { $set: errors },
+                            hasError: { $set: analyzeErrors(errors) },
                         },
                     },
+                },
+            },
+        },
+    };
+    return update(state, settings);
+};
+
+const removeEntry = (state, action) => {
+    const { leadId, key } = action;
+    // NOTE: no need to get new selectedEntryKey
+    // a new selectedEntryKey is calculated on mark as delete
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entries: {
+                    $filter: entry => entryAccessor.key(entry) !== key,
                 },
             },
         },
@@ -430,9 +473,6 @@ const applyToAllEntries = mode => (state, action) => {
         },
     };
 
-
-    // eslint-disable-next-line
-    debugger;
     // NOTE: setting entry to undefined instead of using filter to preserve index
     let iterableEntries;
     if (mode === 'all-below') {
@@ -478,10 +518,85 @@ const applyToAllEntries = mode => (state, action) => {
                         } },
                     } },
                 } },
-                // TODO: hasError must be calculated
             },
         };
     });
+    const newState = update(state, settings);
+
+    // re-calculate errors
+    const newSettings = {
+        editEntries: {
+            [leadId]: {
+                entries: {},
+            },
+        },
+    };
+
+    const {
+        editEntries: { [leadId]: { entries: newEntries = [] } = {} } = {},
+    } = newState;
+
+    newEntries.forEach((entry, i) => {
+        const { localData: { error } = {} } = entry || {};
+        settings.editEntries[leadId].entries[i] = {
+            localData: {
+                hasError: { $set: analyzeErrors(error) },
+            },
+        };
+    });
+
+    return update(newState, newSettings);
+};
+
+const setPending = (state, action) => {
+    const { leadId, entryKey, pending } = action;
+    const settings = {
+        editEntries: { $auto: {
+            [leadId]: { $auto: {
+                entryRests: { $auto: {
+                    [entryKey]: { $set: pending },
+                } },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
+const saveEntry = (state, action) => {
+    const { leadId, entryKey, response } = action;
+
+    // NOTE: create new entry from remoteEntry
+    const remoteEntry = response;
+    const {
+        id: remoteServerId,
+        versionId: remoteVersionId,
+    } = remoteEntry;
+    const newEntry = createEntry({
+        key: entryKey,
+        serverId: remoteServerId,
+        versionId: remoteVersionId,
+        data: remoteEntry,
+        isPristine: true,
+        hasError: false,
+    });
+
+    const {
+        editEntries: { [leadId]: { entries = [] } = {} } = {},
+    } = state;
+    const entryIndex = entries.findIndex(
+        entry => entryAccessor.key(entry) === entryKey,
+    );
+
+    const settings = {
+        editEntries: { $auto: {
+            [leadId]: { $auto: {
+                entries: { $auto: {
+                    [entryIndex]: { $set: newEntry },
+                } },
+            } },
+        } },
+    };
+
     return update(state, settings);
 };
 
@@ -495,8 +610,11 @@ const reducers = {
     [EEB__SET_ENTRY_ERROR]: setEntryError,
     [EEB__ADD_ENTRY]: addEntry,
     [EEB__REMOVE_LOCAL_ENTRIES]: removeLocalEntries,
+    [EEB__REMOVE_ENTRY]: removeEntry,
     [EEB__MARK_AS_DELETED_ENTRY]: markAsDeletedEntry,
     [EEB__APPLY_TO_ALL_ENTRIES]: applyToAllEntries('all'),
     [EEB__APPLY_TO_ALL_ENTRIES_BELOW]: applyToAllEntries('all-below'),
+    [EEB__SET_PENDING]: setPending,
+    [EEB__SAVE_ENTRY]: saveEntry,
 };
 export default reducers;

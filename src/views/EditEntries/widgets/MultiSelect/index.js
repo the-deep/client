@@ -33,9 +33,10 @@ export default class MultiSelectWidget extends React.PureComponent {
             <div>
                 <SelectInputWithList
                     faramElementName="value"
-                    showLabel={false}
                     hideClearButton
                     options={options}
+                    showLabel={false}
+                    showHintAndError={false}
                 />
             </div>
         );

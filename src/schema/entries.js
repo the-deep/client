@@ -42,15 +42,26 @@ const entrySchema = [];
             description: 'Attributes data for entry',
         },
         fields: {
-            widget: { type: 'uint', required: true },
-            widgetObj: { type: 'Widget' },
-            id: { type: 'uint', required: true },
+            // FIXME: id should be required, but not present in some cases in server
+            id: { type: 'uint' },
             data: { type: 'object' },
         },
     };
     entrySchema.push({ name, schema });
 }
-
+{
+    const name = 'entryAttributesMap';
+    const schema = {
+        doc: {
+            name: 'entryAttributesMap',
+            description: 'Map of attributes data for entry',
+        },
+        fields: {
+            '*': { type: 'entryAttributes', required: true },
+        },
+    };
+    entrySchema.push({ name, schema });
+}
 {
     const name = 'entry';
     const schema = {
@@ -69,7 +80,7 @@ const entrySchema = [];
             informationDate: { type: 'string' },
             // exportData: { type: 'array.entryExport', required: true },
             // filterData: { type: 'array.entryFilter', required: true },
-            attributes: { type: 'array.entryAttributes', required: true },
+            attributes: { type: 'entryAttributesMap', required: true },
             order: { type: 'uint', required: true },
         },
         validator: (self, context) => {
@@ -131,4 +142,22 @@ const entrySchema = [];
     entrySchema.push({ name, schema });
 }
 
+
+{
+    const name = 'entriesForEditEntriesGetResponse';
+    const schema = {
+        doc: {
+            name: 'Entries',
+            description: 'List of entry',
+        },
+        fields: {
+            analysisFramework: { type: 'analysisFramework', required: true },
+            entries: { type: 'array.entry', required: true },
+            geoOptions: { type: 'object', required: true }, // FIXME: better schema
+            lead: { type: 'lead', required: true },
+            regions: { type: 'array', required: true }, // FIXME: better schema
+        },
+    };
+    entrySchema.push({ name, schema });
+}
 export default entrySchema;

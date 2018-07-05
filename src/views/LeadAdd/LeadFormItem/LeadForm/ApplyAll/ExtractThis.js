@@ -15,7 +15,7 @@ const propTypes = {
     onClick: PropTypes.func.isRequired,
 };
 const defaultProps = {
-    className: undefined,
+    className: '',
 };
 
 export default class ExtractThis extends React.PureComponent {

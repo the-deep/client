@@ -11,6 +11,7 @@ const userSchema = [];
             description: 'Small Data for user',
         },
         fields: {
+            displayPicture: { type: 'uint' },
             displayName: { type: 'string', required: true },
             email: { type: 'string', required: true },
             id: { type: 'uint', required: true },

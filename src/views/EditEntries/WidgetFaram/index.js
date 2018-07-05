@@ -6,8 +6,11 @@ import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
 import GridViewLayout from '#rs/components/View/GridViewLayout';
 
 import { entryAccessor } from '#entities/editEntries';
+import { iconNames } from '#constants';
+
 import { fetchWidget } from '../widgets';
 
+import ErrorWrapper from '../ErrorWrapper';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -82,9 +85,16 @@ export default class WidgetFaram extends React.PureComponent {
         } = entry || {};
         const entryKey = entryAccessor.key(entry);
 
-        return (
-            <div className={styles.header}>
+
+        const Header = ({ hasError, error }) => (
+            <div
+                className={`${styles.header} ${hasError ? styles.error : ''}`}
+                title={error}
+            >
                 <h5 className={styles.heading}>
+                    { hasError &&
+                        <span className={iconNames.warning} />
+                    }
                     { title }
                 </h5>
                 { ActionComponent && entry && (
@@ -97,6 +107,15 @@ export default class WidgetFaram extends React.PureComponent {
                     </div>
                 )}
             </div>
+        );
+
+        return (
+            <FaramGroup faramElementName={String(id)}>
+                <ErrorWrapper
+                    faramElementName="data"
+                    renderer={Header}
+                />
+            </FaramGroup>
         );
     }
 

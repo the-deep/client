@@ -3,6 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import { reverseRoute } from '#rs/utils/common';
+import update from '#rs/utils/immutable-update';
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import { detachedFaram } from '#rsci/Faram';
@@ -11,28 +13,31 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { CoordinatorBuilder } from '#rsu/coordinate';
 
-import { reverseRoute } from '#rs/utils/common';
-
-import { entryAccessor } from '#entities/editEntries';
+import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
 import {
     iconNames,
     routes,
 } from '#constants';
 import {
     leadIdFromRoute,
-    editEntriesLeadSelector,
 
     editEntriesAnalysisFrameworkSelector,
-    editEntriesSetLeadAction,
     editEntriesEntriesSelector,
-    editEntriesSetEntriesAction,
+    editEntriesLeadSelector,
+    editEntriesSchemaSelector,
+    editEntriesStatusesSelector,
+
+    editEntriesAddEntryAction,
     editEntriesClearEntriesAction,
-    editEntriesSetExcerptAction,
+    editEntriesRemoveEntryAction,
+    editEntriesRemoveLocalEntriesAction,
+    editEntriesSaveEntryAction,
+    editEntriesSetEntriesAction,
     editEntriesSetEntryDataAction,
     editEntriesSetEntryErrorsAction,
-    editEntriesSchemaSelector,
-    editEntriesAddEntryAction,
-    editEntriesRemoveLocalEntriesAction,
+    editEntriesSetExcerptAction,
+    editEntriesSetLeadAction,
+    editEntriesSetPendingAction,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
@@ -42,6 +47,8 @@ import notify from '#notify';
 import _ts from '#ts';
 
 import EditEntryDataRequest from './requests/EditEntryDataRequest';
+import EditEntryDeleteRequest from './requests/EditEntryDeleteRequest';
+import EditEntrySaveRequest from './requests/EditEntrySaveRequest';
 
 import Overview from './Overview';
 import Listing from './List';
@@ -49,56 +56,60 @@ import Listing from './List';
 import styles from './styles.scss';
 
 const propTypes = {
-    leadId: PropTypes.number.isRequired,
-    lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    leadId: PropTypes.number.isRequired,
     schema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 
-    setLead: PropTypes.func.isRequired,
-    setEntries: PropTypes.func.isRequired,
+    addEntry: PropTypes.func.isRequired,
     clearEntries: PropTypes.func.isRequired,
-
+    removeEntry: PropTypes.func.isRequired,
+    removeLocalEntries: PropTypes.func.isRequired,
+    saveEntry: PropTypes.func.isRequired,
     setAnalysisFramework: PropTypes.func.isRequired,
-    setGeoOptions: PropTypes.func.isRequired,
-    setRegions: PropTypes.func.isRequired,
-
-    setExcerpt: PropTypes.func.isRequired,
+    setEntries: PropTypes.func.isRequired,
     setEntryData: PropTypes.func.isRequired,
     setEntryError: PropTypes.func.isRequired,
-    addEntry: PropTypes.func.isRequired,
-    removeLocalEntries: PropTypes.func.isRequired,
+    setExcerpt: PropTypes.func.isRequired,
+    setGeoOptions: PropTypes.func.isRequired,
+    setLead: PropTypes.func.isRequired,
+    setPending: PropTypes.func.isRequired,
+    setRegions: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     analysisFramework: undefined,
     entries: [],
+    statuses: {},
     schema: {},
 };
 
 const mapStateToProps = state => ({
-    leadId: leadIdFromRoute(state),
-    lead: editEntriesLeadSelector(state),
-    entries: editEntriesEntriesSelector(state),
-
     analysisFramework: editEntriesAnalysisFrameworkSelector(state),
+    entries: editEntriesEntriesSelector(state),
+    lead: editEntriesLeadSelector(state),
+    leadId: leadIdFromRoute(state),
     schema: editEntriesSchemaSelector(state),
+    statuses: editEntriesStatusesSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-    setLead: params => dispatch(editEntriesSetLeadAction(params)),
-    setEntries: params => dispatch(editEntriesSetEntriesAction(params)),
+    addEntry: params => dispatch(editEntriesAddEntryAction(params)),
     clearEntries: params => dispatch(editEntriesClearEntriesAction(params)),
-
+    removeEntry: params => dispatch(editEntriesRemoveEntryAction(params)),
+    removeLocalEntries: params => dispatch(editEntriesRemoveLocalEntriesAction(params)),
+    saveEntry: params => dispatch(editEntriesSaveEntryAction(params)),
     setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
-    setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
-    setRegions: params => dispatch(setRegionsForProjectAction(params)),
-    setExcerpt: params => dispatch(editEntriesSetExcerptAction(params)),
-
+    setEntries: params => dispatch(editEntriesSetEntriesAction(params)),
     setEntryData: params => dispatch(editEntriesSetEntryDataAction(params)),
     setEntryError: params => dispatch(editEntriesSetEntryErrorsAction(params)),
-    addEntry: params => dispatch(editEntriesAddEntryAction(params)),
-    removeLocalEntries: params => dispatch(editEntriesRemoveLocalEntriesAction(params)),
+    setExcerpt: params => dispatch(editEntriesSetExcerptAction(params)),
+    setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
+    setLead: params => dispatch(editEntriesSetLeadAction(params)),
+    setPending: params => dispatch(editEntriesSetPendingAction(params)),
+    setRegions: params => dispatch(setRegionsForProjectAction(params)),
 });
 
 
@@ -185,11 +196,11 @@ export default class EditEntries extends React.PureComponent {
             .build();
 
         this.editEntryDataRequest = new EditEntryDataRequest({
-            setEntries: this.props.setEntries,
+            clearEntries: this.props.clearEntries,
             getAf: () => this.props.analysisFramework,
             getEntries: () => this.props.entries,
-            clearEntries: this.props.clearEntries,
             setAnalysisFramework: this.props.setAnalysisFramework,
+            setEntries: this.props.setEntries,
             setGeoOptions: this.props.setGeoOptions,
             setLead: this.props.setLead,
             setRegions: this.props.setRegions,
@@ -206,6 +217,8 @@ export default class EditEntries extends React.PureComponent {
     componentWillReceiveProps(nextProps) {
         const { leadId } = nextProps;
         if (this.props.leadId !== leadId && leadId) {
+            this.saveRequestCoordinator.stop();
+
             this.editEntryDataRequest.init({ leadId });
             this.editEntryDataRequest.start();
         }
@@ -213,7 +226,6 @@ export default class EditEntries extends React.PureComponent {
 
     componentWillUnmount() {
         this.editEntryDataRequest.stop();
-
         this.saveRequestCoordinator.stop();
     }
 
@@ -278,25 +290,48 @@ export default class EditEntries extends React.PureComponent {
         this.saveRequestCoordinator.add(entryKey, proxyRequest);
     }
 
-    handleValidationSuccess = (values, entryKey) => {
-        const request = {
-            start: () => {
-                // FIXME: create a save request
-                this.saveRequestCoordinator.notifyComplete(entryKey, false);
+    handleValidationSuccess = (values, entryKey, entry) => {
+        // NOTE: update attributes in entry to get newEntry
+        const settings = {
+            data: {
+                attributes: { $set: values },
             },
-            stop: () => {},
         };
+        const newEntry = update(entry, settings);
+
+        const request = new EditEntrySaveRequest({
+            setPending: this.props.setPending,
+            saveEntry: this.props.saveEntry,
+            setEntryServerError: (data) => {
+                // TODO:
+                console.warn('error entry:', data);
+            },
+            getCoordinator: () => this.saveRequestCoordinator,
+        });
+        request.init({
+            leadId: this.props.leadId,
+            entryKey: entryAccessor.key(newEntry),
+            entryData: entryAccessor.data(newEntry),
+            serverId: entryAccessor.serverId(newEntry),
+        });
         this.saveRequestCoordinator.add(entryKey, request);
     }
 
-    handleDeleteEntry = (entry, entryKey) => {
-        const request = {
-            start: () => {
-                // FIXME: create a delete request
-                this.saveRequestCoordinator.notifyComplete(entryKey, false);
+    handleDeleteEntry = (entryKey, entry) => {
+        const request = new EditEntryDeleteRequest({
+            setPending: this.props.setPending,
+            removeEntry: this.props.removeEntry,
+            setEntryServerError: (data) => {
+                // TODO:
+                console.warn('error entry:', data);
             },
-            stop: () => {},
-        };
+            getCoordinator: () => this.saveRequestCoordinator,
+        });
+        request.init({
+            leadId: this.props.leadId,
+            entryKey: entryAccessor.key(entry),
+            serverId: entryAccessor.serverId(entry),
+        });
         this.saveRequestCoordinator.add(entryKey, request);
     }
 
@@ -307,20 +342,30 @@ export default class EditEntries extends React.PureComponent {
 
         this.props.entries.forEach((entry) => {
             const entryKey = entryAccessor.key(entry);
+            const status = this.props.statuses[entryKey];
 
-            if (entryAccessor.isMarkedAsDeleted(entry)) {
-                this.handleDeleteEntry(entry, entryKey);
+            // NOTE: only delete if not requesting
+            if (entryAccessor.isMarkedAsDeleted(entry) && status !== ENTRY_STATUS.requesting) {
+                this.handleDeleteEntry(entryKey, entry);
+                return;
             }
 
-            detachedFaram({
-                value: entry.data.attributes,
-                schema: this.props.schema,
-                error: entry.localData.error,
-                onChange: this.handleChange,
+            // NOTE: only submit if non pristine
+            if (status === ENTRY_STATUS.nonPristine) {
+                detachedFaram({
+                    value: entry.data.attributes,
+                    schema: this.props.schema,
+                    error: entry.localData.error,
+                    onChange: this.handleChange,
 
-                onValidationFailure: errors => this.handleValidationFailure(errors, entryKey),
-                onValidationSuccess: values => this.handleValidationSuccess(values, entryKey),
-            });
+                    onValidationFailure: (errors) => {
+                        this.handleValidationFailure(errors, entryKey, entry);
+                    },
+                    onValidationSuccess: (values) => {
+                        this.handleValidationSuccess(values, entryKey, entry);
+                    },
+                });
+            }
         });
 
         this.saveRequestCoordinator.start();

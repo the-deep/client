@@ -10,6 +10,7 @@ import FixedTabs from '#rs/components/View/FixedTabs';
 import {
     editEntriesLeadSelector,
     editEntriesEntriesSelector,
+    editEntriesStatusesSelector,
     editEntriesSelectedEntryKeySelector,
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
@@ -35,6 +36,7 @@ const propTypes = {
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     onExcerptCreate: PropTypes.func.isRequired,
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     selectedEntryKey: PropTypes.string,
     setSelectedEntryKey: PropTypes.func.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
@@ -42,6 +44,7 @@ const propTypes = {
 
 const defaultProps = {
     entries: [],
+    statuses: {},
     selectedEntryKey: undefined,
 };
 
@@ -49,6 +52,7 @@ const mapStateToProps = state => ({
     lead: editEntriesLeadSelector(state),
     entries: editEntriesEntriesSelector(state),
     selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
+    statuses: editEntriesStatusesSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -149,6 +153,7 @@ export default class LeftPane extends React.PureComponent {
                     <EntriesList
                         leadId={this.props.lead.id}
                         entries={this.props.entries}
+                        statuses={this.props.statuses}
                         selectedEntryKey={this.props.selectedEntryKey}
                         setSelectedEntryKey={this.props.setSelectedEntryKey}
                         markAsDeletedEntry={this.props.markAsDeletedEntry}

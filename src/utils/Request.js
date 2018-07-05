@@ -7,12 +7,13 @@ const requestNotCreatedForStopMessage = 'REQUEST: stop() called before init()';
 const validationNotDefinedMessage = 'REQUEST: Validation is not defined';
 
 export default class Request {
-    constructor(parent) {
+    constructor(parent, { delay = 50, retryTime = 1000, maxRetryAttempts = 5 } = {}) {
         this.parent = parent;
-        this.delay = 50;
 
-        this.retryTime = 1000;
-        this.maxRetryAttempts = 5;
+        this.delay = delay;
+
+        this.retryTime = retryTime;
+        this.maxRetryAttempts = maxRetryAttempts;
 
         this.schemaName = undefined;
     }

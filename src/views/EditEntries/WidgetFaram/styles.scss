@@ -29,7 +29,18 @@
                     padding: $spacing-extra-small $spacing-extra-small-alt;
                 }
             }
+
+            &.error {
+                .heading {
+                    color: $color-danger;
+                    >span {
+                        display: inline-block;
+                        margin-right: $spacing-small;
+                    }
+                }
+            }
         }
+
 
         &:hover {
             .header {

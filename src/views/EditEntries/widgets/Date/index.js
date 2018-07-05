@@ -2,6 +2,7 @@ import React from 'react';
 // import PropTypes from 'prop-types';
 
 import DateInput from '#rs/components/Input/DateInput';
+import styles from './styles.scss';
 
 const propTypes = {
 };
@@ -17,16 +18,13 @@ export default class DateWidget extends React.PureComponent {
     render() {
         // TODO: feature to set date to published date automatically
         return (
-            <DateInput
-                faramElementName="value"
-                // FIXME: remove this later (this is example of faramInfo)
-                faramInfo={{
-                    action: 'changeExcerpt',
-                    type: 'excerpt',
-                    value: 'This excerpt was changed as a side effect.',
-                }}
-                showLabel={false}
-            />
+            <div className={styles.date}>
+                <DateInput
+                    faramElementName="value"
+                    showLabel={false}
+                    showHintAndError={false}
+                />
+            </div>
         );
     }
 }

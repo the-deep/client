@@ -19,7 +19,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: undefined,
+    className: '',
 };
 
 export default class ApplyAll extends React.PureComponent {

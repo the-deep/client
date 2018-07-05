@@ -37,6 +37,7 @@
                 max-width: 100%;
                 max-height: 128px;
                 object-fit: contain;
+                pointer-events: none;
             }
 
             .status-icons {
@@ -57,8 +58,11 @@
                     animation: spin 1s linear infinite;
                 }
 
+                .warning {
+                    color: $color-warning;
+                }
+
                 .error {
-                    margin-left: 0;
                     color: $color-danger;
                 }
 

@@ -12,7 +12,7 @@ import Request from '#utils/Request';
 import _ts from '#ts';
 
 export default class EditEntryDataRequest extends Request {
-    // TODO: write schema
+    schemaName = 'entriesForEditEntriesGetResponse';
 
     handlePreLoad = () => {
         this.parent.setState({ pendingEditEntryData: true });
@@ -34,9 +34,15 @@ export default class EditEntryDataRequest extends Request {
 
         this.parent.setLead({ lead });
 
-        // TODO: notify that analysis framework changed and history cleared
         const oldAf = this.parent.getAf();
         if (oldAf.versionId < analysisFramework.versionId) {
+            notify.send({
+                type: notify.type.WARNING,
+                title: _ts('editEntry', 'entryClearedTitle'),
+                message: _ts('editEntry', 'entryClearedDetail'),
+                duration: notify.duration.SLOW,
+            });
+
             this.parent.clearEntries({ leadId });
         }
         this.parent.setAnalysisFramework({ analysisFramework });
