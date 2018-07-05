@@ -168,7 +168,7 @@ export default class ActionButtons extends React.PureComponent {
                         )}
                     />
                     <Cloak
-                        hide={({ hasAssessmentTemplate }) => !hasAssessmentTemplate}
+                        hide={({ hasAnalysisFramework }) => !hasAnalysisFramework}
                         render={({ disabled }) => (
                             <Link
                                 className={`${styles.addEntryLink} ${disabled ? styles.disabled : ''}`}
