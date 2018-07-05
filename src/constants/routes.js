@@ -273,6 +273,14 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'notifications');
 
+    visualization: {
+        order: 170,
+        type: ROUTE.private,
+        path: '/visualization/',
+        loader: () => import('../views/Visualization'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'visualization');
+
     fourHundredFour: {
         order: 990,
         type: ROUTE.public,

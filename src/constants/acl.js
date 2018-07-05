@@ -52,6 +52,12 @@ const acl = {
         ),
     },
 
+    visualization: {
+        hide: ({ isLoggedIn, isDevMode }) => (
+            !isLoggedIn || !isDevMode
+        ),
+    },
+
     // this is an element
     projectSelect: {
         hide: ({ isLoggedIn }) => !isLoggedIn,
