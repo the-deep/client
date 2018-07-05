@@ -23,7 +23,7 @@ import {
     projectDetailsSelector,
     geoOptionsForProjectSelector,
 } from '#redux';
-import OrganigramWithList from '#components/OrganigramWithList/';
+import OrganigramInput from '#components/OrganigramInput/';
 import GeoListInput from '#components/GeoListInput/';
 
 import Header from '../Header';
@@ -208,7 +208,7 @@ export default class Methodology extends React.PureComponent {
                             keySelector={idSelector}
                             labelSelector={titleSelector}
                         />
-                        <OrganigramWithList
+                        <OrganigramInput
                             faramElementName="affectedGroups"
                             title={affectedGroupsTitle}
                             className={styles.affectedGroups}

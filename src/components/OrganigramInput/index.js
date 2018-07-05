@@ -78,7 +78,7 @@ const getOptionsForSelect = (params) => {
 };
 
 @FaramElement('input')
-export default class OrganigramWithList extends React.PureComponent {
+export default class OrganigramInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -121,8 +121,8 @@ export default class OrganigramWithList extends React.PureComponent {
 
         const classNames = [
             className,
-            styles.organigramWithList,
-            'organigram-with-list',
+            styles.organigramInput,
+            'organigram-input',
         ];
 
         return classNames.join(' ');
@@ -235,8 +235,8 @@ export default class OrganigramWithList extends React.PureComponent {
                     value={this.selectValues}
                     onChange={this.handleSelectChange}
                     options={this.options}
-                    labelSelector={OrganigramWithList.selectLabelSelector}
-                    keySelector={OrganigramWithList.selectIdSelector}
+                    labelSelector={OrganigramInput.selectLabelSelector}
+                    keySelector={OrganigramInput.selectIdSelector}
                     showHintAndError={false}
                     topRightChild={!showHeader &&
                         <AccentButton
