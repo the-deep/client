@@ -63,6 +63,12 @@ const titleSelector = d => d.title;
 export default class Methodology extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+    static orgIdSelector = organ => organ.id;
+    static orgLabelSelector = organ => organ.title;
+    static orgChildSelector = organ => organ.children;
+
+    static orgValueKeySelector = item => item.id;
+    static orgValueLabelSelector = item => item.name;
 
     renderAttributeHeader = (k, key) => {
         const { aryTemplateMethodology: attributesTemplate } = this.props;
@@ -207,6 +213,11 @@ export default class Methodology extends React.PureComponent {
                             title={affectedGroupsTitle}
                             className={styles.affectedGroups}
                             data={affectedGroups}
+                            childSelector={Methodology.orgChildSelector}
+                            labelSelector={Methodology.orgLabelSelector}
+                            idSelector={Methodology.orgIdSelector}
+                            valueKeySelector={Methodology.orgValueKeySelector}
+                            valueLabelSelector={Methodology.orgValueLabelSelector}
                         />
                         <GeoListInput
                             faramElementName="locations"

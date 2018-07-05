@@ -10,6 +10,7 @@ import ExcerptWidget from './Excerpt';
 import NumberWidget from './Number';
 import ScaleWidget from './Scale';
 import MultiSelectWidget from './MultiSelect';
+import OrganigramWidget from './Organigram';
 
 const WidgetList = [
     {
@@ -85,7 +86,7 @@ const WidgetList = [
     {
         widgetId: 'organigramWidget',
         type: 'list',
-        component: DefaultWidget,
+        component: OrganigramWidget,
     },
     {
         widgetId: 'scaleWidget',
