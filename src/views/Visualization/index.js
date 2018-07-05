@@ -57,153 +57,164 @@ const DonutChartView = BoundError(VizError)(wrapViz(DonutChart));
 const OrganigramView = BoundError(VizError)(wrapViz(Organigram));
 const ParallelCoordinatesView = BoundError(VizError)(wrapViz(ParallelCoordinates));
 
+const sizeAccessor = d => d.size;
+const nameAccessor = d => d.name;
+const valueAccessor = d => d.value;
+const labelAccessor = d => d.label;
+const idAccessor = d => d.id;
+const groupAccessor = d => d.group;
+const monthAccessor = d => d.month;
+const timeAccessor = d => d.time;
+
 @BoundError(AppError)
 export default class Visualization extends React.PureComponent {
     render() {
         return (
             <div className={styles.visualization}>
                 <header className={styles.header}>
-                    <h2> {_ts('visualization', 'visualizationTitle')}</h2>
+                    <h2>
+                        {_ts('visualization', 'visualizationTitle')}
+                    </h2>
                 </header>
                 <div className={styles.container}>
                     <SunBurstView
                         className={styles.sunburst}
-                        data={hierarchicalData}
-                        valueAccessor={d => d.size}
-                        labelAccessor={d => d.name}
                         headerText={_ts('visualization', 'sunburst')}
+                        data={hierarchicalData}
+                        valueAccessor={sizeAccessor}
+                        labelAccessor={nameAccessor}
                     />
                     <CorrelationMatrixView
                         className={styles.correlationMatrix}
+                        headerText={_ts('visualization', 'correlationMatrix')}
                         data={correlationData}
                         colorSchemeType="continuous"
-                        headerText={_ts('visualization', 'correlationMatrix')}
                     />
                     <DendrogramView
                         className={styles.dendrogram}
-                        data={hierarchicalData}
-                        labelAccessor={d => d.name}
-                        valueAccessor={d => d.size}
                         headerText={_ts('visualization', 'dendrogram')}
+                        data={hierarchicalData}
+                        labelAccessor={nameAccessor}
+                        valueAccessor={sizeAccessor}
                     />
                     <RadialDendrogramView
                         className={styles.radialDendrogram}
-                        data={hierarchicalData}
-                        labelAccessor={d => d.name}
                         headerText={_ts('visualization', 'radialDendrogram')}
+                        data={hierarchicalData}
+                        labelAccessor={nameAccessor}
                     />
                     <TreeMapView
                         className={styles.treemap}
-                        data={hierarchicalData}
-                        valueAccessor={d => d.size}
-                        labelAccessor={d => d.name}
                         headerText={_ts('visualization', 'treemap')}
+                        data={hierarchicalData}
+                        valueAccessor={sizeAccessor}
+                        labelAccessor={nameAccessor}
                     />
                     <TreeMapView
                         className={styles.treemap}
-                        data={hierarchicalData}
-                        valueAccessor={d => d.size}
-                        zoomable={false}
-                        labelAccessor={d => d.name}
                         headerText={_ts('visualization', 'zoomableTreemap')}
+                        data={hierarchicalData}
+                        valueAccessor={sizeAccessor}
+                        labelAccessor={nameAccessor}
+                        zoomable={false}
                     />
                     <ChordDiagramView
                         className={styles.chordDiagram}
+                        headerText={_ts('visualization', 'chordDiagram')}
                         data={chordData.values}
                         labelsData={chordData.labels}
-                        valueAccessor={d => d.size}
-                        labelAccessor={d => d.name}
-                        headerText={_ts('visualization', 'chordDiagram')}
+                        valueAccessor={sizeAccessor}
+                        labelAccessor={nameAccessor}
                     />
                     <HorizontalBarView
                         className={styles.horizontalBar}
-                        data={barData.data}
-                        valueAccessor={d => d.value}
-                        labelAccessor={d => d.label}
                         headerText={_ts('visualization', 'horizontalBar')}
+                        data={barData.data}
+                        valueAccessor={valueAccessor}
+                        labelAccessor={labelAccessor}
                     />
                     <ForceDirectedGraphView
                         className={styles.forceDirectedGraph}
-                        data={forceDirectedData}
-                        idAccessor={d => d.id}
-                        groupAccessor={d => d.group}
-                        valueAccessor={d => d.value}
                         headerText={_ts('visualization', 'forcedDirectedGraph')}
+                        data={forceDirectedData}
+                        idAccessor={idAccessor}
+                        groupAccessor={groupAccessor}
+                        valueAccessor={valueAccessor}
                     />
                     <ForceDirectedGraphView
                         className={styles.forceDirectedGraphVoronoi}
-                        data={forceDirectedData}
-                        idAccessor={d => d.id}
-                        groupAccessor={d => d.group}
-                        valueAccessor={d => d.value}
-                        useVoronoi={false}
                         headerText={_ts('visualization', 'forceDirectedGraphVoronoi')}
+                        data={forceDirectedData}
+                        idAccessor={idAccessor}
+                        groupAccessor={groupAccessor}
+                        valueAccessor={valueAccessor}
+                        useVoronoi={false}
                     />
                     <CollapsibleTreeView
                         className={styles.collapsibleTreeView}
-                        data={hierarchicalData}
-                        labelAccessor={d => d.name}
                         headerText={_ts('visualization', 'collapsibleTree')}
+                        data={hierarchicalData}
+                        labelAccessor={nameAccessor}
                     />
                     <OrgChartView
                         className={styles.orgChart}
-                        data={hierarchicalData}
-                        idAccessor={d => d.name}
                         headerText={_ts('visualization', 'orgChart')}
+                        data={hierarchicalData}
+                        idAccessor={nameAccessor}
                     />
                     <PieChartView
                         className={styles.pieChart}
-                        data={barData.data}
-                        valueAccessor={d => d.value}
-                        labelAccessor={d => d.label}
                         headerText={_ts('visualization', 'pieChart')}
+                        data={barData.data}
+                        valueAccessor={valueAccessor}
+                        labelAccessor={labelAccessor}
                     />
                     <DonutChartView
                         className={styles.donutChart}
-                        data={barData.data}
-                        valueAccessor={d => d.value}
-                        labelAccessor={d => d.label}
                         headerText={_ts('visualization', 'donutChart')}
+                        data={barData.data}
+                        valueAccessor={valueAccessor}
+                        labelAccessor={labelAccessor}
                     />
                     <OrganigramView
                         className={styles.organigram}
-                        data={hierarchicalData}
-                        idAccessor={d => d.name}
                         headerText={_ts('visualization', 'organigram')}
+                        data={hierarchicalData}
+                        idAccessor={nameAccessor}
                     />
                     <StackedBarChartView
                         className={styles.stackedBarChart}
+                        headerText={_ts('visualization', 'stackedBarChart')}
                         data={stackedData}
                         labelName="month"
-                        labelAccessor={d => d.month}
-                        headerText={_ts('visualization', 'stackedBarChart')}
+                        labelAccessor={monthAccessor}
                     />
                     <StreamGraphView
                         className={styles.streamGraph}
+                        headerText={_ts('visualization', 'streamGraph')}
                         data={streamData}
                         labelName="time"
-                        labelAccessor={d => d.time}
-                        headerText={_ts('visualization', 'streamGraph')}
+                        labelAccessor={timeAccessor}
                     />
                     <SankeyView
                         className={styles.sankey}
-                        data={sankeyData}
-                        valueAccessor={d => d.value}
-                        labelAccessor={d => d.name}
                         headerText={_ts('visualization', 'sankey')}
+                        data={sankeyData}
+                        valueAccessor={valueAccessor}
+                        labelAccessor={nameAccessor}
                     />
                     <SparkLinesView
                         className={styles.sparklines}
-                        data={lineData.data}
-                        valueAccessor={d => d.value}
                         headerText={_ts('visualization', 'sparklines')}
+                        data={lineData.data}
+                        valueAccessor={valueAccessor}
                     />
                     <ParallelCoordinatesView
                         className={styles.parallelCoordinates}
+                        headerText={_ts('visualization', 'parallelCoordinates')}
                         data={parallelData}
                         labelName="name"
-                        labelAccessor={d => d.name}
-                        headerText={_ts('visualization', 'parallelCoordinates')}
+                        labelAccessor={nameAccessor}
                     />
                 </div>
             </div>

@@ -209,6 +209,7 @@ export default class Navbar extends React.PureComponent {
             // 'notifications',
 
             'apiDocs',
+            'visualization',
             'stringManagement',
         ];
 

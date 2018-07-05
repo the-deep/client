@@ -1,4 +1,5 @@
 const iconNames = {
+    pizza: 'ion-pizza',
     add: 'ion-plus',
     substract: 'ion-ios-minus-empty',
     applyAll: 'ion-ios-world',

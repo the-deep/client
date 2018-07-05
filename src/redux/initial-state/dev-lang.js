@@ -719,7 +719,7 @@ const initialDevLangState = {
         3008: 'Created At',
         3009: 'Clusters',
         3010: 'Cluster',
-        3999: 'visualization',
+        3999: 'Visualizations',
         4000: 'Visualization',
         4001: 'Sunburst',
         4002: 'CorrelationMatrix',

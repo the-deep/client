@@ -137,14 +137,6 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'clusterViz');
 
-    visualization: {
-        order: 170,
-        type: ROUTE.private,
-        path: '/visualization',
-        loader: () => import('../views/Visualization'),
-        links: allLinks,
-    }, // _ts('pageTitle', 'Visualization');
-
     entries: {
         order: 40,
         type: ROUTE.private,
@@ -280,6 +272,14 @@ export const routes = {
         loader: () => import('../views/Notifications'),
         links: allLinks,
     }, // _ts('pageTitle', 'notifications');
+
+    visualization: {
+        order: 170,
+        type: ROUTE.private,
+        path: '/visualization/',
+        loader: () => import('../views/Visualization'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'visualization');
 
     fourHundredFour: {
         order: 990,

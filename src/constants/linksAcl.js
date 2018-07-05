@@ -13,6 +13,7 @@ export const allLinks = {
     apiDocs: acl.apiDocs,
     stringManagement: acl.stringManagement,
     notifications: acl.notifications,
+    visualization: acl.visualization,
 
     adminPanel: acl.adminPanel,
     projectSelect: acl.projectSelect,
