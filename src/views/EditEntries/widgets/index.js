@@ -10,6 +10,7 @@ import ExcerptWidget from './Excerpt';
 import NumberWidget from './Number';
 import ScaleWidget from './Scale';
 import MultiSelectWidget from './MultiSelect';
+import Matrix1dOverviewWidget from './Matrix1dOverview';
 
 const WidgetList = [
     {
@@ -35,6 +36,11 @@ const WidgetList = [
     {
         widgetId: 'matrix1dWidget',
         type: 'overview',
+        component: Matrix1dOverviewWidget,
+    },
+    {
+        widgetId: 'matrix1dWidget',
+        type: 'list',
         component: DefaultWidget,
     },
     {
@@ -44,21 +50,6 @@ const WidgetList = [
     },
     {
         widgetId: 'matrix2dWidget',
-        type: 'list',
-        component: DefaultWidget,
-    },
-    {
-        widgetId: 'matrix1dWidget',
-        type: 'list',
-        component: DefaultWidget,
-    },
-    {
-        widgetId: 'matrix1dWidget',
-        type: 'overview',
-        component: DefaultWidget,
-    },
-    {
-        widgetId: 'matrix1dWidget',
         type: 'list',
         component: DefaultWidget,
     },

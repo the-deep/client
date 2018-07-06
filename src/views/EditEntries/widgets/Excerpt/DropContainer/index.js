@@ -6,11 +6,14 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     show: PropTypes.bool,
+    contentText: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     show: false,
+    // FIXME: use strings
+    contentText: 'Drop text or image here',
 };
 
 export default class DropContainer extends React.PureComponent {
@@ -21,14 +24,13 @@ export default class DropContainer extends React.PureComponent {
         const {
             show,
             className: classNameFromProps,
+            contentText,
         } = this.props;
 
         if (!show) {
             return null;
         }
 
-        // FIXME: use strings
-        const contentText = 'Drop text or image here';
         const className = `
             ${classNameFromProps}
             ${styles.dropdownContainer}

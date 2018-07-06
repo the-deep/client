@@ -43,12 +43,12 @@ export default class Excerpt extends React.PureComponent {
         this.setState({ isBeingDraggedOver: true });
     }
 
-    handleDragOver = (e) => {
-        e.preventDefault();
-    }
-
     handleDragExit = () => {
         this.setState({ isBeingDraggedOver: false });
+    }
+
+    handleDragOver = (e) => {
+        e.preventDefault();
     }
 
     handleTextChange = (value) => {
