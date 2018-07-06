@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import AccentButton from '#rs/components/Action/Button/AccentButton';
-import ListInput from '#rs/components/Input/ListInput';
+import SelectInputWithList from '#rs/components/Input/SelectInputWithList';
 import FaramElement from '#rs/components/Input/Faram/FaramElement';
 import { iconNames } from '#constants';
 
@@ -16,6 +16,7 @@ const propTypes = {
     geoOptionsByRegion: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     regions: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    showHeader: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -25,6 +26,7 @@ const defaultProps = {
     geoOptionsByRegion: {},
     value: [],
     regions: [],
+    showHeader: true,
 };
 
 @FaramElement('input')
@@ -50,11 +52,20 @@ export default class GeoListInput extends React.PureComponent {
         return geoOptionsById;
     }
 
+    static getAllGeoOptions = (geoOptionsByRegion) => {
+        const allGeoOptions = [];
+        Object.values(geoOptionsByRegion).forEach((r) => {
+            allGeoOptions.push(...r);
+        });
+        return allGeoOptions;
+    }
+
     constructor(props) {
         super(props);
 
         // Calculate state from initial value
         this.geoOptionsById = GeoListInput.calcGeoOptionsById(props.geoOptionsByRegion);
+        this.geoOptions = GeoListInput.getAllGeoOptions(props.geoOptionsByRegion);
         this.state = {
             modalValue: props.value,
             showModal: false,
@@ -64,6 +75,7 @@ export default class GeoListInput extends React.PureComponent {
     componentWillReceiveProps(nextProps) {
         if (this.props.geoOptionsByRegion !== nextProps.geoOptionsByRegion) {
             this.geoOptionsById = GeoListInput.calcGeoOptionsById(nextProps.geoOptionsByRegion);
+            this.geoOptions = GeoListInput.getAllGeoOptions(nextProps.geoOptionsByRegion);
         }
 
         if (this.props.value !== nextProps.value) {
@@ -98,6 +110,12 @@ export default class GeoListInput extends React.PureComponent {
         this.setState({ showModal: false, modalValue });
     }
 
+    handleSelectChange = (newValues) => {
+        if (this.props.onChange) {
+            this.props.onChange(newValues);
+        }
+    }
+
     handleModalValueChange = (modalValue) => {
         this.setState({ modalValue });
     }
@@ -107,20 +125,18 @@ export default class GeoListInput extends React.PureComponent {
     }
 
     valueLabelSelector = (v) => {
-        const option = this.geoOptionsById[v];
+        const option = this.geoOptionsById[v.key];
         if (this.props.regions.length > 0) {
             return `${option.regionTitle} / ${option.label}`;
         }
         return option.label;
     }
-    valueKeySelector = v => v;
+    valueKeySelector = v => v.key;
 
-    render() {
+    renderGeoModal = () => {
         const {
             title,
             regions,
-            value,
-            onChange,
             geoOptionsByRegion,
         } = this.props;
         const {
@@ -128,41 +144,71 @@ export default class GeoListInput extends React.PureComponent {
             modalValue,
         } = this.state;
 
+        if (!showModal) {
+            return null;
+        }
+
+        return (
+            <GeoModal
+                title={title}
+                regions={regions}
+                geoOptionsByRegion={geoOptionsByRegion}
+                geoOptionsById={this.geoOptionsById}
+                value={modalValue}
+                onChange={this.handleModalValueChange}
+                onApply={this.handleModalApply}
+                onCancel={this.handleModalCancel}
+            />
+        );
+    }
+
+    render() {
+        const {
+            title,
+            value,
+            geoOptionsByRegion,
+            showHeader,
+        } = this.props;
+
         const titleClassName = `${styles.title} title`;
         const headerClassName = `${styles.header} header`;
 
+        const GeoModalRender = this.renderGeoModal;
+
         return (
             <div className={this.getClassName()}>
-                <header className={headerClassName}>
-                    <div className={titleClassName}>
-                        { title }
-                    </div>
-                    <AccentButton
-                        className={styles.action}
-                        iconName={iconNames.map}
-                        onClick={this.handleShowModal}
-                        transparent
-                    />
-                </header>
-                <ListInput
-                    className={styles.listInput}
+                {showHeader &&
+                    <header className={headerClassName}>
+                        <div className={titleClassName}>
+                            { title }
+                        </div>
+                        <AccentButton
+                            className={styles.action}
+                            iconName={iconNames.map}
+                            onClick={this.handleShowModal}
+                            transparent
+                        />
+                    </header>
+                }
+                <SelectInputWithList
+                    value={value}
+                    onChange={this.handleSelectChange}
+                    className={styles.selectInput}
+                    options={this.geoOptions}
                     labelSelector={this.valueLabelSelector}
                     keySelector={this.valueKeySelector}
-                    onChange={onChange}
-                    value={value}
+                    showHintAndError={false}
+                    topRightChild={!showHeader &&
+                        <AccentButton
+                            className={styles.action}
+                            iconName={iconNames.chart}
+                            onClick={this.handleShowModal}
+                            transparent
+                        />
+                    }
+                    hideSelectAllButton
                 />
-                {showModal && (
-                    <GeoModal
-                        title={title}
-                        regions={regions}
-                        geoOptionsByRegion={geoOptionsByRegion}
-                        geoOptionsById={this.geoOptionsById}
-                        value={modalValue}
-                        onChange={this.handleModalValueChange}
-                        onApply={this.handleModalApply}
-                        onCancel={this.handleModalCancel}
-                    />
-                )}
+                <GeoModalRender />
             </div>
         );
     }

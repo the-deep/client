@@ -3,6 +3,7 @@
 .geo-list-input {
     display: flex;
     flex-direction: column;
+    height: 100%;
 
     .header {
         display: flex;
@@ -20,7 +21,7 @@
         }
     }
 
-    .list-input {
+    .select-input {
         flex-grow: 1;
     }
 }
