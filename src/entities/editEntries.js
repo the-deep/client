@@ -19,6 +19,7 @@ export const entryAccessor = {
     isMarkedAsDeleted: (entry = {}) => !!(entry.localData || {}).isMarkedAsDeleted,
     isPristine: (entry = {}) => !!(entry.localData || {}).isPristine,
     hasError: (entry = {}) => !!(entry.localData || {}).hasError,
+    hasServerError: (entry = {}) => !!(entry.localData || {}).hasServerError,
 
     dataAttribute: (entry = {}, attributeId) => (
         (((entry.data || {}).attributes || {})[attributeId] || {}).data
@@ -33,24 +34,29 @@ export const ENTRY_STATUS = {
     // A rest request is in session
     requesting: 'requesting',
     // Error occured and it cannot be recovered
-    invalid: 'invalid',
-    // Some changed has occured
-    nonPristine: 'nonPristine',
+    localError: 'localError',
+    // Error occured and it cannot be recovered
+    serverError: 'serverError',
     // No change has occured and saved in server
     complete: 'complete',
     // No change has occured, and not saved in server
     pristine: 'pristine',
+    // Some changed has occured
+    nonPristine: 'nonPristine',
 };
 
 export const calculateEntryState = ({ entry, restPending }) => {
     const serverId = entryAccessor.serverId(entry);
     const pristine = entryAccessor.isPristine(entry);
-    const error = entryAccessor.hasError(entry);
+    const hasLocalError = entryAccessor.hasError(entry);
+    const hasServerError = entryAccessor.hasServerError(entry);
 
     if (restPending) {
         return ENTRY_STATUS.requesting;
-    } else if (error) {
-        return ENTRY_STATUS.invalid;
+    } else if (hasServerError) {
+        return ENTRY_STATUS.serverError;
+    } else if (hasLocalError) {
+        return ENTRY_STATUS.localError;
     } else if (!pristine) {
         return ENTRY_STATUS.nonPristine;
     } else if (serverId) {
@@ -94,6 +100,7 @@ export const createEntry = ({
             color: undefined,
             isPristine: true,
             hasError: false,
+            hasSeverError: false,
             error: undefined,
             isMarkedAsDeleted: false,
         },

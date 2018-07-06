@@ -1,6 +1,8 @@
 import localforage from 'localforage';
 import { createTransform } from 'redux-persist';
 
+import { mapToMap } from '#rs/utils/common';
+
 const myTransform = createTransform(
     inboundState => ({
         ...inboundState,
@@ -13,11 +15,11 @@ const myTransform = createTransform(
 
             removeModal: undefined,
         },
-        editEntries: {
-            ...inboundState.editEntries,
-            // post, patch and delete
-            entryRests: undefined,
-        },
+        editEntries: mapToMap(
+            inboundState.editEntries,
+            k => k,
+            obj => ({ ...obj, entryRests: undefined }),
+        ),
     }),
     undefined,
     { whitelist: ['siloDomainData'] },

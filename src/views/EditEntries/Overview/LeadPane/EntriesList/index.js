@@ -31,7 +31,8 @@ export default class EntriesListing extends React.PureComponent {
 
     static iconMap = {
         [ENTRY_STATUS.requesting]: `${iconNames.loading} ${styles.pending}`,
-        [ENTRY_STATUS.invalid]: `${iconNames.error} ${styles.error}`,
+        [ENTRY_STATUS.localError]: `${iconNames.error} ${styles.error}`,
+        [ENTRY_STATUS.serverError]: `${iconNames.error} ${styles.error}`,
         [ENTRY_STATUS.nonPristine]: `${iconNames.codeWorking} ${styles.pristine}`,
         [ENTRY_STATUS.complete]: `${iconNames.checkCircle} ${styles.complete}`,
         markedForRemoval: `${iconNames.removeCircle} ${styles.warning}`,

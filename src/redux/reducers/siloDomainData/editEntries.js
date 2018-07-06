@@ -124,11 +124,12 @@ export const editEntriesSetEntryDataAction = ({ leadId, key, values, errors, inf
     info,
 });
 
-export const editEntriesSetEntryErrorsAction = ({ leadId, key, errors }) => ({
+export const editEntriesSetEntryErrorsAction = ({ leadId, key, errors, isServerError }) => ({
     type: EEB__SET_ENTRY_ERROR,
     leadId,
     key,
     errors,
+    isServerError,
 });
 
 export const editEntriesMarkAsDeletedEntryAction = ({ leadId, key, value }) => ({
@@ -222,6 +223,7 @@ const setEntryExcerpt = (state, action) => {
                         },
                         localData: {
                             isPristine: { $set: false },
+                            hasServerError: { $set: false },
                         },
                     },
                 },
@@ -313,6 +315,7 @@ const setEntryData = (state, action) => {
                             },
                             localData: {
                                 isPristine: { $set: false },
+                                hasServerError: { $set: false },
                             },
                         },
                     },
@@ -337,6 +340,7 @@ const setEntryData = (state, action) => {
                             isPristine: { $set: false },
                             error: { $set: errors },
                             hasError: { $set: analyzeErrors(errors) },
+                            hasServerError: { $set: false },
                         },
                     },
                 },
@@ -349,7 +353,7 @@ const setEntryData = (state, action) => {
 };
 
 const setEntryError = (state, action) => {
-    const { leadId, key, errors } = action;
+    const { leadId, key, errors, isServerError } = action;
     const {
         editEntries: { [leadId]: { entries = [] } = {} } = {},
     } = state;
@@ -364,8 +368,17 @@ const setEntryError = (state, action) => {
                 entries: {
                     [entryIndex]: {
                         localData: {
-                            error: { $set: errors },
-                            hasError: { $set: analyzeErrors(errors) },
+                            $if: [
+                                isServerError,
+                                {
+                                    hasServerError: { $set: true },
+                                },
+                                {
+                                    error: { $set: errors },
+                                    hasError: { $set: analyzeErrors(errors) },
+                                    hasServerError: { $set: false },
+                                },
+                            ],
                         },
                     },
                 },
@@ -518,6 +531,7 @@ const applyToAllEntries = mode => (state, action) => {
                         } },
                     } },
                 } },
+                hasServerError: { $set: false },
             },
         };
     });
