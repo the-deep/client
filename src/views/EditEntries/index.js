@@ -303,8 +303,14 @@ export default class EditEntries extends React.PureComponent {
             setPending: this.props.setPending,
             saveEntry: this.props.saveEntry,
             setEntryServerError: (data) => {
-                // TODO:
-                console.warn('error entry:', data);
+                console.warn('Entry save error', data);
+                this.props.setEntryError({
+                    leadId: this.props.leadId,
+                    key: entryKey,
+                    // TODO: handle error messages later
+                    errors: undefined,
+                    isServerError: true,
+                });
             },
             getCoordinator: () => this.saveRequestCoordinator,
         });
@@ -322,8 +328,14 @@ export default class EditEntries extends React.PureComponent {
             setPending: this.props.setPending,
             removeEntry: this.props.removeEntry,
             setEntryServerError: (data) => {
-                // TODO:
-                console.warn('error entry:', data);
+                console.warn('Entry delete error', data);
+                this.props.setEntryError({
+                    leadId: this.props.leadId,
+                    key: entryKey,
+                    // TODO: handle error messages later
+                    errors: undefined,
+                    isServerError: true,
+                });
             },
             getCoordinator: () => this.saveRequestCoordinator,
         });
@@ -351,7 +363,10 @@ export default class EditEntries extends React.PureComponent {
             }
 
             // NOTE: only submit if non pristine
-            if (status === ENTRY_STATUS.nonPristine) {
+            if (
+                status === ENTRY_STATUS.nonPristine ||
+                status === ENTRY_STATUS.serverError
+            ) {
                 detachedFaram({
                     value: entry.data.attributes,
                     schema: this.props.schema,
