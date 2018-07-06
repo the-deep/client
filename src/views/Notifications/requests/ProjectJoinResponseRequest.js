@@ -15,7 +15,8 @@ export default class ProjectJoinResponseRequest {
     }
 
     success = (response) => {
-        this.props.setProjectJoinStatus({ newNotificationDetails: response });
+        const newNotificationDetails = { ...response };
+        this.props.setProjectJoinStatus({ newNotificationDetails });
     }
 
     failure = (response) => {
@@ -37,10 +38,14 @@ export default class ProjectJoinResponseRequest {
         });
     }
 
-    create = (projectId, requestId, response) => {
+    create = (projectId, requestId, response, role) => {
+        const body = {};
+        if (response) {
+            body.role = role;
+        }
         const projectJoinResponseRequest = new FgRestBuilder()
             .url(createUrlForProjectJoinResponse(projectId, requestId, response))
-            .params(createParamsForProjectJoinResponse())
+            .params(createParamsForProjectJoinResponse(body))
             .preLoad(() => { this.props.setState({ approvalLoading: true }); })
             .postLoad(() => { this.props.setState({ approvalLoading: false }); })
             .success(this.success)

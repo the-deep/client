@@ -54,7 +54,7 @@ export default class ProjectJoinItem extends React.PureComponent {
         }
     }
 
-    startProjectJoinResponseRequest = (projectId, requestId, approval) => {
+    startProjectJoinResponseRequest = (projectId, requestId, approval, role) => {
         let response = 'reject';
         if (approval) {
             response = 'accept';
@@ -73,18 +73,19 @@ export default class ProjectJoinItem extends React.PureComponent {
             projectId,
             requestId,
             response,
+            role,
         );
         this.requestForProjectJoinResponse.start();
     }
 
-    handleRequestApproval = (approval) => {
+    handleRequestApproval = (approval, role) => {
         const { data } = this.props;
         const {
             id,
             project,
         } = data.details;
 
-        this.startProjectJoinResponseRequest(project.id, id, approval);
+        this.startProjectJoinResponseRequest(project.id, id, approval, role);
     }
 
     renderPendingDescription = () => {
@@ -138,9 +139,16 @@ export default class ProjectJoinItem extends React.PureComponent {
                     <SuccessButton
                         className={styles.button}
                         iconName={iconNames.check}
-                        onClick={() => this.handleRequestApproval(true)}
+                        onClick={() => this.handleRequestApproval(true, 'normal')}
                     >
                         {_ts('notifications.projectJoin', 'acceptButton')}
+                    </SuccessButton>
+                    <SuccessButton
+                        className={styles.button}
+                        iconName={iconNames.check}
+                        onClick={() => this.handleRequestApproval(true, 'admin')}
+                    >
+                        {_ts('notifications.projectJoin', 'acceptAsAdminButton')}
                     </SuccessButton>
                 </div>
             </Fragment>
@@ -154,13 +162,17 @@ export default class ProjectJoinItem extends React.PureComponent {
             requestedBy,
             respondedBy,
             status,
+            role,
         } = data.details;
 
-        const approvalText = status === 'rejected' ? 'rejectedText' : 'acceptedText';
+        let approvalText = 'rejectedText';
+        if (status === 'accepted') {
+            approvalText = role === 'admin' ? 'acceptedAsAdminText' : 'acceptedText';
+        }
 
         return (
             <Fragment>
-                <div className={`${styles.respondedDescription} ${styles.description}`} >
+                <div className={styles.description} >
                     {_ts('notifications.projectJoin', approvalText, {
                         requestedBy: (
                             <Link

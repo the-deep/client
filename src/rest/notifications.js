@@ -13,8 +13,8 @@ export const createUrlForProjectJoinResponse = (projectId, requestId, response) 
     `${wsEndpoint}/projects/${projectId}/requests/${requestId}/${response}/`
 );
 
-export const createParamsForProjectJoinResponse = () => ({
+export const createParamsForProjectJoinResponse = body => ({
     method: POST,
     headers: commonHeaderForPost,
-    body: '{}',
+    body: JSON.stringify(body),
 });
