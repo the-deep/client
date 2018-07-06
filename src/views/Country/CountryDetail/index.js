@@ -4,10 +4,9 @@ import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 
 import Faram, { requiredCondition } from '#rs/components/Input/Faram';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
 import FixedTabs from '#rs/components/View/FixedTabs';
 import MultiViewContainer from '#rs/components/View/MultiViewContainer';
-import Confirm from '#rs/components/View/Modal/Confirm';
 import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import WarningButton from '#rs/components/Action/Button/WarningButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
@@ -65,7 +64,6 @@ const defaultProps = {
         faramErrors: {},
         pristine: false,
     },
-    title: '',
 };
 
 const mapStateToProps = (state, props) => ({
@@ -93,7 +91,6 @@ export default class CountryDetail extends React.PureComponent {
 
         this.state = {
             // Delete Modal state
-            deleteCountry: false,
             deletePending: false,
             dataLoading: true,
         };
@@ -213,10 +210,6 @@ export default class CountryDetail extends React.PureComponent {
         }
     }
 
-    handleDeleteButtonClick = () => {
-        this.setState({ deleteCountry: true });
-    }
-
     handleDiscardButtonClick = () => {
         this.startRegionRequest(this.props.countryId, true);
     }
@@ -280,17 +273,12 @@ export default class CountryDetail extends React.PureComponent {
         });
     };
 
-    deleteActiveCountry = (confirm) => {
-        if (confirm) {
-            const { countryDetail } = this.props;
-            this.startRequestForRegionDelete(countryDetail.id);
-        }
-        this.setState({ deleteCountry: false });
+    handleDeleteButtonClick = () => {
+        const { countryDetail } = this.props;
+        this.startRequestForRegionDelete(countryDetail.id);
     }
 
     renderHeader = () => {
-        const { deleteCountry } = this.state;
-
         const {
             countryDetail,
             activeUser,
@@ -300,6 +288,10 @@ export default class CountryDetail extends React.PureComponent {
             faramValues = {},
             pristine = false,
         } = this.props.regionDetail;
+
+        const confirmMsg = _ts('countries', 'deleteCountryConfirm', {
+            country: (<b>{countryDetail.title}</b>),
+        });
 
         return (
             <header className={styles.header} >
@@ -311,9 +303,12 @@ export default class CountryDetail extends React.PureComponent {
                         {
                             activeUser.isSuperuser &&
                             <Fragment>
-                                <DangerButton onClick={this.handleDeleteButtonClick}>
+                                <DangerConfirmButton
+                                    onClick={this.handleDeleteButtonClick}
+                                    confirmationMessage={confirmMsg}
+                                >
                                     {_ts('countries', 'deleteCountryButtonLabel')}
-                                </DangerButton>
+                                </DangerConfirmButton>
                                 <WarningButton
                                     disabled={!pristine}
                                     onClick={this.handleDiscardButtonClick}
@@ -328,15 +323,6 @@ export default class CountryDetail extends React.PureComponent {
                                 </SuccessButton>
                             </Fragment>
                         }
-                        <Confirm
-                            show={deleteCountry}
-                            closeOnEscape
-                            onClose={this.deleteActiveCountry}
-                        >
-                            <p>{`${_ts('countries', 'deleteCountryConfirm')}
-                                    ${countryDetail.title}?`}
-                            </p>
-                        </Confirm>
                     </div>
                 </div>
                 <FixedTabs

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
@@ -6,22 +6,21 @@ import {
     Prompt,
 } from 'react-router-dom';
 
-import BoundError from '#rs/components/General/BoundError';
-import {
-    isTruthy,
-    checkVersion,
-    randomString,
-    trimWhitespace,
-    splitInWhitespace,
-    reverseRoute,
-} from '#rs/utils/common';
-import { FgRestBuilder } from '#rs/utils/rest';
-import SelectInput from '#rs/components/Input/SelectInput';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
 import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
+import BoundError from '#rs/components/General/BoundError';
+import SelectInput from '#rs/components/Input/SelectInput';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import Confirm from '#rs/components/View/Modal/Confirm';
+import { FgRestBuilder } from '#rs/utils/rest';
+import {
+    checkVersion,
+    isTruthy,
+    randomString,
+    reverseRoute,
+    splitInWhitespace,
+    trimWhitespace,
+} from '#rs/utils/common';
 
 import {
     categoryEditorViewTitleSelector,
@@ -140,9 +139,6 @@ export default class CategoryEditor extends React.PureComponent {
             showEditCategoryModal: false,
             showNewSubcategoryModal: false,
             showNewManualNGramModal: false,
-
-            confirmText: '',
-            deleteCategory: false,
         };
     }
 
@@ -309,29 +305,13 @@ export default class CategoryEditor extends React.PureComponent {
         });
     }
 
-    // ADDTION HELPERS
     handleRemoveCategory = () => {
-        const { activeCategoryId, categories } = this.props;
-        const activeCategory = categories.find(cat => cat.id === activeCategoryId);
-        const confirmText = _ts('categoryEditor', 'confirmTextDeleteCategory', {
-            category: activeCategory.title,
+        this.props.removeCategory({
+            categoryEditorId: this.props.categoryEditorId,
+            id: this.props.activeCategoryId,
         });
+    }
 
-        this.setState({
-            deleteCategory: true,
-            confirmText,
-        });
-    }
-    // Close Delete Modal
-    handleRemoveCategoryClose = (confirm) => {
-        if (confirm) {
-            this.props.removeCategory({
-                categoryEditorId: this.props.categoryEditorId,
-                id: this.props.activeCategoryId,
-            });
-        }
-        this.setState({ deleteCategory: false });
-    }
     addNewCategory = (title) => {
         const key = randomString();
         const newCategory = {
@@ -503,8 +483,6 @@ export default class CategoryEditor extends React.PureComponent {
         } = this.props;
         const {
             pending,
-            confirmText,
-            deleteCategory,
             showNewCategoryModal,
             showEditCategoryModal,
             showNewSubcategoryModal,
@@ -512,6 +490,9 @@ export default class CategoryEditor extends React.PureComponent {
         } = this.state;
 
         const activeCategory = categories.find(cat => cat.id === activeCategoryId);
+        const confirmMessage = _ts('categoryEditor', 'confirmTextDeleteCategory', {
+            category: (<b>{activeCategory.title}</b>),
+        });
 
         return (
             <div className={styles.categoryEditor}>
@@ -566,24 +547,23 @@ export default class CategoryEditor extends React.PureComponent {
                                 title={_ts('categoryEditor', 'addCategoryTooltip')}
                             />
                             { isTruthy(activeCategoryId) &&
-                                [
+                                <Fragment>
                                     <PrimaryButton
-                                        key="edit"
                                         className={styles.addCategoryBtn}
                                         onClick={this.handleEditCategory}
                                         disabled={pending}
                                         iconName={iconNames.edit}
                                         title={_ts('categoryEditor', 'editCategoryTooltip')}
-                                    />,
-                                    <DangerButton
-                                        key="remove"
+                                    />
+                                    <DangerConfirmButton
                                         className={styles.addCategoryBtn}
                                         onClick={this.handleRemoveCategory}
                                         disabled={pending}
                                         iconName={iconNames.delete}
                                         title={_ts('categoryEditor', 'deleteCategoryTooltip')}
-                                    />,
-                                ]
+                                        confirmationMessage={confirmMessage}
+                                    />
+                                </Fragment>
                             }
                         </div>
                     </header>
@@ -630,14 +610,6 @@ export default class CategoryEditor extends React.PureComponent {
                         onClose={this.handleNewManualNgramModalClose}
                     />
                 }
-                <Confirm
-                    onClose={this.handleRemoveCategoryClose}
-                    show={deleteCategory}
-                >
-                    <p>
-                        {confirmText}
-                    </p>
-                </Confirm>
             </div>
         );
     }

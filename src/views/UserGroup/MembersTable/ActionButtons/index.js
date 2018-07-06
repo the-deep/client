@@ -3,8 +3,8 @@ import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '#rs/utils/common';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
+import PrimaryConfirmButton from '#rs/components/Action/ConfirmButton/PrimaryConfirmButton';
 
 import {
     iconNames,
@@ -67,15 +67,30 @@ export default class ActionButtons extends React.PureComponent {
 
         const isAdmin = row.role === 'admin';
         const isCurrentUser = row.member === activeUser.userId;
+
         if (isCurrentUser || !isCurrentUserAdmin) {
             return this.renderLinkToUserProfile();
         }
+
+        const confirmMsg = _ts('userGroup', 'confirmTextRemoveMember', {
+            memberName: (<b>{row.memberName}</b>),
+        });
+
+
+        const permissionConfirmMsg = isAdmin
+            ? _ts('userGroup', 'confirmTextRevokeAdmin', {
+                memberName: (<b>{row.memberName}</b>),
+            })
+            : _ts('userGroup', 'confirmTextGrantAdmin', {
+                memberName: (<b>{row.memberName}</b>),
+            });
+
         return (
             <Fragment>
                 {
                     this.renderLinkToUserProfile()
                 }
-                <PrimaryButton
+                <PrimaryConfirmButton
                     title={
                         isAdmin
                             ? _ts('userGroup', 'revokeAdminLinkTitle')
@@ -85,13 +100,15 @@ export default class ActionButtons extends React.PureComponent {
                     iconName={isAdmin ? iconNames.locked : iconNames.person}
                     smallVerticalPadding
                     transparent
+                    confirmationMessage={permissionConfirmMsg}
                 />
-                <DangerButton
+                <DangerConfirmButton
                     title={_ts('userGroup', 'deleteMemberLinkTitle')}
                     onClick={() => onRemoveMember(row)}
                     iconName={iconNames.delete}
                     smallVerticalPadding
                     transparent
+                    confirmationMessage={confirmMsg}
                 />
             </Fragment>
         );

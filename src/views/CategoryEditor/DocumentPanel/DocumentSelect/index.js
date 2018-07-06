@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import ListView from '#rs/components/View/List/ListView';
 import Button from '#rs/components/Action/Button';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
 
 import {
     categoryEditorDocumentsSelector,
@@ -125,11 +125,15 @@ export default class DocumentSelect extends React.PureComponent {
             <span className={styles.title} >
                 {file.title}
             </span>
-            <DangerButton
+            <DangerConfirmButton
                 className={styles.icon}
                 onClick={() => this.handleRemoveFiles(fileId)}
                 transparent
                 iconName={iconNames.delete}
+                // FIXME: use strings
+                title="Remove document"
+                // FIXME: use strings
+                confirmationMessage="Are you sure you want to remove this document?"
             />
         </div>
     );

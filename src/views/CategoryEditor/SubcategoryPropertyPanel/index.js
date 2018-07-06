@@ -5,10 +5,9 @@ import { connect } from 'react-redux';
 import { bound } from '#rs/utils/common';
 import ListView from '#rs/components/View/List/ListView';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
 import TextInput from '#rs/components/Input/TextInput';
 import TextArea from '#rs/components/Input/TextArea';
-import Confirm from '#rs/components/View/Modal/Confirm';
 
 import _ts from '#ts';
 import {
@@ -69,8 +68,8 @@ export default class SubcategoryPropertyPanel extends React.PureComponent {
             selectedNGramIndex: 0,
             ngramKeys,
 
-            confirmText: '',
-            deleteSubCategory: false,
+            // confirmText: '',
+            // deleteSubCategory: false,
         };
     }
 
@@ -139,25 +138,9 @@ export default class SubcategoryPropertyPanel extends React.PureComponent {
     };
 
     handleSubcategoryRemove = () => {
-        const { subcategory } = this.props;
-        const confirmText = _ts('categoryEditor', 'confirmTextDeleteSubCategory', {
-            subcategory: subcategory.title,
+        this.props.removeSelectedSubcategory({
+            categoryEditorId: this.props.categoryEditorId,
         });
-
-        this.setState({
-            deleteSubCategory: true,
-            confirmText,
-        });
-    };
-
-    // Close Delete Modal
-    handleRemoveSubCategoryClose = (confirm) => {
-        if (confirm) {
-            this.props.removeSelectedSubcategory({
-                categoryEditorId: this.props.categoryEditorId,
-            });
-        }
-        this.setState({ deleteSubCategory: false });
     }
 
     handleNgramRemove = (ngram) => {
@@ -178,6 +161,7 @@ export default class SubcategoryPropertyPanel extends React.PureComponent {
             className={this.getNGramSelectStyleName(i)}
             key={key}
             onClick={() => { this.handleNGramSelectButtonClick(i); }}
+            type="button"
         >
             {key}
         </button>
@@ -191,8 +175,8 @@ export default class SubcategoryPropertyPanel extends React.PureComponent {
         const {
             selectedNGramIndex,
             ngramKeys,
-            deleteSubCategory,
-            confirmText,
+            //  deleteSubCategory,
+            // confirmText,
         } = this.state;
 
         if (!subcategory) {
@@ -213,6 +197,10 @@ export default class SubcategoryPropertyPanel extends React.PureComponent {
 
         const keywords = ngrams[ngramKeys[selectedNGramIndex]];
 
+        const confirmMessage = _ts('categoryEditor', 'confirmTextDeleteSubCategory', {
+            subcategory: (<b>{subcategory.title}</b>),
+        });
+
         return (
             <div className={styles.propertyPanel} >
                 <header className={styles.header} >
@@ -220,11 +208,12 @@ export default class SubcategoryPropertyPanel extends React.PureComponent {
                         {_ts('categoryEditor', 'subCategoryDetailsText')}
                     </h3>
                     <div className={styles.actionButtons}>
-                        <DangerButton
+                        <DangerConfirmButton
                             onClick={this.handleSubcategoryRemove}
+                            confirmationMessage={confirmMessage}
                         >
                             {_ts('categoryEditor', 'removeCategoryButtonLabel')}
-                        </DangerButton>
+                        </DangerConfirmButton>
                     </div>
                 </header>
                 <section className={styles.properties} >
@@ -278,12 +267,6 @@ export default class SubcategoryPropertyPanel extends React.PureComponent {
                         </PrimaryButton>
                     </div>
                 </section>
-                <Confirm
-                    onClose={this.handleRemoveSubCategoryClose}
-                    show={deleteSubCategory}
-                >
-                    <p>{confirmText}</p>
-                </Confirm>
             </div>
         );
     }

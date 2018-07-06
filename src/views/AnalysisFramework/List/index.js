@@ -6,10 +6,9 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import GridLayout from '#rs/components/View/GridLayout';
-import Confirm from '#rs/components/View/Modal/Confirm';
 import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import Button from '#rs/components/Action/Button';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
 import {
     randomString,
     reverseRoute,
@@ -63,10 +62,6 @@ export default class List extends React.PureComponent {
         this.updateAnalysisFramework(props.analysisFramework);
 
         this.widgetEditActions = {};
-
-        this.state = {
-            showDeleteModal: false,
-        };
     }
 
     componentWillReceiveProps(nextProps) {
@@ -106,18 +101,22 @@ export default class List extends React.PureComponent {
         ) : (
             <div className="action-buttons">
                 <Button
-                    transparent
+                    // FIXME: use strings
+                    title="Edit widget"
                     onClick={() => this.handleWidgetEditButtonClick(key)}
-                >
-                    <span className={iconNames.edit} />
-                </Button>
-
-                <DangerButton
+                    iconName={iconNames.edit}
                     transparent
-                    onClick={() => this.handleWidgetRemoveButtonClick(key)}
-                >
-                    <span className={iconNames.close} />
-                </DangerButton>
+                />
+                <DangerConfirmButton
+                    // FIXME: use strings
+                    title="Remove widget"
+                    onClick={() => this.handleWidgetClose(key)}
+                    iconName={iconNames.close}
+                    transparent
+                    // FIXME: use strings
+                    confirmationTitle="Remove widget"
+                    confirmationMessage={_ts('framework', 'confirmDeletewWidget')}
+                />
             </div>
         );
 
@@ -159,35 +158,18 @@ export default class List extends React.PureComponent {
         );
     }
 
-    handleWidgetClose = (y) => {
-        if (y) {
-            const {
-                analysisFramework,
-                removeWidget,
-            } = this.props;
-            const {
-                deleteKey: id,
-            } = this.state;
+    handleWidgetClose = (id) => {
+        const {
+            analysisFramework,
+            removeWidget,
+        } = this.props;
 
-            const widgetData = {
-                analysisFrameworkId: analysisFramework.id,
-                widgetId: id,
-            };
+        const widgetData = {
+            analysisFrameworkId: analysisFramework.id,
+            widgetId: id,
+        };
 
-            removeWidget(widgetData);
-        }
-
-        this.setState({
-            showDeleteModal: false,
-            deleteKey: undefined,
-        });
-    }
-
-    handleWidgetRemoveButtonClick = (key) => {
-        this.setState({
-            showDeleteModal: true,
-            deleteKey: key,
-        });
+        removeWidget(widgetData);
     }
 
     handleWidgetEditButtonClick = (id) => {
@@ -368,16 +350,6 @@ export default class List extends React.PureComponent {
                     </div>
                     <WidgetList />
                 </div>
-
-                <Confirm
-                    title="Remove widget" // FIXME: strings
-                    onClose={this.handleWidgetClose}
-                    show={this.state.showDeleteModal}
-                >
-                    <p>
-                        {_ts('framework', 'confirmDeletewWidget')}
-                    </p>
-                </Confirm>
             </div>
         );
     }

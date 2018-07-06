@@ -7,10 +7,8 @@ import {
 } from 'react-router-dom';
 
 import BoundError from '#rs/components/General/BoundError';
-import SelectInput from '#rs/components/Input/SelectInput';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import Confirm from '#rs/components/View/Modal/Confirm';
 import Pager from '#rs/components/View/Pager';
 import RawTable from '#rs/components/View/RawTable';
 import TableHeader from '#rs/components/View/TableHeader';
@@ -98,12 +96,6 @@ const mapDispatchToProps = dispatch => ({
     setLeadPageFilter: params => dispatch(setLeadPageFilterAction(params)),
     setLeadsPerPage: params => dispatch(setLeadPageLeadsPerPageAction(params)),
 });
-
-const ACTION = {
-    delete: 'delete',
-    markAsPending: 'markAsPending',
-    markAsProcessed: 'markAsProcessed',
-};
 
 @BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
@@ -232,9 +224,11 @@ export default class Leads extends React.PureComponent {
                     <ActionButtons
                         row={row}
                         onSearchSimilarLead={this.handleSearchSimilarLead}
-                        onRemoveLead={r => this.handleLeadAction(r, ACTION.delete)}
-                        onMarkProcessed={r => this.handleLeadAction(r, ACTION.markAsProcessed)}
-                        onMarkPending={r => this.handleLeadAction(r, ACTION.markAsPending)}
+
+                        onRemoveLead={this.handleLeadDelete}
+                        onMarkProcessed={this.handleMarkAsProcessed}
+                        onMarkPending={this.handleMarkAsPending}
+
                         activeProject={this.props.activeProject}
                     />
                 ),
@@ -244,15 +238,6 @@ export default class Leads extends React.PureComponent {
         this.state = {
             loadingLeads: false,
             redirectTo: undefined,
-
-            leadAction: undefined,
-            showModal: false,
-            selectedLead: undefined,
-
-            /*
-            showDeleteModal: false,
-            showStatusChangeModal: false,
-            */
         };
     }
 
@@ -322,19 +307,6 @@ export default class Leads extends React.PureComponent {
         }
     }
 
-    getModalText = (action) => {
-        switch (action) {
-            case ACTION.delete:
-                return _ts('leads', 'leadDeleteConfirmText');
-            case ACTION.markAsPending:
-                return _ts('leads', 'leadMarkPendingConfirmText');
-            case ACTION.markAsProcessed:
-                return _ts('leads', 'leadMarkProcessedConfirmText');
-            default:
-                return _ts('leads', 'leadConfirmText');
-        }
-    }
-
     // UI
 
     handleSearchSimilarLead = (row) => {
@@ -346,64 +318,40 @@ export default class Leads extends React.PureComponent {
         });
     };
 
-    handleLeadAction= (row, action) => {
-        this.setState({
-            selectedLead: row,
-            leadAction: action,
-            showModal: true,
+    handleLeadDelete = (selectedLead) => {
+        if (this.leadDeleteRequest) {
+            this.leadDeleteRequest.stop();
+        }
+        const request = new DeleteLeadRequest({
+            setState: params => this.setState(params),
+            removeLead: this.props.removeLead,
         });
+        this.leadDeleteRequest = request.create(selectedLead);
+        this.leadDeleteRequest.start();
     }
 
-    handleModalClose = (confirm) => {
-        if (confirm) {
-            const { leadAction, selectedLead } = this.state;
-            switch (leadAction) {
-                case ACTION.delete: {
-                    if (this.leadDeleteRequest) {
-                        this.leadDeleteRequest.stop();
-                    }
-                    const request = new DeleteLeadRequest({
-                        setState: params => this.setState(params),
-                        removeLead: this.props.removeLead,
-                    });
-                    this.leadDeleteRequest = request.create(selectedLead);
-                    this.leadDeleteRequest.start();
-                    break;
-                }
-                case ACTION.markAsPending: {
-                    if (this.leadEditRequest) {
-                        this.leadEditRequest.stop();
-                    }
-                    const request = new PatchLeadRequest({
-                        setState: params => this.setState(params),
-                        patchLead: this.props.patchLead,
-                    });
-                    this.leadEditRequest = request.create(selectedLead, { status: 'pending' });
-                    this.leadEditRequest.start();
-                    break;
-                }
-                case ACTION.markAsProcessed: {
-                    if (this.leadEditRequest) {
-                        this.leadEditRequest.stop();
-                    }
-                    const request = new PatchLeadRequest({
-                        setState: params => this.setState(params),
-                        patchLead: this.props.patchLead,
-                    });
-                    this.leadEditRequest = request.create(selectedLead, { status: 'processed' });
-                    this.leadEditRequest.start();
-                    break;
-                }
-                default:
-                    break;
-            }
+    handleMarkAsPending = (selectedLead) => {
+        if (this.leadEditRequest) {
+            this.leadEditRequest.stop();
         }
-
-        this.setState({
-            showModal: false,
-            selectedLead: undefined,
-            leadAction: undefined,
+        const request = new PatchLeadRequest({
+            setState: params => this.setState(params),
+            patchLead: this.props.patchLead,
         });
+        this.leadEditRequest = request.create(selectedLead, { status: 'pending' });
+        this.leadEditRequest.start();
+    }
+
+    handleMarkAsProcessed = (selectedLead) => {
+        if (this.leadEditRequest) {
+            this.leadEditRequest.stop();
+        }
+        const request = new PatchLeadRequest({
+            setState: params => this.setState(params),
+            patchLead: this.props.patchLead,
+        });
+        this.leadEditRequest = request.create(selectedLead, { status: 'processed' });
+        this.leadEditRequest.start();
     }
 
     handlePageClick = (page) => {
@@ -580,9 +528,7 @@ export default class Leads extends React.PureComponent {
     render() {
         const {
             loadingLeads,
-            showModal,
             redirectTo,
-            leadAction,
         } = this.state;
 
         if (redirectTo) {
@@ -615,15 +561,6 @@ export default class Leads extends React.PureComponent {
                     </div>
                 </div>
                 <Footer />
-                <Confirm
-                    show={showModal}
-                    closeOnEscape
-                    onClose={this.handleModalClose}
-                >
-                    <p>
-                        {this.getModalText(leadAction)}
-                    </p>
-                </Confirm>
             </div>
         );
     }

@@ -3,7 +3,7 @@ import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '#rs/utils/common';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
 
 import {
     iconNames,
@@ -52,14 +52,14 @@ export default class LeadGroupsActionButtons extends React.PureComponent {
 
         return (
             <Fragment>
-                <DangerButton
+                <DangerConfirmButton
                     title={_ts('leadGroups', 'removeLeadGroupButtonTitle')}
                     onClick={() => onRemoveLeadGroup(row)}
                     smallVerticalPadding
                     transparent
-                >
-                    <i className={iconNames.delete} />
-                </DangerButton>
+                    iconName={iconNames.delete}
+                    confirmationMessage={_ts('leadGroups', 'leadGroupDeleteConfirmText')}
+                />
                 <Link
                     className={styles.addAryLink}
                     tabIndex="-1"

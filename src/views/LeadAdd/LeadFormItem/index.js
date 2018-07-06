@@ -11,7 +11,6 @@ import {
     requiredCondition,
     urlCondition,
 } from '#rs/components/Input/Faram';
-import Confirm from '#rs/components/View/Modal/Confirm';
 import ResizableV from '#rs/components/View/Resizable/ResizableV';
 import update from '#rs/utils/immutable-update';
 
@@ -68,11 +67,6 @@ const mapDispatchToProps = dispatch => ({
     addLeadViewCopyAll: params => dispatch(addLeadViewCopyAllAction(params)),
 });
 
-const APPLY_MODE = {
-    all: 'all',
-    allBelow: 'allBelow',
-};
-
 @connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })
 export default class LeadFormItem extends React.PureComponent {
     static propTypes = propTypes;
@@ -89,10 +83,7 @@ export default class LeadFormItem extends React.PureComponent {
             isUrlValid,
             pendingExtraction: false,
 
-            showApplyModal: false,
             showAddLeadGroupModal: false,
-            applyMode: undefined, // all or below
-            applyAttribute: undefined, // attribute to apply
         };
     }
 
@@ -221,22 +212,6 @@ export default class LeadFormItem extends React.PureComponent {
         onFormSubmitFailure(leadId);
     }
 
-    handleApplyAllClick = (attrName) => {
-        this.setState({
-            showApplyModal: true,
-            applyMode: APPLY_MODE.all,
-            applyAttribute: attrName,
-        });
-    }
-
-    handleApplyAllBelowClick = (attrName) => {
-        this.setState({
-            showApplyModal: true,
-            applyMode: APPLY_MODE.allBelow,
-            applyAttribute: attrName,
-        });
-    }
-
     handleAddLeadGroupClick = () => {
         this.setState({ showAddLeadGroupModal: true });
     }
@@ -276,25 +251,20 @@ export default class LeadFormItem extends React.PureComponent {
         });
     }
 
-    handleApplyModal = (confirm) => {
-        if (confirm) {
-            const {
-                leadKey,
-                addLeadViewCopyAll,
-                addLeadViewCopyAllBelow,
-            } = this.props;
-            const { applyMode, applyAttribute } = this.state;
-            if (applyMode === APPLY_MODE.all) {
-                addLeadViewCopyAll({ leadId: leadKey, attrName: applyAttribute });
-            } else if (applyMode === APPLY_MODE.allBelow) {
-                addLeadViewCopyAllBelow({ leadId: leadKey, attrName: applyAttribute });
-            }
-        }
-        this.setState({
-            showApplyModal: false,
-            applyMode: undefined,
-            applyAttribute: undefined,
-        });
+    handleApplyAllClick = (applyAttribute) => {
+        const {
+            leadKey,
+            addLeadViewCopyAll,
+        } = this.props;
+        addLeadViewCopyAll({ leadId: leadKey, attrName: applyAttribute });
+    }
+
+    handleApplyAllBelowClick = (applyAttribute) => {
+        const {
+            leadKey,
+            addLeadViewCopyAllBelow,
+        } = this.props;
+        addLeadViewCopyAllBelow({ leadId: leadKey, attrName: applyAttribute });
     }
 
     // CO-ORDINATOR
@@ -406,11 +376,6 @@ export default class LeadFormItem extends React.PureComponent {
             ...otherProps
         } = this.props;
 
-        const {
-            showApplyModal,
-            applyMode,
-        } = this.state;
-
         const type = leadAccessor.getType(lead);
         const disableResize = type === LEAD_TYPE.text;
 
@@ -444,19 +409,6 @@ export default class LeadFormItem extends React.PureComponent {
                             onExtractClick={this.handleExtractClick}
                             {...otherProps}
                         />
-                        <Confirm
-                            show={showApplyModal}
-                            closeOnEscape
-                            onClose={this.handleApplyModal}
-                        >
-                            <p>
-                                {
-                                    applyMode === APPLY_MODE.all
-                                        ? _ts('addLeads', 'applyToAll')
-                                        : _ts('addLeads', 'applyToAllBelow')
-                                }
-                            </p>
-                        </Confirm>
                         <AddLeadGroupModal />
                     </Fragment>
                 }

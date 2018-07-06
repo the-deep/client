@@ -6,14 +6,13 @@ import {
     Link,
 } from 'react-router-dom';
 
-import { reverseRoute } from '#rs/utils/common';
-import Confirm from '#rs/components/View/Modal/Confirm';
+import BoundError from '#rs/components/General/BoundError';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Pager from '#rs/components/View/Pager';
 import RawTable from '#rs/components/View/RawTable';
 import TableHeader from '#rs/components/View/TableHeader';
-import BoundError from '#rs/components/General/BoundError';
+import { reverseRoute } from '#rs/utils/common';
 
 import AppError from '#components/AppError';
 import {
@@ -138,9 +137,6 @@ export default class Arys extends React.PureComponent {
         this.state = {
             loadingArys: false,
             redirectTo: undefined,
-
-            showDeleteModal: false,
-            aryToDelete: undefined,
         };
     }
 
@@ -204,31 +200,16 @@ export default class Arys extends React.PureComponent {
 
     // UI
 
-    handleRemoveAry = (row) => {
-        this.setState({
-            showDeleteModal: true,
-            aryToDelete: row,
-        });
-    };
-
-    handleDeleteModalClose = (confirm) => {
-        if (confirm) {
-            const { aryToDelete } = this.state;
-            if (this.aryDeleteRequest) {
-                this.aryDeleteRequest.stop();
-            }
-            const aryDeleteRequest = new AryDeleteRequest({
-                setState: params => this.setState(params),
-                pullArys: this.pullArys,
-            });
-            this.aryDeleteRequest = aryDeleteRequest.create(aryToDelete);
-            this.aryDeleteRequest.start();
+    handleRemoveAry = (aryToDelete) => {
+        if (this.aryDeleteRequest) {
+            this.aryDeleteRequest.stop();
         }
-
-        this.setState({
-            showDeleteModal: false,
-            aryToDelete: undefined,
+        const aryDeleteRequest = new AryDeleteRequest({
+            setState: params => this.setState(params),
+            pullArys: this.pullArys,
         });
+        this.aryDeleteRequest = aryDeleteRequest.create(aryToDelete);
+        this.aryDeleteRequest.start();
     }
 
     handlePageClick = (page) => {
@@ -311,7 +292,6 @@ export default class Arys extends React.PureComponent {
     render() {
         const {
             loadingArys,
-            showDeleteModal,
             redirectTo,
         } = this.state;
         const { className, arys } = this.props;
@@ -344,15 +324,6 @@ export default class Arys extends React.PureComponent {
                     { loadingArys && <LoadingAnimation large /> }
                 </div>
                 <Footer />
-                <Confirm
-                    show={showDeleteModal}
-                    closeOnEscape
-                    onClose={this.handleDeleteModalClose}
-                >
-                    <p>
-                        {_ts('assessments', 'aryDeleteConfirmText')}
-                    </p>
-                </Confirm>
             </div>
         );
     }
