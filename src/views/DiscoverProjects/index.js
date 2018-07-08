@@ -200,10 +200,7 @@ export default class DiscoverProjects extends React.PureComponent {
                 );
             case 'created_by':
                 return (
-                    <Link
-                        key={project.createdBy}
-                        to={reverseRoute(pathNames.userProfile, { userId: project.createdBy })}
-                    >
+                    <Link to={reverseRoute(pathNames.userProfile, { userId: project.createdBy })}>
                         {project.createdByName}
                     </Link>
                 );

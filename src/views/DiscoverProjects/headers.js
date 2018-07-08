@@ -40,7 +40,6 @@ const headers = [
         key: 'regions',
         title: _ts('discoverProjects.table', 'regionsTitle'),
         order: 7,
-        sortable: true,
     },
     {
         key: 'number_of_users',
