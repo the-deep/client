@@ -764,7 +764,8 @@ const initialDevLangState = {
         'discoverProjects.table': {
             titleTitle: 13,
             descriptionTitle: 200,
-            createdAtTitle: 2,
+            createdAtTitle: 163,
+            createdByTitle: 538,
             adminsTitle: 7627,
             frameworkTitle: 379,
             regionsTitle: 336,

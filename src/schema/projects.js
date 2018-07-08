@@ -30,7 +30,8 @@ const projectSchema = [];
             numberOfEntries: { type: 'uint' },
             entriesActivity: { type: 'array.timevalue' },
             leadsActivity: { type: 'array.timevalue' },
-            status: { type: 'string' },
+            status: { type: 'uint' },
+            statusTitle: { type: 'string' },
         },
     };
     projectSchema.push({ name, schema });
