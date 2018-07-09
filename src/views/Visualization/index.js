@@ -1,25 +1,28 @@
 import React from 'react';
 import _ts from '#ts';
 
-import wrapViz from '#rs/components/Visualization/VizWrapper';
-import SunBurst from '#rs/components/Visualization/SunBurst';
-import ChordDiagram from '#rs/components/Visualization/ChordDiagram';
-import TreeMap from '#rs/components/Visualization/TreeMap';
-import CorrelationMatrix from '#rs/components/Visualization/CorrelationMatrix';
-import OrgChart from '#rs/components/Visualization/OrgChart';
-import HorizontalBar from '#rs/components/Visualization/HorizontalBar';
-import Dendrogram from '#rs/components/Visualization/Dendrogram';
-import ForceDirectedGraph from '#rs/components/Visualization/ForceDirectedGraph';
-import CollapsibleTree from '#rs/components/Visualization/CollapsibleTree';
-import RadialDendrogram from '#rs/components/Visualization/RadialDendrogram';
-import PieChart from '#rs/components/Visualization/PieChart';
-import DonutChart from '#rs/components/Visualization/DonutChart';
-import Sankey from '#rs/components/Visualization/Sankey';
-import ParallelCoordinates from '#rs/components/Visualization/ParallelCoordinates';
-import StreamGraph from '#rs/components/Visualization/StreamGraph';
-import StackedBarChart from '#rs/components/Visualization/StackedBarChart';
-import SparkLines from '#rs/components/Visualization/SparkLines';
-import Organigram from '#rs/components/Visualization/Organigram';
+import VerticalTabs from '#rscv/VerticalTabs';
+import MultiViewContainer from '#rscv/MultiViewContainer';
+
+import wrapViz from '#rscz/VizWrapper';
+import SunBurst from '#rscz/SunBurst';
+import ChordDiagram from '#rscz/ChordDiagram';
+import TreeMap from '#rscz/TreeMap';
+import CorrelationMatrix from '#rscz/CorrelationMatrix';
+import OrgChart from '#rscz/OrgChart';
+import HorizontalBar from '#rscz/HorizontalBar';
+import Dendrogram from '#rscz/Dendrogram';
+import ForceDirectedGraph from '#rscz/ForceDirectedGraph';
+import CollapsibleTree from '#rscz/CollapsibleTree';
+import RadialDendrogram from '#rscz/RadialDendrogram';
+import PieChart from '#rscz/PieChart';
+import DonutChart from '#rscz/DonutChart';
+import Sankey from '#rscz/Sankey';
+import ParallelCoordinates from '#rscz/ParallelCoordinates';
+import StreamGraph from '#rscz/StreamGraph';
+import StackedBarChart from '#rscz/StackedBarChart';
+import SparkLines from '#rscz/SparkLines';
+import Organigram from '#rscz/Organigram';
 
 import BoundError from '#rs/components/General/BoundError';
 import VizError from '#components/VizError';
@@ -68,15 +71,35 @@ const timeAccessor = d => d.time;
 
 @BoundError(AppError)
 export default class Visualization extends React.PureComponent {
-    render() {
-        return (
-            <div className={styles.visualization}>
-                <header className={styles.header}>
-                    <h2>
-                        {_ts('visualization', 'visualizationTitle')}
-                    </h2>
-                </header>
-                <div className={styles.container}>
+    constructor(props) {
+        super(props);
+
+        this.tabs = {
+            sunBurst: _ts('visualization', 'sunburst'),
+            correlationMatrix: _ts('visualization', 'correlationMatrix'),
+            dendrogram: _ts('visualization', 'dendrogram'),
+            radialDendrogram: _ts('visualization', 'radialDendrogram'),
+            treemap: _ts('visualization', 'treemap'),
+            zoomableTreemap: _ts('visualization', 'zoomableTreemap'),
+            chordDiagram: _ts('visualization', 'chordDiagram'),
+            horizontalBar: _ts('visualization', 'horizontalBar'),
+            forcedDirectedGraph: _ts('visualization', 'forcedDirectedGraph'),
+            forcedDirectedGraphVoronoi: _ts('visualization', 'forceDirectedGraphVoronoi'),
+            collapsibleTree: _ts('visualization', 'collapsibleTree'),
+            orgChart: _ts('visualization', 'orgChart'),
+            pieChart: _ts('visualization', 'pieChart'),
+            donutChart: _ts('visualization', 'donutChart'),
+            organigram: _ts('visualization', 'organigram'),
+            stackedBarChart: _ts('visualization', 'stackedBarChart'),
+            streamGraph: _ts('visualization', 'streamGraph'),
+            sankey: _ts('visualization', 'sankey'),
+            sparkLines: _ts('visualization', 'sparklines'),
+            parallelCoordinates: _ts('visualization', 'parallelCoordinates'),
+        };
+
+        this.views = {
+            sunBurst: {
+                component: () => (
                     <SunBurstView
                         className={styles.sunburst}
                         headerText={_ts('visualization', 'sunburst')}
@@ -84,12 +107,20 @@ export default class Visualization extends React.PureComponent {
                         valueAccessor={sizeAccessor}
                         labelAccessor={nameAccessor}
                     />
+                ),
+            },
+            correlationMatrix: {
+                component: () => (
                     <CorrelationMatrixView
                         className={styles.correlationMatrix}
                         headerText={_ts('visualization', 'correlationMatrix')}
                         data={correlationData}
                         colorSchemeType="continuous"
                     />
+                ),
+            },
+            dendrogram: {
+                component: () => (
                     <DendrogramView
                         className={styles.dendrogram}
                         headerText={_ts('visualization', 'dendrogram')}
@@ -97,12 +128,20 @@ export default class Visualization extends React.PureComponent {
                         labelAccessor={nameAccessor}
                         valueAccessor={sizeAccessor}
                     />
+                ),
+            },
+            radialDendrogram: {
+                component: () => (
                     <RadialDendrogramView
                         className={styles.radialDendrogram}
                         headerText={_ts('visualization', 'radialDendrogram')}
                         data={hierarchicalData}
                         labelAccessor={nameAccessor}
                     />
+                ),
+            },
+            treemap: {
+                component: () => (
                     <TreeMapView
                         className={styles.treemap}
                         headerText={_ts('visualization', 'treemap')}
@@ -110,6 +149,10 @@ export default class Visualization extends React.PureComponent {
                         valueAccessor={sizeAccessor}
                         labelAccessor={nameAccessor}
                     />
+                ),
+            },
+            zoomableTreemap: {
+                component: () => (
                     <TreeMapView
                         className={styles.treemap}
                         headerText={_ts('visualization', 'zoomableTreemap')}
@@ -118,6 +161,10 @@ export default class Visualization extends React.PureComponent {
                         labelAccessor={nameAccessor}
                         zoomable={false}
                     />
+                ),
+            },
+            chordDiagram: {
+                component: () => (
                     <ChordDiagramView
                         className={styles.chordDiagram}
                         headerText={_ts('visualization', 'chordDiagram')}
@@ -126,6 +173,10 @@ export default class Visualization extends React.PureComponent {
                         valueAccessor={sizeAccessor}
                         labelAccessor={nameAccessor}
                     />
+                ),
+            },
+            horizontalBar: {
+                component: () => (
                     <HorizontalBarView
                         className={styles.horizontalBar}
                         headerText={_ts('visualization', 'horizontalBar')}
@@ -133,16 +184,24 @@ export default class Visualization extends React.PureComponent {
                         valueAccessor={valueAccessor}
                         labelAccessor={labelAccessor}
                     />
+                ),
+            },
+            forcedDirectedGraph: {
+                component: () => (
                     <ForceDirectedGraphView
-                        className={styles.forceDirectedGraph}
+                        className={styles.forcedDirectedGraph}
                         headerText={_ts('visualization', 'forcedDirectedGraph')}
                         data={forceDirectedData}
                         idAccessor={idAccessor}
                         groupAccessor={groupAccessor}
                         valueAccessor={valueAccessor}
                     />
+                ),
+            },
+            forcedDirectedGraphVoronoi: {
+                component: () => (
                     <ForceDirectedGraphView
-                        className={styles.forceDirectedGraphVoronoi}
+                        className={styles.forcedDirectedGraphVoronoi}
                         headerText={_ts('visualization', 'forceDirectedGraphVoronoi')}
                         data={forceDirectedData}
                         idAccessor={idAccessor}
@@ -150,18 +209,30 @@ export default class Visualization extends React.PureComponent {
                         valueAccessor={valueAccessor}
                         useVoronoi={false}
                     />
+                ),
+            },
+            collapsibleTree: {
+                component: () => (
                     <CollapsibleTreeView
                         className={styles.collapsibleTreeView}
                         headerText={_ts('visualization', 'collapsibleTree')}
                         data={hierarchicalData}
                         labelAccessor={nameAccessor}
                     />
+                ),
+            },
+            orgChart: {
+                component: () => (
                     <OrgChartView
                         className={styles.orgChart}
                         headerText={_ts('visualization', 'orgChart')}
                         data={hierarchicalData}
                         idAccessor={nameAccessor}
                     />
+                ),
+            },
+            pieChart: {
+                component: () => (
                     <PieChartView
                         className={styles.pieChart}
                         headerText={_ts('visualization', 'pieChart')}
@@ -169,6 +240,10 @@ export default class Visualization extends React.PureComponent {
                         valueAccessor={valueAccessor}
                         labelAccessor={labelAccessor}
                     />
+                ),
+            },
+            donutChart: {
+                component: () => (
                     <DonutChartView
                         className={styles.donutChart}
                         headerText={_ts('visualization', 'donutChart')}
@@ -176,12 +251,20 @@ export default class Visualization extends React.PureComponent {
                         valueAccessor={valueAccessor}
                         labelAccessor={labelAccessor}
                     />
+                ),
+            },
+            organigram: {
+                component: () => (
                     <OrganigramView
                         className={styles.organigram}
                         headerText={_ts('visualization', 'organigram')}
                         data={hierarchicalData}
                         idAccessor={nameAccessor}
                     />
+                ),
+            },
+            stackedBarChart: {
+                component: () => (
                     <StackedBarChartView
                         className={styles.stackedBarChart}
                         headerText={_ts('visualization', 'stackedBarChart')}
@@ -189,6 +272,10 @@ export default class Visualization extends React.PureComponent {
                         labelName="month"
                         labelAccessor={monthAccessor}
                     />
+                ),
+            },
+            streamGraph: {
+                component: () => (
                     <StreamGraphView
                         className={styles.streamGraph}
                         headerText={_ts('visualization', 'streamGraph')}
@@ -196,6 +283,10 @@ export default class Visualization extends React.PureComponent {
                         labelName="time"
                         labelAccessor={timeAccessor}
                     />
+                ),
+            },
+            sankey: {
+                component: () => (
                     <SankeyView
                         className={styles.sankey}
                         headerText={_ts('visualization', 'sankey')}
@@ -203,18 +294,50 @@ export default class Visualization extends React.PureComponent {
                         valueAccessor={valueAccessor}
                         labelAccessor={nameAccessor}
                     />
+                ),
+            },
+            sparkLines: {
+                component: () => (
                     <SparkLinesView
                         className={styles.sparklines}
                         headerText={_ts('visualization', 'sparklines')}
                         data={lineData.data}
                         valueAccessor={valueAccessor}
                     />
+                ),
+            },
+            parallelCoordinates: {
+                component: () => (
                     <ParallelCoordinatesView
                         className={styles.parallelCoordinates}
                         headerText={_ts('visualization', 'parallelCoordinates')}
                         data={parallelData}
                         labelName="name"
                         labelAccessor={nameAccessor}
+                    />
+                ),
+            },
+        };
+    }
+
+    render() {
+        return (
+            <div className={styles.visualization}>
+                <header className={styles.header}>
+                    <h2>
+                        {_ts('visualization', 'visualizationTitle')}
+                    </h2>
+                </header>
+                <div className={styles.content}>
+                    <VerticalTabs
+                        className={styles.tabs}
+                        tabs={this.tabs}
+                        useHash
+                    />
+                    <MultiViewContainer
+                        className={styles.visualizations}
+                        views={this.views}
+                        useHash
                     />
                 </div>
             </div>
