@@ -681,6 +681,12 @@ export default class AssistedTagging extends React.PureComponent {
                     onChange={this.handleAssitedTaggingSourceChange}
                     backgroundHighlight
                 />
+                <div className={styles.info}>
+                    <span
+                        className={`${styles.icon} ${iconNames.help}`}
+                        title={_ts('components.assistedTagging', 'infoTooltip')}
+                    />
+                </div>
                 { selectedAssitedTaggingSource === NLP && (
                     <MultiSelectInput
                         disabled={this.state.pendingNlpClassify}
