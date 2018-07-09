@@ -1,6 +1,7 @@
 @import '../../stylesheets/base';
 
 .visualization {
+    @extend %main-content;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -15,90 +16,104 @@
         padding: $spacing-small;
     }
 
-    .container {
+    .content {
+        display: flex;
         flex: 1;
-        overflow: auto;
 
-        %viz {
-            @include background-color($color-background-header);
-            margin-bottom: $spacing-small;
-            height: 800px;
+        $width-tabs: 240px;
+
+        .tabs {
+            @include background-color($color-foreground);
+            flex-basis: $width-tabs;
+            flex-grow: 0;
+            flex-shrink: 0;
         }
 
-        .sunburst {
-            @extend %viz;
-        }
+        .visualizations {
+            display: flex;
+            flex-direction: column;
 
-        .correlation-matrix {
-            @extend %viz;
-        }
+            %viz {
+                @include background-color($color-foreground-alt);
+                flex-grow: 1;
+                margin-bottom: $spacing-small;
+            }
 
-        .dendrogram {
-            @extend %viz;
-        }
+            .sunburst {
+                @extend %viz;
+            }
 
-        .radial-dendrogram {
-            @extend %viz;
-        }
+            .correlation-matrix {
+                @extend %viz;
+            }
 
-        .treemap {
-            @extend %viz;
-        }
+            .dendrogram {
+                @extend %viz;
+            }
 
-        .chord-diagram {
-            @extend %viz;
-        }
+            .radial-dendrogram {
+                @extend %viz;
+            }
 
-        .horizontal-bar {
-            @extend %viz;
-        }
+            .treemap {
+                @extend %viz;
+            }
 
-        .force-directed-graph {
-            @extend %viz;
-        }
+            .chord-diagram {
+                @extend %viz;
+            }
 
-        .force-directed-graph-voronoi {
-            @extend %viz;
-        }
+            .horizontal-bar {
+                @extend %viz;
+            }
 
-        .collapsible-tree-view {
-            @extend %viz;
-        }
+            .force-directed-graph {
+                @extend %viz;
+            }
 
-        .org-chart {
-            @extend %viz;
-        }
+            .force-directed-graph-voronoi {
+                @extend %viz;
+            }
 
-        .pie-chart {
-            @extend %viz;
-        }
+            .collapsible-tree-view {
+                @extend %viz;
+            }
 
-        .donut-chart {
-            @extend %viz;
-        }
+            .org-chart {
+                @extend %viz;
+            }
 
-        .organigram {
-            @extend %viz;
-        }
+            .pie-chart {
+                @extend %viz;
+            }
 
-        .stacked-bar-chart {
-            @extend %viz;
-        }
+            .donut-chart {
+                @extend %viz;
+            }
 
-        .stream-graph {
-            @extend %viz;
-        }
+            .organigram {
+                @extend %viz;
+            }
 
-        .sankey {
-            @extend %viz;
-        }
+            .stacked-bar-chart {
+                @extend %viz;
+            }
 
-        .sparklines {
-            @extend %viz;
-        }
+            .stream-graph {
+                @extend %viz;
+            }
 
-        .parallel-coordinates {
-            @extend %viz;
+            .sankey {
+                @extend %viz;
+            }
+
+            .sparklines {
+                @extend %viz;
+            }
+
+            .parallel-coordinates {
+                @extend %viz;
+            }
         }
     }
 }

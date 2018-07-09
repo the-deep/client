@@ -3,7 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
-import { FgRestBuilder } from '#rs/utils/rest';
+import { FgRestBuilder } from '#rsu/rest';
+
 import AppLoading from '#components/AppLoading';
 import {
     initializeGa,
