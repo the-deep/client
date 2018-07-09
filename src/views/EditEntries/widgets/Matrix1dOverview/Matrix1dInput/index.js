@@ -43,17 +43,21 @@ class Matrix1dInput extends React.PureComponent {
     }
 
     handleCellDrop = (key, cellKey, droppedData) => {
-        // TODO: if droppedData already same excerpt, modify that data
-        const value = {
-            [key]: {
-                [cellKey]: true,
+        const { type, data } = droppedData;
+        this.props.onChange(
+            undefined,
+            undefined,
+            {
+                action: 'newEntry',
+                excerptType: type,
+                excerptValue: data,
+                value: {
+                    [key]: {
+                        [cellKey]: true,
+                    },
+                },
             },
-        };
-
-        this.props.onChange(value);
-
-        // TODO: Create new entry with this data
-        console.warn(value, droppedData);
+        );
     }
 
     // TODO: memoize this later

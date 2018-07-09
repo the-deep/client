@@ -248,19 +248,37 @@ export default class EditEntries extends React.PureComponent {
             leadId: this.props.leadId,
             entry: {
                 analysisFramework: this.props.analysisFramework.id,
-                entryType: type,
-                entryValue: value,
+                excerptType: type,
+                exceprtValue: value,
             },
         });
     }
 
     handleChange = (faramValues, faramErrors, faramInfo, entryKey) => {
         if (faramInfo.action === 'newEntry' || entryKey === undefined) {
+            // TODO: if excerpt already exists modify existing entry
+            // instead of creating a new one
+
+            const {
+                excerptType,
+                excerptValue,
+                value,
+                faramElementName,
+            } = faramInfo;
+
+            // Create attribute using faramElementName and value
+            let attributes = value;
+            [...faramElementName].reverse().forEach((key) => {
+                attributes = { [key]: attributes };
+            });
+
             this.props.addEntry({
                 leadId: this.props.leadId,
                 entry: {
+                    excerptType,
+                    excerptValue,
                     lead: this.props.leadId,
-                    attributes: faramValues,
+                    attributes,
                     analysisFramework: this.props.analysisFramework.id,
                 },
             });

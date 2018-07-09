@@ -2,8 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import styles from './styles.scss';
 
-import DropContainer from '../../../../Excerpt/DropContainer';
-
 const propTypes = {
     children: PropTypes.node,
     active: PropTypes.bool,

@@ -27,6 +27,7 @@ const defaultProps = {
     image: undefined,
 };
 
+// FIXME: reuse this from entities.editEntries
 const TEXT = 'excerpt';
 const IMAGE = 'image';
 
