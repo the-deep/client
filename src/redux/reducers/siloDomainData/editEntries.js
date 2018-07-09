@@ -240,8 +240,8 @@ const addEntry = (state, action) => {
     } = state;
 
     const {
-        entryType,
-        entryValue,
+        excerptType,
+        excerptValue,
         ...otherEntry
     } = entry;
 
@@ -263,9 +263,9 @@ const addEntry = (state, action) => {
 
     const newData = {
         ...otherEntry,
-        entryType,
-        excerpt: entryType === 'excerpt' ? entryValue : undefined,
-        image: entryType === 'image' ? entryValue : undefined,
+        entryType: excerptType,
+        excerpt: excerptType === 'excerpt' ? excerptValue : undefined,
+        image: excerptType === 'image' ? excerptValue : undefined,
         lead: leadId,
         order: maxEntryOrder + 1,
     };

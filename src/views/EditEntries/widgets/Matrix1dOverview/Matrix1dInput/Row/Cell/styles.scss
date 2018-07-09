@@ -1,0 +1,23 @@
+@import '../../../../../../../stylesheets/base';
+@import '../../../../../../../vendor/react-store/stylesheets/button-base';
+
+.matrix-cell {
+    @extend %button-base;
+    @include background-color($color-background-alt);
+    position: relative;
+    margin: $spacing-extra-small;
+
+    &.active {
+        @include background-color($color-accent);
+    }
+
+    &.is-being-dragged-over {
+        outline: $width-separator-thin dashed get-text-color($color-background-alt);
+        outline-offset: -$spacing-extra-small-alt;
+
+        &.active {
+            outline: $width-separator-thin dashed get-text-color($color-accent);
+        }
+    }
+
+}

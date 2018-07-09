@@ -27,6 +27,7 @@ const defaultProps = {
     image: undefined,
 };
 
+// FIXME: reuse this from entities.editEntries
 const TEXT = 'excerpt';
 const IMAGE = 'image';
 
@@ -43,12 +44,12 @@ export default class Excerpt extends React.PureComponent {
         this.setState({ isBeingDraggedOver: true });
     }
 
-    handleDragOver = (e) => {
-        e.preventDefault();
-    }
-
     handleDragExit = () => {
         this.setState({ isBeingDraggedOver: false });
+    }
+
+    handleDragOver = (e) => {
+        e.preventDefault();
     }
 
     handleTextChange = (value) => {
