@@ -14,8 +14,7 @@ export default class ProjectJoinResponseRequest {
         this.props = props;
     }
 
-    success = (response) => {
-        const newNotificationDetails = { ...response };
+    success = (newNotificationDetails) => {
         this.props.setProjectJoinStatus({ newNotificationDetails });
     }
 
@@ -39,10 +38,8 @@ export default class ProjectJoinResponseRequest {
     }
 
     create = (projectId, requestId, response, role) => {
-        const body = {};
-        if (response) {
-            body.role = role;
-        }
+        const body = response ? { role } : {};
+
         const projectJoinResponseRequest = new FgRestBuilder()
             .url(createUrlForProjectJoinResponse(projectId, requestId, response))
             .params(createParamsForProjectJoinResponse(body))

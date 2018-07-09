@@ -55,10 +55,7 @@ export default class ProjectJoinItem extends React.PureComponent {
     }
 
     startProjectJoinResponseRequest = (projectId, requestId, approval, role) => {
-        let response = 'reject';
-        if (approval) {
-            response = 'accept';
-        }
+        const response = approval ? 'accept' : 'reject';
 
         if (this.requestForProjectJoinResponse) {
             this.requestForProjectJoinResponse.stop();
@@ -78,14 +75,34 @@ export default class ProjectJoinItem extends React.PureComponent {
         this.requestForProjectJoinResponse.start();
     }
 
-    handleRequestApproval = (approval, role) => {
+    handleRequestApproval = () => {
         const { data } = this.props;
         const {
             id,
             project,
         } = data.details;
 
-        this.startProjectJoinResponseRequest(project.id, id, approval, role);
+        this.startProjectJoinResponseRequest(project.id, id, true, 'normal');
+    }
+
+    handleRequestAdminApproval = () => {
+        const { data } = this.props;
+        const {
+            id,
+            project,
+        } = data.details;
+
+        this.startProjectJoinResponseRequest(project.id, id, true, 'admin');
+    }
+
+    handleRequestRejection = () => {
+        const { data } = this.props;
+        const {
+            id,
+            project,
+        } = data.details;
+
+        this.startProjectJoinResponseRequest(project.id, id, false);
     }
 
     renderPendingDescription = () => {
@@ -132,21 +149,21 @@ export default class ProjectJoinItem extends React.PureComponent {
                     <DangerButton
                         className={styles.button}
                         iconName={iconNames.close}
-                        onClick={() => this.handleRequestApproval(false)}
+                        onClick={this.handleRequestRejection}
                     >
                         {_ts('notifications.projectJoin', 'rejectButton')}
                     </DangerButton>
                     <SuccessButton
                         className={styles.button}
                         iconName={iconNames.check}
-                        onClick={() => this.handleRequestApproval(true, 'normal')}
+                        onClick={this.handleRequestApproval}
                     >
                         {_ts('notifications.projectJoin', 'acceptButton')}
                     </SuccessButton>
                     <SuccessButton
                         className={styles.button}
                         iconName={iconNames.check}
-                        onClick={() => this.handleRequestApproval(true, 'admin')}
+                        onClick={this.handleRequestAdminApproval}
                     >
                         {_ts('notifications.projectJoin', 'acceptAsAdminButton')}
                     </SuccessButton>
@@ -169,6 +186,10 @@ export default class ProjectJoinItem extends React.PureComponent {
         if (status === 'accepted') {
             approvalText = role === 'admin' ? 'acceptedAsAdminText' : 'acceptedText';
         }
+
+        // _ts('notifications.projectJoin', 'rejectedText') is used
+        // _ts('notifications.projectJoin', 'acceptedText') is used
+        // _ts('notifications.projectJoin', 'acceptedAsAdminText') is used
 
         return (
             <Fragment>
