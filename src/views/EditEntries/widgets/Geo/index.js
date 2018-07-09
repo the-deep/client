@@ -29,11 +29,6 @@ export default class GeoWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static childSelector = d => d.organs;
-    static labelSelector = d => d.title;
-    static idSelector = d => d.key;
-    static valueKeySelector = d => d.id;
-
     render() {
         const {
             geoOptions,

@@ -52,13 +52,9 @@ export default class GeoListInput extends React.PureComponent {
         return geoOptionsById;
     }
 
-    static getAllGeoOptions = (geoOptionsByRegion) => {
-        const allGeoOptions = [];
-        Object.values(geoOptionsByRegion).forEach((r) => {
-            allGeoOptions.push(...r);
-        });
-        return allGeoOptions;
-    }
+    static getAllGeoOptions = geoOptionsByRegion => (
+        Object.values(geoOptionsByRegion).reduce((acc, r) => [...acc, ...r], [])
+    )
 
     constructor(props) {
         super(props);
@@ -131,6 +127,7 @@ export default class GeoListInput extends React.PureComponent {
         }
         return option.label;
     }
+
     valueKeySelector = v => v.key;
 
     renderGeoModal = () => {
@@ -158,6 +155,22 @@ export default class GeoListInput extends React.PureComponent {
                 onChange={this.handleModalValueChange}
                 onApply={this.handleModalApply}
                 onCancel={this.handleModalCancel}
+            />
+        );
+    }
+
+    renderShowModalButton = () => {
+        const { showHeader } = this.props;
+        if (showHeader) {
+            return null;
+        }
+
+        return (
+            <AccentButton
+                className={styles.action}
+                iconName={iconNames.chart}
+                onClick={this.handleShowModal}
+                transparent
             />
         );
     }
@@ -197,14 +210,7 @@ export default class GeoListInput extends React.PureComponent {
                     labelSelector={this.valueLabelSelector}
                     keySelector={this.valueKeySelector}
                     showHintAndError={false}
-                    topRightChild={!showHeader &&
-                        <AccentButton
-                            className={styles.action}
-                            iconName={iconNames.chart}
-                            onClick={this.handleShowModal}
-                            transparent
-                        />
-                    }
+                    topRightChild={this.renderShowModalButton}
                     hideSelectAllButton
                 />
                 <GeoModalRender />

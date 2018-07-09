@@ -47,32 +47,50 @@ const getOptionsForSelect = (params) => {
         idSelector,
         labelSelector,
         childSelector,
+        prefix = '',
     } = params;
-
-    let options = [];
 
     if (!data || data.length === 0) {
         return [];
     }
 
-    data.forEach((d) => {
-        options.push({
+    return data.reduce((options, d) => [
+        {
             id: idSelector(d),
-            name: labelSelector(d),
-        });
-        options = [
-            ...options,
-            ...getOptionsForSelect({
-                data: childSelector(d),
-                idSelector,
-                labelSelector,
-                childSelector,
-            }),
-        ];
-    });
-
-    return options;
+            name: `${prefix}${labelSelector(d)}`,
+        },
+        ...options,
+        ...getOptionsForSelect({
+            data: childSelector(d),
+            idSelector,
+            labelSelector,
+            childSelector,
+            prefix: `${prefix}${labelSelector(d)} / `,
+        }),
+    ], []);
 };
+
+const handleDataForOrganigram = (props) => {
+    const {
+        idSelector,
+        labelSelector,
+        childSelector,
+        data,
+    } = props;
+
+    let options = [];
+
+    if (data) {
+        options = getOptionsForSelect({
+            idSelector,
+            labelSelector,
+            childSelector,
+            data,
+        });
+    }
+    return ({ options, mountSelectInput: !!data });
+};
+
 
 @FaramElement('input')
 export default class OrganigramInput extends React.PureComponent {
@@ -84,29 +102,34 @@ export default class OrganigramInput extends React.PureComponent {
 
     constructor(props) {
         super(props);
-        const {
-            idSelector,
-            labelSelector,
-            childSelector,
-            data,
-        } = this.props;
-
         this.state = {
             value: props.value,
             showOrgChartModal: false,
         };
 
-        this.options = getOptionsForSelect({
-            idSelector,
-            labelSelector,
-            childSelector,
-            data,
-        });
+        const optionsInfo = handleDataForOrganigram(props);
+        this.mountSelectInput = optionsInfo.mountSelectInput;
+        this.options = optionsInfo.options;
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.value !== this.props.value) {
-            this.setState({ value: nextProps.value });
+        const {
+            value: newValue,
+            data: newData,
+        } = nextProps;
+
+        const {
+            value: oldValue,
+            data: oldData,
+        } = this.props;
+
+        if (newValue !== oldValue) {
+            this.setState({ value: newValue });
+        }
+        if (newData !== oldData) {
+            const optionsInfo = handleDataForOrganigram(nextProps);
+            this.mountSelectInput = optionsInfo.mountSelectInput;
+            this.options = optionsInfo.options;
         }
     }
 
@@ -171,6 +194,9 @@ export default class OrganigramInput extends React.PureComponent {
             <Modal className={styles.orgchartModal}>
                 <ModalHeader title={title} />
                 <ModalBody className={styles.body}>
+                    {/*
+                        All organigrams in widgets have singular head
+                    */}
                     <OrgChart
                         className={styles.orgchart}
                         data={data[0] || emptyObject}
@@ -193,16 +219,54 @@ export default class OrganigramInput extends React.PureComponent {
         );
     }
 
+    renderShowModalButton = () => {
+        const { showHeader } = this.props;
+        if (showHeader) {
+            return null;
+        }
+
+        return (
+            <AccentButton
+                className={styles.action}
+                iconName={iconNames.chart}
+                onClick={this.handleShowModal}
+                transparent
+            />
+        );
+    }
+
+    renderMultiSelect = () => {
+        const { value } = this.props;
+
+        if (!this.mountSelectInput) {
+            return null;
+        }
+
+        return (
+            <SelectInputWithList
+                value={value}
+                onChange={this.handleSelectChange}
+                className={styles.selectInput}
+                options={this.options}
+                labelSelector={OrganigramInput.selectLabelSelector}
+                keySelector={OrganigramInput.selectIdSelector}
+                showHintAndError={false}
+                topRightChild={this.renderShowModalButton}
+                hideSelectAllButton
+            />
+        );
+    }
+
     render() {
         const {
             title,
-            value,
             showHeader,
         } = this.props;
 
         const titleClassName = `${styles.title} title`;
         const headerClassName = `${styles.header} header`;
         const OrgChartModal = this.renderOrgChartModal;
+        const MultiSelect = this.renderMultiSelect;
 
         return (
             <div className={this.getClassName()}>
@@ -219,24 +283,7 @@ export default class OrganigramInput extends React.PureComponent {
                         />
                     </header>
                 }
-                <SelectInputWithList
-                    value={value}
-                    onChange={this.handleSelectChange}
-                    className={styles.selectInput}
-                    options={this.options}
-                    labelSelector={OrganigramInput.selectLabelSelector}
-                    keySelector={OrganigramInput.selectIdSelector}
-                    showHintAndError={false}
-                    topRightChild={!showHeader &&
-                        <AccentButton
-                            className={styles.action}
-                            iconName={iconNames.chart}
-                            onClick={this.handleShowModal}
-                            transparent
-                        />
-                    }
-                    hideSelectAllButton
-                />
+                <MultiSelect />
                 <OrgChartModal />
             </div>
         );

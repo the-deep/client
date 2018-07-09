@@ -12,13 +12,6 @@ const defaultProps = {
     widget: undefined,
 };
 
-const getData = (widget = {}) => {
-    const { properties: { data = {} } = {} } = widget;
-
-    // Data is returned as an array because there might be miltiple heads
-    return [data];
-};
-
 export default class OrganigramWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -27,14 +20,30 @@ export default class OrganigramWidget extends React.PureComponent {
     static labelSelector = d => d.title;
     static idSelector = d => d.key;
 
-    render() {
-        const { widget } = this.props;
-        const data = getData(widget);
+    constructor(props) {
+        super(props);
+        const { widget = {} } = props;
+        const { properties: { data = {} } = {} } = widget;
 
+        // Data is returned as an array because there might be multiple heads
+        this.data = data === undefined ? undefined : [data];
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { properties: { data: newData } = {} } = nextProps.widget;
+        const { properties: { data: oldData } = {} } = this.props.widget;
+
+        if (newData !== oldData) {
+            // Data is returned as an array because there might be multiple heads
+            this.data = newData === undefined ? undefined : [newData];
+        }
+    }
+
+    render() {
         return (
             <OrganigramInput
                 faramElementName="values"
-                data={data}
+                data={this.data}
                 childSelector={OrganigramWidget.childSelector}
                 labelSelector={OrganigramWidget.labelSelector}
                 idSelector={OrganigramWidget.idSelector}
