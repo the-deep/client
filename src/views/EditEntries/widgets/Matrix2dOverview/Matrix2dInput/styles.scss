@@ -1,0 +1,36 @@
+@import '../../../../../stylesheets/base';
+
+.overview {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+
+    .table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        text-align: center;
+
+        thead {
+            border: 0;
+
+            th {
+                position: sticky;
+                top: 0;
+                background-color: $color-foreground;
+                padding: $spacing-extra-small $spacing-small;
+            }
+        }
+
+        tbody {
+            td {
+                border: $width-separator-thin solid $color-foreground;
+                padding: $spacing-extra-small;
+            }
+
+            // .dimension-td {
+            //     width: $width-dimension-column;
+            // }
+        }
+    }
+}

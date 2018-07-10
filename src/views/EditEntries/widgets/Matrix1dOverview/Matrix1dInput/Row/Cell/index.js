@@ -18,7 +18,7 @@ const defaultProps = {
     disabled: false,
 };
 
-export default class MatrixCell extends React.PureComponent {
+export default class Matrix1dCell extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 

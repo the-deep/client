@@ -26,7 +26,7 @@ const defaultProps = {
     disabled: false,
 };
 
-export default class MatrixRow extends React.PureComponent {
+export default class Matrix1dRow extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -58,7 +58,7 @@ export default class MatrixRow extends React.PureComponent {
                 <ListView
                     data={cells}
                     className={styles.cells}
-                    keyExtractor={MatrixRow.cellKeyExtractor}
+                    keyExtractor={Matrix1dRow.cellKeyExtractor}
                     renderer={Cell}
                     rendererParams={this.rendererParams}
                 />
