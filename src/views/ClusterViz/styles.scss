@@ -41,6 +41,12 @@ $table-width: 400px;
                     @include background-color($color-foreground);
                     padding: $spacing-small;
                 }
+                .keywords {
+                    .keyword-label {
+                        font-size: $font-size-large;
+                        font-style: italic;
+                    }
+                }
 
                 &.active-cluster {
                     border-color: $color-accent;

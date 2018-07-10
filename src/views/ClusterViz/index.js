@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import BoundError from '#rs/components/General/BoundError';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Table from '#rs/components/View/Table';
+import FormattedDate from '#rs/components/View/FormattedDate';
 import ListView from '#rs/components/View/List/ListView';
 import ForceDirectedGraph from '#rs/components/Visualization/NewForceDirectedGraph';
 import wrapViz from '#rs/components/Visualization/VizWrapper';
@@ -16,9 +17,6 @@ import {
     reverseRoute,
     mapToList,
     groupList,
-    compareString,
-    compareNumber,
-    compareDate,
 } from '#rs/utils/common';
 
 import VizError from '#components/VizError';
@@ -88,8 +86,10 @@ export default class ClusterViz extends PureComponent {
         const clusterGroup = groupList(keywords, d => d.cluster);
 
         const nodes = keywords.map(cluster => ({
-            id: cluster.value,
+            id: cluster.value + cluster.cluster,
+            label: cluster.value,
             group: cluster.cluster,
+            radius: cluster.score,
         }));
 
         const maxNodes = Object.entries(clusterGroup)
@@ -102,15 +102,14 @@ export default class ClusterViz extends PureComponent {
             const target = maxNodes.find(node => node.id === key) || {};
             const source = value.filter(node => (target.node || {}).value !== node.value);
             return source.map(node => ({
-                source: node.value,
-                target: target.node.value,
+                source: node.value + node.cluster,
+                target: target.node.value + target.node.cluster,
                 value: 1,
             }));
         };
 
         // NOTE: Unflatten array using Array.concat(...arrayOfArray)
         const links = [].concat(...Object.entries(clusterGroup).map(mappingFn));
-
         const clusterGroupList = mapToList(
             clusterGroup,
             (data, key) => (
@@ -137,15 +136,11 @@ export default class ClusterViz extends PureComponent {
                 key: 'value',
                 label: _ts('clusterViz', 'keywordTableValueLabel'),
                 order: 1,
-                sortable: true,
-                comparator: (a, b) => compareString(a.value, b.value),
             },
             {
                 key: 'score',
                 label: _ts('clusterViz', 'keywordTableScoreLabel'),
                 order: 2,
-                sortable: true,
-                comparator: (a, b) => compareNumber(a.score, b.score),
             },
         ];
 
@@ -154,22 +149,17 @@ export default class ClusterViz extends PureComponent {
                 key: 'title',
                 label: _ts('clusterViz', 'documentTableTitleLabel'),
                 order: 1,
-                sortable: true,
-                comparator: (a, b) => compareString(a.value, b.value),
-            },
-            {
-                key: 'classifiedDocId',
-                label: _ts('clusterViz', 'documentTableClassifiedDocIdLabel'),
-                order: 2,
-                sortable: true,
-                comparator: (a, b) => compareNumber(a.classifiedDocId, b.classifiedDocId),
             },
             {
                 key: 'createdAt',
                 label: _ts('clusterViz', 'documentTableCreatedAtLabel'),
                 order: 3,
-                sortable: true,
-                comaparator: (a, b) => compareDate(a.createdAt, b.createdAt),
+                modifier: row => (
+                    <FormattedDate
+                        date={row.createdAt}
+                        mode="dd-MM-yyyy"
+                    />
+                ),
             },
         ];
 
@@ -184,6 +174,10 @@ export default class ClusterViz extends PureComponent {
         );
         this.nodesAndLinks = nodesAndLinks;
         this.clusterGroupList = clusterGroupList;
+        this.noOfClusters = clusterGroupList.length;
+        this.noOfLeads = clusterGroupList
+            .map(cluster => cluster.documents.length)
+            .reduce((sum, val) => sum + val, 0);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -303,10 +297,9 @@ export default class ClusterViz extends PureComponent {
         const isActive = activeCluster && String(activeCluster.group) === String(data.id);
         const className = this.getTableClassName(isActive);
 
-        let activeRowKey;
-        if (isActive) {
-            activeRowKey = activeCluster.id;
-        }
+        const keywords = data.clusters.map(cluster => cluster.value).join(', ');
+        const clusterIndex = Number(key) + 1;
+        const leadsCount = data.documents.length;
 
         return (
             <div
@@ -314,18 +307,28 @@ export default class ClusterViz extends PureComponent {
                 key={key}
             >
                 <header className={styles.tableHeader}>
-                    <h3>{_ts('clusterViz', 'tableHeader')}-{key}</h3>
+                    <h3>
+                        {
+                            _ts(
+                                'clusterViz',
+                                'tableHeader',
+                                {
+                                    clusterIndex,
+                                    leadsCount,
+                                },
+                            )
+                        }
+                    </h3>
                 </header>
+                <div className={styles.keywords}>
+                    <span className={styles.keywordLabel}>
+                        {_ts('clusterViz', 'keywords')}
+                    </span> : {keywords}
+                </div>
                 <Table
                     data={data.documents}
                     headers={this.documentHeader}
                     keyExtractor={ClusterViz.documentTableKeyExtractor}
-                />
-                <Table
-                    data={data.clusters}
-                    headers={this.keywordHeader}
-                    keyExtractor={ClusterViz.keywordTableKeyExtractor}
-                    highlightRowKey={activeRowKey}
                 />
             </div>
         );
@@ -365,10 +368,16 @@ export default class ClusterViz extends PureComponent {
                         className={styles.forcedDirectedGraph}
                         data={this.nodesAndLinks}
                         idAccessor={ClusterViz.idAccessor}
-                        useVoronoi
                         groupAccessor={ClusterViz.groupAccessor}
                         valueAccessor={ClusterViz.valueAccessor}
-                        headerText={_ts('clusterViz', 'clusterVizGraph')}
+                        useVoronoi
+                        headerText={
+                            _ts(
+                                'clusterViz',
+                                'clusterTitle',
+                                { noOfClusters: this.noOfClusters, noOfLeads: this.noOfLeads },
+                            )
+                        }
                         onMouseOver={(d) => { this.setState({ activeCluster: d }); }}
                         onMouseOut={() => { this.setState({ activeCluster: undefined }); }}
                         clusterSize={clusterSize}
