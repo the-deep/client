@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
 import { dateCondition } from '#rs/components/Input/Faram';
-import { listToMap } from '#rs/utils/common';
+import { listToMap, decodeDate } from '#rs/utils/common';
 
 import { entryAccessor, calculateEntryState } from '#entities/editEntries';
 
@@ -98,10 +98,25 @@ const getSchemaForWidget = (widget) => {
     switch (widget.widgetId) {
         // TODO; add schema for dateWidget
         case 'dateWidget': {
-            // FIXME: this is a test
             return {
                 fields: {
                     value: [dateCondition],
+                },
+            };
+        }
+        case 'dateRangeWidget': {
+            return {
+                validation: ({ fromValue, toValue }) => {
+                    const errors = [];
+                    if (fromValue && toValue && decodeDate(fromValue) > decodeDate(toValue)) {
+                        // FIXME: use strings
+                        errors.push('Invalid date range');
+                    }
+                    return errors;
+                },
+                fields: {
+                    fromValue: [dateCondition],
+                    toValue: [dateCondition],
                 },
             };
         }

@@ -3,6 +3,7 @@ import boundError from '#rs/components/General/BoundError';
 import { listToMap } from '#rs/utils/common';
 
 import DateWidget from './Date';
+import DateRangeWidget from './DateRange';
 import DefaultWidget from './Default';
 import ExcerptWidget from './Excerpt';
 import NumberWidget from './Number';
@@ -20,6 +21,11 @@ const WidgetList = [
         widgetId: 'dateWidget',
         type: 'list',
         component: DateWidget,
+    },
+    {
+        widgetId: 'dateRangeWidget',
+        type: 'list',
+        component: DateRangeWidget,
     },
     {
         widgetId: 'excerptWidget',

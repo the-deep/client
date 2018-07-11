@@ -2,6 +2,8 @@ import excerptWidget from './ExcerptWidget';
 import matrix1dWidget from './Matrix1dWidget';
 import matrix2dWidget from './Matrix2dWidget';
 import dateWidget from './DateWidget';
+
+import dateRangeWidget from './DateRangeWidget';
 import numberWidget from './NumberWidget';
 import selectWidget from './SelectWidget';
 import multiselectWidget from './MultiselectWidget';
@@ -17,6 +19,7 @@ const widgetStore = [
     matrix2dWidget,
     numberMatrixWidget,
     dateWidget,
+    dateRangeWidget,
     numberWidget,
     selectWidget,
     multiselectWidget,

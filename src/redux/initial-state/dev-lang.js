@@ -815,6 +815,14 @@ const initialDevLangState = {
             cancelButtonLabel: 61,
             editTitleModalHeader: 773,
         },
+        'framework.dateRangeWidget': {
+            widgetTitlePlaceholder: 13,
+
+            titleLabel: 13,
+            saveButtonLabel: 25,
+            cancelButtonLabel: 61,
+            editTitleModalHeader: 773,
+        },
         'framework.excerptWidget': {
             formatExcerpt: 515,
             textOrImageExcerptWidgetLabel: 706,
