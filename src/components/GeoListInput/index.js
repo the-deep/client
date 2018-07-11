@@ -17,6 +17,7 @@ const propTypes = {
     value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     regions: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     showHeader: PropTypes.bool,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -24,6 +25,7 @@ const defaultProps = {
     title: '',
     onChange: undefined,
     geoOptionsByRegion: {},
+    disabled: false,
     value: [],
     regions: [],
     showHeader: true,
@@ -121,7 +123,7 @@ export default class GeoListInput extends React.PureComponent {
     }
 
     valueLabelSelector = (v) => {
-        const option = this.geoOptionsById[v.key];
+        const option = this.geoOptionsById[this.valueKeySelector(v)];
         if (this.props.regions.length > 0) {
             return `${option.regionTitle} / ${option.label}`;
         }
@@ -160,7 +162,11 @@ export default class GeoListInput extends React.PureComponent {
     }
 
     renderShowModalButton = () => {
-        const { showHeader } = this.props;
+        const {
+            showHeader,
+            disabled,
+        } = this.props;
+
         if (showHeader) {
             return null;
         }
@@ -170,6 +176,7 @@ export default class GeoListInput extends React.PureComponent {
                 className={styles.action}
                 iconName={iconNames.chart}
                 onClick={this.handleShowModal}
+                disabled={disabled}
                 transparent
             />
         );
@@ -180,6 +187,7 @@ export default class GeoListInput extends React.PureComponent {
             title,
             value,
             showHeader,
+            disabled,
         } = this.props;
 
         const titleClassName = `${styles.title} title`;
@@ -198,6 +206,7 @@ export default class GeoListInput extends React.PureComponent {
                             className={styles.action}
                             iconName={iconNames.map}
                             onClick={this.handleShowModal}
+                            disabled={disabled}
                             transparent
                         />
                     </header>
@@ -212,6 +221,7 @@ export default class GeoListInput extends React.PureComponent {
                     showHintAndError={false}
                     topRightChild={this.renderShowModalButton}
                     hideSelectAllButton
+                    disabled={disabled}
                 />
                 <GeoModalRender />
             </div>
