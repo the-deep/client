@@ -8,6 +8,7 @@ import ExcerptWidget from './Excerpt';
 import NumberWidget from './Number';
 import ScaleWidget from './Scale';
 import MultiSelectWidget from './MultiSelect';
+import SelectWidget from './Select';
 import Matrix1dOverviewWidget from './Matrix1dOverview';
 import OrganigramWidget from './Organigram';
 import GeoWidget from './Geo';
@@ -59,6 +60,11 @@ const WidgetList = [
         widgetId: 'multiselectWidget',
         type: 'list',
         component: MultiSelectWidget,
+    },
+    {
+        widgetId: 'selectWidget',
+        type: 'list',
+        component: SelectWidget,
     },
     {
         widgetId: 'numberMatrixWidget',

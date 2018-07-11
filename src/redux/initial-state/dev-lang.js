@@ -847,6 +847,18 @@ const initialDevLangState = {
             saveButtonLabel: 25,
             cancelButtonLabel: 61,
         },
+        'framework.selectWidget': {
+            editSelectModalTitle: 740,
+            addOptionButtonLabel: 741,
+            optionLabel: 738,
+            optionPlaceholder: 739,
+            optionsHeader: 775,
+
+            titlePlaceholderScale: 758,
+            titleLabel: 13,
+            saveButtonLabel: 25,
+            cancelButtonLabel: 61,
+        },
         'framework.numberMatrixWidget': {
             editNumberMatrixModalTitle: 747,
             tooltipTitle: 733,
@@ -1590,6 +1602,7 @@ const initialDevLangState = {
             matrix1DWidgetLabel: 718,
             matrix2DWidgetLabel: 723,
             multiselectWidgetLabel: 737,
+            selectWidgetLabel: 643,
             numberMatrixWidgetLabel: 742,
             numberWidgetLabel: 752,
             organigramWidgetLabel: 753,

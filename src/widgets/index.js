@@ -3,6 +3,7 @@ import matrix1dWidget from './Matrix1dWidget';
 import matrix2dWidget from './Matrix2dWidget';
 import dateWidget from './DateWidget';
 import numberWidget from './NumberWidget';
+import selectWidget from './SelectWidget';
 import multiselectWidget from './MultiselectWidget';
 import scaleWidget from './ScaleWidget';
 import organigramWidget from './OrganigramWidget';
@@ -17,6 +18,7 @@ const widgetStore = [
     numberMatrixWidget,
     dateWidget,
     numberWidget,
+    selectWidget,
     multiselectWidget,
     scaleWidget,
     organigramWidget,
