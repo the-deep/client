@@ -5,10 +5,22 @@ import update from '#rs/utils/immutable-update';
 import List from '#rs/components/View/List';
 import FaramElement from '#rs/components/Input/Faram/FaramElement';
 
-import ColumnHeader from './ColumnHeader';
 import Row from './Row';
 
 import styles from './styles.scss';
+
+const ColumnHeader = ({ column }) => (
+    <th
+        className={styles.tableHeader}
+        scope="col"
+        title={column.tooltip}
+    >
+        {column.title}
+    </th>
+);
+ColumnHeader.propTypes = {
+    column: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+};
 
 const propTypes = {
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types

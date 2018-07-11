@@ -13,8 +13,10 @@ const defaultProps = {
     widget: undefined,
 };
 
+const emptyObject = {};
+
 const getData = (widget = {}) => {
-    const { properties: { data = {} } = {} } = widget;
+    const { properties: { data = emptyObject } = {} } = widget;
     return data;
 };
 

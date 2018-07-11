@@ -7,9 +7,11 @@ import _ts from '#ts';
 import styles from './styles.scss';
 
 const propTypes = {
+    rowKey: PropTypes.string.isRequired,
+    columnKey: PropTypes.string.isRequired,
     columnValue: PropTypes.number,
     disabled: PropTypes.bool.isRequired,
-    onNumberInputChange: PropTypes.func.isRequired,
+    onChangeNumberField: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -20,11 +22,20 @@ export default class ColumnElement extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    handleNumberInputChange = (newValue) => {
+        const {
+            rowKey,
+            columnKey,
+            onChangeNumberField,
+        } = this.props;
+
+        onChangeNumberField(rowKey, columnKey, newValue);
+    }
+
     render() {
         const {
             columnValue,
             disabled,
-            onNumberInputChange,
         } = this.props;
 
         return (
@@ -32,7 +43,7 @@ export default class ColumnElement extends React.PureComponent {
                 <NumberInput
                     placeholder={_ts('framework.numberMatrixWidget', 'numberPlaceholder')}
                     showLabel={false}
-                    onChange={onNumberInputChange}
+                    onChange={this.handleNumberInputChange}
                     value={columnValue}
                     showHintAndError={false}
                     separator=" "

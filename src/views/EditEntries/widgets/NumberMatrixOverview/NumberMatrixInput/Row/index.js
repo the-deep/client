@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import List from '#rs/components/View/List';
+import { unique } from '#rs/utils/common';
 
 import ColumnElement from './ColumnElement';
 import styles from './styles.scss';
@@ -28,7 +29,7 @@ export default class NumberMatrixRow extends React.PureComponent {
 
         const values = Object.values(value[key] || emptyObject).filter(v => v);
 
-        const isSame = new Set(values).size === 1;
+        const isSame = unique(values).length === 1;
         const colHeaderLength = (data.columnHeaders || emptyList).length;
 
         if (isSame && values.length === colHeaderLength) {
@@ -49,12 +50,15 @@ export default class NumberMatrixRow extends React.PureComponent {
             disabled,
             onChangeNumberField,
         } = this.props;
+
         const columnValue = (value[rowKey] || emptyObject)[columnKey];
 
         return ({
+            rowKey,
+            columnKey,
             disabled,
             columnValue,
-            onNumberInputChange: newValue => onChangeNumberField(rowKey, columnKey, newValue),
+            onChangeNumberField,
         });
     }
 
