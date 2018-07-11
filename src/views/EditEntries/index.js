@@ -255,7 +255,7 @@ export default class EditEntries extends React.PureComponent {
     }
 
     handleChange = (faramValues, faramErrors, faramInfo, entryKey) => {
-        if (faramInfo.action === 'newEntry' || entryKey === undefined) {
+        if (faramInfo.action === 'newEntry') {
             // TODO: if excerpt already exists modify existing entry
             // instead of creating a new one
 
@@ -271,6 +271,21 @@ export default class EditEntries extends React.PureComponent {
             [...faramElementName].reverse().forEach((key) => {
                 attributes = { [key]: attributes };
             });
+
+            this.props.addEntry({
+                leadId: this.props.leadId,
+                entry: {
+                    excerptType,
+                    excerptValue,
+                    lead: this.props.leadId,
+                    attributes,
+                    analysisFramework: this.props.analysisFramework.id,
+                },
+            });
+        } else if (entryKey === undefined) {
+            const excerptValue = '';
+            const excerptType = 'excerpt';
+            const attributes = faramValues;
 
             this.props.addEntry({
                 leadId: this.props.leadId,

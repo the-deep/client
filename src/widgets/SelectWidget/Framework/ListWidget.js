@@ -38,9 +38,10 @@ const emptyList = [];
 
 @BoundError(WidgetError)
 export default class Select extends React.PureComponent {
-    static valueKeyExtractor = d => d.key;
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static valueKeyExtractor = d => d.key;
 
     constructor(props) {
         super(props);
@@ -63,7 +64,7 @@ export default class Select extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.data !== nextProps.data) {
-            const options = (nextProps.data || emptyObject).options;
+            const { options } = (nextProps.data || emptyObject);
             this.setState({ options });
         }
     }

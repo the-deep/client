@@ -106,7 +106,7 @@ const getSchemaForWidget = (widget) => {
         }
         case 'dateRangeWidget': {
             return {
-                validation: ({ fromValue, toValue }) => {
+                validation: ({ fromValue, toValue } = {}) => {
                     const errors = [];
                     if (fromValue && toValue && decodeDate(fromValue) > decodeDate(toValue)) {
                         // FIXME: use strings
