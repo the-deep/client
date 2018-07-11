@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import NumberMatrixInput from '#components/NumberMatrixInput';
 import _ts from '#ts';
+import NumberMatrixInput from './NumberMatrixInput';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types

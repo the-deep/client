@@ -1,0 +1,6 @@
+@import '../../../../../../stylesheets/base';
+
+.table-header {
+    @include background-color($color-foreground);
+    padding: $spacing-small;
+}

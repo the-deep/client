@@ -21,9 +21,10 @@ const emptyList = [];
 const emptyObject = {};
 
 class NumberMatrixListView extends React.PureComponent {
-    static rowKeyExtractor = d => d.key;
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static rowKeyExtractor = d => d.key;
 
     getRowsData = (data, value) => {
         const { rowHeaders = emptyList } = data;
@@ -84,7 +85,6 @@ class NumberMatrixListView extends React.PureComponent {
     render() {
         const { value, data } = this.props;
         const dataRows = this.getRowsData(data, value);
-        console.warn(value);
 
         return (
             <ListView
@@ -98,4 +98,4 @@ class NumberMatrixListView extends React.PureComponent {
     }
 }
 
-export default FaramElement('input')(NumberMatrixListView);
+export default FaramElement('output')(NumberMatrixListView);
