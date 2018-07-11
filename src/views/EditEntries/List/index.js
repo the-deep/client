@@ -7,9 +7,10 @@ import VirtualizedListView from '#rscv/VirtualizedListView';
 import {
     editEntriesFilteredEntriesSelector,
     editEntriesWidgetsSelector,
+    editEntriesStatusesSelector,
 } from '#redux';
 
-import { entryAccessor } from '#entities/editEntries';
+import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
 
 import { hasWidget } from '../widgets';
 import WidgetFaramContainer from './WidgetFaramContainer';
@@ -17,18 +18,19 @@ import styles from './styles.scss';
 
 const propTypes = {
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    pending: PropTypes.bool,
 };
 
 const defaultProps = {
     entries: [],
+    statuses: {},
     widgets: [],
-    pending: false,
 };
 
 const mapStateToProps = state => ({
     entries: editEntriesFilteredEntriesSelector(state),
+    statuses: editEntriesStatusesSelector(state),
     widgets: editEntriesWidgetsSelector(state),
 });
 
@@ -59,7 +61,6 @@ const calculateMaxWidgetHeight = (widgets) => {
 };
 
 
-// eslint-disable-next-line react/no-multi-comp
 @connect(mapStateToProps)
 export default class Listing extends React.PureComponent {
     static propTypes = propTypes;
@@ -109,10 +110,12 @@ export default class Listing extends React.PureComponent {
         const {
             entries, // eslint-disable-line
             widgets, // eslint-disable-line
+            statuses,
             ...otherProps
         } = this.props;
         return {
             entry,
+            pending: statuses[key] === ENTRY_STATUS.requesting,
             widgetType: Listing.widgetType,
             widgets: this.widgets,
             ...otherProps,

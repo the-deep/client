@@ -130,8 +130,6 @@ export default class EditEntries extends React.PureComponent {
             overview: {
                 component: () => (
                     <Overview
-                        pending={this.state.pendingEditEntryData}
-
                         // injected inside WidgetFaram
                         onChange={this.handleChange}
                         onExcerptChange={this.handleExcerptChange}
@@ -147,8 +145,6 @@ export default class EditEntries extends React.PureComponent {
             list: {
                 component: () => (
                     <Listing
-                        pending={this.state.pendingEditEntryData}
-
                         // injected inside WidgetFaram
                         onChange={this.handleChange}
                         onExcerptChange={this.handleExcerptChange}

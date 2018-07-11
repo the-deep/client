@@ -4,6 +4,7 @@ import React from 'react';
 import Faram from '#rs/components/Input/Faram';
 import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
 import GridViewLayout from '#rs/components/View/GridViewLayout';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import { entryAccessor } from '#entities/editEntries';
 import { iconNames } from '#constants';
@@ -18,8 +19,8 @@ const propTypes = {
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     schema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    pending: PropTypes.bool,
     widgetType: PropTypes.string.isRequired,
+    pending: PropTypes.bool,
 
     onExcerptChange: PropTypes.func.isRequired,
     onExcerptCreate: PropTypes.func.isRequired,
@@ -28,10 +29,10 @@ const propTypes = {
 };
 
 const defaultProps = {
+    pending: false,
     className: '',
     entry: undefined,
     widgets: [],
-    pending: false,
     onChange: () => {},
     schema: {},
     actionComponent: undefined,
@@ -180,10 +181,10 @@ export default class WidgetFaram extends React.PureComponent {
     render() {
         const {
             entry = {},
-            pending,
             widgets,
             className: classNameFromProps,
             schema,
+            pending,
         } = this.props;
 
         const error = entryAccessor.error(entry);
@@ -206,6 +207,7 @@ export default class WidgetFaram extends React.PureComponent {
                 error={error}
                 disabled={pending}
             >
+                { pending && <LoadingAnimation /> }
                 <GridViewLayout
                     data={widgets}
                     layoutSelector={this.layoutSelector}
