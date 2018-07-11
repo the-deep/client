@@ -2,15 +2,17 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { Link } from 'react-router-dom';
+import { reverseRoute } from '#rs/utils/common';
+import { pathNames } from '#constants/';
+
 import BoundError from '#rs/components/General/BoundError';
-import SelectInput from '#rs/components/Input/SelectInput';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Pager from '#rs/components/View/Pager';
 import RawTable from '#rs/components/View/RawTable';
 import TableHeader from '#rs/components/View/TableHeader';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import SparkLines from '#rs/components/Visualization/SparkLines';
-import _ts from '#ts';
 
 import {
     discoverProjectsTotalProjectsCountSelector,
@@ -196,7 +198,13 @@ export default class DiscoverProjects extends React.PureComponent {
                         mode="dd-MM-yyyy"
                     />
                 );
-            case 'analysis_framework_title':
+            case 'created_by':
+                return (
+                    <Link to={reverseRoute(pathNames.userProfile, { userId: project.createdBy })}>
+                        {project.createdByName}
+                    </Link>
+                );
+            case 'analysis_framework':
                 return project.analysisFrameworkTitle;
             case 'number_of_users':
                 return project.numberOfUsers;
@@ -234,6 +242,8 @@ export default class DiscoverProjects extends React.PureComponent {
                         onProjectJoinCancel={this.handleProjectJoinCancel}
                     />
                 );
+            case 'status':
+                return project.statusTitle;
             default:
                 return project[columnKey];
         }

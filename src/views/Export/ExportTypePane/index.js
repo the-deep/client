@@ -74,6 +74,13 @@ export default class ExportTypePane extends React.PureComponent {
             });
         });
 
+        nodes.push({
+            title: _ts('export', 'uncategorizedTitle'),
+            key: 'uncategorized',
+            selected: true,
+            draggable: true,
+        });
+
         return nodes;
     }
 
