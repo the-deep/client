@@ -93,16 +93,7 @@ const decorator = Component => boundWidgetError(Component);
 const widgets = listToMap(
     WidgetList,
     widget => `${widget.type}:${widget.widgetId}`,
-    (widget) => {
-        const Widget = decorator(widget.component);
-        return props => (
-            <Widget
-                {...props}
-                widgetName={widget.widgetId}
-                widgetType={widget.type}
-            />
-        );
-    },
+    widget => decorator(widget.component),
 );
 
 export const fetchWidget = (type, widgetId) => (
