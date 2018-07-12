@@ -32,9 +32,7 @@ class Matrix1dInput extends React.PureComponent {
         const { value } = this.props;
         const settings = { $auto: {
             [key]: { $auto: {
-                [cellKey]: {
-                    $apply: item => !item,
-                },
+                [cellKey]: { $apply: item => !item },
             } },
         } };
 
@@ -65,6 +63,7 @@ class Matrix1dInput extends React.PureComponent {
         title: row.title,
         tooltip: row.tooltip,
         cells: row.cells,
+        // FIXME: send rowKey and cellKey as props
         onCellClick: cellKey => this.handleCellClick(key, cellKey),
         onCellDrop: (cellKey, droppedData) => this.handleCellDrop(key, cellKey, droppedData),
         selectedCells: this.props.value ? this.props.value[key] : undefined,

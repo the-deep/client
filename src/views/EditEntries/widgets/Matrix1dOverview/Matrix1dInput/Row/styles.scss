@@ -12,6 +12,7 @@
         flex-basis: $width-matrix-1d-title;
         flex-shrink: 0;
         padding: $spacing-extra-small $spacing-small;
+        font-weight: $font-weight-bold;
     }
 
     .cells {

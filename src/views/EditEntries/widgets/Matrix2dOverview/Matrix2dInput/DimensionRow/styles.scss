@@ -1,0 +1,8 @@
+@import '../../../../../../stylesheets/base';
+
+$width-dimension-column: 96px;
+
+.dimension-td {
+    width: $width-dimension-column;
+    font-weight: $font-weight-bold;
+}

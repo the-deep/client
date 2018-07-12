@@ -15,6 +15,7 @@ import OrganigramWidget from './Organigram';
 import GeoWidget from './Geo';
 import NumberMatrixOverviewWidget from './NumberMatrixOverview';
 import NumberMatrixListWidget from './NumberMatrixList';
+import Matrix2dOverviewWidget from './Matrix2dOverview';
 
 const WidgetList = [
     {
@@ -55,7 +56,7 @@ const WidgetList = [
     {
         widgetId: 'matrix2dWidget',
         type: 'overview',
-        component: DefaultWidget,
+        component: Matrix2dOverviewWidget,
     },
     {
         widgetId: 'matrix2dWidget',
