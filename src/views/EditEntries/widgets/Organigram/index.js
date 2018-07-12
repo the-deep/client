@@ -23,7 +23,7 @@ export default class OrganigramWidget extends React.PureComponent {
     constructor(props) {
         super(props);
         const { widget = {} } = props;
-        const { properties: { data = {} } = {} } = widget;
+        const { properties: { data } = {} } = widget;
 
         // Data is returned as an array because there might be multiple heads
         this.data = data === undefined ? undefined : [data];

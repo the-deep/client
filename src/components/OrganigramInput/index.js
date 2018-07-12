@@ -26,6 +26,7 @@ const propTypes = {
     labelSelector: PropTypes.func,
     childSelector: PropTypes.func,
     showHeader: PropTypes.bool,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -33,6 +34,7 @@ const defaultProps = {
     title: 'Organigram', // FIXME: use strings
     onChange: undefined,
     value: [],
+    disabled: false,
     showHeader: true,
     idSelector: organ => organ.id,
     labelSelector: organ => organ.title,
@@ -220,7 +222,10 @@ export default class OrganigramInput extends React.PureComponent {
     }
 
     renderShowModalButton = () => {
-        const { showHeader } = this.props;
+        const {
+            showHeader,
+            disabled,
+        } = this.props;
         if (showHeader) {
             return null;
         }
@@ -231,12 +236,16 @@ export default class OrganigramInput extends React.PureComponent {
                 iconName={iconNames.chart}
                 onClick={this.handleShowModal}
                 transparent
+                disabled={disabled}
             />
         );
     }
 
     renderMultiSelect = () => {
-        const { value } = this.props;
+        const {
+            value,
+            disabled,
+        } = this.props;
 
         if (!this.mountSelectInput) {
             return null;
@@ -253,6 +262,7 @@ export default class OrganigramInput extends React.PureComponent {
                 showHintAndError={false}
                 topRightChild={this.renderShowModalButton}
                 hideSelectAllButton
+                disabled={disabled}
             />
         );
     }
@@ -261,6 +271,7 @@ export default class OrganigramInput extends React.PureComponent {
         const {
             title,
             showHeader,
+            disabled,
         } = this.props;
 
         const titleClassName = `${styles.title} title`;
@@ -279,6 +290,7 @@ export default class OrganigramInput extends React.PureComponent {
                             className={styles.action}
                             iconName={iconNames.chart}
                             onClick={this.handleShowModal}
+                            disabled={disabled}
                             transparent
                         />
                     </header>
