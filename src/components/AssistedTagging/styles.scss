@@ -1,6 +1,11 @@
 @import '../../stylesheets/base';
 
 $height-assistant-options: 58px;
+$position-info-top: 16px;
+$position-info-right: 12px;
+$min-width-sector: 96px;
+$max-height-info-bar: 40vh;
+$min-width-assistant: 240px;
 
 .assisted-tagging {
     &.assistant-shown {
@@ -34,6 +39,18 @@ $height-assistant-options: 58px;
             flex-basis: 40%;
             margin-left: $spacing-small;
         }
+
+        .info {
+            position: absolute;
+            top: $position-info-top;
+            right: $position-info-right;
+            cursor: pointer;
+
+            .icon {
+                color: $color-primary;
+                font-size: $font-size-large;
+            }
+        }
     }
 }
 
@@ -42,7 +59,7 @@ $height-assistant-options: 58px;
     display: flex;
     flex-direction: column;
     background-color: $color-foreground;
-    min-width: 240px;
+    min-width: $min-width-assistant;
 
     .header {
         display: flex;
@@ -71,7 +88,7 @@ $height-assistant-options: 58px;
         display: flex;
         flex-direction: column;
         padding: $spacing-small $spacing-large;
-        max-height: 40vh;
+        max-height: $max-height-info-bar;
         overflow-y: auto;
         text-align: justify;
 
@@ -101,7 +118,7 @@ $height-assistant-options: 58px;
             margin-left: $spacing-extra-small;
             border: $width-separator-thin solid $color-separator-alt;
             padding: 0 $spacing-extra-small;
-            min-width: 96px;
+            min-width: $min-width-sector;
 
             .sector-text {
                 flex-grow: 1;

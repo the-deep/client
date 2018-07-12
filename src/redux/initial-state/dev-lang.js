@@ -291,6 +291,7 @@ const initialDevLangState = {
         542: 'Thank you for your feedback.',
         543: 'Oops! It seems you don\'t have any entries. Please go back to the overview page to add some entries.',
         545: 'Locations',
+        546: 'Much like all living beings, DEEP has evolved and has a growing brain. Right now, it can help give you recommendations on finding excerpts in your Source that talk about the following sectors:\nWASH, Livelihood, Food, Protection, Shelter, NFI, Health, Nutrition, Education, Crosscutting, Agriculture, Logistic\n \nBut DEEP needs your help to learn! By hovering over a highlighted sentence, you will see the option to give a recommendation a thumbs up or thumbs down. Your feedback will help make DEEP’s recommendations more accurate for yourself and everyone else.\n \nContent available in the Category Editor will also be highlighted with this feature when you select \'Category Editor\' in list in the bottom right.\n \nSee something you don\'t like or want to leave feedback? Or just want somebody to talk to? Use the \'Feedback / Report a Bug\' feature at the bottom of the screen and the DEEP itself will get back to you.',
         600: 'Export',
         601: 'Show Preview',
         602: 'Start Export',
@@ -1206,6 +1207,7 @@ const initialDevLangState = {
             entitiesLabel: 508,
             nlpLabel: 502,
             notAccurateTextTitle: 505,
+            infoTooltip: 546,
         },
         editEntry: {
             gotoOverviewButtonLabel: 509,
