@@ -101,6 +101,8 @@ export default class EntriesListing extends React.PureComponent {
             classNames.push(styles.markedForDelete);
         }
 
+        const pending = status === ENTRY_STATUS.requesting;
+
         return (
             <div
                 className={classNames.join(' ')}
@@ -128,6 +130,7 @@ export default class EntriesListing extends React.PureComponent {
                             onClick={() => handleMarkAsDeletedEntry(currentEntryKey, false)}
                             iconName={iconNames.undo}
                             title={_ts('editEntry', 'removeEntryButtonTitle')}
+                            disabled={pending}
                         />
                     ) : (
                         <DangerButton
@@ -136,6 +139,7 @@ export default class EntriesListing extends React.PureComponent {
                             onClick={() => handleMarkAsDeletedEntry(currentEntryKey, true)}
                             iconName={iconNames.delete}
                             title={_ts('editEntry', 'undoRemoveEntryButtonTitle')}
+                            disabled={pending}
                         />
                     )
                 }

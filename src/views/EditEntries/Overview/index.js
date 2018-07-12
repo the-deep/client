@@ -7,12 +7,13 @@ import SelectInput from '#rsci/SelectInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 
-import { entryAccessor } from '#entities/editEntries';
+import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
 
 import {
     leadIdFromRoute,
     editEntriesWidgetsSelector,
     editEntriesSelectedEntrySelector,
+    editEntriesStatusesSelector,
 
     editEntriesSelectedEntryKeySelector,
     editEntriesFilteredEntriesSelector,
@@ -30,9 +31,9 @@ const propTypes = {
     leadId: PropTypes.number.isRequired,
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    pending: PropTypes.bool,
     selectedEntryKey: PropTypes.string,
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setSelectedEntryKey: PropTypes.func.isRequired,
     onExcerptCreate: PropTypes.func.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
@@ -42,7 +43,7 @@ const defaultProps = {
     entry: undefined,
     widgets: [],
     entries: [],
-    pending: false,
+    statuses: {},
     selectedEntryKey: undefined,
 };
 
@@ -53,6 +54,7 @@ const mapStateToProps = state => ({
     entry: editEntriesSelectedEntrySelector(state),
     selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
     entries: editEntriesFilteredEntriesSelector(state),
+    statuses: editEntriesStatusesSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -74,9 +76,11 @@ export default class Overview extends React.PureComponent {
     )
 
     static entryKeySelector = entry => entryAccessor.key(entry)
+
     static entryLabelSelector = (entry) => {
         const values = entryAccessor.data(entry);
         const { excerpt, order } = values;
+        // FIXME: use strings
         return excerpt || `Excerpt ${order}`;
     };
 
@@ -119,15 +123,17 @@ export default class Overview extends React.PureComponent {
 
     render() {
         const {
-            pending,
             entry,
             leadId, // eslint-disable-line no-unused-vars
             widgets, // eslint-disable-line no-unused-vars
             entries, // eslint-disable-line no-unused-vars
+            statuses,
             selectedEntryKey, // eslint-disable-line no-unused-vars
 
             ...otherProps
         } = this.props;
+
+        const pending = statuses[selectedEntryKey] === ENTRY_STATUS.requesting;
 
         return (
             <ResizableH
@@ -156,7 +162,7 @@ export default class Overview extends React.PureComponent {
                             <div className={styles.actionButtons}>
                                 <DangerButton
                                     onClick={this.handleEntryDelete}
-                                    disabled={!entry}
+                                    disabled={!entry || pending}
                                 >
                                     {/* FIXME: use strings */}
                                     Remove
@@ -173,8 +179,8 @@ export default class Overview extends React.PureComponent {
                         <WidgetFaram
                             className={styles.content}
                             entry={entry}
-                            widgets={this.widgets}
                             pending={pending}
+                            widgets={this.widgets}
                             widgetType={Overview.widgetType}
                             {...otherProps}
                         />

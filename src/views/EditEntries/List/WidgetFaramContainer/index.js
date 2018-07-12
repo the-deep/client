@@ -104,12 +104,14 @@ export default class WidgetFaramContainer extends React.PureComponent {
                         iconName={iconNames.delete}
                         title={deleteButtonTooltip}
                         onClick={this.handleEntryDelete}
+                        disabled={pending}
                     />
                     <WarningButton
                         transparent
                         onClick={this.handleEdit}
                         title={editButtonTooltip}
                         iconName={iconNames.edit}
+                        // NOTE: no need to disable edit
                     />
                 </header>
                 <WidgetFaram
