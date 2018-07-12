@@ -3,11 +3,13 @@ import boundError from '#rs/components/General/BoundError';
 import { listToMap } from '#rs/utils/common';
 
 import DateWidget from './Date';
+import DateRangeWidget from './DateRange';
 import DefaultWidget from './Default';
 import ExcerptWidget from './Excerpt';
 import NumberWidget from './Number';
 import ScaleWidget from './Scale';
 import MultiSelectWidget from './MultiSelect';
+import SelectWidget from './Select';
 import Matrix1dOverviewWidget from './Matrix1dOverview';
 import OrganigramWidget from './Organigram';
 import GeoWidget from './Geo';
@@ -19,6 +21,11 @@ const WidgetList = [
         widgetId: 'dateWidget',
         type: 'list',
         component: DateWidget,
+    },
+    {
+        widgetId: 'dateRangeWidget',
+        type: 'list',
+        component: DateRangeWidget,
     },
     {
         widgetId: 'excerptWidget',
@@ -59,6 +66,11 @@ const WidgetList = [
         widgetId: 'multiselectWidget',
         type: 'list',
         component: MultiSelectWidget,
+    },
+    {
+        widgetId: 'selectWidget',
+        type: 'list',
+        component: SelectWidget,
     },
     {
         widgetId: 'numberMatrixWidget',

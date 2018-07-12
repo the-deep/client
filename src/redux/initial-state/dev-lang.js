@@ -815,6 +815,14 @@ const initialDevLangState = {
             cancelButtonLabel: 61,
             editTitleModalHeader: 773,
         },
+        'framework.dateRangeWidget': {
+            widgetTitlePlaceholder: 13,
+
+            titleLabel: 13,
+            saveButtonLabel: 25,
+            cancelButtonLabel: 61,
+            editTitleModalHeader: 773,
+        },
         'framework.excerptWidget': {
             formatExcerpt: 515,
             textOrImageExcerptWidgetLabel: 706,
@@ -837,6 +845,18 @@ const initialDevLangState = {
         },
         'framework.multiselectWidget': {
             editMultiselectModalTitle: 740,
+            addOptionButtonLabel: 741,
+            optionLabel: 738,
+            optionPlaceholder: 739,
+            optionsHeader: 775,
+
+            titlePlaceholderScale: 758,
+            titleLabel: 13,
+            saveButtonLabel: 25,
+            cancelButtonLabel: 61,
+        },
+        'framework.selectWidget': {
+            editSelectModalTitle: 740,
             addOptionButtonLabel: 741,
             optionLabel: 738,
             optionPlaceholder: 739,
@@ -1590,6 +1610,7 @@ const initialDevLangState = {
             matrix1DWidgetLabel: 718,
             matrix2DWidgetLabel: 723,
             multiselectWidgetLabel: 737,
+            selectWidgetLabel: 643,
             numberMatrixWidgetLabel: 742,
             numberWidgetLabel: 752,
             organigramWidgetLabel: 753,
