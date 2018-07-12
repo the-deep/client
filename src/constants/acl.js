@@ -44,7 +44,9 @@ const acl = {
         ),
     },
     notifications: {
-        hide: ({ isLoggedIn }) => !isLoggedIn,
+        hide: ({ isLoggedIn, isBeta }) => (
+            !isLoggedIn || isBeta
+        ),
     },
     adminPanel: {
         hide: ({ isLoggedIn, isAdmin }) => (
