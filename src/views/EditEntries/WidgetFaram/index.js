@@ -121,33 +121,56 @@ export default class WidgetFaram extends React.PureComponent {
 
     renderWidgetContent = (widget) => {
         const {
+            id,
+            widgetId,
+        } = widget;
+        const {
             widgetType,
             entry,
         } = this.props;
+        const {
+            entryType,
+            excerpt,
+            image,
+        } = entryAccessor.data(entry) || {};
 
-        const { entryType, excerpt, image } = entryAccessor.data(entry) || {};
-        const { id, widgetId } = widget;
         const Widget = fetchWidget(widgetType, widgetId);
+
+        let child = null;
+        switch (widgetId) {
+            case 'excerptWidget': {
+                child = (
+                    <Widget
+                        widgetName={widgetId}
+                        widgetType={widgetType}
+                        widget={widget}
+
+                        entryType={entryType}
+                        excerpt={excerpt}
+                        image={image}
+                        onExcerptChange={this.handleExcerptChange}
+                        onExcerptCreate={this.handleExcerptCreate}
+                    />
+                );
+                break;
+            }
+            default: {
+                child = (
+                    <Widget
+                        widgetName={widgetId}
+                        widgetType={widgetType}
+                        widget={widget}
+                    />
+                );
+                break;
+            }
+        }
 
         return (
             <div className={styles.content}>
                 <FaramGroup faramElementName={String(id)}>
                     <FaramGroup faramElementName="data">
-                        {
-                            // NOTE: excerptWidget is a special case
-                            widgetId === 'excerptWidget' ? (
-                                <Widget
-                                    entryType={entryType}
-                                    excerpt={excerpt}
-                                    image={image}
-                                    widget={widget}
-                                    onExcerptChange={this.handleExcerptChange}
-                                    onExcerptCreate={this.handleExcerptCreate}
-                                />
-                            ) : (
-                                <Widget widget={widget} />
-                            )
-                        }
+                        { child }
                     </FaramGroup>
                 </FaramGroup>
             </div>

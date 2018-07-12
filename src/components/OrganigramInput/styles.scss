@@ -3,9 +3,10 @@
 $height-orgchart-modal: 80vh;
 $width-orgchart-modal: 80%;
 
-.organigram-with-list {
+.organigram-input {
     display: flex;
     flex-direction: column;
+    height: 100%;
 
     .header {
         display: flex;
@@ -23,7 +24,7 @@ $width-orgchart-modal: 80%;
         }
     }
 
-    .list-input {
+    .select-input {
         flex-grow: 1;
     }
 }

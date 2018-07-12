@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import Message from '#rscv/Message';
+
 const propTypes = {
     widgetName: PropTypes.string.isRequired,
     widgetType: PropTypes.string.isRequired,
@@ -15,10 +17,11 @@ export default class DefaultWidget extends React.PureComponent {
 
     render() {
         const { widgetName, widgetType } = this.props;
+        // FIXME: use strings
         return (
-            <div>
-                {widgetType}: {widgetName}
-            </div>
+            <Message>
+                {widgetName} for {widgetType}
+            </Message>
         );
     }
 }

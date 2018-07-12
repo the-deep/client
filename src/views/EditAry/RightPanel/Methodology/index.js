@@ -23,7 +23,7 @@ import {
     projectDetailsSelector,
     geoOptionsForProjectSelector,
 } from '#redux';
-import OrganigramWithList from '#components/OrganigramWithList/';
+import OrganigramInput from '#components/OrganigramInput/';
 import GeoListInput from '#components/GeoListInput/';
 
 import Header from '../Header';
@@ -63,6 +63,9 @@ const titleSelector = d => d.title;
 export default class Methodology extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+    static orgIdSelector = organ => organ.id;
+    static orgLabelSelector = organ => organ.title;
+    static orgChildSelector = organ => organ.children;
 
     renderAttributeHeader = (k, key) => {
         const { aryTemplateMethodology: attributesTemplate } = this.props;
@@ -202,11 +205,14 @@ export default class Methodology extends React.PureComponent {
                             keySelector={idSelector}
                             labelSelector={titleSelector}
                         />
-                        <OrganigramWithList
+                        <OrganigramInput
                             faramElementName="affectedGroups"
                             title={affectedGroupsTitle}
                             className={styles.affectedGroups}
                             data={affectedGroups}
+                            childSelector={Methodology.orgChildSelector}
+                            labelSelector={Methodology.orgLabelSelector}
+                            idSelector={Methodology.orgIdSelector}
                         />
                         <GeoListInput
                             faramElementName="locations"

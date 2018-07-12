@@ -11,6 +11,8 @@ import NumberWidget from './Number';
 import ScaleWidget from './Scale';
 import MultiSelectWidget from './MultiSelect';
 import Matrix1dOverviewWidget from './Matrix1dOverview';
+import OrganigramWidget from './Organigram';
+import GeoWidget from './Geo';
 
 const WidgetList = [
     {
@@ -31,7 +33,7 @@ const WidgetList = [
     {
         widgetId: 'geoWidget',
         type: 'list',
-        component: DefaultWidget,
+        component: GeoWidget,
     },
     {
         widgetId: 'matrix1dWidget',
@@ -76,7 +78,7 @@ const WidgetList = [
     {
         widgetId: 'organigramWidget',
         type: 'list',
-        component: DefaultWidget,
+        component: OrganigramWidget,
     },
     {
         widgetId: 'scaleWidget',
@@ -91,16 +93,7 @@ const decorator = Component => boundWidgetError(Component);
 const widgets = listToMap(
     WidgetList,
     widget => `${widget.type}:${widget.widgetId}`,
-    (widget) => {
-        const Widget = decorator(widget.component);
-        return props => (
-            <Widget
-                {...props}
-                widgetName={widget.widgetId}
-                widgetType={widget.type}
-            />
-        );
-    },
+    widget => decorator(widget.component),
 );
 
 export const fetchWidget = (type, widgetId) => (

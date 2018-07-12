@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Organigram from '#rs/components/Visualization/Organigram';
+import OrgChart from '#rs/components/Visualization/OrgChart';
 import Button from '#rs/components/Action/Button';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import AccentButton from '#rs/components/Action/Button/AccentButton';
@@ -157,13 +157,13 @@ export default class OrganigramSelectInput extends React.PureComponent {
             <Modal>
                 <ModalHeader title={label} />
                 <ModalBody>
-                    <Organigram
-                        childrenAccessor={childrenSelector}
-                        idAccessor={idSelector}
-                        labelAccessor={labelSelector}
-                        onSelection={this.handleOrgSelection}
-                        value={value}
-                        data={data[0] || emptyObject}
+                    <OrgChart
+                        data={data}
+                        labelAccessor={this.labelAccessor}
+                        idAccessor={this.idAccessor}
+                        childAccessor={this.childAccessor}
+                        onSelection={this.handleSelection}
+                        value={this.state.values}
                     />
                 </ModalBody>
                 <ModalFooter>

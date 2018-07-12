@@ -108,11 +108,13 @@ export default class Listing extends React.PureComponent {
     rendererParams = (key, entry) => {
         const {
             entries, // eslint-disable-line
+            widgets, // eslint-disable-line
             ...otherProps
         } = this.props;
         return {
             entry,
             widgetType: Listing.widgetType,
+            widgets: this.widgets,
             ...otherProps,
         };
     }
