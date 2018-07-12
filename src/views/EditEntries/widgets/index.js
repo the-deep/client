@@ -17,7 +17,7 @@ import NumberMatrixOverviewWidget from './NumberMatrixOverview';
 import NumberMatrixListWidget from './NumberMatrixList';
 import Matrix2dOverviewWidget from './Matrix2dOverview';
 
-const WidgetList = [
+const widgetList = [
     {
         widgetId: 'dateWidget',
         type: 'list',
@@ -104,7 +104,7 @@ const boundWidgetError = boundError(WidgetError);
 const decorator = Component => boundWidgetError(Component);
 
 const widgets = listToMap(
-    WidgetList,
+    widgetList,
     widget => `${widget.type}:${widget.widgetId}`,
     widget => decorator(widget.component),
 );

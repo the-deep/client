@@ -13,6 +13,10 @@ export const urlForAnalysisFrameworks = `${wsEndpoint}/analysis-frameworks/?${p(
 
 export const urlForAfCreate = `${wsEndpoint}/analysis-frameworks/`;
 
+export const createUrlForProjectFramework = projectId => (`
+    ${wsEndpoint}/projects/${projectId}/analysis-framework/
+`);
+
 export const createUrlForAfClone = analysisFrameworkId => (
     `${wsEndpoint}/clone-analysis-framework/${analysisFrameworkId}/`
 );

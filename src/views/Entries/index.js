@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import ListView from '#rscv/List/ListView';
 import BoundError from '#rs/components/General/BoundError';
 
 import AppError from '#components/AppError';
@@ -26,15 +27,17 @@ import {
     setEntriesViewActivePageAction,
 } from '#redux';
 
-import _ts from '#ts';
+// import _ts from '#ts';
 
 import EntriesRequest from './requests/EntriesRequest';
-import FilterEntriesForm from './FilterEntriesForm';
+import FrameworkRequest from './requests/FrameworkRequest';
+import LeadGroupedEntries from './LeadGroupedEntries';
+// import FilterEntriesForm from './FilterEntriesForm';
 import styles from './styles.scss';
 
 const mapStateToProps = (state, props) => ({
-    entries: entriesForProjectSelector(state, props),
-    analysisFramework: analysisFrameworkForProjectSelector(state, props),
+    leadGroupedEntriesList: entriesForProjectSelector(state, props),
+    framework: analysisFrameworkForProjectSelector(state, props),
     entriesFilter: entriesViewFilterSelector(state, props),
     projectId: projectIdFromRouteSelector(state, props),
     activePage: entriesViewActivePageSelector(state, props),
@@ -50,15 +53,17 @@ const mapStateToProps = (state, props) => ({
 const mapDispatchToProps = dispatch => ({
     setEntries: params => dispatch(setEntriesAction(params)),
     setProject: params => dispatch(setProjectAction(params)),
-    setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
+    setFramework: params => dispatch(setAnalysisFrameworkAction(params)),
     unsetEntriesViewFilter: params => dispatch(unsetEntriesViewFilterAction(params)),
     setEntriesViewActivePage: params => dispatch(setEntriesViewActivePageAction(params)),
 });
 
 const propTypes = {
     // activePage: PropTypes.number.isRequired,
-    // entries: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/forbid-prop-types
+    leadGroupedEntriesList: PropTypes.array.isRequired,
     setEntries: PropTypes.func.isRequired,
+    setFramework: PropTypes.func.isRequired,
     entriesFilter: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     // totalEntriesCount: PropTypes.number,
     // setEntriesViewActivePage: PropTypes.func.isRequired,
@@ -72,11 +77,13 @@ const propTypes = {
 
 const defaultProps = {
     // maxHeight: 0,
-    totalEntriesCount: 0,
+    // totalEntriesCount: 0,
 };
 
-const MAX_ENTRIES_PER_REQUEST = 5;
-const emptyList = [];
+// const MAX_ENTRIES_PER_REQUEST = 5;
+// const emptyList = [];
+
+const LeadKeySelector = d => d.id;
 
 @BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
@@ -89,14 +96,28 @@ export default class Entries extends React.PureComponent {
 
         this.state = {
             pendingEntries: true,
+            pendingFramework: true,
         };
 
+        const getProjectId = () => this.props.projectId;
+        const getOffset = () => this.props.offset;
+        const getLimit = () => this.props.limit;
+        const getFilters = () => this.props.entriesFilter;
+        const setState = d => this.setState(d);
+
         this.entriesRequest = new EntriesRequest({
-            setState: d => this.setState(d),
-            getOffset: () => this.props.offset,
-            getLimit: () => this.props.limit,
-            getFilters: () => this.props.entriesFilter,
+            setState,
+            getOffset,
+            getLimit,
+            getProjectId,
+            getFilters,
             setEntries: this.props.setEntries,
+        });
+
+        this.frameworkRequest = new FrameworkRequest({
+            setState,
+            getProjectId,
+            setFramework: this.props.setFramework,
         });
 
         this.leadEntries = React.createRef();
@@ -105,12 +126,32 @@ export default class Entries extends React.PureComponent {
     componentDidMount() {
         this.entriesRequest.init();
         this.entriesRequest.start();
+
+        this.frameworkRequest.init();
+        this.frameworkRequest.start();
+
         window.addEventListener('scroll', this.handleScroll, true);
     }
 
     componentWillUnmount() {
         this.entriesRequest.stop();
+        this.frameworkRequest.stop();
         window.removeEventListener('scroll', this.handleScroll, true);
+    }
+
+    getLeadGroupedEntriesParams = (_, datum) => {
+        const {
+            projectId,
+            framework: {
+                widgets,
+            },
+        } = this.props;
+
+        return ({
+            lead: datum,
+            projectId,
+            widgets,
+        });
     }
 
     renderHeader = () => {
@@ -123,13 +164,17 @@ export default class Entries extends React.PureComponent {
         );
     }
 
-    renderLeadGroupedEntries = () => {
-        const text = 'Entries';
+    renderLeadGroupedEntriesList = () => {
+        const { leadGroupedEntriesList } = this.props;
 
         return (
-            <div className={styles.leadGroupedEntries}>
-                { text }
-            </div>
+            <ListView
+                className={styles.leadGroupedEntriesList}
+                data={leadGroupedEntriesList}
+                renderer={LeadGroupedEntries}
+                keyExtractor={LeadKeySelector}
+                rendererParams={this.getLeadGroupedEntriesParams}
+            />
         );
     }
 
@@ -145,14 +190,13 @@ export default class Entries extends React.PureComponent {
 
     render() {
         const Header = this.renderHeader;
-        const LeadGroupedEntries = this.renderLeadGroupedEntries;
+        const LeadGroupedEntriesList = this.renderLeadGroupedEntriesList;
         const Footer = this.renderFooter;
-        // const LeadEntries = this.renderLeadEntries;
 
         return (
             <div className={styles.entriesView}>
                 <Header />
-                <LeadGroupedEntries />
+                <LeadGroupedEntriesList />
                 <Footer />
             </div>
         );

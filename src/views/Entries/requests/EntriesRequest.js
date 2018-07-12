@@ -5,6 +5,8 @@ import {
 } from '#rest';
 
 export default class EntriesRequest extends Request {
+    schemaName = 'entriesGetResponse';
+
     handlePreLoad = () => {
         this.parent.setState({ pendingEntries: true });
     }
@@ -13,8 +15,25 @@ export default class EntriesRequest extends Request {
         this.parent.setState({ pendingEntries: false });
     }
 
-    handleSuccess = (entries) => {
-        this.parent.setEntries({ entries });
+    handleSuccess = (response) => {
+        const {
+            results: {
+                entries: responseEntries,
+                leads: responseLeads,
+            },
+            count: totalEntriesCount,
+        } = response;
+
+        const entries = responseLeads.map(lead => ({
+            ...lead,
+            entries: responseEntries.filter(e => e.lead === lead.id),
+        }));
+
+        this.parent.setEntries({
+            projectId: this.parent.getProjectId(),
+            entries,
+            totalEntriesCount,
+        });
     }
 
     getUrl = () => (

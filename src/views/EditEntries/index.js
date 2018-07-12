@@ -245,7 +245,7 @@ export default class EditEntries extends React.PureComponent {
             entry: {
                 analysisFramework: this.props.analysisFramework.id,
                 excerptType: type,
-                exceprtValue: value,
+                excerptValue: value,
             },
         });
     }
