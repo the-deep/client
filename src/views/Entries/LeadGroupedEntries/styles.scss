@@ -1,0 +1,46 @@
+@import '../../../stylesheets/base';
+
+.lead-grouped-entries {
+    .header {
+        @include background-color($color-background-header);
+        display: flex;
+        align-items: center;
+
+        .heading {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+
+            .title {
+                padding: $spacing-small $spacing-small $spacing-small $spacing-medium;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .date {
+                flex-shrink: 0;
+                padding: $spacing-small;
+                color: $color-text-label;
+            }
+        }
+
+        .number-of-entries {
+            flex-shrink: 0;
+            padding: $spacing-small $spacing-medium;
+            width: 5ch;
+            text-align: right;
+            font-family: $font-family-monospace;
+        }
+
+        .edit-entry-link {
+            @include background-color($color-primary);
+            flex-shrink: 0;
+            padding: $spacing-small $spacing-medium;
+        }
+    }
+
+    .entry-list {
+        padding: $spacing-medium;
+    }
+}

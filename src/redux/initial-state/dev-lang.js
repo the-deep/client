@@ -279,7 +279,7 @@ const initialDevLangState = {
         523: 'Mark current entry for removal',
         525: 'Unmark current entry for removal',
         528: 'Clear',
-        530: 'Edit Entry',
+        530: 'Edit entries',
         531: 'Set',
         533: 'Select geo region',
         534: 'Couldn\'t load geo filter options',
@@ -746,6 +746,8 @@ const initialDevLangState = {
         4018: 'Sankey',
         4019: 'Sparklines',
         4020: 'Parallel Coordinates',
+
+        12000: 'Goto edit entries page for the lead',
     },
     links: {
         /*
@@ -1257,7 +1259,7 @@ const initialDevLangState = {
         entries: {
             applyFilterButtonLabel: 427,
             clearFilterButtonLabel: 528,
-            editEntryLinkTitle: 363,
+            editEntryLinkTitle: 12000,
             editEntryButtonLabel: 530,
             searchFilterLabel: 9,
             searchFilterPlaceholder: 537,

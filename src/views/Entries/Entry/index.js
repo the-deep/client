@@ -1,0 +1,109 @@
+import PropTypes from 'prop-types';
+import React from 'react';
+import GridViewLayout from '#rs/components/View/GridViewLayout';
+
+import { fetchWidget } from '../widgets';
+import styles from './styles.scss';
+
+const propTypes = {
+    className: PropTypes.string,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    entry: PropTypes.object.isRequired,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    widgets: PropTypes.array.isRequired,
+};
+
+const defaultProps = {
+    className: '',
+};
+
+const widgetLayoutSelector = (widget) => {
+    const {
+        properties: {
+            listGridLayout,
+        } = {},
+    } = widget;
+    return listGridLayout;
+};
+
+const widgetKeySelector = widget => widget.key;
+
+export default class Entry extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
+
+    renderWidgetHeader = (widget) => {
+        const { title } = widget;
+
+        const className = `
+            ${styles.header}
+        `;
+
+        return (
+            <div className={className}>
+                <h5 className={styles.heading}>
+                    { title }
+                </h5>
+            </div>
+        );
+    }
+
+    renderWidgetContent = (widget) => {
+        const { widgetId } = widget;
+
+        const Widget = fetchWidget(widgetId);
+        const {
+            entry: {
+                entryType,
+                excerpt,
+                image,
+            },
+        } = this.props;
+
+        if (widgetId === 'excerptWidget') {
+            return (
+                <Widget
+                    className={styles.content}
+                    entryType={entryType}
+                    excerpt={excerpt}
+                    image={image}
+                    widget={widget}
+                />
+            );
+        }
+
+        return (
+            <Widget
+                className={styles.content}
+                widget={widget}
+            />
+        );
+    }
+
+    render() {
+        const {
+            className: classNameFromProps,
+            widgets,
+        } = this.props;
+
+        const className = `
+            ${classNameFromProps}
+            ${styles.entry}
+        `;
+
+        return (
+            <GridViewLayout
+                className={className}
+                data={widgets}
+                layoutSelector={widgetLayoutSelector}
+                itemHeaderModifier={this.renderWidgetHeader}
+                itemContentModifier={this.renderWidgetContent}
+                keySelector={widgetKeySelector}
+                itemClassName={styles.widget}
+            />
+        );
+    }
+}

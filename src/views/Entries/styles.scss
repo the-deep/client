@@ -2,130 +2,29 @@
 @import '../../stylesheets/grid-item';
 
 .entries-view {
-    @extend %main-content;
     display: flex;
-    position: relative;
     flex-direction: column;
+    margin: -$spacing-small-alt;
+    height: calc(100% + #{$spacing-small-alt * 2});
 
-    :global {
-        .entries-filters {
-            display: flex;
-            align-items: flex-end;
-            flex-shrink: 0;
-            flex-wrap: wrap;
-            border-bottom: $width-separator-thin solid $color-separator;
-            background-color: $color-foreground;
-            padding: $spacing-small;
-
-            .entries-filter,
-            .select-input {
-                margin: $spacing-small;
-
-                &.flat-select-input {
-                    margin: 0;
-                }
-            }
-
-            .range-filter {
-                display: flex;
-                justify-content: space-between;
-                margin: 0;
-
-                .single-select-input {
-                    margin: $spacing-small;
-                }
-            }
-
-            >.button {
-                flex-shrink: 0;
-                margin: $spacing-small;
-            }
-        }
+    .header {
+        flex-shrink: 0;
+        border-bottom: $width-separator-thin solid $color-separator;
+        background-color: $color-background-header;
+        padding: $spacing-small;
     }
 
-    .loading-animation {
-        position: relative;
+    .lead-grouped-entries-list {
+        @extend %main-content;
         flex-grow: 1;
-        width: 100%;
-    }
-
-    .lead-entries {
-        position: relative;
-        flex-grow: 1;
-        overflow: auto;
-
-        .lead-grouped-entries {
-            line-height: 0;
-
-            .header {
-                display: flex;
-                position: sticky;
-                top: 0;
-                z-index: 11;
-                border-bottom: $width-separator-thin solid $color-separator-alt;
-                background-color: $color-background-header;
-                padding: $spacing-small $spacing-medium-alt;
-                line-height: initial;
-
-                .information-container {
-                    flex-grow: 1;
-
-                    .heading {
-                        text-transform: none;
-                        font-weight: $font-weight-medium;
-                    }
-
-                    .detail {
-                        margin: $spacing-small 0;
-
-                        span {
-                            margin-right: $spacing-small;
-                        }
-                    }
-                }
-
-                .action-buttons {
-                    flex-shrink: 0;
-
-                    .edit-entry-link {
-                        @include button-like-link($color-accent);
-                        display: block;
-                    }
-                }
-            }
-
-            .entries {
-                display: inline-block;
-                min-width: 100%;
-                line-height: initial;
-
-                .entry {
-                    border-bottom: $width-separator-thin solid $color-separator-alt;
-                    background-color: $color-background-row;
-
-                    :global {
-                        .grid-item {
-                            @extend %grid-item;
-
-                            .header {
-                                border: 0;
-                            }
-
-                            .content {
-                                border: 0;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        margin: $spacing-small-alt;
+        height: auto;
     }
 
     .footer {
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        justify-content: flex-end;
         border-top: $width-separator-thin solid $color-separator;
         background-color: $color-foreground;
         padding: $spacing-small;
