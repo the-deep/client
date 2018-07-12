@@ -1,5 +1,3 @@
-import React from 'react';
-
 import WidgetError from '#components/WidgetError';
 import boundError from '#rs/components/General/BoundError';
 import { listToMap } from '#rs/utils/common';
@@ -13,6 +11,8 @@ import MultiSelectWidget from './MultiSelect';
 import Matrix1dOverviewWidget from './Matrix1dOverview';
 import OrganigramWidget from './Organigram';
 import GeoWidget from './Geo';
+import NumberMatrixOverviewWidget from './NumberMatrixOverview';
+import NumberMatrixListWidget from './NumberMatrixList';
 
 const WidgetList = [
     {
@@ -63,12 +63,12 @@ const WidgetList = [
     {
         widgetId: 'numberMatrixWidget',
         type: 'overview',
-        component: DefaultWidget,
+        component: NumberMatrixOverviewWidget,
     },
     {
         widgetId: 'numberMatrixWidget',
         type: 'list',
-        component: DefaultWidget,
+        component: NumberMatrixListWidget,
     },
     {
         widgetId: 'numberWidget',
