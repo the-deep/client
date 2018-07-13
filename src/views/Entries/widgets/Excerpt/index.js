@@ -17,7 +17,7 @@ const defaultProps = {
 };
 
 const TEXT = 'excerpt';
-// const IMAGE = 'image';
+const IMAGE = 'image';
 
 const entryTypes = {
     excerpt: 'text',
@@ -36,7 +36,17 @@ export default class ExcerptWidget extends React.PureComponent {
             image,
         } = this.props;
 
-        const value = entryType === TEXT ? excerpt : image;
+        let value;
+        switch (entryType) {
+            case TEXT:
+                value = excerpt;
+                break;
+            case IMAGE:
+                value = image;
+                break;
+            default:
+                console.error('Unknown entry type', entryType);
+        }
 
         return (
             <ExcerptOutput
