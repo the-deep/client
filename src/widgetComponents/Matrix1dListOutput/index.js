@@ -8,11 +8,13 @@ import Row from './Row';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     rows: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
+    className: '',
     value: {},
     rows: [],
 };
@@ -100,9 +102,15 @@ class Matrix1dListOutput extends React.PureComponent {
     })
 
     render() {
+        const { className: classNameFromProps } = this.props;
+        const className = `
+            ${classNameFromProps}
+            ${styles.list}
+        `;
+
         return (
             <ListView
-                className={styles.list}
+                className={className}
                 data={this.selectedRows}
                 keyExtractor={Matrix1dListOutput.keyExtractor}
                 renderer={Row}
