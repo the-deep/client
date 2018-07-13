@@ -10,17 +10,16 @@ const propTypes = {
     data: PropTypes.object,
 
     // eslint-disable-next-line react/forbid-prop-types
-    widget: PropTypes.object,
+    widget: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
     className: '',
     data: {},
-    widget: {},
 };
 
 const emptyArray = [];
-const getRows = (widget = {}) => {
+const getRows = (widget) => {
     const { properties: { data: { rows = emptyArray } = {} } = {} } = widget;
     return rows;
 };
