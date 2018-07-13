@@ -27,12 +27,9 @@ import {
     setEntriesViewActivePageAction,
 } from '#redux';
 
-// import _ts from '#ts';
-
 import EntriesRequest from './requests/EntriesRequest';
 import FrameworkRequest from './requests/FrameworkRequest';
 import LeadGroupedEntries from './LeadGroupedEntries';
-// import FilterEntriesForm from './FilterEntriesForm';
 import styles from './styles.scss';
 
 const mapStateToProps = (state, props) => ({
@@ -42,12 +39,6 @@ const mapStateToProps = (state, props) => ({
     projectId: projectIdFromRouteSelector(state, props),
     activePage: entriesViewActivePageSelector(state, props),
     totalEntriesCount: totalEntriesCountForProjectSelector(state, props),
-
-    /*
-    gridItems: gridItemsForProjectSelector(state, props),
-    widgets: widgetsSelector(state, props),
-    maxHeight: maxHeightForProjectSelector(state, props),
-    */
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -59,29 +50,21 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const propTypes = {
-    // activePage: PropTypes.number.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     leadGroupedEntriesList: PropTypes.array.isRequired,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    framework: PropTypes.object.isRequired,
+    projectId: PropTypes.number.isRequired,
     setEntries: PropTypes.func.isRequired,
     setFramework: PropTypes.func.isRequired,
-    entriesFilter: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    // totalEntriesCount: PropTypes.number,
-    // setEntriesViewActivePage: PropTypes.func.isRequired,
 
-    /*
-    gridItems: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    widgets: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    maxHeight: PropTypes.number,
-    */
+    // eslint-disable-next-line react/forbid-prop-types
+    entriesFilter: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
-    // maxHeight: 0,
-    // totalEntriesCount: 0,
 };
-
-// const MAX_ENTRIES_PER_REQUEST = 5;
-// const emptyList = [];
 
 const LeadKeySelector = d => d.id;
 

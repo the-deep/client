@@ -4,11 +4,15 @@ import boundError from '#rscg/BoundError';
 
 import { listToMap } from '#rs/utils/common';
 
-import ExcerptWidget from './Excerpt';
+import Matrix1dListWidget from './Matrix1dList';
 import DefaultWidget from './Default';
 
 
 const widgetList = [
+    {
+        widgetId: 'dateRangeWidget',
+        component: DefaultWidget,
+    },
     {
         widgetId: 'dateWidget',
         component: DefaultWidget,
@@ -23,7 +27,7 @@ const widgetList = [
     },
     {
         widgetId: 'matrix1dWidget',
-        component: DefaultWidget,
+        component: Matrix1dListWidget,
     },
     {
         widgetId: 'matrix2dWidget',
@@ -47,6 +51,10 @@ const widgetList = [
     },
     {
         widgetId: 'scaleWidget',
+        component: DefaultWidget,
+    },
+    {
+        widgetId: 'selectWidget',
         component: DefaultWidget,
     },
 ];
