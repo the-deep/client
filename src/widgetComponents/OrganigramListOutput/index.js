@@ -9,12 +9,13 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    options: PropTypes.arrayOf(PropTypes.object).isRequired,
+    options: PropTypes.arrayOf(PropTypes.object),
 };
 
 const defaultProps = {
     className: '',
     value: [],
+    options: [],
 };
 
 const getOptionsForSelect = (params) => {

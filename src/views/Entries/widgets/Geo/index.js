@@ -40,7 +40,9 @@ export default class GeoListWidget extends React.PureComponent {
                 value,
             },
             geoOptions,
-            projectDetails,
+            projectDetails: {
+                regions,
+            },
             className,
         } = this.props;
 
@@ -49,7 +51,7 @@ export default class GeoListWidget extends React.PureComponent {
                 className={className}
                 value={value}
                 geoOptionsByRegion={geoOptions}
-                regions={projectDetails.regions}
+                regions={regions}
                 showHeader={false}
             />
         );

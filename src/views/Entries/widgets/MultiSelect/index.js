@@ -1,16 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import SelectInputWithList from '#rs/components/Input/SelectInputWithList';
+import MultiSelectListOutput from '#widgetComponents/MultiSelectListOutput';
 // import _ts from '#ts';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     widget: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    data: PropTypes.object,
+    className: PropTypes.string,
 };
 
 const defaultProps = {
-    widget: undefined,
+    className: '',
+    data: {},
 };
 
 const emptyArray = [];
@@ -20,7 +24,7 @@ const getOptions = (widget) => {
 };
 
 // eslint-disable-next-line react/prefer-stateless-function
-export default class MultiSelectWidget extends React.PureComponent {
+export default class MultiSelectViewWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -28,17 +32,22 @@ export default class MultiSelectWidget extends React.PureComponent {
     static keySelector = o => o.key;
 
     render() {
-        const { widget } = this.props;
+        const {
+            widget,
+            data: {
+                value,
+            },
+            className,
+        } = this.props;
         const options = getOptions(widget);
 
         return (
-            <SelectInputWithList
-                faramElementName="value"
+            <MultiSelectListOutput
+                className={className}
+                value={value}
                 options={options}
-                labelSelector={MultiSelectWidget.labelSelector}
-                keySelector={MultiSelectWidget.keySelector}
-                showLabel={false}
-                showHintAndError={false}
+                labelSelector={MultiSelectViewWidget.labelSelector}
+                keySelector={MultiSelectViewWidget.keySelector}
             />
         );
     }

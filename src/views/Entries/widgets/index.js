@@ -9,6 +9,7 @@ import ExcerptWidget from './Excerpt';
 import NumberMatrixWidget from './NumberMatrix';
 import GeoWidget from './Geo';
 import OrganigramWidget from './Organigram';
+import MultiSelectWidget from './MultiSelect';
 import DefaultWidget from './Default';
 
 
@@ -39,7 +40,7 @@ const widgetList = [
     },
     {
         widgetId: 'multiselectWidget',
-        component: DefaultWidget,
+        component: MultiSelectWidget,
     },
     {
         widgetId: 'numberMatrixWidget',

@@ -45,10 +45,9 @@ export default class GeoListOutput extends React.PureComponent {
     }
 
     static getAllGeoOptions = (geoOptionsByRegion, value) => (
-        Object.values(geoOptionsByRegion).reduce((acc, r) => (
-            [...acc, ...r]
-        ),
-        []).filter(o => value.find(v => v === o.key))
+        Object.values(geoOptionsByRegion)
+            .reduce((acc, r) => [...acc, ...r], [])
+            .filter(o => value.find(v => v === o.key))
     )
 
     constructor(props) {

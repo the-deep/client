@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import ListView from '#rscv/List/ListView';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import BoundError from '#rs/components/General/BoundError';
 
 import AppError from '#components/AppError';
@@ -85,6 +86,7 @@ export default class Entries extends React.PureComponent {
         this.state = {
             pendingEntries: true,
             pendingFramework: true,
+            pendingGeoOptions: true,
         };
 
         const getProjectId = () => this.props.projectId;
@@ -187,15 +189,30 @@ export default class Entries extends React.PureComponent {
     }
 
     render() {
+        const {
+            pendingGeoOptions,
+            pendingEntries,
+            pendingFramework,
+        } = this.state;
+
         const Header = this.renderHeader;
         const LeadGroupedEntriesList = this.renderLeadGroupedEntriesList;
         const Footer = this.renderFooter;
+        const loading = pendingEntries ||
+            pendingGeoOptions ||
+            pendingFramework;
 
         return (
             <div className={styles.entriesView}>
-                <Header />
-                <LeadGroupedEntriesList />
-                <Footer />
+                {loading ? (
+                    <LoadingAnimation />
+                ) : (
+                    <Fragment>
+                        <Header />
+                        <LeadGroupedEntriesList />
+                        <Footer />
+                    </Fragment>
+                )}
             </div>
         );
     }
