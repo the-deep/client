@@ -19,10 +19,10 @@ const getRows = (widget = {}) => {
 };
 
 export default class Matrix1dListWidget extends React.PureComponent {
-    static valueKeyExtractor = d => d.key;
-
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static valueKeyExtractor = d => d.key;
 
     render() {
         const { widget } = this.props;

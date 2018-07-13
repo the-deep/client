@@ -5,18 +5,25 @@ import styles from './styles.scss';
 
 const propTypes = {
     value: PropTypes.string.isRequired,
+    marker: PropTypes.string,
 };
 
-export default class Cell extends React.PureComponent {
+const defaultProps = {
+    marker: '•',
+};
+
+export default class ListItem extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     render() {
-        const { value } = this.props;
-
-        const marker = '•';
+        const {
+            value,
+            marker,
+        } = this.props;
 
         return (
-            <div className={styles.cell}>
+            <div className={styles.listItem}>
                 <div className={styles.marker}>
                     { marker }
                 </div>

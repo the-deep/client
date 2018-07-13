@@ -27,7 +27,6 @@ const getSelectedCells = (attributeRow, cells = []) => cells.reduce(
             return acc;
         }
 
-        // FIXME: just push attributeCell
         return [
             ...acc,
             cell,
@@ -36,7 +35,7 @@ const getSelectedCells = (attributeRow, cells = []) => cells.reduce(
     [],
 );
 
-const getSelectedRowss = (rows, value) => {
+const getSelected = (rows, value) => {
     const selectedRows = rows.reduce(
         (acc, row) => {
             const {
@@ -81,7 +80,7 @@ class Matrix1dListOutput extends React.PureComponent {
             rows,
             value,
         } = props;
-        this.selectedRows = getSelectedRowss(rows, value);
+        this.selectedRows = getSelected(rows, value);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -91,7 +90,7 @@ class Matrix1dListOutput extends React.PureComponent {
         } = nextProps;
 
         if (this.props.rows !== newRows || this.props.value !== newValue) {
-            this.selectedRows = getSelectedRowss(newRows, newValue);
+            this.selectedRows = getSelected(newRows, newValue);
         }
     }
 

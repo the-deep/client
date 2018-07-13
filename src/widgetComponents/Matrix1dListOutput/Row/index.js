@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import ListView from '#rs/components/View/List/ListView';
 
-import Cell from './Cell';
+import ListItem from '#components/ListItem';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -35,7 +35,7 @@ export default class Row extends React.PureComponent {
                     data={cells}
                     keyExtractor={Row.keyExtractor}
                     rendererParams={this.rendererParams}
-                    renderer={Cell}
+                    renderer={ListItem}
                 />
             </div>
         );
