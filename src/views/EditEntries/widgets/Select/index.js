@@ -25,8 +25,6 @@ export default class SelectWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static valueKeyExtractor = d => d.key;
-
     render() {
         const { widget } = this.props;
         const options = getOptions(widget);

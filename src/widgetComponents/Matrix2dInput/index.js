@@ -43,15 +43,22 @@ class Matrix2dInput extends React.PureComponent {
 
     static titleKeyExtractor = sector => sector.id;
 
-    handleCellClick = (dimensionId, subdimensionId, sectorId) => {
+    handleCellClick = (dimensionId, subdimensionId, sectorId, isCellActive) => {
         const {
             value,
             onChange,
         } = this.props;
+
         const settings = { $auto: {
             [dimensionId]: { $auto: {
                 [subdimensionId]: { $auto: {
-                    [sectorId]: { $apply: item => !item },
+                    $if: [
+                        isCellActive,
+                        { $unset: [sectorId] },
+                        {
+                            [sectorId]: { $set: [] },
+                        },
+                    ],
                 } },
             } },
         } };
@@ -70,7 +77,7 @@ class Matrix2dInput extends React.PureComponent {
             value: {
                 [dimensionId]: {
                     [subdimensionId]: {
-                        [sectorId]: true,
+                        [sectorId]: [],
                     },
                 },
             },

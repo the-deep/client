@@ -20,6 +20,7 @@ export default class NumberWidget extends React.PureComponent {
 
     render() {
         const separatorText = ' ';
+
         return (
             <div className={styles.number}>
                 <NumberInput
@@ -28,12 +29,11 @@ export default class NumberWidget extends React.PureComponent {
                     separator={separatorText}
                     showLabel={false}
                     showHintAndError={false}
-                    // FIXME: remove this later (this is example of faramInfo)
-                    faramInfo={{
-                        action: 'changeExcerpt',
-                        type: 'excerpt',
-                        value: 'This excerpt was changed as a side effect.',
-                    }}
+                    // faramInfo={{
+                    //     action: 'changeExcerpt',
+                    //     type: 'excerpt',
+                    //     value: 'This excerpt was changed as a side effect.',
+                    // }}
                 />
             </div>
         );

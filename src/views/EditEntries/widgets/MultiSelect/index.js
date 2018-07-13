@@ -23,7 +23,6 @@ const getOptions = (widget = {}) => {
 export default class MultiSelectWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-    static valueKeyExtractor = d => d.key;
 
     render() {
         const { widget } = this.props;

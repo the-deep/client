@@ -25,8 +25,6 @@ const getValue = (widget = {}) => {
 };
 
 export default class ScaleWidget extends React.PureComponent {
-    static valueKeyExtractor = d => d.key;
-
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
