@@ -5,7 +5,7 @@ import Matrix1dListOutput from '#widgetComponents/Matrix1dListOutput';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
-    widget: PropTypes.object,
+    widget: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -13,7 +13,7 @@ const defaultProps = {
 };
 
 const emptyArray = [];
-const getRows = (widget = {}) => {
+const getRows = (widget) => {
     const { properties: { data: { rows = emptyArray } = {} } = {} } = widget;
     return rows;
 };
@@ -21,8 +21,6 @@ const getRows = (widget = {}) => {
 export default class Matrix1dListWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    static valueKeyExtractor = d => d.key;
 
     render() {
         const { widget } = this.props;

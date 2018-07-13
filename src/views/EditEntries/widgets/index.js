@@ -4,11 +4,12 @@ import { listToMap } from '#rs/utils/common';
 
 import DateRangeWidget from './DateRange';
 import DateWidget from './Date';
-import DefaultWidget from './Default';
+// import DefaultWidget from './Default';
 import ExcerptWidget from './Excerpt';
 import GeoWidget from './Geo';
 import Matrix1dListWidget from './Matrix1dList';
 import Matrix1dWidget from './Matrix1d';
+import Matrix2dListWidget from './Matrix2dList';
 import Matrix2dWidget from './Matrix2d';
 import MultiSelectWidget from './MultiSelect';
 import NumberMatrixListWidget from './NumberMatrixList';
@@ -62,7 +63,7 @@ const widgetList = [
     {
         widgetId: 'matrix2dWidget',
         type: 'list',
-        component: DefaultWidget,
+        component: Matrix2dListWidget,
     },
     {
         widgetId: 'multiselectWidget',

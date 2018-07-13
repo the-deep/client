@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Matrix2dInput from '#widgetComponents/Matrix2dInput';
+import Matrix2dListInput from '#widgetComponents/Matrix2dListInput';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
@@ -22,8 +22,7 @@ const getSectors = (widget) => {
     const { properties: { data: { sectors = emptyArray } = {} } = {} } = widget;
     return sectors;
 };
-
-export default class Matrix2dOverviewWidget extends React.PureComponent {
+export default class Matrix1dListWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -33,7 +32,7 @@ export default class Matrix2dOverviewWidget extends React.PureComponent {
         const sectors = getSectors(widget);
 
         return (
-            <Matrix2dInput
+            <Matrix2dListInput
                 faramElementName="value"
                 dimensions={dimensions}
                 sectors={sectors}

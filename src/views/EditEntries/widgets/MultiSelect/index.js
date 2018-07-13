@@ -6,7 +6,7 @@ import SelectInputWithList from '#rs/components/Input/SelectInputWithList';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
-    widget: PropTypes.object,
+    widget: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -14,7 +14,7 @@ const defaultProps = {
 };
 
 const emptyArray = [];
-const getOptions = (widget = {}) => {
+const getOptions = (widget) => {
     const { properties: { data: { options = emptyArray } = {} } = {} } = widget;
     return options;
 };
@@ -23,7 +23,6 @@ const getOptions = (widget = {}) => {
 export default class MultiSelectWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-    static valueKeyExtractor = d => d.key;
 
     render() {
         const { widget } = this.props;

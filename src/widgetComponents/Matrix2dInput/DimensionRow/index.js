@@ -58,18 +58,25 @@ export default class DimensionRow extends React.PureComponent {
         };
     };
 
+    static getHoverStyle = rowStyle => ({
+        outline: `1px dashed ${rowStyle.color}`,
+        outlineOffset: '-3px',
+    });
+
     constructor(props) {
         super(props);
 
         const { dimension: { color } } = this.props;
         this.rowStyle = DimensionRow.getRowStyle(color);
         this.activeCellStyle = DimensionRow.getActiveCellStyle(this.rowStyle);
+        this.hoverStyle = DimensionRow.getHoverStyle(this.rowStyle);
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.dimension.color !== nextProps.dimension.color) {
             this.rowStyle = DimensionRow.getRowStyle(nextProps.dimension.color);
             this.activeCellStyle = DimensionRow.getActiveCellStyle(this.rowStyle);
+            this.hoverStyle = DimensionRow.getHoverStyle(this.rowStyle);
         }
     }
 
@@ -101,6 +108,7 @@ export default class DimensionRow extends React.PureComponent {
             children,
             rowStyle: this.rowStyle,
             activeCellStyle: this.activeCellStyle,
+            hoverStyle: this.hoverStyle,
 
             ...otherProps,
         };

@@ -11,6 +11,7 @@ const propTypes = {
     onDrop: PropTypes.func.isRequired,
 
     activeCellStyle: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    hoverStyle: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
@@ -20,11 +21,17 @@ const defaultProps = {
     value: undefined,
     disabled: false,
     activeCellStyle: undefined,
+    hoverStyle: undefined,
 };
 
 export default class Cell extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+        this.state = { isBeingDraggedOver: false };
+    }
 
     isCellActive = () => {
         const {
@@ -37,6 +44,18 @@ export default class Cell extends React.PureComponent {
         const subsectors = value && ((value[dimensionId] || {})[subdimensionId] || {})[sectorId];
 
         return !!subsectors;
+    }
+
+    handleDragEnter = () => {
+        this.setState({ isBeingDraggedOver: true });
+    }
+
+    handleDragExit = () => {
+        this.setState({ isBeingDraggedOver: false });
+    }
+
+    handleDragOver = (e) => {
+        e.preventDefault();
     }
 
     handleDrop = (e) => {
@@ -59,10 +78,7 @@ export default class Cell extends React.PureComponent {
             };
         }
         this.props.onDrop(dimensionId, subdimensionId, sectorId, formattedData);
-    }
-
-    handleDragOver = (e) => {
-        e.preventDefault();
+        this.setState({ isBeingDraggedOver: false });
     }
 
     handleClick = () => {
@@ -71,15 +87,22 @@ export default class Cell extends React.PureComponent {
             subdimensionId,
             sectorId,
         } = this.props;
-        this.props.onClick(dimensionId, subdimensionId, sectorId);
+        const isCellActive = this.isCellActive();
+        this.props.onClick(dimensionId, subdimensionId, sectorId, isCellActive);
     }
 
     render() {
         const {
             activeCellStyle,
             disabled,
+            hoverStyle,
         } = this.props;
-        const style = this.isCellActive() ? activeCellStyle : undefined;
+        const { isBeingDraggedOver } = this.state;
+
+        let style = this.isCellActive() ? activeCellStyle : undefined;
+        if (isBeingDraggedOver) {
+            style = style ? { ...style, ...hoverStyle } : hoverStyle;
+        }
 
         return (
             <td
@@ -87,8 +110,10 @@ export default class Cell extends React.PureComponent {
                 disabled={disabled}
                 role="gridcell"
                 style={style}
-                onDrop={this.handleDrop}
+                onDragEnter={this.handleDragEnter}
+                onDragLeave={this.handleDragExit}
                 onDragOver={this.handleDragOver}
+                onDrop={this.handleDrop}
                 onClick={this.handleClick}
             />
         );

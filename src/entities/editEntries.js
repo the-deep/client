@@ -148,6 +148,7 @@ export const createDiff = (locals, remotes) => {
             const localEntry = localEntriesMap[remoteServerId];
             if (!localEntry) {
                 // NOTE: New remote entry has been added
+                // FIXME: get from server
                 const localId = randomString();
                 const newEntry = createEntry({
                     key: localId,
@@ -177,6 +178,7 @@ export const createDiff = (locals, remotes) => {
             const localVersionId = entryAccessor.versionId(localEntry);
 
             // get remote enty with same serverId as current local entry
+            // FIXME: get from serverId or key?
             const remoteEntry = remoteEntriesMap[localServerId];
             if (!localServerId) {
                 // this local entry hasn't been saved

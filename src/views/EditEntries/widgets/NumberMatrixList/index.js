@@ -6,16 +6,15 @@ import NumberMatrixListOutput from '#widgetComponents/NumberMatrixListOutput';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
-    widget: PropTypes.object,
+    widget: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
-    widget: undefined,
 };
 
 const emptyObject = {};
 
-const getData = (widget = {}) => {
+const getData = (widget) => {
     const { properties: { data = emptyObject } = {} } = widget;
     return data;
 };
