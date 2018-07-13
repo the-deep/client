@@ -5,6 +5,7 @@ import boundError from '#rscg/BoundError';
 import { listToMap } from '#rs/utils/common';
 
 import Matrix1dListWidget from './Matrix1dList';
+import ExcerptWidget from './Excerpt';
 import DefaultWidget from './Default';
 
 

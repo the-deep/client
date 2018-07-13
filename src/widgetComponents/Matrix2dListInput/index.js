@@ -28,6 +28,10 @@ const defaultProps = {
 const getSelectedSectors = (dimensions = [], sectors = [], value) => {
     const selectedSectors = [];
 
+    if (!value) {
+        return selectedSectors;
+    }
+
     dimensions.forEach((dimension) => {
         const dimensionAttribute = value[dimension.id];
         if (!dimensionAttribute) {
