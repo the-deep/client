@@ -34,6 +34,7 @@ import {
     editEntriesRemoveEntryAction,
     editEntriesSaveEntryAction,
     editEntriesSetEntriesAction,
+    editEntriesUpdateEntriesBulkAction,
     editEntriesSetEntryDataAction,
     editEntriesSetEntryErrorsAction,
     editEntriesSetExcerptAction,
@@ -51,6 +52,7 @@ import EditEntryDataRequest from './requests/EditEntryDataRequest';
 import EditEntryDeleteRequest from './requests/EditEntryDeleteRequest';
 import EditEntrySaveRequest from './requests/EditEntrySaveRequest';
 
+import calculateEntryData from './entryDataCalculator';
 import Overview from './Overview';
 import Listing from './List';
 
@@ -71,6 +73,7 @@ const propTypes = {
     saveEntry: PropTypes.func.isRequired,
     setAnalysisFramework: PropTypes.func.isRequired,
     setEntries: PropTypes.func.isRequired,
+    updateEntriesBulk: PropTypes.func.isRequired,
     setEntryData: PropTypes.func.isRequired,
     setEntryError: PropTypes.func.isRequired,
     setExcerpt: PropTypes.func.isRequired,
@@ -104,6 +107,7 @@ const mapDispatchToProps = dispatch => ({
     saveEntry: params => dispatch(editEntriesSaveEntryAction(params)),
     setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
     setEntries: params => dispatch(editEntriesSetEntriesAction(params)),
+    updateEntriesBulk: params => dispatch(editEntriesUpdateEntriesBulkAction(params)),
     setEntryData: params => dispatch(editEntriesSetEntryDataAction(params)),
     setEntryError: params => dispatch(editEntriesSetEntryErrorsAction(params)),
     setExcerpt: params => dispatch(editEntriesSetExcerptAction(params)),
@@ -212,6 +216,7 @@ export default class EditEntries extends React.PureComponent {
             setLead: this.props.setLead,
             setRegions: this.props.setRegions,
             setState: params => this.setState(params),
+            calculateEntryData,
         });
 
         this.savableEntries = EditEntries.calculateSavableEntries(
@@ -221,7 +226,20 @@ export default class EditEntries extends React.PureComponent {
     }
 
     componentDidMount() {
-        const { leadId } = this.props;
+        const { leadId, entries, analysisFramework } = this.props;
+
+        // Update extra data (like color) for all existing entries
+        if (entries && analysisFramework && entries.length > 0) {
+            const data = entries.reduce((acc, entry) => {
+                acc[entryAccessor.key(entry)] = calculateEntryData(
+                    entryAccessor.dataAttributes(entry), analysisFramework,
+                );
+                return acc;
+            }, {});
+
+            this.props.updateEntriesBulk({ leadId, data });
+        }
+
         this.editEntryDataRequest.init({ leadId });
         this.editEntryDataRequest.start();
     }
@@ -281,6 +299,7 @@ export default class EditEntries extends React.PureComponent {
     // FARAM
 
     handleChange = (faramValues, faramErrors, faramInfo, entryKey) => {
+        const { analysisFramework } = this.props;
         if (faramInfo.action === 'newEntry') {
             // TODO: if excerpt already exists modify existing entry
             // instead of creating a new one
@@ -297,6 +316,7 @@ export default class EditEntries extends React.PureComponent {
             [...faramElementName].reverse().forEach((key) => {
                 attributes = { [key]: attributes };
             });
+            const extraData = calculateEntryData(attributes, analysisFramework);
 
             this.props.addEntry({
                 leadId: this.props.leadId,
@@ -305,13 +325,15 @@ export default class EditEntries extends React.PureComponent {
                     excerptValue,
                     lead: this.props.leadId,
                     attributes,
-                    analysisFramework: this.props.analysisFramework.id,
+                    analysisFramework: analysisFramework.id,
+                    ...extraData,
                 },
             });
         } else if (entryKey === undefined) {
             const excerptValue = '';
             const excerptType = 'excerpt';
             const attributes = faramValues;
+            const extraData = calculateEntryData(attributes, analysisFramework);
 
             this.props.addEntry({
                 leadId: this.props.leadId,
@@ -320,16 +342,19 @@ export default class EditEntries extends React.PureComponent {
                     excerptValue,
                     lead: this.props.leadId,
                     attributes,
-                    analysisFramework: this.props.analysisFramework.id,
+                    analysisFramework: analysisFramework.id,
+                    ...extraData,
                 },
             });
         } else {
+            const extraData = calculateEntryData(faramValues, analysisFramework);
             this.props.setEntryData({
                 leadId: this.props.leadId,
                 key: entryKey,
                 values: faramValues,
                 errors: faramErrors,
                 info: faramInfo,
+                ...extraData,
             });
         }
     }

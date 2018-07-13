@@ -80,7 +80,7 @@ export const DIFF_ACTION = {
 };
 
 export const createEntry = ({
-    key, serverId, versionId, data = {}, isPristine = false, hasError = false,
+    key, serverId, versionId, data = {}, isPristine = false, hasError = false, color,
 }) => {
     const keysToPick = [
         'excerpt',
@@ -120,7 +120,7 @@ export const createEntry = ({
             id: { $set: key },
             isPristine: { $set: isPristine },
             hasError: { $set: hasError },
-            color: { $set: undefined },
+            color: { $set: color },
             error: { $set: undefined },
         },
         serverData: {

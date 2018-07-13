@@ -24,6 +24,7 @@ const getNewSelectedEntryKey = (entries, selectedEntryKey) => {
 
 export const EEB__SET_LEAD = 'siloDomainData/EEB__SET_LEAD';
 export const EEB__SET_ENTRIES = 'siloDomainData/EEB__SET_ENTRIES';
+export const EEB__UPDATE_ENTRIES_BULK = 'siloDomainData/EEB__UPDATE_ENTRIES_BULK';
 export const EEB__CLEAR_ENTRIES = 'siloDomainData/EEB__CLEAR_ENTRIES';
 export const EEB__SET_SELECTED_ENTRY_KEY = 'siloDomainData/EEB__SET_SELECTED_ENTRY_KEY';
 export const EEB__SET_ENTRY_EXCERPT = 'siloDomainData/EEB__SET_ENTRY_EXCERPT';
@@ -91,6 +92,12 @@ export const editEntriesSetEntriesAction = ({ leadId, entryActions }) => ({
     leadId,
 });
 
+export const editEntriesUpdateEntriesBulkAction = ({ leadId, data }) => ({
+    type: EEB__UPDATE_ENTRIES_BULK,
+    leadId,
+    data,
+});
+
 export const editEntriesClearEntriesAction = ({ leadId }) => ({
     type: EEB__CLEAR_ENTRIES,
     leadId,
@@ -110,13 +117,14 @@ export const editEntriesSetExcerptAction = ({ leadId, key, excerptValue, excerpt
     excerptValue,
 });
 
-export const editEntriesSetEntryDataAction = ({ leadId, key, values, errors, info }) => ({
+export const editEntriesSetEntryDataAction = ({ leadId, key, values, errors, info, color }) => ({
     type: EEB__SET_ENTRY_DATA,
     leadId,
     key,
     values,
     errors,
     info,
+    color,
 });
 
 export const editEntriesSetEntryErrorsAction = ({ leadId, key, errors, isServerError }) => ({
@@ -169,6 +177,41 @@ const setEntries = (state, action) => {
             } },
         } },
     };
+    return update(state, settings);
+};
+
+const updateEntriesBulk = (state, action) => {
+    const { leadId, data } = action;
+    const {
+        editEntries: { [leadId]: { entries = [] } = {} } = {},
+    } = state;
+
+    if (entries.length === 0 || Object.keys(data).length === 0) {
+        return state;
+    }
+
+    const entriesSettings = Object.keys(data).reduce((acc, key) => {
+        const entryIndex = entries
+            .findIndex(entry => entryAccessor.key(entry) === key);
+        const { color } = data[key];
+
+        acc[entryIndex] = { $auto: {
+            localData: { $auto: {
+                color: { $set: color },
+            } },
+        } };
+
+        return acc;
+    }, {});
+
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entries: entriesSettings,
+            },
+        },
+    };
+
     return update(state, settings);
 };
 
@@ -237,6 +280,7 @@ const addEntry = (state, action) => {
     const {
         excerptType,
         excerptValue,
+        color,
         ...otherEntry
     } = entry;
 
@@ -269,6 +313,7 @@ const addEntry = (state, action) => {
     const newEntry = createEntry({
         key: localId,
         data: newData,
+        color,
     });
 
     const settings = {
@@ -285,7 +330,7 @@ const addEntry = (state, action) => {
 };
 
 const setEntryData = (state, action) => {
-    const { leadId, key, values, errors, info } = action;
+    const { leadId, key, values, errors, info, color } = action;
     const {
         editEntries: { [leadId]: { entries = [] } = {} } = {},
     } = state;
@@ -338,6 +383,7 @@ const setEntryData = (state, action) => {
                             error: { $set: errors },
                             hasError: { $set: analyzeErrors(errors) },
                             hasServerError: { $set: false },
+                            color: { $set: color },
                         },
                     },
                 },
@@ -595,6 +641,7 @@ const saveEntry = (state, action) => {
 const reducers = {
     [EEB__SET_LEAD]: setLead,
     [EEB__SET_ENTRIES]: setEntries,
+    [EEB__UPDATE_ENTRIES_BULK]: updateEntriesBulk,
     [EEB__CLEAR_ENTRIES]: clearEntries,
     [EEB__SET_SELECTED_ENTRY_KEY]: setSelectedEntryKey,
     [EEB__SET_ENTRY_EXCERPT]: setEntryExcerpt,
