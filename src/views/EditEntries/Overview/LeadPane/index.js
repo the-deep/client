@@ -103,6 +103,7 @@ export default class LeftPane extends React.PureComponent {
                 <SimplifiedLeadPreview
                     className={styles.simplifiedPreview}
                     leadId={this.props.lead.id}
+                    // FIXME: Do not always call calculateHighlights here
                     highlights={this.calculateHighlights()}
                     highlightModifier={this.highlightSimplifiedExcerpt}
                     onLoad={this.handleLoadImages}
@@ -219,10 +220,12 @@ export default class LeftPane extends React.PureComponent {
 
     // Simplified Lead Preview
 
-    calculateHighlights = () => ([
-        // this.props.api.getEntryHighlights()
-        // TODO: send highlights prop
-    ])
+    calculateHighlights = () => this.props.entries
+        .filter(e => e.data.entryType === 'excerpt')
+        .map(entry => ({
+            text: entry.data.excerpt,
+            color: entry.localData.color || '#c0c0c0',
+        }));
 
     highlightSimplifiedExcerpt = (highlight, text, actualStr) => (
         SimplifiedLeadPreview.highlightModifier(
