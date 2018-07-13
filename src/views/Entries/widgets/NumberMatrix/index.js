@@ -9,9 +9,11 @@ const propTypes = {
     widget: PropTypes.object,
     // eslint-disable-next-line react/forbid-prop-types
     data: PropTypes.object,
+    className: PropTypes.string,
 };
 
 const defaultProps = {
+    className: '',
     widget: undefined,
     data: {},
 };
@@ -33,11 +35,13 @@ export default class NumberMatrixListWidget extends React.PureComponent {
             data: {
                 value,
             },
+            className,
         } = this.props;
         const options = getOptions(widget);
 
         return (
             <NumberMatrixListOutput
+                className={className}
                 options={options}
                 value={value}
                 placeholder={_ts('framework.numberWidget', 'numberPlaceholder')}

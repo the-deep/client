@@ -11,9 +11,11 @@ import styles from './styles.scss';
 const propTypes = {
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     options: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    className: PropTypes.string,
 };
 
 const defaultProps = {
+    className: '',
     options: {},
     value: {},
 };
@@ -85,9 +87,11 @@ class NumberMatrixListView extends React.PureComponent {
     });
 
     render() {
+        const { className } = this.props;
+
         return (
             <ListView
-                className={styles.list}
+                className={`${styles.list} ${className}`}
                 data={this.rowsData}
                 renderer={Row}
                 rendererParams={this.rowRendererParams}

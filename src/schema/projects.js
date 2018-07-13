@@ -70,6 +70,7 @@ const projectSchema = [];
             analysisFramework: { type: 'uint', required: false },
             assessmentTemplate: { type: 'uint', required: false },
             versionId: { type: 'uint', required: true },
+            regions: { type: 'array' },
         },
     };
     projectSchema.push({ name, schema });
