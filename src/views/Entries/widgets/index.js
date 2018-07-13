@@ -6,6 +6,7 @@ import { listToMap } from '#rs/utils/common';
 
 import Matrix1dListWidget from './Matrix1dList';
 import ExcerptWidget from './Excerpt';
+import NumberMatrixWidget from './NumberMatrix';
 import DefaultWidget from './Default';
 
 
@@ -40,7 +41,7 @@ const widgetList = [
     },
     {
         widgetId: 'numberMatrixWidget',
-        component: DefaultWidget,
+        component: NumberMatrixWidget,
     },
     {
         widgetId: 'numberWidget',
