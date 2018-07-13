@@ -52,7 +52,10 @@ export default class Entry extends React.PureComponent {
     }
 
     renderWidgetContent = (widget) => {
-        const { widgetId } = widget;
+        const {
+            widgetId,
+            id,
+        } = widget;
 
         const Widget = fetchWidget(widgetId);
         const {
@@ -60,6 +63,11 @@ export default class Entry extends React.PureComponent {
                 entryType,
                 excerpt,
                 image,
+                attributes: {
+                    [id]: {
+                        data,
+                    } = {},
+                } = {},
             },
         } = this.props;
 
@@ -71,6 +79,7 @@ export default class Entry extends React.PureComponent {
                     excerpt={excerpt}
                     image={image}
                     widget={widget}
+                    data={data}
                 />
             );
         }
@@ -79,6 +88,7 @@ export default class Entry extends React.PureComponent {
             <Widget
                 className={styles.content}
                 widget={widget}
+                data={data}
             />
         );
     }
