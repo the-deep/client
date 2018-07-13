@@ -5,7 +5,6 @@ import _ts from '#ts';
 import {
     createUrlForGeoOptions,
     createParamsForGet,
-    transformResponseErrorToFormError,
 } from '#rest';
 
 export default class GeoOptionsRequest extends Request {
@@ -45,18 +44,10 @@ export default class GeoOptionsRequest extends Request {
         });
     }
 
-    getUrl = () => (
-        createUrlForGeoOptions(this.parent.getProjectId())
-    )
-
-    getParam = () => (
-        createParamsForGet()
-    )
-
     init = () => {
         this.createDefault({
-            url: this.getUrl,
-            params: this.getParam,
+            url: createUrlForGeoOptions(this.parent.getProjectId()),
+            params: createParamsForGet(),
         });
     }
 }

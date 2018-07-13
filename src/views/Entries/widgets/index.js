@@ -8,6 +8,7 @@ import Matrix1dListWidget from './Matrix1dList';
 import ExcerptWidget from './Excerpt';
 import NumberMatrixWidget from './NumberMatrix';
 import GeoWidget from './Geo';
+import OrganigramWidget from './Organigram';
 import DefaultWidget from './Default';
 
 
@@ -50,7 +51,7 @@ const widgetList = [
     },
     {
         widgetId: 'organigramWidget',
-        component: DefaultWidget,
+        component: OrganigramWidget,
     },
     {
         widgetId: 'scaleWidget',
