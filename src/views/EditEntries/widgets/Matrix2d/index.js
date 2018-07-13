@@ -5,7 +5,7 @@ import Matrix2dInput from '#widgetComponents/Matrix2dInput';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
-    widget: PropTypes.object,
+    widget: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -13,12 +13,12 @@ const defaultProps = {
 };
 
 const emptyArray = [];
-const getDimensions = (widget = {}) => {
+const getDimensions = (widget) => {
     const { properties: { data: { dimensions = emptyArray } = {} } = {} } = widget;
     return dimensions;
 };
 
-const getSectors = (widget = {}) => {
+const getSectors = (widget) => {
     const { properties: { data: { sectors = emptyArray } = {} } = {} } = widget;
     return sectors;
 };

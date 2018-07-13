@@ -29,6 +29,7 @@ export default class NumberWidget extends React.PureComponent {
                     separator={separatorText}
                     showLabel={false}
                     showHintAndError={false}
+                    // NOTE: example ussage of faramInfo
                     // faramInfo={{
                     //     action: 'changeExcerpt',
                     //     type: 'excerpt',

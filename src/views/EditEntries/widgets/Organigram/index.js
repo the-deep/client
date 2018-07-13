@@ -5,11 +5,16 @@ import OrganigramInput from '#components/OrganigramInput';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
-    widget: PropTypes.object,
+    widget: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
     widget: undefined,
+};
+
+const getData = (widget) => {
+    const { properties: { data } = {} } = widget;
+    return data;
 };
 
 export default class OrganigramWidget extends React.PureComponent {
@@ -22,17 +27,16 @@ export default class OrganigramWidget extends React.PureComponent {
 
     constructor(props) {
         super(props);
-        const { widget = {} } = props;
-        const { properties: { data } = {} } = widget;
+        const { widget } = props;
+        const data = getData(widget);
 
         // Data is returned as an array because there might be multiple heads
         this.data = data === undefined ? undefined : [data];
     }
 
     componentWillReceiveProps(nextProps) {
-        const { properties: { data: newData } = {} } = nextProps.widget;
-        const { properties: { data: oldData } = {} } = this.props.widget;
-
+        const oldData = getData(this.props.widget);
+        const newData = getData(nextProps.widget);
         if (newData !== oldData) {
             // Data is returned as an array because there might be multiple heads
             this.data = newData === undefined ? undefined : [newData];

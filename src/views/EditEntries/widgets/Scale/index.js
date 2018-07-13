@@ -6,7 +6,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
-    widget: PropTypes.object,
+    widget: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -14,12 +14,12 @@ const defaultProps = {
 };
 
 const emptyArray = [];
-const getOptions = (widget = {}) => {
+const getOptions = (widget) => {
     const { properties: { data: { scaleUnits = emptyArray } = {} } = {} } = widget;
     return scaleUnits;
 };
 
-const getValue = (widget = {}) => {
+const getValue = (widget) => {
     const { properties: { data: { value } = {} } = {} } = widget;
     return value;
 };

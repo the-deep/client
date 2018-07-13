@@ -5,15 +5,14 @@ import Matrix1dInput from '#widgetComponents/Matrix1dInput';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
-    widget: PropTypes.object,
+    widget: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
-    widget: undefined,
 };
 
 const emptyArray = [];
-const getOptions = (widget = {}) => {
+const getOptions = (widget) => {
     const { properties: { data: { rows = emptyArray } = {} } = {} } = widget;
     return rows;
 };
