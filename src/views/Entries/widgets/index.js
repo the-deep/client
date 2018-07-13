@@ -10,6 +10,10 @@ import DefaultWidget from './Default';
 
 const widgetList = [
     {
+        widgetId: 'dateRangeWidget',
+        component: DefaultWidget,
+    },
+    {
         widgetId: 'dateWidget',
         component: DefaultWidget,
     },
@@ -47,6 +51,10 @@ const widgetList = [
     },
     {
         widgetId: 'scaleWidget',
+        component: DefaultWidget,
+    },
+    {
+        widgetId: 'selectWidget',
         component: DefaultWidget,
     },
 ];
