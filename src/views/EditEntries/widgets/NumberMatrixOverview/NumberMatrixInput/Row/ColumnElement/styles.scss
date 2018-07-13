@@ -1,6 +1,0 @@
-@import '../../../../../../../stylesheets/base';
-
-.table-cell {
-    @include background-color($color-foreground);
-    padding: $spacing-extra-small $spacing-small;
-}

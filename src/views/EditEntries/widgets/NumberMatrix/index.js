@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import _ts from '#ts';
-import NumberMatrixListOutput from '#widgetComponents/NumberMatrixListOutput';
+
+import NumberMatrixInput from '#widgetComponents/NumberMatrixInput';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
@@ -20,7 +21,8 @@ const getData = (widget = {}) => {
     return data;
 };
 
-export default class NumberMatrixListWidget extends React.PureComponent {
+// eslint-disable-next-line react/prefer-stateless-function
+export default class NumberMatrixOverviewWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -29,7 +31,7 @@ export default class NumberMatrixListWidget extends React.PureComponent {
         const data = getData(widget);
 
         return (
-            <NumberMatrixListOutput
+            <NumberMatrixInput
                 data={data}
                 faramElementName="value"
                 placeholder={_ts('framework.numberWidget', 'numberPlaceholder')}
