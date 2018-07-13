@@ -2,32 +2,32 @@ import WidgetError from '#components/WidgetError';
 import boundError from '#rs/components/General/BoundError';
 import { listToMap } from '#rs/utils/common';
 
-import DateWidget from './Date';
 import DateRangeWidget from './DateRange';
+import DateWidget from './Date';
 import DefaultWidget from './Default';
 import ExcerptWidget from './Excerpt';
-import NumberWidget from './Number';
-import ScaleWidget from './Scale';
-import MultiSelectWidget from './MultiSelect';
-import SelectWidget from './Select';
-import Matrix1dOverviewWidget from './Matrix1dOverview';
-import Matrix1dListWidget from './Matrix1dList';
-import OrganigramWidget from './Organigram';
 import GeoWidget from './Geo';
-import NumberMatrixOverviewWidget from './NumberMatrixOverview';
+import Matrix1dListWidget from './Matrix1dList';
+import Matrix1dWidget from './Matrix1d';
+import Matrix2dWidget from './Matrix2d';
+import MultiSelectWidget from './MultiSelect';
 import NumberMatrixListWidget from './NumberMatrixList';
-import Matrix2dOverviewWidget from './Matrix2dOverview';
+import NumberMatrixWidget from './NumberMatrix';
+import NumberWidget from './Number';
+import OrganigramWidget from './Organigram';
+import ScaleWidget from './Scale';
+import SelectWidget from './Select';
 
 const widgetList = [
-    {
-        widgetId: 'dateWidget',
-        type: 'list',
-        component: DateWidget,
-    },
     {
         widgetId: 'dateRangeWidget',
         type: 'list',
         component: DateRangeWidget,
+    },
+    {
+        widgetId: 'dateWidget',
+        type: 'list',
+        component: DateWidget,
     },
     {
         widgetId: 'excerptWidget',
@@ -47,7 +47,7 @@ const widgetList = [
     {
         widgetId: 'matrix1dWidget',
         type: 'overview',
-        component: Matrix1dOverviewWidget,
+        component: Matrix1dWidget,
     },
     {
         widgetId: 'matrix1dWidget',
@@ -57,7 +57,7 @@ const widgetList = [
     {
         widgetId: 'matrix2dWidget',
         type: 'overview',
-        component: Matrix2dOverviewWidget,
+        component: Matrix2dWidget,
     },
     {
         widgetId: 'matrix2dWidget',
@@ -70,14 +70,9 @@ const widgetList = [
         component: MultiSelectWidget,
     },
     {
-        widgetId: 'selectWidget',
-        type: 'list',
-        component: SelectWidget,
-    },
-    {
         widgetId: 'numberMatrixWidget',
         type: 'overview',
-        component: NumberMatrixOverviewWidget,
+        component: NumberMatrixWidget,
     },
     {
         widgetId: 'numberMatrixWidget',
@@ -98,6 +93,11 @@ const widgetList = [
         widgetId: 'scaleWidget',
         type: 'list',
         component: ScaleWidget,
+    },
+    {
+        widgetId: 'selectWidget',
+        type: 'list',
+        component: SelectWidget,
     },
 ];
 

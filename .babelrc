@@ -30,6 +30,7 @@
                     "#ravl": "./src/vendor/ravl",
 
                     "#components": "./src/components",
+                    "#widgetComponents": "./src/widgetComponents",
                     "#config": "./src/config",
                     "#entities": "./src/entities",
                     "#constants": "./src/constants",

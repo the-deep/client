@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Matrix1dListOutput from '#widgetComponents/Matrix1dListOutput';
+import Matrix1dInput from '#widgetComponents/Matrix1dInput';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
@@ -13,12 +13,12 @@ const defaultProps = {
 };
 
 const emptyArray = [];
-const getRows = (widget = {}) => {
+const getOptions = (widget = {}) => {
     const { properties: { data: { rows = emptyArray } = {} } = {} } = widget;
     return rows;
 };
 
-export default class Matrix1dListWidget extends React.PureComponent {
+export default class Matrix1dOverviewWidget extends React.PureComponent {
     static valueKeyExtractor = d => d.key;
 
     static propTypes = propTypes;
@@ -26,12 +26,12 @@ export default class Matrix1dListWidget extends React.PureComponent {
 
     render() {
         const { widget } = this.props;
-        const rows = getRows(widget);
+        const options = getOptions(widget);
 
         return (
-            <Matrix1dListOutput
+            <Matrix1dInput
                 faramElementName="value"
-                rows={rows}
+                options={options}
             />
         );
     }
