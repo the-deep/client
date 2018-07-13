@@ -19,7 +19,7 @@ const widgetList = [
     },
     {
         widgetId: 'excerptWidget',
-        component: DefaultWidget,
+        component: ExcerptWidget,
     },
     {
         widgetId: 'geoWidget',
