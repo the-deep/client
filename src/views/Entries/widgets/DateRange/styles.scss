@@ -1,0 +1,12 @@
+@import '../../../../stylesheets/base';
+
+.date-range {
+    display: flex;
+    align-items: flex-start;
+    height: 100%;
+
+    .date,
+    .to {
+        padding: $spacing-extra-small $spacing-small;
+    }
+}

@@ -15,13 +15,14 @@ import DateWidget from './Date';
 import NumberWidget from './Number';
 import ScaleWidget from './Scale';
 import SelectWidget from './Select';
+import DateRangeWidget from './DateRange';
 import DefaultWidget from './Default';
 
 
 const widgetList = [
     {
         widgetId: 'dateRangeWidget',
-        component: DefaultWidget,
+        component: DateRangeWidget,
     },
     {
         widgetId: 'dateWidget',

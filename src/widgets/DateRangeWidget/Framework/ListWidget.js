@@ -117,6 +117,7 @@ export default class DateFrameworkList extends React.PureComponent {
 
     render() {
         const EditModal = this.renderEditModal;
+        const dateRangeToLabel = _ts('framework.dateRangeWidget', 'dateRangeToLabel');
 
         return (
             <div className={styles.list}>
@@ -129,8 +130,7 @@ export default class DateFrameworkList extends React.PureComponent {
                 <span
                     className={styles.to}
                 >
-                    {/* FIXME: use strings */}
-                    to
+                    {dateRangeToLabel}
                 </span>
                 <DateInput
                     className={styles.dateInput}

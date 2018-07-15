@@ -2,6 +2,8 @@ import React from 'react';
 // import PropTypes from 'prop-types';
 
 import DateInput from '#rs/components/Input/DateInput';
+import _ts from '#ts';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -24,9 +26,8 @@ export default class DateRangeWidget extends React.PureComponent {
                     showLabel={false}
                     showHintAndError={false}
                 />
-                {/* FIXME: use strings */}
                 <span className={styles.to}>
-                    to
+                    {_ts('editEntry.widgets', 'dateRangeToLabel')}
                 </span>
                 <DateInput
                     className={styles.dateInput}
