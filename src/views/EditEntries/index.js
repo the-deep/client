@@ -9,6 +9,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import { detachedFaram } from '#rsci/Faram';
 import FixedTabs from '#rscv/FixedTabs';
+import Message from '#rscv/Message';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { CoordinatorBuilder } from '#rsu/coordinate';
@@ -20,6 +21,7 @@ import {
 } from '#constants';
 import {
     leadIdFromRoute,
+    projectIdFromRoute,
 
     editEntriesAnalysisFrameworkSelector,
     editEntriesEntriesSelector,
@@ -60,6 +62,7 @@ const propTypes = {
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     leadId: PropTypes.number.isRequired,
+    projectId: PropTypes.number.isRequired,
     schema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 
@@ -91,6 +94,7 @@ const mapStateToProps = state => ({
     entries: editEntriesEntriesSelector(state),
     lead: editEntriesLeadSelector(state),
     leadId: leadIdFromRoute(state),
+    projectId: projectIdFromRoute(state),
     schema: editEntriesSchemaSelector(state),
     statuses: editEntriesStatusesSelector(state),
 });
@@ -124,6 +128,7 @@ export default class EditEntries extends React.PureComponent {
         this.state = {
             pendingEditEntryData: true,
             pendingSaveAll: false,
+            projectMismatch: false,
         };
 
         this.views = {
@@ -194,6 +199,7 @@ export default class EditEntries extends React.PureComponent {
         this.editEntryDataRequest = new EditEntryDataRequest({
             clearEntries: this.props.clearEntries,
             getAf: () => this.props.analysisFramework,
+            getProjectId: () => this.props.projectId,
             getEntries: () => this.props.entries,
             setAnalysisFramework: this.props.setAnalysisFramework,
             setEntries: this.props.setEntries,
@@ -425,6 +431,7 @@ export default class EditEntries extends React.PureComponent {
         const {
             pendingEditEntryData,
             pendingSaveAll,
+            projectMismatch,
         } = this.state;
 
         if (pendingEditEntryData) {
@@ -463,27 +470,37 @@ export default class EditEntries extends React.PureComponent {
                         useHash
                         replaceHistory
                         deafultHash={this.defaultHash}
+                        disabled={projectMismatch}
                     />
                     <div className={styles.actionButtons}>
                         <DangerButton
-                            disabled={pendingEditEntryData || pendingSaveAll}
+                            disabled={pendingEditEntryData || pendingSaveAll || projectMismatch}
                         >
                             { cancelButtonTitle }
                         </DangerButton>
                         <SuccessButton
-                            disabled={pendingEditEntryData || pendingSaveAll}
+                            disabled={pendingEditEntryData || pendingSaveAll || projectMismatch}
                             onClick={this.handleSave}
                         >
                             { saveButtonTitle }
                         </SuccessButton>
                     </div>
                 </header>
-                <MultiViewContainer
-                    views={this.views}
-                    useHash
-                    containerClassName={styles.content}
-                    activeClassName={styles.active}
-                />
+                {
+                    !projectMismatch ? (
+                        <MultiViewContainer
+                            views={this.views}
+                            useHash
+                            containerClassName={styles.content}
+                            activeClassName={styles.active}
+                        />
+                    ) : (
+                        <Message>
+                            {/* FIXME: use strings */}
+                            Cannot find lead inside current project.
+                        </Message>
+                    )
+                }
             </div>
         );
     }
