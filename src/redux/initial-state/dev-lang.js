@@ -405,6 +405,7 @@ const initialDevLangState = {
         877: 'Seems like you do not have any projects yet.',
         878: 'To get started, create a project from your profile.',
         879: 'Go to your profile',
+        893: 'Verify you are a human',
         900: 'User Profile Edit',
         901: 'User Edit Successful',
         902: 'User Edit Failure.',
@@ -1606,6 +1607,7 @@ const initialDevLangState = {
             emailPlaceholder: 813,
             loginLabel: 814,
             registerLabel: 811,
+            enterRecaptcha: 893,
         },
         widgetTitle: {
             dateWidgetLabel: 704,
