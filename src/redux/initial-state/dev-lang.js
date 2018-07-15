@@ -488,6 +488,7 @@ const initialDevLangState = {
         997: 'Region details Successfully Saved.',
         998: 'Save Region',
         999: 'There was an error while fetching existing users',
+        1000: 'to',
         1200: 'User',
         1206: 'Search Gallery Files',
         1209: 'Loading File',
@@ -821,6 +822,7 @@ const initialDevLangState = {
         },
         'framework.dateRangeWidget': {
             widgetTitlePlaceholder: 13,
+            dateRangeToLabel: 1000,
 
             titleLabel: 13,
             saveButtonLabel: 25,
@@ -1239,6 +1241,9 @@ const initialDevLangState = {
             entrySaveSuccess: 989,
             entrySaveFailure: 990,
         },
+        'editEntry.widgets': {
+            dateRangeToLabel: 1000,
+        },
         editAssessment: {
             metadataTabLabel: 7001,
             methodologyTabLabel: 7002,
@@ -1270,6 +1275,9 @@ const initialDevLangState = {
             createdAtFilterLabel: 163,
             entriesTabLabel: 15,
             geoOptionsFatalMessage: 534,
+        },
+        'entries.widgets': {
+            dateRangeToLabel: 1000,
         },
         export: {
             headerExport: 600,

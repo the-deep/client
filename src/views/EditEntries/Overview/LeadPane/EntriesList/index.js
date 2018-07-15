@@ -25,7 +25,7 @@ const defaultProps = {
     statuses: {},
 };
 
-export default class EntriesListing extends React.PureComponent {
+export default class EntriesList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -85,7 +85,7 @@ export default class EntriesListing extends React.PureComponent {
             });
         };
 
-        const currentEntryKey = EntriesListing.calcEntryKey(entry);
+        const currentEntryKey = EntriesList.calcEntryKey(entry);
         const isActive = currentEntryKey === selectedEntryKey;
         const isMarkedAsDeleted = entryAccessor.isMarkedAsDeleted(entry);
 
@@ -117,15 +117,14 @@ export default class EntriesListing extends React.PureComponent {
                     {this.renderEntryLabel(entry)}
                     <div className={styles.statusIcons}>
                         { isMarkedAsDeleted &&
-                            <span className={EntriesListing.iconMap.markedForRemoval} />
+                            <span className={EntriesList.iconMap.markedForRemoval} />
                         }
-                        <span className={EntriesListing.iconMap[status] || ''} />
+                        <span className={EntriesList.iconMap[status] || ''} />
                     </div>
                 </button>
                 {
                     isMarkedAsDeleted ? (
                         <Button
-                            key="undo-button"
                             className={styles.removeButton}
                             onClick={() => handleMarkAsDeletedEntry(currentEntryKey, false)}
                             iconName={iconNames.undo}
@@ -134,7 +133,6 @@ export default class EntriesListing extends React.PureComponent {
                         />
                     ) : (
                         <DangerButton
-                            key="remove-button"
                             className={styles.removeButton}
                             onClick={() => handleMarkAsDeletedEntry(currentEntryKey, true)}
                             iconName={iconNames.delete}
@@ -153,7 +151,7 @@ export default class EntriesListing extends React.PureComponent {
                 className={styles.entriesList}
                 modifier={this.renderEntryItem}
                 data={this.props.entries}
-                keyExtractor={EntriesListing.calcEntryKey}
+                keyExtractor={EntriesList.calcEntryKey}
             />
         );
     }
