@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
 import { dateCondition } from '#rs/components/Input/Faram';
-import { listToMap, decodeDate } from '#rs/utils/common';
+import { listToMap, decodeDate, compareNumber } from '#rs/utils/common';
 
 import { entryAccessor, calculateEntryState } from '#entities/editEntries';
 
@@ -32,7 +32,12 @@ export const editEntriesLeadSelector = createSelector(
 
 export const editEntriesEntriesSelector = createSelector(
     editEntriesForLeadSelector,
-    editEntry => editEntry.entries || emptyArray,
+    editEntry => editEntry.entries.sort(
+        (a, b) => (
+            compareNumber(entryAccessor.order(a), entryAccessor.order(b))
+            || compareNumber(entryAccessor.serverId(a), entryAccessor.serverId(b))
+        ),
+    ) || emptyArray,
 );
 
 export const editEntriesRestsSelector = createSelector(
