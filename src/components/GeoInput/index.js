@@ -3,6 +3,7 @@ import React from 'react';
 
 import AccentButton from '#rs/components/Action/Button/AccentButton';
 import SelectInputWithList from '#rs/components/Input/SelectInputWithList';
+import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
 import FaramElement from '#rs/components/Input/Faram/FaramElement';
 import { iconNames } from '#constants';
 
@@ -18,6 +19,7 @@ const propTypes = {
     regions: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     showHeader: PropTypes.bool,
     disabled: PropTypes.bool,
+    hideList: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -26,13 +28,14 @@ const defaultProps = {
     onChange: undefined,
     geoOptionsByRegion: {},
     disabled: false,
+    hideList: false,
     value: [],
     regions: [],
     showHeader: true,
 };
 
 @FaramElement('input')
-export default class GeoListInput extends React.PureComponent {
+export default class GeoInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -62,8 +65,8 @@ export default class GeoListInput extends React.PureComponent {
         super(props);
 
         // Calculate state from initial value
-        this.geoOptionsById = GeoListInput.calcGeoOptionsById(props.geoOptionsByRegion);
-        this.geoOptions = GeoListInput.getAllGeoOptions(props.geoOptionsByRegion);
+        this.geoOptionsById = GeoInput.calcGeoOptionsById(props.geoOptionsByRegion);
+        this.geoOptions = GeoInput.getAllGeoOptions(props.geoOptionsByRegion);
         this.state = {
             modalValue: props.value,
             showModal: false,
@@ -72,8 +75,8 @@ export default class GeoListInput extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.geoOptionsByRegion !== nextProps.geoOptionsByRegion) {
-            this.geoOptionsById = GeoListInput.calcGeoOptionsById(nextProps.geoOptionsByRegion);
-            this.geoOptions = GeoListInput.getAllGeoOptions(nextProps.geoOptionsByRegion);
+            this.geoOptionsById = GeoInput.calcGeoOptionsById(nextProps.geoOptionsByRegion);
+            this.geoOptions = GeoInput.getAllGeoOptions(nextProps.geoOptionsByRegion);
         }
 
         if (this.props.value !== nextProps.value) {
@@ -174,10 +177,61 @@ export default class GeoListInput extends React.PureComponent {
         return (
             <AccentButton
                 className={styles.action}
-                iconName={iconNames.chart}
+                iconName={iconNames.globe}
                 onClick={this.handleShowModal}
                 disabled={disabled}
                 transparent
+            />
+        );
+    }
+
+    renderSelection = () => {
+        /* FIXME: Don't toggle between MultiSelect & SelectInputWithList
+            Make a separate ListComponent and use that in SelectInputWithList
+            Use that component to build custom SelectInputWithList to use in GeoInput
+            and organigram input
+        */
+        const {
+            value,
+            disabled,
+            hideList,
+        } = this.props;
+
+        if (hideList) {
+            return (
+                <div className={styles.noListSelection} >
+                    <MultiSelectInput
+                        value={value}
+                        onChange={this.handleSelectChange}
+                        options={this.geoOptions}
+                        labelSelector={this.valueLabelSelector}
+                        keySelector={this.valueKeySelector}
+                        showHintAndError={false}
+                        hideSelectAllButton
+                        disabled={disabled}
+                    />
+                    <AccentButton
+                        className={styles.action}
+                        iconName={iconNames.map}
+                        onClick={this.handleShowModal}
+                        disabled={disabled}
+                        transparent
+                    />
+                </div>
+            );
+        }
+        return (
+            <SelectInputWithList
+                value={value}
+                onChange={this.handleSelectChange}
+                className={styles.selectInput}
+                options={this.geoOptions}
+                labelSelector={this.valueLabelSelector}
+                keySelector={this.valueKeySelector}
+                showHintAndError={false}
+                topRightChild={this.renderShowModalButton}
+                hideSelectAllButton
+                disabled={disabled}
             />
         );
     }
@@ -186,14 +240,15 @@ export default class GeoListInput extends React.PureComponent {
         const {
             title,
             value,
-            showHeader,
             disabled,
+            showHeader,
         } = this.props;
 
         const titleClassName = `${styles.title} title`;
         const headerClassName = `${styles.header} header`;
 
         const GeoModalRender = this.renderGeoModal;
+        const Selection = this.renderSelection;
 
         return (
             <div className={this.getClassName()}>
@@ -211,18 +266,7 @@ export default class GeoListInput extends React.PureComponent {
                         />
                     </header>
                 }
-                <SelectInputWithList
-                    value={value}
-                    onChange={this.handleSelectChange}
-                    className={styles.selectInput}
-                    options={this.geoOptions}
-                    labelSelector={this.valueLabelSelector}
-                    keySelector={this.valueKeySelector}
-                    showHintAndError={false}
-                    topRightChild={this.renderShowModalButton}
-                    hideSelectAllButton
-                    disabled={disabled}
-                />
+                <Selection />
                 <GeoModalRender />
             </div>
         );

@@ -24,7 +24,7 @@ import {
     geoOptionsForProjectSelector,
 } from '#redux';
 import OrganigramInput from '#components/OrganigramInput/';
-import GeoListInput from '#components/GeoListInput/';
+import GeoInput from '#components/GeoInput/';
 
 import Header from '../Header';
 import { renderWidget } from '../widgetUtils';
@@ -214,7 +214,7 @@ export default class Methodology extends React.PureComponent {
                             labelSelector={Methodology.orgLabelSelector}
                             idSelector={Methodology.orgIdSelector}
                         />
-                        <GeoListInput
+                        <GeoInput
                             faramElementName="locations"
                             title={locationsTitle}
                             className={styles.locationSelection}
