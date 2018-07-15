@@ -2,21 +2,26 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import GeoListInput from '#components/GeoListInput/';
-
 import {
     projectDetailsSelector,
     geoOptionsForProjectSelector,
 } from '#redux';
 
+import GeoListOutput from '#widgetComponents/GeoListOutput';
+
 const propTypes = {
+    // eslint-disable-next-line react/forbid-prop-types
+    data: PropTypes.object,
+    className: PropTypes.string,
     geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     projectDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
+    className: '',
     geoOptions: {},
     projectDetails: {},
+    data: {},
 };
 
 const mapStateToProps = (state, props) => ({
@@ -25,21 +30,28 @@ const mapStateToProps = (state, props) => ({
 });
 
 @connect(mapStateToProps)
-export default class GeoWidget extends React.PureComponent {
+export default class GeoListWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
     render() {
         const {
+            data: {
+                value,
+            },
             geoOptions,
-            projectDetails,
+            projectDetails: {
+                regions,
+            },
+            className,
         } = this.props;
 
         return (
-            <GeoListInput
-                faramElementName="value"
+            <GeoListOutput
+                className={className}
+                value={value}
                 geoOptionsByRegion={geoOptions}
-                regions={projectDetails.regions}
+                regions={regions}
                 showHeader={false}
             />
         );

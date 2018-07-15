@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import ListView from '#rscv/List/ListView';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import BoundError from '#rs/components/General/BoundError';
 
 import AppError from '#components/AppError';
@@ -14,6 +15,8 @@ import {
     setAnalysisFrameworkAction,
     analysisFrameworkForProjectSelector,
     unsetEntriesViewFilterAction,
+
+    setGeoOptionsAction,
 
     // Here
     // gridItemsForProjectSelector,
@@ -29,6 +32,7 @@ import {
 
 import EntriesRequest from './requests/EntriesRequest';
 import FrameworkRequest from './requests/FrameworkRequest';
+import GeoOptionsRequest from './requests/GeoOptionsRequest';
 import LeadGroupedEntries from './LeadGroupedEntries';
 import styles from './styles.scss';
 
@@ -45,6 +49,7 @@ const mapDispatchToProps = dispatch => ({
     setEntries: params => dispatch(setEntriesAction(params)),
     setProject: params => dispatch(setProjectAction(params)),
     setFramework: params => dispatch(setAnalysisFrameworkAction(params)),
+    setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
     unsetEntriesViewFilter: params => dispatch(unsetEntriesViewFilterAction(params)),
     setEntriesViewActivePage: params => dispatch(setEntriesViewActivePageAction(params)),
 });
@@ -61,6 +66,7 @@ const propTypes = {
 
     // eslint-disable-next-line react/forbid-prop-types
     entriesFilter: PropTypes.object.isRequired,
+    setGeoOptions: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -80,6 +86,7 @@ export default class Entries extends React.PureComponent {
         this.state = {
             pendingEntries: true,
             pendingFramework: true,
+            pendingGeoOptions: true,
         };
 
         const getProjectId = () => this.props.projectId;
@@ -97,6 +104,12 @@ export default class Entries extends React.PureComponent {
             setEntries: this.props.setEntries,
         });
 
+        this.geoOptionsRequest = new GeoOptionsRequest({
+            setState,
+            getProjectId,
+            setGeoOptions: this.props.setGeoOptions,
+        });
+
         this.frameworkRequest = new FrameworkRequest({
             setState,
             getProjectId,
@@ -110,6 +123,9 @@ export default class Entries extends React.PureComponent {
         this.entriesRequest.init();
         this.entriesRequest.start();
 
+        this.geoOptionsRequest.init();
+        this.geoOptionsRequest.start();
+
         this.frameworkRequest.init();
         this.frameworkRequest.start();
 
@@ -118,6 +134,7 @@ export default class Entries extends React.PureComponent {
 
     componentWillUnmount() {
         this.entriesRequest.stop();
+        this.geoOptionsRequest.stop();
         this.frameworkRequest.stop();
         window.removeEventListener('scroll', this.handleScroll, true);
     }
@@ -172,15 +189,30 @@ export default class Entries extends React.PureComponent {
     }
 
     render() {
+        const {
+            pendingGeoOptions,
+            pendingEntries,
+            pendingFramework,
+        } = this.state;
+
         const Header = this.renderHeader;
         const LeadGroupedEntriesList = this.renderLeadGroupedEntriesList;
         const Footer = this.renderFooter;
+        const loading = pendingEntries ||
+            pendingGeoOptions ||
+            pendingFramework;
 
         return (
             <div className={styles.entriesView}>
-                <Header />
-                <LeadGroupedEntriesList />
-                <Footer />
+                {loading ? (
+                    <LoadingAnimation />
+                ) : (
+                    <Fragment>
+                        <Header />
+                        <LeadGroupedEntriesList />
+                        <Footer />
+                    </Fragment>
+                )}
             </div>
         );
     }

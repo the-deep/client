@@ -2,7 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import List from '#rs/components/View/List';
-import { unique } from '#rs/utils/common';
+import {
+    unique,
+    isTruthy,
+} from '#rs/utils/common';
 
 import ColumnElement from './ColumnElement';
 import styles from './styles.scss';
@@ -27,7 +30,7 @@ export default class NumberMatrixRow extends React.PureComponent {
         const { data, value } = this.props;
         const indicatorStyle = [styles.tableHeaderRow];
 
-        const values = Object.values(value[key] || emptyObject).filter(v => v);
+        const values = Object.values(value[key] || emptyObject).filter(v => isTruthy(v));
 
         const isSame = unique(values).length === 1;
         const colHeaderLength = (data.columnHeaders || emptyList).length;

@@ -18,8 +18,8 @@ export default class Request {
         this.schemaName = undefined;
     }
 
-    handleFatal = (error) => {
-        console.warn(error);
+    handleFatal = () => {
+        // console.warn(error);
     }
 
     start = () => {
@@ -33,9 +33,12 @@ export default class Request {
     stop = () => {
         if (this.request) {
             this.request.stop();
-        } else {
+        }
+        /*
+        else {
             console.error(requestNotCreatedForStopMessage);
         }
+        */
     }
 
     successInterceptor = (response) => {
@@ -43,8 +46,8 @@ export default class Request {
             try {
                 schema.validate(response, this.schemaName);
             } catch (e) {
+                console.error('NETWORK ERROR:', e);
                 this.handleFatal({ errorMessage: e, errroCode: null });
-                console.error(e);
                 return;
             }
         } else {
@@ -55,7 +58,7 @@ export default class Request {
     }
 
     failureInterceptor = (response) => {
-        const newResponse = alterResponseErrorToFaramError(response);
+        const newResponse = alterResponseErrorToFaramError(response.errors);
         this.handleFailure(newResponse);
     }
 

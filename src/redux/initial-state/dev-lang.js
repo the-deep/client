@@ -282,7 +282,7 @@ const initialDevLangState = {
         530: 'Edit entries',
         531: 'Set',
         533: 'Select geo region',
-        534: 'Couldn\'t load geo filter options',
+        534: 'Couldn\'t load geo options',
         535: 'Select locations',
         537: 'Search Excerpt',
         538: 'Created By',

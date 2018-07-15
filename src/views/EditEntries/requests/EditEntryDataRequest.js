@@ -32,6 +32,13 @@ export default class EditEntryDataRequest extends Request {
         } = response;
         const { leadId } = this;
 
+        const projectIdFromUrl = this.parent.getProjectId();
+        if (projectIdFromUrl !== lead.project) {
+            this.parent.setState({ projectMismatch: true });
+            console.error(`Expected project id to be ${projectIdFromUrl}, but got ${lead.project}`);
+            return;
+        }
+
         this.parent.setLead({ lead });
 
         const oldAf = this.parent.getAf();

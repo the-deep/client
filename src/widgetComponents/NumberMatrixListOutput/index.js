@@ -10,22 +10,24 @@ import styles from './styles.scss';
 
 const propTypes = {
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    options: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    className: PropTypes.string,
 };
 
 const defaultProps = {
-    data: {},
+    className: '',
+    options: {},
     value: {},
 };
 
 const emptyList = [];
 const emptyObject = {};
 
-const getRowsData = (data, value) => {
-    const { rowHeaders = emptyList } = data;
+const getRowsData = (options, value) => {
+    const { rowHeaders = emptyList } = options;
 
     const dataRows = rowHeaders.map((row) => {
-        const { columnHeaders = emptyList } = data;
+        const { columnHeaders = emptyList } = options;
 
         const columnList = columnHeaders.map((col) => {
             const colValue = (value[row.key] || emptyObject)[col.key];
@@ -57,26 +59,26 @@ class NumberMatrixListView extends React.PureComponent {
     constructor(props) {
         super(props);
         const {
-            data,
+            options,
             value,
         } = props;
 
-        this.rowsData = getRowsData(data, value);
+        this.rowsData = getRowsData(options, value);
     }
 
     componentWillReceiveProps(nextProps) {
         const {
-            data: newData,
+            options: newOptions,
             value: newValue,
         } = nextProps;
 
         const {
-            data: oldData,
+            options: oldOptions,
             value: oldValue,
         } = this.props;
 
-        if (newData !== oldData || newValue !== oldValue) {
-            this.rowsData = getRowsData(newData, newValue);
+        if (newOptions !== oldOptions || newValue !== oldValue) {
+            this.rowsData = getRowsData(newOptions, newValue);
         }
     }
 
@@ -85,9 +87,11 @@ class NumberMatrixListView extends React.PureComponent {
     });
 
     render() {
+        const { className } = this.props;
+
         return (
             <ListView
-                className={styles.list}
+                className={`${styles.list} ${className}`}
                 data={this.rowsData}
                 renderer={Row}
                 rendererParams={this.rowRendererParams}

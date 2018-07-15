@@ -6,6 +6,10 @@ import { listToMap } from '#rs/utils/common';
 
 import Matrix1dListWidget from './Matrix1dList';
 import ExcerptWidget from './Excerpt';
+import NumberMatrixWidget from './NumberMatrix';
+import GeoWidget from './Geo';
+import OrganigramWidget from './Organigram';
+import MultiSelectWidget from './MultiSelect';
 import DefaultWidget from './Default';
 
 
@@ -24,7 +28,7 @@ const widgetList = [
     },
     {
         widgetId: 'geoWidget',
-        component: DefaultWidget,
+        component: GeoWidget,
     },
     {
         widgetId: 'matrix1dWidget',
@@ -36,11 +40,11 @@ const widgetList = [
     },
     {
         widgetId: 'multiselectWidget',
-        component: DefaultWidget,
+        component: MultiSelectWidget,
     },
     {
         widgetId: 'numberMatrixWidget',
-        component: DefaultWidget,
+        component: NumberMatrixWidget,
     },
     {
         widgetId: 'numberWidget',
@@ -48,7 +52,7 @@ const widgetList = [
     },
     {
         widgetId: 'organigramWidget',
-        component: DefaultWidget,
+        component: OrganigramWidget,
     },
     {
         widgetId: 'scaleWidget',

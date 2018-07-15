@@ -46,7 +46,7 @@ export default class OrganigramWidget extends React.PureComponent {
     render() {
         return (
             <OrganigramInput
-                faramElementName="values"
+                faramElementName="value"
                 data={this.data}
                 childSelector={OrganigramWidget.childSelector}
                 labelSelector={OrganigramWidget.labelSelector}
