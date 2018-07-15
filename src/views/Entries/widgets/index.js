@@ -11,6 +11,9 @@ import NumberMatrixWidget from './NumberMatrix';
 import GeoWidget from './Geo';
 import OrganigramWidget from './Organigram';
 import MultiSelectWidget from './MultiSelect';
+import DateWidget from './Date';
+import NumberWidget from './Number';
+import ScaleWidget from './Scale';
 import DefaultWidget from './Default';
 
 
@@ -21,7 +24,7 @@ const widgetList = [
     },
     {
         widgetId: 'dateWidget',
-        component: DefaultWidget,
+        component: DateWidget,
     },
     {
         widgetId: 'excerptWidget',
@@ -49,7 +52,7 @@ const widgetList = [
     },
     {
         widgetId: 'numberWidget',
-        component: DefaultWidget,
+        component: NumberWidget,
     },
     {
         widgetId: 'organigramWidget',
@@ -57,7 +60,7 @@ const widgetList = [
     },
     {
         widgetId: 'scaleWidget',
-        component: DefaultWidget,
+        component: ScaleWidget,
     },
     {
         widgetId: 'selectWidget',
