@@ -18,6 +18,7 @@ export const entryAccessor = {
 
     key: (entry = {}) => (entry.localData || {}).id,
     error: (entry = {}) => (entry.localData || {}).error,
+    color: (entry = {}) => (entry.localData || {}).color,
     isMarkedAsDeleted: (entry = {}) => !!(entry.localData || {}).isMarkedAsDeleted,
     isPristine: (entry = {}) => !!(entry.localData || {}).isPristine,
     hasError: (entry = {}) => !!(entry.localData || {}).hasError,
@@ -27,6 +28,8 @@ export const entryAccessor = {
     dataAttribute: (entry = {}, attributeId) => (
         (((entry.data || {}).attributes || {})[attributeId] || {}).data
     ),
+    entryType: (entry = {}) => (entry.data || {}).entryType,
+    excerpt: (entry = {}) => (entry.data || {}).excerpt,
     order: (entry = {}) => (entry.data || {}).order,
     serverId: (entry = {}) => (entry.data || {}).id,
 

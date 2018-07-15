@@ -190,19 +190,24 @@ const updateEntriesBulk = (state, action) => {
         return state;
     }
 
-    const entriesSettings = Object.keys(data).reduce((acc, key) => {
-        const entryIndex = entries
-            .findIndex(entry => entryAccessor.key(entry) === key);
-        const { color } = data[key];
+    const entriesSettings = Object.keys(data).reduce(
+        (acc, key) => {
+            const { color } = data[key];
 
-        acc[entryIndex] = { $auto: {
-            localData: { $auto: {
-                color: { $set: color },
-            } },
-        } };
+            const entryIndex = entries.findIndex(
+                entry => entryAccessor.key(entry) === key,
+            );
 
-        return acc;
-    }, {});
+            acc[entryIndex] = { $auto: {
+                localData: { $auto: {
+                    color: { $set: color },
+                } },
+            } };
+
+            return acc;
+        },
+        {},
+    );
 
     const settings = {
         editEntries: {

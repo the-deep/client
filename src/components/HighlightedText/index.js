@@ -65,6 +65,7 @@ export default class HighlightedText extends React.PureComponent {
             }
 
             const actualStr = text.substr(split.start, split.end - split.start);
+            const actualKey = split.key;
             const splitStr = text.substr(splitIndex, split.end - splitIndex);
             const key = `split-${level}-${split.start}-1`;
 
@@ -75,12 +76,15 @@ export default class HighlightedText extends React.PureComponent {
                             split.item,
                             this.renderSplits(splitStr, split.children, level + 1),
                             actualStr,
+                            actualKey,
                         ) }
                     </span>,
                 );
             } else {
                 result.push(
-                    <span key={key}>{ this.props.modifier(split.item, splitStr, actualStr) }</span>,
+                    <span key={key}>
+                        { this.props.modifier(split.item, splitStr, actualStr, actualKey) }
+                    </span>,
                 );
             }
 
@@ -89,7 +93,9 @@ export default class HighlightedText extends React.PureComponent {
 
         if (index < text.length) {
             result.push(
-                <span key={`split-${level}-2`}>{ text.substr(index) }</span>,
+                <span key={`split-${level}-2`}>
+                    { text.substr(index) }
+                </span>,
             );
         }
 
@@ -103,16 +109,15 @@ export default class HighlightedText extends React.PureComponent {
             text,
         } = this.props;
 
-        const highlightsCopy = highlights.map(h => ({ ...h }))
+        const highlightsCopy = highlights
+            .map(h => ({ ...h }))
             .filter(h => h.start >= 0)
             .sort((h1, h2) => h1.start - h2.start);
 
+        const nestedSplits = HighlightedText.createNestedSplits(highlightsCopy);
         return (
             <p className={className}>
-                {this.renderSplits(
-                    text,
-                    HighlightedText.createNestedSplits(highlightsCopy),
-                )}
+                {this.renderSplits(text, nestedSplits)}
             </p>
         );
     }

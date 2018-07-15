@@ -6,10 +6,10 @@ import MultiViewContainer from '#rs/components/View/MultiViewContainer';
 import Message from '#rs/components/View/Message';
 import FixedTabs from '#rs/components/View/FixedTabs';
 
-
 import {
     editEntriesLeadSelector,
     editEntriesEntriesSelector,
+    editEntriesFilteredEntriesSelector,
     editEntriesStatusesSelector,
     editEntriesSelectedEntryKeySelector,
     editEntriesSetSelectedEntryKeyAction,
@@ -21,6 +21,8 @@ import {
     LEAD_PANE_TYPE,
     leadPaneTypeMap,
 } from '#entities/lead';
+
+import { entryAccessor } from '#entities/editEntries';
 
 import _ts from '#ts';
 
@@ -36,6 +38,7 @@ const propTypes = {
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     onExcerptCreate: PropTypes.func.isRequired,
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    filteredEntries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     selectedEntryKey: PropTypes.string,
     setSelectedEntryKey: PropTypes.func.isRequired,
@@ -44,6 +47,7 @@ const propTypes = {
 
 const defaultProps = {
     entries: [],
+    filteredEntries: [],
     statuses: {},
     selectedEntryKey: undefined,
 };
@@ -51,6 +55,7 @@ const defaultProps = {
 const mapStateToProps = state => ({
     lead: editEntriesLeadSelector(state),
     entries: editEntriesEntriesSelector(state),
+    filteredEntries: editEntriesFilteredEntriesSelector(state),
     selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
     statuses: editEntriesStatusesSelector(state),
 });
@@ -220,27 +225,30 @@ export default class LeftPane extends React.PureComponent {
 
     // Simplified Lead Preview
 
-    calculateHighlights = () => this.props.entries
-        .filter(e => e.data.entryType === 'excerpt')
+    calculateHighlights = () => this.props.filteredEntries
+        .filter(e => entryAccessor.entryType(e) === 'excerpt')
         .map(entry => ({
-            text: entry.data.excerpt,
-            color: entry.localData.color || '#c0c0c0',
+            key: entryAccessor.key(entry),
+            text: entryAccessor.excerpt(entry),
+            color: entryAccessor.color(entry) || '#c0c0c0',
         }));
 
-    highlightSimplifiedExcerpt = (highlight, text, actualStr) => (
+    highlightSimplifiedExcerpt = (highlight, text, actualStr, actualKey) => (
         SimplifiedLeadPreview.highlightModifier(
             highlight,
             text,
             actualStr,
+            actualKey,
             this.handleHighlightClick,
         )
     );
 
-    handleHighlightClick = (e, { text }) => {
-        console.warn('this should handle highlight click', text);
-        // TODO:
-        // const existing = api.getEntryForExcerpt(text);
-        // api.selectEntry(existing.data.id);
+    handleHighlightClick = (e, { key }) => {
+        // console.warn('this should handle highlight click', text, key);
+        this.props.setSelectedEntryKey({
+            leadId: this.props.lead.id,
+            key,
+        });
     }
 
     handleLoadImages = (response) => {

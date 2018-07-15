@@ -230,9 +230,11 @@ export default class EditEntries extends React.PureComponent {
 
         // Update extra data (like color) for all existing entries
         if (entries && analysisFramework && entries.length > 0) {
+            const entryKey = entryAccessor.key(entry);
             const data = entries.reduce((acc, entry) => {
-                acc[entryAccessor.key(entry)] = calculateEntryData(
-                    entryAccessor.dataAttributes(entry), analysisFramework,
+                acc[entryKey] = calculateEntryData(
+                    entryAccessor.dataAttributes(entry),
+                    analysisFramework,
                 );
                 return acc;
             }, {});

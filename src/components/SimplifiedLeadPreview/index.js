@@ -50,12 +50,14 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
         };
     };
 
-    static highlightModifier = (highlight, text, actualStr, onClick, className = '') => {
+    // FIXME: move this to a separate component
+    static highlightModifier = (highlight, text, actualStr, actualKey, onClick, className = '') => {
         const colors = SimplifiedLeadPreview.getHighlightColors(highlight.color);
         const clickHandler = onClick && ((e) => {
             onClick(e, {
                 ...highlight,
                 text: actualStr,
+                key: actualKey,
             });
             e.stopPropagation();
         });
@@ -229,7 +231,12 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
             highlights: highlights.map((item) => {
                 const start = item.text ? extractedText.indexOf(item.text) : item.start;
                 const end = item.text ? item.text.length + start : item.end;
-                return { start, end, item };
+                return {
+                    start,
+                    end,
+                    item,
+                    key: item.key,
+                };
             }),
         });
     }
