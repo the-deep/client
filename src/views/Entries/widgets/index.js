@@ -14,6 +14,7 @@ import MultiSelectWidget from './MultiSelect';
 import DateWidget from './Date';
 import NumberWidget from './Number';
 import ScaleWidget from './Scale';
+import SelectWidget from './Select';
 import DefaultWidget from './Default';
 
 
@@ -64,7 +65,7 @@ const widgetList = [
     },
     {
         widgetId: 'selectWidget',
-        component: DefaultWidget,
+        component: SelectWidget,
     },
 ];
 
