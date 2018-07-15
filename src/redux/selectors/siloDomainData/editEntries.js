@@ -32,12 +32,12 @@ export const editEntriesLeadSelector = createSelector(
 
 export const editEntriesEntriesSelector = createSelector(
     editEntriesForLeadSelector,
-    editEntry => editEntry.entries.sort(
+    editEntry => (editEntry.entries || emptyArray).sort(
         (a, b) => (
             compareNumber(entryAccessor.order(a), entryAccessor.order(b))
             || compareNumber(entryAccessor.serverId(a), entryAccessor.serverId(b))
         ),
-    ) || emptyArray,
+    ),
 );
 
 export const editEntriesRestsSelector = createSelector(
