@@ -5,6 +5,7 @@ import boundError from '#rscg/BoundError';
 import { listToMap } from '#rs/utils/common';
 
 import Matrix1dListWidget from './Matrix1dList';
+import Matrix2dListWidget from './Matrix2dList';
 import ExcerptWidget from './Excerpt';
 import NumberMatrixWidget from './NumberMatrix';
 import GeoWidget from './Geo';
@@ -36,7 +37,7 @@ const widgetList = [
     },
     {
         widgetId: 'matrix2dWidget',
-        component: DefaultWidget,
+        component: Matrix2dListWidget,
     },
     {
         widgetId: 'multiselectWidget',
