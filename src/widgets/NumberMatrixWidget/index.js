@@ -2,11 +2,6 @@ import {
     FrameworkOverviewWidget,
     FrameworkListWidget,
 } from './Framework';
-import {
-    TaggingOverviewWidget,
-    TaggingListWidget,
-} from './Tagging';
-import { ViewListWidget } from './View';
 
 const numberMatrixWidget = {
     id: 'numberMatrixWidget',
@@ -15,15 +10,8 @@ const numberMatrixWidget = {
     analysisFramework: {
         overviewComponent: FrameworkOverviewWidget,
         listComponent: FrameworkListWidget,
-        overviewMinSize: { width: 240, height: 108 },
-        listMinSize: { width: 240, height: 108 },
-    },
-    tagging: {
-        overviewComponent: TaggingOverviewWidget,
-        listComponent: TaggingListWidget,
-    },
-    view: {
-        listComponent: ViewListWidget,
+        overviewMinSize: { w: 15, h: 6 },
+        listMinSize: { w: 15, h: 6 },
     },
 };
 

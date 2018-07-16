@@ -3,15 +3,6 @@ import {
     FrameworkListWidget,
 } from './Framework';
 
-import {
-    TaggingOverviewWidget,
-    TaggingListWidget,
-} from './Tagging';
-
-import {
-    ViewListWidget,
-} from './View';
-
 const excerptTextWidget = {
     id: 'excerptWidget',
     // NOTE: used as _ts('widgetTitle', 'excerptWidgetLabel')
@@ -19,15 +10,8 @@ const excerptTextWidget = {
     analysisFramework: {
         overviewComponent: FrameworkOverviewWidget,
         listComponent: FrameworkListWidget,
-        overviewMinSize: { width: 240, height: 108 },
-        listMinSize: { width: 240, height: 108 },
-    },
-    tagging: {
-        overviewComponent: TaggingOverviewWidget,
-        listComponent: TaggingListWidget,
-    },
-    view: {
-        listComponent: ViewListWidget,
+        overviewMinSize: { w: 15, h: 6 },
+        listMinSize: { w: 15, h: 6 },
     },
 };
 

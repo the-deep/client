@@ -6,7 +6,7 @@ const dateWidget = {
     title: 'dateRangeWidgetLabel',
     analysisFramework: {
         listComponent: FrameworkListWidget,
-        listMinSize: { width: 416, height: 48 },
+        listMinSize: { w: 26, h: 3 },
     },
 };
 
