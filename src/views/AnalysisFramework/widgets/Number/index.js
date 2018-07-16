@@ -100,17 +100,20 @@ export default class NumberFrameworkList extends React.PureComponent {
             faramValues: values,
             pristine: false,
         });
+
         const {
             title,
             minValue,
             maxValue,
         } = values;
 
+        const newRange = {
+            minValue,
+            maxValue,
+        };
+
         this.props.onChange(
-            {
-                minValue,
-                maxValue,
-            },
+            newRange,
             title,
         );
     }
