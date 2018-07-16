@@ -140,11 +140,12 @@ export default class AssistedTagging extends React.PureComponent {
     }
 
 
-    highlightSimplifiedExcerpt = (highlight, text, actualStr) => (
+    highlightSimplifiedExcerpt = (highlight, text, actualStr, actualKey) => (
         SimplifiedLeadPreview.highlightModifier(
             highlight,
             text,
             actualStr,
+            actualKey,
             this.handleHighlightClick,
         )
     );
