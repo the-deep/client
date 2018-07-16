@@ -8,7 +8,7 @@ const selectWidget = {
     title: 'selectWidgetLabel',
     analysisFramework: {
         listComponent: FrameworkListWidget,
-        listMinSize: { width: 192, height: 48 },
+        listMinSize: { w: 12, h: 3 },
     },
 };
 

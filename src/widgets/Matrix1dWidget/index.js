@@ -2,13 +2,6 @@ import {
     FrameworkOverviewWidget,
     FrameworkListWidget,
 } from './Framework';
-import {
-    TaggingOverviewWidget,
-    TaggingListWidget,
-} from './Tagging';
-import { ViewListWidget } from './View';
-import entryUpdater from './entryUpdater';
-
 
 const excerptWidget = {
     id: 'matrix1dWidget',
@@ -17,17 +10,9 @@ const excerptWidget = {
     analysisFramework: {
         overviewComponent: FrameworkOverviewWidget,
         listComponent: FrameworkListWidget,
-        overviewMinSize: { width: 240, height: 108 },
-        listMinSize: { width: 192, height: 192 },
+        overviewMinSize: { w: 15, h: 6 },
+        listMinSize: { w: 12, h: 12 },
     },
-    tagging: {
-        overviewComponent: TaggingOverviewWidget,
-        listComponent: TaggingListWidget,
-    },
-    view: {
-        listComponent: ViewListWidget,
-    },
-    entryUpdater,
 };
 
 export default excerptWidget;

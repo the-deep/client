@@ -2,13 +2,6 @@ import {
     FrameworkOverviewWidget,
     FrameworkListWidget,
 } from './Framework';
-import {
-    TaggingOverviewWidget,
-    TaggingListWidget,
-} from './Tagging';
-import { ViewListWidget } from './View';
-import entryUpdater from './entryUpdater';
-
 
 const matrix2dWidget = {
     id: 'matrix2dWidget',
@@ -17,17 +10,9 @@ const matrix2dWidget = {
     analysisFramework: {
         overviewComponent: FrameworkOverviewWidget,
         listComponent: FrameworkListWidget,
-        overviewMinSize: { width: 240, height: 108 },
-        listMinSize: { width: 240, height: 108 },
+        overviewMinSize: { w: 15, h: 6 },
+        listMinSize: { w: 15, h: 6 },
     },
-    tagging: {
-        overviewComponent: TaggingOverviewWidget,
-        listComponent: TaggingListWidget,
-    },
-    view: {
-        listComponent: ViewListWidget,
-    },
-    entryUpdater,
 };
 
 export default matrix2dWidget;
