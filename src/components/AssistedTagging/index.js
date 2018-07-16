@@ -140,12 +140,12 @@ export default class AssistedTagging extends React.PureComponent {
     }
 
 
-    highlightSimplifiedExcerpt = (highlight, text, actualStr, actualKey) => (
+    highlightSimplifiedExcerpt = (highlight, text, actualStr, key) => (
         SimplifiedLeadPreview.highlightModifier(
             highlight,
             text,
             actualStr,
-            actualKey,
+            key,
             this.handleHighlightClick,
         )
     );
@@ -466,6 +466,7 @@ export default class AssistedTagging extends React.PureComponent {
 
         const highlights = filteredClassifications.map(excerpt => ({
             ...excerpt,
+            key: `${excerpt.start}`, // Assuming start position of each classification is unique
             color: getHexFromString(excerpt.sectors[0].label),
             source: _ts('components.assistedTagging', 'sourceNLP'),
         }));
@@ -486,6 +487,7 @@ export default class AssistedTagging extends React.PureComponent {
         )).reduce((acc, c) => acc.concat(c), []);
 
         const highlights = keywords.map(keyword => ({
+            key: `${keyword.start}`, // Assuming start position of each classification is unique
             start: keyword.start,
             end: keyword.length + keyword.start,
             label: keyword.entity,
@@ -510,6 +512,7 @@ export default class AssistedTagging extends React.PureComponent {
         )).reduce((acc, c) => acc.concat(c.keywords), []);
 
         const highlights = keywords.map(keyword => ({
+            key: `${keyword.start}`, // Assuming start position of each classification is unique
             start: keyword.start,
             end: keyword.start + keyword.length,
             label: keyword.subcategory,

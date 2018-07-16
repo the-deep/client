@@ -51,13 +51,13 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
     };
 
     // FIXME: move this to a separate component
-    static highlightModifier = (highlight, text, actualStr, actualKey, onClick, className = '') => {
+    static highlightModifier = (highlight, text, actualStr, key, onClick, className = '') => {
         const colors = SimplifiedLeadPreview.getHighlightColors(highlight.color);
         const clickHandler = onClick && ((e) => {
             onClick(e, {
                 ...highlight,
                 text: actualStr,
-                key: actualKey,
+                key,
             });
             e.stopPropagation();
         });
