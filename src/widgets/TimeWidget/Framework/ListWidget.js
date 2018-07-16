@@ -54,12 +54,6 @@ export default class TimeFrameworkList extends React.PureComponent {
         this.setState({ title: value });
     }
 
-    /*
-    handleInformationDataCheck = (value) => {
-        this.setState({ informationDateSelected: value });
-    }
-    */
-
     handleEdit = () => {
         this.setState({ showEditModal: true });
     }
@@ -73,7 +67,6 @@ export default class TimeFrameworkList extends React.PureComponent {
         this.setState({
             showEditModal: false,
             title,
-            // informationDateSelected: data.informationDateSelected,
         });
     }
 
@@ -82,9 +75,7 @@ export default class TimeFrameworkList extends React.PureComponent {
         const { onChange } = this.props;
         const {
             title,
-            // informationDateSelected,
         } = this.state;
-        // const data = { informationDateSelected };
         onChange(undefined, title);
     }
 
@@ -92,19 +83,17 @@ export default class TimeFrameworkList extends React.PureComponent {
         const {
             showEditModal,
             title: titleValue,
-            // informationDateSelected,
         } = this.state;
 
         if (!showEditModal) {
             return null;
         }
 
-        const headerTitle = _ts('framework.dateWidget', 'editTitleModalHeader');
-        const titleInputLabel = _ts('framework.dateWidget', 'titleLabel');
-        const titleInputPlaceholder = _ts('framework.dateWidget', 'widgetTitlePlaceholder');
-        // const checkboxLabel = _ts('framework.dateWidget', 'informationDateCheckboxLabel');
-        const cancelButtonLabel = _ts('framework.dateWidget', 'cancelButtonLabel');
-        const saveButtonLabel = _ts('framework.dateWidget', 'saveButtonLabel');
+        const headerTitle = _ts('framework.timeWidget', 'editTitleModalHeader');
+        const titleInputLabel = _ts('framework.timeWidget', 'titleLabel');
+        const titleInputPlaceholder = _ts('framework.timeWidget', 'widgetTitlePlaceholder');
+        const cancelButtonLabel = _ts('framework.timeWidget', 'cancelButtonLabel');
+        const saveButtonLabel = _ts('framework.timeWidget', 'saveButtonLabel');
 
         return (
             <Modal className={styles.editModal}>
@@ -119,14 +108,6 @@ export default class TimeFrameworkList extends React.PureComponent {
                         showHintAndError={false}
                         value={titleValue}
                     />
-                    {/*
-                    <Checkbox
-                        className={styles.checkbox}
-                        onChange={this.handleInformationDataCheck}
-                        value={informationDateSelected}
-                        label={checkboxLabel}
-                    />
-                    */}
                 </ModalBody>
                 <ModalFooter>
                     <Button onClick={this.handleEditModalCancelButtonClick}>
@@ -146,7 +127,7 @@ export default class TimeFrameworkList extends React.PureComponent {
         return (
             <div className={styles.list}>
                 <TimeInput
-                    className={styles.dateInput}
+                    className={styles.timeInput}
                     onChange={this.noop}
                     showHintAndError={false}
                     disabled

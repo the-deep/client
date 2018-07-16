@@ -4,6 +4,7 @@ import { listToMap } from '#rs/utils/common';
 
 import DateRangeWidget from './DateRange';
 import DateWidget from './Date';
+import TimeWidget from './Time';
 // import DefaultWidget from './Default';
 import ExcerptWidget from './Excerpt';
 import GeoWidget from './Geo';
@@ -29,6 +30,11 @@ const widgetList = [
         widgetId: 'dateWidget',
         type: 'list',
         component: DateWidget,
+    },
+    {
+        widgetId: 'timeWidget',
+        type: 'list',
+        component: TimeWidget,
     },
     {
         widgetId: 'excerptWidget',

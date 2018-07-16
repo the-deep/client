@@ -1,6 +1,9 @@
 import { createSelector } from 'reselect';
 
-import { dateCondition } from '#rs/components/Input/Faram';
+import {
+    dateCondition,
+    timeCondition,
+} from '#rs/components/Input/Faram';
 import { listToMap, decodeDate, compareNumber } from '#rs/utils/common';
 
 import { entryAccessor, calculateEntryState } from '#entities/editEntries';
@@ -106,6 +109,13 @@ const getSchemaForWidget = (widget) => {
             return {
                 fields: {
                     value: [dateCondition],
+                },
+            };
+        }
+        case 'timeWidget': {
+            return {
+                fields: {
+                    value: [timeCondition],
                 },
             };
         }

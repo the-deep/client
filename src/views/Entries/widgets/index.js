@@ -12,12 +12,12 @@ import GeoWidget from './Geo';
 import OrganigramWidget from './Organigram';
 import MultiSelectWidget from './MultiSelect';
 import DateWidget from './Date';
+import TimeWidget from './Time';
 import NumberWidget from './Number';
 import ScaleWidget from './Scale';
 import SelectWidget from './Select';
 import DateRangeWidget from './DateRange';
-import DefaultWidget from './Default';
-
+// import DefaultWidget from './Default';
 
 const widgetList = [
     {
@@ -27,6 +27,10 @@ const widgetList = [
     {
         widgetId: 'dateWidget',
         component: DateWidget,
+    },
+    {
+        widgetId: 'timeWidget',
+        component: TimeWidget,
     },
     {
         widgetId: 'excerptWidget',
