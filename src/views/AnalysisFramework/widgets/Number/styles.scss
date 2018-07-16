@@ -11,3 +11,12 @@
     }
 }
 
+.number-container {
+    display: flex;
+    justify-content: space-between;
+
+    .input {
+        flex-basis: calc(50% - #{$spacing-extra-small});
+    }
+}
+
