@@ -42,7 +42,13 @@ const emptyObject = {};
 export default class ScaleFrameworkList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+
     static rowKeyExtractor = d => d.key;
+
+    static keySelector = option => option.key;
+    static labelSelector = option => option.title;
+    static colorSelector = option => option.color;
 
     constructor(props) {
         super(props);
@@ -50,7 +56,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
         const data = this.props.data || emptyObject;
         const scaleUnits = data.scaleUnits || emptyList;
         const defaultScaleUnit = data.value;
-        const title = this.props.title;
+        const { title } = this.props;
 
         this.state = {
             showEditModal: false,
@@ -59,9 +65,10 @@ export default class ScaleFrameworkList extends React.PureComponent {
             title,
         };
         this.props.editAction(this.handleEdit);
-        this.createScaleUnits(props);
+        // this.createScaleUnits(props);
     }
 
+    /*
     componentWillReceiveProps(nextProps) {
         const { data: newData } = nextProps.data;
         const { data: oldData } = this.props;
@@ -70,6 +77,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
             this.createScaleUnits(nextProps);
         }
     }
+    */
 
     getSelectedScaleStyle = (key) => {
         const { defaultScaleUnit } = this.state;
@@ -81,6 +89,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
         return styleNames.join(' ');
     }
 
+    /*
     createScaleUnits = ({ data = emptyObject }) => {
         const scaleUnits = data.scaleUnits || emptyList;
         const tempScaleUnits = {};
@@ -89,6 +98,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
         });
         this.scaleUnits = tempScaleUnits;
     }
+    */
 
     handleScaleUnitSortChange = (scaleUnits) => {
         this.setState({ scaleUnits });
@@ -350,12 +360,17 @@ export default class ScaleFrameworkList extends React.PureComponent {
 
     render() {
         const { defaultScaleUnit } = this.state;
+        const { data: { scaleUnits } = {} } = this.props;
         const EditModal = this.renderEditModal;
 
         return (
             <Fragment>
                 <ScaleInput
-                    options={this.scaleUnits}
+                    options={scaleUnits}
+                    keySelector={ScaleFrameworkList.keySelector}
+                    labelSelector={ScaleFrameworkList.labelSelector}
+                    colorSelector={ScaleFrameworkList.colorSelector}
+                    // isDefaultSelector={this.isDefaultSelector}
                     value={defaultScaleUnit}
                     readOnly
                 />

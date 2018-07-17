@@ -12,6 +12,7 @@ import numberWidget from './NumberWidget';
 import organigramWidget from './OrganigramWidget';
 import scaleWidget from './ScaleWidget';
 import selectWidget from './SelectWidget';
+import timeWidget from './TimeWidget';
 
 const changeWidgetUnit = (widget) => {
     const mapper = (minSize) => {
@@ -43,6 +44,7 @@ const widgetStore = [
     numberMatrixWidget,
     dateWidget,
     dateRangeWidget,
+    timeWidget,
     numberWidget,
     selectWidget,
     multiselectWidget,

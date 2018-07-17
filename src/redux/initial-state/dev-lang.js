@@ -811,6 +811,14 @@ const initialDevLangState = {
             afUpdateOverridden: 982,
             afSaveSuccess: 983,
         },
+        'framework.timeWidget': {
+            widgetTitlePlaceholder: 13,
+
+            titleLabel: 13,
+            saveButtonLabel: 25,
+            cancelButtonLabel: 61,
+            editTitleModalHeader: 773,
+        },
         'framework.dateWidget': {
             informationDateCheckboxLabel: 777,
             widgetTitlePlaceholder: 13,

@@ -8,7 +8,7 @@ const multiselectWidget = {
     title: 'multiselectWidgetLabel',
     analysisFramework: {
         listComponent: FrameworkListWidget,
-        listMinSize: { w: 120, h: 15 },
+        listMinSize: { w: 7, h: 15 },
     },
 };
 
