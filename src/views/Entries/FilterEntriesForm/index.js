@@ -27,9 +27,9 @@ import {
 } from '#redux';
 import {
     createUrlForGeoOptions,
+    createUrlForEntryFilterOptions,
 
     createParamsForGet,
-    createUrlForEntryFilterOptions,
 
     transformResponseErrorToFormError,
 } from '#rest';

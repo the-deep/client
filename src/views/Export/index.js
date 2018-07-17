@@ -239,13 +239,13 @@ export default class Export extends React.PureComponent {
                     this.props.setProject({ project: response });
 
                     if (isFalsy(response.analysisFramework)) {
-                        console.warn('There is no analysis framework');
+                        console.error('There is no analysis framework');
                         this.setState({ pendingAf: false });
                     } else {
-                        this.analysisFramework = this.createRequestForAnalysisFramework(
+                        this.analysisFrameworkRequest = this.createRequestForAnalysisFramework(
                             response.analysisFramework,
                         );
-                        this.analysisFramework.start();
+                        this.analysisFrameworkRequest.start();
                     }
                 } catch (er) {
                     console.error(er);
@@ -456,6 +456,7 @@ export default class Export extends React.PureComponent {
                             <FilterEntriesForm
                                 applyOnChange
                                 pending={pendingAf}
+                                filters={(analysisFramework || {}).filters}
                             />
                         </div>
                         <div className={styles.leadFilters}>
