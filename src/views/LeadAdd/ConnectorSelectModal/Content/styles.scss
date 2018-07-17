@@ -29,21 +29,33 @@
         }
     }
 
-    .table {
+    .table-container {
         flex-grow: 1;
+        overflow-y: auto;
 
-        :global {
-            .selected {
-                >div {
-                    padding-top: $spacing-small-alt;
-                    padding-bottom: $spacing-small-alt;
+        .table {
+            :global {
+                .selected {
+                    >div {
+                        padding-top: $spacing-small-alt;
+                        padding-bottom: $spacing-small-alt;
+                    }
+                }
+
+                .title {
+                    width: 100%;
                 }
             }
-
-            .title {
-                width: 100%;
-            }
         }
+    }
+
+    .footer {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: space-between;
+        border-top: $width-separator-thin solid $color-separator;
+        padding: $spacing-small;
     }
 
     .select-all-checkbox,

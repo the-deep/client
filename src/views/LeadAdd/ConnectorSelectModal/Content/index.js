@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '#rs/utils/common';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Pager from '#rs/components/View/Pager';
 import Table from '#rs/components/View/Table';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import Checkbox from '#rs/components/Input/Checkbox';
@@ -21,9 +22,13 @@ const propTypes = {
     connectorLeads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     connectorId: PropTypes.number.isRequired,
     projectId: PropTypes.number.isRequired,
+    activePage: PropTypes.number.isRequired,
+    leadsCount: PropTypes.number,
+    selectedLeads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     setConnectorLeads: PropTypes.func.isRequired,
     leadsUrlMap: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setConnectorLeadSelection: PropTypes.func.isRequired,
+    setConnectorActivePage: PropTypes.func.isRequired,
     onSelectAllClick: PropTypes.func.isRequired,
     className: PropTypes.string,
 };
@@ -31,7 +36,11 @@ const propTypes = {
 const defaultProps = {
     className: '',
     connectorLeads: [],
+    selectedLeads: [],
+    leadsCount: 0,
 };
+
+const MAX_LEADS_PER_REQUEST = 25;
 
 export default class ConnectorContent extends React.PureComponent {
     static propTypes = propTypes;
@@ -79,6 +88,7 @@ export default class ConnectorContent extends React.PureComponent {
                 sortable: false,
                 modifier: (row) => {
                     const { leadsUrlMap } = this.props;
+
                     if (leadsUrlMap[row.url] || row.existing) {
                         return (
                             <Checkbox
@@ -132,9 +142,23 @@ export default class ConnectorContent extends React.PureComponent {
         const {
             connectorId,
             projectId,
+            activePage,
         } = this.props;
         if (connectorId) {
-            this.startConnectorLeadsGetRequest(connectorId, projectId);
+            this.startConnectorLeadsGetRequest(connectorId, projectId, activePage);
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const {
+            activePage: newActivePage,
+            connectorId,
+            projectId,
+        } = nextProps;
+        const { activePage: oldActivePage } = this.props;
+
+        if (newActivePage !== oldActivePage) {
+            this.startConnectorLeadsGetRequest(connectorId, projectId, newActivePage);
         }
     }
 
@@ -144,26 +168,42 @@ export default class ConnectorContent extends React.PureComponent {
         }
     }
 
-    startConnectorLeadsGetRequest = (connectorId, projectId) => {
+    startConnectorLeadsGetRequest = (connectorId, projectId, activePage) => {
         if (this.requestForConnectorLeads) {
             this.requestForConnectorLeads.stop();
         }
         const requestForConnectorLeads = new ConnectorLeadsGetRequest({
             setState: v => this.setState(v),
             setConnectorLeads: this.props.setConnectorLeads,
+            selectedLeads: this.props.selectedLeads,
         });
-        this.requestForConnectorLeads = requestForConnectorLeads.create(connectorId, projectId);
+        this.requestForConnectorLeads = requestForConnectorLeads.create(
+            connectorId,
+            projectId,
+            activePage,
+            MAX_LEADS_PER_REQUEST,
+        );
         this.requestForConnectorLeads.start();
     }
 
     handleRefreshButtonClick = () => {
         const {
             connectorId,
+            activePage,
             projectId,
         } = this.props;
         if (connectorId) {
-            this.startConnectorLeadsGetRequest(connectorId, projectId);
+            this.startConnectorLeadsGetRequest(connectorId, projectId, activePage);
         }
+    }
+
+    handlePageClick = (activePage) => {
+        const {
+            connectorId,
+            setConnectorActivePage,
+        } = this.props;
+
+        setConnectorActivePage({ connectorId, activePage });
     }
 
     render() {
@@ -171,9 +211,17 @@ export default class ConnectorContent extends React.PureComponent {
             connectorLeads = [],
             className,
             connectorId,
+            leadsCount,
+            activePage,
+            selectedLeads,
         } = this.props;
-        const { connectorLeadsLoading } = this.state;
+
+        const {
+            connectorLeadsLoading,
+        } = this.state;
+
         const classNames = `${styles.connectorContent} ${className}`;
+        const selectedLeadsCount = selectedLeads.length;
 
         return (
             <div className={classNames} >
@@ -195,12 +243,28 @@ export default class ConnectorContent extends React.PureComponent {
                         />
                     </div>
                 </header>
-                <Table
-                    className={styles.table}
-                    data={connectorLeads}
-                    headers={this.connectorLeadsHeader}
-                    keyExtractor={ConnectorContent.leadKeySelector}
-                />
+                <div className={styles.tableContainer} >
+                    <Table
+                        className={styles.table}
+                        data={connectorLeads}
+                        headers={this.connectorLeadsHeader}
+                        keyExtractor={ConnectorContent.leadKeySelector}
+                    />
+                </div>
+                <footer className={styles.footer} >
+                    <span>
+                        {_ts('addLeads.connectorsSelect', 'selectedNumberText', {
+                            count: selectedLeadsCount,
+                        })}
+                    </span>
+                    <Pager
+                        activePage={activePage}
+                        itemsCount={leadsCount}
+                        maxItemsPerPage={MAX_LEADS_PER_REQUEST}
+                        onPageClick={this.handlePageClick}
+                        showItemsPerPageChange={false}
+                    />
+                </footer>
             </div>
         );
     }
