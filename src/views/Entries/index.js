@@ -2,14 +2,15 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
-import ListView from '#rscv/List/ListView';
+import BoundError from '#rscg/BoundError';
+import List from '#rscv/List';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import BoundError from '#rs/components/General/BoundError';
+import Pager from '#rscv/Pager';
 
 import AppError from '#components/AppError';
 import {
     setEntriesAction,
-    setProjectAction,
+    // setProjectAction,
     entriesForProjectSelector,
     entriesViewFilterSelector,
     setAnalysisFrameworkAction,
@@ -17,11 +18,6 @@ import {
     unsetEntriesViewFilterAction,
 
     setGeoOptionsAction,
-
-    // Here
-    // gridItemsForProjectSelector,
-    // maxHeightForProjectSelector,
-    // widgetsSelector,
 
     projectIdFromRouteSelector,
 
@@ -33,46 +29,57 @@ import {
 import EntriesRequest from './requests/EntriesRequest';
 import FrameworkRequest from './requests/FrameworkRequest';
 import GeoOptionsRequest from './requests/GeoOptionsRequest';
+
+import FilterEntriesForm from './FilterEntriesForm';
 import LeadGroupedEntries from './LeadGroupedEntries';
+
 import styles from './styles.scss';
 
 const mapStateToProps = (state, props) => ({
-    leadGroupedEntriesList: entriesForProjectSelector(state, props),
-    framework: analysisFrameworkForProjectSelector(state, props),
-    entriesFilter: entriesViewFilterSelector(state, props),
-    projectId: projectIdFromRouteSelector(state, props),
     activePage: entriesViewActivePageSelector(state, props),
+    entriesFilter: entriesViewFilterSelector(state, props),
+    framework: analysisFrameworkForProjectSelector(state, props),
+    leadGroupedEntriesList: entriesForProjectSelector(state, props),
+    projectId: projectIdFromRouteSelector(state, props),
     totalEntriesCount: totalEntriesCountForProjectSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
     setEntries: params => dispatch(setEntriesAction(params)),
-    setProject: params => dispatch(setProjectAction(params)),
+    setEntriesViewActivePage: params => dispatch(setEntriesViewActivePageAction(params)),
     setFramework: params => dispatch(setAnalysisFrameworkAction(params)),
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
+    // setProject: params => dispatch(setProjectAction(params)),
     unsetEntriesViewFilter: params => dispatch(unsetEntriesViewFilterAction(params)),
-    setEntriesViewActivePage: params => dispatch(setEntriesViewActivePageAction(params)),
 });
 
 const propTypes = {
-    // eslint-disable-next-line react/forbid-prop-types
-    leadGroupedEntriesList: PropTypes.array.isRequired,
 
-    // eslint-disable-next-line react/forbid-prop-types
-    framework: PropTypes.object.isRequired,
-    projectId: PropTypes.number.isRequired,
-    setEntries: PropTypes.func.isRequired,
-    setFramework: PropTypes.func.isRequired,
-
+    activePage: PropTypes.number.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     entriesFilter: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    framework: PropTypes.object,
+    // eslint-disable-next-line react/forbid-prop-types
+    leadGroupedEntriesList: PropTypes.array.isRequired,
+    projectId: PropTypes.number.isRequired,
+    totalEntriesCount: PropTypes.number,
+
+    setEntries: PropTypes.func.isRequired,
+    setEntriesViewActivePage: PropTypes.func.isRequired,
+    setFramework: PropTypes.func.isRequired,
     setGeoOptions: PropTypes.func.isRequired,
+    unsetEntriesViewFilter: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
+    framework: {},
+    totalEntriesCount: 0,
 };
 
-const LeadKeySelector = d => d.id;
+const leadKeySelector = d => d.id;
+
+const MAX_ENTRIES_PER_REQUEST = 5;
 
 @BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
@@ -89,30 +96,24 @@ export default class Entries extends React.PureComponent {
             pendingGeoOptions: true,
         };
 
-        const getProjectId = () => this.props.projectId;
-        const getOffset = () => this.props.offset;
-        const getLimit = () => this.props.limit;
-        const getFilters = () => this.props.entriesFilter;
-        const setState = d => this.setState(d);
-
         this.entriesRequest = new EntriesRequest({
-            setState,
-            getOffset,
-            getLimit,
-            getProjectId,
-            getFilters,
+            getFilters: () => this.props.entriesFilter,
+            getLimit: () => MAX_ENTRIES_PER_REQUEST,
+            getOffset: () => (this.props.activePage - 1) * MAX_ENTRIES_PER_REQUEST,
+            getProjectId: () => this.props.projectId,
             setEntries: this.props.setEntries,
+            setState: params => this.setState(params),
         });
 
         this.geoOptionsRequest = new GeoOptionsRequest({
-            setState,
-            getProjectId,
+            setState: params => this.setState(params),
+            getProjectId: () => this.props.projectId,
             setGeoOptions: this.props.setGeoOptions,
         });
 
         this.frameworkRequest = new FrameworkRequest({
-            setState,
-            getProjectId,
+            setState: params => this.setState(params),
+            getProjectId: () => this.props.projectId,
             setFramework: this.props.setFramework,
         });
 
@@ -132,14 +133,62 @@ export default class Entries extends React.PureComponent {
         window.addEventListener('scroll', this.handleScroll, true);
     }
 
+    componentWillReceiveProps(nextProps) {
+        const {
+            projectId: oldProjectId,
+            framework: oldAf,
+            entriesFilter: oldFilter,
+            activePage: oldActivePage,
+        } = this.props;
+        const {
+            projectId: newProjectId,
+            framework: newAf,
+            entriesFilter: newFilter,
+            activePage: newActivePage,
+        } = nextProps;
+
+        if (oldProjectId !== newProjectId) {
+            this.setState({
+                pendingEntries: true,
+                pendingFramework: true,
+                pendingGeoOptions: true,
+            });
+
+            this.frameworkRequest.init();
+            this.frameworkRequest.start();
+
+            this.geoOptionsRequest.init();
+            this.geoOptionsRequest.start();
+
+            this.entriesRequest.init();
+            this.entriesRequest.start();
+            return;
+        }
+
+        if (oldAf !== newAf && (!oldAf || !newAf || oldAf.versionId !== newAf.versionId)) {
+            // clear previous filters
+            this.props.unsetEntriesViewFilter();
+        }
+
+        if (oldFilter !== newFilter || oldActivePage !== newActivePage) {
+            this.entriesRequest.init();
+            this.entriesRequest.start();
+        }
+    }
+
     componentWillUnmount() {
         this.entriesRequest.stop();
         this.geoOptionsRequest.stop();
         this.frameworkRequest.stop();
+
         window.removeEventListener('scroll', this.handleScroll, true);
     }
 
-    getLeadGroupedEntriesParams = (_, datum) => {
+    handlePageClick = (page) => {
+        this.props.setEntriesViewActivePage({ activePage: page });
+    }
+
+    rendererParams = (key, datum) => {
         const {
             projectId,
             framework: {
@@ -154,65 +203,61 @@ export default class Entries extends React.PureComponent {
         });
     }
 
-    renderHeader = () => {
-        const text = 'Header';
-
-        return (
-            <header className={styles.header}>
-                { text }
-            </header>
-        );
-    }
-
-    renderLeadGroupedEntriesList = () => {
-        const { leadGroupedEntriesList } = this.props;
-
-        return (
-            <ListView
-                className={styles.leadGroupedEntriesList}
-                data={leadGroupedEntriesList}
-                renderer={LeadGroupedEntries}
-                keyExtractor={LeadKeySelector}
-                rendererParams={this.getLeadGroupedEntriesParams}
-            />
-        );
-    }
-
-    renderFooter = () => {
-        const text = 'Footer';
-
-        return (
-            <div className={styles.footer}>
-                { text }
-            </div>
-        );
-    }
-
     render() {
+        const {
+            leadGroupedEntriesList,
+            framework,
+            activePage,
+            totalEntriesCount,
+        } = this.props;
+
         const {
             pendingGeoOptions,
             pendingEntries,
             pendingFramework,
         } = this.state;
 
-        const Header = this.renderHeader;
-        const LeadGroupedEntriesList = this.renderLeadGroupedEntriesList;
-        const Footer = this.renderFooter;
-        const loading = pendingEntries ||
-            pendingGeoOptions ||
-            pendingFramework;
+        const blockedLoading = pendingGeoOptions || pendingFramework;
+        const nonBlockedLoading = pendingEntries;
 
         return (
             <div className={styles.entriesView}>
-                {loading ? (
-                    <LoadingAnimation />
-                ) : (
-                    <Fragment>
-                        <Header />
-                        <LeadGroupedEntriesList />
-                        <Footer />
-                    </Fragment>
-                )}
+                <header className={styles.header}>
+                    <FilterEntriesForm
+                        pending={pendingFramework}
+                        filters={framework.filters}
+                    />
+                </header>
+                <div className={styles.leadGroupedEntriesList}>
+                    {
+                        blockedLoading ? (
+                            <LoadingAnimation />
+                        ) : (
+                            <Fragment>
+                                { nonBlockedLoading && <LoadingAnimation /> }
+                                <List
+                                    className={styles.leadGroupedEntriesList}
+                                    data={leadGroupedEntriesList}
+                                    renderer={LeadGroupedEntries}
+                                    keyExtractor={leadKeySelector}
+                                    rendererParams={this.rendererParams}
+                                />
+                            </Fragment>
+                        )
+                    }
+                </div>
+                {
+                    totalEntriesCount > 0 &&
+                    <footer className={styles.footer}>
+                        <Pager
+                            activePage={activePage}
+                            itemsCount={totalEntriesCount}
+                            maxItemsPerPage={MAX_ENTRIES_PER_REQUEST}
+                            onPageClick={this.handlePageClick}
+                            showItemsPerPageChange={false}
+                        />
+                    </footer>
+                }
             </div>
         );
     }
