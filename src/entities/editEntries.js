@@ -4,6 +4,8 @@ import {
     randomString,
     compareDate,
     compareNumber,
+    isFalsy,
+    isTruthy,
 } from '#rs/utils/common';
 import {
     pick,
@@ -133,23 +135,37 @@ export const createEntry = ({
 
 export const createDiff = (locals, remotes) => {
     // accumulate action 'add'
-    const localEntriesMap = listToMap(
+    const localEntriesMapByServerId = listToMap(
         locals,
         entryAccessor.serverId,
         (entry, key) => (key ? true : undefined),
     );
+    const localEntriesMapByKey = listToMap(
+        locals,
+        entryAccessor.key,
+        (entry, key) => (key ? true : undefined),
+    );
+
     const actionsFoo = remotes.reduce(
         (acc, remoteEntry) => {
             const {
                 id: remoteServerId,
                 versionId: remoteVersionId,
+                clientId: remoteKey,
             } = remoteEntry;
 
-            const localEntry = localEntriesMap[remoteServerId];
+            // NOTE: there may not be a clientId
+
+            // Try to find localEntry first be serverId then by clientId
+            // NOTE: Sometimes, a entry is saved in server but the serverId
+            // hasn't been updated locally because of network error (or some exception in code)
+            // which can result in duplicated entries locally
+            const localEntry = localEntriesMapByServerId[remoteServerId]
+                || (remoteKey ? localEntriesMapByKey[remoteKey] : undefined);
+
             if (!localEntry) {
                 // NOTE: New remote entry has been added
-                // FIXME: get from server
-                const localId = randomString();
+                const localId = remoteKey || randomString();
                 const newEntry = createEntry({
                     key: localId,
                     serverId: remoteServerId,
@@ -170,34 +186,27 @@ export const createDiff = (locals, remotes) => {
     );
 
     // Accumulate other actions
-    const remoteEntriesMap = listToMap(remotes, remoteEntry => remoteEntry.id);
+    const remoteEntriesMapByServerId = listToMap(remotes, remoteEntry => remoteEntry.id);
+    const remoteEntriesMapByClientId = listToMap(remotes, remoteEntry => remoteEntry.clientId);
+
     const actionsBar = locals.reduce(
         (arr, localEntry) => {
             const localId = entryAccessor.key(localEntry);
             const localServerId = entryAccessor.serverId(localEntry);
             const localVersionId = entryAccessor.versionId(localEntry);
 
-            // get remote enty with same serverId as current local entry
-            // FIXME: get from serverId or key?
-            const remoteEntry = remoteEntriesMap[localServerId];
-            if (!localServerId) {
-                // this local entry hasn't been saved
-                arr.push({
-                    id: localId,
-                    action: DIFF_ACTION.noop,
-                });
-            } else if (!remoteEntry) {
-                // this entry was removed from server
-                arr.push({
-                    id: localId,
-                    serverId: localServerId,
-                    action: DIFF_ACTION.remove,
-                });
-            } else if (localVersionId < remoteEntry.versionId) {
+            const remoteEntry = remoteEntriesMapByServerId[localServerId]
+                || remoteEntriesMapByClientId[localId];
+
+            if (
+                remoteEntry && (
+                    isFalsy(localVersionId) || localVersionId < remoteEntry.versionId
+                )
+            ) {
                 // this entry was updated on server
                 const { versionId: remoteVersionId } = remoteEntry;
                 const newEntry = createEntry({
-                    id: localId,
+                    key: localId,
                     serverId: localServerId, // here
                     versionId: remoteVersionId,
                     data: remoteEntry,
@@ -209,7 +218,7 @@ export const createDiff = (locals, remotes) => {
                 const localError = entryAccessor.hasError(localEntry);
                 const localValues = entryAccessor.data(localEntry);
                 const newEntryOnSkip = createEntry({
-                    id: localId,
+                    key: localId,
                     serverId: localServerId,
                     versionId: remoteVersionId,
                     data: localValues,
@@ -224,11 +233,18 @@ export const createDiff = (locals, remotes) => {
                     entry: newEntry,
                     entryOnSkip: newEntryOnSkip,
                 });
-            } else {
-                // the entry wasn't changed on server
+            } else if (!remoteEntry && isTruthy(localServerId)) {
+                // this entry was removed from server
                 arr.push({
                     id: localId,
                     serverId: localServerId,
+                    action: DIFF_ACTION.remove,
+                });
+            } else {
+                // this local entry has not been saved
+                // or the entry has not changed in server
+                arr.push({
+                    id: localId,
                     action: DIFF_ACTION.noop,
                 });
             }
