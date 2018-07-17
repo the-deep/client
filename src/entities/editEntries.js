@@ -204,10 +204,10 @@ export const createDiff = (locals, remotes) => {
                 )
             ) {
                 // this entry was updated on server
-                const { versionId: remoteVersionId } = remoteEntry;
+                const { id: remoteServerId, versionId: remoteVersionId } = remoteEntry;
                 const newEntry = createEntry({
                     key: localId,
-                    serverId: localServerId, // here
+                    serverId: remoteServerId, // here
                     versionId: remoteVersionId,
                     data: remoteEntry,
                     isPristine: true,
@@ -219,7 +219,7 @@ export const createDiff = (locals, remotes) => {
                 const localValues = entryAccessor.data(localEntry);
                 const newEntryOnSkip = createEntry({
                     key: localId,
-                    serverId: localServerId,
+                    serverId: remoteServerId,
                     versionId: remoteVersionId,
                     data: localValues,
                     isPristine: localPristine,
@@ -228,7 +228,7 @@ export const createDiff = (locals, remotes) => {
 
                 arr.push({
                     id: localId,
-                    serverId: localServerId,
+                    serverId: remoteServerId,
                     action: DIFF_ACTION.replace,
                     entry: newEntry,
                     entryOnSkip: newEntryOnSkip,
