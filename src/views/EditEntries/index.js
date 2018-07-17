@@ -353,7 +353,10 @@ export default class EditEntries extends React.PureComponent {
         request.init({
             leadId: this.props.leadId,
             entryKey: entryAccessor.key(newEntry),
-            entryData: entryAccessor.data(newEntry),
+            entryData: {
+                ...entryAccessor.data(newEntry),
+                clientId: entryKey,
+            },
             serverId: entryAccessor.serverId(newEntry),
         });
         this.saveRequestCoordinator.add(entryKey, request);
