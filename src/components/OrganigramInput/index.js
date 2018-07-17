@@ -19,7 +19,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     title: PropTypes.string,
-    data: PropTypes.arrayOf(PropTypes.object).isRequired,
+    data: PropTypes.arrayOf(PropTypes.object),
     onChange: PropTypes.func,
     value: PropTypes.arrayOf(PropTypes.string),
     idSelector: PropTypes.func,
@@ -39,6 +39,7 @@ const defaultProps = {
     idSelector: organ => organ.id,
     labelSelector: organ => organ.title,
     childSelector: organ => organ.children,
+    data: [],
 };
 
 const emptyObject = {};

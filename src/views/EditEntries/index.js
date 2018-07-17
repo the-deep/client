@@ -150,6 +150,7 @@ export default class EditEntries extends React.PureComponent {
             list: {
                 component: () => (
                     <Listing
+                        hash={window.location.hash}
                         // injected inside WidgetFaram
                         onChange={this.handleChange}
                         onExcerptChange={this.handleExcerptChange}
