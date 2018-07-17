@@ -44,7 +44,10 @@ export default class EntriesRequest extends Request {
     )
 
     getParam = () => (
-        createParamsForFilteredEntries(this.parent.getFilters())
+        createParamsForFilteredEntries({
+            ...this.parent.getFilters(),
+            project: this.parent.getProjectId(),
+        })
     )
 
     init = () => {

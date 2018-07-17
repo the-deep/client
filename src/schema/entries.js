@@ -75,6 +75,7 @@ const entrySchema = [];
 
             image: { type: 'string' },
             excerpt: { type: 'string' },
+            clientId: { type: 'string' },
             lead: { type: 'uint', required: true },
             entryType: { type: 'string', required: true },
             informationDate: { type: 'string' },
