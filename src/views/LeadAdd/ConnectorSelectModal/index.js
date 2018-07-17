@@ -148,15 +148,25 @@ export default class ConnectorSelectModal extends React.PureComponent {
                 component: () => {
                     const {
                         selectedConnector,
-                        connectorsLeads,
+                        connectorsLeads: {
+                            [selectedConnector]: {
+                                leads,
+                                count,
+                                activePage,
+                            } = {},
+                        } = {},
                     } = this.state;
+
                     return (
                         <ConnectorContent
                             connectorId={selectedConnector}
                             projectId={this.props.projectId}
-                            connectorLeads={connectorsLeads[selectedConnector]}
+                            connectorLeads={leads}
+                            leadsCount={count}
+                            activePage={activePage || 1}
                             className={styles.content}
                             setConnectorLeads={this.setConnectorLeads}
+                            setConnectorActivePage={this.setConnectorActivePage}
                             selectedLeads={this.state.selectedLeads[selectedConnector]}
                             setConnectorLeadSelection={this.setConnectorLeadSelection}
                             onSelectAllClick={this.handleSelectAllLead}
@@ -192,10 +202,24 @@ export default class ConnectorSelectModal extends React.PureComponent {
         return filteredLeads;
     }
 
-    setConnectorLeads = ({ connectorLeads, connectorId }) => {
+    setConnectorLeads = ({ connectorLeads, connectorId, totalConnectorLeadsCount }) => {
         const settings = {
             connectorsLeads: { $auto: {
-                [connectorId]: { $set: connectorLeads },
+                [connectorId]: { $auto: {
+                    leads: { $set: connectorLeads },
+                    count: { $set: totalConnectorLeadsCount },
+                } },
+            } },
+        };
+        this.setState(update(this.state, settings));
+    }
+
+    setConnectorActivePage = ({ connectorId, activePage }) => {
+        const settings = {
+            connectorsLeads: { $auto: {
+                [connectorId]: { $auto: {
+                    activePage: { $set: activePage },
+                } },
             } },
         };
         this.setState(update(this.state, settings));
@@ -203,21 +227,28 @@ export default class ConnectorSelectModal extends React.PureComponent {
 
     setConnectorLeadSelection = ({ key, isSelected, connectorId }) => {
         const {
-            connectorsLeads,
+            connectorsLeads: {
+                [connectorId]: {
+                    leads,
+                } = {},
+            },
             selectedLeads,
         } = this.state;
 
-        const connectorLeadIndex = connectorsLeads[connectorId].findIndex(l => l.key === key);
+        const connectorLeadIndex = leads.findIndex(l => l.key === key);
 
         const selectedLeadsForIndex = selectedLeads[connectorId] || [];
         const selectedLeadsIndex = selectedLeadsForIndex.findIndex(l => l.key === key);
 
-        const lead = connectorsLeads[connectorId][connectorLeadIndex];
+        const lead = leads[connectorLeadIndex];
+
         const settings = {
             connectorsLeads: { $auto: {
                 [connectorId]: {
-                    [connectorLeadIndex]: {
-                        isSelected: { $set: isSelected },
+                    leads: {
+                        [connectorLeadIndex]: {
+                            isSelected: { $set: isSelected },
+                        },
                     },
                 },
             } },
@@ -241,11 +272,14 @@ export default class ConnectorSelectModal extends React.PureComponent {
     }
 
     handleSelectAllLead = ({ connectorId, isSelected }) => {
-        const { connectorsLeads } = this.state;
-        const connectorLeads = connectorsLeads[connectorId] || [];
+        const { connectorsLeads: {
+            [connectorId]: {
+                leads,
+            } = {},
+        } = {} } = this.state;
 
-        if (connectorLeads.length > 0) {
-            const part = connectorLeads.reduce(
+        if (leads.length > 0) {
+            const part = leads.reduce(
                 (acc, val, index) => ({
                     ...acc,
                     [index]: { isSelected: { $set: isSelected } },
@@ -254,12 +288,14 @@ export default class ConnectorSelectModal extends React.PureComponent {
             );
             const settings = {
                 connectorsLeads: { $auto: {
-                    [connectorId]: part,
+                    [connectorId]: {
+                        leads: part,
+                    },
                 } },
             };
             if (isSelected) {
                 settings.selectedLeads = { $auto: {
-                    [connectorId]: { $set: connectorLeads },
+                    [connectorId]: { $set: leads },
                 } };
             } else {
                 settings.selectedLeads = { $auto: {

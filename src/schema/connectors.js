@@ -91,6 +91,7 @@ const connectorsSchema = [];
             description: 'Different leads from connector',
         },
         fields: {
+            key: { type: 'string' },
             title: { type: 'string' },
             website: { type: 'string' },
             url: { type: 'string' },
