@@ -258,9 +258,7 @@ const addEntry = (state, action) => {
         0,
     );
 
-    // Get random key for new entry
-    const localId = randomString();
-
+    // Create data for new entry
     const newData = {
         ...otherEntry,
         entryType: excerptType,
@@ -269,6 +267,10 @@ const addEntry = (state, action) => {
         lead: leadId,
         order: maxEntryOrder + 1,
     };
+
+    // Get random key for new entry
+    const localId = randomString();
+
     const newEntry = createEntry({
         key: localId,
         data: newData,
@@ -579,12 +581,13 @@ const setPending = (state, action) => {
 const saveEntry = (state, action) => {
     const { leadId, entryKey, response } = action;
 
-    // NOTE: create new entry from remoteEntry
+    // NOTE: create new entry from remote entry
     const remoteEntry = response;
     const {
         id: remoteServerId,
         versionId: remoteVersionId,
     } = remoteEntry;
+
     const newEntry = createEntry({
         key: entryKey,
         serverId: remoteServerId,
