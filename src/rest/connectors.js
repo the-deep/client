@@ -6,7 +6,7 @@ import {
     commonHeaderForPost,
 } from '#config/rest';
 
-const connectorsMiniFields = ['id', 'title', 'version_id', 'source', 'role'];
+const connectorsMiniFields = ['id', 'title', 'version_id', 'source', 'role', 'filters'];
 export const urlForConnectors = `${wsEndpoint}/connectors/?${p({ fields: connectorsMiniFields })}`;
 export const urlForConnectorsForAdmin = `${wsEndpoint}/connectors/?${p({
     fields: connectorsMiniFields,

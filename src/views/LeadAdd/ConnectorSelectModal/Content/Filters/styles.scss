@@ -1,0 +1,10 @@
+@import '../../../../../stylesheets/base';
+
+.container {
+    display: flex;
+    align-items: center;
+
+    .input {
+        padding: 0 $spacing-small;
+    }
+}

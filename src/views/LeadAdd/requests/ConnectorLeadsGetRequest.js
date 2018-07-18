@@ -1,5 +1,4 @@
 import { FgRestBuilder } from '#rs/utils/rest';
-import { randomString } from '#rs/utils/common';
 import {
     createParamsForConnectorLeads,
     createUrlForConnectorleads,
@@ -61,11 +60,13 @@ export default class ConnectorLeadsRequest {
         projectId,
         activePage,
         maxLeadsPerRequest,
+        filtersData,
     ) => {
         const body = {
             project: projectId,
             offset: (activePage - 1) * maxLeadsPerRequest,
             limit: maxLeadsPerRequest,
+            ...filtersData,
         };
 
         const connectorLeadsRequest = new FgRestBuilder()

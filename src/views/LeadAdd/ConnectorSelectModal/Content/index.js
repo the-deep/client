@@ -16,20 +16,24 @@ import {
 import _ts from '#ts';
 
 import ConnectorLeadsGetRequest from '../../requests/ConnectorLeadsGetRequest';
+import Filters from './Filters';
 import styles from './styles.scss';
 
 const propTypes = {
     connectorLeads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     connectorId: PropTypes.number.isRequired,
     projectId: PropTypes.number.isRequired,
+    filters: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     activePage: PropTypes.number.isRequired,
     leadsCount: PropTypes.number,
     selectedLeads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    filtersData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setConnectorLeads: PropTypes.func.isRequired,
     leadsUrlMap: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setConnectorLeadSelection: PropTypes.func.isRequired,
     setConnectorActivePage: PropTypes.func.isRequired,
     onSelectAllClick: PropTypes.func.isRequired,
+    onFiltersApply: PropTypes.func.isRequired,
     className: PropTypes.string,
 };
 
@@ -37,6 +41,8 @@ const defaultProps = {
     className: '',
     connectorLeads: [],
     selectedLeads: [],
+    filtersData: {},
+    filters: [],
     leadsCount: 0,
 };
 
@@ -50,7 +56,10 @@ export default class ConnectorContent extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = { connectorLeadsLoading: true };
+        this.state = {
+            connectorLeadsLoading: true,
+            localFiltersData: props.filtersData,
+        };
 
         this.connectorLeadsHeader = [
             {
@@ -143,9 +152,16 @@ export default class ConnectorContent extends React.PureComponent {
             connectorId,
             projectId,
             activePage,
+            filtersData,
         } = this.props;
+
         if (connectorId) {
-            this.startConnectorLeadsGetRequest(connectorId, projectId, activePage);
+            this.startConnectorLeadsGetRequest(
+                connectorId,
+                projectId,
+                activePage,
+                filtersData,
+            );
         }
     }
 
@@ -154,11 +170,21 @@ export default class ConnectorContent extends React.PureComponent {
             activePage: newActivePage,
             connectorId,
             projectId,
+            filtersData: newFiltersData,
         } = nextProps;
-        const { activePage: oldActivePage } = this.props;
 
-        if (newActivePage !== oldActivePage) {
-            this.startConnectorLeadsGetRequest(connectorId, projectId, newActivePage);
+        const {
+            activePage: oldActivePage,
+            filtersData: oldFiltersData,
+        } = this.props;
+
+        if (newActivePage !== oldActivePage || newFiltersData !== oldFiltersData) {
+            this.startConnectorLeadsGetRequest(
+                connectorId,
+                projectId,
+                newActivePage,
+                newFiltersData,
+            );
         }
     }
 
@@ -168,7 +194,7 @@ export default class ConnectorContent extends React.PureComponent {
         }
     }
 
-    startConnectorLeadsGetRequest = (connectorId, projectId, activePage) => {
+    startConnectorLeadsGetRequest = (connectorId, projectId, activePage, localFiltersData) => {
         if (this.requestForConnectorLeads) {
             this.requestForConnectorLeads.stop();
         }
@@ -182,6 +208,7 @@ export default class ConnectorContent extends React.PureComponent {
             projectId,
             activePage,
             MAX_LEADS_PER_REQUEST,
+            localFiltersData,
         );
         this.requestForConnectorLeads.start();
     }
@@ -191,9 +218,16 @@ export default class ConnectorContent extends React.PureComponent {
             connectorId,
             activePage,
             projectId,
+            filtersData,
         } = this.props;
+
         if (connectorId) {
-            this.startConnectorLeadsGetRequest(connectorId, projectId, activePage);
+            this.startConnectorLeadsGetRequest(
+                connectorId,
+                projectId,
+                activePage,
+                filtersData,
+            );
         }
     }
 
@@ -206,43 +240,74 @@ export default class ConnectorContent extends React.PureComponent {
         setConnectorActivePage({ connectorId, activePage });
     }
 
+    handleFiltersChange = (newValue) => {
+        this.setState({ localFiltersData: newValue });
+    }
+
+    handleFiltersApply = (value) => {
+        const {
+            connectorId,
+            onFiltersApply,
+        } = this.props;
+
+        onFiltersApply(value, connectorId);
+    }
+
+    renderHeader = () => {
+        const {
+            connectorId,
+            filters,
+        } = this.props;
+        const { localFiltersData } = this.state;
+
+        return (
+            <header className={styles.header} >
+                <div className={styles.leftContainer} >
+                    <Filters
+                        filters={filters}
+                        value={localFiltersData}
+                        onChange={this.handleFiltersChange}
+                        onApply={this.handleFiltersApply}
+                    />
+                </div>
+                <div className={styles.rightContainer}>
+                    <Link
+                        className={styles.settingsLink}
+                        target="_blank"
+                        to={reverseRoute(pathNames.connectors, { connectorId })}
+                    >
+                        <span className={iconNames.settings} />
+                    </Link>
+                    <AccentButton
+                        iconName={iconNames.refresh}
+                        onClick={this.handleRefreshButtonClick}
+                        className={styles.button}
+                        transparent
+                    />
+                </div>
+            </header>
+        );
+    }
+
     render() {
         const {
             connectorLeads = [],
             className,
-            connectorId,
             leadsCount,
             activePage,
             selectedLeads,
         } = this.props;
 
-        const {
-            connectorLeadsLoading,
-        } = this.state;
+        const { connectorLeadsLoading } = this.state;
 
         const classNames = `${styles.connectorContent} ${className}`;
         const selectedLeadsCount = selectedLeads.length;
+        const Header = this.renderHeader;
 
         return (
             <div className={classNames} >
                 { connectorLeadsLoading && <LoadingAnimation large /> }
-                <header className={styles.header} >
-                    <div className={styles.rightContainer}>
-                        <Link
-                            className={styles.settingsLink}
-                            target="_blank"
-                            to={reverseRoute(pathNames.connectors, { connectorId })}
-                        >
-                            <span className={iconNames.settings} />
-                        </Link>
-                        <AccentButton
-                            iconName={iconNames.refresh}
-                            onClick={this.handleRefreshButtonClick}
-                            className={styles.button}
-                            transparent
-                        />
-                    </div>
-                </header>
+                <Header />
                 <div className={styles.tableContainer} >
                     <Table
                         className={styles.table}

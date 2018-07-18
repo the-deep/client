@@ -110,7 +110,7 @@ export default class LeadButtons extends React.PureComponent {
         // google-drive which creates an overlay and disables everything in bg
         this.state = {
             dropboxDisabled: false,
-            connectorSelectModalShow: false,
+            connectorSelectModalShow: true,
         };
         // NOTE: google drive access token is received at start
         this.googleDriveAccessToken = undefined;
