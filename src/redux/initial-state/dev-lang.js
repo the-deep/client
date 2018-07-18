@@ -1603,6 +1603,7 @@ const initialDevLangState = {
             searchConnectorPlaceholder: 1101,
             datePublishedLabel: 3,
             titleLabel: 13,
+            applyFilterLabel: 427,
         },
         register: {
             checkYourEmailText: 818,

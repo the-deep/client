@@ -88,6 +88,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
             selectedConnector,
             selectedLeads: emptyObject,
             connectorsLeads: emptyObject,
+            filtersData: emptyObject,
         };
 
         this.views = this.getContentViews(connectorsList);
@@ -155,15 +156,25 @@ export default class ConnectorSelectModal extends React.PureComponent {
                                 activePage,
                             } = {},
                         } = {},
+                        filtersData,
                     } = this.state;
+                    const {
+                        connectorsList = [],
+                    } = this.props;
+
+                    const selectedConnectorDetails = connectorsList
+                        .find(l => l.id === selectedConnector) || {};
 
                     return (
                         <ConnectorContent
+                            filtersData={filtersData[selectedConnector]}
                             connectorId={selectedConnector}
+                            filters={selectedConnectorDetails.filters}
                             projectId={this.props.projectId}
                             connectorLeads={leads}
                             leadsCount={count}
                             activePage={activePage || 1}
+                            onFiltersApply={this.handleFiltersApply}
                             className={styles.content}
                             setConnectorLeads={this.setConnectorLeads}
                             setConnectorActivePage={this.setConnectorActivePage}
@@ -270,6 +281,21 @@ export default class ConnectorSelectModal extends React.PureComponent {
 
         this.setState(update(this.state, settings));
     }
+
+    handleFiltersApply = (value, connectorId) => {
+        const settings = {
+            filtersData: {
+                [connectorId]: { $set: value },
+            },
+            connectorsLeads: { $auto: {
+                [connectorId]: { $auto: {
+                    activePage: { $set: 1 },
+                } },
+            } },
+        };
+        this.setState(update(this.state, settings));
+    }
+
 
     handleSelectAllLead = ({ connectorId, isSelected }) => {
         const { connectorsLeads: {

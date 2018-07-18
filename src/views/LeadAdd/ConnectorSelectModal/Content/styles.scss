@@ -9,10 +9,11 @@
 
     .header {
         display: flex;
+        align-items: center;
         flex-shrink: 0;
-        justify-content: flex-end;
+        justify-content: space-between;
         background-color: $color-background-header;
-        padding: $spacing-extra-small $spacing-small;
+        padding: $spacing-small;
 
         .right-container {
             display: flex;
