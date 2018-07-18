@@ -13,6 +13,7 @@ const connectorsSchema = [];
             title: { type: 'string', required: true },
             source: { type: 'string', required: true },
             role: { type: 'string' },
+            filters: { type: 'array' },
         },
     };
     connectorsSchema.push({ name, schema });
@@ -32,6 +33,7 @@ const connectorsSchema = [];
             projects: { type: 'array' },
             params: { type: 'object' },
             users: { type: 'array' },
+            filters: { type: 'array' },
         },
     };
     connectorsSchema.push({ name, schema });
@@ -114,6 +116,7 @@ const connectorsSchema = [];
         fields: {
             count: { type: 'uint', required: true },
             results: { type: 'array.connectorLead', required: true },
+            countPerPage: { type: 'uint' },
         },
     };
     connectorsSchema.push({ name, schema });
