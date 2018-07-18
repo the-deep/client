@@ -266,6 +266,7 @@ const initialDevLangState = {
         506: 'Show suggestions for :',
         508: 'Entities',
         509: 'Go to Overview',
+        510: 'Edit Framework',
         511: 'Go to List',
         512: 'Entry',
         513: 'There was a problem while fetching leads.',
@@ -1148,6 +1149,7 @@ const initialDevLangState = {
         },
         editEntry: {
             gotoOverviewButtonLabel: 509,
+            editFrameworkButtonLabel: 510,
             saveButtonLabel: 25,
             gotoListButtonLabel: 511,
             altLabel: 512,

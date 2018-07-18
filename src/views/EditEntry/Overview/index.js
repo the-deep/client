@@ -15,10 +15,14 @@ import {
     setActiveEntryAction,
     editEntryCurrentLeadSelector,
 } from '#redux';
-import { iconNames } from '#constants';
+import {
+    iconNames,
+    pathNames,
+} from '#constants';
 import _ts from '#ts';
 import widgetStore from '#widgets';
 import { entryAccessor } from '#entities/entry';
+import { reverseRoute } from '#rs/utils/common';
 
 import LeftPanel from './LeftPanel';
 import styles from './styles.scss';
@@ -172,6 +176,10 @@ export default class Overview extends React.PureComponent {
             choices,
             entries,
             filteredEntries,
+            analysisFramework: {
+                isAdmin,
+                id: analysisFrameworkId,
+            } = {},
             lead,
             onEntryAdd,
             onEntryDelete,
@@ -239,6 +247,18 @@ export default class Overview extends React.PureComponent {
                             }
                         </div>
                         <div className={styles.actionButtons}>
+                            {isAdmin &&
+                                <Link
+                                    className={styles.editFramework}
+                                    to={reverseRoute(pathNames.analysisFramework, {
+                                        analysisFrameworkId,
+                                    })}
+                                    target="_blank"
+                                    replace
+                                >
+                                    {_ts('editEntry', 'editFrameworkButtonLabel')}
+                                </Link>
+                            }
                             <Link
                                 className={styles.gotoLink}
                                 to="#/list"
