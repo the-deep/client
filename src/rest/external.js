@@ -1,27 +1,11 @@
 import {
     GET,
     POST,
-    commonHeaderForGet,
+    commonHeaderForGetExternal,
     commonHeaderForPostExternal,
     p,
+    deeplEndPoint,
 } from '#config/rest';
-
-const getDeeplEndPoint = () => {
-    switch (process.env.REACT_APP_DEEP_ENVIRONMENT) {
-        case 'nightly':
-            // TODO: create new endpoint
-            return 'https://deepl-alpha.thedeep.io';
-        case 'alpha':
-            return 'https://deepl-alpha.thedeep.io';
-        case 'beta':
-            return 'https://deepl.togglecorp.com';
-        default:
-            // TODO: create new endpoint
-            return 'https://deepl-alpha.thedeep.io';
-    }
-};
-
-const deeplEndPoint = getDeeplEndPoint();
 
 export const urlForNer = `${deeplEndPoint}/api/ner/`;
 export const urlForFeedback = `${deeplEndPoint}/api/v2/recommendation/`;
@@ -64,7 +48,7 @@ export const createUrlForInitClusterRequest = `${deeplEndPoint}/api/cluster/`;
 
 export const createParamsForProjectClusterData = () => ({
     method: GET,
-    headers: commonHeaderForGet,
+    headers: commonHeaderForGetExternal,
 });
 
 export const createParamsForInitClusterRequest = body => ({
