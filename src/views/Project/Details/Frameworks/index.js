@@ -76,7 +76,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
         }
 
         this.state = {
-            showAddAFModal: false,
+            showAddFrameworkModal: false,
             displayAfList,
             pending: false,
             searchInputValue: '',
@@ -152,7 +152,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
     }
 
     handleModalClose = () => {
-        this.setState({ showAddAFModal: false });
+        this.setState({ showAddFrameworkModal: false });
     }
 
     handleSearchInputChange = (searchInputValue) => {
@@ -168,7 +168,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
     };
 
     handleAddAfButtonClick = () => {
-        this.setState({ showAddAFModal: true });
+        this.setState({ showAddFrameworkModal: true });
     }
 
     renderCheckmark = ({ afId }) => {
@@ -219,6 +219,8 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
             );
         }
 
+        console.warn(selectedAf);
+
         return (
             <Details
                 key={selectedAf}
@@ -227,7 +229,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
         );
     }
 
-    renderAnalysisFrameworkList = () => {
+    renderFrameworkList = () => {
         const {
             searchInputValue,
             displayAfList,
@@ -273,11 +275,11 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
         );
     }
 
-    renderAddAFModal = () => {
-        const { showAddAFModal } = this.state;
+    renderAddFrameworkModal = () => {
+        const { showAddFrameworkModal } = this.state;
         const { projectId } = this.props;
 
-        if (!showAddAFModal) {
+        if (!showAddFrameworkModal) {
             return null;
         }
 
@@ -300,8 +302,8 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
         const { pending } = this.state;
         const AFDetails = this.renderSelectedAfDetails;
 
-        const AddAFModal = this.renderAddAFModal;
-        const AnalysisFrameworkList = this.renderAnalysisFrameworkList;
+        const AddAFModal = this.renderAddFrameworkModal;
+        const AnalysisFrameworkList = this.renderFrameworkList;
 
         return (
             <div className={styles.projectAnalysisFramework}>

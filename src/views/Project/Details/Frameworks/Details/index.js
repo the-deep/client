@@ -349,6 +349,8 @@ export default class ProjectAfDetail extends React.PureComponent {
             projectDetails,
         } = this.props;
 
+        console.warn(frameworkDetails);
+
         const {
             cloneConfirmModalShow,
             useConfirmModalShow,

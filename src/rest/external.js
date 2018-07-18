@@ -1,7 +1,7 @@
 import {
     GET,
     POST,
-    commonHeaderForGet,
+    commonHeaderForGetExternal,
     commonHeaderForPostExternal,
     p,
 } from '#config/rest';
@@ -16,8 +16,7 @@ const getDeeplEndPoint = () => {
         case 'beta':
             return 'https://deepl.togglecorp.com';
         default:
-            // TODO: create new endpoint
-            return 'https://deepl-alpha.thedeep.io';
+            return process.env.REACT_APP_DEEPL_DOMAIN || 'http://192.168.1.66:8010';
     }
 };
 
@@ -64,7 +63,7 @@ export const createUrlForInitClusterRequest = `${deeplEndPoint}/api/cluster/`;
 
 export const createParamsForProjectClusterData = () => ({
     method: GET,
-    headers: commonHeaderForGet,
+    headers: commonHeaderForGetExternal,
 });
 
 export const createParamsForInitClusterRequest = body => ({

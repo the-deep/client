@@ -42,3 +42,7 @@ export const commonHeaderForGet = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
 };
+export const commonHeaderForGetExternal = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+};
