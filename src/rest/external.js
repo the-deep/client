@@ -4,23 +4,8 @@ import {
     commonHeaderForGetExternal,
     commonHeaderForPostExternal,
     p,
+    deeplEndPoint,
 } from '#config/rest';
-
-const getDeeplEndPoint = () => {
-    switch (process.env.REACT_APP_DEEP_ENVIRONMENT) {
-        case 'nightly':
-            // TODO: create new endpoint
-            return 'https://deepl-alpha.thedeep.io';
-        case 'alpha':
-            return 'https://deepl-alpha.thedeep.io';
-        case 'beta':
-            return 'https://deepl.togglecorp.com';
-        default:
-            return process.env.REACT_APP_DEEPL_DOMAIN || 'http://192.168.1.66:8010';
-    }
-};
-
-const deeplEndPoint = getDeeplEndPoint();
 
 export const urlForNer = `${deeplEndPoint}/api/ner/`;
 export const urlForFeedback = `${deeplEndPoint}/api/v2/recommendation/`;
