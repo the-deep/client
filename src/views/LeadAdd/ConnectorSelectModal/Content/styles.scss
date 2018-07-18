@@ -15,6 +15,13 @@
         background-color: $color-background-header;
         padding: $spacing-small;
 
+        .left-container {
+            > span {
+                color: $color-text-label;
+                font-size: $font-size-small;
+            }
+        }
+
         .right-container {
             display: flex;
 

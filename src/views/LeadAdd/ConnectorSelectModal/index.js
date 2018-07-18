@@ -154,6 +154,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
                                 leads,
                                 count,
                                 activePage,
+                                countPerPage,
                             } = {},
                         } = {},
                         filtersData,
@@ -173,6 +174,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
                             projectId={this.props.projectId}
                             connectorLeads={leads}
                             leadsCount={count}
+                            countPerPage={countPerPage}
                             activePage={activePage || 1}
                             onFiltersApply={this.handleFiltersApply}
                             className={styles.content}
@@ -213,12 +215,18 @@ export default class ConnectorSelectModal extends React.PureComponent {
         return filteredLeads;
     }
 
-    setConnectorLeads = ({ connectorLeads, connectorId, totalConnectorLeadsCount }) => {
+    setConnectorLeads = ({
+        leads,
+        connectorId,
+        totalCount,
+        countPerPage,
+    }) => {
         const settings = {
             connectorsLeads: { $auto: {
                 [connectorId]: { $auto: {
-                    leads: { $set: connectorLeads },
-                    count: { $set: totalConnectorLeadsCount },
+                    leads: { $set: leads },
+                    count: { $set: totalCount },
+                    countPerPage: { $set: countPerPage },
                 } },
             } },
         };
@@ -456,13 +464,6 @@ export default class ConnectorSelectModal extends React.PureComponent {
                     title={_ts('addLeads.connectorsSelect', 'connectorsLabel')}
                     rightComponent={
                         <div className={styles.rightButtons} >
-                            <Link
-                                className={styles.settingsLink}
-                                target="_blank"
-                                to={reverseRoute(pathNames.connectors, { })}
-                            >
-                                <span className={iconNames.settings} />
-                            </Link>
                             <PrimaryButton
                                 onClick={this.handleConnectorSelectModalClose}
                                 transparent

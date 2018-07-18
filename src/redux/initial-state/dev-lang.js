@@ -709,6 +709,7 @@ const initialDevLangState = {
         1136: 'This url is already added.',
         1137: 'Failed to test connector.',
         1138: 'Test results',
+        1139: 'Filters not available',
         7627: 'Admins',
         7628: 'Discover usergroups',
         7629: 'Discover projects',
@@ -1604,6 +1605,7 @@ const initialDevLangState = {
             datePublishedLabel: 3,
             titleLabel: 13,
             applyFilterLabel: 427,
+            noFiltersMessage: 1139,
         },
         register: {
             checkYourEmailText: 818,
