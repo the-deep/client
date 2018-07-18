@@ -46,9 +46,15 @@ $height-tabs: 48px;
             }
 
             .action-buttons {
+                .edit-framework {
+                    @extend %button-like-link;
+                    @include background-color($color-warning);
+                }
+
                 .goto-link {
                     @extend %button-like-link;
                     @include background-color($color-primary);
+                    margin-left: $spacing-medium;
                 }
 
                 .save-button {
