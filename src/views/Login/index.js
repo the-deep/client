@@ -204,8 +204,12 @@ export default class Login extends React.PureComponent {
             .failure((response) => {
                 const faramErrors = alterResponseErrorToFaramError(response.errors);
                 if (response.errorCode === 4004) {
+                    const { showReCaptcha } = this.state;
                     this.setState({
-                        faramErrors: { ...faramErrors, $internal: [_ts('login', 'enterRecaptcha')] },
+                        faramErrors: {
+                            ...faramErrors,
+                            $internal: [_ts('login', showReCaptcha ? 'retryRecaptcha' : 'enterRecaptcha')],
+                        },
                         pending: false,
                         showReCaptcha: true,
                         schema: Login.schemaWithRecaptcha,
