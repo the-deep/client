@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '#rs/utils/common';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Pager from '#rs/components/View/Pager';
 import Table from '#rs/components/View/Table';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import Checkbox from '#rs/components/Input/Checkbox';
@@ -15,23 +16,39 @@ import {
 import _ts from '#ts';
 
 import ConnectorLeadsGetRequest from '../../requests/ConnectorLeadsGetRequest';
+import Filters from './Filters';
 import styles from './styles.scss';
 
 const propTypes = {
     connectorLeads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     connectorId: PropTypes.number.isRequired,
     projectId: PropTypes.number.isRequired,
+    filters: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    activePage: PropTypes.number.isRequired,
+    leadsCount: PropTypes.number,
+    countPerPage: PropTypes.number,
+    selectedLeads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    filtersData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setConnectorLeads: PropTypes.func.isRequired,
     leadsUrlMap: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setConnectorLeadSelection: PropTypes.func.isRequired,
+    setConnectorActivePage: PropTypes.func.isRequired,
     onSelectAllClick: PropTypes.func.isRequired,
+    onFiltersApply: PropTypes.func.isRequired,
     className: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     connectorLeads: [],
+    selectedLeads: [],
+    filtersData: {},
+    filters: [],
+    leadsCount: 0,
+    countPerPage: 0,
 };
+
+const DEFAULT_MAX_LEADS_PER_REQUEST = 25;
 
 export default class ConnectorContent extends React.PureComponent {
     static propTypes = propTypes;
@@ -41,7 +58,10 @@ export default class ConnectorContent extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = { connectorLeadsLoading: true };
+        this.state = {
+            connectorLeadsLoading: true,
+            localFiltersData: props.filtersData,
+        };
 
         this.connectorLeadsHeader = [
             {
@@ -79,6 +99,7 @@ export default class ConnectorContent extends React.PureComponent {
                 sortable: false,
                 modifier: (row) => {
                     const { leadsUrlMap } = this.props;
+
                     if (leadsUrlMap[row.url] || row.existing) {
                         return (
                             <Checkbox
@@ -132,9 +153,44 @@ export default class ConnectorContent extends React.PureComponent {
         const {
             connectorId,
             projectId,
+            activePage,
+            filtersData,
+            countPerPage,
         } = this.props;
+
         if (connectorId) {
-            this.startConnectorLeadsGetRequest(connectorId, projectId);
+            this.startConnectorLeadsGetRequest(
+                connectorId,
+                projectId,
+                activePage,
+                filtersData,
+                countPerPage,
+            );
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const {
+            activePage: newActivePage,
+            connectorId,
+            projectId,
+            filtersData: newFiltersData,
+            countPerPage,
+        } = nextProps;
+
+        const {
+            activePage: oldActivePage,
+            filtersData: oldFiltersData,
+        } = this.props;
+
+        if (newActivePage !== oldActivePage || newFiltersData !== oldFiltersData) {
+            this.startConnectorLeadsGetRequest(
+                connectorId,
+                projectId,
+                newActivePage,
+                newFiltersData,
+                countPerPage,
+            );
         }
     }
 
@@ -144,63 +200,156 @@ export default class ConnectorContent extends React.PureComponent {
         }
     }
 
-    startConnectorLeadsGetRequest = (connectorId, projectId) => {
+    startConnectorLeadsGetRequest = (
+        connectorId,
+        projectId,
+        activePage,
+        localFiltersData,
+        countPerPage,
+    ) => {
         if (this.requestForConnectorLeads) {
             this.requestForConnectorLeads.stop();
         }
         const requestForConnectorLeads = new ConnectorLeadsGetRequest({
             setState: v => this.setState(v),
             setConnectorLeads: this.props.setConnectorLeads,
+            selectedLeads: this.props.selectedLeads,
         });
-        this.requestForConnectorLeads = requestForConnectorLeads.create(connectorId, projectId);
+
+        this.requestForConnectorLeads = requestForConnectorLeads.create(
+            connectorId,
+            projectId,
+            activePage,
+            countPerPage || DEFAULT_MAX_LEADS_PER_REQUEST,
+            localFiltersData,
+        );
         this.requestForConnectorLeads.start();
     }
 
     handleRefreshButtonClick = () => {
         const {
             connectorId,
+            activePage,
             projectId,
+            filtersData,
         } = this.props;
+
         if (connectorId) {
-            this.startConnectorLeadsGetRequest(connectorId, projectId);
+            this.startConnectorLeadsGetRequest(
+                connectorId,
+                projectId,
+                activePage,
+                filtersData,
+            );
         }
+    }
+
+    handlePageClick = (activePage) => {
+        const {
+            connectorId,
+            setConnectorActivePage,
+        } = this.props;
+
+        setConnectorActivePage({ connectorId, activePage });
+    }
+
+    handleFiltersChange = (newValue) => {
+        this.setState({ localFiltersData: newValue });
+    }
+
+    handleFiltersApply = (value) => {
+        const {
+            connectorId,
+            onFiltersApply,
+        } = this.props;
+
+        onFiltersApply(value, connectorId);
+    }
+
+    renderHeader = () => {
+        const {
+            connectorId,
+            filters,
+        } = this.props;
+        const { localFiltersData } = this.state;
+
+        return (
+            <header className={styles.header}>
+                <div className={styles.leftContainer}>
+                    {filters.length > 0 ? (
+                        <Filters
+                            filters={filters}
+                            value={localFiltersData}
+                            onChange={this.handleFiltersChange}
+                            onApply={this.handleFiltersApply}
+                        />
+                    ) : (
+                        <span>
+                            {_ts('addLeads.connectorsSelect', 'noFiltersMessage')}
+                        </span>
+                    )}
+                </div>
+                <div className={styles.rightContainer}>
+                    <Link
+                        className={styles.settingsLink}
+                        target="_blank"
+                        to={reverseRoute(pathNames.connectors, { connectorId })}
+                    >
+                        <span className={iconNames.settings} />
+                    </Link>
+                    <AccentButton
+                        iconName={iconNames.refresh}
+                        onClick={this.handleRefreshButtonClick}
+                        className={styles.button}
+                        transparent
+                    />
+                </div>
+            </header>
+        );
     }
 
     render() {
         const {
             connectorLeads = [],
             className,
-            connectorId,
+            leadsCount,
+            countPerPage,
+            activePage,
+            selectedLeads,
         } = this.props;
+
         const { connectorLeadsLoading } = this.state;
+
         const classNames = `${styles.connectorContent} ${className}`;
+        const selectedLeadsCount = selectedLeads.length;
+        const Header = this.renderHeader;
 
         return (
             <div className={classNames} >
                 { connectorLeadsLoading && <LoadingAnimation large /> }
-                <header className={styles.header} >
-                    <div className={styles.rightContainer}>
-                        <Link
-                            className={styles.settingsLink}
-                            target="_blank"
-                            to={reverseRoute(pathNames.connectors, { connectorId })}
-                        >
-                            <span className={iconNames.settings} />
-                        </Link>
-                        <AccentButton
-                            iconName={iconNames.refresh}
-                            onClick={this.handleRefreshButtonClick}
-                            className={styles.button}
-                            transparent
-                        />
-                    </div>
-                </header>
-                <Table
-                    className={styles.table}
-                    data={connectorLeads}
-                    headers={this.connectorLeadsHeader}
-                    keyExtractor={ConnectorContent.leadKeySelector}
-                />
+                <Header />
+                <div className={styles.tableContainer} >
+                    <Table
+                        className={styles.table}
+                        data={connectorLeads}
+                        headers={this.connectorLeadsHeader}
+                        keyExtractor={ConnectorContent.leadKeySelector}
+                    />
+                </div>
+                <footer className={styles.footer} >
+                    <span>
+                        {_ts('addLeads.connectorsSelect', 'selectedNumberText', {
+                            count: selectedLeadsCount,
+                        })}
+                    </span>
+                    <Pager
+                        activePage={activePage}
+                        itemsCount={leadsCount}
+                        maxItemsPerPage={countPerPage || DEFAULT_MAX_LEADS_PER_REQUEST}
+                        onPageClick={this.handlePageClick}
+                        showItemsPerPageChange={false}
+                    />
+                </footer>
             </div>
         );
     }
