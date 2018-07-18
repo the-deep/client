@@ -18,7 +18,7 @@ export default class ConnectorLeadsRequest {
 
         try {
             schema.validate(response, 'connectorLeads');
-            const connectorLeads = response.results.map((l) => {
+            const leads = response.results.map((l) => {
                 const isSelected = selectedLeads.findIndex(s => s.key === l.key) !== -1;
 
                 return {
@@ -27,9 +27,10 @@ export default class ConnectorLeadsRequest {
                 };
             });
             this.props.setConnectorLeads({
-                connectorLeads,
-                totalConnectorLeadsCount: response.count,
+                leads,
+                totalCount: response.count,
                 connectorId,
+                countPerPage: response.countPerPage,
             });
         } catch (er) {
             console.error(er);

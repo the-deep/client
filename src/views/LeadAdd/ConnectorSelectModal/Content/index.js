@@ -26,6 +26,7 @@ const propTypes = {
     filters: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     activePage: PropTypes.number.isRequired,
     leadsCount: PropTypes.number,
+    countPerPage: PropTypes.number,
     selectedLeads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     filtersData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setConnectorLeads: PropTypes.func.isRequired,
@@ -44,9 +45,10 @@ const defaultProps = {
     filtersData: {},
     filters: [],
     leadsCount: 0,
+    countPerPage: 0,
 };
 
-const MAX_LEADS_PER_REQUEST = 25;
+const DEFAULT_MAX_LEADS_PER_REQUEST = 25;
 
 export default class ConnectorContent extends React.PureComponent {
     static propTypes = propTypes;
@@ -153,6 +155,7 @@ export default class ConnectorContent extends React.PureComponent {
             projectId,
             activePage,
             filtersData,
+            countPerPage,
         } = this.props;
 
         if (connectorId) {
@@ -161,6 +164,7 @@ export default class ConnectorContent extends React.PureComponent {
                 projectId,
                 activePage,
                 filtersData,
+                countPerPage,
             );
         }
     }
@@ -171,6 +175,7 @@ export default class ConnectorContent extends React.PureComponent {
             connectorId,
             projectId,
             filtersData: newFiltersData,
+            countPerPage,
         } = nextProps;
 
         const {
@@ -184,6 +189,7 @@ export default class ConnectorContent extends React.PureComponent {
                 projectId,
                 newActivePage,
                 newFiltersData,
+                countPerPage,
             );
         }
     }
@@ -194,7 +200,13 @@ export default class ConnectorContent extends React.PureComponent {
         }
     }
 
-    startConnectorLeadsGetRequest = (connectorId, projectId, activePage, localFiltersData) => {
+    startConnectorLeadsGetRequest = (
+        connectorId,
+        projectId,
+        activePage,
+        localFiltersData,
+        countPerPage,
+    ) => {
         if (this.requestForConnectorLeads) {
             this.requestForConnectorLeads.stop();
         }
@@ -203,11 +215,12 @@ export default class ConnectorContent extends React.PureComponent {
             setConnectorLeads: this.props.setConnectorLeads,
             selectedLeads: this.props.selectedLeads,
         });
+
         this.requestForConnectorLeads = requestForConnectorLeads.create(
             connectorId,
             projectId,
             activePage,
-            MAX_LEADS_PER_REQUEST,
+            countPerPage || DEFAULT_MAX_LEADS_PER_REQUEST,
             localFiltersData,
         );
         this.requestForConnectorLeads.start();
@@ -261,14 +274,20 @@ export default class ConnectorContent extends React.PureComponent {
         const { localFiltersData } = this.state;
 
         return (
-            <header className={styles.header} >
-                <div className={styles.leftContainer} >
-                    <Filters
-                        filters={filters}
-                        value={localFiltersData}
-                        onChange={this.handleFiltersChange}
-                        onApply={this.handleFiltersApply}
-                    />
+            <header className={styles.header}>
+                <div className={styles.leftContainer}>
+                    {filters.length > 0 ? (
+                        <Filters
+                            filters={filters}
+                            value={localFiltersData}
+                            onChange={this.handleFiltersChange}
+                            onApply={this.handleFiltersApply}
+                        />
+                    ) : (
+                        <span>
+                            {_ts('addLeads.connectorsSelect', 'noFiltersMessage')}
+                        </span>
+                    )}
                 </div>
                 <div className={styles.rightContainer}>
                     <Link
@@ -294,6 +313,7 @@ export default class ConnectorContent extends React.PureComponent {
             connectorLeads = [],
             className,
             leadsCount,
+            countPerPage,
             activePage,
             selectedLeads,
         } = this.props;
@@ -325,7 +345,7 @@ export default class ConnectorContent extends React.PureComponent {
                     <Pager
                         activePage={activePage}
                         itemsCount={leadsCount}
-                        maxItemsPerPage={MAX_LEADS_PER_REQUEST}
+                        maxItemsPerPage={countPerPage || DEFAULT_MAX_LEADS_PER_REQUEST}
                         onPageClick={this.handlePageClick}
                         showItemsPerPageChange={false}
                     />
