@@ -30,6 +30,7 @@ import SimplifiedLeadPreview from '#components/SimplifiedLeadPreview';
 import LeadPreview from '#components/LeadPreview';
 import AssistedTagging from '#components/AssistedTagging';
 import ImagesGrid from '#components/ImagesGrid';
+import Highlight from '#components/Highlight';
 
 import EntriesList from './EntriesList';
 import styles from './styles.scss';
@@ -110,8 +111,10 @@ export default class LeftPane extends React.PureComponent {
                     leadId={this.props.lead.id}
                     // FIXME: Do not always call calculateHighlights here
                     highlights={this.calculateHighlights()}
-                    highlightModifier={this.highlightSimplifiedExcerpt}
                     onLoad={this.handleLoadImages}
+
+                    renderer={Highlight}
+                    rendererParams={this.highlightRendererParams}
                 />
             ),
             mount: true,
@@ -225,6 +228,10 @@ export default class LeftPane extends React.PureComponent {
 
     // Simplified Lead Preview
 
+    highlightRendererParams = () => ({
+        onClick: this.handleHighlightClick,
+    })
+
     calculateHighlights = () => this.props.filteredEntries
         .filter(e => entryAccessor.entryType(e) === 'excerpt')
         .map(entry => ({
@@ -232,16 +239,6 @@ export default class LeftPane extends React.PureComponent {
             text: entryAccessor.excerpt(entry),
             color: entryAccessor.color(entry) || '#c0c0c0',
         }));
-
-    highlightSimplifiedExcerpt = (highlight, text, actualStr, actualKey) => (
-        SimplifiedLeadPreview.highlightModifier(
-            highlight,
-            text,
-            actualStr,
-            actualKey,
-            this.handleHighlightClick,
-        )
-    );
 
     handleHighlightClick = (e, { key }) => {
         // console.warn('this should handle highlight click', text, key);

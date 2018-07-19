@@ -20,81 +20,20 @@ const propTypes = {
     className: PropTypes.string,
     leadId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     highlights: PropTypes.arrayOf(PropTypes.object),
-    highlightModifier: PropTypes.func,
+    renderer: PropTypes.func.isRequired,
+    rendererParams: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
     leadId: undefined,
     highlights: [],
-    highlightModifier: text => text,
+    rendererParams: undefined,
 };
 
 export default class SimplifiedLeadPreview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    static getHighlightColors = (color) => {
-        const r = parseInt(color.substr(1, 2), 16);
-        const g = parseInt(color.substr(3, 2), 16);
-        const b = parseInt(color.substr(5, 2), 16);
-
-        const backgroundColor = `rgba(${r}, ${g}, ${b}, 0.2)`;
-        const borderColor = color;
-        const labelColor = `rgba(${r}, ${g}, ${b}, 0.5)`;
-
-        return {
-            background: backgroundColor,
-            border: borderColor,
-            label: labelColor,
-        };
-    };
-
-    // FIXME: move this to a separate component
-    static highlightModifier = (highlight, text, actualStr, key, onClick, className = '') => {
-        const colors = SimplifiedLeadPreview.getHighlightColors(highlight.color);
-        const clickHandler = onClick && ((e) => {
-            onClick(e, {
-                ...highlight,
-                text: actualStr,
-                key,
-            });
-            e.stopPropagation();
-        });
-        const dragHandler = (e) => {
-            e.dataTransfer.setData('text/plain', actualStr);
-            e.stopPropagation();
-        };
-        const style = {
-            backgroundColor: colors.background,
-            border: `1px solid ${colors.border}`,
-        };
-
-        return (
-            <span
-                role="presentation"
-                className={`${styles.highlight} ${className}`}
-                style={style}
-                onClick={clickHandler}
-                onDragStart={dragHandler}
-                draggable
-            >
-                <span className={styles.text}>
-                    {text}
-                </span>
-                {highlight.label && (
-                    <span
-                        className={styles.label}
-                        style={{
-                            backgroundColor: colors.label,
-                        }}
-                    >
-                        { highlight.label }
-                    </span>
-                )}
-            </span>
-        );
-    };
 
     constructor(props) {
         super(props);
@@ -242,7 +181,10 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
     }
 
     renderContent = () => {
-        const { highlightModifier } = this.props;
+        const {
+            rendererParams,
+            renderer,
+        } = this.props;
 
         const {
             error,
@@ -267,7 +209,8 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
                     className={styles.highlightedText}
                     text={extractedText}
                     highlights={highlights}
-                    modifier={highlightModifier}
+                    renderer={renderer}
+                    rendererParams={rendererParams}
                 />
             );
         }

@@ -1,0 +1,22 @@
+@import '../../stylesheets/base';
+
+.highlight {
+    border-radius: 4px;
+    cursor: pointer;
+    padding: $spacing-extra-small-alt 0;
+
+    .text {
+        padding: 0 $spacing-small;
+    }
+
+    .label {
+        display: inline-block;
+        transform: translateY(-1px);
+        border-radius: 3px;
+        padding: 0 $spacing-small;
+        text-transform: uppercase;
+        color: $color-text-label;
+        font-size: $font-size-extra-small;
+        font-weight: $font-weight-bold;
+    }
+}

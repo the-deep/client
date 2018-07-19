@@ -26,6 +26,7 @@ import {
 import schema from '#schema';
 import _ts from '#ts';
 
+import Highlight from '../Highlight';
 import SimplifiedLeadPreview from '../SimplifiedLeadPreview';
 import styles from './styles.scss';
 
@@ -139,16 +140,9 @@ export default class AssistedTagging extends React.PureComponent {
         return classNames.join(' ');
     }
 
-
-    highlightSimplifiedExcerpt = (highlight, text, actualStr, key) => (
-        SimplifiedLeadPreview.highlightModifier(
-            highlight,
-            text,
-            actualStr,
-            key,
-            this.handleHighlightClick,
-        )
-    );
+    highlightRendererParams = () => ({
+        onClick: this.handleHighlightClick,
+    })
 
     handleAssitedBoxInvalidate = (popupContainer) => {
         const popupRect = popupContainer.getBoundingClientRect();
@@ -750,8 +744,9 @@ export default class AssistedTagging extends React.PureComponent {
                     className={previewClassName}
                     leadId={leadId}
                     highlights={highlights}
-                    highlightModifier={this.highlightSimplifiedExcerpt}
                     onLoad={this.handleLeadPreviewLoad}
+                    renderer={Highlight}
+                    rendererParams={this.highlightRendererParams}
                 />
                 <AssistantOptions />
                 <Assistant />

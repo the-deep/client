@@ -9,12 +9,13 @@ const propTypes = {
         end: PropTypes.number,
         item: PropTypes.object,
     })).isRequired,
-    modifier: PropTypes.func,
+    renderer: PropTypes.func.isRequired,
+    rendererParams: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
-    modifier: text => text,
+    rendererParams: undefined,
 };
 
 
@@ -54,49 +55,58 @@ export default class HighlightedText extends React.PureComponent {
     renderSplits = (text, splits, level = 1) => {
         const result = [];
         let index = 0;
+
         splits.forEach((split) => {
-            const splitIndex = Math.max(index, split.start);
+            const {
+                start,
+                end,
+                key,
+                item,
+                children,
+            } = split;
+
+            const splitIndex = Math.max(index, start);
             if (index < splitIndex) {
                 result.push(
-                    <span key={`split-${level}-${split.start}-0`}>
+                    <span key={`split-${level}-${start}`}>
                         { text.substr(index, splitIndex - index) }
                     </span>,
                 );
             }
-
-            const actualStr = text.substr(split.start, split.end - split.start);
-            const key = split.key;
-            const splitStr = text.substr(splitIndex, split.end - splitIndex);
-
-            if (splitIndex === split.end) {
+            if (splitIndex === end) {
                 return;
             }
 
-            if (split.children.length > 0) {
-                result.push(
-                    <span key={key}>
-                        { this.props.modifier(
-                            split.item,
-                            this.renderSplits(splitStr, split.children, level + 1),
-                            actualStr,
-                            key,
-                        ) }
-                    </span>,
-                );
-            } else {
-                result.push(
-                    <span key={key}>
-                        { this.props.modifier(split.item, splitStr, actualStr, key) }
-                    </span>,
-                );
-            }
+            const actualStr = text.substr(start, end - start);
+            const splitStr = text.substr(splitIndex, end - splitIndex);
 
-            index = split.end;
+            const {
+                renderer: Renderer,
+                rendererParams,
+            } = this.props;
+            const otherProps = rendererParams ? rendererParams(key) : {};
+
+            result.push(
+                <Renderer
+                    key={key}
+                    highlightKey={key}
+                    highlight={item}
+                    actualStr={actualStr}
+                    text={
+                        children.length > 0
+                            ? this.renderSplits(splitStr, children, level + 1)
+                            : splitStr
+                    }
+                    {...otherProps}
+                />,
+            );
+
+            index = end;
         });
 
         if (index < text.length) {
             result.push(
-                <span key={`split-${level}-2`}>
+                <span key={`split-${level}`}>
                     { text.substr(index) }
                 </span>,
             );
@@ -113,11 +123,12 @@ export default class HighlightedText extends React.PureComponent {
         } = this.props;
 
         const highlightsCopy = highlights
-            .map(h => ({ ...h }))
             .filter(h => h.start >= 0)
+            .map(h => ({ ...h }))
             .sort((h1, h2) => h1.start - h2.start);
 
         const nestedSplits = HighlightedText.createNestedSplits(highlightsCopy);
+
         return (
             <p className={className}>
                 {this.renderSplits(text, nestedSplits)}
