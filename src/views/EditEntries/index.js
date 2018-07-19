@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '#rs/utils/common';
 import update from '#rs/utils/immutable-update';
-import DangerButton from '#rsca/Button/DangerButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import { detachedFaram } from '#rsci/Faram';
 import FixedTabs from '#rscv/FixedTabs';
@@ -214,7 +214,6 @@ export default class EditEntries extends React.PureComponent {
             setState: params => this.setState(params),
         });
 
-
         this.savableEntries = EditEntries.calculateSavableEntries(
             this.props.entries,
             this.props.statuses,
@@ -252,6 +251,8 @@ export default class EditEntries extends React.PureComponent {
         this.saveRequestCoordinator.stop();
     }
 
+    // APIS
+
     handleExcerptChange = ({ type, value }, entryKey) => {
         if (!entryKey) {
             console.error('This should not occur');
@@ -276,6 +277,8 @@ export default class EditEntries extends React.PureComponent {
             },
         });
     }
+
+    // FARAM
 
     handleChange = (faramValues, faramErrors, faramInfo, entryKey) => {
         if (faramInfo.action === 'newEntry') {
@@ -382,6 +385,8 @@ export default class EditEntries extends React.PureComponent {
         this.saveRequestCoordinator.add(entryKey, request);
     }
 
+    // HANDLERS
+
     handleDeleteLocalEntry = (entryKey) => {
         const pseudoRequest = {
             start: () => {
@@ -452,6 +457,13 @@ export default class EditEntries extends React.PureComponent {
         this.saveRequestCoordinator.start();
     }
 
+    handleCancel = () => {
+        const { leadId } = this.props;
+        this.props.clearEntries({ leadId });
+        this.editEntryDataRequest.init({ leadId });
+        this.editEntryDataRequest.start();
+    }
+
     render() {
         const {
             lead: {
@@ -509,12 +521,14 @@ export default class EditEntries extends React.PureComponent {
                         disabled={projectMismatch}
                     />
                     <div className={styles.actionButtons}>
-                        <DangerButton
-                            // TODO: implement this
-                            disabled
+                        <DangerConfirmButton
+                            disabled={isSaveDisabled}
+                            // FIXME: use strings
+                            onClick={this.handleCancel}
+                            confirmationMessage="Do you want to cancel all changes?"
                         >
                             { cancelButtonTitle }
-                        </DangerButton>
+                        </DangerConfirmButton>
                         <SuccessButton
                             disabled={isSaveDisabled}
                             onClick={this.handleSave}
