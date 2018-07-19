@@ -208,7 +208,9 @@ export default class Login extends React.PureComponent {
                     this.setState({
                         faramErrors: {
                             ...faramErrors,
-                            $internal: [_ts('login', showReCaptcha ? 'retryRecaptcha' : 'enterRecaptcha')],
+                            $internal: [
+                                showReCaptcha ? _ts('login', 'retryRecaptcha') : _ts('login', 'enterRecaptcha'),
+                            ],
                         },
                         pending: false,
                         showReCaptcha: true,
