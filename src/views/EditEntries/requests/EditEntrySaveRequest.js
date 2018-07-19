@@ -21,10 +21,12 @@ export default class EditEntrySaveRequest extends Request {
 
     handleSuccess = (response) => {
         const { leadId, entryKey } = this;
+        const { color } = this.parent.calculateEntryData(response.attributes);
         this.parent.saveEntry({
             leadId,
             entryKey,
             response,
+            color,
         });
         this.parent.getCoordinator().notifyComplete(entryKey);
     }

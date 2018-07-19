@@ -26,6 +26,7 @@ import {
 import schema from '#schema';
 import _ts from '#ts';
 
+import Highlight from '../Highlight';
 import SimplifiedLeadPreview from '../SimplifiedLeadPreview';
 import styles from './styles.scss';
 
@@ -139,15 +140,9 @@ export default class AssistedTagging extends React.PureComponent {
         return classNames.join(' ');
     }
 
-
-    highlightSimplifiedExcerpt = (highlight, text, actualStr) => (
-        SimplifiedLeadPreview.highlightModifier(
-            highlight,
-            text,
-            actualStr,
-            this.handleHighlightClick,
-        )
-    );
+    highlightRendererParams = () => ({
+        onClick: this.handleHighlightClick,
+    })
 
     handleAssitedBoxInvalidate = (popupContainer) => {
         const popupRect = popupContainer.getBoundingClientRect();
@@ -465,6 +460,7 @@ export default class AssistedTagging extends React.PureComponent {
 
         const highlights = filteredClassifications.map(excerpt => ({
             ...excerpt,
+            key: `${excerpt.start}`, // Assuming start position of each classification is unique
             color: getHexFromString(excerpt.sectors[0].label),
             source: _ts('components.assistedTagging', 'sourceNLP'),
         }));
@@ -485,6 +481,7 @@ export default class AssistedTagging extends React.PureComponent {
         )).reduce((acc, c) => acc.concat(c), []);
 
         const highlights = keywords.map(keyword => ({
+            key: `${keyword.start}`, // Assuming start position of each classification is unique
             start: keyword.start,
             end: keyword.length + keyword.start,
             label: keyword.entity,
@@ -509,6 +506,7 @@ export default class AssistedTagging extends React.PureComponent {
         )).reduce((acc, c) => acc.concat(c.keywords), []);
 
         const highlights = keywords.map(keyword => ({
+            key: `${keyword.start}`, // Assuming start position of each classification is unique
             start: keyword.start,
             end: keyword.start + keyword.length,
             label: keyword.subcategory,
@@ -746,8 +744,9 @@ export default class AssistedTagging extends React.PureComponent {
                     className={previewClassName}
                     leadId={leadId}
                     highlights={highlights}
-                    highlightModifier={this.highlightSimplifiedExcerpt}
                     onLoad={this.handleLeadPreviewLoad}
+                    renderer={Highlight}
+                    rendererParams={this.highlightRendererParams}
                 />
                 <AssistantOptions />
                 <Assistant />

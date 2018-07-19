@@ -6,10 +6,10 @@ import MultiViewContainer from '#rs/components/View/MultiViewContainer';
 import Message from '#rs/components/View/Message';
 import FixedTabs from '#rs/components/View/FixedTabs';
 
-
 import {
     editEntriesLeadSelector,
     editEntriesEntriesSelector,
+    editEntriesFilteredEntriesSelector,
     editEntriesStatusesSelector,
     editEntriesSelectedEntryKeySelector,
     editEntriesSetSelectedEntryKeyAction,
@@ -22,12 +22,15 @@ import {
     leadPaneTypeMap,
 } from '#entities/lead';
 
+import { entryAccessor } from '#entities/editEntries';
+
 import _ts from '#ts';
 
 import SimplifiedLeadPreview from '#components/SimplifiedLeadPreview';
 import LeadPreview from '#components/LeadPreview';
 import AssistedTagging from '#components/AssistedTagging';
 import ImagesGrid from '#components/ImagesGrid';
+import Highlight from '#components/Highlight';
 
 import EntriesList from './EntriesList';
 import styles from './styles.scss';
@@ -36,6 +39,7 @@ const propTypes = {
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     onExcerptCreate: PropTypes.func.isRequired,
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    filteredEntries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     selectedEntryKey: PropTypes.string,
     setSelectedEntryKey: PropTypes.func.isRequired,
@@ -44,6 +48,7 @@ const propTypes = {
 
 const defaultProps = {
     entries: [],
+    filteredEntries: [],
     statuses: {},
     selectedEntryKey: undefined,
 };
@@ -51,6 +56,7 @@ const defaultProps = {
 const mapStateToProps = state => ({
     lead: editEntriesLeadSelector(state),
     entries: editEntriesEntriesSelector(state),
+    filteredEntries: editEntriesFilteredEntriesSelector(state),
     selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
     statuses: editEntriesStatusesSelector(state),
 });
@@ -103,9 +109,12 @@ export default class LeftPane extends React.PureComponent {
                 <SimplifiedLeadPreview
                     className={styles.simplifiedPreview}
                     leadId={this.props.lead.id}
+                    // FIXME: Do not always call calculateHighlights here
                     highlights={this.calculateHighlights()}
-                    highlightModifier={this.highlightSimplifiedExcerpt}
                     onLoad={this.handleLoadImages}
+
+                    renderer={Highlight}
+                    rendererParams={this.highlightRendererParams}
                 />
             ),
             mount: true,
@@ -219,25 +228,24 @@ export default class LeftPane extends React.PureComponent {
 
     // Simplified Lead Preview
 
-    calculateHighlights = () => ([
-        // this.props.api.getEntryHighlights()
-        // TODO: send highlights prop
-    ])
+    highlightRendererParams = () => ({
+        onClick: this.handleHighlightClick,
+    })
 
-    highlightSimplifiedExcerpt = (highlight, text, actualStr) => (
-        SimplifiedLeadPreview.highlightModifier(
-            highlight,
-            text,
-            actualStr,
-            this.handleHighlightClick,
-        )
-    );
+    calculateHighlights = () => this.props.filteredEntries
+        .filter(e => entryAccessor.entryType(e) === 'excerpt')
+        .map(entry => ({
+            key: entryAccessor.key(entry),
+            text: entryAccessor.excerpt(entry),
+            color: entryAccessor.color(entry) || '#c0c0c0',
+        }));
 
-    handleHighlightClick = (e, { text }) => {
-        console.warn('this should handle highlight click', text);
-        // TODO:
-        // const existing = api.getEntryForExcerpt(text);
-        // api.selectEntry(existing.data.id);
+    handleHighlightClick = (e, { key }) => {
+        // console.warn('this should handle highlight click', text, key);
+        this.props.setSelectedEntryKey({
+            leadId: this.props.lead.id,
+            key,
+        });
     }
 
     handleLoadImages = (response) => {
