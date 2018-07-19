@@ -38,6 +38,7 @@ export default class EditEntryDataRequest extends Request {
             console.error(`Expected project id to be ${projectIdFromUrl}, but got ${lead.project}`);
             return;
         }
+        this.parent.setState({ projectMismatch: false });
 
         this.parent.setLead({ lead });
 

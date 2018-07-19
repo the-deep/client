@@ -80,11 +80,6 @@ export const editEntriesRemoveEntryAction = ({ leadId, key }) => ({
     key,
 });
 
-export const editEntriesRemoveLocalEntriesAction = ({ leadId }) => ({
-    type: EEB__REMOVE_LOCAL_ENTRIES,
-    leadId,
-});
-
 export const editEntriesSetLeadAction = ({ lead }) => ({
     type: EEB__SET_LEAD,
     lead,
@@ -406,27 +401,6 @@ const removeEntry = (state, action) => {
     return update(state, settings);
 };
 
-// Remove all entries that are marked as deleted
-// and don't have serverId
-const removeLocalEntries = (state, action) => {
-    const { leadId } = action;
-    // NOTE: no need to get new selectedEntryKey
-    // a new selectedEntryKey is calculated on mark as delete
-    const settings = {
-        editEntries: {
-            [leadId]: {
-                entries: {
-                    $filter: entry => !(
-                        entryAccessor.isMarkedAsDeleted(entry) &&
-                        !entryAccessor.serverId(entry)
-                    ),
-                },
-            },
-        },
-    };
-    return update(state, settings);
-};
-
 const markAsDeletedEntry = (state, action) => {
     const { leadId, key, value } = action;
     const {
@@ -463,6 +437,7 @@ const markAsDeletedEntry = (state, action) => {
                 entries: {
                     [entryIndex]: {
                         localData: {
+                            isPristine: { $set: false },
                             isMarkedAsDeleted: { $set: value },
                         },
                     },
@@ -626,7 +601,6 @@ const reducers = {
     [EEB__SET_ENTRY_DATA]: setEntryData,
     [EEB__SET_ENTRY_ERROR]: setEntryError,
     [EEB__ADD_ENTRY]: addEntry,
-    [EEB__REMOVE_LOCAL_ENTRIES]: removeLocalEntries,
     [EEB__REMOVE_ENTRY]: removeEntry,
     [EEB__MARK_AS_DELETED_ENTRY]: markAsDeletedEntry,
     [EEB__APPLY_TO_ALL_ENTRIES]: applyToAllEntries('all'),
