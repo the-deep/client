@@ -1,23 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import update from 'immutability-helper';
-import { Link } from 'react-router-dom';
 
 import { connect } from 'react-redux';
 
 import GridLayout from '#rs/components/View/GridLayout';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import Button from '#rs/components/Action/Button';
 import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
-import {
-    randomString,
-    reverseRoute,
-} from '#rs/utils/common';
+import { randomString } from '#rs/utils/common';
 
-import {
-    iconNames,
-    pathNames,
-} from '#constants';
+import { iconNames } from '#constants';
 import {
     addAfViewWidgetAction,
     removeAfViewWidgetAction,
@@ -27,16 +19,17 @@ import {
 } from '#redux';
 import _ts from '#ts';
 
-import widgetStore from '#widgets';
+
+import widgetStore from '../widgets';
+
+import WidgetList from '../WidgetList';
 import styles from './styles.scss';
 
 const propTypes = {
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     addWidget: PropTypes.func.isRequired,
-    onSave: PropTypes.func.isRequired,
     removeWidget: PropTypes.func.isRequired,
     updateWidget: PropTypes.func.isRequired,
-    projectId: PropTypes.number.isRequired,
 };
 
 const mapDispatchToProps = dispatch => ({
@@ -256,100 +249,22 @@ export default class List extends React.PureComponent {
         this.gridItems = this.getGridItems(this.items);
     }
 
-    renderWidgetList = () => (
-        <div className={styles.widgetList}>
-            {
-                this.widgets.map(widget => (
-                    <div
-                        className={styles.widgetListItem}
-                        key={widget.id}
-                    >
-                        <div className={styles.title}>
-                            {widget.title}
-                        </div>
-                        <div className={styles.actions}>
-                            <Button
-                                transparent
-                                onClick={
-                                    () => {
-                                        this.handleAddWidgetButtonClick(widget.id);
-                                    }
-                                }
-                            >
-                                <span className={iconNames.add} />
-                            </Button>
-                        </div>
-                    </div>
-                ))
-            }
-        </div>
-    )
-
-    renderHeader = () => {
-        const {
-            projectId,
-            analysisFramework,
-        } = this.props;
-
-        const exitUrl = `${reverseRoute(pathNames.projects, { projectId })}#/frameworks`;
-        const frameworkTitle = analysisFramework.title || _ts('framework', 'analysisFramework');
-
-        return (
-            <header className={styles.header}>
-                <h2 className={styles.heading}>
-                    <span className={styles.title}>
-                        { frameworkTitle }
-                    </span>
-                    <span className={styles.separator}>
-                        /
-                    </span>
-                    <span className={styles.pageType}>
-                        {_ts('framework', 'headerList')}
-                    </span>
-                </h2>
-                <div className={styles.actions}>
-                    <Link
-                        className={styles.exitLink}
-                        to={exitUrl}
-                    >
-                        {_ts('framework', 'exitButtonLabel')}
-                    </Link>
-                    <Link
-                        className={styles.gotoOverviewLink}
-                        to="#/overview"
-                        replace
-                    >
-                        {_ts('framework', 'gotoOverviewButtonLabel')}
-                    </Link>
-                    <SuccessButton
-                        className={styles.saveButton}
-                        onClick={this.props.onSave}
-                    >
-                        {_ts('framework', 'saveButtonLabel')}
-                    </SuccessButton>
-                </div>
-            </header>
-        );
-    }
-
     render() {
-        const Header = this.renderHeader;
-        const WidgetList = this.renderWidgetList;
-
         return (
             <div className={styles.list}>
-                <Header />
-                <div className={styles.content}>
-                    <div className={styles.gridLayoutWrapper}>
-                        <GridLayout
-                            className={styles.gridLayout}
-                            modifier={this.getItemView}
-                            items={this.gridItems}
-                            onLayoutChange={this.handleLayoutChange}
-                        />
-                    </div>
-                    <WidgetList />
+                <div className={styles.gridLayoutWrapper}>
+                    <GridLayout
+                        className={styles.gridLayout}
+                        modifier={this.getItemView}
+                        items={this.gridItems}
+                        onLayoutChange={this.handleLayoutChange}
+                    />
                 </div>
+                <WidgetList
+                    className={styles.widgetList}
+                    widgets={this.widgets}
+                    onAdd={this.handleAddWidgetButtonClick}
+                />
             </div>
         );
     }

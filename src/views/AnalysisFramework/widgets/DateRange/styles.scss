@@ -1,0 +1,20 @@
+@import '../../../../../stylesheets/base';
+
+.list {
+    display: flex;
+    align-items: flex-end;
+    padding: 0 $spacing-small;
+    height: 100%;
+
+    .date-input {
+        width: 100%;
+    }
+
+    .to {
+        padding: $spacing-extra-small $spacing-small;
+    }
+}
+
+.edit-modal {
+    width: $width-modal-extra-small;
+}

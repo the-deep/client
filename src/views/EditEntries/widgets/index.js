@@ -2,23 +2,22 @@ import WidgetError from '#components/WidgetError';
 import boundError from '#rs/components/General/BoundError';
 import { listToMap } from '#rs/utils/common';
 
-import DateRangeWidget from './DateRange';
 import DateWidget from './Date';
-import TimeWidget from './Time';
-// import DefaultWidget from './Default';
+import DateRangeWidget from './DateRange';
 import ExcerptWidget from './Excerpt';
 import GeoWidget from './Geo';
-import Matrix1dListWidget from './Matrix1dList';
 import Matrix1dWidget from './Matrix1d';
-import Matrix2dListWidget from './Matrix2dList';
+import Matrix1dListWidget from './Matrix1dList';
 import Matrix2dWidget from './Matrix2d';
+import Matrix2dListWidget from './Matrix2dList';
 import MultiSelectWidget from './MultiSelect';
-import NumberMatrixListWidget from './NumberMatrixList';
-import NumberMatrixWidget from './NumberMatrix';
 import NumberWidget from './Number';
+import NumberMatrixWidget from './NumberMatrix';
+import NumberMatrixListWidget from './NumberMatrixList';
 import OrganigramWidget from './Organigram';
 import ScaleWidget from './Scale';
 import SelectWidget from './Select';
+import TimeWidget from './Time';
 
 const widgetList = [
     {

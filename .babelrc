@@ -39,7 +39,6 @@
                     "#rest": "./src/rest",
                     "#schema": "./src/schema",
                     "#utils": "./src/utils",
-                    "#widgets": "./src/widgets",
 
                     "#notify": "./src/notify",
                     "#store": "./src/store",

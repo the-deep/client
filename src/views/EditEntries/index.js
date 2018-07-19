@@ -14,10 +14,11 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { CoordinatorBuilder } from '#rsu/coordinate';
 
+import Cloak from '#components/Cloak';
 import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
 import {
     iconNames,
-    routes,
+    pathNames,
 } from '#constants';
 import {
     leadIdFromRoute,
@@ -498,6 +499,7 @@ export default class EditEntries extends React.PureComponent {
                 title: leadTitle,
                 project: projectId,
             } = {},
+            analysisFramework = {},
         } = this.props;
         const {
             pendingEditEntryData,
@@ -517,15 +519,22 @@ export default class EditEntries extends React.PureComponent {
         const cancelButtonTitle = 'Cancel';
         const saveButtonTitle = 'Save';
         const backButtonTooltip = 'Back to leads page';
+        const editFrameworkTitle = 'Edit Framework';
 
-        const exitPath = reverseRoute(routes.leads.path, {
+        const exitPath = reverseRoute(pathNames.leads, {
             projectId,
+        });
+
+        const frameworkPath = reverseRoute(pathNames.analysisFramework, {
+            analysisFrameworkId: analysisFramework.id,
         });
 
         const hasSavableEntries = this.savableEntries.length > 0;
         const isSaveDisabled = (
             pendingEditEntryData || pendingSaveAll || projectMismatch || !hasSavableEntries
         );
+
+        // FIXME: add prompt
 
         return (
             <div className={styles.editEntries}>
@@ -549,10 +558,22 @@ export default class EditEntries extends React.PureComponent {
                         disabled={projectMismatch}
                     />
                     <div className={styles.actionButtons}>
+                        <Cloak
+                            hide={({ isAdmin }) => !isAdmin}
+                            render={({ disabled }) => (
+                                <Link
+                                    className={styles.editFrameworkLink}
+                                    to={frameworkPath}
+                                    disabled={!analysisFramework.id || disabled}
+                                >
+                                    { editFrameworkTitle }
+                                </Link>
+                            )}
+                        />
                         <DangerConfirmButton
                             disabled={isSaveDisabled}
-                            // FIXME: use strings
                             onClick={this.handleCancel}
+                            // FIXME: use strings
                             confirmationMessage="Do you want to cancel all changes?"
                         >
                             { cancelButtonTitle }

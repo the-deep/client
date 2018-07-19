@@ -1,0 +1,18 @@
+@import '../../../../../stylesheets/base';
+
+.list {
+    padding: 0 $spacing-small;
+    height: 100%;
+
+    .time-input {
+        width: 100%;
+    }
+}
+
+.edit-modal {
+    width: $width-modal-extra-small;
+
+    .checkbox {
+        margin-top: $spacing-large;
+    }
+}

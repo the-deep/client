@@ -1,23 +1,23 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import update from 'immutability-helper';
-import { Link } from 'react-router-dom';
 
 import { connect } from 'react-redux';
 
+import Modal from '#rs/components/View/Modal';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import ModalBody from '#rs/components/View/Modal/Body';
+import ModalFooter from '#rs/components/View/Modal/Footer';
 import GridLayout from '#rs/components/View/GridLayout';
 import Button from '#rs/components/Action/Button';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import WarningButton from '#rs/components/Action/Button/WarningButton';
 import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
-import {
-    randomString,
-    reverseRoute,
-} from '#rs/utils/common';
+import { randomString } from '#rs/utils/common';
+import GridViewLayout from '#rs/components/View/GridViewLayout';
 
-import {
-    iconNames,
-    pathNames,
-} from '#constants';
+import { iconNames } from '#constants';
 import {
     addAfViewWidgetAction,
     removeAfViewWidgetAction,
@@ -27,16 +27,91 @@ import {
 } from '#redux';
 import _ts from '#ts';
 
-import widgetStore from '#widgets';
+
+import WidgetList from '../WidgetList';
 import styles from './styles.scss';
+
+import { overviewWidgets, hasWidget, fetchWidget } from '../widgets/newindex';
+// import widgetStore from '../widgets';
+
+
+class EditModal extends React.PureComponent {
+    constructor(props) {
+        super(props);
+        this.state = {
+            showModal: false,
+        };
+    }
+
+    handleEditClick = () => {
+        this.setState({
+            showModal: true,
+        });
+    }
+
+    handleCancel = () => {
+        this.setState({
+            showModal: false,
+        });
+    }
+
+    handleSave = (data, title) => {
+        const { widget } = this.props;
+        const { title: originalTitle } = widget;
+
+        const settings = {
+            title: { $set: title || originalTitle },
+            properties: {
+                data: { $set: data },
+            },
+        };
+
+        const newWidget = update(widget, settings);
+
+        this.props.onChange(newWidget);
+
+        this.setState({
+            showModal: false,
+        });
+    }
+
+    render() {
+        const {
+            renderer: Widget,
+            widget,
+        } = this.props;
+        const { showModal } = this.state;
+
+        return (
+            <Fragment>
+                <WarningButton
+                    iconName={iconNames.edit}
+                    // FIXME: use strings
+                    title="Edit widget"
+                    tabIndex="-1"
+                    transparent
+                    onClick={this.handleEditClick}
+                />
+                {
+                    showModal &&
+                    <Widget
+                        title={widget.title}
+                        data={widget.properties.data}
+                        onSave={this.handleSave}
+                        onClose={this.handleCancel}
+                    />
+                }
+            </Fragment>
+        );
+    }
+}
 
 const propTypes = {
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    addWidget: PropTypes.func.isRequired,
-    onSave: PropTypes.func.isRequired,
-    updateWidget: PropTypes.func.isRequired,
-    removeWidget: PropTypes.func.isRequired,
-    projectId: PropTypes.number.isRequired,
+
+    // addWidget: PropTypes.func.isRequired,
+    // updateWidget: PropTypes.func.isRequired,
+    // removeWidget: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => ({
@@ -45,31 +120,54 @@ const mapDispatchToProps = dispatch => ({
     updateWidget: params => dispatch(updateAfViewWidgetAction(params)),
 });
 
-const mapStateToProps = (state, props) => ({
-    projectId: activeProjectIdFromStateSelector(state, props),
-});
-
-@connect(mapStateToProps, mapDispatchToProps)
+// eslint-disable-next-line
+@connect(undefined, mapDispatchToProps)
 export default class Overview extends React.PureComponent {
     static propTypes = propTypes;
+
+    static widgetType = 'overview'
+
+    static filterWidgets = widgets => widgets.filter(
+        widget => hasWidget(Overview.widgetType, widget.widgetId),
+    );
+
+    static layoutSelector = (widget) => {
+        const { properties: { overviewGridLayout } = {} } = widget;
+        return overviewGridLayout;
+    }
+
+    static keySelector = widget => widget.key;
 
     constructor(props) {
         super(props);
 
-        this.items = [];
-        this.gridItems = [];
+        const { analysisFramework: { widgets = [] } = {} } = this.props;
+        this.widgets = Overview.filterWidgets(widgets);
 
-        this.updateAnalysisFramework(props.analysisFramework);
+        // this.items = [];
+        // this.gridItems = [];
 
-        this.widgetEditActions = {};
+        // this.updateAnalysisFramework(props.analysisFramework);
+
+        // this.widgetEditActions = {};
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (this.props.analysisFramework !== nextProps.analysisFramework) {
+            const { analysisFramework: { widgets = [] } = {} } = nextProps;
+            this.widgets = Overview.filterWidgets(widgets);
+        }
+    }
+
+    /*
     componentWillReceiveProps(nextProps) {
         if (this.props.analysisFramework !== nextProps.analysisFramework) {
             this.updateAnalysisFramework(nextProps.analysisFramework);
         }
     }
+    */
 
+    /*
     getUniqueKey = () => {
         let key;
         const checkExisting = () => this.items.find(item => item.key === key);
@@ -80,7 +178,9 @@ export default class Overview extends React.PureComponent {
 
         return key;
     }
+    */
 
+    /*
     getGridItems = () => this.items.map(item => ({
         key: item.key,
         widgetId: item.widgetId,
@@ -93,7 +193,7 @@ export default class Overview extends React.PureComponent {
                 <Button
                     // FIXME: use strings
                     title="Edit widget"
-                    onClick={() => this.handleWidgetEditButtonClick(item.key)}
+                    // onClick={() => this.handleWidgetEditButtonClick(item.key)}
                     transparent
                     iconName={iconNames.edit}
                 />
@@ -110,7 +210,9 @@ export default class Overview extends React.PureComponent {
             </div>
         ),
     }))
+    */
 
+    /*
     getItemView = (item) => {
         const Component = this.widgets.find(w => w.id === item.widgetId).overviewComponent;
 
@@ -127,7 +229,9 @@ export default class Overview extends React.PureComponent {
             />
         );
     };
+    */
 
+    /*
     handleWidgetClose = (id) => {
         const {
             analysisFramework,
@@ -141,13 +245,17 @@ export default class Overview extends React.PureComponent {
 
         removeWidget(widgetData);
     }
+    */
 
+    /*
     handleWidgetEditButtonClick = (id) => {
         if (this.widgetEditActions[id]) {
             (this.widgetEditActions[id])();
         }
     }
+    */
 
+    /*
     handleAddWidgetButtonClick = (id) => {
         const analysisFrameworkId = this.props.analysisFramework.id;
         const widget = this.widgets.find(w => w.id === id);
@@ -176,7 +284,9 @@ export default class Overview extends React.PureComponent {
             widget: item,
         });
     }
+    */
 
+    /*
     handleLayoutChange = (items) => {
         items.forEach((item) => {
             const originalItem = this.items.find(i => i.key === item.key);
@@ -191,22 +301,18 @@ export default class Overview extends React.PureComponent {
             this.props.updateWidget({ analysisFrameworkId, widget });
         });
     }
+    */
 
-    handleItemChange = (key, data, title) => {
-        const originalItem = this.items.find(i => i.key === key);
-        const settings = {
-            title: { $set: title || originalItem.title },
-            properties: {
-                data: { $set: data },
-            },
-        };
-
+    handleItemChange = (newWidget) => {
         const analysisFrameworkId = this.props.analysisFramework.id;
-        const widget = update(originalItem, settings);
 
-        this.props.updateWidget({ analysisFrameworkId, widget });
+        this.props.updateWidget({
+            analysisFrameworkId,
+            widget: newWidget,
+        });
     }
 
+    /*
     updateAnalysisFramework(analysisFramework) {
         this.widgets = widgetStore
             .filter(widget => widget.analysisFramework.overviewComponent)
@@ -223,95 +329,81 @@ export default class Overview extends React.PureComponent {
             w => this.widgets.find(w1 => w1.id === w.widgetId),
         );
 
-        this.gridItems = this.getGridItems();
+        // this.gridItems = this.getGridItems();
+    }
+    */
+
+    renderWidgetHeader = (widget) => {
+        const { title, widgetId } = widget;
+        const overviewWidget = fetchWidget(Overview.widgetType, widgetId);
+        return (
+            <div className={styles.header}>
+                <h5 className={styles.heading}>
+                    { title }
+                </h5>
+                <div className={styles.actionButtons}>
+                    { overviewWidget.editComponent &&
+                        <EditModal
+                            widget={widget}
+                            renderer={overviewWidget.editComponent}
+                            onChange={this.handleItemChange}
+                        />
+                    }
+                    <DangerConfirmButton
+                        iconName={iconNames.delete}
+                        // FIXME: use strings
+                        title="Remove widget"
+                        tabIndex="-1"
+                        confirmationMessage="Do you want to remove this widget?"
+                        transparent
+                    />
+                </div>
+            </div>
+        );
     }
 
-    renderHeader = () => {
-        const {
-            projectId,
-            analysisFramework,
-        } = this.props;
-
-        const exitUrl = `${reverseRoute(pathNames.projects, { projectId })}#/frameworks`;
-        const frameworkTitle = analysisFramework.title || _ts('framework', 'analysisFramework');
+    renderWidgetContent = (widget) => {
+        const { widgetId } = widget;
+        const overviewWidget = fetchWidget(Overview.widgetType, widgetId);
+        const { Widget } = overviewWidget;
 
         return (
-            <header className={styles.header}>
-                <h2 className={styles.heading}>
-                    <span className={styles.title}>
-                        { frameworkTitle }
-                    </span>
-                    <span className={styles.separator}>
-                        /
-                    </span>
-                    <span className={styles.pageType}>
-                        {_ts('framework', 'headerOverview')}
-                    </span>
-                </h2>
-                <div className={styles.actions}>
-                    <Link
-                        className={styles.exitLink}
-                        to={exitUrl}
-                    >
-                        {_ts('framework', 'exitButtonLabel')}
-                    </Link>
-                    <Link
-                        className={styles.gotoListLink}
-                        to="#/list"
-                        replace
-                    >
-                        {_ts('framework', 'gotoListButtonLabel')}
-                    </Link>
-                    <SuccessButton
-                        className={styles.saveButton}
-                        onClick={this.props.onSave}
-                    >
-                        {_ts('framework', 'saveButtonLabel')}
-                    </SuccessButton>
-                </div>
-            </header>
+            <div className={styles.content}>
+                { Widget &&
+                    <Widget
+                        disabled
+                    />
+                }
+            </div>
         );
     }
 
     render() {
-        const Header = this.renderHeader;
-
         return (
             <div className={styles.overview}>
-                <Header />
-                <div className={styles.content}>
-                    <div className={styles.widgetList}>
-                        {
-                            this.widgets.map(widget => (
-                                <div
-                                    className={styles.widgetListItem}
-                                    key={widget.id}
-                                >
-                                    <div className={styles.title}>
-                                        {widget.title}
-                                    </div>
-                                    <div className={styles.actions}>
-                                        <Button
-                                            transparent
-                                            onClick={
-                                                () => this.handleAddWidgetButtonClick(widget.id)
-                                            }
-                                            iconName={iconNames.add}
-                                        />
-                                    </div>
-                                </div>
-                            ))
-                        }
-                    </div>
-                    <div className={styles.gridLayoutContainer}>
-                        <div className={styles.scrollWrapper}>
-                            <GridLayout
-                                className={styles.gridLayout}
-                                modifier={this.getItemView}
-                                items={this.gridItems}
-                                onLayoutChange={this.handleLayoutChange}
-                            />
-                        </div>
+                <WidgetList
+                    className={styles.widgetList}
+                    widgets={overviewWidgets}
+                    // onAdd={this.handleAddWidgetButtonClick}
+                />
+                <div className={styles.gridLayoutContainer}>
+                    <div className={styles.scrollWrapper}>
+                        <GridViewLayout
+                            data={this.widgets}
+                            layoutSelector={Overview.layoutSelector}
+                            itemHeaderModifier={this.renderWidgetHeader}
+                            itemContentModifier={this.renderWidgetContent}
+                            keySelector={Overview.keySelector}
+                            itemClassName={styles.widget}
+                        />
+                        {/*
+                        <GridLayout
+                            className={styles.gridLayout}
+                            modifier={this.getItemView}
+                            items={this.gridItems}
+                            onLayoutChange={this.handleLayoutChange}
+                        />
+                        */}
                     </div>
                 </div>
             </div>

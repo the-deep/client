@@ -1,65 +1,54 @@
 @import '../../../stylesheets/base';
-@import '../../../stylesheets/grid-item';
-@import '../page-basic';
-@import '../widget-list';
+@import '../../../stylesheets/widget';
 
 .overview {
-    @extend %page-basic;
+    display: flex;
+    height: 100%;
 
-    .content {
-        display: flex;
+    .widget-list {
+        width: 30%;
+    }
 
-        .widget-list {
-            @extend %widget-list;
-            border-right: $width-separator-thin solid $color-separator;
-            width: 30%;
-        }
+    .grid-layout-container {
+        background-color: $color-background-alt;
+        width: 70%;
 
-        .grid-layout-container {
-            background-color: $color-background-alt;
-            width: 70%;
+        .scroll-wrapper {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
 
-            .scroll-wrapper {
-                width: 100%;
-                height: 100%;
-                overflow: auto;
+            .widget {
+                @extend %widget;
+                padding: $spacing-extra-small;
 
-                .grid-layout {
-                    min-width: 100%;
-                    min-height: 100%;
+                .header {
+                    display: flex;
+                    align-items: center;
 
-                    :global {
-                        .grid-item {
-                            @extend %grid-item;
+                    .heading {
+                        display: flex;
+                        align-items: center;
+                        align-self: stretch;
+                        flex-grow: 1;
+                        padding: 0 $spacing-small;
+                    }
 
-                            .header {
-                                @include background-color($color-background-header);
-                                cursor: grab;
+                    .action-buttons {
+                        flex-shrink: 0;
+                        transition: $duration-transition-medium opacity ease-in-out;
+                        opacity: 0;
 
-                                .action-buttons {
-                                    @include transition-medium;
-                                    display: flex;
-                                    flex-shrink: 0;
-                                    opacity: 0;
-                                    margin: 0 $spacing-extra-small;
+                        >* {
+                            padding: $spacing-extra-small $spacing-extra-small-alt;
+                        }
+                    }
+                }
 
-                                    button {
-                                        padding: 0 $spacing-extra-small-alt;
-                                    }
-                                }
-                            }
-
-                            .content {
-                                @include background-color($color-foreground-alt);
-                            }
-
-                            &:hover {
-                                .header {
-                                    .action-buttons {
-                                        opacity: 1;
-                                    }
-                                }
-                            }
+                &:hover {
+                    .header {
+                        .action-buttons {
+                            opacity: 1;
                         }
                     }
                 }

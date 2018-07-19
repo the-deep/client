@@ -1,0 +1,261 @@
+@import '../../../../../stylesheets/base';
+@import '../row';
+@import '../cell';
+
+$width-overview-edit-modal: 900px;
+$height-overview-edit-modal: 80vh;
+
+.list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 $spacing-small;
+    height: 100%;
+    color: $color-text-disabled;
+}
+
+.overview {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+
+    .matrix-row {
+        @extend %matrix-1d-row;
+
+        .cells {
+            .matrix-cell {
+                @extend %matrix-1d-cell;
+            }
+        }
+
+        .action-buttons {
+            flex-shrink: 0;
+        }
+    }
+}
+
+
+.edit-cell-modal {
+    .edit-cell-body {
+        padding: 0;
+
+        .edit-cell {
+            border-top: 0;
+        }
+    }
+}
+
+.edit-row-modal {
+    width: $width-overview-edit-modal;
+    height: $height-overview-edit-modal;
+
+    .body {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        width: 100%;
+
+        .general-info-container {
+            flex-shrink: 0;
+            border-bottom: $width-separator-thin solid $color-separator;
+
+            .title-input {
+                padding: $spacing-small $spacing-medium-alt;
+                width: auto;
+            }
+        }
+
+        .modal-rows-content {
+            display: flex;
+            flex-grow: 1;
+
+            .left-container {
+                flex-basis: 30%;
+                border-right: $width-separator-thin solid $color-separator;
+                overflow-y: auto;
+
+                .row-list-item {
+                    border-top: 0;
+                }
+            }
+
+            .right-container {
+                display: flex;
+                flex-basis: 70%;
+                flex-direction: column;
+
+                .edit-row {
+                    @include background-color($color-foreground);
+                    display: flex;
+                    align-items: center;
+                    flex-shrink: 0;
+                    justify-content: space-between;
+                    border-bottom: $width-separator-thin solid $color-separator;
+                    padding: $spacing-medium-alt;
+
+                    .title-input {
+                        flex-grow: 1;
+                        margin-right: $spacing-small;
+                    }
+
+                    .delete-button {
+                        flex-shrink: 0;
+                    }
+
+                    &.active {
+                        border-left: $width-separator-thick solid $color-accent;
+                    }
+                }
+
+                .matrix-cells {
+                    display: flex;
+                    flex-direction: column;
+                    flex-grow: 1;
+
+                    .header {
+                        @include background-color($color-background-header);
+                        display: flex;
+                        align-items: center;
+                        flex-shrink: 0;
+                        justify-content: space-between;
+                        border-bottom: $width-separator-thin solid $color-separator;
+                        padding: $spacing-small $spacing-medium;
+                    }
+
+                    .cell-list {
+                        flex-grow: 1;
+                        overflow-y: auto;
+
+                        :global .drag-handle {
+                            border-top: $width-separator-thin solid transparent;
+                        }
+
+                        .cell-list-item {
+                            @include background-color($color-foreground);
+                            display: flex;
+                            border-top: $width-separator-thin solid transparent;
+
+                            .edit-cell {
+                                display: flex;
+                                flex-grow: 1;
+
+                                .title-input {
+                                    flex-grow: 1;
+                                    margin-right: $spacing-small;
+                                }
+
+                                .delete-button {
+                                    flex-shrink: 0;
+                                }
+                            }
+
+                            &:nth-child(even) {
+                                @include background-color($color-foreground-alt);
+                            }
+                        }
+                    }
+                }
+
+                .empty-container {
+                    display: flex;
+                    align-items: center;
+                    flex-grow: 1;
+                    justify-content: center;
+                    color: $color-text-label;
+                }
+            }
+        }
+
+        .row-list {
+            flex-grow: 1;
+            border-left: $width-separator-thin solid $color-separator;
+            overflow-y: auto;
+
+            .edit-row {
+                border-top: 0;
+            }
+
+            &.no-items {
+                flex-basis: 100%;
+            }
+        }
+    }
+}
+
+.cell-list-item {
+    @include background-color($color-foreground);
+    display: flex;
+    border-top: $width-separator-thin solid $color-separator;
+    border-bottom: $width-separator-thin solid $color-separator;
+    padding: $spacing-small 0;
+
+    .drag-handle {
+        display: flex;
+        align-items: center;
+        align-self: stretch;
+        flex-grow: 0;
+        flex-shrink: 0;
+        cursor: move;
+        padding: 0 $spacing-medium;
+    }
+
+    .edit-cell {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        justify-content: space-between;
+        padding-right: $spacing-medium-alt;
+
+        .title-input {
+            flex-grow: 1;
+            margin-left: $spacing-extra-small;
+        }
+
+        .delete-button {
+            flex-shrink: 0;
+        }
+    }
+}
+
+.row-list-item {
+    @include background-color($color-foreground);
+    display: flex;
+    border-top: $width-separator-thin solid $color-separator;
+    border-bottom: $width-separator-thin solid $color-separator;
+
+    .drag-handle {
+        display: flex;
+        align-items: center;
+        align-self: stretch;
+        flex-grow: 0;
+        flex-shrink: 0;
+        cursor: move;
+        padding: $spacing-small-alt $spacing-medium;
+
+        &.active {
+            @include background-color($color-accent);
+        }
+    }
+
+    .row-title-button {
+        display: flex;
+        align-self: stretch;
+        flex-grow: 1;
+        outline: 0;
+        border: 0;
+        background-color: transparent;
+        cursor: pointer;
+        padding: $spacing-small-alt $spacing-medium;
+        color: $color-text;
+        font-family: inherit;
+
+        &.active {
+            @include background-color($color-accent);
+        }
+    }
+}
+
+
+.draggable-item {
+    z-index: 11111;
+}

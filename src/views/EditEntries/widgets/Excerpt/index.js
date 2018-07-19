@@ -16,8 +16,9 @@ const propTypes = {
     entryType: PropTypes.string,
     excerpt: PropTypes.string,
     image: PropTypes.string,
-    onExcerptChange: PropTypes.func.isRequired,
-    onExcerptCreate: PropTypes.func.isRequired,
+    onExcerptChange: PropTypes.func,
+    onExcerptCreate: PropTypes.func,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -25,6 +26,9 @@ const defaultProps = {
     entryType: undefined,
     excerpt: undefined,
     image: undefined,
+    disabled: false,
+    onExcerptChange: () => {},
+    onExcerptCreate: () => {},
 };
 
 // FIXME: reuse this from entities.editEntries
@@ -41,10 +45,16 @@ export default class Excerpt extends React.PureComponent {
     }
 
     handleDragEnter = () => {
+        if (this.props.disabled) {
+            return;
+        }
+
         this.setState({ isBeingDraggedOver: true });
     }
 
     handleDragExit = () => {
+        // Don't disable
+
         this.setState({ isBeingDraggedOver: false });
     }
 
@@ -82,6 +92,11 @@ export default class Excerpt extends React.PureComponent {
 
     handleDragDrop = (e) => {
         e.preventDefault();
+
+        if (this.props.disabled) {
+            return;
+        }
+
         const transferredData = e.dataTransfer.getData('text');
 
         let formattedData;
@@ -144,7 +159,11 @@ export default class Excerpt extends React.PureComponent {
     }
 
     renderText = () => {
-        const { entryType, excerpt } = this.props;
+        const {
+            entryType,
+            excerpt,
+            disabled,
+        } = this.props;
 
         const className = `
             ${styles.text}
@@ -161,6 +180,7 @@ export default class Excerpt extends React.PureComponent {
                     showHintAndError={false}
                     value={excerpt}
                     onChange={this.handleTextChange}
+                    disabled={disabled}
                 />
                 { entryType &&
                     <AccentButton
@@ -172,6 +192,7 @@ export default class Excerpt extends React.PureComponent {
                         smallVerticalPadding
                         smallHorizontalPadding
                         transparent
+                        disabled={disabled}
                     />
                 }
             </Fragment>
@@ -179,7 +200,10 @@ export default class Excerpt extends React.PureComponent {
     }
 
     render() {
-        const { className: classNameFromProps, entryType } = this.props;
+        const {
+            className: classNameFromProps,
+            entryType,
+        } = this.props;
         const { isBeingDraggedOver } = this.state;
 
         const Image = this.renderImage;
