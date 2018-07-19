@@ -9,8 +9,10 @@ import Modal from '#rs/components/View/Modal';
 import SelectInputWithList from '#rs/components/Input/SelectInputWithList';
 import ModalHeader from '#rs/components/View/Modal/Header';
 import ModalBody from '#rs/components/View/Modal/Body';
+import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
 import ModalFooter from '#rs/components/View/Modal/Footer';
 import FaramElement from '#rs/components/Input/Faram/FaramElement';
+import Label from '#rs/components/Input/Label';
 
 import { iconNames } from '#constants';
 import styles from './styles.scss';
@@ -25,17 +27,21 @@ const propTypes = {
     idSelector: PropTypes.func,
     labelSelector: PropTypes.func,
     childSelector: PropTypes.func,
-    showHeader: PropTypes.bool,
     disabled: PropTypes.bool,
+    label: PropTypes.string,
+    showLabel: PropTypes.bool,
+    hideList: PropTypes.bool,
 };
 
 const defaultProps = {
+    label: '',
+    showLabel: true,
     className: '',
     title: 'Organigram', // FIXME: use strings
     onChange: undefined,
+    hideList: false,
     value: [],
     disabled: false,
-    showHeader: true,
     idSelector: organ => organ.id,
     labelSelector: organ => organ.title,
     childSelector: organ => organ.children,
@@ -223,13 +229,7 @@ export default class OrganigramInput extends React.PureComponent {
     }
 
     renderShowModalButton = () => {
-        const {
-            showHeader,
-            disabled,
-        } = this.props;
-        if (showHeader) {
-            return null;
-        }
+        const { disabled } = this.props;
 
         return (
             <AccentButton
@@ -242,9 +242,15 @@ export default class OrganigramInput extends React.PureComponent {
         );
     }
 
-    renderMultiSelect = () => {
+    renderSelection = () => {
+        /* TODO: Don't toggle between MultiSelect & SelectInputWithList
+            Make a separate ListComponent and use that in SelectInputWithList
+            Use that component to build custom SelectInputWithList to use in GeoInput
+            and organigram input
+        */
         const {
             value,
+            hideList,
             disabled,
         } = this.props;
 
@@ -252,6 +258,30 @@ export default class OrganigramInput extends React.PureComponent {
             return null;
         }
 
+        if (hideList) {
+            return (
+                <div className={styles.noListSelection} >
+                    <MultiSelectInput
+                        value={value}
+                        onChange={this.handleSelectChange}
+                        className={styles.selectInput}
+                        options={this.options}
+                        labelSelector={OrganigramInput.selectLabelSelector}
+                        keySelector={OrganigramInput.selectIdSelector}
+                        showHintAndError={false}
+                        hideSelectAllButton
+                        disabled={disabled}
+                    />
+                    <AccentButton
+                        className={styles.action}
+                        iconName={iconNames.chart}
+                        onClick={this.handleShowModal}
+                        disabled={disabled}
+                        transparent
+                    />
+                </div>
+            );
+        }
         return (
             <SelectInputWithList
                 value={value}
@@ -270,33 +300,22 @@ export default class OrganigramInput extends React.PureComponent {
 
     render() {
         const {
-            title,
-            showHeader,
-            disabled,
+            label,
+            showLabel,
         } = this.props;
 
-        const titleClassName = `${styles.title} title`;
-        const headerClassName = `${styles.header} header`;
         const OrgChartModal = this.renderOrgChartModal;
-        const MultiSelect = this.renderMultiSelect;
+        const Selection = this.renderSelection;
 
         return (
             <div className={this.getClassName()}>
-                {showHeader &&
-                    <header className={headerClassName}>
-                        <div className={titleClassName}>
-                            { title }
-                        </div>
-                        <AccentButton
-                            className={styles.action}
-                            iconName={iconNames.chart}
-                            onClick={this.handleShowModal}
-                            disabled={disabled}
-                            transparent
-                        />
-                    </header>
+                {showLabel &&
+                    <Label
+                        show={showLabel}
+                        text={label}
+                    />
                 }
-                <MultiSelect />
+                <Selection />
                 <OrgChartModal />
             </div>
         );

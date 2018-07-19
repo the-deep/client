@@ -8,7 +8,7 @@
     height: calc(100% + #{$spacing-small-alt * 2});
 
     .header {
-        flex-shrink: 0;
+        flex-direction: row;
         border-bottom: $width-separator-thin solid $color-separator;
         background-color: $color-background-header;
         padding: $spacing-small;
@@ -16,6 +16,7 @@
 
     .lead-grouped-entries-list {
         @extend %main-content;
+        position: relative;
         flex-grow: 1;
         margin: $spacing-small-alt;
         height: auto;

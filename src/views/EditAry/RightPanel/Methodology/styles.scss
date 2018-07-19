@@ -133,24 +133,16 @@ $height-bottom: 196px;
             }
         }
 
-        .affected-groups,
-        .location-selection {
+        .location-selection,
+        .affected-groups {
             @extend %content;
 
-            :global {
-                .header {
-                    @extend %header;
-                    padding: 0;
-
-                    .title {
-                        padding: $spacing-extra-small $spacing-medium;
-                        font-weight: $font-weight-light;
-                    }
-
-                    .button {
-                        padding: $spacing-extra-small $spacing-small;
-                    }
-                }
+            .title {
+                flex-shrink: 0;
+                padding: $spacing-small $spacing-medium;
+                text-transform: uppercase;
+                font-size: $font-size-large;
+                font-weight: $font-weight-light;
             }
         }
     }

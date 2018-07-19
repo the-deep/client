@@ -8,24 +8,16 @@ $width-orgchart-modal: 80%;
     flex-direction: column;
     height: 100%;
 
-    .header {
-        display: flex;
-        align-items: center;
-        flex-shrink: 0;
-        padding: $spacing-small $spacing-medium;
-
-        .title {
-            flex-grow: 1;
-            text-transform: uppercase;
-        }
-
-        .action {
-            flex-shrink: 0;
-        }
+    .action {
+        padding: $spacing-extra-small $spacing-small;
     }
 
     .select-input {
         flex-grow: 1;
+    }
+
+    .no-list-selection {
+        display: flex;
     }
 }
 

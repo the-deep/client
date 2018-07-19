@@ -11,6 +11,8 @@ import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
 import Button from '#rs/components/Action/Button';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 
+import GeoInput from '#components/GeoInput/';
+
 import {
     activeProjectIdFromStateSelector,
     entriesViewFilterSelector,
@@ -25,48 +27,47 @@ import {
 } from '#redux';
 import {
     createUrlForGeoOptions,
+    createUrlForEntryFilterOptions,
 
     createParamsForGet,
-    createUrlForEntryFilterOptions,
 
     transformResponseErrorToFormError,
 } from '#rest';
 import schema from '#schema';
 import notify from '#notify';
 import _ts from '#ts';
-import GeoSelection from '#components/GeoSelection';
+
+import styles from './styles.scss';
 
 const mapStateToProps = (state, props) => ({
     activeProject: activeProjectIdFromStateSelector(state),
     entriesFilters: entriesViewFilterSelector(state, props),
-    projectDetails: projectDetailsSelector(state, props),
     entryFilterOptions: entryFilterOptionsForProjectSelector(state, props),
     geoOptions: geoOptionsForProjectSelector(state, props),
+    projectDetails: projectDetailsSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
     setEntriesViewFilter: params => dispatch(setEntriesViewFilterAction(params)),
-    unsetEntriesViewFilter: params => dispatch(unsetEntriesViewFilterAction(params)),
-
     setEntryFilterOptions: params => dispatch(setEntryFilterOptionsAction(params)),
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
+    unsetEntriesViewFilter: params => dispatch(unsetEntriesViewFilterAction(params)),
 });
 
 const propTypes = {
+    applyOnChange: PropTypes.bool,
+    filters: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    pending: PropTypes.bool,
+
     activeProject: PropTypes.number.isRequired,
     entriesFilters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    filters: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    setEntriesViewFilter: PropTypes.func.isRequired,
-    unsetEntriesViewFilter: PropTypes.func.isRequired,
-    setGeoOptions: PropTypes.func.isRequired,
+    entryFilterOptions: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    pending: PropTypes.bool,
-    applyOnChange: PropTypes.bool,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-
-    // eslint-disable-next-line react/forbid-prop-types
-    entryFilterOptions: PropTypes.object.isRequired,
+    setEntriesViewFilter: PropTypes.func.isRequired,
     setEntryFilterOptions: PropTypes.func.isRequired,
+    setGeoOptions: PropTypes.func.isRequired,
+    unsetEntriesViewFilter: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -259,7 +260,7 @@ export default class FilterEntriesForm extends React.PureComponent {
             return (
                 <MultiSelectInput
                     key={key}
-                    className="entries-filter"
+                    className={styles.entriesFilter}
                     options={filter.options || emptyList}
                     label={title}
                     showHintAndError={false}
@@ -271,7 +272,7 @@ export default class FilterEntriesForm extends React.PureComponent {
         } else if (filter.type === 'multiselect-range') {
             return (
                 <RangeFilter
-                    className="range-filter entries-filter"
+                    className={`${styles.rangeFilter} ${styles.entriesFilter}`}
                     key={key}
                     options={filter.options}
                     label={title}
@@ -285,7 +286,7 @@ export default class FilterEntriesForm extends React.PureComponent {
             return (
                 <DateFilter
                     key={key}
-                    className="entries-filter"
+                    className={styles.entriesFilter}
                     label={title}
                     showHintAndError={false}
                     onChange={values => this.handleFilterChange(key, values)}
@@ -294,17 +295,17 @@ export default class FilterEntriesForm extends React.PureComponent {
                 />
             );
         } else if (filter.type === 'geo') {
-            // User GeoSelect component
             return (
-                <GeoSelection
+                <GeoInput
                     key={key}
-                    className="entries-filter"
+                    className={styles.entriesFilter}
+                    disabled={this.props.pending && this.state.geoSelectionEnable}
+                    geoOptionsByRegion={this.props.geoOptions}
                     label={title}
-                    geoOptions={this.props.geoOptions}
                     onChange={values => this.handleFilterChange(key, values)}
                     regions={this.props.projectDetails.regions}
+                    showHeader={false}
                     value={filters[key] || emptyList}
-                    disabled={this.props.pending && this.state.geoSelectionEnable}
                     hideList
                 />
             );
@@ -321,13 +322,9 @@ export default class FilterEntriesForm extends React.PureComponent {
         const { createdBy } = entryFilterOptions;
 
         return (
-            <div
-                key="filters"
-                className="entries-filters"
-            >
+            <div className={styles.entriesFilters} >
                 <SearchInput
-                    className="entries-filter"
-                    key="search"
+                    className={styles.entriesFilter}
                     label={_ts('entries', 'searchFilterLabel')}
                     onChange={(value) => { this.handleFilterChange('search', value); }}
                     placeholder={_ts('entries', 'searchFilterPlaceholder')}
@@ -336,8 +333,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                     disabled={this.props.pending}
                 />
                 <MultiSelectInput
-                    className="entries-filter"
-                    key="created-by"
+                    className={styles.entriesFilter}
                     keySelector={FilterEntriesForm.optionKeySelector}
                     labelSelector={FilterEntriesForm.optionLabelSelector}
                     options={createdBy}
@@ -348,8 +344,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                     disabled={this.props.pending}
                 />
                 <DateFilter
-                    className="entries-filter"
-                    key="created-at"
+                    className={styles.entriesFilter}
                     label={_ts('entries', 'createdAtFilterLabel')}
                     onChange={(value) => { this.handleFilterChange('created_at', value); }}
                     showHintAndError={false}
@@ -360,7 +355,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                 {
                     !this.props.applyOnChange && (
                         <Button
-                            className="button apply-filter-button"
+                            className={`${styles.button} ${styles.applyFilterButton}`}
                             onClick={this.handleApplyFilter}
                             disabled={pending || pristine}
                         >
@@ -369,7 +364,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                     )
                 }
                 <DangerButton
-                    className="button reset-filter-button"
+                    className={`${styles.button} ${styles.resetFilterButton}`}
                     onClick={this.handleClearFilter}
                     disabled={pending || isFilterEmpty}
                 >
