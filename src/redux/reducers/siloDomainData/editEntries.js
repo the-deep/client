@@ -39,11 +39,12 @@ export const EEB__APPLY_TO_ALL_ENTRIES_BELOW = 'siloDomainData/EEB__APPLY_TO_ALL
 export const EEB__SET_PENDING = 'siloDomainData/EEB__SET_PENDING';
 export const EEB__SAVE_ENTRY = 'siloDomainData/EEB__SAVE_ENTRY';
 
-export const editEntriesSaveEntryAction = ({ leadId, entryKey, response }) => ({
+export const editEntriesSaveEntryAction = ({ leadId, entryKey, response, color }) => ({
     type: EEB__SAVE_ENTRY,
     leadId,
     entryKey,
     response,
+    color,
 });
 
 export const editEntriesSetPendingAction = ({ leadId, entryKey, pending }) => ({
@@ -605,7 +606,7 @@ const setPending = (state, action) => {
 };
 
 const saveEntry = (state, action) => {
-    const { leadId, entryKey, response } = action;
+    const { leadId, entryKey, response, color } = action;
 
     // NOTE: create new entry from remote entry
     const remoteEntry = response;
@@ -621,6 +622,7 @@ const saveEntry = (state, action) => {
         data: remoteEntry,
         isPristine: true,
         hasError: false,
+        color,
     });
 
     const {

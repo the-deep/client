@@ -399,6 +399,7 @@ export default class EditEntries extends React.PureComponent {
                 });
             },
             getCoordinator: () => this.saveRequestCoordinator,
+            calculateEntryData: attrs => calculateEntryData(attrs, this.props.analysisFramework),
         });
         request.init({
             leadId: this.props.leadId,
