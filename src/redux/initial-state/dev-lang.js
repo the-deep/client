@@ -1605,6 +1605,7 @@ const initialDevLangState = {
             goBackToLoginText: 817,
             loginLabel: 814,
             registerLabel: 811,
+            retryRecaptcha: 894,
         },
         passwordReset: {
             checkInboxText: 812,
@@ -1612,6 +1613,7 @@ const initialDevLangState = {
             submitForgetPassword: 826,
             emailLabel: 184,
             emailPlaceholder: 813,
+            retryRecaptcha: 894,
         },
         login: {
             welcomeToText: 803,
