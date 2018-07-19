@@ -4,6 +4,7 @@ import React from 'react';
 import AccentButton from '#rs/components/Action/Button/AccentButton';
 import SelectInputWithList from '#rs/components/Input/SelectInputWithList';
 import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
+import Label from '#rs/components/Input/Label';
 import FaramElement from '#rs/components/Input/Faram/FaramElement';
 import { iconNames } from '#constants';
 
@@ -12,26 +13,26 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    title: PropTypes.string,
     onChange: PropTypes.func,
     geoOptionsByRegion: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     regions: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    showHeader: PropTypes.bool,
+    label: PropTypes.string,
+    showLabel: PropTypes.bool,
     disabled: PropTypes.bool,
     hideList: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
-    title: '',
+    label: '',
+    showLabel: true,
     onChange: undefined,
     geoOptionsByRegion: {},
     disabled: false,
     hideList: false,
     value: [],
     regions: [],
-    showHeader: true,
 };
 
 @FaramElement('input')
@@ -137,7 +138,7 @@ export default class GeoInput extends React.PureComponent {
 
     renderGeoModal = () => {
         const {
-            title,
+            label,
             regions,
             geoOptionsByRegion,
         } = this.props;
@@ -152,7 +153,7 @@ export default class GeoInput extends React.PureComponent {
 
         return (
             <GeoModal
-                title={title}
+                title={label}
                 regions={regions}
                 geoOptionsByRegion={geoOptionsByRegion}
                 geoOptionsById={this.geoOptionsById}
@@ -165,14 +166,7 @@ export default class GeoInput extends React.PureComponent {
     }
 
     renderShowModalButton = () => {
-        const {
-            showHeader,
-            disabled,
-        } = this.props;
-
-        if (showHeader) {
-            return null;
-        }
+        const { disabled } = this.props;
 
         return (
             <AccentButton
@@ -186,7 +180,7 @@ export default class GeoInput extends React.PureComponent {
     }
 
     renderSelection = () => {
-        /* FIXME: Don't toggle between MultiSelect & SelectInputWithList
+        /* TODO: Don't toggle between MultiSelect & SelectInputWithList
             Make a separate ListComponent and use that in SelectInputWithList
             Use that component to build custom SelectInputWithList to use in GeoInput
             and organigram input
@@ -212,7 +206,7 @@ export default class GeoInput extends React.PureComponent {
                     />
                     <AccentButton
                         className={styles.action}
-                        iconName={iconNames.map}
+                        iconName={iconNames.globe}
                         onClick={this.handleShowModal}
                         disabled={disabled}
                         transparent
@@ -238,33 +232,20 @@ export default class GeoInput extends React.PureComponent {
 
     render() {
         const {
-            title,
-            value,
-            disabled,
-            showHeader,
+            label,
+            showLabel,
         } = this.props;
-
-        const titleClassName = `${styles.title} title`;
-        const headerClassName = `${styles.header} header`;
 
         const GeoModalRender = this.renderGeoModal;
         const Selection = this.renderSelection;
 
         return (
             <div className={this.getClassName()}>
-                {showHeader &&
-                    <header className={headerClassName}>
-                        <div className={titleClassName}>
-                            { title }
-                        </div>
-                        <AccentButton
-                            className={styles.action}
-                            iconName={iconNames.map}
-                            onClick={this.handleShowModal}
-                            disabled={disabled}
-                            transparent
-                        />
-                    </header>
+                {showLabel &&
+                    <Label
+                        show={showLabel}
+                        text={label}
+                    />
                 }
                 <Selection />
                 <GeoModalRender />

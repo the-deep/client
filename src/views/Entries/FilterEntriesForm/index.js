@@ -11,7 +11,7 @@ import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
 import Button from '#rs/components/Action/Button';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 
-import GeoSelection from '#components/GeoSelection';
+import GeoInput from '#components/GeoInput/';
 
 import {
     activeProjectIdFromStateSelector,
@@ -296,15 +296,16 @@ export default class FilterEntriesForm extends React.PureComponent {
             );
         } else if (filter.type === 'geo') {
             return (
-                <GeoSelection
+                <GeoInput
                     key={key}
                     className={styles.entriesFilter}
+                    disabled={this.props.pending && this.state.geoSelectionEnable}
+                    geoOptionsByRegion={this.props.geoOptions}
                     label={title}
-                    geoOptions={this.props.geoOptions}
                     onChange={values => this.handleFilterChange(key, values)}
                     regions={this.props.projectDetails.regions}
+                    showHeader={false}
                     value={filters[key] || emptyList}
-                    disabled={this.props.pending && this.state.geoSelectionEnable}
                     hideList
                 />
             );

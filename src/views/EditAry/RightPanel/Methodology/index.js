@@ -205,22 +205,29 @@ export default class Methodology extends React.PureComponent {
                             keySelector={idSelector}
                             labelSelector={titleSelector}
                         />
-                        <OrganigramInput
-                            faramElementName="affectedGroups"
-                            title={affectedGroupsTitle}
-                            className={styles.affectedGroups}
-                            data={affectedGroups}
-                            childSelector={Methodology.orgChildSelector}
-                            labelSelector={Methodology.orgLabelSelector}
-                            idSelector={Methodology.orgIdSelector}
-                        />
-                        <GeoInput
-                            faramElementName="locations"
-                            title={locationsTitle}
-                            className={styles.locationSelection}
-                            geoOptionsByRegion={geoOptions}
-                            regions={projectDetails.regions}
-                        />
+                        <div className={styles.affectedGroups}>
+                            <div className={styles.title}>
+                                {affectedGroupsTitle}
+                            </div>
+                            <OrganigramInput
+                                faramElementName="affectedGroups"
+                                data={affectedGroups}
+                                childSelector={Methodology.orgChildSelector}
+                                labelSelector={Methodology.orgLabelSelector}
+                                idSelector={Methodology.orgIdSelector}
+                            />
+                        </div>
+                        <div className={styles.locationSelection}>
+                            <div className={styles.title}>
+                                {locationsTitle}
+                            </div>
+                            <GeoInput
+                                faramElementName="locations"
+                                title={locationsTitle}
+                                geoOptionsByRegion={geoOptions}
+                                regions={projectDetails.regions}
+                            />
+                        </div>
                     </section>
 
                     <div className={styles.methodologyContent}>
