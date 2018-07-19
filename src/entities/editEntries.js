@@ -23,6 +23,7 @@ export const entryAccessor = {
     hasError: (entry = {}) => !!(entry.localData || {}).hasError,
     hasServerError: (entry = {}) => !!(entry.localData || {}).hasServerError,
 
+    dataAttributes: (entry = {}) => (entry.data || {}).attributes,
     dataAttribute: (entry = {}, attributeId) => (
         (((entry.data || {}).attributes || {})[attributeId] || {}).data
     ),

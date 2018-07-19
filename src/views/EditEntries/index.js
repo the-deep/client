@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '#rs/utils/common';
 import update from '#rs/utils/immutable-update';
-import DangerButton from '#rsca/Button/DangerButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import { detachedFaram } from '#rsci/Faram';
 import FixedTabs from '#rscv/FixedTabs';
@@ -32,7 +32,6 @@ import {
     editEntriesAddEntryAction,
     editEntriesClearEntriesAction,
     editEntriesRemoveEntryAction,
-    editEntriesRemoveLocalEntriesAction,
     editEntriesSaveEntryAction,
     editEntriesSetEntriesAction,
     editEntriesSetEntryDataAction,
@@ -69,7 +68,6 @@ const propTypes = {
     addEntry: PropTypes.func.isRequired,
     clearEntries: PropTypes.func.isRequired,
     removeEntry: PropTypes.func.isRequired,
-    removeLocalEntries: PropTypes.func.isRequired,
     saveEntry: PropTypes.func.isRequired,
     setAnalysisFramework: PropTypes.func.isRequired,
     setEntries: PropTypes.func.isRequired,
@@ -103,7 +101,6 @@ const mapDispatchToProps = dispatch => ({
     addEntry: params => dispatch(editEntriesAddEntryAction(params)),
     clearEntries: params => dispatch(editEntriesClearEntriesAction(params)),
     removeEntry: params => dispatch(editEntriesRemoveEntryAction(params)),
-    removeLocalEntries: params => dispatch(editEntriesRemoveLocalEntriesAction(params)),
     saveEntry: params => dispatch(editEntriesSaveEntryAction(params)),
     setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
     setEntries: params => dispatch(editEntriesSetEntriesAction(params)),
@@ -121,6 +118,12 @@ const mapDispatchToProps = dispatch => ({
 export default class EditEntries extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static calculateSavableEntries = (entries, statuses) => entries.filter((entry) => {
+        const entryKey = entryAccessor.key(entry);
+        const status = statuses[entryKey];
+        return status === ENTRY_STATUS.serverError || status === ENTRY_STATUS.nonPristine;
+    })
 
     constructor(props) {
         super(props);
@@ -150,6 +153,7 @@ export default class EditEntries extends React.PureComponent {
             list: {
                 component: () => (
                     <Listing
+                        // NOTE: to re-render Listing when has changes
                         hash={window.location.hash}
                         // injected inside WidgetFaram
                         onChange={this.handleChange}
@@ -173,7 +177,7 @@ export default class EditEntries extends React.PureComponent {
         this.defaultHash = 'overview';
 
         this.saveRequestCoordinator = new CoordinatorBuilder()
-            .maxActiveActors(3)
+            .maxActiveActors(4)
             .preSession(() => {
                 this.setState({ pendingSaveAll: true });
             })
@@ -209,9 +213,14 @@ export default class EditEntries extends React.PureComponent {
             setRegions: this.props.setRegions,
             setState: params => this.setState(params),
         });
+
+        this.savableEntries = EditEntries.calculateSavableEntries(
+            this.props.entries,
+            this.props.statuses,
+        );
     }
 
-    componentWillMount() {
+    componentDidMount() {
         const { leadId } = this.props;
         this.editEntryDataRequest.init({ leadId });
         this.editEntryDataRequest.start();
@@ -225,12 +234,24 @@ export default class EditEntries extends React.PureComponent {
             this.editEntryDataRequest.init({ leadId });
             this.editEntryDataRequest.start();
         }
+
+        if (
+            this.props.entries !== nextProps.entries ||
+            this.props.statuses !== nextProps.statuses
+        ) {
+            this.savableEntries = EditEntries.calculateSavableEntries(
+                nextProps.entries,
+                nextProps.statuses,
+            );
+        }
     }
 
     componentWillUnmount() {
         this.editEntryDataRequest.stop();
         this.saveRequestCoordinator.stop();
     }
+
+    // APIS
 
     handleExcerptChange = ({ type, value }, entryKey) => {
         if (!entryKey) {
@@ -256,6 +277,8 @@ export default class EditEntries extends React.PureComponent {
             },
         });
     }
+
+    // FARAM
 
     handleChange = (faramValues, faramErrors, faramInfo, entryKey) => {
         if (faramInfo.action === 'newEntry') {
@@ -362,6 +385,22 @@ export default class EditEntries extends React.PureComponent {
         this.saveRequestCoordinator.add(entryKey, request);
     }
 
+    // HANDLERS
+
+    handleDeleteLocalEntry = (entryKey) => {
+        const pseudoRequest = {
+            start: () => {
+                this.props.removeEntry({
+                    leadId: this.props.leadId,
+                    key: entryKey,
+                });
+                this.saveRequestCoordinator.notifyComplete(entryKey);
+            },
+            stop: () => {}, // no-op
+        };
+        this.saveRequestCoordinator.add(entryKey, pseudoRequest);
+    }
+
     handleDeleteEntry = (entryKey, entry) => {
         const request = new EditEntryDeleteRequest({
             setPending: this.props.setPending,
@@ -387,29 +426,22 @@ export default class EditEntries extends React.PureComponent {
     }
 
     handleSave = () => {
-        this.props.removeLocalEntries({
-            leadId: this.props.leadId,
-        });
-
-        this.props.entries.forEach((entry) => {
+        this.savableEntries.forEach((entry) => {
             const entryKey = entryAccessor.key(entry);
-            const status = this.props.statuses[entryKey];
+            const isMarkedAsDeleted = entryAccessor.isMarkedAsDeleted(entry);
 
-            // NOTE: only delete if not requesting
-            if (entryAccessor.isMarkedAsDeleted(entry) && status !== ENTRY_STATUS.requesting) {
-                this.handleDeleteEntry(entryKey, entry);
-                return;
-            }
-
-            // NOTE: only submit if non pristine
-            if (
-                status === ENTRY_STATUS.nonPristine ||
-                status === ENTRY_STATUS.serverError
-            ) {
+            if (isMarkedAsDeleted) {
+                if (entryAccessor.serverId(entry)) {
+                    this.handleDeleteEntry(entryKey, entry);
+                } else {
+                    this.handleDeleteLocalEntry(entryKey);
+                }
+            } else {
                 detachedFaram({
-                    value: entry.data.attributes,
+                    value: entryAccessor.dataAttributes(entry),
+                    error: entryAccessor.error(entry),
+
                     schema: this.props.schema,
-                    error: entry.localData.error,
                     onChange: this.handleChange,
 
                     onValidationFailure: (errors) => {
@@ -423,6 +455,13 @@ export default class EditEntries extends React.PureComponent {
         });
 
         this.saveRequestCoordinator.start();
+    }
+
+    handleCancel = () => {
+        const { leadId } = this.props;
+        this.props.clearEntries({ leadId });
+        this.editEntryDataRequest.init({ leadId });
+        this.editEntryDataRequest.start();
     }
 
     render() {
@@ -455,6 +494,11 @@ export default class EditEntries extends React.PureComponent {
             projectId,
         });
 
+        const hasSavableEntries = this.savableEntries.length > 0;
+        const isSaveDisabled = (
+            pendingEditEntryData || pendingSaveAll || projectMismatch || !hasSavableEntries
+        );
+
         return (
             <div className={styles.editEntries}>
                 <header className={styles.header}>
@@ -477,13 +521,16 @@ export default class EditEntries extends React.PureComponent {
                         disabled={projectMismatch}
                     />
                     <div className={styles.actionButtons}>
-                        <DangerButton
-                            disabled={pendingEditEntryData || pendingSaveAll || projectMismatch}
+                        <DangerConfirmButton
+                            disabled={isSaveDisabled}
+                            // FIXME: use strings
+                            onClick={this.handleCancel}
+                            confirmationMessage="Do you want to cancel all changes?"
                         >
                             { cancelButtonTitle }
-                        </DangerButton>
+                        </DangerConfirmButton>
                         <SuccessButton
-                            disabled={pendingEditEntryData || pendingSaveAll || projectMismatch}
+                            disabled={isSaveDisabled}
                             onClick={this.handleSave}
                         >
                             { saveButtonTitle }
