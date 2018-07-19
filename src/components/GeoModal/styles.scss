@@ -3,6 +3,10 @@
 .geo-modal {
     width: 72vw;
 
+    &.has-left {
+        width: 84vw;
+    }
+
     .select-inputs {
         display: flex;
     }
@@ -12,12 +16,23 @@
         padding: 0;
         height: 60vh;
 
+        .left {
+            flex-basis: 15%;
+        }
+
         .map {
             flex-basis: 80%;
+            border-right: $width-separator-thin solid $color-separator;
+            border-left: $width-separator-thin solid $color-separator;
+
+            &.has-left {
+                flex-basis: 70%;
+            }
         }
 
         .right {
-            flex-basis: 20%;
+            flex-basis: 15%;
+            overflow-y: auto;
 
             .selection-group {
                 .title {

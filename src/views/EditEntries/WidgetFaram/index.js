@@ -155,6 +155,20 @@ export default class WidgetFaram extends React.PureComponent {
                 );
                 break;
             }
+            case 'organigramWidget':
+            case 'geoWidget': {
+                child = (
+                    <Widget
+                        widgetName={widgetId}
+                        widgetType={widgetType}
+                        widget={widget}
+                        entryType={entryType}
+                        excerpt={excerpt}
+                        image={image}
+                    />
+                );
+                break;
+            }
             default: {
                 child = (
                     <Widget

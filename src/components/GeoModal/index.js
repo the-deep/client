@@ -24,6 +24,7 @@ const propTypes = {
     onChange: PropTypes.func,
     onApply: PropTypes.func,
     onCancel: PropTypes.func,
+    modalLeftComponent: PropTypes.node,
 };
 
 const defaultProps = {
@@ -34,6 +35,7 @@ const defaultProps = {
     onChange: undefined,
     onApply: undefined,
     onCancel: undefined,
+    modalLeftComponent: undefined,
 };
 
 @FaramElement('input')
@@ -177,12 +179,30 @@ export default class GeoModal extends React.PureComponent {
     )
 
     render() {
-        const { regions, title, geoOptionsByRegion } = this.props;
-        const { value, selectedRegion, groupedValue } = this.state;
+        const {
+            regions,
+            title,
+            geoOptionsByRegion,
+            modalLeftComponent,
+        } = this.props;
+
+        const {
+            value,
+            selectedRegion,
+            groupedValue,
+        } = this.state;
+
         const GroupSelectionList = this.renderGroupSelectionList;
+        const mapClassNames = [styles.map];
+        const geoModalClassNames = [styles.geoModal];
+
+        if (modalLeftComponent) {
+            mapClassNames.push(styles.hasLeft);
+            geoModalClassNames.push(styles.hasLeft);
+        }
 
         return (
-            <Modal className={styles.geoModal}>
+            <Modal className={geoModalClassNames.join(' ')}>
                 <ModalHeader
                     title={title}
                     rightComponent={
@@ -209,8 +229,13 @@ export default class GeoModal extends React.PureComponent {
                     }
                 />
                 <ModalBody className={styles.body}>
+                    {modalLeftComponent &&
+                        <div className={styles.left}>
+                            {modalLeftComponent}
+                        </div>
+                    }
                     <RegionMap
-                        className={styles.map}
+                        className={mapClassNames.join(' ')}
                         regionId={selectedRegion}
                         onChange={this.handleRegionValueChange}
                         selections={value}

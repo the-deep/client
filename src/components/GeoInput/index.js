@@ -21,6 +21,7 @@ const propTypes = {
     showLabel: PropTypes.bool,
     disabled: PropTypes.bool,
     hideList: PropTypes.bool,
+    modalLeftComponent: PropTypes.node,
 };
 
 const defaultProps = {
@@ -33,6 +34,7 @@ const defaultProps = {
     hideList: false,
     value: [],
     regions: [],
+    modalLeftComponent: undefined,
 };
 
 @FaramElement('input')
@@ -141,6 +143,7 @@ export default class GeoInput extends React.PureComponent {
             label,
             regions,
             geoOptionsByRegion,
+            modalLeftComponent,
         } = this.props;
         const {
             showModal,
@@ -161,6 +164,7 @@ export default class GeoInput extends React.PureComponent {
                 onChange={this.handleModalValueChange}
                 onApply={this.handleModalApply}
                 onCancel={this.handleModalCancel}
+                modalLeftComponent={modalLeftComponent}
             />
         );
     }

@@ -868,6 +868,7 @@ const initialDevLangState = {
             saveButtonLabel: 25,
             cancelButtonLabel: 61,
             editTitleModalHeader: 773,
+            excerptHeaderTitle: 514,
         },
         'framework.multiselectWidget': {
             editMultiselectModalTitle: 740,
