@@ -1,5 +1,6 @@
 @import '../../stylesheets/base';
 $table-width: 400px;
+$width-cluster-details: 420px;
 
 .cluster {
     @extend %main-content;
@@ -7,14 +8,14 @@ $table-width: 400px;
     flex-direction: column;
     height: 100%;
 
-    .header {
+    >.header {
         @include background-color($color-background-header);
         display: flex;
         align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
-        border-bottom: $width-separator-thin solid $color-separator-alt;
-        padding: $spacing-small;
+        border-bottom: $width-separator-thin solid $color-separator;
+        padding: $spacing-small $spacing-medium;
     }
 
     .container {
@@ -24,27 +25,100 @@ $table-width: 400px;
 
         .forced-directed-graph {
             flex-grow: 1;
+            background-color: $color-foreground-alt;
             height: auto;
             overflow: auto;
         }
 
-        .tables {
-            flex-basis: $table-width;
+        .cluster-details {
+            flex-basis: $width-cluster-details;
             flex-shrink: 0;
+            border-left: $width-separator-thin solid $color-separator;
             overflow-y: auto;
 
-            .table-container {
+            .cluster-detail {
                 transition: $duration-transition-medium border-color ease-in-out;
-                border: $width-separator-thin solid transparent;
+                // border: $width-separator-thin solid transparent;
+                border-bottom-color: $color-separator;
+                background-color: $color-foreground;
 
-                .table-header {
-                    @include background-color($color-foreground);
-                    padding: $spacing-small;
+                .header {
+                    display: flex;
+                    position: sticky;
+                    top: 0;
+                    border-bottom: $width-separator-thin solid $color-separator;
+                    background-color: $color-background-header;
+                    padding: $spacing-small-alt 0;
+
+                    >.heading {
+                        flex-grow: 1;
+                        padding: 0 $spacing-small;
+                        color: $color-primary;
+                        font-weight: $font-weight-medium;
+                    }
+
+                    .leads-count {
+                        display: flex;
+                        flex-shrink: 0;
+                        padding: 0 $spacing-small;
+
+                        .number {
+                            flex-shrink: 0;
+                            padding-right: $spacing-small;
+                            font-family: $font-family-monospace;
+                        }
+                    }
                 }
-                .keywords {
-                    .keyword-label {
-                        font-size: $font-size-large;
-                        font-style: italic;
+
+                .keyword-list {
+                    >.heading {
+                        padding: $spacing-small;
+                        color: $color-accent;
+                        font-weight: $font-weight-bold;
+                    }
+
+                    .keywords {
+                        display: flex;
+                        flex-wrap: wrap;
+                        padding-bottom: $spacing-medium;
+
+                        .keyword {
+                            transition: $duration-transition-medium border-color, $duration-transition-medium color;
+                            border: $width-separator-thin solid transparent;
+                            cursor: pointer;
+                            padding: $spacing-extra-small $spacing-small;
+                            font-family: $font-family-monospace;
+
+                            &:not(:last-child):after {
+                                content: ',';
+                            }
+
+                            &.active,
+                            &:hover {
+                                border-color: $color-accent;
+                                color: $color-accent;
+                            }
+                        }
+                    }
+                }
+
+                .lead-list {
+                    >.heading {
+                        padding: $spacing-small;
+                        color: $color-accent;
+                        font-weight: $font-weight-bold;
+                    }
+
+                    .leads {
+                        padding-bottom: $spacing-medium;
+
+                        .lead {
+                            padding: $spacing-extra-small-alt $spacing-small;
+                        }
+
+                        .leads-empty {
+                            padding: 0 $spacing-small;
+                        }
                     }
                 }
 
