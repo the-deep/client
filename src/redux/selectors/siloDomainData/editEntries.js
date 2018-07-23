@@ -3,10 +3,20 @@ import { createSelector } from 'reselect';
 import {
     dateCondition,
     timeCondition,
+    greaterThanOrEqualToCondition,
+    lessThanOrEqualToCondition,
 } from '#rs/components/Input/Faram';
-import { listToMap, decodeDate, compareNumber } from '#rs/utils/common';
 
-import { entryAccessor, calculateEntryState } from '#entities/editEntries';
+import {
+    isTruthy,
+    listToMap,
+    decodeDate,
+    compareNumber,
+} from '#rs/utils/common';
+import {
+    entryAccessor,
+    calculateEntryState,
+} from '#entities/editEntries';
 
 import {
     analysisFrameworksSelector,
@@ -104,7 +114,6 @@ export const editEntriesWidgetsSelector = createSelector(
 
 const getSchemaForWidget = (widget) => {
     switch (widget.widgetId) {
-        // TODO; add schema for dateWidget
         case 'dateWidget': {
             return {
                 fields: {
@@ -132,6 +141,29 @@ const getSchemaForWidget = (widget) => {
                 fields: {
                     fromValue: [dateCondition],
                     toValue: [dateCondition],
+                },
+            };
+        }
+        case 'numberWidget': {
+            const {
+                properties: {
+                    data: {
+                        minValue,
+                        maxValue,
+                    } = {},
+                } = {},
+            } = widget;
+
+            const validations = [];
+            if (isTruthy(minValue)) {
+                validations.push(greaterThanOrEqualToCondition(minValue));
+            }
+            if (isTruthy(maxValue)) {
+                validations.push(lessThanOrEqualToCondition(maxValue));
+            }
+            return {
+                fields: {
+                    value: validations,
                 },
             };
         }

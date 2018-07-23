@@ -492,6 +492,8 @@ const initialDevLangState = {
         998: 'Save region',
         999: 'There was an error while fetching existing users',
         1000: 'to',
+        1001: 'Max value',
+        1002: 'Min value',
         1200: 'User',
         1206: 'Search gallery files',
         1209: 'Loading file',
@@ -910,6 +912,8 @@ const initialDevLangState = {
             cancelButtonLabel: 61,
             editTitleModalHeader: 773,
             numberPlaceholder: 768,
+            maxValueLabel: 1001,
+            minValueLabel: 1002,
         },
         'framework.organigramWidget': {
             organPlaceholder: 754,
