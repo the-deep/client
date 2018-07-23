@@ -71,6 +71,36 @@ const connectorsSchema = [];
 }
 
 {
+    const name = 'rssOption';
+    const schema = {
+        doc: {
+            name: 'RSS fields option',
+            description: 'Option for rss fields',
+        },
+        fields: {
+            label: { type: 'string', required: true },
+            key: { type: 'string', required: true },
+        },
+    };
+    connectorsSchema.push({ name, schema });
+}
+
+{
+    const name = 'rssOptions';
+    const schema = {
+        doc: {
+            name: 'RSS fields options',
+            description: 'Options for rss fields',
+        },
+        fields: {
+            count: { type: 'int', required: true },
+            results: { type: 'array.rssOption', required: true },
+        },
+    };
+    connectorsSchema.push({ name, schema });
+}
+
+{
     const name = 'connectorSources';
     const schema = {
         doc: {
@@ -121,4 +151,6 @@ const connectorsSchema = [];
     };
     connectorsSchema.push({ name, schema });
 }
+
+
 export default connectorsSchema;

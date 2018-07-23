@@ -19,11 +19,7 @@ export default class ConnectorTestRequest {
     success = (response) => {
         try {
             schema.validate(response, 'connectorLeads');
-            const testLeads = response.results.map(l => ({
-                key: randomString(),
-                ...l,
-            }));
-            this.props.setState({ testLeads });
+            this.props.setState({ testLeads: response.results.filter(r => r.key) });
         } catch (er) {
             console.error(er);
         }

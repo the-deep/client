@@ -37,10 +37,11 @@ export default class ConnectorsGetRequest {
     }
 
     failure = (response) => {
+        const message = response.$internal.join(' ');
         notify.send({
             title: _ts('connector', 'connectorTitle'),
             type: notify.type.ERROR,
-            message: response.error,
+            message,
             duration: notify.duration.MEDIUM,
         });
     }

@@ -51,4 +51,21 @@
             padding: $spacing-small;
         }
     }
+
+    .feed-url-container {
+        display: flex;
+        align-items: center;
+
+        .feed-url {
+            flex-grow: 1;
+        }
+
+        .loading-animation {
+            position: initial;
+            flex-shrink: 0;
+            background-color: transparent;
+            padding-left: $spacing-small;
+            width: auto;
+        }
+    }
 }
