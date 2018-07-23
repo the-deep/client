@@ -630,6 +630,24 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         } = this.state;
 
         if (data.fieldType === 'string' || data.fieldType === 'url') {
+            if (data.key === 'feed-url') {
+                return (
+                    <div className={styles.feedUrlContainer}>
+                        <TextInput
+                            key={data.key}
+                            className={styles.feedUrl}
+                            faramElementName={data.key}
+                            label={data.title}
+                        />
+                        { pendingRssFields &&
+                            <LoadingAnimation
+                                className={styles.loadingAnimation}
+                                small
+                            />
+                        }
+                    </div>
+                );
+            }
             return (
                 <TextInput
                     key={data.key}
@@ -688,6 +706,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             projectDataLoading,
             userDataLoading,
             disableTest,
+            pendingRssFields,
         } = this.state;
 
         const {
@@ -768,9 +787,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                             placeholder="Relief Web"
                             autoFocus
                         />
-                        <FaramGroup
-                            faramElementName="params"
-                        >
+                        <FaramGroup faramElementName="params">
                             <List
                                 data={connectorSource.options}
                                 modifier={this.renderParamInput}

@@ -23,7 +23,10 @@ export default class RssFieldsGet extends Request {
     }
 
     handleFailure = (response) => {
-        const faramErrors = { params: response };
+        const faramErrors = {
+            params: response,
+            $internal: response.$internal,
+        };
         this.parent.setConnectorError({
             faramErrors,
             connectorId: this.parent.connectorId,
