@@ -119,6 +119,8 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         const {
             users,
             userProjects,
+            connectorId,
+            setErrorUserConnectorDetails,
         } = this.props;
 
         const { faramValues = {} } = this.props.connectorDetails;
@@ -135,6 +137,8 @@ export default class ConnectorDetailsForm extends React.PureComponent {
 
         this.rssFieldGetRequest = new RssFieldsGet({
             setState: params => this.setState(params),
+            connectorId,
+            setConnectorError: setErrorUserConnectorDetails,
         });
 
         this.usersHeader = [
@@ -764,7 +768,9 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                             placeholder="Relief Web"
                             autoFocus
                         />
-                        <FaramGroup faramElementName="params">
+                        <FaramGroup
+                            faramElementName="params"
+                        >
                             <List
                                 data={connectorSource.options}
                                 modifier={this.renderParamInput}

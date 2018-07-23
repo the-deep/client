@@ -8,7 +8,7 @@ import {
 } from '#rest';
 
 export default class RssFieldsGet extends Request {
-    // schemaName = 'geoOptions';
+    schemaName = 'rssOptions';
 
     handlePreLoad = () => {
         this.parent.setState({ pendingRssFields: true });
@@ -23,13 +23,12 @@ export default class RssFieldsGet extends Request {
     }
 
     handleFailure = (response) => {
-        const message = response.$internal.join(' ');
-        notify.send({
-            title: _ts('connector', 'connectorTitle'),
-            type: notify.type.ERROR,
-            message,
-            duration: notify.duration.MEDIUM,
+        const faramErrors = { params: response };
+        this.parent.setConnectorError({
+            faramErrors,
+            connectorId: this.parent.connectorId,
         });
+        this.parent.setState({ rssOptions: undefined });
     }
 
     handleFatal = () => {

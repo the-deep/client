@@ -67,14 +67,15 @@ export const alterResponseErrorToFaramError = (errors) => {
     const {
         nonFieldErrors = [],
         internalNonFieldErrors,
-        ...formFieldErrorList
+        ...formFieldErrors
     } = errors;
 
     console.error('SERVER ERROR:', internalNonFieldErrors);
 
-    return Object.keys(formFieldErrorList).reduce(
+    return Object.keys(formFieldErrors).reduce(
         (acc, key) => {
-            acc[key] = formFieldErrorList[key].join(' ');
+            const error = formFieldErrors[key];
+            acc[key] = Array.isArray(error) ? error.join(' ') : error;
             return acc;
         },
         {
