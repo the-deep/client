@@ -1,7 +1,6 @@
 import { FgRestBuilder } from '#rs/utils/rest';
-import { randomString } from '#rs/utils/common';
 import {
-    createParamsForGet,
+    createParamsForConnectorLeads,
     createUrlForConnectorleads,
     alterAndCombineResponseErrors,
 } from '#rest';
@@ -15,18 +14,23 @@ export default class ConnectorLeadsRequest {
     }
 
     success = connectorId => (response) => {
+        const { selectedLeads } = this.props;
+
         try {
             schema.validate(response, 'connectorLeads');
-            const connectorLeads = [];
-            response.results.forEach((l) => {
-                const lead = l;
-                lead.key = randomString(16).toLowerCase();
-                lead.isSelected = false;
-                connectorLeads.push(lead);
+            const leads = response.results.map((l) => {
+                const isSelected = selectedLeads.findIndex(s => s.key === l.key) !== -1;
+
+                return {
+                    ...l,
+                    isSelected,
+                };
             });
             this.props.setConnectorLeads({
-                connectorLeads,
+                leads,
+                totalCount: response.count,
                 connectorId,
+                countPerPage: response.countPerPage,
             });
         } catch (er) {
             console.error(er);
@@ -52,10 +56,23 @@ export default class ConnectorLeadsRequest {
         });
     }
 
-    create = (connectorId, projectId) => {
+    create = (
+        connectorId,
+        projectId,
+        activePage,
+        maxLeadsPerRequest,
+        filtersData,
+    ) => {
+        const body = {
+            project: projectId,
+            offset: (activePage - 1) * maxLeadsPerRequest,
+            limit: maxLeadsPerRequest,
+            ...filtersData,
+        };
+
         const connectorLeadsRequest = new FgRestBuilder()
-            .url(createUrlForConnectorleads(connectorId, projectId))
-            .params(createParamsForGet)
+            .url(createUrlForConnectorleads(connectorId))
+            .params(createParamsForConnectorLeads(body))
             .preLoad(() => { this.props.setState({ connectorLeadsLoading: true }); })
             .postLoad(() => { this.props.setState({ connectorLeadsLoading: false }); })
             .success(this.success(connectorId))

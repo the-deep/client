@@ -9,10 +9,18 @@
 
     .header {
         display: flex;
+        align-items: center;
         flex-shrink: 0;
-        justify-content: flex-end;
+        justify-content: space-between;
         background-color: $color-background-header;
-        padding: $spacing-extra-small $spacing-small;
+        padding: $spacing-small;
+
+        .left-container {
+            > span {
+                color: $color-text-label;
+                font-size: $font-size-small;
+            }
+        }
 
         .right-container {
             display: flex;
@@ -29,21 +37,33 @@
         }
     }
 
-    .table {
+    .table-container {
         flex-grow: 1;
+        overflow-y: auto;
 
-        :global {
-            .selected {
-                >div {
-                    padding-top: $spacing-small-alt;
-                    padding-bottom: $spacing-small-alt;
+        .table {
+            :global {
+                .selected {
+                    >div {
+                        padding-top: $spacing-small-alt;
+                        padding-bottom: $spacing-small-alt;
+                    }
+                }
+
+                .title {
+                    width: 100%;
                 }
             }
-
-            .title {
-                width: 100%;
-            }
         }
+    }
+
+    .footer {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: space-between;
+        border-top: $width-separator-thin solid $color-separator;
+        padding: $spacing-small;
     }
 
     .select-all-checkbox,
