@@ -1,22 +1,18 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import {
-    randomString,
-    isFalsy,
-} from '#rs/utils/common';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import TextInput from '#rs/components/Input/TextInput';
 import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
 import ModalHeader from '#rs/components/View/Modal/Header';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import TextInput from '#rs/components/Input/TextInput';
-import update from '#rs/utils/immutable-update';
 
 import Faram, { requiredCondition } from '#rs/components/Input/Faram';
 
+import OrganigramCreatorInput from '#components/OrganigramCreatorInput';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -28,30 +24,9 @@ const propTypes = {
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
-const baseOrgan = {
-    key: 'base',
-    title: 'Base',
-    organs: [],
-};
-
 const defaultProps = {
-    data: baseOrgan,
+    data: undefined,
 };
-
-// TODO: move this later to public
-const buildSettings = (indices, action, value, wrapper) => (
-    // NOTE: reverse() mutates the array so making a copy
-    [...indices].reverse().reduce(
-        (acc, selected, index) => wrapper(
-            { [selected]: acc },
-            indices.length - index - 1,
-        ),
-        wrapper(
-            { [action]: value },
-            indices.length,
-        ),
-    )
-);
 
 export default class Organigram extends React.PureComponent {
     static propTypes = propTypes;
@@ -60,6 +35,7 @@ export default class Organigram extends React.PureComponent {
     static schema = {
         fields: {
             title: [requiredCondition],
+            data: [],
         },
     };
 
@@ -68,72 +44,17 @@ export default class Organigram extends React.PureComponent {
 
         const {
             title,
-            data: organigram,
+            data,
         } = props;
+
         this.state = {
             faramValues: {
                 title,
-                organigram,
+                data,
             },
             faramErrors: {},
-            organigram: props.data || baseOrgan,
         };
     }
-
-    componentWillReceiveProps(nextProps) {
-        if (this.props.data !== nextProps.data) {
-            this.setState({ organigram: nextProps.data || baseOrgan });
-        }
-    }
-
-    getValuesForOrgan = (organ, parentLabel) => {
-        const label = parentLabel ? `${parentLabel} / ${organ.title}` : organ.title;
-        return [
-            {
-                key: organ.key,
-                label,
-            },
-            ...organ.organs.reduce((acc, o) => acc.concat(this.getValuesForOrgan(o, label)), []),
-        ];
-    }
-
-    handleAdd = nextIndices => () => {
-        const wrapper = e => ({ organs: e });
-        const key = `Organ ${randomString()}`;
-        const organsSetting = buildSettings(
-            nextIndices,
-            '$push',
-            [{ key, title: '', organs: [] }],
-            wrapper,
-        );
-        const newOrganigram = update(this.state.organigram, organsSetting);
-        this.setState({ organigram: newOrganigram });
-    };
-    handleRemove = (indices, j) => () => {
-        const wrapper = e => ({ organs: e });
-        const organsSetting = buildSettings(
-            indices,
-            '$splice',
-            [[j, 1]],
-            wrapper,
-        );
-        const newOrganigram = update(this.state.organigram, organsSetting);
-        this.setState({ organigram: newOrganigram });
-    };
-    handleChange = nextIndices => (value) => {
-        const wrapper = (e, i) => (
-            i === nextIndices.length ? { title: e } : { organs: e }
-        );
-        const organsSetting = buildSettings(
-            nextIndices,
-            '$set',
-            value,
-            wrapper,
-        );
-        const newOrganigram = update(this.state.organigram, organsSetting);
-        this.setState({ organigram: newOrganigram });
-    };
-
 
     handleFaramChange = (faramValues, faramErrors) => {
         this.setState({
@@ -153,71 +74,13 @@ export default class Organigram extends React.PureComponent {
     handleFaramValidationSuccess = (faramValues) => {
         const {
             title,
-            organigram,
+            data,
         } = faramValues;
-        this.props.onSave(organigram, title);
-    };
-
-    renderOrgan = (organ, indices = [], j) => {
-        const isFatherOrgan = isFalsy(j);
-        const nextIndices = isFatherOrgan ? indices : [...indices, j];
-
-        const organPlaceholder = _ts('framework.organigramWidget', 'organPlaceholder');
-        const addChildButtonTitle = _ts('framework.organigramWidget', 'addChildButtonTitle');
-        const removeElementButtonTitle = _ts('framework.organigramWidget', 'removeElementButtonTitle');
-
-        return (
-            <div
-                className={styles.organ}
-                key={organ.key}
-            >
-                <div className={styles.organHeader}>
-                    <TextInput
-                        value={organ.title}
-                        className={styles.titleInput}
-                        showHintAndError={false}
-                        placeholder={organPlaceholder}
-                        showLabel={false}
-                        onChange={this.handleChange(nextIndices)}
-                        autoFocus
-                    />
-                    <div className={styles.actionButtons}>
-                        <PrimaryButton
-                            className={styles.actionButton}
-                            onClick={this.handleAdd(nextIndices)}
-                            title={addChildButtonTitle}
-                            tabIndex="-1"
-                            transparent
-                            iconName="ion-fork-repo"
-                        />
-                        {
-                            !isFatherOrgan && (
-                                <DangerButton
-                                    className={styles.actionButton}
-                                    onClick={this.handleRemove(indices, j)}
-                                    title={removeElementButtonTitle}
-                                    tabIndex="-1"
-                                    transparent
-                                    iconName="ion-trash-b"
-                                />
-                            )
-                        }
-                    </div>
-                </div>
-                <div className={styles.organBody}>
-                    {
-                        organ.organs.map(
-                            (childOrgan, i) => this.renderOrgan(childOrgan, nextIndices, i),
-                        )
-                    }
-                </div>
-            </div>
-        );
+        this.props.onSave(data, title);
     };
 
     render() {
         const {
-            organigram,
             faramValues,
             faramErrors,
             pristine,
@@ -257,7 +120,9 @@ export default class Organigram extends React.PureComponent {
                             />
                         </div>
                         <div className={styles.organs}>
-                            { this.renderOrgan(organigram) }
+                            <OrganigramCreatorInput
+                                faramElementName="data"
+                            />
                         </div>
                     </ModalBody>
                     <ModalFooter>

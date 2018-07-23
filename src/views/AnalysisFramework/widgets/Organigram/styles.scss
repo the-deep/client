@@ -2,7 +2,6 @@
 
 $width-edit-modal: 72vw;
 $height-edit-modal: 72vh;
-$width-organ-header-min: 144px;
 
 .edit-modal {
     width: $width-edit-modal;
@@ -16,7 +15,6 @@ $width-organ-header-min: 144px;
 
     .title-input-container {
         flex-shrink: 0;
-        background-color: $color-foreground-alt;
         padding: $spacing-medium;
     }
 
@@ -25,57 +23,6 @@ $width-organ-header-min: 144px;
         flex-direction: column;
         flex-grow: 1;
         overflow: auto;
+        background-color: $color-foreground-alt;
     }
-
-    .organ {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-
-        +.organ {
-            border-left: $width-separator-medium solid $color-separator;
-        }
-    }
-
-    .organ-header {
-        display: flex;
-        position: relative;
-        flex-shrink: 0;
-        margin: $spacing-small;
-        background-color: $color-foreground;
-        padding: $spacing-medium;
-        min-width: $width-organ-header-min;
-
-        .action-buttons {
-            @include transition-medium;
-            position: absolute;
-            top: 0;
-            right: 0;
-            opacity: 0;
-            pointer-events: none;
-
-            .action-button {
-                flex-shrink: 0;
-            }
-        }
-
-        &:hover {
-            .action-buttons {
-                opacity: 1;
-                pointer-events: all;
-            }
-        }
-
-        .title-input {
-            flex-grow: 1;
-            width: 100%;
-        }
-    }
-
-    .organ-body {
-        display: flex;
-        align-items: stretch;
-        flex-grow: 1;
-    }
-
 }

@@ -358,7 +358,7 @@ const initialDevLangState = {
         751: 'Add column unit',
         752: 'Number',
         753: 'Organigram',
-        754: 'Organ',
+        754: 'Level {level} organization',
         755: 'Edit organigram',
         757: 'Scale',
         758: 'e.g. Reliable',

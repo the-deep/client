@@ -169,7 +169,6 @@ const widgetList = [
         widgetId: 'organigramWidget',
         type: 'list',
         component: OrganigramWidget,
-        // FIXME: This component is not complete @tnagorra
         editComponent: OrganigramEditWidget,
 
         // NOTE: used as _ts('widgetTitle', 'organigramWidgetLabel')
