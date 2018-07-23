@@ -1,6 +1,55 @@
 @import '../../stylesheets/base';
 
+$height-header: 42px;
+
 .analysis-framework {
-    @extend %main-content;
-    position: relative;
+    margin: -$spacing-small;
+    padding: 0;
+    height: 100%;
+
+    .header {
+        display: flex;
+        align-items: center;
+        border-bottom: $width-separator-thin solid $color-separator-alt;
+        background-color: $color-background-header;
+        height: $height-header;
+
+        .back-link {
+            @extend %transparent-button-like-link;
+            padding: $spacing-small $spacing-medium;
+            font-size: $font-size-large;
+        }
+
+        .heading {
+            flex-grow: 1;
+            padding: 0 $spacing-medium;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .tabs {
+            flex-shrink: 0;
+        }
+
+        .action-buttons {
+            flex-shrink: 0;
+            padding: 0 $spacing-medium;
+
+            >button {
+                margin-left: $spacing-medium;
+            }
+        }
+    }
+
+    .content {
+        @extend %main-content;
+        display: none;
+        margin: $spacing-small;
+        height: calc(100% - #{$height-header});
+
+        &.active {
+            display: block;
+        }
+    }
 }

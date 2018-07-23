@@ -1,13 +1,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-
-import { FgRestBuilder } from '#rs/utils/rest';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import MultiViewContainer from '#rs/components/View/MultiViewContainer';
-import { checkVersion } from '#rs/utils/common';
+import { Link } from 'react-router-dom';
 
 import BoundError from '#rs/components/General/BoundError';
+import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import MultiViewContainer from '#rs/components/View/MultiViewContainer';
+import { reverseRoute, checkVersion } from '#rs/utils/common';
+import { FgRestBuilder } from '#rs/utils/rest';
+import SuccessButton from '#rsca/Button/SuccessButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import FixedTabs from '#rscv/FixedTabs';
+
 import AppError from '#components/AppError';
 import {
     createParamsForGet,
@@ -19,7 +23,12 @@ import {
     setAfViewAnalysisFrameworkAction,
 
     afViewCurrentAnalysisFrameworkSelector,
+    activeProjectIdFromStateSelector,
 } from '#redux';
+import {
+    iconNames,
+    pathNames,
+} from '#constants';
 import notify from '#notify';
 import schema from '#schema';
 import _ts from '#ts';
@@ -32,6 +41,7 @@ const propTypes = {
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     analysisFrameworkId: PropTypes.number.isRequired,
     setAnalysisFramework: PropTypes.func.isRequired,
+    projectId: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
@@ -41,6 +51,7 @@ const defaultProps = {
 const mapStateToProps = (state, props) => ({
     analysisFramework: afViewCurrentAnalysisFrameworkSelector(state, props),
     analysisFrameworkId: afIdFromRoute(state, props),
+    projectId: activeProjectIdFromStateSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -61,24 +72,31 @@ export default class AnalysisFramework extends React.PureComponent {
                 component: () => (
                     <Overview
                         analysisFramework={this.props.analysisFramework}
-                        onSave={this.handleSave}
                     />
                 ),
+                wrapContainer: true,
+                lazyMount: true,
+                mount: true,
             },
             list: {
                 component: () => (
                     <List
                         analysisFramework={this.props.analysisFramework}
-                        onSave={this.handleSave}
                     />
                 ),
+                wrapContainer: true,
+                lazyMount: true,
+                mount: true,
             },
         };
 
+        // FIXME: use strings
+        this.tabs = {
+            overview: 'Overview',
+            list: 'List',
+        };
+
         this.defaultHash = 'overview';
-        if (!window.location.hash) {
-            window.location.replace(`#/${this.defaultHash}`);
-        }
     }
 
     componentWillMount() {
@@ -88,9 +106,19 @@ export default class AnalysisFramework extends React.PureComponent {
         this.analysisFrameworkRequest.start();
     }
 
-    componentWillReceiveProps() {
-        if (!window.location.hash) {
-            window.location.replace(`#/${this.defaultHash}`);
+    componentWillReceiveProps(nextProps) {
+        if (this.props.analysisFrameworkId !== nextProps.analysisFrameworkId) {
+            if (this.analysisFrameworkRequest) {
+                this.analysisFrameworkRequest.stop();
+            }
+            if (this.analysisFrameworkSaveRequest) {
+                this.analysisFrameworkSaveRequest.stop();
+            }
+
+            this.analysisFrameworkRequest = this.createRequestForAnalysisFramework(
+                this.props.analysisFrameworkId,
+            );
+            this.analysisFrameworkRequest.start();
         }
     }
 
@@ -169,10 +197,6 @@ export default class AnalysisFramework extends React.PureComponent {
     }
 
     handleSave = () => {
-        if (!this.props.analysisFramework) {
-            return;
-        }
-
         this.analysisFrameworkSaveRequest = this.createRequestForAnalysisFrameworkSave({
             analysisFramework: this.props.analysisFramework,
         });
@@ -180,7 +204,10 @@ export default class AnalysisFramework extends React.PureComponent {
     }
 
     render() {
-        const { analysisFramework } = this.props;
+        const {
+            analysisFramework,
+            projectId,
+        } = this.props;
 
         if (!analysisFramework) {
             return (
@@ -190,12 +217,54 @@ export default class AnalysisFramework extends React.PureComponent {
             );
         }
 
+        // FIXME: add prompt
+
+        const cancelButtonTitle = 'Cancel';
+        const saveButtonTitle = 'Save';
+        const backButtonTooltip = 'Back to projects';
+
+        const exitPath = `${reverseRoute(pathNames.projects, { projectId })}#/frameworks`;
+        const frameworkTitle = analysisFramework.title || _ts('framework', 'analysisFramework');
 
         return (
             <div className={styles.analysisFramework}>
+                <header className={styles.header}>
+                    <Link
+                        className={styles.backLink}
+                        title={backButtonTooltip}
+                        to={exitPath}
+                    >
+                        <i className={iconNames.back} />
+                    </Link>
+                    <h4 className={styles.heading}>
+                        { frameworkTitle }
+                    </h4>
+                    <FixedTabs
+                        className={styles.tabs}
+                        tabs={this.tabs}
+                        useHash
+                        replaceHistory
+                        deafultHash={this.defaultHash}
+                    />
+                    <div className={styles.actionButtons}>
+                        <DangerConfirmButton
+                            // FIXME: use strings
+                            confirmationMessage="Do you want to cancel all changes?"
+                        >
+                            { cancelButtonTitle }
+                        </DangerConfirmButton>
+                        <SuccessButton
+                            onClick={this.handleSave}
+                        >
+                            { saveButtonTitle }
+                        </SuccessButton>
+                    </div>
+                </header>
                 <MultiViewContainer
                     views={this.views}
                     useHash
+                    containerClassName={styles.content}
+                    activeClassName={styles.active}
                 />
             </div>
         );

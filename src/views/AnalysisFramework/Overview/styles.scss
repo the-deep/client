@@ -1,69 +1,21 @@
 @import '../../../stylesheets/base';
-@import '../../../stylesheets/grid-item';
-@import '../page-basic';
-@import '../widget-list';
 
 .overview {
-    @extend %page-basic;
+    display: flex;
+    height: 100%;
 
-    .content {
-        display: flex;
+    .widget-list {
+        width: 30%;
+    }
 
-        .widget-list {
-            @extend %widget-list;
-            border-right: $width-separator-thin solid $color-separator;
-            width: 30%;
-        }
+    .grid-layout-container {
+        background-color: $color-background-alt;
+        width: 70%;
 
-        .grid-layout-container {
-            background-color: $color-background-alt;
-            width: 70%;
-
-            .scroll-wrapper {
-                width: 100%;
-                height: 100%;
-                overflow: auto;
-
-                .grid-layout {
-                    min-width: 100%;
-                    min-height: 100%;
-
-                    :global {
-                        .grid-item {
-                            @extend %grid-item;
-
-                            .header {
-                                @include background-color($color-background-header);
-                                cursor: grab;
-
-                                .action-buttons {
-                                    @include transition-medium;
-                                    display: flex;
-                                    flex-shrink: 0;
-                                    opacity: 0;
-                                    margin: 0 $spacing-extra-small;
-
-                                    button {
-                                        padding: 0 $spacing-extra-small-alt;
-                                    }
-                                }
-                            }
-
-                            .content {
-                                @include background-color($color-foreground-alt);
-                            }
-
-                            &:hover {
-                                .header {
-                                    .action-buttons {
-                                        opacity: 1;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        .scroll-wrapper {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
         }
     }
 }
