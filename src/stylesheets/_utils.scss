@@ -42,6 +42,11 @@
     transition: $duration-transition-fast all ease-in-out;
 }
 
+@mixin outline-button($background-color) {
+    outline: $width-separator-thin dotted get-text-color($background-color);
+    outline-offset: -$spacing-extra-small-alt;
+}
+
 @keyframes spin {
     from {
         transform: rotate(0deg);
@@ -139,6 +144,10 @@ $radius-button-border: 2px;
 
     &:hover {
         background-color: get-hover-color($background-color);
+    }
+
+    &:focus {
+        @include outline-button($background-color);
     }
 }
 

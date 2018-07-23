@@ -39,18 +39,18 @@ $min-width-assistant: 240px;
             flex-basis: 40%;
             margin-left: $spacing-small;
         }
+    }
+}
 
-        .info {
-            position: absolute;
-            top: $position-info-top;
-            right: $position-info-right;
-            cursor: pointer;
+.info {
+    position: absolute;
+    top: $position-info-top;
+    right: $position-info-right;
+    cursor: pointer;
 
-            .icon {
-                color: $color-primary;
-                font-size: $font-size-large;
-            }
-        }
+    .icon {
+        color: $color-primary;
+        font-size: $font-size-large;
     }
 }
 

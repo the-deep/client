@@ -273,16 +273,18 @@ export default class DiscoverProjects extends React.PureComponent {
         this.props.setActiveSort(activeSort);
     }
 
-    handleProjectJoin = (projectId) => {
+    handleProjectJoin = (project) => {
         this.projectJoinRequest.init({
-            projectId,
+            projectId: project.id,
+            projectTitle: project.title,
         });
         this.projectJoinRequest.start();
     }
 
-    handleProjectJoinCancel = (projectId) => {
+    handleProjectJoinCancel = (project) => {
         this.projectJoinCancelRequest.init({
-            projectId,
+            projectId: project.id,
+            projectTitle: project.title,
         });
         this.projectJoinCancelRequest.start();
     }

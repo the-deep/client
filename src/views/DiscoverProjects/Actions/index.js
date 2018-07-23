@@ -32,19 +32,10 @@ export default class Actions extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    renderButtons = () => {
+    renderUserAccessButtons = () => {
         const { project } = this.props;
 
         switch (project.role) {
-            case 'none':
-                return (
-                    <PrimaryButton
-                        iconName={iconNames.add}
-                        title={_ts('discoverProjects.table', 'joinProjectTooltip')}
-                        transparent
-                        onClick={() => this.props.onProjectJoin(project.id)}
-                    />
-                );
             case 'admin': {
                 const link = reverseRoute(
                     pathNames.projects,
@@ -64,14 +55,23 @@ export default class Actions extends React.PureComponent {
                 return (
                     <WarningButton
                         iconName={iconNames.undo}
-                        title={_ts('discoverProjects.table', 'joinCancelProjectTooltip')}
+                        title={_ts('discoverProjects.table', 'cancelJoinRequest')}
                         transparent
-                        onClick={() => this.props.onProjectJoinCancel(project.id)}
+                        onClick={() => this.props.onProjectJoinCancel(project)}
                     />
                 );
             case 'rejected':
                 return (
                     <span>Rejected</span>
+                );
+            case 'none':
+                return (
+                    <PrimaryButton
+                        title={_ts('discoverProjects.table', 'joinLabel')}
+                        onClick={() => this.props.onProjectJoin(project)}
+                    >
+                        {_ts('discoverProjects.table', 'joinLabel')}
+                    </PrimaryButton>
                 );
             default:
                 return null;
@@ -79,11 +79,35 @@ export default class Actions extends React.PureComponent {
     }
 
     render() {
-        const Buttons = this.renderButtons;
+        const UserAccessButtons = this.renderUserAccessButtons;
+        const {
+            project: {
+                memberships,
+                title: projectName,
+            },
+        } = this.props;
+
+        const admins = memberships.filter(m => m.role === 'admin');
+        const adminEmails = admins.map(a => a.memberEmail);
+        const subject = _ts(
+            'discoverProjects.table',
+            'contactAdminsSubject',
+            { projectName },
+        );
+        const contantLink = `mailto:${adminEmails.join(',')}?subject=${subject}`;
 
         return (
             <React.Fragment>
-                <Buttons />
+                <a
+                    className={styles.emailLink}
+                    tabIndex="-1"
+                    title={_ts('discoverProjects.table', 'contactAdminsTitle')}
+                    href={contantLink}
+                    target="_blank"
+                >
+                    <span className={iconNames.email} />
+                </a>
+                <UserAccessButtons />
             </React.Fragment>
         );
     }

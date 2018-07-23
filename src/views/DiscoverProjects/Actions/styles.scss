@@ -14,3 +14,7 @@
     @extend %link;
     color: $color-warning;
 }
+
+.email-link {
+    @extend %link;
+}

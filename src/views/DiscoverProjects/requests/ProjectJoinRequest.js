@@ -4,6 +4,8 @@ import {
     createParamsForProjectJoin,
     // transformResponseErrorToFormError,
 } from '#rest';
+import notify from '#notify';
+import _ts from '#ts';
 
 export default class ProjectJoinRequest extends Request {
     handlePreLoad = () => {
@@ -19,11 +21,22 @@ export default class ProjectJoinRequest extends Request {
             projectId: this.projectId,
             isJoining: true,
         });
+        notify.send({
+            title: _ts('discoverProjects', 'discoverProjectsNotificationTitle'),
+            type: notify.type.SUCCESS,
+            message: _ts(
+                'discoverProjects',
+                'projectJoinNotification',
+                { projectName: this.projectTitle },
+            ),
+            duration: notify.duration.MEDIUM,
+        });
     }
 
-    init = ({ projectId }) => {
+    init = ({ projectId, projectTitle }) => {
         const url = createUrlForProjectJoin(projectId);
         this.projectId = projectId;
+        this.projectTitle = projectTitle;
 
         this.createDefault({
             url,
