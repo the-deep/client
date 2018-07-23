@@ -3,6 +3,9 @@ import boundError from '#rs/components/General/BoundError';
 import { listToMap } from '#rs/utils/common';
 
 import DefaultEditWidget from './Default';
+import NumberEditWidget from './Number';
+import DateEditWidget from './Date';
+import OrganigramEditWidget from './Organigram';
 
 import DateWidget from '../../EditEntries/widgets/Date';
 import DateRangeWidget from '../../EditEntries/widgets/DateRange';
@@ -36,7 +39,7 @@ const widgetList = [
         widgetId: 'dateWidget',
         type: 'list',
         component: DateWidget,
-        editComponent: DefaultEditWidget,
+        editComponent: DateEditWidget,
 
         // NOTE: used as _ts('widgetTitle', 'dateWidgetLabel')
         title: 'dateWidgetLabel',
@@ -156,7 +159,7 @@ const widgetList = [
         widgetId: 'numberWidget',
         type: 'list',
         component: NumberWidget,
-        editComponent: DefaultEditWidget,
+        editComponent: NumberEditWidget,
 
         // NOTE: used as _ts('widgetTitle', 'numberWidgetLabel')
         title: 'numberWidgetLabel',
@@ -166,7 +169,8 @@ const widgetList = [
         widgetId: 'organigramWidget',
         type: 'list',
         component: OrganigramWidget,
-        editComponent: DefaultEditWidget,
+        // FIXME: This component is not complete @tnagorra
+        editComponent: OrganigramEditWidget,
 
         // NOTE: used as _ts('widgetTitle', 'organigramWidgetLabel')
         title: 'organigramWidgetLabel',
