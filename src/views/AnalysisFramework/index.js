@@ -34,11 +34,8 @@ import schema from '#schema';
 import _ts from '#ts';
 
 import Overview from './Overview';
-// import List from './List';
+import List from './List';
 import styles from './styles.scss';
-
-// FIXME: remove this
-const List = () => <div />;
 
 const propTypes = {
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types

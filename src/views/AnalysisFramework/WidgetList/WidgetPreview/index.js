@@ -10,7 +10,6 @@ import styles from './styles.scss';
 
 const propTypes = {
     widget: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    widgetId: PropTypes.string.isRequired,
     onAdd: PropTypes.func,
 };
 const defaultProps = {
@@ -24,9 +23,9 @@ export default class WidgetPreview extends React.PureComponent {
     handleAddClick = () => {
         const {
             onAdd,
-            widgetId,
+            widget,
         } = this.props;
-        onAdd(widgetId);
+        onAdd(widget);
     }
 
     render() {
