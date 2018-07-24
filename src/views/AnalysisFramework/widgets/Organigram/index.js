@@ -94,10 +94,12 @@ export default class Organigram extends React.PureComponent {
         const textInputPlaceholder = _ts('framework.organigramWidget', 'titlePlaceholderScale');
         const cancelButtonLabel = _ts('framework.organigramWidget', 'cancelButtonLabel');
         const saveButtonLabel = _ts('framework.organigramWidget', 'saveButtonLabel');
+        const organigramStructureTitle = _ts('framework.organigramWidget', 'organigramStructureTitle');
 
         return (
             <Modal className={styles.editModal}>
                 <Faram
+                    className={styles.form}
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
                     onValidationSuccess={this.handleFaramValidationSuccess}
@@ -119,6 +121,9 @@ export default class Organigram extends React.PureComponent {
                                 selectOnFocus
                             />
                         </div>
+                        <header className={styles.organigramStructureHeader}>
+                            <h3>{organigramStructureTitle}</h3>
+                        </header>
                         <div className={styles.organs}>
                             <OrganigramCreatorInput
                                 faramElementName="data"

@@ -7,9 +7,16 @@ $height-edit-modal: 72vh;
     width: $width-edit-modal;
     height: $height-edit-modal;
 
+    .form {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
     .body {
         display: flex;
         flex-direction: column;
+        flex-grow: 1;
         padding: 0;
     }
 
@@ -18,11 +25,13 @@ $height-edit-modal: 72vh;
         padding: $spacing-medium;
     }
 
+    .organigram-structure-header {
+        padding: $spacing-medium $spacing-medium 0;
+    }
+
     .organs {
         display: flex;
-        flex-direction: column;
         flex-grow: 1;
         overflow: auto;
-        background-color: $color-foreground-alt;
     }
 }

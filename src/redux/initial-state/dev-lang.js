@@ -370,6 +370,7 @@ const initialDevLangState = {
         767: 'Remove element',
         768: 'e.g. 123 456',
         773: 'Edit title',
+        774: 'Organigram structure',
         775: 'Options',
         777: 'Information date',
         778: 'Exit',
@@ -929,6 +930,7 @@ const initialDevLangState = {
             addChildButtonTitle: 766,
             applyButtonLabel: 427,
             removeElementButtonTitle: 767,
+            organigramStructureTitle: 774,
 
             saveButtonLabel: 25,
             cancelButtonLabel: 61,

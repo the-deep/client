@@ -1,12 +1,8 @@
 @import '../../stylesheets/base';
 
-$width-organ-header-min: 144px;
+$width-organ-header-min: 108px;
 
 .organ {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-
     +.organ {
         border-left: $width-separator-medium solid $color-separator;
     }
@@ -16,8 +12,8 @@ $width-organ-header-min: 144px;
         position: relative;
         flex-grow: 1;
         flex-shrink: 0;
-        margin: $spacing-small;
-        padding: $spacing-medium;
+        margin: $spacing-small $spacing-medium;
+        padding: $spacing-extra-small;
         min-width: $width-organ-header-min;
 
         .action-buttons {
