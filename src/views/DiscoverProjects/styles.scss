@@ -49,6 +49,14 @@
                     top: 0;
                 }
 
+                :global {
+                    .number_of_users,
+                    .number_of_leads,
+                    .number_of_entries {
+                        text-align: right;
+                    }
+                }
+
                 .spark-line {
                     width: 128px;
                     height: 26px;
@@ -65,6 +73,12 @@
                         }
                     }
                 }
+            }
+        }
+
+        .admin {
+            &:not(:last-child)::after {
+                content: ', ';
             }
         }
     }
@@ -87,5 +101,4 @@
             display: flex;
         }
     }
-
 }

@@ -4,6 +4,8 @@ import {
     createParamsForProjectJoinCancel,
     // transformResponseErrorToFormError,
 } from '#rest';
+import notify from '#notify';
+import _ts from '#ts';
 
 export default class ProjectJoinCancelRequest extends Request {
     handlePreLoad = () => {
@@ -19,11 +21,22 @@ export default class ProjectJoinCancelRequest extends Request {
             projectId: this.projectId,
             isJoining: false,
         });
+        notify.send({
+            title: _ts('discoverProjects', 'discoverProjectsNotificationTitle'),
+            type: notify.type.WARNING,
+            message: _ts(
+                'discoverProjects',
+                'projectJoinCancelNotification',
+                { projectName: this.projectTitle },
+            ),
+            duration: notify.duration.MEDIUM,
+        });
     }
 
-    init = ({ projectId }) => {
+    init = ({ projectId, projectTitle }) => {
         const url = createUrlForProjectJoinCancel(projectId);
         this.projectId = projectId;
+        this.projectTitle = projectTitle;
 
         this.createDefault({
             url,

@@ -8,6 +8,7 @@ import { pathNames } from '#constants/';
 
 import BoundError from '#rs/components/General/BoundError';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import ListView from '#rs/components/View/List/ListView';
 import Pager from '#rs/components/View/Pager';
 import RawTable from '#rs/components/View/RawTable';
 import TableHeader from '#rs/components/View/TableHeader';
@@ -39,6 +40,19 @@ import FilterProjectsForm from './FilterProjectsForm';
 import headers from './headers';
 import Actions from './Actions';
 import styles from './styles.scss';
+
+const Admin = ({ admin }) => (
+    <Link
+        className={styles.admin}
+        to={reverseRoute(pathNames.userProfile, { userId: admin.member })}
+    >
+        {admin.memberName}
+    </Link>
+);
+
+Admin.propTypes = {
+    admin: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+};
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
@@ -86,6 +100,8 @@ const mapDispatchToProps = dispatch => ({
 export default class DiscoverProjects extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static membershipKeySelector = m => m.id;
 
     static projectsPerPageOptions = [
         { label: '25', key: 25 },
@@ -186,11 +202,21 @@ export default class DiscoverProjects extends React.PureComponent {
 
     dataModifier = (project, columnKey) => {
         switch (columnKey) {
-            case 'admins':
-                return project.memberships
-                    .filter(d => d.role === 'admin')
-                    .map(d => d.memberName)
-                    .join(', ');
+            case 'admins': {
+                const adminsList = project.memberships.filter(d => d.role === 'admin');
+                const rendererParams = (key, admin) => ({ admin });
+                const EmptyComponent = () => '-';
+
+                return (
+                    <ListView
+                        data={adminsList}
+                        keyExtractor={DiscoverProjects.membershipKeySelector}
+                        renderer={Admin}
+                        rendererParams={rendererParams}
+                        emptyComponent={EmptyComponent}
+                    />
+                );
+            }
             case 'created_at':
                 return (
                     <FormattedDate
@@ -273,16 +299,18 @@ export default class DiscoverProjects extends React.PureComponent {
         this.props.setActiveSort(activeSort);
     }
 
-    handleProjectJoin = (projectId) => {
+    handleProjectJoin = (project) => {
         this.projectJoinRequest.init({
-            projectId,
+            projectId: project.id,
+            projectTitle: project.title,
         });
         this.projectJoinRequest.start();
     }
 
-    handleProjectJoinCancel = (projectId) => {
+    handleProjectJoinCancel = (project) => {
         this.projectJoinCancelRequest.init({
-            projectId,
+            projectId: project.id,
+            projectTitle: project.title,
         });
         this.projectJoinCancelRequest.start();
     }

@@ -22,6 +22,7 @@ const iconNames = {
     delete: 'ion-android-delete',
     refresh: 'ion-android-refresh',
     calendar: 'ion-ios-calendar-outline',
+    email: 'fa fa-envelope',
 
     documentText: 'fa fa-file-o',
 
