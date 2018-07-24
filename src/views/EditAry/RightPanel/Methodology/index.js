@@ -99,7 +99,7 @@ export default class Methodology extends React.PureComponent {
         );
     }
 
-    renderAttributeRow = (dummy, attribute, index) => {
+    renderAttributeRow = (_, attribute, index) => {
         const { aryTemplateMethodology: attributesTemplate } = this.props;
         const attributesTemplateKeys = Object.keys(attributesTemplate);
         const renderAttribute = (k, key) => this.renderAttribute(key, index);

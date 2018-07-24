@@ -1,65 +1,14 @@
-@import '../../../../../stylesheets/base';
-
-.list {
-    padding: $spacing-small;
-    width: 100%;
-    height: 100%;
-
-    .input {
-        width: 100%;
-    }
-}
+@import '../../../../stylesheets/base';
 
 $height-edit-modal: 512px;
 
-.edit-modal {
-    width: $width-modal-small;
-    height: $height-edit-modal;
-
-    .body {
-        display: flex;
-        flex-direction: column;
-        padding: 0;
-
-        .title-input-container {
-            flex-shrink: 0;
-            padding: $spacing-medium;
-        }
-
-        .option-inputs {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-
-            .header {
-                display: flex;
-                align-items: center;
-                flex-shrink: 0;
-                justify-content: space-between;
-                border-top: $width-separator-thin solid $color-separator;
-                border-bottom: $width-separator-thin solid $color-separator;
-                background-color: $color-background-header;
-                padding: 0 $spacing-medium;
-            }
-
-            .edit-option-list {
-                flex-grow: 1;
-                overflow-y: auto;
-
-                .sortable-unit {
-                    border-top: 0;
-                }
-            }
-        }
-    }
-}
-
 .sortable-unit {
     display: flex;
+    align-items: center;
     border-top: $width-separator-thin solid $color-separator;
     border-bottom: $width-separator-thin solid $color-separator;
     background-color: $color-foreground;
-    padding: $spacing-small 0;
+    padding: $spacing-small;
 
     .drag-handle {
         display: flex;
@@ -71,20 +20,60 @@ $height-edit-modal: 512px;
         padding: 0 $spacing-medium;
     }
 
-    .edit-option {
-        display: flex;
-        align-items: flex-end;
+    .title-input {
         flex-grow: 1;
-        background-color: $color-foreground;
-        padding: $spacing-medium 0;
+        padding: 0 $spacing-extra-small;
+    }
 
-        .title-input {
+    .delete-button {
+        flex-shrink: 0;
+    }
+}
+
+.edit-modal {
+    width: $width-modal-small;
+    height: $height-edit-modal;
+
+    .form {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        .body {
+            display: flex;
+            flex-direction: column;
             flex-grow: 1;
-        }
+            padding: 0;
 
-        .delete-button {
-            align-self: flex-end;
-            flex-shrink: 0;
+            .title-input {
+                padding: 0 $spacing-small;
+            }
+
+            .option-inputs {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+
+                .header {
+                    display: flex;
+                    align-items: center;
+                    flex-shrink: 0;
+                    justify-content: space-between;
+                    border-top: $width-separator-thin solid $color-separator;
+                    border-bottom: $width-separator-thin solid $color-separator;
+                    background-color: $color-background-header;
+                    padding: $spacing-small;
+                }
+
+                .edit-option-list {
+                    flex-grow: 1;
+                    overflow-y: auto;
+
+                    .sortable-unit {
+                        border-top: 0;
+                    }
+                }
+            }
         }
     }
 }
