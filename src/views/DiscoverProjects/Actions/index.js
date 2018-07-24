@@ -78,8 +78,7 @@ export default class Actions extends React.PureComponent {
         }
     }
 
-    render() {
-        const UserAccessButtons = this.renderUserAccessButtons;
+    renderContactLink = () => {
         const {
             project: {
                 memberships,
@@ -89,24 +88,37 @@ export default class Actions extends React.PureComponent {
 
         const admins = memberships.filter(m => m.role === 'admin');
         const adminEmails = admins.map(a => a.memberEmail);
+
+        if (adminEmails.length < 1) {
+            return null;
+        }
+
         const subject = _ts(
             'discoverProjects.table',
             'contactAdminsSubject',
             { projectName },
         );
         const contantLink = `mailto:${adminEmails.join(',')}?subject=${subject}`;
+        return (
+            <a
+                className={styles.emailLink}
+                tabIndex="-1"
+                title={_ts('discoverProjects.table', 'contactAdminsTitle')}
+                href={contantLink}
+                target="_blank"
+            >
+                <span className={iconNames.email} />
+            </a>
+        );
+    }
+
+    render() {
+        const UserAccessButtons = this.renderUserAccessButtons;
+        const ContactLink = this.renderContactLink;
 
         return (
             <React.Fragment>
-                <a
-                    className={styles.emailLink}
-                    tabIndex="-1"
-                    title={_ts('discoverProjects.table', 'contactAdminsTitle')}
-                    href={contantLink}
-                    target="_blank"
-                >
-                    <span className={iconNames.email} />
-                </a>
+                <ContactLink />
                 <UserAccessButtons />
             </React.Fragment>
         );

@@ -75,6 +75,12 @@
                 }
             }
         }
+
+        .admin {
+            &:not(:last-child)::after {
+                content: ', ';
+            }
+        }
     }
 
     .footer {
@@ -95,5 +101,4 @@
             display: flex;
         }
     }
-
 }
