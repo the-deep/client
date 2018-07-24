@@ -1,0 +1,21 @@
+@import '../../../../stylesheets/base';
+
+.excerpt-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .title {
+        flex-shrink: 0;
+        padding: $spacing-small;
+        padding-bottom: 0;
+        text-transform: uppercase;
+        color: $color-accent;
+        font-weight: $font-weight-bold;
+    }
+
+    .excerpt-box {
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+}

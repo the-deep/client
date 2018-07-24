@@ -31,6 +31,7 @@ const propTypes = {
     label: PropTypes.string,
     showLabel: PropTypes.bool,
     hideList: PropTypes.bool,
+    modalLeftComponent: PropTypes.node,
 };
 
 const defaultProps = {
@@ -46,6 +47,7 @@ const defaultProps = {
     labelSelector: organ => organ.title,
     childSelector: organ => organ.children,
     data: [],
+    modalLeftComponent: undefined,
 };
 
 const emptyObject = {};
@@ -192,6 +194,7 @@ export default class OrganigramInput extends React.PureComponent {
             idSelector,
             labelSelector,
             childSelector,
+            modalLeftComponent,
         } = this.props;
 
         if (!showOrgChartModal) {
@@ -206,6 +209,11 @@ export default class OrganigramInput extends React.PureComponent {
                     {/*
                         All organigrams in widgets have singular head
                     */}
+                    {modalLeftComponent &&
+                        <div className={styles.left}>
+                            {modalLeftComponent}
+                        </div>
+                    }
                     <OrgChart
                         className={styles.orgchart}
                         data={data[0] || emptyObject}
