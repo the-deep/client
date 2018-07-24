@@ -95,6 +95,9 @@ const iconNames = {
     settings: 'ion-android-settings',
 
     back: 'ion-android-arrow-back',
+
+    fork: 'ion-fork-repo',
+    trash: 'ion-trash-b',
 };
 
 export default iconNames;

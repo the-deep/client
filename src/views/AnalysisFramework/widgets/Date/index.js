@@ -2,25 +2,24 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import Checkbox from '#rs/components/Input/Checkbox';
-import DateInput from '#rs/components/Input/DateInput';
-import TextInput from '#rs/components/Input/TextInput';
-import Button from '#rs/components/Action/Button';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
 import Modal from '#rs/components/View/Modal';
-import ModalHeader from '#rs/components/View/Modal/Header';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
-import BoundError from '#rs/components/General/BoundError';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import TextInput from '#rs/components/Input/TextInput';
+import Faram, { requiredCondition } from '#rs/components/Input/Faram';
 
-import WidgetError from '#components/WidgetError';
 import _ts from '#ts';
 
 import styles from './styles.scss';
 
 const propTypes = {
     title: PropTypes.string.isRequired,
-    editAction: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
@@ -28,78 +27,71 @@ const defaultProps = {
     data: {},
 };
 
-const emptyObject = {};
-
-@BoundError(WidgetError)
 export default class DateFrameworkList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static schema = {
+        fields: {
+            title: [requiredCondition],
+            informationDateSelected: [],
+        },
+    };
 
     constructor(props) {
         super(props);
 
         const {
             title,
-            editAction,
+            data: {
+                informationDateSelected,
+            },
         } = props;
 
-        const informationDateSelected = (props.data || emptyObject).informationDateSelected;
         this.state = {
-            showEditModal: false,
-            title,
-            informationDateSelected,
+            faramErrors: {},
+            faramValues: {
+                title,
+                informationDateSelected,
+            },
+            pristine: false,
         };
-        editAction(this.handleEdit);
     }
 
-    handleWidgetTitleChange = (value) => {
-        this.setState({ title: value });
-    }
+    handleFaramChange = (faramValues, faramErrors) => {
+        this.setState({
+            faramValues,
+            faramErrors,
+            pristine: true,
+        });
+    };
 
-    handleInformationDataCheck = (value) => {
-        this.setState({ informationDateSelected: value });
-    }
+    handleFaramValidationFailure = (faramErrors) => {
+        this.setState({
+            faramErrors,
+            pristine: false,
+        });
+    };
 
-    handleEdit = () => {
-        this.setState({ showEditModal: true });
-    }
-
-    handleEditModalCancelButtonClick = () => {
+    handleFaramValidationSuccess = (faramValues) => {
         const {
-            data,
+            title,
+            ...otherProps
+        } = faramValues;
+        this.props.onSave(otherProps, title);
+    };
+
+    render() {
+        const {
+            faramValues,
+            faramErrors,
+            pristine,
+        } = this.state;
+        const {
+            onClose,
             title,
         } = this.props;
 
-        this.setState({
-            showEditModal: false,
-            title,
-            informationDateSelected: data.informationDateSelected,
-        });
-    }
-
-    handleEditModalSaveButtonClick = () => {
-        this.setState({ showEditModal: false });
-        const { onChange } = this.props;
-        const {
-            title,
-            informationDateSelected,
-        } = this.state;
-        const data = { informationDateSelected };
-        onChange(data, title);
-    }
-
-    renderEditModal = () => {
-        const {
-            showEditModal,
-            title: titleValue,
-            informationDateSelected,
-        } = this.state;
-
-        if (!showEditModal) {
-            return null;
-        }
-
-        const headerTitle = _ts('framework.dateWidget', 'editTitleModalHeader');
         const titleInputLabel = _ts('framework.dateWidget', 'titleLabel');
         const titleInputPlaceholder = _ts('framework.dateWidget', 'widgetTitlePlaceholder');
         const checkboxLabel = _ts('framework.dateWidget', 'informationDateCheckboxLabel');
@@ -108,49 +100,44 @@ export default class DateFrameworkList extends React.PureComponent {
 
         return (
             <Modal className={styles.editModal}>
-                <ModalHeader title={headerTitle} />
-                <ModalBody>
-                    <TextInput
-                        autoFocus
-                        label={titleInputLabel}
-                        onChange={this.handleWidgetTitleChange}
-                        placeholder={titleInputPlaceholder}
-                        selectOnFocus
-                        showHintAndError={false}
-                        value={titleValue}
-                    />
-                    <Checkbox
-                        className={styles.checkbox}
-                        onChange={this.handleInformationDataCheck}
-                        value={informationDateSelected}
-                        label={checkboxLabel}
-                    />
-                </ModalBody>
-                <ModalFooter>
-                    <Button onClick={this.handleEditModalCancelButtonClick}>
-                        {cancelButtonLabel}
-                    </Button>
-                    <PrimaryButton onClick={this.handleEditModalSaveButtonClick}>
-                        {saveButtonLabel}
-                    </PrimaryButton>
-                </ModalFooter>
+                <Faram
+                    onChange={this.handleFaramChange}
+                    onValidationFailure={this.handleFaramValidationFailure}
+                    onValidationSuccess={this.handleFaramValidationSuccess}
+                    schema={DateFrameworkList.schema}
+                    value={faramValues}
+                    error={faramErrors}
+                >
+                    <ModalHeader title={title} />
+                    <ModalBody>
+                        <NonFieldErrors faramElement />
+                        <TextInput
+                            faramElementName="title"
+                            autoFocus
+                            label={titleInputLabel}
+                            placeholder={titleInputPlaceholder}
+                            selectOnFocus
+                            showHintAndError={false}
+                        />
+                        <Checkbox
+                            faramElementName="informationDateSelected"
+                            className={styles.checkbox}
+                            label={checkboxLabel}
+                        />
+                    </ModalBody>
+                    <ModalFooter>
+                        <DangerButton onClick={onClose}>
+                            {cancelButtonLabel}
+                        </DangerButton>
+                        <PrimaryButton
+                            type="submit"
+                            disabled={!pristine}
+                        >
+                            {saveButtonLabel}
+                        </PrimaryButton>
+                    </ModalFooter>
+                </Faram>
             </Modal>
-        );
-    }
-
-    render() {
-        const EditModal = this.renderEditModal;
-
-        return (
-            <div className={styles.list}>
-                <DateInput
-                    className={styles.dateInput}
-                    onChange={this.noop}
-                    showHintAndError={false}
-                    disabled
-                />
-                <EditModal />
-            </div>
         );
     }
 }
