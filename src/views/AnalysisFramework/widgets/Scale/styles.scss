@@ -1,4 +1,4 @@
-@import '../../../../../stylesheets/base';
+@import '../../../../stylesheets/base';
 
 $height-edit-modal: 72vh;
 
@@ -22,63 +22,44 @@ $height-edit-modal: 72vh;
         flex-grow: 1;
         padding: 0;
 
-        .scale-unit {
-            flex-basis: 100%;
-            overflow-y: auto;
+        .header {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            justify-content: space-between;
+            // border-top: $width-separator-thin solid $color-separator;
+            border-bottom: $width-separator-thin solid $color-separator;
+            // background-color: $color-background-header;
+            padding: $spacing-small;
         }
 
-        .sortable-unit {
-            border-top: 0;
+        .edit-scale-unit-list {
+            flex-grow: 1;
+            overflow-y: auto;
         }
     }
 }
 
-.sortable-unit {
+.edit-scale-unit {
     display: flex;
-    border-top: $width-separator-thin solid $color-separator;
-    border-bottom: $width-separator-thin solid $color-separator;
+    align-items: flex-end;
+    flex-grow: 1;
     background-color: $color-foreground;
-    padding: $spacing-small 0;
+    padding: $spacing-medium 0;
 
-    .drag-handle {
-        display: flex;
-        align-items: center;
-        align-self: stretch;
-        flex-grow: 0;
-        flex-shrink: 0;
-        cursor: move;
-        padding: 0 $spacing-medium;
-    }
-
-    .edit-scale-unit {
+    .check-button {
         display: flex;
         align-items: flex-end;
-        flex-grow: 1;
-        background-color: $color-foreground;
-        padding: $spacing-medium 0;
+        flex-direction: column;
+        flex-shrink: 0;
+        cursor: pointer;
 
-        .title-input {
-            flex-grow: 1;
-        }
-
-        .delete-button {
-            flex-shrink: 0;
-        }
-
-        .check-button {
-            display: flex;
-            align-items: flex-end;
-            flex-direction: column;
+        .label {
             flex-shrink: 0;
             cursor: pointer;
-
-            .label {
-                flex-shrink: 0;
-                cursor: pointer;
-                text-transform: uppercase;
-                color: $color-text-label;
-                font-size: $font-size-extra-small;
-            }
+            text-transform: uppercase;
+            color: $color-text-label;
+            font-size: $font-size-extra-small;
         }
     }
 }
