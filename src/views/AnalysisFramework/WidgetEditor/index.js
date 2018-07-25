@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
+import update from 'immutability-helper';
 
 import Faram from '#rs/components/Input/Faram';
 import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
 import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
-import GridViewLayout from '#rs/components/View/GridViewLayout';
+import GridLayoutEditor from '#rs/components/View/GridLayoutEditor';
 
 import {
     updateAfViewWidgetAction,
@@ -16,10 +17,14 @@ import { iconNames } from '#constants';
 import {
     fetchWidget,
     hasWidget,
+    gridSize,
 } from '../widgets';
 
 import EditButton from './EditButton';
 import styles from './styles.scss';
+
+const OVERVIEW = 'overview';
+const LIST = 'list';
 
 const propTypes = {
     widgets: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -69,6 +74,33 @@ export default class WidgetEditor extends React.PureComponent {
         });
     }
 
+    handleWidgetLayoutChange = (key, layout) => {
+        const {
+            widgets,
+            widgetType,
+            updateWidget,
+            analysisFrameworkId,
+        } = this.props;
+
+        const widget = widgets.find(d => d.key === key);
+
+        const settings = {
+            properties: {
+                $if: [
+                    widgetType === OVERVIEW,
+                    { overviewGridLayout: { $set: layout } },
+                    { listGridLayout: { $set: layout } },
+                ],
+            },
+        };
+
+        const newWidget = update(widget, settings);
+        updateWidget({
+            analysisFrameworkId,
+            widget: newWidget,
+        });
+    }
+
     layoutSelector = (widget) => {
         const { widgetType } = this.props;
         const {
@@ -77,7 +109,8 @@ export default class WidgetEditor extends React.PureComponent {
                 listGridLayout,
             } = {},
         } = widget;
-        return widgetType === 'overview' ? overviewGridLayout : listGridLayout;
+
+        return widgetType === OVERVIEW ? overviewGridLayout : listGridLayout;
     }
 
     renderWidgetHeader = (widget) => {
@@ -155,17 +188,21 @@ export default class WidgetEditor extends React.PureComponent {
         const { widgets } = this.props;
         return (
             <Faram
+                className={styles.faram}
                 schema={WidgetEditor.schema}
                 value={WidgetEditor.value}
                 disabled
             >
-                <GridViewLayout
+                <GridLayoutEditor
+                    className={styles.gridLayoutEditor}
+                    gridSize={gridSize}
                     data={widgets}
                     layoutSelector={this.layoutSelector}
                     itemHeaderModifier={this.renderWidgetHeader}
                     itemContentModifier={this.renderWidgetContent}
                     keySelector={WidgetEditor.keySelector}
                     itemClassName={styles.widget}
+                    onLayoutChange={this.handleWidgetLayoutChange}
                 />
             </Faram>
         );

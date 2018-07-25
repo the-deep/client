@@ -24,6 +24,11 @@ import ScaleWidget from '../../EditEntries/widgets/Scale';
 import SelectWidget from '../../EditEntries/widgets/Select';
 import TimeWidget from '../../EditEntries/widgets/Time';
 
+export const gridSize = {
+    width: 16,
+    height: 16,
+};
+
 const widgetList = [
     {
         widgetId: 'dateRangeWidget',
@@ -217,8 +222,8 @@ const widgets = listToMap(
             component: decorator(component),
             editComponent: editComponent ? decorator(editComponent) : undefined,
             minSize: {
-                width: 16 * minSize.w,
-                height: 16 * minSize.h,
+                width: gridSize.width * minSize.w,
+                height: gridSize.height * minSize.h,
             },
         };
     },
