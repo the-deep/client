@@ -1,256 +1,190 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { randomString } from '#rs/utils/common';
-import update from '#rs/utils/immutable-update';
-import TextInput from '#rs/components/Input/TextInput';
-import Button from '#rs/components/Action/Button';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
+import FaramList from '#rs/components/Input/Faram/FaramList';
+import List from '#rs/components/View/List';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
 import Modal from '#rs/components/View/Modal';
-import ModalHeader from '#rs/components/View/Modal/Header';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
-import SortableList from '#rs/components/View/SortableList';
-import BoundError from '#rs/components/General/BoundError';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import TextInput from '#rs/components/Input/TextInput';
+import Faram, { requiredCondition } from '#rs/components/Input/Faram';
+import { randomString, unique } from '#rs/utils/common';
 
-import _ts from '#ts';
 import { iconNames } from '#constants';
-import WidgetError from '#components/WidgetError';
+import _ts from '#ts';
 
+import InputRow from './InputRow';
 import styles from './styles.scss';
-
 
 const propTypes = {
     title: PropTypes.string.isRequired,
-    editAction: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired,
-    data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    data: PropTypes.object, // eslint-disable-line react/forbid-prop-types, react/no-unused-prop-types, max-len
 };
 
 const defaultProps = {
     data: {},
 };
 
-const emptyObject = {};
-const emptyList = [];
-
-@BoundError(WidgetError)
-export default class Multiselect extends React.PureComponent {
-    static valueKeyExtractor = d => d.key;
+export default class MultiSelectEditWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static schema = {
+        fields: {
+            title: [requiredCondition],
+            options: {
+                validation: (options) => {
+                    const errors = [];
+                    if (!options || options.length <= 0) {
+                        // FIXME: use strings
+                        errors.push('There should be at least one option.');
+                    } else if (options && unique(options, o => o.label).length !== options.length) {
+                        // FIXME: use strings
+                        errors.push('Duplicate options are not allowed.');
+                    }
+                    return errors;
+                },
+                member: {
+                    fields: {
+                        label: [requiredCondition],
+                        key: [requiredCondition],
+                    },
+                },
+            },
+        },
+    };
+
+    static faramInfoForAdd = {
+        newElement: () => ({
+            key: randomString(16).toLowerCase(),
+            label: '',
+        }),
+    }
+
+    static keyExtractor = elem => elem.key;
+
+    static rendererParams = (key, elem, i) => ({
+        index: i,
+    })
 
     constructor(props) {
         super(props);
 
         const {
             title,
-            data,
-            editAction,
-        } = this.props;
-        const options = data.options || emptyList;
-
+            data: { options },
+        } = props;
         this.state = {
-            showEditModal: false,
-            title,
-            options,
+            faramValues: { title, options },
+            faramErrors: {},
+            pristine: false,
         };
-
-        editAction(this.handleEdit);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (this.props.data !== nextProps.data) {
-            const options = (nextProps.data || emptyObject).options;
-            this.setState({ options });
-        }
-    }
-
-    handleEdit = () => {
-        this.setState({ showEditModal: true });
-    }
-
-    handleOptionOrderChange = (newOptions) => {
-        this.setState({ options: newOptions });
-    }
-
-    handleWidgetTitleChange = (value) => {
-        this.setState({ title: value });
-    }
-
-    handleRemoveButtonClick = (key) => {
-        const options = this.state.options.filter(d => d.key !== key);
-        this.setState({ options });
-    }
-
-    handleValueInputChange = (key, value) => {
-        const valueIndex = this.state.options.findIndex(d => d.key === key);
-        const settings = {
-            [valueIndex]: {
-                label: { $set: value },
-            },
-        };
-        const options = update(this.state.options, settings);
-
-        this.setState({ options });
-    }
-
-    handleAddOptionButtonClick = () => {
-        const newOption = {
-            key: randomString(16).toLowerCase(),
-            label: '',
-        };
-
+    handleFaramChange = (faramValues, faramErrors) => {
         this.setState({
-            options: [
-                ...this.state.options,
-                newOption,
-            ],
+            faramValues,
+            faramErrors,
+            pristine: true,
         });
-    }
-
-    handleModalCancelButtonClick = () => {
-        this.setState({
-            showEditModal: false,
-            options: this.props.data.options,
-            title: this.props.title,
-        });
-    }
-
-    handleModalSaveButtonClick = () => {
-        this.setState({ showEditModal: false });
-        const { options } = this.state;
-        const { data } = this.props;
-
-        const newData = {
-            ...data,
-            options,
-        };
-
-        this.props.onChange(
-            newData,
-            this.state.title,
-        );
-    }
-
-    renderEditOption = (key, data) => (
-        <div
-            className={styles.editOption}
-            key={key}
-        >
-            <TextInput
-                className={styles.titleInput}
-                label={_ts('framework.multiselectWidget', 'optionLabel')}
-                placeholder={_ts('framework.multiselectWidget', 'optionPlaceholder')}
-                onChange={(value) => { this.handleValueInputChange(key, value); }}
-                showHintAndError={false}
-                value={data.label}
-                autoFocus
-            />
-            <DangerButton
-                className={styles.deleteButton}
-                onClick={() => { this.handleRemoveButtonClick(key); }}
-                transparent
-            >
-                <span className={iconNames.delete} />
-            </DangerButton>
-        </div>
-    )
-
-    renderDragHandle = () => {
-        const dragStyle = [styles.dragHandle];
-        return (
-            <span className={`${iconNames.hamburger} ${dragStyle.join(' ')}`} />
-        );
     };
 
-    renderEditModal = () => {
+    handleFaramValidationFailure = (faramErrors) => {
+        this.setState({
+            faramErrors,
+            pristine: false,
+        });
+    };
+
+    handleFaramValidationSuccess = (faramValues) => {
+        const { title, ...otherProps } = faramValues;
+        this.props.onSave(otherProps, title);
+    };
+
+    render() {
         const {
-            showEditModal,
-            options,
-            title,
+            faramValues,
+            faramErrors,
+            pristine,
         } = this.state;
+        const {
+            onClose,
+            title,
+        } = this.props;
 
-        if (!showEditModal) {
-            return null;
-        }
-
-        const headerTitle = _ts('framework.multiselectWidget', 'editMultiselectModalTitle');
-        const titleInputLabel = _ts('framework.multiselectWidget', 'titleLabel');
-        const titleInputPlaceholder = _ts('framework.multiselectWidget', 'titlePlaceholderScale');
-        const optionsTitle = _ts('framework.multiselectWidget', 'optionsHeader');
-        const addOptionButtonLabel = _ts('framework.multiselectWidget', 'addOptionButtonLabel');
-        const cancelButtonLabel = _ts('framework.multiselectWidget', 'cancelButtonLabel');
-        const saveButtonLabel = _ts('framework.multiselectWidget', 'saveButtonLabel');
+        const cancelButtonLabel = 'Cancel';
+        const saveButtonLabel = 'Save';
 
         return (
             <Modal className={styles.editModal}>
-                <ModalHeader title={headerTitle} />
-                <ModalBody className={styles.body}>
-                    <div className={styles.titleInputContainer}>
+                <Faram
+                    className={styles.form}
+                    onChange={this.handleFaramChange}
+                    onValidationFailure={this.handleFaramValidationFailure}
+                    onValidationSuccess={this.handleFaramValidationSuccess}
+                    schema={MultiSelectEditWidget.schema}
+                    value={faramValues}
+                    error={faramErrors}
+                >
+                    <ModalHeader title={title} />
+                    <ModalBody className={styles.body}>
+                        <NonFieldErrors faramElement />
                         <TextInput
+                            faramElementName="title"
                             className={styles.titleInput}
-                            label={titleInputLabel}
-                            placeholder={titleInputPlaceholder}
-                            onChange={this.handleWidgetTitleChange}
-                            value={title}
-                            showHintAndError={false}
                             autoFocus
                             selectOnFocus
+                            label={_ts('framework.excerptWidget', 'titleLabel')}
+                            placeholder={_ts('framework.excerptWidget', 'widgetTitlePlaceholder')}
                         />
-                    </div>
-                    <div className={styles.optionInputs}>
-                        <header className={styles.header}>
-                            <h4>
-                                { optionsTitle }
-                            </h4>
-                            <AccentButton
-                                onClick={this.handleAddOptionButtonClick}
-                                transparent
-                            >
-                                { addOptionButtonLabel }
-                            </AccentButton>
-                        </header>
-                        <SortableList
-                            className={styles.editOptionList}
-                            data={options}
-                            modifier={this.renderEditOption}
-                            onChange={this.handleOptionOrderChange}
-                            sortableItemClass={styles.sortableUnit}
-                            keyExtractor={Multiselect.valueKeyExtractor}
-                            dragHandleModifier={this.renderDragHandle}
-                        />
-                    </div>
-                </ModalBody>
-                <ModalFooter>
-                    <Button onClick={this.handleModalCancelButtonClick}>
-                        { cancelButtonLabel }
-                    </Button>
-                    <PrimaryButton onClick={this.handleModalSaveButtonClick}>
-                        { saveButtonLabel }
-                    </PrimaryButton>
-                </ModalFooter>
+                        <div className={styles.optionInputs} >
+                            <FaramList faramElementName="options">
+                                <NonFieldErrors faramElement />
+                                <header className={styles.header}>
+                                    <h4>
+                                        {/* FIXME: use strings */}
+                                        Options
+                                    </h4>
+                                    <PrimaryButton
+                                        faramAction="add"
+                                        faramInfo={MultiSelectEditWidget.faramInfoForAdd}
+                                        // iconName={iconNames.add}
+                                        transparent
+                                    >
+                                        {/* FIXME: use strings */}
+                                        Add
+                                    </PrimaryButton>
+                                </header>
+                                <div className={styles.editOptionList}>
+                                    <List
+                                        faramElement
+                                        keyExtractor={MultiSelectEditWidget.keyExtractor}
+                                        rendererParams={MultiSelectEditWidget.rendererParams}
+                                        renderer={InputRow}
+                                    />
+                                </div>
+                            </FaramList>
+                        </div>
+                    </ModalBody>
+                    <ModalFooter>
+                        <DangerButton onClick={onClose}>
+                            {cancelButtonLabel}
+                        </DangerButton>
+                        <PrimaryButton
+                            type="submit"
+                            disabled={!pristine}
+                        >
+                            {saveButtonLabel}
+                        </PrimaryButton>
+                    </ModalFooter>
+                </Faram>
             </Modal>
-        );
-    }
-
-    render() {
-        const { options } = this.state;
-        const EditModal = this.renderEditModal;
-
-        return (
-            <div className={styles.list}>
-                <MultiSelectInput
-                    className={styles.input}
-                    options={options}
-                    keyExtractor={Multiselect.valueKeyExtractor}
-                    disabled
-                />
-                <EditModal />
-            </div>
         );
     }
 }

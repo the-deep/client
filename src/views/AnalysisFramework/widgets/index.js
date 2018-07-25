@@ -6,6 +6,7 @@ import DefaultEditWidget from './Default';
 import NumberEditWidget from './Number';
 import DateEditWidget from './Date';
 import OrganigramEditWidget from './Organigram';
+import MultiSelectEditWidget from './MultiSelect';
 
 import DateWidget from '../../EditEntries/widgets/Date';
 import DateRangeWidget from '../../EditEntries/widgets/DateRange';
@@ -154,7 +155,7 @@ const widgetList = [
         widgetId: 'multiselectWidget',
         type: 'list',
         component: MultiSelectWidget,
-        editComponent: DefaultEditWidget,
+        editComponent: MultiSelectEditWidget,
 
         // NOTE: used as _ts('widgetTitle', 'multiselectWidgetLabel')
         title: 'multiselectWidgetLabel',

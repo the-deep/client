@@ -1,0 +1,30 @@
+@import '../../../../../stylesheets/base';
+
+.sortable-unit {
+    display: flex;
+    align-items: center;
+    // border-top: $width-separator-thin solid $color-separator;
+    border-bottom: $width-separator-thin solid $color-separator;
+    background-color: $color-foreground;
+    padding: $spacing-small;
+
+    // .drag-handle {
+    //     display: flex;
+    //     align-items: center;
+    //     align-self: stretch;
+    //     flex-grow: 0;
+    //     flex-shrink: 0;
+    //     cursor: move;
+    //     padding: 0 $spacing-medium;
+    // }
+
+    .title-input {
+        flex-grow: 1;
+        padding: 0 $spacing-extra-small;
+    }
+
+    .delete-button {
+        flex-shrink: 0;
+    }
+}
+

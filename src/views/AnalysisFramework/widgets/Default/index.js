@@ -24,7 +24,7 @@ const defaultProps = {
     data: {},
 };
 
-export default class Excerpt extends React.PureComponent {
+export default class DefaultEditWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -85,7 +85,7 @@ export default class Excerpt extends React.PureComponent {
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
                     onValidationSuccess={this.handleFaramValidationSuccess}
-                    schema={Excerpt.schema}
+                    schema={DefaultEditWidget.schema}
                     value={faramValues}
                     error={faramErrors}
                 >
