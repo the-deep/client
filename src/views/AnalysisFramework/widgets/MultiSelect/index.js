@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
 import FaramList from '#rs/components/Input/Faram/FaramList';
 import List from '#rs/components/View/List';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
@@ -18,29 +17,8 @@ import { randomString, unique } from '#rs/utils/common';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
+import InputRow from './InputRow';
 import styles from './styles.scss';
-
-const InputRow = ({ index }) => (
-    <div className={styles.sortableUnit}>
-        <FaramGroup
-            faramElementName={String(index)}
-        >
-            <TextInput
-                className={styles.titleInput}
-                faramElementName="label"
-                autoFocus
-                label="Title"
-                placeholder={`Option ${index + 1}`}
-            />
-        </FaramGroup>
-        <DangerButton
-            className={styles.deleteButton}
-            iconName={iconNames.delete}
-            faramAction="remove"
-            faramElementIndex={index}
-        />
-    </div>
-);
 
 const propTypes = {
     title: PropTypes.string.isRequired,
@@ -67,6 +45,7 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                         // FIXME: use strings
                         errors.push('There should be at least one option.');
                     } else if (options && unique(options, o => o.label).length !== options.length) {
+                        // FIXME: use strings
                         errors.push('Duplicate options are not allowed.');
                     }
                     return errors;
@@ -80,6 +59,19 @@ export default class MultiSelectEditWidget extends React.PureComponent {
             },
         },
     };
+
+    static faramInfoForAdd = {
+        newElement: () => ({
+            key: randomString(16).toLowerCase(),
+            label: '',
+        }),
+    }
+
+    static keyExtractor = elem => elem.key;
+
+    static rendererParams = (key, elem, i) => ({
+        index: i,
+    })
 
     constructor(props) {
         super(props);
@@ -145,35 +137,35 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                         <NonFieldErrors faramElement />
                         <TextInput
                             faramElementName="title"
+                            className={styles.titleInput}
                             autoFocus
+                            selectOnFocus
                             label={_ts('framework.excerptWidget', 'titleLabel')}
                             placeholder={_ts('framework.excerptWidget', 'widgetTitlePlaceholder')}
-                            selectOnFocus
-                            className={styles.titleInput}
                         />
                         <div className={styles.optionInputs} >
                             <FaramList faramElementName="options">
                                 <NonFieldErrors faramElement />
                                 <header className={styles.header}>
-                                    <h3>
+                                    <h4>
+                                        {/* FIXME: use strings */}
                                         Options
-                                    </h3>
+                                    </h4>
                                     <PrimaryButton
                                         faramAction="add"
-                                        faramInfo={{
-                                            newElement: () => ({
-                                                key: randomString(16).toLowerCase(),
-                                                label: '',
-                                            }),
-                                        }}
-                                        iconName={iconNames.add}
-                                    />
+                                        faramInfo={MultiSelectEditWidget.faramInfoForAdd}
+                                        // iconName={iconNames.add}
+                                        transparent
+                                    >
+                                        {/* FIXME: use strings */}
+                                        Add
+                                    </PrimaryButton>
                                 </header>
                                 <div className={styles.editOptionList}>
                                     <List
                                         faramElement
-                                        keyExtractor={elem => elem.key}
-                                        rendererParams={(key, elem, i) => ({ index: i })}
+                                        keyExtractor={MultiSelectEditWidget.keyExtractor}
+                                        rendererParams={MultiSelectEditWidget.rendererParams}
                                         renderer={InputRow}
                                     />
                                 </div>
