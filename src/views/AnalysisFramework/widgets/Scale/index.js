@@ -7,7 +7,6 @@ import Faram, {
 import FaramList from '#rs/components/Input/Faram/FaramList';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import List from '#rs/components/View/List';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import TextInput from '#rs/components/Input/TextInput';
@@ -49,18 +48,15 @@ export default class ScaleFrameworkList extends React.PureComponent {
     static schema = {
         fields: {
             title: [requiredCondition],
-            // FIXME: is this enough?
             scaleUnits: {
                 validation: (scaleUnits) => {
                     const errors = [];
                     if (!scaleUnits || scaleUnits.length <= 0) {
-                        // FIXME: use strings
-                        errors.push('There should be at least one scale unit.');
+                        errors.push(_ts('framework.scaleWidget', 'requiredErrorMessage'));
                     } else if (
                         scaleUnits && unique(scaleUnits, o => o.label).length !== scaleUnits.length
                     ) {
-                        // FIXME: use strings
-                        errors.push('Duplicate scale units are not allowed.');
+                        errors.push(_ts('framework.scaleWidget', 'duplicateErrorMessage'));
                     }
                     return errors;
                 },
@@ -94,6 +90,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
         } = props;
 
         this.state = {
+            // TODO: Implement defaultScaleUnit
             defaultScaleUnit,
             faramValues: {
                 title,
@@ -124,42 +121,6 @@ export default class ScaleFrameworkList extends React.PureComponent {
         this.props.onSave(otherProps, title);
     };
 
-    handleScaleSetDefaultButtonClick = (key) => {
-        this.setState({ defaultScaleUnit: key });
-    }
-
-    renderScaleUnit = (key) => {
-        const { defaultScaleUnit } = this.state;
-        let defaultIconName = iconNames.checkboxOutlineBlank;
-        if (defaultScaleUnit === key) {
-            defaultIconName = iconNames.checkbox;
-        }
-
-        const defaultButtonLabel = _ts('framework.scaleWidget', 'defaultButtonLabel');
-
-        return (
-            <div
-                className={`${styles.editScaleUnit} ${styles.draggableItem}`}
-                key={key}
-            >
-                <AccentButton
-                    className={styles.checkButton}
-                    onClick={() => { this.handleScaleSetDefaultButtonClick(key); }}
-                    id={`${key}-check-button`}
-                    transparent
-                >
-                    <label
-                        className={styles.label}
-                        htmlFor={`${key}-check-button`}
-                    >
-                        { defaultButtonLabel }
-                    </label>
-                    <span className={defaultIconName} />
-                </AccentButton>
-            </div>
-        );
-    }
-
     render() {
         const {
             faramValues,
@@ -171,16 +132,10 @@ export default class ScaleFrameworkList extends React.PureComponent {
             onClose,
         } = this.props;
 
-        const addScaleUnitButtonLabel = _ts('framework.scaleWidget', 'addscaleUnitButtonLabel');
-
-        const titleInputLabel = _ts('framework.scaleWidget', 'titleLabel');
-        const titleInputPlaceholder = _ts('framework.scaleWidget', 'titlePlaceholderScale');
-        const cancelButtonLabel = _ts('framework.scaleWidget', 'cancelButtonLabel');
-        const saveButtonLabel = _ts('framework.scaleWidget', 'saveButtonLabel');
-
         return (
             <Modal className={styles.editModal}>
                 <Faram
+                    className={styles.form}
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
                     onValidationSuccess={this.handleFaramValidationSuccess}
@@ -193,8 +148,8 @@ export default class ScaleFrameworkList extends React.PureComponent {
                         <div className={styles.titleInputContainer} >
                             <TextInput
                                 faramElementName="title"
-                                label={titleInputLabel}
-                                placeholder={titleInputPlaceholder}
+                                label={_ts('framework.scaleWidget', 'titleLabel')}
+                                placeholder={_ts('framework.scaleWidget', 'titlePlaceholderScale')}
                                 showHintAndError={false}
                                 autoFocus
                                 selectOnFocus
@@ -205,16 +160,15 @@ export default class ScaleFrameworkList extends React.PureComponent {
                                 <NonFieldErrors faramElement />
                                 <header className={styles.header}>
                                     <h4>
-                                        {/* FIXME: use strings */}
-                                        Scale Units
+                                        {_ts('framework.scaleWidget', 'addOptionHeadingLabel')}
                                     </h4>
                                     <PrimaryButton
                                         faramAction="add"
                                         faramInfo={ScaleFrameworkList.faramInfoForAdd}
-                                        // iconName={iconNames.add}
+                                        iconName={iconNames.add}
                                         transparent
                                     >
-                                        {addScaleUnitButtonLabel}
+                                        {_ts('framework.scaleWidget', 'addOptionButtonLabel')}
                                     </PrimaryButton>
                                 </header>
                                 <div className={styles.editScaleUnitList}>
@@ -230,13 +184,13 @@ export default class ScaleFrameworkList extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerButton onClick={onClose}>
-                            {cancelButtonLabel}
+                            {_ts('framework.scaleWidget', 'cancelButtonLabel')}
                         </DangerButton>
                         <PrimaryButton
                             type="submit"
                             disabled={!pristine}
                         >
-                            {saveButtonLabel}
+                            {_ts('framework.scaleWidget', 'saveButtonLabel')}
                         </PrimaryButton>
                     </ModalFooter>
                 </Faram>

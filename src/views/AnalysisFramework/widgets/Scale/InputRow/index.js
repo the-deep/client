@@ -26,7 +26,6 @@ export default class InputRow extends React.PureComponent {
                 <FaramGroup
                     faramElementName={String(index)}
                 >
-                    { /* TODO: push fix in react-store */ }
                     <ColorInput
                         faramElementName="color"
                         label={_ts('framework.scaleWidget', 'colorLabel')}
@@ -35,7 +34,7 @@ export default class InputRow extends React.PureComponent {
                     <TextInput
                         className={styles.titleInput}
                         faramElementName="label"
-                        label={_ts('framework.scaleWidget', 'titleLabel')}
+                        label={_ts('framework.scaleWidget', 'inputLabel', { index: index + 1 })}
                         placeholder={_ts('framework.scaleWidget', 'titlePlaceholderScale')}
                         showHintAndError={false}
                         autoFocus
@@ -45,8 +44,7 @@ export default class InputRow extends React.PureComponent {
                     className={styles.deleteButton}
                     iconName={iconNames.delete}
                     faramAction="remove"
-                    // FIXME: use strings
-                    title="Remove Scale Unit"
+                    title={_ts('framework.scaleWidget', 'removeButtonTitle')}
                     faramElementIndex={index}
                     transparent
                 />

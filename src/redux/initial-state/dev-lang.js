@@ -364,11 +364,16 @@ const initialDevLangState = {
         758: 'e.g. Reliable',
         759: 'Edit scales',
         760: 'Add scale unit',
+        761: 'Scale Units',
         763: 'e.g. Overview',
         764: 'Color',
         766: 'Add child',
         767: 'Remove element',
         768: 'e.g. 123 456',
+
+        769: 'There should be at least one scale unit.',
+        770: 'Duplicate scale units are not allowed.',
+
         773: 'Edit title',
         774: 'Organigram structure',
         775: 'Options',
@@ -595,6 +600,8 @@ const initialDevLangState = {
         7000: 'Do you want to mark the lead as pending?',
         8001: 'Do you want to mark the lead as processed?',
         8002: 'Are you sure you want to continue?',
+        8003: 'Scale {index}',
+        8004: 'Remove Scale Unit',
 
         8050: 'Failed to change lead status.',
         8051: 'Lead status changed successfully.',
@@ -954,14 +961,20 @@ const initialDevLangState = {
         },
         'framework.scaleWidget': {
             editScaleModalTitle: 759,
-            addscaleUnitButtonLabel: 760,
+            addOptionButtonLabel: 760,
+            addOptionHeadingLabel: 761,
             titlePlaceholderScale: 758,
             colorLabel: 764,
             defaultButtonLabel: 779,
+            removeButtonTitle: 8004,
 
             saveButtonLabel: 25,
             cancelButtonLabel: 61,
+            inputLabel: 8003,
             titleLabel: 13,
+
+            requiredErrorMessage: 769,
+            duplicateErrorMessage: 770,
         },
         'framework.matrix1dWidget': {
             saveButtonLabel: 25,
