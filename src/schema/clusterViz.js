@@ -66,7 +66,7 @@ const clusterVizSchema = [];
 {
     const name = 'leadsDetailForClusterDocs';
     const schema = {
-        doc: {
+        dopc: {
             name: 'Filtered leads',
             description: 'Filtered leads data',
         },

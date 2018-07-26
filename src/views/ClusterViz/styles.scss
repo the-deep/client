@@ -109,16 +109,8 @@ $width-cluster-details: 420px;
                         font-weight: $font-weight-bold;
                     }
 
-                    .leads {
-                        padding-bottom: $spacing-medium;
-
-                        .lead {
-                            padding: $spacing-extra-small-alt $spacing-small;
-                        }
-
-                        .leads-empty {
-                            padding: 0 $spacing-small;
-                        }
+                    .leads-empty {
+                        padding: 0 $spacing-small;
                     }
                 }
 
