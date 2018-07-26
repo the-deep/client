@@ -40,8 +40,18 @@ $height-edit-modal: 72vh;
                 .edit-scale-unit-list {
                     flex-grow: 1;
                     overflow-x: auto;
+
+                    .item {
+                        background-color: $color-foreground;
+                    }
                 }
             }
         }
     }
+}
+
+.drag-handle {
+    flex-shrink: 0;
+    background-color: $color-foreground;
+    padding: $spacing-small;
 }

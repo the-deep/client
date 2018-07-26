@@ -6,7 +6,7 @@ import Faram, {
 } from '#rs/components/Input/Faram';
 import FaramList from '#rs/components/Input/Faram/FaramList';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import List from '#rs/components/View/List';
+import SortableListView from '#rs/components/View/SortableListView';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import TextInput from '#rs/components/Input/TextInput';
@@ -171,14 +171,15 @@ export default class ScaleFrameworkList extends React.PureComponent {
                                         {_ts('framework.scaleWidget', 'addOptionButtonLabel')}
                                     </PrimaryButton>
                                 </header>
-                                <div className={styles.editScaleUnitList}>
-                                    <List
-                                        faramElement
-                                        keyExtractor={ScaleFrameworkList.keyExtractor}
-                                        rendererParams={ScaleFrameworkList.rendererParams}
-                                        renderer={InputRow}
-                                    />
-                                </div>
+                                <SortableListView
+                                    className={styles.editScaleUnitList}
+                                    dragHandleClassName={styles.dragHandle}
+                                    faramElement
+                                    keyExtractor={ScaleFrameworkList.keyExtractor}
+                                    rendererParams={ScaleFrameworkList.rendererParams}
+                                    itemClassName={styles.item}
+                                    renderer={InputRow}
+                                />
                             </FaramList>
                         </div>
                     </ModalBody>

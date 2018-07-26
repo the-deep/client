@@ -2,6 +2,7 @@
 
 .sortable-unit {
     display: flex;
+    width: 100%;
     align-items: center;
     // border-top: $width-separator-thin solid $color-separator;
     border-bottom: $width-separator-thin solid $color-separator;
@@ -21,6 +22,7 @@
     .title-input {
         flex-grow: 1;
         padding: 0 $spacing-extra-small;
+        margin-left: $spacing-small;
     }
 
     .delete-button {

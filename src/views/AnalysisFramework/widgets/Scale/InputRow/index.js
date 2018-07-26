@@ -29,14 +29,12 @@ export default class InputRow extends React.PureComponent {
                     <ColorInput
                         faramElementName="color"
                         label={_ts('framework.scaleWidget', 'colorLabel')}
-                        showHintAndError={false}
                     />
                     <TextInput
                         className={styles.titleInput}
                         faramElementName="label"
                         label={_ts('framework.scaleWidget', 'inputLabel', { index: index + 1 })}
                         placeholder={_ts('framework.scaleWidget', 'titlePlaceholderScale')}
-                        showHintAndError={false}
                         autoFocus
                     />
                 </FaramGroup>
