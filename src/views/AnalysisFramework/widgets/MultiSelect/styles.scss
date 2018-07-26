@@ -31,9 +31,7 @@ $height-edit-modal: 512px;
                     align-items: center;
                     flex-shrink: 0;
                     justify-content: space-between;
-                    // border-top: $width-separator-thin solid $color-separator;
                     border-bottom: $width-separator-thin solid $color-separator;
-                    // background-color: $color-background-header;
                     padding: $spacing-small;
                 }
 
@@ -41,14 +39,21 @@ $height-edit-modal: 512px;
                     flex-grow: 1;
                     overflow-y: auto;
 
-                    // .sortable-unit {
-                    //     border-top: 0;
-                    // }
+                    .item {
+                        background-color: $color-foreground;
+                    }
                 }
             }
         }
     }
 }
+
+.drag-handle {
+    flex-shrink: 0;
+    background-color: $color-foreground;
+    padding: $spacing-small;
+}
+
 
 // .draggable-item {
 //     z-index: 11111;

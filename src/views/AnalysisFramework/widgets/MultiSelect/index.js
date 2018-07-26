@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import FaramList from '#rs/components/Input/Faram/FaramList';
-import List from '#rs/components/View/List';
+import SortableListView from '#rs/components/View/SortableListView';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
@@ -14,7 +14,6 @@ import TextInput from '#rs/components/Input/TextInput';
 import Faram, { requiredCondition } from '#rs/components/Input/Faram';
 import { randomString, unique } from '#rs/utils/common';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import InputRow from './InputRow';
@@ -43,7 +42,7 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                     const errors = [];
                     if (!options || options.length <= 0) {
                         // FIXME: use strings
-                        errors.push('There should be at least one option.');
+                        errors.push('There should be at least 1 option.');
                     } else if (options && unique(options, o => o.label).length !== options.length) {
                         // FIXME: use strings
                         errors.push('Duplicate options are not allowed.');
@@ -154,21 +153,21 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                                     <PrimaryButton
                                         faramAction="add"
                                         faramInfo={MultiSelectEditWidget.faramInfoForAdd}
-                                        // iconName={iconNames.add}
                                         transparent
                                     >
                                         {/* FIXME: use strings */}
                                         Add
                                     </PrimaryButton>
                                 </header>
-                                <div className={styles.editOptionList}>
-                                    <List
-                                        faramElement
-                                        keyExtractor={MultiSelectEditWidget.keyExtractor}
-                                        rendererParams={MultiSelectEditWidget.rendererParams}
-                                        renderer={InputRow}
-                                    />
-                                </div>
+                                <SortableListView
+                                    className={styles.editOptionList}
+                                    dragHandleClassName={styles.dragHandle}
+                                    faramElement
+                                    keyExtractor={MultiSelectEditWidget.keyExtractor}
+                                    rendererParams={MultiSelectEditWidget.rendererParams}
+                                    itemClassName={styles.item}
+                                    renderer={InputRow}
+                                />
                             </FaramList>
                         </div>
                     </ModalBody>
