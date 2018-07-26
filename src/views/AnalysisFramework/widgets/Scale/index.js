@@ -146,6 +146,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                     <ModalHeader title={title} />
                     <ModalBody className={styles.body}>
                         <div className={styles.titleInputContainer} >
+                            <NonFieldErrors faramElement />
                             <TextInput
                                 faramElementName="title"
                                 label={_ts('framework.scaleWidget', 'titleLabel')}
