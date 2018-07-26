@@ -179,7 +179,7 @@ export default class Leads extends React.PureComponent {
                 label: _ts('leads', 'assignee'),
                 order: 6,
                 sortable: true,
-                modifier: ({ assigneeDetails: person }) => (
+                modifier: ({ assigneeDetails: person = {} }) => (
                     <Link
                         key={person.id}
                         className={styles.assigneeLink}
