@@ -195,7 +195,7 @@ const widgetList = [
         widgetId: 'selectWidget',
         type: 'list',
         component: SelectWidget,
-        editComponent: DefaultEditWidget,
+        editComponent: MultiSelectEditWidget,
 
         // NOTE: used as _ts('widgetTitle', 'selectWidgetLabel')
         title: 'selectWidgetLabel',

@@ -12,7 +12,7 @@ import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import TextInput from '#rs/components/Input/TextInput';
 import Faram, { requiredCondition } from '#rs/components/Input/Faram';
-import { randomString, unique } from '#rs/utils/common';
+import { isFalsy, isTruthy, randomString } from '#rs/utils/common';
 
 import _ts from '#ts';
 
@@ -30,6 +30,20 @@ const defaultProps = {
     data: {},
 };
 
+const findDuplicates = (list = [], keySelector) => {
+    const counts = list.reduce(
+        (acc, item) => {
+            const key = keySelector(item);
+            if (isTruthy(key) && key !== '') {
+                acc[key] = isFalsy(acc[key]) ? 1 : acc[key] + 1;
+            }
+            return acc;
+        },
+        {},
+    );
+    return Object.keys(counts).filter(key => counts[key] > 1);
+};
+
 export default class MultiSelectEditWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -43,9 +57,12 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                     if (!options || options.length <= 0) {
                         // FIXME: use strings
                         errors.push('There should be at least 1 option.');
-                    } else if (options && unique(options, o => o.label).length !== options.length) {
+                    }
+
+                    const duplicates = findDuplicates(options, o => o.label);
+                    if (duplicates.length > 0) {
                         // FIXME: use strings
-                        errors.push('Duplicate options are not allowed.');
+                        errors.push(`Duplicate options are not allowed: ${duplicates.join(', ')}`);
                     }
                     return errors;
                 },
