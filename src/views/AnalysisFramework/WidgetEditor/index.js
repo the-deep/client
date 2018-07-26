@@ -50,6 +50,11 @@ export default class WidgetEditor extends React.PureComponent {
     static schema = {};
     static value = {};
 
+    widgetMinSizeSelector = (widget) => {
+        const { minSize } = fetchWidget(this.props.widgetType, widget.widgetId);
+        return minSize;
+    }
+
     handleItemChange = (newWidget) => {
         const {
             analysisFrameworkId,
@@ -121,10 +126,18 @@ export default class WidgetEditor extends React.PureComponent {
             hasWidget('overview', widgetId) && this.props.widgetType === 'list'
         );
 
+        const layout = this.layoutSelector(widget);
+        const widthBlocks = Math.ceil(layout.width / gridSize.width);
+        const heightBlocks = Math.ceil(layout.height / gridSize.height);
+
+        const headerTitle = (process.env.NODE_ENV === 'development')
+            ? `${title} [${widthBlocks} ⨯ ${heightBlocks}]`
+            : title;
+
         return (
             <div className={styles.header}>
                 <h5 className={styles.heading}>
-                    { title }
+                    {headerTitle}
                 </h5>
                 <div className={styles.actionButtons}>
                     {
@@ -198,11 +211,13 @@ export default class WidgetEditor extends React.PureComponent {
                     gridSize={gridSize}
                     data={widgets}
                     layoutSelector={this.layoutSelector}
+                    itemMinSizeSelector={this.widgetMinSizeSelector}
                     itemHeaderModifier={this.renderWidgetHeader}
                     itemContentModifier={this.renderWidgetContent}
                     keySelector={WidgetEditor.keySelector}
                     itemClassName={styles.widget}
                     onLayoutChange={this.handleWidgetLayoutChange}
+                    dragItemClassName={styles.heading}
                 />
             </Faram>
         );
