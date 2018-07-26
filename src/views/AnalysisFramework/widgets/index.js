@@ -27,8 +27,8 @@ import SelectWidget from '../../EditEntries/widgets/Select';
 import TimeWidget from '../../EditEntries/widgets/Time';
 
 export const gridSize = {
-    width: 16,
-    height: 16,
+    width: 12,
+    height: 12,
 };
 
 const widgetList = [
