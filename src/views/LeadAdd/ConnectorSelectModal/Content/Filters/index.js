@@ -10,25 +10,6 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-const Filter = ({ filterData }) => {
-    if (filterData.fieldType === 'string') {
-        return (
-            <TextInput
-                className={styles.input}
-                key={filterData.key}
-                faramElementName={filterData.key}
-                label={filterData.title}
-                showHintAndError={false}
-            />
-        );
-    }
-    return null;
-};
-
-Filter.propTypes = {
-    filterData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-};
-
 const propTypes = {
     filters: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     value: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -69,9 +50,20 @@ export default class ConnectorContentFilters extends React.PureComponent {
         }
     }
 
-    rendererParams = (key, filterData) => ({
-        filterData,
-    })
+    renderFilters = (key, filterData) => {
+        if (filterData.fieldType === 'string') {
+            return (
+                <TextInput
+                    className={styles.input}
+                    key={filterData.key}
+                    faramElementName={filterData.key}
+                    label={filterData.title}
+                    showHintAndError={false}
+                />
+            );
+        }
+        return null;
+    };
 
     render() {
         const {
@@ -92,9 +84,8 @@ export default class ConnectorContentFilters extends React.PureComponent {
             >
                 <List
                     data={filters}
-                    renderer={Filter}
+                    modifier={this.renderFilters}
                     keySelector={ConnectorContentFilters.keySelector}
-                    rendererParams={this.rendererParams}
                 />
                 <Button type="submit" >
                     {_ts('addLeads.connectorsSelect', 'applyFilterLabel')}
