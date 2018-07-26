@@ -1,4 +1,4 @@
-@import '../../../../../stylesheets/base';
+@import '../../../../stylesheets/base';
 
 $height-edit-modal: 72vh;
 
@@ -6,83 +6,52 @@ $height-edit-modal: 72vh;
     width: $width-modal-medium;
     height: $height-edit-modal;
 
-    .body {
+    .form {
         display: flex;
         flex-direction: column;
-        padding: 0;
+        height: 100%;
 
-        .title-input-container {
-            background-color: $color-foreground-alt;
-            padding: $spacing-medium;
-        }
-    }
-
-    .scale-units {
-        display: flex;
-        flex-grow: 1;
-        padding: 0;
-
-        .scale-unit {
-            flex-basis: 100%;
-            overflow-y: auto;
-        }
-
-        .sortable-unit {
-            border-top: 0;
-        }
-    }
-}
-
-.sortable-unit {
-    display: flex;
-    border-top: $width-separator-thin solid $color-separator;
-    border-bottom: $width-separator-thin solid $color-separator;
-    background-color: $color-foreground;
-    padding: $spacing-small 0;
-
-    .drag-handle {
-        display: flex;
-        align-items: center;
-        align-self: stretch;
-        flex-grow: 0;
-        flex-shrink: 0;
-        cursor: move;
-        padding: 0 $spacing-medium;
-    }
-
-    .edit-scale-unit {
-        display: flex;
-        align-items: flex-end;
-        flex-grow: 1;
-        background-color: $color-foreground;
-        padding: $spacing-medium 0;
-
-        .title-input {
-            flex-grow: 1;
-        }
-
-        .delete-button {
-            flex-shrink: 0;
-        }
-
-        .check-button {
+        .body {
             display: flex;
-            align-items: flex-end;
             flex-direction: column;
-            flex-shrink: 0;
-            cursor: pointer;
+            flex-grow: 1;
+            padding: 0;
 
-            .label {
-                flex-shrink: 0;
-                cursor: pointer;
-                text-transform: uppercase;
-                color: $color-text-label;
-                font-size: $font-size-extra-small;
+            .title-input-container {
+                padding: $spacing-medium;
+            }
+
+            .scale-units {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+
+                .header {
+                    display: flex;
+                    align-items: center;
+                    flex-shrink: 0;
+                    justify-content: space-between;
+                    // border-top: $width-separator-thin solid $color-separator;
+                    border-bottom: $width-separator-thin solid $color-separator;
+                    // background-color: $color-background-header;
+                    padding: $spacing-small;
+                }
+
+                .edit-scale-unit-list {
+                    flex-grow: 1;
+                    overflow-x: auto;
+
+                    .item {
+                        background-color: $color-foreground;
+                    }
+                }
             }
         }
     }
 }
 
-.draggable-item {
-    z-index: 11111;
+.drag-handle {
+    flex-shrink: 0;
+    background-color: $color-foreground;
+    padding: $spacing-small;
 }

@@ -1,34 +1,32 @@
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 
-import update from '#rs/utils/immutable-update';
-
-import Button from '#rs/components/Action/Button';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
+import Faram, {
+    requiredCondition,
+} from '#rs/components/Input/Faram';
+import FaramList from '#rs/components/Input/Faram/FaramList';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import SortableListView from '#rs/components/View/SortableListView';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import BoundError from '#rs/components/General/BoundError';
-import ColorInput from '#rs/components/Input/ColorInput';
-import ScaleInput from '#rs/components/Input/ScaleInput';
 import TextInput from '#rs/components/Input/TextInput';
 import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
 import ModalHeader from '#rs/components/View/Modal/Header';
-import SortableList from '#rs/components/View/SortableList';
-import { randomString } from '#rs/utils/common';
+import { randomString, unique } from '#rs/utils/common';
 
-import WidgetError from '#components/WidgetError';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
+import InputRow from './InputRow';
 import styles from './styles.scss';
 
 const propTypes = {
     title: PropTypes.string.isRequired,
-    editAction: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired,
-    data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    data: PropTypes.object, // eslint-disable-line react/forbid-prop-types, react/no-unused-prop-types, max-len
 };
 
 const defaultProps = {
@@ -36,346 +34,168 @@ const defaultProps = {
 };
 
 const emptyList = [];
-const emptyObject = {};
 
-@BoundError(WidgetError)
 export default class ScaleFrameworkList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static keyExtractor = scaleUnit => scaleUnit.key;
 
-    static rowKeyExtractor = d => d.key;
+    static rendererParams = (key, elem, i) => ({
+        index: i,
+    })
 
-    static keySelector = option => option.key;
-    static labelSelector = option => option.title;
-    static colorSelector = option => option.color;
+    static schema = {
+        fields: {
+            title: [requiredCondition],
+            scaleUnits: {
+                validation: (scaleUnits) => {
+                    const errors = [];
+                    if (!scaleUnits || scaleUnits.length <= 0) {
+                        errors.push(_ts('framework.scaleWidget', 'requiredErrorMessage'));
+                    } else if (
+                        scaleUnits && unique(scaleUnits, o => o.label).length !== scaleUnits.length
+                    ) {
+                        errors.push(_ts('framework.scaleWidget', 'duplicateErrorMessage'));
+                    }
+                    return errors;
+                },
+                member: {
+                    fields: {
+                        key: [requiredCondition],
+                        label: [requiredCondition],
+                        color: [],
+                    },
+                },
+            },
+        },
+    };
+
+    static faramInfoForAdd = {
+        newElement: () => ({
+            key: randomString(16).toLowerCase(),
+            label: '',
+        }),
+    }
 
     constructor(props) {
         super(props);
 
-        const data = this.props.data || emptyObject;
-        const scaleUnits = data.scaleUnits || emptyList;
-        const defaultScaleUnit = data.value;
-        const { title } = this.props;
+        const {
+            title,
+            data: {
+                scaleUnits = emptyList,
+                value: defaultScaleUnit,
+            },
+        } = props;
 
         this.state = {
-            showEditModal: false,
+            // TODO: Implement defaultScaleUnit
             defaultScaleUnit,
-            scaleUnits,
-            title,
-        };
-        this.props.editAction(this.handleEdit);
-        // this.createScaleUnits(props);
-    }
-
-    /*
-    componentWillReceiveProps(nextProps) {
-        const { data: newData } = nextProps.data;
-        const { data: oldData } = this.props;
-
-        if (oldData !== newData) {
-            this.createScaleUnits(nextProps);
-        }
-    }
-    */
-
-    getSelectedScaleStyle = (key) => {
-        const { defaultScaleUnit } = this.state;
-        const scaleUnitStyle = ['scale-unit'];
-        if (defaultScaleUnit === key) {
-            scaleUnitStyle.push('selected');
-        }
-        const styleNames = scaleUnitStyle.map(d => styles[d]);
-        return styleNames.join(' ');
-    }
-
-    /*
-    createScaleUnits = ({ data = emptyObject }) => {
-        const scaleUnits = data.scaleUnits || emptyList;
-        const tempScaleUnits = {};
-        scaleUnits.forEach((s) => {
-            tempScaleUnits[s.key] = s;
-        });
-        this.scaleUnits = tempScaleUnits;
-    }
-    */
-
-    handleScaleUnitSortChange = (scaleUnits) => {
-        this.setState({ scaleUnits });
-    }
-
-    handleScaleSetDefaultButtonClick = (key) => {
-        this.setState({ defaultScaleUnit: key });
-    }
-
-    handleEdit = () => {
-        this.setState({ showEditModal: true });
-    }
-
-    handleAddScaleUnitButtonClick = () => {
-        this.addScaleUnit();
-    }
-
-    handleEditModalClose = () => {
-        this.setState({ showEditModal: false });
-    }
-
-    handleModalCancelButtonClick = () => {
-        const {
-            data = emptyObject,
-            title,
-        } = this.props;
-
-        this.setState({
-            showEditModal: false,
-            defaultScaleUnit: data.value,
-            scaleUnits: data.scaleUnits || emptyList,
-            title,
-        });
-    }
-
-    handleModalSaveButtonClick = () => {
-        const {
-            scaleUnits,
-            title,
-            defaultScaleUnit,
-        } = this.state;
-        const {
-            data,
-            onChange,
-        } = this.props;
-
-        const newScaleUnits = {
-            ...data,
-            value: defaultScaleUnit,
-            scaleUnits,
-        };
-
-        this.setState({ showEditModal: false });
-        onChange(
-            newScaleUnits,
-            title,
-        );
-    }
-
-    handleScaleWidgetTitleChange = (value) => {
-        this.setState({ title: value });
-    }
-
-    handleScaleUnitValueInputChange = (key, value) => {
-        const rowIndex = this.state.scaleUnits.findIndex(d => d.key === key);
-
-        const settings = {
-            [rowIndex]: {
-                title: { $set: value },
+            faramValues: {
+                title,
+                scaleUnits,
             },
+            faramErrors: {},
+            pristine: false,
         };
-        const newScaleUnits = update(this.state.scaleUnits, settings);
-
-        this.setState({ scaleUnits: newScaleUnits });
     }
 
-    handleScaleUnitRemoveButtonClick = (key) => {
-        const { defaultScaleUnit } = this.state;
-        const settings = {
-            $filter: d => d.key !== key,
-        };
-        const newScaleUnits = update(this.state.scaleUnits, settings);
-        if (defaultScaleUnit === key && newScaleUnits.length > 0) {
-            const newDefaultScaleUnit = newScaleUnits[0].key;
-            this.setState({ defaultScaleUnit: newDefaultScaleUnit });
-        }
-        this.setState({ scaleUnits: newScaleUnits });
+    handleFaramChange = (faramValues, faramErrors) => {
+        this.setState({
+            faramValues,
+            faramErrors,
+            pristine: true,
+        });
     };
 
-    handleColorChange = (newColor, key) => {
-        const rowIndex = this.state.scaleUnits.findIndex(d => d.key === key);
-
-        const settings = {
-            [rowIndex]: {
-                color: { $set: newColor },
-            },
-        };
-
-        const newScaleUnits = update(this.state.scaleUnits, settings);
-
-        this.setState({ scaleUnits: newScaleUnits });
-    }
-
-    addScaleUnit = () => {
-        const { defaultScaleUnit } = this.state;
-        let newDefaultScaleUnit = defaultScaleUnit;
-        const newScaleUnit = {
-            key: randomString(16).toLowerCase(),
-            title: '',
-            color: '#ffffff',
-        };
-
-        const rowIndexForDefault = this.state.scaleUnits.findIndex(s => s.key === defaultScaleUnit);
-        if (rowIndexForDefault === -1) {
-            newDefaultScaleUnit = newScaleUnit.key;
-        }
-
+    handleFaramValidationFailure = (faramErrors) => {
         this.setState({
-            defaultScaleUnit: newDefaultScaleUnit,
-            scaleUnits: [
-                ...this.state.scaleUnits,
-                newScaleUnit,
-            ],
+            faramErrors,
+            pristine: false,
         });
-    }
-
-    renderDragHandle = () => {
-        const dragStyle = [styles.dragHandle];
-        return (
-            <span className={`${iconNames.hamburger} ${dragStyle.join(' ')}`} />
-        );
     };
 
-    renderScaleUnit = (key, data) => {
-        const { defaultScaleUnit } = this.state;
-        let defaultIconName = iconNames.checkboxOutlineBlank;
-        if (defaultScaleUnit === key) {
-            defaultIconName = iconNames.checkbox;
-        }
+    handleFaramValidationSuccess = (faramValues) => {
+        const { title, ...otherProps } = faramValues;
+        this.props.onSave(otherProps, title);
+    };
 
-        const colorInputLabel = _ts('framework.scaleWidget', 'colorLabel');
-        const titleInputPlaceholder = _ts('framework.scaleWidget', 'titlePlaceholderScale');
-        const titleInputLabel = _ts('framework.scaleWidget', 'titleLabel');
-        const defaultButtonLabel = _ts('framework.scaleWidget', 'defaultButtonLabel');
-
-        return (
-            <div
-                className={`${styles.editScaleUnit} ${styles.draggableItem}`}
-                key={key}
-            >
-                <ColorInput
-                    label={colorInputLabel}
-                    onChange={newColor => this.handleColorChange(newColor, key)}
-                    value={data.color}
-                    showHintAndError={false}
-                />
-                <TextInput
-                    className={styles.titleInput}
-                    label={titleInputLabel}
-                    placeholder={titleInputPlaceholder}
-                    onChange={(value) => { this.handleScaleUnitValueInputChange(key, value); }}
-                    value={data.title}
-                    showHintAndError={false}
-                    autoFocus
-                />
-                <AccentButton
-                    className={styles.checkButton}
-                    onClick={() => { this.handleScaleSetDefaultButtonClick(key); }}
-                    id={`${key}-check-button`}
-                    transparent
-                >
-                    <label
-                        className={styles.label}
-                        htmlFor={`${key}-check-button`}
-                    >
-                        { defaultButtonLabel }
-                    </label>
-                    <span className={defaultIconName} />
-                </AccentButton>
-                <DangerButton
-                    className={styles.deleteButton}
-                    onClick={() => { this.handleScaleUnitRemoveButtonClick(key); }}
-                    transparent
-                >
-                    <span className={iconNames.delete} />
-                </DangerButton>
-            </div>
-        );
-    }
-
-
-    renderEditModal = () => {
+    render() {
         const {
-            scaleUnits,
-            showEditModal,
-            title,
+            faramValues,
+            faramErrors,
+            pristine,
         } = this.state;
-
-        if (!showEditModal) {
-            return null;
-        }
-
-        const headerTitle = _ts('framework.scaleWidget', 'editScaleModalTitle');
-        const addScaleUnitButtonLabel = _ts('framework.scaleWidget', 'addscaleUnitButtonLabel');
-        const titleInputLabel = _ts('framework.scaleWidget', 'titleLabel');
-        const titleInputPlaceholder = _ts('framework.scaleWidget', 'titlePlaceholderScale');
-        const cancelButtonLabel = _ts('framework.scaleWidget', 'cancelButtonLabel');
-        const saveButtonLabel = _ts('framework.scaleWidget', 'saveButtonLabel');
+        const {
+            title,
+            onClose,
+        } = this.props;
 
         return (
             <Modal className={styles.editModal}>
-                <ModalHeader
-                    title={headerTitle}
-                    rightComponent={
+                <Faram
+                    className={styles.form}
+                    onChange={this.handleFaramChange}
+                    onValidationFailure={this.handleFaramValidationFailure}
+                    onValidationSuccess={this.handleFaramValidationSuccess}
+                    schema={ScaleFrameworkList.schema}
+                    value={faramValues}
+                    error={faramErrors}
+                >
+                    <ModalHeader title={title} />
+                    <ModalBody className={styles.body}>
+                        <div className={styles.titleInputContainer} >
+                            <TextInput
+                                faramElementName="title"
+                                label={_ts('framework.scaleWidget', 'titleLabel')}
+                                placeholder={_ts('framework.scaleWidget', 'titlePlaceholderScale')}
+                                showHintAndError={false}
+                                autoFocus
+                                selectOnFocus
+                            />
+                        </div>
+                        <div className={styles.scaleUnits}>
+                            <FaramList faramElementName="scaleUnits">
+                                <NonFieldErrors faramElement />
+                                <header className={styles.header}>
+                                    <h4>
+                                        {_ts('framework.scaleWidget', 'addOptionHeadingLabel')}
+                                    </h4>
+                                    <PrimaryButton
+                                        faramAction="add"
+                                        faramInfo={ScaleFrameworkList.faramInfoForAdd}
+                                        iconName={iconNames.add}
+                                        transparent
+                                    >
+                                        {_ts('framework.scaleWidget', 'addOptionButtonLabel')}
+                                    </PrimaryButton>
+                                </header>
+                                <SortableListView
+                                    className={styles.editScaleUnitList}
+                                    dragHandleClassName={styles.dragHandle}
+                                    faramElement
+                                    keyExtractor={ScaleFrameworkList.keyExtractor}
+                                    rendererParams={ScaleFrameworkList.rendererParams}
+                                    itemClassName={styles.item}
+                                    renderer={InputRow}
+                                />
+                            </FaramList>
+                        </div>
+                    </ModalBody>
+                    <ModalFooter>
+                        <DangerButton onClick={onClose}>
+                            {_ts('framework.scaleWidget', 'cancelButtonLabel')}
+                        </DangerButton>
                         <PrimaryButton
-                            iconName={iconNames.add}
-                            onClick={this.handleAddScaleUnitButtonClick}
-                            transparent
+                            type="submit"
+                            disabled={!pristine}
                         >
-                            { addScaleUnitButtonLabel }
+                            {_ts('framework.scaleWidget', 'saveButtonLabel')}
                         </PrimaryButton>
-                    }
-                />
-                <ModalBody className={styles.body}>
-                    <div className={styles.titleInputContainer} >
-                        <TextInput
-                            label={titleInputLabel}
-                            placeholder={titleInputPlaceholder}
-                            onChange={this.handleScaleWidgetTitleChange}
-                            value={title}
-                            showHintAndError={false}
-                            autoFocus
-                            selectOnFocus
-                        />
-                    </div>
-                    <div className={styles.scaleUnits}>
-                        <SortableList
-                            className={styles.scaleUnit}
-                            data={scaleUnits}
-                            modifier={this.renderScaleUnit}
-                            onChange={this.handleScaleUnitSortChange}
-                            sortableItemClass={styles.sortableUnit}
-                            keyExtractor={ScaleFrameworkList.rowKeyExtractor}
-                            dragHandleModifier={this.renderDragHandle}
-                        />
-                    </div>
-                </ModalBody>
-                <ModalFooter>
-                    <Button onClick={this.handleModalCancelButtonClick}>
-                        { cancelButtonLabel }
-                    </Button>
-                    <PrimaryButton onClick={this.handleModalSaveButtonClick}>
-                        { saveButtonLabel }
-                    </PrimaryButton>
-                </ModalFooter>
+                    </ModalFooter>
+                </Faram>
             </Modal>
-        );
-    }
-
-    render() {
-        const { defaultScaleUnit } = this.state;
-        const { data: { scaleUnits } = {} } = this.props;
-        const EditModal = this.renderEditModal;
-
-        return (
-            <Fragment>
-                <ScaleInput
-                    options={scaleUnits}
-                    keySelector={ScaleFrameworkList.keySelector}
-                    labelSelector={ScaleFrameworkList.labelSelector}
-                    colorSelector={ScaleFrameworkList.colorSelector}
-                    // isDefaultSelector={this.isDefaultSelector}
-                    value={defaultScaleUnit}
-                    readOnly
-                />
-                <EditModal key="modal" />
-            </Fragment>
         );
     }
 }

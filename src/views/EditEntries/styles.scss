@@ -20,11 +20,6 @@ $height-header: 42px;
             font-size: $font-size-large;
         }
 
-        .edit-framework-link {
-            @extend %transparent-button-like-link;
-            @include background-color($color-primary);
-        }
-
         .heading {
             flex-grow: 1;
             padding: 0 $spacing-medium;
@@ -40,6 +35,14 @@ $height-header: 42px;
         .action-buttons {
             flex-shrink: 0;
             padding: 0 $spacing-medium;
+
+            .edit-framework-link {
+                @include button-like-link($color-primary);
+
+                .edit-icon {
+                    margin-right: $spacing-small;
+                }
+            }
 
             >button {
                 margin-left: $spacing-medium;

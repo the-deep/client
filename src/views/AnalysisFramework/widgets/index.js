@@ -7,6 +7,7 @@ import NumberEditWidget from './Number';
 import DateEditWidget from './Date';
 import OrganigramEditWidget from './Organigram';
 import MultiSelectEditWidget from './MultiSelect';
+import ScaleEditWiget from './Scale';
 
 import DateWidget from '../../EditEntries/widgets/Date';
 import DateRangeWidget from '../../EditEntries/widgets/DateRange';
@@ -185,7 +186,7 @@ const widgetList = [
         widgetId: 'scaleWidget',
         type: 'list',
         component: ScaleWidget,
-        editComponent: DefaultEditWidget,
+        editComponent: ScaleEditWiget,
 
         // NOTE: used as _ts('widgetTitle', 'scaleWidgetLabel')
         title: 'scaleWidgetLabel',
