@@ -1,0 +1,17 @@
+@import '../../../../../stylesheets/base';
+
+.row-title {
+    display: flex;
+    align-items: center;
+    background-color: $color-foreground;
+    padding: $spacing-small;
+    width: 100%;
+
+    .title {
+        flex-grow: 1;
+    }
+
+    .delete-button {
+        flex-shrink: 0;
+    }
+}

@@ -1,11 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
-import FaramElement from '#rs/components/Input/Faram/FaramElement';
 import FaramList from '#rs/components/Input/Faram/FaramList';
 import SortableListView from '#rs/components/View/SortableListView';
-import Button from '#rs/components/Action/Button';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
@@ -14,13 +11,14 @@ import ModalHeader from '#rs/components/View/Modal/Header';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import TextInput from '#rs/components/Input/TextInput';
-import ColorInput from '#rs/components/Input/ColorInput';
 import Faram, { requiredCondition } from '#rs/components/Input/Faram';
 import { findDuplicates, randomString } from '#rs/utils/common';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
+import RowTitle from './RowTitle';
+import RowContent from './RowContent';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -33,69 +31,6 @@ const propTypes = {
 const defaultProps = {
     data: {},
 };
-
-
-const Text = FaramElement('errorIndicator')(({ index, isSelected, hasError, title, className }) => (
-    <span className={className}>
-        { isSelected ? '#' : ''}
-        {title || `Row ${index + 1}`}
-        { hasError ? '?' : ''}
-    </span>
-));
-
-const InputRow = ({ index, data, setSelectedRow, isSelected }) => (
-    <div className={styles.sortableUnit}>
-        <Button
-            onClick={() => setSelectedRow(data.key)}
-            transparent
-        >
-            <Text
-                title={data.title}
-                isSelected={isSelected}
-                faramElementName={String(index)}
-                index={index}
-                className={styles.title}
-            />
-        </Button>
-        <DangerButton
-            // className={styles.deleteButton}
-            iconName={iconNames.delete}
-            faramAction="remove"
-            faramInfo={{
-                callback: (i, newValue) => {
-                    const newIndex = Math.min(i, newValue.length - 1);
-                    const newKey = newIndex !== -1 ? newValue[newIndex].key : undefined;
-                    setSelectedRow(newKey);
-                },
-            }}
-            // FIXME: use strings
-            title="Remove Row"
-            faramElementIndex={index}
-            transparent
-        />
-    </div>
-);
-
-const InputCell = ({ index }) => (
-    <div className={styles.sortableUnit}>
-        <FaramGroup faramElementName={String(index)}>
-            <TextInput
-                faramElementName="value"
-                autoFocus
-                label={`Cell ${index + 1}`}
-                selectOnFocus
-            />
-        </FaramGroup>
-        <DangerButton
-            iconName={iconNames.delete}
-            faramAction="remove"
-            // FIXME: use strings
-            title="Remove Cell"
-            faramElementIndex={index}
-            transparent
-        />
-    </div>
-);
 
 export default class DefaultEditWidget extends React.PureComponent {
     static propTypes = propTypes;
@@ -155,13 +90,6 @@ export default class DefaultEditWidget extends React.PureComponent {
 
     static keyExtractor = elem => elem.key;
 
-    static faramInfoForAnotherAdd = {
-        newElement: () => ({
-            key: randomString(16).toLowerCase(),
-            value: '',
-        }),
-    }
-
     constructor(props) {
         super(props);
 
@@ -214,10 +142,6 @@ export default class DefaultEditWidget extends React.PureComponent {
         },
     }
 
-    anotherRendererParams = (key, elem, i) => ({
-        index: i,
-    })
-
     rendererParams = (key, elem, i) => ({
         index: i,
         data: elem,
@@ -226,66 +150,6 @@ export default class DefaultEditWidget extends React.PureComponent {
         },
         isSelected: this.state.selectedRowKey === key,
     })
-
-
-    renderContent = ({ selectedRowIndex }) => (
-        <div>
-            <FaramGroup
-                faramElementName={String(selectedRowIndex)}
-            >
-                <NonFieldErrors faramElement />
-                <div className={styles.content}>
-                    <ColorInput
-                        // className={styles.input}
-                        faramElementName="color"
-                        label="Color"
-                    />
-                    <TextInput
-                        className={styles.input}
-                        faramElementName="title"
-                        // FIXME: use strings
-                        label={`Row ${selectedRowIndex + 1}`}
-                        autoFocus
-                    />
-                    <TextInput
-                        className={styles.input}
-                        faramElementName="tooltip"
-                        // FIXME: use strings
-                        label="Tooltip"
-                    />
-                </div>
-                <FaramList faramElementName="cells">
-                    <NonFieldErrors faramElement />
-                    <header className={styles.header}>
-                        <h4>
-                            {/* FIXME: use strings */}
-                            Cells
-                        </h4>
-                        <PrimaryButton
-                            faramAction="add"
-                            // FIXME: add this
-                            faramInfo={DefaultEditWidget.faramInfoForAnotherAdd}
-                            iconName={iconNames.add}
-                            transparent
-                        >
-                            {/* FIXME: use strings */}
-                            Add Cell
-                        </PrimaryButton>
-                    </header>
-                    <SortableListView
-                        className={styles.editOptionList}
-                        dragHandleClassName={styles.dragHandle}
-                        faramElement
-                        keyExtractor={DefaultEditWidget.keyExtractor}
-                        rendererParams={this.anotherRendererParams}
-                        itemClassName={styles.item}
-                        renderer={InputCell}
-                    />
-                </FaramList>
-            </FaramGroup>
-        </div>
-    );
-
 
     render() {
         const {
@@ -302,10 +166,7 @@ export default class DefaultEditWidget extends React.PureComponent {
         const saveButtonLabel = 'Save';
 
         const { rows = [] } = faramValues || {};
-
         const selectedRowIndex = rows.findIndex(row => row.key === this.state.selectedRowKey);
-
-        const Content = this.renderContent;
 
         return (
             <Modal className={styles.editModal}>
@@ -320,7 +181,10 @@ export default class DefaultEditWidget extends React.PureComponent {
                 >
                     <ModalHeader title={title} />
                     <ModalBody className={styles.body}>
-                        <NonFieldErrors faramElement />
+                        <NonFieldErrors
+                            faramElement
+                            className={styles.error}
+                        />
                         <TextInput
                             className={styles.titleInput}
                             faramElementName="title"
@@ -329,9 +193,9 @@ export default class DefaultEditWidget extends React.PureComponent {
                             placeholder={_ts('framework.excerptWidget', 'widgetTitlePlaceholder')}
                             selectOnFocus
                         />
-                        <div className={styles.optionInputs} >
+                        <div className={styles.rows} >
                             <FaramList faramElementName="rows">
-                                <NonFieldErrors faramElement />
+                                <NonFieldErrors faramElement className={styles.error} />
                                 <header className={styles.header}>
                                     <h4>
                                         {/* FIXME: use strings */}
@@ -347,19 +211,20 @@ export default class DefaultEditWidget extends React.PureComponent {
                                         Add Row
                                     </PrimaryButton>
                                 </header>
-                                <div className={styles.mainContent}>
+                                <div className={styles.panels}>
                                     <SortableListView
-                                        className={styles.editOptionList}
+                                        className={styles.leftPanel}
                                         dragHandleClassName={styles.dragHandle}
                                         faramElement
                                         keyExtractor={DefaultEditWidget.keyExtractor}
                                         rendererParams={this.rendererParams}
                                         itemClassName={styles.item}
-                                        renderer={InputRow}
+                                        renderer={RowTitle}
                                     />
                                     { rows.length > 0 && selectedRowIndex !== -1 &&
-                                        <Content
-                                            selectedRowIndex={selectedRowIndex}
+                                        <RowContent
+                                            index={selectedRowIndex}
+                                            className={styles.rightPanel}
                                         />
                                     }
                                 </div>

@@ -1,9 +1,15 @@
 @import '../../../../stylesheets/base';
 
-$height-edit-modal: 512px;
+$height-edit-modal: 70vh;
+
+.drag-handle {
+    flex-shrink: 0;
+    background-color: $color-foreground;
+    padding: $spacing-small;
+}
 
 .edit-modal {
-    width: $width-modal-medium;
+    width: $width-modal-large;
     height: $height-edit-modal;
 
     .form {
@@ -17,14 +23,23 @@ $height-edit-modal: 512px;
             flex-grow: 1;
             padding: 0;
 
+            .error {
+                flex-shrink: 0;
+            }
+
             .title-input {
+                flex-shrink: 0;
                 padding: 0 $spacing-small;
             }
 
-            .option-inputs {
+            .rows {
                 display: flex;
                 flex-direction: column;
                 flex-grow: 1;
+
+                .error {
+                    flex-shrink: 0;
+                }
 
                 .header {
                     display: flex;
@@ -35,54 +50,28 @@ $height-edit-modal: 512px;
                     padding: $spacing-small;
                 }
 
-                .main-content {
+                .panels {
                     display: flex;
+                    flex-grow: 1;
 
-                    .edit-option-list {
-                        flex-grow: 1;
+                    .left-panel {
+                        flex-basis: 30%;
                         border-right: $width-separator-thin solid $color-separator;
                         overflow-y: auto;
 
                         .item {
+                            border-bottom: $width-separator-thin solid $color-separator;
                             background-color: $color-foreground;
                         }
                     }
 
-                    .content {
+                    .right-panel {
                         display: flex;
-                        align-items: center;
-
-                        .input {
-                            flex-grow: 1;
-                            margin-left: $spacing-small;
-                            padding: 0 $spacing-extra-small;
-                        }
+                        flex-basis: 70%;
+                        flex-direction: column;
                     }
                 }
             }
         }
-    }
-}
-
-.drag-handle {
-    flex-shrink: 0;
-    background-color: $color-foreground;
-    padding: $spacing-small;
-}
-
-.sortable-unit {
-    display: flex;
-    align-items: center;
-    border-bottom: $width-separator-thin solid $color-separator;
-    background-color: $color-foreground;
-    padding: $spacing-small;
-    width: 100%;
-
-    .title {
-        flex-grow: 1;
-    }
-
-    .delete-button {
-        flex-shrink: 0;
     }
 }

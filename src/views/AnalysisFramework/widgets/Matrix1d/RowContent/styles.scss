@@ -1,0 +1,44 @@
+@import '../../../../../stylesheets/base';
+
+.header {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    justify-content: space-between;
+    border-bottom: $width-separator-thin solid $color-separator;
+    padding: $spacing-small;
+}
+
+.error {
+    flex-shrink: 0;
+}
+
+.edit-row {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 0 $spacing-small;
+
+    .input {
+        flex-grow: 1;
+        margin-left: $spacing-small;
+        padding: 0 $spacing-extra-small;
+    }
+}
+
+.cell-list {
+    flex-grow: 1;
+    border-right: $width-separator-thin solid $color-separator;
+    overflow-y: auto;
+
+    .item {
+        border-bottom: $width-separator-thin solid $color-separator;
+        background-color: $color-foreground;
+    }
+}
+
+.drag-handle {
+    flex-shrink: 0;
+    background-color: $color-foreground;
+    padding: $spacing-small;
+}
