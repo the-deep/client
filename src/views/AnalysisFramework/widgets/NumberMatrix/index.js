@@ -1,420 +1,314 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import update from '#rs/utils/immutable-update';
-import { randomString } from '#rs/utils/common';
-import NumberInput from '#rs/components/Input/NumberInput';
 import TextInput from '#rs/components/Input/TextInput';
-import Button from '#rs/components/Action/Button';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import Modal from '#rs/components/View/Modal';
 import ModalHeader from '#rs/components/View/Modal/Header';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
-import List from '#rs/components/View/List';
-import SortableList from '#rs/components/View/SortableList';
-import BoundError from '#rs/components/General/BoundError';
+import SortableListView from '#rs/components/View/SortableListView';
+import Faram, { requiredCondition } from '#rs/components/Input/Faram';
+import FaramList from '#rs/components/Input/Faram/FaramList';
+import FixedTabs from '#rscv/FixedTabs';
+import MultiViewContainer from '#rs/components/View/MultiViewContainer';
+import { isFalsy, isTruthy, randomString } from '#rs/utils/common';
 
-import WidgetError from '#components/WidgetError';
+import TabTitle from '#components/TabTitle';
+
 import _ts from '#ts';
 import { iconNames } from '#constants';
 
+import InputRow from './InputRow';
 import styles from './styles.scss';
 
 const propTypes = {
     title: PropTypes.string.isRequired,
-    editAction: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
-    data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    data: PropTypes.object, // eslint-disable-line react/forbid-prop-types, react/no-unused-prop-types, max-len
 };
 
 const defaultProps = {
-    data: undefined,
+    data: {},
 };
 
-const emptyObject = {};
-const emptyList = [];
+const findDuplicates = (list = [], keySelector) => {
+    const counts = list.reduce(
+        (acc, item) => {
+            const key = keySelector(item);
+            if (isTruthy(key) && key !== '') {
+                acc[key] = isFalsy(acc[key]) ? 1 : acc[key] + 1;
+            }
+            return acc;
+        },
+        {},
+    );
+    return Object.keys(counts).filter(key => counts[key] > 1);
+};
 
-@BoundError(WidgetError)
+
 export default class NumberMatrixOverview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
     static rowKeyExtractor = d => d.key;
 
+    static schema = {
+        fields: {
+            title: [requiredCondition],
+            rowHeaders: {
+                validation: (rowHeaders) => {
+                    const errors = [];
+                    if (!rowHeaders || rowHeaders.length <= 0) {
+                        // FIXME: use strings
+                        errors.push('There should be at least 1 row header.');
+                    }
+
+                    const duplicates = findDuplicates(rowHeaders, o => o.title);
+                    if (duplicates.length > 0) {
+                        // FIXME: use strings
+                        errors.push(`Duplicate options are not allowed: ${duplicates.join(', ')}`);
+                    }
+                    return errors;
+                },
+                member: {
+                    fields: {
+                        title: [requiredCondition],
+                        key: [requiredCondition],
+                    },
+                },
+            },
+            columnHeaders: {
+                validation: (columnHeaders) => {
+                    const errors = [];
+                    if (!columnHeaders || columnHeaders.length <= 0) {
+                        // FIXME: use strings
+                        errors.push('There should be at least 1 row header.');
+                    }
+
+                    const duplicates = findDuplicates(columnHeaders, o => o.title);
+                    if (duplicates.length > 0) {
+                        // FIXME: use strings
+                        errors.push(`Duplicate options are not allowed: ${duplicates.join(', ')}`);
+                    }
+                    return errors;
+                },
+                member: {
+                    fields: {
+                        title: [requiredCondition],
+                        key: [requiredCondition],
+                    },
+                },
+            },
+        },
+    };
+
+    static faramInfoForAdd = {
+        newElement: () => ({
+            key: randomString(16).toLowerCase(),
+            title: '',
+        }),
+    }
+
+    static rendererParams = (key, elem, i) => ({
+        index: i,
+    })
+
     constructor(props) {
         super(props);
 
-        const rowHeaders = (props.data || emptyObject).rowHeaders || emptyList;
-        const columnHeaders = (props.data || emptyObject).columnHeaders || emptyList;
+        const {
+            title,
+            data: {
+                rowHeaders,
+                columnHeaders,
+            },
+        } = props;
 
         this.state = {
-            showEditModal: false,
-            rowHeaders,
-            columnHeaders,
-            title: props.title,
+            faramValues: { title, rowHeaders, columnHeaders },
+            faramErrors: {},
+            pristine: false,
+            selectedTab: 'rowHeaders',
         };
 
-        props.editAction(this.handleEdit);
+        this.tabs = {
+            rowHeaders: _ts('framework.numberMatrixWidget', 'rowsLabel'),
+            columnHeaders: _ts('framework.numberMatrixWidget', 'columnsLabel'),
+        };
+
+        this.views = {
+            rowHeaders: {
+                component: () => (
+                    <FaramList faramElementName="rowHeaders">
+                        <SortableListView
+                            className={styles.editList}
+                            dragHandleClassName={styles.dragHandle}
+                            faramElement
+                            itemClassName={styles.sortableUnit}
+                            keyExtractor={NumberMatrixOverview.rowKeyExtractor}
+                            renderer={InputRow}
+                            rendererParams={NumberMatrixOverview.rendererParams}
+                        />
+                    </FaramList>
+                ),
+                wrapContainer: true,
+            },
+            columnHeaders: {
+                component: () => (
+                    <FaramList faramElementName="columnHeaders">
+                        <SortableListView
+                            className={styles.editList}
+                            dragHandleClassName={styles.dragHandle}
+                            faramElement
+                            itemClassName={styles.sortableUnit}
+                            keyExtractor={NumberMatrixOverview.rowKeyExtractor}
+                            renderer={InputRow}
+                            rendererParams={NumberMatrixOverview.rendererParams}
+                        />
+                    </FaramList>
+                ),
+                wrapContainer: true,
+            },
+        };
     }
 
-    handleRowListSortChange = (rowHeaders) => {
-        this.setState({ rowHeaders });
-    }
-
-    handleColumnListSortChange = (columnHeaders) => {
-        this.setState({ columnHeaders });
-    }
-
-    handleEdit = () => {
-        this.setState({ showEditModal: true });
-    }
-
-    handleEditModalClose = () => {
-        this.setState({ showEditModal: false });
-    }
-
-    handleWidgetTitleChange = (value) => {
-        this.setState({ title: value });
-    }
-
-    handleModalCancelButtonClick = () => {
+    handleFaramChange = (faramValues, faramErrors) => {
         this.setState({
-            showEditModal: false,
-            rowHeaders: (this.props.data || emptyObject).rowHeaders || emptyList,
-            columnHeaders: (this.props.data || emptyObject).columnHeaders || emptyList,
-            title: this.props.title,
+            faramValues,
+            faramErrors,
+            pristine: true,
         });
-    }
-
-    handleModalSaveButtonClick = () => {
-        this.setState({ showEditModal: false });
-        const { rowHeaders, columnHeaders, title } = this.state;
-        const newData = {
-            ...this.props.data,
-            rowHeaders,
-            columnHeaders,
-        };
-        this.props.onChange(
-            newData,
-            title,
-        );
-    }
-
-    handleUnitInputChange = (key, value, dimension, type) => {
-        let index = -1;
-        if (dimension === 'row') {
-            index = this.state.rowHeaders.findIndex(d => d.key === key);
-        } else if (dimension === 'column') {
-            index = this.state.columnHeaders.findIndex(d => d.key === key);
-        }
-
-        if (index !== -1) {
-            const settings = {
-                [index]: {
-                    [type]: { $set: value },
-                },
-            };
-
-            if (dimension === 'row') {
-                const newHeaders = update(this.state.rowHeaders, settings);
-                this.setState({ rowHeaders: newHeaders });
-            } else if (dimension === 'column') {
-                const newHeaders = update(this.state.columnHeaders, settings);
-                this.setState({ columnHeaders: newHeaders });
-            }
-        }
-    }
-
-    handleColUnitRemoveButtonClick = (key) => {
-        const settings = {
-            $filter: d => d.key !== key,
-        };
-        const newColumnHeaders = update(this.state.columnHeaders, settings);
-
-        this.setState({ columnHeaders: newColumnHeaders });
-    }
-
-    handleRowUnitRemoveButtonClick = (key) => {
-        const settings = {
-            $filter: d => d.key !== key,
-        };
-        const newRowHeaders = update(this.state.rowHeaders, settings);
-
-        this.setState({ rowHeaders: newRowHeaders });
-    }
-
-    handleAddButtonClick = (type) => {
-        const newUnit = {
-            key: randomString(16).toLowerCase(),
-            title: '',
-        };
-        if (type === 'row') {
-            this.addRowUnit(newUnit);
-        } else if (type === 'column') {
-            this.addColumnUnit(newUnit);
-        }
-    }
-
-    addRowUnit = (newRow) => {
-        this.setState({
-            rowHeaders: [
-                ...this.state.rowHeaders,
-                newRow,
-            ],
-        });
-    }
-
-    addColumnUnit = (newColumn) => {
-        this.setState({
-            columnHeaders: [
-                ...this.state.columnHeaders,
-                newColumn,
-            ],
-        });
-    }
-
-    renderColumnUnit = (key, data) => (
-        <div
-            className={`${styles.rowColElement} ${styles.draggableItem}`}
-            key={key}
-        >
-            <TextInput
-                className={styles.titleInput}
-                label={_ts('framework.numberMatrixWidget', 'titleLabel')}
-                placeholder={_ts('framework.numberMatrixWidget', 'titlePlaceholderColumn')}
-                onChange={(value) => { this.handleUnitInputChange(key, value, 'column', 'title'); }}
-                value={data.title}
-                showHintAndError={false}
-                autoFocus
-            />
-            <TextInput
-                className={styles.titleInput}
-                label={_ts('framework.numberMatrixWidget', 'tooltipTitle')}
-                placeholder={_ts('framework.numberMatrixWidget', 'tooltipPlaceholder')}
-                onChange={(value) => { this.handleUnitInputChange(key, value, 'column', 'tooltip'); }}
-                value={data.tooltip}
-                showHintAndError={false}
-            />
-            <DangerButton
-                className={styles.deleteButton}
-                onClick={() => { this.handleColUnitRemoveButtonClick(key); }}
-                transparent
-            >
-                <span className={iconNames.delete} />
-            </DangerButton>
-        </div>
-    )
-
-    renderDragHandle = () => {
-        const dragStyle = [styles.dragHandle];
-        return (
-            <span className={`${iconNames.hamburger} ${dragStyle.join(' ')}`} />
-        );
     };
 
-    renderRowUnit = (key, data) => (
-        <div
-            className={`${styles.rowColElement} ${styles.draggableItem}`}
-            key={key}
-        >
-            <TextInput
-                className={styles.titleInput}
-                label={_ts('framework.numberMatrixWidget', 'titleLabel')}
-                placeholder={_ts('framework.numberMatrixWidget', 'titlePlaceholderRow')}
-                onChange={(value) => { this.handleUnitInputChange(key, value, 'row', 'title'); }}
-                value={data.title}
-                showHintAndError={false}
-                autoFocus
-            />
-            <TextInput
-                className={styles.titleInput}
-                label={_ts('framework.numberMatrixWidget', 'tooltipTitle')}
-                placeholder={_ts('framework.numberMatrixWidget', 'tooltipPlaceholder')}
-                onChange={(value) => { this.handleUnitInputChange(key, value, 'row', 'tooltip'); }}
-                value={data.tooltip}
-                showHintAndError={false}
-            />
-            <DangerButton
-                className={styles.deleteButton}
-                onClick={() => { this.handleRowUnitRemoveButtonClick(key); }}
-                transparent
-            >
-                <span className={iconNames.delete} />
-            </DangerButton>
-        </div>
-    )
+    handleFaramValidationFailure = (faramErrors) => {
+        this.setState({
+            faramErrors,
+            pristine: false,
+        });
+    };
 
-    renderColHeader = (key, data) => (
-        <th
-            className={styles.tableHeader}
-            scope="col"
-            key={key}
-        >
-            {data.title}
-        </th>
-    )
+    handleFaramValidationSuccess = (faramValues) => {
+        const { title, ...otherProps } = faramValues;
+        this.props.onSave(otherProps, title);
+    };
 
-    renderColElement = (key, data, rowKey) => (
-        <td
-            className={styles.tableCell}
-            key={`${rowKey}-${key}`}
-        >
-            <NumberInput
-                className={styles.numberInput}
-                placeholder={_ts('framework.numberMatrixWidget', 'numberPlaceholder')}
-                showLabel={false}
-                showHintAndError={false}
-                separator=" "
-                disabled
-            />
-        </td>
-    )
-
-    renderRow = (key, data) => {
-        const { columnHeaders } = this.state;
-
-        return (
-            <tr key={key}>
-                <th
-                    className={styles.tableHeader}
-                    scope="row"
-                >
-                    {data.title}
-                </th>
-                <List
-                    data={columnHeaders}
-                    modifier={(colKey, colData) => this.renderColElement(colKey, colData, key)}
-                    keyExtractor={NumberMatrixOverview.rowKeyExtractor}
-                />
-            </tr>
-        );
+    handleTabSelect = (selectedTab) => {
+        this.setState({ selectedTab });
     }
 
-    renderMatrix = () => {
-        const { rowHeaders, columnHeaders } = this.state;
+    renderTabsWithButton = () => {
+        const { selectedTab } = this.state;
+
+        const buttonLabel = selectedTab === 'rowHeaders' ? (
+            _ts('framework.numberMatrixWidget', 'addRowUnitButtonLabel')
+        ) : (
+            _ts('framework.numberMatrixWidget', 'addColumnUnitButtonLabel')
+        );
 
         return (
-            <table>
-                <tbody>
-                    <tr>
-                        <td />
-                        <List
-                            data={columnHeaders}
-                            modifier={this.renderColHeader}
-                            keyExtractor={NumberMatrixOverview.rowKeyExtractor}
-                        />
-                    </tr>
-                    <List
-                        data={rowHeaders}
-                        modifier={this.renderRow}
-                        keyExtractor={NumberMatrixOverview.rowKeyExtractor}
+            <div className={styles.tabsContainer}>
+                <FaramList faramElementName={selectedTab}>
+                    <NonFieldErrors
+                        className={styles.nonFieldErrors}
+                        faramElement
                     />
-                </tbody>
-            </table>
+                </FaramList>
+                <FixedTabs
+                    className={styles.tabs}
+                    tabs={this.tabs}
+                    active={selectedTab}
+                    onClick={this.handleTabSelect}
+                    modifier={this.renderTab}
+                >
+                    <FaramList faramElementName={selectedTab}>
+                        <PrimaryButton
+                            faramAction="add"
+                            faramInfo={NumberMatrixOverview.faramInfoForAdd}
+                            iconName={iconNames.add}
+                            title={buttonLabel}
+                            transparent
+                        >
+                            {buttonLabel}
+                        </PrimaryButton>
+                    </FaramList>
+                </FixedTabs>
+            </div>
         );
     }
 
-    renderEditModal = () => {
+    renderTab = (tabKey) => {
+        const title = this.tabs[tabKey];
+
+        return (
+            <TabTitle
+                title={title}
+                faramElementName={tabKey}
+            />
+        );
+    }
+
+    render() {
         const {
-            showEditModal,
-            rowHeaders,
-            columnHeaders,
-            title,
+            faramValues,
+            faramErrors,
+            pristine,
+            selectedTab,
         } = this.state;
 
-        if (!showEditModal) {
-            return null;
-        }
+        const { onClose } = this.props;
+        const TabsWithButton = this.renderTabsWithButton;
 
         return (
             <Modal
                 className={styles.editModal}
                 onClose={this.handleEditModalClose}
             >
-                <ModalHeader title={_ts('framework.numberMatrixWidget', 'editNumberMatrixModalTitle')} />
-                <ModalBody className={styles.body}>
-                    <div className={styles.titleInputContainer}>
+                <Faram
+                    className={styles.form}
+                    onChange={this.handleFaramChange}
+                    onValidationFailure={this.handleFaramValidationFailure}
+                    onValidationSuccess={this.handleFaramValidationSuccess}
+                    schema={NumberMatrixOverview.schema}
+                    value={faramValues}
+                    error={faramErrors}
+                >
+                    <ModalHeader title={_ts('framework.numberMatrixWidget', 'editNumberMatrixModalTitle')} />
+                    <ModalBody className={styles.body}>
+                        <NonFieldErrors
+                            className={styles.nonFieldErrors}
+                            faramElement
+                        />
                         <TextInput
+                            className={styles.title}
+                            faramElementName="title"
                             label={_ts('framework.numberMatrixWidget', 'titleLabel')}
                             placeholder={_ts('framework.numberMatrixWidget', 'titlePlaceholderScale')}
-                            onChange={this.handleWidgetTitleChange}
-                            value={title}
-                            showHintAndError={false}
                             autoFocus
                             selectOnFocus
                         />
-                    </div>
-                    <div className={styles.modalUnitContainer}>
-                        <header className={styles.header}>
-                            <h3 className={styles.heading}>
-                                {_ts('framework.numberMatrixWidget', 'rowsLabel')}
-                            </h3>
-                            <PrimaryButton
-                                iconName={iconNames.add}
-                                onClick={() => this.handleAddButtonClick('row')}
-                                title={_ts('framework.numberMatrixWidget', 'addRowUnitButtonLabel')}
-                                transparent
-                            />
-                        </header>
-                        <SortableList
-                            className={styles.editList}
-                            data={rowHeaders}
-                            modifier={this.renderRowUnit}
-                            onChange={this.handleRowListSortChange}
-                            sortableItemClass={styles.sortableUnit}
-                            keyExtractor={NumberMatrixOverview.rowKeyExtractor}
-                            dragHandleModifier={this.renderDragHandle}
+                        <TabsWithButton />
+                        <MultiViewContainer
+                            views={this.views}
+                            containerClassName={styles.modalUnitContainer}
+                            active={selectedTab}
                         />
-                    </div>
-                    <div className={styles.modalUnitContainer}>
-                        <header className={styles.header}>
-                            <h3 className={styles.heading}>
-                                {_ts('framework.numberMatrixWidget', 'columnsLabel')}
-                            </h3>
-                            <PrimaryButton
-                                iconName={iconNames.add}
-                                onClick={() => this.handleAddButtonClick('column')}
-                                title={_ts('framework.numberMatrixWidget', 'addColumnUnitButtonLabel')}
-                                transparent
-                            />
-                        </header>
-                        <SortableList
-                            className={styles.editList}
-                            data={columnHeaders}
-                            modifier={this.renderColumnUnit}
-                            onChange={this.handleColumnListSortChange}
-                            sortableItemClass={styles.sortableUnit}
-                            keyExtractor={NumberMatrixOverview.rowKeyExtractor}
-                            dragHandleModifier={this.renderDragHandle}
-                        />
-                    </div>
-                </ModalBody>
-                <ModalFooter>
-                    <Button
-                        onClick={this.handleModalCancelButtonClick}
-                    >
-                        {_ts('framework.numberMatrixWidget', 'cancelButtonLabel')}
-                    </Button>
-                    <PrimaryButton
-                        onClick={this.handleModalSaveButtonClick}
-                    >
-                        {_ts('framework.numberMatrixWidget', 'saveButtonLabel')}
-                    </PrimaryButton>
-                </ModalFooter>
+                    </ModalBody>
+                    <ModalFooter>
+                        <DangerButton onClick={onClose}>
+                            {_ts('framework.numberMatrixWidget', 'cancelButtonLabel')}
+                        </DangerButton>
+                        <PrimaryButton
+                            type="submit"
+                            disabled={!pristine}
+                        >
+                            {_ts('framework.numberMatrixWidget', 'saveButtonLabel')}
+                        </PrimaryButton>
+                    </ModalFooter>
+                </Faram>
             </Modal>
-        );
-    }
-
-    render() {
-        const Matrix = this.renderMatrix;
-        const EditModal = this.renderEditModal;
-
-        return (
-            <div className={styles.overview}>
-                <Matrix />
-                <EditModal />
-            </div>
         );
     }
 }
