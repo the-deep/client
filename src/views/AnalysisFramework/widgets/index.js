@@ -7,7 +7,8 @@ import NumberEditWidget from './Number';
 import DateEditWidget from './Date';
 import OrganigramEditWidget from './Organigram';
 import MultiSelectEditWidget from './MultiSelect';
-import ScaleEditWiget from './Scale';
+import ScaleEditWidget from './Scale';
+import Matrix1dEditWidget from './Matrix1d';
 
 import DateWidget from '../../EditEntries/widgets/Date';
 import DateRangeWidget from '../../EditEntries/widgets/DateRange';
@@ -96,7 +97,7 @@ const widgetList = [
         widgetId: 'matrix1dWidget',
         type: 'overview',
         component: Matrix1dWidget,
-        editComponent: DefaultEditWidget,
+        editComponent: Matrix1dEditWidget,
 
         // NOTE: used as _ts('widgetTitle', 'matrix1DWidgetLabel')
         title: 'matrix1DWidgetLabel',
@@ -106,7 +107,6 @@ const widgetList = [
         widgetId: 'matrix1dWidget',
         type: 'list',
         component: Matrix1dListWidget,
-        editComponent: DefaultEditWidget,
 
         // NOTE: used as _ts('widgetTitle', 'matrix1DWidgetLabel')
         title: 'matrix1DWidgetLabel',
@@ -186,7 +186,7 @@ const widgetList = [
         widgetId: 'scaleWidget',
         type: 'list',
         component: ScaleWidget,
-        editComponent: ScaleEditWiget,
+        editComponent: ScaleEditWidget,
 
         // NOTE: used as _ts('widgetTitle', 'scaleWidgetLabel')
         title: 'scaleWidgetLabel',
