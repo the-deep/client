@@ -1,0 +1,31 @@
+@import '../../../../../stylesheets/base';
+
+.row-title {
+    @include transition-medium;
+    display: flex;
+    align-items: center;
+    border-right: $width-separator-thick solid transparent;
+    background-color: $color-foreground;
+    width: 100%;
+
+    .title {
+        flex-grow: 1;
+        text-align: left;
+        text-transform: capitalize;
+        font-size: $font-size-medium;
+        font-weight: $font-weight-normal;
+
+        &.has-error {
+            color: $color-danger;
+        }
+    }
+
+    .delete-button {
+        flex-shrink: 0;
+    }
+
+    &.active {
+        border-right-color: $color-accent;
+        background-color: $color-background-selected;
+    }
+}

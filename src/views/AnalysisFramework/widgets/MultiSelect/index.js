@@ -12,8 +12,9 @@ import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import TextInput from '#rs/components/Input/TextInput';
 import Faram, { requiredCondition } from '#rs/components/Input/Faram';
-import { isFalsy, isTruthy, randomString } from '#rs/utils/common';
+import { findDuplicates, randomString } from '#rs/utils/common';
 
+import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import InputRow from './InputRow';
@@ -28,20 +29,6 @@ const propTypes = {
 
 const defaultProps = {
     data: {},
-};
-
-const findDuplicates = (list = [], keySelector) => {
-    const counts = list.reduce(
-        (acc, item) => {
-            const key = keySelector(item);
-            if (isTruthy(key) && key !== '') {
-                acc[key] = isFalsy(acc[key]) ? 1 : acc[key] + 1;
-            }
-            return acc;
-        },
-        {},
-    );
-    return Object.keys(counts).filter(key => counts[key] > 1);
 };
 
 export default class MultiSelectEditWidget extends React.PureComponent {
@@ -152,8 +139,8 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                     <ModalBody className={styles.body}>
                         <NonFieldErrors faramElement />
                         <TextInput
-                            faramElementName="title"
                             className={styles.titleInput}
+                            faramElementName="title"
                             autoFocus
                             selectOnFocus
                             label={_ts('framework.excerptWidget', 'titleLabel')}
@@ -170,10 +157,11 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                                     <PrimaryButton
                                         faramAction="add"
                                         faramInfo={MultiSelectEditWidget.faramInfoForAdd}
+                                        iconName={iconNames.add}
                                         transparent
                                     >
                                         {/* FIXME: use strings */}
-                                        Add
+                                        Add Option
                                     </PrimaryButton>
                                 </header>
                                 <SortableListView

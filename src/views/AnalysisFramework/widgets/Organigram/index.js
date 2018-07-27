@@ -122,7 +122,9 @@ export default class Organigram extends React.PureComponent {
                             />
                         </div>
                         <header className={styles.organigramStructureHeader}>
-                            <h3>{organigramStructureTitle}</h3>
+                            <h4>
+                                {organigramStructureTitle}
+                            </h4>
                         </header>
                         <div className={styles.organs}>
                             <OrganigramCreatorInput
