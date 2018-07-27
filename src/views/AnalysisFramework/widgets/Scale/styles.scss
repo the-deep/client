@@ -1,10 +1,21 @@
 @import '../../../../stylesheets/base';
 
-$height-edit-modal: 72vh;
+.sortable-unit {
+    border-top: $width-separator-thin solid $color-separator;
+    border-bottom: $width-separator-thin solid $color-separator;
+
+    .drag-handle {
+        display: flex;
+        align-items: center;
+        align-self: stretch;
+        background-color: $color-foreground;
+        padding: $spacing-small;
+    }
+}
 
 .edit-modal {
     width: $width-modal-medium;
-    height: $height-edit-modal;
+    height: $height-modal-medium;
 
     .form {
         display: flex;
@@ -17,8 +28,14 @@ $height-edit-modal: 72vh;
             flex-grow: 1;
             padding: 0;
 
-            .title-input-container {
-                padding: $spacing-medium;
+            .non-field-errors {
+                flex-shrink: 0;
+                padding: 0 $spacing-small;
+            }
+
+            .title {
+                flex-shrink: 0;
+                padding: 0 $spacing-small;
             }
 
             .scale-units {
@@ -31,27 +48,19 @@ $height-edit-modal: 72vh;
                     align-items: center;
                     flex-shrink: 0;
                     justify-content: space-between;
-                    // border-top: $width-separator-thin solid $color-separator;
                     border-bottom: $width-separator-thin solid $color-separator;
-                    // background-color: $color-background-header;
                     padding: $spacing-small;
                 }
 
-                .edit-scale-unit-list {
+                .edit-list {
                     flex-grow: 1;
-                    overflow-x: auto;
+                    overflow-y: auto;
 
-                    .item {
-                        background-color: $color-foreground;
+                    .sortable-unit {
+                        border-top-color: transparent;
                     }
                 }
             }
         }
     }
-}
-
-.drag-handle {
-    flex-shrink: 0;
-    background-color: $color-foreground;
-    padding: $spacing-small;
 }

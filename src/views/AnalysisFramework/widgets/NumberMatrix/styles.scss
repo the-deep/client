@@ -54,14 +54,11 @@
                 border-bottom: $width-separator-thin solid $color-separator;
 
                 .edit-list {
-                    display: flex;
-                    flex-direction: column;
                     flex-grow: 1;
                     overflow-y: auto;
 
                     .sortable-unit {
-                        flex-shrink: 0;
-                        border-top: $width-separator-thin solid $color-separator;
+                        border-top-color: transparent;
                     }
                 }
             }
