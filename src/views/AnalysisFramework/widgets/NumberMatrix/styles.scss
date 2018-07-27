@@ -14,47 +14,55 @@
 }
 
 .edit-modal {
-    .body {
+    width: $width-modal-medium;
+    height: $height-modal-medium;
+
+    .form {
         display: flex;
         flex-direction: column;
-        padding: 0;
-        height: $height-modal-body-medium;
+        height: 100%;
 
-        .non-field-errors {
-            flex-shrink: 0;
-            padding: $spacing-extra-small $spacing-small;
-        }
-
-        .title {
-            flex-shrink: 0;
-            padding: $spacing-extra-small $spacing-small;
-        }
-
-        .tabs-container {
+        .body {
             display: flex;
             flex-direction: column;
-            flex-shrink: 0;
+            padding: 0;
 
-            .tabs {
-                flex-grow: 1;
+            .non-field-errors {
+                flex-shrink: 0;
+                padding: 0 $spacing-small;
             }
-        }
 
-        .modal-unit-container {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            border-bottom: $width-separator-thin solid $color-separator;
+            .title {
+                flex-shrink: 0;
+                padding: $spacing-extra-small $spacing-small;
+            }
 
-            .edit-list {
+            .tabs-container {
+                display: flex;
+                flex-direction: column;
+                flex-shrink: 0;
+
+                .tabs {
+                    flex-grow: 1;
+                }
+            }
+
+            .modal-unit-container {
                 display: flex;
                 flex-direction: column;
                 flex-grow: 1;
-                overflow-y: auto;
+                border-bottom: $width-separator-thin solid $color-separator;
 
-                .sortable-unit {
-                    flex-shrink: 0;
-                    border-top: $width-separator-thin solid $color-separator;
+                .edit-list {
+                    display: flex;
+                    flex-direction: column;
+                    flex-grow: 1;
+                    overflow-y: auto;
+
+                    .sortable-unit {
+                        flex-shrink: 0;
+                        border-top: $width-separator-thin solid $color-separator;
+                    }
                 }
             }
         }

@@ -1,10 +1,21 @@
 @import '../../../../stylesheets/base';
 
-$height-edit-modal: 512px;
+.sortable-unit {
+    border-top: $width-separator-thin solid $color-separator;
+    border-bottom: $width-separator-thin solid $color-separator;
+
+    .drag-handle {
+        display: flex;
+        align-items: center;
+        align-self: stretch;
+        background-color: $color-foreground;
+        padding: $spacing-small;
+    }
+}
 
 .edit-modal {
-    width: $width-modal-small;
-    height: $height-edit-modal;
+    width: $width-modal-medium;
+    height: $height-modal-medium;
 
     .form {
         display: flex;
@@ -17,7 +28,13 @@ $height-edit-modal: 512px;
             flex-grow: 1;
             padding: 0;
 
-            .title-input {
+            .non-field-errors {
+                flex-shrink: 0;
+                padding: 0 $spacing-small;
+            }
+
+            .title {
+                flex-shrink: 0;
                 padding: 0 $spacing-small;
             }
 
@@ -35,26 +52,16 @@ $height-edit-modal: 512px;
                     padding: $spacing-small;
                 }
 
-                .edit-option-list {
+                .edit-list {
                     flex-grow: 1;
                     overflow-y: auto;
 
-                    .item {
-                        background-color: $color-foreground;
+                    .sortable-unit {
+                        flex-shrink: 0;
+                        border-top: $width-separator-thin solid $color-separator;
                     }
                 }
             }
         }
     }
 }
-
-.drag-handle {
-    flex-shrink: 0;
-    background-color: $color-foreground;
-    padding: $spacing-small;
-}
-
-
-// .draggable-item {
-//     z-index: 11111;
-// }

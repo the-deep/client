@@ -20,7 +20,7 @@ export default class InputRow extends React.PureComponent {
     render() {
         const { index } = this.props;
         return (
-            <div className={styles.sortableUnit}>
+            <div className={styles.inputContainer}>
                 <FaramGroup
                     faramElementName={String(index)}
                 >

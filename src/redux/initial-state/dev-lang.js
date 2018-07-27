@@ -346,7 +346,6 @@ const initialDevLangState = {
         738: 'Option',
         739: 'e.g. Context',
         740: 'Edit multiselect',
-        741: 'Add option',
         742: 'Number matrix',
         744: 'e.g. Row',
         745: 'e.g. Its a tooltip',
@@ -901,7 +900,7 @@ const initialDevLangState = {
         },
         'framework.multiselectWidget': {
             editMultiselectModalTitle: 740,
-            addOptionButtonLabel: 741,
+            addOptionButtonLabel: 301,
             optionLabel: 738,
             optionPlaceholder: 739,
             optionsHeader: 775,
@@ -913,7 +912,7 @@ const initialDevLangState = {
         },
         'framework.selectWidget': {
             editSelectModalTitle: 740,
-            addOptionButtonLabel: 741,
+            addOptionButtonLabel: 301,
             optionLabel: 738,
             optionPlaceholder: 739,
             optionsHeader: 775,

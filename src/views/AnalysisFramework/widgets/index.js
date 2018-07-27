@@ -92,7 +92,7 @@ const widgetList = [
 
         // NOTE: used as _ts('widgetTitle', 'geoWidgetLabel')
         title: 'geoWidgetLabel',
-        minSize: { w: 20, h: 12 },
+        minSize: { w: 15, h: 6 },
     },
     {
         widgetId: 'matrix1dWidget',
