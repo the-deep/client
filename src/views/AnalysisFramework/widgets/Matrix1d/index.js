@@ -97,6 +97,7 @@ export default class DefaultEditWidget extends React.PureComponent {
             title,
             data: { rows },
         } = props;
+
         this.state = {
             faramValues: {
                 title,
@@ -144,12 +145,25 @@ export default class DefaultEditWidget extends React.PureComponent {
 
     rendererParams = (key, elem, i) => ({
         index: i,
+        faramElementName: String(i),
         data: elem,
         setSelectedRow: (k) => {
             this.setState({ selectedRowKey: k });
         },
         isSelected: this.state.selectedRowKey === key,
     })
+
+    renderDragHandle = (key) => {
+        const dragHandleClassNames = [styles.dragHandle];
+        const { selectedRowKey } = this.state;
+        if (selectedRowKey === key) {
+            dragHandleClassNames.push(styles.active);
+        }
+
+        return (
+            <span className={`${iconNames.hamburger} ${dragHandleClassNames.join(' ')}`} />
+        );
+    };
 
     render() {
         const {
@@ -162,6 +176,7 @@ export default class DefaultEditWidget extends React.PureComponent {
             title,
         } = this.props;
 
+        // FIXME: Use strings
         const cancelButtonLabel = 'Cancel';
         const saveButtonLabel = 'Save';
 
@@ -214,7 +229,7 @@ export default class DefaultEditWidget extends React.PureComponent {
                                 <div className={styles.panels}>
                                     <SortableListView
                                         className={styles.leftPanel}
-                                        dragHandleClassName={styles.dragHandle}
+                                        dragHandleModifier={this.renderDragHandle}
                                         faramElement
                                         keyExtractor={DefaultEditWidget.keyExtractor}
                                         rendererParams={this.rendererParams}

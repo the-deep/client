@@ -2,10 +2,25 @@
 
 $height-edit-modal: 70vh;
 
-.drag-handle {
-    flex-shrink: 0;
+.item {
+    display: flex;
+    align-items: stretch;
+    border-top: $width-separator-thin solid $color-separator;
+    border-bottom: $width-separator-thin solid $color-separator;
     background-color: $color-foreground;
-    padding: $spacing-small;
+    padding: 0;
+
+    .drag-handle {
+        @include transition-medium;
+        flex-shrink: 0;
+        background-color: $color-foreground;
+        cursor: drag;
+        padding: $spacing-small;
+
+        &.active {
+            background-color: $color-background-selected;
+        }
+    }
 }
 
 .edit-modal {
@@ -48,6 +63,7 @@ $height-edit-modal: 70vh;
                     justify-content: space-between;
                     border-bottom: $width-separator-thin solid $color-separator;
                     padding: $spacing-small;
+                    padding-top: 0;
                 }
 
                 .panels {
@@ -60,8 +76,7 @@ $height-edit-modal: 70vh;
                         overflow-y: auto;
 
                         .item {
-                            border-bottom: $width-separator-thin solid $color-separator;
-                            background-color: $color-foreground;
+                            border-top-color: transparent;
                         }
                     }
 

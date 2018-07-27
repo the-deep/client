@@ -3,10 +3,10 @@ import React from 'react';
 
 import Button from '#rs/components/Action/Button';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
+import FaramElement from '#rs/components/Input/Faram/FaramElement';
 
 import { iconNames } from '#constants';
 
-import RowHeading from './RowHeading';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -20,6 +20,7 @@ const defaultProps = {
     isSelected: false,
 };
 
+@FaramElement('errorIndicator')
 export default class RowTitle extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -42,20 +43,26 @@ export default class RowTitle extends React.PureComponent {
             index,
             data: { title },
             isSelected,
+            hasError,
         } = this.props;
+
+        const rowTitleClassNames = [styles.rowTitle];
+        const titleClassNames = [styles.title];
+        if (isSelected) {
+            rowTitleClassNames.push(styles.active);
+        }
+        if (hasError) {
+            titleClassNames.push(styles.hasError);
+        }
+
         return (
-            <div className={styles.rowTitle}>
+            <div className={rowTitleClassNames.join(' ')}>
                 <Button
-                    className={styles.title}
+                    className={titleClassNames.join(' ')}
                     onClick={this.handleClick}
                     transparent
                 >
-                    <RowHeading
-                        title={title}
-                        index={index}
-                        isSelected={isSelected}
-                        faramElementName={String(index)}
-                    />
+                    {title}
                 </Button>
                 <DangerButton
                     className={styles.deleteButton}
