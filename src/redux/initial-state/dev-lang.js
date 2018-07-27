@@ -628,6 +628,8 @@ const initialDevLangState = {
 
         1005: 'Edit entries',
         1006: 'No of entries',
+        1007: 'There should be at least one item.',
+        1008: 'Duplicate items are not allowed: {duplicates}.',
         9000: 'Priority humanitarian access issues',
         9001: 'Settings facing most humanitarian access issues',
         9002: 'Population with limited/intermittent access',
@@ -839,6 +841,10 @@ const initialDevLangState = {
             gotoOverviewButtonLabel: 509,
             exitButtonLabel: 778,
             confirmDeletewWidget: 6000,
+
+            // error messages
+            duplicationError: 1008,
+            atLeastOneError: 1007,
 
             // notification
             afTitle: 379,

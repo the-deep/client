@@ -42,14 +42,16 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                 validation: (options) => {
                     const errors = [];
                     if (!options || options.length <= 0) {
-                        // FIXME: use strings
-                        errors.push('There should be at least 1 option.');
+                        errors.push(_ts('framework', 'atLeastOneError'));
                     }
 
                     const duplicates = findDuplicates(options, o => o.label);
                     if (duplicates.length > 0) {
-                        // FIXME: use strings
-                        errors.push(`Duplicate options are not allowed: ${duplicates.join(', ')}`);
+                        errors.push(_ts(
+                            'framework',
+                            'duplicationError',
+                            { duplicates: duplicates.join(', ') },
+                        ));
                     }
                     return errors;
                 },
