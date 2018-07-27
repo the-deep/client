@@ -14,7 +14,7 @@ import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
 import ModalHeader from '#rs/components/View/Modal/Header';
-import { randomString, unique } from '#rs/utils/common';
+import { findDuplicates, randomString } from '#rs/utils/common';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';
@@ -53,10 +53,15 @@ export default class ScaleFrameworkList extends React.PureComponent {
                     const errors = [];
                     if (!scaleUnits || scaleUnits.length <= 0) {
                         errors.push(_ts('framework.scaleWidget', 'requiredErrorMessage'));
-                    } else if (
-                        scaleUnits && unique(scaleUnits, o => o.label).length !== scaleUnits.length
-                    ) {
-                        errors.push(_ts('framework.scaleWidget', 'duplicateErrorMessage'));
+                    }
+
+                    const duplicates = findDuplicates(scaleUnits, o => o.label);
+                    if (duplicates.length > 0) {
+                        errors.push(
+                            _ts('framework.scaleWidget', 'duplicateErrorMessage', {
+                                duplicates: duplicates.join(', '),
+                            }),
+                        );
                     }
                     return errors;
                 },
@@ -74,7 +79,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
     static faramInfoForAdd = {
         newElement: () => ({
             key: randomString(16).toLowerCase(),
-            label: '',
+            title: '',
         }),
     }
 
