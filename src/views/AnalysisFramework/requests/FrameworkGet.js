@@ -33,10 +33,10 @@ export default class FrameworkGet extends Request {
             isValueOverriden,
         } = checkVersion(analysisFramework.versionId, response.versionId);
 
-        if (shouldSetValue) {
+        if (shouldSetValue || this.cancel) {
             setAnalysisFramework({ analysisFramework: response });
         }
-        if (isValueOverriden) {
+        if (isValueOverriden || this.cancel) {
             notify.send({
                 type: notify.type.WARNING,
                 title: _ts('framework', 'afUpdate'),
@@ -65,7 +65,9 @@ export default class FrameworkGet extends Request {
         });
     }
 
-    init = (frameworkId) => {
+    init = (frameworkId, cancel = false) => {
+        this.cancel = cancel;
+
         this.createDefault({
             url: createUrlForAnalysisFramework(frameworkId),
             params: createParamsForGet(),
