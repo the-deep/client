@@ -1,19 +1,15 @@
 import { createSelector } from 'reselect';
 import { afIdFromRoute } from '../domainData';
 
+const emptyObject = {};
+
 const analysisFrameworkViewSelector = ({ siloDomainData }) => (
     siloDomainData.analysisFrameworkView
 );
 
+// eslint-disable-next-line import/prefer-default-export
 export const afViewAnalysisFrameworkSelector = createSelector(
-    analysisFrameworkViewSelector,
-    afView => afView.analysisFramework,
-);
-
-export const afViewCurrentAnalysisFrameworkSelector = createSelector(
     afIdFromRoute,
-    afViewAnalysisFrameworkSelector,
-    (id, analysisFramework) => (
-        (analysisFramework && analysisFramework.id === id) ? analysisFramework : undefined
-    ),
+    analysisFrameworkViewSelector,
+    (afId, afView) => afView[afId] || emptyObject,
 );

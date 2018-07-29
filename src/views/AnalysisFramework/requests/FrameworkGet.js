@@ -36,7 +36,7 @@ export default class FrameworkGet extends Request {
         if (shouldSetValue || this.cancel) {
             setAnalysisFramework({ analysisFramework: response });
         }
-        if (isValueOverriden || this.cancel) {
+        if (isValueOverriden) {
             notify.send({
                 type: notify.type.WARNING,
                 title: _ts('framework', 'afUpdate'),

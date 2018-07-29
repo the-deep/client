@@ -156,9 +156,11 @@ const getValidatedAnalysisFramework = (analysisFramework) => {
 
 const afViewSetAnalysisFramework = (state, action) => {
     const { analysisFramework } = action;
+    const frameworkId = analysisFramework.id;
+
     const settings = {
         analysisFrameworkView: {
-            analysisFramework: {
+            [frameworkId]: {
                 $set: analysisFramework,
             },
         },
@@ -168,14 +170,14 @@ const afViewSetAnalysisFramework = (state, action) => {
 
 const afViewAddWidget = (state, action) => {
     const { analysisFrameworkId, widget } = action;
-    const { analysisFrameworkView: { analysisFramework } } = state;
+    const { analysisFrameworkView: { [analysisFrameworkId]: analysisFramework } } = state;
     if (!isAnalysisFrameworkValid(analysisFramework, analysisFrameworkId)) {
         return state;
     }
 
     const settings = {
         analysisFrameworkView: {
-            analysisFramework: {
+            [analysisFrameworkId]: {
                 widgets: {
                     $autoArray: { $push: [widget] },
                 },
@@ -185,7 +187,7 @@ const afViewAddWidget = (state, action) => {
     const newState = update(state, settings);
     const newSettings = {
         analysisFrameworkView: {
-            analysisFramework: { $set: getValidatedAnalysisFramework(
+            [analysisFrameworkId]: { $set: getValidatedAnalysisFramework(
                 newState.analysisFrameworkView.analysisFramework,
             ) },
         },
@@ -196,14 +198,15 @@ const afViewAddWidget = (state, action) => {
 
 const afViewRemoveWidget = (state, action) => {
     const { analysisFrameworkId, widgetId } = action;
-    const { analysisFrameworkView: { analysisFramework } } = state;
+    const { analysisFrameworkView: { [analysisFrameworkId]: analysisFramework } } = state;
+
     if (!isAnalysisFrameworkValid(analysisFramework, analysisFrameworkId)) {
         return state;
     }
 
     const settings = {
         analysisFrameworkView: {
-            analysisFramework: {
+            [analysisFrameworkId]: {
                 widgets: { $filter: w => getWidgetKey(w) !== widgetId },
             },
         },
@@ -213,7 +216,8 @@ const afViewRemoveWidget = (state, action) => {
 
 const afViewUpdateWidget = (state, action) => {
     const { analysisFrameworkId, widget } = action;
-    const { analysisFrameworkView: { analysisFramework } } = state;
+    const { analysisFrameworkView: { [analysisFrameworkId]: analysisFramework } } = state;
+
     if (!isAnalysisFrameworkValid(analysisFramework, analysisFrameworkId)) {
         return state;
     }
@@ -227,7 +231,7 @@ const afViewUpdateWidget = (state, action) => {
 
     const settings = {
         analysisFrameworkView: {
-            analysisFramework: {
+            [analysisFrameworkId]: {
                 widgets: {
                     [widgetIndex]: { $merge: widget },
                 },

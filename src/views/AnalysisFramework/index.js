@@ -16,7 +16,7 @@ import {
     afIdFromRoute,
     setAfViewAnalysisFrameworkAction,
 
-    afViewCurrentAnalysisFrameworkSelector,
+    afViewAnalysisFrameworkSelector,
     activeProjectIdFromStateSelector,
 } from '#redux';
 import {
@@ -43,7 +43,7 @@ const defaultProps = {
 };
 
 const mapStateToProps = (state, props) => ({
-    analysisFramework: afViewCurrentAnalysisFrameworkSelector(state, props),
+    analysisFramework: afViewAnalysisFrameworkSelector(state, props),
     analysisFrameworkId: afIdFromRoute(state, props),
     projectId: activeProjectIdFromStateSelector(state, props),
 });
@@ -73,6 +73,7 @@ export default class AnalysisFramework extends React.PureComponent {
             setState: params => this.setState(params),
             setAnalysisFramework: this.props.setAnalysisFramework,
         });
+        console.warn(this.props.analysisFramework);
 
         this.views = {
             overview: {
@@ -136,8 +137,8 @@ export default class AnalysisFramework extends React.PureComponent {
             analysisFramework,
         } = this.props;
 
-        this.frameworkGetRequest.init(analysisFrameworkId);
-        this.frameworkGetRequest.start(analysisFramework);
+        this.frameworkSaveRequest.init(analysisFrameworkId, analysisFramework);
+        this.frameworkSaveRequest.start();
     }
 
     handleCancel = () => {
