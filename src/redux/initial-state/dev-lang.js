@@ -328,6 +328,7 @@ const initialDevLangState = {
         646: 'Couldn\'t load project',
         648: 'Couldn\'t load analysis framework',
         649: 'Uncategorized',
+        650: 'Dismiss',
         704: 'Date',
         705: 'Date range',
         706: 'Text or image excerpt',
@@ -1105,6 +1106,12 @@ const initialDevLangState = {
         'components.appError': {
             problemText: 2010,
             reportErrorTitle: 9920,
+        },
+        'components.frameworkWidgetError': {
+            problemText: 2011,
+            reportErrorTitle: 9920,
+            dismissTitle: 650,
+            headingTitle: 630,
         },
         'components.widgetError': {
             problemText: 2011,
