@@ -201,11 +201,13 @@ export default class AnalysisFramework extends React.PureComponent {
                             // FIXME: use strings
                             confirmationMessage="Do you want to cancel all changes?"
                             onClick={this.handleCancel}
+                            disabled={!analysisFramework.pristine}
                         >
                             { cancelButtonTitle }
                         </DangerConfirmButton>
                         <SuccessButton
                             onClick={this.handleSave}
+                            disabled={!analysisFramework.pristine}
                         >
                             { saveButtonTitle }
                         </SuccessButton>

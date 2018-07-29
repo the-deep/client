@@ -155,6 +155,7 @@ const initialSiloDomainData = {
     },
 
     leadGroupsView: {
+        /*
         1: {
             activeSort: '',
             activePage: 1,
@@ -162,6 +163,7 @@ const initialSiloDomainData = {
             leadGroups: [],
             totalLeadGroupsCount: 20,
         },
+         */
     },
 
     // i specifies project
@@ -203,8 +205,8 @@ const initialSiloDomainData = {
     },
 
     analysisFrameworkView: {
-        analysisFramework: {
-            /*
+        /*
+        1: {
             id: 1,
             title: 'ACAPS Framework',
             createdAt: '',
@@ -225,8 +227,8 @@ const initialSiloDomainData = {
             ],
             exportables: [
             ],
-            */
         },
+        */
     },
 
     // SubCategory = {

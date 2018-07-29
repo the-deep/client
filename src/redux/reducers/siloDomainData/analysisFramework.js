@@ -149,6 +149,7 @@ const getValidatedAnalysisFramework = (analysisFramework) => {
     // Return updates widget list
     return update(analysisFramework, {
         widgets: { $set: widgets },
+        pristine: { $set: true },
     });
 };
 
@@ -157,11 +158,15 @@ const getValidatedAnalysisFramework = (analysisFramework) => {
 const afViewSetAnalysisFramework = (state, action) => {
     const { analysisFramework } = action;
     const frameworkId = analysisFramework.id;
+    const framework = {
+        ...analysisFramework,
+        pristine: false,
+    };
 
     const settings = {
         analysisFrameworkView: {
             [frameworkId]: {
-                $set: analysisFramework,
+                $set: framework,
             },
         },
     };
@@ -188,7 +193,7 @@ const afViewAddWidget = (state, action) => {
     const newSettings = {
         analysisFrameworkView: {
             [analysisFrameworkId]: { $set: getValidatedAnalysisFramework(
-                newState.analysisFrameworkView.analysisFramework,
+                newState.analysisFrameworkView[analysisFrameworkId],
             ) },
         },
     };
@@ -208,6 +213,7 @@ const afViewRemoveWidget = (state, action) => {
         analysisFrameworkView: {
             [analysisFrameworkId]: {
                 widgets: { $filter: w => getWidgetKey(w) !== widgetId },
+                pristine: { $set: true },
             },
         },
     };
@@ -235,6 +241,7 @@ const afViewUpdateWidget = (state, action) => {
                 widgets: {
                     [widgetIndex]: { $merge: widget },
                 },
+                pristine: { $set: true },
             },
         },
     };
