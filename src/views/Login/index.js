@@ -125,7 +125,7 @@ export default class Login extends React.PureComponent {
         this.setState({ pending: true });
     }
 
-    setRecaptchaResetFunction = (func) => {
+    setResetRecaptchaFunction = (func) => {
         this.resetRecaptcha = func;
     }
 
@@ -308,7 +308,7 @@ export default class Login extends React.PureComponent {
                         />
                         { showReCaptcha &&
                             <ReCaptcha
-                                setResetFunction={this.setRecaptchaResetFunction}
+                                setResetFunction={this.setResetRecaptchaFunction}
                                 faramElementName="recaptchaResponse"
                                 siteKey={reCaptchaSiteKey}
                             />

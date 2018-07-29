@@ -221,11 +221,13 @@ export default class LeadAdd extends React.PureComponent {
         const { project } = leadAccessor.getFaramValues(lead);
         const leadOptions = leadFilterOptions[project];
 
+        const setSubmitter = (submitter) => {
+            this.leadFormSubmitters[key] = submitter;
+        };
+
         return (
             <LeadFormItem
-                setSubmitter={(submitter) => {
-                    this.leadFormSubmitters[key] = submitter;
-                }}
+                setSubmitter={setSubmitter}
                 key={key}
                 leadKey={key}
                 active={key === activeLeadId}

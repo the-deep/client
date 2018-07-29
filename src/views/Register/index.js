@@ -70,7 +70,7 @@ export default class Register extends React.PureComponent {
         }
     }
 
-    setRecaptchaResetFunction = (func) => {
+    setResetRecaptchaFunction = (func) => {
         this.resetRecaptcha = func;
     }
 
@@ -205,7 +205,7 @@ export default class Register extends React.PureComponent {
                     placeholder={_ts('register', 'emailPlaceholder')}
                 />
                 <ReCaptcha
-                    setResetFunction={this.setRecaptchaResetFunction}
+                    setResetFunction={this.setResetRecaptchaFunction}
                     faramElementName="recaptchaResponse"
                     siteKey={reCaptchaSiteKey}
                     reset={pending}

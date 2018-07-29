@@ -79,7 +79,7 @@ const mapStateToProps = (state, props) => ({
     projectDetails: projectDetailsSelector(state, props),
 });
 
-@connect(mapStateToProps, null, null)
+@connect(mapStateToProps)
 export default class LeadForm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -211,6 +211,10 @@ export default class LeadForm extends React.PureComponent {
         }
     }
 
+    setSubmitFormFunction = (func) => {
+        this.submitForm = func;
+    }
+
     handleApplyAllClick = attrName => this.props.onApplyAllClick(attrName);
 
     handleApplyAllBelowClick = attrName => this.props.onApplyAllBelowClick(attrName);
@@ -252,7 +256,7 @@ export default class LeadForm extends React.PureComponent {
 
         return (
             <Faram
-                setSubmitFunction={(func) => { this.submitForm = func; }}
+                setSubmitFunction={this.setSubmitFormFunction}
                 className={`${styles.addLeadForm} ${className}`}
                 onChange={onChange}
                 onValidationFailure={onFailure}

@@ -60,7 +60,7 @@ export default class PasswordReset extends React.PureComponent {
         };
     }
 
-    setRecaptchaResetFunction = (func) => {
+    setResetRecaptchaFunction = (func) => {
         this.resetRecaptcha = func;
     }
 
@@ -180,7 +180,7 @@ export default class PasswordReset extends React.PureComponent {
                                     placeholder={_ts('passwordReset', 'emailPlaceholder')}
                                 />
                                 <ReCaptcha
-                                    setResetFunction={this.setRecaptchaResetFunction}
+                                    setResetFunction={this.setResetRecaptchaFunction}
                                     faramElementName="recaptchaResponse"
                                     siteKey={reCaptchaSiteKey}
                                 />
