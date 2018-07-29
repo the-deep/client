@@ -19,13 +19,14 @@
         position: relative;
         flex-grow: 1;
         margin: $spacing-small-alt;
-        height: auto;
+        overflow-y: auto;
     }
 
     .footer {
         display: flex;
         align-items: center;
         flex-shrink: 0;
+        justify-content: flex-end;
         border-top: $width-separator-thin solid $color-separator;
         background-color: $color-foreground;
         padding: $spacing-small;

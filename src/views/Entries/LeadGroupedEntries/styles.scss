@@ -1,10 +1,16 @@
 @import '../../../stylesheets/base';
 
 .lead-grouped-entries {
+    border-bottom: $width-separator-thin solid $color-separator;
+
     .header {
         @include background-color($color-background-header);
         display: flex;
+        position: sticky;
+        top: 0;
         align-items: center;
+        z-index: 1;
+        border-bottom: $width-separator-thin solid $color-separator;
 
         .heading {
             display: flex;
