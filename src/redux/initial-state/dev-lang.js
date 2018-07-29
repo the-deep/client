@@ -489,6 +489,7 @@ const initialDevLangState = {
         988: 'Save entry',
         989: 'Entries successfully saved',
         990: '{errorCount} entries could not be saved.',
+        991: 'Failed to load analysis framework',
         993: 'Lead successfully removed',
         994: 'Remove leads',
         995: 'Leads successfully removed',
@@ -849,6 +850,7 @@ const initialDevLangState = {
             afTitle: 379,
             afUpdate: 981,
             afUpdateOverridden: 982,
+            afFatalError: 991,
             afSaveSuccess: 983,
         },
         'framework.timeWidget': {

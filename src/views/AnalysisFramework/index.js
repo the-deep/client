@@ -14,7 +14,6 @@ import FixedTabs from '#rscv/FixedTabs';
 
 import AppError from '#components/AppError';
 import {
-    createParamsForGet,
     createParamsForAnalysisFrameworkEdit,
     createUrlForAnalysisFramework,
 } from '#rest';
@@ -33,6 +32,7 @@ import notify from '#notify';
 import schema from '#schema';
 import _ts from '#ts';
 
+import FrameworkGetRequest from './requests/FrameworkGet';
 import Overview from './Overview';
 import List from './List';
 import styles from './styles.scss';
@@ -67,6 +67,16 @@ export default class AnalysisFramework extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        this.state = {
+            pendingFramework: true,
+        };
+
+        this.frameworkGetRequest = new FrameworkGetRequest({
+            setState: params => this.setState(params),
+            setAnalysisFramework: this.props.setAnalysisFramework,
+            getAnalysisFramework: () => this.props.analysisFramework,
+        });
+
         this.views = {
             overview: {
                 component: () => (
@@ -100,73 +110,29 @@ export default class AnalysisFramework extends React.PureComponent {
     }
 
     componentWillMount() {
-        this.analysisFrameworkRequest = this.createRequestForAnalysisFramework(
-            this.props.analysisFrameworkId,
-        );
-        this.analysisFrameworkRequest.start();
+        this.frameworkGetRequest.init(this.props.analysisFrameworkId);
+        this.frameworkGetRequest.start();
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.analysisFrameworkId !== nextProps.analysisFrameworkId) {
-            if (this.analysisFrameworkRequest) {
-                this.analysisFrameworkRequest.stop();
-            }
+        const { analysisFrameworkId: oldAnalysisFrameworkId } = this.props;
+        const { analysisFrameworkId: newAnalysisFrameworkId } = nextProps;
+
+        if (oldAnalysisFrameworkId !== newAnalysisFrameworkId) {
             if (this.analysisFrameworkSaveRequest) {
                 this.analysisFrameworkSaveRequest.stop();
             }
 
-            this.analysisFrameworkRequest = this.createRequestForAnalysisFramework(
-                this.props.analysisFrameworkId,
-            );
-            this.analysisFrameworkRequest.start();
+            this.frameworkGetRequest.init(newAnalysisFrameworkId);
+            this.frameworkGetRequest.start();
         }
     }
 
     componentWillUnmount() {
-        if (this.analysisFrameworkRequest) {
-            this.analysisFrameworkRequest.stop();
-        }
+        this.frameworkGetRequest.stop();
         if (this.analysisFrameworkSaveRequest) {
             this.analysisFrameworkSaveRequest.stop();
         }
-    }
-
-    createRequestForAnalysisFramework = (analysisFrameworkId) => {
-        const urlForAnalysisFramework = createUrlForAnalysisFramework(
-            analysisFrameworkId,
-        );
-        const analysisFrameworkRequest = new FgRestBuilder()
-            .url(urlForAnalysisFramework)
-            .params(createParamsForGet)
-            .success((response) => {
-                try {
-                    schema.validate(response, 'analysisFramework');
-                    const { analysisFramework = {} } = this.props;
-
-                    const {
-                        shouldSetValue,
-                        isValueOverriden,
-                    } = checkVersion(analysisFramework.versionId, response.versionId);
-
-                    if (shouldSetValue) {
-                        this.props.setAnalysisFramework({
-                            analysisFramework: response,
-                        });
-                    }
-                    if (isValueOverriden) {
-                        notify.send({
-                            type: notify.type.WARNING,
-                            title: _ts('framework', 'afUpdate'),
-                            message: _ts('framework', 'afUpdateOverridden'),
-                            duration: notify.duration.SLOW,
-                        });
-                    }
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .build();
-        return analysisFrameworkRequest;
     }
 
     createRequestForAnalysisFrameworkSave = ({ analysisFramework }) => {
@@ -219,11 +185,12 @@ export default class AnalysisFramework extends React.PureComponent {
 
         // FIXME: add prompt
 
+        // FIXME: Use Strings
         const cancelButtonTitle = 'Cancel';
         const saveButtonTitle = 'Save';
         const backButtonTooltip = 'Back to projects';
 
-        const exitPath = `${reverseRoute(pathNames.projects, { projectId })}#/frameworks`;
+        const exitPath = reverseRoute(pathNames.projects, { projectId });
         const frameworkTitle = analysisFramework.title || _ts('framework', 'analysisFramework');
 
         return (
@@ -232,7 +199,10 @@ export default class AnalysisFramework extends React.PureComponent {
                     <Link
                         className={styles.backLink}
                         title={backButtonTooltip}
-                        to={exitPath}
+                        to={{
+                            pathname: exitPath,
+                            hash: '#/frameworks',
+                        }}
                     >
                         <i className={iconNames.back} />
                     </Link>
