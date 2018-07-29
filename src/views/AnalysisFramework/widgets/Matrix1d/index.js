@@ -32,6 +32,8 @@ const defaultProps = {
     data: {},
 };
 
+const emptyArray = [];
+
 export default class Matrix1dEditWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -95,7 +97,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
 
         const {
             title,
-            data: { rows },
+            data: { rows = emptyArray },
         } = props;
 
         this.state = {
@@ -106,7 +108,9 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             faramErrors: {},
             pristine: false,
 
-            selectedRowKey: rows[0] ? rows[0].key : undefined,
+            selectedRowKey: rows[0]
+                ? Matrix1dEditWidget.keyExtractor(rows[0])
+                : undefined,
         };
     }
 
@@ -139,7 +143,9 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             cells: [],
         }),
         callback: (value) => {
-            this.setState({ selectedRowKey: value.key });
+            this.setState({
+                selectedRowKey: Matrix1dEditWidget.keyExtractor(value),
+            });
         },
     }
 
@@ -151,6 +157,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             this.setState({ selectedRowKey: k });
         },
         isSelected: this.state.selectedRowKey === key,
+        keyExtractor: Matrix1dEditWidget.keyExtractor,
     })
 
     renderDragHandle = (key) => {
@@ -181,7 +188,9 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         const saveButtonLabel = 'Save';
 
         const { rows = [] } = faramValues || {};
-        const selectedRowIndex = rows.findIndex(row => row.key === this.state.selectedRowKey);
+        const selectedRowIndex = rows.findIndex(
+            row => Matrix1dEditWidget.keyExtractor(row) === this.state.selectedRowKey,
+        );
 
         return (
             <Modal className={styles.editModal}>

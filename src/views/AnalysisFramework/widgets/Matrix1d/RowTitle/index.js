@@ -14,6 +14,7 @@ const propTypes = {
     index: PropTypes.number.isRequired,
     setSelectedRow: PropTypes.func.isRequired,
     hasError: PropTypes.bool,
+    keyExtractor: PropTypes.func.isRequired,
 };
 const defaultProps = {
     data: {},
@@ -27,14 +28,17 @@ export default class RowTitle extends React.PureComponent {
     static defaultProps = defaultProps;
 
     handleClick = () => {
-        const { data: { key } } = this.props;
+        const { data } = this.props;
+        const key = this.props.keyExtractor(data);
         this.props.setSelectedRow(key);
     }
 
     faramInfoForDelete = {
         callback: (i, newValue) => {
             const newIndex = Math.min(i, newValue.length - 1);
-            const newKey = newIndex !== -1 ? newValue[newIndex].key : undefined;
+            const newKey = newIndex !== -1
+                ? this.props.keyExtractor(newValue[newIndex])
+                : undefined;
             this.props.setSelectedRow(newKey);
         },
     }
@@ -63,7 +67,6 @@ export default class RowTitle extends React.PureComponent {
                 <button
                     className={titleClassNames.join(' ')}
                     onClick={this.handleClick}
-                    transparent
                     type="button"
                 >
                     {title || defaultTitle}
