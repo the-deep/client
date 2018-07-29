@@ -125,6 +125,10 @@ export default class Login extends React.PureComponent {
         this.setState({ pending: true });
     }
 
+    setRecaptchaResetFunction = (func) => {
+        this.resetRecaptcha = func;
+    }
+
     checkParamsFromHid = () => {
         const { location } = this.props;
         // Get params from the current url
@@ -185,8 +189,8 @@ export default class Login extends React.PureComponent {
                 this.setState({ pending: true });
             })
             .postLoad(() => {
-                if (this.reCaptcha) {
-                    this.reCaptcha.reset();
+                if (this.resetRecaptcha) {
+                    this.resetRecaptcha();
                 }
             })
             .success((response) => {
@@ -304,7 +308,7 @@ export default class Login extends React.PureComponent {
                         />
                         { showReCaptcha &&
                             <ReCaptcha
-                                ref={(reCaptcha) => { this.reCaptcha = reCaptcha; }}
+                                setResetFunction={this.setRecaptchaResetFunction}
                                 faramElementName="recaptchaResponse"
                                 siteKey={reCaptchaSiteKey}
                             />

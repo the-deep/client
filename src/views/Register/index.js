@@ -70,6 +70,10 @@ export default class Register extends React.PureComponent {
         }
     }
 
+    setRecaptchaResetFunction = (func) => {
+        this.resetRecaptcha = func;
+    }
+
     // FORM RELATED
 
     handleFaramChange = (faramValues, faramErrors) => {
@@ -117,8 +121,8 @@ export default class Register extends React.PureComponent {
                 this.setState({ pending: true });
             })
             .postLoad(() => {
-                if (this.reCaptcha) {
-                    this.reCaptcha.reset();
+                if (this.resetRecaptcha) {
+                    this.resetRecaptcha();
                 }
                 this.setState({ pending: false });
             })
@@ -201,7 +205,7 @@ export default class Register extends React.PureComponent {
                     placeholder={_ts('register', 'emailPlaceholder')}
                 />
                 <ReCaptcha
-                    ref={(reCaptcha) => { this.reCaptcha = reCaptcha; }}
+                    setResetFunction={this.setRecaptchaResetFunction}
                     faramElementName="recaptchaResponse"
                     siteKey={reCaptchaSiteKey}
                     reset={pending}
