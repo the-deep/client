@@ -1,16 +1,19 @@
 @import '../../../../../stylesheets/base';
 
-.sortable-unit {
+.input-container {
     display: flex;
     align-items: center;
-    border-bottom: $width-separator-thin solid $color-separator;
     background-color: $color-foreground;
     padding: $spacing-small;
     width: 100%;
 
+    .color-input {
+        flex-shrink: 0;
+        padding-right: $spacing-small;
+    }
+
     .title-input {
         flex-grow: 1;
-        margin-left: $spacing-small;
         padding: 0 $spacing-extra-small;
     }
 
@@ -18,4 +21,3 @@
         flex-shrink: 0;
     }
 }
-

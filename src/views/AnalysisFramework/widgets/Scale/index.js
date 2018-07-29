@@ -150,20 +150,25 @@ export default class ScaleFrameworkList extends React.PureComponent {
                 >
                     <ModalHeader title={title} />
                     <ModalBody className={styles.body}>
-                        <div className={styles.titleInputContainer} >
-                            <NonFieldErrors faramElement />
-                            <TextInput
-                                faramElementName="title"
-                                label={_ts('framework.scaleWidget', 'titleLabel')}
-                                placeholder={_ts('framework.scaleWidget', 'titlePlaceholderScale')}
-                                showHintAndError={false}
-                                autoFocus
-                                selectOnFocus
-                            />
-                        </div>
+                        <NonFieldErrors
+                            className={styles.nonFieldErrors}
+                            faramElement
+                        />
+                        <TextInput
+                            className={styles.title}
+                            faramElementName="title"
+                            label={_ts('framework.scaleWidget', 'titleLabel')}
+                            placeholder={_ts('framework.scaleWidget', 'titlePlaceholderScale')}
+                            showHintAndError={false}
+                            autoFocus
+                            selectOnFocus
+                        />
                         <div className={styles.scaleUnits}>
                             <FaramList faramElementName="scaleUnits">
-                                <NonFieldErrors faramElement />
+                                <NonFieldErrors
+                                    className={styles.nonFieldErrors}
+                                    faramElement
+                                />
                                 <header className={styles.header}>
                                     <h4>
                                         {_ts('framework.scaleWidget', 'addOptionHeadingLabel')}
@@ -178,12 +183,12 @@ export default class ScaleFrameworkList extends React.PureComponent {
                                     </PrimaryButton>
                                 </header>
                                 <SortableListView
-                                    className={styles.editScaleUnitList}
+                                    className={styles.editList}
                                     dragHandleClassName={styles.dragHandle}
                                     faramElement
                                     keyExtractor={ScaleFrameworkList.keyExtractor}
                                     rendererParams={ScaleFrameworkList.rendererParams}
-                                    itemClassName={styles.item}
+                                    itemClassName={styles.sortableUnit}
                                     renderer={InputRow}
                                 />
                             </FaramList>

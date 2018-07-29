@@ -346,16 +346,15 @@ const initialDevLangState = {
         738: 'Option',
         739: 'e.g. Context',
         740: 'Edit multiselect',
-        741: 'Add option',
         742: 'Number matrix',
         744: 'e.g. Row',
         745: 'e.g. Its a tooltip',
         746: 'e.g. Column',
         747: 'Edit number matrix',
         748: 'Rows',
-        749: 'Add row unit',
+        749: 'Add row',
         750: 'Columns',
-        751: 'Add column unit',
+        751: 'Add column',
         752: 'Number',
         753: 'Organigram',
         754: 'Level {level} organization',
@@ -628,6 +627,8 @@ const initialDevLangState = {
 
         1005: 'Edit entries',
         1006: 'No of entries',
+        1007: 'There should be at least one item.',
+        1008: 'Duplicate items are not allowed: {duplicates}.',
         9000: 'Priority humanitarian access issues',
         9001: 'Settings facing most humanitarian access issues',
         9002: 'Population with limited/intermittent access',
@@ -840,6 +841,10 @@ const initialDevLangState = {
             exitButtonLabel: 778,
             confirmDeletewWidget: 6000,
 
+            // error messages
+            duplicationError: 1008,
+            atLeastOneError: 1007,
+
             // notification
             afTitle: 379,
             afUpdate: 981,
@@ -895,7 +900,7 @@ const initialDevLangState = {
         },
         'framework.multiselectWidget': {
             editMultiselectModalTitle: 740,
-            addOptionButtonLabel: 741,
+            addOptionButtonLabel: 301,
             optionLabel: 738,
             optionPlaceholder: 739,
             optionsHeader: 775,
@@ -907,7 +912,7 @@ const initialDevLangState = {
         },
         'framework.selectWidget': {
             editSelectModalTitle: 740,
-            addOptionButtonLabel: 741,
+            addOptionButtonLabel: 301,
             optionLabel: 738,
             optionPlaceholder: 739,
             optionsHeader: 775,

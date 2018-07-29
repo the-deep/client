@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Button from '#rs/components/Action/Button';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import FaramElement from '#rs/components/Input/Faram/FaramElement';
 
@@ -14,10 +13,12 @@ const propTypes = {
     isSelected: PropTypes.bool,
     index: PropTypes.number.isRequired,
     setSelectedRow: PropTypes.func.isRequired,
+    hasError: PropTypes.bool,
 };
 const defaultProps = {
     data: {},
     isSelected: false,
+    hasError: false,
 };
 
 @FaramElement('errorIndicator')
@@ -55,15 +56,18 @@ export default class RowTitle extends React.PureComponent {
             titleClassNames.push(styles.hasError);
         }
 
+        const defaultTitle = `Row ${index + 1}`;
+
         return (
             <div className={rowTitleClassNames.join(' ')}>
-                <Button
+                <button
                     className={titleClassNames.join(' ')}
                     onClick={this.handleClick}
                     transparent
+                    type="button"
                 >
-                    {title}
-                </Button>
+                    {title || defaultTitle}
+                </button>
                 <DangerButton
                     className={styles.deleteButton}
                     // FIXME: use strings

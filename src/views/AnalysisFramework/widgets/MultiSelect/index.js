@@ -42,14 +42,16 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                 validation: (options) => {
                     const errors = [];
                     if (!options || options.length <= 0) {
-                        // FIXME: use strings
-                        errors.push('There should be at least 1 option.');
+                        errors.push(_ts('framework', 'atLeastOneError'));
                     }
 
                     const duplicates = findDuplicates(options, o => o.label);
                     if (duplicates.length > 0) {
-                        // FIXME: use strings
-                        errors.push(`Duplicate options are not allowed: ${duplicates.join(', ')}`);
+                        errors.push(_ts(
+                            'framework',
+                            'duplicationError',
+                            { duplicates: duplicates.join(', ') },
+                        ));
                     }
                     return errors;
                 },
@@ -137,10 +139,13 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                 >
                     <ModalHeader title={title} />
                     <ModalBody className={styles.body}>
-                        <NonFieldErrors faramElement />
+                        <NonFieldErrors
+                            className={styles.nonFieldErrors}
+                            faramElement
+                        />
                         <TextInput
-                            className={styles.titleInput}
                             faramElementName="title"
+                            className={styles.title}
                             autoFocus
                             selectOnFocus
                             label={_ts('framework.excerptWidget', 'titleLabel')}
@@ -148,29 +153,30 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                         />
                         <div className={styles.optionInputs} >
                             <FaramList faramElementName="options">
-                                <NonFieldErrors faramElement />
+                                <NonFieldErrors
+                                    className={styles.nonFieldErrors}
+                                    faramElement
+                                />
                                 <header className={styles.header}>
                                     <h4>
-                                        {/* FIXME: use strings */}
-                                        Options
+                                        {_ts('framework.multiselectWidget', 'optionsHeader')}
                                     </h4>
                                     <PrimaryButton
+                                        iconName={iconNames.add}
                                         faramAction="add"
                                         faramInfo={MultiSelectEditWidget.faramInfoForAdd}
-                                        iconName={iconNames.add}
                                         transparent
                                     >
-                                        {/* FIXME: use strings */}
-                                        Add Option
+                                        {_ts('framework.multiselectWidget', 'addOptionButtonLabel')}
                                     </PrimaryButton>
                                 </header>
                                 <SortableListView
-                                    className={styles.editOptionList}
+                                    className={styles.editList}
                                     dragHandleClassName={styles.dragHandle}
                                     faramElement
                                     keyExtractor={MultiSelectEditWidget.keyExtractor}
                                     rendererParams={MultiSelectEditWidget.rendererParams}
-                                    itemClassName={styles.item}
+                                    itemClassName={styles.sortableUnit}
                                     renderer={InputRow}
                                 />
                             </FaramList>

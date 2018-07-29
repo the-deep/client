@@ -9,6 +9,7 @@ import OrganigramEditWidget from './Organigram';
 import MultiSelectEditWidget from './MultiSelect';
 import ScaleEditWidget from './Scale';
 import Matrix1dEditWidget from './Matrix1d';
+import NumberMatrixEditWidget from './NumberMatrix';
 
 import DateWidget from '../../EditEntries/widgets/Date';
 import DateRangeWidget from '../../EditEntries/widgets/DateRange';
@@ -91,7 +92,7 @@ const widgetList = [
 
         // NOTE: used as _ts('widgetTitle', 'geoWidgetLabel')
         title: 'geoWidgetLabel',
-        minSize: { w: 20, h: 12 },
+        minSize: { w: 15, h: 6 },
     },
     {
         widgetId: 'matrix1dWidget',
@@ -136,7 +137,7 @@ const widgetList = [
         widgetId: 'numberMatrixWidget',
         type: 'overview',
         component: NumberMatrixWidget,
-        editComponent: DefaultEditWidget,
+        editComponent: NumberMatrixEditWidget,
 
         // NOTE: used as _ts('widgetTitle', 'numberMatrixWidgetLabel')
         title: 'numberMatrixWidgetLabel',

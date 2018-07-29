@@ -35,6 +35,7 @@ import {
 } from '#redux';
 import _ts from '#ts';
 import Baksa from '#components/Baksa';
+import TabTitle from '#components/TabTitle';
 
 import AryPutRequest from '../requests/AryPutRequest';
 
@@ -42,7 +43,6 @@ import Metadata from './Metadata';
 import Summary from './Summary';
 import Score from './Score';
 import Methodology from './Methodology';
-import TabTitle from './TabTitle';
 import styles from './styles.scss';
 
 const emptyObject = {};

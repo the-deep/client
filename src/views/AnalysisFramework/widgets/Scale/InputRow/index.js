@@ -22,11 +22,12 @@ export default class InputRow extends React.PureComponent {
     render() {
         const { index } = this.props;
         return (
-            <div className={styles.sortableUnit}>
+            <div className={styles.inputContainer}>
                 <FaramGroup
                     faramElementName={String(index)}
                 >
                     <ColorInput
+                        className={styles.colorInput}
                         faramElementName="color"
                         label={_ts('framework.scaleWidget', 'colorLabel')}
                     />

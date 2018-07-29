@@ -1,113 +1,68 @@
-@import '../../../../../stylesheets/base';
-
-.list {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    color: $color-text-disabled;
-}
-
-.overview {
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-
-    .table-header {
-        @include background-color($color-foreground);
-        padding: $spacing-small;
-    }
-
-    .table-cell {
-        background-color: $color-foreground;
-        padding: $spacing-extra-small $spacing-small;
-
-        .number-input {
-            background-color: transparent;
-        }
-    }
-}
+@import '../../../../stylesheets/base';
 
 .sortable-unit {
-    display: flex;
     border-top: $width-separator-thin solid $color-separator;
     border-bottom: $width-separator-thin solid $color-separator;
-    background-color: $color-foreground;
-    padding: $spacing-small 0;
 
     .drag-handle {
         display: flex;
         align-items: center;
         align-self: stretch;
-        flex-grow: 0;
-        flex-shrink: 0;
-        cursor: move;
-        padding: 0 $spacing-medium;
-    }
-
-    .row-col-element {
-        display: flex;
-        flex-grow: 1;
-        flex-shrink: 0;
-        padding: $spacing-extra-small 0;
-
-        .title-input {
-            flex-grow: 1;
-            margin-left: $spacing-small;
-        }
+        background-color: $color-foreground;
+        padding: $spacing-small;
     }
 }
 
 .edit-modal {
-    .body {
+    width: $width-modal-medium;
+    height: $height-modal-medium;
+
+    .form {
         display: flex;
         flex-direction: column;
-        padding: 0;
-        height: 512px;
+        height: 100%;
 
-        .title-input-container {
-            flex-shrink: 0;
-            border-bottom: $width-separator-thin solid $color-separator;
-            padding: $spacing-small $spacing-medium-alt;
-        }
-
-        .modal-unit-container {
+        .body {
             display: flex;
             flex-direction: column;
-            flex-grow: 1;
-            border-bottom: $width-separator-thin solid $color-separator;
-            height: 50%;
+            padding: 0;
 
-            .header {
-                display: flex;
-                align-items: center;
+            .non-field-errors {
                 flex-shrink: 0;
-                justify-content: space-between;
-                border-bottom: $width-separator-thin solid $color-separator;
-                background-color: $color-background-header;
-                padding: $spacing-small $spacing-medium-alt;
+                padding: 0 $spacing-small;
+            }
 
-                .heading {
-                    text-transform: uppercase;
+            .title {
+                flex-shrink: 0;
+                padding: $spacing-extra-small $spacing-small;
+            }
+
+            .tabs-container {
+                display: flex;
+                flex-direction: column;
+                flex-shrink: 0;
+
+                .tabs {
+                    flex-grow: 1;
                 }
             }
 
-            .edit-list {
+            .modal-unit-container {
                 display: flex;
                 flex-direction: column;
                 flex-grow: 1;
-                overflow-y: auto;
+                border-bottom: $width-separator-thin solid $color-separator;
 
-                .sortable-unit {
-                    flex-shrink: 0;
-                    border-top: 0;
+                .edit-list {
+                    flex-grow: 1;
+                    overflow-y: auto;
+
+                    .sortable-unit {
+                        border-top-color: transparent;
+                    }
                 }
             }
         }
     }
 }
 
-.draggable-item {
-    z-index: 11111;
-}
