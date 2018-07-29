@@ -115,7 +115,7 @@ export default class LeadAdd extends React.PureComponent {
         };
 
         // Store references to lead forms
-        this.leadFormRefs = { };
+        this.leadFormSubmitters = { };
 
         this.formCoordinator = new CoordinatorBuilder()
             .maxActiveActors(1)
@@ -223,8 +223,8 @@ export default class LeadAdd extends React.PureComponent {
 
         return (
             <LeadFormItem
-                ref={(elem) => {
-                    this.leadFormRefs[key] = elem ? elem.getWrappedInstance() : undefined;
+                setSubmitter={(submitter) => {
+                    this.leadFormSubmitters[key] = submitter;
                 }}
                 key={key}
                 leadKey={key}
@@ -269,7 +269,7 @@ export default class LeadAdd extends React.PureComponent {
                     <LeadFilter />
                     { hasActiveLead &&
                         <LeadActions
-                            leadFormRefs={this.leadFormRefs}
+                            leadFormSubmitters={this.leadFormSubmitters}
                             formCoordinator={this.formCoordinator}
                             uploadCoordinator={this.uploadCoordinator}
                             pendingSubmitAll={pendingSubmitAll}

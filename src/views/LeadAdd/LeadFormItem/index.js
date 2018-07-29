@@ -52,9 +52,12 @@ const propTypes = {
     addLeadViewCopyAll: PropTypes.func.isRequired,
 
     hidePreview: PropTypes.bool,
+
+    setSubmitter: PropTypes.func,
 };
 const defaultProps = {
     hidePreview: false,
+    setSubmitter: undefined,
 };
 
 const mapStateToProps = state => ({
@@ -82,9 +85,15 @@ export default class LeadFormItem extends React.PureComponent {
         this.state = {
             isUrlValid,
             pendingExtraction: false,
-
             showAddLeadGroupModal: false,
         };
+
+        if (props.setSubmitter) {
+            props.setSubmitter({
+                start: this.start,
+                stop: this.stop,
+            });
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -103,6 +112,13 @@ export default class LeadFormItem extends React.PureComponent {
         if (this.webInfoExtractRequest) {
             this.webInfoExtractRequest.stop();
         }
+        if (this.props.setSubmitter) {
+            this.props.setSubmitter(undefined);
+        }
+    }
+
+    setSubmitLeadFormFunction = (func) => {
+        this.submitLeadForm = func;
     }
 
     createWebInfoExtractRequest = (url) => {
@@ -275,8 +291,8 @@ export default class LeadFormItem extends React.PureComponent {
             leadKey,
         } = this.props;
 
-        if (this.containerRef) {
-            const submittable = this.containerRef.submit();
+        if (this.submitLeadForm) {
+            const submittable = this.submitLeadForm();
             if (!submittable) {
                 onFormSubmitFailure(leadKey);
             }
@@ -290,12 +306,6 @@ export default class LeadFormItem extends React.PureComponent {
 
     // RENDER
 
-
-    referenceForLeadDetail = (elem) => {
-        if (elem) {
-            this.containerRef = elem.getWrappedInstance();
-        }
-    }
 
     renderLeadPreview = ({ lead }) => {
         const type = leadAccessor.getType(lead);
@@ -394,7 +404,7 @@ export default class LeadFormItem extends React.PureComponent {
                 topChild={
                     <Fragment>
                         <LeadForm
-                            ref={this.referenceForLeadDetail}
+                            setSubmitFunction={this.setSubmitLeadFormFunction}
                             className={styles.addLeadForm}
                             lead={lead}
                             projectId={projectId}

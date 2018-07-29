@@ -65,10 +65,13 @@ const propTypes = {
     isExtractionDisabled: PropTypes.bool.isRequired,
     isExtractionLoading: PropTypes.bool.isRequired,
     onExtractClick: PropTypes.func.isRequired,
+
+    setSubmitFunction: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
+    setSubmitFunction: undefined,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -76,7 +79,7 @@ const mapStateToProps = (state, props) => ({
     projectDetails: projectDetailsSelector(state, props),
 });
 
-@connect(mapStateToProps, null, null, { withRef: true })
+@connect(mapStateToProps, null, null)
 export default class LeadForm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -183,6 +186,10 @@ export default class LeadForm extends React.PureComponent {
         const { lead } = props;
         const leadType = leadAccessor.getType(lead);
         this.schema = LeadForm.getSchemaForLead(leadType);
+
+        if (props.setSubmitFunction) {
+            props.setSubmitFunction(this.submit);
+        }
     }
 
     componentDidMount() {
@@ -198,6 +205,12 @@ export default class LeadForm extends React.PureComponent {
         }
     }
 
+    componentWillUnmount() {
+        if (this.props.setSubmitFunction) {
+            this.props.setSubmitFunction(undefined);
+        }
+    }
+
     handleApplyAllClick = attrName => this.props.onApplyAllClick(attrName);
 
     handleApplyAllBelowClick = attrName => this.props.onApplyAllBelowClick(attrName);
@@ -205,8 +218,8 @@ export default class LeadForm extends React.PureComponent {
     handleAddLeadGroupClick = () => this.props.onAddLeadGroupClick();
 
     submit = () => {
-        if (this.formRef && !this.props.isSaveDisabled) {
-            this.formRef.submit();
+        if (this.submitForm && !this.props.isSaveDisabled) {
+            this.submitForm();
             return true;
         }
         return false;
@@ -239,7 +252,7 @@ export default class LeadForm extends React.PureComponent {
 
         return (
             <Faram
-                ref={(ref) => { this.formRef = ref; }}
+                setSubmitFunction={(func) => { this.submitForm = func; }}
                 className={`${styles.addLeadForm} ${className}`}
                 onChange={onChange}
                 onValidationFailure={onFailure}
