@@ -70,7 +70,7 @@ const mapDispatchToProps = dispatch => ({
     addLeadViewCopyAll: params => dispatch(addLeadViewCopyAllAction(params)),
 });
 
-@connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })
+@connect(mapStateToProps, mapDispatchToProps)
 export default class LeadFormItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

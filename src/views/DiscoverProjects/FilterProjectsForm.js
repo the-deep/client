@@ -25,7 +25,6 @@ import ProjectOptionsRequest from './requests/ProjectOptionsRequest';
 
 const propTypes = {
     className: PropTypes.string,
-    applyOnChange: PropTypes.bool,
 
     // eslint-disable-next-line react/forbid-prop-types
     filters: PropTypes.object.isRequired,
@@ -40,7 +39,6 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    applyOnChange: false,
     filters: {},
 };
 
@@ -119,11 +117,6 @@ export default class FilterProjectsForm extends React.PureComponent {
                 faramValues: values,
                 pristine: false,
             },
-            () => {
-                if (this.props.applyOnChange) {
-                    this.submitForm();
-                }
-            },
         );
     }
 
@@ -145,7 +138,6 @@ export default class FilterProjectsForm extends React.PureComponent {
         const {
             className,
             filters,
-            applyOnChange,
             projectOptions,
         } = this.props;
 
@@ -162,7 +154,6 @@ export default class FilterProjectsForm extends React.PureComponent {
 
         return (
             <Faram
-                setSubmitFunction={(func) => { this.submitForm = func; }}
                 className={`projects-filters ${className}`}
                 onValidationSuccess={this.handleFaramValidationSuccess}
                 onChange={this.handleFaramChange}
@@ -200,15 +191,13 @@ export default class FilterProjectsForm extends React.PureComponent {
                     showLabel
                     className="projects-filter"
                 />
-                { !applyOnChange &&
-                    <Button
-                        className="button apply-filter-button"
-                        disabled={isApplyDisabled || pendingProjectOptionss}
-                        type="submit"
-                    >
-                        {_ts('discoverProjects.filter', 'filterApplyFilter')}
-                    </Button>
-                }
+                <Button
+                    className="button apply-filter-button"
+                    disabled={isApplyDisabled || pendingProjectOptionss}
+                    type="submit"
+                >
+                    {_ts('discoverProjects.filter', 'filterApplyFilter')}
+                </Button>
                 <DangerButton
                     className="button clear-filter-button"
                     disabled={isClearDisabled || pendingProjectOptionss}

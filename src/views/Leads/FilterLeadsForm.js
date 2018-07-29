@@ -45,13 +45,10 @@ const propTypes = {
     setLeadFilterOptions: PropTypes.func.isRequired,
     setLeadPageFilter: PropTypes.func.isRequired,
     unsetLeadPageFilter: PropTypes.func.isRequired,
-
-    applyOnChange: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
-    applyOnChange: false,
     filters: {},
     leadFilterOptions: {},
 };
@@ -172,11 +169,6 @@ export default class FilterLeadsForm extends React.PureComponent {
                 faramValues: values,
                 pristine: false,
             },
-            () => {
-                if (this.props.applyOnChange) {
-                    this.submitForm();
-                }
-            },
         );
     }
 
@@ -219,7 +211,6 @@ export default class FilterLeadsForm extends React.PureComponent {
                 assignee,
             },
             filters,
-            applyOnChange,
         } = this.props;
 
         const {
@@ -235,7 +226,6 @@ export default class FilterLeadsForm extends React.PureComponent {
 
         return (
             <Faram
-                setSubmitFunction={(func) => { this.submitForm = func; }}
                 className={`leads-filters ${className}`}
                 onValidationSuccess={this.handleFaramValidationSuccess}
                 onChange={this.handleFaramChange}
@@ -300,15 +290,13 @@ export default class FilterLeadsForm extends React.PureComponent {
                     showLabel
                     className="leads-filter"
                 />
-                { !applyOnChange &&
-                    <Button
-                        className="button apply-filter-button"
-                        disabled={isApplyDisabled || loadingLeadFilters}
-                        type="submit"
-                    >
-                        {_ts('leads', 'filterApplyFilter')}
-                    </Button>
-                }
+                <Button
+                    className="button apply-filter-button"
+                    disabled={isApplyDisabled || loadingLeadFilters}
+                    type="submit"
+                >
+                    {_ts('leads', 'filterApplyFilter')}
+                </Button>
                 <DangerButton
                     className="button clear-filter-button"
                     disabled={isClearDisabled || loadingLeadFilters}
