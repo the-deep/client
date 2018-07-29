@@ -174,7 +174,7 @@ export default class FilterLeadsForm extends React.PureComponent {
             },
             () => {
                 if (this.props.applyOnChange) {
-                    this.faramComponent.submit();
+                    this.submitForm();
                 }
             },
         );
@@ -235,7 +235,7 @@ export default class FilterLeadsForm extends React.PureComponent {
 
         return (
             <Faram
-                ref={(elem) => { this.faramComponent = elem; }}
+                setSubmitFunction={(func) => { this.submitForm = func; }}
                 className={`leads-filters ${className}`}
                 onValidationSuccess={this.handleFaramValidationSuccess}
                 onChange={this.handleFaramChange}

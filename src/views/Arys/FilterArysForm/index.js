@@ -81,8 +81,6 @@ export default class FilterArysForm extends React.PureComponent {
                 search: [],
             },
         };
-
-        this.faramRef = React.createRef();
     }
 
     componentWillMount() {
@@ -143,7 +141,7 @@ export default class FilterArysForm extends React.PureComponent {
             },
             () => {
                 if (this.props.applyOnChange) {
-                    this.faramRef.current.submit();
+                    this.submitForm();
                 }
             },
         );
@@ -187,7 +185,7 @@ export default class FilterArysForm extends React.PureComponent {
 
         return (
             <Faram
-                ref={this.faramRef}
+                setSubmitFunction={(func) => { this.submitForm = func; }}
                 className={`arys-filters ${className}`}
                 onValidationSuccess={this.handleFaramValidationSuccess}
                 onChange={this.handleFaramChange}
