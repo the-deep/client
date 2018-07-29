@@ -14,7 +14,7 @@ import Faram, { requiredCondition } from '#rs/components/Input/Faram';
 import FaramList from '#rs/components/Input/Faram/FaramList';
 import FixedTabs from '#rscv/FixedTabs';
 import MultiViewContainer from '#rs/components/View/MultiViewContainer';
-import { isFalsy, isTruthy, randomString } from '#rs/utils/common';
+import { findDuplicates, randomString } from '#rs/utils/common';
 
 import TabTitle from '#components/TabTitle';
 
@@ -34,21 +34,6 @@ const propTypes = {
 const defaultProps = {
     data: {},
 };
-
-const findDuplicates = (list = [], keySelector) => {
-    const counts = list.reduce(
-        (acc, item) => {
-            const key = keySelector(item);
-            if (isTruthy(key) && key !== '') {
-                acc[key] = isFalsy(acc[key]) ? 1 : acc[key] + 1;
-            }
-            return acc;
-        },
-        {},
-    );
-    return Object.keys(counts).filter(key => counts[key] > 1);
-};
-
 
 export default class NumberMatrixOverview extends React.PureComponent {
     static propTypes = propTypes;
@@ -216,8 +201,8 @@ export default class NumberMatrixOverview extends React.PureComponent {
             <div className={styles.tabsContainer}>
                 <FaramList faramElementName={selectedTab}>
                     <NonFieldErrors
-                        className={styles.nonFieldErrors}
                         faramElement
+                        className={styles.nonFieldErrors}
                     />
                 </FaramList>
                 <FixedTabs
@@ -262,7 +247,11 @@ export default class NumberMatrixOverview extends React.PureComponent {
             selectedTab,
         } = this.state;
 
-        const { onClose } = this.props;
+        const {
+            title,
+            onClose,
+        } = this.props;
+
         const TabsWithButton = this.renderTabsWithButton;
 
         return (
@@ -279,7 +268,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                     value={faramValues}
                     error={faramErrors}
                 >
-                    <ModalHeader title={_ts('framework.numberMatrixWidget', 'editNumberMatrixModalTitle')} />
+                    <ModalHeader title={title} />
                     <ModalBody className={styles.body}>
                         <NonFieldErrors
                             className={styles.nonFieldErrors}

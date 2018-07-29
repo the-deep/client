@@ -21,9 +21,7 @@ export default class InputRow extends React.PureComponent {
         const { index } = this.props;
         return (
             <div className={styles.inputContainer}>
-                <FaramGroup
-                    faramElementName={String(index)}
-                >
+                <FaramGroup faramElementName={String(index)}>
                     <TextInput
                         className={styles.titleInput}
                         faramElementName="title"

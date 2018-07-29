@@ -32,7 +32,7 @@ const defaultProps = {
     data: {},
 };
 
-export default class DefaultEditWidget extends React.PureComponent {
+export default class Matrix1dEditWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -190,7 +190,7 @@ export default class DefaultEditWidget extends React.PureComponent {
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
                     onValidationSuccess={this.handleFaramValidationSuccess}
-                    schema={DefaultEditWidget.schema}
+                    schema={Matrix1dEditWidget.schema}
                     value={faramValues}
                     error={faramErrors}
                 >
@@ -231,7 +231,7 @@ export default class DefaultEditWidget extends React.PureComponent {
                                         className={styles.leftPanel}
                                         dragHandleModifier={this.renderDragHandle}
                                         faramElement
-                                        keyExtractor={DefaultEditWidget.keyExtractor}
+                                        keyExtractor={Matrix1dEditWidget.keyExtractor}
                                         rendererParams={this.rendererParams}
                                         itemClassName={styles.item}
                                         renderer={RowTitle}

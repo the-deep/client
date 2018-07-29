@@ -11,10 +11,9 @@ $height-edit-modal: 70vh;
     padding: 0;
 
     .drag-handle {
-        @include transition-medium;
         flex-shrink: 0;
         background-color: $color-foreground;
-        cursor: drag;
+        cursor: move;
         padding: $spacing-small;
 
         &.active {
@@ -76,7 +75,7 @@ $height-edit-modal: 70vh;
                         overflow-y: auto;
 
                         .item {
-                            border-top-color: transparent;
+                            border-top: 0;
                         }
                     }
 
