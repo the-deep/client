@@ -16,7 +16,7 @@ import Table from '#rs/components/View/Table';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 import AppError from '#components/AppError';
 import {
     createUrlForExport,

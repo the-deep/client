@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 import ListView from '#rs/components/View/List/ListView';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 

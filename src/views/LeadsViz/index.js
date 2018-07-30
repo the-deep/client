@@ -18,7 +18,7 @@ import ForceDirectedGraph from '#rs/components/Visualization/ForceDirectedGraph'
 import CollapsibleTree from '#rs/components/Visualization/CollapsibleTree';
 import RadialDendrogram from '#rs/components/Visualization/RadialDendrogram';
 import GeoReferencedMap from '#rs/components/Visualization/GeoReferencedMap';
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 import VizError from '#components/VizError';
 import AppError from '#components/AppError';
 

@@ -1,5 +1,5 @@
 import WidgetError from '#components/WidgetError';
-import boundError from '#rs/components/General/BoundError';
+import boundError from '#rscg/BoundError';
 import { listToMap } from '#rsu/common';
 
 import DateWidget from './Date';

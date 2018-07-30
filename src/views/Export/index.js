@@ -37,7 +37,7 @@ import {
 import { iconNames } from '#constants';
 import notify from '#notify';
 import schema from '#schema';
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 
 import _ts from '#ts';
 import AppError from '#components/AppError';

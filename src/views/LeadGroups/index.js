@@ -9,7 +9,7 @@ import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Pager from '#rs/components/View/Pager';
 import RawTable from '#rs/components/View/RawTable';
 import TableHeader from '#rs/components/View/TableHeader';
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 
 import AppError from '#components/AppError';
 import {

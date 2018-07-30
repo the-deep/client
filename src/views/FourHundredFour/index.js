@@ -2,7 +2,7 @@ import React from 'react';
 import ReactSVG from 'react-svg';
 import { Link } from 'react-router-dom';
 
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 
 import _ts from '#ts';
 import AppError from '#components/AppError';

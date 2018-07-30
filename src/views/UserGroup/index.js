@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';

@@ -15,7 +15,7 @@ import {
 import { CoordinatorBuilder } from '#rsu/coordinate';
 import List from '#rs/components/View/List';
 import Message from '#rs/components/View/Message';
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 
 import AppError from '#components/AppError';
 import {

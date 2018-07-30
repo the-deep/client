@@ -15,7 +15,7 @@ import SearchInput from '#rs/components/Input/SearchInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import UserProjectAdd from '#components/UserProjectAdd';
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 import Cloak from '#components/Cloak';
 import AppError from '#components/AppError';
 import {

@@ -21,7 +21,7 @@ import _ts from '#ts';
 import { iconNames } from '#constants';
 import AddRegion from '#components/AddRegion';
 
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 import AppError from '#components/AppError';
 
 import CountriesGetRequest from './requests/CountriesGetRequest';

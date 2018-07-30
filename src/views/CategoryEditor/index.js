@@ -9,7 +9,7 @@ import {
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 import SelectInput from '#rs/components/Input/SelectInput';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import { FgRestBuilder } from '#rsu/rest';

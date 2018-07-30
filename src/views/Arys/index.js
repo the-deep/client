@@ -6,7 +6,7 @@ import {
     Link,
 } from 'react-router-dom';
 
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Pager from '#rs/components/View/Pager';

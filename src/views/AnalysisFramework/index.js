@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link, Prompt } from 'react-router-dom';
 
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import MultiViewContainer from '#rs/components/View/MultiViewContainer';
 import { reverseRoute } from '#rsu/common';

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Redirect, Link } from 'react-router-dom';
 
 import { reverseRoute } from '#rsu/common';
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 
 import {
     activeProjectIdFromStateSelector,

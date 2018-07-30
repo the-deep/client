@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 import AppError from '#components/AppError';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Modal from '#rs/components/View/Modal';

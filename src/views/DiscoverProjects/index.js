@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { reverseRoute } from '#rsu/common';
 import { pathNames } from '#constants/';
 
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import ListView from '#rs/components/View/List/ListView';
 import Pager from '#rs/components/View/Pager';
