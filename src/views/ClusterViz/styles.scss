@@ -30,6 +30,17 @@ $width-cluster-details: 420px;
             overflow: auto;
         }
 
+        .add-entry-link {
+            display: inline-block;
+            transition: $duration-transition-medium background-color ease-in-out, $duration-transition-medium color ease-in-out;
+            padding: $spacing-extra-small $spacing-small;
+            color: $color-accent;
+
+            &.disabled {
+                pointer-events: none;
+            }
+        }
+
         .cluster-details {
             flex-basis: $width-cluster-details;
             flex-shrink: 0;
@@ -97,6 +108,22 @@ $width-cluster-details: 420px;
                             &:hover {
                                 border-color: $color-accent;
                                 color: $color-accent;
+                            }
+                        }
+                    }
+                }
+
+                .leads-table {
+                    :global {
+                        .body {
+                            .row {
+                                cursor: pointer;
+
+                                &.highlighted {
+                                    .link {
+                                        color: get-text-color($color-accent);
+                                    }
+                                }
                             }
                         }
                     }

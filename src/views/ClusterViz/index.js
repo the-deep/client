@@ -18,6 +18,7 @@ import {
     mapToList,
     groupList,
 } from '#rsu/common';
+import Cloak from '#components/Cloak';
 
 import VizError from '#components/VizError';
 import AppError from '#components/AppError';
@@ -30,7 +31,10 @@ import {
     projectIdFromRouteSelector,
     setProjectClusterDataAction,
 } from '#redux';
-import { pathNames } from '#constants/';
+import {
+    iconNames,
+    pathNames,
+} from '#constants';
 
 import ProjectClusterDataRequest from './requests/ProjectClusterDataRequest';
 import InitProjectClusterRequest from './requests/InitProjectClusterRequest';
@@ -132,6 +136,7 @@ export default class ClusterViz extends PureComponent {
             createClusterPending: true,
             clusterDataPending: true,
             highlightClusterId: undefined,
+            highlightTableId: undefined,
         };
 
         this.leadsTableHeader = [
@@ -150,6 +155,35 @@ export default class ClusterViz extends PureComponent {
                         mode="dd-MM-yyyy"
                     />
                 ),
+            },
+            {
+                key: 'actions',
+                label: _ts('clusterViz', 'leadsTableActions'),
+                order: 3,
+                modifier: (row) => {
+                    const editEntries = reverseRoute(
+                        pathNames.editEntries,
+                        {
+                            projectId: this.props.activeProject,
+                            leadId: row.id,
+                        },
+                    );
+                    return (
+                        <Cloak
+                            hide={({ hasAnalysisFramework }) => !hasAnalysisFramework}
+                            render={({ disabled }) => (
+                                <Link
+                                    className={`${styles.addEntryLink} link ${disabled ? styles.disabled : ''}`}
+                                    title={_ts('clusterViz', 'addEntryFromLeadButtonTitle')}
+                                    to={editEntries}
+                                    disabled={disabled}
+                                >
+                                    <i className={iconNames.forward} />
+                                </Link>
+                            )}
+                        />
+                    );
+                },
             },
         ];
 
@@ -282,20 +316,29 @@ export default class ClusterViz extends PureComponent {
         }
     }
 
-    handleKeywordMouseOver = (keyword) => {
-        this.setState({ highlightClusterId: keyword });
-    }
-
-    handleKeywordMouseOut = () => {
-        this.setState({ highlightClusterId: undefined });
-    }
-
     handleMouseOver = (d) => {
-        this.setState({ activeCluster: d });
+        this.setState({
+            activeCluster: d,
+            highlightTableId: d.id,
+        });
     }
 
     handleMouseOut = () => {
-        this.setState({ activeCluster: undefined });
+        this.setState({
+            activeCluster: undefined,
+            highlightTableId: undefined,
+        });
+    }
+
+    handleTableHover = (rowKey) => {
+        this.setState({ highlightClusterId: rowKey });
+    }
+
+    handleTableHoverOut = () => {
+        this.setState({
+            highlightClusterId: undefined,
+            highlightTableId: undefined,
+        });
     }
 
     renderKeyword = (_, cluster) => {
@@ -316,13 +359,9 @@ export default class ClusterViz extends PureComponent {
             classNames.push(styles.active);
         }
 
-        const handleKeywordMouseOver = () => { this.handleKeywordMouseOver(keywordId); };
-
         return (
             // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
             <div
-                onMouseOver={handleKeywordMouseOver}
-                onMouseOut={this.handleKeywordMouseOut}
                 key={keyword}
                 className={classNames.join(' ')}
             >
@@ -332,7 +371,11 @@ export default class ClusterViz extends PureComponent {
     }
 
     renderClusterDetail = (key, data) => {
-        const { activeCluster } = this.state;
+        const {
+            activeCluster,
+            highlightTableId,
+        } = this.state;
+
         const isActive = activeCluster && String(activeCluster.group) === String(data.id);
 
         const className = this.getClusterDetailClassName(isActive);
@@ -369,6 +412,16 @@ export default class ClusterViz extends PureComponent {
             </div>
         );
 
+        const handleHover = (rowKey) => {
+            const hoverLead = documents.find(d => d.id === rowKey) || {};
+            const highlightClusterId = `${hoverLead.id}-${data.id}`;
+
+            this.setState({
+                highlightClusterId,
+                highlightTableId: rowKey,
+            });
+        };
+
         return (
             <div
                 className={className}
@@ -397,8 +450,12 @@ export default class ClusterViz extends PureComponent {
                         {_ts('clusterViz', 'leadsTitle')}
                     </h5>
                     <Table
+                        className={styles.leadsTable}
                         data={documents}
                         headers={this.leadsTableHeader}
+                        onBodyHover={handleHover}
+                        onBodyHoverOut={this.handleTableHoverOut}
+                        highlightRowKey={highlightTableId}
                         keyExtractor={ClusterViz.leadsTableKeyExtractor}
                         emptyComponent={leadsEmptyComponent}
                     />
@@ -454,8 +511,8 @@ export default class ClusterViz extends PureComponent {
                                 { noOfClusters: this.noOfClusters, noOfLeads: this.noOfLeads },
                             )
                         }
-                        onMouseOver={d => this.handleMouseOver(d)}
-                        onMouseOut={() => this.handleMouseOut}
+                        onMouseOver={this.handleMouseOver}
+                        onMouseOut={this.handleMouseOut}
                         clusterSize={clusterSize}
                         onClusterSizeChange={this.handleClusterSizeChange}
                     />

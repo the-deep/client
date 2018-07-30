@@ -746,7 +746,7 @@ const initialDevLangState = {
         3000: 'Cluster visualization',
         3001: 'Show table',
         3002: 'Title',
-        3003: 'CreatedAt',
+        3003: 'Created at',
         3004: 'Cannot initialize cluster creation for project. Please check your network connection and try again',
         3005: 'Cannot fetch data for given cluster. Please check your network connection and try again',
         3006: 'Cannot fetch leads data for given documents',
@@ -2145,6 +2145,7 @@ const initialDevLangState = {
         },
         clusterViz: {
             clusterVizTitle: 3000,
+            addEntryFromLeadButtonTitle: 138,
             showTable: 3001,
             leadsTableTitle: 3002,
             leadsTableCreatedAt: 3003,
@@ -2156,6 +2157,7 @@ const initialDevLangState = {
             leadsCount: 3012,
             keywordsTitle: 3011,
             leadsTitle: 3013,
+            leadsTableActions: 16,
         },
         visualization: {
             visualizationTitle: 4000,
