@@ -133,6 +133,7 @@ const initialDevLangState = {
         142: 'Tabular',
         143: 'Add assessment from this lead',
         144: 'No assessment template found for this project.',
+        145: 'No analysis framework found.',
         150: 'First name',
         151: 'e.g. John',
         152: 'Last name',
@@ -489,6 +490,7 @@ const initialDevLangState = {
         988: 'Save entry',
         989: 'Entries successfully saved',
         990: '{errorCount} entries could not be saved.',
+        991: 'Failed to load analysis framework',
         993: 'Lead successfully removed',
         994: 'Remove leads',
         995: 'Leads successfully removed',
@@ -844,11 +846,13 @@ const initialDevLangState = {
             // error messages
             duplicationError: 1008,
             atLeastOneError: 1007,
+            noAnalysisFramework: 145,
 
             // notification
             afTitle: 379,
             afUpdate: 981,
             afUpdateOverridden: 982,
+            afFatalError: 991,
             afSaveSuccess: 983,
         },
         'framework.timeWidget': {
@@ -1596,7 +1600,7 @@ const initialDevLangState = {
             removeAllFilteredButtonTitle: 5553,
             removeAllCompletedButtonTitle: 360,
             removeButtonTitle: 419,
-            removeCurrentButtonTitle: 5550,
+            removeCurrentButtonTitle: 5551,
             saveAllButtonTitle: 5552,
             saveAllFilteredButtonTitle: 5553,
             saveButtonTitle: 25,

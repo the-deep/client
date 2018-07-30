@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 
 import ListView from '#rs/components/View/List/ListView';
 import { randomString } from '#rs/utils/common';
+
 import { addAfViewWidgetAction } from '#redux';
+import _ts from '#ts';
 
 import { fetchWidget } from '../widgets';
 
@@ -52,7 +54,7 @@ export default class WidgetList extends React.PureComponent {
         const widgetInfo = {
             key: `${widgetType}-${widgetId}-${randomString(16)}`,
             widgetId,
-            title,
+            title: _ts('widgetTitle', title),
             properties: {
                 overviewGridLayout: overviewWidget && {
                     left: 0,

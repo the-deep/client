@@ -146,20 +146,29 @@ const getValidatedAnalysisFramework = (analysisFramework) => {
         }
     }
 
-    // Return updates widget list
-    return update(analysisFramework, {
+    const analysisFrameworkSettings = {
         widgets: { $set: widgets },
-    });
+        pristine: { $set: false },
+    };
+
+    // Return updates widget list
+    return update(analysisFramework, analysisFrameworkSettings);
 };
 
 // REDUCER
 
 const afViewSetAnalysisFramework = (state, action) => {
     const { analysisFramework } = action;
+    const frameworkId = analysisFramework.id;
+    const framework = {
+        ...analysisFramework,
+        pristine: true,
+    };
+
     const settings = {
         analysisFrameworkView: {
-            analysisFramework: {
-                $set: analysisFramework,
+            [frameworkId]: {
+                $set: framework,
             },
         },
     };
@@ -168,14 +177,14 @@ const afViewSetAnalysisFramework = (state, action) => {
 
 const afViewAddWidget = (state, action) => {
     const { analysisFrameworkId, widget } = action;
-    const { analysisFrameworkView: { analysisFramework } } = state;
+    const { analysisFrameworkView: { [analysisFrameworkId]: analysisFramework } } = state;
     if (!isAnalysisFrameworkValid(analysisFramework, analysisFrameworkId)) {
         return state;
     }
 
     const settings = {
         analysisFrameworkView: {
-            analysisFramework: {
+            [analysisFrameworkId]: {
                 widgets: {
                     $autoArray: { $push: [widget] },
                 },
@@ -185,8 +194,8 @@ const afViewAddWidget = (state, action) => {
     const newState = update(state, settings);
     const newSettings = {
         analysisFrameworkView: {
-            analysisFramework: { $set: getValidatedAnalysisFramework(
-                newState.analysisFrameworkView.analysisFramework,
+            [analysisFrameworkId]: { $set: getValidatedAnalysisFramework(
+                newState.analysisFrameworkView[analysisFrameworkId],
             ) },
         },
     };
@@ -196,15 +205,17 @@ const afViewAddWidget = (state, action) => {
 
 const afViewRemoveWidget = (state, action) => {
     const { analysisFrameworkId, widgetId } = action;
-    const { analysisFrameworkView: { analysisFramework } } = state;
+    const { analysisFrameworkView: { [analysisFrameworkId]: analysisFramework } } = state;
+
     if (!isAnalysisFrameworkValid(analysisFramework, analysisFrameworkId)) {
         return state;
     }
 
     const settings = {
         analysisFrameworkView: {
-            analysisFramework: {
+            [analysisFrameworkId]: {
                 widgets: { $filter: w => getWidgetKey(w) !== widgetId },
+                pristine: { $set: false },
             },
         },
     };
@@ -213,7 +224,8 @@ const afViewRemoveWidget = (state, action) => {
 
 const afViewUpdateWidget = (state, action) => {
     const { analysisFrameworkId, widget } = action;
-    const { analysisFrameworkView: { analysisFramework } } = state;
+    const { analysisFrameworkView: { [analysisFrameworkId]: analysisFramework } } = state;
+
     if (!isAnalysisFrameworkValid(analysisFramework, analysisFrameworkId)) {
         return state;
     }
@@ -227,10 +239,11 @@ const afViewUpdateWidget = (state, action) => {
 
     const settings = {
         analysisFrameworkView: {
-            analysisFramework: {
+            [analysisFrameworkId]: {
                 widgets: {
                     [widgetIndex]: { $merge: widget },
                 },
+                pristine: { $set: false },
             },
         },
     };
