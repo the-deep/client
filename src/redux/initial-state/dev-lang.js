@@ -1600,7 +1600,7 @@ const initialDevLangState = {
             removeAllFilteredButtonTitle: 5553,
             removeAllCompletedButtonTitle: 360,
             removeButtonTitle: 419,
-            removeCurrentButtonTitle: 5550,
+            removeCurrentButtonTitle: 5551,
             saveAllButtonTitle: 5552,
             saveAllFilteredButtonTitle: 5553,
             saveButtonTitle: 25,
