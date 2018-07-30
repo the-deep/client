@@ -38,13 +38,10 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     aryFilterOptions: PropTypes.object.isRequired,
     setAryFilterOptions: PropTypes.func.isRequired,
-
-    applyOnChange: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
-    applyOnChange: false,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -81,8 +78,6 @@ export default class FilterArysForm extends React.PureComponent {
                 search: [],
             },
         };
-
-        this.faramRef = React.createRef();
     }
 
     componentWillMount() {
@@ -141,11 +136,6 @@ export default class FilterArysForm extends React.PureComponent {
                 faramValues: values,
                 pristine: false,
             },
-            () => {
-                if (this.props.applyOnChange) {
-                    this.faramRef.current.submit();
-                }
-            },
         );
     }
 
@@ -171,7 +161,6 @@ export default class FilterArysForm extends React.PureComponent {
             aryFilterOptions: {
                 createdBy,
             },
-            applyOnChange,
             filters,
         } = this.props;
 
@@ -187,7 +176,6 @@ export default class FilterArysForm extends React.PureComponent {
 
         return (
             <Faram
-                ref={this.faramRef}
                 className={`arys-filters ${className}`}
                 onValidationSuccess={this.handleFaramValidationSuccess}
                 onChange={this.handleFaramChange}
@@ -221,15 +209,13 @@ export default class FilterArysForm extends React.PureComponent {
                     showHintAndError={false}
                     showLabel
                 />
-                { !applyOnChange &&
-                    <Button
-                        className="button apply-filter-button"
-                        disabled={isApplyDisabled}
-                        type="submit"
-                    >
-                        {_ts('assessments', 'filterApplyFilter')}
-                    </Button>
-                }
+                <Button
+                    className="button apply-filter-button"
+                    disabled={isApplyDisabled}
+                    type="submit"
+                >
+                    {_ts('assessments', 'filterApplyFilter')}
+                </Button>
                 <DangerButton
                     className="button clear-filter-button"
                     disabled={isClearDisabled}

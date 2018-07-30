@@ -60,6 +60,10 @@ export default class PasswordReset extends React.PureComponent {
         };
     }
 
+    setResetRecaptchaFunction = (func) => {
+        this.resetRecaptcha = func;
+    }
+
     handleFaramChange = (faramValues, faramErrors) => {
         this.setState({
             faramValues,
@@ -99,8 +103,8 @@ export default class PasswordReset extends React.PureComponent {
                 this.setState({ pending: true });
             })
             .postLoad(() => {
-                if (this.reCaptcha) {
-                    this.reCaptcha.reset();
+                if (this.resetRecaptcha) {
+                    this.resetRecaptcha();
                 }
                 this.setState({ pending: false });
             })
@@ -176,7 +180,7 @@ export default class PasswordReset extends React.PureComponent {
                                     placeholder={_ts('passwordReset', 'emailPlaceholder')}
                                 />
                                 <ReCaptcha
-                                    ref={(reCaptcha) => { this.reCaptcha = reCaptcha; }}
+                                    setResetFunction={this.setResetRecaptchaFunction}
                                     faramElementName="recaptchaResponse"
                                     siteKey={reCaptchaSiteKey}
                                 />

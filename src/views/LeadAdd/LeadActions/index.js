@@ -71,7 +71,7 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     formCoordinator: PropTypes.object.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
-    leadFormRefs: PropTypes.object.isRequired,
+    leadFormSubmitters: PropTypes.object.isRequired,
 
     hidePreview: PropTypes.bool,
     setPreview: PropTypes.func.isRequired,
@@ -235,20 +235,20 @@ export default class LeadFilter extends React.PureComponent {
 
     handleSaveButtonClick = () => {
         const leadId = this.props.activeLeadId;
-        this.props.formCoordinator.add(leadId, this.props.leadFormRefs[leadId]);
+        this.props.formCoordinator.add(leadId, this.props.leadFormSubmitters[leadId]);
         this.props.formCoordinator.start();
     }
 
     handleFilteredSaveButtonClick = () => {
         this.props.filteredLeadKeys.forEach((id) => {
-            this.props.formCoordinator.add(id, this.props.leadFormRefs[id]);
+            this.props.formCoordinator.add(id, this.props.leadFormSubmitters[id]);
         });
         this.props.formCoordinator.start();
     }
 
     handleBulkSaveButtonClick = () => {
         this.props.leadKeys.forEach((id) => {
-            this.props.formCoordinator.add(id, this.props.leadFormRefs[id]);
+            this.props.formCoordinator.add(id, this.props.leadFormSubmitters[id]);
         });
         this.props.formCoordinator.start();
     }

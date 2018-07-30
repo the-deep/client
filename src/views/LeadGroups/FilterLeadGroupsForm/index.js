@@ -28,13 +28,10 @@ const propTypes = {
 
     setLeadGroupsFilter: PropTypes.func.isRequired,
     unsetLeadGroupsFilter: PropTypes.func.isRequired,
-
-    applyOnChange: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
-    applyOnChange: false,
 };
 
 const mapStateToProps = state => ({
@@ -67,8 +64,6 @@ export default class FilterArysForm extends React.PureComponent {
                 search: [],
             },
         };
-
-        this.faramRef = React.createRef();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -98,11 +93,6 @@ export default class FilterArysForm extends React.PureComponent {
                 faramValues: values,
                 pristine: false,
             },
-            () => {
-                if (this.props.applyOnChange) {
-                    this.faramRef.current.submit();
-                }
-            },
         );
     }
 
@@ -123,7 +113,6 @@ export default class FilterArysForm extends React.PureComponent {
     render() {
         const {
             className,
-            applyOnChange,
             filters,
         } = this.props;
 
@@ -139,7 +128,6 @@ export default class FilterArysForm extends React.PureComponent {
 
         return (
             <Faram
-                ref={this.faramRef}
                 className={`arys-filters ${className}`}
                 onValidationSuccess={this.handleFaramValidationSuccess}
                 onChange={this.handleFaramChange}
@@ -154,15 +142,13 @@ export default class FilterArysForm extends React.PureComponent {
                     showLabel
                     className="arys-filter"
                 />
-                { !applyOnChange &&
-                    <Button
-                        className="button apply-filter-button"
-                        disabled={isApplyDisabled}
-                        type="submit"
-                    >
-                        {_ts('leadGroups', 'filterApplyFilter')}
-                    </Button>
-                }
+                <Button
+                    className="button apply-filter-button"
+                    disabled={isApplyDisabled}
+                    type="submit"
+                >
+                    {_ts('leadGroups', 'filterApplyFilter')}
+                </Button>
                 <DangerButton
                     className="button clear-filter-button"
                     disabled={isClearDisabled}
