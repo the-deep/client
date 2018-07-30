@@ -146,11 +146,13 @@ const getValidatedAnalysisFramework = (analysisFramework) => {
         }
     }
 
-    // Return updates widget list
-    return update(analysisFramework, {
+    const analysisFrameworkSettings = {
         widgets: { $set: widgets },
         pristine: { $set: true },
-    });
+    };
+
+    // Return updates widget list
+    return update(analysisFramework, analysisFrameworkSettings);
 };
 
 // REDUCER

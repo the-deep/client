@@ -10,6 +10,7 @@ import { reverseRoute } from '#rs/utils/common';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import FixedTabs from '#rscv/FixedTabs';
+import Message from '#rscv/Message';
 
 import AppError from '#components/AppError';
 import {
@@ -73,7 +74,6 @@ export default class AnalysisFramework extends React.PureComponent {
             setState: params => this.setState(params),
             setAnalysisFramework: this.props.setAnalysisFramework,
         });
-        console.warn(this.props.analysisFramework);
 
         this.views = {
             overview: {
@@ -155,11 +155,19 @@ export default class AnalysisFramework extends React.PureComponent {
 
         const { pendingFramework } = this.state;
 
-        if (!analysisFramework || pendingFramework) {
+        if (pendingFramework) {
             return (
                 <div className={styles.analysisFramework}>
                     <LoadingAnimation large />
                 </div>
+            );
+        }
+
+        if (!analysisFramework.id) {
+            return (
+                <Message className={styles.analysisFramework}>
+                    {_ts('framework', 'noAnalysisFramework')}
+                </Message>
             );
         }
 

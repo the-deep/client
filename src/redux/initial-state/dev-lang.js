@@ -133,6 +133,7 @@ const initialDevLangState = {
         142: 'Tabular',
         143: 'Add assessment from this lead',
         144: 'No assessment template found for this project.',
+        145: 'No analysis framework found.',
         150: 'First name',
         151: 'e.g. John',
         152: 'Last name',
@@ -845,6 +846,7 @@ const initialDevLangState = {
             // error messages
             duplicationError: 1008,
             atLeastOneError: 1007,
+            noAnalysisFramework: 145,
 
             // notification
             afTitle: 379,
