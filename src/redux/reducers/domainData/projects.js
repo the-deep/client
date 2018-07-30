@@ -91,11 +91,12 @@ const setUserProject = (state, action) => {
 const setUserProjectOptions = (state, action) => {
     const { projectId, options } = action;
 
-    const regions = [...options.regions];
-    const userGroups = [...options.userGroups];
-
-    regions.sort((a, b) => compareString(a.value, b.value));
-    userGroups.sort((a, b) => compareString(a.value, b.value));
+    const regions = [...options.regions].sort(
+        (a, b) => compareString(a.value, b.value),
+    );
+    const userGroups = [...options.userGroups].sort(
+        (a, b) => compareString(a.value, b.value),
+    );
 
     const newOptions = {
         userGroups,

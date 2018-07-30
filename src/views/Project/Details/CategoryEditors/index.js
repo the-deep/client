@@ -39,6 +39,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    categoryEditorList: [],
 };
 
 const mapStateToProps = (state, props) => ({

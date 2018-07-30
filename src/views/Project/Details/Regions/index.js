@@ -262,8 +262,9 @@ export default class ProjectRegions extends React.PureComponent {
             searchInputValue,
         } = this.state;
 
-        const sortedRegions = [...displayRegionList]
-            .sort((a, b) => compareString(a.title, b.title));
+        const sortedRegions = [...displayRegionList].sort(
+            (a, b) => compareString(a.title, b.title),
+        );
 
         const searchPlaceholder = _ts('project', 'searchRegionPlaceholder');
         const addRegionButtonLabel = _ts('project', 'addRegionButtonLabel');

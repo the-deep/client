@@ -41,6 +41,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    analysisFrameworkList: [],
 };
 
 const mapStateToProps = (state, props) => ({

@@ -61,9 +61,10 @@ export default class CountryPanel extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const displayCountryList = [...this.props.countries];
-
-        displayCountryList.sort((a, b) => compareString(a.title, b.title));
+        const { countries } = this.props;
+        const displayCountryList = [...countries].sort(
+            (a, b) => compareString(a.title, b.title),
+        );
 
         this.state = {
             addCountryModal: false,
