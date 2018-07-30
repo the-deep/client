@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import DangerButton from '#rsca/Button/DangerButton';
 import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
 import TextInput from '#rs/components/Input/TextInput';
 

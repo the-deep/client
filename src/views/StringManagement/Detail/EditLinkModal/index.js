@@ -7,8 +7,8 @@ import ModalHeader from '#rs/components/View/Modal/Header';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
 import ListView from '#rs/components/View/List/ListView';
-import Button from '#rs/components/Action/Button';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import Button from '#rsca/Button';
+import SuccessButton from '#rsca/Button/SuccessButton';
 import SelectInput from '#rs/components/Input/SelectInput';
 
 import {

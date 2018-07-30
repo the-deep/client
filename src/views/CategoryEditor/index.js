@@ -6,9 +6,9 @@ import {
     Prompt,
 } from 'react-router-dom';
 
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
-import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import SuccessButton from '#rsca/Button/SuccessButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import BoundError from '#rs/components/General/BoundError';
 import SelectInput from '#rs/components/Input/SelectInput';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';

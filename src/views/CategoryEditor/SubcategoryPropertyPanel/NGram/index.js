@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import ListView from '#rs/components/View/List/ListView';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import DangerButton from '#rsca/Button/DangerButton';
 
 import { iconNames } from '#constants';
 

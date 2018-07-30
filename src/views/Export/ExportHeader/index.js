@@ -4,8 +4,8 @@ import React from 'react';
 
 import { reverseRoute } from '#rsu/common';
 import { FgRestBuilder } from '#rsu/rest';
-import Button from '#rs/components/Action/Button';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import Button from '#rsca/Button';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import {
     urlForExportTrigger,

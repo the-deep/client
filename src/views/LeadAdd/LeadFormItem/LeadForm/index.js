@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
-import Button from '#rs/components/Action/Button';
+import Button from '#rsca/Button';
 import DateInput from '#rs/components/Input/DateInput';
 import Faram, {
     requiredCondition,

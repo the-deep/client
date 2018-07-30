@@ -9,8 +9,8 @@ import List from '#rs/components/View/List';
 import ListView from '#rs/components/View/List/ListView';
 import TextArea from '#rs/components/Input/TextArea';
 import CheckGroup from '#rs/components/Input/CheckGroup';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import DangerButton from '#rsca/Button/DangerButton';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';

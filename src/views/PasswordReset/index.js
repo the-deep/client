@@ -11,7 +11,7 @@ import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import ReCaptcha from '#rs/components/Input/ReCaptcha';
 import TextInput from '#rs/components/Input/TextInput';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Faram, {
     requiredCondition,
     emailCondition,

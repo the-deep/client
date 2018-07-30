@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Button from '#rs/components/Action/Button';
-import SegmentButton from '#rs/components/Action/SegmentButton';
+import Button from '#rsca/Button';
+import SegmentButton from '#rsca/SegmentButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import { FgRestBuilder } from '#rsu/rest';
 

@@ -8,7 +8,7 @@ import ModalBody from '#rs/components/View/Modal/Body';
 import ModalHeader from '#rs/components/View/Modal/Header';
 import BoundError from '#rs/components/General/BoundError';
 import SearchInput from '#rs/components/Input/SearchInput';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import ListView from '#rs/components/View/List/ListView';
 import {
     reverseRoute,

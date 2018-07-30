@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import WarningButton from '#rs/components/Action/Button/WarningButton';
+import WarningButton from '#rsca/Button/WarningButton';
 import { isTruthy } from '#rsu/common';
 
 import {

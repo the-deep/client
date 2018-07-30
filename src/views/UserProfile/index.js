@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 
 import BoundError from '#rs/components/General/BoundError';
 import AppError from '#components/AppError';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalHeader from '#rs/components/View/Modal/Header';

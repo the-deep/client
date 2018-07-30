@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import AccentConfirmButton from '#rs/components/Action/ConfirmButton/AccentConfirmButton';
-import WarningConfirmButton from '#rs/components/Action/ConfirmButton/WarningConfirmButton';
+import AccentConfirmButton from '#rsca/ConfirmButton/AccentConfirmButton';
+import WarningConfirmButton from '#rsca/ConfirmButton/WarningConfirmButton';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';

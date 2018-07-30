@@ -3,8 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { isObjectEmpty } from '#rsu/common';
-import Button from '#rs/components/Action/Button';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import Button from '#rsca/Button';
+import DangerButton from '#rsca/Button/DangerButton';
 import Faram from '#rs/components/Input/Faram';
 import SearchInput from '#rs/components/Input/SearchInput';
 

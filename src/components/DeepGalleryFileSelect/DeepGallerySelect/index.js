@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Button from '#rs/components/Action/Button';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import Button from '#rsca/Button';
+import AccentButton from '#rsca/Button/AccentButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import FileInput from '#rs/components/Input/FileInput';
 import SearchInput from '#rs/components/Input/SearchInput';
 import FormattedDate from '#rs/components/View/FormattedDate';

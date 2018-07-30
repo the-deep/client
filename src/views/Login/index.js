@@ -13,7 +13,7 @@ import {
     RestRequest,
 } from '#rsu/rest';
 
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Faram, {
     requiredCondition,
     emailCondition,

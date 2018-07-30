@@ -8,8 +8,8 @@ import {
     compareLength,
     compareString,
 } from '#rsu/common';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DangerButton from '#rsca/Button/DangerButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Confirm from '#rs/components/View/Modal/Confirm';
 import FormattedDate from '#rs/components/View/FormattedDate';

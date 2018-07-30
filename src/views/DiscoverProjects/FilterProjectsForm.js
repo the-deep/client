@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Button from '#rs/components/Action/Button';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import Button from '#rsca/Button';
+import DangerButton from '#rsca/Button/DangerButton';
 import Faram from '#rs/components/Input/Faram';
 import SelectInput from '#rs/components/Input/SelectInput';
 import MultiSelectInput from '#rs/components/Input/MultiSelectInput';

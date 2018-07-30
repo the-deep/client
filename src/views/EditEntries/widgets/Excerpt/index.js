@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 
 import TextArea from '#rsci/TextArea';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
+import AccentButton from '#rsca/Button/AccentButton';
 import { formatPdfText } from '#rsu/common';
 
 import { iconNames } from '#constants';

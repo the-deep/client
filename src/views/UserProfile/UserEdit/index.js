@@ -15,8 +15,8 @@ import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import ImageInput from '#rs/components/Input/FileInput/ImageInput';
 import TextInput from '#rs/components/Input/TextInput';
 import HiddenInput from '#rs/components/Input/HiddenInput';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DangerButton from '#rsca/Button/DangerButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 
 import {

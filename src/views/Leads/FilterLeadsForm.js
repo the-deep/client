@@ -7,8 +7,8 @@ import {
     isObjectEmpty,
 } from '#rsu/common';
 import { FgRestBuilder } from '#rsu/rest';
-import Button from '#rs/components/Action/Button';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import Button from '#rsca/Button';
+import DangerButton from '#rsca/Button/DangerButton';
 import Faram from '#rs/components/Input/Faram';
 import SearchInput from '#rs/components/Input/SearchInput';
 import DateFilter from '#rs/components/Input/DateFilter';

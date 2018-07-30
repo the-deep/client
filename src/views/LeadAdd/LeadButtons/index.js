@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Button from '#rs/components/Action/Button';
+import Button from '#rsca/Button';
 import FileInput from '#rs/components/Input/FileInput';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import { randomString } from '#rsu/common';

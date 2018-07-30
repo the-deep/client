@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
-import AccentButton from '#rs/components/Action/Button/AccentButton';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import AccentButton from '#rsca/Button/AccentButton';
+import DangerButton from '#rsca/Button/DangerButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import SuccessButton from '#rsca/Button/SuccessButton';
 import Faram, { requiredCondition, urlCondition } from '#rs/components/Input/Faram';
 import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';

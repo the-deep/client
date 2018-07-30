@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { caseInsensitiveSubmatch, compareString } from '#rsu/common';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
+import AccentButton from '#rsca/Button/AccentButton';
 import SearchInput from '#rs/components/Input/SearchInput';
 import RadioInput from '#rs/components/Input/RadioInput';
 import ListView from '#rs/components/View/List/ListView';

@@ -3,8 +3,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DangerButton from '#rsca/Button/DangerButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SearchInput from '#rs/components/Input/SearchInput';
 import ListItem from '#rs/components/View/List/ListItem';
 import ListView from '#rs/components/View/List/ListView';

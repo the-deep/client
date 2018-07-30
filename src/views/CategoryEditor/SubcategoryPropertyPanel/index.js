@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 
 import { bound } from '#rsu/common';
 import ListView from '#rs/components/View/List/ListView';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import TextInput from '#rs/components/Input/TextInput';
 import TextArea from '#rs/components/Input/TextArea';
 

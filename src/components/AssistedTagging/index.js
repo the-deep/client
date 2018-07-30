@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
-import WarningButton from '#rs/components/Action/Button/WarningButton';
-import SegmentButton from '#rs/components/Action/SegmentButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import SuccessButton from '#rsca/Button/SuccessButton';
+import WarningButton from '#rsca/Button/WarningButton';
+import SegmentButton from '#rsca/SegmentButton';
 import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
 import FloatingContainer from '#rs/components/View/FloatingContainer';
 import ListView from '#rs/components/View/List/ListView';

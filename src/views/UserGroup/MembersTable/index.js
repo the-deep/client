@@ -7,7 +7,7 @@ import {
     compareString,
     compareDate,
 } from '#rsu/common';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import Modal from '#rs/components/View/Modal';

@@ -8,7 +8,7 @@ import Pager from '#rs/components/View/Pager';
 import Table from '#rs/components/View/Table';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import Checkbox from '#rs/components/Input/Checkbox';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
+import AccentButton from '#rsca/Button/AccentButton';
 import {
     iconNames,
     pathNames,

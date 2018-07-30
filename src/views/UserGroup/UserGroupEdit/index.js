@@ -8,8 +8,8 @@ import { connect } from 'react-redux';
 
 import Faram, { requiredCondition } from '#rs/components/Input/Faram';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DangerButton from '#rsca/Button/DangerButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import TextInput from '#rs/components/Input/TextInput';
 import TextArea from '#rs/components/Input/TextArea';

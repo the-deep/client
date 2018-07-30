@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import AccentButton from '#rs/components/Action/Button/AccentButton';
+import AccentButton from '#rsca/Button/AccentButton';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';

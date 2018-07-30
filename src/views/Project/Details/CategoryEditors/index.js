@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { FgRestBuilder } from '#rsu/rest';
 import { caseInsensitiveSubmatch, compareString } from '#rsu/common';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
+import AccentButton from '#rsca/Button/AccentButton';
 import SearchInput from '#rs/components/Input/SearchInput';
 import ListView from '#rs/components/View/List/ListView';
 import ListItem from '#rs/components/View/List/ListItem';

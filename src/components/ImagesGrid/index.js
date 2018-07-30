@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import ListView from '#rs/components/View/List/ListView';
 import Modal from '#rs/components/View/Modal';
 import ModalHeader from '#rs/components/View/Modal/Header';

@@ -3,8 +3,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '#rsu/common';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import WarningButton from '#rs/components/Action/Button/WarningButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import WarningButton from '#rsca/Button/WarningButton';
 
 import {
     iconNames,

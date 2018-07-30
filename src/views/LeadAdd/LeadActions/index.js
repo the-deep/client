@@ -7,9 +7,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Button from '#rs/components/Action/Button';
+import Button from '#rsca/Button';
 import Checkbox from '#rs/components/Input/Checkbox';
-import DropdownMenu from '#rs/components/Action/DropdownMenu';
+import DropdownMenu from '#rsca/DropdownMenu';
 import Confirm from '#rs/components/View/Modal/Confirm';
 
 import { iconNames } from '#constants';

@@ -5,7 +5,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Faram, {
     emailCondition,
     requiredCondition,

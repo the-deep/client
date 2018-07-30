@@ -5,7 +5,7 @@ import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
 import FaramList from '#rs/components/Input/Faram/FaramList';
 import SortableListView from '#rs/components/View/SortableListView';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rs/components/Input/TextInput';
 import ColorInput from '#rs/components/Input/ColorInput';
 import { randomString } from '#rsu/common';

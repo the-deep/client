@@ -7,7 +7,7 @@ import {
 
 import { reverseRoute } from '#rsu/common';
 import List from '#rs/components/View/List';
-import DropdownMenu from '#rs/components/Action/DropdownMenu';
+import DropdownMenu from '#rsca/DropdownMenu';
 
 import {
     iconNames,

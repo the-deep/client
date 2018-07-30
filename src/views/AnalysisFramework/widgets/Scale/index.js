@@ -7,8 +7,8 @@ import Faram, {
 import FaramList from '#rs/components/Input/Faram/FaramList';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import SortableListView from '#rs/components/View/SortableListView';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DangerButton from '#rsca/Button/DangerButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rs/components/Input/TextInput';
 import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';

@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
 import ModalHeader from '#rs/components/View/Modal/Header';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import DangerButton from '#rsca/Button/DangerButton';
 
 import { handleException, handleReport } from '#config/sentry';
 import _ts from '#ts';

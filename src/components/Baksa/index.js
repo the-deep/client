@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DangerButton from '#rsca/Button/DangerButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DropZone from '#rs/components/Input/DropZone';
 import FaramElement from '#rs/components/Input/Faram/FaramElement';
 import FileInput from '#rs/components/Input/FileInput';

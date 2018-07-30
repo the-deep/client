@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import TextInput from '#rs/components/Input/TextInput';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import DangerButton from '#rsca/Button/DangerButton';
 import Modal from '#rs/components/View/Modal';
 import ModalHeader from '#rs/components/View/Modal/Header';
 import ModalBody from '#rs/components/View/Modal/Body';

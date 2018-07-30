@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 
 import Faram, { requiredCondition } from '#rs/components/Input/Faram';
-import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import FixedTabs from '#rs/components/View/FixedTabs';
 import MultiViewContainer from '#rs/components/View/MultiViewContainer';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
-import WarningButton from '#rs/components/Action/Button/WarningButton';
+import SuccessButton from '#rsca/Button/SuccessButton';
+import WarningButton from '#rsca/Button/WarningButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import {
     countryDetailSelector,

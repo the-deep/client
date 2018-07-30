@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Button from '#rs/components/Action/Button';
+import Button from '#rsca/Button';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';

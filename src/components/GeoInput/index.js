@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import AccentButton from '#rs/components/Action/Button/AccentButton';
+import AccentButton from '#rsca/Button/AccentButton';
 import SelectInputWithList from '#rs/components/Input/SelectInputWithList';
 import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
 import Label from '#rs/components/Input/Label';

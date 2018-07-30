@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import BoundError from '#rs/components/General/BoundError';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Modal from '#rs/components/View/Modal';

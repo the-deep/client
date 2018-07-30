@@ -5,15 +5,15 @@ import { connect } from 'react-redux';
 
 import { FgRestBuilder } from '#rsu/rest';
 import { reverseRoute } from '#rsu/common';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
-import WarningButton from '#rs/components/Action/Button/WarningButton';
+import AccentButton from '#rsca/Button/AccentButton';
+import WarningButton from '#rsca/Button/WarningButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Confirm from '#rs/components/View/Modal/Confirm';
 import Faram, {
     requiredCondition,
 } from '#rs/components/Input/Faram';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import DangerButton from '#rsca/Button/DangerButton';
+import SuccessButton from '#rsca/Button/SuccessButton';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import TextInput from '#rs/components/Input/TextInput';
 

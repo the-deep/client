@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import WarningButton from '#rs/components/Action/Button/WarningButton';
+import DangerButton from '#rsca/Button/DangerButton';
+import WarningButton from '#rsca/Button/WarningButton';
 
 import { entryAccessor } from '#entities/editEntries';
 import { iconNames } from '#constants';

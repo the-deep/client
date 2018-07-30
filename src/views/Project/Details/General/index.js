@@ -8,12 +8,12 @@ import {
     compareDate,
 } from '#rsu/common';
 import update from '#rsu/immutable-update';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import FormattedDate from '#rs/components/View/FormattedDate';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import DangerButton from '#rsca/Button/DangerButton';
 import { FgRestBuilder } from '#rsu/rest';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import SuccessButton from '#rsca/Button/SuccessButton';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import TextInput from '#rs/components/Input/TextInput';
 import SelectInputWithList from '#rs/components/Input/SelectInputWithList';

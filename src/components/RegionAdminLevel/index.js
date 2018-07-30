@@ -3,8 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { BgRestBuilder } from '#rsu/rest';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import Modal from '#rs/components/View/Modal';
 import ModalHeader from '#rs/components/View/Modal/Header';
 import ModalBody from '#rs/components/View/Modal/Body';

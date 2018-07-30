@@ -11,7 +11,7 @@ import {
 import { getFiltersForRequest } from '#entities/lead';
 import update from '#rsu/immutable-update';
 import { FgRestBuilder } from '#rsu/rest';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
+import AccentButton from '#rsca/Button/AccentButton';
 import Table from '#rs/components/View/Table';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import FormattedDate from '#rs/components/View/FormattedDate';

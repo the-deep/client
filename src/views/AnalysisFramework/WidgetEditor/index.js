@@ -5,7 +5,7 @@ import update from 'immutability-helper';
 
 import Faram from '#rs/components/Input/Faram';
 import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
-import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import GridLayoutEditor from '#rs/components/View/GridLayoutEditor';
 
 import {

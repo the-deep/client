@@ -8,8 +8,8 @@ import SearchInput from '#rs/components/Input/SearchInput';
 import DateFilter from '#rs/components/Input/DateFilter';
 import RangeFilter from '#rs/components/Input/RangeFilter';
 import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
-import Button from '#rs/components/Action/Button';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import Button from '#rsca/Button';
+import DangerButton from '#rsca/Button/DangerButton';
 
 import GeoInput from '#components/GeoInput/';
 

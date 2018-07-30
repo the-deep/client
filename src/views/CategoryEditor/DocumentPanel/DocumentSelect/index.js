@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import ListView from '#rs/components/View/List/ListView';
-import Button from '#rs/components/Action/Button';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
+import Button from '#rsca/Button';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 
 import {
     categoryEditorDocumentsSelector,

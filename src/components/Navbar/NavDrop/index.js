@@ -9,8 +9,8 @@ import {
 import DisplayPicture from '#components/DisplayPicture';
 import { reverseRoute } from '#rsu/common';
 import List from '#rs/components/View/List';
-import DropdownMenu from '#rs/components/Action/DropdownMenu';
-import DropdownGroup from '#rs/components/Action/DropdownMenu/Group';
+import DropdownMenu from '#rsca/DropdownMenu';
+import DropdownGroup from '#rsca/DropdownMenu/Group';
 
 import { stopSiloBackgroundTasksAction } from '#redux/middlewares/siloBackgroundTasks';
 import { adminEndpoint } from '#config/rest';

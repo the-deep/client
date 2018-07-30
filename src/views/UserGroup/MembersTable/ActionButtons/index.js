@@ -3,8 +3,8 @@ import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '#rsu/common';
-import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
-import PrimaryConfirmButton from '#rs/components/Action/ConfirmButton/PrimaryConfirmButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import PrimaryConfirmButton from '#rsca/ConfirmButton/PrimaryConfirmButton';
 
 import {
     iconNames,

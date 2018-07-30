@@ -3,7 +3,7 @@ import React from 'react';
 
 import Faram from '#rs/components/Input/Faram';
 import TextInput from '#rs/components/Input/TextInput';
-import Button from '#rs/components/Action/Button';
+import Button from '#rsca/Button';
 import List from '#rs/components/View/List';
 
 import _ts from '#ts';

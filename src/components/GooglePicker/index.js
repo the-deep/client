@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Button from '#rs/components/Action/Button';
+import Button from '#rsca/Button';
 import _ts from '#ts';
 
 const propTypes = {

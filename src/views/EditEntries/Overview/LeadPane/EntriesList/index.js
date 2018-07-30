@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Button from '#rs/components/Action/Button';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import Button from '#rsca/Button';
+import DangerButton from '#rsca/Button/DangerButton';
 import ListView from '#rs/components/View/List/ListView';
 
 import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';

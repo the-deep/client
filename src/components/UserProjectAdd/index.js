@@ -13,8 +13,8 @@ import Faram, {
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import TextInput from '#rs/components/Input/TextInput';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import DangerButton from '#rsca/Button/DangerButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import {
     alterResponseErrorToFaramError,

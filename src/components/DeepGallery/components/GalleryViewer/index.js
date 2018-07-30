@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 
-import AccentButton from '#rs/components/Action/Button/AccentButton';
+import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rs/components/Input/TextInput';
 import Message from '#rs/components/View/Message';
 import urlRegex from '#rs/components/Input/Faram/regexForWeburl';

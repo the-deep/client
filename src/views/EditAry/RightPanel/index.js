@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import MultiViewContainer from '#rs/components/View/MultiViewContainer';
 import FixedTabs from '#rs/components/View/FixedTabs';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import SuccessButton from '#rsca/Button/SuccessButton';
 import Faram, {
     requiredCondition,
     dateCondition,

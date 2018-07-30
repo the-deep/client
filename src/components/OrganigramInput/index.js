@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import OrgChart from '#rs/components/Visualization/OrgChart';
-import Button from '#rs/components/Action/Button';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
+import Button from '#rsca/Button';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import AccentButton from '#rsca/Button/AccentButton';
 import Modal from '#rs/components/View/Modal';
 import SelectInputWithList from '#rs/components/Input/SelectInputWithList';
 import ModalHeader from '#rs/components/View/Modal/Header';

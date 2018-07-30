@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
-import WarningButton from '#rs/components/Action/Button/WarningButton';
+import DangerButton from '#rsca/Button/DangerButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import SuccessButton from '#rsca/Button/SuccessButton';
+import WarningButton from '#rsca/Button/WarningButton';
 import Faram, {
     requiredCondition,
 } from '#rs/components/Input/Faram';

@@ -12,7 +12,7 @@ import ModalBody from '#rs/components/View/Modal/Body';
 import ModalHeader from '#rs/components/View/Modal/Header';
 import ListView from '#rs/components/View/List/ListView';
 import SearchInput from '#rs/components/Input/SearchInput';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import UserProjectAdd from '#components/UserProjectAdd';
 import BoundError from '#rs/components/General/BoundError';
