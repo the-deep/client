@@ -6,8 +6,8 @@
     height: 100%;
 
     .grid-layout-editor {
-        min-width: 100%;
-        min-height: 100%;
+        width: 100%;
+        height: 100%;
 
         .widget {
             @extend %widget;
