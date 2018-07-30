@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'; import { connect } from 'react-redux';
 
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import ResizableH from '#rs/components/View/Resizable/ResizableH';
-import { isFalsy } from '#rs/utils/common';
+import { isFalsy } from '#rsu/common';
 
 import {
     setAryTemplateAction,

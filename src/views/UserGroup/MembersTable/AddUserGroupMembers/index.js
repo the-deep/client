@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { compareString } from '#rs/utils/common';
+import { compareString } from '#rsu/common';
 import Faram, { requiredCondition } from '#rs/components/Input/Faram';
-import update from '#rs/utils/immutable-update';
+import update from '#rsu/immutable-update';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';

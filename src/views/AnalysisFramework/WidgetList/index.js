@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import ListView from '#rs/components/View/List/ListView';
-import { randomString } from '#rs/utils/common';
+import { randomString } from '#rsu/common';
 
 import { addAfViewWidgetAction } from '#redux';
 import _ts from '#ts';

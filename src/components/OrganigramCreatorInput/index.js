@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { randomString } from '#rs/utils/common';
+import { randomString } from '#rsu/common';
 
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import FaramElement from '#rs/components/Input/Faram/FaramElement';
 import TextInput from '#rs/components/Input/TextInput';
 import List from '#rs/components/View/List';
-import update from '#rs/utils/immutable-update';
+import update from '#rsu/immutable-update';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';

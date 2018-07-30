@@ -17,9 +17,9 @@ import {
     caseInsensitiveSubmatch,
     compareString,
     compareDate,
-} from '#rs/utils/common';
-import { FgRestBuilder } from '#rs/utils/rest';
-import { UploadBuilder } from '#rs/utils/upload';
+} from '#rsu/common';
+import { FgRestBuilder } from '#rsu/rest';
+import { UploadBuilder } from '#rsu/upload';
 
 import { iconNames } from '#constants';
 import { leadTypeIconMap } from '#entities/lead';

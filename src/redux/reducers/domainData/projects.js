@@ -1,5 +1,5 @@
-import update from '#rs/utils/immutable-update';
-import { isTruthy, compareString } from '#rs/utils/common';
+import update from '#rsu/immutable-update';
+import { isTruthy, compareString } from '#rsu/common';
 
 // TYPE
 

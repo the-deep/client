@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '#rs/utils/rest';
+import { FgRestBuilder } from '#rsu/rest';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import TextInput from '#rs/components/Input/TextInput';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';

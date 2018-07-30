@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { reverseRoute } from '#rs/utils/common';
+import { reverseRoute } from '#rsu/common';
 
 import { pathNames } from '#constants';
 

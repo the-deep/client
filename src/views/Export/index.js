@@ -7,10 +7,10 @@ import {
     listToMap,
     compareString,
     compareDate,
-} from '#rs/utils/common';
+} from '#rsu/common';
 import { getFiltersForRequest } from '#entities/lead';
-import update from '#rs/utils/immutable-update';
-import { FgRestBuilder } from '#rs/utils/rest';
+import update from '#rsu/immutable-update';
+import { FgRestBuilder } from '#rsu/rest';
 import AccentButton from '#rs/components/Action/Button/AccentButton';
 import Table from '#rs/components/View/Table';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';

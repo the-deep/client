@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { isObjectEmpty } from '#rs/utils/common';
+import { isObjectEmpty } from '#rsu/common';
 import Button from '#rs/components/Action/Button';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import Faram from '#rs/components/Input/Faram';

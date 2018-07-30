@@ -1,5 +1,5 @@
 import boundError from '#rs/components/General/BoundError';
-import { listToMap } from '#rs/utils/common';
+import { listToMap } from '#rsu/common';
 
 import FrameworkWidgetError from '#components/FrameworkWidgetError';
 

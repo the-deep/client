@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '#rs/utils/rest';
-import { isObjectEmpty } from '#rs/utils/common';
+import { FgRestBuilder } from '#rsu/rest';
+import { isObjectEmpty } from '#rsu/common';
 import SearchInput from '#rs/components/Input/SearchInput';
 import DateFilter from '#rs/components/Input/DateFilter';
 import RangeFilter from '#rs/components/Input/RangeFilter';

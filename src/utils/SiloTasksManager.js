@@ -1,4 +1,4 @@
-import Locker from '#rs/utils/Locker';
+import Locker from '#rsu/Locker';
 
 import AbstractTask from './AbstractTask';
 

@@ -9,8 +9,8 @@ import Faram, {
     requiredCondition,
     dateCondition,
 } from '#rs/components/Input/Faram';
-import { getObjectChildren } from '#rs/utils/common';
-import { median, sum, bucket } from '#rs/utils/stats';
+import { getObjectChildren } from '#rsu/common';
+import { median, sum, bucket } from '#rsu/stats';
 
 import {
     leadIdFromRouteSelector,

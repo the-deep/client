@@ -1,4 +1,4 @@
-import update from '#rs/utils/immutable-update';
+import update from '#rsu/immutable-update';
 
 // TODO
 // # Resolve action

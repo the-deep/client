@@ -12,7 +12,7 @@ import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Pager from '#rs/components/View/Pager';
 import RawTable from '#rs/components/View/RawTable';
 import TableHeader from '#rs/components/View/TableHeader';
-import { reverseRoute } from '#rs/utils/common';
+import { reverseRoute } from '#rsu/common';
 
 import Cloak from '#components/Cloak';
 import AppError from '#components/AppError';

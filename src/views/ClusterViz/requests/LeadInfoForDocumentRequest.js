@@ -1,4 +1,4 @@
-import { FgRestBuilder } from '#rs/utils/rest';
+import { FgRestBuilder } from '#rsu/rest';
 import notify from '#notify';
 import {
     createUrlForLeadsOfProject,
@@ -7,7 +7,7 @@ import {
 import {
     mapToMap,
     listToMap,
-} from '#rs/utils/common';
+} from '#rsu/common';
 import schema from '#schema';
 import _ts from '#ts';
 

@@ -1,4 +1,4 @@
-import { isFalsy } from '#rs/utils/common';
+import { isFalsy } from '#rsu/common';
 
 const getFromProps = identifier => ({ route }, props) => {
     if (!isFalsy(props) && !isFalsy(props[identifier])) {

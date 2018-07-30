@@ -6,12 +6,12 @@ import {
     reverseRoute,
     compareString,
     compareDate,
-} from '#rs/utils/common';
-import update from '#rs/utils/immutable-update';
+} from '#rsu/common';
+import update from '#rsu/immutable-update';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
-import { FgRestBuilder } from '#rs/utils/rest';
+import { FgRestBuilder } from '#rsu/rest';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';

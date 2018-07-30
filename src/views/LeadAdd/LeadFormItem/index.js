@@ -6,13 +6,13 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '#rs/utils/rest';
+import { FgRestBuilder } from '#rsu/rest';
 import {
     requiredCondition,
     urlCondition,
 } from '#rs/components/Input/Faram';
 import ResizableV from '#rs/components/View/Resizable/ResizableV';
-import update from '#rs/utils/immutable-update';
+import update from '#rsu/immutable-update';
 
 import {
     InternalGallery,

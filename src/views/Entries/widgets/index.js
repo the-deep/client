@@ -2,7 +2,7 @@ import React from 'react';
 import WidgetError from '#components/WidgetError';
 import boundError from '#rscg/BoundError';
 
-import { listToMap } from '#rs/utils/common';
+import { listToMap } from '#rsu/common';
 
 import Matrix1dListWidget from './Matrix1dList';
 import Matrix2dListWidget from './Matrix2dList';

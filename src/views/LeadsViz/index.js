@@ -7,7 +7,7 @@ import _ts from '#ts';
 import {
     reverseRoute,
     isObjectEmpty,
-} from '#rs/utils/common';
+} from '#rsu/common';
 
 import wrapViz from '#rs/components/Visualization/VizWrapper';
 import SunBurst from '#rs/components/Visualization/SunBurst';

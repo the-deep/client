@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import {
     isTruthy,
     isObjectEmpty,
-} from '#rs/utils/common';
-import { FgRestBuilder } from '#rs/utils/rest';
+} from '#rsu/common';
+import { FgRestBuilder } from '#rsu/rest';
 import Button from '#rs/components/Action/Button';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import Faram from '#rs/components/Input/Faram';

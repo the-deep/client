@@ -14,7 +14,7 @@ import TextInput from '#rs/components/Input/TextInput';
 import Faram, { requiredCondition } from '#rs/components/Input/Faram';
 import FixedTabs from '#rscv/FixedTabs';
 import MultiViewContainer from '#rs/components/View/MultiViewContainer';
-import { findDuplicates, randomString } from '#rs/utils/common';
+import { findDuplicates, randomString } from '#rsu/common';
 
 import TabTitle from '#components/TabTitle';
 import { iconNames } from '#constants';

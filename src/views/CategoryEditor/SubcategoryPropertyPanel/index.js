@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { bound } from '#rs/utils/common';
+import { bound } from '#rsu/common';
 import ListView from '#rs/components/View/List/ListView';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';

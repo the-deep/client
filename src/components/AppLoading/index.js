@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { getRandomFromList } from '#rs/utils/common';
+import { getRandomFromList } from '#rsu/common';
 import _ts from '#ts';
 
 import styles from './styles.scss';

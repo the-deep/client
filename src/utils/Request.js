@@ -1,4 +1,4 @@
-import { RestRequest } from '#rs/utils/rest';
+import { RestRequest } from '#rsu/rest';
 import schema from '#schema';
 import { alterResponseErrorToFaramError } from '#rest';
 

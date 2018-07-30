@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '#rs/utils/rest';
-import { compareString, compareNumber } from '#rs/utils/common';
+import { FgRestBuilder } from '#rsu/rest';
+import { compareString, compareNumber } from '#rsu/common';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';

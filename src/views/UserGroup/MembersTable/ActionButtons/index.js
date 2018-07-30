@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
-import { reverseRoute } from '#rs/utils/common';
+import { reverseRoute } from '#rsu/common';
 import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
 import PrimaryConfirmButton from '#rs/components/Action/ConfirmButton/PrimaryConfirmButton';
 

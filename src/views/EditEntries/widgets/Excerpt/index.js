@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import TextArea from '#rsci/TextArea';
 import AccentButton from '#rs/components/Action/Button/AccentButton';
-import { formatPdfText } from '#rs/utils/common';
+import { formatPdfText } from '#rsu/common';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';

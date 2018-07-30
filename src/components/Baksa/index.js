@@ -9,8 +9,8 @@ import FileInput from '#rs/components/Input/FileInput';
 import NumberInput from '#rs/components/Input/NumberInput';
 import TextInput from '#rs/components/Input/TextInput';
 import iconNames from '#rs/constants/iconNames';
-import { isTruthy, isFalsy } from '#rs/utils/common';
-import { UploadBuilder } from '#rs/utils/upload';
+import { isTruthy, isFalsy } from '#rsu/common';
+import { UploadBuilder } from '#rsu/upload';
 
 import {
     urlForUpload,

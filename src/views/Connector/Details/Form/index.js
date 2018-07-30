@@ -21,8 +21,8 @@ import {
     compareString,
     compareDate,
     isFalsy,
-} from '#rs/utils/common';
-import update from '#rs/utils/immutable-update';
+} from '#rsu/common';
+import update from '#rsu/immutable-update';
 
 import { iconNames } from '#constants';
 import {

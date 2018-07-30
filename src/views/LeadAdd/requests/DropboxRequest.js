@@ -1,4 +1,4 @@
-import { FgRestBuilder } from '#rs/utils/rest';
+import { FgRestBuilder } from '#rsu/rest';
 import schema from '#schema';
 import { leadAccessor } from '#entities/lead';
 

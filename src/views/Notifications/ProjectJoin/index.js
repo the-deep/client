@@ -7,7 +7,7 @@ import FormattedDate from '#rs/components/View/FormattedDate';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import SuccessButton from '#rs/components/Action/Button/SuccessButton';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
-import { reverseRoute } from '#rs/utils/common';
+import { reverseRoute } from '#rsu/common';
 
 import DisplayPicture from '#components/DisplayPicture';
 import {

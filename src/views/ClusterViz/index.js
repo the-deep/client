@@ -15,7 +15,7 @@ import {
     reverseRoute,
     mapToList,
     groupList,
-} from '#rs/utils/common';
+} from '#rsu/common';
 
 import VizError from '#components/VizError';
 import AppError from '#components/AppError';

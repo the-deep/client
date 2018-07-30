@@ -8,8 +8,8 @@ import SegmentButton from '#rs/components/Action/SegmentButton';
 import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
 import FloatingContainer from '#rs/components/View/FloatingContainer';
 import ListView from '#rs/components/View/List/ListView';
-import { getHexFromString } from '#rs/utils/common';
-import { FgRestBuilder } from '#rs/utils/rest';
+import { getHexFromString } from '#rsu/common';
+import { FgRestBuilder } from '#rsu/rest';
 
 import { iconNames } from '#constants';
 import notify from '#notify';

@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '#rs/utils/rest';
-import { caseInsensitiveSubmatch, compareString } from '#rs/utils/common';
+import { FgRestBuilder } from '#rsu/rest';
+import { caseInsensitiveSubmatch, compareString } from '#rsu/common';
 
 import AccentButton from '#rs/components/Action/Button/AccentButton';
 import SearchInput from '#rs/components/Input/SearchInput';

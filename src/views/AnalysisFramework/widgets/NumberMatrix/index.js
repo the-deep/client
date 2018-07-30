@@ -14,7 +14,7 @@ import Faram, { requiredCondition } from '#rs/components/Input/Faram';
 import FaramList from '#rs/components/Input/Faram/FaramList';
 import FixedTabs from '#rscv/FixedTabs';
 import MultiViewContainer from '#rs/components/View/MultiViewContainer';
-import { findDuplicates, randomString } from '#rs/utils/common';
+import { findDuplicates, randomString } from '#rsu/common';
 
 import TabTitle from '#components/TabTitle';
 

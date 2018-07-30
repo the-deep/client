@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
-import { unique, mapToList } from '#rs/utils/common';
-import update from '#rs/utils/immutable-update';
+import { unique, mapToList } from '#rsu/common';
+import update from '#rsu/immutable-update';
 
 import {
     createFooLanguageSelector,

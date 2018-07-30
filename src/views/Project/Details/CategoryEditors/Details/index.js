@@ -3,8 +3,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '#rs/utils/rest';
-import { reverseRoute } from '#rs/utils/common';
+import { FgRestBuilder } from '#rsu/rest';
+import { reverseRoute } from '#rsu/common';
 import AccentButton from '#rs/components/Action/Button/AccentButton';
 import WarningButton from '#rs/components/Action/Button/WarningButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';

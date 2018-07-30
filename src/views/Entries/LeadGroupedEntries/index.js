@@ -9,7 +9,7 @@ import {
     pathNames,
 } from '#constants';
 
-import { reverseRoute } from '#rs/utils/common';
+import { reverseRoute } from '#rsu/common';
 
 import FormattedDate from '#rscv/FormattedDate';
 import ListView from '#rscv/List/ListView';

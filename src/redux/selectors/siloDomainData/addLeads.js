@@ -4,7 +4,7 @@ import {
     isObjectEmpty,
     compareString,
     caseInsensitiveSubmatch,
-} from '#rs/utils/common';
+} from '#rsu/common';
 
 import {
     LEAD_FILTER_STATUS,

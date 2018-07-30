@@ -1,4 +1,4 @@
-import { RestRequest } from '#rs/utils/rest';
+import { RestRequest } from '#rsu/rest';
 
 export const POST = 'POST';
 export const GET = 'GET';

@@ -17,8 +17,8 @@ import MultiViewContainer from '#rs/components/View/MultiViewContainer';
 import {
     caseInsensitiveSubmatch,
     reverseRoute,
-} from '#rs/utils/common';
-import update from '#rs/utils/immutable-update';
+} from '#rsu/common';
+import update from '#rsu/immutable-update';
 
 import {
     iconNames,

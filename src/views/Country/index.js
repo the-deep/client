@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { caseInsensitiveSubmatch, compareString } from '#rs/utils/common';
+import { caseInsensitiveSubmatch, compareString } from '#rsu/common';
 import SearchInput from '#rs/components/Input/SearchInput';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import ListView from '#rs/components/View/List/ListView';

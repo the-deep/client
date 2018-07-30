@@ -7,7 +7,7 @@ import {
     caseInsensitiveSubmatch,
     compareLength,
     compareString,
-} from '#rs/utils/common';
+} from '#rsu/common';
 import DangerButton from '#rs/components/Action/Button/DangerButton';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';

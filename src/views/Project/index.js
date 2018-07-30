@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import {
     reverseRoute,
     caseInsensitiveSubmatch,
-} from '#rs/utils/common';
+} from '#rsu/common';
 import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalHeader from '#rs/components/View/Modal/Header';

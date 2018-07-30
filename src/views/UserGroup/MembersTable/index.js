@@ -6,7 +6,7 @@ import {
     caseInsensitiveSubmatch,
     compareString,
     compareDate,
-} from '#rs/utils/common';
+} from '#rsu/common';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import FormattedDate from '#rs/components/View/FormattedDate';

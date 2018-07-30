@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 
 import DisplayPicture from '#components/DisplayPicture';
-import { reverseRoute } from '#rs/utils/common';
+import { reverseRoute } from '#rsu/common';
 import List from '#rs/components/View/List';
 import DropdownMenu from '#rs/components/Action/DropdownMenu';
 import DropdownGroup from '#rs/components/Action/DropdownMenu/Group';

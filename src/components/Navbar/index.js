@@ -9,11 +9,11 @@ import {
 } from 'react-router-dom';
 
 
-import { BgRestBuilder } from '#rs/utils/rest';
+import { BgRestBuilder } from '#rsu/rest';
 import {
     isTruthy,
     reverseRoute,
-} from '#rs/utils/common';
+} from '#rsu/common';
 import SelectInput from '#rs/components/Input/SelectInput';
 
 import {

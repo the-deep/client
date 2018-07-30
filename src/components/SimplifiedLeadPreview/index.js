@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { FgRestBuilder } from '#rs/utils/rest';
-import { isFalsy } from '#rs/utils/common';
+import { FgRestBuilder } from '#rsu/rest';
+import { isFalsy } from '#rsu/common';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
 
-import { startActionsSync } from '#rs/utils/redux-sync';
+import { startActionsSync } from '#rsu/redux-sync';
 
 import store from '#store';
 

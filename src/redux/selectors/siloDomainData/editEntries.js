@@ -12,7 +12,7 @@ import {
     listToMap,
     decodeDate,
     compareNumber,
-} from '#rs/utils/common';
+} from '#rsu/common';
 import {
     entryAccessor,
     calculateEntryState,

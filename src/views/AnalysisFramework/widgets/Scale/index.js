@@ -14,7 +14,7 @@ import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
 import ModalHeader from '#rs/components/View/Modal/Header';
-import { findDuplicates, randomString } from '#rs/utils/common';
+import { findDuplicates, randomString } from '#rsu/common';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';

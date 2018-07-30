@@ -1,6 +1,6 @@
 // import schema from '#schema';
 import Request from '#utils/Request';
-import { randomString } from '#rs/utils/common';
+import { randomString } from '#rsu/common';
 import {
     createUrlForNotificationsGet,
     createParamsForGet,

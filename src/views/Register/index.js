@@ -14,8 +14,8 @@ import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import ReCaptcha from '#rs/components/Input/ReCaptcha';
 import TextInput from '#rs/components/Input/TextInput';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import { reverseRoute } from '#rs/utils/common';
-import { FgRestBuilder } from '#rs/utils/rest';
+import { reverseRoute } from '#rsu/common';
+import { FgRestBuilder } from '#rsu/rest';
 
 import { reCaptchaSiteKey } from '#config/reCaptcha';
 import { pathNames } from '#constants';

@@ -5,8 +5,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { FgRestBuilder } from '#rs/utils/rest';
-import { reverseRoute } from '#rs/utils/common';
+import { FgRestBuilder } from '#rsu/rest';
+import { reverseRoute } from '#rsu/common';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import ReCaptcha from '#rs/components/Input/ReCaptcha';

@@ -14,7 +14,7 @@ import {
     compareDate,
     compareLength,
     compareString,
-} from '#rs/utils/common';
+} from '#rsu/common';
 import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';

@@ -6,7 +6,7 @@ import { Link, Prompt } from 'react-router-dom';
 import BoundError from '#rs/components/General/BoundError';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import MultiViewContainer from '#rs/components/View/MultiViewContainer';
-import { reverseRoute } from '#rs/utils/common';
+import { reverseRoute } from '#rsu/common';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import FixedTabs from '#rscv/FixedTabs';

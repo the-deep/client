@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { reverseRoute } from '#rs/utils/common';
+import { reverseRoute } from '#rsu/common';
 import Label from '#rs/components/Input/Label';
 import ListView from '#rs/components/View/List/ListView';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';

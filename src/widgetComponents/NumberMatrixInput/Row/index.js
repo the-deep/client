@@ -5,7 +5,7 @@ import List from '#rs/components/View/List';
 import {
     unique,
     isTruthy,
-} from '#rs/utils/common';
+} from '#rsu/common';
 
 import ColumnElement from './ColumnElement';
 import styles from './styles.scss';

@@ -11,8 +11,8 @@ import { Prompt } from 'react-router-dom';
 import {
     isTruthy,
     randomString,
-} from '#rs/utils/common';
-import { CoordinatorBuilder } from '#rs/utils/coordinate';
+} from '#rsu/common';
+import { CoordinatorBuilder } from '#rsu/coordinate';
 import List from '#rs/components/View/List';
 import Message from '#rs/components/View/Message';
 import BoundError from '#rs/components/General/BoundError';

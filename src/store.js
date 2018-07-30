@@ -8,7 +8,7 @@ import {
     commonHeaderForGet,
     authorizationHeaderForPost,
 } from '#config/rest';
-import { createActionSyncMiddleware } from '#rs/utils/redux-sync.js';
+import { createActionSyncMiddleware } from '#rsu/redux-sync';
 
 import reducer from '#redux/reducers';
 import { reducersToSync } from '#config/store';

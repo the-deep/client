@@ -1,5 +1,5 @@
-import { getLinkedListNode, getElementAround } from '#rs/utils/common';
-import update from '#rs/utils/immutable-update';
+import { getLinkedListNode, getElementAround } from '#rsu/common';
+import update from '#rsu/immutable-update';
 
 // TYPE
 

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '#rs/utils/rest';
+import { FgRestBuilder } from '#rsu/rest';
 import FixedTabs from '#rs/components/View/FixedTabs';
 import MultiViewContainer from '#rs/components/View/MultiViewContainer';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';

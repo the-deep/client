@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 
-import { isTruthy } from '#rs/utils/common';
+import { isTruthy } from '#rsu/common';
 
 import {
     leadIdFromRouteSelector,

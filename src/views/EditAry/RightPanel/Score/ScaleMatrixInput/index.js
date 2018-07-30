@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import List from '#rs/components/View/List';
 import FaramElement from '#rs/components/Input/Faram/FaramElement';
-import { getColorOnBgColor } from '#rs/utils/common.js';
+import { getColorOnBgColor } from '#rsu/common.js';
 
 import styles from './styles.scss';
 

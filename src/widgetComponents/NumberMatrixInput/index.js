@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import update from '#rs/utils/immutable-update';
+import update from '#rsu/immutable-update';
 import List from '#rs/components/View/List';
 import FaramElement from '#rs/components/Input/Faram/FaramElement';
 

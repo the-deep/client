@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { BgRestBuilder } from '#rs/utils/rest';
+import { BgRestBuilder } from '#rsu/rest';
 import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
 import SelectInput from '#rs/components/Input/SelectInput';
 import TextInput from '#rs/components/Input/TextInput';

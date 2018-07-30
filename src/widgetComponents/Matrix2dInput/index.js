@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import List from '#rs/components/View/List';
 import FaramElement from '#rs/components/Input/Faram/FaramElement';
-import update from '#rs/utils/immutable-update';
+import update from '#rsu/immutable-update';
 
 import DimensionRow from './DimensionRow';
 import styles from './styles.scss';

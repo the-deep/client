@@ -8,7 +8,7 @@ import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import TextInput from '#rs/components/Input/TextInput';
 import ColorInput from '#rs/components/Input/ColorInput';
-import { randomString } from '#rs/utils/common';
+import { randomString } from '#rsu/common';
 
 import { iconNames } from '#constants';
 

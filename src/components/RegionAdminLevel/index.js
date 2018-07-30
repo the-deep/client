@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { BgRestBuilder } from '#rs/utils/rest';
+import { BgRestBuilder } from '#rsu/rest';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
 import Modal from '#rs/components/View/Modal';

@@ -10,8 +10,8 @@ import DangerButton from '#rs/components/Action/Button/DangerButton';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 
-import { FgRestBuilder } from '#rs/utils/rest';
-import { reverseRoute } from '#rs/utils/common';
+import { FgRestBuilder } from '#rsu/rest';
+import { reverseRoute } from '#rsu/common';
 
 import { pathNames } from '#constants';
 

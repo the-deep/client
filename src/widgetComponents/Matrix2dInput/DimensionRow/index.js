@@ -7,7 +7,7 @@ import {
     hexToRgb,
     rgbToHex,
     interpolateRgb,
-} from '#rs/utils/common';
+} from '#rsu/common';
 
 import SubdimensionRow from './SubdimensionRow';
 import styles from './styles.scss';

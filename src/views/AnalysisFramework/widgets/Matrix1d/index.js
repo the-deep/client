@@ -12,7 +12,7 @@ import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import TextInput from '#rs/components/Input/TextInput';
 import Faram, { requiredCondition } from '#rs/components/Input/Faram';
-import { findDuplicates, randomString } from '#rs/utils/common';
+import { findDuplicates, randomString } from '#rsu/common';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';

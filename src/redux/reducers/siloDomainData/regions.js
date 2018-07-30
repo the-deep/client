@@ -1,7 +1,7 @@
 import {
     analyzeErrors,
 } from '#rs/components/Input/Faram/validator';
-import update from '#rs/utils/immutable-update';
+import update from '#rsu/immutable-update';
 import {
     SET_REGION_DETAILS,
     UNSET_REGION,

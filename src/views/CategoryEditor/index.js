@@ -12,7 +12,7 @@ import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfi
 import BoundError from '#rs/components/General/BoundError';
 import SelectInput from '#rs/components/Input/SelectInput';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import { FgRestBuilder } from '#rs/utils/rest';
+import { FgRestBuilder } from '#rsu/rest';
 import {
     checkVersion,
     isTruthy,
@@ -20,7 +20,7 @@ import {
     reverseRoute,
     splitInWhitespace,
     trimWhitespace,
-} from '#rs/utils/common';
+} from '#rsu/common';
 
 import {
     categoryEditorViewTitleSelector,

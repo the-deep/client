@@ -1,4 +1,4 @@
-import update from '#rs/utils/immutable-update';
+import update from '#rsu/immutable-update';
 
 import { LOGOUT_ACTION } from '../../reducers/auth';
 import { SET_USER_PROJECTS } from '../../reducers/domainData/projects';

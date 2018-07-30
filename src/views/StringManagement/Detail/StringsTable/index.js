@@ -11,7 +11,7 @@ import {
     compareString,
     compareStringAsNumber,
     compareStringByWordCount,
-} from '#rs/utils/common';
+} from '#rsu/common';
 
 import { iconNames } from '#constants';
 import { allStringsSelector } from '#redux';

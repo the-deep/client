@@ -11,7 +11,7 @@ import ReactSVG from 'react-svg';
 import {
     FgRestBuilder,
     RestRequest,
-} from '#rs/utils/rest';
+} from '#rsu/rest';
 
 import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
 import Faram, {
@@ -23,7 +23,7 @@ import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
 import ReCaptcha from '#rs/components/Input/ReCaptcha';
 import TextInput from '#rs/components/Input/TextInput';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import { reverseRoute } from '#rs/utils/common';
+import { reverseRoute } from '#rsu/common';
 
 import { hidUrl } from '#config/hid';
 import { reCaptchaSiteKey } from '#config/reCaptcha';

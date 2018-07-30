@@ -1,4 +1,4 @@
-import { BgRestBuilder } from '#rs/utils/rest';
+import { BgRestBuilder } from '#rsu/rest';
 
 import {
     createParamsForGet,

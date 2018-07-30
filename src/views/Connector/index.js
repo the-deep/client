@@ -13,7 +13,7 @@ import ListView from '#rs/components/View/List/ListView';
 import {
     reverseRoute,
     caseInsensitiveSubmatch,
-} from '#rs/utils/common';
+} from '#rsu/common';
 
 import AppError from '#components/AppError';
 import {

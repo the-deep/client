@@ -4,7 +4,7 @@ import React from 'react';
 import Button from '#rs/components/Action/Button';
 import SegmentButton from '#rs/components/Action/SegmentButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import { FgRestBuilder } from '#rs/utils/rest';
+import { FgRestBuilder } from '#rsu/rest';
 
 import { iconNames } from '#constants';
 import {

@@ -10,8 +10,8 @@ import {
     compareString,
     compareBoolean,
     compareDate,
-} from '#rs/utils/common';
-import { FgRestBuilder } from '#rs/utils/rest';
+} from '#rsu/common';
+import { FgRestBuilder } from '#rsu/rest';
 import Table from '#rs/components/View/Table';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';

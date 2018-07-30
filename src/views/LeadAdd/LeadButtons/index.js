@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import Button from '#rs/components/Action/Button';
 import FileInput from '#rs/components/Input/FileInput';
 import FormattedDate from '#rs/components/View/FormattedDate';
-import { randomString } from '#rs/utils/common';
+import { randomString } from '#rsu/common';
 
 import DropboxChooser from '#components/DropboxChooser';
 import GooglePicker from '#components/GooglePicker';
