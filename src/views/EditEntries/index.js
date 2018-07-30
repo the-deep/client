@@ -30,6 +30,7 @@ import {
     editEntriesEntriesSelector,
     editEntriesLeadSelector,
     editEntriesSchemaSelector,
+    editEntriesComputeSchemaSelector,
     editEntriesStatusesSelector,
 
     editEntriesAddEntryAction,
@@ -56,7 +57,10 @@ import EditEntryDataRequest from './requests/EditEntryDataRequest';
 import EditEntryDeleteRequest from './requests/EditEntryDeleteRequest';
 import EditEntrySaveRequest from './requests/EditEntrySaveRequest';
 
-import calculateEntryColor from './entryColorCalculator';
+import {
+    calculateEntryColor,
+    calculateFirstTimeAttributes,
+} from './entryDataCalculator';
 import Overview from './Overview';
 import Listing from './List';
 
@@ -69,6 +73,7 @@ const propTypes = {
     leadId: PropTypes.number.isRequired,
     projectId: PropTypes.number.isRequired,
     schema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    computeSchema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 
     addEntry: PropTypes.func.isRequired,
@@ -94,6 +99,7 @@ const defaultProps = {
     entries: [],
     statuses: {},
     schema: {},
+    computeSchema: {},
 };
 
 const mapStateToProps = state => ({
@@ -103,6 +109,7 @@ const mapStateToProps = state => ({
     leadId: leadIdFromRoute(state),
     projectId: projectIdFromRoute(state),
     schema: editEntriesSchemaSelector(state),
+    computeSchema: editEntriesComputeSchemaSelector(state),
     statuses: editEntriesStatusesSelector(state),
     routeUrl: routeUrlSelector(state),
 });
@@ -154,6 +161,7 @@ export default class EditEntries extends React.PureComponent {
                         onExcerptChange={this.handleExcerptChange}
                         onExcerptCreate={this.handleExcerptCreate}
                         schema={this.props.schema}
+                        computeSchema={this.props.computeSchema}
                     />
                 ),
                 wrapContainer: true,
@@ -171,6 +179,7 @@ export default class EditEntries extends React.PureComponent {
                         onExcerptChange={this.handleExcerptChange}
                         onExcerptCreate={this.handleExcerptCreate}
                         schema={this.props.schema}
+                        computeSchema={this.props.computeSchema}
                     />
                 ),
                 wrapContainer: true,
@@ -240,9 +249,8 @@ export default class EditEntries extends React.PureComponent {
             const bulkData = entries.reduce((acc, entry) => {
                 const entryKey = entryAccessor.key(entry);
                 acc[entryKey] = { localData: {} };
-                acc[entryKey].localData.color = calculateEntryColor(
+                acc[entryKey].localData.color = this.calculateEntryColor(
                     entryAccessor.dataAttributes(entry),
-                    analysisFramework,
                 );
                 return acc;
             }, {});
@@ -279,6 +287,18 @@ export default class EditEntries extends React.PureComponent {
         this.saveRequestCoordinator.stop();
     }
 
+    // Calculations
+    calculateFirstTimeAttributes = attributes => calculateFirstTimeAttributes(
+        attributes,
+        this.props.analysisFramework,
+        this.props.lead,
+    )
+
+    calculateEntryColor = attributes => calculateEntryColor(
+        attributes,
+        this.props.analysisFramework,
+    )
+
     // APIS
 
     handleExcerptChange = ({ type, value }, entryKey) => {
@@ -302,6 +322,7 @@ export default class EditEntries extends React.PureComponent {
                 analysisFramework: this.props.analysisFramework.id,
                 excerptType: type,
                 excerptValue: value,
+                attributes: this.calculateFirstTimeAttributes({}),
             },
         });
     }
@@ -326,7 +347,9 @@ export default class EditEntries extends React.PureComponent {
             [...faramElementName].reverse().forEach((key) => {
                 attributes = { [key]: attributes };
             });
-            const color = calculateEntryColor(attributes, analysisFramework);
+
+            attributes = this.calculateFirstTimeAttributes(attributes);
+            const color = this.calculateEntryColor(attributes);
 
             this.props.addEntry({
                 leadId: this.props.leadId,
@@ -342,8 +365,9 @@ export default class EditEntries extends React.PureComponent {
         } else if (entryKey === undefined) {
             const excerptValue = '';
             const excerptType = 'excerpt';
-            const attributes = faramValues;
-            const color = calculateEntryColor(attributes, analysisFramework);
+
+            const attributes = this.calculateFirstTimeAttributes(faramValues);
+            const color = this.calculateEntryColor(attributes);
 
             this.props.addEntry({
                 leadId: this.props.leadId,
@@ -357,7 +381,7 @@ export default class EditEntries extends React.PureComponent {
                 },
             });
         } else {
-            const color = calculateEntryColor(faramValues, analysisFramework);
+            const color = this.calculateEntryColor(faramValues);
             this.props.setEntryData({
                 leadId: this.props.leadId,
                 key: entryKey,
@@ -407,7 +431,7 @@ export default class EditEntries extends React.PureComponent {
                 });
             },
             getCoordinator: () => this.saveRequestCoordinator,
-            calculateEntryColor: attrs => calculateEntryColor(attrs, this.props.analysisFramework),
+            calculateEntryColor: this.calculateEntryColor,
         });
         request.init({
             leadId: this.props.leadId,
@@ -478,6 +502,7 @@ export default class EditEntries extends React.PureComponent {
                     error: entryAccessor.error(entry),
 
                     schema: this.props.schema,
+                    computeSchema: this.props.computeSchema,
                     onChange: this.handleChange,
 
                     onValidationFailure: (errors) => {

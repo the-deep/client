@@ -24,6 +24,7 @@ const propTypes = {
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     schema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    computeSchema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgetType: PropTypes.string.isRequired,
     pending: PropTypes.bool,
 
@@ -40,6 +41,7 @@ const defaultProps = {
     widgets: [],
     onChange: () => {},
     schema: {},
+    computeSchema: {},
     actionComponent: undefined,
 };
 
@@ -243,6 +245,7 @@ export default class WidgetFaram extends React.PureComponent {
             widgets,
             className: classNameFromProps,
             schema,
+            computeSchema,
             pending,
         } = this.props;
 
@@ -262,6 +265,7 @@ export default class WidgetFaram extends React.PureComponent {
                 className={className}
                 onChange={this.handleChange}
                 schema={schema}
+                computeSchema={computeSchema}
                 value={attributes}
                 error={error}
                 disabled={pending}

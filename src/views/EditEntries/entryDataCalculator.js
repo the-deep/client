@@ -37,10 +37,10 @@ const calculateMatrix2dColor = (value, widgetData) => {
     return color;
 };
 
-const calculateEntryColor = (values = {}, analysisFramework) => {
+export const calculateEntryColor = (attributes = {}, analysisFramework) => {
     let color;
 
-    Object.keys(values).forEach((widgetId) => {
+    Object.keys(attributes).forEach((widgetId) => {
         if (color) {
             return;
         }
@@ -53,7 +53,7 @@ const calculateEntryColor = (values = {}, analysisFramework) => {
             return;
         }
 
-        const attributeValue = values[widgetId].data.value;
+        const attributeValue = attributes[widgetId].data.value;
         const widgetData = widget.properties.data;
         if (!attributeValue || !widgetData) {
             return;
@@ -76,4 +76,32 @@ const calculateEntryColor = (values = {}, analysisFramework) => {
     return color;
 };
 
-export default calculateEntryColor;
+export const calculateFirstTimeAttributes = (
+    attributes = {},
+    analysisFramework,
+    lead,
+) => analysisFramework.widgets.reduce(
+    (acc, widget) => {
+        // Ignore the attributes for widgets which are already set
+        if (acc[widget.id]) {
+            return acc;
+        }
+
+        const {
+            widgetId,
+            properties: {
+                data: widgetData = {},
+            } = {},
+        } = widget;
+        let value;
+
+        if (widgetId === 'dateWidget' && widgetData.informationDateSelected) {
+            value = lead.publishedOn;
+        }
+
+        if (value) {
+            acc[widget.id] = { data: { value } };
+        }
+        return acc;
+    }, attributes,
+);
