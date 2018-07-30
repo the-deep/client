@@ -88,7 +88,6 @@ export default class AnalysisFramework extends React.PureComponent {
                     />
                 ),
                 wrapContainer: true,
-                lazyMount: true,
                 mount: true,
             },
             list: {
@@ -98,7 +97,6 @@ export default class AnalysisFramework extends React.PureComponent {
                     />
                 ),
                 wrapContainer: true,
-                lazyMount: true,
                 mount: true,
             },
         };

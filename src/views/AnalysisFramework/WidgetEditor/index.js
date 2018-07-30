@@ -10,6 +10,7 @@ import GridLayoutEditor from '#rs/components/View/GridLayoutEditor';
 
 import {
     updateAfViewWidgetAction,
+    updateAfViewWidgetLayoutAction,
     removeAfViewWidgetAction,
 } from '#redux';
 import { iconNames } from '#constants';
@@ -31,6 +32,7 @@ const propTypes = {
     analysisFrameworkId: PropTypes.number.isRequired,
 
     updateWidget: PropTypes.func.isRequired,
+    updateWidgetLayout: PropTypes.func.isRequired,
     removeWidget: PropTypes.func.isRequired,
 
     widgetType: PropTypes.string.isRequired,
@@ -39,6 +41,7 @@ const propTypes = {
 const mapDispatchToProps = dispatch => ({
     removeWidget: params => dispatch(removeAfViewWidgetAction(params)),
     updateWidget: params => dispatch(updateAfViewWidgetAction(params)),
+    updateWidgetLayout: params => dispatch(updateAfViewWidgetLayoutAction(params)),
 });
 
 @connect(undefined, mapDispatchToProps)
@@ -81,28 +84,16 @@ export default class WidgetEditor extends React.PureComponent {
 
     handleWidgetLayoutChange = (key, layout) => {
         const {
-            widgets,
             widgetType,
-            updateWidget,
+            updateWidgetLayout,
             analysisFrameworkId,
         } = this.props;
 
-        const widget = widgets.find(d => d.key === key);
-
-        const settings = {
-            properties: {
-                $if: [
-                    widgetType === OVERVIEW,
-                    { overviewGridLayout: { $set: layout } },
-                    { listGridLayout: { $set: layout } },
-                ],
-            },
-        };
-
-        const newWidget = update(widget, settings);
-        updateWidget({
+        updateWidgetLayout({
             analysisFrameworkId,
-            widget: newWidget,
+            widgetKey: key,
+            widgetType,
+            layout,
         });
     }
 
