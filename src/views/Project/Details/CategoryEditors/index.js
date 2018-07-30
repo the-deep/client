@@ -211,8 +211,9 @@ export default class ProjectCategoryEditor extends React.PureComponent {
             searchInputValue,
         } = this.state;
 
-        const sortedCes = [...displayCeList];
-        sortedCes.sort((a, b) => compareString(a.title, b.title));
+        const sortedCes = [...displayCeList].sort(
+            (a, b) => compareString(a.title, b.title),
+        );
 
         // FIXME: use strings
         const headingText = 'Category Editors';

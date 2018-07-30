@@ -100,13 +100,13 @@ export default class GeoModal extends React.PureComponent {
             {},
         );
 
-        const groupedValue = Object.entries(adminLevels).sort(l => l[0] - l[1]).map(
-            al => ({
+        const groupedValue = Object.entries(adminLevels)
+            .sort(l => l[0] - l[1])
+            .map(al => ({
                 level: al[0],
                 title: al[1],
                 value: groupMap[al[0]],
-            }),
-        );
+            }));
 
         return {
             value,

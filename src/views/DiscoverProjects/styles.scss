@@ -1,5 +1,5 @@
-@import '../../stylesheets/base';
-@import '../../vendor/react-store/stylesheets/input-label';
+@import '~base-scss/base';
+@import '~rs-scss/input-label';
 
 .discover-projects {
     @extend %main-content;
