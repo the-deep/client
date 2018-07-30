@@ -8,7 +8,7 @@ import FaramElement from '#rsci/Faram/FaramElement';
 import FileInput from '#rsci/FileInput';
 import NumberInput from '#rsci/NumberInput';
 import TextInput from '#rsci/TextInput';
-import iconNames from '#rs/constants/iconNames';
+import iconNames from '#rsk/iconNames';
 import { isTruthy, isFalsy } from '#rsu/common';
 import { UploadBuilder } from '#rsu/upload';
 

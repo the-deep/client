@@ -26,7 +26,8 @@
                     "#rscv": "./src/vendor/react-store/components/View",
                     "#rscz": "./src/vendor/react-store/components/Visualization",
                     "#rsu": "./src/vendor/react-store/utils",
-                    "#rs": "./src/vendor/react-store",
+                    "#rsk": "./src/vendor/react-store/constants",
+
                     "#ravl": "./src/vendor/ravl",
 
                     "#components": "./src/components",
