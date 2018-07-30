@@ -1,4 +1,4 @@
-@import '../../../stylesheets/base';
+@import '~base-scss/base';
 
 .table-header-row {
     @include background-color($color-foreground);

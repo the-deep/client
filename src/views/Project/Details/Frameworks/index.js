@@ -238,8 +238,9 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
         const searchAFPlaceholder = _ts('project', 'searchAfPlaceholder');
         const addAFButtonLabel = _ts('project', 'addAfButtonLabel');
 
-        const sortedAfs = [...displayAfList];
-        sortedAfs.sort((a, b) => compareString(a.title, b.title));
+        const sortedAfs = [...displayAfList].sort(
+            (a, b) => compareString(a.title, b.title),
+        );
 
         // FIXME: use strings
         const headingText = 'Analysis frameworks';
