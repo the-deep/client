@@ -37,7 +37,7 @@ const calculateMatrix2dColor = (value, widgetData) => {
     return color;
 };
 
-const calculateEntryData = (values = {}, analysisFramework) => {
+const calculateEntryColor = (values = {}, analysisFramework) => {
     let color;
 
     Object.keys(values).forEach((widgetId) => {
@@ -73,7 +73,7 @@ const calculateEntryData = (values = {}, analysisFramework) => {
         }
     });
 
-    return { color };
+    return color;
 };
 
-export default calculateEntryData;
+export default calculateEntryColor;

@@ -93,10 +93,10 @@ export const editEntriesSetEntriesAction = ({ leadId, entryActions }) => ({
     leadId,
 });
 
-export const editEntriesUpdateEntriesBulkAction = ({ leadId, data }) => ({
+export const editEntriesUpdateEntriesBulkAction = ({ leadId, bulkData }) => ({
     type: EEB__UPDATE_ENTRIES_BULK,
     leadId,
-    data,
+    bulkData,
 });
 
 export const editEntriesClearEntriesAction = ({ leadId }) => ({
@@ -182,18 +182,18 @@ const setEntries = (state, action) => {
 };
 
 const updateEntriesBulk = (state, action) => {
-    const { leadId, data } = action;
+    const { leadId, bulkData } = action;
     const {
         editEntries: { [leadId]: { entries = [] } = {} } = {},
     } = state;
 
-    if (entries.length === 0 || Object.keys(data).length === 0) {
+    if (entries.length === 0 || Object.keys(bulkData).length === 0) {
         return state;
     }
 
-    const entriesSettings = Object.keys(data).reduce(
+    const entriesSettings = Object.keys(bulkData).reduce(
         (acc, key) => {
-            const { color } = data[key];
+            const { localData = {}, data = {} } = bulkData[key];
 
             const entryIndex = entries.findIndex(
                 entry => entryAccessor.key(entry) === key,
@@ -201,7 +201,10 @@ const updateEntriesBulk = (state, action) => {
 
             acc[entryIndex] = { $auto: {
                 localData: { $auto: {
-                    color: { $set: color },
+                    $merge: localData,
+                } },
+                data: { $auto: {
+                    $merge: data,
                 } },
             } };
 

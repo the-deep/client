@@ -56,7 +56,7 @@ import EditEntryDataRequest from './requests/EditEntryDataRequest';
 import EditEntryDeleteRequest from './requests/EditEntryDeleteRequest';
 import EditEntrySaveRequest from './requests/EditEntrySaveRequest';
 
-import calculateEntryData from './entryDataCalculator';
+import calculateEntryColor from './entryColorCalculator';
 import Overview from './Overview';
 import Listing from './List';
 
@@ -223,7 +223,7 @@ export default class EditEntries extends React.PureComponent {
             setLead: this.props.setLead,
             setRegions: this.props.setRegions,
             setState: params => this.setState(params),
-            calculateEntryData,
+            calculateEntryColor,
         });
 
         this.savableEntries = EditEntries.calculateSavableEntries(
@@ -235,18 +235,19 @@ export default class EditEntries extends React.PureComponent {
     componentDidMount() {
         const { leadId, entries, analysisFramework } = this.props;
 
-        // Update extra data (like color) for all existing entries
+        // Update all entries with new color
         if (entries && analysisFramework && entries.length > 0) {
-            const data = entries.reduce((acc, entry) => {
+            const bulkData = entries.reduce((acc, entry) => {
                 const entryKey = entryAccessor.key(entry);
-                acc[entryKey] = calculateEntryData(
+                acc[entryKey] = { localData: {} };
+                acc[entryKey].localData.color = calculateEntryColor(
                     entryAccessor.dataAttributes(entry),
                     analysisFramework,
                 );
                 return acc;
             }, {});
 
-            this.props.updateEntriesBulk({ leadId, data });
+            this.props.updateEntriesBulk({ leadId, bulkData });
         }
 
         this.editEntryDataRequest.init({ leadId });
@@ -325,7 +326,7 @@ export default class EditEntries extends React.PureComponent {
             [...faramElementName].reverse().forEach((key) => {
                 attributes = { [key]: attributes };
             });
-            const extraData = calculateEntryData(attributes, analysisFramework);
+            const color = calculateEntryColor(attributes, analysisFramework);
 
             this.props.addEntry({
                 leadId: this.props.leadId,
@@ -334,15 +335,15 @@ export default class EditEntries extends React.PureComponent {
                     excerptValue,
                     lead: this.props.leadId,
                     attributes,
+                    color,
                     analysisFramework: analysisFramework.id,
-                    ...extraData,
                 },
             });
         } else if (entryKey === undefined) {
             const excerptValue = '';
             const excerptType = 'excerpt';
             const attributes = faramValues;
-            const extraData = calculateEntryData(attributes, analysisFramework);
+            const color = calculateEntryColor(attributes, analysisFramework);
 
             this.props.addEntry({
                 leadId: this.props.leadId,
@@ -351,19 +352,19 @@ export default class EditEntries extends React.PureComponent {
                     excerptValue,
                     lead: this.props.leadId,
                     attributes,
+                    color,
                     analysisFramework: analysisFramework.id,
-                    ...extraData,
                 },
             });
         } else {
-            const extraData = calculateEntryData(faramValues, analysisFramework);
+            const color = calculateEntryColor(faramValues, analysisFramework);
             this.props.setEntryData({
                 leadId: this.props.leadId,
                 key: entryKey,
                 values: faramValues,
                 errors: faramErrors,
                 info: faramInfo,
-                ...extraData,
+                color,
             });
         }
     }
@@ -406,7 +407,7 @@ export default class EditEntries extends React.PureComponent {
                 });
             },
             getCoordinator: () => this.saveRequestCoordinator,
-            calculateEntryData: attrs => calculateEntryData(attrs, this.props.analysisFramework),
+            calculateEntryColor: attrs => calculateEntryColor(attrs, this.props.analysisFramework),
         });
         request.init({
             leadId: this.props.leadId,
