@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, Prompt } from 'react-router-dom';
 
 import BoundError from '#rs/components/General/BoundError';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
@@ -19,6 +19,8 @@ import {
 
     afViewAnalysisFrameworkSelector,
     activeProjectIdFromStateSelector,
+
+    routeUrlSelector,
 } from '#redux';
 import {
     iconNames,
@@ -37,6 +39,8 @@ const propTypes = {
     analysisFrameworkId: PropTypes.number.isRequired,
     setAnalysisFramework: PropTypes.func.isRequired,
     projectId: PropTypes.number.isRequired,
+
+    routeUrl: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -47,6 +51,7 @@ const mapStateToProps = (state, props) => ({
     analysisFramework: afViewAnalysisFrameworkSelector(state, props),
     analysisFrameworkId: afIdFromRoute(state, props),
     projectId: activeProjectIdFromStateSelector(state, props),
+    routeUrl: routeUrlSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -183,6 +188,19 @@ export default class AnalysisFramework extends React.PureComponent {
 
         return (
             <div className={styles.analysisFramework}>
+                <Prompt
+                    message={
+                        (location) => {
+                            const { routeUrl } = this.props;
+                            if (location.pathname === routeUrl) {
+                                return true;
+                            } else if (analysisFramework.pristine) {
+                                return true;
+                            }
+                            return _ts('common', 'youHaveUnsavedChanges');
+                        }
+                    }
+                />
                 <header className={styles.header}>
                     <Link
                         className={styles.backLink}
@@ -209,13 +227,13 @@ export default class AnalysisFramework extends React.PureComponent {
                             // FIXME: use strings
                             confirmationMessage="Do you want to cancel all changes?"
                             onClick={this.handleCancel}
-                            disabled={!analysisFramework.pristine}
+                            disabled={analysisFramework.pristine}
                         >
                             { cancelButtonTitle }
                         </DangerConfirmButton>
                         <SuccessButton
                             onClick={this.handleSave}
-                            disabled={!analysisFramework.pristine}
+                            disabled={analysisFramework.pristine}
                         >
                             { saveButtonTitle }
                         </SuccessButton>

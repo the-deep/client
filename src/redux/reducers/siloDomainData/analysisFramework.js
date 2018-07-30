@@ -148,7 +148,7 @@ const getValidatedAnalysisFramework = (analysisFramework) => {
 
     const analysisFrameworkSettings = {
         widgets: { $set: widgets },
-        pristine: { $set: true },
+        pristine: { $set: false },
     };
 
     // Return updates widget list
@@ -162,7 +162,7 @@ const afViewSetAnalysisFramework = (state, action) => {
     const frameworkId = analysisFramework.id;
     const framework = {
         ...analysisFramework,
-        pristine: false,
+        pristine: true,
     };
 
     const settings = {
@@ -215,7 +215,7 @@ const afViewRemoveWidget = (state, action) => {
         analysisFrameworkView: {
             [analysisFrameworkId]: {
                 widgets: { $filter: w => getWidgetKey(w) !== widgetId },
-                pristine: { $set: true },
+                pristine: { $set: false },
             },
         },
     };
@@ -243,7 +243,7 @@ const afViewUpdateWidget = (state, action) => {
                 widgets: {
                     [widgetIndex]: { $merge: widget },
                 },
-                pristine: { $set: true },
+                pristine: { $set: false },
             },
         },
     };

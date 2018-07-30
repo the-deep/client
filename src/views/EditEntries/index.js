@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, Prompt } from 'react-router-dom';
 
 import { reverseRoute } from '#rs/utils/common';
 import update from '#rs/utils/immutable-update';
@@ -23,6 +23,8 @@ import {
 import {
     leadIdFromRoute,
     projectIdFromRoute,
+
+    routeUrlSelector,
 
     editEntriesAnalysisFrameworkSelector,
     editEntriesEntriesSelector,
@@ -82,6 +84,8 @@ const propTypes = {
     setLead: PropTypes.func.isRequired,
     setPending: PropTypes.func.isRequired,
     setRegions: PropTypes.func.isRequired,
+
+    routeUrl: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -99,6 +103,7 @@ const mapStateToProps = state => ({
     projectId: projectIdFromRoute(state),
     schema: editEntriesSchemaSelector(state),
     statuses: editEntriesStatusesSelector(state),
+    routeUrl: routeUrlSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -538,6 +543,19 @@ export default class EditEntries extends React.PureComponent {
 
         return (
             <div className={styles.editEntries}>
+                <Prompt
+                    message={
+                        (location) => {
+                            const { routeUrl } = this.props;
+                            if (location.pathname === routeUrl) {
+                                return true;
+                            } else if (isSaveDisabled) {
+                                return true;
+                            }
+                            return _ts('common', 'youHaveUnsavedChanges');
+                        }
+                    }
+                />
                 <header className={styles.header}>
                     <Link
                         className={styles.backLink}
