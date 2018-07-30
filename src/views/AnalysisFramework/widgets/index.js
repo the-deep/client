@@ -1,6 +1,7 @@
-import WidgetError from '#components/WidgetError';
 import boundError from '#rs/components/General/BoundError';
 import { listToMap } from '#rs/utils/common';
+
+import FrameworkWidgetError from '#components/FrameworkWidgetError';
 
 import DefaultEditWidget from './Default';
 import NumberEditWidget from './Number';
@@ -206,7 +207,7 @@ const widgetList = [
 export const listWidgets = widgetList.filter(widget => widget.type === 'list');
 export const overviewWidgets = widgetList.filter(widget => widget.type === 'overview');
 
-const boundWidgetError = boundError(WidgetError);
+const boundWidgetError = boundError(FrameworkWidgetError);
 const decorator = Component => boundWidgetError(Component);
 
 const widgets = listToMap(
