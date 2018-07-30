@@ -8,8 +8,8 @@ import { Link } from 'react-router-dom';
 import BoundError from '#rscg/BoundError';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
-import ForceDirectedGraph from '#rs/components/Visualization/NewForceDirectedGraph';
-import wrapViz from '#rs/components/Visualization/VizWrapper';
+import ForceDirectedGraph from '#rscz/NewForceDirectedGraph';
+import wrapViz from '#rscz/VizWrapper';
 
 import {
     reverseRoute,

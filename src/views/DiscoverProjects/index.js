@@ -13,7 +13,7 @@ import Pager from '#rscv/Pager';
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
-import SparkLines from '#rs/components/Visualization/SparkLines';
+import SparkLines from '#rscz/SparkLines';
 
 import {
     discoverProjectsTotalProjectsCountSelector,
