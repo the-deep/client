@@ -17,12 +17,12 @@ import {
 } from '#rsu/common';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import FormattedDate from '#rs/components/View/FormattedDate';
-import Modal from '#rs/components/View/Modal';
-import ModalBody from '#rs/components/View/Modal/Body';
-import ModalHeader from '#rs/components/View/Modal/Header';
-import Table from '#rs/components/View/Table';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import FormattedDate from '#rscv/FormattedDate';
+import Modal from '#rscv/Modal';
+import ModalBody from '#rscv/Modal/Body';
+import ModalHeader from '#rscv/Modal/Header';
+import Table from '#rscv/Table';
 
 import {
     userProjectsSelector,

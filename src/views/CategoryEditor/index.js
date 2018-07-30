@@ -11,7 +11,7 @@ import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import BoundError from '#rscg/BoundError';
 import SelectInput from '#rsci/SelectInput';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import { FgRestBuilder } from '#rsu/rest';
 import {
     checkVersion,

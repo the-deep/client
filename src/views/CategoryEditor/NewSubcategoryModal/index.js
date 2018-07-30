@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Modal from '#rs/components/View/Modal';
-import ModalHeader from '#rs/components/View/Modal/Header';
-import ModalBody from '#rs/components/View/Modal/Body';
-import ModalFooter from '#rs/components/View/Modal/Footer';
+import Modal from '#rscv/Modal';
+import ModalHeader from '#rscv/Modal/Header';
+import ModalBody from '#rscv/Modal/Body';
+import ModalFooter from '#rscv/Modal/Footer';
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';

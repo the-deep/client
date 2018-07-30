@@ -3,7 +3,7 @@ import React, { Fragment } from 'react';
 
 import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
-import Message from '#rs/components/View/Message';
+import Message from '#rscv/Message';
 import urlRegex from '#rsci/Faram/regexForWeburl';
 
 import { galleryMapping, galleryType } from '#config/deepMimeTypes';

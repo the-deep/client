@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types'; import { connect } from 'react-redux';
 
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import ResizableH from '#rs/components/View/Resizable/ResizableH';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import ResizableH from '#rscv/Resizable/ResizableH';
 import { isFalsy } from '#rsu/common';
 
 import {

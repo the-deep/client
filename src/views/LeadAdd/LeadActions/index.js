@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import Button from '#rsca/Button';
 import Checkbox from '#rsci/Checkbox';
 import DropdownMenu from '#rsca/DropdownMenu';
-import Confirm from '#rs/components/View/Modal/Confirm';
+import Confirm from '#rscv/Modal/Confirm';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';

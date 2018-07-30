@@ -8,7 +8,7 @@ import Faram, { requiredCondition } from '#rsci/Faram';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import { FgRestBuilder } from '#rsu/rest';
 import { reverseRoute } from '#rsu/common';

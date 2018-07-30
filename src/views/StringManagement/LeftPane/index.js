@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import VerticalTabs from '#rs/components/View/VerticalTabs';
+import VerticalTabs from '#rscv/VerticalTabs';
 import SearchInput from '#rsci/SearchInput';
 
 import {

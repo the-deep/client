@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Table from '#rs/components/View/Table';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import FormattedDate from '#rs/components/View/FormattedDate';
+import Table from '#rscv/Table';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import FormattedDate from '#rscv/FormattedDate';
 import {
     connectorIdFromRouteSelector,
     connectorSourceSelector,

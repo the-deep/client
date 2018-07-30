@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 
 import FaramGroup from '#rsci/Faram/FaramGroup';
 import iconNames from '#constants/iconNames';
-import List from '#rs/components/View/List';
-import ListView from '#rs/components/View/List/ListView';
+import List from '#rscv/List';
+import ListView from '#rscv/List/ListView';
 import ScaleInput from '#rsci/ScaleInput';
 
 import {

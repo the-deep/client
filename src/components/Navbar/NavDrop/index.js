@@ -8,7 +8,7 @@ import {
 
 import DisplayPicture from '#components/DisplayPicture';
 import { reverseRoute } from '#rsu/common';
-import List from '#rs/components/View/List';
+import List from '#rscv/List';
 import DropdownMenu from '#rsca/DropdownMenu';
 import DropdownGroup from '#rsca/DropdownMenu/Group';
 

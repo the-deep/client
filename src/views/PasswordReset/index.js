@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 import { FgRestBuilder } from '#rsu/rest';
 import { reverseRoute } from '#rsu/common';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ReCaptcha from '#rsci/ReCaptcha';
 import TextInput from '#rsci/TextInput';

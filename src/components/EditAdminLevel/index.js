@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { BgRestBuilder } from '#rsu/rest';
 import { UploadBuilder } from '#rsu/upload';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 import TextInput from '#rsci/TextInput';

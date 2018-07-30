@@ -2,18 +2,18 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import FaramList from '#rsci/Faram/FaramList';
-import SortableListView from '#rs/components/View/SortableListView';
+import SortableListView from '#rscv/SortableListView';
 import DangerButton from '#rsca/Button/DangerButton';
-import Modal from '#rs/components/View/Modal';
-import ModalBody from '#rs/components/View/Modal/Body';
-import ModalFooter from '#rs/components/View/Modal/Footer';
-import ModalHeader from '#rs/components/View/Modal/Header';
+import Modal from '#rscv/Modal';
+import ModalBody from '#rscv/Modal/Body';
+import ModalFooter from '#rscv/Modal/Footer';
+import ModalHeader from '#rscv/Modal/Header';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
 import Faram, { requiredCondition } from '#rsci/Faram';
 import FixedTabs from '#rscv/FixedTabs';
-import MultiViewContainer from '#rs/components/View/MultiViewContainer';
+import MultiViewContainer from '#rscv/MultiViewContainer';
 import { findDuplicates, randomString } from '#rsu/common';
 
 import TabTitle from '#components/TabTitle';

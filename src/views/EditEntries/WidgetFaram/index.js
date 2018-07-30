@@ -3,7 +3,7 @@ import React from 'react';
 
 import Faram from '#rsci/Faram';
 import FaramGroup from '#rsci/Faram/FaramGroup';
-import GridViewLayout from '#rs/components/View/GridViewLayout';
+import GridViewLayout from '#rscv/GridViewLayout';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import { entryAccessor } from '#entities/editEntries';

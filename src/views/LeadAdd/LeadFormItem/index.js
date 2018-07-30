@@ -11,7 +11,7 @@ import {
     requiredCondition,
     urlCondition,
 } from '#rsci/Faram';
-import ResizableV from '#rs/components/View/Resizable/ResizableV';
+import ResizableV from '#rscv/Resizable/ResizableV';
 import update from '#rsu/immutable-update';
 
 import {

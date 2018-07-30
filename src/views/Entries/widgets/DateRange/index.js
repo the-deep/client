@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import FormattedDate from '#rs/components/View/FormattedDate';
+import FormattedDate from '#rscv/FormattedDate';
 import _ts from '#ts';
 
 import styles from './styles.scss';

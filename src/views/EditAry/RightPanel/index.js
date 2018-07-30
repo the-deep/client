@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import MultiViewContainer from '#rs/components/View/MultiViewContainer';
-import FixedTabs from '#rs/components/View/FixedTabs';
+import MultiViewContainer from '#rscv/MultiViewContainer';
+import FixedTabs from '#rscv/FixedTabs';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import Faram, {
     requiredCondition,

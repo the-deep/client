@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import FaramGroup from '#rsci/Faram/FaramGroup';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import ListView from '#rs/components/View/List/ListView';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import ListView from '#rscv/List/ListView';
 
 import { aryTemplateMetadataSelector } from '#redux';
 import _ts from '#ts';

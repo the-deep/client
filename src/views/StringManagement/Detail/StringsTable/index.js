@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
-import Table from '#rs/components/View/Table';
+import Table from '#rscv/Table';
 import {
     compareBoolean,
     compareNumber,

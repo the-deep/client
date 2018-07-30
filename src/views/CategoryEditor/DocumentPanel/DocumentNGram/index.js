@@ -6,7 +6,7 @@ import {
     trimWhitespace,
     splitInWhitespace,
 } from '#rsu/common';
-import ListView from '#rs/components/View/List/ListView';
+import ListView from '#rscv/List/ListView';
 
 import _ts from '#ts';
 import { categoryEditorNgramsSelector } from '#redux';

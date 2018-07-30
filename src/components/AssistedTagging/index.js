@@ -6,8 +6,8 @@ import SuccessButton from '#rsca/Button/SuccessButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import SegmentButton from '#rsca/SegmentButton';
 import MultiSelectInput from '#rsci/MultiSelectInput';
-import FloatingContainer from '#rs/components/View/FloatingContainer';
-import ListView from '#rs/components/View/List/ListView';
+import FloatingContainer from '#rscv/FloatingContainer';
+import ListView from '#rscv/List/ListView';
 import { getHexFromString } from '#rsu/common';
 import { FgRestBuilder } from '#rsu/rest';
 

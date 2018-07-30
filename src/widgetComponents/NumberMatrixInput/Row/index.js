@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import List from '#rs/components/View/List';
+import List from '#rscv/List';
 import {
     unique,
     isTruthy,

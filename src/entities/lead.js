@@ -1,4 +1,4 @@
-import FormattedDate from '#rs/components/View/FormattedDate';
+import FormattedDate from '#rscv/FormattedDate';
 import update from '#rsu/immutable-update';
 import iconNames from '#constants/iconNames';
 

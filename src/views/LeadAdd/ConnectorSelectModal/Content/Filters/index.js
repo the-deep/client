@@ -4,7 +4,7 @@ import React from 'react';
 import Faram from '#rsci/Faram';
 import TextInput from '#rsci/TextInput';
 import Button from '#rsca/Button';
-import List from '#rs/components/View/List';
+import List from '#rscv/List';
 
 import _ts from '#ts';
 

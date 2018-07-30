@@ -7,12 +7,12 @@ import AccentButton from '#rsca/Button/AccentButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import FileInput from '#rsci/FileInput';
 import SearchInput from '#rsci/SearchInput';
-import FormattedDate from '#rs/components/View/FormattedDate';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import ModalBody from '#rs/components/View/Modal/Body';
-import ModalFooter from '#rs/components/View/Modal/Footer';
-import ModalHeader from '#rs/components/View/Modal/Header';
-import Table from '#rs/components/View/Table';
+import FormattedDate from '#rscv/FormattedDate';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import ModalBody from '#rscv/Modal/Body';
+import ModalFooter from '#rscv/Modal/Footer';
+import ModalHeader from '#rscv/Modal/Header';
+import Table from '#rscv/Table';
 import {
     caseInsensitiveSubmatch,
     compareString,

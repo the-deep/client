@@ -5,11 +5,11 @@ import { Prompt } from 'react-router-dom';
 
 import Faram, { requiredCondition } from '#rsci/Faram';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
-import FixedTabs from '#rs/components/View/FixedTabs';
-import MultiViewContainer from '#rs/components/View/MultiViewContainer';
+import FixedTabs from '#rscv/FixedTabs';
+import MultiViewContainer from '#rscv/MultiViewContainer';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import WarningButton from '#rsca/Button/WarningButton';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import {
     countryDetailSelector,
     regionDetailSelector,

@@ -7,8 +7,8 @@ import { FgRestBuilder } from '#rsu/rest';
 import { reverseRoute } from '#rsu/common';
 import AccentButton from '#rsca/Button/AccentButton';
 import WarningButton from '#rsca/Button/WarningButton';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import Confirm from '#rs/components/View/Modal/Confirm';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import Confirm from '#rscv/Modal/Confirm';
 import Faram, {
     requiredCondition,
 } from '#rsci/Faram';

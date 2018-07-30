@@ -1,4 +1,4 @@
-import { NOTIFICATION } from '#rs/components/View/Toast';
+import { NOTIFICATION } from '#rscv/Toast';
 
 import { notifySendAction } from '#redux';
 import store from '#store';

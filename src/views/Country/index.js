@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 import { caseInsensitiveSubmatch, compareString } from '#rsu/common';
 import SearchInput from '#rsci/SearchInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import ListView from '#rs/components/View/List/ListView';
-import Modal from '#rs/components/View/Modal';
-import ModalHeader from '#rs/components/View/Modal/Header';
-import ModalBody from '#rs/components/View/Modal/Body';
+import ListView from '#rscv/List/ListView';
+import Modal from '#rscv/Modal';
+import ModalHeader from '#rscv/Modal/Header';
+import ModalBody from '#rscv/Modal/Body';
 
 import {
     regionsListSelector,

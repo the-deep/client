@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
 
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import BoundError from '#rscg/BoundError';
 
 import ComponentError from '#components/ComponentError';

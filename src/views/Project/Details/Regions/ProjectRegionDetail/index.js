@@ -9,8 +9,8 @@ import WarningButton from '#rsca/Button/WarningButton';
 import Faram, {
     requiredCondition,
 } from '#rsci/Faram';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import Confirm from '#rs/components/View/Modal/Confirm';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import Confirm from '#rscv/Modal/Confirm';
 
 import RegionAdminLevel from '#components/RegionAdminLevel';
 import RegionDetail from '#components/RegionDetail';

@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { reverseRoute } from '#rsu/common';
-import FormattedDate from '#rs/components/View/FormattedDate';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import Pager from '#rs/components/View/Pager';
-import RawTable from '#rs/components/View/RawTable';
-import TableHeader from '#rs/components/View/TableHeader';
+import FormattedDate from '#rscv/FormattedDate';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import Pager from '#rscv/Pager';
+import RawTable from '#rscv/RawTable';
+import TableHeader from '#rscv/TableHeader';
 import BoundError from '#rscg/BoundError';
 
 import AppError from '#components/AppError';

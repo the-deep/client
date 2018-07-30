@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { FgRestBuilder } from '#rsu/rest';
 import { compareString, compareNumber } from '#rsu/common';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';

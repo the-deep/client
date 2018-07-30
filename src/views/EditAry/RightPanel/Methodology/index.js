@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 
 import FaramGroup from '#rsci/Faram/FaramGroup';
 import FaramList from '#rsci/Faram/FaramList';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import List from '#rs/components/View/List';
-import ListView from '#rs/components/View/List/ListView';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import List from '#rscv/List';
+import ListView from '#rscv/List/ListView';
 import TextArea from '#rsci/TextArea';
 import CheckGroup from '#rsci/CheckGroup';
 import PrimaryButton from '#rsca/Button/PrimaryButton';

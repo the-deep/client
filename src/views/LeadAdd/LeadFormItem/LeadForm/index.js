@@ -14,8 +14,8 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import SelectInput from '#rsci/SelectInput';
 import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
-import FormattedDate from '#rs/components/View/FormattedDate';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import FormattedDate from '#rscv/FormattedDate';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
     LEAD_TYPE,

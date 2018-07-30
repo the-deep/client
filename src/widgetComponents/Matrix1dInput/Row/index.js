@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import ListView from '#rs/components/View/List/ListView';
+import ListView from '#rscv/List/ListView';
 
 import Cell from './Cell';
 import styles from './styles.scss';

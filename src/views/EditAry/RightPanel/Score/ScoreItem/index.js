@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Numeral from '#rs/components/View/Numeral';
+import Numeral from '#rscv/Numeral';
 import FaramElement from '#rsci/Faram/FaramElement';
 import { getColorOnBgColor } from '#rsu/common';
 

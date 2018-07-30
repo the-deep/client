@@ -3,7 +3,7 @@ import React from 'react';
 
 import Checkbox from '#rsci/Checkbox';
 import TreeSelection from '#rsci/TreeSelection';
-import List from '#rs/components/View/List';
+import List from '#rscv/List';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';

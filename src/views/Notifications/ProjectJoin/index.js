@@ -3,8 +3,8 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import FormattedDate from '#rs/components/View/FormattedDate';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import FormattedDate from '#rscv/FormattedDate';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerButton from '#rsca/Button/DangerButton';
 import { reverseRoute } from '#rsu/common';

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Modal from '#rs/components/View/Modal';
+import Modal from '#rscv/Modal';
 
 import DeepGallerySelect from './DeepGallerySelect';
 import styles from './styles.scss';

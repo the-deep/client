@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import ListView from '#rs/components/View/List/ListView';
+import ListView from '#rscv/List/ListView';
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';

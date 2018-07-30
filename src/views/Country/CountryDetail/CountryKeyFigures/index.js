@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import FaramGroup from '#rsci/Faram/FaramGroup';
 import TextInput from '#rsci/TextInput';
 

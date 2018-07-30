@@ -8,7 +8,7 @@ import update from '#rsu/immutable-update';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import TabularSelectInput from '#rsci/TabularSelectInput';
 
 import {

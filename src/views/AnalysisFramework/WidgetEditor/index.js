@@ -6,7 +6,7 @@ import update from 'immutability-helper';
 import Faram from '#rsci/Faram';
 import FaramGroup from '#rsci/Faram/FaramGroup';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
-import GridLayoutEditor from '#rs/components/View/GridLayoutEditor';
+import GridLayoutEditor from '#rscv/GridLayoutEditor';
 
 import {
     updateAfViewWidgetAction,

@@ -3,7 +3,7 @@ import React from 'react';
 
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
-import ListView from '#rs/components/View/List/ListView';
+import ListView from '#rscv/List/ListView';
 
 import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
 import { iconNames } from '#constants';

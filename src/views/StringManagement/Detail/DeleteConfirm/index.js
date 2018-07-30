@@ -11,8 +11,8 @@ import {
     selectedLinkCollectionNameSelector,
 } from '#redux';
 
-import Confirm from '#rs/components/View/Modal/Confirm';
-import ListView from '#rs/components/View/List/ListView';
+import Confirm from '#rscv/Modal/Confirm';
+import ListView from '#rscv/List/ListView';
 import styles from './styles.scss';
 
 const propTypes = {

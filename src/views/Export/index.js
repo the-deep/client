@@ -12,9 +12,9 @@ import { getFiltersForRequest } from '#entities/lead';
 import update from '#rsu/immutable-update';
 import { FgRestBuilder } from '#rsu/rest';
 import AccentButton from '#rsca/Button/AccentButton';
-import Table from '#rs/components/View/Table';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import FormattedDate from '#rs/components/View/FormattedDate';
+import Table from '#rscv/Table';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import FormattedDate from '#rscv/FormattedDate';
 
 import ExportPreview from '#components/ExportPreview';
 import {

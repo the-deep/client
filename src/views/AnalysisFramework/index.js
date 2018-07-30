@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { Link, Prompt } from 'react-router-dom';
 
 import BoundError from '#rscg/BoundError';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import MultiViewContainer from '#rs/components/View/MultiViewContainer';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import MultiViewContainer from '#rscv/MultiViewContainer';
 import { reverseRoute } from '#rsu/common';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';

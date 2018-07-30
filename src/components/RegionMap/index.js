@@ -3,7 +3,7 @@ import React from 'react';
 
 import Button from '#rsca/Button';
 import SegmentButton from '#rsca/SegmentButton';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import { FgRestBuilder } from '#rsu/rest';
 
 import { iconNames } from '#constants';

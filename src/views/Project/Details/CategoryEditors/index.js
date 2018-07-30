@@ -6,12 +6,12 @@ import { FgRestBuilder } from '#rsu/rest';
 import { caseInsensitiveSubmatch, compareString } from '#rsu/common';
 import AccentButton from '#rsca/Button/AccentButton';
 import SearchInput from '#rsci/SearchInput';
-import ListView from '#rs/components/View/List/ListView';
-import ListItem from '#rs/components/View/List/ListItem';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import Modal from '#rs/components/View/Modal';
-import ModalHeader from '#rs/components/View/Modal/Header';
-import ModalBody from '#rs/components/View/Modal/Body';
+import ListView from '#rscv/List/ListView';
+import ListItem from '#rscv/List/ListItem';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import Modal from '#rscv/Modal';
+import ModalHeader from '#rscv/Modal/Header';
+import ModalBody from '#rscv/Modal/Body';
 
 import {
     urlForCategoryEditors,

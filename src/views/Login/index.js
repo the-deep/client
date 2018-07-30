@@ -22,7 +22,7 @@ import Faram, {
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ReCaptcha from '#rsci/ReCaptcha';
 import TextInput from '#rsci/TextInput';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import { reverseRoute } from '#rsu/common';
 
 import { hidUrl } from '#config/hid';

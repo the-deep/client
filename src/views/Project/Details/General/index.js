@@ -9,10 +9,10 @@ import {
 } from '#rsu/common';
 import update from '#rsu/immutable-update';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import FormattedDate from '#rs/components/View/FormattedDate';
+import FormattedDate from '#rscv/FormattedDate';
 import DangerButton from '#rsca/Button/DangerButton';
 import { FgRestBuilder } from '#rsu/rest';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';

@@ -3,7 +3,7 @@ import React from 'react';
 
 import FaramGroup from '#rsci/Faram/FaramGroup';
 import FaramList from '#rsci/Faram/FaramList';
-import SortableListView from '#rs/components/View/SortableListView';
+import SortableListView from '#rscv/SortableListView';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';

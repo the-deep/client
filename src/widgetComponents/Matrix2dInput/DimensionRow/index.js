@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import List from '#rs/components/View/List';
+import List from '#rscv/List';
 import {
     getColorOnBgColor,
     hexToRgb,

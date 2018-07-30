@@ -3,9 +3,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { FgRestBuilder } from '#rsu/rest';
-import FixedTabs from '#rs/components/View/FixedTabs';
-import MultiViewContainer from '#rs/components/View/MultiViewContainer';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import FixedTabs from '#rscv/FixedTabs';
+import MultiViewContainer from '#rscv/MultiViewContainer';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
     createParamsForGet,

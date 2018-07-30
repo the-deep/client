@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import GridViewLayout from '#rs/components/View/GridViewLayout';
+import GridViewLayout from '#rscv/GridViewLayout';
 
 import { fetchWidget } from '../widgets';
 import styles from './styles.scss';

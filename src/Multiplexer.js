@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 
 import ExclusivelyPublicRoute from '#rscg/ExclusivelyPublicRoute';
 import PrivateRoute from '#rscg/PrivateRoute';
-import Toast from '#rs/components/View/Toast';
+import Toast from '#rscv/Toast';
 
 import Navbar from '#components/Navbar';
 import {

@@ -7,7 +7,7 @@ import {
     compareString,
     compareNumber,
 } from '#rsu/common';
-import Table from '#rs/components/View/Table';
+import Table from '#rscv/Table';
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import {

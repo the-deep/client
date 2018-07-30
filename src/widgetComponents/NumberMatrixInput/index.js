@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import update from '#rsu/immutable-update';
-import List from '#rs/components/View/List';
+import List from '#rscv/List';
 import FaramElement from '#rsci/Faram/FaramElement';
 
 import Row from './Row';
