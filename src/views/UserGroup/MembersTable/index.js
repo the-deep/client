@@ -14,7 +14,7 @@ import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalHeader from '#rs/components/View/Modal/Header';
 import Table from '#rs/components/View/Table';
-import SearchInput from '#rs/components/Input/SearchInput';
+import SearchInput from '#rsci/SearchInput';
 
 import {
     unSetMembershipAction,

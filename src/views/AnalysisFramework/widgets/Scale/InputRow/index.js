@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import DangerButton from '#rsca/Button/DangerButton';
-import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
-import TextInput from '#rs/components/Input/TextInput';
-import ColorInput from '#rs/components/Input/ColorInput';
+import FaramGroup from '#rsci/Faram/FaramGroup';
+import TextInput from '#rsci/TextInput';
+import ColorInput from '#rsci/ColorInput';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';

@@ -14,7 +14,7 @@ import {
     isTruthy,
     reverseRoute,
 } from '#rsu/common';
-import SelectInput from '#rs/components/Input/SelectInput';
+import SelectInput from '#rsci/SelectInput';
 
 import {
     createUrlForSetUserProject,

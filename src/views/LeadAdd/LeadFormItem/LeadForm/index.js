@@ -3,17 +3,17 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import Button from '#rsca/Button';
-import DateInput from '#rs/components/Input/DateInput';
+import DateInput from '#rsci/DateInput';
 import Faram, {
     requiredCondition,
     urlCondition,
     dateCondition,
-} from '#rs/components/Input/Faram';
-import HiddenInput from '#rs/components/Input/HiddenInput';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import SelectInput from '#rs/components/Input/SelectInput';
-import TextArea from '#rs/components/Input/TextArea';
-import TextInput from '#rs/components/Input/TextInput';
+} from '#rsci/Faram';
+import HiddenInput from '#rsci/HiddenInput';
+import NonFieldErrors from '#rsci/NonFieldErrors';
+import SelectInput from '#rsci/SelectInput';
+import TextArea from '#rsci/TextArea';
+import TextInput from '#rsci/TextInput';
 import FormattedDate from '#rs/components/View/FormattedDate';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 

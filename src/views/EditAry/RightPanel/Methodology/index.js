@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
-import FaramList from '#rs/components/Input/Faram/FaramList';
+import FaramGroup from '#rsci/Faram/FaramGroup';
+import FaramList from '#rsci/Faram/FaramList';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import List from '#rs/components/View/List';
 import ListView from '#rs/components/View/List/ListView';
-import TextArea from '#rs/components/Input/TextArea';
-import CheckGroup from '#rs/components/Input/CheckGroup';
+import TextArea from '#rsci/TextArea';
+import CheckGroup from '#rsci/CheckGroup';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 

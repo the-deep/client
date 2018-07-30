@@ -18,10 +18,10 @@ import Faram, {
     requiredCondition,
     emailCondition,
     lengthGreaterThanCondition,
-} from '#rs/components/Input/Faram';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import ReCaptcha from '#rs/components/Input/ReCaptcha';
-import TextInput from '#rs/components/Input/TextInput';
+} from '#rsci/Faram';
+import NonFieldErrors from '#rsci/NonFieldErrors';
+import ReCaptcha from '#rsci/ReCaptcha';
+import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import { reverseRoute } from '#rsu/common';
 

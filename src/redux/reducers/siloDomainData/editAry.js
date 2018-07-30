@@ -1,4 +1,4 @@
-import { analyzeErrors } from '#rs/components/Input/Faram/validator';
+import { analyzeErrors } from '#rsci/Faram/validator';
 import { isTruthy } from '#rsu/common';
 import update from '#rsu/immutable-update';
 

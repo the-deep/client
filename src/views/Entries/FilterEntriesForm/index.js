@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 
 import { FgRestBuilder } from '#rsu/rest';
 import { isObjectEmpty } from '#rsu/common';
-import SearchInput from '#rs/components/Input/SearchInput';
-import DateFilter from '#rs/components/Input/DateFilter';
-import RangeFilter from '#rs/components/Input/RangeFilter';
-import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
+import SearchInput from '#rsci/SearchInput';
+import DateFilter from '#rsci/DateFilter';
+import RangeFilter from '#rsci/RangeFilter';
+import MultiSelectInput from '#rsci/MultiSelectInput';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 

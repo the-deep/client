@@ -3,8 +3,8 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import update from 'immutability-helper';
 
-import Faram from '#rs/components/Input/Faram';
-import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
+import Faram from '#rsci/Faram';
+import FaramGroup from '#rsci/Faram/FaramGroup';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import GridLayoutEditor from '#rs/components/View/GridLayoutEditor';
 

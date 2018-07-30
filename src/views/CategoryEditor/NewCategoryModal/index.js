@@ -7,8 +7,8 @@ import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import TextInput from '#rs/components/Input/TextInput';
-import Faram, { requiredCondition } from '#rs/components/Input/Faram';
+import TextInput from '#rsci/TextInput';
+import Faram, { requiredCondition } from '#rsci/Faram';
 
 import _ts from '#ts';
 

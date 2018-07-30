@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import NumberInput from '#rs/components/Input/NumberInput';
+import NumberInput from '#rsci/NumberInput';
 import DangerButton from '#rsca/Button/DangerButton';
-import TextInput from '#rs/components/Input/TextInput';
+import TextInput from '#rsci/TextInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Modal from '#rs/components/View/Modal';
 import ModalHeader from '#rs/components/View/Modal/Header';
 import ModalBody from '#rs/components/View/Modal/Body';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import NonFieldErrors from '#rsci/NonFieldErrors';
 import ModalFooter from '#rs/components/View/Modal/Footer';
-import Faram, { requiredCondition } from '#rs/components/Input/Faram';
+import Faram, { requiredCondition } from '#rsci/Faram';
 import { isTruthy } from '#rsu/common';
 
 import _ts from '#ts';

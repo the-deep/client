@@ -11,7 +11,7 @@ import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalHeader from '#rs/components/View/Modal/Header';
 import ListView from '#rs/components/View/List/ListView';
-import SearchInput from '#rs/components/Input/SearchInput';
+import SearchInput from '#rsci/SearchInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import UserProjectAdd from '#components/UserProjectAdd';

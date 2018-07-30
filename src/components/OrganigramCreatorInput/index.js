@@ -5,8 +5,8 @@ import { randomString } from '#rsu/common';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import FaramElement from '#rs/components/Input/Faram/FaramElement';
-import TextInput from '#rs/components/Input/TextInput';
+import FaramElement from '#rsci/Faram/FaramElement';
+import TextInput from '#rsci/TextInput';
 import List from '#rs/components/View/List';
 import update from '#rsu/immutable-update';
 

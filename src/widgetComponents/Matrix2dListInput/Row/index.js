@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
+import MultiSelectInput from '#rsci/MultiSelectInput';
 
 import _ts from '#ts';
 

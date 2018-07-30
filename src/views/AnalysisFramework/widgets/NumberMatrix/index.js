@@ -1,17 +1,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import TextInput from '#rs/components/Input/TextInput';
+import TextInput from '#rsci/TextInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import NonFieldErrors from '#rsci/NonFieldErrors';
 import DangerButton from '#rsca/Button/DangerButton';
 import Modal from '#rs/components/View/Modal';
 import ModalHeader from '#rs/components/View/Modal/Header';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
 import SortableListView from '#rs/components/View/SortableListView';
-import Faram, { requiredCondition } from '#rs/components/Input/Faram';
-import FaramList from '#rs/components/Input/Faram/FaramList';
+import Faram, { requiredCondition } from '#rsci/Faram';
+import FaramList from '#rsci/Faram/FaramList';
 import FixedTabs from '#rscv/FixedTabs';
 import MultiViewContainer from '#rs/components/View/MultiViewContainer';
 import { findDuplicates, randomString } from '#rsu/common';

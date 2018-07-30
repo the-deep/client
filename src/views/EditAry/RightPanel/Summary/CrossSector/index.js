@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
-import SelectInput from '#rs/components/Input/SelectInput';
-import HiearchicalSelectInput from '#rs/components/Input/HierarchicalSelectInput';
+import FaramGroup from '#rsci/Faram/FaramGroup';
+import SelectInput from '#rsci/SelectInput';
+import HiearchicalSelectInput from '#rsci/HierarchicalSelectInput';
 
 import {
     editArySelectedSectorsSelector,

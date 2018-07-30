@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import DangerButton from '#rsca/Button/DangerButton';
-import FaramElement from '#rs/components/Input/Faram/FaramElement';
+import FaramElement from '#rsci/Faram/FaramElement';
 
 import { iconNames } from '#constants';
 

@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
+import FaramGroup from '#rsci/Faram/FaramGroup';
 import iconNames from '#constants/iconNames';
 import List from '#rs/components/View/List';
 import ListView from '#rs/components/View/List/ListView';
-import ScaleInput from '#rs/components/Input/ScaleInput';
+import ScaleInput from '#rsci/ScaleInput';
 
 import {
     assessmentPillarsSelector,

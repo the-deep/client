@@ -7,10 +7,10 @@ import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import SelectInput from '#rs/components/Input/SelectInput';
-import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
-import ListInput from '#rs/components/Input/ListInput';
-import FaramElement from '#rs/components/Input/Faram/FaramElement';
+import SelectInput from '#rsci/SelectInput';
+import MultiSelectInput from '#rsci/MultiSelectInput';
+import ListInput from '#rsci/ListInput';
+import FaramElement from '#rsci/Faram/FaramElement';
 
 import RegionMap from '../RegionMap';
 import styles from './styles.scss';

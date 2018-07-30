@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import TextInput from '#rs/components/Input/TextInput';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import TextInput from '#rsci/TextInput';
+import NonFieldErrors from '#rsci/NonFieldErrors';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
+import FaramGroup from '#rsci/Faram/FaramGroup';
 
 import _ts from '#ts';
 

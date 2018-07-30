@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import VerticalTabs from '#rs/components/View/VerticalTabs';
-import SearchInput from '#rs/components/Input/SearchInput';
+import SearchInput from '#rsci/SearchInput';
 
 import {
     stringMgmtSetSelectedLinkCollectionNameAction,

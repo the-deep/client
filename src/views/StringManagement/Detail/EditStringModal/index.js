@@ -9,7 +9,7 @@ import ModalFooter from '#rs/components/View/Modal/Footer';
 import ListView from '#rs/components/View/List/ListView';
 import Button from '#rsca/Button';
 import SuccessButton from '#rsca/Button/SuccessButton';
-import TextInput from '#rs/components/Input/TextInput';
+import TextInput from '#rsci/TextInput';
 
 import {
     allStringsSelector,

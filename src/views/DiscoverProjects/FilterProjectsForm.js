@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
-import Faram from '#rs/components/Input/Faram';
-import SelectInput from '#rs/components/Input/SelectInput';
-import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
-import SearchInput from '#rs/components/Input/SearchInput';
+import Faram from '#rsci/Faram';
+import SelectInput from '#rsci/SelectInput';
+import MultiSelectInput from '#rsci/MultiSelectInput';
+import SearchInput from '#rsci/SearchInput';
 import { isObjectEmpty } from '#rsu/common';
 
 import {

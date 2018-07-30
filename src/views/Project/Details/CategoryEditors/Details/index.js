@@ -11,11 +11,11 @@ import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Confirm from '#rs/components/View/Modal/Confirm';
 import Faram, {
     requiredCondition,
-} from '#rs/components/Input/Faram';
+} from '#rsci/Faram';
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import TextInput from '#rs/components/Input/TextInput';
+import NonFieldErrors from '#rsci/NonFieldErrors';
+import TextInput from '#rsci/TextInput';
 
 import {
     createParamsForProjectPatch,

@@ -9,8 +9,8 @@ import Modal from '#rs/components/View/Modal';
 import ModalHeader from '#rs/components/View/Modal/Header';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
-import HintAndError from '#rs/components/Input/HintAndError';
-import FaramElement from '#rs/components/Input/Faram/FaramElement';
+import HintAndError from '#rsci/HintAndError';
+import FaramElement from '#rsci/Faram/FaramElement';
 
 import { iconNames } from '#constants';
 import styles from './styles.scss';

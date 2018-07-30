@@ -6,8 +6,8 @@ import { bound } from '#rsu/common';
 import ListView from '#rs/components/View/List/ListView';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
-import TextInput from '#rs/components/Input/TextInput';
-import TextArea from '#rs/components/Input/TextArea';
+import TextInput from '#rsci/TextInput';
+import TextArea from '#rsci/TextArea';
 
 import _ts from '#ts';
 import {

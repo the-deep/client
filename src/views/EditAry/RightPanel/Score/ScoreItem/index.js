@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Numeral from '#rs/components/View/Numeral';
-import FaramElement from '#rs/components/Input/Faram/FaramElement';
+import FaramElement from '#rsci/Faram/FaramElement';
 import { getColorOnBgColor } from '#rsu/common';
 
 import styles from './styles.scss';

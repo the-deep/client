@@ -3,13 +3,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { compareString } from '#rsu/common';
-import Faram, { requiredCondition } from '#rs/components/Input/Faram';
+import Faram, { requiredCondition } from '#rsci/Faram';
 import update from '#rsu/immutable-update';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import NonFieldErrors from '#rsci/NonFieldErrors';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import TabularSelectInput from '#rs/components/Input/TabularSelectInput';
+import TabularSelectInput from '#rsci/TabularSelectInput';
 
 import {
     usersInformationListSelector,

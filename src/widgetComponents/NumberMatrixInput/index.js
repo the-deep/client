@@ -3,7 +3,7 @@ import React from 'react';
 
 import update from '#rsu/immutable-update';
 import List from '#rs/components/View/List';
-import FaramElement from '#rs/components/Input/Faram/FaramElement';
+import FaramElement from '#rsci/Faram/FaramElement';
 
 import Row from './Row';
 

@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 import { isObjectEmpty } from '#rsu/common';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
-import Faram from '#rs/components/Input/Faram';
-import SearchInput from '#rs/components/Input/SearchInput';
-import DateFilter from '#rs/components/Input/DateFilter';
-import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
+import Faram from '#rsci/Faram';
+import SearchInput from '#rsci/SearchInput';
+import DateFilter from '#rsci/DateFilter';
+import MultiSelectInput from '#rsci/MultiSelectInput';
 
 import {
     activeProjectIdFromStateSelector,

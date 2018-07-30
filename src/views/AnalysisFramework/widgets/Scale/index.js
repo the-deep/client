@@ -3,13 +3,13 @@ import React from 'react';
 
 import Faram, {
     requiredCondition,
-} from '#rs/components/Input/Faram';
-import FaramList from '#rs/components/Input/Faram/FaramList';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+} from '#rsci/Faram';
+import FaramList from '#rsci/Faram/FaramList';
+import NonFieldErrors from '#rsci/NonFieldErrors';
 import SortableListView from '#rs/components/View/SortableListView';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import TextInput from '#rs/components/Input/TextInput';
+import TextInput from '#rsci/TextInput';
 import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';

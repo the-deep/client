@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import SelectInput from '#rs/components/Input/SelectInput';
+import SelectInput from '#rsci/SelectInput';
 
 import styles from './styles.scss';
 

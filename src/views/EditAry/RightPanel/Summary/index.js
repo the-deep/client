@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
+import FaramGroup from '#rsci/Faram/FaramGroup';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import VerticalTabs from '#rs/components/View/VerticalTabs/';
 import { listToMap } from '#rsu/common';

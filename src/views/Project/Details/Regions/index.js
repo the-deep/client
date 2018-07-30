@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 
 import { caseInsensitiveSubmatch, compareString } from '#rsu/common';
 import AccentButton from '#rsca/Button/AccentButton';
-import SearchInput from '#rs/components/Input/SearchInput';
-import RadioInput from '#rs/components/Input/RadioInput';
+import SearchInput from '#rsci/SearchInput';
+import RadioInput from '#rsci/RadioInput';
 import ListView from '#rs/components/View/List/ListView';
 import ListItem from '#rs/components/View/List/ListItem';
 import Modal from '#rs/components/View/Modal';

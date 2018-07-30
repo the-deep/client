@@ -1,7 +1,7 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 
-import NumberInput from '#rs/components/Input/NumberInput';
+import NumberInput from '#rsci/NumberInput';
 
 import _ts from '#ts';
 

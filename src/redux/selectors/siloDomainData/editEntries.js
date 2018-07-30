@@ -5,7 +5,7 @@ import {
     timeCondition,
     greaterThanOrEqualToCondition,
     lessThanOrEqualToCondition,
-} from '#rs/components/Input/Faram';
+} from '#rsci/Faram';
 
 import {
     isTruthy,

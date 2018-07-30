@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import NonFieldErrors from '#rsci/NonFieldErrors';
 
 import styles from './styles.scss';
 

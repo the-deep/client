@@ -9,12 +9,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { InternalGallery } from '#components/DeepGallery';
 
-import Faram, { requiredCondition } from '#rs/components/Input/Faram';
-import SelectInput from '#rs/components/Input/SelectInput';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import ImageInput from '#rs/components/Input/FileInput/ImageInput';
-import TextInput from '#rs/components/Input/TextInput';
-import HiddenInput from '#rs/components/Input/HiddenInput';
+import Faram, { requiredCondition } from '#rsci/Faram';
+import SelectInput from '#rsci/SelectInput';
+import NonFieldErrors from '#rsci/NonFieldErrors';
+import ImageInput from '#rsci/FileInput/ImageInput';
+import TextInput from '#rsci/TextInput';
+import HiddenInput from '#rsci/HiddenInput';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';

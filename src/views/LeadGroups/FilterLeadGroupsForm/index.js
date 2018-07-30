@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import { isObjectEmpty } from '#rsu/common';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
-import Faram from '#rs/components/Input/Faram';
-import SearchInput from '#rs/components/Input/SearchInput';
+import Faram from '#rsci/Faram';
+import SearchInput from '#rsci/SearchInput';
 
 import {
     activeProjectIdFromStateSelector,

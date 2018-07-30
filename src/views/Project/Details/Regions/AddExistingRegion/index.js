@@ -7,11 +7,11 @@ import { compareString, compareNumber } from '#rsu/common';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import TabularSelectInput from '#rs/components/Input/TabularSelectInput';
+import NonFieldErrors from '#rsci/NonFieldErrors';
+import TabularSelectInput from '#rsci/TabularSelectInput';
 import Faram, {
     requiredCondition,
-} from '#rs/components/Input/Faram';
+} from '#rsci/Faram';
 
 import {
     alterResponseErrorToFaramError,

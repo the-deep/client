@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
-import FaramList from '#rs/components/Input/Faram/FaramList';
+import FaramGroup from '#rsci/Faram/FaramGroup';
+import FaramList from '#rsci/Faram/FaramList';
 import SortableListView from '#rs/components/View/SortableListView';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import TextInput from '#rs/components/Input/TextInput';
+import TextInput from '#rsci/TextInput';
 import { randomString } from '#rsu/common';
 
 import { iconNames } from '#constants';

@@ -3,11 +3,11 @@ import React from 'react';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import DropZone from '#rs/components/Input/DropZone';
-import FaramElement from '#rs/components/Input/Faram/FaramElement';
-import FileInput from '#rs/components/Input/FileInput';
-import NumberInput from '#rs/components/Input/NumberInput';
-import TextInput from '#rs/components/Input/TextInput';
+import DropZone from '#rsci/DropZone';
+import FaramElement from '#rsci/Faram/FaramElement';
+import FileInput from '#rsci/FileInput';
+import NumberInput from '#rsci/NumberInput';
+import TextInput from '#rsci/TextInput';
 import iconNames from '#rs/constants/iconNames';
 import { isTruthy, isFalsy } from '#rsu/common';
 import { UploadBuilder } from '#rsu/upload';

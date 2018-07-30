@@ -1,5 +1,5 @@
 import { applyDiff, entryAccessor, createEntry } from '#entities/editEntries';
-import { analyzeErrors } from '#rs/components/Input/Faram/validator';
+import { analyzeErrors } from '#rsci/Faram/validator';
 import { isFalsy, randomString, getDefinedElementAround } from '#rsu/common';
 import update from '#rsu/immutable-update';
 

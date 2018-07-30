@@ -6,10 +6,10 @@ import Modal from '#rs/components/View/Modal';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
 import ModalHeader from '#rs/components/View/Modal/Header';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import TextInput from '#rs/components/Input/TextInput';
-import Faram, { requiredCondition } from '#rs/components/Input/Faram';
+import TextInput from '#rsci/TextInput';
+import Faram, { requiredCondition } from '#rsci/Faram';
 
 import _ts from '#ts';
 

@@ -7,7 +7,7 @@ import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import Pager from '#rs/components/View/Pager';
 import Table from '#rs/components/View/Table';
 import FormattedDate from '#rs/components/View/FormattedDate';
-import Checkbox from '#rs/components/Input/Checkbox';
+import Checkbox from '#rsci/Checkbox';
 import AccentButton from '#rsca/Button/AccentButton';
 import {
     iconNames,

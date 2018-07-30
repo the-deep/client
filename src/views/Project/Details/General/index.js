@@ -14,16 +14,16 @@ import DangerButton from '#rsca/Button/DangerButton';
 import { FgRestBuilder } from '#rsu/rest';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
 import SuccessButton from '#rsca/Button/SuccessButton';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import TextInput from '#rs/components/Input/TextInput';
-import SelectInputWithList from '#rs/components/Input/SelectInputWithList';
-import TabularSelectInput from '#rs/components/Input/TabularSelectInput';
-import DateInput from '#rs/components/Input/DateInput';
-import TextArea from '#rs/components/Input/TextArea';
+import NonFieldErrors from '#rsci/NonFieldErrors';
+import TextInput from '#rsci/TextInput';
+import SelectInputWithList from '#rsci/SelectInputWithList';
+import TabularSelectInput from '#rsci/TabularSelectInput';
+import DateInput from '#rsci/DateInput';
+import TextArea from '#rsci/TextArea';
 import Faram, {
     requiredCondition,
     dateCondition,
-} from '#rs/components/Input/Faram';
+} from '#rsci/Faram';
 
 import {
     alterResponseErrorToFaramError,

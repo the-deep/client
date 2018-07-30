@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import SearchInput from '#rs/components/Input/SearchInput';
+import SearchInput from '#rsci/SearchInput';
 import ListItem from '#rs/components/View/List/ListItem';
 import ListView from '#rs/components/View/List/ListView';
 import Message from '#rs/components/View/Message';

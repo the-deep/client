@@ -4,8 +4,8 @@ import React, { Fragment } from 'react';
 import MultiViewContainer from '#rs/components/View/MultiViewContainer';
 import Message from '#rs/components/View/Message';
 import FixedTabs from '#rs/components/View/FixedTabs';
-import SelectInput from '#rs/components/Input/SelectInput';
-import Label from '#rs/components/Input/Label';
+import SelectInput from '#rsci/SelectInput';
+import Label from '#rsci/Label';
 
 import {
     LEAD_TYPE,

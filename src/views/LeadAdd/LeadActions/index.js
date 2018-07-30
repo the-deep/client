@@ -8,7 +8,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Button from '#rsca/Button';
-import Checkbox from '#rs/components/Input/Checkbox';
+import Checkbox from '#rsci/Checkbox';
 import DropdownMenu from '#rsca/DropdownMenu';
 import Confirm from '#rs/components/View/Modal/Confirm';
 

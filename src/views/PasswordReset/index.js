@@ -8,14 +8,14 @@ import { Link } from 'react-router-dom';
 import { FgRestBuilder } from '#rsu/rest';
 import { reverseRoute } from '#rsu/common';
 import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import ReCaptcha from '#rs/components/Input/ReCaptcha';
-import TextInput from '#rs/components/Input/TextInput';
+import NonFieldErrors from '#rsci/NonFieldErrors';
+import ReCaptcha from '#rsci/ReCaptcha';
+import TextInput from '#rsci/TextInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Faram, {
     requiredCondition,
     emailCondition,
-} from '#rs/components/Input/Faram';
+} from '#rsci/Faram';
 
 import _ts from '#ts';
 import {

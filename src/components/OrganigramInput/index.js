@@ -6,13 +6,13 @@ import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import AccentButton from '#rsca/Button/AccentButton';
 import Modal from '#rs/components/View/Modal';
-import SelectInputWithList from '#rs/components/Input/SelectInputWithList';
+import SelectInputWithList from '#rsci/SelectInputWithList';
 import ModalHeader from '#rs/components/View/Modal/Header';
 import ModalBody from '#rs/components/View/Modal/Body';
-import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
+import MultiSelectInput from '#rsci/MultiSelectInput';
 import ModalFooter from '#rs/components/View/Modal/Footer';
-import FaramElement from '#rs/components/Input/Faram/FaramElement';
-import Label from '#rs/components/Input/Label';
+import FaramElement from '#rsci/Faram/FaramElement';
+import Label from '#rsci/Label';
 
 import { iconNames } from '#constants';
 import styles from './styles.scss';
