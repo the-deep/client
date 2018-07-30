@@ -3,20 +3,20 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { reverseRoute } from '#rs/utils/common';
-import { FgRestBuilder } from '#rs/utils/rest';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
-import WarningButton from '#rs/components/Action/Button/WarningButton';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import Confirm from '#rs/components/View/Modal/Confirm';
+import { reverseRoute } from '#rsu/common';
+import { FgRestBuilder } from '#rsu/rest';
+import AccentButton from '#rsca/Button/AccentButton';
+import WarningButton from '#rsca/Button/WarningButton';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import Confirm from '#rscv/Modal/Confirm';
 import Faram, {
     requiredCondition,
-} from '#rs/components/Input/Faram';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import TextInput from '#rs/components/Input/TextInput';
-import TextArea from '#rs/components/Input/TextArea';
+} from '#rsci/Faram';
+import DangerButton from '#rsca/Button/DangerButton';
+import SuccessButton from '#rsca/Button/SuccessButton';
+import NonFieldErrors from '#rsci/NonFieldErrors';
+import TextInput from '#rsci/TextInput';
+import TextArea from '#rsci/TextArea';
 
 import {
     createParamsForProjectPatch,

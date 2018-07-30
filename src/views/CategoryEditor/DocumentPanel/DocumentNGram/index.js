@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import {
     trimWhitespace,
     splitInWhitespace,
-} from '#rs/utils/common';
-import ListView from '#rs/components/View/List/ListView';
+} from '#rsu/common';
+import ListView from '#rscv/List/ListView';
 
 import _ts from '#ts';
 import { categoryEditorNgramsSelector } from '#redux';

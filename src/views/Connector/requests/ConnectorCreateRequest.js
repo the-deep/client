@@ -1,5 +1,5 @@
-import { reverseRoute } from '#rs/utils/common';
-import { FgRestBuilder } from '#rs/utils/rest';
+import { reverseRoute } from '#rsu/common';
+import { FgRestBuilder } from '#rsu/rest';
 
 import {
     createParamsForConnectorCreate,

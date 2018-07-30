@@ -2,13 +2,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { reverseRoute } from '#rs/utils/common';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import Pager from '#rs/components/View/Pager';
-import Table from '#rs/components/View/Table';
-import FormattedDate from '#rs/components/View/FormattedDate';
-import Checkbox from '#rs/components/Input/Checkbox';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
+import { reverseRoute } from '#rsu/common';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import Pager from '#rscv/Pager';
+import Table from '#rscv/Table';
+import FormattedDate from '#rscv/FormattedDate';
+import Checkbox from '#rsci/Checkbox';
+import AccentButton from '#rsca/Button/AccentButton';
 import {
     iconNames,
     pathNames,

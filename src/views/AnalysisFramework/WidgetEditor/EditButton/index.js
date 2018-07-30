@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import update from 'immutability-helper';
 
-import WarningButton from '#rs/components/Action/Button/WarningButton';
+import WarningButton from '#rsca/Button/WarningButton';
 
 import { iconNames } from '#constants';
 

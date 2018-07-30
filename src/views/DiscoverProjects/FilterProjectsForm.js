@@ -2,13 +2,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Button from '#rs/components/Action/Button';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import Faram from '#rs/components/Input/Faram';
-import SelectInput from '#rs/components/Input/SelectInput';
-import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
-import SearchInput from '#rs/components/Input/SearchInput';
-import { isObjectEmpty } from '#rs/utils/common';
+import Button from '#rsca/Button';
+import DangerButton from '#rsca/Button/DangerButton';
+import Faram from '#rsci/Faram';
+import SelectInput from '#rsci/SelectInput';
+import MultiSelectInput from '#rsci/MultiSelectInput';
+import SearchInput from '#rsci/SearchInput';
+import { isObjectEmpty } from '#rsu/common';
 
 import {
     discoverProjectsFiltersSelector,

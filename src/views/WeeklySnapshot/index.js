@@ -1,6 +1,6 @@
 import React from 'react';
 
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 import AppError from '#components/AppError';
 
 const propTypes = {

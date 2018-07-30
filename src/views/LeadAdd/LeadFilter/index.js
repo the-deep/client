@@ -7,12 +7,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { BgRestBuilder } from '#rs/utils/rest';
-import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
-import SelectInput from '#rs/components/Input/SelectInput';
-import TextInput from '#rs/components/Input/TextInput';
-import SearchInput from '#rs/components/Input/SearchInput';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
+import { BgRestBuilder } from '#rsu/rest';
+import MultiSelectInput from '#rsci/MultiSelectInput';
+import SelectInput from '#rsci/SelectInput';
+import TextInput from '#rsci/TextInput';
+import SearchInput from '#rsci/SearchInput';
+import DangerButton from '#rsca/Button/DangerButton';
 
 import {
     activeProjectIdFromStateSelector,

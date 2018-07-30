@@ -7,14 +7,14 @@ import {
     listToMap,
     compareString,
     compareDate,
-} from '#rs/utils/common';
+} from '#rsu/common';
 import { getFiltersForRequest } from '#entities/lead';
-import update from '#rs/utils/immutable-update';
-import { FgRestBuilder } from '#rs/utils/rest';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
-import Table from '#rs/components/View/Table';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import FormattedDate from '#rs/components/View/FormattedDate';
+import update from '#rsu/immutable-update';
+import { FgRestBuilder } from '#rsu/rest';
+import AccentButton from '#rsca/Button/AccentButton';
+import Table from '#rscv/Table';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import FormattedDate from '#rscv/FormattedDate';
 
 import ExportPreview from '#components/ExportPreview';
 import {
@@ -37,7 +37,7 @@ import {
 import { iconNames } from '#constants';
 import notify from '#notify';
 import schema from '#schema';
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 
 import _ts from '#ts';
 import AppError from '#components/AppError';

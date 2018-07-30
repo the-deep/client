@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { isFalsy, getKeyByValue } from '#rs/utils/common';
+import { isFalsy, getKeyByValue } from '#rsu/common';
 import { pathNames } from '#constants/routes';
 
 const emptyObject = {};

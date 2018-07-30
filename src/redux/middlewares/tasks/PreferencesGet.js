@@ -1,5 +1,5 @@
-import { BgRestBuilder } from '#rs/utils/rest';
-import { isFalsy } from '#rs/utils/common';
+import { BgRestBuilder } from '#rsu/rest';
+import { isFalsy } from '#rsu/common';
 
 import {
     createParamsForGet,

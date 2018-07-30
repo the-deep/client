@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Faram from '#rs/components/Input/Faram';
-import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
-import GridViewLayout from '#rs/components/View/GridViewLayout';
+import Faram from '#rsci/Faram';
+import FaramGroup from '#rsci/Faram/FaramGroup';
+import GridViewLayout from '#rscv/GridViewLayout';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import { entryAccessor } from '#entities/editEntries';

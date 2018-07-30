@@ -1,6 +1,6 @@
 import Request from '#utils/Request';
 import notify from '#notify';
-import { checkVersion } from '#rs/utils/common';
+import { checkVersion } from '#rsu/common';
 
 import _ts from '#ts';
 

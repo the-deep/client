@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { reverseRoute } from '#rs/utils/common';
-import { FgRestBuilder } from '#rs/utils/rest';
-import Button from '#rs/components/Action/Button';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import { reverseRoute } from '#rsu/common';
+import { FgRestBuilder } from '#rsu/rest';
+import Button from '#rsca/Button';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import {
     urlForExportTrigger,

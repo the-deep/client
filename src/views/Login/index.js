@@ -11,19 +11,19 @@ import ReactSVG from 'react-svg';
 import {
     FgRestBuilder,
     RestRequest,
-} from '#rs/utils/rest';
+} from '#rsu/rest';
 
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Faram, {
     requiredCondition,
     emailCondition,
     lengthGreaterThanCondition,
-} from '#rs/components/Input/Faram';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import ReCaptcha from '#rs/components/Input/ReCaptcha';
-import TextInput from '#rs/components/Input/TextInput';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import { reverseRoute } from '#rs/utils/common';
+} from '#rsci/Faram';
+import NonFieldErrors from '#rsci/NonFieldErrors';
+import ReCaptcha from '#rsci/ReCaptcha';
+import TextInput from '#rsci/TextInput';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import { reverseRoute } from '#rsu/common';
 
 import { hidUrl } from '#config/hid';
 import { reCaptchaSiteKey } from '#config/reCaptcha';

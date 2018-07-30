@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
-import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import SelectInput from '#rs/components/Input/SelectInput';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import SuccessButton from '#rsca/Button/SuccessButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import SelectInput from '#rsci/SelectInput';
 
 import {
     setLanguageAction,

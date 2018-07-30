@@ -2,10 +2,10 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
-import ListView from '#rs/components/View/List/ListView';
-import Message from '#rs/components/View/Message';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import SuccessButton from '#rsca/Button/SuccessButton';
+import ListView from '#rscv/List/ListView';
+import Message from '#rscv/Message';
 
 import {
     problemCollectionSelector,

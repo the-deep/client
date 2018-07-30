@@ -2,14 +2,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { BgRestBuilder } from '#rs/utils/rest';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
-import Modal from '#rs/components/View/Modal';
-import ModalHeader from '#rs/components/View/Modal/Header';
-import ModalBody from '#rs/components/View/Modal/Body';
-import Table from '#rs/components/View/Table';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import { BgRestBuilder } from '#rsu/rest';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import Modal from '#rscv/Modal';
+import ModalHeader from '#rscv/Modal/Header';
+import ModalBody from '#rscv/Modal/Body';
+import Table from '#rscv/Table';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
     createUrlForAdminLevelsForRegion,

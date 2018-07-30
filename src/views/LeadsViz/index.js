@@ -7,18 +7,18 @@ import _ts from '#ts';
 import {
     reverseRoute,
     isObjectEmpty,
-} from '#rs/utils/common';
+} from '#rsu/common';
 
-import wrapViz from '#rs/components/Visualization/VizWrapper';
-import SunBurst from '#rs/components/Visualization/SunBurst';
-import ChordDiagram from '#rs/components/Visualization/ChordDiagram';
-import TreeMap from '#rs/components/Visualization/TreeMap';
-import CorrelationMatrix from '#rs/components/Visualization/CorrelationMatrix';
-import ForceDirectedGraph from '#rs/components/Visualization/ForceDirectedGraph';
-import CollapsibleTree from '#rs/components/Visualization/CollapsibleTree';
-import RadialDendrogram from '#rs/components/Visualization/RadialDendrogram';
-import GeoReferencedMap from '#rs/components/Visualization/GeoReferencedMap';
-import BoundError from '#rs/components/General/BoundError';
+import wrapViz from '#rscz/VizWrapper';
+import SunBurst from '#rscz/SunBurst';
+import ChordDiagram from '#rscz/ChordDiagram';
+import TreeMap from '#rscz/TreeMap';
+import CorrelationMatrix from '#rscz/CorrelationMatrix';
+import ForceDirectedGraph from '#rscz/ForceDirectedGraph';
+import CollapsibleTree from '#rscz/CollapsibleTree';
+import RadialDendrogram from '#rscz/RadialDendrogram';
+import GeoReferencedMap from '#rscz/GeoReferencedMap';
+import BoundError from '#rscg/BoundError';
 import VizError from '#components/VizError';
 import AppError from '#components/AppError';
 

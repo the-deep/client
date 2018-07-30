@@ -2,24 +2,24 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Button from '#rs/components/Action/Button';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import FileInput from '#rs/components/Input/FileInput';
-import SearchInput from '#rs/components/Input/SearchInput';
-import FormattedDate from '#rs/components/View/FormattedDate';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import ModalBody from '#rs/components/View/Modal/Body';
-import ModalFooter from '#rs/components/View/Modal/Footer';
-import ModalHeader from '#rs/components/View/Modal/Header';
-import Table from '#rs/components/View/Table';
+import Button from '#rsca/Button';
+import AccentButton from '#rsca/Button/AccentButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import FileInput from '#rsci/FileInput';
+import SearchInput from '#rsci/SearchInput';
+import FormattedDate from '#rscv/FormattedDate';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import ModalBody from '#rscv/Modal/Body';
+import ModalFooter from '#rscv/Modal/Footer';
+import ModalHeader from '#rscv/Modal/Header';
+import Table from '#rscv/Table';
 import {
     caseInsensitiveSubmatch,
     compareString,
     compareDate,
-} from '#rs/utils/common';
-import { FgRestBuilder } from '#rs/utils/rest';
-import { UploadBuilder } from '#rs/utils/upload';
+} from '#rsu/common';
+import { FgRestBuilder } from '#rsu/rest';
+import { UploadBuilder } from '#rsu/upload';
 
 import { iconNames } from '#constants';
 import { leadTypeIconMap } from '#entities/lead';

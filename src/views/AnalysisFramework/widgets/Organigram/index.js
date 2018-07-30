@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import TextInput from '#rs/components/Input/TextInput';
-import Modal from '#rs/components/View/Modal';
-import ModalBody from '#rs/components/View/Modal/Body';
-import ModalFooter from '#rs/components/View/Modal/Footer';
-import ModalHeader from '#rs/components/View/Modal/Header';
+import DangerButton from '#rsca/Button/DangerButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import NonFieldErrors from '#rsci/NonFieldErrors';
+import TextInput from '#rsci/TextInput';
+import Modal from '#rscv/Modal';
+import ModalBody from '#rscv/Modal/Body';
+import ModalFooter from '#rscv/Modal/Footer';
+import ModalHeader from '#rscv/Modal/Header';
 
-import Faram, { requiredCondition } from '#rs/components/Input/Faram';
+import Faram, { requiredCondition } from '#rsci/Faram';
 
 import OrganigramCreatorInput from '#components/OrganigramCreatorInput';
 import _ts from '#ts';

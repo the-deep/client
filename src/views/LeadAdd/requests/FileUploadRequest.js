@@ -1,4 +1,4 @@
-import { UploadBuilder } from '#rs/utils/upload';
+import { UploadBuilder } from '#rsu/upload';
 import { leadAccessor } from '#entities/lead';
 
 import {

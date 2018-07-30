@@ -3,8 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link, Prompt } from 'react-router-dom';
 
-import { reverseRoute } from '#rs/utils/common';
-import update from '#rs/utils/immutable-update';
+import { reverseRoute } from '#rsu/common';
+import update from '#rsu/immutable-update';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import { detachedFaram } from '#rsci/Faram';

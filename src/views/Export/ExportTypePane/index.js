@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Checkbox from '#rs/components/Input/Checkbox';
-import TreeSelection from '#rs/components/Input/TreeSelection';
-import List from '#rs/components/View/List';
+import Checkbox from '#rsci/Checkbox';
+import TreeSelection from '#rsci/TreeSelection';
+import List from '#rscv/List';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';

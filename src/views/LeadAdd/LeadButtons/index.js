@@ -7,10 +7,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Button from '#rs/components/Action/Button';
-import FileInput from '#rs/components/Input/FileInput';
-import FormattedDate from '#rs/components/View/FormattedDate';
-import { randomString } from '#rs/utils/common';
+import Button from '#rsca/Button';
+import FileInput from '#rsci/FileInput';
+import FormattedDate from '#rscv/FormattedDate';
+import { randomString } from '#rsu/common';
 
 import DropboxChooser from '#components/DropboxChooser';
 import GooglePicker from '#components/GooglePicker';

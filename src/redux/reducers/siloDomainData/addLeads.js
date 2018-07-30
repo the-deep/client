@@ -2,9 +2,9 @@ import {
     listToMap,
     getElementAround,
     getNumbers,
-} from '#rs/utils/common';
-import { analyzeErrors } from '#rs/components/Input/Faram/validator';
-import update from '#rs/utils/immutable-update';
+} from '#rsu/common';
+import { analyzeErrors } from '#rsci/Faram/validator';
+import update from '#rsu/immutable-update';
 
 import {
     createLead,

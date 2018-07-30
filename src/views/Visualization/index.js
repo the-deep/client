@@ -24,7 +24,7 @@ import StackedBarChart from '#rscz/StackedBarChart';
 import SparkLines from '#rscz/SparkLines';
 import Organigram from '#rscz/Organigram';
 
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 import VizError from '#components/VizError';
 import AppError from '#components/AppError';
 

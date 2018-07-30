@@ -3,13 +3,13 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 
-import Faram, { requiredCondition } from '#rs/components/Input/Faram';
-import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
-import FixedTabs from '#rs/components/View/FixedTabs';
-import MultiViewContainer from '#rs/components/View/MultiViewContainer';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
-import WarningButton from '#rs/components/Action/Button/WarningButton';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import Faram, { requiredCondition } from '#rsci/Faram';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import FixedTabs from '#rscv/FixedTabs';
+import MultiViewContainer from '#rscv/MultiViewContainer';
+import SuccessButton from '#rsca/Button/SuccessButton';
+import WarningButton from '#rsca/Button/WarningButton';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import {
     countryDetailSelector,
     regionDetailSelector,

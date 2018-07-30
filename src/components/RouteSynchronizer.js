@@ -3,11 +3,11 @@ import Helmet from 'react-helmet';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
-import Bundle from '#rs/components/General/Bundle';
-import withTracker from '#rs/components/General/withTracker';
+import Bundle from '#rscg/Bundle';
+import withTracker from '#rscg/withTracker';
 import {
     reverseRoute,
-} from '#rs/utils/common';
+} from '#rsu/common';
 
 import Cloak from '#components/Cloak';
 import { routes } from '#constants/routes';

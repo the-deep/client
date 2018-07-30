@@ -1,4 +1,4 @@
-import { isTruthy } from '#rs/utils/common';
+import { isTruthy } from '#rsu/common';
 
 import createReducerWithMap from '#utils/createReducerWithMap';
 

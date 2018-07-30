@@ -2,15 +2,15 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { caseInsensitiveSubmatch, compareString } from '#rs/utils/common';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
-import SearchInput from '#rs/components/Input/SearchInput';
-import RadioInput from '#rs/components/Input/RadioInput';
-import ListView from '#rs/components/View/List/ListView';
-import ListItem from '#rs/components/View/List/ListItem';
-import Modal from '#rs/components/View/Modal';
-import ModalHeader from '#rs/components/View/Modal/Header';
-import ModalBody from '#rs/components/View/Modal/Body';
+import { caseInsensitiveSubmatch, compareString } from '#rsu/common';
+import AccentButton from '#rsca/Button/AccentButton';
+import SearchInput from '#rsci/SearchInput';
+import RadioInput from '#rsci/RadioInput';
+import ListView from '#rscv/List/ListView';
+import ListItem from '#rscv/List/ListItem';
+import Modal from '#rscv/Modal';
+import ModalHeader from '#rscv/Modal/Header';
+import ModalBody from '#rscv/Modal/Body';
 
 import { projectDetailsSelector } from '#redux';
 import { iconNames } from '#constants';

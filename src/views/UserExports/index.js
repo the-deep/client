@@ -10,13 +10,13 @@ import {
     compareString,
     compareBoolean,
     compareDate,
-} from '#rs/utils/common';
-import { FgRestBuilder } from '#rs/utils/rest';
-import Table from '#rs/components/View/Table';
-import FormattedDate from '#rs/components/View/FormattedDate';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+} from '#rsu/common';
+import { FgRestBuilder } from '#rsu/rest';
+import Table from '#rscv/Table';
+import FormattedDate from '#rscv/FormattedDate';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 import AppError from '#components/AppError';
 import {
     createUrlForExport,

@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ListView from '#rs/components/View/List/ListView';
-import { listToMap } from '#rs/utils/common';
+import ListView from '#rscv/List/ListView';
+import { listToMap } from '#rsu/common';
 
 import Row from './Row';
 import styles from './styles.scss';

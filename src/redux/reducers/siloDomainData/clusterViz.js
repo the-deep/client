@@ -1,4 +1,4 @@
-import update from '#rs/utils/immutable-update';
+import update from '#rsu/immutable-update';
 
 export const CV__SET_PROJECT_CLUSTER_VISUALIZATION = 'siloDomainData/SET_PROJECT_CLUSTER_VISUALIZATION';
 

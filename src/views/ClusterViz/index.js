@@ -5,17 +5,17 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import BoundError from '#rs/components/General/BoundError';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import ListView from '#rs/components/View/List/ListView';
-import ForceDirectedGraph from '#rs/components/Visualization/NewForceDirectedGraph';
-import wrapViz from '#rs/components/Visualization/VizWrapper';
+import BoundError from '#rscg/BoundError';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import ListView from '#rscv/List/ListView';
+import ForceDirectedGraph from '#rscz/NewForceDirectedGraph';
+import wrapViz from '#rscz/VizWrapper';
 
 import {
     reverseRoute,
     mapToList,
     groupList,
-} from '#rs/utils/common';
+} from '#rsu/common';
 
 import VizError from '#components/VizError';
 import AppError from '#components/AppError';

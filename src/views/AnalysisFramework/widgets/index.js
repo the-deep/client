@@ -1,5 +1,5 @@
-import boundError from '#rs/components/General/BoundError';
-import { listToMap } from '#rs/utils/common';
+import boundError from '#rscg/BoundError';
+import { listToMap } from '#rsu/common';
 
 import FrameworkWidgetError from '#components/FrameworkWidgetError';
 
@@ -204,8 +204,8 @@ const widgetList = [
     },
 ];
 
-export const listWidgets = widgetList.filter(widget => widget.type === 'list');
-export const overviewWidgets = widgetList.filter(widget => widget.type === 'overview');
+export const listWidgets = widgetList.filter(widget => widget.type === 'list' && widget.editComponent);
+export const overviewWidgets = widgetList.filter(widget => widget.type === 'overview' && widget.editComponent);
 
 const boundWidgetError = boundError(FrameworkWidgetError);
 const decorator = Component => boundWidgetError(Component);

@@ -6,13 +6,13 @@ import {
     Prompt,
 } from 'react-router-dom';
 
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
-import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
-import BoundError from '#rs/components/General/BoundError';
-import SelectInput from '#rs/components/Input/SelectInput';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import { FgRestBuilder } from '#rs/utils/rest';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import SuccessButton from '#rsca/Button/SuccessButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import BoundError from '#rscg/BoundError';
+import SelectInput from '#rsci/SelectInput';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import { FgRestBuilder } from '#rsu/rest';
 import {
     checkVersion,
     isTruthy,
@@ -20,7 +20,7 @@ import {
     reverseRoute,
     splitInWhitespace,
     trimWhitespace,
-} from '#rs/utils/common';
+} from '#rsu/common';
 
 import {
     categoryEditorViewTitleSelector,

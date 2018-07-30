@@ -4,8 +4,8 @@ import ReactSVG from 'react-svg';
 import { connect } from 'react-redux';
 import { Redirect, Link } from 'react-router-dom';
 
-import { reverseRoute } from '#rs/utils/common';
-import BoundError from '#rs/components/General/BoundError';
+import { reverseRoute } from '#rsu/common';
+import BoundError from '#rscg/BoundError';
 
 import {
     activeProjectIdFromStateSelector,

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Confirm from '#rs/components/View/Modal/Confirm';
+import Confirm from '#rscv/Modal/Confirm';
 
 const getUserConfirmation = (message, confirm) => {
     const container = document.createElement('div');

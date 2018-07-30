@@ -1,4 +1,4 @@
-import { FgRestBuilder } from '#rs/utils/rest';
+import { FgRestBuilder } from '#rsu/rest';
 
 import {
     createParamsForConnectorTest,
@@ -6,7 +6,7 @@ import {
 } from '#rest';
 import {
     randomString,
-} from '#rs/utils/common';
+} from '#rsu/common';
 import _ts from '#ts';
 import schema from '#schema';
 import notify from '#notify';

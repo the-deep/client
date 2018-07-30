@@ -11,11 +11,11 @@ import { Prompt } from 'react-router-dom';
 import {
     isTruthy,
     randomString,
-} from '#rs/utils/common';
-import { CoordinatorBuilder } from '#rs/utils/coordinate';
-import List from '#rs/components/View/List';
-import Message from '#rs/components/View/Message';
-import BoundError from '#rs/components/General/BoundError';
+} from '#rsu/common';
+import { CoordinatorBuilder } from '#rsu/coordinate';
+import List from '#rscv/List';
+import Message from '#rscv/Message';
+import BoundError from '#rscg/BoundError';
 
 import AppError from '#components/AppError';
 import {

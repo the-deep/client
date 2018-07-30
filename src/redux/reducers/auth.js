@@ -1,6 +1,6 @@
 import jwtDecode from 'jwt-decode';
 
-import update from '#rs/utils/immutable-update';
+import update from '#rsu/immutable-update';
 
 import createReducerWithMap from '#utils/createReducerWithMap';
 import schema from '#schema';

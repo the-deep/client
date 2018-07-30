@@ -1,7 +1,7 @@
 import localforage from 'localforage';
 import { createTransform } from 'redux-persist';
 
-import { mapToMap } from '#rs/utils/common';
+import { mapToMap } from '#rsu/common';
 
 const myTransform = createTransform(
     inboundState => ({

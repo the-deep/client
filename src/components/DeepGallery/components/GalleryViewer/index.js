@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 
-import AccentButton from '#rs/components/Action/Button/AccentButton';
-import TextInput from '#rs/components/Input/TextInput';
-import Message from '#rs/components/View/Message';
-import urlRegex from '#rs/components/Input/Faram/regexForWeburl';
+import AccentButton from '#rsca/Button/AccentButton';
+import TextInput from '#rsci/TextInput';
+import Message from '#rscv/Message';
+import urlRegex from '#rsci/Faram/regexForWeburl';
 
 import { galleryMapping, galleryType } from '#config/deepMimeTypes';
 import { iconNames } from '#constants';

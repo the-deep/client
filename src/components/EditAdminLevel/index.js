@@ -2,21 +2,21 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { BgRestBuilder } from '#rs/utils/rest';
-import { UploadBuilder } from '#rs/utils/upload';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import TextInput from '#rs/components/Input/TextInput';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import HiddenInput from '#rs/components/Input/HiddenInput';
-import FileInput from '#rs/components/Input/FileInput';
-import SelectInput from '#rs/components/Input/SelectInput';
+import { BgRestBuilder } from '#rsu/rest';
+import { UploadBuilder } from '#rsu/upload';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import DangerButton from '#rsca/Button/DangerButton';
+import TextInput from '#rsci/TextInput';
+import NonFieldErrors from '#rsci/NonFieldErrors';
+import HiddenInput from '#rsci/HiddenInput';
+import FileInput from '#rsci/FileInput';
+import SelectInput from '#rsci/SelectInput';
 import Faram, {
     greaterThanOrEqualToCondition,
     requiredCondition,
     integerCondition,
-} from '#rs/components/Input/Faram';
+} from '#rsci/Faram';
 
 import { InternalGallery } from '#components/DeepGallery';
 import {

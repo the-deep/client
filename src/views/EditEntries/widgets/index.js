@@ -1,6 +1,6 @@
 import WidgetError from '#components/WidgetError';
-import boundError from '#rs/components/General/BoundError';
-import { listToMap } from '#rs/utils/common';
+import boundError from '#rscg/BoundError';
+import { listToMap } from '#rsu/common';
 
 import DateWidget from './Date';
 import DateRangeWidget from './DateRange';

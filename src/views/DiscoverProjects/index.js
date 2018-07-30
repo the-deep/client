@@ -3,17 +3,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Link } from 'react-router-dom';
-import { reverseRoute } from '#rs/utils/common';
+import { reverseRoute } from '#rsu/common';
 import { pathNames } from '#constants/';
 
-import BoundError from '#rs/components/General/BoundError';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import ListView from '#rs/components/View/List/ListView';
-import Pager from '#rs/components/View/Pager';
-import RawTable from '#rs/components/View/RawTable';
-import TableHeader from '#rs/components/View/TableHeader';
-import FormattedDate from '#rs/components/View/FormattedDate';
-import SparkLines from '#rs/components/Visualization/SparkLines';
+import BoundError from '#rscg/BoundError';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import ListView from '#rscv/List/ListView';
+import Pager from '#rscv/Pager';
+import RawTable from '#rscv/RawTable';
+import TableHeader from '#rscv/TableHeader';
+import FormattedDate from '#rscv/FormattedDate';
+import SparkLines from '#rscz/SparkLines';
 
 import {
     discoverProjectsTotalProjectsCountSelector,

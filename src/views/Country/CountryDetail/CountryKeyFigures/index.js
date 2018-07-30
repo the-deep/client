@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
-import TextInput from '#rs/components/Input/TextInput';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import FaramGroup from '#rsci/Faram/FaramGroup';
+import TextInput from '#rsci/TextInput';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';

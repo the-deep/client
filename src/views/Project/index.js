@@ -6,16 +6,16 @@ import { connect } from 'react-redux';
 import {
     reverseRoute,
     caseInsensitiveSubmatch,
-} from '#rs/utils/common';
-import Modal from '#rs/components/View/Modal';
-import ModalBody from '#rs/components/View/Modal/Body';
-import ModalHeader from '#rs/components/View/Modal/Header';
-import ListView from '#rs/components/View/List/ListView';
-import SearchInput from '#rs/components/Input/SearchInput';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+} from '#rsu/common';
+import Modal from '#rscv/Modal';
+import ModalBody from '#rscv/Modal/Body';
+import ModalHeader from '#rscv/Modal/Header';
+import ListView from '#rscv/List/ListView';
+import SearchInput from '#rsci/SearchInput';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import UserProjectAdd from '#components/UserProjectAdd';
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 import Cloak from '#components/Cloak';
 import AppError from '#components/AppError';
 import {

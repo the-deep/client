@@ -1,7 +1,7 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 
-import DateInput from '#rs/components/Input/DateInput';
+import DateInput from '#rsci/DateInput';
 import _ts from '#ts';
 
 import styles from './styles.scss';

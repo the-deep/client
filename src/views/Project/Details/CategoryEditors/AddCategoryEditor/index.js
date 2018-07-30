@@ -2,15 +2,15 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '#rs/utils/rest';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import TextInput from '#rs/components/Input/TextInput';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import { FgRestBuilder } from '#rsu/rest';
+import NonFieldErrors from '#rsci/NonFieldErrors';
+import TextInput from '#rsci/TextInput';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import DangerButton from '#rsca/Button/DangerButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Faram, {
     requiredCondition,
-} from '#rs/components/Input/Faram';
+} from '#rsci/Faram';
 
 import {
     alterResponseErrorToFaramError,

@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Modal from '#rs/components/View/Modal';
-import ModalHeader from '#rs/components/View/Modal/Header';
-import ModalBody from '#rs/components/View/Modal/Body';
-import ModalFooter from '#rs/components/View/Modal/Footer';
-import Button from '#rs/components/Action/Button';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import SelectInput from '#rs/components/Input/SelectInput';
-import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
-import ListInput from '#rs/components/Input/ListInput';
-import FaramElement from '#rs/components/Input/Faram/FaramElement';
+import Modal from '#rscv/Modal';
+import ModalHeader from '#rscv/Modal/Header';
+import ModalBody from '#rscv/Modal/Body';
+import ModalFooter from '#rscv/Modal/Footer';
+import Button from '#rsca/Button';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import SelectInput from '#rsci/SelectInput';
+import MultiSelectInput from '#rsci/MultiSelectInput';
+import ListInput from '#rsci/ListInput';
+import FaramElement from '#rsci/Faram/FaramElement';
 
 import RegionMap from '../RegionMap';
 import styles from './styles.scss';

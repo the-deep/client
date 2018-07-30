@@ -2,15 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import MultiViewContainer from '#rs/components/View/MultiViewContainer';
-import FixedTabs from '#rs/components/View/FixedTabs';
-import SuccessButton from '#rs/components/Action/Button/SuccessButton';
+import MultiViewContainer from '#rscv/MultiViewContainer';
+import FixedTabs from '#rscv/FixedTabs';
+import SuccessButton from '#rsca/Button/SuccessButton';
 import Faram, {
     requiredCondition,
     dateCondition,
-} from '#rs/components/Input/Faram';
-import { getObjectChildren } from '#rs/utils/common';
-import { median, sum, bucket } from '#rs/utils/stats';
+} from '#rsci/Faram';
+import { getObjectChildren } from '#rsu/common';
+import { median, sum, bucket } from '#rsu/stats';
 
 import {
     leadIdFromRouteSelector,

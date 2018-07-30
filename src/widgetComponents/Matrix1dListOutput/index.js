@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ListView from '#rs/components/View/List/ListView';
-import FaramElement from '#rs/components/Input/Faram/FaramElement';
+import ListView from '#rscv/List/ListView';
+import FaramElement from '#rsci/Faram/FaramElement';
 
 import Row from './Row';
 import styles from './styles.scss';

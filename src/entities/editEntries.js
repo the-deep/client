@@ -1,4 +1,4 @@
-import update from '#rs/utils/immutable-update';
+import update from '#rsu/immutable-update';
 import {
     listToMap,
     randomString,
@@ -6,7 +6,7 @@ import {
     compareNumber,
     isFalsy,
     isTruthy,
-} from '#rs/utils/common';
+} from '#rsu/common';
 import {
     pick,
 } from '#utils/common';

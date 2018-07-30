@@ -1,4 +1,4 @@
-import { FgRestBuilder } from '#rs/utils/rest';
+import { FgRestBuilder } from '#rsu/rest';
 import {
     createUrlForRegionWithField,
     createParamsForGet,

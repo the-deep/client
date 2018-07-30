@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ScaleInput from '#rs/components/Input/ScaleInput';
+import ScaleInput from '#rsci/ScaleInput';
 
 
 const propTypes = {

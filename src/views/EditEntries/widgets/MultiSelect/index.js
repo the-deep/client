@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import SelectInputWithList from '#rs/components/Input/SelectInputWithList';
+import SelectInputWithList from '#rsci/SelectInputWithList';
 // import _ts from '#ts';
 
 const propTypes = {

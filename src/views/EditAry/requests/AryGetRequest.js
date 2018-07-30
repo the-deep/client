@@ -1,5 +1,5 @@
-import { FgRestBuilder } from '#rs/utils/rest';
-import { checkVersion } from '#rs/utils/common';
+import { FgRestBuilder } from '#rsu/rest';
+import { checkVersion } from '#rsu/common';
 import {
     createUrlForLeadGroupAry,
     createUrlForLeadAry,

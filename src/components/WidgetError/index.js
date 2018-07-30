@@ -1,6 +1,6 @@
 import React from 'react';
 
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import { handleException, handleReport } from '#config/sentry';
 import _ts from '#ts';

@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import List from '#rs/components/View/List';
+import List from '#rscv/List';
 import {
     getColorOnBgColor,
     hexToRgb,
     rgbToHex,
     interpolateRgb,
-} from '#rs/utils/common';
+} from '#rsu/common';
 
 import SubdimensionRow from './SubdimensionRow';
 import styles from './styles.scss';

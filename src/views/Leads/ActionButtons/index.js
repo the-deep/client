@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { reverseRoute } from '#rs/utils/common';
-import Button from '#rs/components/Action/Button';
-import DangerConfirmButton from '#rs/components/Action/ConfirmButton/DangerConfirmButton';
+import { reverseRoute } from '#rsu/common';
+import Button from '#rsca/Button';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 
 import {
     iconNames,

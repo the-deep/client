@@ -1,20 +1,20 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import TextInput from '#rs/components/Input/TextInput';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import Modal from '#rs/components/View/Modal';
-import ModalHeader from '#rs/components/View/Modal/Header';
-import ModalBody from '#rs/components/View/Modal/Body';
-import ModalFooter from '#rs/components/View/Modal/Footer';
-import SortableListView from '#rs/components/View/SortableListView';
-import Faram, { requiredCondition } from '#rs/components/Input/Faram';
-import FaramList from '#rs/components/Input/Faram/FaramList';
+import TextInput from '#rsci/TextInput';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import NonFieldErrors from '#rsci/NonFieldErrors';
+import DangerButton from '#rsca/Button/DangerButton';
+import Modal from '#rscv/Modal';
+import ModalHeader from '#rscv/Modal/Header';
+import ModalBody from '#rscv/Modal/Body';
+import ModalFooter from '#rscv/Modal/Footer';
+import SortableListView from '#rscv/SortableListView';
+import Faram, { requiredCondition } from '#rsci/Faram';
+import FaramList from '#rsci/Faram/FaramList';
 import FixedTabs from '#rscv/FixedTabs';
-import MultiViewContainer from '#rs/components/View/MultiViewContainer';
-import { findDuplicates, randomString } from '#rs/utils/common';
+import MultiViewContainer from '#rscv/MultiViewContainer';
+import { findDuplicates, randomString } from '#rsu/common';
 
 import TabTitle from '#components/TabTitle';
 

@@ -5,9 +5,9 @@ import {
     NavLink,
 } from 'react-router-dom';
 
-import { reverseRoute } from '#rs/utils/common';
-import List from '#rs/components/View/List';
-import DropdownMenu from '#rs/components/Action/DropdownMenu';
+import { reverseRoute } from '#rsu/common';
+import List from '#rscv/List';
+import DropdownMenu from '#rsca/DropdownMenu';
 
 import {
     iconNames,

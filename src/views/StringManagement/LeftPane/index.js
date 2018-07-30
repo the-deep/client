@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import VerticalTabs from '#rs/components/View/VerticalTabs';
-import SearchInput from '#rs/components/Input/SearchInput';
+import VerticalTabs from '#rscv/VerticalTabs';
+import SearchInput from '#rsci/SearchInput';
 
 import {
     stringMgmtSetSelectedLinkCollectionNameAction,

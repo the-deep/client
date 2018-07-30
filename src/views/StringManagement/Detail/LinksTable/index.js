@@ -6,10 +6,10 @@ import {
     compareStringByWordCount,
     compareString,
     compareNumber,
-} from '#rs/utils/common';
-import Table from '#rs/components/View/Table';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import WarningButton from '#rs/components/Action/Button/WarningButton';
+} from '#rsu/common';
+import Table from '#rscv/Table';
+import DangerButton from '#rsca/Button/DangerButton';
+import WarningButton from '#rsca/Button/WarningButton';
 import {
     linkCollectionSelector,
 } from '#redux';

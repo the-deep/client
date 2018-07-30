@@ -1,7 +1,7 @@
 import { applyDiff, entryAccessor, createEntry } from '#entities/editEntries';
-import { analyzeErrors } from '#rs/components/Input/Faram/validator';
-import { isFalsy, randomString, getDefinedElementAround } from '#rs/utils/common';
-import update from '#rs/utils/immutable-update';
+import { analyzeErrors } from '#rsci/Faram/validator';
+import { isFalsy, randomString, getDefinedElementAround } from '#rsu/common';
+import update from '#rsu/immutable-update';
 
 const getNewSelectedEntryKey = (entries, selectedEntryKey) => {
     if (entries.length <= 0) {

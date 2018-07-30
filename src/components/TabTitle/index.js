@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramElement from '#rs/components/Input/Faram/FaramElement.js';
+import FaramElement from '#rsci/Faram/FaramElement.js';
 import styles from './styles.scss';
 
 const propTypes = {

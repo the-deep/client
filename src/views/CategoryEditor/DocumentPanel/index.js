@@ -3,8 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 // import { Tabs, TabLink, TabContent } from 'react-tabs-redux';
 
-import List from '#rs/components/View/List';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
+import List from '#rscv/List';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
     categoryEditorDocumentsSelector,

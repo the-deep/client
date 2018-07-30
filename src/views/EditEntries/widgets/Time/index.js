@@ -1,7 +1,7 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 
-import TimeInput from '#rs/components/Input/TimeInput';
+import TimeInput from '#rsci/TimeInput';
 import styles from './styles.scss';
 
 const propTypes = {

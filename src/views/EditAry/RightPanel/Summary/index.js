@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import FaramGroup from '#rs/components/Input/Faram/FaramGroup';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import VerticalTabs from '#rs/components/View/VerticalTabs/';
-import { listToMap } from '#rs/utils/common';
+import FaramGroup from '#rsci/Faram/FaramGroup';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import VerticalTabs from '#rscv/VerticalTabs/';
+import { listToMap } from '#rsu/common';
 
 import {
     assessmentSectorsSelector,

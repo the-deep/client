@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { currentUserActiveProjectSelector } from '#redux';
 import logo from '#resources/img/deep-logo.svg';
-import BoundError from '#rs/components/General/BoundError';
+import BoundError from '#rscg/BoundError';
 import AppError from '#components/AppError';
 
 import styles from './styles.scss';

@@ -3,22 +3,22 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import SearchInput from '#rs/components/Input/SearchInput';
-import ListItem from '#rs/components/View/List/ListItem';
-import ListView from '#rs/components/View/List/ListView';
-import Message from '#rs/components/View/Message';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import Modal from '#rs/components/View/Modal';
-import ModalBody from '#rs/components/View/Modal/Body';
-import ModalHeader from '#rs/components/View/Modal/Header';
-import MultiViewContainer from '#rs/components/View/MultiViewContainer';
+import DangerButton from '#rsca/Button/DangerButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import SearchInput from '#rsci/SearchInput';
+import ListItem from '#rscv/List/ListItem';
+import ListView from '#rscv/List/ListView';
+import Message from '#rscv/Message';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import Modal from '#rscv/Modal';
+import ModalBody from '#rscv/Modal/Body';
+import ModalHeader from '#rscv/Modal/Header';
+import MultiViewContainer from '#rscv/MultiViewContainer';
 import {
     caseInsensitiveSubmatch,
     reverseRoute,
-} from '#rs/utils/common';
-import update from '#rs/utils/immutable-update';
+} from '#rsu/common';
+import update from '#rsu/immutable-update';
 
 import {
     iconNames,

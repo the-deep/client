@@ -1,7 +1,7 @@
 import createReducerWithMap from '#utils/createReducerWithMap';
 
-import { listToMap } from '#rs/utils/common';
-import update from '#rs/utils/immutable-update';
+import { listToMap } from '#rsu/common';
+import update from '#rsu/immutable-update';
 
 import initialLangState from '../initial-state/lang';
 import { LOGOUT_ACTION } from '../reducers/auth';

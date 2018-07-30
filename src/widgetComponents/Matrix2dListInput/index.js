@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import FaramElement from '#rs/components/Input/Faram/FaramElement';
-import ListView from '#rs/components/View/List/ListView';
-import update from '#rs/utils/immutable-update';
+import FaramElement from '#rsci/Faram/FaramElement';
+import ListView from '#rscv/List/ListView';
+import update from '#rsu/immutable-update';
 
 import Row from './Row';
 import styles from './styles.scss';

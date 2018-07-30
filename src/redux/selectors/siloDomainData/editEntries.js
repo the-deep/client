@@ -5,14 +5,14 @@ import {
     timeCondition,
     greaterThanOrEqualToCondition,
     lessThanOrEqualToCondition,
-} from '#rs/components/Input/Faram';
+} from '#rsci/Faram';
 
 import {
     isTruthy,
     listToMap,
     decodeDate,
     compareNumber,
-} from '#rs/utils/common';
+} from '#rsu/common';
 import {
     entryAccessor,
     calculateEntryState,

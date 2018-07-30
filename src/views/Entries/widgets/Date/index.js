@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import FormattedDate from '#rs/components/View/FormattedDate';
+import FormattedDate from '#rscv/FormattedDate';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types

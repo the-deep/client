@@ -7,9 +7,9 @@ import {
 } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import ExclusivelyPublicRoute from '#rs/components/General/ExclusivelyPublicRoute';
-import PrivateRoute from '#rs/components/General/PrivateRoute';
-import Toast from '#rs/components/View/Toast';
+import ExclusivelyPublicRoute from '#rscg/ExclusivelyPublicRoute';
+import PrivateRoute from '#rscg/PrivateRoute';
+import Toast from '#rscv/Toast';
 
 import Navbar from '#components/Navbar';
 import {

@@ -2,14 +2,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { compareString } from '#rs/utils/common';
-import Faram, { requiredCondition } from '#rs/components/Input/Faram';
-import update from '#rs/utils/immutable-update';
-import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import LoadingAnimation from '#rs/components/View/LoadingAnimation';
-import TabularSelectInput from '#rs/components/Input/TabularSelectInput';
+import { compareString } from '#rsu/common';
+import Faram, { requiredCondition } from '#rsci/Faram';
+import update from '#rsu/immutable-update';
+import NonFieldErrors from '#rsci/NonFieldErrors';
+import DangerButton from '#rsca/Button/DangerButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import TabularSelectInput from '#rsci/TabularSelectInput';
 
 import {
     usersInformationListSelector,

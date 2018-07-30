@@ -1,5 +1,5 @@
-import FormattedDate from '#rs/components/View/FormattedDate';
-import update from '#rs/utils/immutable-update';
+import FormattedDate from '#rscv/FormattedDate';
+import update from '#rsu/immutable-update';
 import iconNames from '#constants/iconNames';
 
 export const LEAD_TYPE = {

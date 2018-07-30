@@ -5,14 +5,14 @@ import { connect } from 'react-redux';
 import {
     isTruthy,
     isObjectEmpty,
-} from '#rs/utils/common';
-import { FgRestBuilder } from '#rs/utils/rest';
-import Button from '#rs/components/Action/Button';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import Faram from '#rs/components/Input/Faram';
-import SearchInput from '#rs/components/Input/SearchInput';
-import DateFilter from '#rs/components/Input/DateFilter';
-import MultiSelectInput from '#rs/components/Input/MultiSelectInput';
+} from '#rsu/common';
+import { FgRestBuilder } from '#rsu/rest';
+import Button from '#rsca/Button';
+import DangerButton from '#rsca/Button/DangerButton';
+import Faram from '#rsci/Faram';
+import SearchInput from '#rsci/SearchInput';
+import DateFilter from '#rsci/DateFilter';
+import MultiSelectInput from '#rsci/MultiSelectInput';
 
 import {
     createParamsForGet,
