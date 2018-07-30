@@ -123,7 +123,7 @@ export default class WidgetEditor extends React.PureComponent {
         const { editComponent: Widget } = fetchWidget(this.props.widgetType, widgetId);
 
         const showEdit = Widget && !(
-            hasWidget('overview', widgetId) && this.props.widgetType === 'list'
+            hasWidget(OVERVIEW, widgetId) && this.props.widgetType === LIST
         );
 
         const layout = this.layoutSelector(widget);

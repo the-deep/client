@@ -1,0 +1,53 @@
+@import '../../../../../stylesheets/base';
+
+.item {
+    border-top: $width-separator-thin solid $color-separator;
+    border-bottom: $width-separator-thin solid $color-separator;
+    background-color: $color-foreground;
+    padding: 0;
+
+    .drag-handle {
+        display: flex;
+        align-items: center;
+        align-self: stretch;
+        background-color: $color-foreground;
+        padding: $spacing-small;
+    }
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    justify-content: space-between;
+    border-bottom: $width-separator-thin solid $color-separator;
+    padding: $spacing-small;
+    padding-top: 0;
+}
+
+.error {
+    flex-shrink: 0;
+}
+
+.edit-dimension {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 0 $spacing-small;
+
+    .input {
+        flex-grow: 1;
+        margin-left: $spacing-small;
+        padding: 0 $spacing-extra-small;
+    }
+}
+
+.cell-list {
+    flex-grow: 1;
+    border-right: $width-separator-thin solid $color-separator;
+    overflow-y: auto;
+
+    .item {
+        border-top-color: transparent;
+    }
+}

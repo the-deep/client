@@ -9,6 +9,7 @@ import OrganigramEditWidget from './Organigram';
 import MultiSelectEditWidget from './MultiSelect';
 import ScaleEditWidget from './Scale';
 import Matrix1dEditWidget from './Matrix1d';
+import Matrix2dEditWidget from './Matrix2d';
 import NumberMatrixEditWidget from './NumberMatrix';
 
 import DateWidget from '../../EditEntries/widgets/Date';
@@ -78,7 +79,6 @@ const widgetList = [
         widgetId: 'excerptWidget',
         type: 'list',
         component: ExcerptWidget,
-        editComponent: DefaultEditWidget,
 
         // NOTE: used as _ts('widgetTitle', 'excerptWidgetLabel')
         title: 'excerptWidgetLabel',
@@ -117,7 +117,7 @@ const widgetList = [
         widgetId: 'matrix2dWidget',
         type: 'overview',
         component: Matrix2dWidget,
-        editComponent: DefaultEditWidget,
+        editComponent: Matrix2dEditWidget,
 
         // NOTE: used as _ts('widgetTitle', 'matrix2DWidgetLabel')
         title: 'matrix2DWidgetLabel',
@@ -127,7 +127,6 @@ const widgetList = [
         widgetId: 'matrix2dWidget',
         type: 'list',
         component: Matrix2dListWidget,
-        editComponent: DefaultEditWidget,
 
         // NOTE: used as _ts('widgetTitle', 'matrix2DWidgetLabel')
         title: 'matrix2DWidgetLabel',
@@ -147,7 +146,6 @@ const widgetList = [
         widgetId: 'numberMatrixWidget',
         type: 'list',
         component: NumberMatrixListWidget,
-        editComponent: DefaultEditWidget,
 
         // NOTE: used as _ts('widgetTitle', 'numberMatrixWidgetLabel')
         title: 'numberMatrixWidgetLabel',

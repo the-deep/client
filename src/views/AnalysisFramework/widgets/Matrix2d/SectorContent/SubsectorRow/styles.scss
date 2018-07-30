@@ -1,0 +1,17 @@
+@import '../../../../../../stylesheets/base';
+
+.subsector-row {
+    display: flex;
+    align-items: center;
+    padding: $spacing-small;
+    width: 100%;
+
+    .input {
+        flex-grow: 1;
+        margin-right: $spacing-small;
+    }
+
+    .delete-button {
+        flex-shrink: 0;
+    }
+}

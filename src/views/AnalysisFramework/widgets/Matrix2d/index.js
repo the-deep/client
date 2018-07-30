@@ -1,771 +1,495 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import ColorInput from '#rs/components/Input/ColorInput';
-import TextInput from '#rs/components/Input/TextInput';
-import Button from '#rs/components/Action/Button';
-import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
-import AccentButton from '#rs/components/Action/Button/AccentButton';
+import FaramList from '#rs/components/Input/Faram/FaramList';
+import SortableListView from '#rs/components/View/SortableListView';
+import DangerButton from '#rs/components/Action/Button/DangerButton';
 import Modal from '#rs/components/View/Modal';
-import ModalHeader from '#rs/components/View/Modal/Header';
 import ModalBody from '#rs/components/View/Modal/Body';
 import ModalFooter from '#rs/components/View/Modal/Footer';
-import DangerButton from '#rs/components/Action/Button/DangerButton';
-import ListView from '#rs/components/View/List/ListView';
-import SortableList from '#rs/components/View/SortableList';
-import update from '#rs/utils/immutable-update';
-import BoundError from '#rs/components/General/BoundError';
-import {
-    randomString,
-    getColorOnBgColor,
-} from '#rs/utils/common';
+import ModalHeader from '#rs/components/View/Modal/Header';
+import NonFieldErrors from '#rs/components/Input/NonFieldErrors';
+import PrimaryButton from '#rs/components/Action/Button/PrimaryButton';
+import TextInput from '#rs/components/Input/TextInput';
+import Faram, { requiredCondition } from '#rs/components/Input/Faram';
+import FixedTabs from '#rscv/FixedTabs';
+import MultiViewContainer from '#rs/components/View/MultiViewContainer';
+import { findDuplicates, randomString } from '#rs/utils/common';
 
-import _ts from '#ts';
-import WidgetError from '#components/WidgetError';
+import TabTitle from '#components/TabTitle';
 import { iconNames } from '#constants';
+import _ts from '#ts';
 
+import SectorTitle from './SectorTitle';
+import SectorContent from './SectorContent';
+import DimensionTitle from './DimensionTitle';
+import DimensionContent from './DimensionContent';
 import styles from './styles.scss';
 
 const propTypes = {
     title: PropTypes.string.isRequired,
-    editAction: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
-    data: {
-        title: undefined,
-        sectors: [],
-        dimensions: [],
-    },
+    data: {},
 };
 
-const emptyList = [];
+const emptyArray = [];
 
-@BoundError(WidgetError)
-export default class Matrix2dOverview extends React.PureComponent {
-    static rowKeyExtractor = d => d.id;
+export default class Matrix1dEditWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
+    static schema = {
+        fields: {
+            title: [requiredCondition],
+            dimensions: {
+                validation: (dimensions) => {
+                    const errors = [];
+                    if (!dimensions || dimensions.length <= 0) {
+                        // FIXME: use strings
+                        errors.push('There should be at least one dimension.');
+                    }
 
-        this.state = {
-            title: props.title,
-            data: props.data,
-            showEditModal: false,
-            selectedSectorIndex: 0,
-            activeDimensionTypeIndex: 0,
-            activeDimensionIndex: 0,
-        };
-
-        const { editAction } = props;
-        editAction(this.handleWidgetEdit);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            title: nextProps.title,
-            data: nextProps.data,
-        });
-    }
-
-    handleTitleInputValueChange = (value) => {
-        this.setState({ title: value });
-    }
-
-    handleWidgetEdit = () => {
-        this.setState({ showEditModal: true });
-    }
-
-    handleModalCancelButtonClick = () => {
-        const {
-            data,
-            title,
-        } = this.props;
-
-        this.setState({
-            data,
-            title,
-            showEditModal: false,
-        });
-    }
-
-    handleModalSaveButtonClick = () => {
-        const { onChange } = this.props;
-
-        onChange(
-            this.state.data,
-            this.state.title,
-        );
-
-        this.setState({
-            showEditModal: false,
-        });
-    }
-
-    handleRemoveSubdimensionButtonClick = (i) => {
-        const dimensionTypes = [
-            'sectors',
-            'dimensions',
-        ];
-
-        const subdimensionTypes = [
-            'subsectors',
-            'subdimensions',
-        ];
-
-        const {
-            activeDimensionTypeIndex,
-            activeDimensionIndex,
-            data: oldData,
-        } = this.state;
-
-        const currentDimensionType = dimensionTypes[activeDimensionTypeIndex];
-        const currentSubdimensionType = subdimensionTypes[activeDimensionTypeIndex];
-
-        const settings = {
-            [currentDimensionType]: {
-                [activeDimensionIndex]: {
-                    [currentSubdimensionType]: {
-                        $splice: [[i, 1]],
-                    },
+                    const duplicates = findDuplicates(dimensions, o => o.title);
+                    if (duplicates.length > 0) {
+                        // FIXME: use strings
+                        errors.push(`Duplicate dimensions are not allowed: ${duplicates.join(', ')}`);
+                    }
+                    return errors;
                 },
-            },
-        };
+                member: {
+                    fields: {
+                        id: [requiredCondition],
+                        color: [],
+                        title: [requiredCondition],
+                        tooltip: [],
+                        subdimensions: {
+                            validation: (subdimensions) => {
+                                const errors = [];
+                                if (!subdimensions || subdimensions.length <= 0) {
+                                    // FIXME: use strings
+                                    errors.push('There should be at least one subdimension.');
+                                }
 
-        const data = update(oldData, settings);
-        this.setState({ data });
-    }
-
-    handleRemoveDimensionButtonClick = () => {
-        const dimensionTypes = [
-            'sectors',
-            'dimensions',
-        ];
-
-        const {
-            activeDimensionTypeIndex,
-            activeDimensionIndex,
-            data: oldData,
-        } = this.state;
-
-        const currentDimensionType = dimensionTypes[activeDimensionTypeIndex];
-
-        const settings = {
-            [currentDimensionType]: {
-                $splice: [[activeDimensionIndex, 1]],
-            },
-        };
-
-        const data = update(oldData, settings);
-        this.setState({ data });
-    }
-
-    handleDimensionInputValueChange = (key, value) => {
-        const dimensionTypes = [
-            'sectors',
-            'dimensions',
-        ];
-
-        const {
-            activeDimensionTypeIndex,
-            activeDimensionIndex,
-            data: oldData,
-        } = this.state;
-
-        const currentDimensionType = dimensionTypes[activeDimensionTypeIndex];
-
-        const settings = {
-            [currentDimensionType]: {
-                [activeDimensionIndex]: {
-                    [key]: {
-                        $set: value,
-                    },
-                },
-            },
-        };
-
-        const data = update(oldData, settings);
-        this.setState({ data });
-    }
-
-    handleSubdimensionInputValueChange = (i, key, value) => {
-        const dimensionTypes = [
-            'sectors',
-            'dimensions',
-        ];
-
-        const subdimensionTypes = [
-            'subsectors',
-            'subdimensions',
-        ];
-
-        const {
-            activeDimensionTypeIndex,
-            activeDimensionIndex,
-            data: oldData,
-        } = this.state;
-
-        const currentDimensionType = dimensionTypes[activeDimensionTypeIndex];
-        const currentSubdimensionType = subdimensionTypes[activeDimensionTypeIndex];
-
-        const settings = {
-            [currentDimensionType]: {
-                [activeDimensionIndex]: {
-                    [currentSubdimensionType]: {
-                        [i]: {
-                            [key]: {
-                                $set: value,
+                                const duplicates = findDuplicates(subdimensions, o => o.title);
+                                if (duplicates.length > 0) {
+                                    // FIXME: use strings
+                                    errors.push(`Duplicate subdimensions are not allowed: ${duplicates.join(', ')}`);
+                                }
+                                return errors;
+                            },
+                            member: {
+                                fields: {
+                                    id: [requiredCondition],
+                                    tooltip: [],
+                                    title: [requiredCondition],
+                                },
                             },
                         },
                     },
                 },
             },
-        };
-
-        const data = update(oldData, settings);
-        this.setState({ data });
-    }
-
-    handleDimensionListSortChange = (newData) => {
-        const dimensionTypes = [
-            'sectors',
-            'dimensions',
-        ];
-
-        const {
-            activeDimensionTypeIndex,
-            activeDimensionIndex,
-            data: oldData,
-        } = this.state;
-
-        const currentDimensionType = dimensionTypes[activeDimensionTypeIndex];
-
-        const dimensions = oldData[currentDimensionType];
-        const activeDimensionId = dimensions[activeDimensionIndex].id;
-
-        const newActiveDimensionIndex = newData.findIndex(d => d.id === activeDimensionId);
-
-        const settings = {
-            [currentDimensionType]: {
-                $set: newData,
-            },
-        };
-
-        const data = update(oldData, settings);
-        this.setState({
-            data,
-            activeDimensionIndex: newActiveDimensionIndex,
-        });
-    }
-
-    handleSubdimensionsSortChange = (newData) => {
-        const dimensionTypes = [
-            'sectors',
-            'dimensions',
-        ];
-
-        const subdimensionTypes = [
-            'subsectors',
-            'subdimensions',
-        ];
-
-        const {
-            activeDimensionTypeIndex,
-            activeDimensionIndex,
-            data: oldData,
-        } = this.state;
-
-        const currentDimensionType = dimensionTypes[activeDimensionTypeIndex];
-        const currentSubdimensionType = subdimensionTypes[activeDimensionTypeIndex];
-
-        const settings = {
-            [currentDimensionType]: {
-                [activeDimensionIndex]: {
-                    [currentSubdimensionType]: {
-                        $set: newData,
-                    },
-                },
-            },
-        };
-
-        const data = update(oldData, settings);
-        this.setState({ data });
-    }
-
-    handleAddDimensionButtonClick = () => {
-        const dimensionTypes = [
-            'sectors',
-            'dimensions',
-        ];
-
-        const {
-            activeDimensionTypeIndex,
-            data: oldData,
-        } = this.state;
-
-        const dimensionData = {
-            id: randomString(16).toLowerCase(),
-            title: '',
-            tooltip: '',
-        };
-
-        const newDimensionDataList = [
-            {
-                ...dimensionData,
-                subsectors: emptyList,
-            },
-            {
-                ...dimensionData,
-                color: '#ffffff',
-                subdimensions: emptyList,
-            },
-        ];
-
-        const newDimensionData = newDimensionDataList[activeDimensionTypeIndex];
-
-        const currentDimensionType = dimensionTypes[activeDimensionTypeIndex];
-
-        const settings = {
-            [currentDimensionType]: {
-                $autoPush: [newDimensionData],
-            },
-        };
-
-        const data = update(oldData, settings);
-        this.setState({
-            data,
-            activeDimensionIndex: data[currentDimensionType].length - 1,
-        });
-    }
-
-    handleAddSubdimensionButtonClick = () => {
-        const dimensionTypes = [
-            'sectors',
-            'dimensions',
-        ];
-
-        const subdimensionTypes = [
-            'subsectors',
-            'subdimensions',
-        ];
-
-        const {
-            activeDimensionTypeIndex,
-            activeDimensionIndex,
-            data: oldData,
-        } = this.state;
-
-        const newSubdimension = {
-            id: randomString(16).toLowerCase(),
-            title: '',
-            tooltip: '',
-        };
-        const currentDimensionType = dimensionTypes[activeDimensionTypeIndex];
-        const currentSubdimensionType = subdimensionTypes[activeDimensionTypeIndex];
-
-        const settings = {
-            [currentDimensionType]: {
-                [activeDimensionIndex]: {
-                    [currentSubdimensionType]: {
-                        $autoPush: [newSubdimension],
-                    },
-                },
-            },
-        };
-
-        const data = update(oldData, settings);
-        this.setState({ data });
-    }
-
-    renderHeader = () => {
-        const {
-            sectors,
-        } = this.props.data;
-
-        const renderSectors = [
-            { id: 'blank1', title: '' },
-            { id: 'blank2', title: '' },
-            ...sectors,
-        ];
-
-        return (
-            <thead>
-                <tr>
-                    {
-                        renderSectors.map(sector => (
-                            <th
-                                key={sector.id}
-                                className={styles.sector}
-                            >
-                                {sector.title}
-                            </th>
-                        ))
+            sectors: {
+                validation: (sectors) => {
+                    const errors = [];
+                    if (!sectors || sectors.length <= 0) {
+                        // FIXME: use strings
+                        errors.push('There should be at least one sector.');
                     }
-                </tr>
-            </thead>
-        );
+
+                    const duplicates = findDuplicates(sectors, o => o.title);
+                    if (duplicates.length > 0) {
+                        // FIXME: use strings
+                        errors.push(`Duplicate sectors are not allowed: ${duplicates.join(', ')}`);
+                    }
+                    return errors;
+                },
+                member: {
+                    fields: {
+                        id: [requiredCondition],
+                        title: [requiredCondition],
+                        tooltip: [],
+                        subsectors: {
+                            validation: (subsectors) => {
+                                const errors = [];
+                                if (!subsectors || subsectors.length <= 0) {
+                                    // FIXME: use strings
+                                    errors.push('There should be at least one subsectors.');
+                                }
+
+                                const duplicates = findDuplicates(subsectors, o => o.title);
+                                if (duplicates.length > 0) {
+                                    // FIXME: use strings
+                                    errors.push(`Duplicate subsectors are not allowed: ${duplicates.join(', ')}`);
+                                }
+                                return errors;
+                            },
+                            member: {
+                                fields: {
+                                    id: [requiredCondition],
+                                    tooltip: [],
+                                    title: [requiredCondition],
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    };
+
+    static keyExtractor = elem => elem.id;
+
+    constructor(props) {
+        super(props);
+
+        const {
+            title,
+            data: {
+                dimensions = emptyArray,
+                sectors = emptyArray,
+            },
+        } = props;
+
+        this.state = {
+            faramValues: {
+                title,
+                dimensions,
+                sectors,
+            },
+            faramErrors: {},
+            pristine: false,
+
+            selectedDimensionKey: dimensions[0]
+                ? Matrix1dEditWidget.keyExtractor(dimensions[0])
+                : undefined,
+
+            selectedSectorKey: sectors[0]
+                ? Matrix1dEditWidget.keyExtractor(sectors[0])
+                : undefined,
+
+            selectedTab: 'dimensions',
+        };
+
+        this.tabs = {
+            dimensions: 'Dimensions',
+            sectors: 'Sectors',
+        };
+
+        this.views = {
+            dimensions: {
+                component: () => {
+                    const {
+                        faramValues,
+                        selectedDimensionKey,
+                    } = this.state;
+
+                    const {
+                        dimensions: dimensionsFromState = [],
+                    } = faramValues || {};
+
+                    const selectedDimensionIndex = dimensionsFromState.findIndex(
+                        dimension => (
+                            Matrix1dEditWidget.keyExtractor(dimension) === selectedDimensionKey
+                        ),
+                    );
+
+                    return (
+                        <FaramList faramElementName="dimensions">
+                            <div className={styles.panels}>
+                                <SortableListView
+                                    className={styles.leftPanel}
+                                    dragHandleModifier={this.renderDragHandle}
+                                    faramElement
+                                    keyExtractor={Matrix1dEditWidget.keyExtractor}
+                                    rendererParams={this.rendererParams}
+                                    itemClassName={styles.item}
+                                    renderer={DimensionTitle}
+                                />
+                                { dimensions.length > 0 && selectedDimensionIndex !== -1 &&
+                                    <DimensionContent
+                                        index={selectedDimensionIndex}
+                                        className={styles.rightPanel}
+                                    />
+                                }
+                            </div>
+                        </FaramList>
+                    );
+                },
+                wrapContainer: true,
+            },
+            sectors: {
+                component: () => {
+                    const {
+                        faramValues,
+                        selectedSectorKey,
+                    } = this.state;
+
+                    const {
+                        sectors: sectorsFromState = [],
+                    } = faramValues || {};
+
+                    const selectedSectorIndex = sectorsFromState.findIndex(
+                        sector => (
+                            Matrix1dEditWidget.keyExtractor(sector) === selectedSectorKey
+                        ),
+                    );
+
+                    return (
+                        <FaramList faramElementName="sectors">
+                            <div className={styles.panels}>
+                                <SortableListView
+                                    className={styles.leftPanel}
+                                    dragHandleModifier={this.renderDragHandleSector}
+                                    faramElement
+                                    keyExtractor={Matrix1dEditWidget.keyExtractor}
+                                    rendererParams={this.rendererParamsSector}
+                                    itemClassName={styles.item}
+                                    renderer={SectorTitle}
+                                />
+                                { sectors.length > 0 && selectedSectorIndex !== -1 &&
+                                    <SectorContent
+                                        index={selectedSectorIndex}
+                                        className={styles.rightPanel}
+                                    />
+                                }
+                            </div>
+                        </FaramList>
+                    );
+                },
+                wrapContainer: true,
+            },
+        };
     }
 
-    renderBody = () => {
+    handleFaramChange = (faramValues, faramErrors) => {
+        this.setState({
+            faramValues,
+            faramErrors,
+            pristine: true,
+        });
+    };
+
+    handleFaramValidationFailure = (faramErrors) => {
+        this.setState({
+            faramErrors,
+            pristine: false,
+        });
+    };
+
+    handleFaramValidationSuccess = (faramValues) => {
         const {
+            title,
             dimensions,
             sectors,
-        } = this.props.data;
-
-        return (
-            <tbody>
-                {
-                    dimensions.map((dimension) => {
-                        const rowStyle = {
-                            backgroundColor: dimension.color,
-                            color: getColorOnBgColor(dimension.color),
-                        };
-
-                        return (
-                            dimension.subdimensions.map((subdimension, i) => (
-                                <tr
-                                    style={rowStyle}
-                                    key={subdimension.id}
-                                >
-                                    {
-                                        i === 0 && (
-                                            <td
-                                                className={styles.dimensionTd}
-                                                rowSpan={dimension.subdimensions.length}
-                                                title={dimension.tooltip}
-                                            >
-                                                {dimension.title}
-                                            </td>
-                                        )
-                                    }
-                                    <td
-                                        className={styles.subdimension}
-                                        title={subdimension.tooltip}
-                                    >
-                                        {subdimension.title}
-                                    </td>
-                                    { sectors.map(sector => <td key={sector.id} />) }
-                                </tr>
-                            ))
-                        );
-                    })
-                }
-            </tbody>
-        );
-    }
-
-    renderDimensionTypeListItem = (key, data, i) => {
-        const { activeDimensionTypeIndex } = this.state;
-        const classNames = [styles.tab];
-
-        if (activeDimensionTypeIndex === i) {
-            classNames.push(styles.active);
-        }
-
-        return (
-            <button
-                key={data}
-                onClick={() => {
-                    this.setState({
-                        activeDimensionTypeIndex: i,
-                        activeDimensionIndex: 0,
-                    });
-                }}
-                className={classNames.join(' ')}
-            >
-                { data }
-            </button>
-        );
-    }
-
-    renderDimensionTypes = () => {
-        const dimensionTypes = [
-            _ts('framework.matrix2dWidget', 'dimensionXLabel'),
-            _ts('framework.matrix2dWidget', 'dimensionYLabel'),
-        ];
-
-        return (
-            <ListView
-                className={styles.dimensionTypeList}
-                data={dimensionTypes}
-                modifier={this.renderDimensionTypeListItem}
-            />
-        );
-    }
-
-    renderDimensionListItem = (key, data, i) => {
-        const { activeDimensionIndex } = this.state;
-        const classNames = [styles.dimensionTab];
-
-        if (activeDimensionIndex === i) {
-            classNames.push(styles.active);
-        }
-
-        const untitled = _ts('framework.matrix2dWidget', 'untitledDimensionTitle');
-
-        return (
-            <button
-                key={data.id}
-                onClick={() => { this.setState({ activeDimensionIndex: i }); }}
-                className={classNames.join(' ')}
-            >
-                { data.title || untitled }
-            </button>
-        );
-    }
-
-    renderDimensionList = () => {
-        const {
-            data,
-            activeDimensionTypeIndex,
-        } = this.state;
-
-        const dimensionData = [data.sectors, data.dimensions];
-
-        return (
-            <SortableList
-                className={styles.dimensionList}
-                data={dimensionData[activeDimensionTypeIndex]}
-                modifier={this.renderDimensionListItem}
-                onChange={this.handleDimensionListSortChange}
-                sortableItemClass={styles.dimensionListItem}
-                keyExtractor={Matrix2dOverview.rowKeyExtractor}
-                dragHandleModifier={this.renderDimensionDragHandle}
-            />
-        );
-    }
-
-    renderDimensionDragHandle = (key, data, index) => {
-        const { activeDimensionIndex } = this.state;
-        const dragStyle = [styles.dragHandle];
-        if (activeDimensionIndex === index) {
-            dragStyle.push(styles.active);
-        }
-        return (
-            <span className={`${iconNames.hamburger} ${dragStyle.join(' ')}`} />
+        } = faramValues;
+        this.props.onSave(
+            { dimensions, sectors },
+            title,
         );
     };
 
-    renderSubDimensionDragHandle = () => {
-        const dragStyle = [styles.dragHandle];
-        return (
-            <span className={`${iconNames.hamburger} ${dragStyle.join(' ')}`} />
+    faramInfoForAdd = {
+        newElement: () => ({
+            id: randomString(16).toLowerCase(),
+            color: undefined,
+            title: '',
+            tooltip: '',
+            subdimensions: [],
+        }),
+        callback: (value) => {
+            this.setState({
+                selectedDimensionKey: Matrix1dEditWidget.keyExtractor(value),
+            });
+        },
+    }
+
+    faramInfoForAddSector = {
+        newElement: () => ({
+            id: randomString(16).toLowerCase(),
+            title: '',
+            tooltip: '',
+            sectors: [],
+        }),
+        callback: (value) => {
+            this.setState({
+                selectedSectorKey: Matrix1dEditWidget.keyExtractor(value),
+            });
+        },
+    }
+
+    handleTabSelect = (selectedTab) => {
+        this.setState({ selectedTab });
+    }
+
+    renderTabsWithButton = () => {
+        const { selectedTab } = this.state;
+
+        const buttonLabel = selectedTab === 'dimensions' ? (
+            'Add dimension'
+        ) : (
+            'Add sector'
         );
-    };
 
-    renderDimensionDragHandle = (key, data, index) => {
-        const { activeDimensionIndex } = this.state;
-        const dragStyle = [styles.dragHandle];
-        if (activeDimensionIndex === index) {
-            dragStyle.push(styles.active);
-        }
-        return (
-            <span className={`${iconNames.hamburger} ${dragStyle.join(' ')}`} />
-        );
-    };
-
-    renderSubdimension = (key, data, i) => (
-        <div
-            className={styles.subDimensionInputs}
-            key={data.id}
-        >
-            <div className={styles.inputs}>
-                <TextInput
-                    label={_ts('framework.matrix2dWidget', 'title')}
-                    value={data.title}
-                    showHintAndError={false}
-                    onChange={(value) => { this.handleSubdimensionInputValueChange(i, 'title', value); }}
-                    autoFocus
-                />
-                <TextInput
-                    label={_ts('framework.matrix2dWidget', 'tooltip')}
-                    value={data.tooltip}
-                    showHintAndError={false}
-                    onChange={(value) => { this.handleSubdimensionInputValueChange(i, 'tooltip', value); }}
-                />
-            </div>
-            <div className={styles.actions}>
-                <DangerButton
-                    onClick={() => {
-                        this.handleRemoveSubdimensionButtonClick(i);
-                    }}
-                    iconName={iconNames.delete}
-                />
-            </div>
-        </div>
-    )
-
-    renderDimensionDetail = () => {
-        const {
-            data,
-            activeDimensionTypeIndex,
-            activeDimensionIndex,
-        } = this.state;
-
-        const dimensionData = [data.sectors, data.dimensions];
-        const dimension = dimensionData[activeDimensionTypeIndex][activeDimensionIndex];
-
-        if (!dimension) {
-            return (
-                <div className={styles.empty}>
-                    { _ts('framework.matrix2dWidget', 'empty') }
-                </div>
-            );
-        }
-
-        const subdimensionData = [dimension.subsectors, dimension.subdimensions];
-        const subdimension = subdimensionData[activeDimensionTypeIndex];
-
-        const showColorConditions = [false, true];
-        const showColorInput = showColorConditions[activeDimensionTypeIndex];
-
-        const titleInputLabel = _ts('framework.matrix2dWidget', 'title');
-        const tooltipInputLabel = _ts('framework.matrix2dWidget', 'tooltip');
-        const colorInputLabel = _ts('framework.matrix2dWidget', 'color');
-        const subdimensionsTitle = _ts('framework.matrix2dWidget', 'subdimensions');
-        const addSubdimensionButtonTitle = _ts('framework.matrix2dWidget', 'addSubdimensionButtonTitle');
+        const faramInfo = selectedTab === 'dimensions'
+            ? this.faramInfoForAdd
+            : this.faramInfoForAddSector;
 
         return (
-            <div className={styles.dimensionDetail}>
-                <div className={styles.dimensionInputs}>
-                    <div className={styles.inputs}>
-                        <TextInput
-                            className={styles.textInput}
-                            label={titleInputLabel}
-                            value={dimension.title}
-                            showHintAndError={false}
-                            onChange={(value) => { this.handleDimensionInputValueChange('title', value); }}
-                            autoFocus
-                        />
-                        <TextInput
-                            className={styles.textInput}
-                            label={tooltipInputLabel}
-                            value={dimension.tooltip}
-                            showHintAndError={false}
-                            onChange={(value) => { this.handleDimensionInputValueChange('tooltip', value); }}
-                        />
-                        {
-                            showColorInput && (
-                                <ColorInput
-                                    className={styles.colorInput}
-                                    label={colorInputLabel}
-                                    value={dimension.color}
-                                    showHintAndError={false}
-                                    onChange={(value) => { this.handleDimensionInputValueChange('color', value); }}
-                                />
-                            )
-                        }
-                    </div>
-                    <div className={styles.actions}>
-                        <DangerButton
-                            onClick={this.handleRemoveDimensionButtonClick}
-                            iconName={iconNames.delete}
-                        />
-                    </div>
-                </div>
-                <div className={styles.subdimensionDetail}>
-                    <header className={styles.header}>
-                        <h4>{ subdimensionsTitle }</h4>
-                        <AccentButton
-                            onClick={this.handleAddSubdimensionButtonClick}
+            <div className={styles.tabsContainer}>
+                <FaramList faramElementName={selectedTab}>
+                    <NonFieldErrors
+                        faramElement
+                        className={styles.error}
+                    />
+                </FaramList>
+                <FixedTabs
+                    className={styles.tabs}
+                    tabs={this.tabs}
+                    active={selectedTab}
+                    onClick={this.handleTabSelect}
+                    modifier={this.renderTab}
+                >
+                    <FaramList faramElementName={selectedTab}>
+                        <PrimaryButton
+                            faramAction="add"
+                            faramInfo={faramInfo}
+                            iconName={iconNames.add}
+                            title={buttonLabel}
                             transparent
                         >
-                            { addSubdimensionButtonTitle }
-                        </AccentButton>
-                    </header>
-                    <SortableList
-                        className={styles.content}
-                        data={subdimension}
-                        modifier={this.renderSubdimension}
-                        onChange={this.handleSubdimensionsSortChange}
-                        sortableItemClass={styles.subDimensions}
-                        keyExtractor={Matrix2dOverview.rowKeyExtractor}
-                        dragHandleModifier={this.renderSubDimensionDragHandle}
-                    />
-                </div>
+                            {buttonLabel}
+                        </PrimaryButton>
+                    </FaramList>
+                </FixedTabs>
             </div>
         );
     }
 
-    renderModal = () => {
-        const {
-            showEditModal,
-            title,
-        } = this.state;
+    renderTab = (tabKey) => {
+        const title = this.tabs[tabKey];
 
-        if (!showEditModal) {
-            return null;
+        return (
+            <TabTitle
+                title={title}
+                faramElementName={tabKey}
+            />
+        );
+    }
+    rendererParams = (key, elem, i) => ({
+        index: i,
+        faramElementName: String(i),
+        data: elem,
+        setSelectedDimension: (k) => {
+            this.setState({ selectedDimensionKey: k });
+        },
+        isSelected: this.state.selectedDimensionKey === key,
+        keyExtractor: Matrix1dEditWidget.keyExtractor,
+    })
+
+    rendererParamsSector = (key, elem, i) => ({
+        index: i,
+        faramElementName: String(i),
+        data: elem,
+        setSelectedSector: (k) => {
+            this.setState({ selectedSectorKey: k });
+        },
+        isSelected: this.state.selectedSectorKey === key,
+        keyExtractor: Matrix1dEditWidget.keyExtractor,
+    })
+
+    renderDragHandle = (key) => {
+        const dragHandleClassNames = [styles.dragHandle];
+        const { selectedDimensionKey } = this.state;
+        if (selectedDimensionKey === key) {
+            dragHandleClassNames.push(styles.active);
         }
 
-        const DimensionTypes = this.renderDimensionTypes;
-        const DimensionList = this.renderDimensionList;
-        const DimensionDetail = this.renderDimensionDetail;
+        return (
+            <span className={`${iconNames.hamburger} ${dragHandleClassNames.join(' ')}`} />
+        );
+    };
 
-        const editModalTitle = _ts('framework.matrix2dWidget', 'editModalTitle');
-        const addDimensionButtonTitle = _ts('framework.matrix2dWidget', 'addDimensionButtonTitle');
-        const titleInputLabel = _ts('framework.matrix2dWidget', 'title');
-        const cancelButtonTitle = _ts('framework.matrix2dWidget', 'cancelButtonTitle');
-        const saveButtonTitle = _ts('framework.matrix2dWidget', 'saveButtonTitle');
+    renderDragHandleSector = (key) => {
+        const dragHandleClassNames = [styles.dragHandle];
+        const { selectedSectorKey } = this.state;
+        if (selectedSectorKey === key) {
+            dragHandleClassNames.push(styles.active);
+        }
 
         return (
-            <Modal className={styles.overviewEditModal}>
-                <ModalHeader title={editModalTitle} />
-                <ModalBody className={styles.body}>
-                    <header className={styles.header}>
-                        <div className={styles.left}>
-                            <TextInput
-                                label={titleInputLabel}
-                                showHintAndError={false}
-                                value={title}
-                                onChange={this.handleTitleInputValueChange}
-                                autoFocus
-                                selectOnFocus
-                            />
-                        </div>
-                        <DimensionTypes />
-                        <div className={styles.right}>
-                            <AccentButton
-                                onClick={this.handleAddDimensionButtonClick}
-                                transparent
-                            >
-                                { addDimensionButtonTitle }
-                            </AccentButton>
-                        </div>
-                    </header>
-                    <div className={styles.content}>
-                        <DimensionList />
-                        <DimensionDetail />
-                    </div>
-                </ModalBody>
-                <ModalFooter>
-                    <Button onClick={this.handleModalCancelButtonClick}>
-                        { cancelButtonTitle }
-                    </Button>
-                    <PrimaryButton onClick={this.handleModalSaveButtonClick}>
-                        { saveButtonTitle }
-                    </PrimaryButton>
-                </ModalFooter>
-            </Modal>
+            <span className={`${iconNames.hamburger} ${dragHandleClassNames.join(' ')}`} />
         );
-    }
+    };
 
     render() {
-        const TableHeader = this.renderHeader;
-        const TableBody = this.renderBody;
-        const EditMatrixModal = this.renderModal;
+        const {
+            faramValues,
+            faramErrors,
+            pristine,
+            selectedTab,
+        } = this.state;
+        const {
+            onClose,
+            title,
+        } = this.props;
+
+
+        // FIXME: Use strings
+        const cancelButtonLabel = 'Cancel';
+        const saveButtonLabel = 'Save';
+
+        const TabsWithButton = this.renderTabsWithButton;
 
         return (
-            <div className={styles.overview}>
-                <table className={styles.table}>
-                    <TableHeader />
-                    <TableBody />
-                </table>
-                <EditMatrixModal />
-            </div>
+            <Modal className={styles.editModal}>
+                <Faram
+                    className={styles.form}
+                    onChange={this.handleFaramChange}
+                    onValidationFailure={this.handleFaramValidationFailure}
+                    onValidationSuccess={this.handleFaramValidationSuccess}
+                    schema={Matrix1dEditWidget.schema}
+                    value={faramValues}
+                    error={faramErrors}
+                >
+                    <ModalHeader title={title} />
+                    <ModalBody className={styles.body}>
+                        <NonFieldErrors
+                            faramElement
+                            className={styles.error}
+                        />
+                        <TextInput
+                            className={styles.titleInput}
+                            faramElementName="title"
+                            autoFocus
+                            label={_ts('framework.excerptWidget', 'titleLabel')}
+                            placeholder={_ts('framework.excerptWidget', 'widgetTitlePlaceholder')}
+                            selectOnFocus
+                        />
+                        <TabsWithButton />
+                        <MultiViewContainer
+                            views={this.views}
+                            containerClassName={styles.modalUnitContainer}
+                            active={selectedTab}
+                        />
+                    </ModalBody>
+                    <ModalFooter>
+                        <DangerButton onClick={onClose}>
+                            {cancelButtonLabel}
+                        </DangerButton>
+                        <PrimaryButton
+                            type="submit"
+                            disabled={!pristine}
+                        >
+                            {saveButtonLabel}
+                        </PrimaryButton>
+                    </ModalFooter>
+                </Faram>
+            </Modal>
         );
     }
 }
