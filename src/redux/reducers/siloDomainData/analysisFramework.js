@@ -169,6 +169,7 @@ const afViewUpdateWidgetLayout = (state, action) => {
                         },
                     },
                 },
+                pristine: { $set: false },
             },
         },
     };
