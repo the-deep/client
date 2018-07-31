@@ -18,13 +18,12 @@ export default class DateWidget extends React.PureComponent {
     render() {
         // TODO: feature to set date to published date automatically
         return (
-            <div className={styles.date}>
-                <DateInput
-                    faramElementName="value"
-                    showLabel={false}
-                    showHintAndError={false}
-                />
-            </div>
+            <DateInput
+                className={styles.date}
+                faramElementName="value"
+                showLabel={false}
+                showHintAndError={false}
+            />
         );
     }
 }

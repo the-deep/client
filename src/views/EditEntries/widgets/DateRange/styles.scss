@@ -2,14 +2,27 @@
 
 .date-range {
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    width: 100%;
     height: 100%;
+    overflow: auto;
 
-    .date-input {
-        width: 100%;
-    }
+    .to, .from {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        padding: 0 $spacing-small;
 
-    .to {
-        padding: $spacing-extra-small $spacing-small;
+        .label {
+            flex-shrink: 0;
+            padding-right: $spacing-small;
+            width: 32px;
+        }
+
+        .date-input {
+            flex-grow: 1;
+        }
+
     }
 }

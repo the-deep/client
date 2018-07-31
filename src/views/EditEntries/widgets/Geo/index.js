@@ -71,6 +71,7 @@ export default class GeoWidget extends React.PureComponent {
 
         return (
             <GeoInput
+                className={styles.geoInput}
                 faramElementName="value"
                 geoOptionsByRegion={geoOptions}
                 regions={projectDetails.regions}

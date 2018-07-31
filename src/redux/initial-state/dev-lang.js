@@ -502,6 +502,7 @@ const initialDevLangState = {
         1000: 'to',
         1001: 'Max value',
         1002: 'Min value',
+        1009: 'from',
         1200: 'User',
         1206: 'Search gallery files',
         1209: 'Loading file',
@@ -1312,6 +1313,7 @@ const initialDevLangState = {
         },
         'editEntry.widgets': {
             dateRangeToLabel: 1000,
+            dateRangeFromLabel: 1009,
         },
         editAssessment: {
             metadataTabLabel: 7001,

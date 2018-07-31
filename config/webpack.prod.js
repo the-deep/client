@@ -32,6 +32,13 @@ module.exports = (env) => {
             sourceMapFilename: 'sourcemaps/[file].map',
         },
 
+        resolve: {
+            alias: {
+                'base-scss': path.resolve(appBase, 'src/stylesheets/'),
+                'rs-scss': path.resolve(appBase, 'src/vendor/react-store/stylesheets/'),
+            },
+        },
+
         mode: 'production',
         devtool: 'source-map',
         optimization: {

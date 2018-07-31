@@ -7,8 +7,8 @@ import {
     deeplEndPoint,
 } from '#config/rest';
 
-export const urlForNer = `${deeplEndPoint}/api/ner/`;
-export const urlForFeedback = `${deeplEndPoint}/api/v2/recommendation/`;
+export const urlForNer = `${deeplEndPoint}/api/ner/?case=snakecase`;
+export const urlForFeedback = `${deeplEndPoint}/api/v2/recommendation/?case=snakecase`;
 
 export const createParamsForNer = text => ({
     method: POST,
@@ -18,7 +18,7 @@ export const createParamsForNer = text => ({
     }),
 });
 
-export const urlForLeadClassify = `${deeplEndPoint}/api/v2/classify/`;
+export const urlForLeadClassify = `${deeplEndPoint}/api/v2/classify/?case=snakecase`;
 
 // TODO: remove these fake endpoints
 const isProjectTest = (project) => {
@@ -28,23 +28,29 @@ const isProjectTest = (project) => {
     return false;
 };
 export const createUrlForLeadTopicModeling = (project, isFilter) =>
-    `${deeplEndPoint}/api/topic-modeling/?test=${isProjectTest(project)}&filter=${isFilter}`;
+    `${deeplEndPoint}/api/topic-modeling/?test=${isProjectTest(project)}&filter=${isFilter}&case=snakecase`;
 export const createUrlForLeadTopicCorrelation = (project, isFilter) =>
-    `${deeplEndPoint}/api/subtopics/correlation/?test=${isProjectTest(project)}&filter=${isFilter}`;
+    `${deeplEndPoint}/api/subtopics/correlation/?test=${isProjectTest(project)}&filter=${isFilter}&case=snakecase`;
 export const createUrlForLeadNerDocsId = (project, isFilter) =>
-    `${deeplEndPoint}/api/ner-docs/?test=${isProjectTest(project)}&filter=${isFilter}`;
+    `${deeplEndPoint}/api/ner-docs/?test=${isProjectTest(project)}&filter=${isFilter}&case=snakecase`;
 export const createUrlForLeadKeywordCorrelation = (project, isFilter) =>
-    `${deeplEndPoint}/api/keywords/correlation/?test=${isProjectTest(project)}&filter=${isFilter}`;
+    `${deeplEndPoint}/api/keywords/correlation/?test=${isProjectTest(project)}&filter=${isFilter}&case=snakecase`;
 
-// export const urlForLeadTopicModeling = `${deeplEndPoint}/api/topic-modeling/`;
-// export const urlForLeadTopicCorrelation = `${deeplEndPoint}/api/subtopics/correlation/`;
-// export const urlForLeadNerDocsId = `${deeplEndPoint}/api/ner-docs/`;
-// export const urlForLeadKeywordCorrelation = `${deeplEndPoint}/api/keywords/correlation/`;
+/*
+export const urlForLeadTopicModeling =
+    `${deeplEndPoint}/api/topic-modeling/?case=snakecase`;
+export const urlForLeadTopicCorrelation
+    = `${deeplEndPoint}/api/subtopics/correlation/?case=snakecase`;
+export const urlForLeadNerDocsId
+    = `${deeplEndPoint}/api/ner-docs/?case=snakecase`;
+export const urlForLeadKeywordCorrelation
+    = `${deeplEndPoint}/api/keywords/correlation/?case=snakecase`;
+*/
 
 // endpoint for project clustering
-export const createUrlForProjectClusterData = modelId => `${deeplEndPoint}/api/cluster-data/?cluster_model_id=${modelId}`;
+export const createUrlForProjectClusterData = modelId => `${deeplEndPoint}/api/cluster-data/?cluster_model_id=${modelId}&case=snakecase`;
 
-export const createUrlForInitClusterRequest = `${deeplEndPoint}/api/cluster/`;
+export const createUrlForInitClusterRequest = `${deeplEndPoint}/api/cluster/?case=snakecase`;
 
 export const createParamsForProjectClusterData = () => ({
     method: GET,

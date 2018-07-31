@@ -2,6 +2,7 @@ import React from 'react';
 // import PropTypes from 'prop-types';
 
 import DateInput from '#rsci/DateInput';
+import Label from '#rsci/Label';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -20,21 +21,32 @@ export default class DateRangeWidget extends React.PureComponent {
     render() {
         return (
             <div className={styles.dateRange}>
-                <DateInput
-                    className={styles.dateInput}
-                    faramElementName="fromValue"
-                    showLabel={false}
-                    showHintAndError={false}
-                />
-                <span className={styles.to}>
-                    {_ts('editEntry.widgets', 'dateRangeToLabel')}
-                </span>
-                <DateInput
-                    className={styles.dateInput}
-                    faramElementName="toValue"
-                    showLabel={false}
-                    showHintAndError={false}
-                />
+                <div className={styles.to}>
+                    <Label
+                        text={_ts('editEntry.widgets', 'dateRangeFromLabel')}
+                        className={styles.label}
+                        show
+                    />
+                    <DateInput
+                        className={styles.dateInput}
+                        faramElementName="fromValue"
+                        showLabel={false}
+                        showHintAndError={false}
+                    />
+                </div>
+                <div className={styles.from}>
+                    <Label
+                        text={_ts('editEntry.widgets', 'dateRangeToLabel')}
+                        className={styles.label}
+                        show
+                    />
+                    <DateInput
+                        className={styles.dateInput}
+                        faramElementName="toValue"
+                        showLabel={false}
+                        showHintAndError={false}
+                    />
+                </div>
             </div>
         );
     }
