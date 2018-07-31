@@ -10,7 +10,7 @@ import reducers, {
 } from './analysisFramework';
 
 
-test('should set analaysis framework', () => {
+test('should set analysis framework', () => {
     const state = {
         analysisFrameworkView: { },
     };
@@ -20,52 +20,20 @@ test('should set analaysis framework', () => {
     });
     const after = {
         analysisFrameworkView: {
-            analysisFramework: { id: 1 },
+            1: {
+                id: 1,
+                pristine: true,
+            },
         },
     };
 
     expect(reducers[AF__SET_ANALYSIS_FRAMEWORK](state, action)).toEqual(after);
 });
 
-test('should skip adding widget', () => {
-    const state = {
-        analysisFrameworkView: { },
-    };
-
-    const action = addAfViewWidgetAction({
-        widget: { key: '1', name: 'widget1' },
-        analysisFrameworkId: 1,
-    });
-    const after = {
-        analysisFrameworkView: {
-        },
-    };
-    expect(reducers[AF__VIEW_ADD_WIDGET](state, action)).toEqual(after);
-});
-
-test('should skip adding widget', () => {
-    const state = {
-        analysisFrameworkView: {
-            analysisFramework: {},
-        },
-    };
-
-    const action = addAfViewWidgetAction({
-        widget: { key: '1', name: 'widget1' },
-        analysisFrameworkId: 1,
-    });
-    const after = {
-        analysisFrameworkView: {
-            analysisFramework: {},
-        },
-    };
-    expect(reducers[AF__VIEW_ADD_WIDGET](state, action)).toEqual(after);
-});
-
 test('should add widget', () => {
     const state = {
         analysisFrameworkView: {
-            analysisFramework: { id: 1 },
+            1: { id: 1 },
         },
     };
 
@@ -75,9 +43,16 @@ test('should add widget', () => {
     });
     const after = {
         analysisFrameworkView: {
-            analysisFramework: {
+            1: {
                 id: 1,
-                widgets: [{ key: '1', name: 'widget1', properties: {} }],
+                widgets: [
+                    {
+                        key: '1',
+                        name: 'widget1',
+                        properties: {},
+                    },
+                ],
+                pristine: false,
             },
         },
     };
@@ -87,7 +62,7 @@ test('should add widget', () => {
 test('should remove widget', () => {
     const state = {
         analysisFrameworkView: {
-            analysisFramework: {
+            1: {
                 id: 1,
                 widgets: [
                     { key: '1', name: 'widget1' },
@@ -102,11 +77,12 @@ test('should remove widget', () => {
     });
     const after = {
         analysisFrameworkView: {
-            analysisFramework: {
+            1: {
                 id: 1,
                 widgets: [
                     { key: '1', name: 'widget1' },
                 ],
+                pristine: false,
             },
         },
     };
@@ -116,7 +92,7 @@ test('should remove widget', () => {
 test('should update widget', () => {
     const state = {
         analysisFrameworkView: {
-            analysisFramework: {
+            1: {
                 id: 1,
                 widgets: [
                     { key: '1', name: 'widget1' },
@@ -131,42 +107,13 @@ test('should update widget', () => {
     });
     const after = {
         analysisFrameworkView: {
-            analysisFramework: {
+            1: {
                 id: 1,
                 widgets: [
                     { key: '1', name: 'widget3' },
                     { key: '2', name: 'widget2' },
                 ],
-            },
-        },
-    };
-    expect(reducers[AF__VIEW_UPDATE_WIDGET](state, action)).toEqual(after);
-});
-
-test('should skip updating widget', () => {
-    const state = {
-        analysisFrameworkView: {
-            analysisFramework: {
-                id: 1,
-                widgets: [
-                    { key: '1', name: 'widget1' },
-                    { key: '2', name: 'widget2' },
-                ],
-            },
-        },
-    };
-    const action = updateAfViewWidgetAction({
-        widget: { key: '3', name: 'widget3' },
-        analysisFrameworkId: 1,
-    });
-    const after = {
-        analysisFrameworkView: {
-            analysisFramework: {
-                id: 1,
-                widgets: [
-                    { key: '1', name: 'widget1' },
-                    { key: '2', name: 'widget2' },
-                ],
+                pristine: false,
             },
         },
     };
