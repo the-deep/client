@@ -115,7 +115,16 @@ export default class PasswordReset extends React.PureComponent {
             .failure((response) => {
                 console.info('FAILURE:', response);
                 const faramErrors = alterResponseErrorToFaramError(response.errors);
-                this.setState({ faramErrors });
+                if (response.errorCode === 4004) {
+                    this.setState({
+                        faramErrors: {
+                            ...faramErrors,
+                            $internal: [_ts('passwordReset', 'retryRecaptcha')],
+                        },
+                    });
+                } else {
+                    this.setState({ faramErrors });
+                }
             })
             .fatal((response) => {
                 console.info('FATAL:', response);

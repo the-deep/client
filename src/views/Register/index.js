@@ -136,9 +136,18 @@ export default class Register extends React.PureComponent {
             .failure((response) => {
                 console.info('FAILURE:', response);
                 const faramErrors = alterResponseErrorToFaramError(response.errors);
-                // NOTE: server uses username, client side uses email
-                faramErrors.email = faramErrors.username;
-                this.setState({ faramErrors });
+                if (response.errorCode === 4004) {
+                    this.setState({
+                        faramErrors: {
+                            ...faramErrors,
+                            $internal: [_ts('register', 'retryRecaptcha')],
+                        },
+                    });
+                } else {
+                    // NOTE: server uses username, client side uses email
+                    faramErrors.email = faramErrors.username;
+                    this.setState({ faramErrors });
+                }
             })
             .fatal((response) => {
                 console.info('FATAL:', response);
