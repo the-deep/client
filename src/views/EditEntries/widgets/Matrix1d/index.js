@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import Matrix1dInput from '#widgetComponents/Matrix1dInput';
 
+import styles from './styles.scss';
+
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     widget: PropTypes.object.isRequired,
@@ -27,6 +29,7 @@ export default class Matrix1dOverviewWidget extends React.PureComponent {
 
         return (
             <Matrix1dInput
+                className={styles.input}
                 faramElementName="value"
                 options={options}
             />

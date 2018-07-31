@@ -9,6 +9,7 @@ import Row from './Row';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     options: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
@@ -16,6 +17,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     options: [],
     value: undefined,
     disabled: false,
@@ -71,11 +73,14 @@ class Matrix1dInput extends React.PureComponent {
     })
 
     render() {
-        const { options } = this.props;
+        const {
+            options,
+            className,
+        } = this.props;
 
         return (
             <ListView
-                className={styles.overview}
+                className={`${styles.overview} ${className}`}
                 data={options}
                 keyExtractor={Matrix1dInput.rowKeyExtractor}
                 renderer={Row}
