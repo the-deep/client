@@ -1,5 +1,4 @@
 import update from '#rsu/immutable-update';
-import { isEqualAndTruthy } from '#rsu/common';
 
 // TYPE
 
@@ -60,8 +59,6 @@ export const updateAfViewWidgetLayoutAction = ({
 
 // HELPER
 
-const isAnalysisFrameworkValid = (af = {}, id) => isEqualAndTruthy(id, af.id);
-
 const getWidgetKey = widget => widget.key;
 
 // REDUCER
@@ -86,10 +83,6 @@ const afViewSetAnalysisFramework = (state, action) => {
 
 const afViewAddWidget = (state, action) => {
     const { analysisFrameworkId, widget } = action;
-    const { analysisFrameworkView: { [analysisFrameworkId]: analysisFramework } } = state;
-    if (!isAnalysisFrameworkValid(analysisFramework, analysisFrameworkId)) {
-        return state;
-    }
 
     const settings = {
         analysisFrameworkView: {
@@ -97,6 +90,7 @@ const afViewAddWidget = (state, action) => {
                 widgets: {
                     $autoArray: { $push: [widget] },
                 },
+                pristine: { $set: false },
             },
         },
     };
@@ -105,11 +99,6 @@ const afViewAddWidget = (state, action) => {
 
 const afViewRemoveWidget = (state, action) => {
     const { analysisFrameworkId, widgetId } = action;
-    const { analysisFrameworkView: { [analysisFrameworkId]: analysisFramework } } = state;
-
-    if (!isAnalysisFrameworkValid(analysisFramework, analysisFrameworkId)) {
-        return state;
-    }
 
     const settings = {
         analysisFrameworkView: {
@@ -125,10 +114,6 @@ const afViewRemoveWidget = (state, action) => {
 const afViewUpdateWidget = (state, action) => {
     const { analysisFrameworkId, widget } = action;
     const { analysisFrameworkView: { [analysisFrameworkId]: analysisFramework } } = state;
-
-    if (!isAnalysisFrameworkValid(analysisFramework, analysisFrameworkId)) {
-        return state;
-    }
 
     const existingWidgets = analysisFramework.widgets;
     const widgetIndex = existingWidgets.findIndex(w => getWidgetKey(w) === widget.key);
@@ -160,9 +145,6 @@ const afViewUpdateWidgetLayout = (state, action) => {
     } = action;
 
     const { analysisFrameworkView: { [analysisFrameworkId]: analysisFramework } } = state;
-    if (!isAnalysisFrameworkValid(analysisFramework, analysisFrameworkId)) {
-        return state;
-    }
 
     const existingWidgets = analysisFramework.widgets;
     const widgetIndex = existingWidgets.findIndex(w => getWidgetKey(w) === widgetKey);
@@ -187,6 +169,7 @@ const afViewUpdateWidgetLayout = (state, action) => {
                         },
                     },
                 },
+                pristine: { $set: false },
             },
         },
     };
