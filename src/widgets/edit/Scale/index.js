@@ -3,6 +3,8 @@ import React from 'react';
 
 import Faram, {
     requiredCondition,
+    createBooleanFold,
+    createBooleanUnfold,
 } from '#rsci/Faram';
 import FaramList from '#rsci/Faram/FaramList';
 import NonFieldErrors from '#rsci/NonFieldErrors';
@@ -40,6 +42,9 @@ export default class ScaleFrameworkList extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static keyExtractor = scaleUnit => scaleUnit.key;
+
+    static foldScaleUnits = createBooleanFold(ScaleFrameworkList.keyExtractor)
+    static unfoldScaleUnits = createBooleanUnfold(ScaleFrameworkList.keyExtractor)
 
     static rendererParams = (key, elem, i) => ({
         index: i,
@@ -90,13 +95,11 @@ export default class ScaleFrameworkList extends React.PureComponent {
             title,
             data: {
                 scaleUnits = emptyList,
-                value: defaultScaleUnit,
             },
         } = props;
 
         this.state = {
             // TODO: Implement defaultScaleUnit
-            defaultScaleUnit,
             faramValues: {
                 title,
                 scaleUnits,
@@ -107,6 +110,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
     }
 
     handleFaramChange = (faramValues, faramErrors) => {
+        console.warn(faramValues);
         this.setState({
             faramValues,
             faramErrors,
@@ -164,7 +168,12 @@ export default class ScaleFrameworkList extends React.PureComponent {
                             selectOnFocus
                         />
                         <div className={styles.scaleUnits}>
-                            <FaramList faramElementName="scaleUnits">
+                            <FaramList
+                                faramElementName="scaleUnits"
+                                faramFoldKey="default"
+                                faramFold={ScaleFrameworkList.foldScaleUnits}
+                                faramUnfold={ScaleFrameworkList.unfoldScaleUnits}
+                            >
                                 <NonFieldErrors
                                     className={styles.nonFieldErrors}
                                     faramElement
