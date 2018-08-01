@@ -113,6 +113,7 @@ export default class UserEdit extends React.PureComponent {
             setUserInformation: this.props.setUserInformation,
             handleModalClose: this.props.handleModalClose,
             setState: v => this.setState(v),
+            previousUserData: this.props.userInformation,
         });
         this.userPatchRequest = userPatchRequest.create(userId, values);
         this.userPatchRequest.start();

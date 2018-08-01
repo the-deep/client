@@ -25,9 +25,14 @@ export default class UserPatchRequest {
                 this.props.setState({ pending: false });
             })
             .success((response) => {
+                const {
+                    setUserInformation,
+                    previousUserData = {},
+                } = this.props;
+
                 try {
                     schema.validate(response, 'userPatchResponse');
-                    this.props.setUserInformation({
+                    setUserInformation({
                         userId,
                         information: response,
                     });
@@ -38,6 +43,9 @@ export default class UserPatchRequest {
                         duration: notify.duration.MEDIUM,
                     });
                     this.props.handleModalClose();
+                    if (response.language !== previousUserData.language) {
+                        window.location.reload();
+                    }
                 } catch (er) {
                     console.error(er);
                 }
