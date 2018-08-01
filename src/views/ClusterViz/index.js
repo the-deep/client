@@ -8,6 +8,8 @@ import { Link } from 'react-router-dom';
 import BoundError from '#rscg/BoundError';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
+import Table from '#rscv/Table';
+import FormattedDate from '#rscv/FormattedDate';
 import ForceDirectedGraph from '#rscz/NewForceDirectedGraph';
 import wrapViz from '#rscz/VizWrapper';
 
@@ -16,6 +18,7 @@ import {
     mapToList,
     groupList,
 } from '#rsu/common';
+import Cloak from '#components/Cloak';
 
 import VizError from '#components/VizError';
 import AppError from '#components/AppError';
@@ -28,7 +31,10 @@ import {
     projectIdFromRouteSelector,
     setProjectClusterDataAction,
 } from '#redux';
-import { pathNames } from '#constants/';
+import {
+    iconNames,
+    pathNames,
+} from '#constants';
 
 import ProjectClusterDataRequest from './requests/ProjectClusterDataRequest';
 import InitProjectClusterRequest from './requests/InitProjectClusterRequest';
@@ -72,44 +78,45 @@ export default class ClusterViz extends PureComponent {
     static idAccessor = d => d.id;
     static groupAccessor = d => d.group;
     static valueAccessor = d => d.value;
+    static labelAccessor = d => d.title;
 
     static getTableKey = data => data.id;
-    static keywordTableKeyExtractor = row => row.value;
-    static documentTableKeyExtractor = row => row.id;
+    static leadsTableKeyExtractor = row => row.id;
 
     static calculateNodesAndLinks = (projectClusterData) => {
         const keywords = projectClusterData.keywords || [];
         const documents = projectClusterData.documents || [];
 
-        const clusterGroup = groupList(keywords, d => d.cluster);
+        const keywordGroup = groupList(keywords, d => d.cluster);
 
-        const nodes = keywords.map(cluster => ({
-            id: cluster.value + cluster.cluster,
-            label: cluster.value,
-            group: cluster.cluster,
-            radius: cluster.score,
-        }));
+        const documentGroup = Object.keys(documents).map(key => (
+            documents[key].map(doc => (
+                { ...doc, group: key }
+            ))
+        ));
+        const nodes = [].concat(...documentGroup);
 
-        const maxNodes = Object.entries(clusterGroup)
+        const max = Object.entries(documents)
             .map(([key, value]) => ({
-                id: key,
-                node: ClusterViz.getMaxNode(value),
+                group: key,
+                node: value[0] || {},
             }));
 
         const mappingFn = ([key, value]) => {
-            const target = maxNodes.find(node => node.id === key) || {};
-            const source = value.filter(node => (target.node || {}).value !== node.value);
+            const target = max.find(node => node.group === key) || {};
+            const source = value.filter(node => (target.node || {}).id !== node.id);
+
             return source.map(node => ({
-                source: node.value + node.cluster,
-                target: target.node.value + target.node.cluster,
+                source: node.id,
+                target: target.node.id,
                 value: 1,
             }));
         };
 
         // NOTE: Unflatten array using Array.concat(...arrayOfArray)
-        const links = [].concat(...Object.entries(clusterGroup).map(mappingFn));
+        const links = [].concat(...Object.entries(documentGroup).map(mappingFn));
         const clusterGroupList = mapToList(
-            clusterGroup,
+            keywordGroup,
             (data, key) => (
                 {
                     id: key,
@@ -129,7 +136,56 @@ export default class ClusterViz extends PureComponent {
             createClusterPending: true,
             clusterDataPending: true,
             highlightClusterId: undefined,
+            highlightTableId: undefined,
         };
+
+        this.leadsTableHeader = [
+            {
+                key: 'title',
+                label: _ts('clusterViz', 'leadsTableTitle'),
+                order: 1,
+            },
+            {
+                key: 'createdAt',
+                label: _ts('clusterViz', 'leadsTableCreatedAt'),
+                order: 2,
+                modifier: row => (
+                    <FormattedDate
+                        date={row.createdAt}
+                        mode="dd-MM-yyyy"
+                    />
+                ),
+            },
+            {
+                key: 'actions',
+                label: _ts('clusterViz', 'leadsTableActions'),
+                order: 3,
+                modifier: (row) => {
+                    const editEntries = reverseRoute(
+                        pathNames.editEntries,
+                        {
+                            projectId: this.props.activeProject,
+                            leadId: row.id,
+                        },
+                    );
+                    return (
+                        <Cloak
+                            hide={({ hasAnalysisFramework }) => !hasAnalysisFramework}
+                            render={({ disabled }) => (
+                                <Link
+                                    className={`${styles.addEntryLink} link ${disabled ? styles.disabled : ''}`}
+                                    title={_ts('clusterViz', 'addEntryFromLeadButtonTitle')}
+                                    to={editEntries}
+                                    disabled={disabled}
+                                >
+                                    <i className={iconNames.forward} />
+                                </Link>
+                            )}
+                        />
+                    );
+                },
+            },
+        ];
 
         this.container = React.createRef();
     }
@@ -260,20 +316,29 @@ export default class ClusterViz extends PureComponent {
         }
     }
 
-    handleKeywordMouseOver = (keyword) => {
-        this.setState({ highlightClusterId: keyword });
-    }
-
-    handleKeywordMouseOut = () => {
-        this.setState({ highlightClusterId: undefined });
-    }
-
     handleMouseOver = (d) => {
-        this.setState({ activeCluster: d });
+        this.setState({
+            activeCluster: d,
+            highlightTableId: d.id,
+        });
     }
 
     handleMouseOut = () => {
-        this.setState({ activeCluster: undefined });
+        this.setState({
+            activeCluster: undefined,
+            highlightTableId: undefined,
+        });
+    }
+
+    handleTableHover = (rowKey) => {
+        this.setState({ highlightClusterId: rowKey });
+    }
+
+    handleTableHoverOut = () => {
+        this.setState({
+            highlightClusterId: undefined,
+            highlightTableId: undefined,
+        });
     }
 
     renderKeyword = (_, cluster) => {
@@ -294,13 +359,9 @@ export default class ClusterViz extends PureComponent {
             classNames.push(styles.active);
         }
 
-        const handleKeywordMouseOver = () => { this.handleKeywordMouseOver(keywordId); };
-
         return (
             // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
             <div
-                onMouseOver={handleKeywordMouseOver}
-                onMouseOut={this.handleKeywordMouseOut}
                 key={keyword}
                 className={classNames.join(' ')}
             >
@@ -309,25 +370,12 @@ export default class ClusterViz extends PureComponent {
         );
     }
 
-    renderLead = (_, lead) => {
-        const {
-            title,
-            id,
-        } = lead;
-
-        return (
-            <div
-                key={id}
-                className={styles.lead}
-                title={title}
-            >
-                { title }
-            </div>
-        );
-    }
-
     renderClusterDetail = (key, data) => {
-        const { activeCluster } = this.state;
+        const {
+            activeCluster,
+            highlightTableId,
+        } = this.state;
+
         const isActive = activeCluster && String(activeCluster.group) === String(data.id);
 
         const className = this.getClusterDetailClassName(isActive);
@@ -364,6 +412,16 @@ export default class ClusterViz extends PureComponent {
             </div>
         );
 
+        const handleHover = (rowKey) => {
+            const hoverLead = documents.find(d => d.id === rowKey) || {};
+            const highlightClusterId = `${hoverLead.id}-${data.id}`;
+
+            this.setState({
+                highlightClusterId,
+                highlightTableId: rowKey,
+            });
+        };
+
         return (
             <div
                 className={className}
@@ -391,10 +449,14 @@ export default class ClusterViz extends PureComponent {
                     <h5 className={styles.heading}>
                         {_ts('clusterViz', 'leadsTitle')}
                     </h5>
-                    <ListView
+                    <Table
+                        className={styles.leadsTable}
                         data={documents}
-                        className={styles.leads}
-                        modifier={this.renderLead}
+                        headers={this.leadsTableHeader}
+                        onBodyHover={handleHover}
+                        onBodyHoverOut={this.handleTableHoverOut}
+                        highlightRowKey={highlightTableId}
+                        keyExtractor={ClusterViz.leadsTableKeyExtractor}
                         emptyComponent={leadsEmptyComponent}
                     />
                 </div>
@@ -439,6 +501,7 @@ export default class ClusterViz extends PureComponent {
                         idAccessor={ClusterViz.idAccessor}
                         groupAccessor={ClusterViz.groupAccessor}
                         valueAccessor={ClusterViz.valueAccessor}
+                        labelAccessor={ClusterViz.labelAccessor}
                         highlightClusterId={highlightClusterId}
                         useVoronoi
                         headerText={
@@ -448,8 +511,8 @@ export default class ClusterViz extends PureComponent {
                                 { noOfClusters: this.noOfClusters, noOfLeads: this.noOfLeads },
                             )
                         }
-                        onMouseOver={d => this.handleMouseOver(d)}
-                        onMouseOut={() => this.handleMouseOut}
+                        onMouseOver={this.handleMouseOver}
+                        onMouseOut={this.handleMouseOut}
                         clusterSize={clusterSize}
                         onClusterSizeChange={this.handleClusterSizeChange}
                     />

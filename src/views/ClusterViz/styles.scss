@@ -1,6 +1,7 @@
 @import '~base-scss/base';
 $table-width: 400px;
 $width-cluster-details: 420px;
+$height-cluster-header: 36px;
 
 .cluster {
     @extend %main-content;
@@ -25,9 +26,20 @@ $width-cluster-details: 420px;
 
         .forced-directed-graph {
             flex-grow: 1;
-            background-color: $color-foreground-alt;
+            background-color: $color-foreground;
             height: auto;
             overflow: auto;
+        }
+
+        .add-entry-link {
+            display: inline-block;
+            transition: $duration-transition-medium background-color ease-in-out, $duration-transition-medium color ease-in-out;
+            padding: $spacing-extra-small $spacing-small;
+            color: $color-accent;
+
+            &.disabled {
+                pointer-events: none;
+            }
         }
 
         .cluster-details {
@@ -38,8 +50,7 @@ $width-cluster-details: 420px;
 
             .cluster-detail {
                 transition: $duration-transition-medium border-color ease-in-out;
-                // border: $width-separator-thin solid transparent;
-                border-bottom-color: $color-separator;
+                border-bottom: $width-separator-thin solid $color-separator;
                 background-color: $color-foreground;
 
                 .header {
@@ -49,6 +60,7 @@ $width-cluster-details: 420px;
                     border-bottom: $width-separator-thin solid $color-separator;
                     background-color: $color-background-header;
                     padding: $spacing-small-alt 0;
+                    height: $height-cluster-header;
 
                     >.heading {
                         flex-grow: 1;
@@ -85,18 +97,45 @@ $width-cluster-details: 420px;
                         .keyword {
                             transition: $duration-transition-medium border-color, $duration-transition-medium color;
                             border: $width-separator-thin solid transparent;
-                            cursor: pointer;
                             padding: $spacing-extra-small $spacing-small;
                             font-family: $font-family-monospace;
 
                             &:not(:last-child):after {
                                 content: ',';
                             }
+                        }
+                    }
+                }
 
-                            &.active,
-                            &:hover {
-                                border-color: $color-accent;
-                                color: $color-accent;
+                .leads-table {
+                    :global {
+                        .header {
+                            top: $height-cluster-header;
+                            background-color: $color-foreground;
+                        }
+                        .body {
+                            .row {
+                                background-color: $color-foreground-alt;
+                                border-bottom: $width-separator-thin solid $color-separator;
+                                cursor: pointer;
+
+                                &:nth-child(odd) {
+                                    background-color: $color-foreground-alt;
+                                }
+
+                                &.highlighted {
+                                    background-color: $color-accent;
+
+                                    .link {
+                                        color: get-text-color($color-accent);
+                                    }
+                                }
+
+                                .cell {
+                                    &.createdAt {
+                                        white-space: nowrap;
+                                    }
+                                }
                             }
                         }
                     }
@@ -109,16 +148,8 @@ $width-cluster-details: 420px;
                         font-weight: $font-weight-bold;
                     }
 
-                    .leads {
-                        padding-bottom: $spacing-medium;
-
-                        .lead {
-                            padding: $spacing-extra-small-alt $spacing-small;
-                        }
-
-                        .leads-empty {
-                            padding: 0 $spacing-small;
-                        }
+                    .leads-empty {
+                        padding: 0 $spacing-small;
                     }
                 }
 
