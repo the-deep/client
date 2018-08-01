@@ -69,6 +69,9 @@ export default class EditAdminLevel extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static keySelector = row => row.id;
+    static labelSelector = row => row.title;
+
     constructor(props) {
         super(props);
 
@@ -111,12 +114,8 @@ export default class EditAdminLevel extends React.PureComponent {
         }
     }
 
-    keySelector = row => row.id
-    labelSelector = row => row.title
-
     calculateOtherAdminLevels = adminLevels => adminLevels.filter(adminLevel => (
-        adminLevel.id !== this.props.adminLevelDetail.id &&
-        adminLevel.parent !== this.props.adminLevelDetail.id
+        adminLevel.id !== this.props.adminLevelDetail.id
     ))
 
     createAlForRegionUpdateRequest = (data, adminLevelId) => {
@@ -242,7 +241,10 @@ export default class EditAdminLevel extends React.PureComponent {
         if (adminLevelId) {
             // UPDATE
             this.requestForAlForRegion = this.createAlForRegionUpdateRequest(
-                { ...values, region: countryId },
+                {
+                    ...values,
+                    region: countryId,
+                },
                 adminLevelId,
             );
         } else {
@@ -365,8 +367,8 @@ export default class EditAdminLevel extends React.PureComponent {
                             className={styles.textInput}
                         />
                         <SelectInput
-                            keySelector={this.keySelector}
-                            labelSelector={this.labelSelector}
+                            keySelector={EditAdminLevel.keySelector}
+                            labelSelector={EditAdminLevel.labelSelector}
                             options={adminLevelsOfRegion}
                             showHintAndError={false}
                             faramElementName="parent"
