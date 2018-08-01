@@ -14,10 +14,13 @@ import SelectInput from '#rsci/SelectInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ImageInput from '#rsci/FileInput/ImageInput';
 import TextInput from '#rsci/TextInput';
+import Checkbox from '#rsci/Checkbox';
 import HiddenInput from '#rsci/HiddenInput';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+
+import { iconNames } from '#constants';
 
 import {
     setUserInformationAction,
@@ -42,8 +45,7 @@ const propTypes = {
     availableLanguages: PropTypes.array.isRequired,
 };
 
-const defaultProps = {
-};
+const defaultProps = {};
 
 const mapStateToProps = state => ({
     availableLanguages: availableLanguagesSelector(state),
@@ -60,6 +62,16 @@ export default class UserEdit extends React.PureComponent {
 
     static keySelector = d => d.code;
     static labelSelector = d => d.title;
+    static schema = {
+        fields: {
+            firstName: [requiredCondition],
+            lastName: [requiredCondition],
+            organization: [requiredCondition],
+            receiveEmail: [],
+            displayPicture: [],
+            language: [],
+        },
+    };
 
     constructor(props) {
         super(props);
@@ -70,16 +82,6 @@ export default class UserEdit extends React.PureComponent {
             pending: false,
             pristine: false,
             showGalleryImage: true,
-        };
-
-        this.schema = {
-            fields: {
-                firstName: [requiredCondition],
-                lastName: [requiredCondition],
-                organization: [requiredCondition],
-                displayPicture: [],
-                language: [],
-            },
         };
     }
 
@@ -184,7 +186,7 @@ export default class UserEdit extends React.PureComponent {
                 onChange={this.handleFaramChange}
                 onValidationSuccess={this.handleFaramValidationSuccess}
                 onValidationFailure={this.handleFaramValidationFailure}
-                schema={this.schema}
+                schema={UserEdit.schema}
                 value={faramValues}
                 error={faramErrors}
                 disabled={pending}
@@ -233,6 +235,17 @@ export default class UserEdit extends React.PureComponent {
                     // FIXME: Use strings
                     placeholder="Default"
                 />
+                <div className={styles.receiveEmail}>
+                    <Checkbox
+                        className={styles.checkbox}
+                        label={_ts('userProfile', 'receiveEmailLabel')}
+                        faramElementName="receiveEmail"
+                    />
+                    <span
+                        className={`${iconNames.help} ${styles.info}`}
+                        title={_ts('userProfile', 'receiveEmailInfo')}
+                    />
+                </div>
                 <div className={styles.actionButtons}>
                     <DangerButton onClick={this.handleFaramClose}>
                         {_ts('userProfile', 'modalCancel')}

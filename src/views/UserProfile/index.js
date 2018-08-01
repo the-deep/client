@@ -41,8 +41,7 @@ const propTypes = {
     userId: PropTypes.number.isRequired,
 };
 
-const defaultProps = {
-};
+const defaultProps = {};
 
 
 const mapStateToProps = (state, props) => ({
