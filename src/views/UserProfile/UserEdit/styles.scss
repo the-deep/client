@@ -38,7 +38,7 @@
     }
 
     .display-picture {
-        :global { 
+        :global {
             .image-input-preview {
                 height: 200px;
             }
@@ -51,20 +51,6 @@
 
         button {
             margin-left: $spacing-medium;
-        }
-    }
-
-    .receive-email {
-        display: flex;
-        justify-content: flex-start;
-
-        .checkbox {
-            width: auto;
-        }
-
-        .info {
-            color: $color-primary;
-            padding: 0 $spacing-small;
         }
     }
 }

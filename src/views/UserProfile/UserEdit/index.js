@@ -14,13 +14,12 @@ import SelectInput from '#rsci/SelectInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ImageInput from '#rsci/FileInput/ImageInput';
 import TextInput from '#rsci/TextInput';
-import Checkbox from '#rsci/Checkbox';
 import HiddenInput from '#rsci/HiddenInput';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-
-import { iconNames } from '#constants';
+import { NormalListSelection } from '#rsci/ListSelection';
+import Complement from '#rscg/Complement';
 
 import {
     setUserInformationAction,
@@ -32,6 +31,8 @@ import notify from '#notify';
 import UserPatchRequest from '../requests/UserPatchRequest';
 import UserImageUploadRequest from '../requests/UserImageUploadRequest';
 import styles from './styles.scss';
+
+const ListSelection = Complement(NormalListSelection);
 
 const propTypes = {
     userId: PropTypes.oneOfType([
@@ -55,19 +56,24 @@ const mapDispatchToProps = dispatch => ({
     setUserInformation: params => dispatch(setUserInformationAction(params)),
 });
 
+
 @connect(mapStateToProps, mapDispatchToProps)
 export default class UserEdit extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keySelector = d => d.code;
-    static labelSelector = d => d.title;
+    static languageKeySelector = d => d.code;
+    static languageLabelSelector = d => d.title;
+
+    static emailOptOutsKeySelector = d => d.key;
+    static emailOptOutsLabelSelector = d => d.info;
+
     static schema = {
         fields: {
             firstName: [requiredCondition],
             lastName: [requiredCondition],
             organization: [requiredCondition],
-            receiveEmail: [],
+            emailOptOuts: [],
             displayPicture: [],
             language: [],
         },
@@ -75,6 +81,11 @@ export default class UserEdit extends React.PureComponent {
 
     constructor(props) {
         super(props);
+
+        this.emailOptOutsOptions = [
+            { key: 'news_and_updates', info: _ts('userProfile', 'newsAndUpdatesInfo') },
+            { key: 'join_requests', info: _ts('userProfile', 'joinRequestsInfo') },
+        ];
 
         this.state = {
             faramErrors: {},
@@ -227,25 +238,20 @@ export default class UserEdit extends React.PureComponent {
                 />
                 <SelectInput
                     faramElementName="language"
-                    keySelector={UserEdit.keySelector}
-                    labelSelector={UserEdit.labelSelector}
+                    keySelector={UserEdit.languageKeySelector}
+                    labelSelector={UserEdit.languageLabelSelector}
                     options={availableLanguages}
                     // FIXME: Use strings
                     label="Language"
                     // FIXME: Use strings
                     placeholder="Default"
                 />
-                <div className={styles.receiveEmail}>
-                    <Checkbox
-                        className={styles.checkbox}
-                        label={_ts('userProfile', 'receiveEmailLabel')}
-                        faramElementName="receiveEmail"
-                    />
-                    <span
-                        className={`${iconNames.help} ${styles.info}`}
-                        title={_ts('userProfile', 'receiveEmailInfo')}
-                    />
-                </div>
+                <ListSelection
+                    faramElementName="emailOptOuts"
+                    keySelector={UserEdit.emailOptOutsKeySelector}
+                    labelSelector={UserEdit.emailOptOutsLabelSelector}
+                    options={this.emailOptOutsOptions}
+                />
                 <div className={styles.actionButtons}>
                     <DangerButton onClick={this.handleFaramClose}>
                         {_ts('userProfile', 'modalCancel')}

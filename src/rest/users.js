@@ -42,7 +42,7 @@ export const createParamsForUserPatch = ({
     organization,
     displayPicture,
     language,
-    receiveEmail,
+    emailOptOuts,
 }) => ({
     method: PATCH,
     headers: commonHeaderForPost,
@@ -52,7 +52,7 @@ export const createParamsForUserPatch = ({
         organization,
         displayPicture,
         language,
-        receiveEmail,
+        emailOptOuts,
     }),
 });
 
