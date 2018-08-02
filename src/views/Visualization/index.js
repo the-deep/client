@@ -41,24 +41,26 @@ import streamData from './dummydata/streamData';
 
 import styles from './styles.scss';
 
-const ChordDiagramView = BoundError(VizError)(wrapViz(ChordDiagram));
-const SunBurstView = BoundError(VizError)(wrapViz(SunBurst));
-const CorrelationMatrixView = BoundError(VizError)(wrapViz(CorrelationMatrix));
-const RadialDendrogramView = BoundError(VizError)(wrapViz(RadialDendrogram));
-const TreeMapView = BoundError(VizError)(wrapViz(TreeMap));
-const ForceDirectedGraphView = BoundError(VizError)(wrapViz(ForceDirectedGraph));
-const CollapsibleTreeView = BoundError(VizError)(wrapViz(CollapsibleTree));
-const OrgChartView = BoundError(VizError)(wrapViz(OrgChart));
-const HorizontalBarView = BoundError(VizError)(wrapViz(HorizontalBar));
-const DendrogramView = BoundError(VizError)(wrapViz(Dendrogram));
-const SparkLinesView = BoundError(VizError)(wrapViz(SparkLines));
-const StackedBarChartView = BoundError(VizError)(wrapViz(StackedBarChart));
-const StreamGraphView = BoundError(VizError)(wrapViz(StreamGraph));
-const SankeyView = BoundError(VizError)(wrapViz(Sankey));
-const PieChartView = BoundError(VizError)(wrapViz(PieChart));
-const DonutChartView = BoundError(VizError)(wrapViz(DonutChart));
-const OrganigramView = BoundError(VizError)(wrapViz(Organigram));
-const ParallelCoordinatesView = BoundError(VizError)(wrapViz(ParallelCoordinates));
+const decorate = component => BoundError(VizError)(wrapViz(component));
+
+const ChordDiagramView = decorate(ChordDiagram);
+const SunBurstView = decorate(SunBurst);
+const CorrelationMatrixView = decorate(CorrelationMatrix);
+const RadialDendrogramView = decorate(RadialDendrogram);
+const TreeMapView = decorate(TreeMap);
+const ForceDirectedGraphView = decorate(ForceDirectedGraph);
+const CollapsibleTreeView = decorate(CollapsibleTree);
+const OrgChartView = decorate(OrgChart);
+const HorizontalBarView = decorate(HorizontalBar);
+const DendrogramView = decorate(Dendrogram);
+const SparkLinesView = decorate(SparkLines);
+const StackedBarChartView = decorate(StackedBarChart);
+const StreamGraphView = decorate(StreamGraph);
+const SankeyView = decorate(Sankey);
+const PieChartView = decorate(PieChart);
+const DonutChartView = decorate(DonutChart);
+const OrganigramView = decorate(Organigram);
+const ParallelCoordinatesView = decorate(ParallelCoordinates);
 
 const sizeAccessor = d => d.size;
 const nameAccessor = d => d.name;

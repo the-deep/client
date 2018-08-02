@@ -27,6 +27,7 @@
             flex-basis: $width-tabs;
             flex-grow: 0;
             flex-shrink: 0;
+            border-right: $width-separator-thin solid $color-separator;
         }
 
         .visualizations {
@@ -52,11 +53,11 @@
             },
             .donut-chart {
                 @extend %viz;
-            },
-            .force-directed-graph {
+            }
+            .forced-directed-graph {
                 @extend %viz;
-            },
-            .force-directed-graph-voronoi {
+            }
+            .forced-directed-graph-voronoi {
                 @extend %viz;
             },
             .horizontal-bar {
