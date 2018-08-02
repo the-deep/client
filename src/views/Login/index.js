@@ -157,7 +157,7 @@ export default class Login extends React.PureComponent {
         this.setState({ faramErrors });
     };
 
-    handleFaramValidationSuccess = ({ email, password, recaptchaResponse }) => {
+    handleFaramValidationSuccess = (_, { email, password, recaptchaResponse }) => {
         const url = urlForTokenCreate;
         const params = createParamsForTokenCreate({
             username: email,

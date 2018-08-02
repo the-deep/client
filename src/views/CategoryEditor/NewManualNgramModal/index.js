@@ -53,7 +53,7 @@ export default class NewManualNgramModal extends React.PureComponent {
         this.setState({ faramErrors });
     };
 
-    handleFaramValidationSuccess = ({ word }) => {
+    handleFaramValidationSuccess = (_, { word }) => {
         this.props.onSubmit(word);
     }
 

@@ -432,6 +432,8 @@ export default class ProjectGeneral extends React.PureComponent {
             memberships,
         };
 
+        console.warn(newProjectDetails);
+
         if (this.projectPatchRequest) {
             this.projectPatchRequest.stop();
         }

@@ -71,7 +71,7 @@ export default class Organigram extends React.PureComponent {
         });
     };
 
-    handleFaramValidationSuccess = (faramValues) => {
+    handleFaramValidationSuccess = (_, faramValues) => {
         const {
             title,
             data,

@@ -60,7 +60,7 @@ export default class DefaultEditWidget extends React.PureComponent {
         });
     };
 
-    handleFaramValidationSuccess = (faramValues) => {
+    handleFaramValidationSuccess = (_, faramValues) => {
         const { title } = faramValues;
         this.props.onSave(undefined, title);
     };

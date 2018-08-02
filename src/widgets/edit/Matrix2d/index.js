@@ -287,7 +287,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         });
     };
 
-    handleFaramValidationSuccess = (faramValues) => {
+    handleFaramValidationSuccess = (_, faramValues) => {
         const {
             title,
             dimensions,

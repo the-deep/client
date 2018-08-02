@@ -84,7 +84,7 @@ export default class NumberFrameworkList extends React.PureComponent {
         });
     }
 
-    handleFaramValidationSuccess = (values) => {
+    handleFaramValidationSuccess = (_, values) => {
         const {
             title,
             minValue,

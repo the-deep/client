@@ -139,7 +139,7 @@ export default class FilterArysForm extends React.PureComponent {
         );
     }
 
-    handleFaramValidationSuccess = (values) => {
+    handleFaramValidationSuccess = (_, values) => {
         this.props.setAryPageFilter({
             filters: values,
         });
