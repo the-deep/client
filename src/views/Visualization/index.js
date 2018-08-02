@@ -163,6 +163,7 @@ export default class Visualization extends React.PureComponent {
                         idAccessor={idAccessor}
                         groupAccessor={groupAccessor}
                         valueAccessor={valueAccessor}
+                        useVoronoi={false}
                     />
                 ),
             },
@@ -175,7 +176,6 @@ export default class Visualization extends React.PureComponent {
                         idAccessor={idAccessor}
                         groupAccessor={groupAccessor}
                         valueAccessor={valueAccessor}
-                        useVoronoi={false}
                     />
                 ),
             },
@@ -305,6 +305,7 @@ export default class Visualization extends React.PureComponent {
                         data={hierarchicalData}
                         valueAccessor={sizeAccessor}
                         labelAccessor={nameAccessor}
+                        zoomable={false}
                     />
                 ),
             },
@@ -316,7 +317,6 @@ export default class Visualization extends React.PureComponent {
                         data={hierarchicalData}
                         valueAccessor={sizeAccessor}
                         labelAccessor={nameAccessor}
-                        zoomable={false}
                     />
                 ),
             },
