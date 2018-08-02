@@ -38,80 +38,61 @@
                 flex-grow: 1;
                 margin-bottom: $spacing-small;
             }
-
-            .sunburst {
-                @extend %viz;
-            }
-
-            .correlation-matrix {
-                @extend %viz;
-            }
-
-            .dendrogram {
-                @extend %viz;
-            }
-
-            .radial-dendrogram {
-                @extend %viz;
-            }
-
-            .treemap {
-                @extend %viz;
-            }
-
             .chord-diagram {
                 @extend %viz;
-            }
-
-            .horizontal-bar {
-                @extend %viz;
-            }
-
-            .force-directed-graph {
-                @extend %viz;
-            }
-
-            .force-directed-graph-voronoi {
-                @extend %viz;
-            }
-
+            },
             .collapsible-tree-view {
                 @extend %viz;
-            }
-
-            .org-chart {
+            },
+            .correlation-matrix {
                 @extend %viz;
-            }
-
-            .pie-chart {
+            },
+            .dendrogram {
                 @extend %viz;
-            }
-
+            },
             .donut-chart {
                 @extend %viz;
-            }
-
+            },
+            .force-directed-graph {
+                @extend %viz;
+            },
+            .force-directed-graph-voronoi {
+                @extend %viz;
+            },
+            .horizontal-bar {
+                @extend %viz;
+            },
+            .org-chart {
+                @extend %viz;
+            },
             .organigram {
                 @extend %viz;
-            }
-
-            .stacked-bar-chart {
+            },
+            .parallel-coordinates {
                 @extend %viz;
-            }
-
-            .stream-graph {
+            },
+            .pie-chart {
                 @extend %viz;
-            }
-
+            },
+            .radial-dendrogram {
+                @extend %viz;
+            },
             .sankey {
                 @extend %viz;
-            }
-
+            },
             .sparklines {
                 @extend %viz;
-            }
-
-            .parallel-coordinates {
+            },
+            .stacked-bar-chart {
+                @extend %viz;
+            },
+            .stream-graph {
+                @extend %viz;
+            },
+            .sunburst {
+                @extend %viz;
+            },
+            .treemap {
                 @extend %viz;
             }
         }
