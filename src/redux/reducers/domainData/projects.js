@@ -66,7 +66,7 @@ const setUserProject = (state, action) => {
     const settings = {
         projects: {
             [project.id]: { $auto: {
-                $merge: project,
+                $set: project,
             } },
         },
     };

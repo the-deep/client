@@ -123,11 +123,10 @@ const removeProjectRegion = (state, action) => {
 
 const addNewRegion = (state, action) => {
     const { regionDetail, projectId } = action;
+
     const settings = {
         regions: { $auto: {
-            [regionDetail.id]: { $auto: {
-                $merge: regionDetail,
-            } },
+            [regionDetail.id]: { $set: regionDetail },
         } },
     };
 
