@@ -41,24 +41,26 @@ import streamData from './dummydata/streamData';
 
 import styles from './styles.scss';
 
-const ChordDiagramView = BoundError(VizError)(wrapViz(ChordDiagram));
-const SunBurstView = BoundError(VizError)(wrapViz(SunBurst));
-const CorrelationMatrixView = BoundError(VizError)(wrapViz(CorrelationMatrix));
-const RadialDendrogramView = BoundError(VizError)(wrapViz(RadialDendrogram));
-const TreeMapView = BoundError(VizError)(wrapViz(TreeMap));
-const ForceDirectedGraphView = BoundError(VizError)(wrapViz(ForceDirectedGraph));
-const CollapsibleTreeView = BoundError(VizError)(wrapViz(CollapsibleTree));
-const OrgChartView = BoundError(VizError)(wrapViz(OrgChart));
-const HorizontalBarView = BoundError(VizError)(wrapViz(HorizontalBar));
-const DendrogramView = BoundError(VizError)(wrapViz(Dendrogram));
-const SparkLinesView = BoundError(VizError)(wrapViz(SparkLines));
-const StackedBarChartView = BoundError(VizError)(wrapViz(StackedBarChart));
-const StreamGraphView = BoundError(VizError)(wrapViz(StreamGraph));
-const SankeyView = BoundError(VizError)(wrapViz(Sankey));
-const PieChartView = BoundError(VizError)(wrapViz(PieChart));
-const DonutChartView = BoundError(VizError)(wrapViz(DonutChart));
-const OrganigramView = BoundError(VizError)(wrapViz(Organigram));
-const ParallelCoordinatesView = BoundError(VizError)(wrapViz(ParallelCoordinates));
+const decorate = component => BoundError(VizError)(wrapViz(component));
+
+const ChordDiagramView = decorate(ChordDiagram);
+const SunBurstView = decorate(SunBurst);
+const CorrelationMatrixView = decorate(CorrelationMatrix);
+const RadialDendrogramView = decorate(RadialDendrogram);
+const TreeMapView = decorate(TreeMap);
+const ForceDirectedGraphView = decorate(ForceDirectedGraph);
+const CollapsibleTreeView = decorate(CollapsibleTree);
+const OrgChartView = decorate(OrgChart);
+const HorizontalBarView = decorate(HorizontalBar);
+const DendrogramView = decorate(Dendrogram);
+const SparkLinesView = decorate(SparkLines);
+const StackedBarChartView = decorate(StackedBarChart);
+const StreamGraphView = decorate(StreamGraph);
+const SankeyView = decorate(Sankey);
+const PieChartView = decorate(PieChart);
+const DonutChartView = decorate(DonutChart);
+const OrganigramView = decorate(Organigram);
+const ParallelCoordinatesView = decorate(ParallelCoordinates);
 
 const sizeAccessor = d => d.size;
 const nameAccessor = d => d.name;
@@ -75,36 +77,47 @@ export default class Visualization extends React.PureComponent {
         super(props);
 
         this.tabs = {
-            sunBurst: _ts('visualization', 'sunburst'),
+            chordDiagram: _ts('visualization', 'chordDiagram'),
+            collapsibleTree: _ts('visualization', 'collapsibleTree'),
             correlationMatrix: _ts('visualization', 'correlationMatrix'),
             dendrogram: _ts('visualization', 'dendrogram'),
-            radialDendrogram: _ts('visualization', 'radialDendrogram'),
-            treemap: _ts('visualization', 'treemap'),
-            zoomableTreemap: _ts('visualization', 'zoomableTreemap'),
-            chordDiagram: _ts('visualization', 'chordDiagram'),
-            horizontalBar: _ts('visualization', 'horizontalBar'),
+            donutChart: _ts('visualization', 'donutChart'),
             forcedDirectedGraph: _ts('visualization', 'forcedDirectedGraph'),
             forcedDirectedGraphVoronoi: _ts('visualization', 'forceDirectedGraphVoronoi'),
-            collapsibleTree: _ts('visualization', 'collapsibleTree'),
+            horizontalBar: _ts('visualization', 'horizontalBar'),
             orgChart: _ts('visualization', 'orgChart'),
-            pieChart: _ts('visualization', 'pieChart'),
-            donutChart: _ts('visualization', 'donutChart'),
             organigram: _ts('visualization', 'organigram'),
-            stackedBarChart: _ts('visualization', 'stackedBarChart'),
-            streamGraph: _ts('visualization', 'streamGraph'),
+            parallelCoordinates: _ts('visualization', 'parallelCoordinates'),
+            pieChart: _ts('visualization', 'pieChart'),
+            radialDendrogram: _ts('visualization', 'radialDendrogram'),
             sankey: _ts('visualization', 'sankey'),
             sparkLines: _ts('visualization', 'sparklines'),
-            parallelCoordinates: _ts('visualization', 'parallelCoordinates'),
+            stackedBarChart: _ts('visualization', 'stackedBarChart'),
+            streamGraph: _ts('visualization', 'streamGraph'),
+            sunBurst: _ts('visualization', 'sunburst'),
+            treemap: _ts('visualization', 'treemap'),
+            zoomableTreemap: _ts('visualization', 'zoomableTreemap'),
         };
 
         this.views = {
-            sunBurst: {
+            chordDiagram: {
                 component: () => (
-                    <SunBurstView
-                        className={styles.sunburst}
-                        headerText={_ts('visualization', 'sunburst')}
-                        data={hierarchicalData}
+                    <ChordDiagramView
+                        className={styles.chordDiagram}
+                        headerText={_ts('visualization', 'chordDiagram')}
+                        data={chordData.values}
+                        labelsData={chordData.labels}
                         valueAccessor={sizeAccessor}
+                        labelAccessor={nameAccessor}
+                    />
+                ),
+            },
+            collapsibleTree: {
+                component: () => (
+                    <CollapsibleTreeView
+                        className={styles.collapsibleTreeView}
+                        headerText={_ts('visualization', 'collapsibleTree')}
+                        data={hierarchicalData}
                         labelAccessor={nameAccessor}
                     />
                 ),
@@ -130,56 +143,11 @@ export default class Visualization extends React.PureComponent {
                     />
                 ),
             },
-            radialDendrogram: {
+            donutChart: {
                 component: () => (
-                    <RadialDendrogramView
-                        className={styles.radialDendrogram}
-                        headerText={_ts('visualization', 'radialDendrogram')}
-                        data={hierarchicalData}
-                        labelAccessor={nameAccessor}
-                    />
-                ),
-            },
-            treemap: {
-                component: () => (
-                    <TreeMapView
-                        className={styles.treemap}
-                        headerText={_ts('visualization', 'treemap')}
-                        data={hierarchicalData}
-                        valueAccessor={sizeAccessor}
-                        labelAccessor={nameAccessor}
-                    />
-                ),
-            },
-            zoomableTreemap: {
-                component: () => (
-                    <TreeMapView
-                        className={styles.treemap}
-                        headerText={_ts('visualization', 'zoomableTreemap')}
-                        data={hierarchicalData}
-                        valueAccessor={sizeAccessor}
-                        labelAccessor={nameAccessor}
-                        zoomable={false}
-                    />
-                ),
-            },
-            chordDiagram: {
-                component: () => (
-                    <ChordDiagramView
-                        className={styles.chordDiagram}
-                        headerText={_ts('visualization', 'chordDiagram')}
-                        data={chordData.values}
-                        labelsData={chordData.labels}
-                        valueAccessor={sizeAccessor}
-                        labelAccessor={nameAccessor}
-                    />
-                ),
-            },
-            horizontalBar: {
-                component: () => (
-                    <HorizontalBarView
-                        className={styles.horizontalBar}
-                        headerText={_ts('visualization', 'horizontalBar')}
+                    <DonutChartView
+                        className={styles.donutChart}
+                        headerText={_ts('visualization', 'donutChart')}
                         data={barData.data}
                         valueAccessor={valueAccessor}
                         labelAccessor={labelAccessor}
@@ -195,6 +163,7 @@ export default class Visualization extends React.PureComponent {
                         idAccessor={idAccessor}
                         groupAccessor={groupAccessor}
                         valueAccessor={valueAccessor}
+                        useVoronoi={false}
                     />
                 ),
             },
@@ -207,17 +176,27 @@ export default class Visualization extends React.PureComponent {
                         idAccessor={idAccessor}
                         groupAccessor={groupAccessor}
                         valueAccessor={valueAccessor}
-                        useVoronoi={false}
                     />
                 ),
             },
-            collapsibleTree: {
+            horizontalBar: {
                 component: () => (
-                    <CollapsibleTreeView
-                        className={styles.collapsibleTreeView}
-                        headerText={_ts('visualization', 'collapsibleTree')}
+                    <HorizontalBarView
+                        className={styles.horizontalBar}
+                        headerText={_ts('visualization', 'horizontalBar')}
+                        data={barData.data}
+                        valueAccessor={valueAccessor}
+                        labelAccessor={labelAccessor}
+                    />
+                ),
+            },
+            organigram: {
+                component: () => (
+                    <OrganigramView
+                        className={styles.organigram}
+                        headerText={_ts('visualization', 'organigram')}
                         data={hierarchicalData}
-                        labelAccessor={nameAccessor}
+                        idAccessor={nameAccessor}
                     />
                 ),
             },
@@ -228,6 +207,17 @@ export default class Visualization extends React.PureComponent {
                         headerText={_ts('visualization', 'orgChart')}
                         data={hierarchicalData}
                         idAccessor={nameAccessor}
+                    />
+                ),
+            },
+            parallelCoordinates: {
+                component: () => (
+                    <ParallelCoordinatesView
+                        className={styles.parallelCoordinates}
+                        headerText={_ts('visualization', 'parallelCoordinates')}
+                        data={parallelData}
+                        labelName="name"
+                        labelAccessor={nameAccessor}
                     />
                 ),
             },
@@ -242,24 +232,35 @@ export default class Visualization extends React.PureComponent {
                     />
                 ),
             },
-            donutChart: {
+            radialDendrogram: {
                 component: () => (
-                    <DonutChartView
-                        className={styles.donutChart}
-                        headerText={_ts('visualization', 'donutChart')}
-                        data={barData.data}
-                        valueAccessor={valueAccessor}
-                        labelAccessor={labelAccessor}
+                    <RadialDendrogramView
+                        className={styles.radialDendrogram}
+                        headerText={_ts('visualization', 'radialDendrogram')}
+                        data={hierarchicalData}
+                        labelAccessor={nameAccessor}
                     />
                 ),
             },
-            organigram: {
+            sankey: {
                 component: () => (
-                    <OrganigramView
-                        className={styles.organigram}
-                        headerText={_ts('visualization', 'organigram')}
-                        data={hierarchicalData}
-                        idAccessor={nameAccessor}
+                    <SankeyView
+                        className={styles.sankey}
+                        headerText={_ts('visualization', 'sankey')}
+                        data={sankeyData}
+                        valueAccessor={valueAccessor}
+                        labelAccessor={nameAccessor}
+                    />
+                ),
+            },
+            sparkLines: {
+                component: () => (
+                    <SparkLinesView
+                        className={styles.sparklines}
+                        headerText={_ts('visualization', 'sparklines')}
+                        data={lineData.data}
+                        xValueAccessor={d => d.label}
+                        yValueAccessor={d => d.value}
                     />
                 ),
             },
@@ -285,34 +286,36 @@ export default class Visualization extends React.PureComponent {
                     />
                 ),
             },
-            sankey: {
+            sunBurst: {
                 component: () => (
-                    <SankeyView
-                        className={styles.sankey}
-                        headerText={_ts('visualization', 'sankey')}
-                        data={sankeyData}
-                        valueAccessor={valueAccessor}
+                    <SunBurstView
+                        className={styles.sunburst}
+                        headerText={_ts('visualization', 'sunburst')}
+                        data={hierarchicalData}
+                        valueAccessor={sizeAccessor}
                         labelAccessor={nameAccessor}
                     />
                 ),
             },
-            sparkLines: {
+            treemap: {
                 component: () => (
-                    <SparkLinesView
-                        className={styles.sparklines}
-                        headerText={_ts('visualization', 'sparklines')}
-                        data={lineData.data}
-                        valueAccessor={valueAccessor}
+                    <TreeMapView
+                        className={styles.treemap}
+                        headerText={_ts('visualization', 'treemap')}
+                        data={hierarchicalData}
+                        valueAccessor={sizeAccessor}
+                        labelAccessor={nameAccessor}
+                        zoomable={false}
                     />
                 ),
             },
-            parallelCoordinates: {
+            zoomableTreemap: {
                 component: () => (
-                    <ParallelCoordinatesView
-                        className={styles.parallelCoordinates}
-                        headerText={_ts('visualization', 'parallelCoordinates')}
-                        data={parallelData}
-                        labelName="name"
+                    <TreeMapView
+                        className={styles.treemap}
+                        headerText={_ts('visualization', 'zoomableTreemap')}
+                        data={hierarchicalData}
+                        valueAccessor={sizeAccessor}
                         labelAccessor={nameAccessor}
                     />
                 ),

@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import update from 'immutability-helper';
 
 import Faram from '#rsci/Faram';
 import FaramGroup from '#rsci/Faram/FaramGroup';
