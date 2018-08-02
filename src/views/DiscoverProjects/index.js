@@ -247,7 +247,9 @@ export default class DiscoverProjects extends React.PureComponent {
                     <SparkLines
                         className={styles.sparkLine}
                         data={project.leadsActivity}
-                        valueAccessor={activity => activity.count}
+                        yValueAccessor={activity => activity.count}
+                        xValueAccessor={activity => new Date(activity.date).getTime()}
+                        xLabelModifier={date => FormattedDate.format(new Date(date), 'dd-MM-yyyy')}
                         fill
                     />
                 );
@@ -256,7 +258,9 @@ export default class DiscoverProjects extends React.PureComponent {
                     <SparkLines
                         className={styles.sparkLine}
                         data={project.entriesActivity}
-                        valueAccessor={activity => activity.count}
+                        yValueAccessor={activity => activity.count}
+                        xValueAccessor={activity => new Date(activity.date).getTime()}
+                        xLabelModifier={date => FormattedDate.format(new Date(date), 'dd-MM-yyyy')}
                         fill
                     />
                 );
