@@ -6,28 +6,29 @@
     .header {
         @include background-color($color-background-header);
         display: flex;
-        position: sticky;
-        top: 0;
         align-items: center;
-        z-index: 1;
-        border-bottom: $width-separator-thin solid $color-separator;
+        box-shadow: 0 $spacing-extra-small $radius-blur-medium $radius-spread-medium $color-shadow-light;
 
         .heading {
             display: flex;
+            align-items: baseline;
             flex-grow: 1;
             overflow: hidden;
 
             .title {
-                padding: $spacing-small $spacing-small $spacing-small $spacing-medium;
+                padding: $spacing-small-alt $spacing-small-alt $spacing-small-alt $spacing-medium;
                 overflow: hidden;
+                text-transform: none;
                 text-overflow: ellipsis;
                 white-space: nowrap;
+                font-weight: $font-weight-bold;
             }
 
             .date {
                 flex-shrink: 0;
                 padding: $spacing-small;
                 color: $color-text-label;
+                font-size: $font-size-small;
             }
         }
 
@@ -47,7 +48,7 @@
     }
 
     .entry-list {
-        padding: $spacing-medium;
-        overflow-x: auto;
+        display: inline-block;
+        min-width: 100%;
     }
 }
