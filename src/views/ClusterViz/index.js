@@ -1,5 +1,6 @@
 import React, {
     PureComponent,
+    Fragment,
 } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -8,6 +9,7 @@ import { Link } from 'react-router-dom';
 import BoundError from '#rscg/BoundError';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
+import Message from '#rscv/Message';
 import Table from '#rscv/Table';
 import FormattedDate from '#rscv/FormattedDate';
 import ForceDirectedGraph from '#rscz/NewForceDirectedGraph';
@@ -137,6 +139,8 @@ export default class ClusterViz extends PureComponent {
             clusterDataPending: true,
             highlightClusterId: undefined,
             highlightTableId: undefined,
+            createClusterFailure: false,
+            clusterDataFailure: false,
         };
 
         this.leadsTableHeader = [
@@ -374,6 +378,10 @@ export default class ClusterViz extends PureComponent {
         const {
             activeCluster,
             highlightTableId,
+            createClusterFailure,
+            clusterDataFailure,
+            createClusterPending,
+            clusterDataPending,
         } = this.state;
 
         const isActive = activeCluster && String(activeCluster.group) === String(data.id);
@@ -467,6 +475,8 @@ export default class ClusterViz extends PureComponent {
     render() {
         const {
             clusterSize,
+            createClusterFailure,
+            clusterDataFailure,
             createClusterPending,
             clusterDataPending,
             highlightClusterId,
@@ -483,46 +493,76 @@ export default class ClusterViz extends PureComponent {
         `;
 
         const loading = createClusterPending || clusterDataPending;
+        const failure = createClusterFailure || clusterDataFailure;
 
         return (
             <div
                 ref={this.container}
                 className={className}
             >
+                {
+                    !failure &&
+                    loading &&
+                    <LoadingAnimation />
+                }
                 <header className={styles.header}>
                     <h2>{_ts('clusterViz', 'clusterVizTitle')}</h2>
                 </header>
-                <div className={styles.container}>
-                    {loading && <LoadingAnimation />}
-                    {/* eslint-disable-next-line jsx-a11y/mouse-events-have-key-events */}
-                    <ForceDirectedGraphView
-                        className={styles.forcedDirectedGraph}
-                        data={this.nodesAndLinks}
-                        idAccessor={ClusterViz.idAccessor}
-                        groupAccessor={ClusterViz.groupAccessor}
-                        valueAccessor={ClusterViz.valueAccessor}
-                        labelAccessor={ClusterViz.labelAccessor}
-                        highlightClusterId={highlightClusterId}
-                        useVoronoi
-                        headerText={
-                            _ts(
-                                'clusterViz',
-                                'clusterTitle',
-                                { noOfClusters: this.noOfClusters, noOfLeads: this.noOfLeads },
-                            )
+                {
+                    createClusterFailure && (
+                        <Message>
+                            {_ts('clusterViz', 'createClusterFailure')}
+                        </Message>
+                    )
+                }
+                {
+                    clusterDataFailure && (
+                        <Message>
+                            {_ts('clusterViz', 'clusterDataFailure')}
+                        </Message>
+                    )
+                }
+                {
+                    <div className={styles.container}>
+                        {
+                            !failure &&
+                            <Fragment>
+                                { /* eslint-disable-next-line max-len */ }
+                                { /* eslint-disable-next-line jsx-a11y/mouse-events-have-key-events */ }
+                                <ForceDirectedGraphView
+                                    className={styles.forcedDirectedGraph}
+                                    data={this.nodesAndLinks}
+                                    idAccessor={ClusterViz.idAccessor}
+                                    groupAccessor={ClusterViz.groupAccessor}
+                                    valueAccessor={ClusterViz.valueAccessor}
+                                    labelAccessor={ClusterViz.labelAccessor}
+                                    highlightClusterId={highlightClusterId}
+                                    useVoronoi
+                                    headerText={
+                                        _ts(
+                                            'clusterViz',
+                                            'clusterTitle',
+                                            {
+                                                noOfClusters: this.noOfClusters,
+                                                noOfLeads: this.noOfLeads,
+                                            },
+                                        )
+                                    }
+                                    onMouseOver={this.handleMouseOver}
+                                    onMouseOut={this.handleMouseOut}
+                                    clusterSize={clusterSize}
+                                    onClusterSizeChange={this.handleClusterSizeChange}
+                                />
+                                <ListView
+                                    className={styles.clusterDetails}
+                                    data={this.clusterGroupList}
+                                    keyExtractor={ClusterViz.getTableKey}
+                                    modifier={this.renderClusterDetail}
+                                />
+                            </Fragment>
                         }
-                        onMouseOver={this.handleMouseOver}
-                        onMouseOut={this.handleMouseOut}
-                        clusterSize={clusterSize}
-                        onClusterSizeChange={this.handleClusterSizeChange}
-                    />
-                    <ListView
-                        className={styles.clusterDetails}
-                        data={this.clusterGroupList}
-                        keyExtractor={ClusterViz.getTableKey}
-                        modifier={this.renderClusterDetail}
-                    />
-                </div>
+                    </div>
+                }
                 <footer className={styles.footer}>
                     <Link
                         className={styles.link}
