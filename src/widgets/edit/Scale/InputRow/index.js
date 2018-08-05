@@ -38,7 +38,7 @@ export default class InputRow extends React.PureComponent {
                         autoFocus
                     />
                     <Checkbox
-                        faramElementName="default"
+                        faramElementName="defaultScaleUnit"
                         className={styles.defaultInput}
                         label={_ts('framework.scaleWidget', 'defaultButtonLabel', { index: index + 1 })}
                     />

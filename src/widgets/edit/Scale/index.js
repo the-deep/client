@@ -53,6 +53,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
     static schema = {
         fields: {
             title: [requiredCondition],
+            defaultScaleUnit: [],
             scaleUnits: {
                 validation: (scaleUnits) => {
                     const errors = [];
@@ -95,13 +96,14 @@ export default class ScaleFrameworkList extends React.PureComponent {
             title,
             data: {
                 scaleUnits = emptyList,
+                defaultScaleUnit,
             },
         } = props;
 
         this.state = {
-            // TODO: Implement defaultScaleUnit
             faramValues: {
                 title,
+                defaultScaleUnit,
                 scaleUnits,
             },
             faramErrors: {},
@@ -110,7 +112,6 @@ export default class ScaleFrameworkList extends React.PureComponent {
     }
 
     handleFaramChange = (faramValues, faramErrors) => {
-        console.warn(faramValues);
         this.setState({
             faramValues,
             faramErrors,
@@ -170,7 +171,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                         <div className={styles.scaleUnits}>
                             <FaramList
                                 faramElementName="scaleUnits"
-                                faramFoldKey="default"
+                                faramFoldKey="defaultScaleUnit"
                                 faramFold={ScaleFrameworkList.foldScaleUnits}
                                 faramUnfold={ScaleFrameworkList.unfoldScaleUnits}
                             >
