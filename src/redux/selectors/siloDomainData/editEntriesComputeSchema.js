@@ -4,10 +4,13 @@ const getComputeSchemaForWidget = (widget) => {
 
     const { properties: { data: widgetData = {} } = {} } = widget;
     switch (widget.widgetId) {
+        case 'scaleWidget': {
+            const { defaultScaleUnit } = widgetData;
+            return defaultScaleUnit && (
+                (a, w, d, v) => (v || defaultScaleUnit)
+            );
+        }
         default:
-            // If we do not compute anything for the widget,
-            // we return nothing/undefined
-            // so that no compute schema is set.
             return undefined;
     }
 };
