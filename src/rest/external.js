@@ -108,3 +108,12 @@ export const createUrlForGoogleViewer = docUrl =>
         chrome: false,
         embedded: true,
     })}`;
+
+// Languages Server
+
+export const languageServerEndPoint = 'http://localhost:5000/';
+export const createParamsForLanguageServer = body => ({
+    method: POST,
+    body: JSON.stringify(body),
+    headers: commonHeaderForPostExternal,
+});

@@ -32,6 +32,7 @@ import EditStringModal from './EditStringModal';
 import StringsTable from './StringsTable';
 import LinksTable from './LinksTable';
 import InfoPane from './InfoPane';
+import DevLangSave from './requests/DevLangSave';
 
 import styles from './styles.scss';
 
@@ -100,6 +101,9 @@ export default class StringManagement extends React.PureComponent {
         if (this.languageRequest) {
             this.languageRequest.stop();
         }
+        if (this.devLangSaveRequest) {
+            this.devLangSaveRequest.stop();
+        }
     }
 
     createLanguageRequest = (languageCode, strings, links) => {
@@ -114,6 +118,18 @@ export default class StringManagement extends React.PureComponent {
         });
         this.languageRequest = request.create(languageCode, strings, links);
         this.languageRequest.start();
+    }
+
+    startDevLangSaveRequest = (data) => {
+        if (this.devLangSaveRequest) {
+            this.devLangSaveRequest.stop();
+        }
+
+        this.devLangSaveRequest = new DevLangSave({
+            setState: params => this.setState(params),
+        });
+        this.devLangSaveRequest.init(data);
+        this.devLangSaveRequest.start();
     }
 
     handleSaveButtonClick = () => {
@@ -131,11 +147,12 @@ export default class StringManagement extends React.PureComponent {
             selectedLanguageLinks: links,
         } = this.props;
 
-        const content = encodeURIComponent(
-            JSON.stringify({ strings, links }, undefined, 4),
-        );
+        this.startDevLangSaveRequest({ strings, links });
 
-        window.open(`data:application/txt,${content}`, '_self');
+        // const content = encodeURIComponent(
+        //     JSON.stringify({ strings, links }, undefined, 4),
+        // );
+        // window.open(`data:application/txt,${content}`, '_self');
     }
 
     handleAddButtonClick = () => {
