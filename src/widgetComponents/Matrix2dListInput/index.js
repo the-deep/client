@@ -9,6 +9,7 @@ import Row from './Row';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     dimensions: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     sectors: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 
@@ -18,6 +19,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     dimensions: [],
     sectors: [],
     value: undefined,
@@ -100,14 +102,19 @@ class Matrix2dListInput extends React.PureComponent {
         const {
             dimensions,
             sectors,
+            className: classNameFromProps,
             value,
         } = this.props;
 
         const data = getSelectedSectors(dimensions, sectors, value);
+        const className = `
+            ${classNameFromProps}
+            ${styles.list}
+        `;
 
         return (
             <ListView
-                className={styles.list}
+                className={className}
                 data={data}
                 renderer={Row}
                 rendererParams={this.rendererParams}

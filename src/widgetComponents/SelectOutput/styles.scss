@@ -1,5 +1,6 @@
 @import '~base-scss/base';
 
 .select-output {
-    padding: 0 $spacing-extra-small;
+    padding: $spacing-small;
+    overflow: auto;
 }

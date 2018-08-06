@@ -49,7 +49,7 @@ export default class Row extends React.PureComponent {
         } = this.props;
 
         return (
-            <div className={styles.tagUnit}>
+            <div className={styles.row}>
                 <div className={styles.tagDimension} >
                     <div className={styles.dimensionTitle}>
                         {dimension.title}

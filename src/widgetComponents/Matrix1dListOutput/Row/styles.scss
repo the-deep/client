@@ -1,17 +1,16 @@
 @import '~base-scss/base';
 
 .row {
-    margin: $spacing-small;
+    padding: $spacing-small;
 
     &:not(:last-child) {
         border-bottom: $width-separator-thin solid $color-separator;
     }
 
     .title {
-        margin-bottom: $spacing-small;
+        margin-bottom: $spacing-extra-small-alt;
         color: $color-accent;
         font-size: $font-size-small;
         font-weight: $font-weight-bold;
     }
-
 }

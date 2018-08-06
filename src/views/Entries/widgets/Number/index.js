@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Numeral from '#rscv/Numeral';
+import styles from './styles.scss';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
@@ -23,11 +24,16 @@ export default class NumberListWidget extends React.PureComponent {
             data: {
                 value,
             },
-            className,
+            className: classNameFromProps,
         } = this.props;
 
         const separatorText = ' ';
         const invalidText = '-';
+
+        const className = `
+            ${classNameFromProps}
+            ${styles.numberOutput}
+        `;
 
         return (
             <div className={className} >

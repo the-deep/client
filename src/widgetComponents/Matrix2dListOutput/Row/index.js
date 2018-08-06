@@ -21,8 +21,8 @@ export default class Row extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static subsectorKeySelector = d => d.id;
-    static subsectorLabelSelector = d => d.title;
+    static subsectorKeySelector = (d = {}) => d.id;
+    static subsectorLabelSelector = (d = {}) => d.title;
 
     rendererParams = (key, subsector) => ({
         value: Row.subsectorLabelSelector(subsector),
@@ -37,7 +37,7 @@ export default class Row extends React.PureComponent {
         } = this.props;
 
         return (
-            <div className={styles.tagUnit}>
+            <div className={styles.row}>
                 <div className={styles.tagDimension} >
                     <div className={styles.dimensionTitle}>
                         {dimension.title}
