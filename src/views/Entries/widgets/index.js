@@ -4,10 +4,11 @@ import boundError from '#rscg/BoundError';
 
 import { listToMap } from '#rsu/common';
 
+import ExcerptWidget from './Excerpt';
 import Matrix1dListWidget from './Matrix1dList';
 import Matrix2dListWidget from './Matrix2dList';
-import ExcerptWidget from './Excerpt';
-import NumberMatrixWidget from './NumberMatrix';
+import NumberMatrixListWidget from './NumberMatrixList';
+
 import GeoWidget from './Geo';
 import OrganigramWidget from './Organigram';
 import MultiSelectWidget from './MultiSelect';
@@ -54,7 +55,7 @@ const widgetList = [
     },
     {
         widgetId: 'numberMatrixWidget',
-        component: NumberMatrixWidget,
+        component: NumberMatrixListWidget,
     },
     {
         widgetId: 'numberWidget',

@@ -16,18 +16,17 @@ import { iconNames } from '#constants';
 
 import {
     fetchWidget,
-    hasWidget,
     gridSize,
+    VISIBILITY,
+    VIEW,
+    widgetVisibility,
 } from '../widgets';
 
 import EditButton from './EditButton';
 import styles from './styles.scss';
 
-const OVERVIEW = 'overview';
-const LIST = 'list';
-
 const propTypes = {
-    widgets: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     analysisFrameworkId: PropTypes.number.isRequired,
 
     updateWidget: PropTypes.func.isRequired,
@@ -35,6 +34,10 @@ const propTypes = {
     removeWidget: PropTypes.func.isRequired,
 
     widgetType: PropTypes.string.isRequired,
+};
+
+const defaultProps = {
+    widgets: [],
 };
 
 const mapDispatchToProps = dispatch => ({
@@ -46,6 +49,7 @@ const mapDispatchToProps = dispatch => ({
 @connect(undefined, mapDispatchToProps)
 export default class WidgetEditor extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     static keySelector = widget => widget.key;
 
@@ -53,7 +57,9 @@ export default class WidgetEditor extends React.PureComponent {
     static value = {};
 
     widgetMinSizeSelector = (widget) => {
-        const { minSize } = fetchWidget(this.props.widgetType, widget.widgetId);
+        const { widgetType } = this.props;
+        const { widgetId } = widget;
+        const { minSize } = fetchWidget(widgetType, widgetId);
         return minSize;
     }
 
@@ -105,16 +111,20 @@ export default class WidgetEditor extends React.PureComponent {
             } = {},
         } = widget;
 
-        return widgetType === OVERVIEW ? overviewGridLayout : listGridLayout;
+        return widgetType === VIEW.overview ? overviewGridLayout : listGridLayout;
     }
 
     renderWidgetHeader = (widget) => {
-        const { title, widgetId, key } = widget;
-        const { editComponent: Widget } = fetchWidget(this.props.widgetType, widgetId);
+        const { title, widgetId, key, addedFrom } = widget;
+        const { widgetType } = this.props;
 
-        const showEdit = Widget && !(
-            hasWidget(OVERVIEW, widgetId) && this.props.widgetType === LIST
-        );
+        const { editComponent: Widget } = fetchWidget(widgetType, widgetId);
+
+        const notReadonly = widgetVisibility(
+            widgetId,
+            widgetType,
+            addedFrom,
+        ) !== VISIBILITY.readonly;
 
         const layout = this.layoutSelector(widget);
         const widthBlocks = Math.ceil(layout.width / gridSize.width);
@@ -131,7 +141,7 @@ export default class WidgetEditor extends React.PureComponent {
                 </h5>
                 <div className={styles.actionButtons}>
                     {
-                        showEdit ? (
+                        notReadonly ? (
                             <Fragment>
                                 <EditButton
                                     widget={widget}
@@ -151,7 +161,8 @@ export default class WidgetEditor extends React.PureComponent {
                         ) : (
                             <span
                                 className={`${iconNames.info} ${styles.infoIcon}`}
-                                title="Widget added from overview page" // FIXME: use strings
+                                // FIXME: use strings
+                                title={`Widget added from ${addedFrom} page`}
                             />
                         )
                     }
@@ -161,8 +172,20 @@ export default class WidgetEditor extends React.PureComponent {
     }
 
     renderWidgetContent = (widget) => {
-        const { widgetId, id } = widget;
-        const { component: Widget } = fetchWidget(this.props.widgetType, widgetId);
+        const { widgetId, id, addedFrom } = widget;
+        const { widgetType } = this.props;
+
+        const {
+            component,
+            viewComponent,
+        } = fetchWidget(widgetType, widgetId);
+
+        const notReadonly = widgetVisibility(
+            widgetId,
+            widgetType,
+            addedFrom,
+        ) !== VISIBILITY.readonly;
+        const Widget = notReadonly ? component : viewComponent;
 
         return (
             <div className={styles.content}>
@@ -171,7 +194,7 @@ export default class WidgetEditor extends React.PureComponent {
                         { Widget &&
                             <Widget
                                 widgetName={widgetId}
-                                widgetType={this.props.widgetType}
+                                widgetType={widgetType}
                                 widget={widget}
 
                                 entryType="excerpt"
@@ -188,7 +211,15 @@ export default class WidgetEditor extends React.PureComponent {
     }
 
     render() {
-        const { widgets } = this.props;
+        const {
+            widgets,
+            widgetType,
+        } = this.props;
+
+        const filteredWidgets = widgets.filter(
+            w => widgetVisibility(w.widgetId, widgetType, w.addedFrom) !== VISIBILITY.hidden,
+        );
+
         return (
             <Faram
                 className={styles.faram}
@@ -199,7 +230,7 @@ export default class WidgetEditor extends React.PureComponent {
                 <GridLayoutEditor
                     className={styles.gridLayoutEditor}
                     gridSize={gridSize}
-                    data={widgets}
+                    data={filteredWidgets}
                     layoutSelector={this.layoutSelector}
                     itemMinSizeSelector={this.widgetMinSizeSelector}
                     itemHeaderModifier={this.renderWidgetHeader}
