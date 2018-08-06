@@ -5,7 +5,8 @@ import {
     widgetListingVisibility,
     widgetList,
     VIEW,
-} from '../widgets';
+} from '#widgets';
+
 import WidgetList from '../WidgetList';
 import WidgetEditor from '../WidgetEditor';
 

@@ -7,8 +7,10 @@ import SelectInput from '#rsci/SelectInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 
-import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
-
+import {
+    entryAccessor,
+    ENTRY_STATUS,
+} from '#entities/editEntries';
 import {
     leadIdFromRoute,
     editEntriesWidgetsSelector,
@@ -20,14 +22,13 @@ import {
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
 } from '#redux';
-
-import WidgetFaram from '../WidgetFaram';
 import {
     widgetVisibility,
     VISIBILITY,
     VIEW,
-} from '../../AnalysisFramework/widgets';
+} from '#widgets';
 
+import WidgetFaram from '../WidgetFaram';
 import LeadPane from './LeadPane';
 import styles from './styles.scss';
 

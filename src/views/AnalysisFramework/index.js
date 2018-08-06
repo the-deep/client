@@ -12,6 +12,7 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import FixedTabs from '#rscv/FixedTabs';
 import Message from '#rscv/Message';
 
+import { VIEW } from '#widgets';
 import AppError from '#components/AppError';
 import {
     afIdFromRoute,
@@ -28,7 +29,6 @@ import {
 } from '#constants';
 import _ts from '#ts';
 
-import { VIEW } from './widgets';
 import FrameworkGetRequest from './requests/FrameworkGet';
 import FrameworkSaveRequest from './requests/FrameworkSave';
 import Overview from './Overview';

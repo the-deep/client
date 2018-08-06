@@ -50,14 +50,12 @@ import {
 } from '#redux';
 import notify from '#notify';
 import _ts from '#ts';
+import { VIEW } from '#widgets';
 
 import EditEntryDataRequest from './requests/EditEntryDataRequest';
 import EditEntryDeleteRequest from './requests/EditEntryDeleteRequest';
 import EditEntrySaveRequest from './requests/EditEntrySaveRequest';
 
-import {
-    VIEW,
-} from '../AnalysisFramework/widgets';
 import calculateEntryData from './entryDataCalculator';
 import Overview from './Overview';
 import Listing from './List';

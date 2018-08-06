@@ -4,52 +4,52 @@ import update from '#rsu/immutable-update';
 
 import FrameworkWidgetError from '#components/FrameworkWidgetError';
 
-import DefaultEditWidget from './Default';
+import DefaultEditWidget from './edit/Default';
 // overview
-import Matrix1dEditWidget from './Matrix1d';
-import Matrix2dEditWidget from './Matrix2d';
-import NumberMatrixEditWidget from './NumberMatrix';
+import Matrix1dEditWidget from './edit/Matrix1d';
+import Matrix2dEditWidget from './edit/Matrix2d';
+import NumberMatrixEditWidget from './edit/NumberMatrix';
 // list
-import NumberEditWidget from './Number';
-import DateEditWidget from './Date';
-import OrganigramEditWidget from './Organigram';
-import MultiSelectEditWidget from './MultiSelect';
-import ScaleEditWidget from './Scale';
+import NumberEditWidget from './edit/Number';
+import DateEditWidget from './edit/Date';
+import OrganigramEditWidget from './edit/Organigram';
+import MultiSelectEditWidget from './edit/MultiSelect';
+import ScaleEditWidget from './edit/Scale';
 
 // overview
-import ExcerptWidget from '../../EditEntries/widgets/Excerpt';
-import Matrix1dWidget from '../../EditEntries/widgets/Matrix1d';
-import Matrix1dListWidget from '../../EditEntries/widgets/Matrix1dList';
-import Matrix2dWidget from '../../EditEntries/widgets/Matrix2d';
-import Matrix2dListWidget from '../../EditEntries/widgets/Matrix2dList';
-import NumberMatrixWidget from '../../EditEntries/widgets/NumberMatrix';
-import NumberMatrixListWidget from '../../EditEntries/widgets/NumberMatrixList';
+import ExcerptWidget from './tagging/Excerpt';
+import Matrix1dWidget from './tagging/Matrix1d';
+import Matrix1dListWidget from './tagging/Matrix1dList';
+import Matrix2dWidget from './tagging/Matrix2d';
+import Matrix2dListWidget from './tagging/Matrix2dList';
+import NumberMatrixWidget from './tagging/NumberMatrix';
+import NumberMatrixListWidget from './tagging/NumberMatrixList';
 // list
-import DateWidget from '../../EditEntries/widgets/Date';
-import DateRangeWidget from '../../EditEntries/widgets/DateRange';
-import GeoWidget from '../../EditEntries/widgets/Geo';
-import MultiSelectWidget from '../../EditEntries/widgets/MultiSelect';
-import NumberWidget from '../../EditEntries/widgets/Number';
-import OrganigramWidget from '../../EditEntries/widgets/Organigram';
-import ScaleWidget from '../../EditEntries/widgets/Scale';
-import SelectWidget from '../../EditEntries/widgets/Select';
-import TimeWidget from '../../EditEntries/widgets/Time';
+import DateWidget from './tagging/Date';
+import DateRangeWidget from './tagging/DateRange';
+import GeoWidget from './tagging/Geo';
+import MultiSelectWidget from './tagging/MultiSelect';
+import NumberWidget from './tagging/Number';
+import OrganigramWidget from './tagging/Organigram';
+import ScaleWidget from './tagging/Scale';
+import SelectWidget from './tagging/Select';
+import TimeWidget from './tagging/Time';
 
 // overview
-import ExcerptViewWidget from '../../Entries/widgets/Excerpt';
-import Matrix1dListViewWidget from '../../Entries/widgets/Matrix1dList';
-import Matrix2dListViewWidget from '../../Entries/widgets/Matrix2dList';
-import NumberMatrixListViewWidget from '../../Entries/widgets/NumberMatrixList';
+import ExcerptViewWidget from './view/Excerpt';
+import Matrix1dListViewWidget from './view/Matrix1dList';
+import Matrix2dListViewWidget from './view/Matrix2dList';
+import NumberMatrixListViewWidget from './view/NumberMatrixList';
 // list
-import DateViewWidget from '../../Entries/widgets/Date';
-import DateRangeViewWidget from '../../Entries/widgets/DateRange';
-import GeoViewWidget from '../../Entries/widgets/Geo';
-import MultiSelectViewWidget from '../../Entries/widgets/MultiSelect';
-import NumberViewWidget from '../../Entries/widgets/Number';
-import OrganigramViewWidget from '../../Entries/widgets/Organigram';
-import ScaleViewWidget from '../../Entries/widgets/Scale';
-import SelectViewWidget from '../../Entries/widgets/Select';
-import TimeViewWidget from '../../Entries/widgets/Time';
+import DateViewWidget from './view/Date';
+import DateRangeViewWidget from './view/DateRange';
+import GeoViewWidget from './view/Geo';
+import MultiSelectViewWidget from './view/MultiSelect';
+import NumberViewWidget from './view/Number';
+import OrganigramViewWidget from './view/Organigram';
+import ScaleViewWidget from './view/Scale';
+import SelectViewWidget from './view/Select';
+import TimeViewWidget from './view/Time';
 
 // Constants
 

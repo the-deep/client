@@ -9,14 +9,15 @@ import {
     editEntriesWidgetsSelector,
     editEntriesStatusesSelector,
 } from '#redux';
-
-import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
-
+import {
+    entryAccessor,
+    ENTRY_STATUS,
+} from '#entities/editEntries';
 import {
     widgetVisibility,
     VISIBILITY,
     VIEW,
-} from '../../AnalysisFramework/widgets';
+} from '#widgets';
 
 import WidgetFaramContainer from './WidgetFaramContainer';
 import styles from './styles.scss';

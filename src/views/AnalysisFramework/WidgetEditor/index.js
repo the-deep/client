@@ -20,7 +20,7 @@ import {
     VISIBILITY,
     VIEW,
     widgetVisibility,
-} from '../widgets';
+} from '#widgets';
 
 import EditButton from './EditButton';
 import styles from './styles.scss';

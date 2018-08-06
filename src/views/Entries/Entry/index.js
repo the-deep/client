@@ -5,7 +5,8 @@ import GridViewLayout from '#rscv/GridViewLayout';
 import {
     fetchWidget,
     VIEW,
-} from '../../AnalysisFramework/widgets';
+} from '#widgets';
+
 import styles from './styles.scss';
 
 const propTypes = {

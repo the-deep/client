@@ -14,7 +14,7 @@ import {
     widgetVisibility,
     VIEW,
     VISIBILITY,
-} from '../../AnalysisFramework/widgets';
+} from '#widgets';
 
 import ErrorWrapper from '../ErrorWrapper';
 import styles from './styles.scss';
