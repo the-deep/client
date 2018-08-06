@@ -9,7 +9,12 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import { entryAccessor } from '#entities/editEntries';
 import { iconNames } from '#constants';
 
-import { fetchWidget } from '../widgets';
+import {
+    fetchWidget,
+    widgetVisibility,
+    VIEW,
+    VISIBILITY,
+} from '../../AnalysisFramework/widgets';
 
 import ErrorWrapper from '../ErrorWrapper';
 import styles from './styles.scss';
@@ -70,7 +75,7 @@ export default class WidgetFaram extends React.PureComponent {
                 overviewGridLayout,
             } = {},
         } = widget;
-        return (widgetType === 'list' ? listGridLayout : overviewGridLayout);
+        return (widgetType === VIEW.list ? listGridLayout : overviewGridLayout);
     }
 
     renderWidgetHeader = (widget) => {
@@ -124,6 +129,7 @@ export default class WidgetFaram extends React.PureComponent {
         const {
             id,
             widgetId,
+            properties: { addedFrom },
         } = widget;
         const {
             widgetType,
@@ -135,49 +141,75 @@ export default class WidgetFaram extends React.PureComponent {
             image,
         } = entryAccessor.data(entry) || {};
 
-        const Widget = fetchWidget(widgetType, widgetId);
+        const {
+            component,
+            viewComponent,
+        } = fetchWidget(widgetType, widgetId);
+
+        const isViewComponent = widgetVisibility(
+            widgetId,
+            widgetType,
+            addedFrom,
+        ) === VISIBILITY.readonly;
 
         let child = null;
-        switch (widgetId) {
-            case 'excerptWidget': {
-                child = (
-                    <Widget
-                        widgetName={widgetId}
-                        widgetType={widgetType}
-                        widget={widget}
 
-                        entryType={entryType}
-                        excerpt={excerpt}
-                        image={image}
-                        onExcerptChange={this.handleExcerptChange}
-                        onExcerptCreate={this.handleExcerptCreate}
-                    />
-                );
-                break;
-            }
-            case 'organigramWidget':
-            case 'geoWidget': {
-                child = (
-                    <Widget
-                        widgetName={widgetId}
-                        widgetType={widgetType}
-                        widget={widget}
-                        entryType={entryType}
-                        excerpt={excerpt}
-                        image={image}
-                    />
-                );
-                break;
-            }
-            default: {
-                child = (
-                    <Widget
-                        widgetName={widgetId}
-                        widgetType={widgetType}
-                        widget={widget}
-                    />
-                );
-                break;
+        if (isViewComponent) {
+            // Faram not used for view component
+            const {
+                data: { attributes: { [id]: { data } = {} } = {} } = {},
+            } = entry || {};
+            const Widget = viewComponent;
+
+            child = (
+                <Widget
+                    data={data}
+                    widget={widget}
+                />
+            );
+        } else {
+            const Widget = component;
+            switch (widgetId) {
+                case 'excerptWidget': {
+                    child = (
+                        <Widget
+                            widgetName={widgetId}
+                            widgetType={widgetType}
+                            widget={widget}
+
+                            entryType={entryType}
+                            excerpt={excerpt}
+                            image={image}
+                            onExcerptChange={this.handleExcerptChange}
+                            onExcerptCreate={this.handleExcerptCreate}
+                        />
+                    );
+                    break;
+                }
+                case 'organigramWidget':
+                case 'geoWidget': {
+                    child = (
+                        <Widget
+                            widgetName={widgetId}
+                            widgetType={widgetType}
+                            widget={widget}
+                            entryType={entryType}
+                            excerpt={excerpt}
+                            image={image}
+                        />
+                    );
+                    break;
+                }
+                default: {
+                    child = (
+                        <Widget
+                            widgetName={widgetId}
+                            widgetType={widgetType}
+                            widget={widget}
+                        />
+                    );
+                    break;
+                }
             }
         }
 

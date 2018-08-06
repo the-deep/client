@@ -55,6 +55,9 @@ import EditEntryDataRequest from './requests/EditEntryDataRequest';
 import EditEntryDeleteRequest from './requests/EditEntryDeleteRequest';
 import EditEntrySaveRequest from './requests/EditEntrySaveRequest';
 
+import {
+    VIEW,
+} from '../AnalysisFramework/widgets';
 import calculateEntryData from './entryDataCalculator';
 import Overview from './Overview';
 import Listing from './List';
@@ -145,7 +148,7 @@ export default class EditEntries extends React.PureComponent {
         };
 
         this.views = {
-            overview: {
+            [VIEW.overview]: {
                 component: () => (
                     <Overview
                         // injected inside WidgetFaram
@@ -160,7 +163,7 @@ export default class EditEntries extends React.PureComponent {
                 mount: true,
             },
 
-            list: {
+            [VIEW.list]: {
                 component: () => (
                     <Listing
                         // NOTE: to re-render Listing when has changes
@@ -180,11 +183,11 @@ export default class EditEntries extends React.PureComponent {
 
         // FIXME: use strings
         this.tabs = {
-            overview: 'Overview',
-            list: 'List',
+            [VIEW.overview]: 'Overview',
+            [VIEW.list]: 'List',
         };
 
-        this.defaultHash = 'overview';
+        this.defaultHash = VIEW.overview;
 
         this.saveRequestCoordinator = new CoordinatorBuilder()
             .maxActiveActors(4)

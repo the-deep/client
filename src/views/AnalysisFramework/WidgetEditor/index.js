@@ -115,7 +115,7 @@ export default class WidgetEditor extends React.PureComponent {
     }
 
     renderWidgetHeader = (widget) => {
-        const { title, widgetId, key, addedFrom } = widget;
+        const { title, widgetId, key, properties: { addedFrom } } = widget;
         const { widgetType } = this.props;
 
         const { editComponent: Widget } = fetchWidget(widgetType, widgetId);
@@ -172,7 +172,7 @@ export default class WidgetEditor extends React.PureComponent {
     }
 
     renderWidgetContent = (widget) => {
-        const { widgetId, id, addedFrom } = widget;
+        const { widgetId, id, properties: { addedFrom } } = widget;
         const { widgetType } = this.props;
 
         const {
@@ -217,7 +217,11 @@ export default class WidgetEditor extends React.PureComponent {
         } = this.props;
 
         const filteredWidgets = widgets.filter(
-            w => widgetVisibility(w.widgetId, widgetType, w.addedFrom) !== VISIBILITY.hidden,
+            w => widgetVisibility(
+                w.widgetId,
+                widgetType,
+                w.properties.addedFrom,
+            ) !== VISIBILITY.hidden,
         );
 
         return (

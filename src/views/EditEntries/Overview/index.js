@@ -22,7 +22,11 @@ import {
 } from '#redux';
 
 import WidgetFaram from '../WidgetFaram';
-import { hasWidget } from '../widgets';
+import {
+    widgetVisibility,
+    VISIBILITY,
+    VIEW,
+} from '../../AnalysisFramework/widgets';
 
 import LeadPane from './LeadPane';
 import styles from './styles.scss';
@@ -67,13 +71,9 @@ export default class Overview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static widgetType = 'overview'
-
-    static filterWidgets = widgets => (
-        widgets.filter(
-            widget => hasWidget(Overview.widgetType, widget.widgetId),
-        )
-    )
+    static filterWidgets = (widgets, widgetType) => widgets.filter(
+        w => widgetVisibility(w.widgetId, widgetType, w.properties.addedFrom) !== VISIBILITY.hidden,
+    );
 
     static entryKeySelector = entry => entryAccessor.key(entry)
 
@@ -86,14 +86,14 @@ export default class Overview extends React.PureComponent {
 
     constructor(props) {
         super(props);
-        this.widgets = Overview.filterWidgets(props.widgets);
+        this.widgets = Overview.filterWidgets(props.widgets, VIEW.overview);
     }
 
     componentWillReceiveProps(nextProps) {
         const { widgets: oldWidgets } = this.props;
         const { widgets: newWidgets } = nextProps;
         if (newWidgets !== oldWidgets) {
-            this.widgets = Overview.filterWidgets(newWidgets);
+            this.widgets = Overview.filterWidgets(newWidgets, VIEW.overview);
         }
     }
 
@@ -181,7 +181,7 @@ export default class Overview extends React.PureComponent {
                             entry={entry}
                             pending={pending}
                             widgets={this.widgets}
-                            widgetType={Overview.widgetType}
+                            widgetType={VIEW.overview}
                             {...otherProps}
                         />
                     </React.Fragment>

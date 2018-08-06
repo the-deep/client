@@ -51,8 +51,7 @@ export default class WidgetList extends React.PureComponent {
             key: `${widgetType}-${widgetId}-${randomString(16)}`,
             widgetId,
             title: _ts('widgetTitle', title),
-            properties: initialLayout,
-            addedFrom: widgetType,
+            properties: { ...initialLayout, addedFrom: widgetType },
         };
 
         this.props.addWidget({

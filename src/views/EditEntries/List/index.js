@@ -12,7 +12,12 @@ import {
 
 import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
 
-import { hasWidget } from '../widgets';
+import {
+    widgetVisibility,
+    VISIBILITY,
+    VIEW,
+} from '../../AnalysisFramework/widgets';
+
 import WidgetFaramContainer from './WidgetFaramContainer';
 import styles from './styles.scss';
 
@@ -60,21 +65,18 @@ const calculateMaxWidgetHeight = (widgets) => {
     return maxH;
 };
 
-
 @connect(mapStateToProps)
 export default class Listing extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static widgetType = 'list'
-
-    static filterWidgets = widgets => widgets.filter(
-        widget => hasWidget(Listing.widgetType, widget.widgetId),
+    static filterWidgets = (widgets, widgetType) => widgets.filter(
+        w => widgetVisibility(w.widgetId, widgetType, w.properties.addedFrom) !== VISIBILITY.hidden,
     );
 
     constructor(props) {
         super(props);
-        this.widgets = Listing.filterWidgets(props.widgets);
+        this.widgets = Listing.filterWidgets(props.widgets, VIEW.list);
 
         // TODO: Find better solution for height calcuation
         this.viewHeight = calculateMaxWidgetHeight(props.widgets) + 20;
@@ -88,7 +90,7 @@ export default class Listing extends React.PureComponent {
         const { widgets: oldWidgets } = this.props;
         const { widgets: newWidgets } = nextProps;
         if (newWidgets !== oldWidgets) {
-            this.widgets = Listing.filterWidgets(newWidgets);
+            this.widgets = Listing.filterWidgets(newWidgets, VIEW.list);
             this.viewHeight = calculateMaxWidgetHeight(newWidgets) + 20;
         }
     }
@@ -116,7 +118,7 @@ export default class Listing extends React.PureComponent {
         return {
             entry,
             pending: statuses[key] === ENTRY_STATUS.requesting,
-            widgetType: Listing.widgetType,
+            widgetType: VIEW.list,
             widgets: this.widgets,
             ...otherProps,
         };
