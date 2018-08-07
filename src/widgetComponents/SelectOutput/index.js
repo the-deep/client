@@ -65,22 +65,24 @@ export default class SelectOutput extends React.PureComponent {
 
     render() {
         const {
-            className,
+            className: classNameFromProps,
             labelSelector,
         } = this.props;
 
         const emptyText = '-';
+        const className = `
+            ${classNameFromProps}
+            ${styles.selectOutput}
+        `;
 
         return (
-            <span className={`${className} ${styles.selectOutput}`} >
+            <div className={className} >
                 {this.selection ? (
                     labelSelector(this.selection)
                 ) : (
-                    <span className={className}>
-                        {emptyText}
-                    </span>
+                    emptyText
                 )}
-            </span>
+            </div>
         );
     }
 }

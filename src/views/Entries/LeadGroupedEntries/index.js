@@ -19,6 +19,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    headerClassName: PropTypes.string,
     projectId: PropTypes.number.isRequired,
 
     // eslint-disable-next-line react/forbid-prop-types
@@ -30,6 +31,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    headerClassName: '',
 };
 
 const entryKeySelector = d => d.id;
@@ -46,6 +48,7 @@ export default class LeadGroupedEntries extends React.PureComponent {
     renderHeader = () => {
         const {
             projectId,
+            headerClassName,
             lead: {
                 title: leadTitle,
                 id: leadId,
@@ -59,9 +62,14 @@ export default class LeadGroupedEntries extends React.PureComponent {
             leadId,
         });
 
+        const className = `
+            ${headerClassName}
+            ${styles.header}
+        `;
+
         // {_ts('entries', 'editEntryButtonLabel')}
         return (
-            <header className={styles.header}>
+            <header className={className}>
                 <h3
                     title={leadTitle}
                     className={styles.heading}

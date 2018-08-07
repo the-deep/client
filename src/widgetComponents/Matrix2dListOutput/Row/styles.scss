@@ -1,13 +1,9 @@
 @import '~base-scss/base';
 
-.tag-unit {
+.row {
     display: flex;
-    background-color: $color-background-row-alt;
+    border-bottom: $width-separator-thin solid $color-separator;
     padding: $spacing-small;
-
-    &:nth-child(odd) {
-        background-color: $color-background-row;
-    }
 
     .tag-dimension {
         align-self: center;
@@ -28,7 +24,7 @@
         flex-basis: 50%;
 
         .title {
-            margin-bottom: $spacing-small;
+            margin-bottom: $spacing-extra-small-alt;
             font-weight: $font-weight-bold;
         }
     }

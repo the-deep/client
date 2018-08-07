@@ -2,6 +2,7 @@
 
 .list-item {
     display: flex;
+    padding: $spacing-extra-small 0;
 
     .marker {
         align-self: flex-start;

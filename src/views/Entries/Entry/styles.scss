@@ -2,6 +2,9 @@
 @import '~base-scss/widget';
 
 .entry {
+    padding: $spacing-small;
+    overflow: hidden;
+
     .widget {
         @extend %widget;
         padding: $spacing-extra-small;

@@ -1,13 +1,8 @@
 @import '~base-scss/base';
 
-.tag-unit {
+.row {
     display: flex;
-    background-color: $color-background-row-alt;
     padding: $spacing-small;
-
-    &:nth-child(odd) {
-        background-color: $color-background-row;
-    }
 
     .tag-dimension {
         align-self: center;

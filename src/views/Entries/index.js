@@ -10,7 +10,6 @@ import Pager from '#rscv/Pager';
 import AppError from '#components/AppError';
 import {
     setEntriesAction,
-    // setProjectAction,
     entriesForProjectSelector,
     entriesViewFilterSelector,
     setAnalysisFrameworkAction,
@@ -184,6 +183,13 @@ export default class Entries extends React.PureComponent {
         window.removeEventListener('scroll', this.handleScroll, true);
     }
 
+    handleScroll = (e) => {
+        const headers = e.target.getElementsByClassName(styles.leadGroupedHeader);
+        for (let i = 0; i < headers.length; i += 1) {
+            headers[i].style.transform = `translateX(${e.target.scrollLeft}px)`;
+        }
+    }
+
     handlePageClick = (page) => {
         this.props.setEntriesViewActivePage({ activePage: page });
     }
@@ -197,6 +203,7 @@ export default class Entries extends React.PureComponent {
         } = this.props;
 
         return ({
+            headerClassName: styles.leadGroupedHeader,
             lead: datum,
             projectId,
             widgets,

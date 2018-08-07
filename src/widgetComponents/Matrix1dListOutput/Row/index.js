@@ -13,7 +13,6 @@ const propTypes = {
 
 export default class Row extends React.PureComponent {
     static propTypes = propTypes;
-
     static keyExtractor = cell => cell.key;
 
     rendererParams = (key, cell) => ({
