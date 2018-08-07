@@ -20,6 +20,10 @@ export default class InitProjectClusterRequest {
         this.setState = setState;
     }
 
+    componentWillUnmount() {
+        this.stopRequestForClusterData();
+    }
+
     success = projectId => (response) => {
         try {
             schema.validate(response, 'initClusterRequest');
