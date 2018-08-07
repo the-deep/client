@@ -79,18 +79,30 @@ export default class WidgetFaram extends React.PureComponent {
     }
 
     renderWidgetHeader = (widget) => {
-        const { title, id } = widget;
-
         const {
             actionComponent: ActionComponent,
             entry,
+            widgetType,
         } = this.props;
+
+        const {
+            id,
+            title,
+            widgetId,
+            properties: { addedFrom },
+        } = widget;
 
         const {
             data: { attributes: { [id]: { data } = {} } = {} } = {},
         } = entry || {};
-        const entryKey = entryAccessor.key(entry);
 
+        const isViewComponent = widgetVisibility(
+            widgetId,
+            widgetType,
+            addedFrom,
+        ) === VISIBILITY.readonly;
+
+        const entryKey = entryAccessor.key(entry);
 
         const Header = ({ hasError, error }) => (
             <div
@@ -103,7 +115,7 @@ export default class WidgetFaram extends React.PureComponent {
                     }
                     { title }
                 </h5>
-                { ActionComponent && entry && (
+                { ActionComponent && entry && !isViewComponent && (
                     <div className={styles.actionButtons}>
                         <ActionComponent
                             attributeKey={id}
@@ -127,14 +139,15 @@ export default class WidgetFaram extends React.PureComponent {
 
     renderWidgetContent = (widget) => {
         const {
+            widgetType,
+            entry,
+        } = this.props;
+
+        const {
             id,
             widgetId,
             properties: { addedFrom },
         } = widget;
-        const {
-            widgetType,
-            entry,
-        } = this.props;
         const {
             entryType,
             excerpt,
