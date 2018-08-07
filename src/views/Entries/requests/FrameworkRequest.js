@@ -16,7 +16,6 @@ export default class FrameworkRequest extends Request {
     }
 
     handleSuccess = (response) => {
-        console.warn(response);
         this.parent.setFramework({ analysisFramework: response });
     }
 
