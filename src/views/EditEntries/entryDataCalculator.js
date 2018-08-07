@@ -1,3 +1,5 @@
+import update from '#rsu/immutable-update';
+
 const emptyObject = {};
 
 const calculateMatrix1dColor = (value, widgetData) => {
@@ -37,10 +39,10 @@ const calculateMatrix2dColor = (value, widgetData) => {
     return color;
 };
 
-const calculateEntryData = (values = {}, analysisFramework) => {
+export const calculateEntryColor = (attributes = {}, analysisFramework) => {
     let color;
 
-    Object.keys(values).forEach((widgetId) => {
+    Object.keys(attributes).forEach((widgetId) => {
         if (color) {
             return;
         }
@@ -53,7 +55,7 @@ const calculateEntryData = (values = {}, analysisFramework) => {
             return;
         }
 
-        const attributeValue = values[widgetId].data.value;
+        const attributeValue = attributes[widgetId].data.value;
         const widgetData = widget.properties.data;
         if (!attributeValue || !widgetData) {
             return;
@@ -73,7 +75,47 @@ const calculateEntryData = (values = {}, analysisFramework) => {
         }
     });
 
-    return { color };
+    return color;
 };
 
-export default calculateEntryData;
+export const calculateFirstTimeAttributes = (
+    attributes = {},
+    analysisFramework,
+    lead,
+) => analysisFramework.widgets.reduce(
+    (acc, widget) => {
+        // Ignore the attributes for widgets which are already set
+        if (acc[widget.id]) {
+            return acc;
+        }
+
+        const {
+            widgetId,
+            properties: {
+                data: widgetData = {},
+            } = {},
+        } = widget;
+
+        let value;
+
+        // Calculate first time attribute for each widget
+        if (widgetId === 'dateWidget') {
+            if (widgetData.informationDateSelected) {
+                value = lead.publishedOn;
+            }
+        } /* else if (widgetId === 'nextWidget') { ... } */
+
+        if (value) {
+            const settings = {
+                [widget.id]: { $auto: {
+                    data: { $auto: {
+                        value: { $set: value },
+                    } },
+                } },
+            };
+            return update(acc, settings);
+        }
+
+        return acc;
+    }, attributes,
+);

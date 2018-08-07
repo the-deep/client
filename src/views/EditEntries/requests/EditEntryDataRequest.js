@@ -71,14 +71,14 @@ export default class EditEntryDataRequest extends Request {
             return;
         }
 
-        // Calculate extra data (like color) for each entry in the diff
+        // Calculate color for each entry in the diff
         diffs.forEach((acc) => {
             const { entry: { data: { attributes = {} } = {} } = {} } = acc;
-            const extraData = this.parent.calculateEntryData(
+            const color = this.parent.calculateEntryColor(
                 attributes,
                 analysisFramework,
             );
-            acc.entry.localData.color = extraData.color;
+            acc.entry.localData.color = color;
         });
 
         this.parent.setEntries({ leadId, entryActions: diffs });
