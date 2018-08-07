@@ -374,11 +374,13 @@ export const widgetListingVisibility = (widgetId, ...otherParams) => {
 export const widgetVisibility = (widgetId, ...otherParams) => {
     const overviewWidgetFn = () => VISIBILITY.show;
     const listWidgetFn = (view, addedFrom) => {
-        if (addedFrom === VIEW.list) {
-            return view === VIEW.list ? VISIBILITY.show : VISIBILITY.readonly;
-        } else if (addedFrom === VIEW.overview) {
-            return view === VIEW.overview ? VISIBILITY.show : VISIBILITY.hidden;
+        if (addedFrom === VIEW.overview) {
+            return view === VIEW.overview ? VISIBILITY.show : VISIBILITY.readonly;
+        } else if (addedFrom === VIEW.list) {
+            return view === VIEW.list ? VISIBILITY.show : VISIBILITY.hidden;
         } else if (addedFrom === undefined) {
+            // NOTE: To support legacy widgets,
+            // if there is no addedFrom, only show it in list view
             return view === VIEW.overview ? VISIBILITY.hidden : VISIBILITY.show;
         }
         console.error('Unknown view or addedFrom defined.');
