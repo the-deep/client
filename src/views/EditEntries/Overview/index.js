@@ -176,6 +176,7 @@ export default class Overview extends React.PureComponent {
                         </header>
                         <WidgetFaram
                             className={styles.content}
+                            key={Overview.entryKeySelector(entry)}
                             entry={entry}
                             pending={pending}
                             widgets={this.widgets}
