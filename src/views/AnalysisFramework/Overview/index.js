@@ -2,13 +2,19 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import {
-    overviewWidgets,
-    hasWidget,
-} from '../widgets';
+    widgetListingVisibility,
+    widgetList,
+    VIEW,
+} from '#widgets';
+
 import WidgetList from '../WidgetList';
 import WidgetEditor from '../WidgetEditor';
 
 import styles from './styles.scss';
+
+const overviewWidgets = widgetList.filter(
+    w => widgetListingVisibility(w.widgetId, VIEW.overview),
+);
 
 const propTypes = {
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -17,12 +23,6 @@ const propTypes = {
 export default class Overview extends React.PureComponent {
     static propTypes = propTypes;
 
-    static widgetType = 'overview'
-
-    static filterWidgets = widgets => widgets.filter(
-        widget => hasWidget(Overview.widgetType, widget.widgetId),
-    );
-
     static layoutSelector = (widget) => {
         const { properties: { overviewGridLayout } = {} } = widget;
         return overviewGridLayout;
@@ -30,25 +30,12 @@ export default class Overview extends React.PureComponent {
 
     static keySelector = widget => widget.key;
 
-    constructor(props) {
-        super(props);
-
-        const { analysisFramework: { widgets = [] } = {} } = this.props;
-        this.widgets = Overview.filterWidgets(widgets);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (this.props.analysisFramework !== nextProps.analysisFramework) {
-            const { analysisFramework: { widgets = [] } = {} } = nextProps;
-            this.widgets = Overview.filterWidgets(widgets);
-        }
-    }
-
     render() {
         const {
             analysisFramework: {
                 id: analysisFrameworkId,
-            },
+                widgets,
+            } = {},
         } = this.props;
 
         return (
@@ -56,14 +43,14 @@ export default class Overview extends React.PureComponent {
                 <WidgetList
                     className={styles.widgetList}
                     widgets={overviewWidgets}
-                    widgetType={Overview.widgetType}
+                    widgetType={VIEW.overview}
                     analysisFrameworkId={analysisFrameworkId}
                 />
                 <div className={styles.gridLayoutContainer}>
                     <div className={styles.scrollWrapper}>
                         <WidgetEditor
-                            widgets={this.widgets}
-                            widgetType={Overview.widgetType}
+                            widgets={widgets}
+                            widgetType={VIEW.overview}
                             analysisFrameworkId={analysisFrameworkId}
                         />
                     </div>

@@ -12,6 +12,7 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import FixedTabs from '#rscv/FixedTabs';
 import Message from '#rscv/Message';
 
+import { VIEW } from '#widgets';
 import AppError from '#components/AppError';
 import {
     afIdFromRoute,
@@ -81,7 +82,7 @@ export default class AnalysisFramework extends React.PureComponent {
         });
 
         this.views = {
-            overview: {
+            [VIEW.overview]: {
                 component: () => (
                     <Overview
                         analysisFramework={this.props.analysisFramework}
@@ -90,7 +91,7 @@ export default class AnalysisFramework extends React.PureComponent {
                 wrapContainer: true,
                 mount: true,
             },
-            list: {
+            [VIEW.list]: {
                 component: () => (
                     <List
                         analysisFramework={this.props.analysisFramework}
@@ -103,11 +104,11 @@ export default class AnalysisFramework extends React.PureComponent {
 
         // FIXME: use strings
         this.tabs = {
-            overview: 'Overview',
-            list: 'List',
+            [VIEW.overview]: 'Overview',
+            [VIEW.list]: 'List',
         };
 
-        this.defaultHash = 'overview';
+        this.defaultHash = VIEW.overview;
     }
 
     componentWillMount() {

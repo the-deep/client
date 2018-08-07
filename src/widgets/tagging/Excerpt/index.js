@@ -42,6 +42,16 @@ export default class Excerpt extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = { isBeingDraggedOver: false };
+
+        const { excerpt } = props;
+        this.disableFormat = !excerpt || excerpt === formatPdfText(excerpt);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { excerpt } = nextProps;
+        if (this.props.excerpt !== excerpt) {
+            this.disableFormat = !excerpt || excerpt === formatPdfText(excerpt);
+        }
     }
 
     handleDragEnter = () => {
@@ -87,7 +97,8 @@ export default class Excerpt extends React.PureComponent {
 
     handleFormatText = () => {
         const { excerpt } = this.props;
-        this.handleTextChange(formatPdfText(excerpt));
+        const formattedText = formatPdfText(excerpt);
+        this.handleTextChange(formattedText);
     }
 
     handleDragDrop = (e) => {
@@ -192,7 +203,7 @@ export default class Excerpt extends React.PureComponent {
                         smallVerticalPadding
                         smallHorizontalPadding
                         transparent
-                        disabled={disabled}
+                        disabled={disabled || this.disableFormat}
                     />
                 }
             </Fragment>

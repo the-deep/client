@@ -2,7 +2,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import GridViewLayout from '#rscv/GridViewLayout';
 
-import { fetchWidget } from '../widgets';
+import {
+    fetchWidget,
+    VIEW,
+} from '#widgets';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -57,7 +61,7 @@ export default class Entry extends React.PureComponent {
             id,
         } = widget;
 
-        const Widget = fetchWidget(widgetId);
+        const { viewComponent: Widget } = fetchWidget(VIEW.list, widgetId);
         const {
             entry: {
                 entryType,

@@ -116,15 +116,12 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                         subsectors: {
                             validation: (subsectors) => {
                                 const errors = [];
-                                if (!subsectors || subsectors.length <= 0) {
-                                    // FIXME: use strings
-                                    errors.push('There should be at least one subsectors.');
-                                }
-
-                                const duplicates = findDuplicates(subsectors, o => o.title);
-                                if (duplicates.length > 0) {
-                                    // FIXME: use strings
-                                    errors.push(`Duplicate subsectors are not allowed: ${duplicates.join(', ')}`);
+                                if (subsectors && subsectors.length > 0) {
+                                    const duplicates = findDuplicates(subsectors, o => o.title);
+                                    if (duplicates.length > 0) {
+                                        // FIXME: use strings
+                                        errors.push(`Duplicate subsectors are not allowed: ${duplicates.join(', ')}`);
+                                    }
                                 }
                                 return errors;
                             },
@@ -210,7 +207,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                     itemClassName={styles.item}
                                     renderer={DimensionTitle}
                                 />
-                                { dimensions.length > 0 && selectedDimensionIndex !== -1 &&
+                                { dimensionsFromState.length > 0 && selectedDimensionIndex !== -1 &&
                                     <DimensionContent
                                         index={selectedDimensionIndex}
                                         className={styles.rightPanel}
@@ -251,7 +248,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                     itemClassName={styles.item}
                                     renderer={SectorTitle}
                                 />
-                                { sectors.length > 0 && selectedSectorIndex !== -1 &&
+                                { sectorsFromState.length > 0 && selectedSectorIndex !== -1 &&
                                     <SectorContent
                                         index={selectedSectorIndex}
                                         className={styles.rightPanel}

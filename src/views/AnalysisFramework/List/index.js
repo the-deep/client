@@ -2,9 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import {
-    listWidgets,
-    hasWidget,
-} from '../widgets';
+    widgetListingVisibility,
+    widgetList,
+    VIEW,
+} from '#widgets';
 import WidgetList from '../WidgetList';
 import WidgetEditor from '../WidgetEditor';
 
@@ -14,14 +15,12 @@ const propTypes = {
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
+const listWidgets = widgetList.filter(
+    w => widgetListingVisibility(w.widgetId, VIEW.list),
+);
+
 export default class List extends React.PureComponent {
     static propTypes = propTypes;
-
-    static widgetType = 'list'
-
-    static filterWidgets = widgets => widgets.filter(
-        widget => hasWidget(List.widgetType, widget.widgetId),
-    );
 
     static layoutSelector = (widget) => {
         const { properties: { overviewGridLayout } = {} } = widget;
@@ -30,41 +29,27 @@ export default class List extends React.PureComponent {
 
     static keySelector = widget => widget.key;
 
-    constructor(props) {
-        super(props);
-
-        const { analysisFramework: { widgets = [] } = {} } = this.props;
-        this.widgets = List.filterWidgets(widgets);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (this.props.analysisFramework !== nextProps.analysisFramework) {
-            const { analysisFramework: { widgets = [] } = {} } = nextProps;
-            this.widgets = List.filterWidgets(widgets);
-        }
-    }
-
-
     render() {
         const {
             analysisFramework: {
                 id: analysisFrameworkId,
-            },
+                widgets,
+            } = {},
         } = this.props;
 
         return (
             <div className={styles.list}>
                 <div className={styles.gridLayoutWrapper}>
                     <WidgetEditor
-                        widgets={this.widgets}
-                        widgetType={List.widgetType}
+                        widgets={widgets}
+                        widgetType={VIEW.list}
                         analysisFrameworkId={analysisFrameworkId}
                     />
                 </div>
                 <WidgetList
                     className={styles.widgetList}
                     widgets={listWidgets}
-                    widgetType={List.widgetType}
+                    widgetType={VIEW.list}
                     analysisFrameworkId={analysisFrameworkId}
                 />
             </div>

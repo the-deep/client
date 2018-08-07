@@ -45,18 +45,31 @@ const calculateEntryData = (values = {}, analysisFramework) => {
             return;
         }
 
-        const widget = analysisFramework.widgets.find(w => String(w.id) === widgetId);
+        // Widget is undefined when analysis framwork has changed
+        const widget = analysisFramework.widgets.find(
+            w => String(w.id) === widgetId,
+        );
+        if (!widget) {
+            return;
+        }
+
         const attributeValue = values[widgetId].data.value;
         const widgetData = widget.properties.data;
-
         if (!attributeValue || !widgetData) {
             return;
         }
 
-        if (widget.widgetId === 'matrix1dWidget') {
-            color = calculateMatrix1dColor(attributeValue, widgetData);
-        } else if (widget.widgetId === 'matrix2dWidget') {
-            color = calculateMatrix2dColor(attributeValue, widgetData);
+        switch (widget.widgetId) {
+            case 'matrix1dWidget': {
+                color = calculateMatrix1dColor(attributeValue, widgetData);
+                break;
+            }
+            case 'matrix2dWidget': {
+                color = calculateMatrix2dColor(attributeValue, widgetData);
+                break;
+            }
+            default:
+                break;
         }
     });
 

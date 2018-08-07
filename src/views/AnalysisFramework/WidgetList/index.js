@@ -8,8 +8,6 @@ import { randomString } from '#rsu/common';
 import { addAfViewWidgetAction } from '#redux';
 import _ts from '#ts';
 
-import { fetchWidget } from '../widgets';
-
 import WidgetPreview from './WidgetPreview';
 import styles from './styles.scss';
 
@@ -41,32 +39,19 @@ export default class WidgetList extends React.PureComponent {
         const {
             widgetId,
             title,
+            initialLayout,
         } = widget;
         const {
             analysisFrameworkId,
             widgetType,
         } = this.props;
 
-        const overviewWidget = fetchWidget('overview', widgetId);
-        const listWidget = fetchWidget('list', widgetId);
-
         // TODO: calculate new position appropriately
         const widgetInfo = {
             key: `${widgetType}-${widgetId}-${randomString(16)}`,
             widgetId,
             title: _ts('widgetTitle', title),
-            properties: {
-                overviewGridLayout: overviewWidget && {
-                    left: 0,
-                    top: 0,
-                    ...overviewWidget.minSize,
-                },
-                listGridLayout: listWidget && {
-                    left: 0,
-                    top: 0,
-                    ...listWidget.minSize,
-                },
-            },
+            properties: { ...initialLayout, addedFrom: widgetType },
         };
 
         this.props.addWidget({
