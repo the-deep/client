@@ -44,6 +44,7 @@ import {
     editEntriesSetExcerptAction,
     editEntriesSetLeadAction,
     editEntriesSetPendingAction,
+    editEntriesResetUiStateAction,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
@@ -91,6 +92,7 @@ const propTypes = {
     setPending: PropTypes.func.isRequired,
     setRegions: PropTypes.func.isRequired,
 
+    resetUiState: PropTypes.func.isRequired,
     routeUrl: PropTypes.string.isRequired,
 };
 
@@ -129,6 +131,7 @@ const mapDispatchToProps = dispatch => ({
     setLead: params => dispatch(editEntriesSetLeadAction(params)),
     setPending: params => dispatch(editEntriesSetPendingAction(params)),
     setRegions: params => dispatch(setRegionsForProjectAction(params)),
+    resetUiState: params => dispatch(editEntriesResetUiStateAction(params)),
 });
 
 
@@ -239,6 +242,11 @@ export default class EditEntries extends React.PureComponent {
             this.props.entries,
             this.props.statuses,
         );
+    }
+
+    componentWillMount() {
+        const { leadId, resetUiState } = this.props;
+        resetUiState(leadId);
     }
 
     componentDidMount() {

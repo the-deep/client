@@ -34,6 +34,7 @@ import {
     addLeadViewSetLeadRestsAction,
     addLeadViewButtonStatesSelector,
 
+    addLeadViewResetUiStateAction,
     routeUrlSelector,
 } from '#redux';
 import { leadAccessor } from '#entities/lead';
@@ -67,6 +68,7 @@ const mapDispatchToProps = dispatch => ({
     addLeadViewRemoveSavedLeads: params => dispatch(addLeadViewRemoveSavedLeadsAction(params)),
     addLeads: leads => dispatch(addLeadViewAddLeadsAction(leads)),
     setLeadRests: params => dispatch(addLeadViewSetLeadRestsAction(params)),
+    resetUiState: () => dispatch(addLeadViewResetUiStateAction()),
 });
 
 const propTypes = {
@@ -93,6 +95,7 @@ const propTypes = {
     leadStates: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     buttonStates: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
+    resetUiState: PropTypes.func.isRequired,
     routeUrl: PropTypes.string.isRequired,
 };
 
@@ -150,6 +153,10 @@ export default class LeadAdd extends React.PureComponent {
         this.dropboxUploadCoordinator = new CoordinatorBuilder()
             .maxActiveActors(2)
             .build();
+    }
+
+    componentWillMount() {
+        this.props.resetUiState();
     }
 
     componentDidMount() {

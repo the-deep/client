@@ -46,6 +46,8 @@ export const LA__SET_LEAD_DROPBOX_REST = 'siloDomainData/LA__SET_LEAD_DROPBOX_RE
 
 export const LA__SET_PREVIEW = 'siloDomainData/LA__SET_PREVIEW';
 
+export const LA__RESET_UI_STATE = 'siloDomainData/LA__RESET_UI_STATE';
+
 export const addLeadViewSetPreviewAction = value => ({
     type: LA__SET_PREVIEW,
     value,
@@ -81,6 +83,10 @@ export const addLeadViewSetLeadDropboxRestsAction = ({ leadIds, value }) => ({
     type: LA__SET_LEAD_DROPBOX_REST,
     leadIds,
     value,
+});
+
+export const addLeadViewResetUiStateAction = () => ({
+    type: LA__RESET_UI_STATE,
 });
 
 // ACTION-CREATOR
@@ -551,6 +557,19 @@ const addLeadViewSetPreview = (state, action) => {
     return update(state, settings);
 };
 
+const addLeadViewResetUiState = (state) => {
+    const fields = [
+        'leadRests', 'leadUploads', 'leadDriveRests',
+        'leadDropboxRests', 'removeModalState',
+    ];
+    const settings = {
+        addLeadView: {
+            $unset: fields,
+        },
+    };
+    return update(state, settings);
+};
+
 // REDUCER MAP
 
 const reducers = {
@@ -574,5 +593,6 @@ const reducers = {
     [LA__SET_REMOVE_MODAL_STATE]: addLeadViewSetRemoveModalState,
     [LA__UNSET_REMOVE_MODAL_STATE]: addLeadViewUnsetRemoveModalState,
     [LA__SET_PREVIEW]: addLeadViewSetPreview,
+    [LA__RESET_UI_STATE]: addLeadViewResetUiState,
 };
 export default reducers;

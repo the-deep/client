@@ -38,6 +38,7 @@ export const EEB__APPLY_TO_ALL_ENTRIES = 'siloDomainData/EEB__APPLY_TO_ALL_ENTRI
 export const EEB__APPLY_TO_ALL_ENTRIES_BELOW = 'siloDomainData/EEB__APPLY_TO_ALL_ENTRIES_BELOW';
 export const EEB__SET_PENDING = 'siloDomainData/EEB__SET_PENDING';
 export const EEB__SAVE_ENTRY = 'siloDomainData/EEB__SAVE_ENTRY';
+export const EEB__RESET_UI_STATE = 'siloDomainData/EEB__RESET_UI_STATE';
 
 export const editEntriesSaveEntryAction = ({ leadId, entryKey, response, color }) => ({
     type: EEB__SAVE_ENTRY,
@@ -143,6 +144,12 @@ export const editEntriesMarkAsDeletedEntryAction = ({ leadId, key, value }) => (
     value,
 });
 
+export const editEntriesResetUiStateAction = leadId => ({
+    type: EEB__RESET_UI_STATE,
+    leadId,
+});
+
+// ACTION-CREATOR
 const setLead = (state, action) => {
     const { lead } = action;
     const leadId = lead.id;
@@ -648,6 +655,17 @@ const saveEntry = (state, action) => {
     return update(state, settings);
 };
 
+const editEntriesResetUiState = (state, { leadId }) => {
+    const settings = {
+        editEntries: { $auto: {
+            [leadId]: { $auto: {
+                $unset: ['entryRests'],
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
 const reducers = {
     [EEB__SET_LEAD]: setLead,
     [EEB__SET_ENTRIES]: setEntries,
@@ -664,5 +682,7 @@ const reducers = {
     [EEB__APPLY_TO_ALL_ENTRIES_BELOW]: applyToAllEntries('all-below'),
     [EEB__SET_PENDING]: setPending,
     [EEB__SAVE_ENTRY]: saveEntry,
+    [EEB__RESET_UI_STATE]: editEntriesResetUiState,
 };
+
 export default reducers;

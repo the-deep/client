@@ -13,7 +13,7 @@ const myTransform = createTransform(
             leadDriveRests: undefined,
             leadDropboxRests: undefined,
 
-            removeModal: undefined,
+            removeModalState: undefined,
         },
         editEntries: mapToMap(
             inboundState.editEntries,
