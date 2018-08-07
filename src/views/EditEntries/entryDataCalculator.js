@@ -1,3 +1,5 @@
+import update from '#rsu/immutable-update';
+
 const emptyObject = {};
 
 const calculateMatrix1dColor = (value, widgetData) => {
@@ -93,15 +95,27 @@ export const calculateFirstTimeAttributes = (
                 data: widgetData = {},
             } = {},
         } = widget;
+
         let value;
 
-        if (widgetId === 'dateWidget' && widgetData.informationDateSelected) {
-            value = lead.publishedOn;
-        }
+        // Calculate first time attribute for each widget
+        if (widgetId === 'dateWidget') {
+            if (widgetData.informationDateSelected) {
+                value = lead.publishedOn;
+            }
+        } /* else if (widgetId === 'nextWidget') { ... } */
 
         if (value) {
-            acc[widget.id] = { data: { value } };
+            const settings = {
+                [widget.id]: { $auto: {
+                    data: { $auto: {
+                        value: { $set: value },
+                    } },
+                } },
+            };
+            return update(acc, settings);
         }
+
         return acc;
     }, attributes,
 );
