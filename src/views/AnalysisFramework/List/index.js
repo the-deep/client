@@ -15,8 +15,6 @@ const propTypes = {
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-console.warn(widgetList);
-
 const listWidgets = widgetList.filter(
     w => widgetListingVisibility(w.widgetId, VIEW.list),
 );
