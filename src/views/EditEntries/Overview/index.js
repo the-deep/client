@@ -28,6 +28,8 @@ import {
     VIEW,
 } from '#widgets';
 
+import _ts from '#ts';
+
 import WidgetFaram from '../WidgetFaram';
 import LeadPane from './LeadPane';
 import styles from './styles.scss';
@@ -81,8 +83,7 @@ export default class Overview extends React.PureComponent {
     static entryLabelSelector = (entry) => {
         const values = entryAccessor.data(entry);
         const { excerpt, order } = values;
-        // FIXME: use strings
-        return excerpt || `Excerpt ${order}`;
+        return excerpt || _ts('editEntry.overview', 'unnamedExcerptTitle', { index: order });
     };
 
     constructor(props) {
@@ -149,8 +150,7 @@ export default class Overview extends React.PureComponent {
                         <header className={styles.header}>
                             <SelectInput
                                 className={styles.entrySelectInput}
-                                // FIXME: use strings
-                                placeholder="Select entry"
+                                placeholder={_ts('editEntry.overview', 'selectEntryPlaceholder')}
                                 keySelector={Overview.entryKeySelector}
                                 labelSelector={Overview.entryLabelSelector}
                                 onChange={this.handleEntrySelect}
@@ -165,15 +165,13 @@ export default class Overview extends React.PureComponent {
                                     onClick={this.handleEntryDelete}
                                     disabled={!entry || pending}
                                 >
-                                    {/* FIXME: use strings */}
-                                    Remove
+                                    {_ts('editEntry.overview', 'removeExcerptButtonTitle')}
                                 </DangerButton>
                                 <PrimaryButton
                                     onClick={this.handleEmptyExcerptCreate}
                                     className={styles.addNewEntryButton}
                                 >
-                                    {/* FIXME: use strings */}
-                                    Add new
+                                    {_ts('editEntry.overview', 'addExcerptButtonTitle')}
                                 </PrimaryButton>
                             </div>
                         </header>

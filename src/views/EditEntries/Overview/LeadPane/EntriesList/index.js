@@ -54,13 +54,12 @@ export default class EntriesList extends React.PureComponent {
                 <img
                     className={styles.image}
                     src={image}
-                    alt={_ts('editEntry', 'altLabel')}
+                    alt={_ts('editEntry.overview.leftpane.entryList', 'altLabel')}
                 />
             );
         }
 
-        // FIXME: use strings
-        const excerptTitle = excerpt || `Excerpt ${order}`;
+        const excerptTitle = excerpt || _ts('editEntry.overview.leftpane.entryList', 'unnamedExcerptTitle', { index: order });
         return (
             <div className={styles.entryExcerpt}>
                 {excerptTitle}
@@ -128,7 +127,7 @@ export default class EntriesList extends React.PureComponent {
                             className={styles.removeButton}
                             onClick={() => handleMarkAsDeletedEntry(currentEntryKey, false)}
                             iconName={iconNames.undo}
-                            title={_ts('editEntry', 'removeEntryButtonTitle')}
+                            title={_ts('editEntry.overview.leftpane.entryList', 'removeEntryButtonTitle')}
                             disabled={pending}
                         />
                     ) : (
@@ -136,7 +135,7 @@ export default class EntriesList extends React.PureComponent {
                             className={styles.removeButton}
                             onClick={() => handleMarkAsDeletedEntry(currentEntryKey, true)}
                             iconName={iconNames.delete}
-                            title={_ts('editEntry', 'undoRemoveEntryButtonTitle')}
+                            title={_ts('editEntry.overview.leftpane.entryList', 'undoRemoveEntryButtonTitle')}
                             disabled={pending}
                         />
                     )

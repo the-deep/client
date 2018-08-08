@@ -29,13 +29,13 @@ export default class InputRow extends React.PureComponent {
                     <ColorInput
                         className={styles.colorInput}
                         faramElementName="color"
-                        label={_ts('framework.scaleWidget', 'colorLabel')}
+                        label={_ts('widgets.editor.scale', 'colorLabel')}
                     />
                     <TextInput
                         className={styles.titleInput}
                         faramElementName="label"
-                        label={_ts('framework.scaleWidget', 'inputLabel', { index: index + 1 })}
-                        placeholder={_ts('framework.scaleWidget', 'titlePlaceholderScale')}
+                        label={_ts('widgets.editor.scale', 'inputLabel', { index: index + 1 })}
+                        placeholder={_ts('widgets.editor.scale', 'titlePlaceholderScale')}
                         autoFocus
                     />
                 </FaramGroup>
@@ -43,7 +43,7 @@ export default class InputRow extends React.PureComponent {
                     className={styles.deleteButton}
                     iconName={iconNames.delete}
                     faramAction="remove"
-                    title={_ts('framework.scaleWidget', 'removeButtonTitle')}
+                    title={_ts('widgets.editor.scale', 'removeButtonTitle')}
                     faramElementIndex={index}
                     transparent
                 />

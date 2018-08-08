@@ -34,7 +34,7 @@ export default class NumberMatrixOverviewWidget extends React.PureComponent {
             <NumberMatrixInput
                 data={data}
                 faramElementName="value"
-                placeholder={_ts('framework.numberWidget', 'numberPlaceholder')}
+                placeholder={_ts('widgets.tagging.numberMatrix', 'numberPlaceholder')}
             />
         );
     }

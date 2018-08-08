@@ -5,6 +5,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import FaramGroup from '#rsci/Faram/FaramGroup';
 import TextInput from '#rsci/TextInput';
 
+import _ts from '#ts';
 import { iconNames } from '#constants';
 
 import styles from './styles.scss';
@@ -16,22 +17,19 @@ const SubdimensionRow = ({ index }) => (
                 className={styles.input}
                 faramElementName="title"
                 autoFocus
-                // FIXME: use strings
-                label={`Subdimension ${index + 1}`}
+                label={_ts('widgets.editor.matrix2d', 'unnamedSubdimensionLabel', { index: index + 1 })}
             />
             <TextInput
                 className={styles.input}
                 faramElementName="tooltip"
-                // FIXME: use strings
-                label="Tooltip"
+                label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
             />
         </FaramGroup>
         <DangerButton
             className={styles.deleteButton}
             iconName={iconNames.delete}
             faramAction="remove"
-            // FIXME: use strings
-            title="Remove Subdimensions"
+            title={_ts('widgets.editor.matrix2d', 'removeSubdimensionButtonTooltip')}
             faramElementIndex={index}
             transparent
         />

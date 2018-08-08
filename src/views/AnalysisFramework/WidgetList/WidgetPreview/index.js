@@ -39,8 +39,7 @@ export default class WidgetPreview extends React.PureComponent {
                     transparent
                     onClick={this.handleAddClick}
                     iconName={iconNames.add}
-                    // FIXME: use strings
-                    title="Add widget"
+                    title={_ts('framework.widgetList', 'addWidgetButtonLabel')}
                 />
             </div>
         );

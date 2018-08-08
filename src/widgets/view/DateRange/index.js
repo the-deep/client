@@ -46,7 +46,7 @@ export default class DateRangeViewWidget extends React.PureComponent {
                     emptyComponent={emptyComponent}
                 />
                 <span className={styles.to}>
-                    {_ts('entries.widgets', 'dateRangeToLabel')}
+                    {_ts('widgets.view.dateRange', 'toLabel')}
                 </span>
                 <FormattedDate
                     className={styles.date}

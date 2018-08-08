@@ -5,6 +5,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import FaramGroup from '#rsci/Faram/FaramGroup';
 import TextInput from '#rsci/TextInput';
 
+import _ts from '#ts';
 import { iconNames } from '#constants';
 
 import styles from './styles.scss';
@@ -16,8 +17,7 @@ const InputRow = ({ index }) => (
                 className={styles.input}
                 faramElementName="value"
                 autoFocus
-                // FIXME: use strings
-                label={`Cell ${index + 1}`}
+                label={_ts('widgets.editor.matrix1d', 'unnamedCellTitle', { index: index + 1 })}
                 selectOnFocus
             />
         </FaramGroup>
@@ -25,8 +25,7 @@ const InputRow = ({ index }) => (
             className={styles.deleteButton}
             iconName={iconNames.delete}
             faramAction="remove"
-            // FIXME: use strings
-            title="Remove Cell"
+            title={_ts('widgets.editor.matrix1d', 'removeCellButtonTitle')}
             faramElementIndex={index}
             transparent
         />

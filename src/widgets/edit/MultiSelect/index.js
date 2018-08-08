@@ -42,13 +42,13 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                 validation: (options) => {
                     const errors = [];
                     if (!options || options.length <= 0) {
-                        errors.push(_ts('framework', 'atLeastOneError'));
+                        errors.push(_ts('widgets.editor.multiselect', 'atLeastOneError'));
                     }
 
                     const duplicates = findDuplicates(options, o => o.label);
                     if (duplicates.length > 0) {
                         errors.push(_ts(
-                            'framework',
+                            'widgets.editor.multiselect',
                             'duplicationError',
                             { duplicates: duplicates.join(', ') },
                         ));
@@ -148,8 +148,8 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                             className={styles.title}
                             autoFocus
                             selectOnFocus
-                            label={_ts('framework.excerptWidget', 'titleLabel')}
-                            placeholder={_ts('framework.excerptWidget', 'widgetTitlePlaceholder')}
+                            label={_ts('widgets.editor.multiselect', 'titleLabel')}
+                            placeholder={_ts('widgets.editor.multiselect', 'widgetTitlePlaceholder')}
                         />
                         <div className={styles.optionInputs} >
                             <FaramList faramElementName="options">
@@ -159,7 +159,7 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                                 />
                                 <header className={styles.header}>
                                     <h4>
-                                        {_ts('framework.multiselectWidget', 'optionsHeader')}
+                                        {_ts('widgets.editor.multiselect', 'optionsHeader')}
                                     </h4>
                                     <PrimaryButton
                                         iconName={iconNames.add}
@@ -167,7 +167,7 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                                         faramInfo={MultiSelectEditWidget.faramInfoForAdd}
                                         transparent
                                     >
-                                        {_ts('framework.multiselectWidget', 'addOptionButtonLabel')}
+                                        {_ts('widgets.editor.multiselect', 'addOptionButtonLabel')}
                                     </PrimaryButton>
                                 </header>
                                 <SortableListView

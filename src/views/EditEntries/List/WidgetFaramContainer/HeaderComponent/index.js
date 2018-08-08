@@ -68,19 +68,19 @@ export default class HeaderComponent extends React.PureComponent {
         return (
             <Fragment>
                 <AccentConfirmButton
-                    title={_ts('editEntry', 'applyAllButtonTitle')}
+                    title={_ts('editEntry.list.widgetForm', 'applyAllButtonTitle')}
                     tabIndex="-1"
                     transparent
                     iconName={iconNames.applyAll}
-                    confirmationMessage={_ts('editEntry', 'applyToAll')}
+                    confirmationMessage={_ts('editEntry.list.widgetForm', 'applyToAll')}
                     onClick={this.handleApplyAll}
                 />
                 <WarningConfirmButton
-                    title={_ts('editEntry', 'applyAllBelowButtonTitle')}
+                    title={_ts('editEntry.list.widgetForm', 'applyAllBelowButtonTitle')}
                     tabIndex="-1"
                     transparent
                     iconName={iconNames.applyAllBelow}
-                    confirmationMessage={_ts('editEntry', 'applyToAllBelow')}
+                    confirmationMessage={_ts('editEntry.list.widgetForm', 'applyToAllBelow')}
                     onClick={this.handleApplyAllBelow}
                 />
             </Fragment>

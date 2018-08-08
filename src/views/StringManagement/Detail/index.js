@@ -120,15 +120,17 @@ export default class StringManagement extends React.PureComponent {
         this.languageRequest.start();
     }
 
-    startDevLangSaveRequest = (data) => {
+    startDevLangSaveRequest = (languageCode, strings, links) => {
         if (this.devLangSaveRequest) {
             this.devLangSaveRequest.stop();
         }
 
         this.devLangSaveRequest = new DevLangSave({
             setState: params => this.setState(params),
+            clearChanges: () => this.props.clearChanges(languageCode),
         });
-        this.devLangSaveRequest.init(data);
+
+        this.devLangSaveRequest.init(strings, links);
         this.devLangSaveRequest.start();
     }
 
@@ -143,16 +145,12 @@ export default class StringManagement extends React.PureComponent {
 
     handleExportButtonClick = () => {
         const {
+            selectedLanguageName: languageCode,
             selectedLanguageStrings: strings,
             selectedLanguageLinks: links,
         } = this.props;
 
-        this.startDevLangSaveRequest({ strings, links });
-
-        // const content = encodeURIComponent(
-        //     JSON.stringify({ strings, links }, undefined, 4),
-        // );
-        // window.open(`data:application/txt,${content}`, '_self');
+        this.startDevLangSaveRequest(languageCode, strings, links);
     }
 
     handleAddButtonClick = () => {

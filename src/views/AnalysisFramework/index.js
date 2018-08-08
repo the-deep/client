@@ -102,10 +102,9 @@ export default class AnalysisFramework extends React.PureComponent {
             },
         };
 
-        // FIXME: use strings
         this.tabs = {
-            [VIEW.overview]: 'Overview',
-            [VIEW.list]: 'List',
+            [VIEW.overview]: _ts('framework', 'overviewTabTitle'),
+            [VIEW.list]: _ts('framework', 'listTabTitle'),
         };
 
         this.defaultHash = VIEW.overview;
@@ -175,13 +174,6 @@ export default class AnalysisFramework extends React.PureComponent {
             );
         }
 
-        // FIXME: add prompt
-
-        // FIXME: Use Strings
-        const cancelButtonTitle = 'Cancel';
-        const saveButtonTitle = 'Save';
-        const backButtonTooltip = 'Back to projects';
-
         const exitPath = reverseRoute(pathNames.projects, { projectId });
         const frameworkTitle = analysisFramework.title || _ts('framework', 'analysisFramework');
 
@@ -203,7 +195,7 @@ export default class AnalysisFramework extends React.PureComponent {
                 <header className={styles.header}>
                     <Link
                         className={styles.backLink}
-                        title={backButtonTooltip}
+                        title={_ts('framework', 'backButtonTooltip')}
                         to={{
                             pathname: exitPath,
                             hash: '#/frameworks',
@@ -223,18 +215,17 @@ export default class AnalysisFramework extends React.PureComponent {
                     />
                     <div className={styles.actionButtons}>
                         <DangerConfirmButton
-                            // FIXME: use strings
-                            confirmationMessage="Do you want to cancel all changes?"
+                            confirmationMessage={_ts('framework', 'cancelConfirmDetail')}
                             onClick={this.handleCancel}
                             disabled={analysisFramework.pristine}
                         >
-                            { cancelButtonTitle }
+                            { _ts('framework', 'cancelButtonTitle') }
                         </DangerConfirmButton>
                         <SuccessButton
                             onClick={this.handleSave}
                             disabled={analysisFramework.pristine}
                         >
-                            { saveButtonTitle }
+                            { _ts('framework', 'saveButtonTitle') }
                         </SuccessButton>
                     </div>
                 </header>

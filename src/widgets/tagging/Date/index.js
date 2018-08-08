@@ -16,7 +16,6 @@ export default class DateWidget extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        // TODO: feature to set date to published date automatically
         return (
             <div className={styles.dateWidget}>
                 <DateInput

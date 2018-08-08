@@ -104,7 +104,7 @@ export default class OrganigramCreatorInput extends React.PureComponent {
                         value={value.title}
                         className={styles.titleInput}
                         showHintAndError={false}
-                        placeholder={_ts('framework.organigramWidget', 'organPlaceholder', { level })}
+                        placeholder={_ts('components.organigramCreator', 'organPlaceholder', { level })}
                         showLabel={false}
                         onChange={this.handleTextChange}
                         disabled={disabled}
@@ -114,7 +114,7 @@ export default class OrganigramCreatorInput extends React.PureComponent {
                         <PrimaryButton
                             className={styles.actionButton}
                             onClick={this.handleOrganAdd}
-                            title={_ts('framework.organigramWidget', 'addChildButtonTitle')}
+                            title={_ts('components.organigramCreator', 'addChildButtonTitle')}
                             tabIndex="-1"
                             transparent
                             iconName={iconNames.fork}
@@ -125,7 +125,7 @@ export default class OrganigramCreatorInput extends React.PureComponent {
                                 <DangerButton
                                     className={styles.actionButton}
                                     onClick={this.handleOrganRemove}
-                                    title={_ts('framework.organigramWidget', 'removeElementButtonTitle')}
+                                    title={_ts('components.organigramCreator', 'removeElementButtonTitle')}
                                     tabIndex="-1"
                                     transparent
                                     iconName={iconNames.trash}

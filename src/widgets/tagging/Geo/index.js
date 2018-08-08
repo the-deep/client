@@ -67,7 +67,7 @@ export default class GeoWidget extends React.PureComponent {
             default:
                 console.error('Unknown entry type', entryType);
         }
-        const excerptHeaderTitle = _ts('framework.geoWidget', 'excerptHeaderTitle');
+        const excerptHeaderTitle = _ts('widgets.tagging.geo', 'excerptHeaderTitle');
 
         return (
             <GeoInput

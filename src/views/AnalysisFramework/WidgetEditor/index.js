@@ -22,6 +22,8 @@ import {
     widgetVisibility,
 } from '#widgets';
 
+import _ts from '#ts';
+
 import EditButton from './EditButton';
 import styles from './styles.scss';
 
@@ -150,10 +152,9 @@ export default class WidgetEditor extends React.PureComponent {
                                 />
                                 <DangerConfirmButton
                                     iconName={iconNames.delete}
-                                    // FIXME: use strings
-                                    title="Remove widget"
+                                    title={_ts('framework.widgetEditor', 'deleteTooltip')}
                                     tabIndex="-1"
-                                    confirmationMessage="Do you want to remove this widget?"
+                                    confirmationMessage={_ts('framework.widgetEditor', 'deleteConfirmDetail')}
                                     transparent
                                     onClick={() => this.handleItemRemove(key)}
                                 />
@@ -161,8 +162,7 @@ export default class WidgetEditor extends React.PureComponent {
                         ) : (
                             <span
                                 className={`${iconNames.info} ${styles.infoIcon}`}
-                                // FIXME: use strings
-                                title={`Widget added from ${addedFrom} page`}
+                                title={_ts('framework.widgetEditor', 'infoTooltip', { addedFrom })}
                             />
                         )
                     }

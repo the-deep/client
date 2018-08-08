@@ -10,6 +10,7 @@ import TextInput from '#rsci/TextInput';
 import ColorInput from '#rsci/ColorInput';
 import { randomString } from '#rsu/common';
 
+import _ts from '#ts';
 import { iconNames } from '#constants';
 
 import SubdimensionRow from './SubdimensionRow';
@@ -59,20 +60,18 @@ export default class DimensionContent extends React.PureComponent {
                         <ColorInput
                             // className={styles.input}
                             faramElementName="color"
-                            label="Color"
+                            label={_ts('widgets.editor.matrix2d', 'colorLabel')}
                         />
                         <TextInput
                             className={styles.input}
                             faramElementName="title"
-                            // FIXME: use strings
-                            label={`Dimension ${index + 1}`}
+                            label={_ts('widgets.editor.matrix2d', 'unnamedDimensionLabel', { index: index + 1 })}
                             autoFocus
                         />
                         <TextInput
                             className={styles.input}
                             faramElementName="tooltip"
-                            // FIXME: use strings
-                            label="Tooltip"
+                            label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
                         />
                     </div>
                     <FaramList faramElementName="subdimensions">
@@ -82,8 +81,7 @@ export default class DimensionContent extends React.PureComponent {
                         />
                         <header className={styles.header}>
                             <h4>
-                                {/* FIXME: use strings */}
-                                Subdimensions
+                                {_ts('widgets.editor.matrix2d', 'subdimensionsHeaderTitle')}
                             </h4>
                             <PrimaryButton
                                 faramAction="add"
@@ -91,8 +89,7 @@ export default class DimensionContent extends React.PureComponent {
                                 iconName={iconNames.add}
                                 transparent
                             >
-                                {/* FIXME: use strings */}
-                                Add subdimension
+                                {_ts('widgets.editor.matrix2d', 'addSubdimensionButtonTitle')}
                             </PrimaryButton>
                         </header>
                         <SortableListView

@@ -23,7 +23,7 @@ export default class DateRangeWidget extends React.PureComponent {
             <div className={styles.dateRange}>
                 <div className={styles.to}>
                     <Label
-                        text={_ts('editEntry.widgets', 'dateRangeFromLabel')}
+                        text={_ts('widgets.tagging.dateRange', 'fromLabel')}
                         className={styles.label}
                         show
                     />
@@ -36,7 +36,7 @@ export default class DateRangeWidget extends React.PureComponent {
                 </div>
                 <div className={styles.from}>
                     <Label
-                        text={_ts('editEntry.widgets', 'dateRangeToLabel')}
+                        text={_ts('widgets.tagging.dateRange', 'toLabel')}
                         className={styles.label}
                         show
                     />

@@ -5,6 +5,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import FaramElement from '#rsci/Faram/FaramElement';
 
 import { iconNames } from '#constants';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -68,8 +69,6 @@ export default class SectorTitle extends React.PureComponent {
             titleClassNames.push(styles.hasError);
         }
 
-        const defaultTitle = `Sector ${index + 1}`;
-
         return (
             <div className={sectorTitleClassNames.join(' ')}>
                 <button
@@ -77,12 +76,11 @@ export default class SectorTitle extends React.PureComponent {
                     onClick={this.handleClick}
                     type="button"
                 >
-                    {title || defaultTitle}
+                    {title || _ts('widgets.editor.matrix2d', 'unnamedSectorTitle', { index: index + 1 })}
                 </button>
                 <DangerButton
                     className={styles.deleteButton}
-                    // FIXME: use strings
-                    title="Remove Sector"
+                    title={_ts('widgets.editor.matrix2d', 'deleteSectorTooltip')}
                     iconName={iconNames.delete}
                     transparent
                     faramAction="remove"

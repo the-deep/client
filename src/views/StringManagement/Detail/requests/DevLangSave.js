@@ -18,6 +18,7 @@ export default class DevLangSave extends Request {
     }
 
     handleSuccess = () => {
+        this.parent.clearChanges();
         notify.send({
             title: _ts('stringManagement', 'devLangSaveTitle'),
             type: notify.type.SUCCESS,
@@ -44,10 +45,10 @@ export default class DevLangSave extends Request {
         });
     }
 
-    init = (data) => {
+    init = (strings, links) => {
         this.createDefault({
             url: languageServerEndPoint,
-            params: createParamsForLanguageServer(data),
+            params: createParamsForLanguageServer({ strings, links }),
         });
     }
 }

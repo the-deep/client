@@ -191,10 +191,9 @@ export default class EditEntries extends React.PureComponent {
             },
         };
 
-        // FIXME: use strings
         this.tabs = {
-            [VIEW.overview]: 'Overview',
-            [VIEW.list]: 'List',
+            [VIEW.overview]: _ts('editEntry', 'overviewTabTitle'),
+            [VIEW.list]: _ts('editEntry', 'listTabTitle'),
         };
 
         this.defaultHash = VIEW.overview;
@@ -311,7 +310,7 @@ export default class EditEntries extends React.PureComponent {
 
     handleExcerptChange = ({ type, value }, entryKey) => {
         if (!entryKey) {
-            console.error('This should not occur');
+            console.error('There is no entry key while changing excerpt.');
             // this.handleExcerptCreate({ type, value });
         } else {
             this.props.setExcerpt({
@@ -555,12 +554,6 @@ export default class EditEntries extends React.PureComponent {
             );
         }
 
-        // FIXME: use strings
-        const cancelButtonTitle = 'Cancel';
-        const saveButtonTitle = 'Save';
-        const backButtonTooltip = 'Back to leads page';
-        const editFrameworkTitle = 'Edit Framework';
-
         const exitPath = reverseRoute(pathNames.leads, {
             projectId,
         });
@@ -573,8 +566,6 @@ export default class EditEntries extends React.PureComponent {
         const isSaveDisabled = (
             pendingEditEntryData || pendingSaveAll || projectMismatch || !hasSavableEntries
         );
-
-        // FIXME: add prompt
 
         return (
             <div className={styles.editEntries}>
@@ -594,7 +585,7 @@ export default class EditEntries extends React.PureComponent {
                 <header className={styles.header}>
                     <Link
                         className={styles.backLink}
-                        title={backButtonTooltip}
+                        title={_ts('editEntry', 'backButtonTooltip')}
                         to={exitPath}
                     >
                         <i className={iconNames.back} />
@@ -622,23 +613,22 @@ export default class EditEntries extends React.PureComponent {
                                     {/*
                                         <span className={`${iconNames.edit} ${styles.editIcon}`} />
                                     */}
-                                    { editFrameworkTitle }
+                                    { _ts('editEntry', 'editFrameworkTitle') }
                                 </Link>
                             )}
                         />
                         <DangerConfirmButton
                             disabled={isSaveDisabled}
                             onClick={this.handleCancel}
-                            // FIXME: use strings
-                            confirmationMessage="Do you want to cancel all changes?"
+                            confirmationMessage={_ts('editEntry', 'cancelConfirmDetail')}
                         >
-                            { cancelButtonTitle }
+                            { _ts('editEntry', 'cancelButtonTitle') }
                         </DangerConfirmButton>
                         <SuccessButton
                             disabled={isSaveDisabled}
                             onClick={this.handleSave}
                         >
-                            { saveButtonTitle }
+                            { _ts('editEntry', 'saveButtonTitle') }
                         </SuccessButton>
                     </div>
                 </header>
@@ -652,8 +642,7 @@ export default class EditEntries extends React.PureComponent {
                         />
                     ) : (
                         <Message>
-                            {/* FIXME: use strings */}
-                            Cannot find lead inside current project.
+                            { _ts('editEntry', 'noLeadMessage')}
                         </Message>
                     )
                 }

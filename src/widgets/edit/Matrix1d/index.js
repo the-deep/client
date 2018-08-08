@@ -45,14 +45,16 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                 validation: (rows) => {
                     const errors = [];
                     if (!rows || rows.length <= 0) {
-                        // FIXME: use strings
-                        errors.push('There should be at least 1 row.');
+                        errors.push(_ts('widgets.editor.matrix1d', 'atLeastOneError'));
                     }
 
                     const duplicates = findDuplicates(rows, o => o.title);
                     if (duplicates.length > 0) {
-                        // FIXME: use strings
-                        errors.push(`Duplicate rows are not allowed: ${duplicates.join(', ')}`);
+                        errors.push(_ts(
+                            'widgets.editor.matrix1d',
+                            'duplicationError',
+                            { duplicates: duplicates.join(', ') },
+                        ));
                     }
                     return errors;
                 },
@@ -66,14 +68,16 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                             validation: (cells) => {
                                 const errors = [];
                                 if (!cells || cells.length <= 0) {
-                                    // FIXME: use strings
-                                    errors.push('There should be at least 1 cell.');
+                                    errors.push(_ts('widgets.editor.matrix1d', 'atLeastOneError'));
                                 }
 
                                 const duplicates = findDuplicates(cells, o => o.value);
                                 if (duplicates.length > 0) {
-                                    // FIXME: use strings
-                                    errors.push(`Duplicate cells are not allowed: ${duplicates.join(', ')}`);
+                                    errors.push(_ts(
+                                        'widgets.editor.matrix1d',
+                                        'duplicationError',
+                                        { duplicates: duplicates.join(', ') },
+                                    ));
                                 }
                                 return errors;
                             },
@@ -183,10 +187,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             title,
         } = this.props;
 
-        // FIXME: Use strings
-        const cancelButtonLabel = 'Cancel';
-        const saveButtonLabel = 'Save';
-
         const { rows = [] } = faramValues || {};
         const selectedRowIndex = rows.findIndex(
             row => Matrix1dEditWidget.keyExtractor(row) === this.state.selectedRowKey,
@@ -213,8 +213,8 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                             className={styles.titleInput}
                             faramElementName="title"
                             autoFocus
-                            label={_ts('framework.excerptWidget', 'titleLabel')}
-                            placeholder={_ts('framework.excerptWidget', 'widgetTitlePlaceholder')}
+                            label={_ts('widgets.editor.matrix1d', 'titleLabel')}
+                            placeholder={_ts('widgets.editor.matrix1d', 'widgetTitlePlaceholder')}
                             selectOnFocus
                         />
                         <div className={styles.rows} >
@@ -222,8 +222,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                 <NonFieldErrors faramElement className={styles.error} />
                                 <header className={styles.header}>
                                     <h4>
-                                        {/* FIXME: use strings */}
-                                        Rows
+                                        {_ts('widgets.editor.matrix1d', 'rowTitle')}
                                     </h4>
                                     <PrimaryButton
                                         faramAction="add"
@@ -231,8 +230,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                         iconName={iconNames.add}
                                         transparent
                                     >
-                                        {/* FIXME: use strings */}
-                                        Add Row
+                                        {_ts('widgets.editor.matrix1d', 'addRowButtonTitle')}
                                     </PrimaryButton>
                                 </header>
                                 <div className={styles.panels}>
@@ -257,13 +255,13 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerButton onClick={onClose}>
-                            {cancelButtonLabel}
+                            {_ts('widgets.editor.matrix1d', 'cancelButtonLabel')}
                         </DangerButton>
                         <PrimaryButton
                             type="submit"
                             disabled={!pristine}
                         >
-                            {saveButtonLabel}
+                            {_ts('widgets.editor.matrix1d', 'saveButtonLabel')}
                         </PrimaryButton>
                     </ModalFooter>
                 </Faram>

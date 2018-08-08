@@ -181,21 +181,21 @@ export default class LeftPane extends React.PureComponent {
         switch (leadPaneType) {
             case LEAD_PANE_TYPE.spreadsheet:
                 tabs = {
-                    'original-preview': _ts('editEntry', 'tabularTabLabel'),
-                    'images-preview': _ts('editEntry', 'imagesTabLabel'),
+                    'original-preview': _ts('editEntry.overview.leftpane', 'tabularTabLabel'),
+                    'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
                 };
                 break;
             case LEAD_PANE_TYPE.image:
                 tabs = {
-                    'original-preview': _ts('editEntry', 'imagesTabLabel'),
-                    'images-preview': _ts('editEntry', 'imagesTabLabel'),
+                    'original-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
+                    'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
                 };
                 break;
             case LEAD_PANE_TYPE.text:
                 tabs = {
-                    'simplified-preview': _ts('editEntry', 'simplifiedTabLabel'),
-                    'assisted-tagging': _ts('editEntry', 'assistedTabLabel'),
-                    'images-preview': _ts('editEntry', 'imagesTabLabel'),
+                    'simplified-preview': _ts('editEntry.overview.leftpane', 'simplifiedTabLabel'),
+                    'assisted-tagging': _ts('editEntry.overview.leftpane', 'assistedTabLabel'),
+                    'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
                 };
                 break;
             case LEAD_PANE_TYPE.word:
@@ -203,10 +203,10 @@ export default class LeftPane extends React.PureComponent {
             case LEAD_PANE_TYPE.presentation:
             case LEAD_PANE_TYPE.website:
                 tabs = {
-                    'simplified-preview': _ts('editEntry', 'simplifiedTabLabel'),
-                    'assisted-tagging': _ts('editEntry', 'assistedTabLabel'),
-                    'original-preview': _ts('editEntry', 'originalTabLabel'),
-                    'images-preview': _ts('editEntry', 'imagesTabLabel'),
+                    'simplified-preview': _ts('editEntry.overview.leftpane', 'simplifiedTabLabel'),
+                    'assisted-tagging': _ts('editEntry.overview.leftpane', 'assistedTabLabel'),
+                    'original-preview': _ts('editEntry.overview.leftpane', 'originalTabLabel'),
+                    'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
                 };
                 break;
             default:
@@ -215,7 +215,7 @@ export default class LeftPane extends React.PureComponent {
         if (!images || images.length <= 0) {
             tabs['images-preview'] = undefined;
         }
-        tabs['entries-listing'] = _ts('editEntry', 'entriesTabLabel');
+        tabs['entries-listing'] = _ts('editEntry.overview.leftpane', 'entriesTabLabel');
         return tabs;
     }
 
@@ -284,7 +284,7 @@ export default class LeftPane extends React.PureComponent {
         if (!tabs) {
             return (
                 <Message>
-                    {_ts('editEntry', 'unrecognizedLeadMessage')}
+                    {_ts('editEntry.overview.leftpane', 'unrecognizedLeadMessage')}
                 </Message>
             );
         }

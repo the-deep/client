@@ -78,7 +78,7 @@ export default class GalleryViewer extends React.PureComponent {
 
     handleScreenshotError = (message) => {
         notify.send({
-            title: 'Screenshot', // FIXME: strings
+            title: _ts('components.galleryViewer', 'errorTitle'), // screenshot
             type: notify.type.ERROR,
             message,
             duration: notify.duration.MEDIUM,
@@ -123,8 +123,7 @@ export default class GalleryViewer extends React.PureComponent {
                             <AccentButton
                                 iconName={iconNames.check}
                                 onClick={this.handleScreenshotDone}
-                                // FIXME: use strings
-                                title="Save screenshot"
+                                title={_ts('components.galleryViewer', 'saveButtonTitle')} // save screenshot
                                 transparent
                             />
                         )
@@ -132,8 +131,7 @@ export default class GalleryViewer extends React.PureComponent {
                     <AccentButton
                         iconName={iconNames.close}
                         onClick={this.handleScreenshotClose}
-                        // FIXME: use strings
-                        title="Discard screenshot"
+                        title={_ts('components.galleryViewer', 'discardButtonTitle')} // discard screenshot
                         transparent
                     />
                 </Fragment>
@@ -145,8 +143,7 @@ export default class GalleryViewer extends React.PureComponent {
                 iconName={iconNames.camera}
                 onClick={() => { this.setState({ screenshotMode: true }); }}
                 transparent
-                // FIXME: use strings
-                title="Take screenshot"
+                title={_ts('components.galleryViewer', 'screenshotButtonTitle')} // take screenshot
             />
         );
     }
@@ -173,8 +170,7 @@ export default class GalleryViewer extends React.PureComponent {
                             className={styles.openLink}
                             href={url}
                             target="_blank"
-                            // FIXME: use strings
-                            title="Open link in new tab"
+                            title={_ts('components.galleryViewer', 'viewLinkTooltip')} // open link in new tab
                         >
                             <span className={iconNames.openLink} />
                         </a>
