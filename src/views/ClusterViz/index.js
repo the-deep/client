@@ -346,7 +346,6 @@ export default class ClusterViz extends PureComponent {
         } = cluster;
 
         return (
-            // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
             <div
                 key={keyword}
                 className={styles.keyword}
@@ -518,7 +517,16 @@ export default class ClusterViz extends PureComponent {
                     <LoadingAnimation />
                 }
                 <header className={styles.header}>
-                    <h2>{_ts('clusterViz', 'clusterVizTitle')}</h2>
+                    <Link
+                        className={styles.backLink}
+                        title={_ts('clusterViz', 'showTable')}
+                        to={reverseRoute(pathNames.leads, { projectId: activeProject })}
+                    >
+                        <i className={iconNames.back} />
+                    </Link>
+                    <h2 className={styles.heading}>
+                        {_ts('clusterViz', 'clusterVizTitle')}
+                    </h2>
                 </header>
                 { this.renderErrorMessage() }
                 <div className={styles.container}>
@@ -551,15 +559,6 @@ export default class ClusterViz extends PureComponent {
                         </Fragment>
                     }
                 </div>
-                <footer className={styles.footer}>
-                    <Link
-                        className={styles.link}
-                        to={reverseRoute(pathNames.leads, { projectId: activeProject })}
-                        replace
-                    >
-                        { _ts('clusterViz', 'showTable')}
-                    </Link>
-                </footer>
             </div>
         );
     }

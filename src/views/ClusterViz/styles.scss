@@ -17,6 +17,20 @@ $height-cluster-header: 36px;
         justify-content: space-between;
         border-bottom: $width-separator-thin solid $color-separator;
         padding: $spacing-small $spacing-medium;
+
+        .back-link {
+            @extend %transparent-button-like-link;
+            padding: $spacing-small $spacing-medium;
+            font-size: $font-size-large;
+        }
+
+        .heading {
+            flex-grow: 1;
+            padding: 0 $spacing-medium;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
 
     .container {
@@ -157,19 +171,6 @@ $height-cluster-header: 36px;
                     border-color: $color-accent;
                 }
             }
-        }
-    }
-
-    .footer {
-        @include background-color($color-foreground);
-        display: flex;
-        flex-shrink: 0;
-        justify-content: space-between;
-        border-top: $width-separator-thin solid $color-separator;
-        padding: $spacing-small $spacing-medium-alt;
-
-        .link {
-            @include button-like-link($color-accent);
         }
     }
 }
