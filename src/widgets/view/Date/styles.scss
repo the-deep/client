@@ -1,6 +1,9 @@
 @import '~base-scss/base';
 
 .date-output {
+    display: flex;
+    align-items: center;
     padding: $spacing-small;
+    height: 100%;
     overflow: auto;
 }

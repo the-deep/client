@@ -17,7 +17,7 @@ export default class TimeWidget extends React.PureComponent {
 
     render() {
         return (
-            <div className={styles.date}>
+            <div className={styles.time}>
                 <TimeInput
                     faramElementName="value"
                     showLabel={false}
