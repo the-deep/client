@@ -39,10 +39,10 @@ export default class ExcerptOutput extends React.PureComponent {
             ${styles.excerpt}
         `;
 
-        let Children;
+        let children;
         switch (type) {
             case TEXT: {
-                Children = (
+                children = (
                     <p className={styles.text}>
                         { value }
                     </p>
@@ -50,7 +50,7 @@ export default class ExcerptOutput extends React.PureComponent {
                 break;
             }
             case IMAGE: {
-                Children = (
+                children = (
                     <img
                         className={styles.image}
                         alt=""
@@ -66,7 +66,7 @@ export default class ExcerptOutput extends React.PureComponent {
 
         return (
             <div className={className}>
-                <Children />
+                {children}
             </div>
         );
     }

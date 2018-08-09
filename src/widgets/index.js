@@ -3,6 +3,7 @@ import { mapToMap, mapToList } from '#rsu/common';
 import update from '#rsu/immutable-update';
 
 import FrameworkWidgetError from '#components/FrameworkWidgetError';
+import WidgetError from '#components/WidgetError';
 
 import DefaultEditWidget from './edit/Default';
 // overview
@@ -70,8 +71,8 @@ export const VISIBILITY = {
 };
 
 // Decorator for each widgets
-const boundWidgetError = boundError(FrameworkWidgetError);
-const decorator = Component => boundWidgetError(Component);
+const editDecorator = boundError(FrameworkWidgetError);
+const decorator = boundError(WidgetError);
 
 let widgets = {
     excerptWidget: {
@@ -301,7 +302,7 @@ widgets = mapToMap(
 
         const componentSettings = {
             title: { $set: title },
-            editComponent: { $set: decorator(editComponent) },
+            editComponent: { $set: editDecorator(editComponent) },
             initialLayout: { $set: {
                 overviewGridLayout: overview && {
                     left: 0,
