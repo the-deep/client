@@ -144,12 +144,12 @@ let widgets = {
         overview: {
             component: DateRangeWidget,
             viewComponent: DateRangeViewWidget,
-            minSize: { w: 26, h: 3 },
+            minSize: { w: 20, h: 5 },
         },
         list: {
             component: DateRangeWidget,
             viewComponent: DateRangeViewWidget,
-            minSize: { w: 26, h: 3 },
+            minSize: { w: 20, h: 5 },
         },
     },
     dateWidget: {
@@ -160,12 +160,12 @@ let widgets = {
         overview: {
             component: DateWidget,
             viewComponent: DateViewWidget,
-            minSize: { w: 13, h: 3 },
+            minSize: { w: 16, h: 5 },
         },
         list: {
             component: DateWidget,
             viewComponent: DateViewWidget,
-            minSize: { w: 13, h: 3 },
+            minSize: { w: 16, h: 5 },
         },
     },
     timeWidget: {
@@ -176,12 +176,12 @@ let widgets = {
         overview: {
             component: TimeWidget,
             viewComponent: TimeViewWidget,
-            minSize: { w: 13, h: 3 },
+            minSize: { w: 8, h: 5 },
         },
         list: {
             component: TimeWidget,
             viewComponent: TimeViewWidget,
-            minSize: { w: 13, h: 3 },
+            minSize: { w: 8, h: 5 },
         },
     },
     geoWidget: {

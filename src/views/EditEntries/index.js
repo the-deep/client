@@ -619,7 +619,9 @@ export default class EditEntries extends React.PureComponent {
                                     to={frameworkPath}
                                     disabled={!analysisFramework.id || disabled}
                                 >
-                                    <span className={`${iconNames.edit} ${styles.editIcon}`} />
+                                    {/*
+                                        <span className={`${iconNames.edit} ${styles.editIcon}`} />
+                                    */}
                                     { editFrameworkTitle }
                                 </Link>
                             )}

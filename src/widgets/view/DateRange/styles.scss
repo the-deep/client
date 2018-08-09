@@ -2,11 +2,15 @@
 
 .date-range {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     height: 100%;
+    overflow: auto;
 
-    .date,
-    .to {
+    .date {
         padding: $spacing-extra-small $spacing-small;
+    }
+
+    .empty {
+        color: $color-text-placeholder;
     }
 }

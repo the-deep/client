@@ -2,8 +2,11 @@
 
 .row {
     display: flex;
-    border-bottom: $width-separator-thin solid $color-separator;
     padding: $spacing-small;
+
+    &:not(:last-child) {
+        border-bottom: $width-separator-thin solid $color-separator;
+    }
 
     .tag-dimension {
         align-self: center;
