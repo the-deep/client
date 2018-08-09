@@ -68,8 +68,8 @@ export default class Row extends React.PureComponent {
                         options={sector.subsectors}
                         keySelector={Row.subsectorKeySelector}
                         labelSelector={Row.subsectorLabelSelector}
-                        placeholder={_ts('framework.matrix2dWidget', 'subsectorsLabel')}
-                        label={_ts('framework.matrix2dWidget', 'subsectorsLabel')}
+                        placeholder={_ts('widgets.tagging.matrix2d', 'subsectorsLabel')}
+                        label={_ts('widgets.tagging.matrix2d', 'subsectorsLabel')}
                         showHintAndError={false}
                         disabled={disabled}
                     />

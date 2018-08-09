@@ -95,8 +95,8 @@ export default class DefaultEditWidget extends React.PureComponent {
                         <TextInput
                             faramElementName="title"
                             autoFocus
-                            label={_ts('framework.excerptWidget', 'titleLabel')}
-                            placeholder={_ts('framework.excerptWidget', 'widgetTitlePlaceholder')}
+                            label={_ts('widgets.editor.default', 'titleLabel')}
+                            placeholder={_ts('widgets.editor.default', 'widgetTitlePlaceholder')}
                             selectOnFocus
                         />
                     </ModalBody>

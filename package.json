@@ -105,6 +105,7 @@
         "webpack-pwa-manifest": "^3.6.2"
     },
     "dependencies": {
+        "body-parser": "^1.18.3",
         "d3-area-label": "^1.4.0",
         "d3-array": "^1.2.1",
         "d3-axis": "^1.0.8",
@@ -126,6 +127,8 @@
         "d3-transition": "^1.1.1",
         "d3-voronoi": "^1.1.2",
         "d3-zoom": "^1.7.1",
+        "express": "^4.16.3",
+        "fs": "^0.0.1-security",
         "hoist-non-react-statics": "^2.5.0",
         "immutability-helper": "^2.7.0",
         "jwt-decode": "^2.2.0",

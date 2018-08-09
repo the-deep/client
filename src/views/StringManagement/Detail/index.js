@@ -32,6 +32,7 @@ import EditStringModal from './EditStringModal';
 import StringsTable from './StringsTable';
 import LinksTable from './LinksTable';
 import InfoPane from './InfoPane';
+import DevLangSave from './requests/DevLangSave';
 
 import styles from './styles.scss';
 
@@ -100,6 +101,9 @@ export default class StringManagement extends React.PureComponent {
         if (this.languageRequest) {
             this.languageRequest.stop();
         }
+        if (this.devLangSaveRequest) {
+            this.devLangSaveRequest.stop();
+        }
     }
 
     createLanguageRequest = (languageCode, strings, links) => {
@@ -116,6 +120,20 @@ export default class StringManagement extends React.PureComponent {
         this.languageRequest.start();
     }
 
+    startDevLangSaveRequest = (languageCode, strings, links) => {
+        if (this.devLangSaveRequest) {
+            this.devLangSaveRequest.stop();
+        }
+
+        this.devLangSaveRequest = new DevLangSave({
+            setState: params => this.setState(params),
+            clearChanges: () => this.props.clearChanges(languageCode),
+        });
+
+        this.devLangSaveRequest.init(strings, links);
+        this.devLangSaveRequest.start();
+    }
+
     handleSaveButtonClick = () => {
         const {
             selectedLanguageName: languageCode,
@@ -127,15 +145,12 @@ export default class StringManagement extends React.PureComponent {
 
     handleExportButtonClick = () => {
         const {
+            selectedLanguageName: languageCode,
             selectedLanguageStrings: strings,
             selectedLanguageLinks: links,
         } = this.props;
 
-        const content = encodeURIComponent(
-            JSON.stringify({ strings, links }, undefined, 4),
-        );
-
-        window.open(`data:application/txt,${content}`, '_self');
+        this.startDevLangSaveRequest(languageCode, strings, links);
     }
 
     handleAddButtonClick = () => {

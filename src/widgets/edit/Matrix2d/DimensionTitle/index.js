@@ -5,6 +5,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import FaramElement from '#rsci/Faram/FaramElement';
 
 import { iconNames } from '#constants';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -69,8 +70,6 @@ export default class DimensionTitle extends React.PureComponent {
             titleClassNames.push(styles.hasError);
         }
 
-        const defaultTitle = `Dimension ${index + 1}`;
-
         return (
             <div className={dimensionTitleClassNames.join(' ')}>
                 <button
@@ -78,12 +77,11 @@ export default class DimensionTitle extends React.PureComponent {
                     onClick={this.handleClick}
                     type="button"
                 >
-                    {title || defaultTitle}
+                    {title || _ts('widgets.editor.matrix2d', 'unnamedDimensionLabel', { index: index + 1 })}
                 </button>
                 <DangerButton
                     className={styles.deleteButton}
-                    // FIXME: use strings
-                    title="Remove Dimension"
+                    title={_ts('widgets.editor.matrix2d', 'removeDimensionTooltip')}
                     iconName={iconNames.delete}
                     transparent
                     faramAction="remove"

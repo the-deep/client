@@ -14,6 +14,8 @@ import ModalFooter from '#rscv/Modal/Footer';
 import FaramElement from '#rsci/Faram/FaramElement';
 import Label from '#rsci/Label';
 
+import _ts from '#ts';
+
 import { iconNames } from '#constants';
 import styles from './styles.scss';
 
@@ -38,7 +40,7 @@ const defaultProps = {
     label: '',
     showLabel: true,
     className: '',
-    title: 'Organigram', // FIXME: use strings
+    title: _ts('components.organigram', 'defaultTitle'),
     onChange: undefined,
     hideList: false,
     value: [],

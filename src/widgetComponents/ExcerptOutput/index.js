@@ -27,43 +27,11 @@ export default class ExcerptOutput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    renderText = () => {
-        const {
-            value,
-        } = this.props;
-
-        return (
-            <p className={styles.text}>
-                { value }
-            </p>
-        );
-    }
-
-    renderImage = () => {
-        const {
-            value,
-        } = this.props;
-
-        return (
-            // eslint-disable-next-line jsx-a11y/alt-text
-            <img
-                className={styles.image}
-                src={value}
-            />
-        );
-    }
-
-    renderUnknown = () => (
-        // FIXME: use strings
-        <div className={styles.unknown}>
-            Unknown type
-        </div>
-    )
-
     render() {
         const {
             className: classNameFromProps,
             type,
+            value,
         } = this.props;
 
         const className = `
@@ -73,14 +41,27 @@ export default class ExcerptOutput extends React.PureComponent {
 
         let Children;
         switch (type) {
-            case TEXT:
-                Children = this.renderText;
+            case TEXT: {
+                Children = (
+                    <p className={styles.text}>
+                        { value }
+                    </p>
+                );
                 break;
-            case IMAGE:
-                Children = this.renderImage;
+            }
+            case IMAGE: {
+                Children = (
+                    <img
+                        className={styles.image}
+                        alt=""
+                        src={value}
+                    />
+                );
                 break;
+            }
             default:
-                Children = this.renderUnknown;
+                console.error('Excerpt should either be image or text');
+                break;
         }
 
         return (

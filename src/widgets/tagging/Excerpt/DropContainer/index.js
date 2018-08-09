@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import _ts from '#ts';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -12,8 +14,7 @@ const propTypes = {
 const defaultProps = {
     className: '',
     show: false,
-    // FIXME: use strings
-    contentText: 'Drop text or image here',
+    contentText: _ts('widgets.tagging.excerpt', 'dropHereText'),
 };
 
 export default class DropContainer extends React.PureComponent {

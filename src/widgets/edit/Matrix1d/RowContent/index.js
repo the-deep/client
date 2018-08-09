@@ -10,6 +10,7 @@ import TextInput from '#rsci/TextInput';
 import ColorInput from '#rsci/ColorInput';
 import { randomString } from '#rsu/common';
 
+import _ts from '#ts';
 import { iconNames } from '#constants';
 
 import InputRow from './InputRow';
@@ -63,15 +64,13 @@ export default class RowContent extends React.PureComponent {
                         <TextInput
                             className={styles.input}
                             faramElementName="title"
-                            // FIXME: use strings
-                            label={`Row ${index + 1}`}
+                            label={_ts('widgets.editor.matrix1d', 'unnamedRowTitle', { index: index + 1 })}
                             autoFocus
                         />
                         <TextInput
                             className={styles.input}
                             faramElementName="tooltip"
-                            // FIXME: use strings
-                            label="Tooltip"
+                            label={_ts('widgets.editor.matrix1d', 'tooltipLabel')}
                         />
                     </div>
                     <FaramList faramElementName="cells">
@@ -81,8 +80,7 @@ export default class RowContent extends React.PureComponent {
                         />
                         <header className={styles.header}>
                             <h4>
-                                {/* FIXME: use strings */}
-                                Cells
+                                {_ts('widgets.editor.matrix1d', 'cellsHeaderTitle')}
                             </h4>
                             <PrimaryButton
                                 faramAction="add"
@@ -90,8 +88,7 @@ export default class RowContent extends React.PureComponent {
                                 iconName={iconNames.add}
                                 transparent
                             >
-                                {/* FIXME: use strings */}
-                                Add Cell
+                                {_ts('widgets.editor.matrix1d', 'addCellButtonTitle')}
                             </PrimaryButton>
                         </header>
                         <SortableListView

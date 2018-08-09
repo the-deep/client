@@ -79,7 +79,7 @@ export default class OrganigramWidget extends React.PureComponent {
             default:
                 console.error('Unknown entry type', entryType);
         }
-        const excerptHeaderTitle = _ts('framework.geoWidget', 'excerptHeaderTitle');
+        const excerptHeaderTitle = _ts('widgets.tagging.organigram', 'excerptHeaderTitle');
 
         return (
             <OrganigramInput

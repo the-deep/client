@@ -7,7 +7,6 @@ import {
 import { getFiltersForRequest } from '#entities/lead';
 import _ts from '#ts';
 
-import schema from '#schema';
 import notify from '#notify';
 
 export default class LeadGroupsGetRequest {
@@ -30,7 +29,7 @@ export default class LeadGroupsGetRequest {
     failure = (response) => {
         const message = transformAndCombineResponseErrors(response.errors);
         notify.send({
-            title: _ts('leadGroups', 'connectorTitle'),
+            title: _ts('leadGroups', 'leadGroupTitle'),
             type: notify.type.ERROR,
             message,
             duration: notify.duration.MEDIUM,

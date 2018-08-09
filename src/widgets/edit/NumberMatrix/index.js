@@ -47,13 +47,13 @@ export default class NumberMatrixOverview extends React.PureComponent {
                 validation: (rowHeaders) => {
                     const errors = [];
                     if (!rowHeaders || rowHeaders.length <= 0) {
-                        errors.push(_ts('framework', 'atLeastOneError'));
+                        errors.push(_ts('widgets.editor.numberMatrix', 'atLeastOneError'));
                     }
 
                     const duplicates = findDuplicates(rowHeaders, o => o.title);
                     if (duplicates.length > 0) {
                         errors.push(_ts(
-                            'framework',
+                            'widgets.editor.numberMatrix',
                             'duplicationError',
                             { duplicates: duplicates.join(', ') },
                         ));
@@ -71,13 +71,13 @@ export default class NumberMatrixOverview extends React.PureComponent {
                 validation: (columnHeaders) => {
                     const errors = [];
                     if (!columnHeaders || columnHeaders.length <= 0) {
-                        errors.push(_ts('framework', 'atLeastOneError'));
+                        errors.push(_ts('widgets.editor.numberMatrix', 'atLeastOneError'));
                     }
 
                     const duplicates = findDuplicates(columnHeaders, o => o.title);
                     if (duplicates.length > 0) {
                         errors.push(_ts(
-                            'framework',
+                            'widgets.editor.numberMatrix',
                             'duplicationError',
                             { duplicates: duplicates.join(', ') },
                         ));
@@ -124,8 +124,8 @@ export default class NumberMatrixOverview extends React.PureComponent {
         };
 
         this.tabs = {
-            rowHeaders: _ts('framework.numberMatrixWidget', 'rowsLabel'),
-            columnHeaders: _ts('framework.numberMatrixWidget', 'columnsLabel'),
+            rowHeaders: _ts('widgets.editor.numberMatrix', 'rowsLabel'),
+            columnHeaders: _ts('widgets.editor.numberMatrix', 'columnsLabel'),
         };
 
         this.views = {
@@ -192,9 +192,9 @@ export default class NumberMatrixOverview extends React.PureComponent {
         const { selectedTab } = this.state;
 
         const buttonLabel = selectedTab === 'rowHeaders' ? (
-            _ts('framework.numberMatrixWidget', 'addRowUnitButtonLabel')
+            _ts('widgets.editor.numberMatrix', 'addRowUnitButtonLabel')
         ) : (
-            _ts('framework.numberMatrixWidget', 'addColumnUnitButtonLabel')
+            _ts('widgets.editor.numberMatrix', 'addColumnUnitButtonLabel')
         );
 
         return (
@@ -277,8 +277,8 @@ export default class NumberMatrixOverview extends React.PureComponent {
                         <TextInput
                             className={styles.title}
                             faramElementName="title"
-                            label={_ts('framework.numberMatrixWidget', 'titleLabel')}
-                            placeholder={_ts('framework.numberMatrixWidget', 'titlePlaceholderScale')}
+                            label={_ts('widgets.editor.numberMatrix', 'titleLabel')}
+                            placeholder={_ts('widgets.editor.numberMatrix', 'titlePlaceholderScale')}
                             autoFocus
                             selectOnFocus
                         />
@@ -291,13 +291,13 @@ export default class NumberMatrixOverview extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerButton onClick={onClose}>
-                            {_ts('framework.numberMatrixWidget', 'cancelButtonLabel')}
+                            {_ts('widgets.editor.numberMatrix', 'cancelButtonLabel')}
                         </DangerButton>
                         <PrimaryButton
                             type="submit"
                             disabled={!pristine}
                         >
-                            {_ts('framework.numberMatrixWidget', 'saveButtonLabel')}
+                            {_ts('widgets.editor.numberMatrix', 'saveButtonLabel')}
                         </PrimaryButton>
                     </ModalFooter>
                 </Faram>

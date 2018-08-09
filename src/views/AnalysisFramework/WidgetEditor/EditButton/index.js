@@ -5,6 +5,7 @@ import update from 'immutability-helper';
 import WarningButton from '#rsca/Button/WarningButton';
 
 import { iconNames } from '#constants';
+import _ts from '#ts';
 
 const propTypes = {
     widget: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -65,8 +66,7 @@ export default class EditButton extends React.PureComponent {
             <Fragment>
                 <WarningButton
                     iconName={iconNames.edit}
-                    // FIXME: use strings
-                    title="Edit widget"
+                    title={_ts('framework.widgetEditor', 'editTooltip')}
                     tabIndex="-1"
                     transparent
                     onClick={this.handleEditClick}

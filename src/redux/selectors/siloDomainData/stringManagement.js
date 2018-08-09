@@ -118,9 +118,9 @@ const patchLinkCollection = (links, stateLinks) => {
 const indentName = (name) => {
     const countOfDotOccurence = (name.match(/\./g) || []).length;
     if (countOfDotOccurence > 0) {
-        const spaces = ' '.repeat(countOfDotOccurence);
+        const spaces = '  '.repeat(countOfDotOccurence);
         const lastPart = name.substring(name.lastIndexOf('.') + 1, name.length);
-        return `${spaces}» ${lastPart}`;
+        return `${spaces}↳ ${lastPart}`;
     }
     return name;
 };

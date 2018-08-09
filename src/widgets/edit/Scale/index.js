@@ -52,13 +52,13 @@ export default class ScaleFrameworkList extends React.PureComponent {
                 validation: (scaleUnits) => {
                     const errors = [];
                     if (!scaleUnits || scaleUnits.length <= 0) {
-                        errors.push(_ts('framework.scaleWidget', 'requiredErrorMessage'));
+                        errors.push(_ts('widgets.editor.scale', 'requiredErrorMessage'));
                     }
 
                     const duplicates = findDuplicates(scaleUnits, o => o.label);
                     if (duplicates.length > 0) {
                         errors.push(
-                            _ts('framework.scaleWidget', 'duplicateErrorMessage', {
+                            _ts('widgets.editor.scale', 'duplicateErrorMessage', {
                                 duplicates: duplicates.join(', '),
                             }),
                         );
@@ -157,8 +157,8 @@ export default class ScaleFrameworkList extends React.PureComponent {
                         <TextInput
                             className={styles.title}
                             faramElementName="title"
-                            label={_ts('framework.scaleWidget', 'titleLabel')}
-                            placeholder={_ts('framework.scaleWidget', 'titlePlaceholderScale')}
+                            label={_ts('widgets.editor.scale', 'titleLabel')}
+                            placeholder={_ts('widgets.editor.scale', 'titlePlaceholderScale')}
                             showHintAndError={false}
                             autoFocus
                             selectOnFocus
@@ -171,7 +171,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                                 />
                                 <header className={styles.header}>
                                     <h4>
-                                        {_ts('framework.scaleWidget', 'addOptionHeadingLabel')}
+                                        {_ts('widgets.editor.scale', 'addOptionHeadingLabel')}
                                     </h4>
                                     <PrimaryButton
                                         faramAction="add"
@@ -179,7 +179,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                                         iconName={iconNames.add}
                                         transparent
                                     >
-                                        {_ts('framework.scaleWidget', 'addOptionButtonLabel')}
+                                        {_ts('widgets.editor.scale', 'addOptionButtonLabel')}
                                     </PrimaryButton>
                                 </header>
                                 <SortableListView
@@ -196,13 +196,13 @@ export default class ScaleFrameworkList extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerButton onClick={onClose}>
-                            {_ts('framework.scaleWidget', 'cancelButtonLabel')}
+                            {_ts('widgets.editor.scale', 'cancelButtonLabel')}
                         </DangerButton>
                         <PrimaryButton
                             type="submit"
                             disabled={!pristine}
                         >
-                            {_ts('framework.scaleWidget', 'saveButtonLabel')}
+                            {_ts('widgets.editor.scale', 'saveButtonLabel')}
                         </PrimaryButton>
                     </ModalFooter>
                 </Faram>

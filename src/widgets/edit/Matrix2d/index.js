@@ -50,14 +50,16 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                 validation: (dimensions) => {
                     const errors = [];
                     if (!dimensions || dimensions.length <= 0) {
-                        // FIXME: use strings
-                        errors.push('There should be at least one dimension.');
+                        errors.push(_ts('widgets.editor.matrix2d', 'atLeastOneError'));
                     }
 
                     const duplicates = findDuplicates(dimensions, o => o.title);
                     if (duplicates.length > 0) {
-                        // FIXME: use strings
-                        errors.push(`Duplicate dimensions are not allowed: ${duplicates.join(', ')}`);
+                        errors.push(_ts(
+                            'widgets.editor.matrix2d',
+                            'duplicationError',
+                            { duplicates: duplicates.join(', ') },
+                        ));
                     }
                     return errors;
                 },
@@ -71,14 +73,16 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                             validation: (subdimensions) => {
                                 const errors = [];
                                 if (!subdimensions || subdimensions.length <= 0) {
-                                    // FIXME: use strings
-                                    errors.push('There should be at least one subdimension.');
+                                    errors.push(_ts('widgets.editor.matrix2d', 'atLeastOneError'));
                                 }
 
                                 const duplicates = findDuplicates(subdimensions, o => o.title);
                                 if (duplicates.length > 0) {
-                                    // FIXME: use strings
-                                    errors.push(`Duplicate subdimensions are not allowed: ${duplicates.join(', ')}`);
+                                    errors.push(_ts(
+                                        'widgets.editor.matrix2d',
+                                        'duplicationError',
+                                        { duplicates: duplicates.join(', ') },
+                                    ));
                                 }
                                 return errors;
                             },
@@ -97,14 +101,16 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                 validation: (sectors) => {
                     const errors = [];
                     if (!sectors || sectors.length <= 0) {
-                        // FIXME: use strings
-                        errors.push('There should be at least one sector.');
+                        errors.push(_ts('widgets.editor.matrix2d', 'atLeastOneError'));
                     }
 
                     const duplicates = findDuplicates(sectors, o => o.title);
                     if (duplicates.length > 0) {
-                        // FIXME: use strings
-                        errors.push(`Duplicate sectors are not allowed: ${duplicates.join(', ')}`);
+                        errors.push(_ts(
+                            'widgets.editor.matrix2d',
+                            'duplicationError',
+                            { duplicates: duplicates.join(', ') },
+                        ));
                     }
                     return errors;
                 },
@@ -119,8 +125,11 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                 if (subsectors && subsectors.length > 0) {
                                     const duplicates = findDuplicates(subsectors, o => o.title);
                                     if (duplicates.length > 0) {
-                                        // FIXME: use strings
-                                        errors.push(`Duplicate subsectors are not allowed: ${duplicates.join(', ')}`);
+                                        errors.push(_ts(
+                                            'widgets.editor.matrix2d',
+                                            'duplicationError',
+                                            { duplicates: duplicates.join(', ') },
+                                        ));
                                     }
                                 }
                                 return errors;
@@ -173,8 +182,8 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         };
 
         this.tabs = {
-            dimensions: 'Dimensions',
-            sectors: 'Sectors',
+            dimensions: _ts('widgets.editor.matrix2d', 'dimensionsHeaderTitle'),
+            sectors: _ts('widgets.editor.matrix2d', 'sectorsHeaderTitle'),
         };
 
         this.views = {
@@ -327,9 +336,9 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         const { selectedTab } = this.state;
 
         const buttonLabel = selectedTab === 'dimensions' ? (
-            'Add dimension'
+            _ts('widgets.editor.matrix2d', 'addDimensionButtonTitle')
         ) : (
-            'Add sector'
+            _ts('widgets.editor.matrix2d', 'addSectorButtonTitle')
         );
 
         const faramInfo = selectedTab === 'dimensions'
@@ -436,10 +445,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         } = this.props;
 
 
-        // FIXME: Use strings
-        const cancelButtonLabel = 'Cancel';
-        const saveButtonLabel = 'Save';
-
         const TabsWithButton = this.renderTabsWithButton;
 
         return (
@@ -463,8 +468,8 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                             className={styles.titleInput}
                             faramElementName="title"
                             autoFocus
-                            label={_ts('framework.excerptWidget', 'titleLabel')}
-                            placeholder={_ts('framework.excerptWidget', 'widgetTitlePlaceholder')}
+                            label={_ts('widgets.editor.matrix2d', 'titleLabel')}
+                            placeholder={_ts('widgets.editor.matrix2d', 'widgetTitlePlaceholder')}
                             selectOnFocus
                         />
                         <TabsWithButton />
@@ -476,13 +481,13 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerButton onClick={onClose}>
-                            {cancelButtonLabel}
+                            {_ts('widgets.editor.matrix2d', 'cancelButtonLabel')}
                         </DangerButton>
                         <PrimaryButton
                             type="submit"
                             disabled={!pristine}
                         >
-                            {saveButtonLabel}
+                            {_ts('widgets.editor.matrix2d', 'saveButtonLabel')}
                         </PrimaryButton>
                     </ModalFooter>
                 </Faram>

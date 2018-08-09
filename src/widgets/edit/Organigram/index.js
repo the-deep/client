@@ -90,11 +90,11 @@ export default class Organigram extends React.PureComponent {
             title,
         } = this.props;
 
-        const textInputLabel = _ts('framework.organigramWidget', 'titleLabel');
-        const textInputPlaceholder = _ts('framework.organigramWidget', 'titlePlaceholderScale');
-        const cancelButtonLabel = _ts('framework.organigramWidget', 'cancelButtonLabel');
-        const saveButtonLabel = _ts('framework.organigramWidget', 'saveButtonLabel');
-        const organigramStructureTitle = _ts('framework.organigramWidget', 'organigramStructureTitle');
+        const textInputLabel = _ts('widgets.editor.organigram', 'titleLabel');
+        const textInputPlaceholder = _ts('widgets.editor.organigram', 'titlePlaceholderScale');
+        const cancelButtonLabel = _ts('widgets.editor.organigram', 'cancelButtonLabel');
+        const saveButtonLabel = _ts('widgets.editor.organigram', 'saveButtonLabel');
+        const organigramStructureTitle = _ts('widgets.editor.organigram', 'organigramStructureTitle');
 
         return (
             <Modal className={styles.editModal}>

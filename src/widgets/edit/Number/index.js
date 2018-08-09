@@ -36,8 +36,7 @@ export default class NumberFrameworkList extends React.PureComponent {
         validation: ({ minValue: min, maxValue: max } = {}) => {
             const errors = [];
             if (isTruthy(min) && isTruthy(max) && min >= max) {
-                // FIXME: use strings
-                errors.push('Min value must be less than max value.');
+                errors.push(_ts('widgets.editor.number', 'minGreaterThanMaxError'));
             }
             return errors;
         },
@@ -112,10 +111,10 @@ export default class NumberFrameworkList extends React.PureComponent {
             title,
         } = this.props;
 
-        const titleInputLabel = _ts('framework.numberWidget', 'titleLabel');
-        const titleInputPlaceholder = _ts('framework.numberWidget', 'widgetTitlePlaceholder');
-        const cancelButtonLabel = _ts('framework.numberWidget', 'cancelButtonLabel');
-        const saveButtonLabel = _ts('framework.numberWidget', 'saveButtonLabel');
+        const titleInputLabel = _ts('widgets.editor.number', 'titleLabel');
+        const titleInputPlaceholder = _ts('widgets.editor.number', 'widgetTitlePlaceholder');
+        const cancelButtonLabel = _ts('widgets.editor.number', 'cancelButtonLabel');
+        const saveButtonLabel = _ts('widgets.editor.number', 'saveButtonLabel');
         const separatorText = ' ';
 
         return (
@@ -143,15 +142,15 @@ export default class NumberFrameworkList extends React.PureComponent {
                             <NumberInput
                                 faramElementName="minValue"
                                 className={styles.input}
-                                placeholder={_ts('framework.numberWidget', 'numberPlaceholder')}
-                                label={_ts('framework.numberWidget', 'minValueLabel')}
+                                placeholder={_ts('widgets.editor.number', 'numberPlaceholder')}
+                                label={_ts('widgets.editor.number', 'minValueLabel')}
                                 separator={separatorText}
                             />
                             <NumberInput
                                 faramElementName="maxValue"
                                 className={styles.input}
-                                placeholder={_ts('framework.numberWidget', 'numberPlaceholder')}
-                                label={_ts('framework.numberWidget', 'maxValueLabel')}
+                                placeholder={_ts('widgets.editor.number', 'numberPlaceholder')}
+                                label={_ts('widgets.editor.number', 'maxValueLabel')}
                                 separator={separatorText}
                             />
                         </div>

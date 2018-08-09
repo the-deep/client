@@ -6,6 +6,7 @@ import FaramGroup from '#rsci/Faram/FaramGroup';
 import TextInput from '#rsci/TextInput';
 
 import { iconNames } from '#constants';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -16,22 +17,19 @@ const SubsectorRow = ({ index }) => (
                 className={styles.input}
                 faramElementName="title"
                 autoFocus
-                // FIXME: use strings
-                label={`Subsector ${index + 1}`}
+                label={_ts('widgets.editor.matrix2d', 'unnamedSubsectorLabel', { index: index + 1 })}
             />
             <TextInput
                 className={styles.input}
                 faramElementName="tooltip"
-                // FIXME: use strings
-                label="Tooltip"
+                label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
             />
         </FaramGroup>
         <DangerButton
             className={styles.deleteButton}
             iconName={iconNames.delete}
             faramAction="remove"
-            // FIXME: use strings
-            title="Remove Subsectors"
+            title={_ts('widgets.editor.matrix2d', 'removeSubsectorButtonTooltip')}
             faramElementIndex={index}
             transparent
         />

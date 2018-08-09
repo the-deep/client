@@ -302,8 +302,7 @@ export default class Login extends React.PureComponent {
                         <TextInput
                             faramElementName="password"
                             label={_ts('login', 'passwordLabel')}
-                            // FIXME: use strings
-                            placeholder="**********"
+                            placeholder={_ts('login', 'passwordPlaceholder')}
                             type="password"
                         />
                         { showReCaptcha &&

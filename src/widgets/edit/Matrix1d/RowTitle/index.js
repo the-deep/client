@@ -6,6 +6,7 @@ import FaramElement from '#rsci/Faram/FaramElement';
 
 import { iconNames } from '#constants';
 
+import _ts from '#ts';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -60,8 +61,6 @@ export default class RowTitle extends React.PureComponent {
             titleClassNames.push(styles.hasError);
         }
 
-        const defaultTitle = `Row ${index + 1}`;
-
         return (
             <div className={rowTitleClassNames.join(' ')}>
                 <button
@@ -69,12 +68,11 @@ export default class RowTitle extends React.PureComponent {
                     onClick={this.handleClick}
                     type="button"
                 >
-                    {title || defaultTitle}
+                    {title || _ts('widgets.editor.matrix1d', 'unnamedRowTitle', { index: index + 1 })}
                 </button>
                 <DangerButton
                     className={styles.deleteButton}
-                    // FIXME: use strings
-                    title="Remove Row"
+                    title={_ts('widgets.editor.matrix1d', 'deleteButtonTooltip')}
                     iconName={iconNames.delete}
                     transparent
                     faramAction="remove"

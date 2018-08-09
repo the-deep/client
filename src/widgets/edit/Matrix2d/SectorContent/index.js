@@ -9,11 +9,10 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
 import { randomString } from '#rsu/common';
 
+import _ts from '#ts';
 import { iconNames } from '#constants';
 
-
 import SubsectorRow from './SubsectorRow';
-
 import styles from './styles.scss';
 
 const propTypes = {
@@ -60,15 +59,13 @@ export default class SectorContent extends React.PureComponent {
                         <TextInput
                             className={styles.input}
                             faramElementName="title"
-                            // FIXME: use strings
-                            label={`Sector ${index + 1}`}
+                            label={_ts('widgets.editor.matrix2d', 'unnamedSectorLabel', { index: index + 1 })}
                             autoFocus
                         />
                         <TextInput
                             className={styles.input}
                             faramElementName="tooltip"
-                            // FIXME: use strings
-                            label="Tooltip"
+                            label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
                         />
                     </div>
                     <FaramList faramElementName="subsectors">
@@ -78,8 +75,7 @@ export default class SectorContent extends React.PureComponent {
                         />
                         <header className={styles.header}>
                             <h4>
-                                {/* FIXME: use strings */}
-                                Subsectors
+                                {_ts('widgets.editor.matrix2d', 'subsectorsHeaderTitle')}
                             </h4>
                             <PrimaryButton
                                 faramAction="add"
@@ -87,8 +83,7 @@ export default class SectorContent extends React.PureComponent {
                                 iconName={iconNames.add}
                                 transparent
                             >
-                                {/* FIXME: use strings */}
-                                Add subsector
+                                {_ts('widgets.editor.matrix2d', 'addSubsectorButtonTitle')}
                             </PrimaryButton>
                         </header>
                         <SortableListView

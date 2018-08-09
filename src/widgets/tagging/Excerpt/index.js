@@ -181,7 +181,7 @@ export default class Excerpt extends React.PureComponent {
             text
         `;
 
-        const buttonTitle = _ts('framework.excerptWidget', 'formatExcerpt');
+        const buttonTitle = _ts('widgets.tagging.excerpt', 'formatExcerpt');
 
         return (
             <Fragment>

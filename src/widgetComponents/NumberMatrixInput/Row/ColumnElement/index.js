@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import NumberInput from '#rsci/NumberInput';
-// import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -41,7 +40,6 @@ export default class ColumnElement extends React.PureComponent {
         return (
             <td className={styles.tableCell} >
                 <NumberInput
-                    // placeholder={_ts('framework.numberMatrixWidget', 'numberPlaceholder')}
                     showLabel={false}
                     onChange={this.handleNumberInputChange}
                     value={columnValue}

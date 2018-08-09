@@ -13,8 +13,10 @@ import {
     editEntriesMarkAsDeletedEntryAction,
 } from '#redux';
 
-import HeaderComponent from './HeaderComponent';
+import _ts from '#ts';
+
 import WidgetFaram from '../../WidgetFaram';
+import HeaderComponent from './HeaderComponent';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -92,24 +94,20 @@ export default class WidgetFaramContainer extends React.PureComponent {
             ${styles.header}
         `;
 
-        // FIXME: use strings
-        const deleteButtonTooltip = 'Delete entry';
-        const editButtonTooltip = 'Edit entry';
-
         return (
             <div className={className}>
                 <header className={headerClassName}>
                     <DangerButton
                         transparent
                         iconName={iconNames.delete}
-                        title={deleteButtonTooltip}
+                        title={_ts('editEntry.list.widgetForm', 'deleteButtonTooltip')}
                         onClick={this.handleEntryDelete}
                         disabled={pending}
                     />
                     <WarningButton
                         transparent
                         onClick={this.handleEdit}
-                        title={editButtonTooltip}
+                        title={_ts('editEntry.list.widgetForm', 'editButtonTooltip')}
                         iconName={iconNames.edit}
                         // NOTE: no need to disable edit
                     />

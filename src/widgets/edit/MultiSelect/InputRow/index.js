@@ -6,6 +6,7 @@ import FaramGroup from '#rsci/Faram/FaramGroup';
 import TextInput from '#rsci/TextInput';
 
 import { iconNames } from '#constants';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -27,8 +28,7 @@ export default class InputRow extends React.PureComponent {
                     <TextInput
                         className={styles.titleInput}
                         faramElementName="label"
-                        // FIXME: use strings
-                        label={`Option ${index + 1}`}
+                        label={_ts('widgets.editor.multiselect', 'optionLabel', { index: index + 1 })}
                         autoFocus
                     />
                 </FaramGroup>
@@ -36,8 +36,7 @@ export default class InputRow extends React.PureComponent {
                     className={styles.deleteButton}
                     iconName={iconNames.delete}
                     faramAction="remove"
-                    // FIXME: use strings
-                    title="Remove Option"
+                    title={_ts('widgets.editor.multiselect', 'removeOptionButtonTitle')}
                     faramElementIndex={index}
                     transparent
                 />

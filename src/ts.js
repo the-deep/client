@@ -1,5 +1,5 @@
 import React from 'react';
-import devLang from '#redux/initial-state/dev-lang';
+import devLang from '#redux/initial-state/dev-lang.json';
 
 import {
     selectedLinksSelector,
