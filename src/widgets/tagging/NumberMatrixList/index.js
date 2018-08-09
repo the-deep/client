@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import _ts from '#ts';
 import NumberMatrixListOutput from '#widgetComponents/NumberMatrixListOutput';
 
+import styles from './styles.scss';
+
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     widget: PropTypes.object.isRequired,
@@ -29,6 +31,7 @@ export default class NumberMatrixListWidget extends React.PureComponent {
 
         return (
             <NumberMatrixListOutput
+                className={styles.numberMatrixListWidget}
                 options={options}
                 faramElementName="value"
                 placeholder={_ts('widgets.tagging.numberMatrix', 'numberPlaceholder')}
