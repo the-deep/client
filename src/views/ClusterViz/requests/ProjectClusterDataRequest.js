@@ -19,6 +19,11 @@ export default class ProjectClusterDataRequest {
         this.setProjectClusterData = setProjectClusterData;
     }
 
+    componentWillUnmount() {
+        this.stopRequestForLeadsData();
+    }
+
+
     startRequestForLeadsData = (projectId, documents, keywords) => {
         this.stopRequestForLeadsData();
         const leadsDataRequest = new LeadInfoForDocumentRequest({
@@ -53,6 +58,7 @@ export default class ProjectClusterDataRequest {
     }
 
     failure = (response) => {
+        this.setState({ clusterDataFailure: true });
         notify.send({
             title: _ts('clusterViz', 'clusterVizTitle'),
             type: notify.type.ERROR,
@@ -62,6 +68,7 @@ export default class ProjectClusterDataRequest {
     }
 
     fatal = () => {
+        this.setState({ clusterDataFailure: true });
         notify.send({
             title: _ts('clusterViz', 'clusterVizTitle'),
             type: notify.type.ERROR,
@@ -74,8 +81,8 @@ export default class ProjectClusterDataRequest {
         const clusterDataRequest = new FgRestBuilder()
             .url(createUrlForProjectClusterData(modelId))
             .params(createParamsForProjectClusterData)
-            .maxPollAttempts(50)
-            .pollTime(2000)
+            .maxPollAttempts(20)
+            .pollTime(5000)
             .shouldPoll((response, status) => status !== 200)
             .success(this.success(projectId))
             .failure(this.failure)

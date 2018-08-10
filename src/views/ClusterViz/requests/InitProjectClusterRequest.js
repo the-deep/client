@@ -20,6 +20,10 @@ export default class InitProjectClusterRequest {
         this.setState = setState;
     }
 
+    componentWillUnmount() {
+        this.stopRequestForClusterData();
+    }
+
     success = projectId => (response) => {
         try {
             schema.validate(response, 'initClusterRequest');
@@ -32,6 +36,7 @@ export default class InitProjectClusterRequest {
     }
 
     failure = (response) => {
+        this.setState({ createClusterFailure: true });
         notify.send({
             title: _ts('clusterViz', 'clusterVizTitle'),
             type: notify.type.ERROR,
@@ -41,6 +46,7 @@ export default class InitProjectClusterRequest {
     }
 
     fatal = () => {
+        this.setState({ createClusterFailure: true });
         notify.send({
             title: _ts('clusterViz', 'clusterVizTitle'),
             type: notify.type.ERROR,

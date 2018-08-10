@@ -53,6 +53,7 @@ export default class LeadInfoForDocumentRequest {
     }
 
     failure = (response) => {
+        this.setState({ clusterDataFailure: true });
         notify.send({
             title: _ts('clusterViz', 'clusterVizTitle'),
             type: notify.type.ERROR,
@@ -62,6 +63,7 @@ export default class LeadInfoForDocumentRequest {
     }
 
     fatal = () => {
+        this.setState({ clusterDataFailure: true });
         notify.send({
             title: _ts('clusterViz', 'clusterVizTitle'),
             type: notify.type.ERROR,
