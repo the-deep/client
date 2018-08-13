@@ -279,8 +279,8 @@ export default class DiscoverProjects extends React.PureComponent {
                     <SparkLines
                         className={styles.sparkLine}
                         data={project.leadsActivity}
-                        yValueAccessor={DiscoverProjects.activityCountSelector}
-                        xValueAccessor={DiscoverProjects.activityDateSelector}
+                        yValueSelector={DiscoverProjects.activityCountSelector}
+                        xValueSelector={DiscoverProjects.activityDateSelector}
                         xLabelModifier={DiscoverProjects.activityDateModifier}
                         yLabelModifier={DiscoverProjects.leadsActivityNumberModifier}
                         fill
@@ -291,8 +291,8 @@ export default class DiscoverProjects extends React.PureComponent {
                     <SparkLines
                         className={styles.sparkLine}
                         data={project.entriesActivity}
-                        yValueAccessor={DiscoverProjects.activityCountSelector}
-                        xValueAccessor={DiscoverProjects.activityDateSelector}
+                        yValueSelector={DiscoverProjects.activityCountSelector}
+                        xValueSelector={DiscoverProjects.activityDateSelector}
                         xLabelModifier={DiscoverProjects.activityDateModifier}
                         yLabelModifier={DiscoverProjects.entriesActivityNumberModifier}
                         fill

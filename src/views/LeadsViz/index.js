@@ -92,10 +92,10 @@ export default class LeadsViz extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static sizeValueAccessor = d => d.size;
-    static labelValueAccessor = d => d.name;
-    static groupValueAccessor = d => d.group;
-    static valueAccessor = d => d.value;
+    static sizeValueSelector = d => d.size;
+    static labelValueSelector = d => d.name;
+    static groupValueSelector = d => d.group;
+    static valueSelector = d => d.value;
 
     constructor(props) {
         super(props);
@@ -280,8 +280,8 @@ export default class LeadsViz extends React.PureComponent {
                     vizContainerClass={styles.chartContainer}
                     loading={loadingLeads || hierarchicalDataPending}
                     headerText={_ts('leadsViz', 'treeMap')}
-                    valueAccessor={LeadsViz.sizeValueAccessor}
-                    labelAccessor={LeadsViz.labelValueAccessor}
+                    valueSelector={LeadsViz.sizeValueSelector}
+                    labelSelector={LeadsViz.labelValueSelector}
                 />
                 <SunBurstView
                     className={`${styles.sunBurst} ${styles.viz}`}
@@ -289,8 +289,8 @@ export default class LeadsViz extends React.PureComponent {
                     vizContainerClass={styles.chartContainer}
                     loading={loadingLeads || hierarchicalDataPending}
                     headerText={_ts('leadsViz', 'sunburst')}
-                    valueAccessor={LeadsViz.sizeValueAccessor}
-                    labelAccessor={LeadsViz.labelValueAccessor}
+                    valueSelector={LeadsViz.sizeValueSelector}
+                    labelSelector={LeadsViz.labelValueSelector}
                 />
                 <ChordDiagramView
                     className={`${styles.chordDiagram} ${styles.viz}`}
@@ -299,8 +299,8 @@ export default class LeadsViz extends React.PureComponent {
                     headerText={_ts('leadsViz', 'chordDiagram')}
                     vizContainerClass={styles.chartContainer}
                     labelsData={chordData.labels}
-                    valueAccessor={LeadsViz.sizeValueAccessor}
-                    labelAccessor={LeadsViz.labelValueAccessor}
+                    valueSelector={LeadsViz.sizeValueSelector}
+                    labelSelector={LeadsViz.labelValueSelector}
                 />
                 <CorrelationMatrixView
                     className={`${styles.correlationMatrix} ${styles.viz}`}
@@ -316,9 +316,9 @@ export default class LeadsViz extends React.PureComponent {
                     loading={loadingLeads || forceDirectedDataPending}
                     headerText={_ts('leadsViz', 'forcedDirectedGraph')}
                     vizContainerClass={styles.chartContainer}
-                    idAccessor={d => d.id}
-                    groupAccessor={LeadsViz.groupValueAccessor}
-                    valueAccessor={LeadsViz.valueAccessor}
+                    idSelector={d => d.id}
+                    groupSelector={LeadsViz.groupValueSelector}
+                    valueSelector={LeadsViz.valueSelector}
                     useVoronoi={false}
                 />
                 <CollapsibleTreeView
@@ -327,7 +327,7 @@ export default class LeadsViz extends React.PureComponent {
                     data={hierarchicalData}
                     loading={loadingLeads || hierarchicalDataPending}
                     vizContainerClass={styles.chartContainer}
-                    labelAccessor={LeadsViz.labelValueAccessor}
+                    labelSelector={LeadsViz.labelValueSelector}
                 />
                 <RadialDendrogramView
                     className={`${styles.radialDendrogram} ${styles.viz}`}
@@ -335,7 +335,7 @@ export default class LeadsViz extends React.PureComponent {
                     data={hierarchicalData}
                     loading={loadingLeads || hierarchicalDataPending}
                     vizContainerClass={styles.chartContainer}
-                    labelAccessor={LeadsViz.labelValueAccessor}
+                    labelSelector={LeadsViz.labelValueSelector}
                 />
             </div>
         );

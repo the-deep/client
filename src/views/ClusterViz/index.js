@@ -77,10 +77,10 @@ export default class ClusterViz extends PureComponent {
         current.score > previous.score ? current : previous
     ))
 
-    static idAccessor = d => d.id;
-    static groupAccessor = d => d.group;
-    static valueAccessor = d => d.value;
-    static labelAccessor = d => d.title;
+    static idSelector = d => d.id;
+    static groupSelector = d => d.group;
+    static valueSelector = d => d.value;
+    static labelSelector = d => d.title;
 
     static getTableKey = data => data.id;
     static leadsTableKeyExtractor = row => row.id;
@@ -538,10 +538,10 @@ export default class ClusterViz extends PureComponent {
                             <ForceDirectedGraphView
                                 className={styles.forcedDirectedGraph}
                                 data={this.nodesAndLinks}
-                                idAccessor={ClusterViz.idAccessor}
-                                groupAccessor={ClusterViz.groupAccessor}
-                                valueAccessor={ClusterViz.valueAccessor}
-                                labelAccessor={ClusterViz.labelAccessor}
+                                idSelector={ClusterViz.idSelector}
+                                groupSelector={ClusterViz.groupSelector}
+                                valueSelector={ClusterViz.valueSelector}
+                                labelSelector={ClusterViz.labelSelector}
                                 highlightClusterId={highlightClusterId}
                                 useVoronoi
                                 headerText={graphHeaderText}

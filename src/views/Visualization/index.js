@@ -62,14 +62,14 @@ const DonutChartView = decorate(DonutChart);
 const OrganigramView = decorate(Organigram);
 const ParallelCoordinatesView = decorate(ParallelCoordinates);
 
-const sizeAccessor = d => d.size;
-const nameAccessor = d => d.name;
-const valueAccessor = d => d.value;
-const labelAccessor = d => d.label;
-const idAccessor = d => d.id;
-const groupAccessor = d => d.group;
-const monthAccessor = d => d.month;
-const timeAccessor = d => d.time;
+const sizeSelector = d => d.size;
+const nameSelector = d => d.name;
+const valueSelector = d => d.value;
+const labelSelector = d => d.label;
+const idSelector = d => d.id;
+const groupSelector = d => d.group;
+const monthSelector = d => d.month;
+const timeSelector = d => d.time;
 
 @BoundError(AppError)
 export default class Visualization extends React.PureComponent {
@@ -107,8 +107,8 @@ export default class Visualization extends React.PureComponent {
                         headerText={_ts('visualization', 'chordDiagram')}
                         data={chordData.values}
                         labelsData={chordData.labels}
-                        valueAccessor={sizeAccessor}
-                        labelAccessor={nameAccessor}
+                        valueSelector={sizeSelector}
+                        labelSelector={nameSelector}
                     />
                 ),
             },
@@ -118,7 +118,7 @@ export default class Visualization extends React.PureComponent {
                         className={styles.collapsibleTreeView}
                         headerText={_ts('visualization', 'collapsibleTree')}
                         data={hierarchicalData}
-                        labelAccessor={nameAccessor}
+                        labelSelector={nameSelector}
                     />
                 ),
             },
@@ -138,8 +138,8 @@ export default class Visualization extends React.PureComponent {
                         className={styles.dendrogram}
                         headerText={_ts('visualization', 'dendrogram')}
                         data={hierarchicalData}
-                        labelAccessor={nameAccessor}
-                        valueAccessor={sizeAccessor}
+                        labelSelector={nameSelector}
+                        valueSelector={sizeSelector}
                     />
                 ),
             },
@@ -149,8 +149,8 @@ export default class Visualization extends React.PureComponent {
                         className={styles.donutChart}
                         headerText={_ts('visualization', 'donutChart')}
                         data={barData.data}
-                        valueAccessor={valueAccessor}
-                        labelAccessor={labelAccessor}
+                        valueSelector={valueSelector}
+                        labelSelector={labelSelector}
                     />
                 ),
             },
@@ -160,9 +160,9 @@ export default class Visualization extends React.PureComponent {
                         className={styles.forcedDirectedGraph}
                         headerText={_ts('visualization', 'forcedDirectedGraph')}
                         data={forceDirectedData}
-                        idAccessor={idAccessor}
-                        groupAccessor={groupAccessor}
-                        valueAccessor={valueAccessor}
+                        idSelector={idSelector}
+                        groupSelector={groupSelector}
+                        valueSelector={valueSelector}
                         useVoronoi={false}
                     />
                 ),
@@ -173,9 +173,9 @@ export default class Visualization extends React.PureComponent {
                         className={styles.forcedDirectedGraphVoronoi}
                         headerText={_ts('visualization', 'forceDirectedGraphVoronoi')}
                         data={forceDirectedData}
-                        idAccessor={idAccessor}
-                        groupAccessor={groupAccessor}
-                        valueAccessor={valueAccessor}
+                        idSelector={idSelector}
+                        groupSelector={groupSelector}
+                        valueSelector={valueSelector}
                     />
                 ),
             },
@@ -185,8 +185,8 @@ export default class Visualization extends React.PureComponent {
                         className={styles.horizontalBar}
                         headerText={_ts('visualization', 'horizontalBar')}
                         data={barData.data}
-                        valueAccessor={valueAccessor}
-                        labelAccessor={labelAccessor}
+                        valueSelector={valueSelector}
+                        labelSelector={labelSelector}
                     />
                 ),
             },
@@ -196,7 +196,7 @@ export default class Visualization extends React.PureComponent {
                         className={styles.organigram}
                         headerText={_ts('visualization', 'organigram')}
                         data={hierarchicalData}
-                        idAccessor={nameAccessor}
+                        idSelector={nameSelector}
                     />
                 ),
             },
@@ -206,7 +206,7 @@ export default class Visualization extends React.PureComponent {
                         className={styles.orgChart}
                         headerText={_ts('visualization', 'orgChart')}
                         data={hierarchicalData}
-                        idAccessor={nameAccessor}
+                        idSelector={nameSelector}
                     />
                 ),
             },
@@ -217,7 +217,7 @@ export default class Visualization extends React.PureComponent {
                         headerText={_ts('visualization', 'parallelCoordinates')}
                         data={parallelData}
                         labelName="name"
-                        labelAccessor={nameAccessor}
+                        labelSelector={nameSelector}
                     />
                 ),
             },
@@ -227,8 +227,8 @@ export default class Visualization extends React.PureComponent {
                         className={styles.pieChart}
                         headerText={_ts('visualization', 'pieChart')}
                         data={barData.data}
-                        valueAccessor={valueAccessor}
-                        labelAccessor={labelAccessor}
+                        valueSelector={valueSelector}
+                        labelSelector={labelSelector}
                     />
                 ),
             },
@@ -238,7 +238,7 @@ export default class Visualization extends React.PureComponent {
                         className={styles.radialDendrogram}
                         headerText={_ts('visualization', 'radialDendrogram')}
                         data={hierarchicalData}
-                        labelAccessor={nameAccessor}
+                        labelSelector={nameSelector}
                     />
                 ),
             },
@@ -248,8 +248,8 @@ export default class Visualization extends React.PureComponent {
                         className={styles.sankey}
                         headerText={_ts('visualization', 'sankey')}
                         data={sankeyData}
-                        valueAccessor={valueAccessor}
-                        labelAccessor={nameAccessor}
+                        valueSelector={valueSelector}
+                        labelSelector={nameSelector}
                     />
                 ),
             },
@@ -259,8 +259,8 @@ export default class Visualization extends React.PureComponent {
                         className={styles.sparklines}
                         headerText={_ts('visualization', 'sparklines')}
                         data={lineData.data}
-                        xValueAccessor={d => d.label}
-                        yValueAccessor={d => d.value}
+                        xValueSelector={d => d.label}
+                        yValueSelector={d => d.value}
                     />
                 ),
             },
@@ -271,7 +271,7 @@ export default class Visualization extends React.PureComponent {
                         headerText={_ts('visualization', 'stackedBarChart')}
                         data={stackedData}
                         labelName="month"
-                        labelAccessor={monthAccessor}
+                        labelSelector={monthSelector}
                     />
                 ),
             },
@@ -282,7 +282,7 @@ export default class Visualization extends React.PureComponent {
                         headerText={_ts('visualization', 'streamGraph')}
                         data={streamData}
                         labelName="time"
-                        labelAccessor={timeAccessor}
+                        labelSelector={timeSelector}
                     />
                 ),
             },
@@ -292,8 +292,8 @@ export default class Visualization extends React.PureComponent {
                         className={styles.sunburst}
                         headerText={_ts('visualization', 'sunburst')}
                         data={hierarchicalData}
-                        valueAccessor={sizeAccessor}
-                        labelAccessor={nameAccessor}
+                        valueSelector={sizeSelector}
+                        labelSelector={nameSelector}
                     />
                 ),
             },
@@ -303,8 +303,8 @@ export default class Visualization extends React.PureComponent {
                         className={styles.treemap}
                         headerText={_ts('visualization', 'treemap')}
                         data={hierarchicalData}
-                        valueAccessor={sizeAccessor}
-                        labelAccessor={nameAccessor}
+                        valueSelector={sizeSelector}
+                        labelSelector={nameSelector}
                         zoomable={false}
                     />
                 ),
@@ -315,8 +315,8 @@ export default class Visualization extends React.PureComponent {
                         className={styles.treemap}
                         headerText={_ts('visualization', 'zoomableTreemap')}
                         data={hierarchicalData}
-                        valueAccessor={sizeAccessor}
-                        labelAccessor={nameAccessor}
+                        valueSelector={sizeSelector}
+                        labelSelector={nameSelector}
                     />
                 ),
             },
