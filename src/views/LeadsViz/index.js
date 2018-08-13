@@ -33,7 +33,10 @@ import {
     forceDirectedDataSelector,
     geoPointsDataSelector,
 } from '#redux';
-import { pathNames } from '#constants/';
+import {
+    iconNames,
+    pathNames,
+} from '#constants/';
 
 import LeadKeywordCorrelationRequest from './requests/LeadKeywordCorrelationRequest';
 import LeadTopicCorrelationRequest from './requests/LeadTopicCorrelationRequest';
@@ -57,11 +60,6 @@ const propTypes = {
     forceDirectedData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     geoPointsData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setLeadVisualization: PropTypes.func.isRequired,
-};
-
-const defaultProps = {
-    className: '',
-    totalLeadsCount: 0,
 };
 
 const mapStateToProps = state => ({
@@ -90,7 +88,6 @@ const CollapsibleTreeView = BoundError(VizError)(wrapViz(CollapsibleTree));
 @connect(mapStateToProps, mapDispatchToProps)
 export default class LeadsViz extends React.PureComponent {
     static propTypes = propTypes;
-    static defaultProps = defaultProps;
 
     static sizeValueAccessor = d => d.size;
     static labelValueAccessor = d => d.name;
@@ -348,18 +345,16 @@ export default class LeadsViz extends React.PureComponent {
         return (
             <div className={styles.leads}>
                 <header className={styles.header}>
+                    <Link
+                        className={styles.backLink}
+                        to={reverseRoute(pathNames.leads, { projectId: activeProject.id })}
+                        title={_ts('leadsViz', 'showTable')}
+                    >
+                        <i className={iconNames.back} />
+                    </Link>
                     <FilterLeadsForm className={styles.filters} />
                 </header>
                 { noLeadSelected ? this.renderNoLeadFound() : this.renderCharts() }
-                <footer className={styles.footer}>
-                    <Link
-                        className={styles.link}
-                        to={reverseRoute(pathNames.leads, { projectId: activeProject.id })}
-                        replace
-                    >
-                        { _ts('leadsViz', 'showTable') }
-                    </Link>
-                </footer>
             </div>
         );
     }
