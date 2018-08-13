@@ -27,7 +27,7 @@ import Faram, {
 
 import {
     alterResponseErrorToFaramError,
-    createParamsForProjectPatch,
+    createParamsForProjectPut,
     createUrlForProject,
     createParamsForGet,
     createUrlForUsers,
@@ -42,6 +42,7 @@ import {
     unsetUserProjectMembershipAction,
     setUsersInformationAction,
     setProjectAction,
+    setProjectOptionsAction,
 } from '#redux';
 import schema from '#schema';
 import notify from '#notify';
@@ -51,6 +52,7 @@ import {
     iconNames,
 } from '#constants';
 
+import ProjectOptionsGet from '../../requests/ProjectOptionsGet';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -61,6 +63,7 @@ const propTypes = {
     users: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     setUsers: PropTypes.func.isRequired,
     className: PropTypes.string,
+    setProjectOptions: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -78,6 +81,7 @@ const mapDispatchToProps = dispatch => ({
     unsetUserProjectMembership: params => dispatch(unsetUserProjectMembershipAction(params)),
     setUsers: params => dispatch(setUsersInformationAction(params)),
     setUserProjectMembership: params => dispatch(setUserProjectMembershipAction(params)),
+    setProjectOptions: params => dispatch(setProjectOptionsAction(params)),
 });
 
 const emptyList = [];
@@ -126,8 +130,11 @@ export default class ProjectGeneral extends React.PureComponent {
             userGroupsOptions: projectOptions.userGroups || emptyList,
 
             pristine: false,
-            pending: true,
-            actionPending: false,
+            pending: false,
+            usersPending: true,
+            patchPending: false,
+
+            pendingProjectOptions: true,
         };
 
         this.memberHeaders = [
@@ -207,23 +214,34 @@ export default class ProjectGeneral extends React.PureComponent {
                 memberships: [],
             },
         };
+
+        this.projectOptionsGet = new ProjectOptionsGet({
+            setState: params => this.setState(params),
+            setProjectOptions: this.props.setProjectOptions,
+        });
     }
 
     componentWillMount() {
         if (this.usersRequest) {
             this.usersRequest.stop();
         }
+        const { projectId } = this.props;
 
         this.usersRequest = this.createRequestForUsers();
         this.usersRequest.start();
+
+        this.projectOptionsGet.init(projectId);
+        this.projectOptionsGet.start();
     }
 
     componentWillReceiveProps(nextProps) {
         const {
+            projectId: newProjectId,
             projectDetails,
             projectOptions,
             users,
         } = nextProps;
+        const { projectId: oldProjectId } = this.props;
 
         if (nextProps !== this.props) {
             const faramValues = {
@@ -246,6 +264,11 @@ export default class ProjectGeneral extends React.PureComponent {
                 userGroupsOptions: projectOptions.userGroups || emptyList,
             });
         }
+
+        if (newProjectId !== oldProjectId) {
+            this.projectOptionsGet.init(newProjectId);
+            this.projectOptionsGet.start();
+        }
     }
 
     componentWillUnmount() {
@@ -264,6 +287,8 @@ export default class ProjectGeneral extends React.PureComponent {
         if (this.usersRequest) {
             this.usersRequest.stop();
         }
+
+        this.projectOptionsGet.stop();
     }
 
     getMemberOptions = (users, members) => {
@@ -310,8 +335,8 @@ export default class ProjectGeneral extends React.PureComponent {
         const usersRequest = new FgRestBuilder()
             .url(createUrlForUsers(usersFields))
             .params(createParamsForGet)
-            .preLoad(() => this.setState({ pending: true }))
-            .postLoad(() => this.setState({ pending: false }))
+            .preLoad(() => this.setState({ usersPending: true }))
+            .postLoad(() => this.setState({ usersPending: false }))
             .success((response) => {
                 try {
                     schema.validate(response, 'usersGetResponse');
@@ -329,15 +354,13 @@ export default class ProjectGeneral extends React.PureComponent {
     createProjectPatchRequest = (newProjectDetails, projectId) => {
         const projectPatchRequest = new FgRestBuilder()
             .url(createUrlForProject(projectId))
-            .params(() => createParamsForProjectPatch(newProjectDetails))
-            .preLoad(() => this.setState({ pending: true }))
-            .postLoad(() => this.setState({ pending: false }))
+            .params(() => createParamsForProjectPut(newProjectDetails))
+            .preLoad(() => this.setState({ patchPending: true }))
+            .postLoad(() => this.setState({ patchPending: false }))
             .success((response) => {
                 try {
                     schema.validate(response, 'project');
-                    this.props.setProject({
-                        project: response,
-                    });
+                    this.props.setProject({ project: response });
                     notify.send({
                         title: _ts('project', 'projectDetails'),
                         type: notify.type.SUCCESS,
@@ -495,13 +518,19 @@ export default class ProjectGeneral extends React.PureComponent {
             faramValues,
             pristine,
             pending,
-            actionPending,
             memberOptions,
             regionOptions,
             userGroupsOptions,
+            usersPending,
+            patchPending,
+            pendingProjectOptions,
         } = this.state;
 
         const { className } = this.props;
+        const loading = pending ||
+            patchPending ||
+            usersPending ||
+            pendingProjectOptions;
 
         return (
             <Faram
@@ -512,19 +541,18 @@ export default class ProjectGeneral extends React.PureComponent {
                 schema={this.schema}
                 value={faramValues}
                 error={faramErrors}
-                disabled={pending}
+                disabled={loading}
             >
-                {actionPending && <LoadingAnimation large />}
-                { pending && <LoadingAnimation /> }
+                { loading && <LoadingAnimation /> }
                 <div className={styles.actionButtons}>
                     <DangerButton
                         onClick={this.handleFaramCancel}
-                        disabled={pending || !pristine}
+                        disabled={loading || !pristine}
                     >
                         {_ts('project', 'modalRevert')}
                     </DangerButton>
                     <SuccessButton
-                        disabled={pending || !pristine}
+                        disabled={loading || !pristine}
                         type="submit"
                     >
                         {_ts('project', 'modalSave')}
@@ -559,37 +587,43 @@ export default class ProjectGeneral extends React.PureComponent {
                     rows={3}
                 />
                 <div className={styles.selectsContainer}>
-                    <SelectInputWithList
-                        label={_ts('project', 'projectRegionLabel')}
-                        faramElementName="regions"
-                        placeholder={_ts('project', 'projectRegionPlaceholder')}
-                        className={styles.regions}
-                        options={regionOptions}
-                        labelSelector={ProjectGeneral.optionLabelSelector}
-                        keySelector={ProjectGeneral.optionKeySelector}
-                        hideSelectAllButton
-                    />
-                    <SelectInputWithList
-                        label={_ts('project', 'projectUserGroupLabel')}
-                        faramElementName="userGroups"
-                        placeholder={_ts('project', 'projectUserGroupPlaceholder')}
-                        className={styles.userGroups}
-                        options={userGroupsOptions}
-                        labelSelector={ProjectGeneral.optionLabelSelector}
-                        keySelector={ProjectGeneral.optionKeySelector}
-                        hideSelectAllButton
-                    />
-                    <TabularSelectInput
-                        faramElementName="memberships"
-                        className={styles.members}
-                        options={memberOptions}
-                        label={_ts('project', 'projectMembersLabel')}
-                        labelSelector={ProjectGeneral.memberOptionLabelSelector}
-                        keySelector={ProjectGeneral.memberOptionKeySelector}
-                        tableHeaders={this.memberHeaders}
-                        hideRemoveFromListButton
-                        hideSelectAllButton
-                    />
+                    {!pendingProjectOptions &&
+                        <Fragment>
+                            <SelectInputWithList
+                                label={_ts('project', 'projectRegionLabel')}
+                                faramElementName="regions"
+                                placeholder={_ts('project', 'projectRegionPlaceholder')}
+                                className={styles.regions}
+                                options={regionOptions}
+                                labelSelector={ProjectGeneral.optionLabelSelector}
+                                keySelector={ProjectGeneral.optionKeySelector}
+                                hideSelectAllButton
+                            />
+                            <SelectInputWithList
+                                label={_ts('project', 'projectUserGroupLabel')}
+                                faramElementName="userGroups"
+                                placeholder={_ts('project', 'projectUserGroupPlaceholder')}
+                                className={styles.userGroups}
+                                options={userGroupsOptions}
+                                labelSelector={ProjectGeneral.optionLabelSelector}
+                                keySelector={ProjectGeneral.optionKeySelector}
+                                hideSelectAllButton
+                            />
+                        </Fragment>
+                    }
+                    {!usersPending &&
+                        <TabularSelectInput
+                            faramElementName="memberships"
+                            className={styles.members}
+                            options={memberOptions}
+                            label={_ts('project', 'projectMembersLabel')}
+                            labelSelector={ProjectGeneral.memberOptionLabelSelector}
+                            keySelector={ProjectGeneral.memberOptionKeySelector}
+                            tableHeaders={this.memberHeaders}
+                            hideRemoveFromListButton
+                            hideSelectAllButton
+                        />
+                    }
                 </div>
             </Faram>
         );

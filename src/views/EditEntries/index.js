@@ -590,9 +590,6 @@ export default class EditEntries extends React.PureComponent {
                     >
                         <i className={iconNames.back} />
                     </Link>
-                    <h4 className={styles.heading}>
-                        { leadTitle }
-                    </h4>
                     <FixedTabs
                         className={styles.tabs}
                         tabs={this.tabs}
@@ -601,6 +598,9 @@ export default class EditEntries extends React.PureComponent {
                         deafultHash={this.defaultHash}
                         disabled={projectMismatch}
                     />
+                    <h4 className={styles.heading}>
+                        { leadTitle }
+                    </h4>
                     <div className={styles.actionButtons}>
                         <Cloak
                             hide={({ isAdmin }) => !isAdmin}

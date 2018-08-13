@@ -1,6 +1,7 @@
 import {
     wsEndpoint,
     POST,
+    PUT,
     PATCH,
     DELETE,
     commonHeaderForPost,
@@ -49,6 +50,12 @@ export const createParamsForProjectJoinCancel = () => ({
 
 export const createParamsForProjectPatch = data => ({
     method: PATCH,
+    headers: commonHeaderForPost,
+    body: JSON.stringify(data),
+});
+
+export const createParamsForProjectPut = data => ({
+    method: PUT,
     headers: commonHeaderForPost,
     body: JSON.stringify(data),
 });

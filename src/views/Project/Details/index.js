@@ -10,12 +10,10 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import {
     createParamsForGet,
     createUrlForProject,
-    createUrlForProjectOptions,
 } from '#rest';
 import {
     projectDetailsSelector,
     setProjectAction,
-    setProjectOptionsAction,
 } from '#redux';
 import schema from '#schema';
 import _ts from '#ts';
@@ -31,7 +29,6 @@ const propTypes = {
     project: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     projectId: PropTypes.number,
     setProject: PropTypes.func.isRequired,
-    setProjectOptions: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -46,7 +43,6 @@ const mapStateToProps = (state, props) => ({
 
 const mapDispatchToProps = dispatch => ({
     setProject: params => dispatch(setProjectAction(params)),
-    setProjectOptions: params => dispatch(setProjectOptionsAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -59,9 +55,7 @@ export default class ProjectDetails extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = {
-            pending: true,
-        };
+        this.state = { pending: true };
 
         this.routes = {
             general: 'General',
@@ -117,16 +111,12 @@ export default class ProjectDetails extends React.PureComponent {
         const { projectId } = props;
         if (projectId) {
             this.projectRequest = this.createProjectRequest(projectId);
-            this.projectOptionsRequest = this.createProjectOptionsRequest(projectId);
         }
     }
 
     componentDidMount() {
         if (this.projectRequest) {
             this.projectRequest.start();
-        }
-        if (this.projectOptionsRequest) {
-            this.projectOptionsRequest.start();
         }
     }
 
@@ -144,25 +134,14 @@ export default class ProjectDetails extends React.PureComponent {
                 this.projectRequest.stop();
             }
 
-            if (this.projectOptionsRequest) {
-                this.projectOptionsRequest.stop();
-            }
-
             this.projectRequest = this.createProjectRequest(nextProjectId);
             this.projectRequest.start();
-
-            this.projectOptionsRequest = this.createProjectOptionsRequest(nextProjectId);
-            this.projectOptionsRequest.start(nextProjectId);
         }
     }
 
     componentWillUnmount() {
         if (this.projectRequest) {
             this.projectRequest.stop();
-        }
-
-        if (this.projectOptionsRequest) {
-            this.projectOptionsRequest.stop();
         }
     }
 
@@ -183,37 +162,13 @@ export default class ProjectDetails extends React.PureComponent {
             .success((response) => {
                 try {
                     schema.validate(response, 'projectGetResponse');
-                    this.props.setProject({
-                        project: response,
-                    });
-                    this.setState({
-                        loadingLeads: false,
-                    });
+                    this.props.setProject({ project: response });
                 } catch (er) {
                     console.error(er);
                 }
             })
             .build();
         return projectRequest;
-    };
-
-    createProjectOptionsRequest = (projectId) => {
-        const projectOptionsRequest = new FgRestBuilder()
-            .url(createUrlForProjectOptions(projectId))
-            .params(createParamsForGet)
-            .success((response) => {
-                try {
-                    schema.validate(response, 'projectOptionsGetResponse');
-                    this.props.setProjectOptions({
-                        projectId,
-                        options: response,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .build();
-        return projectOptionsRequest;
     };
 
     renderDetail = () => {

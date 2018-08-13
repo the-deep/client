@@ -60,7 +60,7 @@ export default class NewCategoryModal extends React.PureComponent {
         this.setState({ faramErrors });
     };
 
-    handleFaramValidationSuccess = ({ title }) => {
+    handleFaramValidationSuccess = (_, { title }) => {
         this.props.onSubmit(title);
     }
 

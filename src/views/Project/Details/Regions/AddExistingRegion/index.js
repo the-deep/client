@@ -15,7 +15,7 @@ import Faram, {
 
 import {
     alterResponseErrorToFaramError,
-    createParamsForProjectPatch,
+    createParamsForProjectPut,
     createUrlForProject,
 } from '#rest';
 import {
@@ -120,14 +120,12 @@ export default class AddExistingRegion extends React.PureComponent {
     createProjectPatchRequest = (newProjectDetails, projectId, addedRegions) => {
         const projectPatchRequest = new FgRestBuilder()
             .url(createUrlForProject(projectId))
-            .params(() => createParamsForProjectPatch(newProjectDetails))
+            .params(() => createParamsForProjectPut(newProjectDetails))
             .postLoad(() => this.setState({ pristine: false }))
             .success((response) => {
                 try {
                     schema.validate(response, 'project');
-                    this.props.setProject({
-                        project: response,
-                    });
+                    this.props.setProject({ project: response });
                     notify.send({
                         title: _ts('project', 'countryCreate'),
                         type: notify.type.SUCCESS,

@@ -120,7 +120,7 @@ export default class FilterProjectsForm extends React.PureComponent {
         );
     }
 
-    handleFaramValidationSuccess = (values) => {
+    handleFaramValidationSuccess = (_, values) => {
         this.props.setDiscoverProjectFilter(values);
     }
 

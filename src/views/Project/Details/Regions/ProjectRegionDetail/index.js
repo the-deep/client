@@ -191,9 +191,7 @@ export default class ProjectRegionDetail extends React.PureComponent {
         if (cloneConfirm) {
             this.startRegionCloneRequest(regionId, projectId);
         }
-        this.setState({
-            showCloneAndEditConfirm: false,
-        });
+        this.setState({ showCloneAndEditConfirm: false });
     }
 
     handleRegionRemove = (deleteConfirm, projectDetails, removedRegionId) => {

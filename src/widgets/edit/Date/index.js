@@ -73,7 +73,7 @@ export default class DateFrameworkList extends React.PureComponent {
         });
     };
 
-    handleFaramValidationSuccess = (faramValues) => {
+    handleFaramValidationSuccess = (_, faramValues) => {
         const {
             title,
             ...otherProps

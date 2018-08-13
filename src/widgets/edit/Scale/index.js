@@ -121,7 +121,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
         });
     };
 
-    handleFaramValidationSuccess = (faramValues) => {
+    handleFaramValidationSuccess = (_, faramValues) => {
         const { title, ...otherProps } = faramValues;
         this.props.onSave(otherProps, title);
     };

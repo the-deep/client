@@ -69,6 +69,10 @@ export default class ConnectorContentFilters extends React.PureComponent {
         }
     }
 
+    handleValidationSuccess = (_, value) => {
+        this.props.onApply(value);
+    }
+
     rendererParams = (key, filterData) => ({
         filterData,
     })
@@ -78,7 +82,6 @@ export default class ConnectorContentFilters extends React.PureComponent {
             filters,
             value,
             onChange,
-            onApply,
             className,
         } = this.props;
 
@@ -86,7 +89,7 @@ export default class ConnectorContentFilters extends React.PureComponent {
             <Faram
                 className={`${className} ${styles.container}`}
                 onChange={onChange}
-                onValidationSuccess={onApply}
+                onValidationSuccess={this.handleValidationSuccess}
                 schema={this.schema}
                 value={value}
             >

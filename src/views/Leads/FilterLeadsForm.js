@@ -172,7 +172,7 @@ export default class FilterLeadsForm extends React.PureComponent {
         );
     }
 
-    handleFaramValidationSuccess = (values) => {
+    handleFaramValidationSuccess = (_, values) => {
         const { similar } = this.props.filters;
         this.props.setLeadPageFilter({
             filters: {

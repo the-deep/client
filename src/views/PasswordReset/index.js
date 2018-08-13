@@ -75,7 +75,7 @@ export default class PasswordReset extends React.PureComponent {
         this.setState({ faramErrors });
     };
 
-    handleFaramValidationSuccess = ({ email, recaptchaResponse }) => {
+    handleFaramValidationSuccess = (_, { email, recaptchaResponse }) => {
         const url = urlForUserPasswordReset;
         const params = createParamsForUserPasswordReset({ email, recaptchaResponse });
         this.passwordReset({ url, params });

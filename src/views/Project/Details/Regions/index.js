@@ -12,17 +12,24 @@ import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 
-import { projectDetailsSelector } from '#redux';
+import {
+    projectDetailsSelector,
+
+    setProjectOptionsAction,
+} from '#redux';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 import AddRegion from '#components/AddRegion';
 
 import AddExistingRegion from './AddExistingRegion';
 import ProjectRegionDetail from './ProjectRegionDetail';
+import ProjectOptionsGet from '../../requests/ProjectOptionsGet';
 import styles from './styles.scss';
 
 const propTypes = {
+    projectId: PropTypes.number.isRequired,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    setProjectOptions: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -33,7 +40,7 @@ const mapStateToProps = (state, props) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    dispatch,
+    setProjectOptions: params => dispatch(setProjectOptionsAction(params)),
 });
 
 const emptyList = [];
@@ -70,10 +77,27 @@ export default class ProjectRegions extends React.PureComponent {
             searchInputValue: '',
             showAddRegionModal: false,
         };
+
+        this.projectOptionsGet = new ProjectOptionsGet({
+            setState: params => this.setState(params),
+            setProjectOptions: this.props.setProjectOptions,
+        });
+    }
+
+    componentWillMount() {
+        const { projectId } = this.props;
+
+        this.projectOptionsGet.init(projectId);
+        this.projectOptionsGet.start();
     }
 
     componentWillReceiveProps(nextProps) {
-        const { projectDetails } = nextProps;
+        const {
+            projectDetails,
+            projectId: newProjectId,
+        } = nextProps;
+        const { projectId: oldProjectId } = this.props;
+
         const {
             searchInputValue,
             selectedRegion,
@@ -94,6 +118,15 @@ export default class ProjectRegions extends React.PureComponent {
                 selectedRegion: newSelectedRegion,
             });
         }
+
+        if (newProjectId !== oldProjectId) {
+            this.projectOptionsGet.init(newProjectId);
+            this.projectOptionsGet.start();
+        }
+    }
+
+    componentWillUnmount() {
+        this.projectOptionsGet.stop();
     }
 
     getModalClassName = () => {

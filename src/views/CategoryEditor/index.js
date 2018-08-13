@@ -490,9 +490,10 @@ export default class CategoryEditor extends React.PureComponent {
         } = this.state;
 
         const activeCategory = categories.find(cat => cat.id === activeCategoryId);
-        const confirmMessage = _ts('categoryEditor', 'confirmTextDeleteCategory', {
-            category: (<b>{activeCategory.title}</b>),
-        });
+        const confirmMessage = activeCategory
+            && _ts('categoryEditor', 'confirmTextDeleteCategory', {
+                category: (<b>{activeCategory.title}</b>),
+            });
 
         return (
             <div className={styles.categoryEditor}>
