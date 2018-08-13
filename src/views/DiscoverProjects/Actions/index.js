@@ -105,7 +105,6 @@ export default class Actions extends React.PureComponent {
                 tabIndex="-1"
                 title={_ts('discoverProjects.table', 'contactAdminsTitle')}
                 href={contantLink}
-                target="_blank"
             >
                 <span className={iconNames.email} />
             </a>

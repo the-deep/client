@@ -51,6 +51,11 @@ $min-width-assistant: 240px;
     .icon {
         color: $color-primary;
         font-size: $font-size-large;
+
+        img {
+            width: $font-size-large;
+            height: $font-size-large;
+        }
     }
 }
 

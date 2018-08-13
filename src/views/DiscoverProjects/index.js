@@ -14,6 +14,7 @@ import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
 import SparkLines from '#rscz/SparkLines';
+import Numeral from '#rscv/Numeral';
 
 import {
     discoverProjectsTotalProjectsCountSelector,
@@ -31,6 +32,7 @@ import {
 } from '#redux';
 
 import AppError from '#components/AppError';
+import _ts from '#ts';
 
 import ProjectListRequest from './requests/ProjectListRequest';
 import ProjectJoinRequest from './requests/ProjectJoinRequest';
@@ -102,6 +104,18 @@ export default class DiscoverProjects extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static membershipKeySelector = m => m.id;
+    static activityCountSelector = a => a.count;
+    static activityDateSelector = a => new Date(a.date).getTime();
+    static activityDateModifier = d => `
+        ${_ts('discoverProjects.table', 'dateLabel')}:
+        ${FormattedDate.format(new Date(d), 'dd-MM-yyyy')}
+    `;
+    static entriesActivityNumberModifier = d => `
+        ${_ts('discoverProjects.table', 'numberOfEntries')}: ${d}
+    `;
+    static leadsActivityNumberModifier = d => `
+        ${_ts('discoverProjects.table', 'numberOfLeads')}: ${d}
+    `;
 
     static projectsPerPageOptions = [
         { label: '25', key: 25 },
@@ -233,11 +247,26 @@ export default class DiscoverProjects extends React.PureComponent {
             case 'analysis_framework':
                 return project.analysisFrameworkTitle;
             case 'number_of_users':
-                return project.numberOfUsers;
+                return (
+                    <Numeral
+                        value={project.numberOfUsers}
+                        precision={0}
+                    />
+                );
             case 'number_of_leads':
-                return project.numberOfLeads;
+                return (
+                    <Numeral
+                        value={project.numberOfLeads}
+                        precision={0}
+                    />
+                );
             case 'number_of_entries':
-                return project.numberOfEntries;
+                return (
+                    <Numeral
+                        value={project.numberOfEntries}
+                        precision={0}
+                    />
+                );
             case 'number_of_projects':
                 return project.memberships.length;
             case 'regions':
@@ -247,9 +276,10 @@ export default class DiscoverProjects extends React.PureComponent {
                     <SparkLines
                         className={styles.sparkLine}
                         data={project.leadsActivity}
-                        yValueAccessor={activity => activity.count}
-                        xValueAccessor={activity => new Date(activity.date).getTime()}
-                        xLabelModifier={date => FormattedDate.format(new Date(date), 'dd-MM-yyyy')}
+                        yValueAccessor={DiscoverProjects.activityCountSelector}
+                        xValueAccessor={DiscoverProjects.activityDateSelector}
+                        xLabelModifier={DiscoverProjects.activityDateModifier}
+                        yLabelModifier={DiscoverProjects.leadsActivityNumberModifier}
                         fill
                     />
                 );
@@ -258,9 +288,10 @@ export default class DiscoverProjects extends React.PureComponent {
                     <SparkLines
                         className={styles.sparkLine}
                         data={project.entriesActivity}
-                        yValueAccessor={activity => activity.count}
-                        xValueAccessor={activity => new Date(activity.date).getTime()}
-                        xLabelModifier={date => FormattedDate.format(new Date(date), 'dd-MM-yyyy')}
+                        yValueAccessor={DiscoverProjects.activityCountSelector}
+                        xValueAccessor={DiscoverProjects.activityDateSelector}
+                        xLabelModifier={DiscoverProjects.activityDateModifier}
+                        yLabelModifier={DiscoverProjects.entriesActivityNumberModifier}
                         fill
                     />
                 );

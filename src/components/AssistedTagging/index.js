@@ -24,6 +24,7 @@ import {
     urlForNer,
 } from '#rest';
 import schema from '#schema';
+import icon from '#resources/img/favicon.png';
 import _ts from '#ts';
 
 import Highlight from '../Highlight';
@@ -745,9 +746,15 @@ export default class AssistedTagging extends React.PureComponent {
                 <AssistantOptions />
                 <div className={styles.info}>
                     <span
-                        className={`${styles.icon} ${iconNames.help}`}
+                        className={styles.icon}
                         title={_ts('components.assistedTagging', 'infoTooltip')}
-                    />
+                    >
+                        { /* FIXME: Use strings */ }
+                        <img
+                            src={icon}
+                            alt="Help icon"
+                        />
+                    </span>
                 </div>
                 <Assistant />
             </div>

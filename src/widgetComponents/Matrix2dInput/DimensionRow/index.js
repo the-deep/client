@@ -66,7 +66,7 @@ export default class DimensionRow extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const { dimension: { color } } = this.props;
+        const { dimension: { color = '#ffffff' } } = this.props;
         this.rowStyle = DimensionRow.getRowStyle(color);
         this.activeCellStyle = DimensionRow.getActiveCellStyle(this.rowStyle);
         this.hoverStyle = DimensionRow.getHoverStyle(this.rowStyle);
@@ -74,7 +74,7 @@ export default class DimensionRow extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.dimension.color !== nextProps.dimension.color) {
-            this.rowStyle = DimensionRow.getRowStyle(nextProps.dimension.color);
+            this.rowStyle = DimensionRow.getRowStyle(nextProps.dimension.color || '#ffffff');
             this.activeCellStyle = DimensionRow.getActiveCellStyle(this.rowStyle);
             this.hoverStyle = DimensionRow.getHoverStyle(this.rowStyle);
         }

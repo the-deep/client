@@ -747,7 +747,13 @@
         "-64784286": "Delete sector",
         "-59828541": "Add subsector",
         "-13931386": "Subsector {index}",
-        "-24172161": "Remove subsector"
+        "-24172161": "Remove subsector",
+        "-66570762": "Number of Entries",
+        "-43947547": "Number of Leads",
+        "-35157722": "Well done! Lead has been marked as processed.",
+        "-74575009": "Lead has been marked as pending.",
+        "-56080300": "Min value (optional)",
+        "-86245438": "Max value (optional)"
     },
     "links": {
         "browserExtension": {
@@ -780,7 +786,10 @@
             "contactAdminsSubject": 7635,
             "joinLabel": 7636,
             "cancelJoinRequest": 7637,
-            "editProjectTooltip": 171
+            "editProjectTooltip": 171,
+            "dateLabel": 704,
+            "numberOfEntries": -66570762,
+            "numberOfLeads": -43947547
         },
         "discoverProjects.filter": {
             "status": 8,
@@ -1297,7 +1306,9 @@
             "titleLabel": 13,
             "leadsGetFailure": 513,
             "leadsPatchFailure": 8050,
-            "leadsPatchSuccess": 8051
+            "leadsPatchSuccess": 8051,
+            "leadsPendingSuccess": -74575009,
+            "leadsProcessedSuccess": -35157722
         },
         "leadsViz": {
             "chordDiagram": 4007,
@@ -1994,8 +2005,8 @@
             "saveButtonLabel": 25,
             "cancelButtonLabel": 61,
             "numberPlaceholder": 768,
-            "maxValueLabel": 1001,
-            "minValueLabel": 1002,
+            "maxValueLabel": -86245438,
+            "minValueLabel": -56080300,
             "minGreaterThanMaxError": -11395011
         },
         "widgets.editor.numberMatrix": {

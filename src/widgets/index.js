@@ -97,12 +97,12 @@ let widgets = {
 
         overview: {
             component: Matrix1dWidget,
-            minSize: { w: 15, h: 6 },
+            minSize: { w: 14, h: 5 },
         },
         list: {
             component: Matrix1dListWidget,
             viewComponent: Matrix1dListViewWidget,
-            minSize: { w: 12, h: 12 },
+            minSize: { w: 12, h: 7 },
         },
     },
     matrix2dWidget: {
@@ -117,7 +117,7 @@ let widgets = {
         list: {
             component: Matrix2dListWidget,
             viewComponent: Matrix2dListViewWidget,
-            minSize: { w: 15, h: 6 },
+            minSize: { w: 12, h: 7 },
         },
     },
     numberMatrixWidget: {
@@ -127,12 +127,12 @@ let widgets = {
 
         overview: {
             component: NumberMatrixWidget,
-            minSize: { w: 15, h: 6 },
+            minSize: { w: 15, h: 8 },
         },
         list: {
             component: NumberMatrixListWidget,
             viewComponent: NumberMatrixListViewWidget,
-            minSize: { w: 15, h: 6 },
+            minSize: { w: 12, h: 7 },
         },
     },
 
@@ -145,12 +145,12 @@ let widgets = {
         overview: {
             component: DateRangeWidget,
             viewComponent: DateRangeViewWidget,
-            minSize: { w: 20, h: 5 },
+            minSize: { w: 20, h: 6 },
         },
         list: {
             component: DateRangeWidget,
             viewComponent: DateRangeViewWidget,
-            minSize: { w: 20, h: 5 },
+            minSize: { w: 20, h: 6 },
         },
     },
     dateWidget: {
@@ -177,12 +177,12 @@ let widgets = {
         overview: {
             component: TimeWidget,
             viewComponent: TimeViewWidget,
-            minSize: { w: 8, h: 5 },
+            minSize: { w: 8, h: 4 },
         },
         list: {
             component: TimeWidget,
             viewComponent: TimeViewWidget,
-            minSize: { w: 8, h: 5 },
+            minSize: { w: 8, h: 4 },
         },
     },
     geoWidget: {
@@ -193,12 +193,12 @@ let widgets = {
         overview: {
             component: GeoWidget,
             viewComponent: GeoViewWidget,
-            minSize: { w: 15, h: 6 },
+            minSize: { w: 12, h: 12 },
         },
         list: {
             component: GeoWidget,
             viewComponent: GeoViewWidget,
-            minSize: { w: 15, h: 6 },
+            minSize: { w: 12, h: 12 },
         },
     },
     multiselectWidget: {
@@ -209,12 +209,12 @@ let widgets = {
         overview: {
             component: MultiSelectWidget,
             viewComponent: MultiSelectViewWidget,
-            minSize: { w: 7, h: 15 },
+            minSize: { w: 12, h: 12 },
         },
         list: {
             component: MultiSelectWidget,
             viewComponent: MultiSelectViewWidget,
-            minSize: { w: 7, h: 15 },
+            minSize: { w: 12, h: 12 },
         },
     },
     numberWidget: {
@@ -225,12 +225,12 @@ let widgets = {
         overview: {
             component: NumberWidget,
             viewComponent: NumberViewWidget,
-            minSize: { w: 10, h: 3 },
+            minSize: { w: 10, h: 4 },
         },
         list: {
             component: NumberWidget,
             viewComponent: NumberViewWidget,
-            minSize: { w: 10, h: 3 },
+            minSize: { w: 10, h: 4 },
         },
     },
     organigramWidget: {
@@ -241,12 +241,12 @@ let widgets = {
         overview: {
             component: OrganigramWidget,
             viewComponent: OrganigramViewWidget,
-            minSize: { w: 10, h: 12 },
+            minSize: { w: 12, h: 12 },
         },
         list: {
             component: OrganigramWidget,
             viewComponent: OrganigramViewWidget,
-            minSize: { w: 10, h: 12 },
+            minSize: { w: 12, h: 12 },
         },
     },
     scaleWidget: {
@@ -273,12 +273,12 @@ let widgets = {
         overview: {
             component: SelectWidget,
             viewComponent: SelectViewWidget,
-            minSize: { w: 12, h: 3 },
+            minSize: { w: 12, h: 4 },
         },
         list: {
             component: SelectWidget,
             viewComponent: SelectViewWidget,
-            minSize: { w: 12, h: 3 },
+            minSize: { w: 12, h: 4 },
         },
     },
 };
