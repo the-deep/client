@@ -1542,6 +1542,18 @@
             "clusterViz": 2999,
             "visualization": 3999
         },
+        "project.general": {
+            "saveButtonLabel": 25,
+            "cancelButtonLabel": 61,
+            "projectNameLabel": 103,
+            "projectNamePlaceholder": 39,
+            "projectDescriptionLabel": 200,
+            "projectDescriptionPlaceholder": 331,
+            "projectStartDateLabel": 185,
+            "projectStartDatePlaceholder": 333,
+            "projectEndDateLabel": 334,
+            "projectEndDatePlaceholder": 335
+        },
         "project": {
             "addRegionButtonLabel": 301,
             "projectSaveFailure": 1126,
