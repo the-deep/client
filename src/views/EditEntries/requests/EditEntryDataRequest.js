@@ -74,11 +74,13 @@ export default class EditEntryDataRequest extends Request {
         // Calculate color for each entry in the diff
         diffs.forEach((acc) => {
             const { entry: { data: { attributes = {} } = {} } = {} } = acc;
-            const color = this.parent.calculateEntryColor(
-                attributes,
-                analysisFramework,
-            );
-            acc.entry.localData.color = color;
+            if (acc.entry) {
+                const color = this.parent.calculateEntryColor(
+                    attributes,
+                    analysisFramework,
+                );
+                acc.entry.localData.color = color;
+            }
         });
 
         this.parent.setEntries({ leadId, entryActions: diffs });
