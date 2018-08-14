@@ -17,6 +17,7 @@ import NumberEditWidget from './edit/Number';
 import OrganigramEditWidget from './edit/Organigram';
 import MultiSelectEditWidget from './edit/MultiSelect';
 import ScaleEditWidget from './edit/Scale';
+import ConditionalEditWidget from './edit/Conditional';
 
 // overview
 import ExcerptWidget from './tagging/Excerpt';
@@ -36,6 +37,7 @@ import OrganigramWidget from './tagging/Organigram';
 import ScaleWidget from './tagging/Scale';
 import SelectWidget from './tagging/Select';
 import TimeWidget from './tagging/Time';
+import ConditionalWidget from './tagging/Conditional';
 
 // overview
 import ExcerptViewWidget from './view/Excerpt';
@@ -47,6 +49,7 @@ import DateViewWidget from './view/Date';
 import DateRangeViewWidget from './view/DateRange';
 import GeoViewWidget from './view/Geo';
 import MultiSelectViewWidget from './view/MultiSelect';
+import ConditionalViewWidget from './view/Conditional';
 import NumberViewWidget from './view/Number';
 import OrganigramViewWidget from './view/Organigram';
 import ScaleViewWidget from './view/Scale';
@@ -275,6 +278,22 @@ let widgets = {
             tagComponent: MultiSelectWidget,
             altTagComponent: MultiSelectViewWidget,
             viewComponent: MultiSelectViewWidget,
+        },
+    },
+    conditionalWidget: {
+        // NOTE: used as _ts('widgetTitle', 'conditionalWidgetLabel')
+        title: 'conditionalWidgetLabel',
+        editComponent: ConditionalEditWidget,
+
+        overview: {
+            component: ConditionalWidget,
+            viewComponent: ConditionalViewWidget,
+            minSize: { w: 12, h: 12 },
+        },
+        list: {
+            component: ConditionalWidget,
+            viewComponent: ConditionalViewWidget,
+            minSize: { w: 12, h: 12 },
         },
     },
 };

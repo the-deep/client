@@ -778,7 +778,8 @@
         "-77603800": "Couldn't save project",
         "-71533605": "Failed to save user information.",
         "-5184045": "Failed to retrieve user's projects.",
-        "-59897985": "Failed to retrieve user's User Groups."
+        "-59897985": "Failed to retrieve user's User Groups.",
+        "-86548021": "Conditional"
     },
     "links": {
         "browserExtension": {
@@ -1528,7 +1529,8 @@
             "numberMatrixWidgetLabel": 742,
             "numberWidgetLabel": 752,
             "organigramWidgetLabel": 753,
-            "scaleWidgetLabel": 757
+            "scaleWidgetLabel": 757,
+            "conditionalWidgetLabel": -86548021
         },
         "pageTitle": {
             "login": 814,
