@@ -3,10 +3,16 @@
 
 .entry {
     padding: $spacing-small;
+    min-width: 100%;
     overflow: hidden;
+
+    &:not(:last-child) {
+        border-bottom: $width-separator-thin solid $color-separator;
+    }
 
     .widget {
         @extend %widget;
+        // border: $width-separator-thin solid $color-separator;
         padding: $spacing-extra-small;
 
         .header {
