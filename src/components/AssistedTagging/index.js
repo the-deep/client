@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import ReactSVG from 'react-svg';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
@@ -24,7 +25,7 @@ import {
     urlForNer,
 } from '#rest';
 import schema from '#schema';
-import icon from '#resources/img/favicon.png';
+import brainIcon from '#resources/img/brain.svg';
 import _ts from '#ts';
 
 import Highlight from '../Highlight';
@@ -745,16 +746,11 @@ export default class AssistedTagging extends React.PureComponent {
                 />
                 <AssistantOptions />
                 <div className={styles.info}>
-                    <span
-                        className={styles.icon}
+                    <ReactSVG
+                        svgClassName={styles.brainIcon}
+                        path={brainIcon}
                         title={_ts('components.assistedTagging', 'infoTooltip')}
-                    >
-                        { /* FIXME: Use strings */ }
-                        <img
-                            src={icon}
-                            alt="Help icon"
-                        />
-                    </span>
+                    />
                 </div>
                 <Assistant />
             </div>

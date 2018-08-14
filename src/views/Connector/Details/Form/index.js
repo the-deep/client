@@ -220,6 +220,13 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                 order: 2,
                 sortable: true,
                 comparator: (a, b) => compareString(a.role, b.role),
+                modifier: (row) => {
+                    const isGlobal = row.role === 'global';
+                    if (isGlobal) {
+                        return _ts('connector', 'globalVisibilityLabel');
+                    }
+                    return _ts('connector', 'selfVisibilityLabel');
+                },
             },
             {
                 key: 'actions',
@@ -814,7 +821,6 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                                 keySelector={ConnectorDetailsForm.projectKeySelector}
                                 tableHeaders={projectsHeader}
                                 hideRemoveFromListButton
-                                hideSelectAllButton
                             />
                         </div>
                     }

@@ -322,7 +322,7 @@
         "720": "Add cell",
         "723": "Matrix 2D",
         "733": "Tooltip",
-        "737": "Multiselect",
+        "737": "Dropdown List (Multiple Selection)",
         "742": "Number matrix",
         "748": "Rows",
         "749": "Add row",
@@ -491,8 +491,8 @@
         "1118": "Failed to create connector.",
         "1119": "Users",
         "1120": "Visibility",
-        "1121": "Set it to local",
-        "1122": "Set it to global",
+        "1121": "Set visibility to just me",
+        "1122": "Set visibility to all project members",
         "1123": "You need project admin rights to change this setting.",
         "1124": "Remove project",
         "1125": "Failed to fetch projects",
@@ -753,7 +753,10 @@
         "-35157722": "Well done! Lead has been marked as processed.",
         "-74575009": "Lead has been marked as pending.",
         "-56080300": "Min value (optional)",
-        "-86245438": "Max value (optional)"
+        "-86245438": "Max value (optional)",
+        "-18776228": "Just me",
+        "-84222321": "All project members",
+        "-78389530": "Dropdown List (Single Selection)"
     },
     "links": {
         "browserExtension": {
@@ -1494,7 +1497,7 @@
             "matrix1DWidgetLabel": 718,
             "matrix2DWidgetLabel": 723,
             "multiselectWidgetLabel": 737,
-            "selectWidgetLabel": 643,
+            "selectWidgetLabel": -78389530,
             "numberMatrixWidgetLabel": 742,
             "numberWidgetLabel": 752,
             "organigramWidgetLabel": 753,
@@ -1695,7 +1698,9 @@
             "usersTitle": 1119,
             "usersListGetFailure": 999,
             "projectsTitle": 31,
-            "projectsGetFailure": 1125
+            "projectsGetFailure": 1125,
+            "globalVisibilityLabel": -84222321,
+            "selfVisibilityLabel": -18776228
         },
         "userGroup": {
             "tableHeaderName": 103,

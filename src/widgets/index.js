@@ -137,22 +137,6 @@ let widgets = {
     },
 
 
-    dateRangeWidget: {
-        // NOTE: used as _ts('widgetTitle', 'dateRangeWidgetLabel')
-        title: 'dateRangeWidgetLabel',
-        editComponent: DefaultEditWidget,
-
-        overview: {
-            component: DateRangeWidget,
-            viewComponent: DateRangeViewWidget,
-            minSize: { w: 20, h: 6 },
-        },
-        list: {
-            component: DateRangeWidget,
-            viewComponent: DateRangeViewWidget,
-            minSize: { w: 20, h: 6 },
-        },
-    },
     dateWidget: {
         // NOTE: used as _ts('widgetTitle', 'dateWidgetLabel')
         title: 'dateWidgetLabel',
@@ -185,36 +169,20 @@ let widgets = {
             minSize: { w: 8, h: 4 },
         },
     },
-    geoWidget: {
-        // NOTE: used as _ts('widgetTitle', 'geoWidgetLabel')
-        title: 'geoWidgetLabel',
+    dateRangeWidget: {
+        // NOTE: used as _ts('widgetTitle', 'dateRangeWidgetLabel')
+        title: 'dateRangeWidgetLabel',
         editComponent: DefaultEditWidget,
 
         overview: {
-            component: GeoWidget,
-            viewComponent: GeoViewWidget,
-            minSize: { w: 12, h: 12 },
+            component: DateRangeWidget,
+            viewComponent: DateRangeViewWidget,
+            minSize: { w: 20, h: 6 },
         },
         list: {
-            component: GeoWidget,
-            viewComponent: GeoViewWidget,
-            minSize: { w: 12, h: 12 },
-        },
-    },
-    multiselectWidget: {
-        // NOTE: used as _ts('widgetTitle', 'multiselectWidgetLabel')
-        title: 'multiselectWidgetLabel',
-        editComponent: MultiSelectEditWidget,
-
-        overview: {
-            component: MultiSelectWidget,
-            viewComponent: MultiSelectViewWidget,
-            minSize: { w: 12, h: 12 },
-        },
-        list: {
-            component: MultiSelectWidget,
-            viewComponent: MultiSelectViewWidget,
-            minSize: { w: 12, h: 12 },
+            component: DateRangeWidget,
+            viewComponent: DateRangeViewWidget,
+            minSize: { w: 20, h: 6 },
         },
     },
     numberWidget: {
@@ -233,22 +201,6 @@ let widgets = {
             minSize: { w: 10, h: 4 },
         },
     },
-    organigramWidget: {
-        // NOTE: used as _ts('widgetTitle', 'organigramWidgetLabel')
-        title: 'organigramWidgetLabel',
-        editComponent: OrganigramEditWidget,
-
-        overview: {
-            component: OrganigramWidget,
-            viewComponent: OrganigramViewWidget,
-            minSize: { w: 12, h: 12 },
-        },
-        list: {
-            component: OrganigramWidget,
-            viewComponent: OrganigramViewWidget,
-            minSize: { w: 12, h: 12 },
-        },
-    },
     scaleWidget: {
         // NOTE: used as _ts('widgetTitle', 'scaleWidgetLabel')
         title: 'scaleWidgetLabel',
@@ -265,6 +217,38 @@ let widgets = {
             minSize: { w: 6, h: 4 },
         },
     },
+    geoWidget: {
+        // NOTE: used as _ts('widgetTitle', 'geoWidgetLabel')
+        title: 'geoWidgetLabel',
+        editComponent: DefaultEditWidget,
+
+        overview: {
+            component: GeoWidget,
+            viewComponent: GeoViewWidget,
+            minSize: { w: 12, h: 12 },
+        },
+        list: {
+            component: GeoWidget,
+            viewComponent: GeoViewWidget,
+            minSize: { w: 12, h: 12 },
+        },
+    },
+    organigramWidget: {
+        // NOTE: used as _ts('widgetTitle', 'organigramWidgetLabel')
+        title: 'organigramWidgetLabel',
+        editComponent: OrganigramEditWidget,
+
+        overview: {
+            component: OrganigramWidget,
+            viewComponent: OrganigramViewWidget,
+            minSize: { w: 12, h: 12 },
+        },
+        list: {
+            component: OrganigramWidget,
+            viewComponent: OrganigramViewWidget,
+            minSize: { w: 12, h: 12 },
+        },
+    },
     selectWidget: {
         // NOTE: used as _ts('widgetTitle', 'selectWidgetLabel')
         title: 'selectWidgetLabel',
@@ -279,6 +263,22 @@ let widgets = {
             component: SelectWidget,
             viewComponent: SelectViewWidget,
             minSize: { w: 12, h: 4 },
+        },
+    },
+    multiselectWidget: {
+        // NOTE: used as _ts('widgetTitle', 'multiselectWidgetLabel')
+        title: 'multiselectWidgetLabel',
+        editComponent: MultiSelectEditWidget,
+
+        overview: {
+            component: MultiSelectWidget,
+            viewComponent: MultiSelectViewWidget,
+            minSize: { w: 12, h: 12 },
+        },
+        list: {
+            component: MultiSelectWidget,
+            viewComponent: MultiSelectViewWidget,
+            minSize: { w: 12, h: 12 },
         },
     },
 };

@@ -35,14 +35,15 @@ $width-right-min: 370px;
             }
 
             .action-buttons {
+                display: flex;
                 flex-shrink: 0;
 
                 button {
-                    margin-right: $spacing-medium;
+                    margin: 0 $spacing-small;
                 }
 
                 .add-new-entry-button {
-                    margin-left: $spacing-large;
+                    margin-left: $spacing-extra-small;
                 }
             }
         }
