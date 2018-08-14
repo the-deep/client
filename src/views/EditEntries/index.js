@@ -538,8 +538,12 @@ export default class EditEntries extends React.PureComponent {
                 title: leadTitle,
                 project: projectId,
             } = {},
-            analysisFramework = {},
+            analysisFramework: {
+                id: analysisFrameworkId,
+                isAdmin: isFrameworkAdmin,
+            } = {},
         } = this.props;
+
         const {
             pendingEditEntryData,
             pendingSaveAll,
@@ -559,7 +563,7 @@ export default class EditEntries extends React.PureComponent {
         });
 
         const frameworkPath = reverseRoute(pathNames.analysisFramework, {
-            analysisFrameworkId: analysisFramework.id,
+            analysisFrameworkId,
         });
 
         const hasSavableEntries = this.savableEntries.length > 0;
@@ -590,6 +594,9 @@ export default class EditEntries extends React.PureComponent {
                     >
                         <i className={iconNames.back} />
                     </Link>
+                    <h4 className={styles.heading}>
+                        { leadTitle }
+                    </h4>
                     <FixedTabs
                         className={styles.tabs}
                         tabs={this.tabs}
@@ -598,21 +605,16 @@ export default class EditEntries extends React.PureComponent {
                         deafultHash={this.defaultHash}
                         disabled={projectMismatch}
                     />
-                    <h4 className={styles.heading}>
-                        { leadTitle }
-                    </h4>
                     <div className={styles.actionButtons}>
                         <Cloak
-                            hide={({ isAdmin }) => !isAdmin}
+                            hide={() => !isFrameworkAdmin}
                             render={({ disabled }) => (
                                 <Link
                                     className={styles.editFrameworkLink}
                                     to={frameworkPath}
-                                    disabled={!analysisFramework.id || disabled}
+                                    disabled={!analysisFrameworkId || disabled}
                                 >
-                                    {/*
-                                        <span className={`${iconNames.edit} ${styles.editIcon}`} />
-                                    */}
+                                    <span className={`${iconNames.edit} ${styles.editIcon}`} />
                                     { _ts('editEntry', 'editFrameworkTitle') }
                                 </Link>
                             )}

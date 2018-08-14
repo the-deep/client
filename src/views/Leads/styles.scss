@@ -1,6 +1,8 @@
 @import '~base-scss/base';
 @import '~rs-scss/input-label';
 
+$width-assignee-column: 96px;
+
 .leads {
     @extend %main-content;
     display: flex;
@@ -67,7 +69,9 @@
                     text-transform: capitalize;
                 }
 
+                .created-by-link,
                 .assignee-link {
+                    @extend %accent-color-link;
                     margin-right: $spacing-small;
                 }
 
@@ -85,13 +89,18 @@
                 $mime-column-width: 48px;
 
                 :global {
+                    .header {
+                        &.created_by,
+                        &.assignee {
+                            width: $width-assignee-column;
+                        }
+                    }
                     .cell {
                         padding: $spacing-small;
 
                         &.created_by,
                         &.assignee {
                             color: $color-text-label;
-                            font-size: $font-size-small;
                         }
 
                         &.actions {

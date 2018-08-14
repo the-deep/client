@@ -30,8 +30,8 @@ $height-header: 42px;
 
         .tabs {
             flex-shrink: 0;
+            margin-right: $spacing-small;
             background-color: transparent;
-            height: 100%;
         }
 
         .action-buttons {
@@ -39,7 +39,7 @@ $height-header: 42px;
             padding: 0 $spacing-medium;
 
             .edit-framework-link {
-                @include button-like-link($color-primary);
+                @include button-like-link($color-accent);
 
                 .edit-icon {
                     margin-right: $spacing-small;

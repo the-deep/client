@@ -29,6 +29,7 @@ import {
 } from '#widgets';
 
 import _ts from '#ts';
+import { iconNames } from '#constants';
 
 import WidgetFaram from '../WidgetFaram';
 import LeadPane from './LeadPane';
@@ -164,15 +165,13 @@ export default class Overview extends React.PureComponent {
                                 <DangerButton
                                     onClick={this.handleEntryDelete}
                                     disabled={!entry || pending}
-                                >
-                                    {_ts('editEntry.overview', 'removeExcerptButtonTitle')}
-                                </DangerButton>
+                                    iconName={iconNames.remove}
+                                />
                                 <PrimaryButton
                                     onClick={this.handleEmptyExcerptCreate}
                                     className={styles.addNewEntryButton}
-                                >
-                                    {_ts('editEntry.overview', 'addExcerptButtonTitle')}
-                                </PrimaryButton>
+                                    iconName={iconNames.add}
+                                />
                             </div>
                         </header>
                         <WidgetFaram

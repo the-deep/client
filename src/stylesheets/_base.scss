@@ -91,6 +91,15 @@ body {
     animation: slide-in $duration-slow ease forwards;
 }
 
+%accent-color-link {
+    text-transform: initial;
+    color: $color-accent;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
 @keyframes slide-in {
     from {
         transform: rotateX(1deg);

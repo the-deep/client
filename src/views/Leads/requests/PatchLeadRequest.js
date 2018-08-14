@@ -20,6 +20,7 @@ export default class PatchLeadRequest {
 
     create = (lead, values) => {
         const { id } = lead;
+        const { status } = values;
 
         const leadRequest = new FgRestBuilder()
             .url(createUrlForLeadEdit(id))
@@ -28,12 +29,28 @@ export default class PatchLeadRequest {
                 this.setState({ loadingLeads: true });
             })
             .success((response) => {
-                notify.send({
-                    title: _ts('leads', 'leads'),
-                    type: notify.type.SUCCESS,
-                    message: _ts('leads', 'leadsPatchSuccess'),
-                    duration: notify.duration.MEDIUM,
-                });
+                if (status === 'processed') {
+                    notify.send({
+                        title: _ts('leads', 'leads'),
+                        type: notify.type.SUCCESS,
+                        message: _ts('leads', 'leadsProcessedSuccess'),
+                        duration: notify.duration.MEDIUM,
+                    });
+                } else if (status === 'pending') {
+                    notify.send({
+                        title: _ts('leads', 'leads'),
+                        type: notify.type.SUCCESS,
+                        message: _ts('leads', 'leadsPendingSuccess'),
+                        duration: notify.duration.MEDIUM,
+                    });
+                } else {
+                    notify.send({
+                        title: _ts('leads', 'leads'),
+                        type: notify.type.SUCCESS,
+                        message: _ts('leads', 'leadsPatchSuccess'),
+                        duration: notify.duration.MEDIUM,
+                    });
+                }
 
                 this.patchLead({ lead: response });
                 this.setState({ loadingLeads: false });

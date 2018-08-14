@@ -55,7 +55,13 @@ export const calculateEntryColor = (attributes = {}, analysisFramework) => {
             return;
         }
 
-        const attributeValue = attributes[widgetId].data.value;
+        const {
+            [widgetId]: {
+                data: {
+                    value: attributeValue,
+                } = {},
+            } = {},
+        } = attributes;
         const widgetData = widget.properties.data;
         if (!attributeValue || !widgetData) {
             return;

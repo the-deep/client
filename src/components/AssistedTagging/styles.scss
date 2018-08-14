@@ -48,9 +48,10 @@ $min-width-assistant: 240px;
     right: $position-info-right;
     cursor: pointer;
 
-    .icon {
-        color: $color-primary;
-        font-size: $font-size-large;
+    .brain-icon {
+        margin-bottom: $spacing-extra-large;
+        width: $font-size-large;
+        height: $font-size-large;
     }
 }
 
