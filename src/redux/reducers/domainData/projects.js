@@ -1,5 +1,9 @@
 import update from '#rsu/immutable-update';
 import { isTruthy, compareString } from '#rsu/common';
+import {
+    UP__SET_USER_PROJECT,
+    UP__UNSET_USER_PROJECT,
+} from '#redux/reducers/siloDomainData/users';
 
 // TYPE
 
@@ -50,7 +54,7 @@ export const unsetUserProjectMembershipAction = ({ memberId, projectId }) => ({
     projectId,
 });
 
-export const unSetProjectAction = ({ userId, projectId }) => ({
+export const unsetProjectAction = ({ userId, projectId }) => ({
     type: UNSET_USER_PROJECT,
     userId,
     projectId,
@@ -62,7 +66,7 @@ const emptyObject = {};
 // REDUCER
 
 const setUserProject = (state, action) => {
-    const { project, userId } = action;
+    const { project } = action;
     const settings = {
         projects: {
             [project.id]: { $auto: {
@@ -70,21 +74,6 @@ const setUserProject = (state, action) => {
             } },
         },
     };
-
-    if (userId) {
-        const userProjectArrayIndex = ((state.users[userId] || emptyObject).projects
-            || emptyList).indexOf(project.id);
-
-        if (userProjectArrayIndex === -1) {
-            settings.users = {
-                [userId]: { $auto: {
-                    projects: { $autoArray: {
-                        $push: [project.id],
-                    } },
-                } },
-            };
-        }
-    }
     return update(state, settings);
 };
 
@@ -181,29 +170,12 @@ const unsetUserProjectMembership = (state, action) => {
 };
 
 const unsetUserProject = (state, action) => {
-    const { projectId, userId } = action;
+    const { projectId } = action;
     const settings = {
         projects: {
-            [projectId]: { $auto: {
-                $set: undefined,
-            } },
+            $unset: [projectId],
         },
     };
-
-    if (userId) {
-        const userProjectArrayIndex = ((state.users[userId] || emptyObject).projects
-            || emptyList).indexOf(projectId);
-
-        if (userProjectArrayIndex !== -1) {
-            settings.users = {
-                [userId]: { $auto: {
-                    projects: { $autoArray: {
-                        $splice: [[userProjectArrayIndex, 1]],
-                    } },
-                } },
-            };
-        }
-    }
     return update(state, settings);
 };
 
@@ -244,5 +216,9 @@ const reducers = {
     [SET_USERS_PROJECT_MEMBERSHIP]: setUsersProjectMembership,
     [SET_USER_PROJECT_MEMBERSHIP]: setUserProjectMembership,
     [UNSET_USER_PROJECT_MEMBERSHIP]: unsetUserProjectMembership,
+
+    // From Silo
+    [UP__SET_USER_PROJECT]: setUserProject,
+    [UP__UNSET_USER_PROJECT]: unsetUserProject,
 };
 export default reducers;

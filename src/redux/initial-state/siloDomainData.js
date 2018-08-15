@@ -629,6 +629,17 @@ const initialSiloDomainData = {
          *     },
          * }, */
     },
+
+    userView: {
+        // index is userId
+        /*
+        1: {
+            usergroups: [],
+            projects: [],
+            information: {},
+        },
+        */
+    },
 };
 
 

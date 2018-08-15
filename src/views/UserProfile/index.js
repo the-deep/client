@@ -1,6 +1,7 @@
 /**
  * @author frozenhelium <fren.ankit@gmail.com>
  * @co-author tnagorra <weathermist@gmail.com>
+ * @co-author pprabesh <prabes.pathak@gmail.com>
  */
 
 import PropTypes from 'prop-types';
@@ -18,15 +19,18 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import DisplayPicture from '#components/DisplayPicture';
 import {
     userInformationSelector,
-    setUserInformationAction,
-    unsetUserAction,
+    setUserProfileAction,
+    unsetUserProfileAction,
     activeUserSelector,
     userIdFromRouteSelector,
 } from '#redux';
 import _ts from '#ts';
 import { iconNames } from '#constants';
 
-import UserGetRequest from './requests/UserGetRequest';
+import UserInformationGetRequest from './requests/UserInformationGetRequest';
+import UserProjectsGetRequest from './requests/UserProjectsGetRequest';
+import UserUsergroupsGetRequest from './requests/UserUsergroupsGetRequest';
+
 import UserProject from './UserProject';
 import UserGroup from './UserGroup';
 import UserEdit from './UserEdit';
@@ -34,8 +38,8 @@ import UserEdit from './UserEdit';
 import styles from './styles.scss';
 
 const propTypes = {
-    setUserInformation: PropTypes.func.isRequired,
-    unsetUser: PropTypes.func.isRequired,
+    setUserProfile: PropTypes.func.isRequired,
+    unsetUserProfile: PropTypes.func.isRequired,
     userInformation: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     userId: PropTypes.number.isRequired,
@@ -51,8 +55,8 @@ const mapStateToProps = (state, props) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    setUserInformation: params => dispatch(setUserInformationAction(params)),
-    unsetUser: params => dispatch(unsetUserAction(params)),
+    setUserProfile: params => dispatch(setUserProfileAction(params)),
+    unsetUserProfile: params => dispatch(unsetUserProfileAction(params)),
 });
 
 @BoundError(AppError)
@@ -66,39 +70,81 @@ export default class UserProfile extends React.PureComponent {
 
         this.state = {
             editProfile: false,
-            pending: true,
+            userInformationPending: true,
+            userProjectsPending: true,
+            userUsergroupsPending: true,
         };
     }
 
     componentDidMount() {
         const { userId } = this.props;
-        this.startRequestForUser(userId);
+        this.startRequestForUserInformation(userId);
+        this.startRequestForUserProjects(userId);
+        this.startRequestForUserGroups(userId);
     }
 
     componentWillReceiveProps(nextProps) {
-        const { userId } = nextProps;
-        if (this.props.userId !== userId) {
-            this.startRequestForUser(userId);
+        const { userId: newUserId } = nextProps;
+        const { userId: oldUserId } = this.props;
+        if (newUserId !== oldUserId) {
+            this.startRequestForUserInformation(newUserId);
+            this.startRequestForUserProjects(newUserId);
+            this.startRequestForUserGroups(newUserId);
         }
     }
 
     componentWillUnmount() {
-        if (this.userRequest) {
-            this.userRequest.stop();
+        if (this.userInformationRequest) {
+            this.userInformationRequest.stop();
+        }
+
+        if (this.userProjectRequest) {
+            this.userProjectRequest.stop();
+        }
+
+        if (this.userGroupsRequest) {
+            this.userGroupsRequest.stop();
         }
     }
 
-    startRequestForUser = (userId) => {
-        if (this.userRequest) {
+    startRequestForUserInformation = (userId) => {
+        if (this.userInformationRequest) {
             this.userRequest.stop();
         }
-        const userRequest = new UserGetRequest({
-            unsetUser: this.props.unsetUser,
-            setUserInformation: this.props.setUserInformation,
+        this.userInformationRequest = new UserInformationGetRequest({
+            userId,
+            unsetUserProfile: this.props.unsetUserProfile,
+            setUserProfile: this.props.setUserProfile,
             setState: v => this.setState(v),
         });
-        this.userRequest = userRequest.create(userId);
-        this.userRequest.start();
+        this.userInformationRequest.init();
+        this.userInformationRequest.start();
+    }
+
+    startRequestForUserProjects = (userId) => {
+        if (this.userProjectsRequest) {
+            this.userProjectsRequest.stop();
+        }
+        this.userProjectsRequest = new UserProjectsGetRequest({
+            userId,
+            setUserProfile: this.props.setUserProfile,
+            setState: v => this.setState(v),
+        });
+        this.userProjectsRequest.init();
+        this.userProjectsRequest.start();
+    }
+
+    startRequestForUserGroups = (userId) => {
+        if (this.userGroupsRequest) {
+            this.userGroupsRequest.stop();
+        }
+        this.userGroupsRequest = new UserUsergroupsGetRequest({
+            userId,
+            setUserProfile: this.props.setUserProfile,
+            setState: v => this.setState(v),
+        });
+        this.userGroupsRequest.init();
+        this.userGroupsRequest.start();
     }
 
     // BUTTONS
@@ -117,7 +163,16 @@ export default class UserProfile extends React.PureComponent {
             activeUser,
         } = this.props;
 
-        const { pending } = this.state;
+        const {
+            userInformationPending,
+            userProjectsPending,
+            userUsergroupsPending,
+        } = this.state;
+
+        const pending =
+            userInformationPending ||
+            userProjectsPending ||
+            userUsergroupsPending;
 
         const isCurrentUser = userId === activeUser.userId;
 

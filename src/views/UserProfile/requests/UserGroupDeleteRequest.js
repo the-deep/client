@@ -1,61 +1,61 @@
-import { FgRestBuilder } from '#rsu/rest';
+import Request from '#utils/Request';
+import notify from '#notify';
+import _ts from '#ts';
+
 import {
     createUrlForUserGroup,
     createParamsForUserGroupsDelete,
 } from '#rest';
-import notify from '#notify';
-import _ts from '#ts';
 
-export default class UserGroupDeleteRequest {
-    constructor(props) {
-        this.props = props;
+export default class UserGroupDeleteRequest extends Request {
+    handlePreLoad = () => {
+        this.parent.setState({ deletePending: true });
     }
 
-    create = ({ userGroupId, userId }) => {
-        const urlForUserGroup = createUrlForUserGroup(userGroupId);
+    handleAfterLoad = () => {
+        this.parent.setState({ deletePending: false });
+    }
 
-        const userGroupDeletRequest = new FgRestBuilder()
-            .url(urlForUserGroup)
-            .params(() => createParamsForUserGroupsDelete())
-            .success(() => {
-                try {
-                    this.props.unSetUserGroup({
-                        userGroupId,
-                        userId,
-                    });
-                    notify.send({
-                        title: _ts('userProfile', 'userGroupDelete'),
-                        type: notify.type.SUCCESS,
-                        message: _ts('userProfile', 'userGroupDeleteSuccess'),
-                        duration: notify.duration.MEDIUM,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .preLoad(() => {
-                this.props.setState({ deletePending: true });
-            })
-            .postLoad(() => {
-                this.props.setState({ deletePending: false });
-            })
-            .failure(() => {
-                notify.send({
-                    title: _ts('userProfile', 'userGroupDelete'),
-                    type: notify.type.ERROR,
-                    message: _ts('userProfile', 'userGroupDeleteFailure'),
-                    duration: notify.duration.MEDIUM,
-                });
-            })
-            .fatal(() => {
-                notify.send({
-                    title: _ts('userProfile', 'userGroupDelete'),
-                    type: notify.type.ERROR,
-                    message: _ts('userProfile', 'userGroupDeleteFatal'),
-                    duration: notify.duration.MEDIUM,
-                });
-            })
-            .build();
-        return userGroupDeletRequest;
+    handleSuccess = () => {
+        const {
+            usergroupId,
+            userId,
+        } = this.parent;
+        this.parent.unsetUserGroup({
+            usergroupId,
+            userId,
+        });
+        notify.send({
+            title: _ts('userProfile', 'userGroupDelete'),
+            type: notify.type.SUCCESS,
+            message: _ts('userProfile', 'userGroupDeleteSuccess'),
+            duration: notify.duration.MEDIUM,
+        });
+    }
+
+    handleFailure = () => {
+        notify.send({
+            title: _ts('userProfile', 'userGroupDelete'),
+            type: notify.type.ERROR,
+            message: _ts('userProfile', 'userGroupDeleteFailure'),
+            duration: notify.duration.MEDIUM,
+        });
+    }
+
+    handleFatal = () => {
+        notify.send({
+            title: _ts('userProfile', 'userGroupDelete'),
+            type: notify.type.ERROR,
+            message: _ts('userProfile', 'userGroupDeleteFatal'),
+            duration: notify.duration.MEDIUM,
+        });
+    }
+
+    init = () => {
+        const { usergroupId } = this.parent;
+        this.createDefault({
+            url: createUrlForUserGroup(usergroupId),
+            params: createParamsForUserGroupsDelete(),
+        });
     }
 }

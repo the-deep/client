@@ -3,7 +3,6 @@ import update from '#rsu/immutable-update';
 // TYPE
 
 export const SET_USER_INFORMATION = 'domainData/SET_USER_INFORMATION';
-export const UNSET_USER = 'domainData/UNSET_USER';
 export const SET_USERS_INFORMATION = 'domainData/SET_USERS_INFORMATION';
 
 // ACTION-CREATOR
@@ -12,11 +11,6 @@ export const setUserInformationAction = ({ userId, information }) => ({
     type: SET_USER_INFORMATION,
     userId,
     information,
-});
-
-export const unsetUserAction = ({ userId }) => ({
-    type: UNSET_USER,
-    userId,
 });
 
 export const setUsersInformationAction = ({ users }) => ({
@@ -35,15 +29,6 @@ const setUserInformation = (state, action) => {
                     $merge: information,
                 } },
             } },
-        },
-    };
-    return update(state, settings);
-};
-
-const unsetUserInformation = (state, action) => {
-    const settings = {
-        users: {
-            [action.userId]: { $set: undefined },
         },
     };
     return update(state, settings);
@@ -72,7 +57,6 @@ const setUsersInformation = (state, action) => {
 
 const reducers = {
     [SET_USER_INFORMATION]: setUserInformation,
-    [UNSET_USER]: unsetUserInformation,
     [SET_USERS_INFORMATION]: setUsersInformation,
 };
 export default reducers;

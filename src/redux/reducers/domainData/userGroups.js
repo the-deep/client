@@ -1,4 +1,8 @@
 import update from '#rsu/immutable-update';
+import {
+    UP__SET_USER_USERGROUP,
+    UP__UNSET_USER_USERGROUP,
+} from '#redux/reducers/siloDomainData/users';
 
 // TYPE
 
@@ -81,56 +85,24 @@ const setUserGroups = (state, action) => {
 };
 
 const setUserGroup = (state, action) => {
-    const { userGroup, userId } = action;
+    const { usergroup } = action;
     const settings = {
         userGroups: {
-            [userGroup.id]: { $auto: {
-                $merge: userGroup,
+            [usergroup.id]: { $auto: {
+                $merge: usergroup,
             } },
         },
     };
-
-    if (userId) {
-        const userGroupArrayIndex = ((state.users[userId] || {}).userGroups
-            || []).indexOf(userGroup.id);
-
-        if (userGroupArrayIndex === -1) {
-            settings.users = {
-                [userId]: { $auto: {
-                    userGroups: { $autoArray: {
-                        $push: [userGroup.id],
-                    } },
-                } },
-            };
-        }
-    }
     return update(state, settings);
 };
 
 const unsetUserGroup = (state, action) => {
-    const { userGroupId, userId } = action;
+    const { usergroupId } = action;
     const settings = {
         userGroups: {
-            [userGroupId]: { $auto: {
-                $set: undefined,
-            } },
+            $unset: [usergroupId],
         },
     };
-
-    if (userId) {
-        const userGroupArrayIndex = ((state.users[userId] || {}).userGroups
-            || []).indexOf(userGroupId);
-
-        if (userGroupArrayIndex !== -1) {
-            settings.users = {
-                [userId]: { $auto: {
-                    userGroups: { $autoArray: {
-                        $splice: [[userGroupArrayIndex, 1]],
-                    } },
-                } },
-            };
-        }
-    }
     return update(state, settings);
 };
 
@@ -208,5 +180,9 @@ const reducers = {
     [SET_USERS_MEMBERSHIP]: setUsersMembership,
     [SET_USER_MEMBERSHIP]: setUserMembership,
     [UNSET_USER_MEMBERSHIP]: unsetUserMembership,
+
+    // From Silo
+    [UP__SET_USER_USERGROUP]: setUserGroup,
+    [UP__UNSET_USER_USERGROUP]: unsetUserGroup,
 };
 export default reducers;

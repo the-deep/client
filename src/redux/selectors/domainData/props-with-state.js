@@ -117,6 +117,7 @@ export const userGroupProjectSelector = createSelector(
     ),
 );
 
+/*
 // userIdFromRoute
 export const userInformationSelector = createSelector(
     userSelector,
@@ -152,6 +153,7 @@ export const userGroupsSelector = createSelector(
             : emptyList
     ),
 );
+*/
 
 // activeUser
 export const currentUserInformationSelector = createSelector(

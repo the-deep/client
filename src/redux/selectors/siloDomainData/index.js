@@ -17,3 +17,4 @@ export * from './connectors';
 export * from './leadGroups';
 export * from './stringManagement';
 export * from './projects';
+export * from './users';

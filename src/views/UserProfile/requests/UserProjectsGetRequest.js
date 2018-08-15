@@ -1,38 +1,54 @@
-import { FgRestBuilder } from '#rsu/rest';
+import Request from '#utils/Request';
+import notify from '#notify';
+import _ts from '#ts';
+
 import {
     createUrlForProjectsOfUser,
     createParamsForGet,
 } from '#rest';
-import schema from '#schema';
 
-export default class UserProjectsGetRequest {
-    constructor(props) {
-        this.props = props;
+export default class UserProjectsGetRequest extends Request {
+    schemaName = 'projectsGetResponse';
+
+    handlePreLoad = () => {
+        this.parent.setState({ userProjectsPending: true });
     }
 
-    create = (userId) => {
-        const projectsRequest = new FgRestBuilder()
-            .url(createUrlForProjectsOfUser(userId))
-            .params(createParamsForGet)
-            .success((response) => {
-                try {
-                    schema.validate(response, 'projectsGetResponse');
-                    this.props.setUserProjects({
-                        userId,
-                        projects: response.results,
-                        extra: response.extra,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .failure((response) => {
-                console.info('FAILURE:', response);
-            })
-            .fatal((response) => {
-                console.info('FATAL:', response);
-            })
-            .build();
-        return projectsRequest;
+    handleAfterLoad = () => {
+        this.parent.setState({ userProjectsPending: false });
+    }
+
+    handleSuccess = (response) => {
+        this.parent.setUserProfile({
+            userId: this.parent.userId,
+            projects: response.results,
+            // extra: response.extra,
+        });
+    }
+
+    handleFailure = (response) => {
+        console.warn('Failure:', response);
+        notify.send({
+            title: _ts('userProfile', 'userProfileLabel'),
+            type: notify.type.ERROR,
+            message: _ts('userProfile', 'userProjectsGetFailure'),
+            duration: notify.duration.SLOW,
+        });
+    }
+
+    handleFatal = () => {
+        notify.send({
+            title: _ts('userProfile', 'userProfileLabel'),
+            type: notify.type.ERROR,
+            message: _ts('userProfile', 'userProjectsGetFatal'),
+            duration: notify.duration.MEDIUM,
+        });
+    }
+
+    init = () => {
+        this.createDefault({
+            url: createUrlForProjectsOfUser(this.parent.userId),
+            params: createParamsForGet(),
+        });
     }
 }
