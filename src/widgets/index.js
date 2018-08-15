@@ -72,8 +72,7 @@ export const VIEW = {
 const editDecorator = boundError(FrameworkWidgetError);
 const decorator = boundError(WidgetError);
 
-// Map of all widgets
-let widgets = {
+export const globalWidgets = {
     excerptWidget: {
         // NOTE: used as _ts('widgetTitle', 'excerptWidgetLabel')
         title: 'excerptWidgetLabel',
@@ -299,8 +298,8 @@ let widgets = {
 };
 
 // Modify widgets to inject and transform properties
-widgets = mapToMap(
-    widgets,
+const widgets = mapToMap(
+    globalWidgets,
     undefined,
     (widget) => {
         const {

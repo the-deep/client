@@ -14,10 +14,9 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import ModalFooter from '#rscv/Modal/Footer';
 import Faram, { requiredCondition } from '#rsci/Faram';
 import { randomString } from '#rsu/common';
-
-import { widgetList } from '#widgets';
-
 import _ts from '#ts';
+
+import { widgetList } from '#widgets/conditionalWidget';
 
 import WidgetPreview from './WidgetPreview';
 import SelectedWidgetItem from './SelectedWidgetItem';
