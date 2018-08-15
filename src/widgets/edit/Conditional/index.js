@@ -38,7 +38,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static keyExtractor = widget => widget.widgetId;
-    static itemKeyExtractor = widget => widget.key;
+    static itemKeyExtractor = ({ widget }) => widget.key;
 
     static schema = {
         fields: {
@@ -46,10 +46,15 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
             widgets: {
                 member: {
                     fields: {
-                        title: [requiredCondition],
-                        key: [requiredCondition],
-                        widgetId: [requiredCondition],
-                        properties: [],
+                        widget: {
+                            fields: {
+                                title: [requiredCondition],
+                                key: [requiredCondition],
+                                widgetId: [requiredCondition],
+                                properties: [],
+                            },
+                        },
+                        conditions: [],
                     },
                 },
             },
@@ -108,11 +113,17 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
             title: _ts('widgetTitle', title),
             faramInfoForAdd: {
                 newElement: () => ({
-                    key: `${widgetId}-${randomString(16)}`,
-                    widgetId,
-                    title: _ts('widgetTitle', title),
-                    properties: {
-                        data: {},
+                    widget: {
+                        key: `${widgetId}-${randomString(16)}`,
+                        widgetId,
+                        title: _ts('widgetTitle', title),
+                        properties: {
+                            data: {},
+                        },
+                    },
+                    conditions: {
+                        list: [],
+                        operator: 'AND',
                     },
                 }),
             },
@@ -121,7 +132,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
 
     itemRendererParams = (key, elem, i) => ({
         index: i,
-        widget: elem,
+        item: elem,
     });
 
     render() {
