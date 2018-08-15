@@ -24,9 +24,8 @@ export const setUserProjectsAction = ({ userId, projects, extra }) => ({
     extra, // used to set active project if there is none
 });
 
-export const setProjectAction = ({ userId, project }) => ({
+export const setProjectAction = ({ project }) => ({
     type: SET_USER_PROJECT,
-    userId,
     project,
 });
 

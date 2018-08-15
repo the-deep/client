@@ -3,6 +3,7 @@ import {
     createParamsForProjectDelete,
 } from '#rest';
 import notify from '#notify';
+import Request from '#utils/Request';
 import _ts from '#ts';
 
 /*

@@ -22,6 +22,7 @@ import {
     urlForProjectCreate,
 } from '#rest';
 import {
+    setUserProjectAction,
     setProjectAction,
     activeUserSelector,
 } from '#redux';
@@ -33,6 +34,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     handleModalClose: PropTypes.func.isRequired,
+    setUserProject: PropTypes.func.isRequired,
     setProject: PropTypes.func.isRequired,
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     onProjectAdded: PropTypes.func,
@@ -51,6 +53,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+    setUserProject: params => dispatch(setUserProjectAction(params)),
     setProject: params => dispatch(setProjectAction(params)),
 });
 
@@ -97,7 +100,8 @@ export default class UserProjectAdd extends React.PureComponent {
             .success((response) => {
                 try {
                     schema.validate(response, 'projectCreateResponse');
-                    this.props.setProject({
+                    this.props.setProject({ project: response });
+                    this.props.setUserProject({
                         userId: this.props.activeUser.userId,
                         project: response,
                     });
