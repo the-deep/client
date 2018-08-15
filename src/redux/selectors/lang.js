@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import devLang from '../initial-state/dev-lang';
+import devLang from '../initial-state/dev-lang.json';
 
 const emptyObject = {};
 
