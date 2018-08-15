@@ -1,26 +1,25 @@
 const acl = {
     leads: {
-        hide: ({ isLoggedIn }) => !isLoggedIn,
-        disable: ({ hasProjects }) => !hasProjects,
+        hide: ({ isLoggedIn, hasProjects }) => (
+            !isLoggedIn || !hasProjects
+        ),
     },
     entries: {
-        hide: ({ isLoggedIn }) => !isLoggedIn,
-        disable: ({ hasProjects, hasAnalysisFramework }) => (
-            !hasProjects || !hasAnalysisFramework
+        hide: ({ isLoggedIn, hasProjects, hasAnalysisFramework }) => (
+            !isLoggedIn || !hasProjects || !hasAnalysisFramework
         ),
     },
     arys: {
-        hide: ({ isLoggedIn }) => !isLoggedIn,
-        disable: ({ hasProjects, hasAssessmentTemplate }) => (
-            !hasProjects || !hasAssessmentTemplate
+        hide: ({ isLoggedIn, hasProjects, hasAssessmentTemplate }) => (
+            !isLoggedIn || !hasProjects || !hasAssessmentTemplate
         ),
     },
     export: {
-        hide: ({ isLoggedIn }) => !isLoggedIn,
-        disable: ({ hasProjects, hasAnalysisFramework }) => (
-            !hasProjects || !hasAnalysisFramework
+        hide: ({ isLoggedIn, hasProjects, hasAnalysisFramework }) => (
+            !isLoggedIn || !hasProjects || !hasAnalysisFramework
         ),
     },
+
     userProfile: {
         hide: ({ isLoggedIn }) => !isLoggedIn,
     },
