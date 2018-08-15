@@ -5,14 +5,18 @@ import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import { iconNames } from '#constants';
+import FrameworkEditButton from '#components/FrameworkEditButton';
 import _ts from '#ts';
 
+import {
+    fetchWidget,
+} from '#widgets';
 import ConditionsEditModal from '../ConditionsEdit';
 import styles from './styles.scss';
 
 const propTypes = {
     index: PropTypes.number.isRequired,
-    title: PropTypes.string.isRequired,
+    widget: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 // eslint-disable-next-line react/prefer-stateless-function
@@ -27,6 +31,10 @@ export default class SelectedWidgetItem extends React.PureComponent {
 
     handleEditConditonsClick = () => {
         this.setState({ conditionsEditModalShow: true });
+    }
+
+    handleItemChange = (newValues) => {
+        console.warn(newValues);
     }
 
     renderConditionsEditModal = () => {
@@ -44,10 +52,15 @@ export default class SelectedWidgetItem extends React.PureComponent {
     render() {
         const {
             index,
-            title,
+            widget,
         } = this.props;
+        const {
+            title,
+            widgetId,
+        } = widget;
 
         const ConditionsModal = this.renderConditionsEditModal;
+        const { editComponent: Widget } = fetchWidget('list', widgetId);
 
         return (
             <div className={styles.inputContainer}>
@@ -58,8 +71,13 @@ export default class SelectedWidgetItem extends React.PureComponent {
                     onClick={this.handleEditConditonsClick}
                     iconName={iconNames.edit}
                 >
+                    {/* FIXME: Use strings */}
                     Edit Condition
                 </PrimaryButton>
+                <FrameworkEditButton
+                    faramElementName={String(index)}
+                    renderer={Widget}
+                />
                 <DangerButton
                     className={styles.deleteButton}
                     iconName={iconNames.delete}

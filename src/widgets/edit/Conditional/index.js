@@ -49,6 +49,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                         title: [requiredCondition],
                         key: [requiredCondition],
                         widgetId: [requiredCondition],
+                        properties: [],
                     },
                 },
             },
@@ -110,6 +111,9 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                     key: `${widgetId}-${randomString(16)}`,
                     widgetId,
                     title: _ts('widgetTitle', title),
+                    properties: {
+                        data: {},
+                    },
                 }),
             },
         });
@@ -117,7 +121,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
 
     itemRendererParams = (key, elem, i) => ({
         index: i,
-        title: elem.title,
+        widget: elem,
     });
 
     render() {
