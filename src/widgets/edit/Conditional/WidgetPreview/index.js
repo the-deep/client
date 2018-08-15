@@ -9,7 +9,7 @@ import _ts from '#ts';
 import styles from './styles.scss';
 
 const propTypes = {
-    widget: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    title: PropTypes.string.isRequired,
     faramInfoForAdd: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
@@ -18,14 +18,14 @@ export default class WidgetPreview extends React.PureComponent {
 
     render() {
         const {
-            widget,
+            title,
             faramInfoForAdd,
         } = this.props;
 
         return (
             <div className={styles.widgetListItem}>
                 <div className={styles.title}>
-                    {_ts('widgetTitle', widget.title)}
+                    {title}
                 </div>
                 <Button
                     transparent

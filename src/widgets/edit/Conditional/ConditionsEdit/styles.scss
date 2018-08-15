@@ -1,0 +1,18 @@
+@import '~base-scss/base';
+
+.condition-edit-modal {
+    width: 720px;
+
+    .modal-body {
+        display: flex;
+
+        .left-container {
+            flex-basis: 30%;
+            background-color: red;
+        }
+
+        .right-container {
+            flex-grow: 1;
+        }
+    }
+}

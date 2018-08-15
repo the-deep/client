@@ -104,7 +104,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         } = widget;
 
         return ({
-            widget,
+            title: _ts('widgetTitle', title),
             faramInfoForAdd: {
                 newElement: () => ({
                     key: `${widgetId}-${randomString(16)}`,
