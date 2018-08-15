@@ -1,5 +1,10 @@
 import { mapToList } from '#rsu/common';
 
+import matrix1dConditions from './matrix1d';
+import numberConditions from './number';
+
+// Widgets that can be used in the
+// ConditionalWidget
 const widgetTitles = {
     matrix1dWidget: 'matrix1DWidgetLabel',
     matrix2dWidget: 'matrix2DWidgetLabel',
@@ -23,5 +28,10 @@ export const widgetList = mapToList(
     }),
 );
 
-export const widgetConditions = {
+
+// Conditions for all widgets that support
+// conditions.
+export const conditions = {
+    matrix1dWidget: matrix1dConditions,
+    numberWidget: numberConditions,
 };
