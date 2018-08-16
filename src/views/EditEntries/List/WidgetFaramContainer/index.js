@@ -94,6 +94,11 @@ export default class WidgetFaramContainer extends React.PureComponent {
             ${styles.header}
         `;
 
+        const widgetClassName = `
+            widget
+            ${styles.widget}
+        `;
+
         return (
             <div className={className}>
                 <header className={headerClassName}>
@@ -113,7 +118,7 @@ export default class WidgetFaramContainer extends React.PureComponent {
                     />
                 </header>
                 <WidgetFaram
-                    className="widget"
+                    className={widgetClassName}
                     entry={entry}
                     widgets={widgets}
                     pending={pending}
