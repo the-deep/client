@@ -3,6 +3,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import VirtualizedListView from '#rscv/VirtualizedListView';
+import Message from '#rscv/Message';
+import _ts from '#ts';
 
 import {
     editEntriesFilteredEntriesSelector,
@@ -21,6 +23,12 @@ import {
 
 import WidgetFaramContainer from './WidgetFaramContainer';
 import styles from './styles.scss';
+
+const EmptyComponent = () => (
+    <Message>
+        {_ts('editEntry.list', 'noEntriesText')}
+    </Message>
+);
 
 const propTypes = {
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -136,6 +144,7 @@ export default class Listing extends React.PureComponent {
                 renderer={WidgetFaramContainer}
                 rendererParams={this.rendererParams}
                 keyExtractor={this.keySelector}
+                emptyComponent={EmptyComponent}
             />
         );
     }

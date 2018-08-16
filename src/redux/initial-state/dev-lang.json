@@ -2108,6 +2108,9 @@
             "subsectorsHeaderTitle": 7039,
             "unnamedSubsectorLabel": -13931386,
             "removeSubsectorButtonTooltip": -24172161
+        },
+        "editEntry.list": {
+            "noEntriesText": 543
         }
     }
 }
