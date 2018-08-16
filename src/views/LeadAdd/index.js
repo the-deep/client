@@ -121,7 +121,7 @@ export default class LeadAdd extends React.PureComponent {
         this.leadFormSubmitters = { };
 
         this.formCoordinator = new CoordinatorBuilder()
-            .maxActiveActors(1)
+            .maxActiveActors(3)
             .preSession(() => {
                 this.setState({ pendingSubmitAll: true });
             })
