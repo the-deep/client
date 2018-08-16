@@ -779,7 +779,9 @@
         "-71533605": "Failed to save user information.",
         "-5184045": "Failed to retrieve user's projects.",
         "-59897985": "Failed to retrieve user's User Groups.",
-        "-86548021": "Conditional"
+        "-86548021": "Conditional",
+        "-99261665": "Condition type",
+        "-5699457": "Remove condition"
     },
     "links": {
         "browserExtension": {
@@ -2170,6 +2172,11 @@
         },
         "editEntry.list": {
             "noEntriesText": 543
+        },
+        "widgets.editor.conditional": {
+            "conditionTypeLabel": -99261665,
+            "conditionTypePlaceholder": -99261665,
+            "removeOptionButtonTitle": -5699457
         }
     }
 }

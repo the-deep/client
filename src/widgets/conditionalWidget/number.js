@@ -1,6 +1,7 @@
 import { mapToList } from '#rsu/common';
 
 const isLessThan = {
+    title: 'Is less than',
     attributes: [{
         key: 'value',
         title: 'Value',
@@ -9,6 +10,7 @@ const isLessThan = {
 };
 
 const isGreaterThan = {
+    title: 'Is greater than',
     attributes: [{
         key: 'value',
         title: 'Value',

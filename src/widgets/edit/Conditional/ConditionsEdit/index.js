@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import Faram, { requiredCondition } from '#rsci/Faram';
 import FaramList from '#rsci/Faram/FaramList';
+import SortableListView from '#rscv/SortableListView';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Modal from '#rscv/Modal';
@@ -19,8 +20,10 @@ import {
 
     afViewAnalysisFrameworkSelector,
 } from '#redux';
+import { conditions as conditionsAttributes } from '#widgets/conditionalWidget';
 
 import WidgetPreview from '../WidgetPreview';
+import InputRow from './InputRow';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -49,9 +52,22 @@ export default class ConditionsEditModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static itemKeyExtractor = widget => widget.key;
+
     static schema = {
         fields: {
-            conditions: [],
+            list: {
+                member: {
+                    fields: {
+                        key: [],
+                        widgetId: [],
+                        widgetKey: [],
+                        conditionType: [],
+                        attributes: [],
+                    },
+                },
+            },
+            operator: [],
         },
     };
 
@@ -71,6 +87,7 @@ export default class ConditionsEditModal extends React.PureComponent {
     widgetListRendererParams = (key, widget) => {
         const {
             widgetId,
+            key: widgetKey,
             title,
         } = widget;
 
@@ -78,14 +95,32 @@ export default class ConditionsEditModal extends React.PureComponent {
             title,
             faramInfoForAdd: {
                 newElement: () => ({
-                    key: `${widgetId}-${randomString(16)}`,
+                    key: `condition-${randomString(16)}`,
+                    widgetId,
+                    widgetKey,
                 }),
             },
         });
     }
 
+    itemRendererParams = (key, item, index) => {
+        const {
+            analysisFramework: {
+                widgets = [],
+            } = {},
+        } = this.props;
+
+        const widgetData = widgets.find(w => w.key === item.widgetKey);
+
+        return ({
+            index,
+            item,
+            widgetData,
+            conditions: conditionsAttributes[item.widgetId],
+        });
+    }
+
     handleFaramChange = (faramValues, faramErrors) => {
-        console.warn(faramValues);
         this.setState({
             faramValues,
             faramErrors,
@@ -134,6 +169,10 @@ export default class ConditionsEditModal extends React.PureComponent {
                     <ModalBody className={styles.modalBody} >
                         <FaramList faramElementName="list">
                             <div className={styles.leftContainer}>
+                                <header className={styles.header}>
+                                    {/* FIXME: Use strings */}
+                                    Widgets
+                                </header>
                                 <ListView
                                     className={styles.widgetList}
                                     data={widgets}
@@ -143,7 +182,19 @@ export default class ConditionsEditModal extends React.PureComponent {
                                 />
                             </div>
                             <div className={styles.rightContainer}>
-                                Right
+                                <header className={styles.header}>
+                                    {/* FIXME: Use strings */}
+                                    Conditions
+                                </header>
+                                <SortableListView
+                                    className={styles.editList}
+                                    dragHandleClassName={styles.dragHandle}
+                                    faramElement
+                                    keyExtractor={ConditionsEditModal.itemKeyExtractor}
+                                    rendererParams={this.itemRendererParams}
+                                    itemClassName={styles.sortableUnit}
+                                    renderer={InputRow}
+                                />
                             </div>
                         </FaramList>
                     </ModalBody>
