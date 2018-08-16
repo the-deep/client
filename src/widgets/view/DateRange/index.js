@@ -20,7 +20,7 @@ const defaultProps = {
 const emptyComponent = () => (
     // FIXME: use strings
     <div className={styles.empty}>
-        dd-MM-yyyy
+        dd-mm-yyyy
     </div>
 );
 

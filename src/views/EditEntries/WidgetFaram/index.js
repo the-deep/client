@@ -90,19 +90,13 @@ export default class WidgetFaram extends React.PureComponent {
         const {
             id,
             title,
-            widgetId,
-            properties: { addedFrom },
         } = widget;
 
         const {
             data: { attributes: { [id]: { data } = {} } = {} } = {},
         } = entry || {};
 
-        const isViewComponent = widgetVisibility(
-            widgetId,
-            widgetType,
-            addedFrom,
-        ) === VISIBILITY.readonly;
+        const isViewPage = widgetType === VIEW.list;
 
         const entryKey = entryAccessor.key(entry);
 
@@ -117,7 +111,7 @@ export default class WidgetFaram extends React.PureComponent {
                     }
                     { title }
                 </h5>
-                { ActionComponent && entry && !isViewComponent && (
+                { ActionComponent && entry && isViewPage && (
                     <div className={styles.actionButtons}>
                         <ActionComponent
                             attributeKey={id}
@@ -157,8 +151,8 @@ export default class WidgetFaram extends React.PureComponent {
         } = entryAccessor.data(entry) || {};
 
         const {
-            component,
-            viewComponent,
+            component: Widget,
+            viewComponent: ViewWidget,
         } = fetchWidget(widgetType, widgetId);
 
         const isViewComponent = widgetVisibility(
@@ -167,64 +161,63 @@ export default class WidgetFaram extends React.PureComponent {
             addedFrom,
         ) === VISIBILITY.readonly;
 
-        let child = null;
-
         if (isViewComponent) {
             // Faram not used for view component
             const {
                 data: { attributes: { [id]: { data } = {} } = {} } = {},
             } = entry || {};
-            const Widget = viewComponent;
 
-            child = (
-                <Widget
-                    data={data}
-                    widget={widget}
-                />
+            return (
+                <div className={styles.content}>
+                    <ViewWidget
+                        data={data}
+                        widget={widget}
+                    />
+                </div>
             );
-        } else {
-            const Widget = component;
-            switch (widgetId) {
-                case 'excerptWidget': {
-                    child = (
-                        <Widget
-                            widgetName={widgetId}
-                            widgetType={widgetType}
-                            widget={widget}
+        }
 
-                            entryType={entryType}
-                            excerpt={excerpt}
-                            image={image}
-                            onExcerptChange={this.handleExcerptChange}
-                            onExcerptCreate={this.handleExcerptCreate}
-                        />
-                    );
-                    break;
-                }
-                case 'organigramWidget':
-                case 'geoWidget': {
-                    child = (
-                        <Widget
-                            widgetName={widgetId}
-                            widgetType={widgetType}
-                            widget={widget}
-                            entryType={entryType}
-                            excerpt={excerpt}
-                            image={image}
-                        />
-                    );
-                    break;
-                }
-                default: {
-                    child = (
-                        <Widget
-                            widgetName={widgetId}
-                            widgetType={widgetType}
-                            widget={widget}
-                        />
-                    );
-                    break;
-                }
+        let child = null;
+        switch (widgetId) {
+            case 'excerptWidget': {
+                child = (
+                    <Widget
+                        widgetName={widgetId}
+                        widgetType={widgetType}
+                        widget={widget}
+
+                        entryType={entryType}
+                        excerpt={excerpt}
+                        image={image}
+                        onExcerptChange={this.handleExcerptChange}
+                        onExcerptCreate={this.handleExcerptCreate}
+                    />
+                );
+                break;
+            }
+            case 'organigramWidget':
+            case 'geoWidget': {
+                child = (
+                    <Widget
+                        widgetName={widgetId}
+                        widgetType={widgetType}
+                        widget={widget}
+                        entryType={entryType}
+                        excerpt={excerpt}
+                        image={image}
+                    />
+                );
+                break;
+            }
+            default: {
+                child = (
+                    <Widget
+                        widgetName={widgetId}
+                        widgetType={widgetType}
+                        widget={widget}
+                    />
+                );
+                break;
             }
         }
 
