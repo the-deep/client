@@ -23,8 +23,7 @@ export const adminEndpoint = !process.env.REACT_APP_ADMIN_END
 export const deeplEndPoint = (() => {
     switch (process.env.REACT_APP_DEEP_ENVIRONMENT) {
         case 'nightly':
-            // TODO: create new endpoint
-            return 'https://deepl-alpha.thedeep.io';
+            return 'https://deepl-nightly.thedeep.io';
         case 'alpha':
             return 'https://deepl-alpha.thedeep.io';
         case 'beta':
