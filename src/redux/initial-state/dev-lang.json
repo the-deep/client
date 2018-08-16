@@ -563,6 +563,8 @@
         "2010": "Something went wrong with loading this page. Please logout and try again.",
         "2011": "Widget has failed!",
         "2012": "Component has failed!",
+        "2500": "There was a problem while fetching project information",
+        "2501": "Failed to change project information",
         "2999": "clusterVisualization",
         "3000": "Cluster visualization",
         "3001": "Show table",
@@ -1543,8 +1545,6 @@
             "visualization": 3999
         },
         "project.general": {
-            "saveButtonLabel": 25,
-            "cancelButtonLabel": 61,
             "projectNameLabel": 103,
             "projectNamePlaceholder": 39,
             "projectDescriptionLabel": 200,
@@ -1555,6 +1555,11 @@
             "projectEndDatePlaceholder": 335
         },
         "project": {
+            "projectGetFailure": 2500,
+            "projectPutFailure": 2501,
+            "projectUpdateOverriden": 982,
+            "saveButtonLabel": 25,
+            "cancelButtonLabel": 61,
             "addRegionButtonLabel": 301,
             "projectSaveFailure": 1126,
             "categoryEditorCreateFailure": 1127,

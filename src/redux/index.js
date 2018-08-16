@@ -41,3 +41,4 @@ export * from './reducers/domainData/users';
 export * from './reducers/domainData/categoryEditors';
 export * from './reducers/domainData/assessmentRegistry';
 export * from './reducers/domainData/connectors';
+export * from './reducers/siloDomainData/projects';
