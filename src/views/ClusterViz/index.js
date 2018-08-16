@@ -519,7 +519,7 @@ export default class ClusterViz extends PureComponent {
                 <header className={styles.header}>
                     <Link
                         className={styles.backLink}
-                        title={_ts('clusterViz', 'showTable')}
+                        title={_ts('clusterViz', 'showLeads')}
                         to={reverseRoute(pathNames.leads, { projectId: activeProject })}
                     >
                         <i className={iconNames.back} />

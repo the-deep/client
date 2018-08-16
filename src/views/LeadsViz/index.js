@@ -348,7 +348,7 @@ export default class LeadsViz extends React.PureComponent {
                     <Link
                         className={styles.backLink}
                         to={reverseRoute(pathNames.leads, { projectId: activeProject.id })}
-                        title={_ts('leadsViz', 'showTable')}
+                        title={_ts('leadsViz', 'showLeads')}
                     >
                         <i className={iconNames.back} />
                     </Link>
