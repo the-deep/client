@@ -48,32 +48,6 @@ const mapStateToProps = state => ({
     widgets: editEntriesWidgetsSelector(state),
 });
 
-const calculateMaxWidgetHeight = (widgets) => {
-    if (widgets.length === 0) {
-        return 0;
-    }
-
-    let maxH = 0;
-    widgets.forEach((widget) => {
-        const {
-            properties: {
-                listGridLayout: {
-                    top,
-                    height,
-                },
-            } = {},
-        } = widget;
-
-        const bottom = top + height;
-
-        if (maxH < bottom) {
-            maxH = bottom;
-        }
-    });
-
-    return maxH;
-};
-
 @connect(mapStateToProps)
 export default class Listing extends React.PureComponent {
     static propTypes = propTypes;
@@ -86,9 +60,6 @@ export default class Listing extends React.PureComponent {
     constructor(props) {
         super(props);
         this.widgets = Listing.filterWidgets(props.widgets, VIEW.list);
-
-        // TODO: Find better solution for height calcuation
-        this.viewHeight = calculateMaxWidgetHeight(props.widgets) + 20;
     }
 
     componentDidMount() {
@@ -100,7 +71,6 @@ export default class Listing extends React.PureComponent {
         const { widgets: newWidgets } = nextProps;
         if (newWidgets !== oldWidgets) {
             this.widgets = Listing.filterWidgets(newWidgets, VIEW.list);
-            this.viewHeight = calculateMaxWidgetHeight(newWidgets) + 20;
         }
     }
 
@@ -124,6 +94,7 @@ export default class Listing extends React.PureComponent {
             statuses,
             ...otherProps
         } = this.props;
+
         return {
             entry,
             pending: statuses[key] === ENTRY_STATUS.requesting,
@@ -140,7 +111,6 @@ export default class Listing extends React.PureComponent {
             <VirtualizedListView
                 className={styles.list}
                 data={entries}
-                itemHeight={this.viewHeight}
                 renderer={WidgetFaramContainer}
                 rendererParams={this.rendererParams}
                 keyExtractor={this.keySelector}
