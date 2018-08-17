@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '#rsu/rest';
 import { caseInsensitiveSubmatch, compareString } from '#rsu/common';
 
 import AccentButton from '#rsca/Button/AccentButton';
@@ -15,22 +14,19 @@ import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 
 import {
-    urlForAnalysisFrameworks,
-    createParamsForGet,
-} from '#rest';
-import {
     analysisFrameworkListSelector,
     projectDetailsSelector,
 
     setAnalysisFrameworksAction,
 } from '#redux';
 import _ts from '#ts';
-import schema from '#schema';
 import { iconNames } from '#constants';
 
 import Details from './Details';
 import AddFramework from './AddFramework';
 import styles from './styles.scss';
+
+import ProjectAfsGetRequest from './requests/AfsGetRequest';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
@@ -79,17 +75,19 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
         this.state = {
             showAddFrameworkModal: false,
             displayAfList,
-            pending: false,
+            afLoading: false,
             searchInputValue: '',
             selectedAf,
         };
+
+        this.afsRequest = new ProjectAfsGetRequest({
+            setState: v => this.setState(v),
+            setAnalysisFrameworks: this.props.setAnalysisFrameworks,
+        });
+        this.afsRequest.init();
     }
 
     componentWillMount() {
-        if (this.afsRequest) {
-            this.afsRequest.stop();
-        }
-        this.afsRequest = this.createAfsRequest();
         this.afsRequest.start();
     }
 
@@ -123,30 +121,8 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
     }
 
     componentWillUnmount() {
-        if (this.afsRequest) {
-            this.afsRequest.stop();
-        }
+        this.afsRequest.stop();
     }
-
-    createAfsRequest = () => {
-        const afsRequest = new FgRestBuilder()
-            .url(urlForAnalysisFrameworks)
-            .params(createParamsForGet)
-            .preLoad(() => this.setState({ pending: true }))
-            .postLoad(() => this.setState({ pending: false }))
-            .success((response) => {
-                try {
-                    schema.validate(response, 'analysisFrameworkList');
-                    this.props.setAnalysisFrameworks({
-                        analysisFrameworks: response.results,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .build();
-        return afsRequest;
-    };
 
     handleAfClick = (afId) => {
         this.setState({ selectedAf: afId });
@@ -220,8 +196,6 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
             );
         }
 
-        console.warn(selectedAf);
-
         return (
             <Details
                 key={selectedAf}
@@ -243,8 +217,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
             (a, b) => compareString(a.title, b.title),
         );
 
-        // FIXME: use strings
-        const headingText = 'Analysis frameworks';
+        const headingText = _ts('project', 'afListHeading');
 
         return (
             <div className={styles.afList}>
@@ -301,7 +274,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
     }
 
     render() {
-        const { pending } = this.state;
+        const { afLoading } = this.state;
         const AFDetails = this.renderSelectedAfDetails;
 
         const AddAFModal = this.renderAddFrameworkModal;
@@ -311,7 +284,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
             <div className={styles.projectAnalysisFramework}>
                 <AnalysisFrameworkList />
                 <div className={styles.detailsContainer}>
-                    {pending && <LoadingAnimation large />}
+                    {afLoading && <LoadingAnimation large />}
                     <AFDetails />
                 </div>
                 <AddAFModal />

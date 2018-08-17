@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { reverseRoute } from '#rsu/common';
-import { FgRestBuilder } from '#rsu/rest';
 import AccentButton from '#rsca/Button/AccentButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -19,14 +18,6 @@ import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
 
 import {
-    createParamsForProjectPatch,
-    createUrlForProject,
-    createUrlForAfClone,
-    createParamsForAfClone,
-    createParamsForAnalysisFrameworkEdit,
-    createUrlForAnalysisFramework,
-} from '#rest';
-import {
     analysisFrameworkDetailSelector,
     projectDetailsSelector,
     setProjectAfAction,
@@ -37,9 +28,11 @@ import {
     iconNames,
     pathNames,
 } from '#constants';
-import schema from '#schema';
-import notify from '#notify';
 import _ts from '#ts';
+
+import ProjectPatchRequest from './requests/ProjectPatchRequest';
+import AfCloneRequest from './requests/AfCloneRequest';
+import AfPutRequest from './requests/AfPutRequest';
 
 import styles from './styles.scss';
 
@@ -92,126 +85,38 @@ export default class ProjectAfDetail extends React.PureComponent {
                 description: [],
             },
         };
+
+        // Requests
+        this.projectPatchRequest = new ProjectPatchRequest({
+            setState: v => this.setState(v),
+            setProjectFramework: this.props.setProjectFramework,
+        });
+        this.afCloneRequest = new AfCloneRequest({
+            setState: v => this.setState(v),
+            addNewAf: this.props.addNewAf,
+        });
+        this.afPutRequest = new AfPutRequest({
+            setState: v => this.setState(v),
+            setFrameworkDetails: this.props.setFrameworkDetails,
+        });
     }
 
     componentWillUnmount() {
-        if (this.projectPatchRequest) {
-            this.projectPatchRequest.stop();
-        }
-        if (this.afPutRequest) {
-            this.afPutRequest.stop();
-        }
-        if (this.afCloneRequest) {
-            this.afCloneRequest.stop();
-        }
+        this.projectPatchRequest.stop();
+        this.afCloneRequest.stop();
+        this.afPutRequest.stop();
     }
-
-    createProjectPatchRequest = (afId, projectId) => {
-        const projectPatchRequest = new FgRestBuilder()
-            .url(createUrlForProject(projectId))
-            .params(() => createParamsForProjectPatch({ analysisFramework: afId }))
-            .preLoad(() => this.setState({ pending: true }))
-            .postLoad(() => this.setState({ pending: false }))
-            .success((response) => {
-                try {
-                    schema.validate(response, 'project');
-                    this.props.setProjectFramework({
-                        projectId,
-                        afId,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .build();
-        return projectPatchRequest;
-    };
-
-    createAfCloneRequest = (afId, projectId) => {
-        const afCloneRequest = new FgRestBuilder()
-            .url(createUrlForAfClone(afId))
-            .params(() => createParamsForAfClone({ project: projectId }))
-            .preLoad(() => this.setState({ pending: true }))
-            .postLoad(() => this.setState({ pending: false }))
-            .success((response) => {
-                try {
-                    schema.validate(response, 'analysisFramework');
-                    this.props.addNewAf({
-                        afDetail: response,
-                        projectId,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .build();
-        return afCloneRequest;
-    };
-
-    createAfPutRequest = ({ title, description }) => {
-        const { analysisFrameworkId: afId } = this.props;
-        const afPutRequest = new FgRestBuilder()
-            .url(createUrlForAnalysisFramework(afId))
-            .params(() => createParamsForAnalysisFrameworkEdit({ title, description }))
-            .preLoad(() => this.setState({ pending: true }))
-            .postLoad(() => this.setState({ pending: false }))
-            .success((response) => {
-                try {
-                    schema.validate(response, 'analysisFramework');
-                    this.props.setFrameworkDetails({
-                        afId,
-                        afDetail: response,
-                    });
-                    notify.send({
-                        title: _ts('project', 'afFormEdit'),
-                        type: notify.type.SUCCESS,
-                        message: _ts('project', 'afFormEditSuccess'),
-                        duration: notify.duration.MEDIUM,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .failure(() => {
-                notify.send({
-                    title: _ts('project', 'afFormEdit'),
-                    type: notify.type.ERROR,
-                    message: _ts('project', 'afFormEditFailure'),
-                    duration: notify.duration.SLOW,
-                });
-            })
-            .fatal(() => {
-                notify.send({
-                    title: _ts('project', 'afFormEdit'),
-                    type: notify.type.ERROR,
-                    message: _ts('project', 'afFormEditFatal'),
-                    duration: notify.duration.SLOW,
-                });
-            })
-            .build();
-        return afPutRequest;
-    };
 
     handleAfClone = (cloneConfirm, afId, projectId) => {
         if (cloneConfirm) {
-            if (this.afCloneRequest) {
-                this.afCloneRequest.stop();
-            }
-
-            this.afCloneRequest = this.createAfCloneRequest(afId, projectId);
-            this.afCloneRequest.start();
+            this.afCloneRequest.init(afId, projectId).start();
         }
         this.setState({ cloneConfirmModalShow: false });
     }
 
     handleAfUse = (useConfirm, afId, projectId) => {
         if (useConfirm) {
-            if (this.projectPatchRequest) {
-                this.projectPatchRequest.stop();
-            }
-
-            this.projectPatchRequest = this.createProjectPatchRequest(afId, projectId);
-            this.projectPatchRequest.start();
+            this.projectPatchRequest.init(afId, projectId).start();
         }
         this.setState({ useConfirmModalShow: false });
     }
@@ -253,12 +158,8 @@ export default class ProjectAfDetail extends React.PureComponent {
     };
 
     handleValidationSuccess = (values) => {
-        if (this.afPutRequest) {
-            this.afPutRequest.stop();
-        }
-
-        this.afPutRequest = this.createAfPutRequest(values);
-        this.afPutRequest.start();
+        const { analysisFrameworkId: afId } = this.props;
+        this.afPutRequest.init(afId, values).start();
         this.setState({ pristine: false });
     };
 
@@ -348,8 +249,6 @@ export default class ProjectAfDetail extends React.PureComponent {
             analysisFrameworkId,
             projectDetails,
         } = this.props;
-
-        console.warn(frameworkDetails);
 
         const {
             cloneConfirmModalShow,
