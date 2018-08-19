@@ -54,6 +54,7 @@ export default class ConditionalFrameworkPreview extends React.PureComponent {
 
     getWidgetViews = (widgets) => {
         const views = {};
+        if (!widgets) return {};
         widgets.forEach((w) => {
             const view = {
                 component: () => {
@@ -96,15 +97,17 @@ export default class ConditionalFrameworkPreview extends React.PureComponent {
         return views;
     }
 
-    getWidgetTabs = widgets => (
-        widgets.reduce(
-            (tabs, w) => ({
-                ...tabs,
+    getWidgetTabs = (widgets) => {
+        if (!widgets) return {};
+        const tabs = widgets.reduce(
+            (acc, w) => ({
+                ...acc,
                 [w.widget.key]: w.widget.title,
             }),
             {},
-        )
-    )
+        );
+        return tabs;
+    }
 
     handleTabSelect = (currentWidget) => {
         this.setState({ currentWidget });

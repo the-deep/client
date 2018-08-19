@@ -17,6 +17,7 @@ import { randomString } from '#rsu/common';
 import _ts from '#ts';
 
 import { widgetList } from '#widgets/conditionalWidget';
+import { widgetListingVisibility } from '#widgets';
 
 import WidgetPreview from './WidgetPreview';
 import SelectedWidgetItem from './SelectedWidgetItem';
@@ -67,6 +68,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         const {
             title,
             data: { widgets },
+            properties: { addedFrom },
         } = this.props;
 
         this.state = {
@@ -77,6 +79,10 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
             },
             pristine: false,
         };
+
+        this.widgets = widgetList.filter(
+            w => widgetListingVisibility(w.widgetId, addedFrom),
+        );
     }
 
     handleFaramChange = (faramValues, faramErrors) => {
@@ -145,6 +151,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         const {
             onClose,
             title,
+            properties,
         } = this.props;
 
         const titleInputLabel = _ts('widgets.editor.number', 'titleLabel');
@@ -182,7 +189,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                                     </header>
                                     <ListView
                                         className={styles.widgetList}
-                                        data={widgetList}
+                                        data={this.widgets}
                                         renderer={WidgetPreview}
                                         keyExtractor={ConditionalWidgetEdit.keyExtractor}
                                         rendererParams={this.widgetListRendererParams}
