@@ -3,10 +3,10 @@ import { projectIdFromRoute } from '../domainData';
 
 const emptyObject = {};
 
-const projectPageSelector = ({ siloDomainData }) => siloDomainData.projectsView || {};
+const projectViewSelector = ({ siloDomainData }) => siloDomainData.projectsView || {};
 
 export const projectSelector = createSelector(
-    projectPageSelector,
+    projectViewSelector,
     projectIdFromRoute,
     (projectPage, activeProject) => (
         projectPage[activeProject] || emptyObject

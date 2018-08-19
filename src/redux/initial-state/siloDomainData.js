@@ -617,17 +617,17 @@ const initialSiloDomainData = {
 
     projectsView: {
         // index is projectId
-        1: {
-            localData: {
-                faramValues: undefined,
-                faramErrors: undefined,
-                hasErrors: undefined,
-                pristine: true,
-            },
-            serverData: {
-                versionId: undefined,
-            },
-        },
+        /* 1: {
+         *     localData: {
+         *         faramValues: undefined,
+         *         faramErrors: undefined,
+         *         hasErrors: undefined,
+         *         pristine: true,
+         *     },
+         *     serverData: {
+         *         versionId: undefined,
+         *     },
+         * }, */
     },
 };
 

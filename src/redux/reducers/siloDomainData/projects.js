@@ -1,6 +1,3 @@
-import {
-    analyzeErrors,
-} from '#rsci/Faram/validator';
 import update from '#rsu/immutable-update';
 
 export const SET_PROJECT_DETAILS = 'siloDomainData/SET_PROJECT_DETAILS';
