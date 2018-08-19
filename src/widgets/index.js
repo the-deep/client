@@ -18,6 +18,7 @@ import OrganigramEditWidget from './edit/Organigram';
 import MultiSelectEditWidget from './edit/MultiSelect';
 import ScaleEditWidget from './edit/Scale';
 import ConditionalEditWidget from './edit/Conditional';
+import ConditionalFrameworkPreview from './edit/Conditional/Preview';
 
 // overview
 import ExcerptWidget from './tagging/Excerpt';
@@ -287,11 +288,13 @@ export const globalWidgets = {
         overview: {
             component: ConditionalWidget,
             viewComponent: ConditionalViewWidget,
+            frameworkViewComponent: ConditionalFrameworkPreview,
             minSize: { w: 12, h: 12 },
         },
         list: {
             component: ConditionalWidget,
             viewComponent: ConditionalViewWidget,
+            frameworkViewComponent: ConditionalFrameworkPreview,
             minSize: { w: 12, h: 12 },
         },
     },

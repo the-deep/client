@@ -20,7 +20,6 @@ const propTypes = {
     item: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-// eslint-disable-next-line react/prefer-stateless-function
 export default class SelectedWidgetItem extends React.PureComponent {
     static propTypes = propTypes;
 
