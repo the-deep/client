@@ -11,6 +11,7 @@ import _ts from '#ts';
  * Required:
  *  - setState
  *  - setFrameworkDetails
+ *  - onModalClose
  */
 export default class ProjectAfCloneRequest extends Request {
     schemaName = 'analysisFramework'
@@ -19,7 +20,7 @@ export default class ProjectAfCloneRequest extends Request {
         this.parent.setState({ pending: true });
     }
 
-    handleAfterLoad = () => {
+    handlePostLoad = () => {
         this.parent.setState({ pending: false });
     }
 
@@ -34,6 +35,7 @@ export default class ProjectAfCloneRequest extends Request {
             message: _ts('project', 'afFormEditSuccess'),
             duration: notify.duration.MEDIUM,
         });
+        this.parent.onModalClose();
     }
 
     handleFailure = () => {

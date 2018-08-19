@@ -1,27 +1,19 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { reverseRoute } from '#rsu/common';
 import AccentButton from '#rsca/Button/AccentButton';
 import WarningButton from '#rsca/Button/WarningButton';
-import LoadingAnimation from '#rscv/LoadingAnimation';
-import Confirm from '#rscv/Modal/Confirm';
-import Faram, {
-    requiredCondition,
-} from '#rscg/Faram';
-import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
-import NonFieldErrors from '#rsci/NonFieldErrors';
-import TextInput from '#rsci/TextInput';
-import TextArea from '#rsci/TextArea';
+import Message from '#rscv/Message';
+import Confirm from '#rscv/Modal/Confirm';
 
 import {
     analysisFrameworkDetailSelector,
     projectDetailsSelector,
     setProjectAfAction,
-    setAfDetailAction,
     addNewAfAction,
 } from '#redux';
 import {
@@ -30,9 +22,10 @@ import {
 } from '#constants';
 import _ts from '#ts';
 
+import EditFramework from '../EditFramework';
+
 import ProjectPatchRequest from './requests/ProjectPatchRequest';
 import AfCloneRequest from './requests/AfCloneRequest';
-import AfPutRequest from './requests/AfPutRequest';
 
 import styles from './styles.scss';
 
@@ -42,7 +35,6 @@ const propTypes = {
     addNewAf: PropTypes.func.isRequired,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setProjectFramework: PropTypes.func.isRequired,
-    setFrameworkDetails: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -56,7 +48,6 @@ const mapStateToProps = (state, props) => ({
 const mapDispatchToProps = dispatch => ({
     addNewAf: params => dispatch(addNewAfAction(params)),
     setProjectFramework: params => dispatch(setProjectAfAction(params)),
-    setFrameworkDetails: params => dispatch(setAfDetailAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -67,23 +58,10 @@ export default class ProjectAfDetail extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const { frameworkDetails } = props;
-
         this.state = {
             cloneConfirmModalShow: false,
             useConfirmModalShow: false,
-
-            faramValues: { ...frameworkDetails },
-            faramErrors: {},
-            pristine: false,
-            pending: false,
-        };
-
-        this.schema = {
-            fields: {
-                title: [requiredCondition],
-                description: [],
-            },
+            showEditFrameworkModal: false,
         };
 
         // Requests
@@ -95,16 +73,11 @@ export default class ProjectAfDetail extends React.PureComponent {
             setState: v => this.setState(v),
             addNewAf: this.props.addNewAf,
         });
-        this.afPutRequest = new AfPutRequest({
-            setState: v => this.setState(v),
-            setFrameworkDetails: this.props.setFrameworkDetails,
-        });
     }
 
     componentWillUnmount() {
         this.projectPatchRequest.stop();
         this.afCloneRequest.stop();
-        this.afPutRequest.stop();
     }
 
     handleAfClone = (cloneConfirm, afId, projectId) => {
@@ -129,39 +102,13 @@ export default class ProjectAfDetail extends React.PureComponent {
         this.setState({ useConfirmModalShow: true });
     }
 
-    handlefaramCancel = () => {
-        const { frameworkDetails } = this.props;
+    handleEditFrameworButtonClick = () => {
+        this.setState({ showEditFrameworkModal: true });
+    }
 
-        this.setState({
-            faramValues: { ...frameworkDetails },
-            faramErrors: {},
-
-            pristine: false,
-            pending: false,
-        });
-    };
-
-    // faram RELATED
-    handleFaramChange = (faramValues, faramErrors) => {
-        this.setState({
-            faramValues,
-            faramErrors,
-            pristine: true,
-        });
-    };
-
-    handleValidationFailure = (faramErrors) => {
-        this.setState({
-            faramErrors,
-            pristine: false,
-        });
-    };
-
-    handleValidationSuccess = (values) => {
-        const { analysisFrameworkId: afId } = this.props;
-        this.afPutRequest.init(afId, values).start();
-        this.setState({ pristine: false });
-    };
+    handleEditFrameworkModalClose = () => {
+        this.setState({ showEditFrameworkModal: false });
+    }
 
     renderUseFrameworkButton = () => {
         const {
@@ -205,13 +152,34 @@ export default class ProjectAfDetail extends React.PureComponent {
         };
 
         return (
-            <Link
-                className={styles.editFrameworkLink}
-                to={reverseRoute(pathNames.analysisFramework, params)}
-                disabled={pending}
-            >
-                { editFrameworkButtonLabel }
-            </Link>
+            <Fragment>
+                <Link
+                    className={styles.editFrameworkLink}
+                    to={reverseRoute(pathNames.analysisFramework, params)}
+                    disabled={pending}
+                >
+                    { editFrameworkButtonLabel }
+                </Link>
+                <SuccessButton
+                    onClick={this.handleEditFrameworButtonClick}
+                    disabled={pending}
+                    type="submit"
+                >
+                    {_ts('project', 'quickEditAfButtonLabel')}
+                </SuccessButton>
+            </Fragment>
+        );
+    }
+
+    renderFrameworkPreview = () => {
+        const { frameworkDetails } = this.props;
+
+        // TODO: Complete Framework Preview
+        return (
+            <Message>
+                {frameworkDetails.title}<br />
+                {frameworkDetails.description}
+            </Message>
         );
     }
 
@@ -253,62 +221,23 @@ export default class ProjectAfDetail extends React.PureComponent {
         const {
             cloneConfirmModalShow,
             useConfirmModalShow,
-            faramErrors,
-            pristine,
-            pending,
-            faramValues,
+            showEditFrameworkModal,
         } = this.state;
 
         const Header = this.renderHeader;
-        const readOnly = !frameworkDetails.isAdmin;
+        const FrameworkPreview = this.renderFrameworkPreview;
 
         return (
             <div className={styles.analysisFrameworkDetail}>
-                { pending && <LoadingAnimation /> }
                 <Header />
-                <Faram
-                    className={styles.afDetailForm}
-                    onChange={this.handleFaramChange}
-                    onValidationFailure={this.handleValidationFailure}
-                    onValidationSuccess={this.handleValidationSuccess}
-                    schema={this.schema}
-                    value={faramValues}
-                    error={faramErrors}
-                    disabled={pending}
-                >
-                    { !readOnly &&
-                        <div className={styles.actionButtons}>
-                            <DangerButton
-                                onClick={this.handlefaramCancel}
-                                disabled={pending || !pristine}
-                            >
-                                {_ts('project', 'modalRevert')}
-                            </DangerButton>
-                            <SuccessButton
-                                disabled={pending || !pristine}
-                                type="submit"
-                            >
-                                {_ts('project', 'modalSave')}
-                            </SuccessButton>
-                        </div>
-                    }
-                    <NonFieldErrors faramElement />
-                    <TextInput
-                        label={_ts('project', 'addAfTitleLabel')}
-                        faramElementName="title"
-                        placeholder={_ts('project', 'addAfTitlePlaceholder')}
-                        className={styles.name}
-                        readOnly={readOnly}
+                <FrameworkPreview />
+                {
+                    showEditFrameworkModal &&
+                    <EditFramework
+                        analysisFrameworkId={analysisFrameworkId}
+                        onModalClose={this.handleEditFrameworkModalClose}
                     />
-                    <TextArea
-                        label={_ts('project', 'projectDescriptionLabel')}
-                        faramElementName="description"
-                        placeholder={_ts('project', 'projectDescriptionPlaceholder')}
-                        className={styles.description}
-                        rows={3}
-                        readOnly={readOnly}
-                    />
-                </Faram>
+                }
                 <Confirm
                     show={useConfirmModalShow}
                     onClose={useConfirm => this.handleAfUse(

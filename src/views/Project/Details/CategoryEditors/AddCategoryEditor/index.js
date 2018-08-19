@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '#rsu/rest';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -12,14 +11,10 @@ import Faram, {
     requiredCondition,
 } from '#rscg/Faram';
 
-import {
-    alterResponseErrorToFaramError,
-    createParamsForCeCreate,
-    urlForCeCreate,
-} from '#rest';
 import { addNewCeAction } from '#redux';
 import _ts from '#ts';
-import schema from '#schema';
+
+import CeCreateRequest from './requests/CeCreateRequest';
 
 import styles from './styles.scss';
 
@@ -59,45 +54,16 @@ export default class AddCategoryEditor extends React.PureComponent {
                 title: [requiredCondition],
             },
         };
+
+        this.ceCreateRequest = new CeCreateRequest({
+            setState: v => this.setState(v),
+            addNewCe: this.props.addNewCe,
+            onModalClose: this.props.onModalClose,
+        });
     }
 
     componentWillUnmount() {
-        if (this.ceCreateRequest) {
-            this.ceCreateRequest.stop();
-        }
-    }
-
-    createRequestForCeCreate = ({ title }) => {
-        const { projectId } = this.props;
-
-        const ceCreateRequest = new FgRestBuilder()
-            .url(urlForCeCreate)
-            .params(() => createParamsForCeCreate({ project: projectId, title }))
-            .preLoad(() => this.setState({ pending: true }))
-            .postLoad(() => this.setState({ pending: false }))
-            .success((response) => {
-                try {
-                    schema.validate(response, 'categoryEditor');
-                    this.props.addNewCe({
-                        ceDetail: response,
-                        projectId,
-                    });
-                    this.props.onModalClose();
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .failure((response) => {
-                const faramErrors = alterResponseErrorToFaramError(response.errors);
-                this.setState({ faramErrors });
-            })
-            .fatal(() => {
-                this.setState({
-                    faramErrors: { $internal: [_ts('project', 'categoryEditorCreateFailure')] },
-                });
-            })
-            .build();
-        return ceCreateRequest;
+        this.ceCreateRequest.stop();
     }
 
     // faram RELATED
@@ -113,15 +79,9 @@ export default class AddCategoryEditor extends React.PureComponent {
         this.setState({ faramErrors });
     };
 
-    handleValidationSuccess = (data) => {
-        // Stop old post request
-        if (this.ceCreateRequest) {
-            this.ceCreateRequest.stop();
-        }
-
-        // Create new post request
-        this.ceCreateRequest = this.createRequestForCeCreate(data);
-        this.ceCreateRequest.start();
+    handleValidationSuccess = (values) => {
+        const { projectId } = this.props;
+        this.ceCreateRequest.init(projectId, values).start();
     };
 
     render() {

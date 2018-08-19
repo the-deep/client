@@ -27,34 +27,4 @@ $height-header: 39px;
             }
         }
     }
-
-    .af-detail-form {
-        display: flex;
-        position: relative;
-        flex-direction: column;
-        padding: $spacing-medium;
-        width: $af-detail-form-width;
-        height: calc(100% - #{$height-header});
-
-        .action-buttons {
-            display: flex;
-            flex-shrink: 0;
-            justify-content: flex-end;
-
-            button {
-                margin-left: $spacing-large;
-            }
-        }
-
-        .name,
-        .description {
-            width: 100%;
-        }
-
-        .description {
-            :global .input {
-                resize: none;
-            }
-        }
-    }
 }

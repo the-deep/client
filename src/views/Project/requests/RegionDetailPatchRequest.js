@@ -1,74 +1,73 @@
-import { FgRestBuilder } from '#rsu/rest';
 import {
     createUrlForRegion,
     createParamsForRegionPatch,
-
-    alterResponseErrorToFaramError,
 } from '#rest';
-import schema from '#schema';
+import Request from '#utils/Request';
 import notify from '#notify';
 import _ts from '#ts';
 
 /*
- * setState, setRegionDetails
+ * setState, setRegionDetails, setRegionDetailsErrors
 */
-export default class RegionDetailPatchRequest {
-    constructor(props) {
-        this.props = props;
+export default class RegionDetailPatchRequest extends Request {
+    schemaName = 'regionPatchResponse'
+
+    handlePreLoad = () => {
+        this.parent.setState({ regionDetailPatchPending: true });
     }
 
-    success = regionId => (response) => {
-        try {
-            schema.validate(response, 'regionPatchResponse');
-            const regionDetails = {
-                id: response.id,
-                public: response.public,
-                versionId: response.versionId,
-                faramValues: { ...response },
-                faramErrors: {},
-                pristine: false,
-            };
-            this.props.setRegionDetails({
-                regionDetails,
-                regionId,
-                projectId: this.props.projectId,
-            });
-            notify.send({
-                type: notify.type.SUCCESS,
-                title: _ts('project', 'regionSave'),
-                message: _ts('project', 'regionSaveSuccess'),
-                duration: notify.duration.MEDIUM,
-            });
-        } catch (er) {
-            console.error(er);
-        }
+    handlePostLoad = () => {
+        this.parent.setState({ regionDetailPatchPending: false });
     }
 
-    failure = regionId => (response) => {
-        const faramErrors = alterResponseErrorToFaramError(response.errors);
-        this.props.setRegionDetailsErrors({
+    handleSuccess = (response) => {
+        const {
+            regionId,
+            projectId,
+        } = this.extraParent;
+        const regionDetails = {
+            id: response.id,
+            public: response.public,
+            versionId: response.versionId,
+            faramValues: { ...response },
+            faramErrors: {},
+            pristine: false,
+        };
+        this.parent.setRegionDetails({
+            regionDetails,
+            regionId,
+            projectId,
+        });
+        notify.send({
+            type: notify.type.SUCCESS,
+            title: _ts('project', 'regionSave'),
+            message: _ts('project', 'regionSaveSuccess'),
+            duration: notify.duration.MEDIUM,
+        });
+    }
+
+    handleFailure = (faramErrors) => {
+        const { regionId } = this.extraParent;
+        this.parent.setRegionDetailsErrors({
             faramErrors,
             regionId,
         });
     }
 
-    fatal = regionId => () => {
-        this.props.setRegionDetailsErrors({
+    handleFatal = () => {
+        const { regionId } = this.extraParent;
+        this.parent.setRegionDetailsErrors({
             faramErrors: { $internal: [_ts('countries', 'regionPatchErrorText')] },
             regionId,
         });
     }
 
-    create = (regionId, data) => {
-        const regionDetailPatchRequest = new FgRestBuilder()
-            .url(createUrlForRegion(regionId))
-            .params(() => createParamsForRegionPatch(data))
-            .preLoad(() => { this.props.setState({ regionDetailPatchPending: true }); })
-            .postLoad(() => { this.props.setState({ regionDetailPatchPending: false }); })
-            .success(this.success(regionId))
-            .failure(this.failure(regionId))
-            .fatal(this.fatal(regionId))
-            .build();
-        return regionDetailPatchRequest;
+    init = (projectId, regionId, data) => {
+        this.extraParent = { regionId, projectId };
+        this.createDefault({
+            url: createUrlForRegion(regionId),
+            params: createParamsForRegionPatch(data),
+        });
+        return this;
     }
 }

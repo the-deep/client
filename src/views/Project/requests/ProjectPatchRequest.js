@@ -1,37 +1,40 @@
-import { FgRestBuilder } from '#rsu/rest';
 import {
     createParamsForProjectPatch,
     createUrlForProject,
 } from '#rest';
+import Request from '#utils/Request';
+import notify from '#notify';
 import _ts from '#ts';
 
-import schema from '#schema';
-import notify from '#notify';
+/*
+ * - setState, removeProjectRegion
+ */
+export default class ProjectPatchRequest extends Request {
+    schemaName = 'project'
 
-export default class ProjectPatchRequest {
-    constructor(props) {
-        this.props = props;
+    handlePreLoad = () => {
+        this.parent.setState({ projectPatchPending: true });
     }
 
-    success = (projectId, removedRegionId) => (response) => {
-        try {
-            schema.validate(response, 'project');
-            this.props.removeProjectRegion({
-                projectId,
-                regionId: removedRegionId,
-            });
-            notify.send({
-                title: _ts('project', 'regionRemove'),
-                type: notify.type.SUCCESS,
-                message: _ts('project', 'regionRemoveSuccess'),
-                duration: notify.duration.MEDIUM,
-            });
-        } catch (er) {
-            console.error(er);
-        }
+    handlePostLoad = () => {
+        this.parent.setState({ projectPatchPending: false });
     }
 
-    failure = () => {
+    handleSuccess = () => {
+        const { projectId, removedRegionId } = this.extraParent;
+        this.parent.removeProjectRegion({
+            projectId,
+            regionId: removedRegionId,
+        });
+        notify.send({
+            title: _ts('project', 'regionRemove'),
+            type: notify.type.SUCCESS,
+            message: _ts('project', 'regionRemoveSuccess'),
+            duration: notify.duration.MEDIUM,
+        });
+    }
+
+    handleFailure = () => {
         notify.send({
             title: _ts('project', 'regionRemove'),
             type: notify.type.ERROR,
@@ -40,7 +43,7 @@ export default class ProjectPatchRequest {
         });
     }
 
-    fatal = () => {
+    handleFatal = () => {
         notify.send({
             title: _ts('project', 'regionRemove'),
             type: notify.type.ERROR,
@@ -49,16 +52,12 @@ export default class ProjectPatchRequest {
         });
     }
 
-    create = (projectId, removedRegionId, regions) => {
-        const regionDetailPatchRequest = new FgRestBuilder()
-            .url(createUrlForProject(projectId))
-            .params(() => createParamsForProjectPatch({ regions }))
-            .preLoad(() => { this.props.setState({ projectPatchPending: true }); })
-            .postLoad(() => { this.props.setState({ projectPatchPending: false }); })
-            .success(this.success(projectId, removedRegionId))
-            .failure(this.failure)
-            .fatal(this.fatal)
-            .build();
-        return regionDetailPatchRequest;
+    init = (projectId, removedRegionId, regions) => {
+        this.extraParent = { projectId, removedRegionId };
+        this.createDefault({
+            url: createUrlForProject(projectId),
+            params: createParamsForProjectPatch({ regions }),
+        });
+        return this;
     }
 }

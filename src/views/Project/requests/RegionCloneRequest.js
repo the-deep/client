@@ -1,54 +1,55 @@
-import { FgRestBuilder } from '#rsu/rest';
 import {
     createUrlForRegionClone,
     createParamsForRegionClone,
 } from '#rest';
-import schema from '#schema';
+import Request from '#utils/Request';
 
-export default class RegionCloneRequest {
-    constructor(props) {
-        this.props = props;
+/*
+ * setState, onRegionClone?, addNewRegion, removeProjectRegion
+ */
+export default class RegionCloneRequest extends Request {
+    schemaName = 'region'
+
+    handlePreLoad = () => {
+        this.parent.setState({ regionClonePending: true });
     }
 
-    success = regionId => (response) => {
-        try {
-            schema.validate(response, 'region');
-            this.props.addNewRegion({
-                regionDetail: response,
-                projectId: this.props.projectId,
-            });
-            this.props.removeProjectRegion({
-                projectId: this.props.projectId,
-                regionId,
-            });
-            if (this.props.onRegionClone) {
-                this.props.onRegionClone(response.id);
-            }
-        } catch (er) {
-            console.error(er);
+    handlePostLoad = () => {
+        this.parent.setState({ regionClonePending: false });
+    }
+
+    handleSuccess = (response) => {
+        const { regionId, projectId } = this.extraParent;
+
+        this.parent.addNewRegion({
+            regionDetail: response,
+            projectId,
+        });
+        this.parent.removeProjectRegion({
+            projectId,
+            regionId,
+        });
+        if (this.parent.onRegionClone) {
+            this.parent.onRegionClone(response.id);
         }
     }
 
-    failure = (response) => {
+    handleFailure = (response) => {
         // FIXME: use strings
         console.warn('FAILURE:', response);
     }
 
-    fatal = (response) => {
+    handleFatal = () => {
         // FIXME: use strings
-        console.warn('FATAL:', response);
+        console.warn('FATAL:');
     }
 
-    create = (regionId, projectId) => {
-        const regionDetailPatchRequest = new FgRestBuilder()
-            .url(createUrlForRegionClone(regionId))
-            .params(() => createParamsForRegionClone({ project: projectId }))
-            .preLoad(() => { this.props.setState({ regionClonePending: true }); })
-            .postLoad(() => { this.props.setState({ regionClonePending: false }); })
-            .success(this.success(regionId))
-            .failure(this.failure)
-            .fatal(this.fatal)
-            .build();
-        return regionDetailPatchRequest;
+    init = (regionId, projectId) => {
+        this.extraParent = { regionId, projectId };
+        this.createDefault({
+            url: createUrlForRegionClone(regionId),
+            params: createParamsForRegionClone({ project: projectId }),
+        });
+        return this;
     }
 }

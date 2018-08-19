@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '#rsu/rest';
 import { compareString, compareNumber } from '#rsu/common';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -14,19 +13,14 @@ import Faram, {
 } from '#rscg/Faram';
 
 import {
-    alterResponseErrorToFaramError,
-    createParamsForProjectPut,
-    createUrlForProject,
-} from '#rest';
-import {
     projectDetailsSelector,
     projectOptionsSelector,
 
     setProjectAction,
 } from '#redux';
-import notify from '#notify';
-import schema from '#schema';
 import _ts from '#ts';
+
+import ProjectPatchRequest from './requests/ProjectPatchRequest';
 
 import styles from './styles.scss';
 
@@ -109,61 +103,18 @@ export default class AddExistingRegion extends React.PureComponent {
                 regions: [requiredCondition],
             },
         };
+
+        this.projectPatchRequest = new ProjectPatchRequest({
+            setState: v => this.setState(v),
+            setProject: this.props.setProject,
+            onModalClose: this.props.onModalClose,
+            onRegionsAdd: this.props.onRegionsAdd,
+        });
     }
 
     componentWillUnmount() {
-        if (this.projectPatchRequest) {
-            this.projectPatchRequest.stop();
-        }
+        this.projectPatchRequest.stop();
     }
-
-    createProjectPatchRequest = (newProjectDetails, projectId, addedRegions) => {
-        const projectPatchRequest = new FgRestBuilder()
-            .url(createUrlForProject(projectId))
-            .params(() => createParamsForProjectPut(newProjectDetails))
-            .postLoad(() => this.setState({ pristine: false }))
-            .success((response) => {
-                try {
-                    schema.validate(response, 'project');
-                    this.props.setProject({ project: response });
-                    notify.send({
-                        title: _ts('project', 'countryCreate'),
-                        type: notify.type.SUCCESS,
-                        message: _ts('project', 'countryCreateSuccess'),
-                        duration: notify.duration.MEDIUM,
-                    });
-                    if (this.props.onRegionsAdd) {
-                        this.props.onRegionsAdd(addedRegions);
-                    }
-                    this.props.onModalClose();
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .failure((response) => {
-                notify.send({
-                    title: _ts('project', 'countryCreate'),
-                    type: notify.type.ERROR,
-                    message: _ts('project', 'countryCreateFailure'),
-                    duration: notify.duration.MEDIUM,
-                });
-                const faramErrors = alterResponseErrorToFaramError(response.errors);
-                this.setState({ faramErrors });
-            })
-            .fatal(() => {
-                notify.send({
-                    title: _ts('project', 'countryCreate'),
-                    type: notify.type.ERROR,
-                    message: _ts('project', 'countryCreateFatal'),
-                    duration: notify.duration.MEDIUM,
-                });
-                this.setState({
-                    faramErrors: { $internal: [_ts('project', 'projectSaveFailure')] },
-                });
-            })
-            .build();
-        return projectPatchRequest;
-    };
 
     // faram RELATED
     handleFaramChange = (values, faramErrors) => {
@@ -194,16 +145,11 @@ export default class AddExistingRegion extends React.PureComponent {
             regions,
         };
 
-        if (this.projectPatchRequest) {
-            this.projectPatchRequest.stop();
-        }
-
-        this.projectPatchRequest = this.createProjectPatchRequest(
+        this.projectPatchRequest.init(
             newProjectDetails,
             projectId,
             regionsKeys,
-        );
-        this.projectPatchRequest.start();
+        ).start();
     };
 
     render() {

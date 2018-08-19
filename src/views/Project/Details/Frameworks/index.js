@@ -6,6 +6,7 @@ import { caseInsensitiveSubmatch, compareString } from '#rsu/common';
 
 import AccentButton from '#rsca/Button/AccentButton';
 import SearchInput from '#rsci/SearchInput';
+import Message from '#rscv/Message';
 import ListView from '#rscv/List/ListView';
 import ListItem from '#rscv/List/ListItem';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -92,22 +93,28 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps !== this.props) {
-            const {
-                analysisFrameworkList,
-                projectDetails,
-            } = nextProps;
-
+        const {
+            analysisFrameworkList: newAnalysisFrameworkList,
+            projectDetails: { analysisFramework: newAnalysisFramework },
+        } = nextProps;
+        const {
+            analysisFrameworkList: oldAnalysisFrameworkList,
+            projectDetails: { analysisFramework: oldAnalysisFramework },
+        } = nextProps;
+        if (
+            newAnalysisFrameworkList !== oldAnalysisFrameworkList ||
+            newAnalysisFramework !== oldAnalysisFramework
+        ) {
             // why filter again?
             const { searchInputValue } = this.state;
-            const displayAfList = analysisFrameworkList.filter(
+            const displayAfList = newAnalysisFrameworkList.filter(
                 af => caseInsensitiveSubmatch(af.title, searchInputValue),
             );
 
             let selectedAf;
-            if (projectDetails.analysisFramework) {
+            if (newAnalysisFramework) {
                 // if there is analysisFramework in current project
-                selectedAf = projectDetails.analysisFramework;
+                selectedAf = newAnalysisFramework;
             } else {
                 // if not, get first
                 selectedAf = displayAfList.length > 0 ? displayAfList[0].id : 0;
@@ -190,15 +197,14 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
 
         if (analysisFrameworkList.length <= 0) {
             return (
-                <div className={styles.empty}>
+                <Message>
                     { noAFText }
-                </div>
+                </Message>
             );
         }
 
         return (
             <Details
-                key={selectedAf}
                 analysisFrameworkId={selectedAf}
             />
         );

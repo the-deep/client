@@ -3,7 +3,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '#rsu/rest';
 import { reverseRoute } from '#rsu/common';
 import AccentButton from '#rsca/Button/AccentButton';
 import WarningButton from '#rsca/Button/WarningButton';
@@ -18,13 +17,6 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
 
 import {
-    createParamsForProjectPatch,
-    createUrlForProject,
-
-    createUrlForCeClone,
-    createParamsForCeClone,
-    createParamsForCeEdit,
-    createUrlForCategoryEditor,
 } from '#rest';
 import {
     categoryEditorDetailSelector,
@@ -34,12 +26,15 @@ import {
     setCeDetailAction,
     addNewCeAction,
 } from '#redux';
-import schema from '#schema';
 import _ts from '#ts';
 import {
     iconNames,
     pathNames,
 } from '#constants';
+
+import ProjectPatchRequest from './requests/ProjectPatchRequest';
+import CeCloneRequest from './requests/CeCloneRequest';
+import CePutRequest from './requests/CePutRequest';
 
 import styles from './styles.scss';
 
@@ -91,104 +86,37 @@ export default class ProjectCeDetail extends React.PureComponent {
                 title: [requiredCondition],
             },
         };
+
+        this.projectPatchRequest = new ProjectPatchRequest({
+            setState: v => this.setState(v),
+            setProjectCe: this.props.setProjectCe,
+        });
+        this.ceCloneRequest = new CeCloneRequest({
+            setState: v => this.setState(v),
+            addNewCe: this.props.addNewCe,
+        });
+        this.cePutRequest = new CePutRequest({
+            setState: v => this.setState(v),
+            setCeDetail: this.props.setCeDetail,
+        });
     }
 
     componentWillUnmount() {
-        if (this.projectPatchRequest) {
-            this.projectPatchRequest.stop();
-        }
-        if (this.cePutRequest) {
-            this.cePutRequest.stop();
-        }
-        if (this.ceCloneRequest) {
-            this.ceCloneRequest.stop();
-        }
+        this.projectPatchRequest.stop();
+        this.cePutRequest.stop();
+        this.ceCloneRequest.stop();
     }
-
-    createProjectPatchRequest = (ceId, projectId) => {
-        const projectPatchRequest = new FgRestBuilder()
-            .url(createUrlForProject(projectId))
-            .params(() => createParamsForProjectPatch({ categoryEditor: ceId }))
-            .preLoad(() => this.setState({ pending: true }))
-            .postLoad(() => this.setState({ pending: false }))
-            .success((response) => {
-                try {
-                    schema.validate(response, 'project');
-                    this.props.setProjectCe({
-                        projectId,
-                        ceId,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .build();
-        return projectPatchRequest;
-    };
-
-    createCeCloneRequest = (ceId, projectId) => {
-        const ceCloneRequest = new FgRestBuilder()
-            .url(createUrlForCeClone(ceId))
-            .params(() => createParamsForCeClone({ project: projectId }))
-            .preLoad(() => this.setState({ pending: true }))
-            .postLoad(() => this.setState({ pending: false }))
-            .success((response) => {
-                try {
-                    schema.validate(response, 'categoryEditor');
-                    this.props.addNewCe({
-                        ceDetail: response,
-                        projectId,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .build();
-        return ceCloneRequest;
-    };
-
-    createCePutRequest = ({ title }) => {
-        const { categoryEditorId: ceId } = this.props;
-        const cePutRequest = new FgRestBuilder()
-            .url(createUrlForCategoryEditor(ceId))
-            .params(() => createParamsForCeEdit({ title }))
-            .preLoad(() => this.setState({ pending: true }))
-            .postLoad(() => this.setState({ pending: false }))
-            .success((response) => {
-                try {
-                    schema.validate(response, 'categoryEditor');
-                    this.props.setCeDetail({
-                        ceId,
-                        ceDetail: response,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .build();
-        return cePutRequest;
-    };
 
     handleCeClone = (cloneConfirm, ceId, projectId) => {
         if (cloneConfirm) {
-            if (this.ceCloneRequest) {
-                this.ceCloneRequest.stop();
-            }
-
-            this.ceCloneRequest = this.createCeCloneRequest(ceId, projectId);
-            this.ceCloneRequest.start();
+            this.ceCloneRequest.init(ceId, projectId).start();
         }
         this.setState({ cloneConfirmModalShow: false });
     }
 
     handleCeUse = (useConfirm, ceId, projectId) => {
         if (useConfirm) {
-            if (this.projectPatchRequest) {
-                this.projectPatchRequest.stop();
-            }
-
-            this.projectPatchRequest = this.createProjectPatchRequest(ceId, projectId);
-            this.projectPatchRequest.start();
+            this.projectPatchRequest.init(ceId, projectId).start();
         }
         this.setState({ useConfirmModalShow: false });
     }
@@ -229,12 +157,8 @@ export default class ProjectCeDetail extends React.PureComponent {
     };
 
     handleValidationSuccess = (values) => {
-        if (this.cePutRequest) {
-            this.cePutRequest.stop();
-        }
-
-        this.cePutRequest = this.createCePutRequest(values);
-        this.cePutRequest.start();
+        const { categoryEditorId } = this.props;
+        this.cePutRequest.init(categoryEditorId, values).start();
         this.setState({ pristine: false });
     };
 
