@@ -28,6 +28,7 @@ const propTypes = {
     onSave: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    properties: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -120,7 +121,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
             faramInfoForAdd: {
                 newElement: () => ({
                     widget: {
-                        key: `${widgetId}-${randomString(16)}`,
+                        key: `${widgetId}-${randomString(16).toLowerCase()}`,
                         widgetId,
                         title: _ts('widgetTitle', title),
                         properties: {
@@ -151,7 +152,6 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         const {
             onClose,
             title,
-            properties,
         } = this.props;
 
         const titleInputLabel = _ts('widgets.editor.number', 'titleLabel');

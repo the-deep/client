@@ -1,49 +1,70 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Numeral from '#rscv/Numeral';
-import styles from './styles.scss';
+import FaramGroup from '#rsci/Faram/FaramGroup';
+
+import {
+    fetchWidget,
+    VIEW,
+} from '#widgets';
 
 const propTypes = {
-    // eslint-disable-next-line react/forbid-prop-types
-    data: PropTypes.object,
-    className: PropTypes.string,
+    widget: PropTypes.shape({
+        properties: PropTypes.object,
+    }).isRequired,
+    data: PropTypes.shape({}).isRequired,
 };
 
 const defaultProps = {
-    className: '',
-    data: {},
 };
 
-export default class ConditionalListWidget extends React.PureComponent {
+// eslint-disable-next-line react/prefer-stateless-function
+export default class ConditionalWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    render() {
+    getWidgetData = (selectedWidgetKey) => {
         const {
-            data: {
-                value,
+            widget: {
+                properties: {
+                    data = {},
+                },
             },
-            className: classNameFromProps,
         } = this.props;
+        const widgetData = data
+            .widgets
+            .find(w => ((w || {}).widget || {}).key === selectedWidgetKey);
 
-        const separatorText = ' ';
-        const invalidText = '-';
+        return (widgetData || {}).widget;
+    }
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.numberOutput}
-        `;
+    getWidgetView = (widget) => {
+        const { widgetId } = widget;
+
+        const { viewComponent: Widget } = fetchWidget(VIEW.list, widgetId);
+        const { data: widgetData } = this.props;
+        const {
+            value: { [widget.key]: { data } = {} } = {},
+        } = widgetData;
 
         return (
-            <div className={className} >
-                <Numeral
-                    separator={separatorText}
-                    invalidText={invalidText}
-                    showThousandSeparator
-                    precision={null}
-                    value={value}
-                />
+            <Widget
+                widget={widget}
+                data={data}
+            />
+        );
+    }
+
+    render() {
+        const selectedWidgetKey = 'matrix2dWidget-wcmmdkxe2hc0arju';
+        const widget = this.getWidgetData(selectedWidgetKey);
+        const WidgetView = this.getWidgetView(widget);
+
+        return (
+            <div>
+                <FaramGroup faramElementName="value">
+                    {WidgetView}
+                </FaramGroup>
             </div>
         );
     }

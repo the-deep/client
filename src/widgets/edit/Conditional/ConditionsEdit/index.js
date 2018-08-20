@@ -95,7 +95,7 @@ export default class ConditionsEditModal extends React.PureComponent {
             title,
             faramInfoForAdd: {
                 newElement: () => ({
-                    key: `condition-${randomString(16)}`,
+                    key: `condition-${randomString(16).toLowerCase()}`,
                     widgetId,
                     widgetKey,
                 }),
