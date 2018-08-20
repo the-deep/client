@@ -163,13 +163,16 @@ export const currentUserInformationSelector = createSelector(
 
 // activeUser
 export const currentUserProjectsSelector = createSelector(
-    currentUserSelector,
     projectsSelector,
+    projects => Object.keys(projects).map(projectId => projects[projectId]),
+    /*
+    currentUserSelector,
     (user, projects) => (
         (user.projects && user.projects.map(
             projectId => projects[projectId] || emptyObject,
         )) || emptyList
     ),
+    */
 );
 
 // activeUser

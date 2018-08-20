@@ -20,14 +20,14 @@ export default class UserGetResponse extends Request {
 
     handleSuccess = (response) => {
         this.parent.setUserProfile({
-            userId: this.parent.userId,
+            userId: this.extraParent.userId,
             information: response,
         });
     }
 
     handleFailure = (_, response) => {
         if (response.errorCode === 404) {
-            this.parent.unsetUserProfile({ userId: this.parent.userId });
+            this.parent.unsetUserProfile({ userId: this.extraParent.userId });
         } else {
             console.info('FAILURE:', response);
         }
@@ -42,10 +42,12 @@ export default class UserGetResponse extends Request {
         });
     }
 
-    init = () => {
+    init = (userId) => {
+        this.extraParent = { userId };
         this.createDefault({
-            url: createUrlForUser(this.parent.userId),
+            url: createUrlForUser(userId),
             params: createParamsForGet(),
         });
+        return this;
     }
 }

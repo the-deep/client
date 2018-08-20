@@ -62,16 +62,14 @@ export default class UserGroupAdd extends React.PureComponent {
         };
 
         this.userGroupCreateRequest = new UserGroupPostRequest({
+            setState: v => this.setState(v),
             setUserGroup: this.props.setUserGroup,
             handleModalClose: this.props.handleModalClose,
-            setState: v => this.setState(v),
         });
     }
 
     componentWillUnmount() {
-        if (this.userGroupCreateRequest) {
-            this.userGroupCreateRequest.stop();
-        }
+        this.userGroupCreateRequest.stop();
     }
 
     handleFaramChange = (faramValues, faramErrors) => {

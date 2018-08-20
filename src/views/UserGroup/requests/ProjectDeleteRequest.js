@@ -11,7 +11,8 @@ import _ts from '#ts';
 */
 
 export default class ProjectDeleteRequest extends Request {
-    handleSucces = (id, userId) => {
+    handleSucces = () => {
+        const { id, userId } = this.extraParent;
         this.parent.unSetProject({
             projectId: id,
             userId,
@@ -43,11 +44,12 @@ export default class ProjectDeleteRequest extends Request {
         });
     }
 
-    init = () => {
-        const { id } = this.parent;
+    init = (id, userId) => {
+        this.extraParent = { id, userId };
         this.createDefault({
             url: createUrlForProject(id),
             params: createParamsForProjectDelete(),
         });
+        return this;
     }
 }

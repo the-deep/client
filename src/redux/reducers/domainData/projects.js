@@ -1,5 +1,5 @@
 import update from '#rsu/immutable-update';
-import { isTruthy, compareString } from '#rsu/common';
+import { compareString } from '#rsu/common';
 import {
     UP__SET_USER_PROJECT,
     UP__UNSET_USER_PROJECT,
@@ -68,9 +68,9 @@ const setUserProject = (state, action) => {
     const { project } = action;
     const settings = {
         projects: {
-            [project.id]: { $auto: {
+            [project.id]: {
                 $set: project,
-            } },
+            },
         },
     };
     return update(state, settings);
@@ -179,9 +179,8 @@ const unsetUserProject = (state, action) => {
 };
 
 const setUserProjects = (state, action) => {
-    const { projects, userId } = action;
+    const { projects } = action;
 
-    const settings = {};
     const projectSettings = projects.reduce(
         (acc, project) => {
             acc[project.id] = { $auto: {
@@ -191,19 +190,7 @@ const setUserProjects = (state, action) => {
         },
         { },
     );
-    settings.projects = projectSettings;
-
-    // NOTE: userId not sent when setting projects for usergroup
-    if (isTruthy(userId)) {
-        const userSettings = {
-            [userId]: { $auto: {
-                projects: { $autoArray: {
-                    $set: projects.map(project => project.id),
-                } },
-            } },
-        };
-        settings.users = userSettings;
-    }
+    const settings = { projects: projectSettings };
     return update(state, settings);
 };
 

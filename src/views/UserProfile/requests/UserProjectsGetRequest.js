@@ -20,7 +20,7 @@ export default class UserProjectsGetRequest extends Request {
 
     handleSuccess = (response) => {
         this.parent.setUserProfile({
-            userId: this.parent.userId,
+            userId: this.extraParent.userId,
             projects: response.results,
             // extra: response.extra,
         });
@@ -45,10 +45,12 @@ export default class UserProjectsGetRequest extends Request {
         });
     }
 
-    init = () => {
+    init = (userId) => {
+        this.extraParent = { userId };
         this.createDefault({
-            url: createUrlForProjectsOfUser(this.parent.userId),
+            url: createUrlForProjectsOfUser(this.extraParent.userId),
             params: createParamsForGet(),
         });
+        return this;
     }
 }

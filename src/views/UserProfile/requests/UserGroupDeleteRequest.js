@@ -17,10 +17,7 @@ export default class UserGroupDeleteRequest extends Request {
     }
 
     handleSuccess = () => {
-        const {
-            usergroupId,
-            userId,
-        } = this.parent;
+        const { usergroupId, userId } = this.extraParent;
         this.parent.unsetUserGroup({
             usergroupId,
             userId,
@@ -51,11 +48,12 @@ export default class UserGroupDeleteRequest extends Request {
         });
     }
 
-    init = () => {
-        const { usergroupId } = this.parent;
+    init = (usergroupId, userId) => {
+        this.extraParent = { usergroupId, userId };
         this.createDefault({
             url: createUrlForUserGroup(usergroupId),
             params: createParamsForUserGroupsDelete(),
         });
+        return this;
     }
 }

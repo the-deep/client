@@ -20,7 +20,7 @@ export default class ProjectDeleteRequest extends Request {
         const {
             userId,
             projectId,
-        } = this.parent;
+        } = this.extraParent;
         this.parent.unsetProject({
             userId,
             projectId,
@@ -51,12 +51,13 @@ export default class ProjectDeleteRequest extends Request {
         });
     }
 
-    init = () => {
-        const { projectId } = this.parent;
+    init = (projectId, userId) => {
+        this.extraParent = { projectId, userId };
 
         this.createDefault({
             url: createUrlForProject(projectId),
             params: createParamsForProjectDelete(),
         });
+        return this;
     }
 }

@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import Message from '#rscv/Message';
 import BoundError from '#rscg/BoundError';
 import AppError from '#components/AppError';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -47,7 +48,6 @@ const propTypes = {
 
 const defaultProps = {};
 
-
 const mapStateToProps = (state, props) => ({
     userInformation: userInformationSelector(state, props),
     activeUser: activeUserSelector(state),
@@ -74,77 +74,43 @@ export default class UserProfile extends React.PureComponent {
             userProjectsPending: true,
             userUsergroupsPending: true,
         };
+
+        this.userInformationRequest = new UserInformationGetRequest({
+            unsetUserProfile: this.props.unsetUserProfile,
+            setUserProfile: this.props.setUserProfile,
+            setState: v => this.setState(v),
+        });
+        this.userProjectsRequest = new UserProjectsGetRequest({
+            setUserProfile: this.props.setUserProfile,
+            setState: v => this.setState(v),
+        });
+        this.userGroupsRequest = new UserUsergroupsGetRequest({
+            setUserProfile: this.props.setUserProfile,
+            setState: v => this.setState(v),
+        });
     }
 
     componentDidMount() {
         const { userId } = this.props;
-        this.startRequestForUserInformation(userId);
-        this.startRequestForUserProjects(userId);
-        this.startRequestForUserGroups(userId);
+        this.userInformationRequest.init(userId).start();
+        this.userProjectsRequest.init(userId).start();
+        this.userGroupsRequest.init(userId).start();
     }
 
     componentWillReceiveProps(nextProps) {
         const { userId: newUserId } = nextProps;
         const { userId: oldUserId } = this.props;
         if (newUserId !== oldUserId) {
-            this.startRequestForUserInformation(newUserId);
-            this.startRequestForUserProjects(newUserId);
-            this.startRequestForUserGroups(newUserId);
+            this.userInformationRequest.init(newUserId).start();
+            this.userProjectsRequest.init(newUserId).start();
+            this.userGroupsRequest.init(newUserId).start();
         }
     }
 
     componentWillUnmount() {
-        if (this.userInformationRequest) {
-            this.userInformationRequest.stop();
-        }
-
-        if (this.userProjectRequest) {
-            this.userProjectRequest.stop();
-        }
-
-        if (this.userGroupsRequest) {
-            this.userGroupsRequest.stop();
-        }
-    }
-
-    startRequestForUserInformation = (userId) => {
-        if (this.userInformationRequest) {
-            this.userRequest.stop();
-        }
-        this.userInformationRequest = new UserInformationGetRequest({
-            userId,
-            unsetUserProfile: this.props.unsetUserProfile,
-            setUserProfile: this.props.setUserProfile,
-            setState: v => this.setState(v),
-        });
-        this.userInformationRequest.init();
-        this.userInformationRequest.start();
-    }
-
-    startRequestForUserProjects = (userId) => {
-        if (this.userProjectsRequest) {
-            this.userProjectsRequest.stop();
-        }
-        this.userProjectsRequest = new UserProjectsGetRequest({
-            userId,
-            setUserProfile: this.props.setUserProfile,
-            setState: v => this.setState(v),
-        });
-        this.userProjectsRequest.init();
-        this.userProjectsRequest.start();
-    }
-
-    startRequestForUserGroups = (userId) => {
-        if (this.userGroupsRequest) {
-            this.userGroupsRequest.stop();
-        }
-        this.userGroupsRequest = new UserUsergroupsGetRequest({
-            userId,
-            setUserProfile: this.props.setUserProfile,
-            setState: v => this.setState(v),
-        });
-        this.userGroupsRequest.init();
-        this.userGroupsRequest.start();
+        this.userInformationRequest.stop();
+        this.userProjectsRequest.stop();
+        this.userGroupsRequest.stop();
     }
 
     // BUTTONS
@@ -186,11 +152,9 @@ export default class UserProfile extends React.PureComponent {
 
         if (!userInformation.id) {
             return (
-                <div className={styles.userProfile}>
-                    <div className={styles.userDetailAlt}>
-                        {_ts('userProfile', 'userNotFound')}
-                    </div>
-                </div>
+                <Message>
+                    {_ts('userProfile', 'userNotFound')}
+                </Message>
             );
         }
 

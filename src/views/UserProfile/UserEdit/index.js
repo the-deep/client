@@ -22,7 +22,7 @@ import { NormalListSelection } from '#rsci/ListSelection';
 import Complement from '#rscg/Complement';
 
 import {
-    setUserInformationAction,
+    setUserProfileAction,
     availableLanguagesSelector,
 } from '#redux';
 import _ts from '#ts';
@@ -30,6 +30,7 @@ import notify from '#notify';
 
 import UserPatchRequest from '../requests/UserPatchRequest';
 import UserImageUploadRequest from '../requests/UserImageUploadRequest';
+
 import styles from './styles.scss';
 
 const ListSelection = Complement(NormalListSelection);
@@ -53,7 +54,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    setUserInformation: params => dispatch(setUserInformationAction(params)),
+    setUserInformation: params => dispatch(setUserProfileAction(params)),
 });
 
 
@@ -89,34 +90,25 @@ export default class UserEdit extends React.PureComponent {
 
         this.state = {
             faramErrors: {},
-            faramValues: this.props.userInformation,
+            faramValues: props.userInformation,
             pending: false,
             pristine: false,
             showGalleryImage: true,
         };
+
+        this.userPatchRequest = new UserPatchRequest({
+            setState: v => this.setState(v),
+            setUserInformation: this.props.setUserInformation,
+            handleModalClose: this.props.handleModalClose,
+            previousUserData: this.props.userInformation,
+        });
     }
 
     componentWillUnmount() {
-        if (this.userPatchRequest) {
-            this.userPatchRequest.stop();
-        }
+        this.userPatchRequest.stop();
         if (this.userImageUploader) {
             this.userImageUploader.stop();
         }
-    }
-
-    startRequestForUserPatch = (userId, values) => {
-        if (this.userPatchRequest) {
-            this.userPatchRequest.stop();
-        }
-        const userPatchRequest = new UserPatchRequest({
-            setUserInformation: this.props.setUserInformation,
-            handleModalClose: this.props.handleModalClose,
-            setState: v => this.setState(v),
-            previousUserData: this.props.userInformation,
-        });
-        this.userPatchRequest = userPatchRequest.create(userId, values);
-        this.userPatchRequest.start();
     }
 
     startRequestForUserImageUpload = (file) => {
@@ -145,7 +137,7 @@ export default class UserEdit extends React.PureComponent {
 
     handleFaramValidationSuccess = (values) => {
         const { userId } = this.props;
-        this.startRequestForUserPatch(userId, values);
+        this.userPatchRequest.init(userId, values).start();
     };
 
     // BUTTONS

@@ -1,4 +1,5 @@
 import update from '#rsu/immutable-update';
+import { UP__SET_USER_PROFILE } from '../siloDomainData/users';
 
 // TYPE
 
@@ -22,12 +23,15 @@ export const setUsersInformationAction = ({ users }) => ({
 
 const setUserInformation = (state, action) => {
     const { userId, information } = action;
+    if (!(userId && information)) {
+        return state;
+    }
     const settings = {
         users: {
             [userId]: { $auto: {
-                information: { $auto: {
-                    $merge: information,
-                } },
+                $mergeIfDefined: {
+                    information,
+                },
             } },
         },
     };
@@ -58,5 +62,7 @@ const setUsersInformation = (state, action) => {
 const reducers = {
     [SET_USER_INFORMATION]: setUserInformation,
     [SET_USERS_INFORMATION]: setUsersInformation,
+
+    [UP__SET_USER_PROFILE]: setUserInformation,
 };
 export default reducers;

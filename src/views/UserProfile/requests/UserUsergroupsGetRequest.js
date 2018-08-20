@@ -20,14 +20,14 @@ export default class UserUsergroupsPending extends Request {
 
     handleSuccess = (response) => {
         this.parent.setUserProfile({
-            userId: this.parent.userId,
+            userId: this.extraParent.userId,
             usergroups: response.results,
         });
     }
 
     handleFailure = (response) => {
         if (response.errorCode === 404) {
-            this.parent.unsetUser({ userId: this.parent.userId });
+            this.parent.unsetUser({ userId: this.extraParent.userId });
         } else {
             console.info('FAILURE:', response);
         }
@@ -42,10 +42,12 @@ export default class UserUsergroupsPending extends Request {
         });
     }
 
-    init = () => {
+    init = (userId) => {
+        this.extraParent = { userId };
         this.createDefault({
-            url: createUrlForUserGroupsOfUser(this.parent.userId),
+            url: createUrlForUserGroupsOfUser(this.extraParent.userId),
             params: createParamsForGet(),
         });
+        return this;
     }
 }

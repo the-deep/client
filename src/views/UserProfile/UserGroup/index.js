@@ -170,27 +170,14 @@ export default class UserGroup extends React.PureComponent {
                 },
             },
         ];
+        this.userGroupDeleteRequest = new UserGroupDeleteRequest({
+            setState: v => this.setState(v),
+            unsetUserGroup: this.props.unsetUserGroup,
+        });
     }
 
     componentWillUnmount() {
-        if (this.userGroupDeleteRequest) {
-            this.userGroupDeleteRequest.stop();
-        }
-    }
-
-    startRequestForUserGroupDelete = (usergroupId, userId) => {
-        if (this.userGroupDeleteRequest) {
-            this.userGroupDeleteRequest.stop();
-        }
-        // TODO: change UserGroup to UserUsergroup, thanks
-        this.userGroupDeleteRequest = new UserGroupDeleteRequest({
-            usergroupId,
-            userId,
-            unsetUserGroup: this.props.unsetUserGroup,
-            setState: v => this.setState(v),
-        });
-        this.userGroupDeleteRequest.init();
-        this.userGroupDeleteRequest.start();
+        this.userGroupDeleteRequest.stop();
     }
 
     // BUTTONS
@@ -205,10 +192,10 @@ export default class UserGroup extends React.PureComponent {
 
     // Delete Close
     handleDeleteUserGroupClick = (userGroup) => {
-        const { userId } = this.props.activeUser;
-
         const { id } = userGroup;
-        this.startRequestForUserGroupDelete(id, userId);
+        const { userId } = this.props.activeUser;
+        // TODO: change UserGroup to UserUsergroup, thanks
+        this.userGroupDeleteRequest.init(id, userId).start();
     }
 
     render() {

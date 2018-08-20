@@ -35,6 +35,7 @@ import {
     pathNames,
 } from '#constants';
 import _ts from '#ts';
+
 import UserProjectAdd from '#components/UserProjectAdd';
 
 import ProjectDeleteRequest from '../requests/ProjectDeleteRequest';
@@ -189,26 +190,16 @@ export default class UserProject extends React.PureComponent {
             },
         ];
         this.projectTableKeyExtractor = rowData => rowData.id;
-    }
 
-    componentWillUnmount() {
-        if (this.projectDeleteRequest) {
-            this.projectDeleteRequest.stop();
-        }
-    }
-
-    startRequestForProjectDelete = (projectId, userId) => {
-        if (this.projectDeleteRequest) {
-            this.projectDeleteRequest.stop();
-        }
+        // Request
         this.projectDeleteRequest = new ProjectDeleteRequest({
-            projectId,
-            userId,
             unsetProject: this.props.unsetProject,
             setState: v => this.setState(v),
         });
-        this.projectDeleteRequest.init();
-        this.projectDeleteRequest.start();
+    }
+
+    componentWillUnmount() {
+        this.projectDeleteRequest.stop();
     }
 
     // BUTTONS
@@ -224,8 +215,10 @@ export default class UserProject extends React.PureComponent {
     // Table Actions
 
     handleDeleteProjectClick = (selectedProject) => {
-        const { userId } = this.props.activeUser;
-        this.startRequestForProjectDelete(selectedProject.id, userId);
+        this.projectDeleteRequest.init(
+            selectedProject.id,
+            this.props.activeUser.userId,
+        ).start();
     }
 
     render() {
