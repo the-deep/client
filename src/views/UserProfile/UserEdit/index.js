@@ -9,7 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { InternalGallery } from '#components/DeepGallery';
 
-import Faram, { requiredCondition } from '#rsci/Faram';
+import Faram, { requiredCondition } from '#rscg/Faram';
 import SelectInput from '#rsci/SelectInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ImageInput from '#rsci/FileInput/ImageInput';

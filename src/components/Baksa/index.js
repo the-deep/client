@@ -4,7 +4,7 @@ import React from 'react';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DropZone from '#rsci/DropZone';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramInputElement } from '#rscg/FaramElements';
 import FileInput from '#rsci/FileInput';
 import NumberInput from '#rsci/NumberInput';
 import TextInput from '#rsci/TextInput';
@@ -54,7 +54,7 @@ const defaultProps = {
     showHintAndError: true,
 };
 
-@FaramElement('input')
+@FaramInputElement
 export default class Baksa extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

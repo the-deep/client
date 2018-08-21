@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import DangerButton from '#rsca/Button/DangerButton';
-import FaramGroup from '#rsci/Faram/FaramGroup';
+import FaramGroup from '#rscg/FaramGroup';
 import TextInput from '#rsci/TextInput';
 import ColorInput from '#rsci/ColorInput';
 

@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom';
 
 import Faram, {
     requiredCondition,
-} from '#rsci/Faram';
+} from '#rscg/Faram';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
 import SelectInput from '#rsci/SelectInput';

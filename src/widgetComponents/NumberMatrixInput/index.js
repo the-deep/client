@@ -3,7 +3,7 @@ import React from 'react';
 
 import update from '#rsu/immutable-update';
 import List from '#rscv/List';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramInputElement } from '#rscg/FaramElements';
 
 import Row from './Row';
 
@@ -36,7 +36,9 @@ const defaultProps = {
     onChange: undefined,
 };
 
-class NumberMatrixInput extends React.PureComponent {
+
+@FaramInputElement
+export default class NumberMatrixInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -108,5 +110,3 @@ class NumberMatrixInput extends React.PureComponent {
         );
     }
 }
-
-export default FaramElement('input')(NumberMatrixInput);

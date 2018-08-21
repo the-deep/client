@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramList from '#rsci/Faram/FaramList';
+import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
 import DangerButton from '#rsca/Button/DangerButton';
 import Modal from '#rscv/Modal';
@@ -11,7 +11,7 @@ import ModalHeader from '#rscv/Modal/Header';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
-import Faram, { requiredCondition } from '#rsci/Faram';
+import Faram, { requiredCondition } from '#rscg/Faram';
 import { findDuplicates, randomString } from '#rsu/common';
 
 import { iconNames } from '#constants';

@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Faram from '#rsci/Faram';
-import FaramGroup from '#rsci/Faram/FaramGroup';
+import Faram from '#rscg/Faram';
+import FaramGroup from '#rscg/FaramGroup';
 import GridViewLayout from '#rscv/GridViewLayout';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 

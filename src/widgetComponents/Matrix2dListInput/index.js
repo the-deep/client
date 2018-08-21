@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramInputElement } from '#rscg/FaramElements';
 import ListView from '#rscv/List/ListView';
 import update from '#rsu/immutable-update';
 
@@ -65,7 +65,8 @@ const getSelectedSectors = (dimensions = [], sectors = [], value) => {
     return selectedSectors;
 };
 
-class Matrix2dListInput extends React.PureComponent {
+@FaramInputElement
+export default class Matrix2dListInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -123,5 +124,3 @@ class Matrix2dListInput extends React.PureComponent {
         );
     }
 }
-
-export default FaramElement('input')(Matrix2dListInput);

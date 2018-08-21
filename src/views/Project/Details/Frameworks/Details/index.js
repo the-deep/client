@@ -11,7 +11,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import Confirm from '#rscv/Modal/Confirm';
 import Faram, {
     requiredCondition,
-} from '#rsci/Faram';
+} from '#rscg/Faram';
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';

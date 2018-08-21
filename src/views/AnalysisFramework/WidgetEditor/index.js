@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
-import Faram from '#rsci/Faram';
-import FaramGroup from '#rsci/Faram/FaramGroup';
+import Faram from '#rscg/Faram';
+import FaramGroup from '#rscg/FaramGroup';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import GridLayoutEditor from '#rscv/GridLayoutEditor';
 

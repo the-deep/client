@@ -3,7 +3,7 @@ import React from 'react';
 
 import WidgetEmptyComponent from '#components/WidgetEmptyComponent';
 import ListView from '#rscv/List/ListView';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramOutputElement } from '#rscg/FaramElements';
 
 import Row from './Row';
 import styles from './styles.scss';
@@ -50,7 +50,8 @@ const getRowsData = (options, value) => {
     return dataRows;
 };
 
-class NumberMatrixListView extends React.PureComponent {
+@FaramOutputElement
+export default class NumberMatrixListView extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -101,5 +102,3 @@ class NumberMatrixListView extends React.PureComponent {
         );
     }
 }
-
-export default FaramElement('output')(NumberMatrixListView);

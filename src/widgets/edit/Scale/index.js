@@ -3,8 +3,8 @@ import React from 'react';
 
 import Faram, {
     requiredCondition,
-} from '#rsci/Faram';
-import FaramList from '#rsci/Faram/FaramList';
+} from '#rscg/Faram';
+import FaramList from '#rscg/FaramList';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import SortableListView from '#rscv/SortableListView';
 import DangerButton from '#rsca/Button/DangerButton';

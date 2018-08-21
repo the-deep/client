@@ -3,7 +3,7 @@ import {
     getElementAround,
     getNumbers,
 } from '#rsu/common';
-import { analyzeErrors } from '#rsci/Faram/validator';
+import { analyzeErrors } from '#rscg/Faram/validator';
 import update from '#rsu/immutable-update';
 
 import {

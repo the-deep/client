@@ -10,7 +10,7 @@ import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ModalFooter from '#rscv/Modal/Footer';
-import Faram, { requiredCondition } from '#rsci/Faram';
+import Faram, { requiredCondition } from '#rscg/Faram';
 import { isTruthy } from '#rsu/common';
 
 import _ts from '#ts';

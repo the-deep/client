@@ -10,7 +10,7 @@ import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 
-import Faram, { requiredCondition } from '#rsci/Faram';
+import Faram, { requiredCondition } from '#rscg/Faram';
 
 import OrganigramCreatorInput from '#components/OrganigramCreatorInput';
 import _ts from '#ts';

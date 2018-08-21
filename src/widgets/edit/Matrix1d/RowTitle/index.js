@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import DangerButton from '#rsca/Button/DangerButton';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramErrorIndicatorElement } from '#rscg/FaramElements';
 
 import { iconNames } from '#constants';
 
@@ -23,7 +23,7 @@ const defaultProps = {
     hasError: false,
 };
 
-@FaramElement('errorIndicator')
+@FaramErrorIndicatorElement
 export default class RowTitle extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

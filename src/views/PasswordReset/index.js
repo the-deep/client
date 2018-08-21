@@ -15,7 +15,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Faram, {
     requiredCondition,
     emailCondition,
-} from '#rsci/Faram';
+} from '#rscg/Faram';
 
 import _ts from '#ts';
 import {

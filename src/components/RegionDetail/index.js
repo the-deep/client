@@ -4,7 +4,7 @@ import React from 'react';
 import TextInput from '#rsci/TextInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import FaramGroup from '#rsci/Faram/FaramGroup';
+import FaramGroup from '#rscg/FaramGroup';
 
 import _ts from '#ts';
 

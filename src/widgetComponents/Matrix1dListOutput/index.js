@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import ListView from '#rscv/List/ListView';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramOutputElement } from '#rscg/FaramElements';
 
 import Row from './Row';
 import styles from './styles.scss';
@@ -69,7 +69,8 @@ const getSelected = (rows, value) => {
     return selectedRows;
 };
 
-class Matrix1dListOutput extends React.PureComponent {
+@FaramOutputElement
+export default class Matrix1dListOutput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -119,5 +120,3 @@ class Matrix1dListOutput extends React.PureComponent {
         );
     }
 }
-
-export default FaramElement('output')(Matrix1dListOutput);

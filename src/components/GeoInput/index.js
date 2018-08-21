@@ -5,7 +5,7 @@ import AccentButton from '#rsca/Button/AccentButton';
 import SelectInputWithList from '#rsci/SelectInputWithList';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import Label from '#rsci/Label';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramInputElement } from '#rscg/FaramElements';
 import { iconNames } from '#constants';
 
 import GeoModal from '../GeoModal';
@@ -37,7 +37,7 @@ const defaultProps = {
     modalLeftComponent: undefined,
 };
 
-@FaramElement('input')
+@FaramInputElement
 export default class GeoInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

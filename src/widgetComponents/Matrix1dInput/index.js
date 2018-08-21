@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import ListView from '#rscv/List/ListView';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramInputElement } from '#rscg/FaramElements';
 import update from '#rsu/immutable-update';
 
 import Row from './Row';
@@ -24,7 +24,8 @@ const defaultProps = {
     onChange: () => {},
 };
 
-class Matrix1dInput extends React.PureComponent {
+@FaramInputElement
+export default class Matrix1dInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -89,5 +90,3 @@ class Matrix1dInput extends React.PureComponent {
         );
     }
 }
-
-export default FaramElement('input')(Matrix1dInput);

@@ -7,7 +7,7 @@ import { reverseRoute } from '#rsu/common';
 import update from '#rsu/immutable-update';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
-import { detachedFaram } from '#rsci/Faram';
+import { detachedFaram } from '#rscg/Faram';
 import FixedTabs from '#rscv/FixedTabs';
 import Message from '#rscv/Message';
 import LoadingAnimation from '#rscv/LoadingAnimation';

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import FaramGroup from '#rsci/Faram/FaramGroup';
+import FaramGroup from '#rscg/FaramGroup';
 import TextInput from '#rsci/TextInput';
 
 import { iconNames } from '#constants';

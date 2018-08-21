@@ -9,7 +9,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Faram, {
     emailCondition,
     requiredCondition,
-} from '#rsci/Faram';
+} from '#rscg/Faram';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ReCaptcha from '#rsci/ReCaptcha';
 import TextInput from '#rsci/TextInput';

@@ -5,7 +5,7 @@ import { randomString } from '#rsu/common';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramInputElement } from '#rscg/FaramElements';
 import TextInput from '#rsci/TextInput';
 import List from '#rscv/List';
 import update from '#rsu/immutable-update';
@@ -35,7 +35,7 @@ const defaultProps = {
     level: 1,
 };
 
-@FaramElement('input')
+@FaramInputElement
 export default class OrganigramCreatorInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

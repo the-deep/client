@@ -10,7 +10,7 @@ import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import HintAndError from '#rsci/HintAndError';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramInputElement } from '#rscg/FaramElements';
 
 import { iconNames } from '#constants';
 import styles from './styles.scss';
@@ -52,7 +52,7 @@ const defaultProps = {
     showHintAndError: true,
 };
 
-@FaramElement('input')
+@FaramInputElement
 export default class OrganigramSelectInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
