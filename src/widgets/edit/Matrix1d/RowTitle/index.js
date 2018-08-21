@@ -35,6 +35,7 @@ export default class RowTitle extends React.PureComponent {
     }
 
     faramInfoForDelete = {
+        action: 'remove',
         callback: (i, newValue) => {
             const newIndex = Math.min(i, newValue.length - 1);
             const newKey = newIndex !== -1
@@ -75,7 +76,6 @@ export default class RowTitle extends React.PureComponent {
                     title={_ts('widgets.editor.matrix1d', 'deleteButtonTooltip')}
                     iconName={iconNames.delete}
                     transparent
-                    faramAction="remove"
                     faramInfo={this.faramInfoForDelete}
                     faramElementIndex={index}
                 />

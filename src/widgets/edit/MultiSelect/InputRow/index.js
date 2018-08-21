@@ -14,9 +14,12 @@ const propTypes = {
     index: PropTypes.number.isRequired,
 };
 
-// eslint-disable-next-line react/prefer-stateless-function
 export default class InputRow extends React.PureComponent {
     static propTypes = propTypes;
+
+    static faramInfoForDelete = {
+        action: 'remove',
+    }
 
     render() {
         const { index } = this.props;
@@ -35,7 +38,7 @@ export default class InputRow extends React.PureComponent {
                 <DangerButton
                     className={styles.deleteButton}
                     iconName={iconNames.delete}
-                    faramAction="remove"
+                    faramInfo={InputRow.faramInfoForDelete}
                     title={_ts('widgets.editor.multiselect', 'removeOptionButtonTitle')}
                     faramElementIndex={index}
                     transparent

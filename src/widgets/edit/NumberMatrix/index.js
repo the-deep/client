@@ -95,6 +95,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
     };
 
     static faramInfoForAdd = {
+        action: 'add',
         newElement: () => ({
             key: randomString(16).toLowerCase(),
             title: '',
@@ -214,7 +215,6 @@ export default class NumberMatrixOverview extends React.PureComponent {
                 >
                     <FaramList faramElementName={selectedTab}>
                         <PrimaryButton
-                            faramAction="add"
                             faramInfo={NumberMatrixOverview.faramInfoForAdd}
                             iconName={iconNames.add}
                             title={buttonLabel}

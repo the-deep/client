@@ -39,6 +39,7 @@ export default class SectorTitle extends React.PureComponent {
     }
 
     faramInfoForDelete = {
+        action: 'remove',
         callback: (i, newValue) => {
             const {
                 keyExtractor,
@@ -83,7 +84,6 @@ export default class SectorTitle extends React.PureComponent {
                     title={_ts('widgets.editor.matrix2d', 'deleteSectorTooltip')}
                     iconName={iconNames.delete}
                     transparent
-                    faramAction="remove"
                     faramInfo={this.faramInfoForDelete}
                     faramElementIndex={index}
                 />

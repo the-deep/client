@@ -32,6 +32,7 @@ export default class DimensionContent extends React.PureComponent {
     static keyExtractor = elem => elem.id;
 
     static faramInfoForAdd = {
+        action: 'add',
         newElement: () => ({
             id: randomString(16).toLowerCase(),
             title: '',
@@ -84,7 +85,6 @@ export default class DimensionContent extends React.PureComponent {
                                 {_ts('widgets.editor.matrix2d', 'subdimensionsHeaderTitle')}
                             </h4>
                             <PrimaryButton
-                                faramAction="add"
                                 faramInfo={DimensionContent.faramInfoForAdd}
                                 iconName={iconNames.add}
                                 transparent

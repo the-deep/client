@@ -139,6 +139,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
     };
 
     faramInfoForAdd = {
+        action: 'add',
         newElement: () => ({
             key: randomString(16).toLowerCase(),
             color: undefined,
@@ -225,7 +226,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                         {_ts('widgets.editor.matrix1d', 'rowTitle')}
                                     </h4>
                                     <PrimaryButton
-                                        faramAction="add"
                                         faramInfo={this.faramInfoForAdd}
                                         iconName={iconNames.add}
                                         transparent

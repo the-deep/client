@@ -66,10 +66,12 @@ export default class WidgetList extends React.PureComponent {
     })
 
     render() {
+        const { widgets } = this.props;
+
         return (
             <ListView
                 className={`${styles.widgetList} ${this.props.className}`}
-                data={this.props.widgets}
+                data={widgets}
                 renderer={WidgetPreview}
                 keyExtractor={WidgetList.keyExtractor}
                 rendererParams={this.rendererParams}

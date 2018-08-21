@@ -10,6 +10,10 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
+const faramInfoForDelete = {
+    action: 'remove',
+};
+
 const SubsectorRow = ({ index }) => (
     <div className={styles.subsectorRow}>
         <FaramGroup faramElementName={String(index)}>
@@ -28,7 +32,7 @@ const SubsectorRow = ({ index }) => (
         <DangerButton
             className={styles.deleteButton}
             iconName={iconNames.delete}
-            faramAction="remove"
+            faramInfo={faramInfoForDelete}
             title={_ts('widgets.editor.matrix2d', 'removeSubsectorButtonTooltip')}
             faramElementIndex={index}
             transparent

@@ -40,6 +40,7 @@ export default class DimensionTitle extends React.PureComponent {
     }
 
     faramInfoForDelete = {
+        action: 'remove',
         callback: (i, newValue) => {
             const {
                 keyExtractor,
@@ -84,7 +85,6 @@ export default class DimensionTitle extends React.PureComponent {
                     title={_ts('widgets.editor.matrix2d', 'removeDimensionTooltip')}
                     iconName={iconNames.delete}
                     transparent
-                    faramAction="remove"
                     faramInfo={this.faramInfoForDelete}
                     faramElementIndex={index}
                 />

@@ -66,6 +66,7 @@ export default class MultiSelectEditWidget extends React.PureComponent {
     };
 
     static faramInfoForAdd = {
+        action: 'add',
         newElement: () => ({
             key: randomString(16).toLowerCase(),
             label: '',
@@ -163,7 +164,6 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                                     </h4>
                                     <PrimaryButton
                                         iconName={iconNames.add}
-                                        faramAction="add"
                                         faramInfo={MultiSelectEditWidget.faramInfoForAdd}
                                         transparent
                                     >

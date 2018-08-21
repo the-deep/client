@@ -77,6 +77,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
     };
 
     static faramInfoForAdd = {
+        action: 'add',
         newElement: () => ({
             key: randomString(16).toLowerCase(),
             title: '',
@@ -174,7 +175,6 @@ export default class ScaleFrameworkList extends React.PureComponent {
                                         {_ts('widgets.editor.scale', 'addOptionHeadingLabel')}
                                     </h4>
                                     <PrimaryButton
-                                        faramAction="add"
                                         faramInfo={ScaleFrameworkList.faramInfoForAdd}
                                         iconName={iconNames.add}
                                         transparent

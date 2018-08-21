@@ -67,6 +67,14 @@ export default class Methodology extends React.PureComponent {
     static orgLabelSelector = organ => organ.title;
     static orgChildSelector = organ => organ.children;
 
+    static faramInfoForDelete = {
+        action: 'remove',
+    }
+
+    static faramInfoForAdd = {
+        action: 'add',
+    }
+
     renderAttributeHeader = (k, key) => {
         const { aryTemplateMethodology: attributesTemplate } = this.props;
         const methodologyGroup = attributesTemplate[key];
@@ -116,7 +124,7 @@ export default class Methodology extends React.PureComponent {
                 <div className={styles.actionButtons}>
                     <DangerButton
                         iconName={iconNames.delete}
-                        faramAction="remove"
+                        faramInfo={Methodology.faramInfoForDelete}
                         faramElementIndex={index}
                     />
                 </div>
@@ -174,7 +182,7 @@ export default class Methodology extends React.PureComponent {
                                         />
                                         <div className={styles.actionButtons}>
                                             <PrimaryButton
-                                                faramAction="add"
+                                                faramInfo={Methodology.faramInfoForAdd}
                                                 iconName={iconNames.add}
                                             />
                                         </div>

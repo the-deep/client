@@ -300,6 +300,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
     };
 
     faramInfoForAdd = {
+        action: 'add',
         newElement: () => ({
             id: randomString(16).toLowerCase(),
             color: undefined,
@@ -315,6 +316,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
     }
 
     faramInfoForAddSector = {
+        action: 'add',
         newElement: () => ({
             id: randomString(16).toLowerCase(),
             title: '',
@@ -362,7 +364,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                 >
                     <FaramList faramElementName={selectedTab}>
                         <PrimaryButton
-                            faramAction="add"
                             faramInfo={faramInfo}
                             iconName={iconNames.add}
                             title={buttonLabel}

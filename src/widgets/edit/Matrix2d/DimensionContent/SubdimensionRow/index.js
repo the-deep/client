@@ -10,6 +10,10 @@ import { iconNames } from '#constants';
 
 import styles from './styles.scss';
 
+const faramInfoForDelete = {
+    action: 'remove',
+};
+
 const SubdimensionRow = ({ index }) => (
     <div className={styles.subdimensionRow}>
         <FaramGroup faramElementName={String(index)}>
@@ -28,7 +32,7 @@ const SubdimensionRow = ({ index }) => (
         <DangerButton
             className={styles.deleteButton}
             iconName={iconNames.delete}
-            faramAction="remove"
+            faramInfo={faramInfoForDelete}
             title={_ts('widgets.editor.matrix2d', 'removeSubdimensionButtonTooltip')}
             faramElementIndex={index}
             transparent
