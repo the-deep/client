@@ -79,6 +79,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                 widgets,
             },
             pristine: false,
+            disableEverything: false,
         };
 
         this.widgets = widgetList.filter(
@@ -108,6 +109,10 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         } = values;
 
         this.props.onSave({ widgets }, title);
+    }
+
+    handleModalVisibilityChange = (disableEverything) => {
+        this.setState({ disableEverything });
     }
 
     widgetListRendererParams = (key, widget) => {
@@ -140,6 +145,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
     itemRendererParams = (key, elem, i) => ({
         index: i,
         item: elem,
+        onModalVisibilityChange: this.handleModalVisibilityChange,
     });
 
     render() {
@@ -147,6 +153,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
             faramValues,
             faramErrors,
             pristine,
+            disableEverything,
         } = this.state;
 
         const {
@@ -154,13 +161,20 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
             title,
         } = this.props;
 
-        const titleInputLabel = _ts('widgets.editor.number', 'titleLabel');
-        const titleInputPlaceholder = _ts('widgets.editor.number', 'widgetTitlePlaceholder');
-        const cancelButtonLabel = _ts('widgets.editor.number', 'cancelButtonLabel');
-        const saveButtonLabel = _ts('widgets.editor.number', 'saveButtonLabel');
+        const titleInputLabel = _ts('widgets.editor.conditional', 'titleLabel');
+        const titleInputPlaceholder = _ts('widgets.editor.conditional', 'widgetTitlePlaceholder');
+        const cancelButtonLabel = _ts('widgets.editor.conditional', 'cancelButtonLabel');
+        const saveButtonLabel = _ts('widgets.editor.conditional', 'saveButtonLabel');
+        const widgetsTitle = _ts('widgets.editor.conditional', 'widgetsTitle');
+        const addedWidgetsTitle = _ts('widgets.editor.conditional', 'addedWidgetsTitle');
+
+        const modalClassNames = [styles.modal];
+        if (disableEverything) {
+            modalClassNames.push(styles.disabledEverything);
+        }
 
         return (
-            <Modal>
+            <Modal className={modalClassNames.join(' ')}>
                 <Faram
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
@@ -184,8 +198,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                             <FaramList faramElementName="widgets">
                                 <div className={styles.leftContainer}>
                                     <header className={styles.header}>
-                                        {/* FIXME: Use strings */}
-                                        widgets
+                                        {widgetsTitle}
                                     </header>
                                     <ListView
                                         className={styles.widgetList}
@@ -197,8 +210,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                                 </div>
                                 <div className={styles.rightContainer}>
                                     <header className={styles.header}>
-                                        {/* FIXME: Use strings */}
-                                        Added Widgets
+                                        {addedWidgetsTitle}
                                     </header>
                                     <SortableListView
                                         className={styles.editList}

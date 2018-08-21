@@ -13,48 +13,55 @@
     }
 }
 
-.modal-body {
-    padding: 0;
+.modal {
+    .modal-body {
+        padding: 0;
 
-    .text-input {
-        border-bottom: $width-separator-thin solid $color-separator;
-        padding: $spacing-small;
-    }
-
-    .widgets-container {
-        display: flex;
-
-        .header {
-            flex-shrink: 0;
+        .text-input {
             border-bottom: $width-separator-thin solid $color-separator;
             padding: $spacing-small;
-            text-transform: uppercase;
-            font-size: $font-size-large;
-            font-weight: $font-weight-light;
         }
 
-        .left-container {
+        .widgets-container {
             display: flex;
-            flex-basis: 30%;
-            flex-direction: column;
-            border-right: $spacing-extra-small solid $color-separator;
 
-            .widget-list {
-                overflow-y: auto;
+            .header {
+                flex-shrink: 0;
+                border-bottom: $width-separator-thin solid $color-separator;
+                padding: $spacing-small;
+                text-transform: uppercase;
+                font-size: $font-size-large;
+                font-weight: $font-weight-light;
             }
-        }
 
-        .right-container {
-            flex-direction: column;
-            flex-grow: 1;
+            .left-container {
+                display: flex;
+                flex-basis: 30%;
+                flex-direction: column;
+                border-right: $spacing-extra-small solid $color-separator;
 
-            .edit-list {
-                overflow-y: auto;
+                .widget-list {
+                    overflow-y: auto;
+                }
+            }
 
-                .sortable-unit {
-                    border-top-color: transparent;
+            .right-container {
+                flex-direction: column;
+                flex-grow: 1;
+
+                .edit-list {
+                    overflow-y: auto;
+
+                    .sortable-unit {
+                        border-top-color: transparent;
+                    }
                 }
             }
         }
+    }
+
+    &.disabled-everything {
+        filter: brightness(50%);
+        pointer-events: none;
     }
 }

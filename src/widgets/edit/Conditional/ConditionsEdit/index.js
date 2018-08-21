@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Faram, { requiredCondition } from '#rsci/Faram';
+import Faram from '#rsci/Faram';
 import FaramList from '#rsci/Faram/FaramList';
 import SortableListView from '#rscv/SortableListView';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -11,7 +11,6 @@ import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import ListView from '#rscv/List/ListView';
 import ModalBody from '#rscv/Modal/Body';
-import NonFieldErrors from '#rsci/NonFieldErrors';
 import ModalFooter from '#rscv/Modal/Footer';
 import { randomString } from '#rsu/common';
 
@@ -21,6 +20,8 @@ import {
     afViewAnalysisFrameworkSelector,
 } from '#redux';
 import { conditions as conditionsAttributes } from '#widgets/conditionalWidget';
+
+import _ts from '#ts';
 
 import WidgetPreview from '../WidgetPreview';
 import InputRow from './InputRow';
@@ -35,7 +36,6 @@ const propTypes = {
     onClose: PropTypes.func.isRequired,
 
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    analysisFrameworkId: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
@@ -142,7 +142,6 @@ export default class ConditionsEditModal extends React.PureComponent {
     render() {
         const {
             analysisFramework: { widgets = [] },
-            analysisFrameworkId,
             onClose,
         } = this.props;
         const {
@@ -151,11 +150,15 @@ export default class ConditionsEditModal extends React.PureComponent {
             pristine,
         } = this.state;
 
+        const widgetsTitle = _ts('widgets.editor.conditional', 'widgetsTitle');
+        const conditionsTitle = _ts('widgets.editor.conditional', 'conditionsTitle');
+        const editConditionsTitle = _ts('widgets.editor.conditional', 'conditionsTitle');
+        const cancelLabel = _ts('widgets.editor.conditional', 'cancelButtonLabel');
+        const saveLabel = _ts('widgets.editor.conditional', 'saveButtonLabel');
+
         return (
             <Modal className={styles.conditionEditModal} >
-                {/* FIXME: Use strings */}
                 <Faram
-                    className={styles.form}
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
                     onValidationSuccess={this.handleFaramValidationSuccess}
@@ -163,15 +166,12 @@ export default class ConditionsEditModal extends React.PureComponent {
                     value={faramValues}
                     error={faramErrors}
                 >
-                    <ModalHeader
-                        title="Conditions Edit"
-                    />
+                    <ModalHeader title={editConditionsTitle} />
                     <ModalBody className={styles.modalBody} >
                         <FaramList faramElementName="list">
                             <div className={styles.leftContainer}>
                                 <header className={styles.header}>
-                                    {/* FIXME: Use strings */}
-                                    Widgets
+                                    {widgetsTitle}
                                 </header>
                                 <ListView
                                     className={styles.widgetList}
@@ -183,8 +183,7 @@ export default class ConditionsEditModal extends React.PureComponent {
                             </div>
                             <div className={styles.rightContainer}>
                                 <header className={styles.header}>
-                                    {/* FIXME: Use strings */}
-                                    Conditions
+                                    {conditionsTitle}
                                 </header>
                                 <SortableListView
                                     className={styles.editList}
@@ -200,13 +199,13 @@ export default class ConditionsEditModal extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerButton onClick={onClose}>
-                            Cancel
+                            {cancelLabel}
                         </DangerButton>
                         <PrimaryButton
                             type="submit"
                             disabled={!pristine}
                         >
-                            Save
+                            {saveLabel}
                         </PrimaryButton>
                     </ModalFooter>
                 </Faram>

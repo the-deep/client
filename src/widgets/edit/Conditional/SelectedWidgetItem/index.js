@@ -18,15 +18,22 @@ import styles from './styles.scss';
 const propTypes = {
     index: PropTypes.number.isRequired,
     item: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    onModalVisibilityChange: PropTypes.func,
+};
+
+const defaultProps = {
+    onModalVisibilityChange: () => {},
 };
 
 export default class SelectedWidgetItem extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     render() {
         const {
             index,
             item,
+            onModalVisibilityChange,
         } = this.props;
 
         const {
@@ -46,9 +53,13 @@ export default class SelectedWidgetItem extends React.PureComponent {
                 <FaramGroup faramElementName={String(index)}>
                     <FrameworkEditButton
                         faramElementName="widget"
+                        onModalVisibilityChange={onModalVisibilityChange}
                         renderer={Widget}
                     />
-                    <ConditionsEditButton faramElementName="conditions" />
+                    <ConditionsEditButton
+                        faramElementName="conditions"
+                        onModalVisibilityChange={onModalVisibilityChange}
+                    />
                 </FaramGroup>
                 <DangerButton
                     className={styles.deleteButton}

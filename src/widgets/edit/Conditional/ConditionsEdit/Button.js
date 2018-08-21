@@ -3,9 +3,10 @@ import React, { Fragment } from 'react';
 
 import FaramElement from '#rsci/Faram/FaramElement';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import { iconNames } from '#constants';
-import ConditionsEditModal from '.';
 
+import _ts from '#ts';
+
+import ConditionsEditModal from '.';
 
 const propTypes = {
     value: PropTypes.shape({
@@ -13,12 +14,17 @@ const propTypes = {
         operator: PropTypes.oneOf(['AND', 'OR']),
     }).isRequired,
     onChange: PropTypes.func.isRequired,
+    onModalVisibilityChange: PropTypes.func,
 };
 
+const defaultProps = {
+    onModalVisibilityChange: () => {},
+};
 
 @FaramElement('input')
 export default class ConditionsEditButton extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
@@ -30,13 +36,13 @@ export default class ConditionsEditButton extends React.PureComponent {
     handleClick = () => {
         this.setState({
             showModal: true,
-        });
+        }, () => this.props.onModalVisibilityChange(true));
     }
 
     handleCancel = () => {
         this.setState({
             showModal: false,
-        });
+        }, () => this.props.onModalVisibilityChange(false));
     }
 
     handleSave = (value) => {
@@ -51,13 +57,17 @@ export default class ConditionsEditButton extends React.PureComponent {
         const { showModal } = this.state;
         const { value } = this.props;
 
+        const editConditionsLabel = _ts('widgets.editor.conditional', 'editConditionsLabel');
+
         return (
             <Fragment>
                 <PrimaryButton
+                    title={editConditionsLabel}
+                    tabIndex="-1"
+                    transparent
                     onClick={this.handleClick}
-                    iconName={iconNames.edit}
                 >
-                    Conditions
+                    {editConditionsLabel}
                 </PrimaryButton>
                 {
                     showModal && (

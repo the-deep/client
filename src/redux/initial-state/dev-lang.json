@@ -781,7 +781,11 @@
         "-59897985": "Failed to retrieve user's User Groups.",
         "-86548021": "Conditional",
         "-99261665": "Condition type",
-        "-5699457": "Remove condition"
+        "-5699457": "Remove condition",
+        "-30672948": "Added widgets",
+        "-8124990": "Conditions",
+        "-41289196": "Edit conditions",
+        "-66364403": "Widgets"
     },
     "links": {
         "browserExtension": {
@@ -2176,7 +2180,15 @@
         "widgets.editor.conditional": {
             "conditionTypeLabel": -99261665,
             "conditionTypePlaceholder": -99261665,
-            "removeOptionButtonTitle": -5699457
+            "removeOptionButtonTitle": -5699457,
+            "addedWidgetsTitle": -30672948,
+            "cancelButtonLabel": 61,
+            "saveButtonLabel": 25,
+            "conditionsTitle": -8124990,
+            "editConditionsLabel": -41289196,
+            "titleLabel": 13,
+            "widgetTitlePlaceholder": 13,
+            "widgetsTitle": -66364403
         }
     }
 }
