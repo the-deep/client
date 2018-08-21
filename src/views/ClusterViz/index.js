@@ -123,7 +123,7 @@ export default class ClusterViz extends PureComponent {
                 {
                     id: key,
                     clusters: data,
-                    documents: documents[key],
+                    documents: documents[key] || [],
                 }
             ),
         );

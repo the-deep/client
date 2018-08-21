@@ -464,8 +464,6 @@
         "998": "Save region",
         "999": "There was an error while fetching existing users",
         "1000": "to",
-        "1001": "Max value",
-        "1002": "Min value",
         "1003": "Failed to save region detail.",
         "1004": "Please wait while we process the text for this lead. It can take some time depending on the size of the lead.",
         "1006": "No of entries",
@@ -724,7 +722,6 @@
         "-85998802": "Edit entry",
         "-22730741": "Delete entry",
         "-39451070": "Excerpt {index}",
-        "-81323787": "Add new",
         "-90258572": "Select an entry",
         "-67300185": "******",
         "-91895140": "Add widget",
@@ -758,7 +755,11 @@
         "-84222321": "All project members",
         "-78389530": "Dropdown List (Single Selection)",
         "-35292998": "I want to receive approval notifications by email for when other users request to join my projects",
-        "-63441199": "I want to receive news and updates from DEEP"
+        "-63441199": "I want to receive news and updates from DEEP",
+        "-43376795": "Failed to fetch cluster data.",
+        "-92290017": "Failed to create clusters.",
+        "-72859218": "Project options",
+        "-45091634": "Failed to get project options."
     },
     "links": {
         "browserExtension": {
@@ -1644,7 +1645,9 @@
             "regionSaveSuccess": 997,
             "regionSave": 998,
             "regionUpdate": 996,
-            "regionUpdateOverridden": 982
+            "regionUpdateOverridden": 982,
+            "projectOptions": -72859218,
+            "projectOptionsGetFailure": -45091634
         },
         "connector": {
             "noConnectorsLabel": 1115,
@@ -1934,7 +1937,9 @@
             "leadsCount": 3012,
             "keywordsTitle": 3011,
             "leadsTitle": 641,
-            "leadsTableActions": 16
+            "leadsTableActions": 16,
+            "clusterDataFailure": -43376795,
+            "createClusterFailure": -92290017
         },
         "visualization": {
             "visualizationTitle": 4000,
@@ -1982,9 +1987,7 @@
         },
         "editEntry.overview": {
             "unnamedExcerptTitle": -39451070,
-            "selectEntryPlaceholder": -90258572,
-            "addExcerptButtonTitle": -81323787,
-            "removeExcerptButtonTitle": 419
+            "selectEntryPlaceholder": -90258572
         },
         "editEntry.overview.leftpane": {
             "simplifiedTabLabel": 424,
