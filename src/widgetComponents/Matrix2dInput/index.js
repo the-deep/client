@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import List from '#rscv/List';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramInputElement } from '#rscg/FaramElements';
 import update from '#rsu/immutable-update';
 
 import DimensionRow from './DimensionRow';
@@ -35,7 +35,8 @@ const defaultProps = {
     onChange: () => {},
 };
 
-class Matrix2dInput extends React.PureComponent {
+@FaramInputElement
+export default class Matrix2dInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -140,5 +141,3 @@ class Matrix2dInput extends React.PureComponent {
         );
     }
 }
-
-export default FaramElement('input')(Matrix2dInput);

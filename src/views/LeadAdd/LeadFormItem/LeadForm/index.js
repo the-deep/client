@@ -8,7 +8,7 @@ import Faram, {
     requiredCondition,
     urlCondition,
     dateCondition,
-} from '#rsci/Faram';
+} from '#rscg/Faram';
 import HiddenInput from '#rsci/HiddenInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import SelectInput from '#rsci/SelectInput';

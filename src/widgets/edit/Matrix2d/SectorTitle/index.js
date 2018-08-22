@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import DangerButton from '#rsca/Button/DangerButton';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramErrorIndicatorElement } from '#rscg/FaramElements';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';
@@ -23,7 +23,7 @@ const defaultProps = {
     hasError: false,
 };
 
-@FaramElement('errorIndicator')
+@FaramErrorIndicatorElement
 export default class SectorTitle extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -39,6 +39,7 @@ export default class SectorTitle extends React.PureComponent {
     }
 
     faramInfoForDelete = {
+        action: 'remove',
         callback: (i, newValue) => {
             const {
                 keyExtractor,
@@ -83,7 +84,6 @@ export default class SectorTitle extends React.PureComponent {
                     title={_ts('widgets.editor.matrix2d', 'deleteSectorTooltip')}
                     iconName={iconNames.delete}
                     transparent
-                    faramAction="remove"
                     faramInfo={this.faramInfoForDelete}
                     faramElementIndex={index}
                 />

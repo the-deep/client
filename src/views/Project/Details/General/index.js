@@ -23,7 +23,7 @@ import TextArea from '#rsci/TextArea';
 import Faram, {
     requiredCondition,
     dateCondition,
-} from '#rsci/Faram';
+} from '#rscg/Faram';
 
 import {
     alterResponseErrorToFaramError,

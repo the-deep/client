@@ -10,7 +10,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import ListInput from '#rsci/ListInput';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramInputElement } from '#rscg/FaramElements';
 
 import RegionMap from '../RegionMap';
 import styles from './styles.scss';
@@ -38,7 +38,7 @@ const defaultProps = {
     modalLeftComponent: undefined,
 };
 
-@FaramElement('input')
+@FaramInputElement
 export default class GeoModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

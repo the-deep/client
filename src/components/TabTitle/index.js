@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramElement from '#rsci/Faram/FaramElement.js';
+import { FaramErrorIndicatorElement } from '#rscg/FaramElements';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -18,7 +18,8 @@ const defaultProps = {
     title: '',
 };
 
-class Tab extends React.PureComponent {
+@FaramErrorIndicatorElement
+export default class Tab extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -49,5 +50,3 @@ class Tab extends React.PureComponent {
         );
     }
 }
-
-export default FaramElement('errorIndicator')(Tab);

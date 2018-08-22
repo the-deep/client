@@ -10,7 +10,7 @@ import { FgRestBuilder } from '#rsu/rest';
 import {
     requiredCondition,
     urlCondition,
-} from '#rsci/Faram';
+} from '#rscg/Faram';
 import ResizableV from '#rscv/Resizable/ResizableV';
 import update from '#rsu/immutable-update';
 

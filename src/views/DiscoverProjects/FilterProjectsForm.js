@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
-import Faram from '#rsci/Faram';
+import Faram from '#rscg/Faram';
 import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import SearchInput from '#rsci/SearchInput';

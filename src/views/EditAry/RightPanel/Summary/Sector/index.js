@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import FaramGroup from '#rsci/Faram/FaramGroup';
+import FaramGroup from '#rscg/FaramGroup';
 import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
 import HiearchicalSelectInput from '#rsci/HierarchicalSelectInput';

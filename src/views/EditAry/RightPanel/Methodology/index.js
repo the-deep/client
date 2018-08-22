@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import FaramGroup from '#rsci/Faram/FaramGroup';
-import FaramList from '#rsci/Faram/FaramList';
+import FaramGroup from '#rscg/FaramGroup';
+import FaramList from '#rscg/FaramList';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
 import ListView from '#rscv/List/ListView';
@@ -67,6 +67,14 @@ export default class Methodology extends React.PureComponent {
     static orgLabelSelector = organ => organ.title;
     static orgChildSelector = organ => organ.children;
 
+    static faramInfoForDelete = {
+        action: 'remove',
+    }
+
+    static faramInfoForAdd = {
+        action: 'add',
+    }
+
     renderAttributeHeader = (k, key) => {
         const { aryTemplateMethodology: attributesTemplate } = this.props;
         const methodologyGroup = attributesTemplate[key];
@@ -116,7 +124,7 @@ export default class Methodology extends React.PureComponent {
                 <div className={styles.actionButtons}>
                     <DangerButton
                         iconName={iconNames.delete}
-                        faramAction="remove"
+                        faramInfo={Methodology.faramInfoForDelete}
                         faramElementIndex={index}
                     />
                 </div>
@@ -174,7 +182,7 @@ export default class Methodology extends React.PureComponent {
                                         />
                                         <div className={styles.actionButtons}>
                                             <PrimaryButton
-                                                faramAction="add"
+                                                faramInfo={Methodology.faramInfoForAdd}
                                                 iconName={iconNames.add}
                                             />
                                         </div>

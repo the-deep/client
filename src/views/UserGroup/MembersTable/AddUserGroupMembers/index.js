@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { compareString } from '#rsu/common';
-import Faram, { requiredCondition } from '#rsci/Faram';
+import Faram, { requiredCondition } from '#rscg/Faram';
 import update from '#rsu/immutable-update';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import DangerButton from '#rsca/Button/DangerButton';

@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { FgRestBuilder } from '#rsu/rest';
 import Faram, {
     requiredCondition,
-} from '#rsci/Faram';
+} from '#rscg/Faram';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';

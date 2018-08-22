@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { isObjectEmpty } from '#rsu/common';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
-import Faram from '#rsci/Faram';
+import Faram from '#rscg/Faram';
 import SearchInput from '#rsci/SearchInput';
 import DateFilter from '#rsci/DateFilter';
 import MultiSelectInput from '#rsci/MultiSelectInput';

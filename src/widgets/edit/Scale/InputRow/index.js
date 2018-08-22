@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import DangerButton from '#rsca/Button/DangerButton';
-import FaramGroup from '#rsci/Faram/FaramGroup';
+import FaramGroup from '#rscg/FaramGroup';
 import TextInput from '#rsci/TextInput';
 import ColorInput from '#rsci/ColorInput';
 
@@ -15,9 +15,12 @@ const propTypes = {
     index: PropTypes.number.isRequired,
 };
 
-// eslint-disable-next-line react/prefer-stateless-function
 export default class InputRow extends React.PureComponent {
     static propTypes = propTypes;
+
+    static faramInfoForDelete = {
+        action: 'remove',
+    }
 
     render() {
         const { index } = this.props;
@@ -42,7 +45,7 @@ export default class InputRow extends React.PureComponent {
                 <DangerButton
                     className={styles.deleteButton}
                     iconName={iconNames.delete}
-                    faramAction="remove"
+                    faramInfo={InputRow.faramInfoForDelete}
                     title={_ts('widgets.editor.scale', 'removeButtonTitle')}
                     faramElementIndex={index}
                     transparent

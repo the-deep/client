@@ -2,13 +2,17 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import DangerButton from '#rsca/Button/DangerButton';
-import FaramGroup from '#rsci/Faram/FaramGroup';
+import FaramGroup from '#rscg/FaramGroup';
 import TextInput from '#rsci/TextInput';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';
 
 import styles from './styles.scss';
+
+const faramInfoForDelete = {
+    action: 'remove',
+};
 
 const InputRow = ({ index }) => (
     <div className={styles.inputRow}>
@@ -24,7 +28,7 @@ const InputRow = ({ index }) => (
         <DangerButton
             className={styles.deleteButton}
             iconName={iconNames.delete}
-            faramAction="remove"
+            faramInfo={faramInfoForDelete}
             title={_ts('widgets.editor.matrix1d', 'removeCellButtonTitle')}
             faramElementIndex={index}
             transparent

@@ -3,7 +3,7 @@ import {
     timeCondition,
     greaterThanOrEqualToCondition,
     lessThanOrEqualToCondition,
-} from '#rsci/Faram';
+} from '#rscg/Faram';
 
 import {
     isTruthy,

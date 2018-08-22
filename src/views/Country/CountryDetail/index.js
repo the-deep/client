@@ -3,7 +3,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 
-import Faram, { requiredCondition } from '#rsci/Faram';
+import Faram, { requiredCondition } from '#rscg/Faram';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import FixedTabs from '#rscv/FixedTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';

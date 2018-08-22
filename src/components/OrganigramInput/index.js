@@ -11,7 +11,7 @@ import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import ModalFooter from '#rscv/Modal/Footer';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramInputElement } from '#rscg/FaramElements';
 import Label from '#rsci/Label';
 
 import _ts from '#ts';
@@ -105,7 +105,7 @@ const handleDataForOrganigram = (props) => {
 };
 
 
-@FaramElement('input')
+@FaramInputElement
 export default class OrganigramInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

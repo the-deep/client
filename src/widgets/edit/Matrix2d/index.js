@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramList from '#rsci/Faram/FaramList';
+import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
 import DangerButton from '#rsca/Button/DangerButton';
 import Modal from '#rscv/Modal';
@@ -11,7 +11,7 @@ import ModalHeader from '#rscv/Modal/Header';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
-import Faram, { requiredCondition } from '#rsci/Faram';
+import Faram, { requiredCondition } from '#rscg/Faram';
 import FixedTabs from '#rscv/FixedTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { findDuplicates, randomString } from '#rsu/common';
@@ -300,6 +300,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
     };
 
     faramInfoForAdd = {
+        action: 'add',
         newElement: () => ({
             id: randomString(16).toLowerCase(),
             color: undefined,
@@ -315,6 +316,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
     }
 
     faramInfoForAddSector = {
+        action: 'add',
         newElement: () => ({
             id: randomString(16).toLowerCase(),
             title: '',
@@ -362,7 +364,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                 >
                     <FaramList faramElementName={selectedTab}>
                         <PrimaryButton
-                            faramAction="add"
                             faramInfo={faramInfo}
                             iconName={iconNames.add}
                             title={buttonLabel}

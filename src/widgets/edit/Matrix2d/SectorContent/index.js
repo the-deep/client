@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramGroup from '#rsci/Faram/FaramGroup';
-import FaramList from '#rsci/Faram/FaramList';
+import FaramGroup from '#rscg/FaramGroup';
+import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -31,6 +31,7 @@ export default class SectorContent extends React.PureComponent {
     static keyExtractor = elem => elem.id;
 
     static faramInfoForAdd = {
+        action: 'add',
         newElement: () => ({
             id: randomString(16).toLowerCase(),
             title: '',
@@ -78,7 +79,6 @@ export default class SectorContent extends React.PureComponent {
                                 {_ts('widgets.editor.matrix2d', 'subsectorsHeaderTitle')}
                             </h4>
                             <PrimaryButton
-                                faramAction="add"
                                 faramInfo={SectorContent.faramInfoForAdd}
                                 iconName={iconNames.add}
                                 transparent

@@ -16,7 +16,7 @@ import Faram, {
     greaterThanOrEqualToCondition,
     requiredCondition,
     integerCondition,
-} from '#rsci/Faram';
+} from '#rscg/Faram';
 
 import { InternalGallery } from '#components/DeepGallery';
 import {

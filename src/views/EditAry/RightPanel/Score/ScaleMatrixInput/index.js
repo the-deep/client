@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import List from '#rscv/List';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramInputElement } from '#rscg/FaramElements';
 import { getColorOnBgColor } from '#rsu/common.js';
 
 import styles from './styles.scss';
@@ -33,7 +33,7 @@ const defaultProps = {
     onChange: () => {},
 };
 
-@FaramElement('input')
+@FaramInputElement
 export default class ScaleMatrixInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

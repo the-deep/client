@@ -10,7 +10,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Faram, {
     requiredCondition,
-} from '#rsci/Faram';
+} from '#rscg/Faram';
 
 import {
     alterResponseErrorToFaramError,

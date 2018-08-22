@@ -8,7 +8,7 @@ import SuccessButton from '#rsca/Button/SuccessButton';
 import Faram, {
     requiredCondition,
     dateCondition,
-} from '#rsci/Faram';
+} from '#rscg/Faram';
 import { getObjectChildren } from '#rsu/common';
 import { median, sum, bucket } from '#rsu/stats';
 

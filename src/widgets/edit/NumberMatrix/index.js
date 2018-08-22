@@ -10,8 +10,8 @@ import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import SortableListView from '#rscv/SortableListView';
-import Faram, { requiredCondition } from '#rsci/Faram';
-import FaramList from '#rsci/Faram/FaramList';
+import Faram, { requiredCondition } from '#rscg/Faram';
+import FaramList from '#rscg/FaramList';
 import FixedTabs from '#rscv/FixedTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { findDuplicates, randomString } from '#rsu/common';
@@ -95,6 +95,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
     };
 
     static faramInfoForAdd = {
+        action: 'add',
         newElement: () => ({
             key: randomString(16).toLowerCase(),
             title: '',
@@ -214,7 +215,6 @@ export default class NumberMatrixOverview extends React.PureComponent {
                 >
                     <FaramList faramElementName={selectedTab}>
                         <PrimaryButton
-                            faramAction="add"
                             faramInfo={NumberMatrixOverview.faramInfoForAdd}
                             iconName={iconNames.add}
                             title={buttonLabel}

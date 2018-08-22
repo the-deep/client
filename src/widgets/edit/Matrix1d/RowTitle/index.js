@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import DangerButton from '#rsca/Button/DangerButton';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramErrorIndicatorElement } from '#rscg/FaramElements';
 
 import { iconNames } from '#constants';
 
@@ -23,7 +23,7 @@ const defaultProps = {
     hasError: false,
 };
 
-@FaramElement('errorIndicator')
+@FaramErrorIndicatorElement
 export default class RowTitle extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -35,6 +35,7 @@ export default class RowTitle extends React.PureComponent {
     }
 
     faramInfoForDelete = {
+        action: 'remove',
         callback: (i, newValue) => {
             const newIndex = Math.min(i, newValue.length - 1);
             const newKey = newIndex !== -1
@@ -75,7 +76,6 @@ export default class RowTitle extends React.PureComponent {
                     title={_ts('widgets.editor.matrix1d', 'deleteButtonTooltip')}
                     iconName={iconNames.delete}
                     transparent
-                    faramAction="remove"
                     faramInfo={this.faramInfoForDelete}
                     faramElementIndex={index}
                 />

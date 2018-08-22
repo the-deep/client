@@ -8,7 +8,7 @@ import ModalFooter from '#rscv/Modal/Footer';
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
-import Faram, { requiredCondition } from '#rsci/Faram';
+import Faram, { requiredCondition } from '#rscg/Faram';
 
 import _ts from '#ts';
 

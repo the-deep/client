@@ -11,7 +11,7 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import TabularSelectInput from '#rsci/TabularSelectInput';
 import Faram, {
     requiredCondition,
-} from '#rsci/Faram';
+} from '#rscg/Faram';
 
 import {
     alterResponseErrorToFaramError,

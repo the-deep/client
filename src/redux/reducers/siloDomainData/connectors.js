@@ -1,6 +1,6 @@
 import {
     analyzeErrors,
-} from '#rsci/Faram/validator';
+} from '#rscg/Faram/validator';
 import update from '#rsu/immutable-update';
 
 export const SET_USER_CONNECTORS = 'siloDomainData/SET_USER_CONNECTORS';

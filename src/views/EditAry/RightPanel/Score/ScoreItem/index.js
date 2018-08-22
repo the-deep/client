@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Numeral from '#rscv/Numeral';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramOutputElement } from '#rscg/FaramElements';
 import { getColorOnBgColor } from '#rsu/common';
 
 import styles from './styles.scss';
@@ -63,7 +63,8 @@ const parseColor = (color) => {
     return {};
 };
 
-class ScoreItem extends React.PureComponent {
+@FaramOutputElement
+export default class ScoreItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -122,5 +123,3 @@ class ScoreItem extends React.PureComponent {
         );
     }
 }
-
-export default FaramElement('output')(ScoreItem);

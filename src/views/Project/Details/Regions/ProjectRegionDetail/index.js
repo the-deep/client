@@ -8,7 +8,7 @@ import SuccessButton from '#rsca/Button/SuccessButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import Faram, {
     requiredCondition,
-} from '#rsci/Faram';
+} from '#rscg/Faram';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Confirm from '#rscv/Modal/Confirm';
 
