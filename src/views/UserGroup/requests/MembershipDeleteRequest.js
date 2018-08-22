@@ -1,38 +1,39 @@
-import { FgRestBuilder } from '#rsu/rest';
 import {
     createUrlForUserMembership,
     createParamsForUserMembershipDelete,
 } from '#rest';
+import Request from '#utils/Request';
 import notify from '#notify';
 import _ts from '#ts';
 
 /*
- * props: setState, unSetMembership
+ * parent: setState, unSetMembership
 */
 
-export default class MembershipDeleteRequest {
-    constructor(props) {
-        this.props = props;
+export default class MembershipDeleteRequest extends Request {
+    handlePreLoad = () => {
+        this.parent.setState({ actionPending: true });
     }
 
-    success = (membershipId, userGroupId) => () => {
-        try {
-            this.props.unSetMembership({
-                membershipId,
-                userGroupId,
-            });
-            notify.send({
-                title: _ts('userGroup', 'userMembershipDelete'),
-                type: notify.type.SUCCESS,
-                message: _ts('userGroup', 'userMembershipDeleteSuccess'),
-                duration: notify.duration.MEDIUM,
-            });
-        } catch (er) {
-            console.error(er);
-        }
+    handlePostLoad = () => {
+        this.parent.setState({ actionPending: false });
     }
 
-    failure = () => {
+    handleSuccess = () => {
+        const { membershipId, usergroupId } = this.extraParent;
+        this.parent.unSetMembership({
+            membershipId,
+            usergroupId,
+        });
+        notify.send({
+            title: _ts('userGroup', 'userMembershipDelete'),
+            type: notify.type.SUCCESS,
+            message: _ts('userGroup', 'userMembershipDeleteSuccess'),
+            duration: notify.duration.MEDIUM,
+        });
+    }
+
+    handleFailure = () => {
         notify.send({
             title: _ts('userGroup', 'userMembershipDelete'),
             type: notify.type.ERROR,
@@ -41,7 +42,7 @@ export default class MembershipDeleteRequest {
         });
     }
 
-    fatal = () => {
+    handleFatal = () => {
         notify.send({
             title: _ts('userGroup', 'userMembershipDelete'),
             type: notify.type.ERROR,
@@ -50,16 +51,12 @@ export default class MembershipDeleteRequest {
         });
     }
 
-    create = (membershipId, userGroupId) => {
-        const membershipDeleteRequest = new FgRestBuilder()
-            .url(createUrlForUserMembership(membershipId))
-            .params(createParamsForUserMembershipDelete)
-            .preLoad(() => { this.props.setState({ actionPending: true }); })
-            .postLoad(() => { this.props.setState({ actionPending: false }); })
-            .success(this.success(membershipId, userGroupId))
-            .failure(this.failure)
-            .fatal(this.fatal)
-            .build();
-        return membershipDeleteRequest;
+    init = (membershipId, usergroupId) => {
+        this.extraParent = { membershipId, usergroupId };
+        this.createDefault({
+            url: createUrlForUserMembership(membershipId),
+            params: createParamsForUserMembershipDelete,
+        });
+        return this;
     }
 }

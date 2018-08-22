@@ -20,6 +20,7 @@ import leadGroupsReducers from './leadGroups';
 import clusterVizReducers from './clusterViz';
 import projectsReducers from './projects';
 import usersReducers from './users';
+import usergroupssReducers from './usergroups';
 
 import initialSiloDomainData from '../../initial-state/siloDomainData';
 
@@ -44,6 +45,7 @@ const reducers = {
     ...clusterVizReducers,
     ...projectsReducers,
     ...usersReducers,
+    ...usergroupssReducers,
 };
 
 const reducer = createReducerWithMap(reducers, initialSiloDomainData);

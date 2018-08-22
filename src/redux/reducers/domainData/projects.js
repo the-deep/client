@@ -1,9 +1,7 @@
 import update from '#rsu/immutable-update';
 import { compareString } from '#rsu/common';
-import {
-    UP__SET_USER_PROJECT,
-    UP__UNSET_USER_PROJECT,
-} from '#redux/reducers/siloDomainData/users';
+import { UP__UNSET_USER_PROJECT } from '#redux/reducers/siloDomainData/users';
+import { UG__UNSET_USERGROUP_PROJECT } from '#redux/reducers/siloDomainData/usergroups';
 
 // TYPE
 
@@ -24,9 +22,10 @@ export const setUserProjectsAction = ({ userId, projects, extra }) => ({
     extra, // used to set active project if there is none
 });
 
-export const setProjectAction = ({ project }) => ({
+export const setProjectAction = ({ project, userId }) => ({
     type: SET_USER_PROJECT,
     project,
+    userId,
 });
 
 export const setProjectOptionsAction = ({ projectId, options }) => ({
@@ -182,15 +181,19 @@ const setUserProjects = (state, action) => {
     const { projects } = action;
 
     const projectSettings = projects.reduce(
-        (acc, project) => {
-            acc[project.id] = { $auto: {
-                $merge: project,
-            } };
-            return acc;
-        },
+        (acc, project) => (
+            {
+                ...acc,
+                [project.id]: project,
+            }
+        ),
         { },
     );
-    const settings = { projects: projectSettings };
+    const settings = {
+        projects: {
+            $set: projectSettings,
+        },
+    };
     return update(state, settings);
 };
 
@@ -204,7 +207,7 @@ const reducers = {
     [UNSET_USER_PROJECT_MEMBERSHIP]: unsetUserProjectMembership,
 
     // From Silo
-    [UP__SET_USER_PROJECT]: setUserProject,
     [UP__UNSET_USER_PROJECT]: unsetUserProject,
+    [UG__UNSET_USERGROUP_PROJECT]: unsetUserProject,
 };
 export default reducers;

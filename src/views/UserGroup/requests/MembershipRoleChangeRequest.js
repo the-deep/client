@@ -1,40 +1,41 @@
-import { FgRestBuilder } from '#rsu/rest';
 import {
     createUrlForUserMembership,
     createParamsForUserMembershipRoleChange,
 } from '#rest';
-import schema from '#schema';
+import Request from '#utils/Request';
 import notify from '#notify';
 import _ts from '#ts';
 
 /*
- * props: setState, setUserMembership
+ * parent: setState, setMembership
 */
 
-export default class MembershipRoleChangeRequest {
-    constructor(props) {
-        this.props = props;
+export default class MembershipRoleChangeRequest extends Request {
+    schemaName = 'userGroupMembership'
+
+    handlePreLoad = () => {
+        this.parent.setState({ actionPending: true });
     }
 
-    success = userGroupId => (response) => {
-        try {
-            schema.validate({ results: [response] }, 'userMembershipCreateResponse');
-            this.props.setUserMembership({
-                userMembership: response,
-                userGroupId,
-            });
-            notify.send({
-                title: _ts('userGroup', 'userMembershipRole'),
-                type: notify.type.SUCCESS,
-                message: _ts('userGroup', 'userMembershipRoleSuccess'),
-                duration: notify.duration.MEDIUM,
-            });
-        } catch (er) {
-            console.error(er);
-        }
+    handlePostLoad = () => {
+        this.parent.setState({ actionPending: false });
     }
 
-    failure = () => {
+    handleSuccess = (response) => {
+        const { usergroupId } = this.extraParent;
+        this.parent.setMembership({
+            usergroupId,
+            membership: response,
+        });
+        notify.send({
+            title: _ts('userGroup', 'userMembershipRole'),
+            type: notify.type.SUCCESS,
+            message: _ts('userGroup', 'userMembershipRoleSuccess'),
+            duration: notify.duration.MEDIUM,
+        });
+    }
+
+    handleFailure = () => {
         notify.send({
             title: _ts('userGroup', 'userMembershipRole'),
             type: notify.type.ERROR,
@@ -43,7 +44,7 @@ export default class MembershipRoleChangeRequest {
         });
     }
 
-    fatal = () => {
+    handleFatal = () => {
         notify.send({
             title: _ts('userGroup', 'userMembershipRole'),
             type: notify.type.ERROR,
@@ -52,16 +53,12 @@ export default class MembershipRoleChangeRequest {
         });
     }
 
-    create = ({ membershipId, newRole }, userGroupId) => {
-        const membershipRoleChangeRequest = new FgRestBuilder()
-            .url(createUrlForUserMembership(membershipId))
-            .params(() => createParamsForUserMembershipRoleChange({ newRole }))
-            .preLoad(() => { this.props.setState({ actionPending: true }); })
-            .postLoad(() => { this.props.setState({ actionPending: false }); })
-            .success(this.success(userGroupId))
-            .failure(this.failure)
-            .fatal(this.fatal)
-            .build();
-        return membershipRoleChangeRequest;
+    init = (usergroupId, membershipId, values) => {
+        this.extraParent = { usergroupId };
+        this.createDefault({
+            url: createUrlForUserMembership(membershipId),
+            params: createParamsForUserMembershipRoleChange(values),
+        });
+        return this;
     }
 }

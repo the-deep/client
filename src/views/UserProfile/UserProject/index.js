@@ -269,7 +269,10 @@ export default class UserProject extends React.PureComponent {
                             }
                         />
                         <ModalBody>
-                            <UserProjectAdd handleModalClose={this.handleAddProjectClose} />
+                            <UserProjectAdd
+                                handleModalClose={this.handleAddProjectClose}
+                                userId={isCurrentUser ? userId : undefined}
+                            />
                         </ModalBody>
                     </Modal>
                 }

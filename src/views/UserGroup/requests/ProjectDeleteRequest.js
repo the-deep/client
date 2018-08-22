@@ -7,15 +7,23 @@ import Request from '#utils/Request';
 import _ts from '#ts';
 
 /*
- * props: setState, unSetProject
+ * parent: setState, unSetProject
 */
 
 export default class ProjectDeleteRequest extends Request {
-    handleSucces = () => {
-        const { id, userId } = this.extraParent;
+    handlePreLoad = () => {
+        this.parent.setState({ deletePending: true });
+    }
+
+    handlePostLoad = () => {
+        this.parent.setState({ deletePending: false });
+    }
+
+    handleSuccess = () => {
+        const { projectId, usergroupId } = this.extraParent;
         this.parent.unSetProject({
-            projectId: id,
-            userId,
+            projectId,
+            usergroupId,
         });
         notify.send({
             title: _ts('userGroup', 'userProjectDelete'),
@@ -44,10 +52,10 @@ export default class ProjectDeleteRequest extends Request {
         });
     }
 
-    init = (id, userId) => {
-        this.extraParent = { id, userId };
+    init = (projectId, usergroupId) => {
+        this.extraParent = { projectId, usergroupId };
         this.createDefault({
-            url: createUrlForProject(id),
+            url: createUrlForProject(projectId),
             params: createParamsForProjectDelete(),
         });
         return this;

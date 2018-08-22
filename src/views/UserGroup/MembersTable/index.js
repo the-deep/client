@@ -17,9 +17,11 @@ import Table from '#rscv/Table';
 import SearchInput from '#rsci/SearchInput';
 
 import {
-    unSetMembershipAction,
+    usergroupMembershipsSelector,
+    unsetUsergroupViewMembershipAction,
+
     setUsersMembershipAction,
-    setUserMembershipAction,
+    setUsergroupViewMembershipAction,
 } from '#redux';
 import _ts from '#ts';
 import { iconNames } from '#constants';
@@ -34,10 +36,10 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    memberData: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    membershipList: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     unSetMembership: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
     userGroupId: PropTypes.number.isRequired,
-    setUserMembership: PropTypes.func.isRequired,
+    setMembership: PropTypes.func.isRequired,
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     isCurrentUserAdmin: PropTypes.bool.isRequired,
 };
@@ -46,13 +48,17 @@ const defaultProps = {
     className: '',
 };
 
-const mapDispatchToProps = dispatch => ({
-    unSetMembership: params => dispatch(unSetMembershipAction(params)),
-    setUsersMembership: params => dispatch(setUsersMembershipAction(params)),
-    setUserMembership: params => dispatch(setUserMembershipAction(params)),
+const mapStateToProps = (state, props) => ({
+    membershipList: usergroupMembershipsSelector(state, props),
 });
 
-@connect(undefined, mapDispatchToProps)
+const mapDispatchToProps = dispatch => ({
+    unSetMembership: params => dispatch(unsetUsergroupViewMembershipAction(params)),
+    setUsersMembership: params => dispatch(setUsersMembershipAction(params)),
+    setMembership: params => dispatch(setUsergroupViewMembershipAction(params)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class MembersTable extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -63,9 +69,8 @@ export default class MembersTable extends React.PureComponent {
         this.state = {
             showAddMemberModal: false,
             searchMemberInputValue: '',
-            memberData: this.props.memberData,
+            membershipList: this.props.membershipList,
             actionPending: false,
-            selectedMember: {},
         };
 
         this.memberHeaders = [
@@ -113,51 +118,27 @@ export default class MembersTable extends React.PureComponent {
                 ),
             },
         ];
+
+        // Requests
+        this.membershipRoleChangeRequest = new MembershipRoleChangeRequest({
+            setState: v => this.setState(v),
+            setMembership: this.props.setMembership,
+        });
+        this.membershipDeleteRequest = new MembershipDeleteRequest({
+            setState: v => this.setState(v),
+            unSetMembership: this.props.unSetMembership,
+        });
     }
 
     componentWillReceiveProps(nextProps) {
         this.setState({
-            memberData: nextProps.memberData,
+            membershipList: nextProps.membershipList,
         });
     }
 
     componentWillUnmount() {
-        if (this.membershipRoleChangeRequest) {
-            this.membershipRoleChangeRequest.stop();
-        }
-        if (this.membershipDeleteRequest) {
-            this.membershipDeleteRequest.stop();
-        }
-    }
-
-    startRequestForMembershipRoleChange = (params) => {
-        if (this.membershipRoleChangeRequest) {
-            this.membershipRoleChangeRequest.stop();
-        }
-        const { userGroupId } = this.props;
-        const membershipRoleChangeRequest = new MembershipRoleChangeRequest({
-            setUserMembership: this.props.setUserMembership,
-            setState: v => this.setState(v),
-        });
-        this.membershipRoleChangeRequest = membershipRoleChangeRequest.create(
-            params, userGroupId,
-        );
-        this.membershipRoleChangeRequest.start();
-    }
-
-    startRequestForMembershipDelete = (membershipId) => {
-        if (this.membershipDeleteRequest) {
-            this.membershipDeleteRequest.stop();
-        }
-        const { userGroupId } = this.props;
-        const membershipDeleteRequest = new MembershipDeleteRequest({
-            unSetMembership: this.props.unSetMembership,
-            setState: v => this.setState(v),
-        });
-        this.membershipDeleteRequest = membershipDeleteRequest.create(
-            membershipId, userGroupId,
-        );
-        this.membershipDeleteRequest.start();
+        this.membershipRoleChangeRequest.stop();
+        this.membershipDeleteRequest.stop();
     }
 
     handleAddMemberClick = () => {
@@ -169,39 +150,48 @@ export default class MembersTable extends React.PureComponent {
     }
 
     handleDeleteMemberClick = (selectedMember) => {
-        this.startRequestForMembershipDelete(selectedMember.id);
+        const { userGroupId } = this.props;
+        this.membershipDeleteRequest.init(selectedMember.id, userGroupId).start();
     };
 
     handleSearchMemberChange = (value) => {
-        const { memberData } = this.props;
-        const filteredMemberData = memberData.filter(
+        const { membershipList } = this.props;
+        const filteredMemberData = membershipList.filter(
             member => caseInsensitiveSubmatch(member.memberName, value),
         );
         this.setState({
             searchMemberInputValue: value,
-            memberData: filteredMemberData,
+            membershipList: filteredMemberData,
         });
     }
 
     handleToggleMemberRoleClick = (selectedMember) => {
-        this.startRequestForMembershipRoleChange({
-            membershipId: selectedMember.id,
-            newRole: selectedMember.role === 'admin' ? 'normal' : 'admin',
-        });
+        const { userGroupId } = this.props;
+        const newRole = selectedMember.role === 'admin' ? 'normal' : 'admin';
+        this.membershipRoleChangeRequest.init(
+            userGroupId,
+            selectedMember.id,
+            { newRole },
+        ).start();
     }
 
     calcMemberKey = member => member.id;
 
     render() {
         const {
-            memberData,
+            className,
+            isCurrentUserAdmin,
+            userGroupId,
+        } = this.props;
+        const {
+            membershipList,
             searchMemberInputValue,
             showAddMemberModal,
             actionPending,
         } = this.state;
 
         return (
-            <div className={`${this.props.className} ${styles.members}`}>
+            <div className={`${className} ${styles.members}`}>
                 { actionPending && <LoadingAnimation /> }
                 <div className={styles.header}>
                     <h2>
@@ -217,7 +207,7 @@ export default class MembersTable extends React.PureComponent {
                         showHintAndError={false}
                     />
                     {
-                        this.props.isCurrentUserAdmin &&
+                        isCurrentUserAdmin &&
                         <PrimaryButton
                             onClick={this.handleAddMemberClick}
                         >
@@ -227,7 +217,7 @@ export default class MembersTable extends React.PureComponent {
                 </div>
                 <div className={styles.content}>
                     <Table
-                        data={memberData}
+                        data={membershipList}
                         headers={this.memberHeaders}
                         keyExtractor={this.calcMemberKey}
                     />
@@ -253,7 +243,7 @@ export default class MembersTable extends React.PureComponent {
                             className={styles.addMember}
                         >
                             <AddUserGroupMembers
-                                userGroupId={this.props.userGroupId}
+                                userGroupId={userGroupId}
                                 onModalClose={this.handleAddMemberModalClose}
                             />
                         </ModalBody>

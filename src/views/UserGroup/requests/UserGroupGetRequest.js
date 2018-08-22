@@ -1,51 +1,51 @@
-import { FgRestBuilder } from '#rsu/rest';
 import {
     createUrlForUserGroup,
     createParamsForGet,
 } from '#rest';
-import schema from '#schema';
+import Request from '#utils/Request';
 
 /*
- * props: setState, setUserGroup, unSetUserGroup
+ * parent: setState, setUsergroupView, unSetUserGroup
 */
-export default class UserGroupGetRequest {
-    constructor(props) {
-        this.props = props;
+export default class UserGroupGetRequest extends Request {
+    schemaName = 'userGroupGetResponse'
+
+    handlePreLoad = () => {
+        this.parent.setState({ pending: true });
     }
 
-    success = (response) => {
-        try {
-            schema.validate(response, 'userGroupGetResponse');
-            this.props.setUserGroup({
-                userGroup: response,
-            });
-        } catch (er) {
-            console.error(er);
-        }
+    handleAfterLoad = () => {
+        this.parent.setState({ pending: false });
     }
 
-    failure = id => (response) => {
+    handleSuccess = (response) => {
+        const { memberships, ...information } = response;
+        this.parent.setUsergroupView({
+            usergroupId: information.id,
+            information,
+            memberships,
+        });
+    }
+
+    handleFailure = (_, response) => {
         if (response.errorCode === 404) {
-            this.props.unSetUserGroup({ userGroupId: id });
+            const { usergroupId } = this.extraParent;
+            this.parent.unSetUserGroup({ userGroupId: usergroupId });
         } else {
             console.info('FAILURE:', response);
         }
     }
 
-    fatal = (response) => {
+    handleFatal = (response) => {
         console.info('FATAL:', response);
     }
 
-    create = (id) => {
-        const userGroupRequest = new FgRestBuilder()
-            .url(createUrlForUserGroup(id))
-            .params(createParamsForGet)
-            .preLoad(() => { this.props.setState({ pending: true }); })
-            .postLoad(() => { this.props.setState({ pending: false }); })
-            .success(this.success)
-            .failure(this.failure(id))
-            .fatal(this.fatal)
-            .build();
-        return userGroupRequest;
+    init = (usergroupId) => {
+        this.extraParent = { usergroupId };
+        this.createDefault({
+            url: createUrlForUserGroup(usergroupId),
+            params: createParamsForGet,
+        });
+        return this;
     }
 }

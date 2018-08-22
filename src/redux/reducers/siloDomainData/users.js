@@ -1,5 +1,7 @@
 import update from '#rsu/immutable-update';
 
+// import all from '../domainData/projects';
+
 // TYPE
 
 export const UP__SET_USER_PROFILE = 'siloDomainData/USER_PROFILE/SET_USER_PROFILE';
@@ -81,23 +83,23 @@ const setUserProfile = (state, action) => {
 
 const setUserProject = (state, action) => {
     const { userId, project } = action;
-    if (userId) {
-        const settings = {
-            userView: {
-                [userId]: { $auto: {
-                    projects: { $autoArray: {
-                        // TODO: Use better immutable helper
-                        $bulk: [
-                            { $filter: p => p.id !== project.id },
-                            { $push: [project] },
-                        ],
-                    } },
-                } },
-            },
-        };
-        return update(state, settings);
+    if (!userId) {
+        return state;
     }
-    return state;
+    const settings = {
+        userView: {
+            [userId]: { $auto: {
+                projects: { $autoArray: {
+                    // TODO: Use better immutable helper
+                    $bulk: [
+                        { $filter: p => p.id !== project.id },
+                        { $push: [project] },
+                    ],
+                } },
+            } },
+        },
+    };
+    return update(state, settings);
 };
 
 const setUserUsergroup = (state, action) => {

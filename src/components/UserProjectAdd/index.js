@@ -18,8 +18,9 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import {
 } from '#rest';
 import {
+    setProjectAction,
     setUserProjectAction,
-    activeUserSelector,
+    setUsergroupViewProjectAction,
 } from '#redux';
 import _ts from '#ts';
 
@@ -30,8 +31,10 @@ import styles from './styles.scss';
 const propTypes = {
     handleModalClose: PropTypes.func.isRequired,
     setUserProject: PropTypes.func.isRequired,
-    activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    setUserProfileProject: PropTypes.func.isRequired,
+    setUsergroupProject: PropTypes.func.isRequired,
     onProjectAdded: PropTypes.func,
+    userId: PropTypes.number, // eslint-disable-line
     userGroups: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.number.isRequired,
     })),
@@ -42,15 +45,13 @@ const defaultProps = {
     onProjectAdded: undefined,
 };
 
-const mapStateToProps = state => ({
-    activeUser: activeUserSelector(state),
-});
-
 const mapDispatchToProps = dispatch => ({
-    setUserProject: params => dispatch(setUserProjectAction(params)),
+    setUserProject: params => dispatch(setProjectAction(params)),
+    setUserProfileProject: params => dispatch(setUserProjectAction(params)),
+    setUsergroupProject: params => dispatch(setUsergroupViewProjectAction(params)),
 });
 
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(undefined, mapDispatchToProps)
 export default class UserProjectAdd extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -74,6 +75,9 @@ export default class UserProjectAdd extends React.PureComponent {
         this.projectCreateRequest = new ProjectCreate({
             setState: v => this.setState(v),
             setUserProject: this.props.setUserProject,
+            setUserProfileProject: this.props.setUserProfileProject,
+            setUsergroupProject: this.props.setUsergroupProject,
+
             onProjectAdded: this.props.onProjectAdded,
             handleModalClose: this.props.handleModalClose,
         });
@@ -98,10 +102,7 @@ export default class UserProjectAdd extends React.PureComponent {
     };
 
     successCallback = ({ title }) => {
-        const {
-            userGroups,
-            activeUser: { userId },
-        } = this.props;
+        const { userGroups, userId } = this.props;
         this.projectCreateRequest.init(
             userId,
             { title, userGroups },

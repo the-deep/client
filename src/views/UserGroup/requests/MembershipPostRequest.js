@@ -1,62 +1,57 @@
-import { FgRestBuilder } from '#rsu/rest';
 import {
     urlForUserMembership,
     createParamsForUserMembershipCreate,
-    alterResponseErrorToFaramError,
 } from '#rest';
-import schema from '#schema';
+import Request from '#utils/Request';
 import notify from '#notify';
 import _ts from '#ts';
 
 /*
- * props: setState, setUsersMembership, onModalClose
+ * parent: setState, addMemberships, onModalClose
 */
 
-export default class MembershipPostRequest {
-    constructor(props) {
-        this.props = props;
+export default class MembershipPostRequest extends Request {
+    schemaName = 'userMembershipCreateResponse'
+
+    handlePreLoad = () => {
+        this.parent.setState({ pending: true });
     }
 
-    success = userGroupId => (response) => {
-        try {
-            schema.validate(response, 'userMembershipCreateResponse');
-            this.props.setUsersMembership({
-                usersMembership: response.results,
-                userGroupId,
-            });
-            notify.send({
-                title: _ts('userGroup', 'userMembershipCreate'),
-                type: notify.type.SUCCESS,
-                message: _ts('userGroup', 'userMembershipCreateSuccess'),
-                duration: notify.duration.MEDIUM,
-            });
-            this.props.onModalClose();
-        } catch (er) {
-            console.error(er);
-        }
+    handlePostLoad = () => {
+        this.parent.setState({ pending: false });
     }
 
-    failure = (response) => {
-        const faramErrors = alterResponseErrorToFaramError(response.errors);
-        this.props.setState({ faramErrors });
+    handleSuccess = (response) => {
+        const { usergroupId } = this.extraParent;
+        this.parent.addMemberships({
+            memberships: response.results,
+            usergroupId,
+        });
+        notify.send({
+            title: _ts('userGroup', 'userMembershipCreate'),
+            type: notify.type.SUCCESS,
+            message: _ts('userGroup', 'userMembershipCreateSuccess'),
+            duration: notify.duration.MEDIUM,
+        });
+        this.parent.onModalClose();
     }
 
-    fatal = () => {
-        this.props.setState({
+    handleFailure = (faramErrors) => {
+        this.parent.setState({ faramErrors });
+    }
+
+    handleFatal = () => {
+        this.parent.setState({
             faramErrors: { $internal: [_ts('userGroup', 'addMemberErrorText')] },
         });
     }
 
-    create = (memberList, userGroupId) => {
-        const membershipCreateRequest = new FgRestBuilder()
-            .url(urlForUserMembership)
-            .params(() => createParamsForUserMembershipCreate({ memberList }))
-            .preLoad(() => { this.props.setState({ pending: true }); })
-            .postLoad(() => { this.props.setState({ pending: false }); })
-            .success(this.success(userGroupId))
-            .failure(this.failure)
-            .fatal(this.fatal)
-            .build();
-        return membershipCreateRequest;
+    init = (memberList, usergroupId) => {
+        this.extraParent = { usergroupId };
+        this.createDefault({
+            url: urlForUserMembership,
+            params: createParamsForUserMembershipCreate({ memberList }),
+        });
+        return this;
     }
 }

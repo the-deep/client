@@ -1,47 +1,37 @@
-import { FgRestBuilder } from '#rsu/rest';
 import {
     createUrlForUserGroupProjects,
     createParamsForGet,
 } from '#rest';
-import schema from '#schema';
+import Request from '#utils/Request';
 
 /*
- * props: setUserGroupProject
+ * parent: setUserGroupProject
 */
+export default class UserGroupProjectsRequest extends Request {
+    schemaName = 'projectsGetResponse'
 
-export default class UserGroupProjectsRequest {
-    constructor(props) {
-        this.props = props;
+    handleSuccess = (response) => {
+        const { usergroupId } = this.extraParent;
+        this.parent.setUsergroupView({
+            usergroupId,
+            projects: response.results,
+        });
     }
 
-    success = (response) => {
-        try {
-            schema.validate(response, 'projectsGetResponse');
-            this.props.setUserGroupProject({
-                projects: response.results,
-            });
-        } catch (er) {
-            console.error(er);
-        }
+    handleFailure = () => {
+        // TODO: Notify
     }
 
-    failure = (response) => {
-        console.info('FAILURE:', response);
+    handleFatal = () => {
+        // TODO: Notify
     }
 
-    fatal = (response) => {
-        console.info('FATAL:', response);
-    }
-
-    create = (id) => {
-        const urlForUserGroupProjects = createUrlForUserGroupProjects(id);
-        const userGroupRequest = new FgRestBuilder()
-            .url(urlForUserGroupProjects)
-            .params(createParamsForGet)
-            .success(this.success)
-            .failure(this.failure)
-            .fatal(this.fatal)
-            .build();
-        return userGroupRequest;
+    init = (usergroupId) => {
+        this.extraParent = { usergroupId };
+        this.createDefault({
+            url: createUrlForUserGroupProjects(usergroupId),
+            params: createParamsForGet,
+        });
+        return this;
     }
 }
