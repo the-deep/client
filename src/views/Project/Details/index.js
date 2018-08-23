@@ -1,21 +1,27 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, {
+    Fragment,
+} from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '#rsu/rest';
+import NonFieldErrors from '#rsci/NonFieldErrors';
 import FixedTabs from '#rscv/FixedTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import LoadingAnimation from '#rscv/LoadingAnimation';
-
+import DangerButton from '#rsca/Button/DangerButton';
+import SuccessButton from '#rsca/Button/SuccessButton';
 import {
-    createParamsForGet,
-    createUrlForProject,
-} from '#rest';
-import {
-    projectDetailsSelector,
-    setProjectAction,
+    projectLocalDataSelector,
+    projectServerDataSelector,
+    setProjectDetailsAction,
+    changeProjectDetailsAction,
+    setErrorProjectDetailsAction,
 } from '#redux';
-import schema from '#schema';
+
+import Faram, {
+    requiredCondition,
+    dateCondition,
+} from '#rscg/Faram';
+
 import _ts from '#ts';
 
 import General from './General';
@@ -24,25 +30,37 @@ import Frameworks from './Frameworks';
 import CategoryEditors from './CategoryEditors';
 import styles from './styles.scss';
 
+import ProjectGetRequest from '../requests/ProjectGetRequest';
+import ProjectPutRequest from '../requests/ProjectPutRequest';
+
 const propTypes = {
     className: PropTypes.string,
-    project: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    projectServerData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    projectLocalData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    pristine: PropTypes.bool,
     projectId: PropTypes.number,
-    setProject: PropTypes.func.isRequired,
+    setProjectDetails: PropTypes.func.isRequired,
+    changeProjectDetails: PropTypes.func.isRequired,
+    setErrorProjectDetails: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     className: '',
-    project: undefined,
+    projectServerData: {},
+    projectLocalData: {},
+    pristine: true,
     projectId: undefined,
 };
 
 const mapStateToProps = (state, props) => ({
-    project: projectDetailsSelector(state, props),
+    projectLocalData: projectLocalDataSelector(state, props),
+    projectServerData: projectServerDataSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
-    setProject: params => dispatch(setProjectAction(params)),
+    setProjectDetails: params => dispatch(setProjectDetailsAction(params)),
+    changeProjectDetails: params => dispatch(changeProjectDetailsAction(params)),
+    setErrorProjectDetails: params => dispatch(setErrorProjectDetailsAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -50,12 +68,13 @@ export default class ProjectDetails extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = d => d;
-
     constructor(props) {
         super(props);
 
-        this.state = { pending: true };
+        this.state = {
+            projectGetPending: false,
+            projectPutPending: false,
+        };
 
         this.routes = {
             general: 'General',
@@ -71,7 +90,7 @@ export default class ProjectDetails extends React.PureComponent {
                 component: () => (
                     <General
                         className={styles.content}
-                        projectId={this.props.projectId}
+                        pending={this.state.projectGetPending || this.state.projectPutPending}
                     />
                 ),
             },
@@ -108,33 +127,49 @@ export default class ProjectDetails extends React.PureComponent {
             categoryEditors: _ts('project', 'categoryEditorLabel'),
         };
 
-        const { projectId } = props;
-        if (projectId) {
-            this.projectRequest = this.createProjectRequest(projectId);
-        }
+        this.schema = {
+            fields: {
+                title: [requiredCondition],
+                startDate: [dateCondition],
+                endDate: [dateCondition],
+                description: [],
+                regions: [],
+                userGroups: [],
+                memberships: [],
+            },
+        };
+
+        this.projectRequest = new ProjectGetRequest({
+            setState: params => this.setState(params),
+            setProjectDetails: this.props.setProjectDetails,
+            projectServerData: this.props.projectServerData,
+        });
+
+        this.projectPutRequest = new ProjectPutRequest({
+            setState: params => this.setState(params),
+            setProjectDetails: this.props.setProjectDetails,
+            setErrorProjectDetails: this.props.setErrorProjectDetails,
+        });
     }
 
     componentDidMount() {
-        if (this.projectRequest) {
-            this.projectRequest.start();
-        }
+        const { projectId } = this.props;
+        this.projectRequest.init(projectId);
+        this.projectRequest.start();
     }
 
     componentWillReceiveProps(nextProps) {
         const {
-            projectId: nextProjectId,
+            projectId: newProjectId,
         } = nextProps;
 
         const {
-            projectId: currentProjectId,
+            projectId: oldProjectId,
         } = this.props;
 
-        if (nextProjectId && currentProjectId !== nextProjectId) {
-            if (this.projectRequest) {
-                this.projectRequest.stop();
-            }
 
-            this.projectRequest = this.createProjectRequest(nextProjectId);
+        if (newProjectId !== oldProjectId) {
+            this.projectRequest.init(newProjectId);
             this.projectRequest.start();
         }
     }
@@ -143,77 +178,119 @@ export default class ProjectDetails extends React.PureComponent {
         if (this.projectRequest) {
             this.projectRequest.stop();
         }
+        if (this.projectPutRequest) {
+            this.projectPutRequest.stop();
+        }
     }
 
-    getClassName = () => {
+    handleFaramChange = (faramValues, faramErrors) => {
+        const {
+            projectId,
+            changeProjectDetails,
+        } = this.props;
+
+        changeProjectDetails({
+            faramValues,
+            faramErrors,
+            projectId,
+        });
+    }
+
+    handleFaramCancel = () => {
+        const { projectId } = this.props;
+        const isBeingCancelled = true;
+        this.projectRequest.init(projectId, isBeingCancelled);
+        this.projectRequest.start();
+    }
+
+    handleValidationFailure = (faramErrors) => {
+        const {
+            projectId,
+            setErrorProjectDetails,
+        } = this.props;
+
+        setErrorProjectDetails({
+            faramErrors,
+            projectId,
+        });
+    }
+
+    handleValidationSuccess = (projectDetails) => {
+        const { projectId } = this.props;
+        this.projectPutRequest.init(projectDetails, projectId);
+        this.projectPutRequest.start();
+    }
+
+    render() {
         const { className } = this.props;
-        return `
-            ${className}
-            ${styles.details}
-        `;
-    }
+        const {
+            faramValues = {},
+            faramErrors,
+            pristine,
+        } = this.props.projectLocalData;
 
-    createProjectRequest = (projectId) => {
-        const projectRequest = new FgRestBuilder()
-            .url(createUrlForProject(projectId))
-            .params(createParamsForGet)
-            .preLoad(() => this.setState({ pending: true }))
-            .postLoad(() => this.setState({ pending: false }))
-            .success((response) => {
-                try {
-                    schema.validate(response, 'projectGetResponse');
-                    this.props.setProject({ project: response });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .build();
-        return projectRequest;
-    };
+        const {
+            projectGetPending,
+            projectPutPending,
+        } = this.state;
 
-    renderDetail = () => {
-        const { project } = this.props;
+        const loading = projectGetPending || projectPutPending;
+        const { role } = faramValues;
+
+        const projectDetailsStyle = [
+            className,
+            styles.details,
+        ].join(' ');
 
         return (
-            project.role === 'admin' ? (
-                <React.Fragment>
-                    <header className={styles.header}>
-                        <FixedTabs
-                            defaultHash={this.defaultHash}
-                            replaceHistory
-                            useHash
-                            tabs={this.routes}
-                        />
-                    </header>
-                    <MultiViewContainer
-                        useHash
-                        views={this.views}
-                    />
-                </React.Fragment>
+            role === 'admin' ? (
+                <div className={projectDetailsStyle}>
+                    <Faram
+                        className={styles.projectForm}
+                        onChange={this.handleFaramChange}
+                        onValidationFailure={this.handleValidationFailure}
+                        onValidationSuccess={this.handleValidationSuccess}
+                        schema={this.schema}
+                        value={faramValues}
+                        error={faramErrors}
+                        disabled={loading}
+                    >
+                        <NonFieldErrors faramElement />
+                        <div className={styles.actionButtons}>
+                            <DangerButton
+                                disabled={loading || pristine}
+                                onClick={this.handleFaramCancel}
+                            >
+                                {_ts('project', 'cancelButtonLabel')}
+                            </DangerButton>
+                            <SuccessButton
+                                disabled={loading || pristine}
+                                type="submit"
+                            >
+                                {_ts('project', 'saveButtonLabel')}
+                            </SuccessButton>
+                        </div>
+                        <Fragment>
+                            <header className={styles.header}>
+                                <FixedTabs
+                                    defaultHash={this.defaultHash}
+                                    replaceHistory
+                                    useHash
+                                    tabs={this.routes}
+                                />
+                            </header>
+                            <MultiViewContainer
+                                useHash
+                                views={this.views}
+                            />
+                        </Fragment>
+                    </Faram>
+                </div>
             ) : (
                 <p className={styles.forbiddenText}>
                     {_ts('project', 'forbiddenText')}
                 </p>
             )
-        );
-    }
-
-    render() {
-        const { pending } = this.state;
-
-        const className = this.getClassName();
-        const Detail = this.renderDetail;
-
-        return (
-            <div className={className}>
-                {
-                    pending ? (
-                        <LoadingAnimation large />
-                    ) : (
-                        <Detail />
-                    )
-                }
-            </div>
         );
     }
 }

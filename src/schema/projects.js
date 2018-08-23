@@ -102,6 +102,18 @@ const projectSchema = [];
 }
 
 {
+    const name = 'projectPutResponse';
+    const schema = {
+        doc: {
+            name: 'Project Put Response',
+            description: 'Response for PUT /projects/{id}',
+        },
+        extends: 'project',
+    };
+    projectSchema.push({ name, schema });
+}
+
+{
     const name = 'projectsMiniGetResponse';
     const schema = {
         doc: {

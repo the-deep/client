@@ -3,29 +3,9 @@
 .project-general {
     display: flex;
     position: relative;
-    align-content: stretch;
     flex-direction: column;
+    align-content: stretch;
     flex-grow: 1;
-
-    >* {
-        padding: $spacing-small $spacing-medium-alt;
-    }
-
-    .action-buttons {
-        display: flex;
-        flex-shrink: 0;
-        justify-content: flex-end;
-        padding: $spacing-small $spacing-medium-alt;
-
-        button {
-            margin-left: $spacing-medium;
-        }
-    }
-
-    .non-field-errors {
-        flex-shrink: 0;
-        padding: 0;
-    }
 
     .inputs-container {
         display: flex;
@@ -47,22 +27,6 @@
 
         :global .input {
             resize: none;
-        }
-    }
-
-    .selects-container {
-        display: flex;
-        flex-grow: 1;
-
-        .regions,
-        .user-groups {
-            flex-basis: 18%;
-            margin-right: $spacing-medium-alt;
-            overflow-y: auto;
-        }
-
-        .members {
-            flex-grow: 1;
         }
     }
 }
