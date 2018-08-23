@@ -6,6 +6,27 @@ $width-region-list: 240px;
     display: flex;
     flex-grow: 1;
 
+    .user-details-container {
+        flex-basis: calc(100% - #{$width-region-list});
+
+        .other-users,
+        .other-user-groups {
+            margin-bottom: $spacing-small;
+            background-color: $color-foreground;
+
+            >.heading {
+                padding: $spacing-medium;
+            }
+
+            .content {
+                flex-basis: 100%;
+                flex-grow: 1;
+                background-color: $color-background-row;
+                overflow-y: auto;
+            }
+        }
+    }
+
     .user-search {
         display: flex;
         flex-basis: $width-region-list;
@@ -21,7 +42,7 @@ $width-region-list: 240px;
             border-bottom: $width-separator-thin solid $color-separator;
             padding: $spacing-small;
 
-            .heading {
+            >.heading {
                 flex-grow: 1;
             }
 
@@ -31,15 +52,12 @@ $width-region-list: 240px;
         }
 
         /*.content {
-            flex-grow: 1;
-            overflow-y: auto;
+        flex-grow: 1;
+        overflow-y: auto;
         }
-        */
+         */
     }
 
-    .user-details-container {
-        flex-basis: calc(100% - #{$width-region-list});
-    }
 
     /*
     .no-users {

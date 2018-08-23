@@ -805,7 +805,9 @@
         "-50186668": "Add from geo",
         "-15095273": "Select Gallery Files",
         "-75331863": "Fatal error occured while getting users gallery files",
-        "-41121825": "Failed to get user gallery files"
+        "-41121825": "Failed to get user gallery files",
+        "-54185786": "User/Usergroup",
+        "-17852758": "Search User/Usergroup"
     },
     "links": {
         "browserExtension": {
@@ -1746,7 +1748,9 @@
             "projectOptions": -72859218,
             "projectOptionsGetFailure": -45091634,
             "frameworkListHeading": 12500,
-            "noProjectsFound": -59940596
+            "noProjectsFound": -59940596,
+            "userUserGroupLabel": -54185786,
+            "searchUserPlaceholder": -17852758
         },
         "connector": {
             "noConnectorsLabel": 1115,
