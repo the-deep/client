@@ -69,7 +69,10 @@ export default class SectorContent extends React.PureComponent {
                             label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
                         />
                     </div>
-                    <FaramList faramElementName="subsectors">
+                    <FaramList
+                        faramElementName="subsectors"
+                        keySelector={SectorContent.keyExtractor}
+                    >
                         <NonFieldErrors
                             className={styles.error}
                             faramElement
@@ -91,7 +94,6 @@ export default class SectorContent extends React.PureComponent {
                             className={styles.cellList}
                             dragHandleClassName={styles.dragHandle}
                             itemClassName={styles.item}
-                            keyExtractor={SectorContent.keyExtractor}
                             rendererParams={SectorContent.rendererParams}
                             renderer={SubsectorRow}
                         />

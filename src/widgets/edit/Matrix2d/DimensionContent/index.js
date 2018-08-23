@@ -75,7 +75,10 @@ export default class DimensionContent extends React.PureComponent {
                             label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
                         />
                     </div>
-                    <FaramList faramElementName="subdimensions">
+                    <FaramList
+                        faramElementName="subdimensions"
+                        keySelector={DimensionContent.keyExtractor}
+                    >
                         <NonFieldErrors
                             className={styles.error}
                             faramElement
@@ -97,7 +100,6 @@ export default class DimensionContent extends React.PureComponent {
                             className={styles.cellList}
                             dragHandleClassName={styles.dragHandle}
                             itemClassName={styles.item}
-                            keyExtractor={DimensionContent.keyExtractor}
                             rendererParams={DimensionContent.rendererParams}
                             renderer={SubdimensionRow}
                         />

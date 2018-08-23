@@ -74,7 +74,10 @@ export default class RowContent extends React.PureComponent {
                             label={_ts('widgets.editor.matrix1d', 'tooltipLabel')}
                         />
                     </div>
-                    <FaramList faramElementName="cells">
+                    <FaramList
+                        faramElementName="cells"
+                        keySelector={RowContent.keyExtractor}
+                    >
                         <NonFieldErrors
                             className={styles.error}
                             faramElement
@@ -96,7 +99,6 @@ export default class RowContent extends React.PureComponent {
                             className={styles.cellList}
                             dragHandleClassName={styles.dragHandle}
                             itemClassName={styles.item}
-                            keyExtractor={RowContent.keyExtractor}
                             rendererParams={RowContent.rendererParams}
                             renderer={InputRow}
                         />

@@ -58,6 +58,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                     }
                     return errors;
                 },
+                keySelector: e => e.key,
                 member: {
                     fields: {
                         key: [requiredCondition],
@@ -81,6 +82,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                 }
                                 return errors;
                             },
+                            keySelector: Matrix1dEditWidget.keyExtractor,
                             member: {
                                 fields: {
                                     key: [requiredCondition],
@@ -219,7 +221,10 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                             selectOnFocus
                         />
                         <div className={styles.rows} >
-                            <FaramList faramElementName="rows">
+                            <FaramList
+                                faramElementName="rows"
+                                keySelector={Matrix1dEditWidget.keyExtractor}
+                            >
                                 <NonFieldErrors faramElement className={styles.error} />
                                 <header className={styles.header}>
                                     <h4>
@@ -238,7 +243,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                         className={styles.leftPanel}
                                         dragHandleModifier={this.renderDragHandle}
                                         faramElement
-                                        keyExtractor={Matrix1dEditWidget.keyExtractor}
                                         rendererParams={this.rendererParams}
                                         itemClassName={styles.item}
                                         renderer={RowTitle}

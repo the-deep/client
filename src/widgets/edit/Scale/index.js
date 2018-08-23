@@ -65,6 +65,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                     }
                     return errors;
                 },
+                keySelector: ScaleFrameworkList.keyExtractor,
                 member: {
                     fields: {
                         key: [requiredCondition],
@@ -165,7 +166,10 @@ export default class ScaleFrameworkList extends React.PureComponent {
                             selectOnFocus
                         />
                         <div className={styles.scaleUnits}>
-                            <FaramList faramElementName="scaleUnits">
+                            <FaramList
+                                faramElementName="scaleUnits"
+                                keySelector={ScaleFrameworkList.keyExtractor}
+                            >
                                 <NonFieldErrors
                                     className={styles.nonFieldErrors}
                                     faramElement
@@ -186,7 +190,6 @@ export default class ScaleFrameworkList extends React.PureComponent {
                                     className={styles.editList}
                                     dragHandleClassName={styles.dragHandle}
                                     faramElement
-                                    keyExtractor={ScaleFrameworkList.keyExtractor}
                                     rendererParams={ScaleFrameworkList.rendererParams}
                                     itemClassName={styles.sortableUnit}
                                     renderer={InputRow}

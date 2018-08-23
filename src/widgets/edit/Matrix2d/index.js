@@ -39,9 +39,11 @@ const defaultProps = {
 
 const emptyArray = [];
 
-export default class Matrix1dEditWidget extends React.PureComponent {
+export default class Matrix2dEditWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static keyExtractor = elem => elem.id;
 
     static schema = {
         fields: {
@@ -63,6 +65,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                     }
                     return errors;
                 },
+                keySelector: Matrix2dEditWidget.keyExtractor,
                 member: {
                     fields: {
                         id: [requiredCondition],
@@ -86,6 +89,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                 }
                                 return errors;
                             },
+                            keySelector: Matrix2dEditWidget.keyExtractor,
                             member: {
                                 fields: {
                                     id: [requiredCondition],
@@ -114,6 +118,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                     }
                     return errors;
                 },
+                keySelector: Matrix2dEditWidget.keyExtractor,
                 member: {
                     fields: {
                         id: [requiredCondition],
@@ -134,6 +139,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                 }
                                 return errors;
                             },
+                            keySelector: Matrix2dEditWidget.keyExtractor,
                             member: {
                                 fields: {
                                     id: [requiredCondition],
@@ -147,8 +153,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             },
         },
     };
-
-    static keyExtractor = elem => elem.id;
 
     constructor(props) {
         super(props);
@@ -171,11 +175,11 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             pristine: false,
 
             selectedDimensionKey: dimensions[0]
-                ? Matrix1dEditWidget.keyExtractor(dimensions[0])
+                ? Matrix2dEditWidget.keyExtractor(dimensions[0])
                 : undefined,
 
             selectedSectorKey: sectors[0]
-                ? Matrix1dEditWidget.keyExtractor(sectors[0])
+                ? Matrix2dEditWidget.keyExtractor(sectors[0])
                 : undefined,
 
             selectedTab: 'dimensions',
@@ -200,18 +204,20 @@ export default class Matrix1dEditWidget extends React.PureComponent {
 
                     const selectedDimensionIndex = dimensionsFromState.findIndex(
                         dimension => (
-                            Matrix1dEditWidget.keyExtractor(dimension) === selectedDimensionKey
+                            Matrix2dEditWidget.keyExtractor(dimension) === selectedDimensionKey
                         ),
                     );
 
                     return (
-                        <FaramList faramElementName="dimensions">
+                        <FaramList
+                            faramElementName="dimensions"
+                            keySelector={Matrix2dEditWidget.keyExtractor}
+                        >
                             <div className={styles.panels}>
                                 <SortableListView
                                     className={styles.leftPanel}
                                     dragHandleModifier={this.renderDragHandle}
                                     faramElement
-                                    keyExtractor={Matrix1dEditWidget.keyExtractor}
                                     rendererParams={this.rendererParams}
                                     itemClassName={styles.item}
                                     renderer={DimensionTitle}
@@ -241,18 +247,20 @@ export default class Matrix1dEditWidget extends React.PureComponent {
 
                     const selectedSectorIndex = sectorsFromState.findIndex(
                         sector => (
-                            Matrix1dEditWidget.keyExtractor(sector) === selectedSectorKey
+                            Matrix2dEditWidget.keyExtractor(sector) === selectedSectorKey
                         ),
                     );
 
                     return (
-                        <FaramList faramElementName="sectors">
+                        <FaramList
+                            faramElementName="sectors"
+                            keySelector={Matrix2dEditWidget.keyExtractor}
+                        >
                             <div className={styles.panels}>
                                 <SortableListView
                                     className={styles.leftPanel}
                                     dragHandleModifier={this.renderDragHandleSector}
                                     faramElement
-                                    keyExtractor={Matrix1dEditWidget.keyExtractor}
                                     rendererParams={this.rendererParamsSector}
                                     itemClassName={styles.item}
                                     renderer={SectorTitle}
@@ -310,7 +318,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         }),
         callback: (value) => {
             this.setState({
-                selectedDimensionKey: Matrix1dEditWidget.keyExtractor(value),
+                selectedDimensionKey: Matrix2dEditWidget.keyExtractor(value),
             });
         },
     }
@@ -325,7 +333,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         }),
         callback: (value) => {
             this.setState({
-                selectedSectorKey: Matrix1dEditWidget.keyExtractor(value),
+                selectedSectorKey: Matrix2dEditWidget.keyExtractor(value),
             });
         },
     }
@@ -395,7 +403,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             this.setState({ selectedDimensionKey: k });
         },
         isSelected: this.state.selectedDimensionKey === key,
-        keyExtractor: Matrix1dEditWidget.keyExtractor,
+        keyExtractor: Matrix2dEditWidget.keyExtractor,
     })
 
     rendererParamsSector = (key, elem, i) => ({
@@ -406,7 +414,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             this.setState({ selectedSectorKey: k });
         },
         isSelected: this.state.selectedSectorKey === key,
-        keyExtractor: Matrix1dEditWidget.keyExtractor,
+        keyExtractor: Matrix2dEditWidget.keyExtractor,
     })
 
     renderDragHandle = (key) => {
@@ -455,7 +463,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
                     onValidationSuccess={this.handleFaramValidationSuccess}
-                    schema={Matrix1dEditWidget.schema}
+                    schema={Matrix2dEditWidget.schema}
                     value={faramValues}
                     error={faramErrors}
                 >
