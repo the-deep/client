@@ -1,45 +1,31 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { reverseRoute } from '#rsu/common';
-import { FgRestBuilder } from '#rsu/rest';
 import AccentButton from '#rsca/Button/AccentButton';
 import WarningButton from '#rsca/Button/WarningButton';
-import LoadingAnimation from '#rscv/LoadingAnimation';
-import Confirm from '#rscv/Modal/Confirm';
-import Faram, {
-    requiredCondition,
-} from '#rscg/Faram';
-import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
-import NonFieldErrors from '#rsci/NonFieldErrors';
-import TextInput from '#rsci/TextInput';
-import TextArea from '#rsci/TextArea';
+import Message from '#rscv/Message';
+import Confirm from '#rscv/Modal/Confirm';
 
-import {
-    createParamsForProjectPatch,
-    createUrlForProject,
-    createUrlForAfClone,
-    createParamsForAfClone,
-    createParamsForAnalysisFrameworkEdit,
-    createUrlForAnalysisFramework,
-} from '#rest';
 import {
     analysisFrameworkDetailSelector,
     projectDetailsSelector,
     setProjectAfAction,
-    setAfDetailAction,
     addNewAfAction,
 } from '#redux';
 import {
     iconNames,
     pathNames,
 } from '#constants';
-import schema from '#schema';
-import notify from '#notify';
 import _ts from '#ts';
+
+import EditFramework from '../EditFramework';
+
+import ProjectPatchRequest from './requests/ProjectPatchRequest';
+import AfCloneRequest from './requests/AfCloneRequest';
 
 import styles from './styles.scss';
 
@@ -49,7 +35,6 @@ const propTypes = {
     addNewAf: PropTypes.func.isRequired,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setProjectFramework: PropTypes.func.isRequired,
-    setFrameworkDetails: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -63,7 +48,6 @@ const mapStateToProps = (state, props) => ({
 const mapDispatchToProps = dispatch => ({
     addNewAf: params => dispatch(addNewAfAction(params)),
     setProjectFramework: params => dispatch(setProjectAfAction(params)),
-    setFrameworkDetails: params => dispatch(setAfDetailAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -74,144 +58,38 @@ export default class ProjectAfDetail extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const { frameworkDetails } = props;
-
         this.state = {
             cloneConfirmModalShow: false,
             useConfirmModalShow: false,
-
-            faramValues: { ...frameworkDetails },
-            faramErrors: {},
-            pristine: false,
-            pending: false,
+            showEditFrameworkModal: false,
         };
 
-        this.schema = {
-            fields: {
-                title: [requiredCondition],
-                description: [],
-            },
-        };
+        // Requests
+        this.projectPatchRequest = new ProjectPatchRequest({
+            setState: v => this.setState(v),
+            setProjectFramework: this.props.setProjectFramework,
+        });
+        this.afCloneRequest = new AfCloneRequest({
+            setState: v => this.setState(v),
+            addNewAf: this.props.addNewAf,
+        });
     }
 
     componentWillUnmount() {
-        if (this.projectPatchRequest) {
-            this.projectPatchRequest.stop();
-        }
-        if (this.afPutRequest) {
-            this.afPutRequest.stop();
-        }
-        if (this.afCloneRequest) {
-            this.afCloneRequest.stop();
-        }
+        this.projectPatchRequest.stop();
+        this.afCloneRequest.stop();
     }
-
-    createProjectPatchRequest = (afId, projectId) => {
-        const projectPatchRequest = new FgRestBuilder()
-            .url(createUrlForProject(projectId))
-            .params(() => createParamsForProjectPatch({ analysisFramework: afId }))
-            .preLoad(() => this.setState({ pending: true }))
-            .postLoad(() => this.setState({ pending: false }))
-            .success((response) => {
-                try {
-                    schema.validate(response, 'project');
-                    this.props.setProjectFramework({
-                        projectId,
-                        afId,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .build();
-        return projectPatchRequest;
-    };
-
-    createAfCloneRequest = (afId, projectId) => {
-        const afCloneRequest = new FgRestBuilder()
-            .url(createUrlForAfClone(afId))
-            .params(() => createParamsForAfClone({ project: projectId }))
-            .preLoad(() => this.setState({ pending: true }))
-            .postLoad(() => this.setState({ pending: false }))
-            .success((response) => {
-                try {
-                    schema.validate(response, 'analysisFramework');
-                    this.props.addNewAf({
-                        afDetail: response,
-                        projectId,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .build();
-        return afCloneRequest;
-    };
-
-    createAfPutRequest = ({ title, description }) => {
-        const { analysisFrameworkId: afId } = this.props;
-        const afPutRequest = new FgRestBuilder()
-            .url(createUrlForAnalysisFramework(afId))
-            .params(() => createParamsForAnalysisFrameworkEdit({ title, description }))
-            .preLoad(() => this.setState({ pending: true }))
-            .postLoad(() => this.setState({ pending: false }))
-            .success((response) => {
-                try {
-                    schema.validate(response, 'analysisFramework');
-                    this.props.setFrameworkDetails({
-                        afId,
-                        afDetail: response,
-                    });
-                    notify.send({
-                        title: _ts('project', 'afFormEdit'),
-                        type: notify.type.SUCCESS,
-                        message: _ts('project', 'afFormEditSuccess'),
-                        duration: notify.duration.MEDIUM,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .failure(() => {
-                notify.send({
-                    title: _ts('project', 'afFormEdit'),
-                    type: notify.type.ERROR,
-                    message: _ts('project', 'afFormEditFailure'),
-                    duration: notify.duration.SLOW,
-                });
-            })
-            .fatal(() => {
-                notify.send({
-                    title: _ts('project', 'afFormEdit'),
-                    type: notify.type.ERROR,
-                    message: _ts('project', 'afFormEditFatal'),
-                    duration: notify.duration.SLOW,
-                });
-            })
-            .build();
-        return afPutRequest;
-    };
 
     handleAfClone = (cloneConfirm, afId, projectId) => {
         if (cloneConfirm) {
-            if (this.afCloneRequest) {
-                this.afCloneRequest.stop();
-            }
-
-            this.afCloneRequest = this.createAfCloneRequest(afId, projectId);
-            this.afCloneRequest.start();
+            this.afCloneRequest.init(afId, projectId).start();
         }
         this.setState({ cloneConfirmModalShow: false });
     }
 
     handleAfUse = (useConfirm, afId, projectId) => {
         if (useConfirm) {
-            if (this.projectPatchRequest) {
-                this.projectPatchRequest.stop();
-            }
-
-            this.projectPatchRequest = this.createProjectPatchRequest(afId, projectId);
-            this.projectPatchRequest.start();
+            this.projectPatchRequest.init(afId, projectId).start();
         }
         this.setState({ useConfirmModalShow: false });
     }
@@ -224,43 +102,13 @@ export default class ProjectAfDetail extends React.PureComponent {
         this.setState({ useConfirmModalShow: true });
     }
 
-    handlefaramCancel = () => {
-        const { frameworkDetails } = this.props;
+    handleEditFrameworButtonClick = () => {
+        this.setState({ showEditFrameworkModal: true });
+    }
 
-        this.setState({
-            faramValues: { ...frameworkDetails },
-            faramErrors: {},
-
-            pristine: false,
-            pending: false,
-        });
-    };
-
-    // faram RELATED
-    handleFaramChange = (faramValues, faramErrors) => {
-        this.setState({
-            faramValues,
-            faramErrors,
-            pristine: true,
-        });
-    };
-
-    handleValidationFailure = (faramErrors) => {
-        this.setState({
-            faramErrors,
-            pristine: false,
-        });
-    };
-
-    handleValidationSuccess = (values) => {
-        if (this.afPutRequest) {
-            this.afPutRequest.stop();
-        }
-
-        this.afPutRequest = this.createAfPutRequest(values);
-        this.afPutRequest.start();
-        this.setState({ pristine: false });
-    };
+    handleEditFrameworkModalClose = () => {
+        this.setState({ showEditFrameworkModal: false });
+    }
 
     renderUseFrameworkButton = () => {
         const {
@@ -304,13 +152,34 @@ export default class ProjectAfDetail extends React.PureComponent {
         };
 
         return (
-            <Link
-                className={styles.editFrameworkLink}
-                to={reverseRoute(pathNames.analysisFramework, params)}
-                disabled={pending}
-            >
-                { editFrameworkButtonLabel }
-            </Link>
+            <Fragment>
+                <Link
+                    className={styles.editFrameworkLink}
+                    to={reverseRoute(pathNames.analysisFramework, params)}
+                    disabled={pending}
+                >
+                    { editFrameworkButtonLabel }
+                </Link>
+                <SuccessButton
+                    onClick={this.handleEditFrameworButtonClick}
+                    disabled={pending}
+                    type="submit"
+                >
+                    {_ts('project', 'quickEditAfButtonLabel')}
+                </SuccessButton>
+            </Fragment>
+        );
+    }
+
+    renderFrameworkPreview = () => {
+        const { frameworkDetails } = this.props;
+
+        // TODO: Complete Framework Preview
+        return (
+            <Message>
+                {frameworkDetails.title}<br />
+                {frameworkDetails.description}
+            </Message>
         );
     }
 
@@ -349,67 +218,26 @@ export default class ProjectAfDetail extends React.PureComponent {
             projectDetails,
         } = this.props;
 
-        console.warn(frameworkDetails);
-
         const {
             cloneConfirmModalShow,
             useConfirmModalShow,
-            faramErrors,
-            pristine,
-            pending,
-            faramValues,
+            showEditFrameworkModal,
         } = this.state;
 
         const Header = this.renderHeader;
-        const readOnly = !frameworkDetails.isAdmin;
+        const FrameworkPreview = this.renderFrameworkPreview;
 
         return (
             <div className={styles.analysisFrameworkDetail}>
-                { pending && <LoadingAnimation /> }
                 <Header />
-                <Faram
-                    className={styles.afDetailForm}
-                    onChange={this.handleFaramChange}
-                    onValidationFailure={this.handleValidationFailure}
-                    onValidationSuccess={this.handleValidationSuccess}
-                    schema={this.schema}
-                    value={faramValues}
-                    error={faramErrors}
-                    disabled={pending}
-                >
-                    { !readOnly &&
-                        <div className={styles.actionButtons}>
-                            <DangerButton
-                                onClick={this.handlefaramCancel}
-                                disabled={pending || !pristine}
-                            >
-                                {_ts('project', 'modalRevert')}
-                            </DangerButton>
-                            <SuccessButton
-                                disabled={pending || !pristine}
-                                type="submit"
-                            >
-                                {_ts('project', 'modalSave')}
-                            </SuccessButton>
-                        </div>
-                    }
-                    <NonFieldErrors faramElement />
-                    <TextInput
-                        label={_ts('project', 'addAfTitleLabel')}
-                        faramElementName="title"
-                        placeholder={_ts('project', 'addAfTitlePlaceholder')}
-                        className={styles.name}
-                        readOnly={readOnly}
+                <FrameworkPreview />
+                {
+                    showEditFrameworkModal &&
+                    <EditFramework
+                        analysisFrameworkId={analysisFrameworkId}
+                        onModalClose={this.handleEditFrameworkModalClose}
                     />
-                    <TextArea
-                        label={_ts('project', 'projectDescriptionLabel')}
-                        faramElementName="description"
-                        placeholder={_ts('project', 'projectDescriptionPlaceholder')}
-                        className={styles.description}
-                        rows={3}
-                        readOnly={readOnly}
-                    />
-                </Faram>
+                }
                 <Confirm
                     show={useConfirmModalShow}
                     onClose={useConfirm => this.handleAfUse(

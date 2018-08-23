@@ -111,85 +111,44 @@ export default class ProjectRegionDetail extends React.PureComponent {
                 },
             },
         };
-    }
 
-    componentWillMount() {
-        this.startRegionRequest(this.props.countryId, false);
-    }
-
-    componentWillUnmount() {
-        if (this.projectPatchRequest) {
-            this.projectPatchRequest.stop();
-        }
-        if (this.regionDetailPatchRequest) {
-            this.regionDetailPatchRequest.stop();
-        }
-        if (this.requestForRegionClone) {
-            this.requestForRegionClone.stop();
-        }
-        if (this.requestForRegion) {
-            this.requestForRegion.stop();
-        }
-    }
-
-    startRegionRequest = (regionId, discard) => {
-        if (this.requestForRegion) {
-            this.requestForRegion.stop();
-        }
-        const requestForRegion = new RegionGetRequest({
-            setRegionDetails: this.props.setRegionDetails,
+        // Requests
+        this.requestForRegion = new RegionGetRequest({
             setState: v => this.setState(v),
             regionDetail: this.props.regionDetail || {},
-            discard,
+            setRegionDetails: this.props.setRegionDetails,
         });
-        this.requestForRegion = requestForRegion.create(regionId);
-        this.requestForRegion.start();
-    }
-
-    startRegionCloneRequest = (regionId, projectId) => {
-        if (this.requestForRegionClone) {
-            this.requestForRegionClone.stop();
-        }
-        const requestForRegionClone = new RegionCloneRequest({
+        this.requestForRegionClone = new RegionCloneRequest({
+            setState: v => this.setState(v),
             onRegionClone: this.props.onRegionClone,
             addNewRegion: this.props.addNewRegion,
             removeProjectRegion: this.props.removeProjectRegion,
-            projectId,
-            setState: v => this.setState(v),
         });
-        this.requestForRegionClone = requestForRegionClone.create(regionId, projectId);
-        this.requestForRegionClone.start();
-    }
-
-    startRequestForRegionDetailPatch = (regionId, data) => {
-        if (this.regionDetailPatchRequest) {
-            this.regionDetailPatchRequest.stop();
-        }
-        const regionDetailPatchRequest = new RegionDetailPatchRequest({
+        this.regionDetailPatchRequest = new RegionDetailPatchRequest({
+            setState: v => this.setState(v),
             setRegionDetails: this.props.setRegionDetails,
             setRegionDetailsErrors: this.props.setRegionDetailsErrors,
-            setState: v => this.setState(v),
-            projectId: this.props.activeProject,
         });
-        this.regionDetailPatchRequest = regionDetailPatchRequest.create(regionId, data);
-        this.regionDetailPatchRequest.start();
+        this.projectPatchRequest = new ProjectPatchRequest({
+            setState: v => this.setState(v),
+            removeProjectRegion: this.props.removeProjectRegion,
+        });
     }
 
-    startRequestForProjectPatch = (regionId, data) => {
-        if (this.projectPatchRequest) {
-            this.projectPatchRequest.stop();
-        }
-        const projectPatchRequest = new ProjectPatchRequest({
-            removeProjectRegion: this.props.removeProjectRegion,
-            setState: v => this.setState(v),
-        });
-        this.projectPatchRequest = projectPatchRequest.create(regionId, data);
-        this.projectPatchRequest.start();
+    componentWillMount() {
+        this.requestForRegion.init(this.props.countryId, false).start();
+    }
+
+    componentWillUnmount() {
+        this.projectPatchRequest.stop();
+        this.regionDetailPatchRequest.stop();
+        this.requestForRegionClone.stop();
+        this.requestForRegion.stop();
     }
 
     handleRegionClone = (cloneConfirm, regionId, projectId) => {
         if (cloneConfirm) {
-            this.startRegionCloneRequest(regionId, projectId);
+            this.requestForRegionClone.init(regionId, projectId).start();
         }
         this.setState({ showCloneAndEditConfirm: false });
     }
@@ -200,8 +159,7 @@ export default class ProjectRegionDetail extends React.PureComponent {
             const regions = [...projectDetails.regions];
             const index = regions.findIndex(d => (d.id === removedRegionId));
             regions.splice(index, 1);
-
-            this.startRequestForProjectPatch(projectId, removedRegionId, regions);
+            this.projectPatchRequest.init(projectId, removedRegionId, regions).start();
         }
         this.setState({
             showDeleteConfirm: false,
@@ -209,7 +167,7 @@ export default class ProjectRegionDetail extends React.PureComponent {
     }
 
     handleDiscardButtonClick = () => {
-        this.startRegionRequest(this.props.countryId, true);
+        this.requestForRegion.init(this.props.countryId, true).start();
     }
 
     handleRegionRemoveClick = () => {
@@ -228,7 +186,10 @@ export default class ProjectRegionDetail extends React.PureComponent {
     };
 
     handleValidationSuccess = (values) => {
-        this.startRequestForRegionDetailPatch(this.props.regionDetail.id, values);
+        const { activeProject, regionDetail } = this.props;
+        this.regionDetailPatchRequest.init(
+            activeProject, regionDetail.id, values,
+        ).start();
     };
 
     handleFaramChange = (faramValues, faramErrors) => {

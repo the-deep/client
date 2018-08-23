@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '#rsu/rest';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -12,15 +11,10 @@ import Faram, {
     requiredCondition,
 } from '#rscg/Faram';
 
-import {
-    alterResponseErrorToFaramError,
-    createParamsForAfCreate,
-    urlForAfCreate,
-} from '#rest';
 import { addNewAfAction } from '#redux';
 import _ts from '#ts';
-import notify from '#notify';
-import schema from '#schema';
+
+import AfPostRequest from './requests/AfPostRequest';
 
 import styles from './styles.scss';
 
@@ -60,63 +54,16 @@ export default class AddAnalysisFramework extends React.PureComponent {
                 title: [requiredCondition],
             },
         };
+
+        this.afCreateRequest = new AfPostRequest({
+            setState: v => this.setState(v),
+            addNewAf: this.props.addNewAf,
+            onModalClose: this.props.onModalClose,
+        });
     }
 
     componentWillUnmount() {
-        if (this.afCreateRequest) {
-            this.afCreateRequest.stop();
-        }
-    }
-
-    createRequestForAfCreate = ({ title }) => {
-        const { projectId } = this.props;
-
-        const afCreateRequest = new FgRestBuilder()
-            .url(urlForAfCreate)
-            .params(() => createParamsForAfCreate({ project: projectId, title }))
-            .preLoad(() => this.setState({ pending: true }))
-            .postLoad(() => this.setState({ pending: false }))
-            .success((response) => {
-                try {
-                    schema.validate(response, 'analysisFramework');
-                    this.props.addNewAf({
-                        afDetail: response,
-                        projectId,
-                    });
-                    notify.send({
-                        title: _ts('project', 'afCreate'),
-                        type: notify.type.SUCCESS,
-                        message: _ts('project', 'afCreateSuccess'),
-                        duration: notify.duration.MEDIUM,
-                    });
-                    this.props.onModalClose();
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .failure((response) => {
-                notify.send({
-                    title: _ts('project', 'afCreate'),
-                    type: notify.type.ERROR,
-                    message: _ts('project', 'afCreateFailure'),
-                    duration: notify.duration.SLOW,
-                });
-                const faramErrors = alterResponseErrorToFaramError(response.errors);
-                this.setState({ faramErrors });
-            })
-            .fatal(() => {
-                notify.send({
-                    title: _ts('project', 'afCreate'),
-                    type: notify.type.ERROR,
-                    message: _ts('project', 'afCreateFatal'),
-                    duration: notify.duration.SLOW,
-                });
-                this.setState({
-                    faramErrors: { $internal: [_ts('project', 'frameworkCreateFailure')] },
-                });
-            })
-            .build();
-        return afCreateRequest;
+        this.afCreateRequest.stop();
     }
 
     // faram RELATED
@@ -133,12 +80,8 @@ export default class AddAnalysisFramework extends React.PureComponent {
     };
 
     handleValidationSuccess = (data) => {
-        if (this.afCreateRequest) {
-            this.afCreateRequest.stop();
-        }
-
-        this.afCreateRequest = this.createRequestForAfCreate(data);
-        this.afCreateRequest.start();
+        const { projectId } = this.props;
+        this.afCreateRequest.init(projectId, data).start();
     };
 
     render() {

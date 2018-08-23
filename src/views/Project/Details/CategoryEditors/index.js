@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { FgRestBuilder } from '#rsu/rest';
 import { caseInsensitiveSubmatch, compareString } from '#rsu/common';
 import AccentButton from '#rsca/Button/AccentButton';
 import SearchInput from '#rsci/SearchInput';
@@ -14,18 +13,15 @@ import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 
 import {
-    urlForCategoryEditors,
-    createParamsForGet,
-} from '#rest';
-import {
     categoryEditorListSelector,
     projectDetailsSelector,
 
     setCategoryEditorsAction,
 } from '#redux';
 import _ts from '#ts';
-import schema from '#schema';
 import { iconNames } from '#constants';
+
+import CesRequest from './requests/CesRequest';
 
 import Details from './Details';
 import AddCategoryEditor from './AddCategoryEditor';
@@ -81,14 +77,14 @@ export default class ProjectCategoryEditor extends React.PureComponent {
             searchInputValue: '',
             selectedCe,
         };
+        this.cesRequest = new CesRequest({
+            setState: v => this.setState(v),
+            setCategoryEditors: this.props.setCategoryEditors,
+        });
     }
 
     componentWillMount() {
-        if (this.cesRequest) {
-            this.cesRequest.stop();
-        }
-        this.cesRequest = this.createCesRequest();
-        this.cesRequest.start();
+        this.cesRequest.init().start();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -121,30 +117,8 @@ export default class ProjectCategoryEditor extends React.PureComponent {
     }
 
     componentWillUnmount() {
-        if (this.cesRequest) {
-            this.cesRequest.stop();
-        }
+        this.cesRequest.stop();
     }
-
-    createCesRequest = () => {
-        const cesRequest = new FgRestBuilder()
-            .url(urlForCategoryEditors)
-            .params(createParamsForGet)
-            .preLoad(() => this.setState({ pending: true }))
-            .postLoad(() => this.setState({ pending: false }))
-            .success((response) => {
-                try {
-                    schema.validate(response, 'categoryEditorList');
-                    this.props.setCategoryEditors({
-                        categoryEditors: response.results,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .build();
-        return cesRequest;
-    };
 
     handleCeClick = (ceId) => {
         this.setState({ selectedCe: ceId });

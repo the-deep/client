@@ -1,10 +1,9 @@
-import { FgRestBuilder } from '#rsu/rest';
 import {
     createUrlForRegionWithField,
     createParamsForGet,
 } from '#rest';
 
-import schema from '#schema';
+import Request from '#utils/Request';
 import notify from '#notify';
 import _ts from '#ts';
 
@@ -12,70 +11,69 @@ import _ts from '#ts';
  * setState, setRegionDetails
 */
 
-export default class RegionGetRequest {
-    constructor(props) {
-        this.props = props;
+export default class RegionGetRequest extends Request {
+    schemaName = 'region'
+
+    handlePreLoad = () => {
+        this.parent.setState({ dataLoading: true });
     }
 
-    success = regionId => (response) => {
+    handlePostLoad = () => {
+        this.parent.setState({ dataLoading: false });
+    }
+
+    handleSuccess = (response) => {
         const {
             regionDetail,
-            discard,
             setRegionDetails,
-        } = this.props;
+        } = this.parent;
+        const {
+            regionId,
+            discard,
+        } = this.extraParents;
 
-        try {
-            schema.validate(response, 'region');
-            // FIXME: use utils.checkVersion method, don't compare version yourself
-            if (response.versionId === regionDetail.versionId && !discard) {
-                return;
-            }
-            const regionDetails = {
-                faramValues: response,
-                faramErrors: {},
-                hasErrors: false,
-                pristine: false,
-                id: response.id,
-                public: response.public,
-                versionId: response.versionId,
-            };
-            setRegionDetails({
-                regionDetails,
-                regionId,
+        // FIXME: use utils.checkVersion method, don't compare version yourself
+        if (response.versionId === regionDetail.versionId && !discard) {
+            return;
+        }
+        const regionDetails = {
+            faramValues: response,
+            faramErrors: {},
+            hasErrors: false,
+            pristine: false,
+            id: response.id,
+            public: response.public,
+            versionId: response.versionId,
+        };
+        setRegionDetails({
+            regionDetails,
+            regionId,
+        });
+        if (regionDetail.pristine && !discard) {
+            notify.send({
+                type: notify.type.WARNING,
+                title: _ts('project', 'regionUpdate'),
+                message: _ts('project', 'regionUpdateOverridden'),
+                duration: notify.duration.SLOW,
             });
-            if (regionDetail.pristine && !discard) {
-                notify.send({
-                    type: notify.type.WARNING,
-                    title: _ts('project', 'regionUpdate'),
-                    message: _ts('project', 'regionUpdateOverridden'),
-                    duration: notify.duration.SLOW,
-                });
-            }
-        } catch (er) {
-            console.error(er);
         }
     }
 
-    failure = (response) => {
+    handleFailure = (response) => {
         console.warn('FAILURE:', response);
     }
 
-    fatal = (response) => {
-        console.warn('FATAL:', response);
+    handleFatal = () => {
+        console.warn('FATAL:');
     }
 
-    create = (regionId) => {
-        const urlForRegion = createUrlForRegionWithField(regionId);
+    init = (regionId, discard) => {
+        this.extraParents = { regionId, discard };
 
-        const regionRequest = new FgRestBuilder()
-            .url(urlForRegion)
-            .params(createParamsForGet)
-            .preLoad(() => { this.props.setState({ dataLoading: true }); })
-            .postLoad(() => { this.props.setState({ dataLoading: false }); })
-            .success(this.success(regionId))
-            .failure(this.failure)
-            .fatal(this.fatal)
-            .build();
-        return regionRequest;
+        this.createDefault({
+            url: createUrlForRegionWithField(regionId),
+            params: createParamsForGet,
+        });
+        return this;
     }
 }
