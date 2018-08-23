@@ -38,19 +38,21 @@ export default class SectorTitle extends React.PureComponent {
         setSelectedSector(id);
     }
 
-    faramInfoForDelete = {
-        action: 'remove',
-        callback: (i, newValue) => {
-            const {
-                keyExtractor,
-                setSelectedSector,
-            } = this.props;
-            const newIndex = Math.min(i, newValue.length - 1);
-            const newKey = newIndex !== -1
-                ? keyExtractor(newValue[newIndex])
-                : undefined;
-            setSelectedSector(newKey);
-        },
+    deleteClick = (options, index) => {
+        const newOptions = [...options];
+        newOptions.splice(index, 1);
+
+        const {
+            keyExtractor,
+            setSelectedSector,
+        } = this.props;
+        const newIndex = Math.min(index, newOptions.length - 1);
+        const newKey = newIndex !== -1
+            ? keyExtractor(newOptions[newIndex])
+            : undefined;
+        setSelectedSector(newKey);
+
+        return newOptions;
     }
 
     render() {
@@ -80,12 +82,12 @@ export default class SectorTitle extends React.PureComponent {
                     {title || _ts('widgets.editor.matrix2d', 'unnamedSectorTitle', { index: index + 1 })}
                 </button>
                 <DangerButton
+                    faramAction={this.deleteClick}
+                    faramElementName={index}
                     className={styles.deleteButton}
                     title={_ts('widgets.editor.matrix2d', 'deleteSectorTooltip')}
                     iconName={iconNames.delete}
                     transparent
-                    faramInfo={this.faramInfoForDelete}
-                    faramElementIndex={index}
                 />
             </div>
         );

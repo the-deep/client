@@ -66,13 +66,13 @@ export default class MultiSelectEditWidget extends React.PureComponent {
         },
     };
 
-    static faramInfoForAdd = {
-        action: 'add',
-        newElement: () => ({
+    static optionAddClick = options => ([
+        ...options,
+        {
             key: randomString(16).toLowerCase(),
             label: '',
-        }),
-    }
+        },
+    ])
 
     static keyExtractor = elem => elem.key;
 
@@ -167,8 +167,9 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                                         {_ts('widgets.editor.multiselect', 'optionsHeader')}
                                     </h4>
                                     <PrimaryButton
+                                        faramElementName="add-btn"
+                                        faramInfo={MultiSelectEditWidget.optionAddClick}
                                         iconName={iconNames.add}
-                                        faramInfo={MultiSelectEditWidget.faramInfoForAdd}
                                         transparent
                                     >
                                         {_ts('widgets.editor.multiselect', 'addOptionButtonLabel')}

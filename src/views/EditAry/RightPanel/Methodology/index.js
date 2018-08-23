@@ -70,16 +70,18 @@ export default class Methodology extends React.PureComponent {
 
     static keyExtractor = d => d.key;
 
-    static faramInfoForDelete = {
-        action: 'remove',
+    static removeAttribute = (attributes, index) => {
+        const newAttributes = [...attributes];
+        newAttributes.splice(index, 1);
+        return newAttributes;
     }
 
-    static faramInfoForAdd = {
-        action: 'add',
-        newElement: () => ({
+    static addAttribute = attributes => ([
+        ...attributes,
+        {
             key: randomString(16).toLowerCase(),
-        }),
-    }
+        },
+    ])
 
     renderAttributeHeader = (k, key) => {
         const { aryTemplateMethodology: attributesTemplate } = this.props;
@@ -130,8 +132,8 @@ export default class Methodology extends React.PureComponent {
                 <div className={styles.actionButtons}>
                     <DangerButton
                         iconName={iconNames.delete}
-                        faramInfo={Methodology.faramInfoForDelete}
-                        faramElementIndex={index}
+                        faramElementName={index}
+                        faramAction={Methodology.removeAttribute}
                     />
                 </div>
             </div>
@@ -191,7 +193,8 @@ export default class Methodology extends React.PureComponent {
                                         />
                                         <div className={styles.actionButtons}>
                                             <PrimaryButton
-                                                faramInfo={Methodology.faramInfoForAdd}
+                                                faramElementName="add-button"
+                                                faramAction={Methodology.addAttribute}
                                                 iconName={iconNames.add}
                                             />
                                         </div>

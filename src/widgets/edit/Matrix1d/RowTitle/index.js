@@ -34,15 +34,17 @@ export default class RowTitle extends React.PureComponent {
         this.props.setSelectedRow(key);
     }
 
-    faramInfoForDelete = {
-        action: 'remove',
-        callback: (i, newValue) => {
-            const newIndex = Math.min(i, newValue.length - 1);
-            const newKey = newIndex !== -1
-                ? this.props.keyExtractor(newValue[newIndex])
-                : undefined;
-            this.props.setSelectedRow(newKey);
-        },
+    deleteClick = (options, index) => {
+        const newOptions = [...options];
+        newOptions.splice(index, 1);
+
+        const newIndex = Math.min(index, newOptions.length - 1);
+        const newKey = newIndex !== -1
+            ? this.props.keyExtractor(newOptions[newIndex])
+            : undefined;
+        this.props.setSelectedRow(newKey);
+
+        return newOptions;
     }
 
     render() {
@@ -72,12 +74,12 @@ export default class RowTitle extends React.PureComponent {
                     {title || _ts('widgets.editor.matrix1d', 'unnamedRowTitle', { index: index + 1 })}
                 </button>
                 <DangerButton
+                    faramAction={this.deleteClick}
+                    faramElementName={index}
                     className={styles.deleteButton}
                     title={_ts('widgets.editor.matrix1d', 'deleteButtonTooltip')}
                     iconName={iconNames.delete}
                     transparent
-                    faramInfo={this.faramInfoForDelete}
-                    faramElementIndex={index}
                 />
             </div>
         );

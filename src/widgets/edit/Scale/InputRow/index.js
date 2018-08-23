@@ -18,8 +18,10 @@ const propTypes = {
 export default class InputRow extends React.PureComponent {
     static propTypes = propTypes;
 
-    static faramInfoForDelete = {
-        action: 'remove',
+    static deleteClick = (options, index) => {
+        const newOptions = [...options];
+        newOptions.splice(index, 1);
+        return newOptions;
     }
 
     render() {
@@ -43,11 +45,11 @@ export default class InputRow extends React.PureComponent {
                     />
                 </FaramGroup>
                 <DangerButton
+                    faramElementName={index}
+                    faramAction={InputRow.deleteClick}
                     className={styles.deleteButton}
                     iconName={iconNames.delete}
-                    faramInfo={InputRow.faramInfoForDelete}
                     title={_ts('widgets.editor.scale', 'removeButtonTitle')}
-                    faramElementIndex={index}
                     transparent
                 />
             </div>

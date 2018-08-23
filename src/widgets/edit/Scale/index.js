@@ -77,13 +77,10 @@ export default class ScaleFrameworkList extends React.PureComponent {
         },
     };
 
-    static faramInfoForAdd = {
-        action: 'add',
-        newElement: () => ({
-            key: randomString(16).toLowerCase(),
-            title: '',
-        }),
-    }
+    static addOptionClick = options => ([
+        ...options,
+        { key: randomString(16).toLowerCase() },
+    ])
 
     constructor(props) {
         super(props);
@@ -179,7 +176,8 @@ export default class ScaleFrameworkList extends React.PureComponent {
                                         {_ts('widgets.editor.scale', 'addOptionHeadingLabel')}
                                     </h4>
                                     <PrimaryButton
-                                        faramInfo={ScaleFrameworkList.faramInfoForAdd}
+                                        faramElementName="add-btn"
+                                        faramAction={ScaleFrameworkList.addOptionClick}
                                         iconName={iconNames.add}
                                         transparent
                                     >

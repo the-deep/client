@@ -31,13 +31,13 @@ export default class RowContent extends React.PureComponent {
 
     static keyExtractor = elem => elem.key;
 
-    static faramInfoForAdd = {
-        action: 'add',
-        newElement: () => ({
+    static addOptionClick = options => ([
+        ...options,
+        {
             key: randomString(16).toLowerCase(),
             value: '',
-        }),
-    }
+        },
+    ])
 
     static rendererParams = (key, elem, i) => ({
         index: i,
@@ -87,7 +87,8 @@ export default class RowContent extends React.PureComponent {
                                 {_ts('widgets.editor.matrix1d', 'cellsHeaderTitle')}
                             </h4>
                             <PrimaryButton
-                                faramInfo={RowContent.faramInfoForAdd}
+                                faramName="add-btn"
+                                faramAction={RowContent.addOptionClick}
                                 iconName={iconNames.add}
                                 transparent
                             >

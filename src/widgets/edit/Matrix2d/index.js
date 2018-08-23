@@ -307,35 +307,41 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         );
     };
 
-    faramInfoForAdd = {
-        action: 'add',
-        newElement: () => ({
+    addDimensionClick = (options) => {
+        const newDimension = {
             id: randomString(16).toLowerCase(),
             color: undefined,
             title: '',
             tooltip: '',
             subdimensions: [],
-        }),
-        callback: (value) => {
-            this.setState({
-                selectedDimensionKey: Matrix2dEditWidget.keyExtractor(value),
-            });
-        },
+        };
+
+        this.setState({
+            selectedDimensionKey: Matrix2dEditWidget.keyExtractor(newDimension),
+        });
+
+        return [
+            ...options,
+            newDimension,
+        ];
     }
 
-    faramInfoForAddSector = {
-        action: 'add',
-        newElement: () => ({
+    addSectorClick = (options) => {
+        const newSector = {
             id: randomString(16).toLowerCase(),
             title: '',
             tooltip: '',
             sectors: [],
-        }),
-        callback: (value) => {
-            this.setState({
-                selectedSectorKey: Matrix2dEditWidget.keyExtractor(value),
-            });
-        },
+        };
+
+        this.setState({
+            selectedSectorKey: Matrix2dEditWidget.keyExtractor(newSector),
+        });
+
+        return [
+            ...options,
+            newSector,
+        ];
     }
 
     handleTabSelect = (selectedTab) => {
@@ -351,9 +357,9 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             _ts('widgets.editor.matrix2d', 'addSectorButtonTitle')
         );
 
-        const faramInfo = selectedTab === 'dimensions'
-            ? this.faramInfoForAdd
-            : this.faramInfoForAddSector;
+        const faramAction = selectedTab === 'dimensions'
+            ? this.addDimensionClick
+            : this.addSectorClick;
 
         return (
             <div className={styles.tabsContainer}>
@@ -372,7 +378,8 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                 >
                     <FaramList faramElementName={selectedTab}>
                         <PrimaryButton
-                            faramInfo={faramInfo}
+                            faramElementName="add-btn"
+                            faramAction={faramAction}
                             iconName={iconNames.add}
                             title={buttonLabel}
                             transparent

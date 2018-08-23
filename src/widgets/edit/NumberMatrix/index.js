@@ -97,13 +97,13 @@ export default class NumberMatrixOverview extends React.PureComponent {
         },
     };
 
-    static faramInfoForAdd = {
-        action: 'add',
-        newElement: () => ({
+    static addOptionClick = options => ([
+        ...options,
+        {
             key: randomString(16).toLowerCase(),
             title: '',
-        }),
-    }
+        },
+    ])
 
     static rendererParams = (key, elem, i) => ({
         index: i,
@@ -222,7 +222,8 @@ export default class NumberMatrixOverview extends React.PureComponent {
                 >
                     <FaramList faramElementName={selectedTab}>
                         <PrimaryButton
-                            faramInfo={NumberMatrixOverview.faramInfoForAdd}
+                            faramElementName="add-btn"
+                            faramAction={NumberMatrixOverview.addOptionClick}
                             iconName={iconNames.add}
                             title={buttonLabel}
                             transparent

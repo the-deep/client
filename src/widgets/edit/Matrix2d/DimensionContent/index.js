@@ -31,14 +31,14 @@ export default class DimensionContent extends React.PureComponent {
 
     static keyExtractor = elem => elem.id;
 
-    static faramInfoForAdd = {
-        action: 'add',
-        newElement: () => ({
+    static addSubdimensionClick = subdimensions => ([
+        ...subdimensions,
+        {
             id: randomString(16).toLowerCase(),
             title: '',
             tooltip: '',
-        }),
-    }
+        },
+    ])
 
     static rendererParams = (key, elem, i) => ({
         index: i,
@@ -88,7 +88,8 @@ export default class DimensionContent extends React.PureComponent {
                                 {_ts('widgets.editor.matrix2d', 'subdimensionsHeaderTitle')}
                             </h4>
                             <PrimaryButton
-                                faramInfo={DimensionContent.faramInfoForAdd}
+                                faramElementName="add-btn"
+                                faramAction={DimensionContent.addSubdimensionClick}
                                 iconName={iconNames.add}
                                 transparent
                             >
