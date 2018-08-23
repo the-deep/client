@@ -1,16 +1,20 @@
 import selectOptions from './select';
 import scaleOptions from './scale';
 import matrix1dOptions from './matrix1d';
+import matrix2dOptions from './matrix2d';
 
 export const supportedWidgets = {
     selectWidget: selectOptions,
     multiselectWidget: selectOptions,
     scaleWidget: scaleOptions,
     matrix1dWidget: matrix1dOptions,
+    matrix2dWidget: matrix2dOptions,
 };
 
-export const getSupportedWidgets = widgets => (
-    widgets.filter(w => supportedWidgets[w.widgetId] !== undefined)
+export const getSupportedWidgets = (widgets, widgetKey) => (
+    widgets.filter(w => (
+        supportedWidgets[w.widgetId] !== undefined && w.key !== widgetKey
+    ))
 );
 
 export const getOptionsForSelectedWidget = (selectedWidgetId, widgets) => {

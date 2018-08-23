@@ -14,6 +14,8 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import { afViewAnalysisFrameworkWidgetsSelector } from '#redux';
 
+import _ts from '#ts';
+
 import {
     getSupportedWidgets,
     getOptionsForSelectedWidget,
@@ -22,8 +24,9 @@ import {
 import styles from './styles.scss';
 
 const propTypes = {
-    widgets: PropTypes.array.isRequired,
+    widgets: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     onClose: PropTypes.func.isRequired,
+    widgetKey: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -32,6 +35,38 @@ const defaultProps = {
 const mapStateToProps = (state, props) => ({
     widgets: afViewAnalysisFrameworkWidgetsSelector(state, props),
 });
+
+const getFlatItems = (params) => {
+    const {
+        data,
+        items,
+        treeKeySelector,
+        treeLabelSelector,
+        treeNodesSelector,
+    } = params;
+
+    if (!items || items.length === 0) {
+        if (data) {
+            return [{
+                key: treeKeySelector(data),
+                label: treeLabelSelector(data),
+                selected: data.selected,
+            }];
+        }
+        return [];
+    }
+
+    return items.reduce((selections, d) => [
+        ...selections,
+        ...getFlatItems({
+            data: d,
+            options: treeNodesSelector && treeNodesSelector(d),
+            treeKeySelector,
+            treeLabelSelector,
+            treeNodesSelector,
+        }),
+    ], []);
+};
 
 @connect(mapStateToProps)
 export default class LinkWidgetModal extends React.PureComponent {
@@ -66,13 +101,34 @@ export default class LinkWidgetModal extends React.PureComponent {
     }
 
     handleWidgetChange = (selectedWidget) => {
-        this.setState({
+        this.selectedWidgetOptions = getOptionsForSelectedWidget(
             selectedWidget,
-            selectedWidgetItem: '',
-            items: [],
-            treeKeySelector: undefined,
-            treeLabelSelector: undefined,
-            treeNodesSelector: undefined,
+            this.filteredWidgets,
+        );
+        const selectedWidgetItem = LinkWidgetModal.optionsKeySelector(
+            this.selectedWidgetOptions[0],
+        );
+
+        const selectedWidgetOption = LinkWidgetModal.getSelectedWidgetOption(
+            selectedWidgetItem,
+            this.selectedWidgetOptions,
+        );
+
+        const widgetData = LinkWidgetModal.getWidgetData(selectedWidget, this.filteredWidgets);
+
+        const items = selectedWidgetOption ? selectedWidgetOption.items(widgetData) : [];
+        const treeKeySelector = selectedWidgetOption && selectedWidgetOption.keySelector;
+        const treeLabelSelector = selectedWidgetOption && selectedWidgetOption.labelSelector;
+        const treeNodesSelector = selectedWidgetOption && selectedWidgetOption.nodesSelector;
+
+
+        this.setState({
+            items,
+            selectedWidget,
+            selectedWidgetItem,
+            treeKeySelector,
+            treeLabelSelector,
+            treeNodesSelector,
         });
     }
 
@@ -85,17 +141,11 @@ export default class LinkWidgetModal extends React.PureComponent {
 
         const widgetData = LinkWidgetModal.getWidgetData(selectedWidget, this.filteredWidgets);
 
-        let items = [];
-        let treeKeySelector;
-        let treeLabelSelector;
-        let treeNodesSelector;
+        const items = selectedWidgetOption ? selectedWidgetOption.items(widgetData) : [];
+        const treeKeySelector = selectedWidgetOption && selectedWidgetOption.keySelector;
+        const treeLabelSelector = selectedWidgetOption && selectedWidgetOption.labelSelector;
+        const treeNodesSelector = selectedWidgetOption && selectedWidgetOption.nodesSelector;
 
-        if (selectedWidgetOption) {
-            items = selectedWidgetOption.items(widgetData);
-            treeKeySelector = selectedWidgetOption.keySelector;
-            treeLabelSelector = selectedWidgetOption.labelSelector;
-            treeNodesSelector = selectedWidgetOption.nodesSelector;
-        }
         this.setState({
             items,
             selectedWidgetItem,
@@ -109,10 +159,29 @@ export default class LinkWidgetModal extends React.PureComponent {
         this.setState({ items });
     }
 
+    handleSaveClick = () => {
+        const {
+            items,
+            treeKeySelector,
+            treeLabelSelector,
+            treeNodesSelector,
+        } = this.state;
+
+        const flatItems = getFlatItems({
+            items,
+            treeKeySelector,
+            treeLabelSelector,
+            treeNodesSelector,
+        });
+        const filteredItems = flatItems.filter(i => i.selected);
+        console.warn(filteredItems);
+    }
+
     render() {
         const {
             onClose,
             widgets,
+            widgetKey,
         } = this.props;
 
         const {
@@ -124,36 +193,53 @@ export default class LinkWidgetModal extends React.PureComponent {
             selectedWidgetItem,
         } = this.state;
 
-        this.filteredWidgets = getSupportedWidgets(widgets);
+        this.filteredWidgets = getSupportedWidgets(widgets, widgetKey);
         this.selectedWidgetOptions = getOptionsForSelectedWidget(
             selectedWidget,
             this.filteredWidgets,
         );
 
+        const modalTitle = _ts('widgets.editor.link', 'modalTitle');
+        const widgetSelectionLabel = _ts('widgets.editor.link', 'widgetSelectionLabel');
+        const optionsTypeSelectionLabel = _ts('widgets.editor.link', 'optionsTypeSelectionLabel');
+        const listOfItemsHeader = _ts('widgets.editor.link', 'listOfItemsHeader');
+        const saveButtonLabel = _ts('widgets.editor.link', 'saveButtonLabel');
+        const cancelButtonLabel = _ts('widgets.editor.link', 'cancelButtonLabel');
+
         return (
-            <Modal>
-                <ModalHeader title="Link widgets" />
-                <ModalBody>
+            <Modal className={styles.modal} >
+                <ModalHeader title={modalTitle} />
+                <ModalBody className={styles.modalBody} >
                     <div className={styles.selectionBar} >
                         <SelectInput
+                            className={styles.selectInput}
+                            label={widgetSelectionLabel}
                             options={this.filteredWidgets}
                             keySelector={LinkWidgetModal.widgetKeySelector}
                             labelSelector={LinkWidgetModal.widgetLabelSelector}
                             onChange={this.handleWidgetChange}
                             value={selectedWidget}
+                            showHintAndError={false}
                         />
                         <SelectInput
+                            className={styles.selectInput}
+                            label={optionsTypeSelectionLabel}
                             options={this.selectedWidgetOptions}
                             keySelector={LinkWidgetModal.optionsKeySelector}
                             labelSelector={LinkWidgetModal.optionsLabelSelector}
                             onChange={this.handleWidgetOptionChange}
                             value={selectedWidgetItem}
+                            showHintAndError={false}
                         />
                     </div>
                     <div className={styles.selectionBox} >
+                        <header className={styles.header}>
+                            {listOfItemsHeader}
+                        </header>
                         <TreeSelection
+                            className={styles.tree}
                             value={items}
-                            onChange={this.onItemsChange}
+                            onChange={this.handleItemsChange}
                             labelSelector={treeLabelSelector}
                             keySelector={treeKeySelector}
                             nodesSelector={treeNodesSelector}
@@ -162,10 +248,10 @@ export default class LinkWidgetModal extends React.PureComponent {
                 </ModalBody>
                 <ModalFooter>
                     <DangerButton onClick={onClose}>
-                        Cancel
+                        {cancelButtonLabel}
                     </DangerButton>
-                    <PrimaryButton>
-                        Save
+                    <PrimaryButton onClick={this.handleSaveClick}>
+                        {saveButtonLabel}
                     </PrimaryButton>
                 </ModalFooter>
             </Modal>

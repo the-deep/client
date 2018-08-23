@@ -1,0 +1,49 @@
+@import '~base-scss/base';
+
+$height-edit-modal: 60vh;
+
+.modal {
+    width: $width-modal-medium;
+    height: $height-edit-modal;
+
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+
+        .selection-bar {
+            display: flex;
+            flex-shrink: 0;
+            border-bottom: $width-separator-thin solid $color-separator;
+
+            .select-input {
+                padding: $spacing-medium $spacing-small;
+            }
+        }
+
+        .selection-box {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+
+            .header {
+                flex-shrink: 0;
+                padding: $spacing-medium $spacing-small;
+                text-transform: uppercase;
+                font-size: $font-size-medium;
+                font-weight: $font-weight-light;
+            }
+
+            .tree {
+                flex-grow: 1;
+                overflow-y: auto;
+
+                :global {
+                    .parent-node {
+                        padding: $spacing-extra-small $spacing-small;
+                    }
+                }
+            }
+        }
+    }
+}

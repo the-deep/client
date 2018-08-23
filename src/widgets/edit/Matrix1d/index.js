@@ -28,6 +28,7 @@ const propTypes = {
     onSave: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    widgetKey: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -209,8 +210,13 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             row => Matrix1dEditWidget.keyExtractor(row) === this.state.selectedRowKey,
         );
 
+        const modalClassNames = [styles.editModal];
+        if (showLinkModal) {
+            modalClassNames.push(styles.disabled);
+        }
+
         return (
-            <Modal className={styles.editModal}>
+            <Modal className={modalClassNames.join(' ')}>
                 <Faram
                     className={styles.form}
                     onChange={this.handleFaramChange}
@@ -244,27 +250,29 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                     <h4>
                                         {_ts('widgets.editor.matrix1d', 'rowTitle')}
                                     </h4>
-                                    <PrimaryButton
-                                        transparent
-                                        iconName={iconNames.add}
-                                        onClick={this.handleAddFromWidgetClick}
-                                    >
-                                        {/* FIXME: use strings */}
-                                        Add from widgets
-                                    </PrimaryButton>
-                                    <PrimaryButton
-                                        faramElementName="add-btn"
-                                        faramAction={this.addRowClick}
-                                        iconName={iconNames.add}
-                                        transparent
-                                    >
-                                        {_ts('widgets.editor.matrix1d', 'addRowButtonTitle')}
-                                    </PrimaryButton>
-                                    {showLinkModal &&
-                                        <LinkWidgetModal
-                                            onClose={this.handleLinkModalClose}
-                                        />
-                                    }
+                                    <div>
+                                        <PrimaryButton
+                                            transparent
+                                            iconName={iconNames.add}
+                                            onClick={this.handleAddFromWidgetClick}
+                                        >
+                                            {_ts('widgets.editor.matrix1d', 'addFromWidgets')}
+                                        </PrimaryButton>
+                                        {showLinkModal &&
+                                            <LinkWidgetModal
+                                                onClose={this.handleLinkModalClose}
+                                                widgetKey={this.props.widgetKey}
+                                            />
+                                        }
+                                        <PrimaryButton
+                                            faramElementName="add-btn"
+                                            faramAction={this.addRowClick}
+                                            iconName={iconNames.add}
+                                            transparent
+                                        >
+                                            {_ts('widgets.editor.matrix1d', 'addRowButtonTitle')}
+                                        </PrimaryButton>
+                                    </div>
                                 </header>
                                 <div className={styles.panels}>
                                     <SortableListView

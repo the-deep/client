@@ -10,6 +10,8 @@ const getScaleOptions = (widgetData = {}) => (
 const options = {
     title: 'Options',
     items: getScaleOptions,
+    keySelector: d => d.key,
+    labelSelector: d => d.title,
 };
 
 export default mapToList({

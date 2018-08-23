@@ -27,6 +27,7 @@ const subPillars = {
     items: getSubPillars,
     keySelector: d => d.key,
     labelSelector: d => d.value,
+    nodesSelector: d => d.cells,
 };
 
 export default mapToList({
