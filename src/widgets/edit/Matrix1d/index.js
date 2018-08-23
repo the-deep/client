@@ -3,12 +3,12 @@ import React from 'react';
 
 import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
-import DangerButton from '#rsca/Button/DangerButton';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 import NonFieldErrors from '#rsci/NonFieldErrors';
+import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
 import Faram, { requiredCondition } from '#rscg/Faram';
@@ -16,6 +16,8 @@ import { findDuplicates, randomString } from '#rsu/common';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';
+
+import LinkWidgetModal from '#widgetComponents/LinkWidgetModal';
 
 import RowTitle from './RowTitle';
 import RowContent from './RowContent';
@@ -114,6 +116,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             },
             faramErrors: {},
             pristine: false,
+            showLinkModal: false,
 
             selectedRowKey: rows[0]
                 ? Matrix1dEditWidget.keyExtractor(rows[0])
@@ -141,7 +144,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         this.props.onSave({ rows }, title);
     };
 
-
     addRowClick = (rows) => {
         const newRow = {
             key: randomString(16).toLowerCase(),
@@ -157,6 +159,14 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             ...rows,
             newRow,
         ];
+    }
+
+    handleLinkModalClose = () => {
+        this.setState({ showLinkModal: false });
+    }
+
+    handleAddFromWidgetClick = () => {
+        this.setState({ showLinkModal: true });
     }
 
     rendererParams = (key, elem, i) => ({
@@ -187,6 +197,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             faramValues,
             faramErrors,
             pristine,
+            showLinkModal,
         } = this.state;
         const {
             onClose,
@@ -234,6 +245,14 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                         {_ts('widgets.editor.matrix1d', 'rowTitle')}
                                     </h4>
                                     <PrimaryButton
+                                        transparent
+                                        iconName={iconNames.add}
+                                        onClick={this.handleAddFromWidgetClick}
+                                    >
+                                        {/* FIXME: use strings */}
+                                        Add from widgets
+                                    </PrimaryButton>
+                                    <PrimaryButton
                                         faramElementName="add-btn"
                                         faramAction={this.addRowClick}
                                         iconName={iconNames.add}
@@ -241,6 +260,11 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                     >
                                         {_ts('widgets.editor.matrix1d', 'addRowButtonTitle')}
                                     </PrimaryButton>
+                                    {showLinkModal &&
+                                        <LinkWidgetModal
+                                            onClose={this.handleLinkModalClose}
+                                        />
+                                    }
                                 </header>
                                 <div className={styles.panels}>
                                     <SortableListView
