@@ -2,6 +2,7 @@ import selectOptions from './select';
 import scaleOptions from './scale';
 import matrix1dOptions from './matrix1d';
 import matrix2dOptions from './matrix2d';
+import organigramOptions from './organigram';
 
 export const supportedWidgets = {
     selectWidget: selectOptions,
@@ -9,6 +10,7 @@ export const supportedWidgets = {
     scaleWidget: scaleOptions,
     matrix1dWidget: matrix1dOptions,
     matrix2dWidget: matrix2dOptions,
+    organigramWidget: organigramOptions,
 };
 
 export const getSupportedWidgets = (widgets, widgetKey) => (
