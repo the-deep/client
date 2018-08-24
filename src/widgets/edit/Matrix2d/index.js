@@ -20,6 +20,8 @@ import TabTitle from '#components/TabTitle';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
+import LinkWidgetModal from '#widgetComponents/LinkWidgetModal';
+
 import SectorTitle from './SectorTitle';
 import SectorContent from './SectorContent';
 import DimensionTitle from './DimensionTitle';
@@ -31,6 +33,7 @@ const propTypes = {
     onSave: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    widgetKey: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -173,6 +176,8 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             },
             faramErrors: {},
             pristine: false,
+            showLinkModal: false,
+            showNestedLinkModal: false,
 
             selectedDimensionKey: dimensions[0]
                 ? Matrix2dEditWidget.keyExtractor(dimensions[0])
@@ -226,6 +231,8 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                     <DimensionContent
                                         index={selectedDimensionIndex}
                                         className={styles.rightPanel}
+                                        widgetKey={this.props.widgetKey}
+                                        onNestedModalChange={this.handleNestedModalChange}
                                     />
                                 }
                             </div>
@@ -269,6 +276,8 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                     <SectorContent
                                         index={selectedSectorIndex}
                                         className={styles.rightPanel}
+                                        widgetKey={this.props.widgetKey}
+                                        onNestedModalChange={this.handleNestedModalChange}
                                     />
                                 }
                             </div>
@@ -326,6 +335,18 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         ];
     }
 
+    handleLinkModalClose = () => {
+        this.setState({ showLinkModal: false });
+    }
+
+    handleAddFromWidgetClick = () => {
+        this.setState({ showLinkModal: true });
+    }
+
+    handleNestedModalChange = (showNestedLinkModal) => {
+        this.setState({ showNestedLinkModal });
+    }
+
     addSectorClick = (options) => {
         const newSector = {
             id: randomString(16).toLowerCase(),
@@ -349,7 +370,11 @@ export default class Matrix2dEditWidget extends React.PureComponent {
     }
 
     renderTabsWithButton = () => {
-        const { selectedTab } = this.state;
+        const {
+            selectedTab,
+            showLinkModal,
+        } = this.state;
+
         return (
             <div className={styles.tabsContainer}>
                 <FaramList faramElementName={selectedTab}>
@@ -366,6 +391,19 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     modifier={this.renderTab}
                 >
                     <FaramList faramElementName={selectedTab}>
+                        <PrimaryButton
+                            transparent
+                            iconName={iconNames.add}
+                            onClick={this.handleAddFromWidgetClick}
+                        >
+                            {_ts('widgets.editor.matrix2d', 'addFromWidgets')}
+                        </PrimaryButton>
+                        {showLinkModal &&
+                            <LinkWidgetModal
+                                onClose={this.handleLinkModalClose}
+                                widgetKey={this.props.widgetKey}
+                            />
+                        }
                         {
                             selectedTab === 'dimensions' ? (
                                 <PrimaryButton
@@ -455,7 +493,10 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             faramErrors,
             pristine,
             selectedTab,
+            showLinkModal,
+            showNestedLinkModal,
         } = this.state;
+
         const {
             onClose,
             title,
@@ -463,9 +504,13 @@ export default class Matrix2dEditWidget extends React.PureComponent {
 
 
         const TabsWithButton = this.renderTabsWithButton;
+        const modalClassnames = [styles.editModal];
+        if (showLinkModal || showNestedLinkModal) {
+            modalClassnames.push(styles.disabled);
+        }
 
         return (
-            <Modal className={styles.editModal}>
+            <Modal className={modalClassnames.join(' ')}>
                 <Faram
                     className={styles.form}
                     onChange={this.handleFaramChange}

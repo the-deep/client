@@ -13,12 +13,16 @@ import { randomString } from '#rsu/common';
 import _ts from '#ts';
 import { iconNames } from '#constants';
 
+import LinkWidgetModal from '#widgetComponents/LinkWidgetModal';
+
 import InputRow from './InputRow';
 import styles from './styles.scss';
 
 const propTypes = {
     index: PropTypes.number.isRequired,
     className: PropTypes.string,
+    widgetKey: PropTypes.string.isRequired,
+    onNestedModalChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -43,11 +47,31 @@ export default class RowContent extends React.PureComponent {
         index: i,
     })
 
+    constructor(props) {
+        super(props);
+
+        this.state = { showLinkModal: false };
+    }
+
+    handleAddFromWidgetClick = () => {
+        this.setState({
+            showLinkModal: true,
+        }, () => this.props.onNestedModalChange(true));
+    }
+
+    handleLinkModalClose = () => {
+        this.setState({
+            showLinkModal: false,
+        }, () => this.props.onNestedModalChange(false));
+    }
+
     render() {
         const {
             index,
             className,
         } = this.props;
+
+        const { showLinkModal } = this.state;
 
         return (
             <div className={className}>
@@ -86,14 +110,29 @@ export default class RowContent extends React.PureComponent {
                             <h4>
                                 {_ts('widgets.editor.matrix1d', 'cellsHeaderTitle')}
                             </h4>
-                            <PrimaryButton
-                                faramElementName="add-btn"
-                                faramAction={RowContent.addOptionClick}
-                                iconName={iconNames.add}
-                                transparent
-                            >
-                                {_ts('widgets.editor.matrix1d', 'addCellButtonTitle')}
-                            </PrimaryButton>
+                            <div>
+                                <PrimaryButton
+                                    transparent
+                                    iconName={iconNames.add}
+                                    onClick={this.handleAddFromWidgetClick}
+                                >
+                                    {_ts('widgets.editor.matrix1d', 'addFromWidgets')}
+                                </PrimaryButton>
+                                {showLinkModal &&
+                                    <LinkWidgetModal
+                                        onClose={this.handleLinkModalClose}
+                                        widgetKey={this.props.widgetKey}
+                                    />
+                                }
+                                <PrimaryButton
+                                    faramElementName="add-btn"
+                                    faramAction={RowContent.addOptionClick}
+                                    iconName={iconNames.add}
+                                    transparent
+                                >
+                                    {_ts('widgets.editor.matrix1d', 'addCellButtonTitle')}
+                                </PrimaryButton>
+                            </div>
                         </header>
                         <SortableListView
                             faramElement

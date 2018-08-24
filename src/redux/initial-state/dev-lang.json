@@ -2203,7 +2203,8 @@
             "addSubsectorButtonTitle": -59828541,
             "subsectorsHeaderTitle": 7039,
             "unnamedSubsectorLabel": -13931386,
-            "removeSubsectorButtonTooltip": -24172161
+            "removeSubsectorButtonTooltip": -24172161,
+            "addFromWidgets": -14972110
         },
         "editEntry.list": {
             "noEntriesText": 543

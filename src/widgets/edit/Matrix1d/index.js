@@ -118,6 +118,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             faramErrors: {},
             pristine: false,
             showLinkModal: false,
+            showNestedLinkModal: false,
 
             selectedRowKey: rows[0]
                 ? Matrix1dEditWidget.keyExtractor(rows[0])
@@ -170,6 +171,10 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         this.setState({ showLinkModal: true });
     }
 
+    handleNestedModalChange = (showNestedLinkModal) => {
+        this.setState({ showNestedLinkModal });
+    }
+
     rendererParams = (key, elem, i) => ({
         index: i,
         faramElementName: String(i),
@@ -199,6 +204,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             faramErrors,
             pristine,
             showLinkModal,
+            showNestedLinkModal,
         } = this.state;
         const {
             onClose,
@@ -211,7 +217,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         );
 
         const modalClassNames = [styles.editModal];
-        if (showLinkModal) {
+        if (showLinkModal || showNestedLinkModal) {
             modalClassNames.push(styles.disabled);
         }
 
@@ -286,7 +292,9 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                     { rows.length > 0 && selectedRowIndex !== -1 &&
                                         <RowContent
                                             index={selectedRowIndex}
+                                            widgetKey={this.props.widgetKey}
                                             className={styles.rightPanel}
+                                            onNestedModalChange={this.handleNestedModalChange}
                                         />
                                     }
                                 </div>
