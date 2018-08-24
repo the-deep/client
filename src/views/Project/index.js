@@ -87,10 +87,6 @@ export default class ProjectPanel extends React.PureComponent {
         }
     }
 
-    onChangeProject = (id) => {
-        this.props.setActiveProject({ activeProject: id });
-    }
-
     getStyleName = (projectId) => {
         const { projectId: projectIdFromUrl } = this.props;
 
@@ -133,7 +129,6 @@ export default class ProjectPanel extends React.PureComponent {
             <Link
                 to={reverseRoute(pathNames.projects, { projectId: project.id })}
                 className={styles.link}
-                onClick={() => this.onChangeProject(project.id)}
             >
                 {project.title}
             </Link>
@@ -194,7 +189,6 @@ export default class ProjectPanel extends React.PureComponent {
                 {
                     projectId ? (
                         <Details
-                            key={projectId}
                             className={styles.projectDetails}
                             projectId={projectId}
                             mainHistory={history}

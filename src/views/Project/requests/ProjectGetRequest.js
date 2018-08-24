@@ -45,7 +45,6 @@ export default class ProjectGetRequest extends Request {
             });
         }
     }
-
     handleFailure = (faramErrors) => {
         this.parent.setErrorProjectDetails({
             faramErrors,
