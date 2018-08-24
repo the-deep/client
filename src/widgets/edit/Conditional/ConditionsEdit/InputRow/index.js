@@ -3,7 +3,7 @@ import React from 'react';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import ListView from '#rscv/List/ListView';
-import FaramGroup from '#rsci/Faram/FaramGroup';
+import FaramGroup from '#rscg/FaramGroup';
 import SelectInput from '#rsci/SelectInput';
 
 import { iconNames } from '#constants';
@@ -17,6 +17,10 @@ const propTypes = {
     item: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     widgetData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     conditions: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+};
+
+const faramInfoForDelete = {
+    action: 'remove',
 };
 
 // eslint-disable-next-line react/prefer-stateless-function
@@ -114,8 +118,8 @@ export default class InputRow extends React.PureComponent {
                 <DangerButton
                     className={styles.deleteButton}
                     iconName={iconNames.delete}
-                    faramAction="remove"
                     title={_ts('widgets.editor.conditional', 'removeOptionButtonTitle')}
+                    faramInfo={faramInfoForDelete}
                     faramElementIndex={index}
                     transparent
                 />

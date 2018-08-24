@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FaramList from '#rsci/Faram/FaramList';
+import FaramList from '#rscg/FaramList';
 import ListView from '#rscv/List/ListView';
 import SortableListView from '#rscv/SortableListView';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -12,7 +12,7 @@ import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ModalFooter from '#rscv/Modal/Footer';
-import Faram, { requiredCondition } from '#rsci/Faram';
+import Faram, { requiredCondition } from '#rscg/Faram';
 import { randomString } from '#rsu/common';
 import _ts from '#ts';
 
@@ -124,6 +124,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         return ({
             title: _ts('widgetTitle', title),
             faramInfoForAdd: {
+                action: 'add',
                 newElement: () => ({
                     widget: {
                         key: `${widgetId}-${randomString(16).toLowerCase()}`,

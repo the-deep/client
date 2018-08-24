@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Faram from '#rsci/Faram';
-import FaramList from '#rsci/Faram/FaramList';
+import Faram from '#rscg/Faram';
+import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -94,6 +94,7 @@ export default class ConditionsEditModal extends React.PureComponent {
         return ({
             title,
             faramInfoForAdd: {
+                action: 'add',
                 newElement: () => ({
                     key: `condition-${randomString(16).toLowerCase()}`,
                     widgetId,

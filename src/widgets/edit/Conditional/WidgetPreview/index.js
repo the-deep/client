@@ -29,7 +29,6 @@ export default class WidgetPreview extends React.PureComponent {
                 </div>
                 <Button
                     transparent
-                    faramAction="add"
                     faramInfo={faramInfoForAdd}
                     iconName={iconNames.add}
                     title={_ts('framework.widgetList', 'addWidgetButtonLabel')}

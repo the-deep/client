@@ -3,7 +3,7 @@ import React, { Fragment } from 'react';
 import update from 'immutability-helper';
 
 import AccentButton from '#rsca/Button/AccentButton';
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramInputElement } from '#rscg/FaramElements';
 
 import _ts from '#ts';
 
@@ -18,7 +18,7 @@ const defaultProps = {
     onModalVisibilityChange: () => {},
 };
 
-@FaramElement('input')
+@FaramInputElement
 export default class FrameworkEditButton extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 
-import FaramElement from '#rsci/Faram/FaramElement';
+import { FaramInputElement } from '#rscg/FaramElements';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import _ts from '#ts';
@@ -21,7 +21,7 @@ const defaultProps = {
     onModalVisibilityChange: () => {},
 };
 
-@FaramElement('input')
+@FaramInputElement
 export default class ConditionsEditButton extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

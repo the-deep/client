@@ -2,8 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import DangerButton from '#rsca/Button/DangerButton';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
-import FaramGroup from '#rsci/Faram/FaramGroup';
+import FaramGroup from '#rscg/FaramGroup';
 
 import { iconNames } from '#constants';
 import FrameworkEditButton from '#components/FrameworkEditButton';
@@ -23,6 +22,10 @@ const propTypes = {
 
 const defaultProps = {
     onModalVisibilityChange: () => {},
+};
+
+const faramInfoForDelete = {
+    action: 'remove',
 };
 
 export default class SelectedWidgetItem extends React.PureComponent {
@@ -64,9 +67,9 @@ export default class SelectedWidgetItem extends React.PureComponent {
                 <DangerButton
                     className={styles.deleteButton}
                     iconName={iconNames.delete}
-                    faramAction="remove"
                     title={_ts('widgets.editor.multiselect', 'removeOptionButtonTitle')}
                     faramElementIndex={index}
+                    faramInfo={faramInfoForDelete}
                     transparent
                 />
             </div>
