@@ -65,8 +65,9 @@ export const VIEW = {
 };
 
 export const VISIBILITY = {
-    show: 'show',
-    readonly: 'readonly',
+    primary: 'primary',
+    secondary: 'secondary',
+
     hidden: 'hidden',
 };
 
@@ -161,12 +162,12 @@ let widgets = {
         overview: {
             component: TimeWidget,
             viewComponent: TimeViewWidget,
-            minSize: { w: 8, h: 4 },
+            minSize: { w: 11, h: 5 },
         },
         list: {
             component: TimeWidget,
             viewComponent: TimeViewWidget,
-            minSize: { w: 8, h: 4 },
+            minSize: { w: 11, h: 5 },
         },
     },
     dateRangeWidget: {
@@ -373,25 +374,25 @@ export const widgetListingVisibility = (widgetId, ...otherParams) => {
 
 // Determine visibility of widgets for WidgetEditor
 export const widgetVisibility = (widgetId, ...otherParams) => {
-    const overviewWidgetFn = () => VISIBILITY.show;
     const listWidgetFn = (view, addedFrom) => {
         if (addedFrom === VIEW.overview) {
-            return view === VIEW.overview ? VISIBILITY.show : VISIBILITY.readonly;
+            return view === VIEW.overview ? VISIBILITY.primary : VISIBILITY.secondary;
         } else if (addedFrom === VIEW.list) {
-            return view === VIEW.list ? VISIBILITY.show : VISIBILITY.hidden;
+            return view === VIEW.list ? VISIBILITY.primary : VISIBILITY.hidden;
         } else if (addedFrom === undefined) {
             // NOTE: To support legacy widgets,
             // if there is no addedFrom, only show it in list view
-            return view === VIEW.overview ? VISIBILITY.hidden : VISIBILITY.show;
+            return view === VIEW.overview ? VISIBILITY.hidden : VISIBILITY.primary;
         }
         console.error('Unknown view or addedFrom defined.');
         return VISIBILITY.hidden;
     };
+
     const mapping = {
-        excerptWidget: overviewWidgetFn,
-        matrix1dWidget: overviewWidgetFn,
-        matrix2dWidget: overviewWidgetFn,
-        numberMatrixWidget: overviewWidgetFn,
+        excerptWidget: listWidgetFn,
+        matrix1dWidget: listWidgetFn,
+        matrix2dWidget: listWidgetFn,
+        numberMatrixWidget: listWidgetFn,
 
         dateRangeWidget: listWidgetFn,
         dateWidget: listWidgetFn,

@@ -761,7 +761,8 @@
         "-43376795": "Failed to fetch cluster data.",
         "-92290017": "Failed to create clusters.",
         "-72859218": "Project options",
-        "-45091634": "Failed to get project options."
+        "-45091634": "Failed to get project options.",
+        "-44183195": "Warning! There are currently users who have unsaved entries from the previous version of this framework, saving it will invalidate these entries."
     },
     "links": {
         "browserExtension": {
@@ -820,7 +821,8 @@
             "cancelButtonTitle": 61,
             "saveButtonTitle": 25,
             "backButtonTooltip": -79255806,
-            "cancelConfirmDetail": -58972891
+            "cancelConfirmDetail": -58972891,
+            "successConfirmDetail": -44183195
         },
         "widgets.editor.date": {
             "informationDateCheckboxLabel": 777,
@@ -1638,7 +1640,6 @@
             "analysisFrameworkLabel": 379,
             "categoryEditorLabel": 380,
             "regionLabel": 336,
-            "saveButtonLabel": 25,
             "regionRemove": 205,
             "regionRemoveSuccess": 206,
             "regionRemoveFailure": 207,

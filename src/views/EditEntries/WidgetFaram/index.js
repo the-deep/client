@@ -155,13 +155,13 @@ export default class WidgetFaram extends React.PureComponent {
             viewComponent: ViewWidget,
         } = fetchWidget(widgetType, widgetId);
 
-        const isViewComponent = widgetVisibility(
+        const secondary = widgetVisibility(
             widgetId,
             widgetType,
             addedFrom,
-        ) === VISIBILITY.readonly;
+        ) === VISIBILITY.secondary;
 
-        if (isViewComponent) {
+        if (secondary) {
             // Faram not used for view component
             const {
                 data: { attributes: { [id]: { data } = {} } = {} } = {},
