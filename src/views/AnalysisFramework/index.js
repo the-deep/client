@@ -7,7 +7,7 @@ import BoundError from '#rscg/BoundError';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { reverseRoute } from '#rsu/common';
-import SuccessButton from '#rsca/Button/SuccessButton';
+import SuccessConfirmButton from '#rsca/ConfirmButton/SuccessConfirmButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import FixedTabs from '#rscv/FixedTabs';
 import Message from '#rscv/Message';
@@ -221,12 +221,13 @@ export default class AnalysisFramework extends React.PureComponent {
                         >
                             { _ts('framework', 'cancelButtonTitle') }
                         </DangerConfirmButton>
-                        <SuccessButton
+                        <SuccessConfirmButton
+                            confirmationMessage={_ts('framework', 'successConfirmDetail')}
                             onClick={this.handleSave}
                             disabled={analysisFramework.pristine}
                         >
                             { _ts('framework', 'saveButtonTitle') }
-                        </SuccessButton>
+                        </SuccessConfirmButton>
                     </div>
                 </header>
                 <MultiViewContainer
