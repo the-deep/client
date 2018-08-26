@@ -11,6 +11,7 @@ import TextArea from '#rsci/TextArea';
 import CheckGroup from '#rsci/CheckGroup';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
+import { randomString } from '#rsu/common';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';
@@ -67,13 +68,20 @@ export default class Methodology extends React.PureComponent {
     static orgLabelSelector = organ => organ.title;
     static orgChildSelector = organ => organ.children;
 
-    static faramInfoForDelete = {
-        action: 'remove',
+    static keyExtractor = d => d.key;
+
+    static removeAttribute = (attributes, index) => {
+        const newAttributes = [...attributes];
+        newAttributes.splice(index, 1);
+        return newAttributes;
     }
 
-    static faramInfoForAdd = {
-        action: 'add',
-    }
+    static addAttribute = attributes => ([
+        ...attributes,
+        {
+            key: randomString(16).toLowerCase(),
+        },
+    ])
 
     renderAttributeHeader = (k, key) => {
         const { aryTemplateMethodology: attributesTemplate } = this.props;
@@ -107,14 +115,14 @@ export default class Methodology extends React.PureComponent {
         );
     }
 
-    renderAttributeRow = (_, attribute, index) => {
+    renderAttributeRow = (rowKey, attribute, index) => {
         const { aryTemplateMethodology: attributesTemplate } = this.props;
         const attributesTemplateKeys = Object.keys(attributesTemplate);
         const renderAttribute = (k, key) => this.renderAttribute(key, index);
 
         return (
             <div
-                key={index}
+                key={rowKey}
                 className={styles.row}
             >
                 <List
@@ -124,8 +132,8 @@ export default class Methodology extends React.PureComponent {
                 <div className={styles.actionButtons}>
                     <DangerButton
                         iconName={iconNames.delete}
-                        faramInfo={Methodology.faramInfoForDelete}
-                        faramElementIndex={index}
+                        faramElementName={index}
+                        faramAction={Methodology.removeAttribute}
                     />
                 </div>
             </div>
@@ -167,7 +175,10 @@ export default class Methodology extends React.PureComponent {
                 <FaramGroup faramElementName="methodology">
                     {pending && <LoadingAnimation large />}
 
-                    <FaramList faramElementName="attributes">
+                    <FaramList
+                        faramElementName="attributes"
+                        keySelector={Methodology.keyExtractor}
+                    >
                         <div className={styles.attributesSection}>
                             <Header
                                 className={styles.header}
@@ -182,7 +193,8 @@ export default class Methodology extends React.PureComponent {
                                         />
                                         <div className={styles.actionButtons}>
                                             <PrimaryButton
-                                                faramInfo={Methodology.faramInfoForAdd}
+                                                faramElementName="add-button"
+                                                faramAction={Methodology.addAttribute}
                                                 iconName={iconNames.add}
                                             />
                                         </div>

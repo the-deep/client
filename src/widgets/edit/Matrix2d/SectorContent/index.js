@@ -30,14 +30,14 @@ export default class SectorContent extends React.PureComponent {
 
     static keyExtractor = elem => elem.id;
 
-    static faramInfoForAdd = {
-        action: 'add',
-        newElement: () => ({
+    static addSubsectorClick = subsectors => ([
+        ...subsectors,
+        {
             id: randomString(16).toLowerCase(),
             title: '',
             tooltip: '',
-        }),
-    }
+        },
+    ])
 
     static rendererParams = (key, elem, i) => ({
         index: i,
@@ -69,7 +69,10 @@ export default class SectorContent extends React.PureComponent {
                             label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
                         />
                     </div>
-                    <FaramList faramElementName="subsectors">
+                    <FaramList
+                        faramElementName="subsectors"
+                        keySelector={SectorContent.keyExtractor}
+                    >
                         <NonFieldErrors
                             className={styles.error}
                             faramElement
@@ -79,7 +82,8 @@ export default class SectorContent extends React.PureComponent {
                                 {_ts('widgets.editor.matrix2d', 'subsectorsHeaderTitle')}
                             </h4>
                             <PrimaryButton
-                                faramInfo={SectorContent.faramInfoForAdd}
+                                faramElementName="add-btn"
+                                faramAction={SectorContent.addSubsectorClick}
                                 iconName={iconNames.add}
                                 transparent
                             >
@@ -91,7 +95,6 @@ export default class SectorContent extends React.PureComponent {
                             className={styles.cellList}
                             dragHandleClassName={styles.dragHandle}
                             itemClassName={styles.item}
-                            keyExtractor={SectorContent.keyExtractor}
                             rendererParams={SectorContent.rendererParams}
                             renderer={SubsectorRow}
                         />

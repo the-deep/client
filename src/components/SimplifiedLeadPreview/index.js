@@ -20,7 +20,7 @@ const propTypes = {
     className: PropTypes.string,
     leadId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     highlights: PropTypes.arrayOf(PropTypes.object),
-    renderer: PropTypes.func.isRequired,
+    renderer: PropTypes.func,
     rendererParams: PropTypes.func,
 };
 
@@ -28,6 +28,7 @@ const defaultProps = {
     className: '',
     leadId: undefined,
     highlights: [],
+    renderer: undefined,
     rendererParams: undefined,
 };
 
@@ -204,6 +205,13 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
                 </Message>
             );
         } else if (extractedText) {
+            if (!renderer) {
+                return (
+                    <p className={styles.highlightedText}>
+                        {extractedText}
+                    </p>
+                );
+            }
             return (
                 <HighlightedText
                     className={styles.highlightedText}

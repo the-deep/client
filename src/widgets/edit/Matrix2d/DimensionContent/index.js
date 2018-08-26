@@ -31,14 +31,14 @@ export default class DimensionContent extends React.PureComponent {
 
     static keyExtractor = elem => elem.id;
 
-    static faramInfoForAdd = {
-        action: 'add',
-        newElement: () => ({
+    static addSubdimensionClick = subdimensions => ([
+        ...subdimensions,
+        {
             id: randomString(16).toLowerCase(),
             title: '',
             tooltip: '',
-        }),
-    }
+        },
+    ])
 
     static rendererParams = (key, elem, i) => ({
         index: i,
@@ -75,7 +75,10 @@ export default class DimensionContent extends React.PureComponent {
                             label={_ts('widgets.editor.matrix2d', 'tooltipLabel')}
                         />
                     </div>
-                    <FaramList faramElementName="subdimensions">
+                    <FaramList
+                        faramElementName="subdimensions"
+                        keySelector={DimensionContent.keyExtractor}
+                    >
                         <NonFieldErrors
                             className={styles.error}
                             faramElement
@@ -85,7 +88,8 @@ export default class DimensionContent extends React.PureComponent {
                                 {_ts('widgets.editor.matrix2d', 'subdimensionsHeaderTitle')}
                             </h4>
                             <PrimaryButton
-                                faramInfo={DimensionContent.faramInfoForAdd}
+                                faramElementName="add-btn"
+                                faramAction={DimensionContent.addSubdimensionClick}
                                 iconName={iconNames.add}
                                 transparent
                             >
@@ -97,7 +101,6 @@ export default class DimensionContent extends React.PureComponent {
                             className={styles.cellList}
                             dragHandleClassName={styles.dragHandle}
                             itemClassName={styles.item}
-                            keyExtractor={DimensionContent.keyExtractor}
                             rendererParams={DimensionContent.rendererParams}
                             renderer={SubdimensionRow}
                         />

@@ -39,19 +39,21 @@ export default class DimensionTitle extends React.PureComponent {
         setSelectedDimension(id);
     }
 
-    faramInfoForDelete = {
-        action: 'remove',
-        callback: (i, newValue) => {
-            const {
-                keyExtractor,
-                setSelectedDimension,
-            } = this.props;
-            const newIndex = Math.min(i, newValue.length - 1);
-            const newKey = newIndex !== -1
-                ? keyExtractor(newValue[newIndex])
-                : undefined;
-            setSelectedDimension(newKey);
-        },
+    deleteClick = (options, index) => {
+        const newOptions = [...options];
+        newOptions.splice(index, 1);
+
+        const {
+            keyExtractor,
+            setSelectedDimension,
+        } = this.props;
+        const newIndex = Math.min(index, newOptions.length - 1);
+        const newKey = newIndex !== -1
+            ? keyExtractor(newOptions[newIndex])
+            : undefined;
+        setSelectedDimension(newKey);
+
+        return newOptions;
     }
 
     render() {
@@ -81,12 +83,12 @@ export default class DimensionTitle extends React.PureComponent {
                     {title || _ts('widgets.editor.matrix2d', 'unnamedDimensionLabel', { index: index + 1 })}
                 </button>
                 <DangerButton
+                    faramAction={this.deleteClick}
+                    faramElementName={index}
                     className={styles.deleteButton}
                     title={_ts('widgets.editor.matrix2d', 'removeDimensionTooltip')}
                     iconName={iconNames.delete}
                     transparent
-                    faramInfo={this.faramInfoForDelete}
-                    faramElementIndex={index}
                 />
             </div>
         );

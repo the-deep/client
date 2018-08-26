@@ -65,6 +65,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                     }
                     return errors;
                 },
+                keySelector: ScaleFrameworkList.keyExtractor,
                 member: {
                     fields: {
                         key: [requiredCondition],
@@ -76,13 +77,10 @@ export default class ScaleFrameworkList extends React.PureComponent {
         },
     };
 
-    static faramInfoForAdd = {
-        action: 'add',
-        newElement: () => ({
-            key: randomString(16).toLowerCase(),
-            title: '',
-        }),
-    }
+    static addOptionClick = options => ([
+        ...options,
+        { key: randomString(16).toLowerCase() },
+    ])
 
     constructor(props) {
         super(props);
@@ -165,7 +163,10 @@ export default class ScaleFrameworkList extends React.PureComponent {
                             selectOnFocus
                         />
                         <div className={styles.scaleUnits}>
-                            <FaramList faramElementName="scaleUnits">
+                            <FaramList
+                                faramElementName="scaleUnits"
+                                keySelector={ScaleFrameworkList.keyExtractor}
+                            >
                                 <NonFieldErrors
                                     className={styles.nonFieldErrors}
                                     faramElement
@@ -175,7 +176,8 @@ export default class ScaleFrameworkList extends React.PureComponent {
                                         {_ts('widgets.editor.scale', 'addOptionHeadingLabel')}
                                     </h4>
                                     <PrimaryButton
-                                        faramInfo={ScaleFrameworkList.faramInfoForAdd}
+                                        faramElementName="add-btn"
+                                        faramAction={ScaleFrameworkList.addOptionClick}
                                         iconName={iconNames.add}
                                         transparent
                                     >
@@ -186,7 +188,6 @@ export default class ScaleFrameworkList extends React.PureComponent {
                                     className={styles.editList}
                                     dragHandleClassName={styles.dragHandle}
                                     faramElement
-                                    keyExtractor={ScaleFrameworkList.keyExtractor}
                                     rendererParams={ScaleFrameworkList.rendererParams}
                                     itemClassName={styles.sortableUnit}
                                     renderer={InputRow}

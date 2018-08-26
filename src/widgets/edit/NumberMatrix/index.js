@@ -38,6 +38,7 @@ const defaultProps = {
 export default class NumberMatrixOverview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
     static rowKeyExtractor = d => d.key;
 
     static schema = {
@@ -60,6 +61,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                     }
                     return errors;
                 },
+                keySelector: NumberMatrixOverview.rowKeyExtractor,
                 member: {
                     fields: {
                         title: [requiredCondition],
@@ -84,6 +86,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                     }
                     return errors;
                 },
+                keySelector: NumberMatrixOverview.rowKeyExtractor,
                 member: {
                     fields: {
                         title: [requiredCondition],
@@ -94,13 +97,13 @@ export default class NumberMatrixOverview extends React.PureComponent {
         },
     };
 
-    static faramInfoForAdd = {
-        action: 'add',
-        newElement: () => ({
+    static addOptionClick = options => ([
+        ...options,
+        {
             key: randomString(16).toLowerCase(),
             title: '',
-        }),
-    }
+        },
+    ])
 
     static rendererParams = (key, elem, i) => ({
         index: i,
@@ -132,13 +135,15 @@ export default class NumberMatrixOverview extends React.PureComponent {
         this.views = {
             rowHeaders: {
                 component: () => (
-                    <FaramList faramElementName="rowHeaders">
+                    <FaramList
+                        faramElementName="rowHeaders"
+                        keySelector={NumberMatrixOverview.rowKeyExtractor}
+                    >
                         <SortableListView
                             className={styles.editList}
                             dragHandleClassName={styles.dragHandle}
                             faramElement
                             itemClassName={styles.sortableUnit}
-                            keyExtractor={NumberMatrixOverview.rowKeyExtractor}
                             renderer={InputRow}
                             rendererParams={NumberMatrixOverview.rendererParams}
                         />
@@ -148,13 +153,15 @@ export default class NumberMatrixOverview extends React.PureComponent {
             },
             columnHeaders: {
                 component: () => (
-                    <FaramList faramElementName="columnHeaders">
+                    <FaramList
+                        faramElementName="columnHeaders"
+                        keySelector={NumberMatrixOverview.rowKeyExtractor}
+                    >
                         <SortableListView
                             className={styles.editList}
                             dragHandleClassName={styles.dragHandle}
                             faramElement
                             itemClassName={styles.sortableUnit}
-                            keyExtractor={NumberMatrixOverview.rowKeyExtractor}
                             renderer={InputRow}
                             rendererParams={NumberMatrixOverview.rendererParams}
                         />
@@ -215,7 +222,8 @@ export default class NumberMatrixOverview extends React.PureComponent {
                 >
                     <FaramList faramElementName={selectedTab}>
                         <PrimaryButton
-                            faramInfo={NumberMatrixOverview.faramInfoForAdd}
+                            faramElementName="add-btn"
+                            faramAction={NumberMatrixOverview.addOptionClick}
                             iconName={iconNames.add}
                             title={buttonLabel}
                             transparent

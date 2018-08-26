@@ -247,6 +247,7 @@ export default class RightPanel extends React.PureComponent {
     static createMethodologySchema = (aryTemplateMethodology = {}) => {
         const schema = { fields: {
             attributes: {
+                keySelector: d => d.key,
                 member: { fields: {
                     // NOTE: inject here
                 } },

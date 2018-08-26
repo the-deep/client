@@ -10,8 +10,10 @@ import { iconNames } from '#constants';
 
 import styles from './styles.scss';
 
-const faramInfoForDelete = {
-    action: 'remove',
+const deleteClick = (rows, index) => {
+    const newRows = [...rows];
+    newRows.splice(index, 1);
+    return newRows;
 };
 
 const InputRow = ({ index }) => (
@@ -26,11 +28,11 @@ const InputRow = ({ index }) => (
             />
         </FaramGroup>
         <DangerButton
+            faramAction={deleteClick}
+            faramElementName={index}
             className={styles.deleteButton}
             iconName={iconNames.delete}
-            faramInfo={faramInfoForDelete}
             title={_ts('widgets.editor.matrix1d', 'removeCellButtonTitle')}
-            faramElementIndex={index}
             transparent
         />
     </div>
