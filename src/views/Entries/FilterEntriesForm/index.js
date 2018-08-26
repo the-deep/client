@@ -6,6 +6,7 @@ import { FgRestBuilder } from '#rsu/rest';
 import { isObjectEmpty } from '#rsu/common';
 import SearchInput from '#rsci/SearchInput';
 import DateFilter from '#rsci/DateFilter';
+import TimeFilter from '#rsci/TimeFilter';
 import RangeFilter from '#rsci/RangeFilter';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import Button from '#rsca/Button';
@@ -280,6 +281,18 @@ export default class FilterEntriesForm extends React.PureComponent {
         } else if (filter.type === 'date') {
             return (
                 <DateFilter
+                    key={key}
+                    className={styles.entriesFilter}
+                    label={title}
+                    showHintAndError={false}
+                    onChange={values => this.handleFilterChange(key, values)}
+                    value={filters[key]}
+                    disabled={this.props.pending}
+                />
+            );
+        } else if (filter.type === 'time') {
+            return (
+                <TimeFilter
                     key={key}
                     className={styles.entriesFilter}
                     label={title}
