@@ -335,6 +335,26 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         ];
     }
 
+    addDimensionFromWidgetClick = (rows, _, listOfNewRows) => {
+        const newListOfRows = listOfNewRows.map(r => ({
+            id: randomString(16).toLowerCase(),
+            title: r.label,
+            originalWidget: r.originalWidget,
+            originalKey: r.originalKey,
+            color: undefined,
+            tooltip: '',
+            subdimensions: [],
+        }));
+        this.setState({
+            showLinkModal: false,
+            selectedDimensionKey: Matrix2dEditWidget.keyExtractor(newListOfRows[0]),
+        });
+        return [
+            ...rows,
+            ...newListOfRows,
+        ];
+    };
+
     handleLinkModalClose = () => {
         this.setState({ showLinkModal: false });
     }
@@ -365,6 +385,26 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         ];
     }
 
+    addSectorFromWidgetClick = (rows, _, listOfNewRows) => {
+        const newListOfRows = listOfNewRows.map(r => ({
+            id: randomString(16).toLowerCase(),
+            title: r.label,
+            originalWidget: r.originalWidget,
+            originalKey: r.originalKey,
+            tooltip: '',
+            subsectors: [],
+        }));
+        this.setState({
+            showLinkModal: false,
+            selectedSectorKey: Matrix2dEditWidget.keyExtractor(newListOfRows[0]),
+        });
+        return [
+            ...rows,
+            ...newListOfRows,
+        ];
+    };
+
+
     handleTabSelect = (selectedTab) => {
         this.setState({ selectedTab });
     }
@@ -374,6 +414,10 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             selectedTab,
             showLinkModal,
         } = this.state;
+
+        const addFromWidgetFaramAction = selectedTab === 'dimensions'
+            ? this.addDimensionFromWidgetClick
+            : this.addSectorFromWidgetClick;
 
         return (
             <div className={styles.tabsContainer}>
@@ -402,6 +446,8 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                             <LinkWidgetModal
                                 onClose={this.handleLinkModalClose}
                                 widgetKey={this.props.widgetKey}
+                                faramElementName="add-from-widget-btn"
+                                faramAction={addFromWidgetFaramAction}
                             />
                         }
                         {

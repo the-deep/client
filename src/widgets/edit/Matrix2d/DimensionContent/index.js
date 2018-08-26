@@ -66,6 +66,25 @@ export default class DimensionContent extends React.PureComponent {
         }, () => this.props.onNestedModalChange(false));
     }
 
+    addFromWidgetClick = (items, _, listOfNewItems) => {
+        const newListOfItems = listOfNewItems.map(r => ({
+            id: randomString(16).toLowerCase(),
+            title: r.label,
+            originalWidget: r.originalWidget,
+            originalKey: r.originalKey,
+            tooltip: '',
+        }));
+
+        this.setState({
+            showLinkModal: false,
+        }, () => this.props.onNestedModalChange(false));
+
+        return [
+            ...items,
+            ...newListOfItems,
+        ];
+    };
+
     render() {
         const { showLinkModal } = this.state;
 
@@ -123,6 +142,8 @@ export default class DimensionContent extends React.PureComponent {
                                     <LinkWidgetModal
                                         onClose={this.handleLinkModalClose}
                                         widgetKey={this.props.widgetKey}
+                                        faramElementName="add-from-widget-btn"
+                                        faramAction={this.addFromWidgetClick}
                                     />
                                 }
                                 <PrimaryButton

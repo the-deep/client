@@ -65,6 +65,24 @@ export default class RowContent extends React.PureComponent {
         }, () => this.props.onNestedModalChange(false));
     }
 
+    addFromWidgetClick = (items, _, listOfNewItems) => {
+        const newListOfItems = listOfNewItems.map(r => ({
+            key: randomString(16).toLowerCase(),
+            value: r.label,
+            originalWidget: r.originalWidget,
+            originalKey: r.originalKey,
+        }));
+
+        this.setState({
+            showLinkModal: false,
+        }, () => this.props.onNestedModalChange(false));
+
+        return [
+            ...items,
+            ...newListOfItems,
+        ];
+    };
+
     render() {
         const {
             index,
@@ -122,6 +140,8 @@ export default class RowContent extends React.PureComponent {
                                     <LinkWidgetModal
                                         onClose={this.handleLinkModalClose}
                                         widgetKey={this.props.widgetKey}
+                                        faramElementName="add-from-widget-btn"
+                                        faramAction={this.addFromWidgetClick}
                                     />
                                 }
                                 <PrimaryButton

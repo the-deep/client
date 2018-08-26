@@ -9,6 +9,7 @@ import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
+import { FaramActionElement } from '#rscg/FaramElements';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
@@ -25,6 +26,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     widgets: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    onClick: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
     widgetKey: PropTypes.string.isRequired,
 };
@@ -40,6 +42,8 @@ const getFlatItems = (params) => {
     const {
         data,
         items,
+        itemValues,
+        itemValue,
         treeKeySelector,
         treeLabelSelector,
         treeNodesSelector,
@@ -50,7 +54,7 @@ const getFlatItems = (params) => {
             return [{
                 key: treeKeySelector(data),
                 label: treeLabelSelector(data),
-                selected: data.selected,
+                selected: itemValue.selected,
             }];
         }
         return [];
@@ -60,7 +64,9 @@ const getFlatItems = (params) => {
         ...selections,
         ...getFlatItems({
             data: d,
-            options: treeNodesSelector && treeNodesSelector(d),
+            items: treeNodesSelector && treeNodesSelector(d),
+            itemValue: itemValues[treeKeySelector(d)],
+            itemValues: itemValues[treeKeySelector(d)].nodes,
             treeKeySelector,
             treeLabelSelector,
             treeNodesSelector,
@@ -68,6 +74,7 @@ const getFlatItems = (params) => {
     ], []);
 };
 
+@FaramActionElement
 @connect(mapStateToProps)
 export default class LinkWidgetModal extends React.PureComponent {
     static propTypes = propTypes;
@@ -96,7 +103,7 @@ export default class LinkWidgetModal extends React.PureComponent {
         this.state = {
             selectedWidget: '',
             selectedWidgetItem: '',
-            items: [],
+            itemValues: {},
         };
     }
 
@@ -116,14 +123,15 @@ export default class LinkWidgetModal extends React.PureComponent {
 
         const widgetData = LinkWidgetModal.getWidgetData(selectedWidget, this.filteredWidgets);
 
-        const items = selectedWidgetOption ? selectedWidgetOption.items(widgetData) : [];
         const treeKeySelector = selectedWidgetOption && selectedWidgetOption.keySelector;
         const treeLabelSelector = selectedWidgetOption && selectedWidgetOption.labelSelector;
         const treeNodesSelector = selectedWidgetOption && selectedWidgetOption.nodesSelector;
 
+        const items = selectedWidgetOption ? (selectedWidgetOption.items(widgetData)) : [];
 
         this.setState({
             items,
+            itemValues: {},
             selectedWidget,
             selectedWidgetItem,
             treeKeySelector,
@@ -148,6 +156,7 @@ export default class LinkWidgetModal extends React.PureComponent {
 
         this.setState({
             items,
+            itemValues: {},
             selectedWidgetItem,
             treeKeySelector,
             treeLabelSelector,
@@ -155,13 +164,15 @@ export default class LinkWidgetModal extends React.PureComponent {
         });
     }
 
-    handleItemsChange = (items) => {
-        this.setState({ items });
+    handleItemValuesChange = (itemValues) => {
+        this.setState({ itemValues });
     }
 
     handleSaveClick = () => {
         const {
+            itemValues,
             items,
+            selectedWidget,
             treeKeySelector,
             treeLabelSelector,
             treeNodesSelector,
@@ -169,12 +180,22 @@ export default class LinkWidgetModal extends React.PureComponent {
 
         const flatItems = getFlatItems({
             items,
+            itemValues,
             treeKeySelector,
             treeLabelSelector,
             treeNodesSelector,
         });
-        const filteredItems = flatItems.filter(i => i.selected);
-        console.warn(filteredItems);
+        const filteredItems = flatItems
+            .filter(item => item.selected)
+            .map(item => ({
+                ...item,
+                originalWidget: selectedWidget,
+                originalKey: item.key,
+            }));
+
+        if (this.props.onClick) {
+            this.props.onClick(filteredItems);
+        }
     }
 
     render() {
@@ -186,6 +207,7 @@ export default class LinkWidgetModal extends React.PureComponent {
 
         const {
             items,
+            itemValues,
             treeKeySelector,
             treeLabelSelector,
             treeNodesSelector,
@@ -238,8 +260,9 @@ export default class LinkWidgetModal extends React.PureComponent {
                         </header>
                         <TreeSelection
                             className={styles.tree}
-                            value={items}
-                            onChange={this.handleItemsChange}
+                            data={items}
+                            value={itemValues}
+                            onChange={this.handleItemValuesChange}
                             labelSelector={treeLabelSelector}
                             keySelector={treeKeySelector}
                             nodesSelector={treeNodesSelector}
@@ -250,7 +273,7 @@ export default class LinkWidgetModal extends React.PureComponent {
                     <DangerButton onClick={onClose}>
                         {cancelButtonLabel}
                     </DangerButton>
-                    <PrimaryButton onClick={this.handleSaveClick}>
+                    <PrimaryButton onClick={this.handleSaveClick} >
                         {saveButtonLabel}
                     </PrimaryButton>
                 </ModalFooter>

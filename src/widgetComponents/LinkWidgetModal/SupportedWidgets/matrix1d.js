@@ -19,7 +19,7 @@ const pillars = {
     title: 'Pillars',
     items: getPillars,
     keySelector: d => d.key,
-    labelSelector: d => d.label,
+    labelSelector: d => d.title,
 };
 
 const subPillars = {
@@ -27,7 +27,7 @@ const subPillars = {
     items: getSubPillars,
     keySelector: d => d.key,
     labelSelector: d => d.value,
-    nodesSelector: d => d.cells,
+    nodesSelector: d => d.nodes,
 };
 
 export default mapToList({

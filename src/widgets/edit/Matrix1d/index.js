@@ -163,6 +163,26 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         ];
     }
 
+    addFromWidgetClick = (rows, _, listOfNewRows) => {
+        const newListOfRows = listOfNewRows.map(r => ({
+            key: randomString(16).toLowerCase(),
+            title: r.label,
+            originalWidget: r.originalWidget,
+            originalKey: r.originalKey,
+            color: undefined,
+            tooltip: '',
+            cells: [],
+        }));
+        this.setState({
+            showLinkModal: false,
+            selectedRowKey: Matrix1dEditWidget.keyExtractor(newListOfRows[0]),
+        });
+        return [
+            ...rows,
+            ...newListOfRows,
+        ];
+    };
+
     handleLinkModalClose = () => {
         this.setState({ showLinkModal: false });
     }
@@ -268,6 +288,8 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                             <LinkWidgetModal
                                                 onClose={this.handleLinkModalClose}
                                                 widgetKey={this.props.widgetKey}
+                                                faramElementName="add-from-widget-btn"
+                                                faramAction={this.addFromWidgetClick}
                                             />
                                         }
                                         <PrimaryButton
