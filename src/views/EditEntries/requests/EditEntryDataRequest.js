@@ -42,17 +42,6 @@ export default class EditEntryDataRequest extends Request {
 
         this.parent.setLead({ lead });
 
-        const oldAf = this.parent.getAf();
-        if (oldAf.versionId < analysisFramework.versionId) {
-            notify.send({
-                type: notify.type.WARNING,
-                title: _ts('editEntry', 'entryClearedTitle'),
-                message: _ts('editEntry', 'entryClearedDetail'),
-                duration: notify.duration.SLOW,
-            });
-
-            this.parent.clearEntries({ leadId });
-        }
         this.parent.setAnalysisFramework({ analysisFramework });
 
         this.parent.setGeoOptions({

@@ -224,8 +224,6 @@ export default class EditEntries extends React.PureComponent {
             .build();
 
         this.editEntryDataRequest = new EditEntryDataRequest({
-            clearEntries: this.props.clearEntries,
-            getAf: () => this.props.analysisFramework,
             getProjectId: () => this.props.projectId,
             getEntries: () => this.props.entries,
             setAnalysisFramework: this.props.setAnalysisFramework,

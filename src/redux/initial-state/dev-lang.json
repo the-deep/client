@@ -762,7 +762,7 @@
         "-92290017": "Failed to create clusters.",
         "-72859218": "Project options",
         "-45091634": "Failed to get project options.",
-        "-44183195": "Warning! There are currently users who have unsaved entries from the previous version of this framework, saving it will invalidate these entries."
+        "-44183195": "Modifying this framework may affect {count} entries. Are you sure you want to save these changes?"
     },
     "links": {
         "browserExtension": {

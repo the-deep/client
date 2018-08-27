@@ -353,6 +353,7 @@ export const widgetList = mapToList(
 export const widgetListingVisibility = (widgetId, ...otherParams) => {
     const overviewWidgetFn = view => view === VIEW.overview;
     const listWidgetFn = () => true;
+
     const mapping = {
         excerptWidget: overviewWidgetFn,
         matrix1dWidget: overviewWidgetFn,
@@ -373,38 +374,24 @@ export const widgetListingVisibility = (widgetId, ...otherParams) => {
 };
 
 // Determine visibility of widgets for WidgetEditor
-export const widgetVisibility = (widgetId, ...otherParams) => {
-    const listWidgetFn = (view, addedFrom) => {
-        if (addedFrom === VIEW.overview) {
-            return view === VIEW.overview ? VISIBILITY.primary : VISIBILITY.secondary;
-        } else if (addedFrom === VIEW.list) {
-            return view === VIEW.list ? VISIBILITY.primary : VISIBILITY.hidden;
-        } else if (addedFrom === undefined) {
-            // NOTE: To support legacy widgets,
-            // if there is no addedFrom, only show it in list view
-            return view === VIEW.overview ? VISIBILITY.hidden : VISIBILITY.primary;
-        }
-        console.error('Unknown view or addedFrom defined.');
-        return VISIBILITY.hidden;
-    };
+export const widgetVisibility = (widgetId, view, addedFrom) => {
+    const {
+        primary,
+        secondary,
+        hidden,
+    } = VISIBILITY;
 
-    const mapping = {
-        excerptWidget: listWidgetFn,
-        matrix1dWidget: listWidgetFn,
-        matrix2dWidget: listWidgetFn,
-        numberMatrixWidget: listWidgetFn,
-
-        dateRangeWidget: listWidgetFn,
-        dateWidget: listWidgetFn,
-        timeWidget: listWidgetFn,
-        geoWidget: listWidgetFn,
-        multiselectWidget: listWidgetFn,
-        numberWidget: listWidgetFn,
-        organigramWidget: listWidgetFn,
-        scaleWidget: listWidgetFn,
-        selectWidget: listWidgetFn,
-    };
-    return mapping[widgetId](...otherParams);
+    if (addedFrom === VIEW.overview) {
+        return view === VIEW.overview ? primary : secondary;
+    } else if (addedFrom === VIEW.list) {
+        return view === VIEW.list ? primary : hidden;
+    } else if (addedFrom === undefined) {
+        // NOTE: To support legacy widgets,
+        // if there is no addedFrom, only show it in list view
+        return view === VIEW.overview ? hidden : primary;
+    }
+    console.error('Unknown view or addedFrom defined.');
+    return hidden;
 };
 
 // Access widgets

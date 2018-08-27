@@ -7,7 +7,7 @@ import {
 } from '#config/rest';
 
 const afsUrlFields = ['id', 'title', 'version_id', 'created_at', 'modified_at',
-    'is_admin', 'description', 'snapshot_one', 'snapshot_two'];
+    'is_admin', 'description', 'entries_count'];
 
 export const urlForAnalysisFrameworks = `${wsEndpoint}/analysis-frameworks/?${p({ fields: afsUrlFields })}`;
 
