@@ -22,18 +22,17 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    projectLocalData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    projectServerData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     projectId: PropTypes.number,
 };
 
 const defaultProps = {
     className: '',
-    projectLocalData: {},
+    projectServerData: {},
     projectId: undefined,
 };
 
 const mapStateToProps = (state, props) => ({
-    projectLocalData: projectLocalDataSelector(state, props),
     projectServerData: projectServerDataSelector(state, props),
     routeUrl: routeUrlSelector(state),
 });
@@ -90,14 +89,13 @@ export default class ProjectDetails extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            projectLocalData: {
-                faramValues: {
-                    role,
-                } = {},
+            projectServerData: {
+                role = {},
             },
         } = this.props;
 
-        if (role !== 'admin') {
+        // const setupPermissions = false;
+        if (!role || role.setupPermissions.indexOf('modify') === -1) {
             const className = `
                 ${classNameFromProps}
                 ${styles.forbiddenText}
