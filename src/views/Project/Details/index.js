@@ -3,13 +3,16 @@ import React, {
     Fragment,
 } from 'react';
 import { connect } from 'react-redux';
+import { Prompt } from 'react-router-dom';
 
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import FixedTabs from '#rscv/FixedTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
+
 import {
+    routeUrlSelector,
     projectLocalDataSelector,
     projectServerDataSelector,
     setProjectDetailsAction,
@@ -22,6 +25,7 @@ import Faram, {
     dateCondition,
 } from '#rscg/Faram';
 
+import notify from '#notify';
 import _ts from '#ts';
 
 import General from './General';
@@ -42,6 +46,7 @@ const propTypes = {
     setProjectDetails: PropTypes.func.isRequired,
     changeProjectDetails: PropTypes.func.isRequired,
     setErrorProjectDetails: PropTypes.func.isRequired,
+    routeUrl: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -55,6 +60,7 @@ const defaultProps = {
 const mapStateToProps = (state, props) => ({
     projectLocalData: projectLocalDataSelector(state, props),
     projectServerData: projectServerDataSelector(state, props),
+    routeUrl: routeUrlSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -167,7 +173,6 @@ export default class ProjectDetails extends React.PureComponent {
             projectId: oldProjectId,
         } = this.props;
 
-
         if (newProjectId !== oldProjectId) {
             this.projectRequest.init(newProjectId);
             this.projectRequest.start();
@@ -245,6 +250,19 @@ export default class ProjectDetails extends React.PureComponent {
         return (
             role === 'admin' ? (
                 <div className={projectDetailsStyle}>
+                    <Prompt
+                        message={
+                            (location) => {
+                                const { routeUrl } = this.props;
+                                if (location.pathname === routeUrl) {
+                                    return true;
+                                } else if (pristine) {
+                                    return true;
+                                }
+                                return _ts('common', 'youHaveUnsavedChanges');
+                            }
+                        }
+                    />
                     <Faram
                         className={styles.projectForm}
                         onChange={this.handleFaramChange}
