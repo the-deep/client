@@ -219,9 +219,9 @@ export default class OrganigramInput extends React.PureComponent {
                     <OrgChart
                         className={styles.orgchart}
                         data={data[0] || emptyObject}
-                        labelAccessor={labelSelector}
-                        idAccessor={idSelector}
-                        childAccessor={childSelector}
+                        labelSelector={labelSelector}
+                        idSelector={idSelector}
+                        childSelector={childSelector}
                         onSelection={this.handleSelection}
                         value={value}
                     />
