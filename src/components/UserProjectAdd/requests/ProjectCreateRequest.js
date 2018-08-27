@@ -11,10 +11,10 @@ import _ts from '#ts';
  * - setUserProject
  * - setUserProfileProject
  * - setUsergroupProject
- * - onProjectAdded?
+ * - onProjectAdd?
  * - handleModalClose
  */
-export default class ProjectCreate extends Request {
+export default class ProjectCreateRequest extends Request {
     schemaName = 'projectCreateResponse';
 
     handlePreLoad = () => {
@@ -32,8 +32,8 @@ export default class ProjectCreate extends Request {
             userId: this.extraParent.userId,
             project: response,
         });
-        if (this.parent.onProjectAdded) {
-            this.parent.onProjectAdded(response.id);
+        if (this.parent.onProjectAdd) {
+            this.parent.onProjectAdd(response.id);
         }
         notify.send({
             title: _ts('components.addProject', 'userProjectCreate'),

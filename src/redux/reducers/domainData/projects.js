@@ -111,13 +111,13 @@ const setUsersProjectMembership = (state, action) => {
     );
 
     const settings = {
-        projects: {
+        projects: { $auto: {
             [projectId]: { $auto: {
                 memberships: { $autoArray: {
                     $push: newMembers,
                 } },
             } },
-        },
+        } },
     };
     return update(state, settings);
 };
@@ -131,7 +131,7 @@ const setUserProjectMembership = (state, action) => {
     );
 
     const settings = {
-        projects: {
+        projects: { $auto: {
             [projectId]: { $auto: {
                 memberships: { $autoArray: {
                     [updatedMemberShipIndex]: { $auto: {
@@ -139,7 +139,7 @@ const setUserProjectMembership = (state, action) => {
                     } },
                 } },
             } },
-        },
+        } },
     };
     return update(state, settings);
 };
@@ -154,13 +154,13 @@ const unsetUserProjectMembership = (state, action) => {
 
     if (membershipArrayIndex !== -1) {
         const settings = {
-            projects: {
+            projects: { $auto: {
                 [projectId]: { $auto: {
                     memberships: { $autoArray: {
                         $splice: [[membershipArrayIndex, 1]],
                     } },
                 } },
-            },
+            } },
         };
         return update(state, settings);
     }
@@ -170,17 +170,17 @@ const unsetUserProjectMembership = (state, action) => {
 const unsetUserProject = (state, action) => {
     const { projectId } = action;
     const settings = {
-        projects: {
+        projects: { $auto: {
             $unset: [projectId],
-        },
+        } },
     };
     return update(state, settings);
 };
 
 const setUserProjects = (state, action) => {
-    const { projects } = action;
+    const { projects: projectList } = action;
 
-    const projectSettings = projects.reduce(
+    const projects = projectList.reduce(
         (acc, project) => (
             {
                 ...acc,
@@ -190,9 +190,7 @@ const setUserProjects = (state, action) => {
         { },
     );
     const settings = {
-        projects: {
-            $set: projectSettings,
-        },
+        projects: { $set: projects },
     };
     return update(state, settings);
 };

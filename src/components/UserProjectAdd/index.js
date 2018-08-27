@@ -24,7 +24,7 @@ import {
 } from '#redux';
 import _ts from '#ts';
 
-import ProjectCreate from './requests/ProjectCreate';
+import ProjectCreateRequest from './requests/ProjectCreateRequest';
 
 import styles from './styles.scss';
 
@@ -33,7 +33,7 @@ const propTypes = {
     setUserProject: PropTypes.func.isRequired,
     setUserProfileProject: PropTypes.func.isRequired,
     setUsergroupProject: PropTypes.func.isRequired,
-    onProjectAdded: PropTypes.func,
+    onProjectAdd: PropTypes.func,
     userId: PropTypes.number, // eslint-disable-line
     userGroups: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.number.isRequired,
@@ -42,7 +42,7 @@ const propTypes = {
 
 const defaultProps = {
     userGroups: [],
-    onProjectAdded: undefined,
+    onProjectAdd: undefined,
 };
 
 const mapDispatchToProps = dispatch => ({
@@ -72,13 +72,13 @@ export default class UserProjectAdd extends React.PureComponent {
             },
         };
 
-        this.projectCreateRequest = new ProjectCreate({
+        this.projectCreateRequest = new ProjectCreateRequest({
             setState: v => this.setState(v),
             setUserProject: this.props.setUserProject,
             setUserProfileProject: this.props.setUserProfileProject,
             setUsergroupProject: this.props.setUsergroupProject,
 
-            onProjectAdded: this.props.onProjectAdded,
+            onProjectAdd: this.props.onProjectAdd,
             handleModalClose: this.props.handleModalClose,
         });
     }

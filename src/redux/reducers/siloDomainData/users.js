@@ -132,7 +132,9 @@ const unsetUserProject = (state, { userId, projectId }) => {
     const settings = {
         userView: {
             [userId]: { $auto: {
-                projects: { $filter: project => project.id !== projectId },
+                projects: { $autoArray: {
+                    $filter: project => project.id !== projectId,
+                } },
             } },
         },
     };
@@ -143,9 +145,9 @@ const unsetUserUsergroup = (state, { userId, usergroupId }) => {
     const settings = {
         userView: {
             [userId]: { $auto: {
-                usergroups: {
+                usergroups: { $autoArray: {
                     $filter: usergroup => usergroup.id !== usergroupId,
-                },
+                } },
             } },
         },
     };

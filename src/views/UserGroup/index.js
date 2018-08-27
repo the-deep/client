@@ -136,7 +136,9 @@ export default class Usergroup extends React.PureComponent {
                 </header>
                 <div className={styles.info}>
                     <div className={styles.titleContainer}>
-                        <span className={styles.name}>{ usergroup.title }</span>
+                        <span className={styles.name} >
+                            { usergroup.title }
+                        </span>
                         {
                             isCurrentUserAdmin &&
                                 <PrimaryButton

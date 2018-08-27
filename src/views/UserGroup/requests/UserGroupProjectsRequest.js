@@ -18,13 +18,7 @@ export default class UserGroupProjectsRequest extends Request {
         });
     }
 
-    handleFailure = () => {
-        // TODO: Notify
-    }
-
-    handleFatal = () => {
-        // TODO: Notify
-    }
+    // TODO: notify fatal and failure
 
     init = (usergroupId) => {
         this.extraParent = { usergroupId };

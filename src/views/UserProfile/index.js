@@ -135,10 +135,11 @@ export default class UserProfile extends React.PureComponent {
             userUsergroupsPending,
         } = this.state;
 
-        const pending =
+        const pending = (
             userInformationPending ||
             userProjectsPending ||
-            userUsergroupsPending;
+            userUsergroupsPending
+        );
 
         const isCurrentUser = userId === activeUser.userId;
 

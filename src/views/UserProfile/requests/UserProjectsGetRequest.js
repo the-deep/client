@@ -26,8 +26,7 @@ export default class UserProjectsGetRequest extends Request {
         });
     }
 
-    handleFailure = (response) => {
-        console.warn('Failure:', response);
+    handleFailure = () => {
         notify.send({
             title: _ts('userProfile', 'userProfileLabel'),
             type: notify.type.ERROR,

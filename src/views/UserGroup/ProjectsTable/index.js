@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
+
 import {
     reverseRoute,
     caseInsensitiveSubmatch,
@@ -170,6 +172,8 @@ export default class ProjectsTable extends React.PureComponent {
         this.projectDeleteRequest.stop();
     }
 
+    createUserGroupList = memoize(userGroup => ([userGroup]))
+
     handleDeleteProjectClick = (project) => {
         const confirmText = _ts('userGroup', 'confirmTextDeleteProject', {
             title: (<b>{project.title}</b>),
@@ -275,7 +279,7 @@ export default class ProjectsTable extends React.PureComponent {
                         />
                         <ModalBody>
                             <UserProjectAdd
-                                userGroups={[usergroup]}
+                                userGroups={this.createUserGroupList(usergroup)}
                                 handleModalClose={this.handleAddProjectModalClose}
                             />
                         </ModalBody>

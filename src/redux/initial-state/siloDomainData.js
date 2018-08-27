@@ -632,11 +632,13 @@ const initialSiloDomainData = {
 
     usergroupView: {
         // index is usergroupId
+        /*
         1: {
             information: {},
             projects: [],
             memberships: [],
         },
+        */
     },
 
     userView: {

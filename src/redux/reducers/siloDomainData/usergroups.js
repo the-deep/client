@@ -1,6 +1,5 @@
 import update from '#rsu/immutable-update';
-import { isFalsyOrEmptyOrZero } from '#rsu/common';
-import { SET_USER_PROJECT } from '../domainData/projects';
+import { isFalsy } from '#rsu/common';
 
 // TYPE
 
@@ -14,33 +13,42 @@ export const UG__UNSET_USERGROUP_PROJECT = 'siloDomainData/USERGROUP_VIEW/UNSET_
 
 // ACTION-CREATOR
 
-export const setUsergroupViewAction = params => ({
-    ...params,
+export const setUsergroupViewAction = ({
+    usergroupId, information, projects, memberships,
+}) => ({
+    usergroupId,
+    information,
+    projects,
+    memberships,
     type: UG__SET_USERGROUP_VIEW,
 });
 
-export const setUsergroupViewMembershipAction = params => ({
-    ...params,
+export const setUsergroupViewMembershipAction = ({ usergroupId, membership }) => ({
+    usergroupId,
+    membership,
     type: UG__SET_USERGROUP_MEMBERSHIP,
 });
 
-export const addUsergroupViewMembershipsAction = params => ({
-    ...params,
+export const addUsergroupViewMembershipsAction = ({ usergroupId, memberships }) => ({
+    usergroupId,
+    memberships,
     type: UG__ADD_USERGROUP_MEMBERSHIPS,
 });
 
-export const setUsergroupViewProjectAction = params => ({
-    ...params,
+export const setUsergroupViewProjectAction = ({ project }) => ({
+    project,
     type: UG__SET_USERGROUP_PROJECT,
 });
 
-export const unsetUsergroupViewMembershipAction = params => ({
-    ...params,
+export const unsetUsergroupViewMembershipAction = ({ usergroupId, membershipId }) => ({
+    usergroupId,
+    membershipId,
     type: UG__UNSET_USERGROUP_MEMBERSHIP,
 });
 
-export const unsetUsergroupViewProjectAction = params => ({
-    ...params,
+export const unsetUsergroupViewProjectAction = ({ usergroupId, projectId }) => ({
+    usergroupId,
+    projectId,
     type: UG__UNSET_USERGROUP_PROJECT,
 });
 
@@ -116,7 +124,7 @@ const addUsergroupMemberships = (state, action) => {
 
 const setUserProject = (state, action) => {
     const { project } = action;
-    if (isFalsyOrEmptyOrZero(project.userGroups)) {
+    if (isFalsy(project.userGroups)) {
         return state;
     }
     const usergroupView = project.userGroups.reduce(
@@ -144,9 +152,9 @@ const unsetUsergroupMembership = (state, { usergroupId, membershipId }) => {
     const settings = {
         usergroupView: {
             [usergroupId]: { $auto: {
-                memberships: {
+                memberships: { $autoArray: {
                     $filter: membership => membership.id !== membershipId,
-                },
+                } },
             } },
         },
     };
@@ -157,9 +165,9 @@ const unsetUserProject = (state, { usergroupId, projectId }) => {
     const settings = {
         usergroupView: {
             [usergroupId]: { $auto: {
-                projects: {
+                projects: { $autoArray: {
                     $filter: project => project.id !== projectId,
-                },
+                } },
             } },
         },
     };

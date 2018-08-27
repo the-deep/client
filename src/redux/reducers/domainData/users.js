@@ -27,13 +27,11 @@ const setUserInformation = (state, action) => {
         return state;
     }
     const settings = {
-        users: {
+        users: { $auto: {
             [userId]: { $auto: {
-                $mergeIfDefined: {
-                    information,
-                },
+                information: { $set: information },
             } },
-        },
+        } },
     };
     return update(state, settings);
 };

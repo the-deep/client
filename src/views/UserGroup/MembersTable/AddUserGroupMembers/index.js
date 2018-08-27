@@ -143,7 +143,7 @@ export default class AddUserGroupMembers extends React.PureComponent {
         });
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.usersRequest.init().start();
     }
 

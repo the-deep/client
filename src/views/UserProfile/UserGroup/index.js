@@ -194,7 +194,7 @@ export default class UserGroup extends React.PureComponent {
     handleDeleteUserGroupClick = (userGroup) => {
         const { id } = userGroup;
         const { userId } = this.props.activeUser;
-        // TODO: change UserGroup to UserUsergroup, thanks
+        // TODO: change Usergroup to UserUserGroup, thanks
         this.userGroupDeleteRequest.init(id, userId).start();
     }
 

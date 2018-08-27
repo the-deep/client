@@ -109,7 +109,7 @@ export default class ProjectPanel extends React.PureComponent {
         });
     };
 
-    handleProjectAdded = (projectId) => {
+    handleProjectAdd = (projectId) => {
         this.props.setActiveProject({ activeProject: projectId });
     }
 
@@ -186,7 +186,7 @@ export default class ProjectPanel extends React.PureComponent {
                             />
                             <ModalBody>
                                 <UserProjectAdd
-                                    onProjectAdded={this.handleProjectAdded}
+                                    onProjectAdd={this.handleProjectAdd}
                                     handleModalClose={this.handleAddProjectModalClose}
                                 />
                             </ModalBody>
