@@ -14,7 +14,7 @@ import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
-import { findDuplicates, randomString } from '#rsu/common';
+import { findDuplicates, randomString, removeKey } from '#rsu/common';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';
@@ -40,6 +40,53 @@ export default class ScaleFrameworkList extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static keyExtractor = scaleUnit => scaleUnit.key;
+
+    static faramTransform = {
+        inbound: (data) => {
+            const {
+                defaultScaleUnit,
+                scaleUnits: oldScaleUnits,
+                ...otherData
+            } = data;
+            const { keyExtractor } = ScaleFrameworkList;
+
+            // For each unit, add a `defaultScaleUnit` boolean value
+            const scaleUnits = oldScaleUnits.map(unit => ({
+                ...unit,
+                defaultScaleUnit: keyExtractor(unit) === defaultScaleUnit,
+            }));
+
+            return {
+                ...otherData,
+                scaleUnits,
+            };
+        },
+
+        outbound: (value, oldValue) => {
+            const {
+                scaleUnits,
+                ...otherData
+            } = value;
+            const { keyExtractor } = ScaleFrameworkList;
+
+            // We want to only keep one of the default values
+            // clearing others if multiple was selected.
+            // This happens, when user first selects one default value and
+            // then select another.
+            const possibleDefaultValues = scaleUnits.filter(v => v.defaultScaleUnit);
+
+            // Find the new default value which was not the old default value
+            const newDefaultValue = possibleDefaultValues.find(
+                v => keyExtractor(v) !== oldValue.defaultScaleUnit,
+            );
+
+            return {
+                ...otherData,
+                scaleUnits: scaleUnits.map(v => removeKey(v, 'defaultScaleUnit')),
+                defaultScaleUnit: newDefaultValue && keyExtractor(newDefaultValue),
+            };
+        },
+    }
 
     static rendererParams = (key, elem, i) => ({
         index: i,
@@ -94,11 +141,10 @@ export default class ScaleFrameworkList extends React.PureComponent {
         } = props;
 
         this.state = {
-            // TODO: Implement defaultScaleUnit
-            defaultScaleUnit,
             faramValues: {
                 title,
                 scaleUnits,
+                defaultScaleUnit,
             },
             faramErrors: {},
             pristine: false,
@@ -146,6 +192,8 @@ export default class ScaleFrameworkList extends React.PureComponent {
                     schema={ScaleFrameworkList.schema}
                     value={faramValues}
                     error={faramErrors}
+                    faramInboundTransform={ScaleFrameworkList.faramTransform.inbound}
+                    faramOutboundTransform={ScaleFrameworkList.faramTransform.outbound}
                 >
                     <ModalHeader title={title} />
                     <ModalBody className={styles.body}>
@@ -158,7 +206,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                             faramElementName="title"
                             label={_ts('widgets.editor.scale', 'titleLabel')}
                             placeholder={_ts('widgets.editor.scale', 'titlePlaceholderScale')}
-                            showHintAndError={false}
+                            showHintAndError
                             autoFocus
                             selectOnFocus
                         />

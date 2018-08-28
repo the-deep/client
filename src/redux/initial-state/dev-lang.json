@@ -762,7 +762,8 @@
         "-92290017": "Failed to create clusters.",
         "-72859218": "Project options",
         "-45091634": "Failed to get project options.",
-        "-44183195": "Modifying this framework may affect {count} entries. Are you sure you want to save these changes?"
+        "-44183195": "Modifying this framework may affect {count} entries. Are you sure you want to save these changes?",
+        "-82545000": "Default"
     },
     "links": {
         "browserExtension": {
@@ -853,7 +854,8 @@
             "inputLabel": 8003,
             "titleLabel": 13,
             "requiredErrorMessage": 1007,
-            "duplicateErrorMessage": 1008
+            "duplicateErrorMessage": 1008,
+            "defaultLabel": -82545000
         },
         "widgets.tagging.matrix2d": {
             "subsectorsLabel": 7039

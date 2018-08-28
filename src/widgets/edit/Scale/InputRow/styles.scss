@@ -17,6 +17,10 @@
         padding: 0 $spacing-extra-small;
     }
 
+    .default-input {
+        width: auto;
+    }
+
     .delete-button {
         flex-shrink: 0;
     }
