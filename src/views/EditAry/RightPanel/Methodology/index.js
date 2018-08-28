@@ -11,6 +11,7 @@ import TextArea from '#rsci/TextArea';
 import CheckGroup from '#rsci/CheckGroup';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
+import { randomString } from '#rsu/common';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';
@@ -66,6 +67,12 @@ export default class Methodology extends React.PureComponent {
     static orgIdSelector = organ => organ.id;
     static orgLabelSelector = organ => organ.title;
     static orgChildSelector = organ => organ.children;
+
+    static faramInfoForAdd = () => ({
+        newElement: () => ({
+            key: randomString(16).toLowerCase(),
+        }),
+    })
 
     renderAttributeHeader = (k, key) => {
         const { aryTemplateMethodology: attributesTemplate } = this.props;
@@ -175,6 +182,7 @@ export default class Methodology extends React.PureComponent {
                                         <div className={styles.actionButtons}>
                                             <PrimaryButton
                                                 faramAction="add"
+                                                faramInfo={Methodology.faramInfoForAdd}
                                                 iconName={iconNames.add}
                                             />
                                         </div>
