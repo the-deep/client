@@ -95,6 +95,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
     static schema = {
         fields: {
             title: [requiredCondition],
+            defaultScaleUnit: [],
             scaleUnits: {
                 validation: (scaleUnits) => {
                     const errors = [];
@@ -136,7 +137,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
             title,
             data: {
                 scaleUnits = emptyList,
-                value: defaultScaleUnit,
+                defaultScaleUnit,
             },
         } = props;
 
