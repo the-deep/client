@@ -89,17 +89,17 @@ export default class ProjectDetails extends React.PureComponent {
         const {
             className: classNameFromProps,
             projectServerData: {
-                role = {},
+                role: {
+                    setupPermissions = [],
+                } = {},
             },
         } = this.props;
 
-        // const setupPermissions = false;
-        if (!role || role.setupPermissions.indexOf('modify') === -1) {
+        if (setupPermissions.indexOf('modify') === -1) {
             const className = `
                 ${classNameFromProps}
                 ${styles.forbiddenText}
             `;
-
             return (
                 <Message className={className}>
                     {_ts('project', 'forbiddenText')}
