@@ -10,17 +10,28 @@ import styles from './styles.scss';
 
 const propTypes = {
     title: PropTypes.string.isRequired,
-    faramInfoForAdd: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    createNewElement: PropTypes.func.isRequired,
+    widget: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default class WidgetPreview extends React.PureComponent {
     static propTypes = propTypes;
 
-    render() {
+    addRowClick = (rows) => {
         const {
-            title,
-            faramInfoForAdd,
+            createNewElement,
+            widget,
         } = this.props;
+
+        const newRow = createNewElement(widget);
+        return [
+            ...rows,
+            newRow,
+        ];
+    }
+
+    render() {
+        const { title, widget } = this.props;
 
         return (
             <div className={styles.widgetListItem}>
@@ -29,7 +40,8 @@ export default class WidgetPreview extends React.PureComponent {
                 </div>
                 <Button
                     transparent
-                    faramInfo={faramInfoForAdd}
+                    faramAction={this.addRowClick}
+                    faramElementName={`add-btn-${widget.widgetId}`}
                     iconName={iconNames.add}
                     title={_ts('framework.widgetList', 'addWidgetButtonLabel')}
                 />

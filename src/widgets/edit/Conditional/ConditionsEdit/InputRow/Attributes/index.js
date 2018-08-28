@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 
 import SelectInput from '#rsci/SelectInput';
 import NumberInput from '#rsci/NumberInput';
@@ -8,6 +9,13 @@ const propTypes = {
     attribute: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     widgetData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
+
+const getOptions = memoize((attribute, widgetData) => (
+    Array.isArray(attribute.options) ?
+        [...attribute.options]
+        :
+        attribute.options(widgetData)
+));
 
 export default class ConditionAttribute extends React.PureComponent {
     static propTypes = propTypes;
@@ -19,12 +27,7 @@ export default class ConditionAttribute extends React.PureComponent {
         } = this.props;
 
         if (attribute.type === 'select') {
-            let options;
-            if (Array.isArray(attribute.options)) {
-                options = [...attribute.options];
-            } else {
-                options = attribute.options(widgetData);
-            }
+            const options = getOptions(attribute, widgetData);
 
             return (
                 <SelectInput

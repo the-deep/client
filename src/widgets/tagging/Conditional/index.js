@@ -34,21 +34,28 @@ export default class ConditionalWidget extends React.PureComponent {
         const {
             widget: {
                 properties: {
-                    data = {},
+                    data: {
+                        widgets = [],
+                    } = {},
                 },
             },
         } = this.props;
-        const widgetData = data
-            .widgets
-            .find(w => ((w || {}).widget || {}).key === selectedWidgetKey);
+
+        const widgetData = widgets.find(
+            w => (
+                (w || {}).widget || {}
+            ).key === selectedWidgetKey,
+        );
 
         return (widgetData || {}).widget;
     }
 
     getWidgetView = (widget) => {
         if (!widget) {
-            return (<div>asdasd</div>);
+            // FIXME: Use strings
+            return (<div>No widget</div>);
         }
+
         const {
             widgetType,
             data: widgetValue,
@@ -76,13 +83,15 @@ export default class ConditionalWidget extends React.PureComponent {
         if (isViewComponent) {
             // Faram not used for view component
             const {
-                value: { [widget.key]: { value } = {} } = {},
+                value: {
+                    [widget.key]: { data } = {},
+                } = {},
             } = widgetValue;
 
             return (
                 <div>
                     <ViewWidget
-                        data={{ value }}
+                        data={data}
                         widget={widget}
                     />
                 </div>

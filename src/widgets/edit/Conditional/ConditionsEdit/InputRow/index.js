@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import ListView from '#rscv/List/ListView';
@@ -19,8 +20,10 @@ const propTypes = {
     conditions: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-const faramInfoForDelete = {
-    action: 'remove',
+const deleteClick = (rows, index) => {
+    const newRows = [...rows];
+    newRows.splice(index, 1);
+    return newRows;
 };
 
 // eslint-disable-next-line react/prefer-stateless-function
@@ -30,43 +33,20 @@ export default class InputRow extends React.PureComponent {
     static conditionTypeKeySelector = c => c.key;
     static conditionTypeLabelSelector = c => c.title;
 
-    static getCondtionTypes = conditions => (
+    static getCondtionTypes = memoize(conditions => (
         conditions.map(condition => ({
             key: condition.key,
             title: condition.title,
         }))
-    )
+    ))
 
-    static getAttributesForConditionType = (conditionType, conditions) => {
+    static getAttributesForConditionType = memoize((conditionType, conditions) => {
         if (!conditionType) {
             return [];
         }
         const { attributes } = conditions.find(c => c.key === conditionType);
         return attributes;
-    }
-
-    constructor(props) {
-        super(props);
-        const {
-            item: { conditionType },
-            conditions,
-        } = this.props;
-
-        this.attributes = InputRow.getAttributesForConditionType(conditionType, conditions);
-        this.conditionTypes = InputRow.getCondtionTypes(conditions);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const {
-            item: { conditionType: newConditionType } = {},
-            conditions,
-        } = nextProps;
-        const { item: { conditionType: oldConditionType } = {} } = this.props;
-
-        if (newConditionType !== oldConditionType) {
-            this.attributes = InputRow.getAttributesForConditionType(newConditionType, conditions);
-        }
-    }
+    })
 
     attributeRendererParams = (key, attribute) => {
         const {
@@ -87,13 +67,16 @@ export default class InputRow extends React.PureComponent {
         const {
             index,
             widgetData,
+            item: { conditionType },
+            conditions,
         } = this.props;
+
+        this.attributes = InputRow.getAttributesForConditionType(conditionType, conditions);
+        this.conditionTypes = InputRow.getCondtionTypes(conditions);
 
         return (
             <div className={styles.inputContainer}>
-                <FaramGroup
-                    faramElementName={String(index)}
-                >
+                <FaramGroup faramElementName={String(index)} >
                     <div className={styles.title}>
                         {widgetData.title}
                     </div>
@@ -119,8 +102,8 @@ export default class InputRow extends React.PureComponent {
                     className={styles.deleteButton}
                     iconName={iconNames.delete}
                     title={_ts('widgets.editor.conditional', 'removeOptionButtonTitle')}
-                    faramInfo={faramInfoForDelete}
-                    faramElementIndex={index}
+                    faramAction={deleteClick}
+                    faramElementName={index}
                     transparent
                 />
             </div>

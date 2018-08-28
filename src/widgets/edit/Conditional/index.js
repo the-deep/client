@@ -46,6 +46,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         fields: {
             title: [requiredCondition],
             widgets: {
+                keySelector: ConditionalWidgetEdit.itemKeyExtractor,
                 member: {
                     fields: {
                         widget: {
@@ -116,30 +117,24 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
     }
 
     widgetListRendererParams = (key, widget) => {
-        const {
-            widgetId,
-            title,
-        } = widget;
-
+        const { title } = widget;
         return ({
             title: _ts('widgetTitle', title),
-            faramInfoForAdd: {
-                action: 'add',
-                newElement: () => ({
-                    widget: {
-                        key: `${widgetId}-${randomString(16).toLowerCase()}`,
-                        widgetId,
-                        title: _ts('widgetTitle', title),
-                        properties: {
-                            data: {},
-                        },
+            widget,
+            createNewElement: widgetData => ({
+                widget: {
+                    key: `${widgetData.widgetId}-${randomString(16).toLowerCase()}`,
+                    widgetId: widgetData.widgetId,
+                    title: _ts('widgetTitle', title),
+                    properties: {
+                        data: {},
                     },
-                    conditions: {
-                        list: [],
-                        operator: 'AND',
-                    },
-                }),
-            },
+                },
+                conditions: {
+                    list: [],
+                    operator: 'AND',
+                },
+            }),
         });
     }
 
@@ -196,7 +191,10 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                             selectOnFocus
                         />
                         <div className={styles.widgetsContainer}>
-                            <FaramList faramElementName="widgets">
+                            <FaramList
+                                faramElementName="widgets"
+                                keySelector={ConditionalWidgetEdit.itemKeyExtractor}
+                            >
                                 <div className={styles.leftContainer}>
                                     <header className={styles.header}>
                                         {widgetsTitle}
@@ -217,7 +215,6 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                                         className={styles.editList}
                                         dragHandleClassName={styles.dragHandle}
                                         faramElement
-                                        keyExtractor={ConditionalWidgetEdit.itemKeyExtractor}
                                         rendererParams={this.itemRendererParams}
                                         itemClassName={styles.sortableUnit}
                                         renderer={SelectedWidgetItem}

@@ -56,10 +56,9 @@ export default class FrameworkEditButton extends React.PureComponent {
         const newValue = update(value, settings);
 
         this.props.onChange(newValue);
-
         this.setState({
             showModal: false,
-        });
+        }, () => this.props.onModalVisibilityChange(false));
     }
 
     render() {

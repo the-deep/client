@@ -8,9 +8,8 @@ import { iconNames } from '#constants';
 import FrameworkEditButton from '#components/FrameworkEditButton';
 import _ts from '#ts';
 
-import {
-    fetchWidget,
-} from '#widgets';
+import { fetchWidget } from '#widgets';
+
 import ConditionsEditButton from '../ConditionsEdit/Button';
 import styles from './styles.scss';
 
@@ -24,8 +23,10 @@ const defaultProps = {
     onModalVisibilityChange: () => {},
 };
 
-const faramInfoForDelete = {
-    action: 'remove',
+const deleteClick = (rows, index) => {
+    const newRows = [...rows];
+    newRows.splice(index, 1);
+    return newRows;
 };
 
 export default class SelectedWidgetItem extends React.PureComponent {
@@ -68,8 +69,8 @@ export default class SelectedWidgetItem extends React.PureComponent {
                     className={styles.deleteButton}
                     iconName={iconNames.delete}
                     title={_ts('widgets.editor.multiselect', 'removeOptionButtonTitle')}
-                    faramElementIndex={index}
-                    faramInfo={faramInfoForDelete}
+                    faramElementName={index}
+                    faramAction={deleteClick}
                     transparent
                 />
             </div>

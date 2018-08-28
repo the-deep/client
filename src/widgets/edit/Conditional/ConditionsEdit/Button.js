@@ -50,6 +50,7 @@ export default class ConditionsEditButton extends React.PureComponent {
             showModal: false,
         }, () => {
             this.props.onChange(value);
+            this.props.onModalVisibilityChange(false);
         });
     }
 

@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
+import memoize from 'memoize-one';
 
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import FixedTabs from '#rscv/FixedTabs';
@@ -9,8 +10,6 @@ import {
     VISIBILITY,
     widgetVisibility,
 } from '#widgets';
-
-import styles from './styles.scss';
 
 const propTypes = {
     widget: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -24,37 +23,34 @@ export default class ConditionalFrameworkPreview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static getWidgets = widget => (
+    static getWidgets = memoize(widget => (
         ((widget.properties || {}).data || {}).widgets
-    );
+    ));
 
     constructor(props) {
         super(props);
         const { widget } = this.props;
 
         const widgets = ConditionalFrameworkPreview.getWidgets(widget);
-        this.widgets = this.getWidgetViews(widgets);
-        this.tabs = this.getWidgetTabs(widgets);
-        const tabsMap = Object.keys(this.tabs);
+        const tabs = this.getWidgetTabs(widgets);
+        const tabsMap = Object.keys(tabs);
         this.state = { currentWidget: tabsMap[0] };
     }
 
     componentWillReceiveProps(nextProps) {
-        const { widget: oldWidget } = this.props;
-        const { widget: newWidget } = nextProps;
+        const { widget } = nextProps;
 
-        const oldWidgets = ConditionalFrameworkPreview.getWidgets(oldWidget);
-        const newWidgets = ConditionalFrameworkPreview.getWidgets(newWidget);
-
-        if (oldWidgets !== newWidgets) {
-            this.widgets = this.getWidgetViews(newWidgets);
-            this.tabs = this.getWidgetTabs(newWidgets);
-        }
+        const widgets = ConditionalFrameworkPreview.getWidgets(widget);
+        const tabs = this.getWidgetTabs(widgets);
+        const tabsMap = Object.keys(tabs);
+        this.setState({ currentWidget: tabsMap[0] });
     }
 
-    getWidgetViews = (widgets) => {
+    getWidgetViews = memoize((widgets) => {
         const views = {};
-        if (!widgets) return {};
+        if (!widgets) {
+            return {};
+        }
         widgets.forEach((w) => {
             const view = {
                 component: () => {
@@ -95,10 +91,13 @@ export default class ConditionalFrameworkPreview extends React.PureComponent {
             views[w.widget.key] = view;
         });
         return views;
-    }
+    })
 
-    getWidgetTabs = (widgets) => {
-        if (!widgets) return {};
+    getWidgetTabs = memoize((widgets) => {
+        if (!widgets) {
+            return {};
+        }
+
         const tabs = widgets.reduce(
             (acc, w) => ({
                 ...acc,
@@ -107,7 +106,7 @@ export default class ConditionalFrameworkPreview extends React.PureComponent {
             {},
         );
         return tabs;
-    }
+    })
 
     handleTabSelect = (currentWidget) => {
         this.setState({ currentWidget });
@@ -115,16 +114,21 @@ export default class ConditionalFrameworkPreview extends React.PureComponent {
 
     render() {
         const { currentWidget } = this.state;
+        const { widget } = this.props;
+
+        const widgets = ConditionalFrameworkPreview.getWidgets(widget);
+        const widgetViews = this.getWidgetViews(widgets);
+        const tabs = this.getWidgetTabs(widgets);
 
         return (
             <div>
                 <FixedTabs
-                    tabs={this.tabs}
+                    tabs={tabs}
                     active={currentWidget}
                     onClick={this.handleTabSelect}
                 />
                 <MultiViewContainer
-                    views={this.widgets}
+                    views={widgetViews}
                     active={currentWidget}
                 />
             </div>

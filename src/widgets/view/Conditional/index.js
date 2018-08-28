@@ -27,13 +27,18 @@ export default class ConditionalWidget extends React.PureComponent {
         const {
             widget: {
                 properties: {
-                    data = {},
+                    data: {
+                        widgets = [],
+                    } = {},
                 },
             },
         } = this.props;
-        const widgetData = data
-            .widgets
-            .find(w => ((w || {}).widget || {}).key === selectedWidgetKey);
+
+        const widgetData = widgets.find(
+            w => (
+                (w || {}).widget || {}
+            ).key === selectedWidgetKey,
+        );
 
         return (widgetData || {}).widget;
     }

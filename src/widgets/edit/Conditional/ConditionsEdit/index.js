@@ -47,16 +47,17 @@ const mapStateToProps = (state, props) => ({
     analysisFrameworkId: afIdFromRoute(state, props),
 });
 
-@connect(mapStateToProps)
-export default class ConditionsEditModal extends React.PureComponent {
+// @connect(mapStateToProps)
+class ConditionsEditModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static itemKeyExtractor = widget => widget.key;
+    static widgetKeySelector = widget => widget.key;
 
     static schema = {
         fields: {
             list: {
+                keySelector: ConditionsEditModal.widgetKeySelector,
                 member: {
                     fields: {
                         key: [],
@@ -71,8 +72,6 @@ export default class ConditionsEditModal extends React.PureComponent {
         },
     };
 
-    static keyExtractor = widget => widget.key;
-
     constructor(props) {
         super(props);
         const { conditions } = this.props;
@@ -85,22 +84,16 @@ export default class ConditionsEditModal extends React.PureComponent {
     }
 
     widgetListRendererParams = (key, widget) => {
-        const {
-            widgetId,
-            key: widgetKey,
-            title,
-        } = widget;
+        const { title } = widget;
 
         return ({
             title,
-            faramInfoForAdd: {
-                action: 'add',
-                newElement: () => ({
-                    key: `condition-${randomString(16).toLowerCase()}`,
-                    widgetId,
-                    widgetKey,
-                }),
-            },
+            widget,
+            createNewElement: widgetData => ({
+                key: `condition-${randomString(16).toLowerCase()}`,
+                widgetId: widgetData.widgetId,
+                widgetKey: widgetData.key,
+            }),
         });
     }
 
@@ -169,7 +162,10 @@ export default class ConditionsEditModal extends React.PureComponent {
                 >
                     <ModalHeader title={editConditionsTitle} />
                     <ModalBody className={styles.modalBody} >
-                        <FaramList faramElementName="list">
+                        <FaramList
+                            keySelector={ConditionsEditModal.widgetKeySelector}
+                            faramElementName="list"
+                        >
                             <div className={styles.leftContainer}>
                                 <header className={styles.header}>
                                     {widgetsTitle}
@@ -178,8 +174,8 @@ export default class ConditionsEditModal extends React.PureComponent {
                                     className={styles.widgetList}
                                     data={widgets}
                                     renderer={WidgetPreview}
-                                    keyExtractor={ConditionsEditModal.keyExtractor}
                                     rendererParams={this.widgetListRendererParams}
+                                    keyExtractor={ConditionsEditModal.widgetKeySelector}
                                 />
                             </div>
                             <div className={styles.rightContainer}>
@@ -190,7 +186,6 @@ export default class ConditionsEditModal extends React.PureComponent {
                                     className={styles.editList}
                                     dragHandleClassName={styles.dragHandle}
                                     faramElement
-                                    keyExtractor={ConditionsEditModal.itemKeyExtractor}
                                     rendererParams={this.itemRendererParams}
                                     itemClassName={styles.sortableUnit}
                                     renderer={InputRow}
@@ -214,3 +209,5 @@ export default class ConditionsEditModal extends React.PureComponent {
         );
     }
 }
+
+export default connect(mapStateToProps)(ConditionsEditModal);
