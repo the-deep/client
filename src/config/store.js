@@ -1,7 +1,15 @@
 import localforage from 'localforage';
-import { createTransform } from 'redux-persist';
+import {
+    createMigrate,
+    createTransform,
+} from 'redux-persist';
 
 import { mapToMap } from '#rsu/common';
+
+const migrations = {
+    // NOTE: clear out domainData and siloDomainData only
+    2: ({ auth, lang }) => ({ auth, lang }),
+};
 
 const myTransform = createTransform(
     inboundState => ({
@@ -25,12 +33,15 @@ const myTransform = createTransform(
     { whitelist: ['siloDomainData'] },
 );
 
+const isBeta = process.env.REACT_APP_DEEP_ENVIRONMENT === 'beta';
+
 const storeConfig = {
     blacklist: ['notify', 'route', 'app'],
     key: 'deeper',
-    version: 1,
+    version: 2,
     storage: localforage,
     transforms: [myTransform],
+    migrate: createMigrate(migrations, { debug: !isBeta }),
 };
 
 export const reducersToSync = [
