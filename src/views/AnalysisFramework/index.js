@@ -8,6 +8,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { reverseRoute } from '#rsu/common';
 import SuccessButton from '#rsca/Button/SuccessButton';
+import SuccessConfirmButton from '#rsca/ConfirmButton/SuccessConfirmButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import FixedTabs from '#rscv/FixedTabs';
 import Message from '#rscv/Message';
@@ -155,6 +156,10 @@ export default class AnalysisFramework extends React.PureComponent {
             analysisFramework,
             projectId,
         } = this.props;
+        const {
+            pristine,
+            entriesCount,
+        } = analysisFramework;
 
         const { pendingFramework } = this.state;
 
@@ -185,7 +190,7 @@ export default class AnalysisFramework extends React.PureComponent {
                             const { routeUrl } = this.props;
                             if (location.pathname === routeUrl) {
                                 return true;
-                            } else if (analysisFramework.pristine) {
+                            } else if (pristine) {
                                 return true;
                             }
                             return _ts('common', 'youHaveUnsavedChanges');
@@ -217,16 +222,28 @@ export default class AnalysisFramework extends React.PureComponent {
                         <DangerConfirmButton
                             confirmationMessage={_ts('framework', 'cancelConfirmDetail')}
                             onClick={this.handleCancel}
-                            disabled={analysisFramework.pristine}
+                            disabled={pristine}
                         >
                             { _ts('framework', 'cancelButtonTitle') }
                         </DangerConfirmButton>
-                        <SuccessButton
-                            onClick={this.handleSave}
-                            disabled={analysisFramework.pristine}
-                        >
-                            { _ts('framework', 'saveButtonTitle') }
-                        </SuccessButton>
+                        {
+                            entriesCount > 0 ? (
+                                <SuccessConfirmButton
+                                    confirmationMessage={_ts('framework', 'successConfirmDetail', { count: entriesCount })}
+                                    onClick={this.handleSave}
+                                    disabled={pristine}
+                                >
+                                    { _ts('framework', 'saveButtonTitle') }
+                                </SuccessConfirmButton>
+                            ) : (
+                                <SuccessButton
+                                    onClick={this.handleSave}
+                                    disabled={pristine}
+                                >
+                                    { _ts('framework', 'saveButtonTitle') }
+                                </SuccessButton>
+                            )
+                        }
                     </div>
                 </header>
                 <MultiViewContainer

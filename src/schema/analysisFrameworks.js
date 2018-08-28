@@ -15,8 +15,7 @@ const analysisFrameworkSchema = [];
             filters: { type: 'array.Filter' },
             isAdmin: { type: 'boolean', required: true },
             description: { type: 'string' },
-            snapshotOne: { type: 'uint' },
-            snapshotTwo: { type: 'uint' },
+            entriesCount: { type: 'uint', required: true },
         },
     };
     analysisFrameworkSchema.push({ name, schema });

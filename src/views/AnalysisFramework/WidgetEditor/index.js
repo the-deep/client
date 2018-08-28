@@ -122,11 +122,11 @@ export default class WidgetEditor extends React.PureComponent {
 
         const { editComponent: Widget } = fetchWidget(widgetType, widgetId);
 
-        const notReadonly = widgetVisibility(
+        const hideButtons = widgetVisibility(
             widgetId,
             widgetType,
             addedFrom,
-        ) !== VISIBILITY.readonly;
+        ) === VISIBILITY.secondary;
 
         const layout = this.layoutSelector(widget);
         const widthBlocks = Math.ceil(layout.width / gridSize.width);
@@ -138,12 +138,12 @@ export default class WidgetEditor extends React.PureComponent {
 
         return (
             <div className={styles.header}>
-                <h5 className={styles.heading}>
+                <h5 className={`${styles.heading} ${hideButtons ? styles.disabled : ''}`}>
                     {headerTitle}
                 </h5>
                 <div className={styles.actionButtons}>
                     {
-                        notReadonly ? (
+                        !hideButtons ? (
                             <Fragment>
                                 <EditButton
                                     widget={widget}
@@ -180,12 +180,12 @@ export default class WidgetEditor extends React.PureComponent {
             viewComponent,
         } = fetchWidget(widgetType, widgetId);
 
-        const notReadonly = widgetVisibility(
+        const secondary = widgetVisibility(
             widgetId,
             widgetType,
             addedFrom,
-        ) !== VISIBILITY.readonly;
-        const Widget = notReadonly ? component : viewComponent;
+        ) === VISIBILITY.secondary;
+        const Widget = secondary ? viewComponent : component;
 
         return (
             <div className={styles.content}>
