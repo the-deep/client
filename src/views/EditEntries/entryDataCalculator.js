@@ -104,13 +104,18 @@ export const calculateFirstTimeAttributes = (
 
         let value;
 
-        // Calculate first time attribute for each widget
+        // Calculate value
         if (widgetId === 'dateWidget') {
             if (widgetData.informationDateSelected) {
                 value = lead.publishedOn;
             }
-        } /* else if (widgetId === 'nextWidget') { ... } */
+        } else if (widgetId === 'scaleWidget') {
+            if (widgetData.defaultScaleUnit) {
+                value = widgetData.defaultScaleUnit;
+            }
+        }
 
+        // Set the value
         if (value) {
             const settings = {
                 [widget.id]: { $auto: {
