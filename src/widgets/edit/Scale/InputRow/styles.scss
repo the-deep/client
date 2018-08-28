@@ -9,15 +9,21 @@
 
     .color-input {
         flex-shrink: 0;
-        padding-right: $spacing-small;
+        padding: $spacing-extra-small $spacing-small;
     }
 
     .title-input {
         flex-grow: 1;
-        padding: 0 $spacing-extra-small;
+        padding: 0 $spacing-large;
+    }
+
+    .checkbox-input {
+        padding: 0 $spacing-small;
+        width: auto;
     }
 
     .delete-button {
         flex-shrink: 0;
+        padding: 0 $spacing-small;
     }
 }

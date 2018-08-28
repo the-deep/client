@@ -5,6 +5,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import FaramGroup from '#rscg/FaramGroup';
 import TextInput from '#rsci/TextInput';
 import ColorInput from '#rsci/ColorInput';
+import Checkbox from '#rsci/Checkbox';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';
@@ -28,9 +29,7 @@ export default class InputRow extends React.PureComponent {
         const { index } = this.props;
         return (
             <div className={styles.inputContainer}>
-                <FaramGroup
-                    faramElementName={String(index)}
-                >
+                <FaramGroup faramElementName={String(index)}>
                     <ColorInput
                         className={styles.colorInput}
                         faramElementName="color"
@@ -42,6 +41,11 @@ export default class InputRow extends React.PureComponent {
                         label={_ts('widgets.editor.scale', 'inputLabel', { index: index + 1 })}
                         placeholder={_ts('widgets.editor.scale', 'titlePlaceholderScale')}
                         autoFocus
+                    />
+                    <Checkbox
+                        className={styles.checkboxInput}
+                        faramElementName="defaultScaleUnit"
+                        label={_ts('widgets.editor.scale', 'defaultLabel', { index: index + 1 })}
                     />
                 </FaramGroup>
                 <DangerButton
