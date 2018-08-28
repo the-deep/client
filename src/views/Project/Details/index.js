@@ -8,7 +8,6 @@ import MultiViewContainer from '#rscv/MultiViewContainer';
 
 import {
     routeUrlSelector,
-    projectLocalDataSelector,
     projectServerDataSelector,
 } from '#redux';
 

@@ -51,7 +51,7 @@ const projectSchema = [];
             memberEmail: { type: 'email' },
             memberName: { type: 'string' },
             project: { type: 'uint', required: true },
-            role: { type: 'projectRoleSimple', required: true },
+            role: { type: 'uint', required: true },
         },
     };
     projectSchema.push({ name, schema });
