@@ -13,9 +13,11 @@ import siloDomainDataReducer from './siloDomainData';
 const reducers = {
     notify: notifyReducer,
     route: routeReducer,
+    app: appReducer,
+
     auth: authReducer,
     lang: langReducer,
-    app: appReducer,
+
     domainData: domainDataReducer,
     siloDomainData: siloDomainDataReducer,
 };
