@@ -449,32 +449,6 @@ export default class ClusterViz extends PureComponent {
         );
     }
 
-    renderErrorMessage = () => {
-        const {
-            createClusterFailure,
-            clusterDataFailure,
-        } = this.state;
-
-        return (
-            <Fragment>
-                {
-                    createClusterFailure && (
-                        <Message>
-                            {_ts('clusterViz', 'createClusterFailure')}
-                        </Message>
-                    )
-                }
-                {
-                    clusterDataFailure && (
-                        <Message>
-                            {_ts('clusterViz', 'clusterDataFailure')}
-                        </Message>
-                    )
-                }
-            </Fragment>
-        );
-    }
-
     render() {
         const {
             clusterSize,
@@ -506,59 +480,75 @@ export default class ClusterViz extends PureComponent {
         const loading = createClusterPending || clusterDataPending;
         const failure = createClusterFailure || clusterDataFailure;
 
+        const displayLoading = !failure && loading;
+
         return (
             <div
                 ref={this.container}
                 className={className}
             >
                 {
-                    !failure &&
-                    loading &&
-                    <LoadingAnimation />
-                }
-                <header className={styles.header}>
-                    <Link
-                        className={styles.backLink}
-                        title={_ts('clusterViz', 'showTable')}
-                        to={reverseRoute(pathNames.leads, { projectId: activeProject })}
-                    >
-                        <i className={iconNames.back} />
-                    </Link>
-                    <h2 className={styles.heading}>
-                        {_ts('clusterViz', 'clusterVizTitle')}
-                    </h2>
-                </header>
-                { this.renderErrorMessage() }
-                <div className={styles.container}>
-                    {
-                        !failure &&
+                    displayLoading ? <LoadingAnimation /> : (
                         <Fragment>
-                            { /* eslint-disable-next-line max-len */ }
-                            { /* eslint-disable-next-line jsx-a11y/mouse-events-have-key-events */ }
-                            <ForceDirectedGraphView
-                                className={styles.forcedDirectedGraph}
-                                data={this.nodesAndLinks}
-                                idSelector={ClusterViz.idSelector}
-                                groupSelector={ClusterViz.groupSelector}
-                                valueSelector={ClusterViz.valueSelector}
-                                labelSelector={ClusterViz.labelSelector}
-                                highlightClusterId={highlightClusterId}
-                                useVoronoi
-                                headerText={graphHeaderText}
-                                onMouseOver={this.handleMouseOver}
-                                onMouseOut={this.handleMouseOut}
-                                clusterSize={clusterSize}
-                                onClusterSizeChange={this.handleClusterSizeChange}
-                            />
-                            <ListView
-                                className={styles.clusterDetails}
-                                data={this.clusterGroupList}
-                                keyExtractor={ClusterViz.getTableKey}
-                                modifier={this.renderClusterDetail}
-                            />
+                            <header className={styles.header}>
+                                <Link
+                                    className={styles.backLink}
+                                    title={_ts('clusterViz', 'showTable')}
+                                    to={reverseRoute(pathNames.leads, { projectId: activeProject })}
+                                >
+                                    <i className={iconNames.back} />
+                                </Link>
+                                <h2 className={styles.heading}>
+                                    {_ts('clusterViz', 'clusterVizTitle')}
+                                </h2>
+                            </header>
+                            {
+                                createClusterFailure && (
+                                    <Message>
+                                        {_ts('clusterViz', 'createClusterFailure')}
+                                    </Message>
+                                )
+                            }
+                            {
+                                clusterDataFailure && (
+                                    <Message>
+                                        {_ts('clusterViz', 'clusterDataFailure')}
+                                    </Message>
+                                )
+                            }
+                            <div className={styles.container}>
+                                {
+                                    !failure &&
+                                    <Fragment>
+                                        { /* eslint-disable-next-line max-len */ }
+                                        { /* eslint-disable-next-line jsx-a11y/mouse-events-have-key-events */ }
+                                        <ForceDirectedGraphView
+                                            className={styles.forcedDirectedGraph}
+                                            data={this.nodesAndLinks}
+                                            idSelector={ClusterViz.idSelector}
+                                            groupSelector={ClusterViz.groupSelector}
+                                            valueSelector={ClusterViz.valueSelector}
+                                            labelSelector={ClusterViz.labelSelector}
+                                            highlightClusterId={highlightClusterId}
+                                            useVoronoi
+                                            headerText={graphHeaderText}
+                                            onMouseOver={this.handleMouseOver}
+                                            onMouseOut={this.handleMouseOut}
+                                            clusterSize={clusterSize}
+                                            onClusterSizeChange={this.handleClusterSizeChange}
+                                        />
+                                        <ListView
+                                            className={styles.clusterDetails}
+                                            data={this.clusterGroupList}
+                                            keyExtractor={ClusterViz.getTableKey}
+                                            modifier={this.renderClusterDetail}
+                                        />
+                                    </Fragment>
+                                }
+                            </div>
                         </Fragment>
-                    }
-                </div>
+                    )
+                }
             </div>
         );
     }
