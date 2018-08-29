@@ -12,7 +12,7 @@ import {
 import wrapViz from '#rscz/VizWrapper';
 import SunBurst from '#rscz/SunBurst';
 import ChordDiagram from '#rscz/ChordDiagram';
-import TreeMap from '#rscz/TreeMap';
+import ZoomableTreeMap from '#rscz/ZoomableTreeMap';
 import CorrelationMatrix from '#rscz/CorrelationMatrix';
 import ForceDirectedGraph from '#rscz/ForceDirectedGraph';
 import CollapsibleTree from '#rscz/CollapsibleTree';
@@ -78,13 +78,15 @@ const mapDispatchToProps = dispatch => ({
     setLeadVisualization: parms => dispatch(setLeadVisualizationAction(parms)),
 });
 
-const ChordDiagramView = BoundError(VizError)(wrapViz(ChordDiagram));
-const SunBurstView = BoundError(VizError)(wrapViz(SunBurst));
-const CorrelationMatrixView = BoundError(VizError)(wrapViz(CorrelationMatrix));
-const RadialDendrogramView = BoundError(VizError)(wrapViz(RadialDendrogram));
-const TreeMapView = BoundError(VizError)(wrapViz(TreeMap));
-const ForceDirectedGraphView = BoundError(VizError)(wrapViz(ForceDirectedGraph));
-const CollapsibleTreeView = BoundError(VizError)(wrapViz(CollapsibleTree));
+const decorate = component => BoundError(VizError)(wrapViz(component));
+
+const ChordDiagramView = decorate(ChordDiagram);
+const SunBurstView = decorate(SunBurst);
+const CorrelationMatrixView = decorate(CorrelationMatrix);
+const RadialDendrogramView = decorate(RadialDendrogram);
+const TreeMapView = decorate(ZoomableTreeMap);
+const ForceDirectedGraphView = decorate(ForceDirectedGraph);
+const CollapsibleTreeView = decorate(CollapsibleTree);
 
 @BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
