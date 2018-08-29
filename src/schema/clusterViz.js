@@ -25,7 +25,7 @@ const clusterVizSchema = [];
         },
         fields: {
             value: { type: 'string' },
-            cluster: { type: 'uint' },
+            cluster: { type: 'string' },
             score: { type: 'uint' },
         },
     };
