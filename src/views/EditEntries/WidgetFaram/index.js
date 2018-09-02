@@ -105,7 +105,10 @@ export default class WidgetFaram extends React.PureComponent {
                 className={`${styles.header} ${hasError ? styles.error : ''}`}
                 title={error}
             >
-                <h5 className={styles.heading}>
+                <h5
+                    title={title}
+                    className={styles.heading}
+                >
                     { hasError &&
                         <span className={iconNames.warning} />
                     }

@@ -136,9 +136,17 @@ export default class WidgetEditor extends React.PureComponent {
             ? `${title} [${widthBlocks} ⨯ ${heightBlocks}]`
             : title;
 
+        const headingClassName = `
+            ${styles.heading}
+            ${hideButtons ? styles.disabled : ''}
+        `;
+
         return (
             <div className={styles.header}>
-                <h5 className={`${styles.heading} ${hideButtons ? styles.disabled : ''}`}>
+                <h5
+                    title={title}
+                    className={headingClassName}
+                >
                     {headerTitle}
                 </h5>
                 <div className={styles.actionButtons}>

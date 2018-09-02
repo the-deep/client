@@ -48,7 +48,10 @@ export default class Entry extends React.PureComponent {
 
         return (
             <div className={className}>
-                <h5 className={styles.heading}>
+                <h5
+                    title={title}
+                    className={styles.heading}
+                >
                     { title }
                 </h5>
             </div>
