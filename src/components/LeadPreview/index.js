@@ -25,7 +25,7 @@ export default class LeadPreview extends React.PureComponent {
     static isTypeWithUrl = t => t === LEAD_TYPE.website;
 
     static isTypeWithAttachment = t => (
-        [LEAD_TYPE.file, LEAD_TYPE.dropbox, LEAD_TYPE.drive].indexOf(t) !== 1
+        [LEAD_TYPE.file, LEAD_TYPE.dropbox, LEAD_TYPE.drive].indexOf(t) !== -1
     );
 
     render() {
@@ -54,6 +54,7 @@ export default class LeadPreview extends React.PureComponent {
             );
         }
 
+        // FIXME: use message component
         return (
             <div className={styles.emptyText}>
                 <h1>
