@@ -180,6 +180,7 @@ export default class WidgetFaram extends React.PureComponent {
                 break;
             }
             case 'organigramWidget':
+            case 'conditionalWidget':
             case 'geoWidget': {
                 child = (
                     <Widget
@@ -195,24 +196,6 @@ export default class WidgetFaram extends React.PureComponent {
                 );
                 break;
             }
-            // eslint-disable-next-line no-case-declarations
-            case 'conditionalWidget':
-                const {
-                    data: { attributes: { [id]: { data } = {} } = {} } = {},
-                } = entry || {};
-
-                child = (
-                    <Widget
-                        widgetName={widgetId}
-                        widgetType={widgetType}
-                        widget={widget}
-                        data={data}
-                        entryType={entryType}
-                        excerpt={excerpt}
-                        image={image}
-                    />
-                );
-                break;
             default: {
                 child = (
                     <Widget

@@ -3,17 +3,12 @@ import PropTypes from 'prop-types';
 
 import FaramGroup from '#rscg/FaramGroup';
 
-import {
-    fetchWidget,
-    widgetVisibility,
-    VISIBILITY,
-} from '#widgets';
+import { fetchWidget } from '#widgets';
 
 const propTypes = {
     widget: PropTypes.shape({
         properties: PropTypes.object,
     }).isRequired,
-    data: PropTypes.shape({}).isRequired,
     widgetType: PropTypes.string.isRequired,
     entryType: PropTypes.string.isRequired,
     excerpt: PropTypes.string,
@@ -25,7 +20,8 @@ const defaultProps = {
     image: undefined,
 };
 
-// eslint-disable-next-line react/prefer-stateless-function
+
+// FIXME: This should be rewritten after widget framework change
 export default class ConditionalWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -58,7 +54,6 @@ export default class ConditionalWidget extends React.PureComponent {
 
         const {
             widgetType,
-            data: widgetValue,
             entryType,
             excerpt,
             image,
@@ -66,37 +61,11 @@ export default class ConditionalWidget extends React.PureComponent {
 
         const {
             widgetId,
-            properties: { addedFrom },
         } = widget;
 
         const {
             component: Widget,
-            viewComponent: ViewWidget,
         } = fetchWidget(widgetType, widgetId);
-
-        const isViewComponent = widgetVisibility(
-            widgetId,
-            widgetType,
-            addedFrom,
-        ) === VISIBILITY.readonly;
-
-        if (isViewComponent) {
-            // Faram not used for view component
-            const {
-                value: {
-                    [widget.key]: { data } = {},
-                } = {},
-            } = widgetValue;
-
-            return (
-                <div>
-                    <ViewWidget
-                        data={data}
-                        widget={widget}
-                    />
-                </div>
-            );
-        }
 
         let child = null;
         switch (widgetId) {
