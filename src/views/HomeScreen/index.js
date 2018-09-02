@@ -72,13 +72,17 @@ export default class HomeScreen extends React.PureComponent {
             { userId: activeUser.userId },
         );
 
+        const linkToDiscoverProjects = reverseRoute(
+            pathNames.discoverProjects,
+        );
+
         return (
             <div className={styles.homeScreen}>
                 <ReactSVG
                     svgClassName={styles.deepLogo}
                     path={logo}
                 />
-                <p>
+                <div className={styles.container}>
                     <span className={styles.welcomeMessage}>
                         {_ts('homescreen', 'welcomeText')} <strong>{_ts('homescreen', 'deepLabel')}</strong>
                         <br />
@@ -87,10 +91,21 @@ export default class HomeScreen extends React.PureComponent {
                     <br />
                     {_ts('homescreen', 'message2')}
                     <br />
-                </p>
-                <Link to={linkToProfile}>
-                    {_ts('homescreen', 'goToProfile')}
-                </Link>
+                </div>
+                <div className={styles.links}>
+                    <Link
+                        className={styles.profileLink}
+                        to={linkToProfile}
+                    >
+                        {_ts('homescreen', 'goToProfile')}
+                    </Link>
+                    <Link
+                        className={styles.discoverProjectsLink}
+                        to={linkToDiscoverProjects}
+                    >
+                        {_ts('homescreen', 'goToDiscoverProjects')}
+                    </Link>
+                </div>
             </div>
         );
     }
