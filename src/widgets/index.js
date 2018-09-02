@@ -284,16 +284,15 @@ export const globalWidgets = {
         // NOTE: used as _ts('widgetTitle', 'conditionalWidgetLabel')
         title: 'conditionalWidgetLabel',
         editComponent: ConditionalEditWidget,
+        frameworkComponent: ConditionalFrameworkPreview,
 
         overview: {
             component: ConditionalWidget,
-            frameworkViewComponent: ConditionalFrameworkPreview,
             minSize: { w: 12, h: 12 },
         },
         list: {
             component: ConditionalWidget,
             viewComponent: ConditionalViewWidget,
-            frameworkViewComponent: ConditionalFrameworkPreview,
             minSize: { w: 12, h: 12 },
         },
     },
@@ -307,6 +306,7 @@ const widgets = mapToMap(
         const {
             title,
             editComponent,
+            frameworkComponent,
             list,
             overview,
         } = widget;
@@ -331,6 +331,7 @@ const widgets = mapToMap(
             } },
             title: { $set: title },
             editComponent: { $set: editDecorator(editComponent) },
+            frameworkComponent: { $set: frameworkComponent },
 
             minSize: { $apply: prepareMinSize },
             tagComponent: { $apply: c => (c ? decorator(c) : undefined) },
@@ -387,7 +388,21 @@ export const fetchWidgetTagComponent = (widgetId, view, addedFrom) => {
         : widget.tagComponent;
 };
 
+// Same as above but also check if a frameworkComponent exists
+export const fetchWidgetFrameworkComponent = (widgetId, view, addedFrom) => {
+    const { frameworkComponent } = fetchWidget(view, widgetId);
+    if (frameworkComponent) {
+        return frameworkComponent;
+    }
+    return fetchWidgetTagComponent(widgetId, view, addedFrom);
+};
+
 // Identify if there is a tag component
 export const hasWidgetTagComponent = (widgetId, view, addedFrom) => (
     !!fetchWidgetTagComponent(widgetId, view, addedFrom)
+);
+
+// Identify if there is a framework component
+export const hasWidgetFrameworkComponent = (widgetId, view, addedFrom) => (
+    !!fetchWidgetFrameworkComponent(widgetId, view, addedFrom)
 );
