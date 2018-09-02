@@ -18,11 +18,11 @@
                 align-items: center;
 
                 .heading {
-                    display: flex;
-                    align-items: center;
-                    align-self: stretch;
                     flex-grow: 1;
-                    padding: 0 $spacing-small;
+                    padding: 0 0 0 $spacing-small;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
 
                     &.disabled {
                         color: $color-text-label;
@@ -33,6 +33,7 @@
                     flex-shrink: 0;
                     transition: $duration-transition-medium opacity ease-in-out;
                     opacity: 0;
+                    padding-left: $spacing-small;
 
                     >* {
                         padding: $spacing-extra-small $spacing-extra-small-alt;
