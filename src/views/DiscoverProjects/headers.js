@@ -45,7 +45,6 @@ const headers = [
         key: 'number_of_users',
         title: _ts('discoverProjects.table', 'numberOfUsersTitle'),
         order: 8,
-        sortable: true,
     },
     {
         key: 'number_of_leads',
