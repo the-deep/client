@@ -376,8 +376,9 @@
         "875": "Welcome to the",
         "876": "DEEP",
         "877": "Seems like you do not have any projects yet.",
-        "878": "To get started, create a project from your profile.",
+        "878": "To get started, create a new project from your profile. Or, join existing project from the Discover Projects page.",
         "879": "Go to your profile",
+        "880": "Discover projects",
         "893": "Opps, you need to to verify you are a human",
         "894": "Verify you are a human",
         "900": "User profile edit",
@@ -1215,7 +1216,8 @@
             "deepLabel": 876,
             "message1": 877,
             "message2": 878,
-            "goToProfile": 879
+            "goToProfile": 879,
+            "goToDiscoverProjects": 880
         },
         "assessments": {
             "titleLabel": 13,

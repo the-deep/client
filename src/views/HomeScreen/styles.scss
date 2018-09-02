@@ -18,7 +18,8 @@
         }
     }
 
-    p {
+    .container {
+        margin-bottom: $spacing-extra-large;
         text-align: center;
         line-height: 2;
         font-size: $font-size-large;
@@ -33,9 +34,13 @@
         }
     }
 
-    a {
-        cursor: pointer;
-        color: $color-accent;
-        font-size: $font-size-large;
+    .links {
+        .profile-link,
+        .discover-projects-link {
+            cursor: pointer;
+            padding: $spacing-small $spacing-medium;
+            color: $color-accent;
+            font-size: $font-size-medium;
+        }
     }
 }
