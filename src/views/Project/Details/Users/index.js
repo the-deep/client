@@ -42,6 +42,11 @@ export default class Users extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static searchResultRendererParams = (key, elem, i) => ({
+        key,
+        ...elem,
+    })
+
     constructor(props) {
         super(props);
 
@@ -191,6 +196,18 @@ export default class Users extends React.PureComponent {
         );
     }
 
+    SearchResult = props =>
+        (
+            <div {...props}>
+                {
+                    props.data.type === 'user' ?
+                        props.data.username :
+                        props.data.title
+                }
+                | { props.data.type }
+            </div>
+        );
+
     renderUserGroups = () => {
         const userGroupLabel = _ts('project', 'userGroupLabel');
 
@@ -209,6 +226,7 @@ export default class Users extends React.PureComponent {
 
         );
     }
+
     renderUserDetails = () => {
         const usersLabel = _ts('project', 'usersLabel');
         return (
@@ -236,13 +254,6 @@ export default class Users extends React.PureComponent {
         );
     };
 
-    renderSearchResult = (key, data) =>
-        (
-            <div key={key}>
-                { data.type === 'user' ? data.username : data.title } | { data.type }
-            </div>
-        );
-
     renderUserSearch = () => {
         const searchPlaceholder = _ts('project', 'searchUserPlaceholder');
         const userUserGroupLabel = _ts('project', 'userUserGroupLabel');
@@ -263,8 +274,9 @@ export default class Users extends React.PureComponent {
                     />
                     <ListView
                         keyExtractor={data => data.type + data.id}
+                        rendererParams={Users.searchResultRendererParams}
                         data={this.state.searchResults}
-                        modifier={this.renderSearchResult}
+                        renderer={this.SearchResult}
                     />
 
                 </header>
