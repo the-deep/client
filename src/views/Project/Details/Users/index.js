@@ -1,4 +1,6 @@
 import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import SearchInput from '#rsci/SearchInput';
 import {
@@ -13,18 +15,39 @@ import Table from '#rscv/Table';
 import ListView from '#rscv/List/ListView';
 import _ts from '#ts';
 import {
+    currentProjectMemberDataSelector,
+} from '#redux';
+import {
     iconNames,
 } from '#constants';
 
+import UsersAndUserGroupsGet from '../../requests/UsersAndUserGroupsRequest';
 
 import styles from './styles.scss';
 
+const propTypes = {
+    memberData: PropTypes.arrayOf(PropTypes.object),
+};
+
+const defaultProps = {
+    memberData: [],
+};
+
+const mapStateToProps = (state, props) => ({
+    memberData: currentProjectMemberDataSelector(state, props),
+});
+
+@connect(mapStateToProps)
 export default class Users extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
     constructor(props) {
         super(props);
 
         this.state = {
             searchInputValue: '',
+            searchResults: [],
         };
 
         this.memberHeaders = [
@@ -99,6 +122,10 @@ export default class Users extends React.PureComponent {
             },
         ];
 
+        this.getUsersAndUserGroupsRequest = new UsersAndUserGroupsGet({
+            setState: params => this.setState(params),
+        });
+
         // this.memberData = [];
         // this.userGroupData = [];
         this.memberData = [
@@ -141,13 +168,28 @@ export default class Users extends React.PureComponent {
                 joinedAt: '2017-10-26T04:47:12.381611Z',
                 actions: [],
             },
-
-
         ];
+    }
+
+    getUsersAndUserGroups = () => {
+        const { searchInputValue } = this.state;
+        const trimmedInput = searchInputValue.trim();
+        if (trimmedInput.length < 3) {
+            return;
+        }
+        this.getUsersAndUserGroupsRequest.init(trimmedInput);
+        this.getUsersAndUserGroupsRequest.start();
     }
 
     calcUserGroupKey = userGroup => userGroup.id;
     calcOtherUserKey = otherUser => otherUser.id;
+
+    handleSearchChange = (searchInputValue) => {
+        this.setState(
+            { searchInputValue },
+            this.getUsersAndUserGroups,
+        );
+    }
 
     renderUserGroups = () => {
         const userGroupLabel = _ts('project', 'userGroupLabel');
@@ -177,7 +219,7 @@ export default class Users extends React.PureComponent {
                     </h3>
                     <Table
                         className={styles.content}
-                        data={this.memberData}
+                        data={this.props.memberData}
                         headers={this.memberHeaders}
                         keyExtractor={this.calcOtherUserKey}
                     />
@@ -194,6 +236,13 @@ export default class Users extends React.PureComponent {
         );
     };
 
+    renderSearchResult = (key, data) =>
+        (
+            <div key={key}>
+                { data.type === 'user' ? data.username : data.title } | { data.type }
+            </div>
+        );
+
     renderUserSearch = () => {
         const searchPlaceholder = _ts('project', 'searchUserPlaceholder');
         const userUserGroupLabel = _ts('project', 'userUserGroupLabel');
@@ -206,11 +255,16 @@ export default class Users extends React.PureComponent {
                     </h4>
                     <SearchInput
                         className={styles.userSearchInput}
-                        onChange={() => {}}
+                        onChange={this.handleSearchChange}
                         placeholder={searchPlaceholder}
                         value={this.state.searchInputValue}
                         showHintAndError={false}
                         showLabel={false}
+                    />
+                    <ListView
+                        keyExtractor={data => data.type + data.id}
+                        data={this.state.searchResults}
+                        modifier={this.renderSearchResult}
                     />
 
                 </header>
