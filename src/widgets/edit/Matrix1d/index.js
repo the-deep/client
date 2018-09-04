@@ -38,6 +38,8 @@ export default class Matrix1dEditWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static keyExtractor = elem => elem.key;
+
     static schema = {
         fields: {
             title: [requiredCondition],
@@ -82,6 +84,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                 }
                                 return errors;
                             },
+
                             keySelector: Matrix1dEditWidget.keyExtractor,
                             member: {
                                 fields: {
@@ -95,8 +98,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             },
         },
     };
-
-    static keyExtractor = elem => elem.key;
 
     constructor(props) {
         super(props);

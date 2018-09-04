@@ -87,7 +87,7 @@ export default class RowContent extends React.PureComponent {
                                 {_ts('widgets.editor.matrix1d', 'cellsHeaderTitle')}
                             </h4>
                             <PrimaryButton
-                                faramName="add-btn"
+                                faramElementName="add-btn"
                                 faramAction={RowContent.addOptionClick}
                                 iconName={iconNames.add}
                                 transparent

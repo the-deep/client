@@ -1,6 +1,6 @@
 import {
     createUrlForProject,
-    createParamsForProjectPut,
+    createParamsForProjectPatch,
 } from '#rest';
 import Request from '#utils/Request';
 import notify from '#notify';
@@ -61,7 +61,7 @@ export default class AddExistingRegionProjectPatchRequest extends Request {
         this.addedRegions = addedRegions;
         this.createDefault({
             url: createUrlForProject(projectId),
-            params: createParamsForProjectPut(newProjectDetails),
+            params: createParamsForProjectPatch(newProjectDetails),
         });
         return this;
     }
