@@ -4,13 +4,14 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import Message from '#rscv/Message';
 import BoundError from '#rscg/BoundError';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
 import Table from '#rscv/Table';
 import FormattedDate from '#rscv/FormattedDate';
+import forceDirectedData from '#views/Visualization/dummydata/forceDirectedData';
 import ForceDirectedGraph from '#rscz/NewForceDirectedGraph';
 import wrapViz from '#rscz/VizWrapper';
 
@@ -141,6 +142,7 @@ export default class ClusterViz extends PureComponent {
             highlightTableId: undefined,
             createClusterFailure: false,
             clusterDataFailure: false,
+            entryToRedirectTo: undefined,
         };
 
         this.leadsTableHeader = [
@@ -159,35 +161,6 @@ export default class ClusterViz extends PureComponent {
                         mode="dd-MM-yyyy"
                     />
                 ),
-            },
-            {
-                key: 'actions',
-                label: _ts('clusterViz', 'leadsTableActions'),
-                order: 3,
-                modifier: (row) => {
-                    const editEntries = reverseRoute(
-                        pathNames.editEntries,
-                        {
-                            projectId: this.props.activeProject,
-                            leadId: row.id,
-                        },
-                    );
-                    return (
-                        <Cloak
-                            hide={({ hasAnalysisFramework }) => !hasAnalysisFramework}
-                            render={({ disabled }) => (
-                                <Link
-                                    className={`${styles.addEntryLink} link ${disabled ? styles.disabled : ''}`}
-                                    title={_ts('clusterViz', 'addEntryFromLeadButtonTitle')}
-                                    to={editEntries}
-                                    disabled={disabled}
-                                >
-                                    <i className={iconNames.forward} />
-                                </Link>
-                            )}
-                        />
-                    );
-                },
             },
         ];
 
@@ -229,11 +202,17 @@ export default class ClusterViz extends PureComponent {
             );
             this.nodesAndLinks = nodesAndLinks;
             this.clusterGroupList = clusterGroupList;
+            this.noOfLeads = clusterGroupList
+                .map(cluster => cluster.documents.length)
+                .reduce((sum, val) => sum + val, 0);
         }
     }
 
     componentDidUpdate() {
         const { current: container } = this.container;
+        if (!container) {
+            return;
+        }
 
         const activeClusterDetails = container.getElementsByClassName(styles.activeCluster);
         if (activeClusterDetails.length > 0) {
@@ -340,6 +319,17 @@ export default class ClusterViz extends PureComponent {
         });
     }
 
+    handleBodyClick = (rowKey) => {
+        const entryToRedirectTo = reverseRoute(
+            pathNames.editEntries,
+            {
+                projectId: this.props.activeProject,
+                leadId: rowKey,
+            },
+        );
+        this.setState({ entryToRedirectTo });
+    }
+
     renderKeyword = (_, cluster) => {
         const {
             value: keyword,
@@ -440,6 +430,7 @@ export default class ClusterViz extends PureComponent {
                         headers={this.leadsTableHeader}
                         onBodyHover={handleHover}
                         onBodyHoverOut={this.handleTableHoverOut}
+                        onBodyClick={this.handleBodyClick}
                         highlightRowKey={highlightTableId}
                         keyExtractor={ClusterViz.leadsTableKeyExtractor}
                         emptyComponent={leadsEmptyComponent}
@@ -459,9 +450,20 @@ export default class ClusterViz extends PureComponent {
             <Fragment>
                 {
                     createClusterFailure && (
-                        <Message>
-                            {_ts('clusterViz', 'createClusterFailure')}
-                        </Message>
+                        <div>
+                            <Message>
+                                {_ts('clusterViz', 'createClusterFailure')}
+                            </Message>
+                            <ForceDirectedGraphView
+                                className={styles.forcedDirectedGraph}
+                                headerText={_ts('visualization', 'forcedDirectedGraph')}
+                                data={forceDirectedData}
+                                idSelector={ClusterViz.idSelector}
+                                groupSelector={ClusterViz.groupSelector}
+                                valueSelector={ClusterViz.valueSelector}
+                                useVoronoi={false}
+                            />
+                        </div>
                     )
                 }
                 {
@@ -483,7 +485,22 @@ export default class ClusterViz extends PureComponent {
             createClusterPending,
             clusterDataPending,
             highlightClusterId,
+            entryToRedirectTo,
         } = this.state;
+
+        if (entryToRedirectTo) {
+            return (
+                <Cloak
+                    hide={({ hasAnalysisFramework }) => !hasAnalysisFramework}
+                    render={() => (
+                        <Redirect
+                            push
+                            to={entryToRedirectTo}
+                        />
+                    )}
+                />
+            );
+        }
 
         const {
             className: classNameFromProps,

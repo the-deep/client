@@ -4,6 +4,7 @@ import {
 import update from '#rsu/immutable-update';
 
 export const SET_USER_CONNECTORS = 'siloDomainData/SET_USER_CONNECTORS';
+export const DELETE_CONNECTOR = 'siloDomainData/DELETE_CONNECTOR';
 export const SET_USER_CONNECTOR_DETAILS = 'siloDomainData/SET_USER_CONNECTOR_DETAILS';
 export const CHANGE_USER_CONNECTOR_DETAILS = 'siloDomainData/CHANGE_USER_CONNECTOR_DETAILS';
 export const SET_ERROR_USER_CONNECTOR_DETAILS = 'siloDomainData/SET_ERROR_USER_CONNECTOR_DETAILS';
@@ -13,6 +14,11 @@ export const ADD_USER_CONNECTOR = 'siloDomainData/ADD_USER_CONNECTOR';
 export const setUserConnectorsAction = ({ connectors }) => ({
     type: SET_USER_CONNECTORS,
     connectors,
+});
+
+export const deleteConnectorAction = ({ connectorId }) => ({
+    type: DELETE_CONNECTOR,
+    connectorId,
 });
 
 export const setUserConnectorDetailsAction = ({ connectorDetails, connectorId }) => ({
@@ -66,6 +72,17 @@ export const setUserConnectorDetails = (state, action) => {
             details: { $auto: {
                 [connectorId]: { $set: connectorDetails },
             } },
+        } },
+    };
+    return update(state, settings);
+};
+
+export const deleteConnector = (state, action) => {
+    const { connectorId } = action;
+    const settings = {
+        connectorsView: { $auto: {
+            list: { $unset: [connectorId] },
+            details: { $unset: [connectorId] },
         } },
     };
     return update(state, settings);
@@ -142,6 +159,7 @@ const reducers = {
     [CHANGE_USER_CONNECTOR_DETAILS]: changeUserConnectorDetails,
     [SET_ERROR_USER_CONNECTOR_DETAILS]: setErrorUserConnectorDetails,
     [ADD_USER_CONNECTOR]: addUserConnector,
+    [DELETE_CONNECTOR]: deleteConnector,
 };
 
 export default reducers;

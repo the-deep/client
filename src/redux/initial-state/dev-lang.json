@@ -764,7 +764,10 @@
         "-72859218": "Project options",
         "-45091634": "Failed to get project options.",
         "-44183195": "Modifying this framework may affect {count} entries. Are you sure you want to save these changes?",
-        "-82545000": "Default"
+        "-82545000": "Default",
+        "-70199668": "No notifications to display",
+        "-53914293": "Are you sure you want to remove the connector {connector}?",
+        "-94736495": "Delete"
     },
     "links": {
         "browserExtension": {
@@ -1727,7 +1730,9 @@
             "projectsTitle": 31,
             "projectsGetFailure": 1125,
             "globalVisibilityLabel": -84222321,
-            "selfVisibilityLabel": -18776228
+            "selfVisibilityLabel": -18776228,
+            "connectorDetailDeleteLabel": -94736495,
+            "deleteConnectorConfirmText": -53914293
         },
         "userGroup": {
             "tableHeaderName": 103,
@@ -1843,7 +1848,8 @@
         "notifications": {
             "notificationHeaderTitle": 1929,
             "projectJoinResponse": 1934,
-            "projectJoinResponseFailure": 1935
+            "projectJoinResponseFailure": 1935,
+            "noNotificationsText": -70199668
         },
         "notifications.projectJoin": {
             "requestedToJoin": 1930,

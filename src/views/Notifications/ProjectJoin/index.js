@@ -79,7 +79,7 @@ export default class ProjectJoinItem extends React.PureComponent {
         const { data } = this.props;
         const {
             id,
-            project,
+            project = {},
         } = data.details;
 
         this.startProjectJoinResponseRequest(project.id, id, true, 'normal');
@@ -89,7 +89,7 @@ export default class ProjectJoinItem extends React.PureComponent {
         const { data } = this.props;
         const {
             id,
-            project,
+            project = {},
         } = data.details;
 
         this.startProjectJoinResponseRequest(project.id, id, true, 'admin');
@@ -99,7 +99,7 @@ export default class ProjectJoinItem extends React.PureComponent {
         const { data } = this.props;
         const {
             id,
-            project,
+            project = {},
         } = data.details;
 
         this.startProjectJoinResponseRequest(project.id, id, false);
@@ -108,7 +108,7 @@ export default class ProjectJoinItem extends React.PureComponent {
     renderPendingDescription = () => {
         const { data } = this.props;
         const {
-            project,
+            project = {},
             requestedBy,
         } = data.details;
 
