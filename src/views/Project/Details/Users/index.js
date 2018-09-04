@@ -25,6 +25,35 @@ import UsersAndUserGroupsGet from '../../requests/UsersAndUserGroupsRequest';
 
 import styles from './styles.scss';
 
+// Renderer Params for userAndUserGroups search result
+const searchResultRendererParams = (key, data) => ({
+    key,
+    data,
+});
+
+// Component for rendering each userAndUserGroups search result
+const SearchResult = props => (
+    <div {...props}>
+        {
+            props.data.type === 'user' ?
+                props.data.username :
+                props.data.title
+        }
+        | { props.data.type }
+    </div>
+);
+
+SearchResult.propTypes = {
+    data: PropTypes.shape({
+        type: PropTypes.string.isRequired,
+        username: PropTypes.string,
+        title: PropTypes.string,
+        id: PropTypes.number.isRequired,
+        firstName: PropTypes.string,
+        lastName: PropTypes.string,
+    }).isRequired,
+};
+
 const propTypes = {
     memberData: PropTypes.arrayOf(PropTypes.object),
 };
@@ -42,11 +71,6 @@ export default class Users extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static searchResultRendererParams = (key, elem, i) => ({
-        key,
-        ...elem,
-    })
-
     constructor(props) {
         super(props);
 
@@ -61,7 +85,6 @@ export default class Users extends React.PureComponent {
                 label: _ts('project', 'tableHeaderDp'),
                 order: 1,
             },
-
             {
                 key: 'name',
                 label: _ts('project', 'tableHeaderName'),
@@ -196,17 +219,7 @@ export default class Users extends React.PureComponent {
         );
     }
 
-    SearchResult = props =>
-        (
-            <div {...props}>
-                {
-                    props.data.type === 'user' ?
-                        props.data.username :
-                        props.data.title
-                }
-                | { props.data.type }
-            </div>
-        );
+    userGroupsRendererParams = (key, data) => ({ key, data })
 
     renderUserGroups = () => {
         const userGroupLabel = _ts('project', 'userGroupLabel');
@@ -245,8 +258,10 @@ export default class Users extends React.PureComponent {
                 <div className={styles.otherUserGroups}>
                     <ListView
                         className={styles.otherUserGroups}
-                        modifier={this.renderUserGroups}
+                        renderer={this.renderUserGroups}
+                        rendererParams={this.userGroupsRendererParams}
                         data={this.userGroupData}
+                        keyExtractor={data => data.id}
 
                     />
                 </div>
@@ -274,9 +289,9 @@ export default class Users extends React.PureComponent {
                     />
                     <ListView
                         keyExtractor={data => data.type + data.id}
-                        rendererParams={Users.searchResultRendererParams}
+                        rendererParams={searchResultRendererParams}
                         data={this.state.searchResults}
-                        renderer={this.SearchResult}
+                        renderer={SearchResult}
                     />
 
                 </header>
@@ -291,9 +306,7 @@ export default class Users extends React.PureComponent {
         return (
             <div className={styles.users}>
                 <UserSearch />
-                <UserDetails>
-                    What is
-                </UserDetails>
+                <UserDetails />
             </div>
         );
     }
