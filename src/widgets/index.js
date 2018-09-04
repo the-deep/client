@@ -12,7 +12,8 @@ import Matrix2dEditWidget from './edit/Matrix2d';
 import NumberMatrixEditWidget from './edit/NumberMatrix';
 // list
 import NumberEditWidget from './edit/Number';
-import DateEditWidget from './edit/Date';
+// NOTE: using default widget for date instead
+// import DateEditWidget from './edit/Date';
 import OrganigramEditWidget from './edit/Organigram';
 import MultiSelectEditWidget from './edit/MultiSelect';
 import ScaleEditWidget from './edit/Scale';
@@ -64,17 +65,11 @@ export const VIEW = {
     list: 'list',
 };
 
-export const VISIBILITY = {
-    primary: 'primary',
-    secondary: 'secondary',
-
-    hidden: 'hidden',
-};
-
 // Decorator for each widgets
 const editDecorator = boundError(FrameworkWidgetError);
 const decorator = boundError(WidgetError);
 
+// Map of all widgets
 let widgets = {
     excerptWidget: {
         // NOTE: used as _ts('widgetTitle', 'excerptWidgetLabel')
@@ -82,13 +77,13 @@ let widgets = {
         editComponent: DefaultEditWidget,
 
         overview: {
-            component: ExcerptWidget,
             minSize: { w: 15, h: 6 },
+            tagComponent: ExcerptWidget,
         },
         list: {
-            component: ExcerptWidget,
-            viewComponent: ExcerptViewWidget,
             minSize: { w: 15, h: 6 },
+            altTagComponent: ExcerptWidget,
+            viewComponent: ExcerptViewWidget,
         },
     },
     matrix1dWidget: {
@@ -97,13 +92,13 @@ let widgets = {
         editComponent: Matrix1dEditWidget,
 
         overview: {
-            component: Matrix1dWidget,
             minSize: { w: 14, h: 5 },
+            tagComponent: Matrix1dWidget,
         },
         list: {
-            component: Matrix1dListWidget,
-            viewComponent: Matrix1dListViewWidget,
             minSize: { w: 12, h: 7 },
+            altTagComponent: Matrix1dListWidget,
+            viewComponent: Matrix1dListViewWidget,
         },
     },
     matrix2dWidget: {
@@ -112,13 +107,13 @@ let widgets = {
         editComponent: Matrix2dEditWidget,
 
         overview: {
-            component: Matrix2dWidget,
             minSize: { w: 15, h: 6 },
+            tagComponent: Matrix2dWidget,
         },
         list: {
-            component: Matrix2dListWidget,
-            viewComponent: Matrix2dListViewWidget,
             minSize: { w: 12, h: 7 },
+            altTagComponent: Matrix2dListWidget,
+            viewComponent: Matrix2dListViewWidget,
         },
     },
     numberMatrixWidget: {
@@ -127,13 +122,13 @@ let widgets = {
         editComponent: NumberMatrixEditWidget,
 
         overview: {
-            component: NumberMatrixWidget,
             minSize: { w: 15, h: 8 },
+            tagComponent: NumberMatrixWidget,
         },
         list: {
-            component: NumberMatrixListWidget,
-            viewComponent: NumberMatrixListViewWidget,
             minSize: { w: 12, h: 7 },
+            altTagComponent: NumberMatrixListWidget,
+            viewComponent: NumberMatrixListViewWidget,
         },
     },
 
@@ -141,17 +136,17 @@ let widgets = {
     dateWidget: {
         // NOTE: used as _ts('widgetTitle', 'dateWidgetLabel')
         title: 'dateWidgetLabel',
-        editComponent: DateEditWidget,
+        editComponent: DefaultEditWidget,
 
         overview: {
-            component: DateWidget,
-            viewComponent: DateViewWidget,
             minSize: { w: 16, h: 5 },
+            tagComponent: DateWidget,
         },
         list: {
-            component: DateWidget,
-            viewComponent: DateViewWidget,
             minSize: { w: 16, h: 5 },
+            tagComponent: DateWidget,
+            altTagComponent: DateViewWidget,
+            viewComponent: DateViewWidget,
         },
     },
     timeWidget: {
@@ -160,14 +155,14 @@ let widgets = {
         editComponent: DefaultEditWidget,
 
         overview: {
-            component: TimeWidget,
-            viewComponent: TimeViewWidget,
             minSize: { w: 11, h: 5 },
+            tagComponent: TimeWidget,
         },
         list: {
-            component: TimeWidget,
-            viewComponent: TimeViewWidget,
             minSize: { w: 11, h: 5 },
+            tagComponent: TimeWidget,
+            altTagComponent: TimeViewWidget,
+            viewComponent: TimeViewWidget,
         },
     },
     dateRangeWidget: {
@@ -176,14 +171,14 @@ let widgets = {
         editComponent: DefaultEditWidget,
 
         overview: {
-            component: DateRangeWidget,
-            viewComponent: DateRangeViewWidget,
             minSize: { w: 20, h: 6 },
+            tagComponent: DateRangeWidget,
         },
         list: {
-            component: DateRangeWidget,
-            viewComponent: DateRangeViewWidget,
             minSize: { w: 20, h: 6 },
+            tagComponent: DateRangeWidget,
+            altTagComponent: DateRangeViewWidget,
+            viewComponent: DateRangeViewWidget,
         },
     },
     numberWidget: {
@@ -192,14 +187,14 @@ let widgets = {
         editComponent: NumberEditWidget,
 
         overview: {
-            component: NumberWidget,
-            viewComponent: NumberViewWidget,
             minSize: { w: 10, h: 4 },
+            tagComponent: NumberWidget,
         },
         list: {
-            component: NumberWidget,
-            viewComponent: NumberViewWidget,
             minSize: { w: 10, h: 4 },
+            tagComponent: NumberWidget,
+            altTagComponent: NumberViewWidget,
+            viewComponent: NumberViewWidget,
         },
     },
     scaleWidget: {
@@ -208,14 +203,14 @@ let widgets = {
         editComponent: ScaleEditWidget,
 
         overview: {
-            component: ScaleWidget,
-            viewComponent: ScaleViewWidget,
             minSize: { w: 6, h: 4 },
+            tagComponent: ScaleWidget,
         },
         list: {
-            component: ScaleWidget,
-            viewComponent: ScaleViewWidget,
             minSize: { w: 6, h: 4 },
+            tagComponent: ScaleWidget,
+            altTagComponent: ScaleViewWidget,
+            viewComponent: ScaleViewWidget,
         },
     },
     geoWidget: {
@@ -224,14 +219,14 @@ let widgets = {
         editComponent: DefaultEditWidget,
 
         overview: {
-            component: GeoWidget,
-            viewComponent: GeoViewWidget,
             minSize: { w: 12, h: 12 },
+            tagComponent: GeoWidget,
         },
         list: {
-            component: GeoWidget,
-            viewComponent: GeoViewWidget,
             minSize: { w: 12, h: 12 },
+            tagComponent: GeoWidget,
+            altTagComponent: GeoViewWidget,
+            viewComponent: GeoViewWidget,
         },
     },
     organigramWidget: {
@@ -240,14 +235,14 @@ let widgets = {
         editComponent: OrganigramEditWidget,
 
         overview: {
-            component: OrganigramWidget,
-            viewComponent: OrganigramViewWidget,
             minSize: { w: 12, h: 12 },
+            tagComponent: OrganigramWidget,
         },
         list: {
-            component: OrganigramWidget,
-            viewComponent: OrganigramViewWidget,
             minSize: { w: 12, h: 12 },
+            tagComponent: OrganigramWidget,
+            altTagComponent: OrganigramViewWidget,
+            viewComponent: OrganigramViewWidget,
         },
     },
     selectWidget: {
@@ -256,14 +251,14 @@ let widgets = {
         editComponent: MultiSelectEditWidget,
 
         overview: {
-            component: SelectWidget,
-            viewComponent: SelectViewWidget,
             minSize: { w: 12, h: 4 },
+            tagComponent: SelectWidget,
         },
         list: {
-            component: SelectWidget,
-            viewComponent: SelectViewWidget,
             minSize: { w: 12, h: 4 },
+            tagComponent: SelectWidget,
+            altTagComponent: SelectViewWidget,
+            viewComponent: SelectViewWidget,
         },
     },
     multiselectWidget: {
@@ -272,14 +267,14 @@ let widgets = {
         editComponent: MultiSelectEditWidget,
 
         overview: {
-            component: MultiSelectWidget,
-            viewComponent: MultiSelectViewWidget,
             minSize: { w: 12, h: 12 },
+            tagComponent: MultiSelectWidget,
         },
         list: {
-            component: MultiSelectWidget,
-            viewComponent: MultiSelectViewWidget,
             minSize: { w: 12, h: 12 },
+            tagComponent: MultiSelectWidget,
+            altTagComponent: MultiSelectViewWidget,
+            viewComponent: MultiSelectViewWidget,
         },
     },
 };
@@ -302,40 +297,31 @@ widgets = mapToMap(
         });
 
         const componentSettings = {
-            title: { $set: title },
-            editComponent: { $set: editDecorator(editComponent) },
             initialLayout: { $set: {
-                overviewGridLayout: overview && {
+                overviewGridLayout: {
                     left: 0,
                     top: 0,
                     ...prepareMinSize(overview.minSize),
                 },
-                listGridLayout: list && {
+                listGridLayout: {
                     left: 0,
                     top: 0,
                     ...prepareMinSize(list.minSize),
                 },
             } },
-            component: { $apply: c => decorator(c) },
-            viewComponent: { $apply: c => (c ? decorator(c) : undefined) },
+            title: { $set: title },
+            editComponent: { $set: editDecorator(editComponent) },
+
             minSize: { $apply: prepareMinSize },
+            tagComponent: { $apply: c => (c ? decorator(c) : undefined) },
+            altTagComponent: { $apply: c => (c ? decorator(c) : undefined) },
+            viewComponent: { $apply: c => (c ? decorator(c) : undefined) },
         };
 
         const settings = {
-            list: {
-                $if: [
-                    list,
-                    componentSettings,
-                ],
-            },
-            overview: {
-                $if: [
-                    overview,
-                    componentSettings,
-                ],
-            },
+            list: componentSettings,
+            overview: componentSettings,
         };
-
         return update(widget, settings);
     },
 );
@@ -349,51 +335,6 @@ export const widgetList = mapToList(
     }),
 );
 
-// Determine visibility of widgets for WidgetListing
-export const widgetListingVisibility = (widgetId, ...otherParams) => {
-    const overviewWidgetFn = view => view === VIEW.overview;
-    const listWidgetFn = () => true;
-
-    const mapping = {
-        excerptWidget: overviewWidgetFn,
-        matrix1dWidget: overviewWidgetFn,
-        matrix2dWidget: overviewWidgetFn,
-        numberMatrixWidget: overviewWidgetFn,
-
-        dateRangeWidget: listWidgetFn,
-        dateWidget: listWidgetFn,
-        timeWidget: listWidgetFn,
-        geoWidget: listWidgetFn,
-        multiselectWidget: listWidgetFn,
-        numberWidget: listWidgetFn,
-        organigramWidget: listWidgetFn,
-        scaleWidget: listWidgetFn,
-        selectWidget: listWidgetFn,
-    };
-    return mapping[widgetId](...otherParams);
-};
-
-// Determine visibility of widgets for WidgetEditor
-export const widgetVisibility = (widgetId, view, addedFrom) => {
-    const {
-        primary,
-        secondary,
-        hidden,
-    } = VISIBILITY;
-
-    if (addedFrom === VIEW.overview) {
-        return view === VIEW.overview ? primary : secondary;
-    } else if (addedFrom === VIEW.list) {
-        return view === VIEW.list ? primary : hidden;
-    } else if (addedFrom === undefined) {
-        // NOTE: To support legacy widgets,
-        // if there is no addedFrom, only show it in list view
-        return view === VIEW.overview ? hidden : primary;
-    }
-    console.error('Unknown view or addedFrom defined.');
-    return hidden;
-};
-
 // Access widgets
 
 export const fetchWidget = (type, widgetId) => (
@@ -401,3 +342,32 @@ export const fetchWidget = (type, widgetId) => (
 );
 
 export const hasWidget = (type, widgetId) => !!fetchWidget(type, widgetId);
+
+// Determine visibility of widgets for WidgetListing
+export const widgetListingVisibility = (widgetId, view) => (
+    !!fetchWidget(view, widgetId).tagComponent
+);
+
+// Determine if tagComponent or altTagComponent should be shown
+export const shouldShowAltTagComponent = (widgetId, view, addedFrom) => (
+    view !== addedFrom
+);
+
+// Get tagComponent or altTagComponent
+export const fetchWidgetTagComponent = (widgetId, view, addedFrom) => {
+    const widget = fetchWidget(view, widgetId);
+
+    if (!addedFrom) {
+        console.warn(`ERROR: addedFrom is not defined for ${widgetId}`);
+        return undefined;
+    }
+
+    return shouldShowAltTagComponent(widgetId, view, addedFrom)
+        ? widget.altTagComponent
+        : widget.tagComponent;
+};
+
+// Identify if there is a tag component
+export const hasWidgetTagComponent = (widgetId, view, addedFrom) => (
+    !!fetchWidgetTagComponent(widgetId, view, addedFrom)
+);

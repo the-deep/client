@@ -7,15 +7,12 @@ import NumberMatrixListOutput from '#widgetComponents/NumberMatrixListOutput';
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     widget: PropTypes.object,
-    // eslint-disable-next-line react/forbid-prop-types
-    data: PropTypes.object,
     className: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     widget: undefined,
-    data: {},
 };
 
 const emptyObject = {};
@@ -32,18 +29,15 @@ export default class NumberMatrixListWidget extends React.PureComponent {
     render() {
         const {
             widget,
-            data: {
-                value,
-            },
             className,
         } = this.props;
         const options = getOptions(widget);
 
         return (
             <NumberMatrixListOutput
+                faramElementName="value"
                 className={className}
                 options={options}
-                value={value}
                 placeholder={_ts('widgets.view.numberMatrix', 'numberPlaceholder')}
             />
         );

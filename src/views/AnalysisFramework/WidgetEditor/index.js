@@ -17,9 +17,10 @@ import { iconNames } from '#constants';
 import {
     fetchWidget,
     gridSize,
-    VISIBILITY,
     VIEW,
-    widgetVisibility,
+    hasWidgetTagComponent,
+    fetchWidgetTagComponent,
+    shouldShowAltTagComponent,
 } from '#widgets';
 
 import _ts from '#ts';
@@ -122,11 +123,7 @@ export default class WidgetEditor extends React.PureComponent {
 
         const { editComponent: Widget } = fetchWidget(widgetType, widgetId);
 
-        const hideButtons = widgetVisibility(
-            widgetId,
-            widgetType,
-            addedFrom,
-        ) === VISIBILITY.secondary;
+        const hideButtons = shouldShowAltTagComponent(widgetId, widgetType, addedFrom);
 
         const layout = this.layoutSelector(widget);
         const widthBlocks = Math.ceil(layout.width / gridSize.width);
@@ -183,35 +180,27 @@ export default class WidgetEditor extends React.PureComponent {
         const { widgetId, id, properties: { addedFrom } } = widget;
         const { widgetType } = this.props;
 
-        const {
-            component,
-            viewComponent,
-        } = fetchWidget(widgetType, widgetId);
-
-        const secondary = widgetVisibility(
+        const Widget = fetchWidgetTagComponent(
             widgetId,
             widgetType,
             addedFrom,
-        ) === VISIBILITY.secondary;
-        const Widget = secondary ? viewComponent : component;
+        );
 
         return (
             <div className={styles.content}>
                 <FaramGroup faramElementName={String(id)}>
                     <FaramGroup faramElementName="data">
-                        { Widget &&
-                            <Widget
-                                widgetName={widgetId}
-                                widgetType={widgetType}
-                                widget={widget}
+                        <Widget
+                            widgetName={widgetId}
+                            widgetType={widgetType}
+                            widget={widget}
 
-                                entryType="excerpt"
-                                excerpt=""
-                                image={undefined}
+                            entryType="excerpt"
+                            excerpt=""
+                            image={undefined}
 
-                                disabled
-                            />
-                        }
+                            disabled
+                        />
                     </FaramGroup>
                 </FaramGroup>
             </div>
@@ -224,12 +213,9 @@ export default class WidgetEditor extends React.PureComponent {
             widgetType,
         } = this.props;
 
+        // TODO: memoize
         const filteredWidgets = widgets.filter(
-            w => widgetVisibility(
-                w.widgetId,
-                widgetType,
-                w.properties.addedFrom,
-            ) !== VISIBILITY.hidden,
+            w => hasWidgetTagComponent(w.widgetId, widgetType, w.properties.addedFrom),
         );
 
         return (

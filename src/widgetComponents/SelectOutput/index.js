@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { FaramOutputElement } from '#rscg/FaramElements';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -19,6 +21,7 @@ const defaultProps = {
     keySelector: v => v.key,
 };
 
+@FaramOutputElement
 export default class SelectOutput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

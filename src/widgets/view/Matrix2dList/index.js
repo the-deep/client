@@ -7,15 +7,11 @@ const propTypes = {
     className: PropTypes.string,
 
     // eslint-disable-next-line react/forbid-prop-types
-    data: PropTypes.object,
-
-    // eslint-disable-next-line react/forbid-prop-types
     widget: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
     className: '',
-    data: {},
 };
 
 const emptyArray = [];
@@ -36,19 +32,16 @@ export default class Matrix2dListWidget extends React.PureComponent {
     render() {
         const {
             className,
-            data,
             widget,
         } = this.props;
 
         const dimensions = getDimensions(widget);
         const sectors = getSectors(widget);
 
-        const { value } = data;
-
         return (
             <Matrix2dList
                 className={className}
-                value={value}
+                faramElementName="value"
                 dimensions={dimensions}
                 sectors={sectors}
             />

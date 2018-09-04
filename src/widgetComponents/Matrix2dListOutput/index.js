@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import ListView from '#rscv/List/ListView';
+import { FaramOutputElement } from '#rscg/FaramElements';
 import { listToMap } from '#rsu/common';
 
 import Row from './Row';
@@ -66,6 +67,7 @@ const getSelectedSectors = (dimensions = [], sectors = [], value) => {
     return selectedSectors;
 };
 
+@FaramOutputElement
 export default class Matrix2dListOutput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

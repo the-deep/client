@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { FaramOutputElement } from '#rscg/FaramElements';
+
 import ListView from '#rscv/List/ListView';
 import ListItem from '#components/ListItem';
 
@@ -20,6 +22,7 @@ const defaultProps = {
     regions: [],
 };
 
+@FaramOutputElement
 export default class GeoListOutput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

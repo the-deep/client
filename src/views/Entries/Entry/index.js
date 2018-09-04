@@ -1,7 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import GridViewLayout from '#rscv/GridViewLayout';
 
+import GridViewLayout from '#rscv/GridViewLayout';
+import Faram from '#rscg/Faram';
+import FaramGroup from '#rscg/FaramGroup';
+
+
+import { entryAccessor } from '#entities/editEntries';
 import {
     fetchWidget,
     VIEW,
@@ -64,39 +69,45 @@ export default class Entry extends React.PureComponent {
             id,
         } = widget;
 
-        const { viewComponent: Widget } = fetchWidget(VIEW.list, widgetId);
         const {
-            entry: {
-                entryType,
-                excerpt,
-                image,
-                attributes: {
-                    [id]: {
-                        data,
-                    } = {},
-                } = {},
-            },
-        } = this.props;
+            entryType,
+            excerpt,
+            image,
+        } = this.props.entry;
 
+        const { viewComponent: Widget } = fetchWidget(VIEW.list, widgetId);
+
+        let child;
         if (widgetId === 'excerptWidget') {
-            return (
+            child = (
                 <Widget
                     className={styles.content}
+                    widget={widget}
+                    widgetName={widgetId}
+                    widgetType={VIEW.list}
+
                     entryType={entryType}
                     excerpt={excerpt}
                     image={image}
+                />
+            );
+        } else {
+            child = (
+                <Widget
+                    className={styles.content}
                     widget={widget}
-                    data={data}
+                    widgetName={widgetId}
+                    widgetType={VIEW.list}
                 />
             );
         }
 
         return (
-            <Widget
-                className={styles.content}
-                widget={widget}
-                data={data}
-            />
+            <FaramGroup faramElementName={String(id)}>
+                <FaramGroup faramElementName="data">
+                    { child }
+                </FaramGroup>
+            </FaramGroup>
         );
     }
 
@@ -104,6 +115,9 @@ export default class Entry extends React.PureComponent {
         const {
             className: classNameFromProps,
             widgets,
+            entry: {
+                attributes,
+            },
         } = this.props;
 
         const className = `
@@ -112,15 +126,20 @@ export default class Entry extends React.PureComponent {
         `;
 
         return (
-            <GridViewLayout
+            <Faram
                 className={className}
-                data={widgets}
-                layoutSelector={widgetLayoutSelector}
-                itemHeaderModifier={this.renderWidgetHeader}
-                itemContentModifier={this.renderWidgetContent}
-                keySelector={widgetKeySelector}
-                itemClassName={styles.widget}
-            />
+                value={attributes}
+            >
+                <GridViewLayout
+                    className={className}
+                    data={widgets}
+                    layoutSelector={widgetLayoutSelector}
+                    itemHeaderModifier={this.renderWidgetHeader}
+                    itemContentModifier={this.renderWidgetContent}
+                    keySelector={widgetKeySelector}
+                    itemClassName={styles.widget}
+                />
+            </Faram>
         );
     }
 }

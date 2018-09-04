@@ -2,19 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import MultiSelectListOutput from '#widgetComponents/MultiSelectListOutput';
-// import _ts from '#ts';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     widget: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    data: PropTypes.object,
     className: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
-    data: {},
 };
 
 const emptyArray = [];
@@ -34,17 +30,14 @@ export default class MultiSelectViewWidget extends React.PureComponent {
     render() {
         const {
             widget,
-            data: {
-                value,
-            },
             className,
         } = this.props;
         const options = getOptions(widget);
 
         return (
             <MultiSelectListOutput
+                faramElementName="value"
                 className={className}
-                value={value}
                 options={options}
                 labelSelector={MultiSelectViewWidget.labelSelector}
                 keySelector={MultiSelectViewWidget.keySelector}

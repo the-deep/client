@@ -7,13 +7,11 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     widget: PropTypes.object.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
-    data: PropTypes.object,
     className: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
-    data: {},
 };
 
 const emptyArray = [];
@@ -28,9 +26,6 @@ export default class SelectListWidget extends React.PureComponent {
 
     render() {
         const {
-            data: {
-                value,
-            },
             className,
             widget,
         } = this.props;
@@ -40,7 +35,7 @@ export default class SelectListWidget extends React.PureComponent {
         return (
             <div className={className} >
                 <SelectOutput
-                    value={value}
+                    faramElementName="value"
                     options={options}
                 />
             </div>
