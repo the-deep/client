@@ -168,7 +168,7 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                                     </h4>
                                     <PrimaryButton
                                         faramElementName="add-btn"
-                                        faramInfo={MultiSelectEditWidget.optionAddClick}
+                                        faramAction={MultiSelectEditWidget.optionAddClick}
                                         iconName={iconNames.add}
                                         transparent
                                     >

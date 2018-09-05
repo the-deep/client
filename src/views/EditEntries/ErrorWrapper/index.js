@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { FaramInputElement } from '#rscg/FaramElements';
+import { FaramErrorIndicatorElement } from '#rscg/FaramElements';
 
 const propTypes = {
     errors: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -39,7 +39,7 @@ const getError = (obj) => {
     return error;
 };
 
-@FaramInputElement
+@FaramErrorIndicatorElement
 export default class ErrorWrapper extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

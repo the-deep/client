@@ -22,11 +22,7 @@ import {
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
 } from '#redux';
-import {
-    widgetVisibility,
-    VISIBILITY,
-    VIEW,
-} from '#widgets';
+import { VIEW } from '#widgets';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';
@@ -75,10 +71,6 @@ export default class Overview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static filterWidgets = (widgets, widgetType) => widgets.filter(
-        w => widgetVisibility(w.widgetId, widgetType, w.properties.addedFrom) !== VISIBILITY.hidden,
-    );
-
     static entryKeySelector = entry => entryAccessor.key(entry)
 
     static entryLabelSelector = (entry) => {
@@ -86,19 +78,6 @@ export default class Overview extends React.PureComponent {
         const { excerpt, order } = values;
         return excerpt || _ts('editEntry.overview', 'unnamedExcerptTitle', { index: order });
     };
-
-    constructor(props) {
-        super(props);
-        this.widgets = Overview.filterWidgets(props.widgets, VIEW.overview);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { widgets: oldWidgets } = this.props;
-        const { widgets: newWidgets } = nextProps;
-        if (newWidgets !== oldWidgets) {
-            this.widgets = Overview.filterWidgets(newWidgets, VIEW.overview);
-        }
-    }
 
     handleEntrySelect = (entryKey) => {
         this.props.setSelectedEntryKey({
@@ -128,7 +107,6 @@ export default class Overview extends React.PureComponent {
         const {
             entry,
             leadId, // eslint-disable-line no-unused-vars
-            widgets, // eslint-disable-line no-unused-vars
             entries, // eslint-disable-line no-unused-vars
             statuses,
             selectedEntryKey, // eslint-disable-line no-unused-vars
@@ -179,7 +157,6 @@ export default class Overview extends React.PureComponent {
                             key={Overview.entryKeySelector(entry)}
                             entry={entry}
                             pending={pending}
-                            widgets={this.widgets}
                             widgetType={VIEW.overview}
                             {...otherProps}
                         />

@@ -8,14 +8,12 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     widget: PropTypes.object,
     // eslint-disable-next-line react/forbid-prop-types
-    data: PropTypes.object,
     className: PropTypes.string,
 };
 
 const defaultProps = {
     widget: undefined,
     className: '',
-    data: {},
 };
 
 const emptyArray = [];
@@ -34,9 +32,6 @@ export default class ScaleWidget extends React.PureComponent {
 
     render() {
         const {
-            data: {
-                value,
-            },
             className,
             widget,
         } = this.props;
@@ -46,7 +41,7 @@ export default class ScaleWidget extends React.PureComponent {
         return (
             <ScaleInput
                 className={className}
-                value={value}
+                faramElementName="value"
                 options={options}
                 keySelector={ScaleWidget.keySelector}
                 labelSelector={ScaleWidget.labelSelector}

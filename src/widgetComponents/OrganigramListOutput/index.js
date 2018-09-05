@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import ListView from '#rscv/List/ListView';
+import { FaramOutputElement } from '#rscg/FaramElements';
+
 import ListItem from '#components/ListItem';
 
 import styles from './styles.scss';
@@ -47,6 +49,7 @@ const getOptionsForSelect = (params) => {
     ], []);
 };
 
+@FaramOutputElement
 export default class OrganigramListOutput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

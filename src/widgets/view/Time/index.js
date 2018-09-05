@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import FormattedDate from '#rscv/FormattedDate';
+import NormalFormattedTime from '#rscv/FormattedTime';
+import { FaramOutputElement } from '#rscg/FaramElements';
+
+const FormattedTime = FaramOutputElement(NormalFormattedTime);
 
 const propTypes = {
-    // eslint-disable-next-line react/forbid-prop-types
-    data: PropTypes.object,
     className: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
-    data: {},
 };
 
 export default class TimeListWidget extends React.PureComponent {
@@ -20,17 +20,14 @@ export default class TimeListWidget extends React.PureComponent {
 
     render() {
         const {
-            data: { value },
             className,
         } = this.props;
 
-        // Create fake date, we are only interested in time
-        const sophisticatedTime = value ? `1994-12-25 ${value}` : undefined;
-
         return (
             <div className={className} >
-                <FormattedDate
-                    date={sophisticatedTime}
+                <FormattedTime
+                    faramElementName="value"
+                    showLabel={false}
                     mode="hh:mm"
                 />
             </div>

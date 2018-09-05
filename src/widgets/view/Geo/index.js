@@ -10,8 +10,6 @@ import {
 import GeoListOutput from '#widgetComponents/GeoListOutput';
 
 const propTypes = {
-    // eslint-disable-next-line react/forbid-prop-types
-    data: PropTypes.object,
     className: PropTypes.string,
     geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     projectDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -21,7 +19,6 @@ const defaultProps = {
     className: '',
     geoOptions: {},
     projectDetails: {},
-    data: {},
 };
 
 const mapStateToProps = (state, props) => ({
@@ -36,9 +33,6 @@ export default class GeoListWidget extends React.PureComponent {
 
     render() {
         const {
-            data: {
-                value,
-            },
             geoOptions,
             projectDetails: {
                 regions,
@@ -48,8 +42,8 @@ export default class GeoListWidget extends React.PureComponent {
 
         return (
             <GeoListOutput
+                faramElementName="value"
                 className={className}
-                value={value}
                 geoOptionsByRegion={geoOptions}
                 regions={regions}
                 showHeader={false}

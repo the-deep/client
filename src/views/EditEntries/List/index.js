@@ -15,11 +15,7 @@ import {
     entryAccessor,
     ENTRY_STATUS,
 } from '#entities/editEntries';
-import {
-    widgetVisibility,
-    VISIBILITY,
-    VIEW,
-} from '#widgets';
+import { VIEW } from '#widgets';
 
 import WidgetFaramContainer from './WidgetFaramContainer';
 import styles from './styles.scss';
@@ -53,25 +49,8 @@ export default class Listing extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static filterWidgets = (widgets, widgetType) => widgets.filter(
-        w => widgetVisibility(w.widgetId, widgetType, w.properties.addedFrom) !== VISIBILITY.hidden,
-    );
-
-    constructor(props) {
-        super(props);
-        this.widgets = Listing.filterWidgets(props.widgets, VIEW.list);
-    }
-
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll, true);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { widgets: oldWidgets } = this.props;
-        const { widgets: newWidgets } = nextProps;
-        if (newWidgets !== oldWidgets) {
-            this.widgets = Listing.filterWidgets(newWidgets, VIEW.list);
-        }
     }
 
     componentWillUnmount() {
@@ -90,7 +69,6 @@ export default class Listing extends React.PureComponent {
     rendererParams = (key, entry) => {
         const {
             entries, // eslint-disable-line
-            widgets, // eslint-disable-line
             statuses,
             ...otherProps
         } = this.props;
@@ -99,7 +77,6 @@ export default class Listing extends React.PureComponent {
             entry,
             pending: statuses[key] === ENTRY_STATUS.requesting,
             widgetType: VIEW.list,
-            widgets: this.widgets,
             ...otherProps,
         };
     }

@@ -10,10 +10,9 @@ import { entryAccessor } from '#entities/editEntries';
 import { iconNames } from '#constants';
 
 import {
-    fetchWidget,
-    widgetVisibility,
     VIEW,
-    VISIBILITY,
+    hasWidgetTagComponent,
+    fetchWidgetTagComponent,
 } from '#widgets';
 
 import ErrorWrapper from '../ErrorWrapper';
@@ -106,7 +105,7 @@ export default class WidgetFaram extends React.PureComponent {
                 title={error}
             >
                 <h5
-                    title={title}
+                    title={error || title}
                     className={styles.heading}
                 >
                     { hasError &&
@@ -153,32 +152,11 @@ export default class WidgetFaram extends React.PureComponent {
             image,
         } = entryAccessor.data(entry) || {};
 
-        const {
-            component: Widget,
-            viewComponent: ViewWidget,
-        } = fetchWidget(widgetType, widgetId);
-
-        const secondary = widgetVisibility(
+        const Widget = fetchWidgetTagComponent(
             widgetId,
             widgetType,
             addedFrom,
-        ) === VISIBILITY.secondary;
-
-        if (secondary) {
-            // Faram not used for view component
-            const {
-                data: { attributes: { [id]: { data } = {} } = {} } = {},
-            } = entry || {};
-
-            return (
-                <div className={styles.content}>
-                    <ViewWidget
-                        data={data}
-                        widget={widget}
-                    />
-                </div>
-            );
-        }
+        );
 
         let child = null;
         switch (widgetId) {
@@ -192,6 +170,7 @@ export default class WidgetFaram extends React.PureComponent {
                         entryType={entryType}
                         excerpt={excerpt}
                         image={image}
+
                         onExcerptChange={this.handleExcerptChange}
                         onExcerptCreate={this.handleExcerptCreate}
                     />
@@ -205,6 +184,8 @@ export default class WidgetFaram extends React.PureComponent {
                         widgetName={widgetId}
                         widgetType={widgetType}
                         widget={widget}
+
+                        // extra props to show excerpt in modal
                         entryType={entryType}
                         excerpt={excerpt}
                         image={image}
@@ -243,6 +224,7 @@ export default class WidgetFaram extends React.PureComponent {
             schema,
             computeSchema,
             pending,
+            widgetType,
         } = this.props;
 
         const error = entryAccessor.error(entry);
@@ -251,6 +233,11 @@ export default class WidgetFaram extends React.PureComponent {
             ${styles.widgetFaram}
             'widget-faram'
         `;
+
+        // TODO: memoize
+        const filteredWidgets = widgets.filter(
+            w => hasWidgetTagComponent(w.widgetId, widgetType, w.properties.addedFrom),
+        );
 
         const {
             data: { attributes } = {},
@@ -268,7 +255,7 @@ export default class WidgetFaram extends React.PureComponent {
             >
                 { pending && <LoadingAnimation /> }
                 <GridViewLayout
-                    data={widgets}
+                    data={filteredWidgets}
                     layoutSelector={this.layoutSelector}
                     itemHeaderModifier={this.renderWidgetHeader}
                     itemContentModifier={this.renderWidgetContent}

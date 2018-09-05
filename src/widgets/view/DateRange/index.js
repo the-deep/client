@@ -1,20 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import FormattedDate from '#rscv/FormattedDate';
+import NormalFormattedDate from '#rscv/FormattedDate';
+import { FaramOutputElement } from '#rscg/FaramElements';
 import _ts from '#ts';
 
 import styles from './styles.scss';
 
+const FormattedDate = FaramOutputElement(NormalFormattedDate);
+
 const propTypes = {
-    // eslint-disable-next-line react/forbid-prop-types
-    data: PropTypes.object,
     className: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
-    data: {},
 };
 
 const emptyComponent = () => (
@@ -31,17 +31,13 @@ export default class DateRangeViewWidget extends React.PureComponent {
 
     render() {
         const {
-            data: {
-                fromValue,
-                toValue,
-            } = {},
             className,
         } = this.props;
 
         return (
             <div className={`${className} ${styles.dateRange}`}>
                 <FormattedDate
-                    date={fromValue}
+                    faramElementName="fromValue"
                     className={styles.date}
                     mode="dd-MM-yyyy"
                     emptyComponent={emptyComponent}
@@ -50,8 +46,8 @@ export default class DateRangeViewWidget extends React.PureComponent {
                     {_ts('widgets.view.dateRange', 'toLabel')}
                 </span>
                 <FormattedDate
+                    faramElementName="toValue"
                     className={styles.date}
-                    date={toValue}
                     mode="dd-MM-yyyy"
                     emptyComponent={emptyComponent}
                 />

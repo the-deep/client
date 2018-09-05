@@ -1,18 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Numeral from '#rscv/Numeral';
+import NormalNumeral from '#rscv/Numeral';
+import { FaramOutputElement } from '#rscg/FaramElements';
+
 import styles from './styles.scss';
 
+const Numeral = FaramOutputElement(NormalNumeral);
+
 const propTypes = {
-    // eslint-disable-next-line react/forbid-prop-types
-    data: PropTypes.object,
     className: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
-    data: {},
 };
 
 export default class NumberListWidget extends React.PureComponent {
@@ -21,9 +22,6 @@ export default class NumberListWidget extends React.PureComponent {
 
     render() {
         const {
-            data: {
-                value,
-            },
             className: classNameFromProps,
         } = this.props;
 
@@ -38,11 +36,11 @@ export default class NumberListWidget extends React.PureComponent {
         return (
             <div className={className} >
                 <Numeral
+                    faramElementName="value"
                     separator={separatorText}
                     invalidText={invalidText}
                     showThousandSeparator
                     precision={null}
-                    value={value}
                 />
             </div>
         );

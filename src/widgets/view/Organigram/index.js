@@ -6,15 +6,12 @@ import OrganigramListOutput from '#widgetComponents/OrganigramListOutput';
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     widget: PropTypes.object,
-    // eslint-disable-next-line react/forbid-prop-types
-    data: PropTypes.object,
     className: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
     widget: undefined,
-    data: {},
 };
 
 const getOptions = (widget) => {
@@ -50,16 +47,13 @@ export default class OrganigramViewWidget extends React.PureComponent {
 
     render() {
         const {
-            data: {
-                value,
-            },
             className,
         } = this.props;
 
         return (
             <OrganigramListOutput
+                faramElementName="value"
                 className={className}
-                value={value}
                 options={this.options}
                 childSelector={OrganigramViewWidget.childSelector}
                 labelSelector={OrganigramViewWidget.labelSelector}
