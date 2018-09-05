@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import {
     compareString,
     compareDate,
+    listToMap,
+    isFalsy,
 } from '#rsu/common';
 
 import FormattedDate from '#rscv/FormattedDate';
@@ -17,7 +19,10 @@ import _ts from '#ts';
 import { FaramListElement } from '#rscg/FaramElements';
 import FaramList from '#rscg/FaramList';
 
-import { projectMembershipDataSelector } from '#redux';
+import {
+    projectMembershipDataSelector,
+    projectIdFromRoute,
+} from '#redux';
 
 import {
     iconNames,
@@ -32,6 +37,7 @@ import styles from './styles.scss';
 const Table = FaramListElement(NormalTable);
 const propTypes = {
     memberships: PropTypes.arrayOf(PropTypes.object),
+    projectId: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
@@ -40,6 +46,7 @@ const defaultProps = {
 
 const mapStateToProps = (state, props) => ({
     memberships: projectMembershipDataSelector(state, props),
+    projectId: projectIdFromRoute(state, props),
 });
 
 @connect(mapStateToProps)
@@ -60,6 +67,11 @@ export default class Users extends React.PureComponent {
             searchInputValue: '',
             searchResults: [],
         };
+
+        this.membershipsMap = listToMap(
+            this.props.memberships,
+            elem => elem.member,
+        );
 
         this.userGroupHeaders = [
             {
@@ -105,8 +117,6 @@ export default class Users extends React.PureComponent {
                                 transparent
                             />
                             <DangerButton
-                                faramElementName={String(index)}
-                                faramAction={Users.faramUserDelete}
                                 smallVerticalPadding
                                 key="delete-member"
                                 title={_ts('project', 'deleteMemberLinkTitle')}
@@ -177,8 +187,6 @@ export default class Users extends React.PureComponent {
                                 transparent
                             />
                             <DangerButton
-                                faramElementName={String(index)}
-                                faramAction={Users.faramUserDelete}
                                 smallVerticalPadding
                                 key="delete-member"
                                 title={_ts('project', 'deleteMemberLinkTitle')}
@@ -191,8 +199,12 @@ export default class Users extends React.PureComponent {
             },
         ];
 
+        const searchResultFilter = result => result.filter(x => isFalsy(this.membershipsMap[x.id]));
+
         this.getUsersAndUserGroupsRequest = new UsersAndUserGroupsGet({
-            setState: params => this.setState(params), // TODO: filter here
+            setState: (params) => {
+                this.setState({ searchResults: searchResultFilter(params) });
+            },
         });
 
         this.userGroupData = [
@@ -205,25 +217,18 @@ export default class Users extends React.PureComponent {
                 joinedAt: '2017-10-26T04:47:12.381611Z',
                 actions: [],
             },
-            {
-                id: 2,
-                dp: '',
-                name: 'Majin Bu',
-                email: 'bu@admin.com',
-                role: 'Admin',
-                joinedAt: '2017-10-26T04:47:12.381611Z',
-                actions: [],
-            },
-            {
-                id: 3,
-                dp: '',
-                name: 'Cell',
-                email: 'cell@admin.com',
-                role: 'Admin',
-                joinedAt: '2017-10-26T04:47:12.381611Z',
-                actions: [],
-            },
         ];
+    }
+
+    componentWillReceiveProps = (nextProps) => {
+        const { memberships } = nextProps;
+        const { memberships: oldMemberships } = this.props;
+        if (memberships !== oldMemberships) {
+            this.membershipsMap = listToMap(
+                nextProps.memberships,
+                elem => elem.member,
+            );
+        }
     }
 
     getUsersAndUserGroups = () => {
@@ -249,7 +254,7 @@ export default class Users extends React.PureComponent {
     // Renderer Params for userAndUserGroups search result
     searchResultRendererParams = (key, data) => ({
         key,
-        data,
+        data: { ...data, projectId: this.props.projectId },
         handleAdd: this.addUserOrUserGroup,
     });
 
@@ -270,7 +275,6 @@ export default class Users extends React.PureComponent {
                     keyExtractor={this.calcUserGroupKey}
                 />
             </Fragment>
-
         );
     }
 
