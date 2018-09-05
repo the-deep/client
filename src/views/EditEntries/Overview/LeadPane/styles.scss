@@ -12,6 +12,13 @@ $height-tabs: 48px;
     overflow-y: auto;
 }
 
+.brain-icon {
+    margin-right: $spacing-medium;
+    cursor: pointer;
+    width: $font-size-large;
+    height: $font-size-large;
+}
+
 .simplified-preview {
     @extend %container;
 }

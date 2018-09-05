@@ -42,19 +42,6 @@ $min-width-assistant: 240px;
     }
 }
 
-.info {
-    position: absolute;
-    top: $position-info-top;
-    right: $position-info-right;
-    cursor: pointer;
-
-    .brain-icon {
-        margin-bottom: $spacing-extra-large;
-        width: $font-size-large;
-        height: $font-size-large;
-    }
-}
-
 .assistant {
     @include shadow-large-dark;
     display: flex;

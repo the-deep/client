@@ -767,7 +767,9 @@
         "-82545000": "Default",
         "-70199668": "No notifications to display",
         "-53914293": "Are you sure you want to remove the connector {connector}?",
-        "-94736495": "Delete"
+        "-94736495": "Delete",
+        "-22187575": "Failed to delete connector.",
+        "-96949624": "There are currently not enough leads in your project to view clusters. You can add them in the {addLeads} and then comeback and the clusters will appear here."
     },
     "links": {
         "browserExtension": {
@@ -1732,7 +1734,8 @@
             "globalVisibilityLabel": -84222321,
             "selfVisibilityLabel": -18776228,
             "connectorDetailDeleteLabel": -94736495,
-            "deleteConnectorConfirmText": -53914293
+            "deleteConnectorConfirmText": -53914293,
+            "connectorDeleteFailure": -22187575
         },
         "userGroup": {
             "tableHeaderName": 103,
@@ -1967,7 +1970,8 @@
             "leadsTitle": 641,
             "leadsTableActions": 16,
             "clusterDataFailure": -43376795,
-            "createClusterFailure": -92290017
+            "createClusterFailure": -96949624,
+            "addLeadsLinkLabel": 12
         },
         "visualization": {
             "visualizationTitle": 4000,

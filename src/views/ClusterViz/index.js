@@ -13,6 +13,7 @@ import Table from '#rscv/Table';
 import FormattedDate from '#rscv/FormattedDate';
 import forceDirectedData from '#views/Visualization/dummydata/forceDirectedData';
 import ForceDirectedGraph from '#rscz/NewForceDirectedGraph';
+import OldForceDirectedGraph from '#rscz/ForceDirectedGraph';
 import wrapViz from '#rscz/VizWrapper';
 
 import {
@@ -447,23 +448,34 @@ export default class ClusterViz extends PureComponent {
         } = this.state;
 
         return (
-            <Fragment>
+            <div className={styles.errorContainer} >
                 {
                     createClusterFailure && (
-                        <div>
-                            <Message>
-                                {_ts('clusterViz', 'createClusterFailure')}
+                        <Fragment>
+                            <Message className={styles.message} >
+                                {_ts('clusterViz', 'createClusterFailure', {
+                                    addLeads: (
+                                        <Link
+                                            className={styles.link}
+                                            target="_blank"
+                                            to={reverseRoute(pathNames.addLeads, {
+                                                projectId: this.props.activeProject,
+                                            })}
+                                        >
+                                            {_ts('clusterViz', 'addLeadsLinkLabel')}
+                                        </Link>
+                                    ),
+                                })}
                             </Message>
-                            <ForceDirectedGraphView
+                            <OldForceDirectedGraph
                                 className={styles.forcedDirectedGraph}
                                 headerText={_ts('visualization', 'forcedDirectedGraph')}
                                 data={forceDirectedData}
                                 idSelector={ClusterViz.idSelector}
                                 groupSelector={ClusterViz.groupSelector}
                                 valueSelector={ClusterViz.valueSelector}
-                                useVoronoi={false}
                             />
-                        </div>
+                        </Fragment>
                     )
                 }
                 {
@@ -473,7 +485,7 @@ export default class ClusterViz extends PureComponent {
                         </Message>
                     )
                 }
-            </Fragment>
+            </div>
         );
     }
 
@@ -545,10 +557,12 @@ export default class ClusterViz extends PureComponent {
                         {_ts('clusterViz', 'clusterVizTitle')}
                     </h2>
                 </header>
-                { this.renderErrorMessage() }
-                <div className={styles.container}>
-                    {
-                        !failure &&
+                { failure &&
+                    this.renderErrorMessage()
+                }
+                {
+                    !failure &&
+                    <div className={styles.container}>
                         <Fragment>
                             { /* eslint-disable-next-line max-len */ }
                             { /* eslint-disable-next-line jsx-a11y/mouse-events-have-key-events */ }
@@ -574,8 +588,8 @@ export default class ClusterViz extends PureComponent {
                                 modifier={this.renderClusterDetail}
                             />
                         </Fragment>
-                    }
-                </div>
+                    </div>
+                }
             </div>
         );
     }
