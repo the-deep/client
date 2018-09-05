@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 
 import SearchInput from '#rsci/SearchInput';
+import { connect } from 'react-redux';
 import {
     compareString,
     compareDate,
@@ -11,65 +11,47 @@ import {
 import FormattedDate from '#rscv/FormattedDate';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
-import Table from '#rscv/Table';
+import NormalTable from '#rscv/Table';
 import ListView from '#rscv/List/ListView';
 import _ts from '#ts';
-import {
-    currentProjectMemberDataSelector,
-} from '#redux';
+import { FaramListElement } from '#rscg/FaramElements';
+import FaramList from '#rscg/FaramList';
+
+import { projectMembershipDataSelector } from '#redux';
+
 import {
     iconNames,
 } from '#constants';
 
 import UsersAndUserGroupsGet from '../../requests/UsersAndUserGroupsRequest';
+import SearchResult from './SearchResult';
 
 import styles from './styles.scss';
 
-// Renderer Params for userAndUserGroups search result
-const searchResultRendererParams = (key, data) => ({
-    key,
-    data,
-});
 
-// Component for rendering each userAndUserGroups search result
-const SearchResult = props => (
-    <div {...props}>
-        {
-            props.data.type === 'user' ?
-                props.data.username :
-                props.data.title
-        }
-        | { props.data.type }
-    </div>
-);
-
-SearchResult.propTypes = {
-    data: PropTypes.shape({
-        type: PropTypes.string.isRequired,
-        username: PropTypes.string,
-        title: PropTypes.string,
-        id: PropTypes.number.isRequired,
-        firstName: PropTypes.string,
-        lastName: PropTypes.string,
-    }).isRequired,
-};
-
+const Table = FaramListElement(NormalTable);
 const propTypes = {
-    memberData: PropTypes.arrayOf(PropTypes.object),
+    memberships: PropTypes.arrayOf(PropTypes.object),
 };
 
 const defaultProps = {
-    memberData: [],
+    memberships: [],
 };
 
 const mapStateToProps = (state, props) => ({
-    memberData: currentProjectMemberDataSelector(state, props),
+    memberships: projectMembershipDataSelector(state, props),
 });
 
 @connect(mapStateToProps)
 export default class Users extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static faramUserDelete = (users, index) => {
+        const newUsers = [...users];
+        newUsers.splice(index, 1);
+        return newUsers;
+    }
 
     constructor(props) {
         super(props);
@@ -79,6 +61,64 @@ export default class Users extends React.PureComponent {
             searchResults: [],
         };
 
+        this.userGroupHeaders = [
+            {
+                key: 'title',
+                label: _ts('project', 'tableHeaderName'),
+                order: 1,
+            },
+            {
+                key: 'role',
+                label: _ts('project', 'tableHeaderRights'),
+                order: 4,
+                sortable: true,
+                comparator: (a, b) => compareString(a.role, b.role),
+            },
+            {
+                key: 'joinedAt',
+                label: _ts('project', 'tableHeaderJoinedAt'),
+                order: 5,
+                sortable: true,
+                comparator: (a, b) => compareDate(a.joinedAt, b.joinedAt),
+                modifier: row => (
+                    <FormattedDate date={row.joinedAt} mode="dd-MM-yyyy hh:mm" />
+                ),
+            },
+            {
+                key: 'actions',
+                label: _ts('project', 'tableHeaderActions'),
+                order: 6,
+                modifier: (row, index) => {
+                    const isAdmin = row.role === 'admin';
+                    return (
+                        <Fragment>
+                            <PrimaryButton
+                                smallVerticalPadding
+                                key="role-change"
+                                title={
+                                    isAdmin
+                                        ? _ts('project', 'revokeAdminRightsTitle')
+                                        : _ts('project', 'grantAdminRightsTitle')
+                                }
+                                onClick={() => this.handleToggleMemberRoleClick(row)}
+                                iconName={isAdmin ? iconNames.locked : iconNames.person}
+                                transparent
+                            />
+                            <DangerButton
+                                faramElementName={String(index)}
+                                faramAction={Users.faramUserDelete}
+                                smallVerticalPadding
+                                key="delete-member"
+                                title={_ts('project', 'deleteMemberLinkTitle')}
+                                iconName={iconNames.delete}
+                                transparent
+                            />
+                        </Fragment>
+                    );
+                },
+            },
+        ];
+
         this.memberHeaders = [
             {
                 key: 'dp',
@@ -86,14 +126,14 @@ export default class Users extends React.PureComponent {
                 order: 1,
             },
             {
-                key: 'name',
+                key: 'memberName',
                 label: _ts('project', 'tableHeaderName'),
                 order: 2,
                 sortable: true,
                 comparator: (a, b) => compareString(a.memberName, b.memberName),
             },
             {
-                key: 'email',
+                key: 'memberEmail',
                 label: _ts('project', 'tableHeaderEmail'),
                 order: 3,
                 sortable: true,
@@ -120,7 +160,7 @@ export default class Users extends React.PureComponent {
                 key: 'actions',
                 label: _ts('project', 'tableHeaderActions'),
                 order: 6,
-                modifier: (row) => {
+                modifier: (row, index) => {
                     const isAdmin = row.role === 'admin';
                     return (
                         <Fragment>
@@ -137,10 +177,11 @@ export default class Users extends React.PureComponent {
                                 transparent
                             />
                             <DangerButton
+                                faramElementName={String(index)}
+                                faramAction={Users.faramUserDelete}
                                 smallVerticalPadding
                                 key="delete-member"
                                 title={_ts('project', 'deleteMemberLinkTitle')}
-                                onClick={() => this.handleDeleteMemberClick(row)}
                                 iconName={iconNames.delete}
                                 transparent
                             />
@@ -151,22 +192,8 @@ export default class Users extends React.PureComponent {
         ];
 
         this.getUsersAndUserGroupsRequest = new UsersAndUserGroupsGet({
-            setState: params => this.setState(params),
+            setState: params => this.setState(params), // TODO: filter here
         });
-
-        // this.memberData = [];
-        // this.userGroupData = [];
-        this.memberData = [
-            {
-                id: 1,
-                dp: '',
-                name: 'Goku',
-                email: 'goku@admin.com',
-                role: 'Admin',
-                joinedAt: '2017-10-26T04:47:12.381611Z',
-                actions: [],
-            },
-        ];
 
         this.userGroupData = [
             {
@@ -219,6 +246,13 @@ export default class Users extends React.PureComponent {
         );
     }
 
+    // Renderer Params for userAndUserGroups search result
+    searchResultRendererParams = (key, data) => ({
+        key,
+        data,
+        handleAdd: this.addUserOrUserGroup,
+    });
+
     userGroupsRendererParams = (key, data) => ({ key, data })
 
     renderUserGroups = () => {
@@ -242,6 +276,7 @@ export default class Users extends React.PureComponent {
 
     renderUserDetails = () => {
         const usersLabel = _ts('project', 'usersLabel');
+        const userGroupsLabel = _ts('project', 'userGroupsLabel');
         return (
             <div className={styles.userDetailsContainer}>
                 <div className={styles.otherUsers}>
@@ -250,20 +285,25 @@ export default class Users extends React.PureComponent {
                     </h3>
                     <Table
                         className={styles.content}
-                        data={this.props.memberData}
+                        data={this.props.memberships}
                         headers={this.memberHeaders}
                         keyExtractor={this.calcOtherUserKey}
                     />
                 </div>
                 <div className={styles.otherUserGroups}>
-                    <ListView
-                        className={styles.otherUserGroups}
-                        renderer={this.renderUserGroups}
-                        rendererParams={this.userGroupsRendererParams}
-                        data={this.userGroupData}
+                    <h3 className={styles.heading}>
+                        { userGroupsLabel }
+                    </h3>
+                    <FaramList
                         keyExtractor={data => data.id}
-
-                    />
+                        faramElementName="usergroups"
+                    >
+                        <Table
+                            faramElement
+                            className={styles.content}
+                            headers={this.userGroupHeaders}
+                        />
+                    </FaramList>
                 </div>
             </div>
         );
@@ -289,7 +329,7 @@ export default class Users extends React.PureComponent {
                     />
                     <ListView
                         keyExtractor={data => data.type + data.id}
-                        rendererParams={searchResultRendererParams}
+                        rendererParams={this.searchResultRendererParams}
                         data={this.state.searchResults}
                         renderer={SearchResult}
                     />

@@ -1,5 +1,4 @@
 import Request from '#utils/Request';
-import notify from '#notify';
 
 import {
     createUrlForUsersAndUserGroups,

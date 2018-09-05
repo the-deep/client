@@ -24,7 +24,12 @@ export const projectServerDataSelector = createSelector(
     project => project.serverData || emptyObject,
 );
 
-export const currentProjectMemberDataSelector = createSelector(
+export const projectFaramValueSelector = createSelector(
     projectLocalDataSelector,
+    localdata => localdata.faramValues || emptyObject,
+);
+
+export const projectMembershipDataSelector = createSelector(
+    projectFaramValueSelector,
     localdata => localdata.memberships || emptyArray,
 );
