@@ -15,8 +15,6 @@ import { FaramInputElement } from '#rscg/FaramElements';
 import { iconNames } from '#constants';
 import styles from './styles.scss';
 
-const emptyObject = {};
-
 const propTypes = {
     className: PropTypes.string,
     label: PropTypes.string,

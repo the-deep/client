@@ -1,5 +1,4 @@
-import dict from '#ravl/schema';
-import attachValidator from '#ravl/attachValidator';
+import Dict, { basicTypes } from '@togglecorp/ravl';
 
 import leads from './leads';
 import leadsViz from './leadsViz';
@@ -19,10 +18,7 @@ import langauges from './languages';
 import notifications from './notifications';
 import clusterViz from './clusterViz';
 
-// ATTACHING BEHAVIORS
-attachValidator(dict);
-
-// ATTACHING USER DEFINED SCHEMAS
+const basicTypeSchemas = basicTypes.map(entry => ({ name: entry.doc.name, schema: entry }));
 
 const userDefinedSchemas = [];
 
@@ -91,7 +87,10 @@ const userDefinedSchemas = [];
     userDefinedSchemas.push({ name, schema });
 }
 
+const dict = new Dict();
+
 [
+    ...basicTypeSchemas,
     ...userDefinedSchemas,
     ...leads,
     ...leadsViz,
