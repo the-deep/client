@@ -36,6 +36,8 @@ import {
     hideNavbar,
 } from '#constants';
 import logo from '#resources/img/deep-logo-simplified.svg';
+import slackLogo from '#resources/img/slack.png';
+import skypeLogo from '#resources/img/skype.png';
 
 import Cloak from '../Cloak';
 import NavMenu from './NavMenu';
@@ -256,6 +258,11 @@ export default class Navbar extends React.PureComponent {
                 break;
         }
 
+        const slackLink = 'https://goo.gl/13pcuA';
+        const skypeLink = 'https://join.skype.com/idYxL8ozLDOD';
+        const slackLinkTitle = _ts('components.navbar', 'slackLinkTitle');
+        const skypeLinkTitle = _ts('components.navbar', 'skypeLinkTitle');
+
         return (
             <nav className={`${className} ${styles.navbar}`}>
                 <Link
@@ -305,7 +312,30 @@ export default class Navbar extends React.PureComponent {
                     projectId={activeProject}
                     countryId={activeCountry}
                 />
-
+                <a
+                    className={styles.joinLink}
+                    href={slackLink}
+                    target="_blank"
+                >
+                    <img
+                        className={styles.image}
+                        src={slackLogo}
+                        alt=""
+                        title={slackLinkTitle}
+                    />
+                </a>
+                <a
+                    className={styles.joinLink}
+                    href={skypeLink}
+                    target="_blank"
+                >
+                    <img
+                        className={styles.image}
+                        title={skypeLinkTitle}
+                        alt=""
+                        src={skypeLogo}
+                    />
+                </a>
                 <NavDrop
                     className={styles.userMenu}
                     links={this.validDropLinks}

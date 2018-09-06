@@ -769,7 +769,9 @@
         "-53914293": "Are you sure you want to remove the connector {connector}?",
         "-94736495": "Delete",
         "-22187575": "Failed to delete connector.",
-        "-96949624": "There are currently not enough leads in your project to view clusters. You can add them in the {addLeads} and then comeback and the clusters will appear here."
+        "-96949624": "There are currently not enough leads in your project to view clusters. You can add them in the {addLeads} and then comeback and the clusters will appear here.",
+        "-86309773": "Join our slack channel",
+        "-28004665": "Join our skype group"
     },
     "links": {
         "browserExtension": {
@@ -1043,7 +1045,9 @@
             "selectEventPlaceholder": 1219,
             "adminPanelLabel": 1220,
             "logoutLabel": 1221,
-            "anonymousLabel": 1217
+            "anonymousLabel": 1217,
+            "skypeLinkTitle": -28004665,
+            "slackLinkTitle": -86309773
         },
         "common": {
             "underConstructionLabel": 253,

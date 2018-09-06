@@ -111,7 +111,7 @@ export default class Notifications extends React.PureComponent {
                 </header>
                 <ListView
                     className={styles.content}
-                    data={[]}
+                    data={notifications}
                     keyExtractor={Notifications.notificationKeyExtractor}
                     modifier={this.renderNotificationItem}
                     emptyComponent={this.renderEmptyComponent}

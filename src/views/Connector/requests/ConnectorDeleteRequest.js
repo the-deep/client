@@ -22,7 +22,12 @@ export default class ConnectorDelete extends Request {
     }
 
     handleFailure = (response) => {
-        console.warn(response);
+        notify.send({
+            title: _ts('connector', 'connectorTitle'),
+            type: notify.type.ERROR,
+            message: response.$internal.join(' '),
+            duration: notify.duration.MEDIUM,
+        });
     }
 
     handleFatal = () => {
