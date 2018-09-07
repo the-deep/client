@@ -5,11 +5,7 @@ import memoize from 'memoize-one';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import FixedTabs from '#rscv/FixedTabs';
 
-import {
-    fetchWidget,
-    VISIBILITY,
-    widgetVisibility,
-} from '#widgets';
+import { fetchWidgetTagComponent } from '#widgets';
 
 const propTypes = {
     widget: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -57,18 +53,7 @@ export default class ConditionalFrameworkPreview extends React.PureComponent {
                     const { widgetId } = w.widget;
                     const { widget: { properties: { addedFrom } }, widgetType } = this.props;
 
-                    const {
-                        component,
-                        viewComponent,
-                    } = fetchWidget(widgetType, widgetId);
-
-                    const notReadonly = widgetVisibility(
-                        widgetId,
-                        widgetType,
-                        addedFrom,
-                    ) !== VISIBILITY.readonly;
-
-                    const Widget = notReadonly ? component : viewComponent;
+                    const Widget = fetchWidgetTagComponent(widgetId, widgetType, addedFrom);
 
                     return (
                         <Widget

@@ -287,11 +287,12 @@ export const globalWidgets = {
         frameworkComponent: ConditionalFrameworkPreview,
 
         overview: {
-            component: ConditionalWidget,
+            tagComponent: ConditionalWidget,
             minSize: { w: 12, h: 12 },
         },
         list: {
-            component: ConditionalWidget,
+            tagComponent: ConditionalWidget,
+            altTagComponent: ConditionalWidget,
             viewComponent: ConditionalViewWidget,
             minSize: { w: 12, h: 12 },
         },
