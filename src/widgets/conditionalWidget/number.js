@@ -1,5 +1,3 @@
-import { mapToList } from '#rsu/common';
-
 const isLessThan = {
     title: 'Is less than',
     attributes: [{
@@ -7,6 +5,9 @@ const isLessThan = {
         title: 'Value',
         type: 'number',
     }],
+    test: (data, attributes) => (
+        data.value && data.value < attributes.value
+    ),
 };
 
 const isGreaterThan = {
@@ -16,9 +17,12 @@ const isGreaterThan = {
         title: 'Value',
         type: 'number',
     }],
+    test: (data, attributes) => (
+        data.value && data.value > attributes.value
+    ),
 };
 
-export default mapToList({
+export default {
     isLessThan,
     isGreaterThan,
-}, (condition, key) => ({ key, ...condition }));
+};

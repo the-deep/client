@@ -38,6 +38,8 @@ const widgetLayoutSelector = (widget) => {
 
 const widgetKeySelector = widget => widget.key;
 
+const emptySchema = { fields: {} };
+
 export default class Entry extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -130,6 +132,7 @@ export default class Entry extends React.PureComponent {
             <Faram
                 className={className}
                 value={attributes}
+                schema={emptySchema}
             >
                 <GridViewLayout
                     className={className}

@@ -1,5 +1,3 @@
-import { mapToList } from '#rsu/common';
-
 const getPillarOptions = widgetData => (
     widgetData.rows.map(r => ({
         key: r.key,
@@ -42,7 +40,7 @@ const containsSubpillar = {
 };
 
 
-export default mapToList({
+export default {
     containsPillar,
     containsSubpillar,
-}, (condition, key) => ({ key, ...condition }));
+};

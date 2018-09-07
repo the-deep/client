@@ -136,7 +136,7 @@ export const editEntriesComputeSchemaSelector = createSelector(
             },
         };
         widgets.forEach((widget) => {
-            const schemaForWidget = getComputeSchemaForWidget(widget);
+            const schemaForWidget = getComputeSchemaForWidget(widget, widgets);
             if (schemaForWidget) {
                 schema.fields[widget.id] = {
                     fields: { data: { fields: {

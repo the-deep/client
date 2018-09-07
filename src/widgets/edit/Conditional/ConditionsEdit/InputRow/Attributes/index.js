@@ -7,7 +7,11 @@ import NumberInput from '#rsci/NumberInput';
 
 const propTypes = {
     attribute: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    widgetData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    widgetData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+};
+
+const defaultProps = {
+    widgetData: undefined,
 };
 
 const getOptions = memoize((attribute, widgetData) => (
@@ -19,6 +23,7 @@ const getOptions = memoize((attribute, widgetData) => (
 
 export default class ConditionAttribute extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     render() {
         const {
