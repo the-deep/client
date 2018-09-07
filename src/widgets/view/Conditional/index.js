@@ -3,16 +3,13 @@ import PropTypes from 'prop-types';
 
 import FaramGroup from '#rscg/FaramGroup';
 
-import {
-    fetchWidget,
-    VIEW,
-} from '#widgets';
+import { fetchWidget } from '#widgets';
 
 const propTypes = {
     widget: PropTypes.shape({
         properties: PropTypes.object,
     }).isRequired,
-    data: PropTypes.shape({}).isRequired,
+    widgetType: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -44,24 +41,30 @@ export default class ConditionalWidget extends React.PureComponent {
     }
 
     getWidgetView = (widget) => {
-        const { widgetId } = widget;
+        if (!widget) {
+            // FIXME: Use strings
+            return (<div>No widget</div>);
+        }
 
-        const { viewComponent: Widget } = fetchWidget(VIEW.list, widgetId);
-        const { data: widgetData } = this.props;
-        const {
-            value: { [widget.key]: { data } = {} } = {},
-        } = widgetData;
+        const { widgetId } = widget;
+        const { widgetType } = this.props;
+        const { viewComponent: Widget } = fetchWidget(widgetType, widgetId);
 
         return (
-            <Widget
-                widget={widget}
-                data={data}
-            />
+            <FaramGroup faramElementName={widget.key}>
+                <FaramGroup faramElementName="data">
+                    <Widget
+                        widgetName={widgetId}
+                        widgetType={widgetType}
+                        widget={widget}
+                    />
+                </FaramGroup>
+            </FaramGroup>
         );
     }
 
     render() {
-        const selectedWidgetKey = 'matrix2dWidget-wcmmdkxe2hc0arju';
+        const selectedWidgetKey = 'matrix1dWidget-xcvsqifo1t5fixgz';
         const widget = this.getWidgetData(selectedWidgetKey);
         const WidgetView = this.getWidgetView(widget);
 

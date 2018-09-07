@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import FaramGroup from '#rscg/FaramGroup';
 
-import { fetchWidget } from '#widgets';
+import { fetchWidgetTagComponent } from '#widgets';
 
 const propTypes = {
     widget: PropTypes.shape({
@@ -52,20 +52,15 @@ export default class ConditionalWidget extends React.PureComponent {
             return (<div>No widget</div>);
         }
 
+        const { widgetId } = widget;
+        const { widget: { properties: { addedFrom } }, widgetType } = this.props;
+        const Widget = fetchWidgetTagComponent(widgetId, widgetType, addedFrom);
+
         const {
-            widgetType,
             entryType,
             excerpt,
             image,
         } = this.props;
-
-        const {
-            widgetId,
-        } = widget;
-
-        const {
-            component: Widget,
-        } = fetchWidget(widgetType, widgetId);
 
         let child = null;
         switch (widgetId) {
@@ -107,7 +102,7 @@ export default class ConditionalWidget extends React.PureComponent {
     }
 
     render() {
-        const selectedWidgetKey = 'matrix2dWidget-wcmmdkxe2hc0arju';
+        const selectedWidgetKey = 'matrix1dWidget-xcvsqifo1t5fixgz';
         const widget = this.getWidgetData(selectedWidgetKey);
         const WidgetView = this.getWidgetView(widget);
 
