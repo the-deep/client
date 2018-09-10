@@ -31,5 +31,13 @@ export const projectFaramValueSelector = createSelector(
 
 export const projectMembershipDataSelector = createSelector(
     projectFaramValueSelector,
-    localdata => localdata.memberships || emptyArray,
+    faramValue => faramValue.memberships || emptyArray,
+);
+
+export const projectUserGroupsSelector = createSelector(
+    projectFaramValueSelector,
+    (faramValue) => {
+        console.error(faramValue.userGroups);
+        return faramValue.userGroups || emptyArray;
+    },
 );

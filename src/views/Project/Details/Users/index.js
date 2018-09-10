@@ -17,10 +17,10 @@ import NormalTable from '#rscv/Table';
 import ListView from '#rscv/List/ListView';
 import _ts from '#ts';
 import { FaramListElement } from '#rscg/FaramElements';
-import FaramList from '#rscg/FaramList';
 
 import {
     projectMembershipDataSelector,
+    projectUserGroupsSelector,
     projectIdFromRoute,
 } from '#redux';
 
@@ -38,14 +38,17 @@ const Table = FaramListElement(NormalTable);
 const propTypes = {
     memberships: PropTypes.arrayOf(PropTypes.object),
     projectId: PropTypes.number.isRequired,
+    usergroups: PropTypes.arrayOf(PropTypes.object),
 };
 
 const defaultProps = {
     memberships: [],
+    usergroups: [],
 };
 
 const mapStateToProps = (state, props) => ({
     memberships: projectMembershipDataSelector(state, props),
+    usergroups: projectUserGroupsSelector(state, props),
     projectId: projectIdFromRoute(state, props),
 });
 
@@ -73,28 +76,21 @@ export default class Users extends React.PureComponent {
             elem => elem.member,
         );
 
+        this.userGroupsMap = listToMap(
+            this.props.usergroups,
+            elem => elem.id,
+        );
+
         this.userGroupHeaders = [
+            {
+                key: 'dp',
+                label: _ts('project', 'tableHeaderDp'),
+                order: 1,
+            },
             {
                 key: 'title',
                 label: _ts('project', 'tableHeaderName'),
                 order: 1,
-            },
-            {
-                key: 'role',
-                label: _ts('project', 'tableHeaderRights'),
-                order: 4,
-                sortable: true,
-                comparator: (a, b) => compareString(a.role, b.role),
-            },
-            {
-                key: 'joinedAt',
-                label: _ts('project', 'tableHeaderJoinedAt'),
-                order: 5,
-                sortable: true,
-                comparator: (a, b) => compareDate(a.joinedAt, b.joinedAt),
-                modifier: row => (
-                    <FormattedDate date={row.joinedAt} mode="dd-MM-yyyy hh:mm" />
-                ),
             },
             {
                 key: 'actions',
@@ -170,7 +166,7 @@ export default class Users extends React.PureComponent {
                 key: 'actions',
                 label: _ts('project', 'tableHeaderActions'),
                 order: 6,
-                modifier: (row, index) => {
+                modifier: (row) => {
                     const isAdmin = row.role === 'admin';
                     return (
                         <Fragment>
@@ -199,34 +195,37 @@ export default class Users extends React.PureComponent {
             },
         ];
 
-        const searchResultFilter = result => result.filter(x => isFalsy(this.membershipsMap[x.id]));
+        const searchResultFilter = result => result.filter(x => (
+            x.type === 'user'
+                ? isFalsy(this.membershipsMap[x.id])
+                : isFalsy(this.userGroupsMap[x.id])
+        ));
 
         this.getUsersAndUserGroupsRequest = new UsersAndUserGroupsGet({
             setState: (params) => {
                 this.setState({ searchResults: searchResultFilter(params) });
             },
         });
-
-        this.userGroupData = [
-            {
-                id: 1,
-                dp: '',
-                name: 'Freeza',
-                email: 'freeza@admin.com',
-                role: 'Admin',
-                joinedAt: '2017-10-26T04:47:12.381611Z',
-                actions: [],
-            },
-        ];
     }
 
     componentWillReceiveProps = (nextProps) => {
-        const { memberships } = nextProps;
-        const { memberships: oldMemberships } = this.props;
+        const { memberships, usergroups } = nextProps;
+
+        const {
+            memberships: oldMemberships,
+            usergroups: oldUsergroups,
+        } = this.props;
+
         if (memberships !== oldMemberships) {
             this.membershipsMap = listToMap(
-                nextProps.memberships,
+                memberships,
                 elem => elem.member,
+            );
+        }
+        if (usergroups !== oldUsergroups) {
+            this.userGroupsMap = listToMap(
+                usergroups,
+                elem => elem.id,
             );
         }
     }
@@ -262,6 +261,7 @@ export default class Users extends React.PureComponent {
 
     renderUserGroups = () => {
         const userGroupLabel = _ts('project', 'userGroupLabel');
+        const { usergroups } = this.props;
 
         return (
             <Fragment>
@@ -270,7 +270,7 @@ export default class Users extends React.PureComponent {
                 </h3>
                 <Table
                     className={styles.content}
-                    data={this.userGroupData}
+                    data={usergroups}
                     headers={this.memberHeaders}
                     keyExtractor={this.calcUserGroupKey}
                 />
@@ -298,16 +298,12 @@ export default class Users extends React.PureComponent {
                     <h3 className={styles.heading}>
                         { userGroupsLabel }
                     </h3>
-                    <FaramList
-                        keyExtractor={data => data.id}
-                        faramElementName="usergroups"
-                    >
-                        <Table
-                            faramElement
-                            className={styles.content}
-                            headers={this.userGroupHeaders}
-                        />
-                    </FaramList>
+                    <Table
+                        className={styles.content}
+                        data={this.props.usergroups}
+                        headers={this.userGroupHeaders}
+                        keyExtractor={this.calcUserGroupKey}
+                    />
                 </div>
             </div>
         );
@@ -337,7 +333,6 @@ export default class Users extends React.PureComponent {
                         data={this.state.searchResults}
                         renderer={SearchResult}
                     />
-
                 </header>
             </div>
         );
@@ -351,6 +346,7 @@ export default class Users extends React.PureComponent {
             <div className={styles.users}>
                 <UserSearch />
                 <UserDetails />
+
             </div>
         );
     }

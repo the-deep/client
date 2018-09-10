@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import ProjectMembershipPostRequest from '../../requests/ProjectMembershipRequest';
+import ProjectUserGroupRequest from '../../requests/ProjectUserGroupRequest';
 
 
 const propTypes = {
@@ -30,19 +31,31 @@ export default class SearchResult extends React.PureComponent {
         this.createProjectMembershipRequest = new ProjectMembershipPostRequest({
             setState: () => {}, // TODO: add something functional. maybe to pull data from server
         });
+        this.createProjectUserGroupRequest = new ProjectUserGroupRequest({
+            setState: () => {}, // TODO: add something functional. maybe to pull data from server
+        });
     }
 
     addUser = () => {
+        const { data: { projectId, id } } = this.props;
         const memberlist = [
             {
-                project: this.props.data.projectId,
-                member: this.props.data.id,
+                project: projectId,
+                member: id,
             },
         ];
         this.createProjectMembershipRequest.init(memberlist);
         this.createProjectMembershipRequest.start();
     }
+
     addUserGroup = () => {
+        const { data: { projectId, id } } = this.props;
+        const projectUserGroup = {
+            project: projectId,
+            usergroup: id,
+        };
+        this.createProjectUserGroupRequest.init(projectUserGroup);
+        this.createProjectUserGroupRequest.start();
     }
 
     render() {
@@ -54,27 +67,31 @@ export default class SearchResult extends React.PureComponent {
             },
         } = this.props;
 
-        let displayName = null;
-        let addAction = () => {};
-
         if (type === 'user') {
-            displayName = username;
-            addAction = this.addUser;
+            return (
+                <div>
+                    { username }
+                    <PrimaryButton
+                        onClick={this.addUser}
+                    >
+                        Add User
+                    </PrimaryButton>
+                </div>
+            );
         } else if (type === 'user_group') {
-            displayName = title;
-            addAction = this.addUserGroup;
-        } else {
-            console.warn('Invalid Search User/UserGroup type');
+            return (
+                <div>
+                    { title }
+                    <PrimaryButton
+                        onClick={this.addUserGroup}
+                    >
+                        Add UserGroup
+                    </PrimaryButton>
+                </div>
+            );
         }
-        return (
-            <div>
-                { displayName }
-                <PrimaryButton
-                    onClick={addAction}
-                >
-                    Add User
-                </PrimaryButton>
-            </div>
-        );
+        // else
+        console.warn('Invalid Search User/UserGroup type');
+        return '';
     }
 }

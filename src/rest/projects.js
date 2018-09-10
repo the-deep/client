@@ -13,6 +13,8 @@ export const createUrlForProjectJoin = projectId => `${wsEndpoint}/projects/${pr
 export const createUrlForProjectJoinCancel = projectId => `${wsEndpoint}/projects/${projectId}/join/cancel/`;
 export const createUrlForProjectOptions = projectId => `${wsEndpoint}/project-options/?${p({ project: projectId })}`;
 
+export const urlForProjectUserGroup = `${wsEndpoint}/project-usergroups/`;
+
 export const createUrlForProjectAryTemplate = projectId => `${wsEndpoint}/projects/${projectId}/assessment-template/`;
 
 export const createUrlForProjectsOfUser = userId => (
@@ -92,4 +94,10 @@ export const createParamsForProjectDelete = () => ({
 export const createParamsForUserProjectMembershipDelete = () => ({
     method: DELETE,
     headers: commonHeaderForPost,
+});
+
+export const createParamsForProjectUserGroupCreate = projectUserGroup => ({
+    method: POST,
+    headers: commonHeaderForPost,
+    body: JSON.stringify(projectUserGroup),
 });
