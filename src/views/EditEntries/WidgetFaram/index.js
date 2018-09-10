@@ -89,6 +89,7 @@ export default class WidgetFaram extends React.PureComponent {
         const {
             id,
             title,
+            widgetId,
         } = widget;
 
         const {
@@ -119,6 +120,7 @@ export default class WidgetFaram extends React.PureComponent {
                             attributeKey={id}
                             attributeData={data}
                             entryKey={entryKey}
+                            widgetId={widgetId}
                         />
                     </div>
                 )}

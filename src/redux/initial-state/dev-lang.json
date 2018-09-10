@@ -771,7 +771,9 @@
         "-22187575": "Failed to delete connector.",
         "-96949624": "There are currently not enough leads in your project to view clusters. You can add them in the {addLeads} and then comeback and the clusters will appear here.",
         "-86309773": "Join our slack channel",
-        "-28004665": "Join our skype group"
+        "-28004665": "Join our skype group",
+        "-76332316": "Do you want to format all excerpts?",
+        "-83635501": "Format all excerpts"
     },
     "links": {
         "browserExtension": {
@@ -2019,7 +2021,9 @@
             "applyToAll": 2005,
             "applyToAllBelow": 2006,
             "editButtonTooltip": -85998802,
-            "deleteButtonTooltip": -22730741
+            "deleteButtonTooltip": -22730741,
+            "formatAll": -76332316,
+            "formatAllButtonTitle": -83635501
         },
         "editEntry.overview": {
             "unnamedExcerptTitle": -39451070,
