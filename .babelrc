@@ -47,6 +47,7 @@
                     "#constants": "./src/constants",
                     "#redux": "./src/redux",
                     "#resources": "./src/resources",
+                    "#views": "./src/views",
                     "#rest": "./src/rest",
                     "#schema": "./src/schema",
                     "#utils": "./src/utils",

@@ -2,6 +2,7 @@ import {
     wsEndpoint,
     POST,
     PATCH,
+    DELETE,
     p,
     commonHeaderForPost,
 } from '#config/rest';
@@ -45,4 +46,9 @@ export const createParamsForConnectorPatch = data => ({
     method: PATCH,
     headers: commonHeaderForPost,
     body: JSON.stringify(data),
+});
+
+export const createParamsForConnectorDelete = () => ({
+    method: DELETE,
+    headers: commonHeaderForPost,
 });

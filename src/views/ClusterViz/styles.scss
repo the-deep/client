@@ -33,6 +33,33 @@ $height-cluster-header: 36px;
         }
     }
 
+    .error-container {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        background-color: $color-foreground;
+
+        .message {
+            display: inline-block;
+            flex-shrink: 0;
+            padding: $spacing-extra-large $spacing-large;
+            text-align: center;
+
+            .link {
+                @extend %accent-color-link;
+                margin: 0 $spacing-extra-small-alt;
+                padding: 0;
+                text-transform: lowercase;
+            }
+        }
+
+        .forced-directed-graph {
+            flex-grow: 1;
+            filter: grayscale(100%);
+            pointer-events: none;
+        }
+    }
+
     .container {
         display: flex;
         position: relative;

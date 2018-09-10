@@ -764,7 +764,14 @@
         "-72859218": "Project options",
         "-45091634": "Failed to get project options.",
         "-44183195": "Modifying this framework may affect {count} entries. Are you sure you want to save these changes?",
-        "-82545000": "Default"
+        "-82545000": "Default",
+        "-70199668": "No notifications to display",
+        "-53914293": "Are you sure you want to remove the connector {connector}?",
+        "-94736495": "Delete",
+        "-22187575": "Failed to delete connector.",
+        "-96949624": "There are currently not enough leads in your project to view clusters. You can add them in the {addLeads} and then comeback and the clusters will appear here.",
+        "-86309773": "Join our slack channel",
+        "-28004665": "Join our skype group"
     },
     "links": {
         "browserExtension": {
@@ -1038,7 +1045,9 @@
             "selectEventPlaceholder": 1219,
             "adminPanelLabel": 1220,
             "logoutLabel": 1221,
-            "anonymousLabel": 1217
+            "anonymousLabel": 1217,
+            "skypeLinkTitle": -28004665,
+            "slackLinkTitle": -86309773
         },
         "common": {
             "underConstructionLabel": 253,
@@ -1727,7 +1736,10 @@
             "projectsTitle": 31,
             "projectsGetFailure": 1125,
             "globalVisibilityLabel": -84222321,
-            "selfVisibilityLabel": -18776228
+            "selfVisibilityLabel": -18776228,
+            "connectorDetailDeleteLabel": -94736495,
+            "deleteConnectorConfirmText": -53914293,
+            "connectorDeleteFailure": -22187575
         },
         "userGroup": {
             "tableHeaderName": 103,
@@ -1843,7 +1855,8 @@
         "notifications": {
             "notificationHeaderTitle": 1929,
             "projectJoinResponse": 1934,
-            "projectJoinResponseFailure": 1935
+            "projectJoinResponseFailure": 1935,
+            "noNotificationsText": -70199668
         },
         "notifications.projectJoin": {
             "requestedToJoin": 1930,
@@ -1961,7 +1974,8 @@
             "leadsTitle": 641,
             "leadsTableActions": 16,
             "clusterDataFailure": -43376795,
-            "createClusterFailure": -92290017
+            "createClusterFailure": -96949624,
+            "addLeadsLinkLabel": 12
         },
         "visualization": {
             "visualizationTitle": 4000,

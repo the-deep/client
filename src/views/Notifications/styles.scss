@@ -1,9 +1,12 @@
 @import '~base-scss/base';
 
+$width-notification: 520px;
+
 .notifications {
     @extend %main-content;
     display: flex;
     flex-direction: column;
+    background-color: $color-foreground;
 
     .header {
         display: flex;
@@ -22,5 +25,18 @@
     .content {
         flex-grow: 1;
         overflow-y: auto;
+
+        .empty-component {
+            display: flex;
+            position: relative;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+            border-bottom: $width-separator-thin solid $color-separator;
+            padding: $spacing-extra-small $spacing-medium;
+            width: $width-notification;
+            height: 96px;
+            color: $color-text-label;
+        }
     }
 }

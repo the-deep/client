@@ -91,9 +91,16 @@ export default class Notifications extends React.PureComponent {
         );
     }
 
+    renderEmptyComponent = () => (
+        <div className={styles.emptyComponent} >
+            {_ts('notifications', 'noNotificationsText')}
+        </div>
+    );
+
     render() {
         const { notificationsLoading } = this.state;
         const { notifications } = this.props;
+
         return (
             <div className={styles.notifications} >
                 {notificationsLoading && <LoadingAnimation />}
@@ -107,6 +114,7 @@ export default class Notifications extends React.PureComponent {
                     data={notifications}
                     keyExtractor={Notifications.notificationKeyExtractor}
                     modifier={this.renderNotificationItem}
+                    emptyComponent={this.renderEmptyComponent}
                 />
             </div>
         );

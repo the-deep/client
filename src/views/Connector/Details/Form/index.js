@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 
 import AccentButton from '#rsca/Button/AccentButton';
 import DangerButton from '#rsca/Button/DangerButton';
+import WarningButton from '#rsca/Button/WarningButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import Faram, { requiredCondition, urlCondition } from '#rscg/Faram';
@@ -34,6 +36,7 @@ import {
     setUsersInformationAction,
     setUserProjectsAction,
     changeUserConnectorDetailsAction,
+    deleteConnectorAction,
     setErrorUserConnectorDetailsAction,
     setUserConnectorDetailsAction,
 } from '#redux';
@@ -42,6 +45,7 @@ import _ts from '#ts';
 import ConnectorDetailsGetRequest from '../../requests/ConnectorDetailsGetRequest';
 import ConnectorPatchRequest from '../../requests/ConnectorPatchRequest';
 import RssFieldsGet from '../../requests/RssFieldsGet';
+import ConnectorDeleteRequest from '../../requests/ConnectorDeleteRequest';
 import UserListGetRequest from '../../requests/UserListGetRequest';
 import UserProjectsGetRequest from '../../requests/UserProjectsGetRequest';
 
@@ -65,6 +69,8 @@ const propTypes = {
     setUserConnectorDetails: PropTypes.func.isRequired,
     setUsers: PropTypes.func.isRequired,
     onTestButtonClick: PropTypes.func.isRequired,
+    deleteConnector: PropTypes.func.isRequired,
+    onConnectorDelete: PropTypes.func.isRequired,
     connectorTestLoading: PropTypes.bool,
     className: PropTypes.string,
 };
@@ -92,6 +98,7 @@ const mapDispatchToProps = dispatch => ({
     changeUserConnectorDetails: params => dispatch(changeUserConnectorDetailsAction(params)),
     setErrorUserConnectorDetails: params => dispatch(setErrorUserConnectorDetailsAction(params)),
     setUserConnectorDetails: params => dispatch(setUserConnectorDetailsAction(params)),
+    deleteConnector: params => dispatch(deleteConnectorAction(params)),
 });
 
 const emptyList = [];
@@ -139,6 +146,12 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             setState: params => this.setState(params),
             connectorId,
             setConnectorError: setErrorUserConnectorDetails,
+        });
+
+        this.connectorDeleteRequest = new ConnectorDeleteRequest({
+            setState: params => this.setState(params),
+            deleteConnector: this.props.deleteConnector,
+            onConnectorDelete: this.props.onConnectorDelete,
         });
 
         this.usersHeader = [
@@ -341,6 +354,9 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         }
         if (this.requestForUserList) {
             this.requestForUserList.stop();
+        }
+        if (this.connectorDeleteRequest) {
+            this.connectorDeleteRequest.stop();
         }
         if (this.projectsRequest) {
             this.projectsRequest.stop();
@@ -629,6 +645,12 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         this.setState({ disableTest: true });
     };
 
+    handleConnectorDelete = () => {
+        const { connectorId } = this.props;
+        this.connectorDeleteRequest.init(connectorId);
+        this.connectorDeleteRequest.start();
+    };
+
     renderParamInput = (key, data) => {
         const { connectorSource: { key: connectorKey } } = this.props;
         const {
@@ -768,12 +790,23 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                         >
                             {_ts('connector', 'connectorDetailTestLabel')}
                         </AccentButton>
-                        <DangerButton
+                        <DangerConfirmButton
+                            confirmationMessage={_ts(
+                                'connector',
+                                'deleteConnectorConfirmText',
+                                { connector: faramValues.title },
+                            )}
+                            onClick={this.handleConnectorDelete}
+                            disabled={loading}
+                        >
+                            {_ts('connector', 'connectorDetailDeleteLabel')}
+                        </DangerConfirmButton>
+                        <WarningButton
                             onClick={this.handleFormCancel}
                             disabled={loading || !pristine}
                         >
                             {_ts('connector', 'connectorDetailCancelLabel')}
-                        </DangerButton>
+                        </WarningButton>
                         <SuccessButton
                             type="submit"
                             disabled={loading || !pristine}

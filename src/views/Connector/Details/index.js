@@ -116,6 +116,10 @@ export default class ConnectorDetails extends React.PureComponent {
         this.setState({ connectorTestLoading });
     }
 
+    handleConnectorDelete = () => {
+        this.setState({ connectorDeleted: true });
+    }
+
     startConnectorDetailsRequest = (connectorId, connectorDetails) => {
         if (this.requestForConnectorDetails) {
             this.requestForConnectorDetails.stop();
@@ -136,11 +140,12 @@ export default class ConnectorDetails extends React.PureComponent {
             showTestResults,
             paramsForTest,
             connectorTestLoading,
+            connectorDeleted,
         } = this.state;
 
         const { connectorId } = this.props;
 
-        if (requestFailure) {
+        if (requestFailure || connectorDeleted) {
             return (
                 <div className={styles.noConnectorFound} >
                     {_ts('connector', 'noConnectorFoundLabel')}
@@ -159,6 +164,7 @@ export default class ConnectorDetails extends React.PureComponent {
                     className={formClassName.join(' ')}
                     connectorId={connectorId}
                     onTestButtonClick={this.handleConnectorTestClick}
+                    onConnectorDelete={this.handleConnectorDelete}
                     connectorTestLoading={connectorTestLoading}
                 />
                 { showTestResults &&

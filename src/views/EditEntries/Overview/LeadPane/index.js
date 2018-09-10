@@ -31,6 +31,7 @@ import LeadPreview from '#components/LeadPreview';
 import AssistedTagging from '#components/AssistedTagging';
 import ImagesGrid from '#components/ImagesGrid';
 import Highlight from '#components/Highlight';
+import brainIcon from '#resources/img/brain.png';
 
 import EntriesList from './EntriesList';
 import styles from './styles.scss';
@@ -302,7 +303,16 @@ export default class LeftPane extends React.PureComponent {
                     active={currentTab}
                     tabs={tabs}
                     onClick={this.handleTabClick}
-                />
+                >
+                    {currentTab === 'assisted-tagging' &&
+                        <img
+                            className={styles.brainIcon}
+                            src={brainIcon}
+                            alt=""
+                            title={_ts('components.assistedTagging', 'infoTooltip')}
+                        />
+                    }
+                </FixedTabs>
                 <MultiViewContainer
                     active={currentTab}
                     views={this.views}
