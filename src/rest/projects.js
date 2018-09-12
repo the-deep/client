@@ -38,6 +38,7 @@ const projectMiniUrlFields = [
 export const urlForProjects = `${wsEndpoint}/projects/member-of/?${p({ fields: projectMiniUrlFields })}`;
 export const urlForProjectCreate = `${wsEndpoint}/projects/`;
 export const urlForProjectMembership = `${wsEndpoint}/project-memberships/`;
+export const createUrlForProjectMembership = project => `${wsEndpoint}/project-memberships/?${p({ project })}`;
 export const createUrlForUserProjectMembership = membershipId =>
     `${wsEndpoint}/project-memberships/${membershipId}/`;
 

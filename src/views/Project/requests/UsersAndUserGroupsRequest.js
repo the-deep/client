@@ -16,7 +16,7 @@ export default class UsersAndUserGroupsGet extends Request {
 
     handleSuccess = (response) => {
         const searchResults = response.results;
-        this.parent.setState(searchResults);
+        this.parent.setState({ searchResults });
     }
 
     handleFailure = () => {
