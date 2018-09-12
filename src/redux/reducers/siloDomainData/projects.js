@@ -3,12 +3,20 @@ import update from '#rsu/immutable-update';
 export const SET_PROJECT_DETAILS = 'siloDomainData/SET_PROJECT_DETAILS';
 export const CHANGE_PROJECT_DETAILS = 'siloDomainData/CHANGE_PROJECT_DETAILS';
 export const SET_ERROR_PROJECT_DETAILS = 'siloDomainData/SET_ERROR_PROJECT_DETAILS';
+export const SET_PROJECT_MEMBERSHIPS = 'siloDomainData/SET_PROJECT_MEMBERSHIPS';
+export const ADD_PROJECT_MEMBERSHIP = 'siloDomainData/ADD_PROJECT_MEMBERSHIP';
 
 // REDUCER
 
 export const setProjectDetailsAction = ({ project, projectId }) => ({
     type: SET_PROJECT_DETAILS,
     project,
+    projectId,
+});
+
+export const setProjectMembershipsAction = ({ memberships, projectId }) => ({
+    type: SET_PROJECT_MEMBERSHIPS,
+    memberships,
     projectId,
 });
 
@@ -97,6 +105,40 @@ export const changeProjectDetails = (state, action) => {
     return update(state, settings);
 };
 
+export const setProjectMemberships = (state, action) => {
+    const {
+        projectId,
+        memberships,
+    } = action;
+    const settings = {
+        projectsView: { $auto: {
+            [projectId]: { $auto: {
+                memberships: {
+                    $set: memberships,
+                },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
+export const addProjectMembership = (state, action) => {
+    const {
+        projectId,
+        membership,
+    } = action;
+    const settings = {
+        projectsView: { $auto: {
+            [projectId]: { $auto: {
+                memberships: { $autoArray: {
+                    $push: [membership],
+                } },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
 export const setErrorProjectDetails = (state, action) => {
     const {
         faramErrors,
@@ -120,6 +162,8 @@ const reducers = {
     [SET_PROJECT_DETAILS]: setProjectDetails,
     [CHANGE_PROJECT_DETAILS]: changeProjectDetails,
     [SET_ERROR_PROJECT_DETAILS]: setErrorProjectDetails,
+    [SET_PROJECT_MEMBERSHIPS]: setProjectMemberships,
+    [ADD_PROJECT_MEMBERSHIP]: addProjectMembership,
 };
 
 export default reducers;
