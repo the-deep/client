@@ -29,18 +29,10 @@ export const projectFaramValueSelector = createSelector(
     localdata => localdata.faramValues || emptyObject,
 );
 
-// NOTE: there is projectMembershipsSelector, this exists in case some code is still using it
-export const projectMembershipDataSelector = createSelector(
-    projectFaramValueSelector,
-    faramValue => faramValue.memberships || emptyArray,
-);
 
 export const projectUserGroupsSelector = createSelector(
-    projectFaramValueSelector,
-    (faramValue) => {
-        console.error(faramValue.userGroups);
-        return faramValue.userGroups || emptyArray;
-    },
+    projectSelector,
+    project => project.userGroups || emptyArray,
 );
 
 export const projectMembershipsSelector = createSelector(

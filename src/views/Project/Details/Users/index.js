@@ -17,11 +17,15 @@ import NormalTable from '#rscv/Table';
 import ListView from '#rscv/List/ListView';
 import _ts from '#ts';
 import { FaramListElement } from '#rscg/FaramElements';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
-    projectMembershipDataSelector,
+    setProjectUsergroupsAction,
     projectUserGroupsSelector,
     projectIdFromRoute,
+
+    setProjectMembershipsAction,
+    projectMembershipsSelector,
 } from '#redux';
 
 import {
@@ -29,6 +33,14 @@ import {
 } from '#constants';
 
 import UsersAndUserGroupsGet from '../../requests/UsersAndUserGroupsRequest';
+import {
+    ProjectMembershipDeleteRequest,
+    ProjectMembershipsGetRequest,
+} from '../../requests/ProjectMembershipRequest';
+
+import {
+    ProjectUserGroupsGetRequest,
+} from '../../requests/ProjectUserGroupRequest';
 import SearchResult from './SearchResult';
 
 import styles from './styles.scss';
@@ -38,21 +50,28 @@ const Table = FaramListElement(NormalTable);
 const propTypes = {
     memberships: PropTypes.arrayOf(PropTypes.object),
     projectId: PropTypes.number.isRequired,
-    usergroups: PropTypes.arrayOf(PropTypes.object),
+    userGroups: PropTypes.arrayOf(PropTypes.object),
+    setProjectMembers: PropTypes.func.isRequired,
+    setUsergroups: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     memberships: [],
-    usergroups: [],
+    userGroups: [],
 };
 
 const mapStateToProps = (state, props) => ({
-    memberships: projectMembershipDataSelector(state, props),
-    usergroups: projectUserGroupsSelector(state, props),
+    memberships: projectMembershipsSelector(state, props),
+    userGroups: projectUserGroupsSelector(state, props),
     projectId: projectIdFromRoute(state, props),
 });
 
-@connect(mapStateToProps)
+const mapDispatchToProps = dispatch => ({
+    setProjectMembers: params => dispatch(setProjectMembershipsAction(params)),
+    setUsergroups: params => dispatch(setProjectUsergroupsAction(params)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
 export default class Users extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -69,6 +88,7 @@ export default class Users extends React.PureComponent {
         this.state = {
             searchInputValue: '',
             searchResults: [],
+            pending: false,
         };
 
         this.membershipsMap = listToMap(
@@ -77,7 +97,7 @@ export default class Users extends React.PureComponent {
         );
 
         this.userGroupsMap = listToMap(
-            this.props.usergroups,
+            this.props.userGroups,
             elem => elem.id,
         );
 
@@ -108,16 +128,17 @@ export default class Users extends React.PureComponent {
                                         ? _ts('project', 'revokeAdminRightsTitle')
                                         : _ts('project', 'grantAdminRightsTitle')
                                 }
-                                onClick={() => this.handleToggleMemberRoleClick(row)}
+                                onClick={() => this.handleRemoveMemberClick(row)}
                                 iconName={isAdmin ? iconNames.locked : iconNames.person}
                                 transparent
                             />
                             <DangerButton
                                 smallVerticalPadding
                                 key="delete-member"
-                                title={_ts('project', 'deleteMemberLinkTitle')}
+                                title={_ts('project', 'removeUserGroupTitle')}
                                 iconName={iconNames.delete}
                                 transparent
+                                onClick={() => this.handleRemoveMemberClick(row)}
                             />
                         </Fragment>
                     );
@@ -178,7 +199,7 @@ export default class Users extends React.PureComponent {
                                         ? _ts('project', 'revokeAdminRightsTitle')
                                         : _ts('project', 'grantAdminRightsTitle')
                                 }
-                                onClick={() => this.handleToggleMemberRoleClick(row)}
+                                onClick={() => this.handleChangeRole(row)}
                                 iconName={isAdmin ? iconNames.locked : iconNames.person}
                                 transparent
                             />
@@ -187,6 +208,7 @@ export default class Users extends React.PureComponent {
                                 key="delete-member"
                                 title={_ts('project', 'deleteMemberLinkTitle')}
                                 iconName={iconNames.delete}
+                                onClick={() => this.handleRemoveMemberClick(row)}
                                 transparent
                             />
                         </Fragment>
@@ -195,6 +217,7 @@ export default class Users extends React.PureComponent {
             },
         ];
 
+        // TODO: manage search filter
         const searchResultFilter = result => result.filter(x => (
             x.type === 'user'
                 ? isFalsy(this.membershipsMap[x.id])
@@ -203,17 +226,46 @@ export default class Users extends React.PureComponent {
 
         this.getUsersAndUserGroupsRequest = new UsersAndUserGroupsGet({
             setState: (params) => {
-                this.setState({ searchResults: searchResultFilter(params) });
+                this.setState(params);
             },
+        });
+
+        this.removeMemberRequest = new ProjectMembershipDeleteRequest({
+            setState: (params) => {
+                this.setState(params);
+            },
+        });
+
+        const { setProjectMembers, setUsergroups } = this.props;
+        this.projectMembershipsGetRequest = new ProjectMembershipsGetRequest({
+            setState: params => this.setState(params),
+            setMemberships: (memberships, projectId) =>
+                setProjectMembers({ memberships, projectId }),
+        });
+
+        this.projectUserGroupsGetRequest = new ProjectUserGroupsGetRequest({
+            setState: params => this.setState(params),
+            setUsergroups: (userGroups, projectId) =>
+                setUsergroups({ userGroups, projectId }),
         });
     }
 
-    componentWillReceiveProps = (nextProps) => {
-        const { memberships, usergroups } = nextProps;
+    componentDidMount() {
+        const {
+            projectId,
+        } = this.props;
+
+        this.projectMembershipsGetRequest.init(projectId).start();
+        this.projectUserGroupsGetRequest.init(projectId).start();
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { memberships, userGroups, projectId } = nextProps;
 
         const {
             memberships: oldMemberships,
-            usergroups: oldUsergroups,
+            userGroups: oldUserGroups,
+            projectId: oldProjectId,
         } = this.props;
 
         if (memberships !== oldMemberships) {
@@ -222,11 +274,25 @@ export default class Users extends React.PureComponent {
                 elem => elem.member,
             );
         }
-        if (usergroups !== oldUsergroups) {
+        if (userGroups !== oldUserGroups) {
             this.userGroupsMap = listToMap(
-                usergroups,
+                userGroups,
                 elem => elem.id,
             );
+        }
+
+        if (projectId !== oldProjectId) {
+            this.projectMembershipsGetRequest.init(projectId).start();
+            this.projectUserGroupsGetRequest.init(projectId).start();
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.projectMembershipsGetRequest) {
+            this.projectMembershipsGetRequest.stop();
+        }
+        if (this.projectUserGroupsGetRequest) {
+            this.projectUserGroupsGetRequest.stop();
         }
     }
 
@@ -250,18 +316,24 @@ export default class Users extends React.PureComponent {
         );
     }
 
+    handleRemoveMemberClick = (membershipRow) => {
+        this.removeMemberRequest.init(membershipRow.id);
+        this.removeMemberRequest.start();
+    }
+
     // Renderer Params for userAndUserGroups search result
     searchResultRendererParams = (key, data) => ({
         key,
         data: { ...data, projectId: this.props.projectId },
         handleAdd: this.addUserOrUserGroup,
+        setParentPending: pending => this.setState({ pending }),
     });
 
     userGroupsRendererParams = (key, data) => ({ key, data })
 
     renderUserGroups = () => {
         const userGroupLabel = _ts('project', 'userGroupLabel');
-        const { usergroups } = this.props;
+        const { userGroups } = this.props;
 
         return (
             <Fragment>
@@ -270,7 +342,7 @@ export default class Users extends React.PureComponent {
                 </h3>
                 <Table
                     className={styles.content}
-                    data={usergroups}
+                    data={userGroups}
                     headers={this.memberHeaders}
                     keyExtractor={this.calcUserGroupKey}
                 />
@@ -300,7 +372,7 @@ export default class Users extends React.PureComponent {
                     </h3>
                     <Table
                         className={styles.content}
-                        data={this.props.usergroups}
+                        data={this.props.userGroups}
                         headers={this.userGroupHeaders}
                         keyExtractor={this.calcUserGroupKey}
                     />
@@ -342,11 +414,19 @@ export default class Users extends React.PureComponent {
         const UserDetails = this.renderUserDetails;
         const UserSearch = this.renderUserSearch;
 
+        const { pending } = this.state;
+
         return (
             <div className={styles.users}>
+                { pending && (
+                    <LoadingAnimation
+                        className={styles.loadingAnimation}
+                        message={_ts('project', 'updatingProject')}
+                        small
+                    />
+                )}
                 <UserSearch />
                 <UserDetails />
-
             </div>
         );
     }

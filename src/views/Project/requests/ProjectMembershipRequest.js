@@ -70,10 +70,11 @@ export class ProjectMembershipsGetRequest extends Request {
     }
 
     handleSuccess = (response) => {
-        this.parent.setMemberships(response.results);
+        this.parent.setMemberships(response.results, this.projectId);
     }
 
     init = (projectId) => {
+        this.projectId = projectId;
         this.createDefault({
             url: createUrlForProjectMembership(projectId),
             params: createParamsForGet(),
