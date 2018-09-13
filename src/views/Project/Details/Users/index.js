@@ -116,7 +116,7 @@ export default class Users extends React.PureComponent {
                 key: 'actions',
                 label: _ts('project', 'tableHeaderActions'),
                 order: 6,
-                modifier: (row, index) => {
+                modifier: (row) => {
                     const isAdmin = row.role === 'admin';
                     return (
                         <Fragment>
@@ -217,17 +217,15 @@ export default class Users extends React.PureComponent {
             },
         ];
 
-        // TODO: manage search filter
-        const searchResultFilter = result => result.filter(x => (
+        this.searchResultFilter = result => result.filter(x => (
             x.type === 'user'
                 ? isFalsy(this.membershipsMap[x.id])
                 : isFalsy(this.userGroupsMap[x.id])
         ));
 
         this.getUsersAndUserGroupsRequest = new UsersAndUserGroupsGet({
-            setState: (params) => {
-                this.setState(params);
-            },
+            setSearchResults: searchResults =>
+                this.setState({ searchResults: this.searchResultFilter(searchResults) }),
         });
 
         this.removeMemberRequest = new ProjectMembershipDeleteRequest({
@@ -273,6 +271,9 @@ export default class Users extends React.PureComponent {
                 memberships,
                 elem => elem.member,
             );
+            const { searchResults } = this.state;
+            const newResult = this.searchResultFilter(searchResults);
+            this.setState({ searchResults: newResult });
         }
         if (userGroups !== oldUserGroups) {
             this.userGroupsMap = listToMap(
@@ -300,6 +301,10 @@ export default class Users extends React.PureComponent {
         const { searchInputValue } = this.state;
         const trimmedInput = searchInputValue.trim();
         if (trimmedInput.length < 3) {
+            // also, clear search results
+            if (this.state.searchResults.length > 0) {
+                this.setState({ searchResults: [] });
+            }
             return;
         }
         this.getUsersAndUserGroupsRequest.init(trimmedInput);
@@ -327,6 +332,7 @@ export default class Users extends React.PureComponent {
         data: { ...data, projectId: this.props.projectId },
         handleAdd: this.addUserOrUserGroup,
         setParentPending: pending => this.setState({ pending }),
+        clearSearchInput: () => this.setState({ searchInputValue: '' }),
     });
 
     userGroupsRendererParams = (key, data) => ({ key, data })

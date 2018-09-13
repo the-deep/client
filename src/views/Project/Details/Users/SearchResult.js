@@ -1,9 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { connect } from 'react-redux';
+
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
-import ProjectMembershipPostRequest from '../../requests/ProjectMembershipRequest';
+import {
+    addProjectMembershipAction,
+    // addProjectUsergroupAction
+} from '#redux';
+
+import { ProjectMembershipPostRequest } from '../../requests/ProjectMembershipRequest';
 import ProjectUserGroupRequest from '../../requests/ProjectUserGroupRequest';
 
 
@@ -17,10 +24,19 @@ const propTypes = {
         lastName: PropTypes.string,
         projectId: PropTypes.number,
     }).isRequired,
+    setParentPending: PropTypes.func.isRequired,
+    clearSearchInput: PropTypes.func.isRequired,
+    addProjectMember: PropTypes.func.isRequired,
 };
+
+const mapDispatchToProps = dispatch => ({
+    addProjectMember: params => dispatch(addProjectMembershipAction(params)),
+    // addUsergroups: params => dispatch(addProjectUsergroupAction(params)),
+});
 
 // Component for rendering each userAndUserGroups search result
 // TODO: Beautify this
+@connect(null, mapDispatchToProps)
 export default class SearchResult extends React.PureComponent {
     static propTypes = propTypes;
 
@@ -29,11 +45,20 @@ export default class SearchResult extends React.PureComponent {
         this.state = {
         };
         this.createProjectMembershipRequest = new ProjectMembershipPostRequest({
-            setState: () => {}, // TODO: add something functional. maybe to pull data from server
+            addProjectMember: (projectId, membership) =>
+                this.props.addProjectMember({ projectId, membership }),
+            setParentPending: pending => this.props.setParentPending(pending),
+            clearSearchInput: () => this.props.clearSearchInput(),
         });
         this.createProjectUserGroupRequest = new ProjectUserGroupRequest({
             setState: () => {}, // TODO: add something functional. maybe to pull data from server
+            setParentPending: pending => this.props.setParentPending(pending),
         });
+    }
+
+    componentWillUnmount() {
+        this.createProjectMembershipRequest.stop();
+        this.createProjectUserGroupRequest.stop();
     }
 
     addUser = () => {
@@ -44,7 +69,7 @@ export default class SearchResult extends React.PureComponent {
                 member: id,
             },
         ];
-        this.createProjectMembershipRequest.init(memberlist);
+        this.createProjectMembershipRequest.init(projectId, memberlist);
         this.createProjectMembershipRequest.start();
     }
 

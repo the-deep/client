@@ -24,9 +24,21 @@ export class ProjectMembershipPostRequest extends Request {
     }
 
     handleSuccess = (response) => {
+        // TODO: CHECK VALIDATION
+        const results = response.results || [];
+        if (results.length > 0) {
+            this.parent.addProjectMember(this.projectId, results[0]);
+        }
+        this.parent.setParentPending(false);
+        this.parent.clearSearchInput();
     }
 
-    init = (memberList) => {
+    handleFailure = (response) => {
+        console.warn(response);
+    }
+
+    init = (projectId, memberList) => {
+        this.projectId = projectId;
         this.createDefault({
             url: urlForProjectMembership,
             params: createParamsForProjectMembershipCreate({

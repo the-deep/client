@@ -21,6 +21,11 @@ export const setProjectMembershipsAction = ({ memberships, projectId }) => ({
     projectId,
 });
 
+export const addProjectMembershipAction = ({ projectId, membership }) => ({
+    type: ADD_PROJECT_MEMBERSHIP,
+    projectId,
+    membership,
+});
 export const setProjectUsergroupsAction = ({ userGroups, projectId }) => ({
     type: SET_PROJECT_USERGROUPS,
     userGroups,
@@ -151,7 +156,6 @@ export const setProjectUsergroups = (state, action) => {
         projectId,
         userGroups,
     } = action;
-    console.warn(action);
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
