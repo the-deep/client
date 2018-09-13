@@ -28,6 +28,7 @@ const propTypes = {
     clearSearchInput: PropTypes.func.isRequired,
     addProjectMember: PropTypes.func.isRequired,
     addProjectUserGroup: PropTypes.func.isRequired,
+    getMemberships: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => ({
@@ -56,6 +57,7 @@ export default class SearchResult extends React.PureComponent {
                 this.props.addProjectUserGroup({ projectId, userGroup }),
             setParentPending: pending => this.props.setParentPending(pending),
             clearSearchInput: () => this.props.clearSearchInput(),
+            getMemberships: () => this.props.getMemberships(),
         });
     }
 

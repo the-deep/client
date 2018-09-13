@@ -192,7 +192,7 @@ export default class Users extends React.PureComponent {
                                         ? _ts('project', 'revokeAdminRightsTitle')
                                         : _ts('project', 'grantAdminRightsTitle')
                                 }
-                                onClick={() => this.handleChangeRole(row)}
+                                onClick={() => this.handleChangeRole(row, isAdmin)}
                                 iconName={isAdmin ? iconNames.locked : iconNames.person}
                                 transparent
                             />
@@ -231,6 +231,7 @@ export default class Users extends React.PureComponent {
             removeUserGroup: (projectId, userGroup) =>
                 this.props.removeUserGroup({ projectId, userGroup }),
             setParentPending: pending => this.setState({ pending }),
+            getMemberships: () => this.getMemberships(),
         });
 
         const { setProjectMembers, setUserGroups } = this.props;
@@ -299,6 +300,13 @@ export default class Users extends React.PureComponent {
         }
     }
 
+    getMemberships = () => {
+        const {
+            projectId,
+        } = this.props;
+        this.projectMembershipsGetRequest.init(projectId).start();
+    }
+
     getUsersAndUserGroups = () => {
         const { searchInputValue } = this.state;
         const trimmedInput = searchInputValue.trim();
@@ -315,6 +323,10 @@ export default class Users extends React.PureComponent {
 
     calcUserGroupKey = userGroup => userGroup.id;
     calcOtherUserKey = otherUser => otherUser.id;
+
+    handleChangeRole = (memberRow, isAdmin) => {
+        // TODO: implement this after merging permissions branch
+    }
 
     handleSearchChange = (searchInputValue) => {
         this.setState(
@@ -340,6 +352,7 @@ export default class Users extends React.PureComponent {
         handleAdd: this.addUserOrUserGroup,
         setParentPending: pending => this.setState({ pending }),
         clearSearchInput: () => this.setState({ searchInputValue: '' }),
+        getMemberships: () => this.getMemberships(),
     });
 
     userGroupsRendererParams = (key, data) => ({ key, data })

@@ -25,6 +25,7 @@ export default class ProjectUserGroupPostRequest extends Request {
     handleSuccess = (response) => {
         // TODO: CHECK VALIDATION
         this.parent.addProjectUserGroup(this.projectId, response);
+        this.parent.getMemberships();
         this.parent.setParentPending(false);
         this.parent.clearSearchInput();
     }
@@ -80,6 +81,7 @@ export class ProjectUserGroupDeleteRequest extends Request {
 
     handleSuccess = () => {
         this.parent.removeUserGroup(this.projectId, this.userGroup);
+        this.parent.getMemberships();
     }
 
     init = (projectId, userGroup) => {
