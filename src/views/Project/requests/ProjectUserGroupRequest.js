@@ -5,7 +5,9 @@ import {
     urlForProjectUserGroup,
 
     createParamsForGet,
+    createParamsForDelete,
     createUrlForProjectUserGroupGet,
+    createUrlForProjectUserGroupDelete,
 } from '#rest';
 
 
@@ -58,7 +60,7 @@ export class ProjectUserGroupsGetRequest extends Request {
         this.projectId = projectId;
         this.createDefault({
             url: createUrlForProjectUserGroupGet(projectId),
-            params: createParamsForGet(),
+            params: createParamsForGet,
         });
         return this;
     }
@@ -69,13 +71,25 @@ export class ProjectUserGroupDeleteRequest extends Request {
     // TODO: schemaName =
 
     handlePreLoad = () => {
-        this.parent.setPending(true);
+        this.parent.setParentPending(true);
     }
 
     handlePostLoad = () => {
-        this.parent.setPending(false);
+        this.parent.setParentPending(false);
     }
 
-    init = () => {
+    handleSuccess = () => {
+        this.parent.removeUserGroup(this.projectId, this.userGroup);
+    }
+
+    init = (projectId, userGroup) => {
+        this.projectId = projectId;
+        this.userGroup = userGroup;
+
+        this.createDefault({
+            url: createUrlForProjectUserGroupDelete(userGroup.id),
+            params: createParamsForDelete,
+        });
+        return this;
     }
 }

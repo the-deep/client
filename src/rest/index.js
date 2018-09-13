@@ -34,7 +34,7 @@ export const createParamsForGet = () => ({
 
 export const createParamsForDelete = () => ({
     method: DELETE,
-    header: commonHeaderForPost,
+    headers: commonHeaderForPost,
 });
 
 // FIXME: remove this

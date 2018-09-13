@@ -53,18 +53,22 @@ export class ProjectMembershipDeleteRequest extends Request {
     // TODO: schemaName
 
     handlePreLoad = () => {
-        const pending = true;
-        this.parent.setState({ pending });
+        this.parent.setParentPending(true);
     }
 
-    handleAfterLoad = () => {
-        const pending = false;
-        this.parent.setState({ pending });
+    handlePostLoad = () => {
+        this.parent.setParentPending(false);
     }
 
-    init = (memberShipId) => {
+    handleSuccess = () => {
+        this.parent.removeMembership(this.projectId, this.membership);
+    }
+
+    init = (projectId, membership) => {
+        this.projectId = projectId;
+        this.membership = membership;
         this.createDefault({
-            url: createUrlForUserProjectMembership(memberShipId),
+            url: createUrlForUserProjectMembership(membership.id),
             params: createParamsForUserProjectMembershipDelete(),
         });
         return this;

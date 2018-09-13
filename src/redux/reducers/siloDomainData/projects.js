@@ -8,6 +8,10 @@ export const ADD_PROJECT_MEMBERSHIP = 'siloDomainData/ADD_PROJECT_MEMBERSHIP';
 export const SET_PROJECT_USERGROUPS = 'siloDomainData/SET_PROJECT_USERGROUPS';
 export const ADD_PROJECT_USERGROUP = 'siloDomainData/ADD_PROJECT_USERGROUP';
 
+export const REMOVE_PROJECT_MEMBERSHIP = 'siloDomainData/REMOVE_PROJECT_MEMBERSHIP';
+
+export const REMOVE_PROJECT_USERGROUP = 'siloDomainData/REMOVE_PROJECT_USERGROUP';
+
 // REDUCER
 
 export const setProjectDetailsAction = ({ project, projectId }) => ({
@@ -38,6 +42,18 @@ export const setProjectUserGroupsAction = ({ userGroups, projectId }) => ({
     type: SET_PROJECT_USERGROUPS,
     userGroups,
     projectId,
+});
+
+export const removeProjectMembershipAction = ({ projectId, membership }) => ({
+    type: REMOVE_PROJECT_MEMBERSHIP,
+    projectId,
+    membership,
+});
+
+export const removeProjectUserGroupAction = ({ projectId, userGroup }) => ({
+    type: REMOVE_PROJECT_USERGROUP,
+    projectId,
+    userGroup,
 });
 
 
@@ -212,6 +228,61 @@ export const setErrorProjectDetails = (state, action) => {
     return update(state, settings);
 };
 
+
+export const removeProjectMembership = (state, action) => {
+    const {
+        projectId,
+        membership,
+    } = action;
+
+    const {
+        projectsView: {
+            [projectId]: {
+                memberships,
+            },
+        },
+    } = state;
+
+    const index = memberships.findIndex(x => x.id === membership.id);
+    const settings = {
+        projectsView: { $auto: {
+            [projectId]: { $auto: {
+                memberships: {
+                    $splice: [[index, 1]],
+                },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
+export const removeProjectUserGroup = (state, action) => {
+    const {
+        projectId,
+        userGroup,
+    } = action;
+
+    const {
+        projectsView: {
+            [projectId]: {
+                userGroups,
+            },
+        },
+    } = state;
+
+    const index = userGroups.findIndex(x => x.id === userGroup.id);
+    const settings = {
+        projectsView: { $auto: {
+            [projectId]: { $auto: {
+                userGroups: {
+                    $splice: [[index, 1]],
+                },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
 const reducers = {
     [SET_PROJECT_DETAILS]: setProjectDetails,
     [CHANGE_PROJECT_DETAILS]: changeProjectDetails,
@@ -220,6 +291,9 @@ const reducers = {
     [ADD_PROJECT_MEMBERSHIP]: addProjectMembership,
     [SET_PROJECT_USERGROUPS]: setProjectUserGroups,
     [ADD_PROJECT_USERGROUP]: addProjectUserGroup,
+
+    [REMOVE_PROJECT_MEMBERSHIP]: removeProjectMembership,
+    [REMOVE_PROJECT_USERGROUP]: removeProjectUserGroup,
 };
 
 export default reducers;

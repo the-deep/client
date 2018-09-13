@@ -26,6 +26,9 @@ import {
 
     setProjectMembershipsAction,
     projectMembershipsSelector,
+
+    removeProjectMembershipAction,
+    removeProjectUserGroupAction,
 } from '#redux';
 
 import {
@@ -40,6 +43,7 @@ import {
 
 import {
     ProjectUserGroupsGetRequest,
+    ProjectUserGroupDeleteRequest,
 } from '../../requests/ProjectUserGroupRequest';
 import SearchResult from './SearchResult';
 
@@ -53,6 +57,8 @@ const propTypes = {
     userGroups: PropTypes.arrayOf(PropTypes.object),
     setProjectMembers: PropTypes.func.isRequired,
     setUserGroups: PropTypes.func.isRequired,
+    removeMembership: PropTypes.func.isRequired,
+    removeUserGroup: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -69,6 +75,8 @@ const mapStateToProps = (state, props) => ({
 const mapDispatchToProps = dispatch => ({
     setProjectMembers: params => dispatch(setProjectMembershipsAction(params)),
     setUserGroups: params => dispatch(setProjectUserGroupsAction(params)),
+    removeMembership: params => dispatch(removeProjectMembershipAction(params)),
+    removeUserGroup: params => dispatch(removeProjectUserGroupAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -116,33 +124,18 @@ export default class Users extends React.PureComponent {
                 key: 'actions',
                 label: _ts('project', 'tableHeaderActions'),
                 order: 6,
-                modifier: (row) => {
-                    const isAdmin = row.role === 'admin';
-                    return (
-                        <Fragment>
-                            <PrimaryButton
-                                smallVerticalPadding
-                                key="role-change"
-                                title={
-                                    isAdmin
-                                        ? _ts('project', 'revokeAdminRightsTitle')
-                                        : _ts('project', 'grantAdminRightsTitle')
-                                }
-                                onClick={() => {}}
-                                iconName={isAdmin ? iconNames.locked : iconNames.person}
-                                transparent
-                            />
-                            <DangerButton
-                                smallVerticalPadding
-                                key="delete-member"
-                                title={_ts('project', 'removeUserGroupTitle')}
-                                iconName={iconNames.delete}
-                                transparent
-                                onClick={() => this.handleRemoveMemberClick(row)}
-                            />
-                        </Fragment>
-                    );
-                },
+                modifier: row => (
+                    <Fragment>
+                        <DangerButton
+                            smallVerticalPadding
+                            key="delete-member"
+                            title={_ts('project', 'removeUserGroupTitle')}
+                            iconName={iconNames.delete}
+                            transparent
+                            onClick={() => this.handleRemoveUserGroupClick(row)}
+                        />
+                    </Fragment>
+                ),
             },
         ];
 
@@ -229,18 +222,16 @@ export default class Users extends React.PureComponent {
         });
 
         this.removeMemberRequest = new ProjectMembershipDeleteRequest({
-            setState: (params) => {
-                this.setState(params);
-            },
+            removeMembership: (projectId, membership) =>
+                this.props.removeMembership({ projectId, membership }),
+            setParentPending: pending => this.setState({ pending }),
         });
 
-        /*
         this.removeUserGroupRequest = new ProjectUserGroupDeleteRequest({
-            setState: (params) => {
-                this.setState(params);
-            },
+            removeUserGroup: (projectId, userGroup) =>
+                this.props.removeUserGroup({ projectId, userGroup }),
+            setParentPending: pending => this.setState({ pending }),
         });
-        */
 
         const { setProjectMembers, setUserGroups } = this.props;
         this.projectMembershipsGetRequest = new ProjectMembershipsGetRequest({
@@ -333,8 +324,13 @@ export default class Users extends React.PureComponent {
     }
 
     handleRemoveMemberClick = (membershipRow) => {
-        this.removeMemberRequest.init(membershipRow.id);
-        this.removeMemberRequest.start();
+        const { projectId } = this.props;
+        this.removeMemberRequest.init(projectId, membershipRow).start();
+    }
+
+    handleRemoveUserGroupClick = (userGroupRow) => {
+        const { projectId } = this.props;
+        this.removeUserGroupRequest.init(projectId, userGroupRow).start();
     }
 
     // Renderer Params for userAndUserGroups search result
