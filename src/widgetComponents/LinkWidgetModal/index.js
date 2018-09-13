@@ -193,8 +193,10 @@ export default class LinkWidgetModal extends React.PureComponent {
                 originalKey: item.key,
             }));
 
-        if (this.props.onClick) {
+        if (filteredItems.length > 0 && this.props.onClick) {
             this.props.onClick(filteredItems);
+        } else {
+            this.props.onClose();
         }
     }
 
@@ -227,6 +229,7 @@ export default class LinkWidgetModal extends React.PureComponent {
         const listOfItemsHeader = _ts('widgets.editor.link', 'listOfItemsHeader');
         const saveButtonLabel = _ts('widgets.editor.link', 'saveButtonLabel');
         const cancelButtonLabel = _ts('widgets.editor.link', 'cancelButtonLabel');
+        const rootNodeLabel = _ts('widgets.editor.link', 'rootNodeLabel');
 
         return (
             <Modal className={styles.modal} >
@@ -258,22 +261,29 @@ export default class LinkWidgetModal extends React.PureComponent {
                         <header className={styles.header}>
                             {listOfItemsHeader}
                         </header>
-                        <TreeSelection
-                            className={styles.tree}
-                            data={items}
-                            value={itemValues}
-                            onChange={this.handleItemValuesChange}
-                            labelSelector={treeLabelSelector}
-                            keySelector={treeKeySelector}
-                            nodesSelector={treeNodesSelector}
-                        />
+                        {items &&
+                            <TreeSelection
+                                className={styles.tree}
+                                data={items}
+                                value={itemValues}
+                                onChange={this.handleItemValuesChange}
+                                labelSelector={treeLabelSelector}
+                                keySelector={treeKeySelector}
+                                nodesSelector={treeNodesSelector}
+                                rootKey="all"
+                                rootTitle={rootNodeLabel}
+                                withRoot
+                            />
+                        }
                     </div>
                 </ModalBody>
                 <ModalFooter>
                     <DangerButton onClick={onClose}>
                         {cancelButtonLabel}
                     </DangerButton>
-                    <PrimaryButton onClick={this.handleSaveClick} >
+                    <PrimaryButton
+                        onClick={this.handleSaveClick}
+                    >
                         {saveButtonLabel}
                     </PrimaryButton>
                 </ModalFooter>
