@@ -7,11 +7,11 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import {
     addProjectMembershipAction,
-    // addProjectUsergroupAction
+    addProjectUserGroupAction,
 } from '#redux';
 
 import { ProjectMembershipPostRequest } from '../../requests/ProjectMembershipRequest';
-import ProjectUserGroupRequest from '../../requests/ProjectUserGroupRequest';
+import ProjectUserGroupPostRequest from '../../requests/ProjectUserGroupRequest';
 
 
 const propTypes = {
@@ -27,11 +27,12 @@ const propTypes = {
     setParentPending: PropTypes.func.isRequired,
     clearSearchInput: PropTypes.func.isRequired,
     addProjectMember: PropTypes.func.isRequired,
+    addProjectUserGroup: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => ({
     addProjectMember: params => dispatch(addProjectMembershipAction(params)),
-    // addUsergroups: params => dispatch(addProjectUsergroupAction(params)),
+    addProjectUserGroup: params => dispatch(addProjectUserGroupAction(params)),
 });
 
 // Component for rendering each userAndUserGroups search result
@@ -50,9 +51,11 @@ export default class SearchResult extends React.PureComponent {
             setParentPending: pending => this.props.setParentPending(pending),
             clearSearchInput: () => this.props.clearSearchInput(),
         });
-        this.createProjectUserGroupRequest = new ProjectUserGroupRequest({
-            setState: () => {}, // TODO: add something functional. maybe to pull data from server
+        this.createProjectUserGroupRequest = new ProjectUserGroupPostRequest({
+            addProjectUserGroup: (projectId, userGroup) =>
+                this.props.addProjectUserGroup({ projectId, userGroup }),
             setParentPending: pending => this.props.setParentPending(pending),
+            clearSearchInput: () => this.props.clearSearchInput(),
         });
     }
 
@@ -79,7 +82,7 @@ export default class SearchResult extends React.PureComponent {
             project: projectId,
             usergroup: id,
         };
-        this.createProjectUserGroupRequest.init(projectUserGroup);
+        this.createProjectUserGroupRequest.init(projectId, projectUserGroup);
         this.createProjectUserGroupRequest.start();
     }
 

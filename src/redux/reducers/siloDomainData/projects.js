@@ -6,6 +6,7 @@ export const SET_ERROR_PROJECT_DETAILS = 'siloDomainData/SET_ERROR_PROJECT_DETAI
 export const SET_PROJECT_MEMBERSHIPS = 'siloDomainData/SET_PROJECT_MEMBERSHIPS';
 export const ADD_PROJECT_MEMBERSHIP = 'siloDomainData/ADD_PROJECT_MEMBERSHIP';
 export const SET_PROJECT_USERGROUPS = 'siloDomainData/SET_PROJECT_USERGROUPS';
+export const ADD_PROJECT_USERGROUP = 'siloDomainData/ADD_PROJECT_USERGROUP';
 
 // REDUCER
 
@@ -26,7 +27,14 @@ export const addProjectMembershipAction = ({ projectId, membership }) => ({
     projectId,
     membership,
 });
-export const setProjectUsergroupsAction = ({ userGroups, projectId }) => ({
+
+export const addProjectUserGroupAction = ({ projectId, userGroup }) => ({
+    type: ADD_PROJECT_USERGROUP,
+    projectId,
+    userGroup,
+});
+
+export const setProjectUserGroupsAction = ({ userGroups, projectId }) => ({
     type: SET_PROJECT_USERGROUPS,
     userGroups,
     projectId,
@@ -151,7 +159,7 @@ export const addProjectMembership = (state, action) => {
     return update(state, settings);
 };
 
-export const setProjectUsergroups = (state, action) => {
+export const setProjectUserGroups = (state, action) => {
     const {
         projectId,
         userGroups,
@@ -162,6 +170,23 @@ export const setProjectUsergroups = (state, action) => {
                 userGroups: {
                     $set: userGroups,
                 },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
+export const addProjectUserGroup = (state, action) => {
+    const {
+        projectId,
+        userGroup,
+    } = action;
+    const settings = {
+        projectsView: { $auto: {
+            [projectId]: { $auto: {
+                userGroups: { $autoArray: {
+                    $push: [userGroup],
+                } },
             } },
         } },
     };
@@ -193,7 +218,8 @@ const reducers = {
     [SET_ERROR_PROJECT_DETAILS]: setErrorProjectDetails,
     [SET_PROJECT_MEMBERSHIPS]: setProjectMemberships,
     [ADD_PROJECT_MEMBERSHIP]: addProjectMembership,
-    [SET_PROJECT_USERGROUPS]: setProjectUsergroups,
+    [SET_PROJECT_USERGROUPS]: setProjectUserGroups,
+    [ADD_PROJECT_USERGROUP]: addProjectUserGroup,
 };
 
 export default reducers;

@@ -20,7 +20,7 @@ import { FaramListElement } from '#rscg/FaramElements';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
-    setProjectUsergroupsAction,
+    setProjectUserGroupsAction,
     projectUserGroupsSelector,
     projectIdFromRoute,
 
@@ -52,7 +52,7 @@ const propTypes = {
     projectId: PropTypes.number.isRequired,
     userGroups: PropTypes.arrayOf(PropTypes.object),
     setProjectMembers: PropTypes.func.isRequired,
-    setUsergroups: PropTypes.func.isRequired,
+    setUserGroups: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -68,7 +68,7 @@ const mapStateToProps = (state, props) => ({
 
 const mapDispatchToProps = dispatch => ({
     setProjectMembers: params => dispatch(setProjectMembershipsAction(params)),
-    setUsergroups: params => dispatch(setProjectUsergroupsAction(params)),
+    setUserGroups: params => dispatch(setProjectUserGroupsAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -98,7 +98,7 @@ export default class Users extends React.PureComponent {
 
         this.userGroupsMap = listToMap(
             this.props.userGroups,
-            elem => elem.id,
+            elem => elem.usergroup,
         );
 
         this.userGroupHeaders = [
@@ -128,7 +128,7 @@ export default class Users extends React.PureComponent {
                                         ? _ts('project', 'revokeAdminRightsTitle')
                                         : _ts('project', 'grantAdminRightsTitle')
                                 }
-                                onClick={() => this.handleRemoveMemberClick(row)}
+                                onClick={() => {}}
                                 iconName={isAdmin ? iconNames.locked : iconNames.person}
                                 transparent
                             />
@@ -234,7 +234,15 @@ export default class Users extends React.PureComponent {
             },
         });
 
-        const { setProjectMembers, setUsergroups } = this.props;
+        /*
+        this.removeUserGroupRequest = new ProjectUserGroupDeleteRequest({
+            setState: (params) => {
+                this.setState(params);
+            },
+        });
+        */
+
+        const { setProjectMembers, setUserGroups } = this.props;
         this.projectMembershipsGetRequest = new ProjectMembershipsGetRequest({
             setState: params => this.setState(params),
             setMemberships: (memberships, projectId) =>
@@ -243,8 +251,8 @@ export default class Users extends React.PureComponent {
 
         this.projectUserGroupsGetRequest = new ProjectUserGroupsGetRequest({
             setState: params => this.setState(params),
-            setUsergroups: (userGroups, projectId) =>
-                setUsergroups({ userGroups, projectId }),
+            setUserGroups: (userGroups, projectId) =>
+                setUserGroups({ userGroups, projectId }),
         });
     }
 
@@ -278,8 +286,11 @@ export default class Users extends React.PureComponent {
         if (userGroups !== oldUserGroups) {
             this.userGroupsMap = listToMap(
                 userGroups,
-                elem => elem.id,
+                elem => elem.usergroup,
             );
+            const { searchResults } = this.state;
+            const newResult = this.searchResultFilter(searchResults);
+            this.setState({ searchResults: newResult });
         }
 
         if (projectId !== oldProjectId) {

@@ -9,23 +9,26 @@ import {
 } from '#rest';
 
 
-export default class ProjectUserGroupRequest extends Request {
+export default class ProjectUserGroupPostRequest extends Request {
     // TODO: schemaName =
 
     handlePreLoad = () => {
-        const pending = true;
-        this.parent.setParentState({ pending });
+        this.parent.setParentPending(true);
     }
 
-    handleAfterLoad = () => {
-        const pending = false;
-        this.parent.setParentState({ pending });
+    handlePostLoad = () => {
+        this.parent.setParentPending(false);
     }
 
-    handleSuccess = () => {
+    handleSuccess = (response) => {
+        // TODO: CHECK VALIDATION
+        this.parent.addProjectUserGroup(this.projectId, response);
+        this.parent.setParentPending(false);
+        this.parent.clearSearchInput();
     }
 
-    init = (projectUserGroup) => {
+    init = (projectId, projectUserGroup) => {
+        this.projectId = projectId;
         this.createDefault({
             url: urlForProjectUserGroup,
             params: createParamsForProjectUserGroupCreate({
@@ -48,10 +51,7 @@ export class ProjectUserGroupsGetRequest extends Request {
 
     handleSuccess = (response) => {
         const results = response.results || [];
-        const usergroups = results.length > 0 ? results[0].userGroups : [];
-        console.warn('SUCCESS USERGROUPS');
-
-        this.parent.setUsergroups(usergroups, this.projectId);
+        this.parent.setUserGroups(results, this.projectId);
     }
 
     init = (projectId) => {
@@ -61,5 +61,21 @@ export class ProjectUserGroupsGetRequest extends Request {
             params: createParamsForGet(),
         });
         return this;
+    }
+}
+
+
+export class ProjectUserGroupDeleteRequest extends Request {
+    // TODO: schemaName =
+
+    handlePreLoad = () => {
+        this.parent.setPending(true);
+    }
+
+    handlePostLoad = () => {
+        this.parent.setPending(false);
+    }
+
+    init = () => {
     }
 }

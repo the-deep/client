@@ -14,7 +14,7 @@ export const createUrlForProjectJoinCancel = projectId => `${wsEndpoint}/project
 export const createUrlForProjectOptions = projectId => `${wsEndpoint}/project-options/?${p({ project: projectId })}`;
 
 export const urlForProjectUserGroup = `${wsEndpoint}/project-usergroups/`;
-export const createUrlForProjectUserGroupGet = project => `${wsEndpoint}/projects/?${p({ project, fields: 'user_groups' })}`;
+export const createUrlForProjectUserGroupGet = project => `${wsEndpoint}/project-usergroups/?${p({ project })}`;
 
 export const createUrlForProjectAryTemplate = projectId => `${wsEndpoint}/projects/${projectId}/assessment-template/`;
 
