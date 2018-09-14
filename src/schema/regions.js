@@ -123,13 +123,34 @@ const regionSchema = [];
     regionSchema.push({ name, schema });
 }
 {
+    const name = 'geoOption';
+    const schema = {
+        doc: {
+            name: 'Geo Option GET Response',
+            description: 'Element for array GeoOptions',
+        },
+        fields: {
+            adminLevel: { type: 'uint', required: true },
+            adminLevelTitle: { type: 'string', required: true },
+            key: { type: 'string', required: true },
+            label: { type: 'string' },
+            region: { type: 'uint', required: true },
+            regionTitle: { type: 'string', required: true },
+            title: { type: 'string' },
+        },
+    };
+    regionSchema.push({ name, schema });
+}
+{
     const name = 'geoOptions';
     const schema = {
         doc: {
             name: 'Geo Options GET Response',
             description: 'GET Response for Geo Options',
         },
-        fields: {},
+        fields: {
+            '*': { type: 'array.geoOption' },
+        },
     };
     regionSchema.push({ name, schema });
 }
