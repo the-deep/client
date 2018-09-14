@@ -99,6 +99,8 @@ const iconNames = {
 
     fork: 'ion-fork-repo',
     trash: 'ion-trash-b',
+
+    format: 'ion-android-list',
 };
 
 export default iconNames;

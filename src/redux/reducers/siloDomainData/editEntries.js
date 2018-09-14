@@ -1,6 +1,11 @@
 import { applyDiff, entryAccessor, createEntry } from '#entities/editEntries';
 import { analyzeErrors } from '#rscg/Faram/validator';
-import { isFalsy, randomString, getDefinedElementAround } from '#rsu/common';
+import {
+    isFalsy,
+    randomString,
+    getDefinedElementAround,
+    formatPdfText,
+} from '#rsu/common';
 import update from '#rsu/immutable-update';
 
 const getNewSelectedEntryKey = (entries, selectedEntryKey) => {
@@ -36,6 +41,7 @@ export const EEB__REMOVE_LOCAL_ENTRIES = 'siloDomainData/EEB__REMOVE_LOCAL_ENTRI
 export const EEB__MARK_AS_DELETED_ENTRY = 'siloDomainData/EEB__MARK_AS_DELETED_ENTRY';
 export const EEB__APPLY_TO_ALL_ENTRIES = 'siloDomainData/EEB__APPLY_TO_ALL_ENTRIES';
 export const EEB__APPLY_TO_ALL_ENTRIES_BELOW = 'siloDomainData/EEB__APPLY_TO_ALL_ENTRIES_BELOW';
+export const EEB__FORMAT_ALL_ENTRIES = 'siloDomainData/EEB__FORMAT_ALL_ENTRIES';
 export const EEB__SET_PENDING = 'siloDomainData/EEB__SET_PENDING';
 export const EEB__SAVE_ENTRY = 'siloDomainData/EEB__SAVE_ENTRY';
 export const EEB__RESET_UI_STATE = 'siloDomainData/EEB__RESET_UI_STATE';
@@ -69,6 +75,11 @@ export const editEntriesApplyToAllEntriesBelowAction = ({ leadId, key, value, en
     key,
     value,
     entryKey,
+});
+
+export const editEntriesFormatAllEntriesAction = ({ leadId }) => ({
+    type: EEB__FORMAT_ALL_ENTRIES,
+    leadId,
 });
 
 export const editEntriesAddEntryAction = ({ leadId, entry }) => ({
@@ -666,6 +677,40 @@ const editEntriesResetUiState = (state, { leadId }) => {
     return update(state, settings);
 };
 
+const formatAllEntries = (state, { leadId }) => {
+    const {
+        editEntries: { [leadId]: { entries = [] } = {} } = {},
+    } = state;
+    const settings = {
+        editEntries: {
+            [leadId]: {
+                entries: {},
+            },
+        },
+    };
+    entries.forEach((entry, i) => {
+        if (entry.data.entryType !== 'excerpt') {
+            return;
+        }
+        const newExcerpt = formatPdfText(entry.data.excerpt);
+        if (entry.data.excerpt === newExcerpt) {
+            return;
+        }
+        settings.editEntries[leadId].entries[i] = {
+            data: {
+                excerpt: {
+                    $set: newExcerpt,
+                },
+            },
+            localData: {
+                isPristine: { $set: false },
+                hasServerError: { $set: false },
+            },
+        };
+    });
+    return update(state, settings);
+};
+
 const reducers = {
     [EEB__SET_LEAD]: setLead,
     [EEB__SET_ENTRIES]: setEntries,
@@ -683,6 +728,7 @@ const reducers = {
     [EEB__SET_PENDING]: setPending,
     [EEB__SAVE_ENTRY]: saveEntry,
     [EEB__RESET_UI_STATE]: editEntriesResetUiState,
+    [EEB__FORMAT_ALL_ENTRIES]: formatAllEntries,
 };
 
 export default reducers;
