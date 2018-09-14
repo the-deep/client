@@ -1,38 +1,24 @@
 @import '~base-scss/base';
 
-$af-detail-form-width: 480px;
-$height-header: 39px;
-
-.analysis-framework-detail {
-    height: 100%;
-
+.edit-framework-modal {
     .af-detail-form {
-        display: flex;
-        position: relative;
-        flex-direction: column;
-        padding: $spacing-medium;
-        width: $af-detail-form-width;
-        height: calc(100% - #{$height-header});
-
-        .action-buttons {
-            display: flex;
-            flex-shrink: 0;
-            justify-content: flex-end;
-
-            button {
-                margin-left: $spacing-large;
-            }
-        }
-
-        .name,
-        .description {
+        .name {
+            margin-bottom: $spacing-medium;
             width: 100%;
         }
 
         .description {
+            width: 100%;
+
             :global .input {
                 resize: none;
             }
+        }
+    }
+
+    .footer {
+        .button {
+            margin-left: $spacing-medium;
         }
     }
 }

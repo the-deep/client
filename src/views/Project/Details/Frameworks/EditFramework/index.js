@@ -5,12 +5,13 @@ import { connect } from 'react-redux';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
+import ModalFooter from '#rscv/Modal/Footer';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Faram, {
     requiredCondition,
 } from '#rscg/Faram';
 
-import PrimaryButton from '#rsca/Button/PrimaryButton';
+import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
@@ -101,7 +102,7 @@ export default class ProjectAfDetail extends React.PureComponent {
         this.afPutRequest.init(afId, values).start();
     };
 
-    renderFaram = () => {
+    render() {
         const { onModalClose } = this.props;
         const {
             faramErrors,
@@ -111,8 +112,7 @@ export default class ProjectAfDetail extends React.PureComponent {
         } = this.state;
 
         return (
-            <div className={styles.analysisFrameworkDetail}>
-                { pending && <LoadingAnimation /> }
+            <Modal className={styles.editFrameworkModal}>
                 <Faram
                     className={styles.afDetailForm}
                     onChange={this.handleFaramChange}
@@ -123,60 +123,50 @@ export default class ProjectAfDetail extends React.PureComponent {
                     error={faramErrors}
                     disabled={pending}
                 >
-                    <NonFieldErrors faramElement />
-                    <TextInput
-                        className={styles.name}
-                        label={_ts('project', 'addAfTitleLabel')}
-                        faramElementName="title"
-                        placeholder={_ts('project', 'addAfTitlePlaceholder')}
+                    <ModalHeader
+                        title={_ts('project', 'editFrameworkModalTitle')}
+                        rightComponent={
+                            <Button
+                                onClick={onModalClose}
+                                transparent
+                                iconName={iconNames.close}
+                            />
+                        }
                     />
-                    <TextArea
-                        className={styles.description}
-                        label={_ts('project', 'projectDescriptionLabel')}
-                        faramElementName="description"
-                        placeholder={_ts('project', 'projectDescriptionPlaceholder')}
-                        rows={3}
-                    />
-                    <div className={styles.actionButtons}>
+                    <ModalBody>
+                        { pending && <LoadingAnimation /> }
+                        <NonFieldErrors faramElement />
+                        <TextInput
+                            className={styles.name}
+                            label={_ts('project', 'addAfTitleLabel')}
+                            faramElementName="title"
+                            placeholder={_ts('project', 'addAfTitlePlaceholder')}
+                        />
+                        <TextArea
+                            className={styles.description}
+                            label={_ts('project', 'projectDescriptionLabel')}
+                            faramElementName="description"
+                            placeholder={_ts('project', 'projectDescriptionPlaceholder')}
+                            rows={3}
+                        />
+                    </ModalBody>
+                    <ModalFooter className={styles.footer}>
                         <DangerButton
+                            className={styles.button}
                             onClick={onModalClose}
                             disabled={pending}
                         >
                             {_ts('project', 'modalCancel')}
                         </DangerButton>
                         <SuccessButton
+                            className={styles.button}
                             disabled={pending || pristine}
                             type="submit"
                         >
                             {_ts('project', 'modalSave')}
                         </SuccessButton>
-                    </div>
+                    </ModalFooter>
                 </Faram>
-            </div>
-        );
-    }
-
-
-    render() {
-        const { onModalClose } = this.props;
-        const RenderFaram = this.renderFaram;
-
-        return (
-            <Modal>
-                <ModalHeader
-                    title={_ts('project', 'editFrameworkModalTitle')}
-                    rightComponent={
-                        <PrimaryButton
-                            onClick={onModalClose}
-                            transparent
-                        >
-                            <span className={iconNames.close} />
-                        </PrimaryButton>
-                    }
-                />
-                <ModalBody>
-                    <RenderFaram />
-                </ModalBody>
             </Modal>
         );
     }

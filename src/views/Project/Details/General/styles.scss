@@ -1,32 +1,58 @@
 @import '~base-scss/base';
 
+$width-min-inputs-container: 320px;
+
 .project-general {
     display: flex;
     position: relative;
-    flex-direction: column;
-    align-content: stretch;
     flex-grow: 1;
+    overflow-y: auto;
 
     .inputs-container {
-        display: flex;
-        flex-shrink: 0;
+        flex-basis: 40%;
+        min-width: $width-min-inputs-container;
 
-        .start-date,
-        .end-date,
-        .name {
-            flex-grow: 1;
+        .header {
+            display: flex;
+            flex-shrink: 0;
+            padding: $spacing-large;
 
-            &:not(:last-child) {
-                padding-right: $spacing-medium-alt;
+            .non-field-errors {
+                flex-grow: 1;
+            }
+
+            .action-buttons {
+                flex-shrink: 0;
+
+                .button {
+                    margin-left: $spacing-medium;
+                }
+            }
+        }
+
+        .content {
+            flex-shrink: 0;
+            padding: $spacing-large;
+
+            .start-date,
+            .end-date,
+            .name {
+                margin-bottom: $spacing-medium;
+            }
+
+            .description {
+                :global .input {
+                    resize: none;
+                }
             }
         }
     }
 
-    .description {
-        flex-shrink: 0;
-
-        :global .input {
-            resize: none;
-        }
+    .visualizations {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        justify-content: center;
+        background-color: $color-foreground;
     }
 }
