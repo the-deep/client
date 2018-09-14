@@ -12,11 +12,11 @@ export default class ProjectGetRequest extends Request {
     schemaName = 'projectGetResponse';
 
     handlePreLoad = () => {
-        this.parent.setState({ projectGetPending: true });
+        this.parent.setState({ pendingProjectGet: true });
     }
 
     handlePostLoad = () => {
-        this.parent.setState({ projectGetPending: false });
+        this.parent.setState({ pendingProjectGet: false });
     }
 
     handleSuccess = (response) => {

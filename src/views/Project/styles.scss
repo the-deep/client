@@ -1,92 +1,30 @@
 @import '~base-scss/base';
 
-$width-project-bar: 240px;
+$width-project-bar: 300px;
 
 .project-panel {
     display: flex;
     height: 100%;
 
     .sidebar {
-        @include background-color($color-foreground-alt);
-        display: flex;
-        position: relative;
+        @include background-color($color-foreground);
         flex-basis: $width-project-bar;
-        flex-direction: column;
         flex-shrink: 0;
         margin: -$spacing-small $spacing-small (-$spacing-small) (-$spacing-small);
         border-right: $width-separator-thin solid $color-separator-alt;
-
-        .header {
-            @include background-color($color-background-header);
-            display: flex;
-            align-items: center;
-            flex-shrink: 0;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            border-bottom: $width-separator-thin solid $color-separator;
-            padding: $spacing-small;
-
-            .heading {
-                flex-grow: 1;
-            }
-
-            .search-input {
-                flex-basis: 100%;
-                padding: 0;
-            }
-
-            .link {
-                @include button-like-link($color-accent);
-                margin-right: $spacing-small;
-
-                .discover-icon {
-                    padding-right: $spacing-small;
-                }
-            }
-        }
-
-        .project-list {
-            flex-grow: 1;
-            overflow-y: auto;
-
-            .list-item {
-                display: block;
-                border-bottom: $width-separator-thin solid $color-separator;
-                border-left: $width-separator-thick solid transparent;
-
-                .link {
-                    display: block;
-                    padding: $spacing-small;
-                    width: 100%;
-                    height: 100%;
-                    text-transform: none;
-                }
-            }
-
-            .active {
-                border-left-color: $color-accent;
-                background-color: $color-background-selected;
-            }
-
-            :hover {
-                background-color: $color-background-hover;
-            }
-        }
     }
 
     .project-details {
         @extend %main-content;
-        @include background-color($color-background-alt);
         flex-grow: 1;
+        background-color: $color-foreground-alt;
     }
 
     .no-project-text {
-        @include background-color-with-disabled-text($color-foreground-alt);
         display: flex;
         align-items: center;
-        flex-basis: 84%;
         justify-content: center;
-        margin: 0;
+        color: $color-text-disabled;
         font-size: $font-size-extra-large;
     }
 }

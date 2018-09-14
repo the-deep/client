@@ -5,12 +5,13 @@ import { connect } from 'react-redux';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
+import ModalFooter from '#rscv/Modal/Footer';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Faram, {
     requiredCondition,
 } from '#rscg/Faram';
 
-import PrimaryButton from '#rsca/Button/PrimaryButton';
+import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
@@ -101,7 +102,7 @@ export default class ProjectAfDetail extends React.PureComponent {
         this.afPutRequest.init(afId, values).start();
     };
 
-    renderFaram = () => {
+    renderInputs = () => {
         const { onModalClose } = this.props;
         const {
             faramErrors,
@@ -137,20 +138,6 @@ export default class ProjectAfDetail extends React.PureComponent {
                         placeholder={_ts('project', 'projectDescriptionPlaceholder')}
                         rows={3}
                     />
-                    <div className={styles.actionButtons}>
-                        <DangerButton
-                            onClick={onModalClose}
-                            disabled={pending}
-                        >
-                            {_ts('project', 'modalCancel')}
-                        </DangerButton>
-                        <SuccessButton
-                            disabled={pending || pristine}
-                            type="submit"
-                        >
-                            {_ts('project', 'modalSave')}
-                        </SuccessButton>
-                    </div>
                 </Faram>
             </div>
         );
@@ -159,24 +146,46 @@ export default class ProjectAfDetail extends React.PureComponent {
 
     render() {
         const { onModalClose } = this.props;
-        const RenderFaram = this.renderFaram;
+        const Inputs = this.renderInputs;
+
+        const {
+            pristine,
+            pending,
+        } = this.state;
 
         return (
-            <Modal>
+            <Modal className={styles.editFrameworkModal}>
                 <ModalHeader
                     title={_ts('project', 'editFrameworkModalTitle')}
                     rightComponent={
-                        <PrimaryButton
+                        <Button
                             onClick={onModalClose}
                             transparent
-                        >
-                            <span className={iconNames.close} />
-                        </PrimaryButton>
+                            iconName={iconNames.close}
+                        />
                     }
                 />
                 <ModalBody>
-                    <RenderFaram />
+                    <Inputs />
                 </ModalBody>
+                <ModalFooter>
+                    <div className={styles.actionButtons}>
+                        <DangerButton
+                            className={styles.button}
+                            onClick={onModalClose}
+                            disabled={pending}
+                        >
+                            {_ts('project', 'modalCancel')}
+                        </DangerButton>
+                        <SuccessButton
+                            className={styles.button}
+                            disabled={pending || pristine}
+                            type="submit"
+                        >
+                            {_ts('project', 'modalSave')}
+                        </SuccessButton>
+                    </div>
+                </ModalFooter>
             </Modal>
         );
     }

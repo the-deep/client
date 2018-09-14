@@ -29,6 +29,7 @@ import {
 } from '#constants';
 import _ts from '#ts';
 
+import Sidebar from './Sidebar';
 import Details from './Details';
 import styles from './styles.scss';
 
@@ -45,7 +46,6 @@ const propTypes = {
 };
 
 const defaultProps = {
-    activeUser: {},
     userProjects: {},
     projectId: undefined,
 };
@@ -141,51 +141,19 @@ export default class ProjectPanel extends React.PureComponent {
             showAddProjectModal,
         } = this.state;
 
-        const { projectId } = this.props;
-        const { history } = this.props;
+        const {
+            projectId,
+            history,
+            userProjects,
+        } = this.props;
 
         return (
             <div className={styles.projectPanel}>
-                <div className={styles.sidebar}>
-                    <header className={styles.header}>
-                        <h3 className={styles.heading}>
-                            {_ts('project', 'headerProjects')}
-                        </h3>
-                        <Cloak
-                            hide={({ isBeta }) => isBeta}
-                            render={({ disabled }) => (
-                                <Link
-                                    to={reverseRoute(pathNames.discoverProjects, { })}
-                                    className={styles.link}
-                                    disabled={disabled}
-                                >
-                                    <span className={`${iconNames.discover} ${styles.discoverIcon}`} />
-                                    {_ts('project', 'discoverProjectButtonLabel')}
-                                </Link>
-                            )}
-                        />
-                        <PrimaryButton
-                            onClick={this.handleAddProjectClick}
-                            iconName={iconNames.add}
-                        >
-                            {_ts('project', 'addProjectButtonLabel')}
-                        </PrimaryButton>
-                        <SearchInput
-                            onChange={this.handleSearchInputChange}
-                            placeholder={_ts('project', 'searchProjectPlaceholder')}
-                            className={styles.searchInput}
-                            value={this.state.searchInputValue}
-                            showLabel={false}
-                            showHintAndError={false}
-                        />
-                    </header>
-                    <ListView
-                        className={styles.projectList}
-                        data={displayUserProjects}
-                        keyExtractor={project => project.id}
-                        modifier={this.renderSidebarItem}
-                    />
-                </div>
+                <Sidebar
+                    className={styles.sidebar}
+                    userProjects={userProjects}
+                    projectId={projectId}
+                />
                 {
                     projectId ? (
                         <Details
@@ -194,9 +162,9 @@ export default class ProjectPanel extends React.PureComponent {
                             mainHistory={history}
                         />
                     ) : (
-                        <p className={styles.noProjectText}>
+                        <div className={styles.noProjectText}>
                             {_ts('project', 'noProjectText')}
-                        </p>
+                        </div>
                     )
                 }
                 {

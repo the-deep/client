@@ -3,8 +3,11 @@
 @import 'utils';
 
 $font-family-sans-serif: 'Source Sans Pro', sans-serif;
+$font-family-heading: 'Asap', sans-serif;
 $font-family-monospace: 'Oxygen Mono', monospace;
 $font-family-icons: 'Ionicons';
+
+$font-weight-heading: 500;
 
 * {
     box-sizing: border-box;
@@ -56,7 +59,9 @@ body {
     h5 {
         margin: 0;
         text-transform: uppercase;
-        font-weight: $font-weight-light;
+        color: $color-primary;
+        font-family: $font-family-heading;
+        font-weight: $font-weight-heading;
     }
 
     :global {

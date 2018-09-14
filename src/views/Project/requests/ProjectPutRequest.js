@@ -11,18 +11,21 @@ export default class ProjectPutRequest extends Request {
     schemaName = 'projectPutResponse';
 
     handlePreLoad = () => {
-        this.parent.setState({ projectPutPending: true });
+        this.parent.setState({ pendingProjectPut: true });
     }
 
     handlePostLoad = () => {
-        this.parent.setState({ projectPutPending: false });
+        this.parent.setState({ pendingProjectPut: false });
     }
 
     handleSuccess = (response) => {
-        const project = {
-            faramValues: response,
-        };
-        this.parent.setProjectDetails({ project, projectId: this.projectId });
+        const { setProjectDetails } = this.parent;
+        const project = { faramValues: response };
+
+        setProjectDetails({
+            project,
+            projectId: this.projectId,
+        });
     }
 
     handleFailure = (faramErrors) => {
