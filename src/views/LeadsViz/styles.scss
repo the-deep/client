@@ -18,6 +18,12 @@
         border-bottom: $width-separator-thin solid $color-separator-alt;
         padding: $spacing-small;
 
+        .back-link {
+            @extend %transparent-button-like-link;
+            padding: $spacing-small $spacing-medium;
+            font-size: $font-size-large;
+        }
+
         .filters {
             display: flex;
             flex-grow: 1;
@@ -106,21 +112,4 @@
             grid-area: geo-referenced-map;
         }
     }
-
-    .footer {
-        @include background-color($color-foreground);
-        display: flex;
-        flex-shrink: 0;
-        justify-content: space-between;
-        border-top: $width-separator-thin solid $color-separator;
-        padding: $spacing-small $spacing-medium-alt;
-
-        .link {
-            @include button-like-link($color-accent);
-        }
-    }
-}
-
-.chart-container {
-    padding: $spacing-extra-large-alt;
 }
