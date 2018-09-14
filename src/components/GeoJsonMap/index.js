@@ -214,6 +214,7 @@ export default class GeoJsonMap extends React.PureComponent {
                 map.removeLayer('point-selected');
                 map.removeLayer('point-hover');
                 map.removeSource('geojson');
+                map.removeSource('geojson-hover');
                 this.layerAdded = false;
             }
             map.remove();
@@ -264,6 +265,10 @@ export default class GeoJsonMap extends React.PureComponent {
             type: 'geojson',
             data: geoJson,
         });
+        map.addSource('geojson-hover', {
+            type: 'geojson',
+            data: geoJson,
+        });
         map.addLayer({
             id: 'geojson',
             type: 'fill',
@@ -293,7 +298,7 @@ export default class GeoJsonMap extends React.PureComponent {
         map.addLayer({
             id: 'geojson-hover',
             type: 'fill',
-            source: 'geojson',
+            source: 'geojson-hover',
             paint: {
                 ...basePaint,
                 'fill-color': '#fff',
