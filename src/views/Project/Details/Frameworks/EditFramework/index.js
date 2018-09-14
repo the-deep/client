@@ -102,7 +102,7 @@ export default class ProjectAfDetail extends React.PureComponent {
         this.afPutRequest.init(afId, values).start();
     };
 
-    renderInputs = () => {
+    render() {
         const { onModalClose } = this.props;
         const {
             faramErrors,
@@ -112,8 +112,7 @@ export default class ProjectAfDetail extends React.PureComponent {
         } = this.state;
 
         return (
-            <div className={styles.analysisFrameworkDetail}>
-                { pending && <LoadingAnimation /> }
+            <Modal className={styles.editFrameworkModal}>
                 <Faram
                     className={styles.afDetailForm}
                     onChange={this.handleFaramChange}
@@ -124,52 +123,34 @@ export default class ProjectAfDetail extends React.PureComponent {
                     error={faramErrors}
                     disabled={pending}
                 >
-                    <NonFieldErrors faramElement />
-                    <TextInput
-                        className={styles.name}
-                        label={_ts('project', 'addAfTitleLabel')}
-                        faramElementName="title"
-                        placeholder={_ts('project', 'addAfTitlePlaceholder')}
+                    <ModalHeader
+                        title={_ts('project', 'editFrameworkModalTitle')}
+                        rightComponent={
+                            <Button
+                                onClick={onModalClose}
+                                transparent
+                                iconName={iconNames.close}
+                            />
+                        }
                     />
-                    <TextArea
-                        className={styles.description}
-                        label={_ts('project', 'projectDescriptionLabel')}
-                        faramElementName="description"
-                        placeholder={_ts('project', 'projectDescriptionPlaceholder')}
-                        rows={3}
-                    />
-                </Faram>
-            </div>
-        );
-    }
-
-
-    render() {
-        const { onModalClose } = this.props;
-        const Inputs = this.renderInputs;
-
-        const {
-            pristine,
-            pending,
-        } = this.state;
-
-        return (
-            <Modal className={styles.editFrameworkModal}>
-                <ModalHeader
-                    title={_ts('project', 'editFrameworkModalTitle')}
-                    rightComponent={
-                        <Button
-                            onClick={onModalClose}
-                            transparent
-                            iconName={iconNames.close}
+                    <ModalBody>
+                        { pending && <LoadingAnimation /> }
+                        <NonFieldErrors faramElement />
+                        <TextInput
+                            className={styles.name}
+                            label={_ts('project', 'addAfTitleLabel')}
+                            faramElementName="title"
+                            placeholder={_ts('project', 'addAfTitlePlaceholder')}
                         />
-                    }
-                />
-                <ModalBody>
-                    <Inputs />
-                </ModalBody>
-                <ModalFooter>
-                    <div className={styles.actionButtons}>
+                        <TextArea
+                            className={styles.description}
+                            label={_ts('project', 'projectDescriptionLabel')}
+                            faramElementName="description"
+                            placeholder={_ts('project', 'projectDescriptionPlaceholder')}
+                            rows={3}
+                        />
+                    </ModalBody>
+                    <ModalFooter className={styles.footer}>
                         <DangerButton
                             className={styles.button}
                             onClick={onModalClose}
@@ -184,8 +165,8 @@ export default class ProjectAfDetail extends React.PureComponent {
                         >
                             {_ts('project', 'modalSave')}
                         </SuccessButton>
-                    </div>
-                </ModalFooter>
+                    </ModalFooter>
+                </Faram>
             </Modal>
         );
     }

@@ -1,14 +1,7 @@
 @import '~base-scss/base';
 
-.analysis-framework-detail {
-    height: 100%;
-
+.edit-framework-modal {
     .af-detail-form {
-        display: flex;
-        position: relative;
-        flex-direction: column;
-        padding: $spacing-medium;
-
         .name {
             margin-bottom: $spacing-medium;
             width: 100%;
@@ -22,14 +15,8 @@
             }
         }
     }
-}
 
-.edit-framework-modal {
-    .action-buttons {
-        display: flex;
-        flex-shrink: 0;
-        justify-content: flex-end;
-
+    .footer {
         .button {
             margin-left: $spacing-medium;
         }

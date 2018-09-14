@@ -12,7 +12,6 @@ import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
 
 import {
-    routeUrlSelector,
     projectLocalDataSelector,
     projectServerDataSelector,
     setProjectDetailsAction,
@@ -42,7 +41,6 @@ const defaultProps = {
 const mapStateToProps = (state, props) => ({
     projectLocalData: projectLocalDataSelector(state, props),
     projectServerData: projectServerDataSelector(state, props),
-    routeUrl: routeUrlSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -70,9 +68,6 @@ export default class ProjectGeneral extends PureComponent {
                 startDate: [dateCondition],
                 endDate: [dateCondition],
                 description: [],
-                regions: [],
-                userGroups: [],
-                memberships: [],
             },
         };
 
@@ -160,14 +155,12 @@ export default class ProjectGeneral extends PureComponent {
             message={
                 (location) => {
                     const {
-                        routeUrl,
                         projectLocalData: {
                             pristine,
                         },
                     } = this.props;
 
-                    console.warn(pristine, location.pathname === routeUrl);
-                    if (pristine || location.pathname === routeUrl) {
+                    if (pristine) {
                         return true;
                     }
 
