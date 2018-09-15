@@ -1,5 +1,7 @@
 @import '~base-scss/base';
 
+$height-header: 48px;
+
 .overview {
     display: flex;
     height: 100%;
@@ -12,9 +14,49 @@
         background-color: $color-background-alt;
         width: 70%;
 
+        .header {
+            display: flex;
+            align-items: flex-end;
+            background-color: $color-foreground;
+            height: $height-header;
+
+            .name-input {
+                flex-shrink: 0;
+                padding: 0 $spacing-medium;
+
+                :global {
+                    .input {
+                        padding: 0;
+                    }
+
+                    .empty,
+                    .error {
+                        margin-top: 0;
+                    }
+                }
+            }
+
+            .description-input {
+                flex-grow: 1;
+                padding: 0 $spacing-medium;
+
+                :global {
+                    .input {
+                        padding: 0;
+                        resize: none;
+                    }
+
+                    .empty,
+                    .error {
+                        margin-top: 0;
+                    }
+                }
+            }
+        }
+
         .scroll-wrapper {
             width: 100%;
-            height: 100%;
+            height: calc(100% - #{$height-header});
             overflow: auto;
         }
     }

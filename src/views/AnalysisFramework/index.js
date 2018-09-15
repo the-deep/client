@@ -82,22 +82,20 @@ export default class AnalysisFramework extends React.PureComponent {
             setAnalysisFramework: this.props.setAnalysisFramework,
         });
 
+        const rendererParams = () => ({
+            analysisFramework: this.props.analysisFramework,
+        });
+
         this.views = {
             [VIEW.overview]: {
-                component: () => (
-                    <Overview
-                        analysisFramework={this.props.analysisFramework}
-                    />
-                ),
+                component: Overview,
+                rendererParams,
                 wrapContainer: true,
                 mount: true,
             },
             [VIEW.list]: {
-                component: () => (
-                    <List
-                        analysisFramework={this.props.analysisFramework}
-                    />
-                ),
+                component: List,
+                rendererParams,
                 wrapContainer: true,
                 mount: true,
             },

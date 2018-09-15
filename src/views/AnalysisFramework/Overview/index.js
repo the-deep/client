@@ -1,11 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import TextInput from '#rsci/TextInput';
+import Label from '#rsci/Label';
+import TextArea from '#rsci/TextArea';
+
 import {
     widgetListingVisibility,
     widgetList,
     VIEW,
 } from '#widgets';
+import _ts from '#ts';
 
 import WidgetList from '../WidgetList';
 import WidgetEditor from '../WidgetEditor';
@@ -47,6 +52,21 @@ export default class Overview extends React.PureComponent {
                     analysisFrameworkId={analysisFrameworkId}
                 />
                 <div className={styles.gridLayoutContainer}>
+                    <header className={styles.header}>
+                        <TextInput
+                            className={styles.nameInput}
+                            label={_ts('project', 'addAfTitleLabel')}
+                            faramElementName="title"
+                            placeholder={_ts('project', 'addAfTitlePlaceholder')}
+                        />
+                        <TextArea
+                            className={styles.descriptionInput}
+                            label={_ts('project', 'projectDescriptionLabel')}
+                            faramElementName="description"
+                            placeholder={_ts('project', 'projectDescriptionPlaceholder')}
+                            rows={1}
+                        />
+                    </header>
                     <div className={styles.scrollWrapper}>
                         <WidgetEditor
                             widgets={widgets}

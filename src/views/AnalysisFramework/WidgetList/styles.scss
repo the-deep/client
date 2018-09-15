@@ -1,7 +1,19 @@
 @import '~base-scss/base';
 
-.widget-list {
+.widget-list-container {
+    display: flex;
+    flex-direction: column;
     border-right: $width-separator-thin solid $color-separator;
-    background-color: $color-background-row-alt;
-    overflow-y: auto;
+
+    .heading {
+        flex-shrink: 0;
+        background-color: $color-foreground;
+        padding: $spacing-medium;
+    }
+
+    .widget-list {
+        flex-grow: 1;
+        background-color: $color-background-row-alt;
+        overflow-y: auto;
+    }
 }
