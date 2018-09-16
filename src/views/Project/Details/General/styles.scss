@@ -48,11 +48,8 @@ $width-min-inputs-container: 320px;
         }
     }
 
-    .visualizations {
+    .dashboard {
         display: flex;
-        align-items: center;
         flex-grow: 1;
-        justify-content: center;
-        background-color: $color-foreground;
     }
 }

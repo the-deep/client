@@ -1,0 +1,145 @@
+@import '~base-scss/base';
+
+.project-dashboard {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: $color-foreground;
+
+    .row {
+        flex: 1;
+    }
+
+    .metadata {
+        display: flex;
+
+        .left-section, .right-section {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            justify-content: center;
+
+            .top-section, .bottom-section {
+                display: flex;
+                flex: 1;
+                justify-content: space-around;
+            }
+
+            .bottom-section {
+                margin-top: $spacing-super-large;
+            }
+        }
+
+        .chart {
+            display: flex;
+            align-items: center;
+            align-self: center;
+            flex-direction: column;
+
+            h3 {
+                margin-bottom: $spacing-medium-alt;
+            }
+
+            .spark-line {
+                width: 196px;
+                height: 72px;
+
+                :global {
+                    .fill {
+                        opacity: 0.3;
+                        fill: $color-accent;
+                        stroke: $color-accent;
+                    }
+                    .line {
+                        stroke: $color-accent;
+                    }
+                }
+            }
+        }
+
+        .user-table {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+
+            h3 {
+                margin-bottom: $spacing-medium-alt;
+            }
+
+            .user {
+                display: flex;
+                justify-content: space-between;
+                border-bottom: $width-separator-thin solid $color-separator;
+                width: 176px;
+
+                .name {
+                    margin-right: $spacing-extra-large;
+                }
+            }
+        }
+
+        .summary {
+            display: flex;
+            flex: 1;
+            justify-content: space-around;
+
+            .summary-item {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+
+                .value {
+                    margin: $spacing-small;
+                    color: $color-primary;
+                    font-size: $font-size-extra-large;
+                }
+
+                .label {
+                    text-transform: uppercase;
+                    color: $color-text-label;
+                }
+            }
+        }
+
+        .info {
+            display: table;
+            align-self: center;
+            border-spacing: $spacing-large $spacing-small-alt;
+
+            .info-item {
+                display: table-row;
+
+                .label {
+                    display: table-cell;
+                    text-align: right;
+                    text-transform: uppercase;
+                    color: $color-text-label;
+
+                    &::after {
+                        content: ':';
+                    }
+                }
+
+                .value {
+                    display: table-cell;
+                    font-size: $font-size-large;
+                }
+            }
+        }
+    }
+
+    .map {
+        position: relative;
+
+        .region-select-input {
+            position: absolute;
+            top: $spacing-small;
+            left: $spacing-small;
+            z-index: 20;
+            border: $width-separator-thin solid $color-separator-alt;
+            background-color: $color-foreground;
+            padding: $spacing-small;
+        }
+    }
+}
+

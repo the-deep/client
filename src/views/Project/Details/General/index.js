@@ -28,6 +28,7 @@ import _ts from '#ts';
 
 import ProjectGetRequest from './requests/ProjectGetRequest';
 import ProjectPutRequest from './requests/ProjectPutRequest';
+import Dashboard from './Dashboard';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -80,7 +81,6 @@ export default class ProjectDetailsGeneral extends PureComponent {
 
         const {
             setProjectDetails,
-            projectServerData,
             setErrorProjectDetails,
         } = this.props;
 
@@ -193,6 +193,7 @@ export default class ProjectDetailsGeneral extends PureComponent {
     render() {
         const {
             className: classNameFromProps,
+            projectId,
             projectLocalData: {
                 faramValues = {},
                 faramErrors,
@@ -229,9 +230,10 @@ export default class ProjectDetailsGeneral extends PureComponent {
                     error={faramErrors}
                     disabled={loading}
                 >
-                    <div className={styles.visualizations}>
-                        Visualizations
-                    </div>
+                    <Dashboard
+                        className={styles.dashboard}
+                        projectId={projectId}
+                    />
                     <div className={styles.inputsContainer}>
                         <header className={styles.header}>
                             <NonFieldErrors
