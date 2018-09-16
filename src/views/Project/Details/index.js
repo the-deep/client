@@ -87,12 +87,12 @@ export default class ProjectDetails extends React.PureComponent {
 
     render() {
         const {
-            className: classNameFromProps,
             project: {
                 role: {
                     setupPermissions = [],
                 } = {},
             },
+            className: classNameFromProps,
         } = this.props;
 
         if (setupPermissions.indexOf('modify') === -1) {
