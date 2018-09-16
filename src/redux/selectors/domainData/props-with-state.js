@@ -39,6 +39,13 @@ const currentUserSelector = createSelector(
     (activeUser, users) => (users[activeUser.userId] || emptyObject),
 );
 
+// activeProject
+export const activeProjectSelector = createSelector(
+    projectsSelector,
+    projectIdFromRoute,
+    (projects, projectId) => (projects[projectId] || emptyObject),
+);
+
 export const userExportsListSelector = createSelector(
     userExportsSelector,
     projectIdFromRoute,

@@ -8,7 +8,7 @@ import MultiViewContainer from '#rscv/MultiViewContainer';
 
 import {
     routeUrlSelector,
-    projectServerDataSelector,
+    activeProjectSelector,
 } from '#redux';
 
 import _ts from '#ts';
@@ -21,18 +21,18 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    projectServerData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     projectId: PropTypes.number,
+    project: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     className: '',
-    projectServerData: {},
     projectId: undefined,
+    project: {},
 };
 
 const mapStateToProps = (state, props) => ({
-    projectServerData: projectServerDataSelector(state, props),
+    project: activeProjectSelector(state, props),
     routeUrl: routeUrlSelector(state),
 });
 
@@ -88,7 +88,7 @@ export default class ProjectDetails extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            projectServerData: {
+            project: {
                 role: {
                     setupPermissions = [],
                 } = {},
