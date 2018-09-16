@@ -214,7 +214,7 @@ export default class AnalysisFramework extends React.PureComponent {
                         tabs={this.tabs}
                         useHash
                         replaceHistory
-                        deafultHash={this.defaultHash}
+                        defaultHash={this.defaultHash}
                     />
                     <div className={styles.actionButtons}>
                         <DangerConfirmButton
