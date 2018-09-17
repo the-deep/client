@@ -23,11 +23,9 @@ const defaultProps = {
     onModalVisibilityChange: () => {},
 };
 
-const deleteClick = (rows, index) => {
-    const newRows = [...rows];
-    newRows.splice(index, 1);
-    return newRows;
-};
+const deleteClick = (rows, index) => (
+    rows.filter((row, ind) => ind !== index)
+);
 
 export default class SelectedWidgetItem extends React.PureComponent {
     static propTypes = propTypes;

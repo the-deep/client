@@ -20,13 +20,10 @@ const propTypes = {
     conditions: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
-const deleteClick = (rows, index) => {
-    const newRows = [...rows];
-    newRows.splice(index, 1);
-    return newRows;
-};
+const deleteClick = (rows, index) => (
+    rows.filter((row, ind) => ind !== index)
+);
 
-// eslint-disable-next-line react/prefer-stateless-function
 export default class InputRow extends React.PureComponent {
     static propTypes = propTypes;
 
