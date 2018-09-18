@@ -49,7 +49,6 @@ export default class ProjectCreateRequest extends Request {
     }
 
     handleFatal = () => {
-        // FIXME: Add String `Error while trying to save project.`
         this.parent.setState({
             faramErrors: { $internal: _ts('components.addProject', 'projectCreateFatalError') },
         });

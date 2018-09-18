@@ -15,7 +15,7 @@ import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
 
 import _ts from '#ts';
-import { setUserGroupAction } from '#redux';
+import { setUsergroupViewAction } from '#redux';
 
 import UserGroupPatchRequest from '../requests/UserGroupPatchRequest';
 
@@ -28,13 +28,13 @@ const propTypes = {
         title: PropTypes.string.isRequired,
         description: PropTypes.string.isRequired,
     }).isRequired,
-    setUserGroup: PropTypes.func.isRequired,
+    setUsergroupView: PropTypes.func.isRequired,
 };
 
 const defaultProps = {};
 
 const mapDispatchToProps = dispatch => ({
-    setUserGroup: params => dispatch(setUserGroupAction(params)),
+    setUsergroupView: params => dispatch(setUsergroupViewAction(params)),
 });
 
 @connect(undefined, mapDispatchToProps)
@@ -61,27 +61,17 @@ export default class UserGroupEdit extends React.PureComponent {
                 description: [],
             },
         };
+
+        // Requests
+        this.userGroupPatchRequest = new UserGroupPatchRequest({
+            setState: params => this.setState(params),
+            setUsergroupView: this.props.setUsergroupView,
+            handleModalClose: this.props.handleModalClose,
+        });
     }
 
     componentWillUnmount() {
-        if (this.userGroupCreateRequest) {
-            this.userGroupCreateRequest.stop();
-        }
-    }
-
-    startRequestForUserGroupPatch = (userGroupId, { title, description }) => {
-        if (this.userGroupCreateRequest) {
-            this.userGroupCreateRequest.stop();
-        }
-        const userGroupCreateRequest = new UserGroupPatchRequest({
-            setUserGroup: this.props.setUserGroup,
-            handleModalClose: this.props.handleModalClose,
-            setState: v => this.setState(v),
-        });
-        this.userGroupCreateRequest = userGroupCreateRequest.create(userGroupId, {
-            title, description,
-        });
-        this.userGroupCreateRequest.start();
+        this.userGroupPatchRequest.stop();
     }
 
     handleFaramChange = (faramValues, faramErrors) => {
@@ -97,10 +87,10 @@ export default class UserGroupEdit extends React.PureComponent {
     };
 
     handleFaramValidationSuccess = (values) => {
-        this.startRequestForUserGroupPatch(
+        this.userGroupPatchRequest.init(
             this.props.userGroup.id,
             values,
-        );
+        ).start();
     };
 
     // BUTTONS

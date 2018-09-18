@@ -17,17 +17,6 @@ export default class UserPatchRequest extends Request {
         this.parent.setState({ pending: false });
     }
 
-    handleFailure = (faramErrors) => {
-        this.parent.setState({ faramErrors });
-    }
-
-    handleFailure = () => {
-        this.parent.setState({
-            // FIXME: use strings
-            faramErrors: { $internal: ['Error while trying to save user.'] },
-        });
-    }
-
     handleSuccess = (response) => {
         const { userId } = this.extraParent;
         const { previousUserData = {} } = this.parent;
@@ -45,6 +34,17 @@ export default class UserPatchRequest extends Request {
         if (response.language !== previousUserData.language) {
             window.location.reload();
         }
+    }
+
+    handleFailure = (faramErrors) => {
+        this.parent.setState({ faramErrors });
+    }
+
+    handleFatal = () => {
+        this.parent.setState({
+            // FIXME: use strings
+            faramErrors: { $internal: ['Error while trying to save user.'] },
+        });
     }
 
     init = (userId, data) => {

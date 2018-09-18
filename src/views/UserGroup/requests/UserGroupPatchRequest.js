@@ -1,65 +1,56 @@
-import { FgRestBuilder } from '#rsu/rest';
 import {
     createUrlForUserGroup,
     createParamsForUserGroupsPatch,
-    alterResponseErrorToFaramError,
 } from '#rest';
+import Request from '#utils/Request';
 import notify from '#notify';
-import schema from '#schema';
 import _ts from '#ts';
 
+
 /*
- * props: setState, setUserGroup, handleModalClose
+ * props: setState, setUsergroupView, handleModalClose
 */
-export default class UserGroupPatchRequest {
-    constructor(props) {
-        this.props = props;
+export default class UserGroupPatchRequest extends Request {
+    schemaName = 'userGroupCreateResponse'
+
+    handlePreLoad = () => {
+        this.parent.setState({ pending: true });
     }
 
-    success = (response) => {
-        try {
-            schema.validate(response, 'userGroupCreateResponse');
-            this.props.setUserGroup({
-                userGroup: response,
-            });
-            notify.send({
-                title: _ts('userGroup', 'userGroupEdit'),
-                type: notify.type.SUCCESS,
-                message: _ts('userGroup', 'userGroupEditSuccess'),
-                duration: notify.duration.MEDIUM,
-            });
-            this.props.handleModalClose();
-        } catch (er) {
-            console.error(er);
-        }
+    handlePostLoad = () => {
+        this.parent.setState({ pending: false });
     }
 
-    failure = (response) => {
-        const faramErrors = alterResponseErrorToFaramError(response.errors);
-        this.props.setState({ faramErrors });
+    handleSuccess = (response) => {
+        this.parent.setUsergroupView({
+            usergroupId: this.extraParent.userGroupId,
+            information: response,
+        });
+        notify.send({
+            title: _ts('userGroup', 'userGroupEdit'),
+            type: notify.type.SUCCESS,
+            message: _ts('userGroup', 'userGroupEditSuccess'),
+            duration: notify.duration.MEDIUM,
+        });
+        this.parent.handleModalClose();
     }
 
-    fatal = () => {
-        this.props.setState({
+    handleFailure = (faramErrors) => {
+        this.parent.setState({ faramErrors });
+    }
+
+    handleFatal = () => {
+        this.parent.setState({
             faramErrors: { $internal: [_ts('userGroup', 'userGroupPatchFatal')] },
         });
     }
 
-    create = (userGroupId, { title, description }) => {
-        const urlForUserGroup = createUrlForUserGroup(userGroupId);
-        const userGroupCreateRequest = new FgRestBuilder()
-            .url(urlForUserGroup)
-            .params(() => createParamsForUserGroupsPatch({ title, description }))
-            .preLoad(() => {
-                this.props.setState({ pending: true });
-            })
-            .postLoad(() => {
-                this.props.setState({ pending: false });
-            })
-            .success(this.success)
-            .failure(this.failure)
-            .fatal(this.fatal)
-            .build();
-        return userGroupCreateRequest;
+    init = (userGroupId, { title, description }) => {
+        this.extraParent = { userGroupId };
+        this.createDefault({
+            url: createUrlForUserGroup(userGroupId),
+            params: createParamsForUserGroupsPatch({ title, description }),
+        });
+        return this;
     }
 }
