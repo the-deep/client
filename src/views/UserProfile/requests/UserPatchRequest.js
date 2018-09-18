@@ -42,8 +42,7 @@ export default class UserPatchRequest extends Request {
 
     handleFatal = () => {
         this.parent.setState({
-            // FIXME: use strings
-            faramErrors: { $internal: ['Error while trying to save user.'] },
+            faramErrors: { $internal: [_ts('userProfile', 'userPatchFatal')] },
         });
     }
 

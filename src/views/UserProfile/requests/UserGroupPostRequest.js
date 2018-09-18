@@ -38,8 +38,7 @@ export default class UserGroupPostRequest extends Request {
 
     handleFatal = () => {
         this.parent.setState({
-            // FIXME: use strings
-            faramErrors: { $internal: ['Error while trying to save user group.'] },
+            faramErrors: { $internal: [_ts('userProfile', 'userGroupPostFatal')] },
         });
     }
 

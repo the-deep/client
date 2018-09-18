@@ -7,7 +7,7 @@ import {
     createParamsForGet,
 } from '#rest';
 
-export default class UserUsergroupsPending extends Request {
+export default class UserUsergroupsGetRequest extends Request {
     schemaName = 'userGroupsGetResponse';
 
     handlePreLoad = () => {
@@ -37,7 +37,7 @@ export default class UserUsergroupsPending extends Request {
         notify.send({
             title: _ts('userProfile', 'userProfileLabel'),
             type: notify.type.ERROR,
-            message: _ts('userProfile', 'userUsergroupPending'),
+            message: _ts('userProfile', 'userUserGroupGetFatal'),
             duration: notify.duration.SLOW,
         });
     }

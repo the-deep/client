@@ -1,7 +1,6 @@
 import { createSelector } from 'reselect';
 import { activeUserSelector } from '../auth';
 import {
-    userIdFromRoute,
     groupIdFromRoute,
     countryIdFromRoute,
     projectIdFromRoute,
@@ -38,13 +37,6 @@ const currentUserSelector = createSelector(
     activeUserSelector,
     usersSelector,
     (activeUser, users) => (users[activeUser.userId] || emptyObject),
-);
-
-// userIdFromRoute
-const userSelector = createSelector(
-    userIdFromRoute,
-    usersSelector,
-    (userId, users) => (users[userId] || emptyObject),
 );
 
 export const userExportsListSelector = createSelector(
@@ -117,44 +109,6 @@ export const userGroupProjectSelector = createSelector(
     ),
 );
 
-/*
-// userIdFromRoute
-export const userInformationSelector = createSelector(
-    userSelector,
-    user => (user.information || emptyObject),
-);
-
-// userIdFromRoute
-export const userProjectsSelector = createSelector(
-    projectsSelector,
-    userSelector,
-    (projects, user) => (
-        user.projects
-            ? (
-                user.projects
-                    .map(projectId => projects[projectId])
-                    .filter(project => !!project)
-            )
-            : emptyList
-    ),
-);
-
-// userIdFromRoute
-export const userGroupsSelector = createSelector(
-    groupsSelector,
-    userSelector,
-    (userGroups, user) => (
-        user.userGroups
-            ? (
-                user.userGroups
-                    .map(userGroupId => (userGroups[userGroupId]))
-                    .filter(userGroup => !!userGroup)
-            )
-            : emptyList
-    ),
-);
-*/
-
 // activeUser
 export const currentUserInformationSelector = createSelector(
     currentUserSelector,
@@ -165,14 +119,6 @@ export const currentUserInformationSelector = createSelector(
 export const currentUserProjectsSelector = createSelector(
     projectsSelector,
     projects => Object.keys(projects).map(projectId => projects[projectId]),
-    /*
-    currentUserSelector,
-    (user, projects) => (
-        (user.projects && user.projects.map(
-            projectId => projects[projectId] || emptyObject,
-        )) || emptyList
-    ),
-    */
 );
 
 // activeUser
