@@ -19,8 +19,8 @@ export const createUrlForProjectsOfUser = userId => (
     `${wsEndpoint}/projects/member-of/?${p({ user: userId })}`
 );
 
-export const createUrlForUserGroupProjects = id => (
-    `${wsEndpoint}/projects/?${p({ user_group: id })}`
+export const createUrlForUserGroupProjects = (id, fields) => (
+    `${wsEndpoint}/projects/?${p({ user_groups: id, fields })}`
 );
 
 const projectMiniUrlFields = [

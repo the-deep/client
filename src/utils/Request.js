@@ -59,7 +59,7 @@ export default class Request {
 
     failureInterceptor = (response) => {
         const newResponse = alterResponseErrorToFaramError(response.errors);
-        this.handleFailure(newResponse);
+        this.handleFailure(newResponse, response);
     }
 
     createDefault = (createOptions) => {

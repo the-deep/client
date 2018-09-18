@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
+
 import {
     reverseRoute,
     caseInsensitiveSubmatch,
@@ -20,10 +22,10 @@ import Table from '#rscv/Table';
 import SearchInput from '#rsci/SearchInput';
 
 import {
-    userGroupProjectSelector,
-    setUserProjectsAction,
-    unSetProjectAction,
-    activeUserSelector,
+    usergroupProjectsSelector,
+
+    setUsergroupViewAction,
+    unsetUsergroupViewProjectAction,
 } from '#redux';
 import {
     iconNames,
@@ -32,17 +34,16 @@ import {
 import _ts from '#ts';
 
 import UserProjectAdd from '#components/UserProjectAdd';
-import UserGroupProjectsRequest from '../requests/UserGroupProjectsRequest';
+
 import ProjectDeleteRequest from '../requests/ProjectDeleteRequest';
+
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    userGroup: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    usergroup: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     projects: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-    setUserGroupProject: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
     unSetProject: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
-    activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     isCurrentUserAdmin: PropTypes.bool.isRequired,
 };
 
@@ -51,13 +52,12 @@ const defaultProps = {
 };
 
 const mapStateToProps = (state, props) => ({
-    projects: userGroupProjectSelector(state, props),
-    activeUser: activeUserSelector(state),
+    projects: usergroupProjectsSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
-    setUserGroupProject: params => dispatch(setUserProjectsAction(params)),
-    unSetProject: params => dispatch(unSetProjectAction(params)),
+    setUsergroupView: params => dispatch(setUsergroupViewAction(params)),
+    unSetProject: params => dispatch(unsetUsergroupViewProjectAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -75,7 +75,7 @@ export default class ProjectsTable extends React.PureComponent {
             deletePending: false,
             selectedProject: {},
             searchProjectInputValue: '',
-            projects: this.props.projects,
+            projects: props.projects,
         };
 
         this.projectHeaders = [
@@ -141,7 +141,7 @@ export default class ProjectsTable extends React.PureComponent {
                             <span className={iconNames.openLink} />
                         </Link>
                         {
-                            this.props.isCurrentUserAdmin &&
+                            row.role === 'admin' &&
                             <DangerButton
                                 title={_ts('userGroup', 'deleteProjectLinkTitle')}
                                 onClick={() => this.handleDeleteProjectClick(row)}
@@ -154,10 +154,12 @@ export default class ProjectsTable extends React.PureComponent {
                 ),
             },
         ];
-    }
 
-    componentWillMount() {
-        this.startRequestForUserGroupProjects(this.props.userGroup.id);
+        // Requests
+        this.projectDeleteRequest = new ProjectDeleteRequest({
+            setState: v => this.setState(v),
+            unSetProject: this.props.unSetProject,
+        });
     }
 
     componentWillReceiveProps(nextProps) {
@@ -167,38 +169,14 @@ export default class ProjectsTable extends React.PureComponent {
     }
 
     componentWillUnmount() {
-        if (this.requestForUserGroupProjects) {
-            this.requestForUserGroupProjects.stop();
-        }
+        this.projectDeleteRequest.stop();
     }
 
-    startRequestForUserGroupProjects = (id) => {
-        if (this.requestForUserGroupProjects) {
-            this.requestForUserGroupProjects.stop();
-        }
-        const requestForUserGroupProjects = new UserGroupProjectsRequest({
-            setUserGroupProject: this.props.setUserGroupProject,
-        });
-        this.requestForUserGroupProjects = requestForUserGroupProjects.create(id);
-        this.requestForUserGroupProjects.start();
-    }
-
-    startRequestForProjectDelete = (id) => {
-        if (this.projectDeleteRequest) {
-            this.projectDeleteRequest.stop();
-        }
-        const { id: userId } = this.props.activeUser;
-        const projectDeleteRequest = new ProjectDeleteRequest({
-            unSetProject: this.props.unSetProject,
-            setState: v => this.setState(v),
-        });
-        this.projectDeleteRequest = projectDeleteRequest.create({ id, userId });
-        this.projectDeleteRequest.start();
-    }
+    createUserGroupList = memoize(userGroup => ([userGroup]))
 
     handleDeleteProjectClick = (project) => {
         const confirmText = _ts('userGroup', 'confirmTextDeleteProject', {
-            title: project.title,
+            title: (<b>{project.title}</b>),
         });
 
         this.setState({
@@ -210,12 +188,9 @@ export default class ProjectsTable extends React.PureComponent {
 
     handleDeleteProjectClose = (confirm) => {
         if (confirm) {
-            if (this.projectDeleteRequest) {
-                this.projectDeleteRequest.stop();
-            }
-
-            const { selectedProject } = this.state;
-            this.startRequestForProjectDelete(selectedProject.id);
+            const { selectedProject: { id: projectId } } = this.state;
+            const { id: usergroupId } = this.props.usergroup;
+            this.projectDeleteRequest.init(projectId, usergroupId).start();
         }
         this.setState({ showDeleteProjectModal: false });
     }
@@ -242,7 +217,7 @@ export default class ProjectsTable extends React.PureComponent {
     keyExtractor = rowData => rowData.id
 
     render() {
-        const { userGroup } = this.props;
+        const { usergroup } = this.props;
 
         const {
             deletePending,
@@ -304,7 +279,7 @@ export default class ProjectsTable extends React.PureComponent {
                         />
                         <ModalBody>
                             <UserProjectAdd
-                                userGroups={[userGroup]}
+                                userGroups={this.createUserGroupList(usergroup)}
                                 handleModalClose={this.handleAddProjectModalClose}
                             />
                         </ModalBody>

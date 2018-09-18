@@ -773,7 +773,11 @@
         "-86309773": "Join our slack channel",
         "-28004665": "Join our skype group",
         "-76332316": "Do you want to format all excerpts?",
-        "-83635501": "Format all excerpts"
+        "-83635501": "Format all excerpts",
+        "-77603800": "Couldn't save project",
+        "-71533605": "Failed to save user information.",
+        "-5184045": "Failed to retrieve user's projects.",
+        "-59897985": "Failed to retrieve user's User Groups."
     },
     "links": {
         "browserExtension": {
@@ -1852,7 +1856,14 @@
             "fileSelection": 5557,
             "invalidFileSelection": 5556,
             "joinRequestsInfo": -35292998,
-            "newsAndUpdatesInfo": -63441199
+            "newsAndUpdatesInfo": -63441199,
+            "userInformationGetFailure": -71533605,
+            "userProfileLabel": 5566,
+            "userProjectsGetFailure": -5184045,
+            "userProjectsGetFatal": -5184045,
+            "userUserGroupGetFatal": -59897985,
+            "userGroupPostFatal": 204,
+            "userPatchFatal": -71533605
         },
         "notifications": {
             "notificationHeaderTitle": 1929,
@@ -1878,7 +1889,8 @@
             "userProjectCreate": 916,
             "userProjectCreateSuccess": 917,
             "userProjectCreateFailure": 918,
-            "userProjectCreateFatal": 919
+            "userProjectCreateFatal": 919,
+            "projectCreateFatalError": -77603800
         },
         "components.addRegion": {
             "cancelButtonLabel": 61,

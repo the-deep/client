@@ -1,40 +1,40 @@
-import { FgRestBuilder } from '#rsu/rest';
 import {
     createUrlForProject,
     createParamsForProjectDelete,
 } from '#rest';
 import notify from '#notify';
+import Request from '#utils/Request';
 import _ts from '#ts';
 
 /*
- * props: setState, unSetProject
+ * parent: setState, unSetProject
 */
 
-export default class ProjectDeleteRequest {
-    constructor(props) {
-        this.props = props;
+export default class ProjectDeleteRequest extends Request {
+    handlePreLoad = () => {
+        this.parent.setState({ deletePending: true });
     }
 
-    success = (id, userId) => () => {
-        try {
-            this.props.unSetProject({
-                projectId: id,
-                userId,
-            });
-            notify.send({
-                title: _ts('userGroup', 'userProjectDelete'),
-                type: notify.type.SUCCESS,
-                message: _ts('userGroup', 'userProjectDeleteSuccess'),
-                duration: notify.duration.MEDIUM,
-            });
-            this.props.setState({ showDeleteProjectModal: false });
-        } catch (er) {
-            console.error(er);
-        }
+    handlePostLoad = () => {
+        this.parent.setState({ deletePending: false });
     }
 
-    failure = (response) => {
-        console.warn('FAILURE:', response);
+    handleSuccess = () => {
+        const { projectId, usergroupId } = this.extraParent;
+        this.parent.unSetProject({
+            projectId,
+            usergroupId,
+        });
+        notify.send({
+            title: _ts('userGroup', 'userProjectDelete'),
+            type: notify.type.SUCCESS,
+            message: _ts('userGroup', 'userProjectDeleteSuccess'),
+            duration: notify.duration.MEDIUM,
+        });
+        this.parent.setState({ showDeleteProjectModal: false });
+    }
+
+    handleFailure = () => {
         notify.send({
             title: _ts('userGroup', 'userProjectDelete'),
             type: notify.type.ERROR,
@@ -43,8 +43,7 @@ export default class ProjectDeleteRequest {
         });
     }
 
-    fatal = (response) => {
-        console.warn('FATAL:', response);
+    handleFatal = () => {
         notify.send({
             title: _ts('userGroup', 'userProjectDelete'),
             type: notify.type.ERROR,
@@ -53,20 +52,12 @@ export default class ProjectDeleteRequest {
         });
     }
 
-    create = ({ id, userId }) => {
-        const projectDeleteRequest = new FgRestBuilder()
-            .url(createUrlForProject(id))
-            .params(createParamsForProjectDelete)
-            .preLoad(() => {
-                this.props.setState({ deletePending: true });
-            })
-            .postLoad(() => {
-                this.props.setState({ deletePending: false });
-            })
-            .success(this.success(id, userId))
-            .failure(this.failure)
-            .fatal(this.fatal)
-            .build();
-        return projectDeleteRequest;
+    init = (projectId, usergroupId) => {
+        this.extraParent = { projectId, usergroupId };
+        this.createDefault({
+            url: createUrlForProject(projectId),
+            params: createParamsForProjectDelete(),
+        });
+        return this;
     }
 }

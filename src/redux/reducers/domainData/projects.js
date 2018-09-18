@@ -1,5 +1,7 @@
 import update from '#rsu/immutable-update';
-import { isTruthy, compareString } from '#rsu/common';
+import { compareString } from '#rsu/common';
+import { UP__UNSET_USER_PROJECT } from '#redux/reducers/siloDomainData/users';
+import { UG__UNSET_USERGROUP_PROJECT } from '#redux/reducers/siloDomainData/usergroups';
 
 // TYPE
 
@@ -20,10 +22,10 @@ export const setUserProjectsAction = ({ userId, projects, extra }) => ({
     extra, // used to set active project if there is none
 });
 
-export const setProjectAction = ({ userId, project }) => ({
+export const setProjectAction = ({ project, userId }) => ({
     type: SET_USER_PROJECT,
-    userId,
     project,
+    userId,
 });
 
 export const setProjectOptionsAction = ({ projectId, options }) => ({
@@ -50,7 +52,7 @@ export const unsetUserProjectMembershipAction = ({ memberId, projectId }) => ({
     projectId,
 });
 
-export const unSetProjectAction = ({ userId, projectId }) => ({
+export const unsetProjectAction = ({ userId, projectId }) => ({
     type: UNSET_USER_PROJECT,
     userId,
     projectId,
@@ -62,29 +64,14 @@ const emptyObject = {};
 // REDUCER
 
 const setUserProject = (state, action) => {
-    const { project, userId } = action;
+    const { project } = action;
     const settings = {
         projects: {
-            [project.id]: { $auto: {
+            [project.id]: {
                 $set: project,
-            } },
+            },
         },
     };
-
-    if (userId) {
-        const userProjectArrayIndex = ((state.users[userId] || emptyObject).projects
-            || emptyList).indexOf(project.id);
-
-        if (userProjectArrayIndex === -1) {
-            settings.users = {
-                [userId]: { $auto: {
-                    projects: { $autoArray: {
-                        $push: [project.id],
-                    } },
-                } },
-            };
-        }
-    }
     return update(state, settings);
 };
 
@@ -124,13 +111,13 @@ const setUsersProjectMembership = (state, action) => {
     );
 
     const settings = {
-        projects: {
+        projects: { $auto: {
             [projectId]: { $auto: {
                 memberships: { $autoArray: {
                     $push: newMembers,
                 } },
             } },
-        },
+        } },
     };
     return update(state, settings);
 };
@@ -144,7 +131,7 @@ const setUserProjectMembership = (state, action) => {
     );
 
     const settings = {
-        projects: {
+        projects: { $auto: {
             [projectId]: { $auto: {
                 memberships: { $autoArray: {
                     [updatedMemberShipIndex]: { $auto: {
@@ -152,7 +139,7 @@ const setUserProjectMembership = (state, action) => {
                     } },
                 } },
             } },
-        },
+        } },
     };
     return update(state, settings);
 };
@@ -167,13 +154,13 @@ const unsetUserProjectMembership = (state, action) => {
 
     if (membershipArrayIndex !== -1) {
         const settings = {
-            projects: {
+            projects: { $auto: {
                 [projectId]: { $auto: {
                     memberships: { $autoArray: {
                         $splice: [[membershipArrayIndex, 1]],
                     } },
                 } },
-            },
+            } },
         };
         return update(state, settings);
     }
@@ -181,58 +168,30 @@ const unsetUserProjectMembership = (state, action) => {
 };
 
 const unsetUserProject = (state, action) => {
-    const { projectId, userId } = action;
+    const { projectId } = action;
     const settings = {
-        projects: {
-            [projectId]: { $auto: {
-                $set: undefined,
-            } },
-        },
+        projects: { $auto: {
+            $unset: [projectId],
+        } },
     };
-
-    if (userId) {
-        const userProjectArrayIndex = ((state.users[userId] || emptyObject).projects
-            || emptyList).indexOf(projectId);
-
-        if (userProjectArrayIndex !== -1) {
-            settings.users = {
-                [userId]: { $auto: {
-                    projects: { $autoArray: {
-                        $splice: [[userProjectArrayIndex, 1]],
-                    } },
-                } },
-            };
-        }
-    }
     return update(state, settings);
 };
 
 const setUserProjects = (state, action) => {
-    const { projects, userId } = action;
+    const { projects: projectList } = action;
 
-    const settings = {};
-    const projectSettings = projects.reduce(
-        (acc, project) => {
-            acc[project.id] = { $auto: {
-                $merge: project,
-            } };
-            return acc;
-        },
+    const projects = projectList.reduce(
+        (acc, project) => (
+            {
+                ...acc,
+                [project.id]: project,
+            }
+        ),
         { },
     );
-    settings.projects = projectSettings;
-
-    // NOTE: userId not sent when setting projects for usergroup
-    if (isTruthy(userId)) {
-        const userSettings = {
-            [userId]: { $auto: {
-                projects: { $autoArray: {
-                    $set: projects.map(project => project.id),
-                } },
-            } },
-        };
-        settings.users = userSettings;
-    }
+    const settings = {
+        projects: { $set: projects },
+    };
     return update(state, settings);
 };
 
@@ -244,5 +203,9 @@ const reducers = {
     [SET_USERS_PROJECT_MEMBERSHIP]: setUsersProjectMembership,
     [SET_USER_PROJECT_MEMBERSHIP]: setUserProjectMembership,
     [UNSET_USER_PROJECT_MEMBERSHIP]: unsetUserProjectMembership,
+
+    // From Silo
+    [UP__UNSET_USER_PROJECT]: unsetUserProject,
+    [UG__UNSET_USERGROUP_PROJECT]: unsetUserProject,
 };
 export default reducers;

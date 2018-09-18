@@ -15,7 +15,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
     activeUserSelector,
-    setUserGroupAction,
+    setUserUsergroupAction,
 } from '#redux';
 import _ts from '#ts';
 
@@ -37,7 +37,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    setUserGroup: params => dispatch(setUserGroupAction(params)),
+    setUserGroup: params => dispatch(setUserUsergroupAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -60,25 +60,16 @@ export default class UserGroupAdd extends React.PureComponent {
                 title: [requiredCondition],
             },
         };
+
+        this.userGroupCreateRequest = new UserGroupPostRequest({
+            setState: v => this.setState(v),
+            setUserGroup: this.props.setUserGroup,
+            handleModalClose: this.props.handleModalClose,
+        });
     }
 
     componentWillUnmount() {
-        if (this.userGroupCreateRequest) {
-            this.userGroupCreateRequest.stop();
-        }
-    }
-
-    startRequestForUserGroupCreate = (values, userId) => {
-        if (this.userGroupCreateRequest) {
-            this.userGroupCreateRequest.stop();
-        }
-        const userGroupCreateRequest = new UserGroupPostRequest({
-            setUserGroup: this.props.setUserGroup,
-            handleModalClose: this.props.handleModalClose,
-            setState: v => this.setState(v),
-        });
-        this.userGroupCreateRequest = userGroupCreateRequest.create(values, userId);
-        this.userGroupCreateRequest.start();
+        this.userGroupCreateRequest.stop();
     }
 
     handleFaramChange = (faramValues, faramErrors) => {
@@ -95,7 +86,7 @@ export default class UserGroupAdd extends React.PureComponent {
 
     handleFaramValidationSuccess = (values) => {
         const { userId } = this.props.activeUser;
-        this.startRequestForUserGroupCreate(values, userId);
+        this.userGroupCreateRequest.init(values, userId).start();
     };
 
     // BUTTONS

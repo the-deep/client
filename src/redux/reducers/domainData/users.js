@@ -1,9 +1,9 @@
 import update from '#rsu/immutable-update';
+import { UP__SET_USER_PROFILE } from '../siloDomainData/users';
 
 // TYPE
 
 export const SET_USER_INFORMATION = 'domainData/SET_USER_INFORMATION';
-export const UNSET_USER = 'domainData/UNSET_USER';
 export const SET_USERS_INFORMATION = 'domainData/SET_USERS_INFORMATION';
 
 // ACTION-CREATOR
@@ -12,11 +12,6 @@ export const setUserInformationAction = ({ userId, information }) => ({
     type: SET_USER_INFORMATION,
     userId,
     information,
-});
-
-export const unsetUserAction = ({ userId }) => ({
-    type: UNSET_USER,
-    userId,
 });
 
 export const setUsersInformationAction = ({ users }) => ({
@@ -28,23 +23,15 @@ export const setUsersInformationAction = ({ users }) => ({
 
 const setUserInformation = (state, action) => {
     const { userId, information } = action;
+    if (!(userId && information)) {
+        return state;
+    }
     const settings = {
-        users: {
+        users: { $auto: {
             [userId]: { $auto: {
-                information: { $auto: {
-                    $merge: information,
-                } },
+                information: { $set: information },
             } },
-        },
-    };
-    return update(state, settings);
-};
-
-const unsetUserInformation = (state, action) => {
-    const settings = {
-        users: {
-            [action.userId]: { $set: undefined },
-        },
+        } },
     };
     return update(state, settings);
 };
@@ -72,7 +59,8 @@ const setUsersInformation = (state, action) => {
 
 const reducers = {
     [SET_USER_INFORMATION]: setUserInformation,
-    [UNSET_USER]: unsetUserInformation,
     [SET_USERS_INFORMATION]: setUsersInformation,
+
+    [UP__SET_USER_PROFILE]: setUserInformation,
 };
 export default reducers;

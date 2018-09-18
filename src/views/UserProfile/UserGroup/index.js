@@ -24,10 +24,9 @@ import ModalHeader from '#rscv/Modal/Header';
 import Table from '#rscv/Table';
 
 import {
-    userGroupsSelector,
-    setUserGroupsAction,
+    userUserGroupsSelector,
     activeUserSelector,
-    unSetUserGroupAction,
+    unsetUserProfileUsergroupAction,
     userIdFromRouteSelector,
 } from '#redux';
 import {
@@ -36,7 +35,6 @@ import {
 } from '#constants';
 import _ts from '#ts';
 
-import UserGroupGetRequest from '../requests/UserGroupGetRequest';
 import UserGroupDeleteRequest from '../requests/UserGroupDeleteRequest';
 
 import UserGroupAdd from './UserGroupAdd';
@@ -44,34 +42,33 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    setUserGroups: PropTypes.func.isRequired,
-    userGroups: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    usergroups: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    unSetUserGroup: PropTypes.func.isRequired,
+    unsetUserGroup: PropTypes.func.isRequired,
     userId: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
     className: '',
-    userGroups: [],
 };
 
 
 const mapStateToProps = (state, props) => ({
-    userGroups: userGroupsSelector(state, props),
+    usergroups: userUserGroupsSelector(state, props),
     activeUser: activeUserSelector(state),
     userId: userIdFromRouteSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
-    setUserGroups: params => dispatch(setUserGroupsAction(params)),
-    unSetUserGroup: params => dispatch(unSetUserGroupAction(params)),
+    unsetUserGroup: params => dispatch(unsetUserProfileUsergroupAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class UserGroup extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static userGroupsTableKeyExtractor = rowData => rowData.id;
 
     constructor(props) {
         super(props);
@@ -173,53 +170,14 @@ export default class UserGroup extends React.PureComponent {
                 },
             },
         ];
-        this.userGroupsTableKeyExtractor = rowData => rowData.id;
-    }
-
-    componentWillMount() {
-        const { userId } = this.props;
-        this.startRequestForUserGroups(userId);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { userId } = nextProps;
-        if (this.props.userId !== userId) {
-            this.startRequestForUserGroups(userId);
-        }
+        this.userGroupDeleteRequest = new UserGroupDeleteRequest({
+            setState: v => this.setState(v),
+            unsetUserGroup: this.props.unsetUserGroup,
+        });
     }
 
     componentWillUnmount() {
-        if (this.userGroupsRequest) {
-            this.userGroupsRequest.stop();
-        }
-        if (this.userGroupDeleteRequest) {
-            this.userGroupDeleteRequest.stop();
-        }
-    }
-
-    startRequestForUserGroups = (userId) => {
-        if (this.userGroupsRequest) {
-            this.userGroupsRequest.stop();
-        }
-        const userGroupsRequest = new UserGroupGetRequest({
-            setUserGroups: this.props.setUserGroups,
-        });
-        this.userGroupsRequest = userGroupsRequest.create(userId);
-        this.userGroupsRequest.start();
-    }
-
-    startRequestForUserGroupDelete = (userGroupId, userId) => {
-        if (this.userGroupDeleteRequest) {
-            this.userGroupDeleteRequest.stop();
-        }
-        const userGroupDeleteRequest = new UserGroupDeleteRequest({
-            unSetUserGroup: this.props.unSetUserGroup,
-            setState: v => this.setState(v),
-        });
-        this.userGroupDeleteRequest = userGroupDeleteRequest.create({
-            userGroupId, userId,
-        });
-        this.userGroupDeleteRequest.start();
+        this.userGroupDeleteRequest.stop();
     }
 
     // BUTTONS
@@ -234,16 +192,16 @@ export default class UserGroup extends React.PureComponent {
 
     // Delete Close
     handleDeleteUserGroupClick = (userGroup) => {
-        const { userId } = this.props.activeUser;
-
         const { id } = userGroup;
-        this.startRequestForUserGroupDelete(id, userId);
+        const { userId } = this.props.activeUser;
+        // TODO: change Usergroup to UserUserGroup, thanks
+        this.userGroupDeleteRequest.init(id, userId).start();
     }
 
     render() {
         const {
             className,
-            userGroups,
+            usergroups,
             userId,
             activeUser,
         } = this.props;
@@ -297,9 +255,9 @@ export default class UserGroup extends React.PureComponent {
                 }
                 <div className={styles.usergroupTable}>
                     <Table
-                        data={userGroups}
+                        data={usergroups}
                         headers={this.userGroupsTableHeaders}
-                        keyExtractor={this.userGroupsTableKeyExtractor}
+                        keyExtractor={UserGroup.userGroupsTableKeyExtractor}
                     />
                 </div>
             </div>

@@ -1,35 +1,32 @@
-import { FgRestBuilder } from '#rsu/rest';
 import {
     createUrlForUsers,
     createParamsForGet,
 } from '#rest';
+import Request from '#utils/Request';
 import notify from '#notify';
-import schema from '#schema';
 import _ts from '#ts';
 
 /*
- * props: setState, setUsers
+ * parent: setState, setUsers
 */
-export default class UsersGetRequest {
-    constructor(props) {
-        this.props = props;
+export default class UsersGetRequest extends Request {
+    schemaName = 'usersGetResponse'
 
-        this.usersFields = ['display_name', 'email', 'id'];
+    handlePreLoad = () => {
+        this.parent.setState({ pending: true });
     }
 
-    success = (response) => {
-        try {
-            schema.validate(response, 'usersGetResponse');
-            this.props.setUsers({
-                users: response.results,
-            });
-        } catch (er) {
-            console.error(er);
-        }
+    handlePostLoad = () => {
+        this.parent.setState({ pending: false });
     }
 
-    failure = (response) => {
-        console.warn('FAILURE:', response);
+    handleSuccess = (response) => {
+        this.parent.setUsers({
+            users: response.results,
+        });
+    }
+
+    handleFailure = () => {
         notify.send({
             title: _ts('userGroup', 'userMembershipCreate'),
             type: notify.type.ERROR,
@@ -38,8 +35,7 @@ export default class UsersGetRequest {
         });
     }
 
-    fatal = (response) => {
-        console.warn('FATAL:', response);
+    handleFatal = () => {
         notify.send({
             title: _ts('userGroup', 'userMembershipCreate'),
             type: notify.type.ERROR,
@@ -48,16 +44,12 @@ export default class UsersGetRequest {
         });
     }
 
-    create = () => {
-        const usersRequest = new FgRestBuilder()
-            .url(createUrlForUsers([this.usersFields]))
-            .params(createParamsForGet)
-            .preLoad(() => this.props.setState({ pending: true }))
-            .postLoad(() => this.props.setState({ pending: false }))
-            .success(this.success)
-            .failure(this.failure)
-            .fatal(this.fatal)
-            .build();
-        return usersRequest;
+    init = () => {
+        const fields = ['display_name', 'email', 'id'];
+        this.createDefault({
+            url: createUrlForUsers([fields]),
+            params: createParamsForGet,
+        });
+        return this;
     }
 }

@@ -26,9 +26,8 @@ import Table from '#rscv/Table';
 
 import {
     userProjectsSelector,
-    setUserProjectsAction,
     activeUserSelector,
-    unSetProjectAction,
+    unsetUserProfileProjectAction,
     userIdFromRouteSelector,
 } from '#redux';
 import {
@@ -36,17 +35,16 @@ import {
     pathNames,
 } from '#constants';
 import _ts from '#ts';
+
 import UserProjectAdd from '#components/UserProjectAdd';
 
-import UserProjectsGetRequest from '../requests/UserProjectsGetRequest';
 import ProjectDeleteRequest from '../requests/ProjectDeleteRequest';
 
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    setUserProjects: PropTypes.func.isRequired,
-    unSetProject: PropTypes.func.isRequired,
+    unsetProject: PropTypes.func.isRequired,
     userProjects: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     userId: PropTypes.number.isRequired,
@@ -64,8 +62,7 @@ const mapStateToProps = (state, props) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    setUserProjects: params => dispatch(setUserProjectsAction(params)),
-    unSetProject: params => dispatch(unSetProjectAction(params)),
+    unsetProject: params => dispatch(unsetUserProfileProjectAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -193,45 +190,16 @@ export default class UserProject extends React.PureComponent {
             },
         ];
         this.projectTableKeyExtractor = rowData => rowData.id;
-    }
 
-    componentWillMount() {
-        const { userId } = this.props;
-        this.startRequestForProjects(userId);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { userId } = nextProps;
-        if (this.props.userId !== userId) {
-            this.startRequestForProjects(userId);
-        }
+        // Request
+        this.projectDeleteRequest = new ProjectDeleteRequest({
+            unsetProject: this.props.unsetProject,
+            setState: v => this.setState(v),
+        });
     }
 
     componentWillUnmount() {
-        this.projectsRequest.stop();
-    }
-
-    startRequestForProjects = (userId) => {
-        if (this.projectsRequest) {
-            this.projectsRequest.stop();
-        }
-        const projectsRequest = new UserProjectsGetRequest({
-            setUserProjects: this.props.setUserProjects,
-        });
-        this.projectsRequest = projectsRequest.create(userId);
-        this.projectsRequest.start();
-    }
-
-    startRequestForProjectDelete = (projectId, userId) => {
-        if (this.projectDeleteRequest) {
-            this.projectDeleteRequest.stop();
-        }
-        const projectDeleteRequest = new ProjectDeleteRequest({
-            unSetProject: this.props.unSetProject,
-            setState: v => this.setState(v),
-        });
-        this.projectDeleteRequest = projectDeleteRequest.create({ projectId, userId });
-        this.projectDeleteRequest.start();
+        this.projectDeleteRequest.stop();
     }
 
     // BUTTONS
@@ -247,8 +215,10 @@ export default class UserProject extends React.PureComponent {
     // Table Actions
 
     handleDeleteProjectClick = (selectedProject) => {
-        const { userId } = this.props.activeUser;
-        this.startRequestForProjectDelete(selectedProject.id, userId);
+        this.projectDeleteRequest.init(
+            selectedProject.id,
+            this.props.activeUser.userId,
+        ).start();
     }
 
     render() {
@@ -299,7 +269,10 @@ export default class UserProject extends React.PureComponent {
                             }
                         />
                         <ModalBody>
-                            <UserProjectAdd handleModalClose={this.handleAddProjectClose} />
+                            <UserProjectAdd
+                                handleModalClose={this.handleAddProjectClose}
+                                userId={isCurrentUser ? userId : undefined}
+                            />
                         </ModalBody>
                     </Modal>
                 }

@@ -12,8 +12,9 @@ import ModalHeader from '#rscv/Modal/Header';
 import AppError from '#components/AppError';
 import { iconNames } from '#constants';
 import {
-    groupSelector,
-    setUserGroupAction,
+    usergroupInformationSelector,
+    isCurrentUserAdminOfCurrentUsergroup,
+    setUsergroupViewAction,
     unSetUserGroupAction,
 
     activeUserSelector,
@@ -24,36 +25,38 @@ import _ts from '#ts';
 import MembersTable from './MembersTable';
 import ProjectsTable from './ProjectsTable';
 import UserGroupEdit from './UserGroupEdit';
+
 import UserGroupGetRequest from './requests/UserGroupGetRequest';
+import UserGroupProjectsRequest from './requests/UserGroupProjectsRequest';
 
 import styles from './styles.scss';
 
 const propTypes = {
-    userGroup: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    setUserGroup: PropTypes.func.isRequired,
+    usergroup: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    setUsergroupView: PropTypes.func.isRequired,
     unSetUserGroup: PropTypes.func.isRequired,
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     userGroupId: PropTypes.number.isRequired,
+    isCurrentUserAdmin: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {};
 
 const mapStateToProps = (state, props) => ({
-    userGroup: groupSelector(state, props),
+    usergroup: usergroupInformationSelector(state),
     activeUser: activeUserSelector(state),
     userGroupId: groupIdFromRouteSelector(state, props),
+    isCurrentUserAdmin: isCurrentUserAdminOfCurrentUsergroup(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-    setUserGroup: params => dispatch(setUserGroupAction(params)),
+    setUsergroupView: params => dispatch(setUsergroupViewAction(params)),
     unSetUserGroup: params => dispatch(unSetUserGroupAction(params)),
 });
 
-const emptyList = [];
-
 @BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
-export default class UserGroup extends React.PureComponent {
+export default class Usergroup extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -64,40 +67,28 @@ export default class UserGroup extends React.PureComponent {
             showUserGroupEditModal: false,
             pending: true,
         };
+
+        // Requests
+        this.userGroupRequest = new UserGroupGetRequest({
+            setUsergroupView: this.props.setUsergroupView,
+            unSetUserGroup: this.props.unSetUserGroup,
+            setState: v => this.setState(v),
+        });
+        this.usergroupProjectsRequest = new UserGroupProjectsRequest({
+            setUsergroupView: this.props.setUsergroupView,
+        });
     }
 
     componentWillMount() {
         const { userGroupId } = this.props;
-        this.startRequestForUserGroup(userGroupId);
+        this.userGroupRequest.init(userGroupId).start();
+        this.usergroupProjectsRequest.init(userGroupId).start();
     }
 
     componentWillUnmount() {
-        if (this.userGroupRequest) {
-            this.userGroupRequest.stop();
-        }
-        if (this.usersRequest) {
-            this.usersRequest.stop();
-        }
+        this.userGroupRequest.stop();
+        this.usergroupProjectsRequest.stop();
     }
-
-    startRequestForUserGroup = (id) => {
-        if (this.userGroupRequest) {
-            this.userGroupRequest.stop();
-        }
-        const userGroupRequest = new UserGroupGetRequest({
-            setUserGroup: this.props.setUserGroup,
-            unSetUserGroup: this.props.unSetUserGroup,
-            setState: v => this.setState(v),
-        });
-        this.userGroupRequest = userGroupRequest.create(id);
-        this.userGroupRequest.start();
-    }
-
-    isCurrentUserAdmin = memberData => (
-        memberData.findIndex(member => (
-            member.role === 'admin' && member.member === this.props.activeUser.userId
-        )) !== -1
-    )
 
     handleUserGroupEditModalClose = () => {
         this.setState({ showUserGroupEditModal: false });
@@ -109,15 +100,14 @@ export default class UserGroup extends React.PureComponent {
 
     render() {
         const {
-            userGroup,
+            usergroup,
             userGroupId,
+            isCurrentUserAdmin,
         } = this.props;
         const {
             showUserGroupEditModal,
             pending,
         } = this.state;
-
-        const isCurrentUserAdmin = this.isCurrentUserAdmin(userGroup.memberships || emptyList);
 
         if (pending) {
             return (
@@ -127,7 +117,7 @@ export default class UserGroup extends React.PureComponent {
             );
         }
 
-        if (!userGroup.id) {
+        if (!usergroup.id) {
             return (
                 <div className={styles.usergroup}>
                     <div className={styles.usergroupAlt}>
@@ -146,7 +136,9 @@ export default class UserGroup extends React.PureComponent {
                 </header>
                 <div className={styles.info}>
                     <div className={styles.titleContainer}>
-                        <span className={styles.name}>{ userGroup.title }</span>
+                        <span className={styles.name} >
+                            { usergroup.title }
+                        </span>
                         {
                             isCurrentUserAdmin &&
                                 <PrimaryButton
@@ -158,7 +150,7 @@ export default class UserGroup extends React.PureComponent {
                         }
                     </div>
                     <p className={styles.description}>
-                        { userGroup.description }
+                        { usergroup.description }
                     </p>
                 </div>
                 <div className={styles.stats}>
@@ -169,11 +161,10 @@ export default class UserGroup extends React.PureComponent {
                 <ProjectsTable
                     className={styles.projects}
                     isCurrentUserAdmin={isCurrentUserAdmin}
-                    userGroup={userGroup}
+                    usergroup={usergroup}
                 />
                 <MembersTable
                     className={styles.members}
-                    memberData={userGroup.memberships || emptyList}
                     userGroupId={userGroupId}
                     isCurrentUserAdmin={isCurrentUserAdmin}
                     activeUser={this.props.activeUser}
@@ -197,7 +188,7 @@ export default class UserGroup extends React.PureComponent {
                         />
                         <ModalBody>
                             <UserGroupEdit
-                                userGroup={userGroup}
+                                userGroup={usergroup}
                                 handleModalClose={this.handleUserGroupEditModalClose}
                             />
                         </ModalBody>

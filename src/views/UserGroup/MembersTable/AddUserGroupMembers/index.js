@@ -13,10 +13,10 @@ import TabularSelectInput from '#rsci/TabularSelectInput';
 
 import {
     usersInformationListSelector,
-    setUsersInformationAction,
+    usergroupMembershipsSelector,
 
-    groupSelector,
-    setUsersMembershipAction,
+    setUsersInformationAction,
+    addUsergroupViewMembershipsAction,
 } from '#redux';
 import _ts from '#ts';
 import { iconNames } from '#constants';
@@ -29,11 +29,11 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     onModalClose: PropTypes.func.isRequired,
-    userGroupDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    membershipsList: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     userGroupId: PropTypes.number, // eslint-disable-line react/forbid-prop-types
     users: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     setUsers: PropTypes.func.isRequired,
-    setUsersMembership: PropTypes.func.isRequired,
+    addMemberships: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -43,12 +43,12 @@ const defaultProps = {
 
 const mapStateToProps = (state, props) => ({
     users: usersInformationListSelector(state, props),
-    userGroupDetails: groupSelector(state, props),
+    membershipsList: usergroupMembershipsSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
     setUsers: params => dispatch(setUsersInformationAction(params)),
-    setUsersMembership: params => dispatch(setUsersMembershipAction(params)),
+    addMemberships: params => dispatch(addUsergroupViewMembershipsAction(params)),
 });
 
 const emptyList = [];
@@ -65,14 +65,14 @@ export default class AddUserGroupMembers extends React.PureComponent {
         super(props);
 
         const {
-            userGroupDetails,
+            membershipsList,
             users,
         } = props;
 
         const usersWithRole = users.map(
             user => ({ ...user, role: 'normal' }),
         );
-        const membersBlackList = (userGroupDetails.memberships || emptyList).map(d => d.member);
+        const membersBlackList = membershipsList.map(d => d.member);
 
         this.state = {
             faramErrors: {},
@@ -130,10 +130,21 @@ export default class AddUserGroupMembers extends React.PureComponent {
                 memberships: [requiredCondition],
             },
         };
+
+        // Request
+        this.usersRequest = new UsersGetRequest({
+            setState: v => this.setState(v),
+            setUsers: this.props.setUsers,
+        });
+        this.membershipPostRequest = new MembershipPostRequest({
+            setState: v => this.setState(v),
+            addMemberships: this.props.addMemberships,
+            onModalClose: this.props.onModalClose,
+        });
     }
 
-    componentWillMount() {
-        this.startRequestForUsers();
+    componentDidMount() {
+        this.usersRequest.init().start();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -148,38 +159,8 @@ export default class AddUserGroupMembers extends React.PureComponent {
     }
 
     componentWillUnmount() {
-        if (this.membershipCreateRequest) {
-            this.membershipCreateRequest.stop();
-        }
-        if (this.usersRequest) {
-            this.usersRequest.stop();
-        }
-    }
-
-    startRequestForUsers = () => {
-        if (this.usersRequest) {
-            this.usersRequest.stop();
-        }
-        const usersRequest = new UsersGetRequest({
-            setUsers: this.props.setUsers,
-            setState: v => this.setState(v),
-        });
-        this.usersRequest = usersRequest.create();
-        this.usersRequest.start();
-    }
-
-    startRequestForMembershipCreate = (memberList) => {
-        if (this.membershipCreateRequest) {
-            this.membershipCreateRequest.stop();
-        }
-        const { userGroupId } = this.props;
-        const membershipCreateRequest = new MembershipPostRequest({
-            setUsersMembership: this.props.setUsersMembership,
-            onModalClose: this.props.onModalClose,
-            setState: v => this.setState(v),
-        });
-        this.membershipCreateRequest = membershipCreateRequest.create(memberList, userGroupId);
-        this.membershipCreateRequest.start();
+        this.membershipPostRequest.stop();
+        this.usersRequest.stop();
     }
 
     handleRoleChangeForNewMember = (member) => {
@@ -225,7 +206,7 @@ export default class AddUserGroupMembers extends React.PureComponent {
             group: userGroupId,
         }));
 
-        this.startRequestForMembershipCreate(newMembersList);
+        this.membershipPostRequest.init(newMembersList, userGroupId).start();
     };
 
     render() {
