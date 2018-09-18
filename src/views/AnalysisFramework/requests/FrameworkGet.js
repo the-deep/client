@@ -27,7 +27,6 @@ export default class FrameworkGet extends Request {
         } = this.parent;
 
         const analysisFramework = getAnalysisFramework();
-        console.warn(response);
 
         const {
             shouldSetValue,
