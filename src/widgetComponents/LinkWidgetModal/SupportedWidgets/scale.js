@@ -1,7 +1,7 @@
 import { mapToList } from '#rsu/common';
 
-const getScaleOptions = (widgetData = {}) => (
-    widgetData.scaleUnits.map(s => ({
+const getScaleOptions = ({ scaleUnits = [] } = {}) => (
+    scaleUnits.map(s => ({
         key: s.key,
         title: s.label,
     }))

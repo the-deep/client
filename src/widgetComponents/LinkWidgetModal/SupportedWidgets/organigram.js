@@ -4,6 +4,8 @@ const orgChildSelector = d => d.organs;
 const orgLabelSelector = d => d.title;
 const orgIdSelector = d => d.key;
 
+const emptyArray = [];
+
 const getOptionsForSelect = (params) => {
     const {
         options,
@@ -14,7 +16,7 @@ const getOptionsForSelect = (params) => {
     } = params;
 
     if (!options || options.length === 0) {
-        return [];
+        return emptyArray;
     }
 
     return options.reduce((selections, d) => [

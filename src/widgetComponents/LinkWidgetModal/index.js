@@ -38,6 +38,10 @@ const mapStateToProps = (state, props) => ({
     widgets: afViewAnalysisFrameworkWidgetsSelector(state, props),
 });
 
+const emptyArray = [];
+const emptyObject = {};
+
+
 const getFlatItems = (params) => {
     const {
         data,
@@ -49,29 +53,27 @@ const getFlatItems = (params) => {
         treeNodesSelector,
     } = params;
 
-    if (!items || items.length === 0) {
-        if (data) {
-            return [{
-                key: treeKeySelector(data),
-                label: treeLabelSelector(data),
-                selected: itemValue.selected,
-            }];
-        }
-        return [];
+    if (items && items.length !== 0) {
+        return items.reduce((selections, d) => [
+            ...selections,
+            ...getFlatItems({
+                data: d,
+                items: treeNodesSelector && treeNodesSelector(d),
+                itemValue: itemValues[treeKeySelector(d)],
+                itemValues: itemValues[treeKeySelector(d)].nodes,
+                treeKeySelector,
+                treeLabelSelector,
+                treeNodesSelector,
+            }),
+        ], []);
+    } else if (data) {
+        return [{
+            key: treeKeySelector(data),
+            label: treeLabelSelector(data),
+            selected: itemValue.selected,
+        }];
     }
-
-    return items.reduce((selections, d) => [
-        ...selections,
-        ...getFlatItems({
-            data: d,
-            items: treeNodesSelector && treeNodesSelector(d),
-            itemValue: itemValues[treeKeySelector(d)],
-            itemValues: itemValues[treeKeySelector(d)].nodes,
-            treeKeySelector,
-            treeLabelSelector,
-            treeNodesSelector,
-        }),
-    ], []);
+    return emptyArray;
 };
 
 @FaramActionElement
@@ -93,9 +95,9 @@ export default class LinkWidgetModal extends React.PureComponent {
     static getWidgetData = (id, widgets) => {
         const widget = widgets.find(w => LinkWidgetModal.widgetKeySelector(w) === id);
         if (!widget) {
-            return {};
+            return emptyObject;
         }
-        return (widget.properties || {}).data;
+        return (widget.properties || emptyObject).data;
     };
 
     constructor(props) {
@@ -103,7 +105,7 @@ export default class LinkWidgetModal extends React.PureComponent {
         this.state = {
             selectedWidget: '',
             selectedWidgetItem: '',
-            itemValues: {},
+            itemValues: emptyObject,
         };
     }
 
@@ -127,11 +129,11 @@ export default class LinkWidgetModal extends React.PureComponent {
         const treeLabelSelector = selectedWidgetOption && selectedWidgetOption.labelSelector;
         const treeNodesSelector = selectedWidgetOption && selectedWidgetOption.nodesSelector;
 
-        const items = selectedWidgetOption ? (selectedWidgetOption.items(widgetData)) : [];
+        const items = selectedWidgetOption ? (selectedWidgetOption.items(widgetData)) : emptyArray;
 
         this.setState({
             items,
-            itemValues: {},
+            itemValues: emptyObject,
             selectedWidget,
             selectedWidgetItem,
             treeKeySelector,
@@ -149,14 +151,14 @@ export default class LinkWidgetModal extends React.PureComponent {
 
         const widgetData = LinkWidgetModal.getWidgetData(selectedWidget, this.filteredWidgets);
 
-        const items = selectedWidgetOption ? selectedWidgetOption.items(widgetData) : [];
+        const items = selectedWidgetOption ? selectedWidgetOption.items(widgetData) : emptyArray;
         const treeKeySelector = selectedWidgetOption && selectedWidgetOption.keySelector;
         const treeLabelSelector = selectedWidgetOption && selectedWidgetOption.labelSelector;
         const treeNodesSelector = selectedWidgetOption && selectedWidgetOption.nodesSelector;
 
         this.setState({
             items,
-            itemValues: {},
+            itemValues: emptyObject,
             selectedWidgetItem,
             treeKeySelector,
             treeLabelSelector,

@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { afIdFromRoute } from '../domainData';
 
 const emptyObject = {};
-const emptyArray = {};
+const emptyArray = [];
 
 const analysisFrameworkViewSelector = ({ siloDomainData }) => (
     siloDomainData.analysisFrameworkView

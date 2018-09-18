@@ -792,7 +792,7 @@
         "-41289196": "Edit conditions",
         "-66364403": "Widgets",
         "-305229": "{widgetTitle}: Conditions",
-        "-24214693": "Operator"
+        "-24214693": "Operator",
         "-29582302": "List of items",
         "-17297015": "Link widgets",
         "-31256073": "Widget",
@@ -2223,6 +2223,7 @@
             "widgetsTitle": -66364403,
             "widgetConditionsTitle": -305229,
             "operatorSelectLabel": -24214693
+        },
         "widgets.editor.link": {
             "cancelButtonLabel": 61,
             "saveButtonLabel": 25,

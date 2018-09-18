@@ -4,6 +4,8 @@ import matrix1dOptions from './matrix1d';
 import matrix2dOptions from './matrix2d';
 import organigramOptions from './organigram';
 
+const emptyArray = [];
+
 export const supportedWidgets = {
     selectWidget: selectOptions,
     multiselectWidget: selectOptions,
@@ -24,5 +26,5 @@ export const getOptionsForSelectedWidget = (selectedWidgetId, widgets) => {
     if (selectedWidget) {
         return supportedWidgets[selectedWidget.widgetId];
     }
-    return [];
+    return emptyArray;
 };
