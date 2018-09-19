@@ -10,23 +10,17 @@ import {
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
-import ListView from '#rscv/List/ListView';
-import SearchInput from '#rsci/SearchInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import UserProjectAdd from '#components/UserProjectAdd';
 import BoundError from '#rscg/BoundError';
-import Cloak from '#components/Cloak';
 import AppError from '#components/AppError';
 import {
     currentUserAdminProjectsSelector,
     setActiveProjectAction,
     projectIdFromRouteSelector,
 } from '#redux';
-import {
-    iconNames,
-    pathNames,
-} from '#constants';
+import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import Sidebar from './Sidebar';
@@ -68,46 +62,8 @@ export default class ProjectPanel extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = {
-            showAddProjectModal: false,
-            displayUserProjects: this.props.userProjects,
-            searchInputValue: '',
-        };
+        this.state = { showAddProjectModal: false };
     }
-
-    componentWillReceiveProps(nextProps) {
-        const { userProjects } = nextProps;
-        const { searchInputValue } = this.state;
-
-        if (this.props.userProjects !== userProjects) {
-            const displayUserProjects = userProjects.filter(
-                project => caseInsensitiveSubmatch(project.title, searchInputValue),
-            );
-            this.setState({ displayUserProjects });
-        }
-    }
-
-    getStyleName = (projectId) => {
-        const { projectId: projectIdFromUrl } = this.props;
-
-        const styleNames = [];
-        styleNames.push(styles.listItem);
-        if (projectId === projectIdFromUrl) {
-            styleNames.push(styles.active);
-        }
-        return styleNames.join(' ');
-    }
-
-    handleSearchInputChange = (searchInputValue) => {
-        const displayUserProjects = this.props.userProjects.filter(
-            project => caseInsensitiveSubmatch(project.title, searchInputValue),
-        );
-
-        this.setState({
-            displayUserProjects,
-            searchInputValue,
-        });
-    };
 
     handleProjectAdd = (projectId) => {
         this.props.setActiveProject({ activeProject: projectId });
@@ -121,25 +77,8 @@ export default class ProjectPanel extends React.PureComponent {
         this.setState({ showAddProjectModal: false });
     }
 
-    renderSidebarItem = (key, project) => (
-        <div
-            key={key}
-            className={this.getStyleName(project.id)}
-        >
-            <Link
-                to={reverseRoute(pathNames.projects, { projectId: project.id })}
-                className={styles.link}
-            >
-                {project.title}
-            </Link>
-        </div>
-    )
-
     render() {
-        const {
-            displayUserProjects,
-            showAddProjectModal,
-        } = this.state;
+        const { showAddProjectModal } = this.state;
 
         const {
             projectId,

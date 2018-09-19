@@ -131,7 +131,7 @@ export const currentUserProjectsSelector = createSelector(
 // activeUser
 export const currentUserAdminProjectsSelector = createSelector(
     currentUserProjectsSelector,
-    projects => projects.filter(project => (project.role === 'admin')),
+    projects => projects.filter(project => project),
 );
 
 // activeUser, projectIdFromRoute

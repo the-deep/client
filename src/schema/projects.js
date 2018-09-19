@@ -23,7 +23,8 @@ const projectSchema = [];
             userGroups: { type: 'array.userGroupBase' },
             startDate: { type: 'string' }, // date
             endDate: { type: 'string' }, // date
-            role: { type: 'projectRole', required: true },
+            role: { type: 'projectRole' },
+            memberStatus: { type: 'string' },
             isDefault: { type: 'boolean' },
             numberOfUsers: { type: 'uint' },
             numberOfLeads: { type: 'uint' },
@@ -50,6 +51,7 @@ const projectSchema = [];
             member: { type: 'uint', required: true },
             memberEmail: { type: 'email' },
             memberName: { type: 'string' },
+            memberStatus: { type: 'string' },
             project: { type: 'uint', required: true },
             role: { type: 'uint', required: true },
         },

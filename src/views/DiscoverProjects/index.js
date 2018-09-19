@@ -217,7 +217,8 @@ export default class DiscoverProjects extends React.PureComponent {
     dataModifier = (project, columnKey) => {
         switch (columnKey) {
             case 'admins': {
-                const adminsList = project.memberships.filter(d => d.role === 'admin');
+                // FIXME: Check setup permissions
+                const adminsList = project.memberships.filter(d => d.memberStatus === 'admin');
                 const rendererParams = (key, admin) => ({ admin });
                 const EmptyComponent = () => '-';
 
