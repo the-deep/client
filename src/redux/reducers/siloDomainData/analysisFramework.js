@@ -8,8 +8,16 @@ export const AF__VIEW_ADD_WIDGET = 'siloDomainData/AF__VIEW_ADD_WIDGET';
 export const AF__REMOVE_WIDGET = 'siloDomainData/AF__REMOVE_WIDGET';
 export const AF__VIEW_UPDATE_WIDGET = 'siloDomainData/AF__VIEW_UPDATE_WIDGET';
 export const AF__VIEW_UPDATE_WIDGET_LAYOUT = 'siloDomainData/AF__VIEW_UPDATE_WIDGET_LAYOUT';
+export const AF__SET_FARAM = 'siloDomainData/AF__SET_FARAM';
 
 // CREATOR
+
+export const setAfViewFaramAction = ({ analysisFrameworkId, faramValues, faramErrors }) => ({
+    type: AF__SET_FARAM,
+    analysisFrameworkId,
+    faramValues,
+    faramErrors,
+});
 
 export const setAfViewAnalysisFrameworkAction = ({ analysisFramework }) => ({
     type: AF__SET_ANALYSIS_FRAMEWORK,
@@ -66,16 +74,20 @@ const getWidgetKey = widget => widget.key;
 const afViewSetAnalysisFramework = (state, action) => {
     const { analysisFramework } = action;
     const frameworkId = analysisFramework.id;
-    const framework = {
-        ...analysisFramework,
-        pristine: true,
+
+    const faramValues = {
+        title: analysisFramework.title,
+        description: analysisFramework.description,
     };
 
     const settings = {
         analysisFrameworkView: {
-            [frameworkId]: {
-                $set: framework,
-            },
+            [frameworkId]: { $auto: {
+                pristine: { $set: true },
+                data: { $set: analysisFramework },
+                faramValues: { $set: faramValues },
+                faramErrors: { $set: {} },
+            } },
         },
     };
     return update(state, settings);
@@ -87,8 +99,10 @@ const afViewAddWidget = (state, action) => {
     const settings = {
         analysisFrameworkView: {
             [analysisFrameworkId]: {
-                widgets: {
-                    $autoArray: { $push: [widget] },
+                data: {
+                    widgets: {
+                        $autoArray: { $push: [widget] },
+                    },
                 },
                 pristine: { $set: false },
             },
@@ -103,7 +117,9 @@ const afViewRemoveWidget = (state, action) => {
     const settings = {
         analysisFrameworkView: {
             [analysisFrameworkId]: {
-                widgets: { $filter: w => getWidgetKey(w) !== widgetId },
+                data: {
+                    widgets: { $filter: w => getWidgetKey(w) !== widgetId },
+                },
                 pristine: { $set: false },
             },
         },
@@ -113,7 +129,7 @@ const afViewRemoveWidget = (state, action) => {
 
 const afViewUpdateWidget = (state, action) => {
     const { analysisFrameworkId, widget } = action;
-    const { analysisFrameworkView: { [analysisFrameworkId]: analysisFramework } } = state;
+    const { analysisFrameworkView: { [analysisFrameworkId]: { data: analysisFramework } } } = state;
 
     const existingWidgets = analysisFramework.widgets;
     const widgetIndex = existingWidgets.findIndex(w => getWidgetKey(w) === widget.key);
@@ -125,8 +141,10 @@ const afViewUpdateWidget = (state, action) => {
     const settings = {
         analysisFrameworkView: {
             [analysisFrameworkId]: {
-                widgets: {
-                    [widgetIndex]: { $merge: widget },
+                data: {
+                    widgets: {
+                        [widgetIndex]: { $merge: widget },
+                    },
                 },
                 pristine: { $set: false },
             },
@@ -144,7 +162,7 @@ const afViewUpdateWidgetLayout = (state, action) => {
         layout,
     } = action;
 
-    const { analysisFrameworkView: { [analysisFrameworkId]: analysisFramework } } = state;
+    const { analysisFrameworkView: { [analysisFrameworkId]: { data: analysisFramework } } } = state;
 
     const existingWidgets = analysisFramework.widgets;
     const widgetIndex = existingWidgets.findIndex(w => getWidgetKey(w) === widgetKey);
@@ -158,14 +176,16 @@ const afViewUpdateWidgetLayout = (state, action) => {
     const settings = {
         analysisFrameworkView: {
             [analysisFrameworkId]: {
-                widgets: {
-                    [widgetIndex]: {
-                        properties: {
-                            $if: [
-                                widgetType === OVERVIEW,
-                                { overviewGridLayout: { $set: layout } },
-                                { listGridLayout: { $set: layout } },
-                            ],
+                data: {
+                    widgets: {
+                        [widgetIndex]: {
+                            properties: {
+                                $if: [
+                                    widgetType === OVERVIEW,
+                                    { overviewGridLayout: { $set: layout } },
+                                    { listGridLayout: { $set: layout } },
+                                ],
+                            },
                         },
                     },
                 },
@@ -177,6 +197,24 @@ const afViewUpdateWidgetLayout = (state, action) => {
     return update(state, settings);
 };
 
+const afViewSetFaram = (state, action) => {
+    const {
+        faramErrors,
+        faramValues,
+        analysisFrameworkId,
+    } = action;
+    const settings = {
+        analysisFrameworkView: {
+            [analysisFrameworkId]: {
+                faramValues: { $set: faramValues },
+                faramErrors: { $set: faramErrors },
+                pristine: { $set: false },
+            },
+        },
+    };
+    return update(state, settings);
+};
+
 // REDUCER MAP
 
 const reducers = {
@@ -185,5 +223,6 @@ const reducers = {
     [AF__REMOVE_WIDGET]: afViewRemoveWidget,
     [AF__VIEW_UPDATE_WIDGET]: afViewUpdateWidget,
     [AF__VIEW_UPDATE_WIDGET_LAYOUT]: afViewUpdateWidgetLayout,
+    [AF__SET_FARAM]: afViewSetFaram,
 };
 export default reducers;

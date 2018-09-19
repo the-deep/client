@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Faram from '#rscg/Faram';
 import TextInput from '#rsci/TextInput';
-import Label from '#rsci/Label';
 import TextArea from '#rsci/TextArea';
 
 import {
@@ -23,10 +23,22 @@ const overviewWidgets = widgetList.filter(
 
 const propTypes = {
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    pending: PropTypes.bool.isRequired,
+    faramValues: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    faramErrors: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    faramSchema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    onChange: PropTypes.func.isRequired,
+};
+
+const defaultProps = {
+    faramValues: {},
+    faramErrors: {},
+    faramSchema: {},
 };
 
 export default class Overview extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     static layoutSelector = (widget) => {
         const { properties: { overviewGridLayout } = {} } = widget;
@@ -41,6 +53,11 @@ export default class Overview extends React.PureComponent {
                 id: analysisFrameworkId,
                 widgets,
             } = {},
+            pending,
+            faramValues,
+            faramErrors,
+            faramSchema,
+            onChange,
         } = this.props;
 
         return (
@@ -52,7 +69,14 @@ export default class Overview extends React.PureComponent {
                     analysisFrameworkId={analysisFrameworkId}
                 />
                 <div className={styles.gridLayoutContainer}>
-                    <header className={styles.header}>
+                    <Faram
+                        className={styles.header}
+                        onChange={onChange}
+                        schema={faramSchema}
+                        value={faramValues}
+                        error={faramErrors}
+                        disabled={pending}
+                    >
                         <TextInput
                             className={styles.nameInput}
                             label={_ts('project', 'addAfTitleLabel')}
@@ -66,7 +90,7 @@ export default class Overview extends React.PureComponent {
                             placeholder={_ts('project', 'projectDescriptionPlaceholder')}
                             rows={1}
                         />
-                    </header>
+                    </Faram>
                     <div className={styles.scrollWrapper}>
                         <WidgetEditor
                             widgets={widgets}

@@ -13,6 +13,8 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import FixedTabs from '#rscv/FixedTabs';
 import Message from '#rscv/Message';
 
+import { detachedFaram, requiredCondition } from '#rscg/Faram';
+
 import { VIEW } from '#widgets';
 import AppError from '#components/AppError';
 import {
@@ -20,7 +22,12 @@ import {
     setAfViewAnalysisFrameworkAction,
 
     afViewAnalysisFrameworkSelector,
+    afViewPristineSelector,
     activeProjectIdFromStateSelector,
+
+    afViewFaramValuesSelector,
+    afViewFaramErrorsSelector,
+    setAfViewFaramAction,
 
     routeUrlSelector,
 } from '#redux';
@@ -41,23 +48,33 @@ const propTypes = {
     analysisFrameworkId: PropTypes.number.isRequired,
     setAnalysisFramework: PropTypes.func.isRequired,
     projectId: PropTypes.number.isRequired,
+    pristine: PropTypes.bool.isRequired,
 
     routeUrl: PropTypes.string.isRequired,
+    faramValues: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    faramErrors: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    setFaram: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     analysisFramework: undefined,
+    faramValues: {},
+    faramErrors: {},
 };
 
 const mapStateToProps = (state, props) => ({
     analysisFramework: afViewAnalysisFrameworkSelector(state, props),
+    pristine: afViewPristineSelector(state, props),
     analysisFrameworkId: afIdFromRoute(state, props),
     projectId: activeProjectIdFromStateSelector(state, props),
     routeUrl: routeUrlSelector(state),
+    faramValues: afViewFaramValuesSelector(state),
+    faramErrors: afViewFaramErrorsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
     setAnalysisFramework: params => dispatch(setAfViewAnalysisFrameworkAction(params)),
+    setFaram: params => dispatch(setAfViewFaramAction(params)),
 });
 
 @BoundError(AppError)
@@ -66,10 +83,20 @@ export default class AnalysisFramework extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static schema = {
+        fields: {
+            title: [requiredCondition],
+            description: [],
+        },
+    }
+
     constructor(props) {
         super(props);
 
-        this.state = { pendingFramework: true };
+        this.state = {
+            pendingFramework: true,
+            pendingSaveFramework: false,
+        };
 
         this.frameworkGetRequest = new FrameworkGetRequest({
             setState: params => this.setState(params),
@@ -82,20 +109,26 @@ export default class AnalysisFramework extends React.PureComponent {
             setAnalysisFramework: this.props.setAnalysisFramework,
         });
 
-        const rendererParams = () => ({
-            analysisFramework: this.props.analysisFramework,
-        });
-
         this.views = {
             [VIEW.overview]: {
                 component: Overview,
-                rendererParams,
+                rendererParams: () => ({
+                    analysisFramework: this.props.analysisFramework,
+
+                    pending: this.state.pendingSaveFramework,
+                    onChange: this.handleFaramChange,
+                    faramSchema: AnalysisFramework.schema,
+                    faramValues: this.props.faramValues,
+                    faramErrors: this.props.faramErrors,
+                }),
                 wrapContainer: true,
                 mount: true,
             },
             [VIEW.list]: {
                 component: List,
-                rendererParams,
+                rendererParams: () => ({
+                    analysisFramework: this.props.analysisFramework,
+                }),
                 wrapContainer: true,
                 mount: true,
             },
@@ -133,14 +166,37 @@ export default class AnalysisFramework extends React.PureComponent {
         this.frameworkSaveRequest.stop();
     }
 
+    handleFaramChange = (faramValues = this.props.faramValues, faramErrors) => {
+        const { analysisFrameworkId } = this.props;
+        this.props.setFaram({
+            faramValues,
+            faramErrors,
+            analysisFrameworkId,
+        });
+    }
+
     handleSave = () => {
         const {
             analysisFrameworkId,
             analysisFramework,
+            faramValues,
         } = this.props;
 
-        this.frameworkSaveRequest.init(analysisFrameworkId, analysisFramework);
-        this.frameworkSaveRequest.start();
+        detachedFaram({
+            value: faramValues,
+            schema: AnalysisFramework.schema,
+            onValidationFailure: (errors) => {
+                this.handleFaramChange(undefined, errors);
+            },
+            onValidationSuccess: (values) => {
+                const afValues = {
+                    ...analysisFramework,
+                    ...values,
+                };
+                this.frameworkSaveRequest.init(analysisFrameworkId, afValues);
+                this.frameworkSaveRequest.start();
+            },
+        });
     }
 
     handleCancel = () => {
@@ -151,15 +207,13 @@ export default class AnalysisFramework extends React.PureComponent {
 
     render() {
         const {
-            analysisFramework,
+            analysisFramework = {},
             projectId,
-        } = this.props;
-        const {
             pristine,
-            entriesCount,
-        } = analysisFramework;
+        } = this.props;
+        const { entriesCount } = analysisFramework;
 
-        const { pendingFramework } = this.state;
+        const { pendingFramework, pendingSaveFramework } = this.state;
 
         if (pendingFramework) {
             return (
@@ -229,14 +283,14 @@ export default class AnalysisFramework extends React.PureComponent {
                                 <SuccessConfirmButton
                                     confirmationMessage={_ts('framework', 'successConfirmDetail', { count: entriesCount })}
                                     onClick={this.handleSave}
-                                    disabled={pristine}
+                                    disabled={pristine || pendingSaveFramework}
                                 >
                                     { _ts('framework', 'saveButtonTitle') }
                                 </SuccessConfirmButton>
                             ) : (
                                 <SuccessButton
                                     onClick={this.handleSave}
-                                    disabled={pristine}
+                                    disabled={pristine || pendingSaveFramework}
                                 >
                                     { _ts('framework', 'saveButtonTitle') }
                                 </SuccessButton>
