@@ -25,6 +25,10 @@ const containsPillar = {
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
+    test: (data, attributes) => {
+        const value = data.value[attributes.pillar] || {};
+        return Object.keys(value).some(key => value[key]);
+    },
 };
 
 const containsSubpillar = {

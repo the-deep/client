@@ -52,7 +52,7 @@ export const conditions = Object.keys(conditionsAsMap).reduce(
 
 
 const checkConditions = (widgetConditions, globalWidgets, entryAttributes) => {
-    const { operator, list: conditionList } = widgetConditions;
+    const { operator = 'AND', list: conditionList } = widgetConditions;
 
     if (conditionList.length <= 0) {
         return false;
