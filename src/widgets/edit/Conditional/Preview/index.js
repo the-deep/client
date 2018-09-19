@@ -15,12 +15,14 @@ const propTypes = {
 const defaultProps = {
 };
 
+const emptyObject = {};
+
 export default class ConditionalFrameworkPreview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
     static getWidgets = memoize(widget => (
-        ((widget.properties || {}).data || {}).widgets
+        ((widget.properties || emptyObject).data || emptyObject).widgets
     ));
 
     constructor(props) {
@@ -34,19 +36,26 @@ export default class ConditionalFrameworkPreview extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        const { widget } = nextProps;
+        const { widget: newWidget } = nextProps;
+        const { widget: oldWidget } = this.props;
 
-        const widgets = ConditionalFrameworkPreview.getWidgets(widget);
-        const tabs = this.getWidgetTabs(widgets);
-        const tabsMap = Object.keys(tabs);
-        this.setState({ currentWidget: tabsMap[0] });
+        const newWidgets = ConditionalFrameworkPreview.getWidgets(newWidget);
+        const oldWidgets = ConditionalFrameworkPreview.getWidgets(oldWidget);
+
+        if (oldWidgets !== newWidgets) {
+            const tabs = this.getWidgetTabs(newWidgets);
+            const tabsMap = Object.keys(tabs);
+            this.setState({ currentWidget: tabsMap[0] });
+        }
     }
 
     getWidgetViews = memoize((widgets) => {
-        const views = {};
         if (!widgets) {
-            return {};
+            return emptyObject;
         }
+
+        const views = {};
+
         widgets.forEach((w) => {
             const view = {
                 component: () => {
@@ -80,7 +89,7 @@ export default class ConditionalFrameworkPreview extends React.PureComponent {
 
     getWidgetTabs = memoize((widgets) => {
         if (!widgets) {
-            return {};
+            return emptyObject;
         }
 
         const tabs = widgets.reduce(

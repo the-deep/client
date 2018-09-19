@@ -24,6 +24,8 @@ const deleteClick = (rows, index) => (
     rows.filter((row, ind) => ind !== index)
 );
 
+const emptyArray = [];
+
 export default class InputRow extends React.PureComponent {
     static propTypes = propTypes;
 
@@ -39,7 +41,7 @@ export default class InputRow extends React.PureComponent {
 
     static getAttributesForConditionType = memoize((conditionType, conditions) => {
         if (!conditionType) {
-            return [];
+            return emptyArray;
         }
         const { attributes } = conditions.find(c => c.key === conditionType);
         return attributes;

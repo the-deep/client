@@ -15,10 +15,9 @@ const defaultProps = {
 };
 
 const getOptions = memoize((attribute, widgetData) => (
-    Array.isArray(attribute.options) ?
-        [...attribute.options]
-        :
-        attribute.options(widgetData)
+    Array.isArray(attribute.options)
+        ? [...attribute.options]
+        : attribute.options(widgetData)
 ));
 
 export default class ConditionAttribute extends React.PureComponent {

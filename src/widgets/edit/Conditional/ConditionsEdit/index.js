@@ -79,7 +79,7 @@ class ConditionsEditModal extends React.PureComponent {
         this.state = {
             faramValues: conditions,
             faramErrors: {},
-            pristine: false,
+            pristine: true,
         };
     }
 
@@ -118,14 +118,14 @@ class ConditionsEditModal extends React.PureComponent {
         this.setState({
             faramValues,
             faramErrors,
-            pristine: true,
+            pristine: false,
         });
     };
 
     handleFaramValidationFailure = (faramErrors) => {
         this.setState({
             faramErrors,
-            pristine: false,
+            pristine: true,
         });
     };
 
@@ -199,7 +199,7 @@ class ConditionsEditModal extends React.PureComponent {
                         </DangerButton>
                         <PrimaryButton
                             type="submit"
-                            disabled={!pristine}
+                            disabled={pristine}
                         >
                             {saveLabel}
                         </PrimaryButton>
