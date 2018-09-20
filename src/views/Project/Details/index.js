@@ -8,8 +8,7 @@ import MultiViewContainer from '#rscv/MultiViewContainer';
 
 import {
     routeUrlSelector,
-    projectLocalDataSelector,
-    projectServerDataSelector,
+    activeProjectSelector,
 } from '#redux';
 
 import _ts from '#ts';
@@ -22,19 +21,18 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    projectLocalData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     projectId: PropTypes.number,
+    project: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     className: '',
-    projectLocalData: {},
     projectId: undefined,
+    project: {},
 };
 
 const mapStateToProps = (state, props) => ({
-    projectLocalData: projectLocalDataSelector(state, props),
-    projectServerData: projectServerDataSelector(state, props),
+    project: activeProjectSelector(state, props),
     routeUrl: routeUrlSelector(state),
 });
 
@@ -90,19 +88,18 @@ export default class ProjectDetails extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            projectLocalData: {
-                faramValues: {
-                    role,
+            project: {
+                role: {
+                    setupPermissions = [],
                 } = {},
             },
         } = this.props;
 
-        if (role !== 'admin') {
+        if (setupPermissions.indexOf('modify') === -1) {
             const className = `
                 ${classNameFromProps}
                 ${styles.forbiddenText}
             `;
-
             return (
                 <Message className={className}>
                     {_ts('project', 'forbiddenText')}

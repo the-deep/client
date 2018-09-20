@@ -96,7 +96,7 @@ export default class UserProject extends React.PureComponent {
                 order: 2,
                 sortable: true,
                 comparator: (a, b) => compareString(a.role, b.role),
-                modifier: row => row.role,
+                modifier: row => row.role.title,
             },
             {
                 key: 'createdAt',

@@ -60,7 +60,6 @@ export const setProjectDetails = (state, action) => {
                         description,
                         startDate,
                         endDate,
-                        role,
                         regions,
                         memberships,
                         userGroups,
@@ -70,6 +69,7 @@ export const setProjectDetails = (state, action) => {
                 } },
                 serverData: { $auto: {
                     versionId: { $set: versionId },
+                    role: { $set: role },
                 } },
             } },
         } },

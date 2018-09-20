@@ -23,7 +23,8 @@ const projectSchema = [];
             userGroups: { type: 'array.userGroupBase' },
             startDate: { type: 'string' }, // date
             endDate: { type: 'string' }, // date
-            role: { type: 'string', required: true },
+            role: { type: 'projectRole' },
+            memberStatus: { type: 'string' },
             isDefault: { type: 'boolean' },
             numberOfUsers: { type: 'uint' },
             numberOfLeads: { type: 'uint' },
@@ -50,8 +51,41 @@ const projectSchema = [];
             member: { type: 'uint', required: true },
             memberEmail: { type: 'email' },
             memberName: { type: 'string' },
+            memberStatus: { type: 'string' },
             project: { type: 'uint', required: true },
-            role: { type: 'string' }, // enum: normal, admin
+            role: { type: 'uint', required: true },
+        },
+    };
+    projectSchema.push({ name, schema });
+}
+{
+    const name = 'projectRoleSimple';
+    const schema = {
+        doc: {
+            name: 'Simplified Project Role',
+            descriptioin: 'Project Role just containing id and title',
+        },
+        fields: {
+            id: { type: 'uint', required: true },
+            title: { type: 'string', required: true },
+        },
+    };
+    projectSchema.push({ name, schema });
+}
+{
+    const name = 'projectRole';
+    const schema = {
+        doc: {
+            name: 'Project Role',
+            descriptioin: 'Project Role',
+        },
+        fields: {
+            id: { type: 'uint', required: true },
+            title: { type: 'string', required: true },
+            leadPermissions: { type: 'array.string', required: true },
+            entryPermissions: { type: 'array.string', required: true },
+            setupPermissions: { type: 'array.string', required: true },
+            exportPermissions: { type: 'array.string', required: true },
         },
     };
     projectSchema.push({ name, schema });
@@ -66,7 +100,7 @@ const projectSchema = [];
         fields: {
             id: { type: 'uint', required: true },
             title: { type: 'string', required: true },
-            role: { type: 'string', required: true },
+            role: { type: 'projectRole', required: true },
             analysisFramework: { type: 'uint', required: false },
             assessmentTemplate: { type: 'uint', required: false },
             versionId: { type: 'uint', required: true },

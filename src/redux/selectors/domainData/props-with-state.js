@@ -39,6 +39,13 @@ const currentUserSelector = createSelector(
     (activeUser, users) => (users[activeUser.userId] || emptyObject),
 );
 
+// activeProject
+export const activeProjectSelector = createSelector(
+    projectsSelector,
+    projectIdFromRoute,
+    (projects, projectId) => (projects[projectId] || emptyObject),
+);
+
 export const userExportsListSelector = createSelector(
     userExportsSelector,
     projectIdFromRoute,
@@ -124,7 +131,7 @@ export const currentUserProjectsSelector = createSelector(
 // activeUser
 export const currentUserAdminProjectsSelector = createSelector(
     currentUserProjectsSelector,
-    projects => projects.filter(project => (project.role === 'admin')),
+    projects => projects.filter(project => project),
 );
 
 // activeUser, projectIdFromRoute

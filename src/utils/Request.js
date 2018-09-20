@@ -3,7 +3,6 @@ import schema from '#schema';
 import { alterResponseErrorToFaramError } from '#rest';
 
 const requestNotCreatedForStartMessage = 'REQUEST: start() called before init()';
-const requestNotCreatedForStopMessage = 'REQUEST: stop() called before init()';
 const validationNotDefinedMessage = 'REQUEST: Validation is not defined';
 
 export default class Request {

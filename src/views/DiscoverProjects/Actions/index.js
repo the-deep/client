@@ -18,7 +18,7 @@ const propTypes = {
     // className: PropTypes.string,
     project: PropTypes.shape({
         id: PropTypes.number,
-        role: PropTypes.string,
+        memberStatus: PropTypes.string,
     }).isRequired,
     onProjectJoin: PropTypes.func.isRequired,
     onProjectJoinCancel: PropTypes.func.isRequired,
@@ -35,7 +35,7 @@ export default class Actions extends React.PureComponent {
     renderUserAccessButtons = () => {
         const { project } = this.props;
 
-        switch (project.role) {
+        switch (project.memberStatus) {
             case 'admin': {
                 const link = reverseRoute(
                     pathNames.projects,
@@ -86,7 +86,7 @@ export default class Actions extends React.PureComponent {
             },
         } = this.props;
 
-        const admins = memberships.filter(m => m.role === 'admin');
+        const admins = memberships.filter(m => m.memberStatus === 'admin');
         const adminEmails = admins.map(a => a.memberEmail);
 
         if (adminEmails.length < 1) {
