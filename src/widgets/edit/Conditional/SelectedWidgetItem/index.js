@@ -59,6 +59,7 @@ export default class SelectedWidgetItem extends React.PureComponent {
                         renderer={Widget}
                     />
                     <ConditionsEditButton
+                        widgetTitle={title}
                         faramElementName="conditions"
                         onModalVisibilityChange={onModalVisibilityChange}
                     />

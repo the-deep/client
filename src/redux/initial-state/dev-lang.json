@@ -785,7 +785,9 @@
         "-30672948": "Added widgets",
         "-8124990": "Conditions",
         "-41289196": "Edit conditions",
-        "-66364403": "Widgets"
+        "-66364403": "Widgets",
+        "-305229": "{widgetTitle}: Conditions",
+        "-24214693": "Operator"
     },
     "links": {
         "browserExtension": {
@@ -2188,7 +2190,9 @@
             "editConditionsLabel": -41289196,
             "titleLabel": 13,
             "widgetTitlePlaceholder": 13,
-            "widgetsTitle": -66364403
+            "widgetsTitle": -66364403,
+            "widgetConditionsTitle": -305229,
+            "operatorSelectLabel": -24214693
         }
     }
 }
