@@ -367,6 +367,9 @@ export default class EditEntries extends React.PureComponent {
                     analysisFramework: analysisFramework.id,
                 },
             });
+        } else if (entryKey === undefined && faramInfo.isComputed) {
+            console.warn('Ignoring entry change if there is no entry key and the change is from entry creation.');
+            // pass
         } else if (entryKey === undefined) {
             const excerptValue = '';
             const excerptType = 'excerpt';
