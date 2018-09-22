@@ -10,7 +10,7 @@ import Request from '#utils/Request';
  *  - setState
  *  - setProjectFramework
  */
-export default class ProjectAfsProjectPatchRequest extends Request {
+export default class UseFrameworkRequest extends Request {
     schemaName = 'project'
 
     handlePreLoad = () => {
@@ -24,17 +24,17 @@ export default class ProjectAfsProjectPatchRequest extends Request {
     handleSuccess = () => {
         this.parent.setProjectFramework({
             projectId: this.projectId,
-            afId: this.afId,
+            frameworkId: this.frameworkId,
         });
     }
 
-    init = (afId, projectId) => {
+    init = (frameworkId, projectId) => {
         this.projectId = projectId;
-        this.afId = afId;
+        this.frameworkId = frameworkId;
 
         this.createDefault({
             url: createUrlForProject(projectId),
-            params: createParamsForProjectPatch({ analysisFramework: afId }),
+            params: createParamsForProjectPatch({ analysisFramework: frameworkId }),
         });
         return this;
     }

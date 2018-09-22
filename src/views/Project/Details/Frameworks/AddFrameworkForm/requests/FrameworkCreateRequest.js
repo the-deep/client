@@ -10,7 +10,7 @@ import _ts from '#ts';
  * Pulls all the Analysis Framework
  * Required:
  *  - setState
- *  - addNewAf
+ *  - addNewFramework
  *  - onModalClose
  */
 export default class ProjectAfCloneRequest extends Request {
@@ -25,7 +25,7 @@ export default class ProjectAfCloneRequest extends Request {
     }
 
     handleSuccess = (response) => {
-        this.parent.addNewAf({
+        this.parent.addNewFramework({
             afDetail: response,
             projectId: this.projectId,
         });

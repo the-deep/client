@@ -6,7 +6,6 @@ import Faram from '#rscg/Faram';
 import FaramGroup from '#rscg/FaramGroup';
 
 
-import { entryAccessor } from '#entities/editEntries';
 import {
     fetchWidget,
     VIEW,
@@ -70,10 +69,12 @@ export default class Entry extends React.PureComponent {
         } = widget;
 
         const {
-            entryType,
-            excerpt,
-            image,
-        } = this.props.entry;
+            entry: {
+                entryType,
+                excerpt,
+                image,
+            },
+        } = this.props;
 
         const { viewComponent: Widget } = fetchWidget(VIEW.list, widgetId);
 
@@ -133,11 +134,11 @@ export default class Entry extends React.PureComponent {
                 <GridViewLayout
                     className={className}
                     data={widgets}
-                    layoutSelector={widgetLayoutSelector}
-                    itemHeaderModifier={this.renderWidgetHeader}
-                    itemContentModifier={this.renderWidgetContent}
-                    keySelector={widgetKeySelector}
                     itemClassName={styles.widget}
+                    itemContentModifier={this.renderWidgetContent}
+                    itemHeaderModifier={this.renderWidgetHeader}
+                    keySelector={widgetKeySelector}
+                    layoutSelector={widgetLayoutSelector}
                 />
             </Faram>
         );

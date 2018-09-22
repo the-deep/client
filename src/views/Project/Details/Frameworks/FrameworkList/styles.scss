@@ -1,0 +1,52 @@
+@import '~base-scss/base';
+
+$width-add-framework-modal: 480px;
+
+.framework-list {
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        display: flex;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+        background-color: $color-background-header;
+        padding: $spacing-medium;
+
+        .heading {
+            flex-grow: 1;
+        }
+
+        .add-framework-button {
+            flex-shrink: 0;
+        }
+
+        .framework-search-input {
+            flex-basis: 100%;
+            margin-top: $spacing-small;
+        }
+    }
+
+    .content {
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .item {
+            display: flex;
+
+            .title {
+                flex-grow: 1;
+            }
+
+            .check {
+                flex-shrink: 0;
+                padding-left: $spacing-small;
+                color: $color-success;
+            }
+        }
+    }
+}
+
+.add-framework-modal {
+    width: $width-add-framework-modal;
+}

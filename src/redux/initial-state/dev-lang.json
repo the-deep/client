@@ -706,6 +706,7 @@
         "12000": "Goto edit entries page for the lead",
         "12001": "Development Language Save",
         "12002": "Hurray!! Development Language Successfully Saved",
+        "12500": "Frameworks",
         "-12279953": "Entry Cleared",
         "-94068330": "All local entries were cleared because associated analysis framework was removed.",
         "-4983139": "Remove lead group",
@@ -1684,7 +1685,8 @@
             "regionUpdate": 996,
             "regionUpdateOverridden": 982,
             "projectOptions": -72859218,
-            "projectOptionsGetFailure": -45091634
+            "projectOptionsGetFailure": -45091634,
+            "frameworkListHeading": 12500
         },
         "connector": {
             "noConnectorsLabel": 1115,

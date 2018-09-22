@@ -4,12 +4,9 @@
     .af-detail-form {
         .name {
             margin-bottom: $spacing-medium;
-            width: 100%;
         }
 
         .description {
-            width: 100%;
-
             :global .input {
                 resize: none;
             }

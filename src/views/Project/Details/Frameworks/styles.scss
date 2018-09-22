@@ -1,56 +1,20 @@
 @import '~base-scss/base';
 
-$width-af-list: 240px;
+$width-framework-list: 240px;
 
 .project-analysis-framework {
     display: flex;
     flex-grow: 1;
 
-    .af-list {
-        display: flex;
-        flex-basis: $width-af-list;
-        flex-direction: column;
-        border-right: $width-separator-thin solid $color-separator-alt;
-
-        .header {
-            @include background-color($color-background-header);
-            display: flex;
-            align-items: center;
-            flex-shrink: 0;
-            flex-wrap: wrap;
-            border-bottom: $width-separator-thin solid $color-separator;
-            padding: $spacing-small;
-
-            .heading {
-                flex-grow: 1;
-            }
-
-            .add-af-button {
-                flex-shrink: 0;
-            }
-
-            .search-af-input {
-                flex-basis: 100%;
-            }
-        }
-
-        .content {
-            flex-grow: 1;
-            overflow-y: auto;
-
-            .af-list-item {
-                display: flex;
-                justify-content: space-between;
-
-                .check {
-                    color: $color-success;
-                }
-            }
-        }
+    .framework-list {
+        flex-basis: $width-framework-list;
+        flex-shrink: 0;
+        border-right: $width-separator-thin solid $color-separator;
     }
 
-    .details-container {
+    .details {
         position: relative;
         flex-grow: 1;
+        overflow: auto;
     }
 }
