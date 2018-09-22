@@ -24,7 +24,7 @@ export default class UseFrameworkRequest extends Request {
     handleSuccess = () => {
         this.parent.setProjectFramework({
             projectId: this.projectId,
-            frameworkId: this.frameworkId,
+            afId: this.frameworkId,
         });
     }
 
