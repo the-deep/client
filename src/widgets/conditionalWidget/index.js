@@ -81,11 +81,13 @@ const checkConditions = (widgetConditions, globalWidgets, entryAttributes) => {
 
         const widgetToCheck = globalWidgets.find(w => w.key === widgetKey);
         const attributes = entryAttributes[widgetToCheck.id] || emptyObject;
+        const { properties: { data: widgetData } = {} } = widgetToCheck;
 
         const evaluator = conditionsAsMap[widgetId][conditionType].test;
         const evaluation = evaluator && evaluator(
             attributes.data || emptyObject,
             conditionAttributes || emptyObject,
+            widgetData,
         );
 
         if (operator === 'AND' && !evaluation) {

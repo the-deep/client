@@ -1,3 +1,7 @@
+const isObjectEmpty = obj => (
+    Object.keys(obj).length === 0
+);
+
 const emptyArray = [];
 
 const getDimensionOptions = ({ dimensions = emptyArray } = {}) => (
@@ -44,6 +48,16 @@ const containsDimension = {
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
+    test: ({ value = {} } = {}, { dimension } = {}) => {
+        const dimensionValue = value[dimension];
+        if (!dimensionValue) {
+            return false;
+        }
+
+        const selectedKeys = Object.keys(dimensionValue)
+            .filter(k => !isObjectEmpty(dimensionValue[k]));
+        return selectedKeys.length !== 0;
+    },
 };
 
 const containsSubdimension = {
@@ -56,6 +70,14 @@ const containsSubdimension = {
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
+    test: ({ value = {} } = {}, { subdimension } = {}) => {
+        const dimensionOfSubdimension = Object.keys(value)
+            .find(v => value[v][subdimension] !== undefined);
+        if (!dimensionOfSubdimension) {
+            return false;
+        }
+        return !isObjectEmpty(value[dimensionOfSubdimension][subdimension]);
+    },
 };
 
 const containsSector = {
@@ -68,6 +90,18 @@ const containsSector = {
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
+    test: ({ value = {} } = {}, { sector } = {}) => (
+        !!Object.keys(value).find((v) => {
+            const subdimen = value[v];
+            if (isObjectEmpty(subdimen)) {
+                return false;
+            }
+
+            return !!Object.keys(subdimen).find(sd => (
+                subdimen[sd] && subdimen[sd][sector]
+            ));
+        })
+    ),
 };
 
 const containsSubsector = {
@@ -80,6 +114,24 @@ const containsSubsector = {
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
+    test: ({ value = {} } = {}, { subsector } = {}) => (
+        Object.keys(value).find((v) => {
+            const subdimen = value[v];
+            if (isObjectEmpty(subdimen)) {
+                return false;
+            }
+
+            return !!Object.keys(subdimen).find((sd) => {
+                const subdimenSector = subdimen[sd];
+                if (isObjectEmpty(subdimenSector)) {
+                    return false;
+                }
+                return !!Object.keys(subdimenSector).find(sds => (
+                    subdimenSector[sds].indexOf(subsector) >= 0
+                ));
+            });
+        })
+    ),
 };
 
 
