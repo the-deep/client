@@ -66,16 +66,30 @@ export default class WidgetList extends React.PureComponent {
     })
 
     render() {
-        const { widgets } = this.props;
+        const {
+            widgets,
+            className: classNameFromProps,
+        } = this.props;
+
+        const className = `
+            ${classNameFromProps}
+            ${styles.widgetListContainer}
+        `;
 
         return (
-            <ListView
-                className={`${styles.widgetList} ${this.props.className}`}
-                data={widgets}
-                renderer={WidgetPreview}
-                keyExtractor={WidgetList.keyExtractor}
-                rendererParams={this.rendererParams}
-            />
+            <div className={className}>
+                <h4 className={styles.heading}>
+                    {/* FIXME: Use strings */}
+                    Widgets
+                </h4>
+                <ListView
+                    className={styles.widgetList}
+                    data={widgets}
+                    renderer={WidgetPreview}
+                    keyExtractor={WidgetList.keyExtractor}
+                    rendererParams={this.rendererParams}
+                />
+            </div>
         );
     }
 }

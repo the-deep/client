@@ -12,11 +12,11 @@ export default class FrameworkSave extends Request {
     schemaName = 'analysisFramework';
 
     handlePreLoad = () => {
-        this.parent.setState({ pendingFramework: true });
+        this.parent.setState({ pendingSaveFramework: true });
     }
 
     handleAfterLoad = () => {
-        this.parent.setState({ pendingFramework: false });
+        this.parent.setState({ pendingSaveFramework: false });
     }
 
     handleSuccess = (response) => {

@@ -220,7 +220,7 @@ export default class WidgetEditor extends React.PureComponent {
 
         return (
             <Faram
-                className={styles.faram}
+                className={styles.widgetEditorFaram}
                 schema={WidgetEditor.schema}
                 value={WidgetEditor.value}
                 disabled
