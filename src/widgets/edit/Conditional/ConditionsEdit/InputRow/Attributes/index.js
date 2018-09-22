@@ -4,6 +4,10 @@ import memoize from 'memoize-one';
 
 import SelectInput from '#rsci/SelectInput';
 import NumberInput from '#rsci/NumberInput';
+import DateInput from '#rsci/DateInput';
+import TimeInput from '#rsci/TimeInput';
+
+import styles from './styles.scss';
 
 const propTypes = {
     attribute: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -35,6 +39,7 @@ export default class ConditionAttribute extends React.PureComponent {
 
             return (
                 <SelectInput
+                    className={styles.input}
                     key={attribute.key}
                     faramElementName={attribute.key}
                     label={attribute.title}
@@ -46,6 +51,25 @@ export default class ConditionAttribute extends React.PureComponent {
         } else if (attribute.type === 'number') {
             return (
                 <NumberInput
+                    className={styles.input}
+                    key={attribute.key}
+                    faramElementName={attribute.key}
+                    label={attribute.title}
+                />
+            );
+        } else if (attribute.type === 'date') {
+            return (
+                <DateInput
+                    className={styles.input}
+                    key={attribute.key}
+                    faramElementName={attribute.key}
+                    label={attribute.title}
+                />
+            );
+        } else if (attribute.type === 'time') {
+            return (
+                <TimeInput
+                    className={styles.input}
                     key={attribute.key}
                     faramElementName={attribute.key}
                     label={attribute.title}

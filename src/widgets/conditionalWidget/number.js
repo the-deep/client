@@ -22,7 +22,20 @@ const isGreaterThan = {
     ),
 };
 
+const isEqualTo = {
+    title: 'Is equal to',
+    attributes: [{
+        key: 'value',
+        title: 'Value',
+        type: 'number',
+    }],
+    test: (data, attributes) => (
+        data.value && data.value === attributes.value
+    ),
+};
+
 export default {
     isLessThan,
     isGreaterThan,
+    isEqualTo,
 };

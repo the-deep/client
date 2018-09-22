@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
 
 import Faram from '#rscg/Faram';
 import FaramList from '#rscg/FaramList';
@@ -20,7 +21,10 @@ import {
 
     afViewAnalysisFrameworkSelector,
 } from '#redux';
-import { conditions as conditionsAttributes } from '#widgets/conditionalWidget';
+import {
+    conditions as conditionsAttributes,
+    compatibleWidgetIds,
+} from '#widgets/conditionalWidget';
 
 import _ts from '#ts';
 
@@ -93,6 +97,10 @@ class ConditionsEditModal extends React.PureComponent {
         };
     }
 
+    getCompatibleWidget = memoize(widgets => (
+        widgets.filter(w => compatibleWidgetIds.indexOf(w.widgetId) >= 0)
+    ));
+
     widgetListRendererParams = (key, widget) => {
         const { title } = widget;
 
@@ -162,6 +170,9 @@ class ConditionsEditModal extends React.PureComponent {
         const saveLabel = _ts('widgets.editor.conditional', 'saveButtonLabel');
         const operatorSelectLabel = _ts('widgets.editor.conditional', 'operatorSelectLabel');
 
+        const compatibleWidgets = this.getCompatibleWidget(widgets);
+        console.warn(widgets, compatibleWidgets);
+
         return (
             <Modal className={styles.conditionEditModal} >
                 <Faram
@@ -184,7 +195,7 @@ class ConditionsEditModal extends React.PureComponent {
                                 </header>
                                 <ListView
                                     className={styles.widgetList}
-                                    data={widgets}
+                                    data={compatibleWidgets}
                                     renderer={WidgetPreview}
                                     rendererParams={this.widgetListRendererParams}
                                     keyExtractor={ConditionsEditModal.widgetKeySelector}

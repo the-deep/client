@@ -26,11 +26,13 @@ const deleteClick = (rows, index) => (
 
 const emptyArray = [];
 
-export default class InputRow extends React.PureComponent {
+export default class ConditionsInputRow extends React.PureComponent {
     static propTypes = propTypes;
 
     static conditionTypeKeySelector = c => c.key;
     static conditionTypeLabelSelector = c => c.title;
+
+    static attributeKeySelector = c => c.key;
 
     static getCondtionTypes = memoize(conditions => (
         conditions.map(condition => ({
@@ -70,8 +72,12 @@ export default class InputRow extends React.PureComponent {
             conditions,
         } = this.props;
 
-        this.attributes = InputRow.getAttributesForConditionType(conditionType, conditions);
-        this.conditionTypes = InputRow.getCondtionTypes(conditions);
+        this.attributes = ConditionsInputRow.getAttributesForConditionType(
+            conditionType,
+            conditions,
+        );
+
+        this.conditionTypes = ConditionsInputRow.getCondtionTypes(conditions);
 
         return (
             <div className={styles.inputContainer}>
@@ -81,8 +87,8 @@ export default class InputRow extends React.PureComponent {
                     </div>
                     <SelectInput
                         hideClearButton
-                        keySelector={InputRow.conditionTypeKeySelector}
-                        labelSelector={InputRow.conditionTypeLabelSelector}
+                        keySelector={ConditionsInputRow.conditionTypeKeySelector}
+                        labelSelector={ConditionsInputRow.conditionTypeLabelSelector}
                         options={this.conditionTypes}
                         label={_ts('widgets.editor.conditional', 'conditionTypeLabel')}
                         placeholder={_ts('widgets.editor.conditional', 'conditionTypePlaceholder')}
@@ -92,6 +98,7 @@ export default class InputRow extends React.PureComponent {
                         <ListView
                             className={styles.conditionAttributes}
                             data={this.attributes}
+                            keyExtractor={ConditionsInputRow.attributeKeySelector}
                             renderer={Attribute}
                             rendererParams={this.attributeRendererParams}
                         />
