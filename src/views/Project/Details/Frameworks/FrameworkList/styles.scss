@@ -1,7 +1,5 @@
 @import '~base-scss/base';
 
-$width-add-framework-modal: 480px;
-
 .framework-list {
     display: flex;
     flex-direction: column;
@@ -15,10 +13,6 @@ $width-add-framework-modal: 480px;
 
         .heading {
             flex-grow: 1;
-        }
-
-        .add-framework-button {
-            flex-shrink: 0;
         }
 
         .framework-search-input {
@@ -45,8 +39,4 @@ $width-add-framework-modal: 480px;
             }
         }
     }
-}
-
-.add-framework-modal {
-    width: $width-add-framework-modal;
 }

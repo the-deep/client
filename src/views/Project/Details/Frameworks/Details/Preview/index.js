@@ -9,10 +9,14 @@ import List from './List';
 import styles from './styles.scss';
 
 const propTypes = {
-    framework: PropTypes.object,
+    activeView: PropTypes.string,
+    framework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    className: PropTypes.string,
 };
 
 const defaultProps = {
+    activeView: undefined,
+    className: '',
     framework: undefined,
 };
 

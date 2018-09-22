@@ -103,7 +103,7 @@ export default class ProjectDetails extends React.PureComponent {
             return (
                 <Message
                     large
-                    className={styles.message}
+                    className={className}
                 >
                     {_ts('project', 'forbiddenText')}
                 </Message>
@@ -125,7 +125,6 @@ export default class ProjectDetails extends React.PureComponent {
                     tabs={this.routes}
                 />
                 <MultiViewContainer
-                    className={styles.container}
                     useHash
                     views={this.views}
                 />

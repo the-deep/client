@@ -4,9 +4,6 @@ import { connect } from 'react-redux';
 
 import Message from '#rscv/Message';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import Modal from '#rscv/Modal';
-import ModalHeader from '#rscv/Modal/Header';
-import ModalBody from '#rscv/Modal/Body';
 
 import {
     analysisFrameworkListSelector,
@@ -17,15 +14,13 @@ import {
 import _ts from '#ts';
 
 import Details from './Details';
-import AddFrameworkForm from './AddFrameworkForm';
 import styles from './styles.scss';
 
 import FrameworkListGetRequest from './requests/FrameworkListGetRequest';
 import FrameworkList from './FrameworkList';
 
 const propTypes = {
-    // eslint-disable-next-line react/forbid-prop-types
-    frameworkList: PropTypes.array.isRequired,
+    frameworkList: PropTypes.arrayOf(PropTypes.object).isRequired,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     projectId: PropTypes.number.isRequired,
     setFrameworkList: PropTypes.func.isRequired,
@@ -67,7 +62,6 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
         }
 
         this.state = {
-            showAddFrameworkModal: false,
             pendingFrameworkList: false,
             activeFrameworkId,
         };
@@ -115,10 +109,6 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
         this.frameworkListRequest.stop();
     }
 
-    handleModalClose = () => {
-        this.setState({ showAddFrameworkModal: false });
-    }
-
     handleFrameworkClick = (id) => {
         this.setState({ activeFrameworkId: id });
     }
@@ -143,29 +133,6 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
         );
     }
 
-    renderAddFrameworkModal = () => {
-        const { showAddFrameworkModal } = this.state;
-        const { projectId } = this.props;
-
-        if (!showAddFrameworkModal) {
-            return null;
-        }
-
-        const addAFModalTitle = _ts('project', 'addAfModalTitle');
-
-        return (
-            <Modal>
-                <ModalHeader title={addAFModalTitle} />
-                <ModalBody>
-                    <AddFrameworkForm
-                        projectId={projectId}
-                        onModalClose={this.handleModalClose}
-                    />
-                </ModalBody>
-            </Modal>
-        );
-    }
-
     render() {
         const {
             pendingFrameworkList,
@@ -177,10 +144,10 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
             projectDetails: {
                 analysisFramework: selectedFrameworkId,
             },
+            projectId,
         } = this.props;
 
         const ActiveFrameworkDetails = this.renderActiveFrameworkDetails;
-        const AddAFModal = this.renderAddFrameworkModal;
 
         return (
             <div className={styles.projectAnalysisFramework}>
@@ -190,13 +157,13 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
                     activeFrameworkId={activeFrameworkId}
                     selectedFrameworkId={selectedFrameworkId}
                     frameworkList={frameworkList}
+                    projectId={projectId}
                 />
                 { pendingFrameworkList ? (
                     <LoadingAnimation large />
                 ) : (
                     <ActiveFrameworkDetails />
                 )}
-                <AddAFModal />
             </div>
         );
     }

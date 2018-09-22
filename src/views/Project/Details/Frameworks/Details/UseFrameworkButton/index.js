@@ -9,7 +9,23 @@ import _ts from '#ts';
 
 import UseFrameworkRequest from './requests/UseFrameworkRequest';
 
+const propTypes = {
+    currentFrameworkId: PropTypes.number.isRequired,
+    disabled: PropTypes.bool,
+    frameworkId: PropTypes.number.isRequired,
+    frameworkTitle: PropTypes.string.isRequired,
+    projectId: PropTypes.number.isRequired,
+    setProjectFramework: PropTypes.func.isRequired,
+};
+
+const defaultProps = {
+    disabled: false,
+};
+
 export default class UseFrameworkButton extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
     constructor(props) {
         super(props);
 

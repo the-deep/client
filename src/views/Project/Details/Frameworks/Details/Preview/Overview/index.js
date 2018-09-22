@@ -64,6 +64,7 @@ export default class Overview extends React.PureComponent {
         );
 
         return (
+            // eslint-disable-next-line css-modules/no-undef-class
             <div className={styles.content}>
                 <Widget
                     widgetName={widgetId}

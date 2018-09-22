@@ -7,7 +7,6 @@ import memoize from 'memoize-one';
 import { reverseRoute } from '#rsu/common';
 import FixedTabs from '#rscv/FixedTabs';
 import AccentButton from '#rsca/Button/AccentButton';
-import WarningButton from '#rsca/Button/WarningButton';
 import Confirm from '#rscv/Modal/Confirm';
 
 import {
@@ -17,10 +16,7 @@ import {
     addNewAfAction,
 } from '#redux';
 
-import {
-    iconNames,
-    pathNames,
-} from '#constants';
+import { pathNames } from '#constants';
 import _ts from '#ts';
 
 import Preview from './Preview';
@@ -33,6 +29,7 @@ import FrameworkCloneRequest from './requests/FrameworkCloneRequest';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     framework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     analysisFrameworkId: PropTypes.number.isRequired,
     addNewFramework: PropTypes.func.isRequired,
@@ -41,6 +38,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
 };
 
 const mapStateToProps = (state, props) => ({

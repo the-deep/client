@@ -13,12 +13,15 @@ import AddFrameworkForm from '../../AddFrameworkForm';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
+    projectId: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
+    className: '',
 };
 
-export default class FrameworkList extends React.PureComponent {
+export default class AddFrameworkButton extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 

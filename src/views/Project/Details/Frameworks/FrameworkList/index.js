@@ -7,13 +7,9 @@ import {
     compareString,
 } from '#rsu/common';
 
-import AccentButton from '#rsca/Button/AccentButton';
 import SearchInput from '#rsci/SearchInput';
 import ListView from '#rscv/List/ListView';
 import ListItem from '#rscv/List/ListItem';
-import Modal from '#rscv/Modal';
-import ModalBody from '#rscv/Modal/Body';
-import ModalHeader from '#rscv/Modal/Header';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';
@@ -22,9 +18,20 @@ import AddFrameworkButton from './AddFrameworkButton';
 import styles from './styles.scss';
 
 const propTypes = {
+    activeFrameworkId: PropTypes.number.isRequired,
+    className: PropTypes.string,
+    frameworkList: PropTypes.arrayOf(PropTypes.object),
+    onClick: PropTypes.func.isRequired,
+    selectedFrameworkId: PropTypes.number,
+    projectId: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
+    className: '',
+    frameworkList: [],
+
+    // Apparently there can be no frameworks in projects
+    selectedFrameworkId: undefined,
 };
 
 const FrameworkListItem = ({
@@ -51,6 +58,20 @@ const FrameworkListItem = ({
             { isSelected && <div className={iconClassName} /> }
         </ListItem>
     );
+};
+
+FrameworkListItem.propTypes = {
+    className: PropTypes.string,
+    isActive: PropTypes.bool.isRequired,
+    isSelected: PropTypes.bool.isRequired,
+    framework: PropTypes.shape({
+        title: PropTypes.string,
+    }).isRequired,
+    onClick: PropTypes.func.isRequired,
+};
+
+FrameworkListItem.defaultProps = {
+    className: '',
 };
 
 
@@ -83,7 +104,6 @@ export default class FrameworkList extends React.PureComponent {
 
         this.state = {
             searchInputValue: '',
-            showAddFrameworkModal: false,
         };
     }
 
@@ -106,10 +126,7 @@ export default class FrameworkList extends React.PureComponent {
             projectId,
         } = this.props;
 
-        const {
-            searchInputValue,
-            showAddFrameworkModal,
-        } = this.state;
+        const { searchInputValue } = this.state;
 
         if (!frameworkList) {
             return null;
