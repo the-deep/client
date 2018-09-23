@@ -25,7 +25,7 @@ before_script:
 
 script:
     - python -c "import fcntl; fcntl.fcntl(1, fcntl.F_SETFL, 0)"
-    - docker run -t -v `pwd`/coverage:/code/coverage thedeep/deep-client:latest bash -c 'CI=true yarn test --coverage'
+    - docker run -t -v `pwd`/coverage:/code/coverage thedeep/deep-client:latest bash -c 'export CI=true && yarn install && yarn test'
 
 after_success:
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
