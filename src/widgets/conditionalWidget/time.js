@@ -1,3 +1,15 @@
+const decodeTimeInMinutes = (value, separator = ':') => {
+    if (!value) {
+        return 0;
+    }
+    const values = value.split(separator);
+    return ((+values[0] * 60) + values[1]);
+};
+
+const compareTime = (a, b) => (
+    decodeTimeInMinutes(a) - decodeTimeInMinutes(b)
+);
+
 const isEqualTo = {
     title: 'Is equal to',
     attributes: [{
@@ -5,6 +17,9 @@ const isEqualTo = {
         type: 'time',
         title: 'Is equal to',
     }],
+    test: ({ value } = {}, { value: attrValue } = {}) => (
+        compareTime(value, attrValue) === 0
+    ),
 };
 
 const after = {
@@ -14,6 +29,9 @@ const after = {
         type: 'time',
         title: 'After',
     }],
+    test: ({ value } = {}, { value: attrValue } = {}) => (
+        compareTime(value, attrValue) > 0
+    ),
 };
 
 const before = {
@@ -23,6 +41,9 @@ const before = {
         type: 'time',
         title: 'Before',
     }],
+    test: ({ value } = {}, { value: attrValue } = {}) => (
+        compareTime(value, attrValue) < 0
+    ),
 };
 
 const isInBetween = {
@@ -39,6 +60,10 @@ const isInBetween = {
             title: 'Before',
         },
     ],
+    test: ({ value } = {}, { minValue, maxValue } = {}) => (
+        compareTime(value, maxValue) < 0 &&
+        compareTime(value, minValue) > 0
+    ),
 };
 
 export default {

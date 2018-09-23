@@ -14,10 +14,9 @@ const isEqualTo = {
         keySelector: d => d.key,
         labelSelector: d => d.label,
     }],
-    test: (data, attributes) => {
-        console.warn(data, attributes);
-        return false;
-    },
+    test: ({ value } = {}, { scale } = {}) => (
+        value === scale
+    ),
 };
 
 const isGreaterThan = {
@@ -30,10 +29,10 @@ const isGreaterThan = {
         keySelector: d => d.key,
         labelSelector: d => d.label,
     }],
-    test: (data, attributes) => {
-        console.warn(data, attributes);
-        return false;
-    },
+    test: ({ value } = {}, { scale } = {}, { scaleUnits = [] } = {}) => (
+        scaleUnits.findIndex(s => s.key === value) >=
+        scaleUnits.findIndex(s => s.key === scale)
+    ),
 };
 
 const isLessThan = {
@@ -46,10 +45,10 @@ const isLessThan = {
         keySelector: d => d.key,
         labelSelector: d => d.label,
     }],
-    test: (data, attributes) => {
-        console.warn(data, attributes);
-        return false;
-    },
+    test: ({ value } = {}, { scale } = {}, { scaleUnits = [] } = {}) => (
+        scaleUnits.findIndex(s => s.key === value) <=
+        scaleUnits.findIndex(s => s.key === scale)
+    ),
 };
 
 const isInBetween = {
@@ -72,10 +71,12 @@ const isInBetween = {
             labelSelector: d => d.label,
         },
     ],
-    test: (data, attributes) => {
-        console.warn(data, attributes);
-        return false;
-    },
+    test: ({ value } = {}, { lowerScale, upperScale } = {}, { scaleUnits = [] } = {}) => (
+        (scaleUnits.findIndex(s => s.key === value) >=
+        scaleUnits.findIndex(s => s.key === lowerScale)) &&
+        (scaleUnits.findIndex(s => s.key === value) <=
+        scaleUnits.findIndex(s => s.key === upperScale))
+    ),
 };
 
 export default {

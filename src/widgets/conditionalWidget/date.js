@@ -1,3 +1,5 @@
+import { compareDate } from '#rsu/common';
+
 const isEqualTo = {
     title: 'Is equal to',
     attributes: [{
@@ -5,6 +7,9 @@ const isEqualTo = {
         type: 'date',
         title: 'Is equal to',
     }],
+    test: ({ value } = {}, { value: attrValue } = {}) => (
+        compareDate(value, attrValue) === 0
+    ),
 };
 
 const after = {
@@ -14,6 +19,9 @@ const after = {
         type: 'date',
         title: 'After date',
     }],
+    test: ({ value } = {}, { value: attrValue } = {}) => (
+        compareDate(value, attrValue) > 0
+    ),
 };
 
 const before = {
@@ -23,6 +31,9 @@ const before = {
         type: 'date',
         title: 'Before date',
     }],
+    test: ({ value } = {}, { value: attrValue } = {}) => (
+        compareDate(value, attrValue) < 0
+    ),
 };
 
 const isInBetween = {
@@ -39,6 +50,10 @@ const isInBetween = {
             title: 'Before date',
         },
     ],
+    test: ({ value } = {}, { minValue, maxValue } = {}) => (
+        compareDate(value, maxValue) < 0 &&
+        compareDate(value, minValue) > 0
+    ),
 };
 
 export default {

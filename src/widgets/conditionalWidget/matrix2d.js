@@ -91,13 +91,13 @@ const containsSector = {
         labelSelector: d => d.title,
     }],
     test: ({ value = {} } = {}, { sector } = {}) => (
-        !!Object.keys(value).find((v) => {
+        Object.keys(value).some((v) => {
             const subdimen = value[v];
             if (isObjectEmpty(subdimen)) {
                 return false;
             }
 
-            return !!Object.keys(subdimen).find(sd => (
+            return Object.keys(subdimen).some(sd => (
                 subdimen[sd] && subdimen[sd][sector]
             ));
         })
@@ -115,25 +115,24 @@ const containsSubsector = {
         labelSelector: d => d.title,
     }],
     test: ({ value = {} } = {}, { subsector } = {}) => (
-        Object.keys(value).find((v) => {
+        Object.keys(value).some((v) => {
             const subdimen = value[v];
             if (isObjectEmpty(subdimen)) {
                 return false;
             }
 
-            return !!Object.keys(subdimen).find((sd) => {
+            return Object.keys(subdimen).some((sd) => {
                 const subdimenSector = subdimen[sd];
                 if (isObjectEmpty(subdimenSector)) {
                     return false;
                 }
-                return !!Object.keys(subdimenSector).find(sds => (
+                return Object.keys(subdimenSector).some(sds => (
                     subdimenSector[sds].indexOf(subsector) >= 0
                 ));
             });
         })
     ),
 };
-
 
 export default {
     containsDimension,
