@@ -16,13 +16,24 @@ test('should set analysis framework', () => {
     };
 
     const action = setAfViewAnalysisFrameworkAction({
-        analysisFramework: { id: 1 },
+        analysisFramework: {
+            id: 1,
+            title: 'af',
+        },
     });
     const after = {
         analysisFrameworkView: {
             1: {
-                id: 1,
                 pristine: true,
+                data: {
+                    id: 1,
+                    title: 'af',
+                },
+                faramValues: {
+                    title: 'af',
+                    description: undefined,
+                },
+                faramErrors: {},
             },
         },
     };
@@ -33,7 +44,9 @@ test('should set analysis framework', () => {
 test('should add widget', () => {
     const state = {
         analysisFrameworkView: {
-            1: { id: 1 },
+            1: {
+                data: {},
+            },
         },
     };
 
@@ -44,14 +57,15 @@ test('should add widget', () => {
     const after = {
         analysisFrameworkView: {
             1: {
-                id: 1,
-                widgets: [
-                    {
-                        key: '1',
-                        name: 'widget1',
-                        properties: {},
-                    },
-                ],
+                data: {
+                    widgets: [
+                        {
+                            key: '1',
+                            name: 'widget1',
+                            properties: {},
+                        },
+                    ],
+                },
                 pristine: false,
             },
         },
@@ -63,11 +77,12 @@ test('should remove widget', () => {
     const state = {
         analysisFrameworkView: {
             1: {
-                id: 1,
-                widgets: [
-                    { key: '1', name: 'widget1' },
-                    { key: '2', name: 'widget2' },
-                ],
+                data: {
+                    widgets: [
+                        { key: '1', name: 'widget1' },
+                        { key: '2', name: 'widget2' },
+                    ],
+                },
             },
         },
     };
@@ -78,10 +93,11 @@ test('should remove widget', () => {
     const after = {
         analysisFrameworkView: {
             1: {
-                id: 1,
-                widgets: [
-                    { key: '1', name: 'widget1' },
-                ],
+                data: {
+                    widgets: [
+                        { key: '1', name: 'widget1' },
+                    ],
+                },
                 pristine: false,
             },
         },
@@ -93,11 +109,12 @@ test('should update widget', () => {
     const state = {
         analysisFrameworkView: {
             1: {
-                id: 1,
-                widgets: [
-                    { key: '1', name: 'widget1' },
-                    { key: '2', name: 'widget2' },
-                ],
+                data: {
+                    widgets: [
+                        { key: '1', name: 'widget1' },
+                        { key: '2', name: 'widget2' },
+                    ],
+                },
             },
         },
     };
@@ -108,11 +125,12 @@ test('should update widget', () => {
     const after = {
         analysisFrameworkView: {
             1: {
-                id: 1,
-                widgets: [
-                    { key: '1', name: 'widget3' },
-                    { key: '2', name: 'widget2' },
-                ],
+                data: {
+                    widgets: [
+                        { key: '1', name: 'widget3' },
+                        { key: '2', name: 'widget2' },
+                    ],
+                },
                 pristine: false,
             },
         },

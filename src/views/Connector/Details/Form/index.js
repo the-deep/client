@@ -429,6 +429,8 @@ export default class ConnectorDetailsForm extends React.PureComponent {
     }
 
     createSchema = (props) => {
+        // FIXME: potential problem here with params,
+        // it should be empty array not empty object
         const { connectorSource = {} } = props;
         const schema = {
             fields: {
