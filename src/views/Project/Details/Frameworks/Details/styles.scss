@@ -1,30 +1,61 @@
 @import '~base-scss/base';
 
-$af-detail-form-width: 480px;
-$height-header: 39px;
+.framework-details {
+    display: flex;
+    flex-direction: column;
 
-.analysis-framework-detail {
-    height: 100%;
+    // required to fix overflow of preview
+    // No idea why this works though
+    width: 1px;
 
     .header {
-        @include background-color($color-background-header);
-        display: flex;
-        align-items: center;
         flex-shrink: 0;
-        justify-content: space-between;
         border-bottom: $width-separator-thin solid $color-separator;
-        padding: 0 $spacing-small;
-        height: $height-header;
+        background-color: $color-background-header;
 
-        .action-buttons {
-            button {
-                margin-left: $spacing-small;
+        .top {
+            display: flex;
+            align-items: center;
+
+            .heading {
+                flex-grow: 1;
+                padding: $spacing-small $spacing-medium;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
 
-            .edit-framework-link {
-                @include button-like-link($color-warning);
-                margin-left: $spacing-small;
+            .tabs {
+                flex-shrink: 0;
+            }
+
+            .action-buttons {
+                flex-shrink: 0;
+                padding: $spacing-small $spacing-medium;
+
+                button {
+                    margin-left: $spacing-small;
+                }
+
+                .edit-framework-link {
+                    @include button-like-link($color-warning);
+                    margin-left: $spacing-small;
+                }
             }
         }
+
+        .description {
+            flex-basis: 100%;
+            padding: 0 $spacing-medium $spacing-medium $spacing-medium;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: $color-text-label;
+            font-size: $font-size-large;
+        }
+    }
+
+    .preview {
+        flex-grow: 1;
     }
 }

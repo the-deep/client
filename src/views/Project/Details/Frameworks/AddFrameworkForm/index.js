@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
+import TextArea from '#rsci/TextArea';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -14,13 +15,13 @@ import Faram, {
 import { addNewAfAction } from '#redux';
 import _ts from '#ts';
 
-import AfPostRequest from './requests/AfPostRequest';
+import FrameworkCreateRequest from './requests/FrameworkCreateRequest';
 
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    addNewAf: PropTypes.func.isRequired,
+    addNewFramework: PropTypes.func.isRequired,
     onModalClose: PropTypes.func.isRequired,
     projectId: PropTypes.number,
 };
@@ -31,11 +32,11 @@ const defaultProps = {
 };
 
 const mapDispatchToProps = dispatch => ({
-    addNewAf: params => dispatch(addNewAfAction(params)),
+    addNewFramework: params => dispatch(addNewAfAction(params)),
 });
 
 @connect(undefined, mapDispatchToProps)
-export default class AddAnalysisFramework extends React.PureComponent {
+export default class AddFrameworkForm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -46,24 +47,25 @@ export default class AddAnalysisFramework extends React.PureComponent {
             faramErrors: {},
             faramValues: {},
             pending: false,
-            pristine: false,
+            pristine: true,
         };
 
         this.schema = {
             fields: {
                 title: [requiredCondition],
+                description: [],
             },
         };
 
-        this.afCreateRequest = new AfPostRequest({
+        this.frameworkCreateRequest = new FrameworkCreateRequest({
             setState: v => this.setState(v),
-            addNewAf: this.props.addNewAf,
+            addNewFramework: this.props.addNewFramework,
             onModalClose: this.props.onModalClose,
         });
     }
 
     componentWillUnmount() {
-        this.afCreateRequest.stop();
+        this.frameworkCreateRequest.stop();
     }
 
     // faram RELATED
@@ -71,7 +73,7 @@ export default class AddAnalysisFramework extends React.PureComponent {
         this.setState({
             faramValues,
             faramErrors,
-            pristine: true,
+            pristine: false,
         });
     };
 
@@ -81,7 +83,9 @@ export default class AddAnalysisFramework extends React.PureComponent {
 
     handleValidationSuccess = (data) => {
         const { projectId } = this.props;
-        this.afCreateRequest.init(projectId, data).start();
+        this.frameworkCreateRequest
+            .init(projectId, data)
+            .start();
     };
 
     render() {
@@ -92,11 +96,19 @@ export default class AddAnalysisFramework extends React.PureComponent {
             pristine,
         } = this.state;
 
-        const { className } = this.props;
+        const {
+            className: classNameFromProps,
+            onModalClose,
+        } = this.props;
+
+        const className = `
+            ${classNameFromProps}
+            ${styles.addAnalysisFrameworkForm}
+        `;
 
         return (
             <Faram
-                className={`${className} ${styles.addAnalysisFrameworkForm}`}
+                className={className}
                 onChange={this.handleFaramChange}
                 onValidationFailure={this.handleValidationFailure}
                 onValidationSuccess={this.handleValidationSuccess}
@@ -108,17 +120,25 @@ export default class AddAnalysisFramework extends React.PureComponent {
                 { pending && <LoadingAnimation /> }
                 <NonFieldErrors faramElement />
                 <TextInput
+                    className={styles.title}
                     label={_ts('project', 'addAfTitleLabel')}
                     faramElementName="title"
                     placeholder={_ts('project', 'addAfTitlePlaceholder')}
                     autoFocus
                 />
+                <TextArea
+                    className={styles.description}
+                    label={_ts('project', 'projectDescriptionLabel')}
+                    faramElementName="description"
+                    placeholder={_ts('project', 'projectDescriptionPlaceholder')}
+                    rows={3}
+                />
                 <div className={styles.actionButtons}>
-                    <DangerButton onClick={this.props.onModalClose}>
+                    <DangerButton onClick={onModalClose}>
                         {_ts('project', 'modalCancel')}
                     </DangerButton>
                     <PrimaryButton
-                        disabled={pending || !pristine}
+                        disabled={pending || pristine}
                         type="submit"
                     >
                         {_ts('project', 'modalAdd')}

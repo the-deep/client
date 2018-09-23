@@ -1,41 +1,20 @@
 @import '~base-scss/base';
 
-.details {
+.project-details {
     display: flex;
     position: relative;
     flex-direction: column;
     height: 100%;
 
-    .project-form {
-        display: flex;
-        position: relative;
-        flex-direction: column;
+    .tabs {
+        flex-shrink: 0;
+    }
 
-        .action-buttons {
-            display: flex;
-            flex-shrink: 0;
-            justify-content: flex-end;
-            padding: $spacing-small $spacing-medium-alt;
-
-            button {
-                margin-left: $spacing-medium;
-            }
-        }
-
-        .tabs {
-            @include background-color($color-foreground);
-            flex-shrink: 0;
-        }
-
-        .content {
-            @extend %main-content;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
+    .content {
+        flex-grow: 1;
     }
 }
 
 .forbidden-text {
-    font-size: $font-size-extra-large;
+    @extend %main-content;
 }

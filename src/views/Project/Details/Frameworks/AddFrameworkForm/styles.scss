@@ -6,6 +6,16 @@
     flex-direction: column;
     height: 100%;
 
+    .title {
+        margin-bottom: $spacing-medium;
+    }
+
+    .description {
+        :global .input {
+            resize: none;
+        }
+    }
+
     .action-buttons {
         display: flex;
         justify-content: flex-end;

@@ -16,15 +16,15 @@ export default class ProjectAfsGetRequest extends Request {
     schemaName = 'analysisFrameworkList'
 
     handlePreLoad = () => {
-        this.parent.setState({ afLoading: true });
+        this.parent.setState({ pendingFrameworkList: true });
     }
 
     handleAfterLoad = () => {
-        this.parent.setState({ afLoading: false });
+        this.parent.setState({ pendingFrameworkList: false });
     }
 
     handleSuccess = (response) => {
-        this.parent.setAnalysisFrameworks({
+        this.parent.setFrameworkList({
             analysisFrameworks: response.results,
         });
     }

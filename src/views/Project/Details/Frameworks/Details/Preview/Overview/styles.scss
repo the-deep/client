@@ -1,0 +1,25 @@
+@import '~base-scss/base';
+@import '~base-scss/widget';
+
+.overview {
+    display: inline-block;
+    background-color: $color-foreground;
+
+    .widget {
+        @extend %widget;
+        padding: $spacing-extra-small;
+
+        .header {
+            display: flex;
+            align-items: center;
+
+            .heading {
+                flex-grow: 1;
+                padding: 0 $spacing-small;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+    }
+}

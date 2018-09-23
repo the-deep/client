@@ -1,0 +1,42 @@
+@import '~base-scss/base';
+
+.framework-list {
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        display: flex;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+        background-color: $color-background-header;
+        padding: $spacing-medium;
+
+        .heading {
+            flex-grow: 1;
+        }
+
+        .framework-search-input {
+            flex-basis: 100%;
+            margin-top: $spacing-small;
+        }
+    }
+
+    .content {
+        flex-grow: 1;
+        overflow-y: auto;
+
+        .item {
+            display: flex;
+
+            .title {
+                flex-grow: 1;
+            }
+
+            .check {
+                flex-shrink: 0;
+                padding-left: $spacing-small;
+                color: $color-success;
+            }
+        }
+    }
+}

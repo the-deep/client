@@ -20,7 +20,22 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-export default class ProjectPanel extends React.PureComponent {
+const propTypes = {
+    className: PropTypes.string,
+    projectId: PropTypes.number,
+    userProjects: PropTypes.arrayOf(PropTypes.object),
+};
+
+const defaultProps = {
+    className: '',
+    projectId: undefined,
+    userProjects: [],
+};
+
+export default class Sidebar extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
     constructor(props) {
         super(props);
 

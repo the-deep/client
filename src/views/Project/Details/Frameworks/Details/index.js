@@ -1,13 +1,12 @@
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
 
 import { reverseRoute } from '#rsu/common';
+import FixedTabs from '#rscv/FixedTabs';
 import AccentButton from '#rsca/Button/AccentButton';
-import WarningButton from '#rsca/Button/WarningButton';
-import SuccessButton from '#rsca/Button/SuccessButton';
-import Message from '#rscv/Message';
 import Confirm from '#rscv/Modal/Confirm';
 
 import {
@@ -16,42 +15,51 @@ import {
     setProjectAfAction,
     addNewAfAction,
 } from '#redux';
-import {
-    iconNames,
-    pathNames,
-} from '#constants';
+
+import { pathNames } from '#constants';
 import _ts from '#ts';
 
-import EditFramework from '../EditFramework';
+import Preview from './Preview';
 
-import ProjectPatchRequest from './requests/ProjectPatchRequest';
-import AfCloneRequest from './requests/AfCloneRequest';
+import UseFrameworkButton from './UseFrameworkButton';
+
+import FrameworkGetRequest from './requests/FrameworkGetRequest';
+import FrameworkCloneRequest from './requests/FrameworkCloneRequest';
 
 import styles from './styles.scss';
 
 const propTypes = {
-    frameworkDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    className: PropTypes.string,
+    framework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     analysisFrameworkId: PropTypes.number.isRequired,
-    addNewAf: PropTypes.func.isRequired,
+    addNewFramework: PropTypes.func.isRequired,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setProjectFramework: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
+    className: '',
 };
 
 const mapStateToProps = (state, props) => ({
-    frameworkDetails: analysisFrameworkDetailSelector(state, props),
+    framework: analysisFrameworkDetailSelector(state, props),
     projectDetails: projectDetailsSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
-    addNewAf: params => dispatch(addNewAfAction(params)),
+    addNewFramework: params => dispatch(addNewAfAction(params)),
     setProjectFramework: params => dispatch(setProjectAfAction(params)),
 });
 
+const requestFramework = memoize((frameworkId, frameworkGetRequest) => {
+    frameworkGetRequest.stop();
+    frameworkGetRequest
+        .init(frameworkId)
+        .start();
+});
+
 @connect(mapStateToProps, mapDispatchToProps)
-export default class ProjectAfDetail extends React.PureComponent {
+export default class Details extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -59,208 +67,242 @@ export default class ProjectAfDetail extends React.PureComponent {
         super(props);
 
         this.state = {
-            cloneConfirmModalShow: false,
-            useConfirmModalShow: false,
-            showEditFrameworkModal: false,
+            showCloneFrameworkConfirm: false,
+            showUseFrameworkConfirm: false,
+            framework: undefined,
+            activeView: 'overview',
         };
 
+        const setState = d => this.setState(d);
+
         // Requests
-        this.projectPatchRequest = new ProjectPatchRequest({
-            setState: v => this.setState(v),
-            setProjectFramework: this.props.setProjectFramework,
+        this.frameworkCloneRequest = new FrameworkCloneRequest({
+            setState,
+            addNewFramework: this.props.addNewFramework,
         });
-        this.afCloneRequest = new AfCloneRequest({
-            setState: v => this.setState(v),
-            addNewAf: this.props.addNewAf,
-        });
+
+        this.frameworkGetRequest = new FrameworkGetRequest({ setState });
+
+        this.tabs = {
+            overview: 'Overview',
+            list: 'List',
+        };
     }
 
     componentWillUnmount() {
-        this.projectPatchRequest.stop();
-        this.afCloneRequest.stop();
+        this.frameworkCloneRequest.stop();
+        this.frameworkGetRequest.stop();
     }
 
-    handleAfClone = (cloneConfirm, afId, projectId) => {
+    handleFrameworkClone = (cloneConfirm, afId, projectId) => {
         if (cloneConfirm) {
-            this.afCloneRequest.init(afId, projectId).start();
+            this.frameworkCloneRequest
+                .init(afId, projectId)
+                .start();
         }
-        this.setState({ cloneConfirmModalShow: false });
+        this.setState({ showCloneFrameworkConfirm: false });
     }
 
     handleAfUse = (useConfirm, afId, projectId) => {
         if (useConfirm) {
             this.projectPatchRequest.init(afId, projectId).start();
         }
-        this.setState({ useConfirmModalShow: false });
+        this.setState({ showUseFrameworkConfirm: false });
     }
 
-    handleAfCloneClick = () => {
-        this.setState({ cloneConfirmModalShow: true });
+    handleCloneFrameworkButtonClick = () => {
+        this.setState({ showCloneFrameworkConfirm: true });
     }
 
-    handleAfUseClick = () => {
-        this.setState({ useConfirmModalShow: true });
+    handleUseFrameworkButtonClick = () => {
+        this.setState({ showUseFrameworkConfirm: true });
     }
 
-    handleEditFrameworButtonClick = () => {
-        this.setState({ showEditFrameworkModal: true });
-    }
-
-    handleEditFrameworkModalClose = () => {
-        this.setState({ showEditFrameworkModal: false });
-    }
-
-    renderUseFrameworkButton = () => {
-        const {
-            analysisFrameworkId,
-            projectDetails,
-        } = this.props;
-
-        if (analysisFrameworkId === projectDetails.analysisFramework) {
-            return null;
-        }
-
-        const { pending } = this.state;
-        const useFrameworkButtonLabel = _ts('project', 'useAfButtonLabel');
-
-        return (
-            <WarningButton
-                iconName={iconNames.check}
-                onClick={this.handleAfUseClick}
-                disabled={pending}
-            >
-                { useFrameworkButtonLabel }
-            </WarningButton>
-        );
+    handleTabClick = (tabId) => {
+        this.setState({ activeView: tabId });
     }
 
     renderEditFrameworkButton = () => {
         const {
             analysisFrameworkId,
-            frameworkDetails,
+            framework,
         } = this.props;
 
-        if (!frameworkDetails.isAdmin) {
+        if (!framework.isAdmin) {
             return null;
         }
 
         const { pending } = this.state;
         const editFrameworkButtonLabel = _ts('project', 'editAfButtonLabel');
 
-        const params = {
-            analysisFrameworkId,
-        };
+        const params = { analysisFrameworkId };
 
         return (
-            <Fragment>
-                <Link
-                    className={styles.editFrameworkLink}
-                    to={reverseRoute(pathNames.analysisFramework, params)}
-                    disabled={pending}
-                >
-                    { editFrameworkButtonLabel }
-                </Link>
-                <SuccessButton
-                    onClick={this.handleEditFrameworButtonClick}
-                    disabled={pending}
-                    type="submit"
-                >
-                    {_ts('project', 'quickEditAfButtonLabel')}
-                </SuccessButton>
-            </Fragment>
-        );
-    }
-
-    renderFrameworkPreview = () => {
-        const { frameworkDetails } = this.props;
-
-        // TODO: Complete Framework Preview
-        return (
-            <Message>
-                {frameworkDetails.title}<br />
-                {frameworkDetails.description}
-            </Message>
+            <Link
+                className={styles.editFrameworkLink}
+                to={reverseRoute(pathNames.analysisFramework, params)}
+                disabled={pending}
+            >
+                { editFrameworkButtonLabel }
+            </Link>
         );
     }
 
     renderHeader = () => {
-        const { frameworkDetails } = this.props;
-        const { pending } = this.state;
+        const {
+            framework: {
+                id: frameworkId,
+                title: frameworkTitle,
+                description: frameworkDescription,
+            },
+            projectDetails: {
+                analysisFramework: currentFrameworkId,
+                id: projectId,
+            },
+            setProjectFramework,
+        } = this.props;
 
-        const UseFrameworkButton = this.renderUseFrameworkButton;
+        const {
+            pending,
+            activeView,
+        } = this.state;
+
         const EditFrameworkButton = this.renderEditFrameworkButton;
 
         const cloneAndEditFrameworkButtonLabel = _ts('project', 'cloneEditAfButtonLabel');
 
         return (
             <header className={styles.header}>
-                <h2>
-                    {frameworkDetails.title}
-                </h2>
-                <div className={styles.actionButtons}>
-                    <UseFrameworkButton />
-                    <EditFrameworkButton />
-                    <AccentButton
-                        onClick={this.handleAfCloneClick}
-                        disabled={pending}
+                <div className={styles.top}>
+                    <h2
+                        title={frameworkTitle}
+                        className={styles.heading}
                     >
-                        { cloneAndEditFrameworkButtonLabel }
-                    </AccentButton>
+                        {frameworkTitle}
+                    </h2>
+                    <FixedTabs
+                        className={styles.tabs}
+                        tabs={this.tabs}
+                        onClick={this.handleTabClick}
+                        active={activeView}
+                    />
+
+                    <div className={styles.actionButtons}>
+                        <UseFrameworkButton
+                            currentFrameworkId={currentFrameworkId}
+                            disabled={pending}
+                            frameworkId={frameworkId}
+                            frameworkTitle={frameworkTitle}
+                            projectId={projectId}
+                            setProjectFramework={setProjectFramework}
+                        />
+                        <EditFrameworkButton />
+                        <AccentButton
+                            onClick={this.handleCloneFrameworkButtonClick}
+                            disabled={pending}
+                        >
+                            { cloneAndEditFrameworkButtonLabel }
+                        </AccentButton>
+                    </div>
                 </div>
+                { frameworkDescription && (
+                    <div
+                        className={styles.description}
+                        title={frameworkDescription}
+                    >
+                        { frameworkDescription }
+                    </div>
+                )}
             </header>
+        );
+    }
+
+    renderUseFrameworkConfirm = () => {
+        const {
+            analysisFrameworkId,
+            projectDetails: {
+                id: projectId,
+            },
+            framework: {
+                title: frameworkTitle,
+            },
+        } = this.props;
+
+        const { showUseFrameworkConfirm } = this.state;
+
+        return (
+            <Confirm
+                show={showUseFrameworkConfirm}
+                onClose={useConfirm => this.handleAfUse(
+                    useConfirm,
+                    analysisFrameworkId,
+                    projectId,
+                )}
+            >
+                <p>
+                    { _ts('project', 'confirmUseAf', { title: frameworkTitle }) }
+                </p>
+                <p>
+                    { _ts('project', 'confirmUseAfText') }
+                </p>
+            </Confirm>
+        );
+    }
+
+    renderCloneFrameworkConfirm = () => {
+        const {
+            framework,
+            analysisFrameworkId,
+            projectDetails,
+        } = this.props;
+        const { showCloneFrameworkConfirm } = this.state;
+
+        return (
+            <Confirm
+                show={showCloneFrameworkConfirm}
+                onClose={cloneConfirm => this.handleFrameworkClone(
+                    cloneConfirm,
+                    analysisFrameworkId,
+                    projectDetails.id,
+                )}
+            >
+                <p>
+                    { _ts('project', 'confirmCloneAf', { title: framework.title }) }
+                </p>
+            </Confirm>
         );
     }
 
     render() {
         const {
-            frameworkDetails,
             analysisFrameworkId,
-            projectDetails,
+            className: classNameFromProps,
         } = this.props;
 
+        requestFramework(analysisFrameworkId, this.frameworkGetRequest);
+
         const {
-            cloneConfirmModalShow,
-            useConfirmModalShow,
-            showEditFrameworkModal,
+            framework,
+            activeView,
         } = this.state;
 
         const Header = this.renderHeader;
-        const FrameworkPreview = this.renderFrameworkPreview;
+        const CloneFrameworkConfirm = this.renderCloneFrameworkConfirm;
+
+        const className = `
+            ${classNameFromProps}
+            ${styles.frameworkDetails}
+        `;
 
         return (
-            <div className={styles.analysisFrameworkDetail}>
+            <div className={className}>
                 <Header />
-                <FrameworkPreview />
-                {
-                    showEditFrameworkModal &&
-                    <EditFramework
-                        analysisFrameworkId={analysisFrameworkId}
-                        onModalClose={this.handleEditFrameworkModalClose}
-                    />
-                }
-                <Confirm
-                    show={useConfirmModalShow}
-                    onClose={useConfirm => this.handleAfUse(
-                        useConfirm, analysisFrameworkId, projectDetails.id,
-                    )}
-                >
-                    <p>
-                        { _ts('project', 'confirmUseAf', { title: frameworkDetails.title }) }
-                    </p>
-                    <p>
-                        { _ts('project', 'confirmUseAfText') }
-                    </p>
-                </Confirm>
-                <Confirm
-                    show={cloneConfirmModalShow}
-                    onClose={cloneConfirm => this.handleAfClone(
-                        cloneConfirm, analysisFrameworkId, projectDetails.id,
-                    )}
-                >
-                    <p>
-                        { _ts('project', 'confirmCloneAf', { title: frameworkDetails.title }) }
-                    </p>
-                </Confirm>
+                <Preview
+                    activeView={activeView}
+                    className={styles.preview}
+                    framework={framework}
+                />
+                <CloneFrameworkConfirm />
             </div>
         );
     }

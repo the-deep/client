@@ -70,8 +70,8 @@ const injectHeaders = (reduxStore) => {
 
 const isTest = process.env.NODE_ENV === 'test';
 
-// NOTE: replace 'undefined' with an initialState in future if needed
-const store = !isTest ? prepareStore() : undefined;
+// NOTE: replace 'undefined' with an initialState in future if needed, this is a temporary fix
+const store = !isTest ? prepareStore() : { getState: () => ({ lang: {} }) };
 if (!isTest) {
     injectHeaders(store);
 }

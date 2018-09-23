@@ -5,12 +5,12 @@ import {
 import Request from '#utils/Request';
 
 /*
- * Pulls all the Analysis Framework
+ * Request to clone framework
  * Required:
  *  - setState
- *  - addNewAf
+ *  - addNewFramework
  */
-export default class ProjectAfCloneRequest extends Request {
+export default class FrameworkCloneRequest extends Request {
     schemaName = 'analysisFramework'
 
     handlePreLoad = () => {
@@ -22,19 +22,20 @@ export default class ProjectAfCloneRequest extends Request {
     }
 
     handleSuccess = (response) => {
-        this.parent.addNewAf({
+        this.parent.addNewFramework({
             afDetail: response,
             projectId: this.projectId,
         });
     }
 
-    init = (afId, projectId) => {
+    init = (frameworkId, projectId) => {
         this.projectId = projectId;
 
         this.createDefault({
-            url: createUrlForAfClone(afId),
+            url: createUrlForAfClone(frameworkId),
             params: createParamsForAfClone({ project: projectId }),
         });
+
         return this;
     }
 }

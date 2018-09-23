@@ -101,7 +101,10 @@ export default class ProjectDetails extends React.PureComponent {
                 ${styles.forbiddenText}
             `;
             return (
-                <Message className={className}>
+                <Message
+                    large
+                    className={className}
+                >
                     {_ts('project', 'forbiddenText')}
                 </Message>
             );
@@ -109,7 +112,7 @@ export default class ProjectDetails extends React.PureComponent {
 
         const className = `
             ${classNameFromProps}
-            ${styles.details}
+            ${styles.projectDetails}
         `;
 
         return (
