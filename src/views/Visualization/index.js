@@ -8,6 +8,7 @@ import wrapViz from '#rscz/VizWrapper';
 import SunBurst from '#rscz/SunBurst';
 import ChordDiagram from '#rscz/ChordDiagram';
 import TreeMap from '#rscz/TreeMap';
+import ZoomableTreeMap from '#rscz/ZoomableTreeMap';
 import CorrelationMatrix from '#rscz/CorrelationMatrix';
 import OrgChart from '#rscz/OrgChart';
 import HorizontalBar from '#rscz/HorizontalBar';
@@ -48,6 +49,7 @@ const SunBurstView = decorate(SunBurst);
 const CorrelationMatrixView = decorate(CorrelationMatrix);
 const RadialDendrogramView = decorate(RadialDendrogram);
 const TreeMapView = decorate(TreeMap);
+const ZoomableTreeMapView = decorate(ZoomableTreeMap);
 const ForceDirectedGraphView = decorate(ForceDirectedGraph);
 const CollapsibleTreeView = decorate(CollapsibleTree);
 const OrgChartView = decorate(OrgChart);
@@ -305,13 +307,12 @@ export default class Visualization extends React.PureComponent {
                         data={hierarchicalData}
                         valueSelector={sizeSelector}
                         labelSelector={nameSelector}
-                        zoomable={false}
                     />
                 ),
             },
             zoomableTreemap: {
                 component: () => (
-                    <TreeMapView
+                    <ZoomableTreeMapView
                         className={styles.treemap}
                         headerText={_ts('visualization', 'zoomableTreemap')}
                         data={hierarchicalData}
