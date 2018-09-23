@@ -6,8 +6,7 @@ import memoize from 'memoize-one';
 
 import { reverseRoute } from '#rsu/common';
 import FixedTabs from '#rscv/FixedTabs';
-import AccentButton from '#rsca/Button/AccentButton';
-import Confirm from '#rscv/Modal/Confirm';
+import AccentConfirmButton from '#rsca/ConfirmButton/AccentConfirmButton';
 
 import {
     analysisFrameworkDetailSelector,
@@ -67,8 +66,6 @@ export default class Details extends React.PureComponent {
         super(props);
 
         this.state = {
-            showCloneFrameworkConfirm: false,
-            showUseFrameworkConfirm: false,
             framework: undefined,
             activeView: 'overview',
         };
@@ -94,28 +91,10 @@ export default class Details extends React.PureComponent {
         this.frameworkGetRequest.stop();
     }
 
-    handleFrameworkClone = (cloneConfirm, afId, projectId) => {
-        if (cloneConfirm) {
-            this.frameworkCloneRequest
-                .init(afId, projectId)
-                .start();
-        }
-        this.setState({ showCloneFrameworkConfirm: false });
-    }
-
-    handleAfUse = (useConfirm, afId, projectId) => {
-        if (useConfirm) {
-            this.projectPatchRequest.init(afId, projectId).start();
-        }
-        this.setState({ showUseFrameworkConfirm: false });
-    }
-
-    handleCloneFrameworkButtonClick = () => {
-        this.setState({ showCloneFrameworkConfirm: true });
-    }
-
-    handleUseFrameworkButtonClick = () => {
-        this.setState({ showUseFrameworkConfirm: true });
+    handleFrameworkClone = (afId, projectId) => {
+        this.frameworkCloneRequest
+            .init(afId, projectId)
+            .start();
     }
 
     handleTabClick = (tabId) => {
@@ -197,12 +176,17 @@ export default class Details extends React.PureComponent {
                             setProjectFramework={setProjectFramework}
                         />
                         <EditFrameworkButton />
-                        <AccentButton
-                            onClick={this.handleCloneFrameworkButtonClick}
+                        <AccentConfirmButton
                             disabled={pending}
+                            confirmationMessage={
+                                _ts('project', 'confirmCloneAf', {
+                                    title: <b>{frameworkTitle}</b>,
+                                })
+                            }
+                            onClick={() => this.handleFrameworkClone(frameworkId, projectId)}
                         >
                             { cloneAndEditFrameworkButtonLabel }
-                        </AccentButton>
+                        </AccentConfirmButton>
                     </div>
                 </div>
                 { frameworkDescription && (
@@ -214,62 +198,6 @@ export default class Details extends React.PureComponent {
                     </div>
                 )}
             </header>
-        );
-    }
-
-    renderUseFrameworkConfirm = () => {
-        const {
-            analysisFrameworkId,
-            projectDetails: {
-                id: projectId,
-            },
-            framework: {
-                title: frameworkTitle,
-            },
-        } = this.props;
-
-        const { showUseFrameworkConfirm } = this.state;
-
-        return (
-            <Confirm
-                show={showUseFrameworkConfirm}
-                onClose={useConfirm => this.handleAfUse(
-                    useConfirm,
-                    analysisFrameworkId,
-                    projectId,
-                )}
-            >
-                <p>
-                    { _ts('project', 'confirmUseAf', { title: frameworkTitle }) }
-                </p>
-                <p>
-                    { _ts('project', 'confirmUseAfText') }
-                </p>
-            </Confirm>
-        );
-    }
-
-    renderCloneFrameworkConfirm = () => {
-        const {
-            framework,
-            analysisFrameworkId,
-            projectDetails,
-        } = this.props;
-        const { showCloneFrameworkConfirm } = this.state;
-
-        return (
-            <Confirm
-                show={showCloneFrameworkConfirm}
-                onClose={cloneConfirm => this.handleFrameworkClone(
-                    cloneConfirm,
-                    analysisFrameworkId,
-                    projectDetails.id,
-                )}
-            >
-                <p>
-                    { _ts('project', 'confirmCloneAf', { title: framework.title }) }
-                </p>
-            </Confirm>
         );
     }
 
@@ -287,7 +215,6 @@ export default class Details extends React.PureComponent {
         } = this.state;
 
         const Header = this.renderHeader;
-        const CloneFrameworkConfirm = this.renderCloneFrameworkConfirm;
 
         const className = `
             ${classNameFromProps}
@@ -302,7 +229,6 @@ export default class Details extends React.PureComponent {
                     className={styles.preview}
                     framework={framework}
                 />
-                <CloneFrameworkConfirm />
             </div>
         );
     }

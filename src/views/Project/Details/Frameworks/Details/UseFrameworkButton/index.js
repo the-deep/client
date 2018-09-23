@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import WarningButton from '#rsca/Button/WarningButton';
-import Confirm from '#rscv/Modal/Confirm';
+import WarningConfirmButton from '#rsca/ConfirmButton/WarningConfirmButton';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';
@@ -29,11 +28,9 @@ export default class UseFrameworkButton extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = {
-            showConfirmation: false,
-        };
-
         const { setProjectFramework } = this.props;
+
+        this.state = { pending: false };
 
         this.useFrameworkRequest = new UseFrameworkRequest({
             setState: d => this.setState(d),
@@ -41,23 +38,15 @@ export default class UseFrameworkButton extends React.PureComponent {
         });
     }
 
-    handleClick = () => {
-        this.setState({ showConfirmation: true });
-    }
-
-    handleFrameworkConfirmClose = (useConfirm) => {
+    handleFrameworkConfirmClose = () => {
         const {
             frameworkId,
             projectId,
         } = this.props;
 
-        if (useConfirm) {
-            this.useFrameworkRequest
-                .init(frameworkId, projectId)
-                .start();
-        }
-
-        this.setState({ showConfirmation: false });
+        this.useFrameworkRequest
+            .init(frameworkId, projectId)
+            .start();
     }
 
     render() {
@@ -67,36 +56,36 @@ export default class UseFrameworkButton extends React.PureComponent {
             currentFrameworkId,
             disabled,
         } = this.props;
+        const { pending } = this.state;
 
         if (frameworkId === currentFrameworkId) {
             // If current framework is already being used
             return null;
         }
 
-        const { showConfirmation } = this.state;
         const useFrameworkButtonLabel = _ts('project', 'useAfButtonLabel');
+        const confirmationMessage = (
+            <React.Fragment>
+                <p>
+                    { _ts('project', 'confirmUseAf', {
+                        title: <b>{frameworkTitle}</b>,
+                    }) }
+                </p>
+                <p>
+                    { _ts('project', 'confirmUseAfText') }
+                </p>
+            </React.Fragment>
+        );
 
         return (
-            <React.Fragment>
-                <WarningButton
-                    iconName={iconNames.check}
-                    onClick={this.handleClick}
-                    disabled={disabled}
-                >
-                    { useFrameworkButtonLabel }
-                </WarningButton>
-                <Confirm
-                    show={showConfirmation}
-                    onClose={this.handleFrameworkConfirmClose}
-                >
-                    <p>
-                        { _ts('project', 'confirmUseAf', { title: frameworkTitle }) }
-                    </p>
-                    <p>
-                        { _ts('project', 'confirmUseAfText') }
-                    </p>
-                </Confirm>
-            </React.Fragment>
+            <WarningConfirmButton
+                iconName={iconNames.check}
+                onClick={this.handleFrameworkConfirmClose}
+                disabled={disabled || pending}
+                confirmationMessage={confirmationMessage}
+            >
+                { useFrameworkButtonLabel }
+            </WarningConfirmButton>
         );
     }
 }
