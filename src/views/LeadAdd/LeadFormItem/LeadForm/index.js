@@ -124,60 +124,30 @@ export default class LeadForm extends React.PureComponent {
     }
 
     static getSchemaForLead = (type) => {
-        switch (type) {
-            case LEAD_TYPE.file:
-            case LEAD_TYPE.dropbox:
-            case LEAD_TYPE.drive:
-                return {
-                    fields: {
-                        title: [requiredCondition],
-                        source: [requiredCondition],
-                        confidentiality: [requiredCondition],
-                        assignee: [requiredCondition],
-                        publishedOn: [requiredCondition, dateCondition],
-                        sourceType: [requiredCondition],
-                        project: [requiredCondition],
-                        leadGroup: [],
+        const differentFields = {
+            [LEAD_TYPE.file]: { attachment: [requiredCondition] },
+            [LEAD_TYPE.dropbox]: { attachment: [requiredCondition] },
+            [LEAD_TYPE.drive]: { attachment: [requiredCondition] },
+            [LEAD_TYPE.website]: {
+                url: [requiredCondition, urlCondition],
+                website: [requiredCondition],
+            },
+            [LEAD_TYPE.text]: { text: [requiredCondition] },
+        };
 
-                        attachment: [requiredCondition],
-                    },
-                };
-            case LEAD_TYPE.website:
-                return {
-                    fields: {
-                        title: [requiredCondition],
-                        source: [requiredCondition],
-                        confidentiality: [requiredCondition],
-                        assignee: [requiredCondition],
-                        publishedOn: [requiredCondition, dateCondition],
-                        sourceType: [requiredCondition],
-                        project: [requiredCondition],
-                        leadGroup: [],
-
-                        url: [requiredCondition, urlCondition],
-                        website: [requiredCondition],
-                    },
-                };
-            case LEAD_TYPE.text:
-                return {
-                    fields: {
-                        title: [requiredCondition],
-                        source: [requiredCondition],
-                        confidentiality: [requiredCondition],
-                        assignee: [requiredCondition],
-                        publishedOn: [requiredCondition, dateCondition],
-                        sourceType: [requiredCondition],
-                        project: [requiredCondition],
-                        leadGroup: [],
-
-                        text: [requiredCondition],
-                    },
-                };
-            default:
-                return {
-                    fields: {},
-                };
-        }
+        return {
+            fields: {
+                title: [requiredCondition],
+                source: [requiredCondition],
+                confidentiality: [requiredCondition],
+                assignee: [requiredCondition],
+                publishedOn: [requiredCondition, dateCondition],
+                sourceType: [requiredCondition],
+                project: [requiredCondition],
+                leadGroup: [],
+                ...differentFields[type],
+            },
+        };
     }
 
     constructor(props) {
