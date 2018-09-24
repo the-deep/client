@@ -1,0 +1,18 @@
+@import '~base-scss/base';
+
+.input-container {
+    display: flex;
+    align-items: center;
+    background-color: $color-foreground;
+    padding: $spacing-small;
+    width: 100%;
+
+    .title {
+        flex-grow: 1;
+        padding: 0 $spacing-extra-small;
+    }
+
+    .delete-button {
+        flex-shrink: 0;
+    }
+}

@@ -47,7 +47,7 @@ export const calculateEntryColor = (attributes = {}, analysisFramework) => {
             return;
         }
 
-        // Widget is undefined when analysis framwork has changed
+        // Widget is undefined when analysis framework has changed
         const widget = analysisFramework.widgets.find(
             w => String(w.id) === widgetId,
         );

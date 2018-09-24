@@ -180,6 +180,7 @@ export default class WidgetFaram extends React.PureComponent {
                 break;
             }
             case 'organigramWidget':
+            case 'conditionalWidget':
             case 'geoWidget': {
                 child = (
                     <Widget
@@ -231,8 +232,8 @@ export default class WidgetFaram extends React.PureComponent {
 
         const error = entryAccessor.error(entry);
         const className = `
-            ${classNameFromProps}
             ${styles.widgetFaram}
+            ${classNameFromProps}
             'widget-faram'
         `;
 

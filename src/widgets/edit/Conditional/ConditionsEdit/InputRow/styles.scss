@@ -1,0 +1,23 @@
+@import '~base-scss/base';
+
+.input-container {
+    display: flex;
+    align-items: center;
+    background-color: $color-foreground;
+    padding: $spacing-small;
+    width: 100%;
+
+    .title {
+        padding-right: $spacing-medium;
+    }
+
+    .condition-attributes {
+        display: flex;
+        flex-grow: 1;
+        padding-left: $spacing-medium;
+    }
+
+    .delete-button {
+        flex-shrink: 0;
+    }
+}

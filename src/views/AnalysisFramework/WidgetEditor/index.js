@@ -18,8 +18,8 @@ import {
     fetchWidget,
     gridSize,
     VIEW,
-    hasWidgetTagComponent,
-    fetchWidgetTagComponent,
+    hasWidgetFrameworkComponent,
+    fetchWidgetFrameworkComponent,
     shouldShowAltTagComponent,
 } from '#widgets';
 
@@ -180,7 +180,7 @@ export default class WidgetEditor extends React.PureComponent {
         const { widgetId, id, properties: { addedFrom } } = widget;
         const { widgetType } = this.props;
 
-        const Widget = fetchWidgetTagComponent(
+        const Widget = fetchWidgetFrameworkComponent(
             widgetId,
             widgetType,
             addedFrom,
@@ -215,7 +215,7 @@ export default class WidgetEditor extends React.PureComponent {
 
         // TODO: memoize
         const filteredWidgets = widgets.filter(
-            w => hasWidgetTagComponent(w.widgetId, widgetType, w.properties.addedFrom),
+            w => hasWidgetFrameworkComponent(w.widgetId, widgetType, w.properties.addedFrom),
         );
 
         return (

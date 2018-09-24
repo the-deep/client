@@ -2,19 +2,26 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import update from 'immutability-helper';
 
-import WarningButton from '#rsca/Button/WarningButton';
+import AccentButton from '#rsca/Button/AccentButton';
+import { FaramInputElement } from '#rscg/FaramElements';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 const propTypes = {
-    widget: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    value: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     onChange: PropTypes.func.isRequired,
     renderer: PropTypes.func.isRequired,
+    onModalVisibilityChange: PropTypes.func,
 };
 
-export default class EditButton extends React.PureComponent {
+const defaultProps = {
+    onModalVisibilityChange: () => {},
+};
+
+@FaramInputElement
+export default class FrameworkEditButton extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
@@ -26,57 +33,61 @@ export default class EditButton extends React.PureComponent {
     handleEditClick = () => {
         this.setState({
             showModal: true,
-        });
+        }, () => this.props.onModalVisibilityChange(true));
     }
 
     handleCancel = () => {
         this.setState({
             showModal: false,
-        });
+        }, () => this.props.onModalVisibilityChange(false));
     }
 
     handleSave = (data, title) => {
-        const { widget } = this.props;
-        const { title: originalTitle } = widget;
+        const { value } = this.props;
+        const { title: originalTitle } = value;
 
         const settings = {
             title: { $set: title || originalTitle },
-            properties: {
+            properties: { $auto: {
                 data: { $set: data },
-            },
+            } },
         };
 
-        const newWidget = update(widget, settings);
+        const newValue = update(value, settings);
 
-        this.props.onChange(newWidget);
-
+        this.props.onChange(newValue);
         this.setState({
             showModal: false,
-        });
+        }, () => this.props.onModalVisibilityChange(false));
     }
 
     render() {
         const {
             renderer: Widget,
-            widget,
+            value: {
+                title,
+                properties: {
+                    data,
+                } = {},
+            } = {},
         } = this.props;
         const { showModal } = this.state;
 
         return (
             <Fragment>
-                <WarningButton
-                    iconName={iconNames.edit}
+                <AccentButton
                     title={_ts('framework.widgetEditor', 'editTooltip')}
                     tabIndex="-1"
                     transparent
                     onClick={this.handleEditClick}
-                />
+                >
+                    {_ts('framework.widgetEditor', 'editTooltip')}
+                </AccentButton>
                 {
                     showModal &&
                     <Widget
-                        title={widget.title}
-                        data={widget.properties.data}
-                        properties={widget.properties}
+                        title={title}
+                        data={data}
                         onSave={this.handleSave}
                         onClose={this.handleCancel}
                     />
@@ -85,4 +96,3 @@ export default class EditButton extends React.PureComponent {
         );
     }
 }
-

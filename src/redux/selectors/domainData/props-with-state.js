@@ -32,14 +32,14 @@ const emptyList = [];
 const emptyObject = {};
 
 
-// activeUser
+// active user
 const currentUserSelector = createSelector(
     activeUserSelector,
     usersSelector,
     (activeUser, users) => (users[activeUser.userId] || emptyObject),
 );
 
-// activeProject
+// active project
 export const activeProjectSelector = createSelector(
     projectsSelector,
     projectIdFromRoute,
