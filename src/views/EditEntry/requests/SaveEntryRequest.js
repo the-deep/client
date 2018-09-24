@@ -6,7 +6,7 @@ import {
     createUrlForEntryEdit,
     urlForEntryCreate,
 } from '#rest';
-import { entryAccessor } from '#entities/entry';
+import { entryAccessor, getValuesFromRemoteEntry } from '#entities/entry';
 import schema from '#schema';
 
 export default class SaveEntryRequest {
@@ -85,7 +85,11 @@ export default class SaveEntryRequest {
                         versionId: response.versionId,
                         serverId: response.id,
                     };
-                    this.saveEntry({ leadId, entryId, data });
+
+                    // Save values from response to redux in case it was altered
+                    // by the server.
+                    const newValues = getValuesFromRemoteEntry(response);
+                    this.saveEntry({ leadId, entryId, data, values: newValues });
                     coordinator.notifyComplete(entryId);
                 } catch (er) {
                     console.error(er);
