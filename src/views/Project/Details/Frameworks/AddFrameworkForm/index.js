@@ -68,7 +68,6 @@ export default class AddFrameworkForm extends React.PureComponent {
         this.frameworkCreateRequest.stop();
     }
 
-    // faram RELATED
     handleFaramChange = (faramValues, faramErrors) => {
         this.setState({
             faramValues,

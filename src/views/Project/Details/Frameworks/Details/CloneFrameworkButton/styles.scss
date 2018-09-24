@@ -1,0 +1,15 @@
+@import '~base-scss/base';
+
+.clone-framework-modal {
+    .modal-body {
+        .title {
+            margin-bottom: $spacing-medium;
+        }
+
+        .description {
+            :global .input {
+                resize: none;
+            }
+        }
+    }
+}
