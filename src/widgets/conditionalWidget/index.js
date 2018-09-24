@@ -7,6 +7,7 @@ import scaleConditions from './scale';
 import selectConditions from './select';
 import dateConditions from './date';
 import timeConditions from './time';
+import organigramConditions from './organigram';
 
 const emptyObject = {};
 
@@ -49,6 +50,7 @@ const conditionsAsMap = {
     multiselectWidget: selectConditions,
     dateWidget: dateConditions,
     timeWidget: timeConditions,
+    organigramWidget: organigramConditions,
 };
 
 // Conditions As List

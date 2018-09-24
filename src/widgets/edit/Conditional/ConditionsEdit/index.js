@@ -171,7 +171,6 @@ class ConditionsEditModal extends React.PureComponent {
         const operatorSelectLabel = _ts('widgets.editor.conditional', 'operatorSelectLabel');
 
         const compatibleWidgets = this.getCompatibleWidget(widgets);
-        console.warn(widgets, compatibleWidgets);
 
         return (
             <Modal className={styles.conditionEditModal} >
