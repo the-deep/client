@@ -2,15 +2,14 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
-import DangerButton from '#rsca/Button/DangerButton';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import PrimaryConfirmButton from '#rsca/ConfirmButton/PrimaryConfirmButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import Faram, {
     requiredCondition,
 } from '#rscg/Faram';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import Confirm from '#rscv/Modal/Confirm';
 
 import RegionAdminLevel from '#components/RegionAdminLevel';
 import RegionDetail from '#components/RegionDetail';
@@ -91,8 +90,6 @@ export default class ProjectRegionDetail extends React.PureComponent {
             projectPatchPending: false,
             regionClonePending: false,
             regionDetailPatchPending: false,
-            showDeleteConfirm: false,
-            showCloneAndEditConfirm: false,
         };
 
         this.schema = {
@@ -146,36 +143,20 @@ export default class ProjectRegionDetail extends React.PureComponent {
         this.requestForRegion.stop();
     }
 
-    handleRegionClone = (cloneConfirm, regionId, projectId) => {
-        if (cloneConfirm) {
-            this.requestForRegionClone.init(regionId, projectId).start();
-        }
-        this.setState({ showCloneAndEditConfirm: false });
+    handleRegionClone = (regionId, projectId) => {
+        this.requestForRegionClone.init(regionId, projectId).start();
     }
 
-    handleRegionRemove = (deleteConfirm, projectDetails, removedRegionId) => {
-        if (deleteConfirm) {
-            const projectId = projectDetails.id;
-            const regions = [...projectDetails.regions];
-            const index = regions.findIndex(d => (d.id === removedRegionId));
-            regions.splice(index, 1);
-            this.projectPatchRequest.init(projectId, removedRegionId, regions).start();
-        }
-        this.setState({
-            showDeleteConfirm: false,
-        });
+    handleRegionRemove = (projectDetails, removedRegionId) => {
+        const projectId = projectDetails.id;
+        const regions = [...projectDetails.regions];
+        const index = regions.findIndex(d => (d.id === removedRegionId));
+        regions.splice(index, 1);
+        this.projectPatchRequest.init(projectId, removedRegionId, regions).start();
     }
 
     handleDiscardButtonClick = () => {
         this.requestForRegion.init(this.props.countryId, true).start();
-    }
-
-    handleRegionRemoveClick = () => {
-        this.setState({ showDeleteConfirm: true });
-    }
-
-    handleRegionCloneClick = () => {
-        this.setState({ showCloneAndEditConfirm: true });
     }
 
     handleValidationFailure = (faramErrors) => {
@@ -202,7 +183,12 @@ export default class ProjectRegionDetail extends React.PureComponent {
     };
 
     renderCloneAndEditButton = () => {
-        const { regionDetail } = this.props;
+        const {
+            regionDetail,
+            countryId,
+            activeProject,
+        } = this.props;
+        const { faramValues = {} } = this.props.regionDetail;
 
         const {
             dataLoading,
@@ -217,17 +203,22 @@ export default class ProjectRegionDetail extends React.PureComponent {
         }
 
         return (
-            <PrimaryButton
+            <PrimaryConfirmButton
                 disabled={dataLoading || regionClonePending}
-                onClick={this.handleRegionCloneClick}
+                onClick={() => this.handleRegionClone(countryId, activeProject)}
+                confirmationMessage={_ts('project', 'confirmCloneText', { title: <b>{faramValues.title}</b> })}
             >
                 {cloneAndEditButtonLabel}
-            </PrimaryButton>
+            </PrimaryConfirmButton>
         );
     }
 
     renderHeader = () => {
-        const { regionDetail } = this.props;
+        const {
+            regionDetail,
+            projectDetails,
+            countryId,
+        } = this.props;
 
         const {
             faramValues = {},
@@ -273,12 +264,18 @@ export default class ProjectRegionDetail extends React.PureComponent {
                             </SuccessButton>
                         </Fragment>
                     }
-                    <DangerButton
+                    <DangerConfirmButton
                         disabled={pending}
-                        onClick={this.handleRegionRemoveClick}
+                        onClick={() => this.handleRegionRemove(projectDetails, countryId)}
+                        confirmationMessage={
+                            _ts('project', 'confirmRemoveText', {
+                                title: faramValues.title,
+                                projectTitle: projectDetails.title,
+                            })
+                        }
                     >
                         { removeRegionButtonLabel }
-                    </DangerButton>
+                    </DangerConfirmButton>
                 </div>
             </header>
         );
@@ -328,66 +325,6 @@ export default class ProjectRegionDetail extends React.PureComponent {
         );
     }
 
-    renderDeleteRegionConfirm = () => {
-        const {
-            countryId,
-            projectDetails,
-        } = this.props;
-        const {
-            faramValues = {},
-        } = this.props.regionDetail;
-        const { showDeleteConfirm } = this.state;
-
-        return (
-            <Confirm
-                show={showDeleteConfirm}
-                closeOnEscape
-                onClose={
-                    (deleteConfirm) => {
-                        this.handleRegionRemove(deleteConfirm, projectDetails, countryId);
-                    }
-                }
-            >
-                <p>
-                    {
-                        _ts('project', 'confirmRemoveText', {
-                            title: faramValues.title,
-                            projectTitle: projectDetails.title,
-                        })
-                    }
-                </p>
-            </Confirm>
-        );
-    }
-
-    renderCloneAndEditRegionConfirm = () => {
-        const {
-            countryId,
-            activeProject,
-        } = this.props;
-
-        const {
-            faramValues = {},
-        } = this.props.regionDetail;
-
-        const { showCloneAndEditConfirm } = this.state;
-
-        return (
-            <Confirm
-                show={showCloneAndEditConfirm}
-                onClose={
-                    (cloneConfirm) => {
-                        this.handleRegionClone(cloneConfirm, countryId, activeProject);
-                    }
-                }
-            >
-                <p>
-                    {_ts('project', 'confirmCloneText', { title: faramValues.title })}
-                </p>
-            </Confirm>
-        );
-    }
-
     render() {
         const {
             projectPatchPending,
@@ -397,8 +334,6 @@ export default class ProjectRegionDetail extends React.PureComponent {
 
         const Header = this.renderHeader;
         const Content = this.renderContent;
-        const DeleteRegionConfirm = this.renderDeleteRegionConfirm;
-        const CloneAndEditRegionConfirm = this.renderCloneAndEditRegionConfirm;
 
         const {
             faramErrors = {},
@@ -423,8 +358,6 @@ export default class ProjectRegionDetail extends React.PureComponent {
                 { loading && <LoadingAnimation /> }
                 <Header />
                 <Content />
-                <DeleteRegionConfirm />
-                <CloneAndEditRegionConfirm />
             </Faram>
         );
     }

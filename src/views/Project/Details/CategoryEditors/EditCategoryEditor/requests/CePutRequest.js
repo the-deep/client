@@ -9,6 +9,7 @@ import Request from '#utils/Request';
  * Required:
  * - setState
  * - setCeDetail
+ * - onModalClose
  */
 export default class ProjectCePutRequest extends Request {
     schemaName = 'categoryEditor'
@@ -27,6 +28,7 @@ export default class ProjectCePutRequest extends Request {
             ceId,
             ceDetail: response,
         });
+        this.parent.onModalClose();
     }
 
     // TODO: handle Fatal and Failure

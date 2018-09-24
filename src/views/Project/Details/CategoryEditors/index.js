@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { caseInsensitiveSubmatch, compareString } from '#rsu/common';
 import AccentButton from '#rsca/Button/AccentButton';
 import SearchInput from '#rsci/SearchInput';
+import Message from '#rscv/Message';
 import ListView from '#rscv/List/ListView';
 import ListItem from '#rscv/List/ListItem';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -88,22 +89,28 @@ export default class ProjectCategoryEditor extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps !== this.props) {
-            const {
-                categoryEditorList,
-                projectDetails,
-            } = nextProps;
-
+        const {
+            categoryEditorList: newCategoryEditorList,
+            projectDetails: { categoryEditor: newCategoryEditor },
+        } = nextProps;
+        const {
+            categoryEditorList: oldCategoryEditorList,
+            projectDetails: { categoryEditor: oldCategoryEditor },
+        } = this.props;
+        if (
+            newCategoryEditorList !== oldCategoryEditorList ||
+            newCategoryEditor !== oldCategoryEditor
+        ) {
             // why filter again?
             const { searchInputValue } = this.state;
-            const displayCeList = categoryEditorList.filter(
+            const displayCeList = newCategoryEditorList.filter(
                 ce => caseInsensitiveSubmatch(ce.title, searchInputValue),
             );
 
             let selectedCe;
-            if (projectDetails.categoryEditor) {
+            if (newCategoryEditor) {
                 // if there is category editor in current project
-                selectedCe = projectDetails.categoryEditor;
+                selectedCe = newCategoryEditor;
             } else {
                 // if not, get first
                 selectedCe = displayCeList.length > 0 ? displayCeList[0].id : 0;
@@ -231,9 +238,9 @@ export default class ProjectCategoryEditor extends React.PureComponent {
 
         if (categoryEditorList.length <= 0) {
             return (
-                <div className={styles.empty}>
+                <Message>
                     {_ts('project', 'noCeText')}
-                </div>
+                </Message>
             );
         }
 
