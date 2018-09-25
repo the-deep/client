@@ -31,10 +31,17 @@ import ProjectPutRequest from '../../requests/ProjectPutRequest';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     projectLocalData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    changeProjectDetails: PropTypes.func.isRequired,
+    setProjectDetails: PropTypes.func.isRequired,
+    projectServerData: PropTypes.func.isRequired,
+    setErrorProjectDetails: PropTypes.func.isRequired,
+    projectId: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
+    className: '',
     projectLocalData: {},
 };
 
@@ -78,7 +85,7 @@ export default class ProjectGeneral extends PureComponent {
         } = this.props;
 
         const setState = d => this.setState(d);
-        this.projectRequest = new ProjectGetRequest({
+        this.projectGetRequest = new ProjectGetRequest({
             setState,
             setProjectDetails,
             projectServerData,
@@ -93,8 +100,9 @@ export default class ProjectGeneral extends PureComponent {
     componentDidMount() {
         const { projectId } = this.props;
 
-        this.projectRequest.init(projectId);
-        this.projectRequest.start();
+        this.projectGetRequest
+            .init(projectId)
+            .start();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -102,13 +110,14 @@ export default class ProjectGeneral extends PureComponent {
         const { projectId: oldProjectId } = this.props;
 
         if (newProjectId !== oldProjectId) {
-            this.projectRequest.init(newProjectId);
-            this.projectRequest.start();
+            this.projectGetRequest
+                .init(newProjectId)
+                .start();
         }
     }
 
     componentWillUnmount() {
-        this.projectRequest.stop();
+        this.projectGetRequest.stop();
         this.projectPutRequest.stop();
     }
 
@@ -128,8 +137,9 @@ export default class ProjectGeneral extends PureComponent {
     handleFaramCancel = () => {
         const { projectId } = this.props;
         const isBeingCancelled = true;
-        this.projectRequest.init(projectId, isBeingCancelled);
-        this.projectRequest.start();
+        this.projectGetRequest
+            .init(projectId, isBeingCancelled)
+            .start();
     }
 
     handleValidationFailure = (faramErrors) => {
@@ -153,7 +163,7 @@ export default class ProjectGeneral extends PureComponent {
     renderUnsavedChangesPrompt = () => (
         <Prompt
             message={
-                (location) => {
+                () => {
                     const {
                         projectLocalData: {
                             pristine,
@@ -172,6 +182,7 @@ export default class ProjectGeneral extends PureComponent {
 
     render() {
         const {
+            className: classNameFromProps,
             projectLocalData: {
                 faramValues = {},
                 faramErrors,
@@ -187,10 +198,19 @@ export default class ProjectGeneral extends PureComponent {
         const loading = pendingProjectGet || pendingProjectPut;
         const UnsavedChangesPrompt = this.renderUnsavedChangesPrompt;
 
+        const className = `
+            ${classNameFromProps}
+            ${styles.general}
+        `;
+
+        if (loading) {
+            return <LoadingAnimation className={className} />;
+        }
+
         return (
             <React.Fragment>
                 <Faram
-                    className={styles.projectGeneral}
+                    className={className}
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleValidationFailure}
                     onValidationSuccess={this.handleValidationSuccess}
@@ -199,7 +219,6 @@ export default class ProjectGeneral extends PureComponent {
                     error={faramErrors}
                     disabled={loading}
                 >
-                    { loading && <LoadingAnimation /> }
                     <div className={styles.visualizations}>
                         Visualizations
                     </div>

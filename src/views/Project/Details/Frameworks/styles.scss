@@ -4,6 +4,7 @@ $width-framework-list: 240px;
 
 .project-analysis-framework {
     display: flex;
+    position: relative;
     flex-grow: 1;
 
     .framework-list {

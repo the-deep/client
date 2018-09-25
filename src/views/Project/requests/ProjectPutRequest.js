@@ -23,8 +23,7 @@ export default class ProjectPutRequest extends Request {
         const project = { faramValues: response };
 
         setProjectDetails({
-            project,
-            projectId: this.projectId,
+            project, projectId: this.projectId,
         });
     }
 

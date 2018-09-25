@@ -67,5 +67,7 @@ export default class ProjectGetRequest extends Request {
             url: createUrlForProject(projectId),
             params: createParamsForGet(),
         });
+
+        return this;
     }
 }
