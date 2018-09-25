@@ -1,14 +1,14 @@
 const emptyObject = {};
 const emptyArray = [];
 
-const getPillarOptions = ({ rows = emptyArray }) => (
+const getPillarOptions = ({ rows = emptyArray } = {}) => (
     rows.map(r => ({
         key: r.key,
         title: r.title,
     }))
 );
 
-const getSubpillarOptions = ({ rows = emptyArray }) => (
+const getSubpillarOptions = ({ rows = emptyArray } = {}) => (
     rows.reduce((acc, r) => [
         ...((r || emptyObject).cells || emptyArray).map(c => ({
             key: c.key,
@@ -30,7 +30,7 @@ const containsPillar = {
     }],
     test: ({ value = {} }, { pillar }) => {
         const subpillars = value[pillar] || emptyObject;
-        return Object.keys(subpillars).some(key => value[key]);
+        return Object.keys(subpillars).some(key => subpillars[key]);
     },
 };
 
