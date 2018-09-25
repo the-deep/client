@@ -20,7 +20,7 @@ const isEqualTo = {
 };
 
 const isGreaterThan = {
-    title: 'Is greater than',
+    title: 'At least',
     attributes: [{
         key: 'scale',
         type: 'select',
@@ -36,7 +36,7 @@ const isGreaterThan = {
 };
 
 const isLessThan = {
-    title: 'Is less than',
+    title: 'At most',
     attributes: [{
         key: 'scale',
         type: 'select',
@@ -71,12 +71,13 @@ const isInBetween = {
             labelSelector: d => d.label,
         },
     ],
-    test: ({ value }, { lowerScale, upperScale }, { scaleUnits = [] }) => (
-        (scaleUnits.findIndex(s => s.key === value) >=
-        scaleUnits.findIndex(s => s.key === lowerScale)) &&
-        (scaleUnits.findIndex(s => s.key === value) <=
-        scaleUnits.findIndex(s => s.key === upperScale))
-    ),
+    test: ({ value }, { lowerScale, upperScale }, { scaleUnits = [] }) => {
+        const lowerScaleIndex = scaleUnits.findIndex(s => s.key === lowerScale);
+        const upperScaleIndex = scaleUnits.findIndex(s => s.key === upperScale);
+        const valueIndex = scaleUnits.findIndex(s => s.key === value);
+
+        return (valueIndex >= lowerScaleIndex && valueIndex <= upperScaleIndex);
+    },
 };
 
 export default {

@@ -8,6 +8,7 @@ import selectConditions from './select';
 import dateConditions from './date';
 import timeConditions from './time';
 import organigramConditions from './organigram';
+import numberMatrixConditions from './numberMatrix';
 
 const emptyObject = {};
 
@@ -51,6 +52,7 @@ const conditionsAsMap = {
     dateWidget: dateConditions,
     timeWidget: timeConditions,
     organigramWidget: organigramConditions,
+    numberMatrixWidget: numberMatrixConditions,
 };
 
 // Conditions As List

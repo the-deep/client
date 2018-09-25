@@ -37,7 +37,7 @@ const before = {
 };
 
 const isInBetween = {
-    title: 'In in between',
+    title: 'Is in between',
     attributes: [
         {
             key: 'minValue',

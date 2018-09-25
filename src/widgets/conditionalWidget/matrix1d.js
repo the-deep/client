@@ -9,8 +9,8 @@ const getPillarOptions = ({ rows = emptyArray } = {}) => (
 );
 
 const getSubpillarOptions = ({ rows = emptyArray } = {}) => (
-    rows.reduce((acc, r) => [
-        ...((r || emptyObject).cells || emptyArray).map(c => ({
+    rows.reduce((acc, r = emptyObject) => [
+        ...(r.cells || emptyArray).map(c => ({
             key: c.key,
             title: c.value,
         })),
@@ -47,12 +47,9 @@ const containsSubpillar = {
     test: ({ value = {} }, { subpillar }) => (
         Object.keys(value).some((p) => {
             const subpillars = value[p] || emptyObject;
-            if (subpillars) {
-                return Object.keys(subpillars).some(sp => (
-                    sp === subpillar ? subpillars[sp] : false
-                ));
-            }
-            return false;
+            return Object.keys(subpillars).some(sp => (
+                sp === subpillar && subpillars[sp]
+            ));
         })
     ),
 };

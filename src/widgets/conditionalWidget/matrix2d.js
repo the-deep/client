@@ -1,7 +1,7 @@
 const emptyObject = {};
 
 const isObjectEmpty = obj => (
-    Object.keys(obj).length === 0
+    !!obj && Object.keys(obj).length === 0
 );
 
 const emptyArray = [];
@@ -14,8 +14,8 @@ const getDimensionOptions = ({ dimensions = emptyArray } = {}) => (
 );
 
 const getSubdimensionOptions = ({ dimensions = emptyArray } = {}) => (
-    dimensions.reduce((acc, r) => [
-        ...((r || emptyObject).subdimensions || emptyArray).map(c => ({
+    dimensions.reduce((acc, r = emptyObject) => [
+        ...(r.subdimensions || emptyArray).map(c => ({
             key: c.id,
             title: c.title,
         })),
@@ -31,8 +31,8 @@ const getSectorOptions = ({ sectors = emptyArray } = {}) => (
 );
 
 const getSubsectorOptions = ({ sectors = emptyArray } = {}) => (
-    sectors.reduce((acc, r) => [
-        ...((r || emptyObject).subsectors || emptyArray).map(c => ({
+    sectors.reduce((acc, r = emptyObject) => [
+        ...(r.subsectors || emptyArray).map(c => ({
             key: c.id,
             title: c.title,
         })),

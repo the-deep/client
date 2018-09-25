@@ -1,6 +1,8 @@
 import memoize from 'memoize-one';
+import { isFalsy } from '#rsu/common';
 
 const emptyObject = {};
+const emptyArray = [];
 
 const getOptionsForSelect = (params) => {
     const {
@@ -33,14 +35,18 @@ const getOptionsForSelect = (params) => {
     ], []);
 };
 
-const getOrganigramOptions = memoize(widgetData => (
-    getOptionsForSelect({
+const getOrganigramOptions = memoize((widgetData) => {
+    if (isFalsy(widgetData)) {
+        return emptyArray;
+    }
+
+    return getOptionsForSelect({
         data: [widgetData],
         idSelector: d => d.key,
         labelSelector: d => d.title,
         childSelector: d => d.organs,
-    })
-));
+    });
+});
 
 const isEqualTo = {
     title: 'Is equal to',
