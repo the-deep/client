@@ -6,7 +6,6 @@ import memoize from 'memoize-one';
 
 import { reverseRoute } from '#rsu/common';
 import FixedTabs from '#rscv/FixedTabs';
-import AccentConfirmButton from '#rsca/ConfirmButton/AccentConfirmButton';
 
 import {
     analysisFrameworkDetailSelector,
@@ -21,9 +20,9 @@ import _ts from '#ts';
 import Preview from './Preview';
 
 import UseFrameworkButton from './UseFrameworkButton';
+import CloneFrameworkButton from './CloneFrameworkButton';
 
 import FrameworkGetRequest from './requests/FrameworkGetRequest';
-import FrameworkCloneRequest from './requests/FrameworkCloneRequest';
 
 import styles from './styles.scss';
 
@@ -71,30 +70,16 @@ export default class Details extends React.PureComponent {
         };
 
         const setState = d => this.setState(d);
-
-        // Requests
-        this.frameworkCloneRequest = new FrameworkCloneRequest({
-            setState,
-            addNewFramework: this.props.addNewFramework,
-        });
-
         this.frameworkGetRequest = new FrameworkGetRequest({ setState });
 
         this.tabs = {
-            overview: 'Overview',
-            list: 'List',
+            overview: _ts('project.framework', 'entryOverviewTitle'),
+            list: _ts('project.framework', 'entryListTitle'),
         };
     }
 
     componentWillUnmount() {
-        this.frameworkCloneRequest.stop();
         this.frameworkGetRequest.stop();
-    }
-
-    handleFrameworkClone = (afId, projectId) => {
-        this.frameworkCloneRequest
-            .init(afId, projectId)
-            .start();
     }
 
     handleTabClick = (tabId) => {
@@ -112,7 +97,7 @@ export default class Details extends React.PureComponent {
         }
 
         const { pending } = this.state;
-        const editFrameworkButtonLabel = _ts('project', 'editAfButtonLabel');
+        const editFrameworkButtonTitle = _ts('project.framework', 'editFrameworkButtonTitle');
 
         const params = { analysisFrameworkId };
 
@@ -122,7 +107,7 @@ export default class Details extends React.PureComponent {
                 to={reverseRoute(pathNames.analysisFramework, params)}
                 disabled={pending}
             >
-                { editFrameworkButtonLabel }
+                { editFrameworkButtonTitle }
             </Link>
         );
     }
@@ -139,6 +124,7 @@ export default class Details extends React.PureComponent {
                 id: projectId,
             },
             setProjectFramework,
+            addNewFramework,
         } = this.props;
 
         const {
@@ -147,8 +133,6 @@ export default class Details extends React.PureComponent {
         } = this.state;
 
         const EditFrameworkButton = this.renderEditFrameworkButton;
-
-        const cloneAndEditFrameworkButtonLabel = _ts('project', 'cloneEditAfButtonLabel');
 
         return (
             <header className={styles.header}>
@@ -165,7 +149,6 @@ export default class Details extends React.PureComponent {
                         onClick={this.handleTabClick}
                         active={activeView}
                     />
-
                     <div className={styles.actionButtons}>
                         <UseFrameworkButton
                             currentFrameworkId={currentFrameworkId}
@@ -176,17 +159,12 @@ export default class Details extends React.PureComponent {
                             setProjectFramework={setProjectFramework}
                         />
                         <EditFrameworkButton />
-                        <AccentConfirmButton
+                        <CloneFrameworkButton
+                            projectId={projectId}
+                            frameworkId={frameworkId}
+                            addNewFramework={addNewFramework}
                             disabled={pending}
-                            confirmationMessage={
-                                _ts('project', 'confirmCloneAf', {
-                                    title: <b>{frameworkTitle}</b>,
-                                })
-                            }
-                            onClick={() => this.handleFrameworkClone(frameworkId, projectId)}
-                        >
-                            { cloneAndEditFrameworkButtonLabel }
-                        </AccentConfirmButton>
+                        />
                     </div>
                 </div>
                 { frameworkDescription && (

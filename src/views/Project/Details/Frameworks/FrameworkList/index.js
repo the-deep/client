@@ -146,7 +146,7 @@ export default class FrameworkList extends React.PureComponent {
             <div className={className}>
                 <header className={styles.header}>
                     <h4 className={styles.heading}>
-                        {_ts('project', 'frameworkListHeading')}
+                        {_ts('project.framework', 'frameworkListHeading')}
                     </h4>
                     <AddFrameworkButton
                         projectId={projectId}
@@ -155,7 +155,7 @@ export default class FrameworkList extends React.PureComponent {
                         className={styles.frameworkSearchInput}
                         value={searchInputValue}
                         onChange={this.handleSearchInputValueChange}
-                        placeholder={_ts('project', 'searchAfPlaceholder')}
+                        placeholder={_ts('project.framework', 'searchFrameworkInputPlaceholder')}
                         showHintAndError={false}
                         showLabel={false}
                     />

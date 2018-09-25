@@ -5,6 +5,7 @@ import {
     createUrlForAnalysisFramework,
 } from '#rest';
 
+// TODO: handle errors as well -_-
 export default class FrameworkGet extends Request {
     schemaName = 'analysisFramework';
 

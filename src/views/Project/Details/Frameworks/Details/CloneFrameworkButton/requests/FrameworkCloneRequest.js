@@ -4,36 +4,36 @@ import {
 } from '#rest';
 import Request from '#utils/Request';
 
-/*
- * Request to clone framework
- * Required:
- *  - setState
- *  - addNewFramework
- */
 export default class FrameworkCloneRequest extends Request {
     schemaName = 'analysisFramework'
 
     handlePreLoad = () => {
-        this.parent.setState({ pending: true });
+        this.parent.setState({ pendingFrameworkClone: true });
     }
 
     handlePostLoad = () => {
-        this.parent.setState({ pending: false });
+        this.parent.setState({ pendingFrameworkClone: false });
     }
 
     handleSuccess = (response) => {
+        this.parent.setState({ showCloneFrameworkModal: false });
         this.parent.addNewFramework({
             afDetail: response,
             projectId: this.projectId,
         });
     }
 
-    init = (frameworkId, projectId) => {
+    init = (frameworkId, projectId, faramValues) => {
         this.projectId = projectId;
 
         this.createDefault({
             url: createUrlForAfClone(frameworkId),
-            params: createParamsForAfClone({ project: projectId }),
+
+            // setting project undefined doesn't set the framework to project
+            params: createParamsForAfClone({
+                project: undefined,
+                ...faramValues,
+            }),
         });
 
         return this;
