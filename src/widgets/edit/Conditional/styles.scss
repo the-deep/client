@@ -1,5 +1,7 @@
 @import '~base-scss/base';
 
+$height-modal-body: 540px;
+
 .sortable-unit {
     border-top: $width-separator-thin solid $color-separator;
     border-bottom: $width-separator-thin solid $color-separator;
@@ -15,15 +17,22 @@
 
 .modal {
     .modal-body {
+        display: flex;
+        flex-direction: column;
         padding: 0;
+        height: $height-modal-body;
+        max-height: 80vh;
 
         .text-input {
+            flex-shrink: 0;
             border-bottom: $width-separator-thin solid $color-separator;
             padding: $spacing-small;
         }
 
         .widgets-container {
             display: flex;
+            flex-grow: 1;
+            height: 100%;
 
             .header {
                 flex-shrink: 0;
@@ -46,6 +55,7 @@
             }
 
             .right-container {
+                display: flex;
                 flex-direction: column;
                 flex-grow: 1;
 

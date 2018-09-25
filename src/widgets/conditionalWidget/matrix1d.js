@@ -1,13 +1,16 @@
-const getPillarOptions = widgetData => (
-    widgetData.rows.map(r => ({
+const emptyObject = {};
+const emptyArray = [];
+
+const getPillarOptions = ({ rows = emptyArray } = {}) => (
+    rows.map(r => ({
         key: r.key,
         title: r.title,
     }))
 );
 
-const getSubpillarOptions = widgetData => (
-    widgetData.rows.reduce((acc, r) => [
-        ...r.cells.map(c => ({
+const getSubpillarOptions = ({ rows = emptyArray } = {}) => (
+    rows.reduce((acc, r = emptyObject) => [
+        ...(r.cells || emptyArray).map(c => ({
             key: c.key,
             title: c.value,
         })),
@@ -25,9 +28,9 @@ const containsPillar = {
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
-    test: (data, attributes) => {
-        const value = data.value[attributes.pillar] || {};
-        return Object.keys(value).some(key => value[key]);
+    test: ({ value = {} }, { pillar }) => {
+        const subpillars = value[pillar] || emptyObject;
+        return Object.keys(subpillars).some(key => subpillars[key]);
     },
 };
 
@@ -41,6 +44,14 @@ const containsSubpillar = {
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
+    test: ({ value = {} }, { subpillar }) => (
+        Object.keys(value).some((p) => {
+            const subpillars = value[p] || emptyObject;
+            return Object.keys(subpillars).some(sp => (
+                sp === subpillar && subpillars[sp]
+            ));
+        })
+    ),
 };
 
 

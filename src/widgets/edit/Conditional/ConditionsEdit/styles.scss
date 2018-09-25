@@ -20,20 +20,21 @@
         display: flex;
         padding: 0;
 
-        .header {
-            flex-shrink: 0;
-            border-bottom: $width-separator-thin solid $color-separator;
-            padding: $spacing-small;
-            text-transform: uppercase;
-            font-size: $font-size-large;
-            font-weight: $font-weight-light;
-        }
 
         .left-container {
             display: flex;
             flex-basis: 30%;
             flex-direction: column;
             border-right: $spacing-extra-small solid $color-separator;
+
+            .header {
+                flex-shrink: 0;
+                border-bottom: $width-separator-thin solid $color-separator;
+                padding: $spacing-small;
+                text-transform: uppercase;
+                font-size: $font-size-large;
+                font-weight: $font-weight-light;
+            }
 
             .widget-list {
                 overflow-y: auto;
@@ -43,6 +44,21 @@
         .right-container {
             flex-direction: column;
             flex-grow: 1;
+
+            .header {
+                display: flex;
+                align-items: center;
+                flex-shrink: 0;
+                justify-content: space-between;
+                border-bottom: $width-separator-thin solid $color-separator;
+                padding: $spacing-small;
+
+                .heading {
+                    text-transform: uppercase;
+                    font-size: $font-size-large;
+                    font-weight: $font-weight-light;
+                }
+            }
 
             .edit-list {
                 overflow-y: auto;

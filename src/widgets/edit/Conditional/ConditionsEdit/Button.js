@@ -9,6 +9,7 @@ import _ts from '#ts';
 import ConditionsEditModal from '.';
 
 const propTypes = {
+    widgetTitle: PropTypes.string.isRequired,
     value: PropTypes.shape({
         list: PropTypes.array,
         operator: PropTypes.oneOf(['AND', 'OR']),
@@ -56,7 +57,10 @@ export default class ConditionsEditButton extends React.PureComponent {
 
     render() {
         const { showModal } = this.state;
-        const { value } = this.props;
+        const {
+            value,
+            widgetTitle,
+        } = this.props;
 
         const editConditionsLabel = _ts('widgets.editor.conditional', 'editConditionsLabel');
 
@@ -73,6 +77,7 @@ export default class ConditionsEditButton extends React.PureComponent {
                 {
                     showModal && (
                         <ConditionsEditModal
+                            widgetTitle={widgetTitle}
                             conditions={value}
                             onSave={this.handleSave}
                             onClose={this.handleCancel}

@@ -118,9 +118,11 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
 
     widgetListRendererParams = (key, widget) => {
         const { title } = widget;
+
         return ({
             title: _ts('widgetTitle', title),
             widget,
+            widgetKey: key,
             createNewElement: widgetData => ({
                 widget: {
                     key: `${widgetData.widgetId}-${randomString(16).toLowerCase()}`,

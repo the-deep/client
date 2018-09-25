@@ -1,12 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
 
 import Faram from '#rscg/Faram';
 import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+import SelectInput from '#rsci/SelectInput';
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import ListView from '#rscv/List/ListView';
@@ -19,7 +21,10 @@ import {
 
     afViewAnalysisFrameworkSelector,
 } from '#redux';
-import { conditions as conditionsAttributes } from '#widgets/conditionalWidget';
+import {
+    conditions as conditionsAttributes,
+    compatibleWidgetIds,
+} from '#widgets/conditionalWidget';
 
 import _ts from '#ts';
 
@@ -28,6 +33,7 @@ import InputRow from './InputRow';
 import styles from './styles.scss';
 
 const propTypes = {
+    widgetTitle: PropTypes.string.isRequired,
     conditions: PropTypes.shape({
         list: PropTypes.array,
         operator: PropTypes.oneOf(['AND', 'OR']),
@@ -47,12 +53,20 @@ const mapStateToProps = (state, props) => ({
     analysisFrameworkId: afIdFromRoute(state, props),
 });
 
+const operatorOptions = [
+    { key: 'AND', label: 'AND' },
+    { key: 'OR', label: 'OR' },
+];
+
 // @connect(mapStateToProps)
 class ConditionsEditModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
     static widgetKeySelector = widget => widget.key;
+
+    static operatorKeySelector = o => o.key;
+    static operatorLabelSelector = o => o.label;
 
     static schema = {
         fields: {
@@ -83,12 +97,17 @@ class ConditionsEditModal extends React.PureComponent {
         };
     }
 
+    getCompatibleWidget = memoize(widgets => (
+        widgets.filter(w => compatibleWidgetIds.indexOf(w.widgetId) >= 0)
+    ));
+
     widgetListRendererParams = (key, widget) => {
         const { title } = widget;
 
         return ({
             title,
             widget,
+            widgetKey: key,
             createNewElement: widgetData => ({
                 key: `condition-${randomString(16).toLowerCase()}`,
                 widgetId: widgetData.widgetId,
@@ -137,6 +156,7 @@ class ConditionsEditModal extends React.PureComponent {
         const {
             analysisFramework: { widgets = [] },
             onClose,
+            widgetTitle,
         } = this.props;
         const {
             faramValues,
@@ -146,9 +166,12 @@ class ConditionsEditModal extends React.PureComponent {
 
         const widgetsTitle = _ts('widgets.editor.conditional', 'widgetsTitle');
         const conditionsTitle = _ts('widgets.editor.conditional', 'conditionsTitle');
-        const editConditionsTitle = _ts('widgets.editor.conditional', 'conditionsTitle');
+        const editConditionsTitle = _ts('widgets.editor.conditional', 'widgetConditionsTitle', { widgetTitle });
         const cancelLabel = _ts('widgets.editor.conditional', 'cancelButtonLabel');
         const saveLabel = _ts('widgets.editor.conditional', 'saveButtonLabel');
+        const operatorSelectLabel = _ts('widgets.editor.conditional', 'operatorSelectLabel');
+
+        const compatibleWidgets = this.getCompatibleWidget(widgets);
 
         return (
             <Modal className={styles.conditionEditModal} >
@@ -172,16 +195,31 @@ class ConditionsEditModal extends React.PureComponent {
                                 </header>
                                 <ListView
                                     className={styles.widgetList}
-                                    data={widgets}
+                                    data={compatibleWidgets}
                                     renderer={WidgetPreview}
                                     rendererParams={this.widgetListRendererParams}
                                     keyExtractor={ConditionsEditModal.widgetKeySelector}
                                 />
                             </div>
-                            <div className={styles.rightContainer}>
-                                <header className={styles.header}>
+                        </FaramList>
+                        <div className={styles.rightContainer}>
+                            <header className={styles.header}>
+                                <div className={styles.heading}>
                                     {conditionsTitle}
-                                </header>
+                                </div>
+                                <SelectInput
+                                    faramElementName="operator"
+                                    label={operatorSelectLabel}
+                                    options={operatorOptions}
+                                    keySelector={ConditionsEditModal.operatorKeySelector}
+                                    labelSelector={ConditionsEditModal.operatorLabelSelector}
+                                    hideClearButton
+                                />
+                            </header>
+                            <FaramList
+                                keySelector={ConditionsEditModal.widgetKeySelector}
+                                faramElementName="list"
+                            >
                                 <SortableListView
                                     className={styles.editList}
                                     dragHandleClassName={styles.dragHandle}
@@ -190,8 +228,8 @@ class ConditionsEditModal extends React.PureComponent {
                                     itemClassName={styles.sortableUnit}
                                     renderer={InputRow}
                                 />
-                            </div>
-                        </FaramList>
+                            </FaramList>
+                        </div>
                     </ModalBody>
                     <ModalFooter>
                         <DangerButton onClick={onClose}>

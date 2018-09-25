@@ -12,6 +12,7 @@ const propTypes = {
     title: PropTypes.string.isRequired,
     createNewElement: PropTypes.func.isRequired,
     widget: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    widgetKey: PropTypes.string.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default class WidgetPreview extends React.PureComponent {
@@ -31,7 +32,10 @@ export default class WidgetPreview extends React.PureComponent {
     }
 
     render() {
-        const { title, widget } = this.props;
+        const {
+            title,
+            widgetKey,
+        } = this.props;
 
         return (
             <div className={styles.widgetListItem}>
@@ -41,7 +45,7 @@ export default class WidgetPreview extends React.PureComponent {
                 <Button
                     transparent
                     faramAction={this.addRowClick}
-                    faramElementName={`add-btn-${widget.widgetId}`}
+                    faramElementName={`add-btn-${widgetKey}`}
                     iconName={iconNames.add}
                     title={_ts('framework.widgetList', 'addWidgetButtonLabel')}
                 />
