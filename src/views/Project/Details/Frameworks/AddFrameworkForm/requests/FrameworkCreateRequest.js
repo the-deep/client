@@ -6,14 +6,8 @@ import Request from '#utils/Request';
 import notify from '#notify';
 import _ts from '#ts';
 
-/*
- * Pulls all the Analysis Framework
- * Required:
- *  - setState
- *  - addNewFramework
- *  - onModalClose
- */
-export default class ProjectAfCloneRequest extends Request {
+// TODO: use project.framework namespace for strings
+export default class FrameworkCreateRequest extends Request {
     schemaName = 'analysisFramework'
 
     handlePreLoad = () => {

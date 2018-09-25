@@ -120,27 +120,27 @@ export default class AddFrameworkForm extends React.PureComponent {
                 <NonFieldErrors faramElement />
                 <TextInput
                     className={styles.title}
-                    label={_ts('project', 'addAfTitleLabel')}
+                    label={_ts('project.framework', 'frameworkTitleInputTitle')}
                     faramElementName="title"
-                    placeholder={_ts('project', 'addAfTitlePlaceholder')}
+                    placeholder={_ts('project.framework', 'frameworkTitleInputPlaceholder')}
                     autoFocus
                 />
                 <TextArea
                     className={styles.description}
-                    label={_ts('project', 'projectDescriptionLabel')}
+                    label={_ts('project.framework', 'frameworkDescriptionInputTitle')}
                     faramElementName="description"
-                    placeholder={_ts('project', 'projectDescriptionPlaceholder')}
+                    placeholder={_ts('project.framework', 'frameworkDescriptionInputPlaceholder')}
                     rows={3}
                 />
                 <div className={styles.actionButtons}>
                     <DangerButton onClick={onModalClose}>
-                        {_ts('project', 'modalCancel')}
+                        {_ts('project.framework', 'addFrameworkFormCancelButtonTitle')}
                     </DangerButton>
                     <PrimaryButton
                         disabled={pending || pristine}
                         type="submit"
                     >
-                        {_ts('project', 'modalAdd')}
+                        {_ts('project.framework', 'addFrameworkFormAddButtonTitle')}
                     </PrimaryButton>
                 </div>
             </Faram>

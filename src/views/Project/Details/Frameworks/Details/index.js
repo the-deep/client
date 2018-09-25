@@ -73,8 +73,8 @@ export default class Details extends React.PureComponent {
         this.frameworkGetRequest = new FrameworkGetRequest({ setState });
 
         this.tabs = {
-            overview: 'Overview',
-            list: 'List',
+            overview: _ts('project.framework', 'entryOverviewTitle'),
+            list: _ts('project.framework', 'entryListTitle'),
         };
     }
 
@@ -97,7 +97,7 @@ export default class Details extends React.PureComponent {
         }
 
         const { pending } = this.state;
-        const editFrameworkButtonLabel = _ts('project', 'editAfButtonLabel');
+        const editFrameworkButtonTitle = _ts('project.framework', 'editFrameworkButtonTitle');
 
         const params = { analysisFrameworkId };
 
@@ -107,7 +107,7 @@ export default class Details extends React.PureComponent {
                 to={reverseRoute(pathNames.analysisFramework, params)}
                 disabled={pending}
             >
-                { editFrameworkButtonLabel }
+                { editFrameworkButtonTitle }
             </Link>
         );
     }
@@ -133,8 +133,6 @@ export default class Details extends React.PureComponent {
         } = this.state;
 
         const EditFrameworkButton = this.renderEditFrameworkButton;
-
-        const cloneAndEditFrameworkButtonLabel = _ts('project', 'cloneEditAfButtonLabel');
 
         return (
             <header className={styles.header}>

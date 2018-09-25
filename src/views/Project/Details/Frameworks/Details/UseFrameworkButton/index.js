@@ -63,16 +63,16 @@ export default class UseFrameworkButton extends React.PureComponent {
             return null;
         }
 
-        const useFrameworkButtonLabel = _ts('project', 'useAfButtonLabel');
+        const useFrameworkButtonLabel = _ts('project.framework', 'useFrameworkButtonTitle');
         const confirmationMessage = (
             <React.Fragment>
                 <p>
-                    { _ts('project', 'confirmUseAf', {
+                    { _ts('project.framework', 'confirmUseFramework', {
                         title: <b>{frameworkTitle}</b>,
                     }) }
                 </p>
                 <p>
-                    { _ts('project', 'confirmUseAfText') }
+                    { _ts('project.framework', 'confirmUseFrameworkText') }
                 </p>
             </React.Fragment>
         );

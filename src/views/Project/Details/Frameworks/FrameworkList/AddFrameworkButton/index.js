@@ -60,11 +60,11 @@ export default class AddFrameworkButton extends React.PureComponent {
                     iconName={iconNames.add}
                     onClick={this.handleAddFrameworkButtonClick}
                 >
-                    { _ts('project', 'addAfButtonLabel')}
+                    { _ts('project.framework', 'addFrameworkButtonLabel')}
                 </AccentButton>
                 { showAddFrameworkModal && (
                     <Modal className={styles.addFrameworkModal}>
-                        <ModalHeader title={_ts('project', 'addAfModalTitle')} />
+                        <ModalHeader title={_ts('project.framework', 'addFrameworkModalTitle')} />
                         <ModalBody className={styles.modalBody}>
                             <AddFrameworkForm
                                 projectId={projectId}

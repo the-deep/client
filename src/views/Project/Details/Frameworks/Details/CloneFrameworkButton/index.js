@@ -24,9 +24,10 @@ import FrameworkCloneRequest from './requests/FrameworkCloneRequest';
 import styles from './styles.scss';
 
 const propTypes = {
-    projectId: PropTypes.number.isRequired,
-    frameworkId: PropTypes.number.isRequired,
+    addNewFramework: PropTypes.func.isRequired,
     disabled: PropTypes.bool,
+    frameworkId: PropTypes.number.isRequired,
+    projectId: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
@@ -111,7 +112,7 @@ export default class CloneFrameworkButton extends React.PureComponent {
                     disabled={disabled}
                     onClick={this.handleClick}
                 >
-                    { _ts('project', 'cloneButtonLabel') }
+                    { _ts('project.framework', 'cloneButtonTitle') }
                 </AccentButton>
                 { showCloneFrameworkModal && (
                     <Modal className={styles.cloneFrameworkModal}>
@@ -124,35 +125,34 @@ export default class CloneFrameworkButton extends React.PureComponent {
                             error={faramErrors}
                             disabled={pendingFrameworkClone}
                         >
-                            {/* FIXME: Use strings */}
-                            <ModalHeader title="Clone framework" />
+                            <ModalHeader title={_ts('project.framework', 'cloneFrameworkModalTitle')} />
                             <ModalBody className={styles.modalBody}>
                                 { pendingFrameworkClone && <LoadingAnimation /> }
                                 <NonFieldErrors faramElement />
                                 <TextInput
                                     className={styles.title}
-                                    label={_ts('project', 'addAfTitleLabel')}
+                                    label={_ts('project.framework', 'frameworkTitleInputTitle')}
                                     faramElementName="title"
-                                    placeholder={_ts('project', 'addAfTitlePlaceholder')}
+                                    placeholder={_ts('project.framework', 'frameworkTitleInputPlaceholder')}
                                     autoFocus
                                 />
                                 <TextArea
                                     className={styles.description}
-                                    label={_ts('project', 'projectDescriptionLabel')}
+                                    label={_ts('project.framework', 'frameworkDescriptionInputTitle')}
                                     faramElementName="description"
-                                    placeholder={_ts('project', 'projectDescriptionPlaceholder')}
+                                    placeholder={_ts('project.framework', 'frameworkDescriptionInputPlaceholder')}
                                     rows={3}
                                 />
                             </ModalBody>
                             <ModalFooter>
                                 <DangerButton onClick={this.handleModalCancelButtonClick}>
-                                    {_ts('project', 'modalCancel')}
+                                    {_ts('project.framework', 'cloneFrameworkCancelButtonTitle')}
                                 </DangerButton>
                                 <PrimaryButton
                                     disabled={pendingFrameworkClone || pristine}
                                     type="submit"
                                 >
-                                    {_ts('project', 'cloneButtonLabel')}
+                                    {_ts('project.framework', 'cloneFrameworkCloneButtonTitle')}
                                 </PrimaryButton>
                             </ModalFooter>
                         </Faram>

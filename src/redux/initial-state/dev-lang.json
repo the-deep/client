@@ -707,7 +707,11 @@
         "12000": "Goto edit entries page for the lead",
         "12001": "Development Language Save",
         "12002": "Hurray!! Development Language Successfully Saved",
+
         "12500": "Frameworks",
+        "12501": "Enter framework description",
+        "12502": "Clone framework",
+
         "-12279953": "Entry Cleared",
         "-94068330": "All local entries were cleared because associated analysis framework was removed.",
         "-4983139": "Remove lead group",
@@ -1587,6 +1591,36 @@
             "projectEndDateLabel": 334,
             "projectEndDatePlaceholder": 335
         },
+        "project.framework": {
+            "frameworkListHeading": 12500,
+            "addFrameworkButtonLabel": 301,
+            "searchFrameworkInputPlaceholder": 357,
+            "addFrameworkModalTitle": 358,
+            "noFrameworkText": 359,
+
+            "cloneButtonTitle": 353,
+            "frameworkTitleInputTitle": 13,
+            "frameworkTitleInputPlaceholder": 361,
+            "frameworkDescriptionInputTitle": 200,
+            "frameworkDescriptionInputPlaceholder": 12501,
+
+            "cloneFrameworkModalTitle": 12502,
+            "cloneFrameworkCloneButtonTitle": 353,
+            "cloneFrameworkCancelButtonTitle": 61,
+
+            "addFrameworkFormAddButtonTitle": 301,
+            "addFrameworkFormCancelButtonTitle": 61,
+
+            "entryOverviewTitle": 781,
+            "entryListTitle": 780,
+
+            "useFrameworkButtonTitle": 362,
+            "editFrameworkButtonTitle": 363,
+            "cloneEditFrameworkButtonTitle": 352,
+            "confirmUseFramework": 365,
+            "confirmUseFrameworkText": 366,
+            "confirmCloneFramework": 354
+        },
         "project": {
             "projectGetFailure": 2500,
             "projectPutFailure": 2501,
@@ -1642,18 +1676,6 @@
             "cloneButtonLabel": 353,
             "confirmRemoveText": 319,
             "confirmCloneText": 354,
-            "addAfButtonLabel": 301,
-            "searchAfPlaceholder": 357,
-            "addAfModalTitle": 358,
-            "noAfText": 359,
-            "addAfTitleLabel": 13,
-            "addAfTitlePlaceholder": 361,
-            "useAfButtonLabel": 362,
-            "editAfButtonLabel": 363,
-            "cloneEditAfButtonLabel": 352,
-            "confirmUseAf": 365,
-            "confirmUseAfText": 366,
-            "confirmCloneAf": 354,
             "addCeTitleLabel": 13,
             "addCeTitlePlaceholder": 369,
             "useCeButtonLabel": 362,

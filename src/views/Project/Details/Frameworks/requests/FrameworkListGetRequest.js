@@ -6,13 +6,8 @@ import Request from '#utils/Request';
 import notify from '#notify';
 import _ts from '#ts';
 
-/*
- * Pulls all the Analysis Framework
- * Required:
- *  - setState
- *  - setAnalysisFrameworks
- */
-export default class ProjectAfsGetRequest extends Request {
+// TODO: Use project.framework namespace for strings
+export default class FrameworkListGetRequest extends Request {
     schemaName = 'analysisFrameworkList'
 
     handlePreLoad = () => {
