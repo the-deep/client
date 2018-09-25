@@ -33,7 +33,7 @@ const getOptionsForSelect = (params) => {
     ], []);
 };
 
-const getOrganigramOptions = memoize((widgetData = {}) => (
+const getOrganigramOptions = memoize(widgetData => (
     getOptionsForSelect({
         data: [widgetData],
         idSelector: d => d.key,
@@ -52,7 +52,7 @@ const isEqualTo = {
         keySelector: d => d.id,
         labelSelector: d => d.name,
     }],
-    test: ({ value = [] } = {}, { selection } = {}) => (
+    test: ({ value = [] }, { selection }) => (
         value.some(v => (v === selection))
     ),
 };
@@ -67,7 +67,7 @@ const isDescendentOf = {
         keySelector: d => d.id,
         labelSelector: d => d.name,
     }],
-    test: ({ value = [] } = {}, { selection } = {}, widgetData) => (
+    test: ({ value = [] }, { selection }, widgetData) => (
         value.some((v) => {
             const { parents = [] } = getOrganigramOptions(widgetData)
                 .find(o => o.id === v) ||

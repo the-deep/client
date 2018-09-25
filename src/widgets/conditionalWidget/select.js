@@ -14,7 +14,7 @@ const isSelected = {
         keySelector: d => d.key,
         labelSelector: d => d.label,
     }],
-    test: ({ value } = {}, { selection } = {}) => {
+    test: ({ value }, { selection }) => {
         if (Array.isArray(value)) {
             return value.indexOf(selection) >= 0;
         }

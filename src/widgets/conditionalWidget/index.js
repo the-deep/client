@@ -89,7 +89,7 @@ const checkConditions = (widgetConditions, globalWidgets, entryAttributes) => {
         const evaluation = evaluator && evaluator(
             attributes.data || emptyObject,
             conditionAttributes || emptyObject,
-            widgetData,
+            widgetData || emptyObject,
         );
 
         if (operator === 'AND' && !evaluation) {

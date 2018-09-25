@@ -17,7 +17,7 @@ const isEqualTo = {
         type: 'time',
         title: 'Is equal to',
     }],
-    test: ({ value } = {}, { value: attrValue } = {}) => (
+    test: ({ value }, { value: attrValue }) => (
         compareTime(value, attrValue) === 0
     ),
 };
@@ -29,7 +29,7 @@ const after = {
         type: 'time',
         title: 'After',
     }],
-    test: ({ value } = {}, { value: attrValue } = {}) => (
+    test: ({ value }, { value: attrValue }) => (
         compareTime(value, attrValue) > 0
     ),
 };
@@ -41,7 +41,7 @@ const before = {
         type: 'time',
         title: 'Before',
     }],
-    test: ({ value } = {}, { value: attrValue } = {}) => (
+    test: ({ value }, { value: attrValue }) => (
         compareTime(value, attrValue) < 0
     ),
 };
@@ -60,7 +60,7 @@ const isInBetween = {
             title: 'Before',
         },
     ],
-    test: ({ value } = {}, { minValue, maxValue } = {}) => (
+    test: ({ value }, { minValue, maxValue }) => (
         compareTime(value, maxValue) < 0 &&
         compareTime(value, minValue) > 0
     ),

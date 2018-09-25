@@ -1,3 +1,5 @@
+const emptyObject = {};
+
 const isObjectEmpty = obj => (
     Object.keys(obj).length === 0
 );
@@ -13,7 +15,7 @@ const getDimensionOptions = ({ dimensions = emptyArray } = {}) => (
 
 const getSubdimensionOptions = ({ dimensions = emptyArray } = {}) => (
     dimensions.reduce((acc, r) => [
-        ...(r.subdimensions || emptyArray).map(c => ({
+        ...((r || emptyObject).subdimensions || emptyArray).map(c => ({
             key: c.id,
             title: c.title,
         })),
@@ -30,7 +32,7 @@ const getSectorOptions = ({ sectors = emptyArray } = {}) => (
 
 const getSubsectorOptions = ({ sectors = emptyArray } = {}) => (
     sectors.reduce((acc, r) => [
-        ...(r.subsectors || emptyArray).map(c => ({
+        ...((r || emptyObject).subsectors || emptyArray).map(c => ({
             key: c.id,
             title: c.title,
         })),
@@ -48,7 +50,7 @@ const containsDimension = {
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
-    test: ({ value = {} } = {}, { dimension } = {}) => {
+    test: ({ value = {} }, { dimension }) => {
         const dimensionValue = value[dimension];
         if (!dimensionValue) {
             return false;
@@ -70,13 +72,13 @@ const containsSubdimension = {
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
-    test: ({ value = {} } = {}, { subdimension } = {}) => {
+    test: ({ value = {} }, { subdimension }) => {
         const dimensionOfSubdimension = Object.keys(value)
-            .find(v => value[v][subdimension] !== undefined);
+            .find(v => (value[v] || emptyObject)[subdimension] !== undefined);
         if (!dimensionOfSubdimension) {
             return false;
         }
-        return !isObjectEmpty(value[dimensionOfSubdimension][subdimension]);
+        return !isObjectEmpty((value[dimensionOfSubdimension] || emptyObject)[subdimension]);
     },
 };
 
@@ -90,7 +92,7 @@ const containsSector = {
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
-    test: ({ value = {} } = {}, { sector } = {}) => (
+    test: ({ value = {} }, { sector }) => (
         Object.keys(value).some((v) => {
             const subdimen = value[v];
             if (isObjectEmpty(subdimen)) {
@@ -114,7 +116,7 @@ const containsSubsector = {
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
-    test: ({ value = {} } = {}, { subsector } = {}) => (
+    test: ({ value = {} }, { subsector }) => (
         Object.keys(value).some((v) => {
             const subdimen = value[v];
             if (isObjectEmpty(subdimen)) {

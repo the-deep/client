@@ -1,7 +1,7 @@
 const emptyArray = [];
 
-const getScaleOptions = widgetData => (
-    widgetData.scaleUnits || emptyArray
+const getScaleOptions = ({ scaleUnits } = {}) => (
+    scaleUnits || emptyArray
 );
 
 const isEqualTo = {
@@ -14,7 +14,7 @@ const isEqualTo = {
         keySelector: d => d.key,
         labelSelector: d => d.label,
     }],
-    test: ({ value } = {}, { scale } = {}) => (
+    test: ({ value }, { scale }) => (
         value === scale
     ),
 };
@@ -29,7 +29,7 @@ const isGreaterThan = {
         keySelector: d => d.key,
         labelSelector: d => d.label,
     }],
-    test: ({ value } = {}, { scale } = {}, { scaleUnits = [] } = {}) => (
+    test: ({ value }, { scale }, { scaleUnits = [] }) => (
         scaleUnits.findIndex(s => s.key === value) >=
         scaleUnits.findIndex(s => s.key === scale)
     ),
@@ -45,7 +45,7 @@ const isLessThan = {
         keySelector: d => d.key,
         labelSelector: d => d.label,
     }],
-    test: ({ value } = {}, { scale } = {}, { scaleUnits = [] } = {}) => (
+    test: ({ value }, { scale }, { scaleUnits = [] }) => (
         scaleUnits.findIndex(s => s.key === value) <=
         scaleUnits.findIndex(s => s.key === scale)
     ),
@@ -71,7 +71,7 @@ const isInBetween = {
             labelSelector: d => d.label,
         },
     ],
-    test: ({ value } = {}, { lowerScale, upperScale } = {}, { scaleUnits = [] } = {}) => (
+    test: ({ value }, { lowerScale, upperScale }, { scaleUnits = [] }) => (
         (scaleUnits.findIndex(s => s.key === value) >=
         scaleUnits.findIndex(s => s.key === lowerScale)) &&
         (scaleUnits.findIndex(s => s.key === value) <=

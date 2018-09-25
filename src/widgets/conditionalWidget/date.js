@@ -7,7 +7,7 @@ const isEqualTo = {
         type: 'date',
         title: 'Is equal to',
     }],
-    test: ({ value } = {}, { value: attrValue } = {}) => (
+    test: ({ value }, { value: attrValue }) => (
         compareDate(value, attrValue) === 0
     ),
 };
@@ -19,7 +19,7 @@ const after = {
         type: 'date',
         title: 'After date',
     }],
-    test: ({ value } = {}, { value: attrValue } = {}) => (
+    test: ({ value }, { value: attrValue }) => (
         compareDate(value, attrValue) > 0
     ),
 };
@@ -31,7 +31,7 @@ const before = {
         type: 'date',
         title: 'Before date',
     }],
-    test: ({ value } = {}, { value: attrValue } = {}) => (
+    test: ({ value }, { value: attrValue }) => (
         compareDate(value, attrValue) < 0
     ),
 };
@@ -50,7 +50,7 @@ const isInBetween = {
             title: 'Before date',
         },
     ],
-    test: ({ value } = {}, { minValue, maxValue } = {}) => (
+    test: ({ value }, { minValue, maxValue }) => (
         compareDate(value, maxValue) < 0 &&
         compareDate(value, minValue) > 0
     ),
