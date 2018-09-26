@@ -15,10 +15,8 @@ export default class ConnectorsGetRequest {
     }
 
     success = (response) => {
-        const {
-            setUserConnectors,
-        } = this.props;
         try {
+            const { setUserConnectors } = this.props;
             schema.validate(response, 'connectors');
             const connectors = response.results || emptyList;
             const formattedConnectors = {};

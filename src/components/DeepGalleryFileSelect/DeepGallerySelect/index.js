@@ -186,36 +186,24 @@ export default class DgSelect extends React.PureComponent {
             .url(createUrlForGalleryFiles(params))
             .params(createParamsForGet)
             .preLoad(() => {
-                this.setState({
-                    pending: true,
-                });
+                this.setState({ pending: true });
             })
             .postLoad(() => {
-                this.setState({
-                    pending: false,
-                });
+                this.setState({ pending: false });
             })
             .success((response) => {
-                try {
-                    // FIXME: write schema
-                    this.props.setUserGalleryFiles({
-                        galleryFiles: response.results,
-                    });
-                } catch (err) {
-                    console.error(err);
-                }
+                // FIXME: write schema
+                this.props.setUserGalleryFiles({
+                    galleryFiles: response.results,
+                });
             })
             .failure((response) => {
-                console.error('Failed to get user gallery files', response);
-                this.setState({
-                    pending: false,
-                });
+                console.warn('Failed to get user gallery files', response);
+                this.setState({ pending: false });
             })
             .fatal((response) => {
-                console.error('Fatal error occured while getting users gallery files', response);
-                this.setState({
-                    pending: false,
-                });
+                console.warning('Fatal error occured while getting users gallery files', response);
+                this.setState({ pending: false });
             })
             .build();
         return userGalleryFilesRequest;
@@ -252,10 +240,10 @@ export default class DgSelect extends React.PureComponent {
             })
             .failure((response) => {
                 const message = transformAndCombineResponseErrors(response.errors);
-                console.error(message);
+                console.warn(message);
             })
             .fatal(() => {
-                console.error('Couldn\t upload file');
+                console.warn('Could not upload file');
             })
             .build();
 

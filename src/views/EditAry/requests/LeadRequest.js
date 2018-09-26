@@ -25,14 +25,6 @@ export default class LeadRequest {
                     console.error(er);
                 }
             })
-            .failure((response) => {
-                // TODO: notify
-                console.error(response);
-            })
-            .fatal(() => {
-                // TODO: notify
-                console.error('Failed loading leads');
-            })
             .build();
         return leadRequest;
     }

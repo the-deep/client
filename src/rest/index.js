@@ -70,7 +70,7 @@ export const alterResponseErrorToFaramError = (errors) => {
         ...formFieldErrors
     } = errors;
 
-    console.error('SERVER ERROR:', internalNonFieldErrors);
+    console.warn('SERVER ERROR:', internalNonFieldErrors);
 
     return Object.keys(formFieldErrors).reduce(
         (acc, key) => {

@@ -19,7 +19,6 @@ export default class LanguagePut {
             .postLoad(() => this.props.setState({ pendingLanguagePut: false }))
             .success((response) => {
                 try {
-                    console.warn(response);
                     schema.validate(response, 'language');
                     this.props.clearChanges();
                     this.props.setLanguage(response);

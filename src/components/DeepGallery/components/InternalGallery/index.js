@@ -81,23 +81,13 @@ export default class InternalGallery extends React.PureComponent {
             .preLoad(() => { this.setState({ pending: true, notFound: true }); })
             .postLoad(() => { this.setState({ pending: false }); })
             .success((response) => {
-                try {
-                    // FIXME: write schema
-                    this.setState({
-                        fileUrl: response.file,
-                        fileName: response.title,
-                        mimeType: response.mimeType,
-                        notFound: false,
-                    });
-                } catch (err) {
-                    console.error(err);
-                }
-            })
-            .failure((response) => {
-                console.error('Failed to get gallery file info', response);
-            })
-            .fatal((response) => {
-                console.error('Fatal error occured while getting gallery file info', response);
+                // FIXME: write schema
+                this.setState({
+                    fileUrl: response.file,
+                    fileName: response.title,
+                    mimeType: response.mimeType,
+                    notFound: false,
+                });
             })
             .build();
 

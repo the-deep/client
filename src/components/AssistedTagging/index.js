@@ -226,26 +226,6 @@ export default class AssistedTagging extends React.PureComponent {
                 // FIXME: write schema
                 this.extractNlpClassifications(response);
             })
-            .failure((response) => {
-                console.error(response);
-                // FIXME: notify
-                /*
-                this.setState({
-                    pending: false,
-                    error: _ts('components.assistedTagging', 'serverErrorText'),
-                });
-                */
-            })
-            .fatal((response) => {
-                console.error(response);
-                // FIXME: notify
-                /*
-                this.setState({
-                    pending: false,
-                    error: _ts('components.assistedTagging', 'connectionFailureText'),
-                });
-                */
-            })
             .build();
         return request;
     }
@@ -259,26 +239,6 @@ export default class AssistedTagging extends React.PureComponent {
             .success((response) => {
                 // FIXME: write schema
                 this.extractNerClassifications(response);
-            })
-            .failure((response) => {
-                console.error(response);
-                // FIXME: notify
-                /*
-                this.setState({
-                    pending: false,
-                    error: _ts('components.assistedTagging', 'serverErrorText'),
-                });
-                */
-            })
-            .fatal((response) => {
-                console.error(response);
-                // FIXME: notify
-                /*
-                this.setState({
-                    pending: false,
-                    error: _ts('components.assistedTagging', 'connectionFailureText'),
-                });
-                */
             })
             .build();
         return request;
@@ -300,26 +260,6 @@ export default class AssistedTagging extends React.PureComponent {
                     console.error(err);
                 }
             })
-            .failure((response) => {
-                console.error(response);
-                // FIXME: notify
-                /*
-                this.setState({
-                    pending: false,
-                    error: _ts('components.assistedTagging', 'serverErrorText'),
-                });
-                */
-            })
-            .fatal((response) => {
-                console.error(response);
-                // FIXME: notify
-                /*
-                this.setState({
-                    pending: false,
-                    error: _ts('components.assistedTagging', 'connectionFailureText'),
-                });
-                */
-            })
             .build();
         return request;
     }
@@ -340,26 +280,6 @@ export default class AssistedTagging extends React.PureComponent {
                 } catch (err) {
                     console.error(err);
                 }
-            })
-            .failure((response) => {
-                console.error(response);
-                // FIXME: notify
-                /*
-                this.setState({
-                    pending: false,
-                    error: _ts('components.assistedTagging', 'serverErrorText'),
-                });
-                */
-            })
-            .fatal((response) => {
-                console.error(response);
-                // FIXME: notify
-                /*
-                this.setState({
-                    pending: false,
-                    error: _ts('components.assistedTagging', 'connectionFailureText'),
-                });
-                */
             })
             .build();
         return request;

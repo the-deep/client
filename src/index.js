@@ -1,8 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Raven from 'raven-js';
 
 import Root from './Root';
-// import registerServiceWorker from './common/utils/registerServiceWorker';
 
 ReactDOM.render(<Root />, document.getElementById('root'));
-// registerServiceWorker();
+
+const originalConsoleError = console.error;
+console.error = function consoleError(message, error, ...otherParams) {
+    Raven.captureException(error);
+    originalConsoleError.apply(this, [message, error, ...otherParams]);
+};
