@@ -3,10 +3,12 @@ import reducers, {
     AF__VIEW_ADD_WIDGET,
     AF__REMOVE_WIDGET,
     AF__VIEW_UPDATE_WIDGET,
+    AF__SET_GEO,
     setAfViewAnalysisFrameworkAction,
     addAfViewWidgetAction,
     removeAfViewWidgetAction,
     updateAfViewWidgetAction,
+    setAfViewGeoOptionsAction,
 } from './analysisFramework';
 
 
@@ -39,6 +41,27 @@ test('should set analysis framework', () => {
     };
 
     expect(reducers[AF__SET_ANALYSIS_FRAMEWORK](state, action)).toEqual(after);
+});
+
+test('should set analysis framework geo options', () => {
+    const state = {
+        analysisFrameworkView: {
+        },
+    };
+
+    const action = setAfViewGeoOptionsAction({
+        analysisFrameworkId: 1,
+        geoOptions: { 1: [] },
+    });
+    const after = {
+        analysisFrameworkView: {
+            1: {
+                geoOptions: { 1: [] },
+            },
+        },
+    };
+
+    expect(reducers[AF__SET_GEO](state, action)).toEqual(after);
 });
 
 test('should add widget', () => {
