@@ -1,11 +1,18 @@
 import { mapToList } from '#rsu/common';
 
+const emptyArray = [];
+
 const getDimensions = (widgetData = {}) => (
     widgetData.dimensions
 );
 
 const getSectors = (widgetData = {}) => (
     widgetData.sectors
+);
+
+const getSectorsForSubsectors = (widgetData = {}) => (
+    widgetData.sectors &&
+    widgetData.sectors.filter(s => (s.subsectors || emptyArray).length > 0)
 );
 
 const dimensions = {
@@ -32,7 +39,7 @@ const sectors = {
 
 const subSectors = {
     title: 'Sub sectors',
-    items: getSectors,
+    items: getSectorsForSubsectors,
     keySelector: d => d.id,
     labelSelector: d => d.title,
     nodesSelector: d => d.subsectors,

@@ -60,7 +60,7 @@ const getFlatItems = (params) => {
                 data: d,
                 items: treeNodesSelector && treeNodesSelector(d),
                 itemValue: itemValues[treeKeySelector(d)],
-                itemValues: itemValues[treeKeySelector(d)].nodes,
+                itemValues: (itemValues[treeKeySelector(d)] || emptyObject).nodes,
                 treeKeySelector,
                 treeLabelSelector,
                 treeNodesSelector,
@@ -70,7 +70,7 @@ const getFlatItems = (params) => {
         return [{
             key: treeKeySelector(data),
             label: treeLabelSelector(data),
-            selected: itemValue.selected,
+            selected: (itemValue || emptyObject).selected,
         }];
     }
     return emptyArray;

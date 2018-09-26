@@ -1,3 +1,5 @@
+import memoize from 'memoize-one';
+
 import selectOptions from './select';
 import scaleOptions from './scale';
 import matrix1dOptions from './matrix1d';
@@ -15,16 +17,16 @@ export const supportedWidgets = {
     organigramWidget: organigramOptions,
 };
 
-export const getSupportedWidgets = (widgets, widgetKey) => (
+export const getSupportedWidgets = memoize((widgets, widgetKey) => (
     widgets.filter(w => (
         supportedWidgets[w.widgetId] !== undefined && w.key !== widgetKey
     ))
-);
+));
 
-export const getOptionsForSelectedWidget = (selectedWidgetId, widgets) => {
+export const getOptionsForSelectedWidget = memoize((selectedWidgetId, widgets) => {
     const selectedWidget = widgets.find(w => w.key === selectedWidgetId);
     if (selectedWidget) {
         return supportedWidgets[selectedWidget.widgetId];
     }
     return emptyArray;
-};
+});
