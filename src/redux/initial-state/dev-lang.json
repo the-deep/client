@@ -792,7 +792,11 @@
         "-41289196": "Edit conditions",
         "-66364403": "Widgets",
         "-305229": "{widgetTitle}: Conditions",
-        "-24214693": "Operator"
+        "-24214693": "Operator",
+        "-29582302": "List of items",
+        "-17297015": "Link widgets",
+        "-31256073": "Widget",
+        "-14972110": "Add from widgets"
     },
     "links": {
         "browserExtension": {
@@ -2171,7 +2175,8 @@
             "cellsHeaderTitle": -1855073,
             "tooltipLabel": 733,
             "unnamedCellTitle": -17919979,
-            "removeCellButtonTitle": -53055304
+            "removeCellButtonTitle": -53055304,
+            "addFromWidgets": -14972110
         },
         "widgets.editor.matrix2d": {
             "atLeastOneError": 1007,
@@ -2198,7 +2203,8 @@
             "addSubsectorButtonTitle": -59828541,
             "subsectorsHeaderTitle": 7039,
             "unnamedSubsectorLabel": -13931386,
-            "removeSubsectorButtonTooltip": -24172161
+            "removeSubsectorButtonTooltip": -24172161,
+            "addFromWidgets": -14972110
         },
         "editEntry.list": {
             "noEntriesText": 543
@@ -2217,6 +2223,15 @@
             "widgetsTitle": -66364403,
             "widgetConditionsTitle": -305229,
             "operatorSelectLabel": -24214693
+        },
+        "widgets.editor.link": {
+            "cancelButtonLabel": 61,
+            "saveButtonLabel": 25,
+            "listOfItemsHeader": -29582302,
+            "modalTitle": -17297015,
+            "optionsTypeSelectionLabel": 21,
+            "widgetSelectionLabel": -31256073,
+            "rootNodeLabel": 5552
         }
     }
 }

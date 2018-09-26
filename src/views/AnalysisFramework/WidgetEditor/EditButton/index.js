@@ -77,6 +77,7 @@ export default class EditButton extends React.PureComponent {
                         title={widget.title}
                         data={widget.properties.data}
                         properties={widget.properties}
+                        widgetKey={widget.key}
                         onSave={this.handleSave}
                         onClose={this.handleCancel}
                     />

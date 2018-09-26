@@ -12,12 +12,16 @@ import { randomString } from '#rsu/common';
 import _ts from '#ts';
 import { iconNames } from '#constants';
 
+import LinkWidgetModal from '#widgetComponents/LinkWidgetModal';
+
 import SubsectorRow from './SubsectorRow';
 import styles from './styles.scss';
 
 const propTypes = {
     index: PropTypes.number.isRequired,
     className: PropTypes.string,
+    widgetKey: PropTypes.string.isRequired,
+    onNestedModalChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -43,7 +47,46 @@ export default class SectorContent extends React.PureComponent {
         index: i,
     })
 
+    constructor(props) {
+        super(props);
+
+        this.state = { showLinkModal: false };
+    }
+
+    handleAddFromWidgetClick = () => {
+        this.setState({
+            showLinkModal: true,
+        }, () => this.props.onNestedModalChange(true));
+    }
+
+    handleLinkModalClose = () => {
+        this.setState({
+            showLinkModal: false,
+        }, () => this.props.onNestedModalChange(false));
+    }
+
+    addFromWidgetClick = (items, _, listOfNewItems) => {
+        const newListOfItems = listOfNewItems.map(r => ({
+            id: randomString(16).toLowerCase(),
+            title: r.label,
+            originalWidget: r.originalWidget,
+            originalKey: r.originalKey,
+            tooltip: '',
+        }));
+
+        this.setState({
+            showLinkModal: false,
+        }, () => this.props.onNestedModalChange(false));
+
+        return [
+            ...items,
+            ...newListOfItems,
+        ];
+    };
+
     render() {
+        const { showLinkModal } = this.state;
+
         const {
             index,
             className,
@@ -81,14 +124,31 @@ export default class SectorContent extends React.PureComponent {
                             <h4>
                                 {_ts('widgets.editor.matrix2d', 'subsectorsHeaderTitle')}
                             </h4>
-                            <PrimaryButton
-                                faramElementName="add-btn"
-                                faramAction={SectorContent.addSubsectorClick}
-                                iconName={iconNames.add}
-                                transparent
-                            >
-                                {_ts('widgets.editor.matrix2d', 'addSubsectorButtonTitle')}
-                            </PrimaryButton>
+                            <div>
+                                <PrimaryButton
+                                    transparent
+                                    iconName={iconNames.add}
+                                    onClick={this.handleAddFromWidgetClick}
+                                >
+                                    {_ts('widgets.editor.matrix2d', 'addFromWidgets')}
+                                </PrimaryButton>
+                                {showLinkModal &&
+                                    <LinkWidgetModal
+                                        onClose={this.handleLinkModalClose}
+                                        widgetKey={this.props.widgetKey}
+                                        faramElementName="add-from-widget-btn"
+                                        faramAction={this.addFromWidgetClick}
+                                    />
+                                }
+                                <PrimaryButton
+                                    faramElementName="add-btn"
+                                    faramAction={SectorContent.addSubsectorClick}
+                                    iconName={iconNames.add}
+                                    transparent
+                                >
+                                    {_ts('widgets.editor.matrix2d', 'addSubsectorButtonTitle')}
+                                </PrimaryButton>
+                            </div>
                         </header>
                         <SortableListView
                             faramElement
