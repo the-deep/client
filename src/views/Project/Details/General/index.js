@@ -35,7 +35,7 @@ const propTypes = {
     projectLocalData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     changeProjectDetails: PropTypes.func.isRequired,
     setProjectDetails: PropTypes.func.isRequired,
-    projectServerData: PropTypes.func.isRequired,
+    projectServerData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setErrorProjectDetails: PropTypes.func.isRequired,
     projectId: PropTypes.number.isRequired,
 };
@@ -57,7 +57,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class ProjectGeneral extends PureComponent {
+export default class General extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 

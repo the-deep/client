@@ -1,14 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import memoize from 'memoize-one';
 
 import ListView from '#rscv/List/ListView';
 import SearchInput from '#rsci/SearchInput';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import {
     reverseRoute,
     caseInsensitiveSubmatch,
+    compareString,
 } from '#rsu/common';
 import Cloak from '#components/Cloak';
 
@@ -18,12 +19,14 @@ import {
 } from '#constants';
 import _ts from '#ts';
 
+import AddProjectButton from './AddProjectButton';
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
     projectId: PropTypes.number,
     userProjects: PropTypes.arrayOf(PropTypes.object),
+    setActiveProject: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -32,42 +35,47 @@ const defaultProps = {
     userProjects: [],
 };
 
-export default class Sidebar extends React.PureComponent {
+const filterProjects = memoize((userProjects, searchInputValue) => {
+    const displayUserProjects = userProjects.filter(
+        project => caseInsensitiveSubmatch(
+            project.title,
+            searchInputValue,
+        ),
+    );
+
+    displayUserProjects.sort(
+        (a, b) => compareString(
+            a.title,
+            b.title,
+        ),
+    );
+
+    return displayUserProjects;
+});
+
+export default class ProjectList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+    state = { searchInputValue: '' };
 
-    constructor(props) {
-        super(props);
-
-        const { userProjects } = this.props;
-
-        this.state = {
-            displayUserProjects: userProjects,
-        };
-    }
 
     getStyleName = (projectId) => {
         const { projectId: projectIdFromProps } = this.props;
 
-        const styleNames = [];
-        styleNames.push(styles.listItem);
+        const styleNames = [
+            styles.listItem,
+            'project-list-item',
+        ];
+
         if (projectId === projectIdFromProps) {
             styleNames.push(styles.active);
         }
+
         return styleNames.join(' ');
     }
 
     handleSearchInputChange = (searchInputValue) => {
-        const { userProjects } = this.props;
-
-        const displayUserProjects = userProjects.filter(
-            project => caseInsensitiveSubmatch(project.title, searchInputValue),
-        );
-
-        this.setState({
-            displayUserProjects,
-            searchInputValue,
-        });
+        this.setState({ searchInputValue });
     };
 
     renderSidebarItem = (key, project) => (
@@ -92,12 +100,21 @@ export default class Sidebar extends React.PureComponent {
     )
 
     render() {
-        const { className: classNameFromProps } = this.props;
-        const { displayUserProjects } = this.state;
+        const {
+            className: classNameFromProps,
+            setActiveProject,
+            userProjects,
+        } = this.props;
+
+        const { searchInputValue } = this.state;
+        const displayUserProjects = filterProjects(
+            userProjects,
+            searchInputValue,
+        );
 
         const className = `
             ${classNameFromProps}
-            ${styles.sidebar}
+            ${styles.projectList}
         `;
 
         return (
@@ -110,7 +127,7 @@ export default class Sidebar extends React.PureComponent {
                         hide={({ isBeta }) => isBeta}
                         render={({ disabled }) => (
                             <Link
-                                to={reverseRoute(pathNames.discoverProjects, { })}
+                                to={reverseRoute(pathNames.discoverProjects, {})}
                                 className={styles.link}
                                 disabled={disabled}
                             >
@@ -119,12 +136,7 @@ export default class Sidebar extends React.PureComponent {
                             </Link>
                         )}
                     />
-                    <PrimaryButton
-                        onClick={this.handleAddProjectClick}
-                        iconName={iconNames.add}
-                    >
-                        {_ts('project', 'addProjectButtonLabel')}
-                    </PrimaryButton>
+                    <AddProjectButton setActiveProject={setActiveProject} />
                     <SearchInput
                         onChange={this.handleSearchInputChange}
                         placeholder={_ts('project', 'searchProjectPlaceholder')}
@@ -138,6 +150,8 @@ export default class Sidebar extends React.PureComponent {
                     className={styles.projectList}
                     data={displayUserProjects}
                     keyExtractor={project => project.id}
+
+                    // TODO: use renderer
                     modifier={this.renderSidebarItem}
                     emptyComponent={this.renderEmptyComponent}
                 />

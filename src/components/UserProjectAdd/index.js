@@ -29,7 +29,11 @@ import ProjectCreateRequest from './requests/ProjectCreateRequest';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
+
+    // TODO: Change to onModalClose
     handleModalClose: PropTypes.func.isRequired,
+
     setUserProject: PropTypes.func.isRequired,
     setUserProfileProject: PropTypes.func.isRequired,
     setUsergroupProject: PropTypes.func.isRequired,
@@ -41,6 +45,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     userGroups: [],
     onProjectAdd: undefined,
 };
@@ -51,6 +56,7 @@ const mapDispatchToProps = dispatch => ({
     setUsergroupProject: params => dispatch(setUsergroupViewProjectAction(params)),
 });
 
+// TODO: Rename to ProjectAddForm or something similar
 @connect(undefined, mapDispatchToProps)
 export default class UserProjectAdd extends React.PureComponent {
     static propTypes = propTypes;
@@ -115,6 +121,8 @@ export default class UserProjectAdd extends React.PureComponent {
     }
 
     render() {
+        const { className: classNameFromProps } = this.props;
+
         const {
             faramValues,
             faramErrors,
@@ -122,9 +130,14 @@ export default class UserProjectAdd extends React.PureComponent {
             pristine,
         } = this.state;
 
+        const className = `
+            ${classNameFromProps}
+            ${styles.userProjectAddForm}
+        `;
+
         return (
             <Faram
-                className={styles.userProjectAddForm}
+                className={className}
                 onChange={this.changeCallback}
                 onValidationFailure={this.failureCallback}
                 onValidationSuccess={this.successCallback}
