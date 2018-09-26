@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 
 import FaramGroup from '#rscg/FaramGroup';
 import { FaramInputElement } from '#rscg/FaramElements';
-import { fetchWidgetTagComponent } from '#widgets';
+import {
+    fetchWidgetTagComponent,
+    fetchWidgetViewComponent,
+} from '#widgets';
 
 const propTypes = {
     widget: PropTypes.shape({
@@ -13,6 +16,7 @@ const propTypes = {
     entryType: PropTypes.string,
     excerpt: PropTypes.string,
     image: PropTypes.string,
+    isView: PropTypes.bool,
 
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
@@ -23,6 +27,7 @@ const defaultProps = {
     entryType: 'excerpt',
     excerpt: undefined,
     image: undefined,
+    isView: false,
 
     value: {},
     disabled: false,
@@ -62,8 +67,14 @@ export default class Conditional extends React.PureComponent {
         }
 
         const { widgetId } = widget;
-        const { widget: { properties: { addedFrom } }, widgetType } = this.props;
-        const Widget = fetchWidgetTagComponent(widgetId, widgetType, addedFrom);
+        const { widget: { properties: { addedFrom } }, widgetType, isView } = this.props;
+        let Widget;
+
+        if (isView) {
+            Widget = fetchWidgetViewComponent(widgetId);
+        } else {
+            Widget = fetchWidgetTagComponent(widgetId, widgetType, addedFrom);
+        }
 
         const {
             entryType,
