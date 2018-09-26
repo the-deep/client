@@ -9,8 +9,15 @@ export const AF__REMOVE_WIDGET = 'siloDomainData/AF__REMOVE_WIDGET';
 export const AF__VIEW_UPDATE_WIDGET = 'siloDomainData/AF__VIEW_UPDATE_WIDGET';
 export const AF__VIEW_UPDATE_WIDGET_LAYOUT = 'siloDomainData/AF__VIEW_UPDATE_WIDGET_LAYOUT';
 export const AF__SET_FARAM = 'siloDomainData/AF__SET_FARAM';
+export const AF__SET_GEO = 'siloDomainData/AF__SET_GEO';
 
 // CREATOR
+
+export const setAfViewGeoOptionsAction = ({ analysisFrameworkId, geoOptions }) => ({
+    type: AF__SET_GEO,
+    analysisFrameworkId,
+    geoOptions,
+});
 
 export const setAfViewFaramAction = ({ analysisFrameworkId, faramValues, faramErrors }) => ({
     type: AF__SET_FARAM,
@@ -215,6 +222,22 @@ const afViewSetFaram = (state, action) => {
     return update(state, settings);
 };
 
+const afViewSetGeo = (state, action) => {
+    const {
+        analysisFrameworkId,
+        geoOptions,
+    } = action;
+
+    const settings = {
+        analysisFrameworkView: {
+            [analysisFrameworkId]: { $auto: {
+                geoOptions: { $set: geoOptions },
+            } },
+        },
+    };
+    return update(state, settings);
+};
+
 // REDUCER MAP
 
 const reducers = {
@@ -224,5 +247,6 @@ const reducers = {
     [AF__VIEW_UPDATE_WIDGET]: afViewUpdateWidget,
     [AF__VIEW_UPDATE_WIDGET_LAYOUT]: afViewUpdateWidgetLayout,
     [AF__SET_FARAM]: afViewSetFaram,
+    [AF__SET_GEO]: afViewSetGeo,
 };
 export default reducers;

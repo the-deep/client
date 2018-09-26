@@ -28,6 +28,7 @@ import {
     afViewFaramValuesSelector,
     afViewFaramErrorsSelector,
     setAfViewFaramAction,
+    setAfViewGeoOptionsAction,
 
     routeUrlSelector,
 } from '#redux';
@@ -38,6 +39,7 @@ import {
 import _ts from '#ts';
 
 import FrameworkGetRequest from './requests/FrameworkGet';
+import GeoOptionsRequest from './requests/GeoOptionsRequest';
 import FrameworkSaveRequest from './requests/FrameworkSave';
 import Overview from './Overview';
 import List from './List';
@@ -54,6 +56,7 @@ const propTypes = {
     faramValues: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     faramErrors: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setFaram: PropTypes.func.isRequired,
+    setGeoOptions: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -75,6 +78,7 @@ const mapStateToProps = (state, props) => ({
 const mapDispatchToProps = dispatch => ({
     setAnalysisFramework: params => dispatch(setAfViewAnalysisFrameworkAction(params)),
     setFaram: params => dispatch(setAfViewFaramAction(params)),
+    setGeoOptions: params => dispatch(setAfViewGeoOptionsAction(params)),
 });
 
 @BoundError(AppError)
@@ -95,6 +99,7 @@ export default class AnalysisFramework extends React.PureComponent {
 
         this.state = {
             pendingFramework: true,
+            pendingGeoOptions: true,
             pendingSaveFramework: false,
         };
 
@@ -102,6 +107,12 @@ export default class AnalysisFramework extends React.PureComponent {
             setState: params => this.setState(params),
             setAnalysisFramework: this.props.setAnalysisFramework,
             getAnalysisFramework: () => this.props.analysisFramework,
+        });
+
+        this.geoOptionsRequest = new GeoOptionsRequest({
+            setState: params => this.setState(params),
+            setGeoOptions: this.props.setGeoOptions,
+            getAnalysisFramework: () => this.props.analysisFrameworkId,
         });
 
         this.frameworkSaveRequest = new FrameworkSaveRequest({
@@ -145,6 +156,8 @@ export default class AnalysisFramework extends React.PureComponent {
     componentWillMount() {
         this.frameworkGetRequest.init(this.props.analysisFrameworkId);
         this.frameworkGetRequest.start();
+        this.geoOptionsRequest.init();
+        this.geoOptionsRequest.start();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -164,6 +177,7 @@ export default class AnalysisFramework extends React.PureComponent {
     componentWillUnmount() {
         this.frameworkGetRequest.stop();
         this.frameworkSaveRequest.stop();
+        this.geoOptionsRequest.stop();
     }
 
     handleFaramChange = (faramValues = this.props.faramValues, faramErrors) => {
@@ -213,9 +227,13 @@ export default class AnalysisFramework extends React.PureComponent {
         } = this.props;
         const { entriesCount } = analysisFramework;
 
-        const { pendingFramework, pendingSaveFramework } = this.state;
+        const {
+            pendingFramework,
+            pendingSaveFramework,
+            pendingGeoOptions,
+        } = this.state;
 
-        if (pendingFramework) {
+        if (pendingFramework || pendingGeoOptions) {
             return (
                 <div className={styles.analysisFramework}>
                     <LoadingAnimation large />

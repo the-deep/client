@@ -213,6 +213,7 @@ class ConditionsEditModal extends React.PureComponent {
                                     options={operatorOptions}
                                     keySelector={ConditionsEditModal.operatorKeySelector}
                                     labelSelector={ConditionsEditModal.operatorLabelSelector}
+                                    showHintAndError={false}
                                     hideClearButton
                                 />
                             </header>
