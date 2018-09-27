@@ -34,6 +34,11 @@ export const afViewAnalysisFrameworkSelector = createSelector(
     afView => afView.data || emptyObject,
 );
 
+export const afViewGeoOptionsSelector = createSelector(
+    afViewFrameworkViewForIdSelector,
+    afView => afView.geoOptions || emptyObject,
+);
+
 export const afViewAnalysisFrameworkWidgetsSelector = createSelector(
     afViewAnalysisFrameworkSelector,
     afView => afView.widgets || emptyArray,

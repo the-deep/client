@@ -15,6 +15,7 @@ import ListView from '#rscv/List/ListView';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import { randomString } from '#rsu/common';
+import { iconNames } from '#constants';
 
 import {
     afIdFromRoute,
@@ -171,6 +172,8 @@ class ConditionsEditModal extends React.PureComponent {
         const saveLabel = _ts('widgets.editor.conditional', 'saveButtonLabel');
         const operatorSelectLabel = _ts('widgets.editor.conditional', 'operatorSelectLabel');
 
+        const widgetsHeaderInfo = _ts('widgets.editor.conditional', 'frameworkWidgetsInfoText');
+
         const compatibleWidgets = this.getCompatibleWidget(widgets);
 
         return (
@@ -192,6 +195,10 @@ class ConditionsEditModal extends React.PureComponent {
                             <div className={styles.leftContainer}>
                                 <header className={styles.header}>
                                     {widgetsTitle}
+                                    <span
+                                        className={`${iconNames.info} ${styles.headerInfo}`}
+                                        title={widgetsHeaderInfo}
+                                    />
                                 </header>
                                 <ListView
                                     className={styles.widgetList}
@@ -213,6 +220,7 @@ class ConditionsEditModal extends React.PureComponent {
                                     options={operatorOptions}
                                     keySelector={ConditionsEditModal.operatorKeySelector}
                                     labelSelector={ConditionsEditModal.operatorLabelSelector}
+                                    showHintAndError={false}
                                     hideClearButton
                                 />
                             </header>

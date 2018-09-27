@@ -21,6 +21,7 @@ export default class ConditionalWidget extends React.PureComponent {
         return (
             <Conditional
                 faramElementName="value"
+                isView
                 {...this.props}
             />
         );

@@ -93,6 +93,7 @@ export default class ConditionsInputRow extends React.PureComponent {
                         label={_ts('widgets.editor.conditional', 'conditionTypeLabel')}
                         placeholder={_ts('widgets.editor.conditional', 'conditionTypePlaceholder')}
                         faramElementName="conditionType"
+                        showHintAndError={false}
                     />
                     <FaramGroup faramElementName="attributes" >
                         <ListView
