@@ -12,6 +12,10 @@ export const routePathSelector = ({ route }) => (
     route.path
 );
 
+export const routeIsFirstPageSelector = ({ route }) => (
+    route.isFirstPage
+);
+
 export const routePathKeySelector = createSelector(
     routePathSelector,
     path => getKeyByValue(pathNames, path),

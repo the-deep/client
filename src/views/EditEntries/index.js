@@ -14,6 +14,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { CoordinatorBuilder } from '#rsu/coordinate';
 
+import BackLink from '#components/BackLink';
 import Cloak from '#components/Cloak';
 import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
 import {
@@ -588,13 +589,9 @@ export default class EditEntries extends React.PureComponent {
                     }
                 />
                 <header className={styles.header}>
-                    <Link
-                        className={styles.backLink}
-                        title={_ts('editEntry', 'backButtonTooltip')}
-                        to={exitPath}
-                    >
-                        <i className={iconNames.back} />
-                    </Link>
+                    <BackLink
+                        defaultLink={exitPath}
+                    />
                     <h4 className={styles.heading}>
                         { leadTitle }
                     </h4>
@@ -603,7 +600,7 @@ export default class EditEntries extends React.PureComponent {
                         tabs={this.tabs}
                         useHash
                         replaceHistory
-                        deafultHash={this.defaultHash}
+                        defaultHash={this.defaultHash}
                         disabled={projectMismatch}
                     />
                     <div className={styles.actionButtons}>

@@ -25,6 +25,7 @@ import Cloak from '#components/Cloak';
 
 import VizError from '#components/VizError';
 import AppError from '#components/AppError';
+import BackLink from '#components/BackLink';
 
 import _ts from '#ts';
 
@@ -34,10 +35,7 @@ import {
     projectIdFromRouteSelector,
     setProjectClusterDataAction,
 } from '#redux';
-import {
-    iconNames,
-    pathNames,
-} from '#constants';
+import { pathNames } from '#constants';
 
 import ProjectClusterDataRequest from './requests/ProjectClusterDataRequest';
 import InitProjectClusterRequest from './requests/InitProjectClusterRequest';
@@ -546,20 +544,14 @@ export default class ClusterViz extends PureComponent {
                     <LoadingAnimation />
                 }
                 <header className={styles.header}>
-                    <Link
-                        className={styles.backLink}
-                        title={_ts('clusterViz', 'showTable')}
-                        to={reverseRoute(pathNames.leads, { projectId: activeProject })}
-                    >
-                        <i className={iconNames.back} />
-                    </Link>
+                    <BackLink
+                        defaultLink={reverseRoute(pathNames.leads, { projectId: activeProject })}
+                    />
                     <h2 className={styles.heading}>
                         {_ts('clusterViz', 'clusterVizTitle')}
                     </h2>
                 </header>
-                { failure &&
-                    this.renderErrorMessage()
-                }
+                { failure && this.renderErrorMessage() }
                 {
                     !failure &&
                     <div className={styles.container}>

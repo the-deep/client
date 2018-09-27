@@ -169,7 +169,6 @@ export default class Navbar extends React.PureComponent {
             this.setUserProjectRequest.start();
         }
 
-        // Set new links
         if (oldLocation !== newLocation) {
             this.setLinksForLocation(newLocation);
         }

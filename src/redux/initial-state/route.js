@@ -4,6 +4,7 @@ const initialRouteState = {
     isExact: undefined,
     params: {},
     routeState: {},
+    isFirstPage: true,
 };
 
 export default initialRouteState;
