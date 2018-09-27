@@ -14,6 +14,7 @@ import _ts from '#ts';
 import { iconNames } from '#constants';
 
 import LinkWidgetModal from '#widgetComponents/LinkWidgetModal';
+import GeoLink from '#widgetComponents/GeoLink';
 
 import InputRow from './InputRow';
 import styles from './styles.scss';
@@ -128,7 +129,11 @@ export default class RowContent extends React.PureComponent {
                             <h4>
                                 {_ts('widgets.editor.matrix1d', 'cellsHeaderTitle')}
                             </h4>
-                            <div>
+                            <div className={styles.buttonContainer} >
+                                <GeoLink
+                                    faramElementName="add-from-geo-btn"
+                                    faramAction={this.addFromWidgetClick}
+                                />
                                 <PrimaryButton
                                     transparent
                                     iconName={iconNames.add}

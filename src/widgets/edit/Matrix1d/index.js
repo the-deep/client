@@ -13,11 +13,11 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
 import Faram, { requiredCondition } from '#rscg/Faram';
 import { findDuplicates, randomString } from '#rsu/common';
-
 import { iconNames } from '#constants';
-import _ts from '#ts';
 
 import LinkWidgetModal from '#widgetComponents/LinkWidgetModal';
+import GeoLink from '#widgetComponents/GeoLink';
+import _ts from '#ts';
 
 import RowTitle from './RowTitle';
 import RowContent from './RowContent';
@@ -226,6 +226,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             showLinkModal,
             showNestedLinkModal,
         } = this.state;
+
         const {
             onClose,
             title,
@@ -276,7 +277,11 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                     <h4>
                                         {_ts('widgets.editor.matrix1d', 'rowTitle')}
                                     </h4>
-                                    <div>
+                                    <div className={styles.buttonContainer} >
+                                        <GeoLink
+                                            faramElementName="add-from-geo-btn"
+                                            faramAction={this.addFromWidgetClick}
+                                        />
                                         <PrimaryButton
                                             transparent
                                             iconName={iconNames.add}

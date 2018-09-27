@@ -63,6 +63,11 @@ $height-edit-modal: 70vh;
                     border-bottom: $width-separator-thin solid $color-separator;
                     padding: $spacing-small;
                     padding-top: 0;
+
+                    .button-container {
+                        display: flex;
+                        align-items: center;
+                    }
                 }
 
                 .panels {

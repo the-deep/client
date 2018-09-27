@@ -21,6 +21,7 @@ import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import LinkWidgetModal from '#widgetComponents/LinkWidgetModal';
+import GeoLink from '#widgetComponents/GeoLink';
 
 import SectorTitle from './SectorTitle';
 import SectorContent from './SectorContent';
@@ -434,44 +435,50 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     onClick={this.handleTabSelect}
                     modifier={this.renderTab}
                 >
-                    <FaramList faramElementName={selectedTab}>
-                        <PrimaryButton
-                            transparent
-                            iconName={iconNames.add}
-                            onClick={this.handleAddFromWidgetClick}
-                        >
-                            {_ts('widgets.editor.matrix2d', 'addFromWidgets')}
-                        </PrimaryButton>
-                        {showLinkModal &&
-                            <LinkWidgetModal
-                                onClose={this.handleLinkModalClose}
-                                widgetKey={this.props.widgetKey}
-                                faramElementName="add-from-widget-btn"
+                    <div className={styles.buttonContainer}>
+                        <FaramList faramElementName={selectedTab}>
+                            <GeoLink
+                                faramElementName="add-from-geo-btn"
                                 faramAction={addFromWidgetFaramAction}
                             />
-                        }
-                        {
-                            selectedTab === 'dimensions' ? (
-                                <PrimaryButton
-                                    faramElementName="add-dimension-btn"
-                                    faramAction={this.addDimensionClick}
-                                    iconName={iconNames.add}
-                                    transparent
-                                >
-                                    {_ts('widgets.editor.matrix2d', 'addDimensionButtonTitle')}
-                                </PrimaryButton>
-                            ) : (
-                                <PrimaryButton
-                                    faramElementName="add-sector-btn"
-                                    faramAction={this.addSectorClick}
-                                    iconName={iconNames.add}
-                                    transparent
-                                >
-                                    {_ts('widgets.editor.matrix2d', 'addSectorButtonTitle')}
-                                </PrimaryButton>
-                            )
-                        }
-                    </FaramList>
+                            <PrimaryButton
+                                transparent
+                                iconName={iconNames.add}
+                                onClick={this.handleAddFromWidgetClick}
+                            >
+                                {_ts('widgets.editor.matrix2d', 'addFromWidgets')}
+                            </PrimaryButton>
+                            {showLinkModal &&
+                                <LinkWidgetModal
+                                    onClose={this.handleLinkModalClose}
+                                    widgetKey={this.props.widgetKey}
+                                    faramElementName="add-from-widget-btn"
+                                    faramAction={addFromWidgetFaramAction}
+                                />
+                            }
+                            {
+                                selectedTab === 'dimensions' ? (
+                                    <PrimaryButton
+                                        faramElementName="add-dimension-btn"
+                                        faramAction={this.addDimensionClick}
+                                        iconName={iconNames.add}
+                                        transparent
+                                    >
+                                        {_ts('widgets.editor.matrix2d', 'addDimensionButtonTitle')}
+                                    </PrimaryButton>
+                                ) : (
+                                    <PrimaryButton
+                                        faramElementName="add-sector-btn"
+                                        faramAction={this.addSectorClick}
+                                        iconName={iconNames.add}
+                                        transparent
+                                    >
+                                        {_ts('widgets.editor.matrix2d', 'addSectorButtonTitle')}
+                                    </PrimaryButton>
+                                )
+                            }
+                        </FaramList>
+                    </div>
                 </FixedTabs>
             </div>
         );

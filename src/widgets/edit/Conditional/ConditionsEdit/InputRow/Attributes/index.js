@@ -23,7 +23,7 @@ const propTypes = {
 
 const defaultProps = {
     widgetData: undefined,
-    geoOptions: [],
+    geoOptions: {},
 };
 
 const getOptions = memoize((attribute, widgetData) => (
