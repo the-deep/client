@@ -13,6 +13,7 @@ import _ts from '#ts';
 import { iconNames } from '#constants';
 
 import LinkWidgetModal from '#widgetComponents/LinkWidgetModal';
+import GeoLink from '#widgetComponents/GeoLink';
 
 import SubsectorRow from './SubsectorRow';
 import styles from './styles.scss';
@@ -124,7 +125,11 @@ export default class SectorContent extends React.PureComponent {
                             <h4>
                                 {_ts('widgets.editor.matrix2d', 'subsectorsHeaderTitle')}
                             </h4>
-                            <div>
+                            <div className={styles.buttonContainer} >
+                                <GeoLink
+                                    faramElementName="add-from-geo-btn"
+                                    faramAction={this.addFromWidgetClick}
+                                />
                                 <PrimaryButton
                                     transparent
                                     iconName={iconNames.add}

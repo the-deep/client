@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 
 import AccentButton from '#rsca/Button/AccentButton';
 import SelectInputWithList from '#rsci/SelectInputWithList';
@@ -7,6 +8,7 @@ import MultiSelectInput from '#rsci/MultiSelectInput';
 import Label from '#rsci/Label';
 import { FaramInputElement } from '#rscg/FaramElements';
 import { iconNames } from '#constants';
+import { listToMap } from '#rsu/common';
 
 import GeoModal from '../GeoModal';
 import styles from './styles.scss';
@@ -21,6 +23,7 @@ const propTypes = {
     showLabel: PropTypes.bool,
     disabled: PropTypes.bool,
     hideList: PropTypes.bool,
+    hideInput: PropTypes.bool,
     modalLeftComponent: PropTypes.node,
 };
 
@@ -32,10 +35,13 @@ const defaultProps = {
     geoOptionsByRegion: {},
     disabled: false,
     hideList: false,
+    hideInput: false,
     value: [],
     regions: [],
     modalLeftComponent: undefined,
 };
+
+const emptyArray = [];
 
 @FaramInputElement
 export default class GeoInput extends React.PureComponent {
@@ -63,6 +69,11 @@ export default class GeoInput extends React.PureComponent {
     static getAllGeoOptions = geoOptionsByRegion => (
         Object.values(geoOptionsByRegion).reduce((acc, r) => [...acc, ...r], [])
     )
+
+    static getRegionDetails = memoize((regions = emptyArray, allRegions = emptyArray) => {
+        const allRegionsMap = listToMap(allRegions, r => r.key);
+        return regions.map(selectedRegion => allRegionsMap[selectedRegion]);
+    });
 
     constructor(props) {
         super(props);
@@ -102,9 +113,10 @@ export default class GeoInput extends React.PureComponent {
     handleModalApply = () => {
         const { onChange } = this.props;
         const { modalValue } = this.state;
+        const detailedValue = GeoInput.getRegionDetails(modalValue, this.geoOptions);
         this.setState({ showModal: false }, () => {
             if (onChange) {
-                onChange(modalValue);
+                onChange(modalValue, detailedValue);
             }
         });
     }
@@ -115,8 +127,9 @@ export default class GeoInput extends React.PureComponent {
     }
 
     handleSelectChange = (newValues) => {
+        const detailedValue = GeoInput.getRegionDetails(newValues, this.geoOptions);
         if (this.props.onChange) {
-            this.props.onChange(newValues);
+            this.props.onChange(newValues, detailedValue);
         }
     }
 
@@ -193,11 +206,14 @@ export default class GeoInput extends React.PureComponent {
             value,
             disabled,
             hideList,
+            label,
+            hideInput,
         } = this.props;
 
-        if (hideList) {
+        if (hideList || hideInput) {
             return (
                 <div className={styles.noListSelection} >
+                    {!hideInput &&
                     <MultiSelectInput
                         value={value}
                         onChange={this.handleSelectChange}
@@ -208,13 +224,16 @@ export default class GeoInput extends React.PureComponent {
                         hideSelectAllButton
                         disabled={disabled}
                     />
+                    }
                     <AccentButton
                         className={styles.action}
                         iconName={iconNames.globe}
                         onClick={this.handleShowModal}
                         disabled={disabled}
                         transparent
-                    />
+                    >
+                        {hideInput && label}
+                    </AccentButton>
                 </div>
             );
         }

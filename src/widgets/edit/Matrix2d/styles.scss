@@ -53,6 +53,11 @@ $height-edit-modal: 70vh;
 
                 .tabs {
                     flex-grow: 1;
+
+                    .button-container {
+                        display: flex;
+                        align-items: center;
+                    }
                 }
             }
 
