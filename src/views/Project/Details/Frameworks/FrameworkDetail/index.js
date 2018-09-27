@@ -6,6 +6,7 @@ import memoize from 'memoize-one';
 
 import { reverseRoute } from '#rsu/common';
 import FixedTabs from '#rscv/FixedTabs';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
     analysisFrameworkDetailSelector,
@@ -28,8 +29,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    framework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    analysisFrameworkId: PropTypes.number.isRequired,
+    frameworkId: PropTypes.number.isRequired,
     addNewFramework: PropTypes.func.isRequired,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setProjectFramework: PropTypes.func.isRequired,
@@ -40,7 +40,6 @@ const defaultProps = {
 };
 
 const mapStateToProps = (state, props) => ({
-    framework: analysisFrameworkDetailSelector(state, props),
     projectDetails: projectDetailsSelector(state, props),
 });
 
@@ -57,7 +56,7 @@ const requestFramework = memoize((frameworkId, frameworkGetRequest) => {
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class Details extends React.PureComponent {
+export default class FrameworkDetail extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -65,6 +64,7 @@ export default class Details extends React.PureComponent {
         super(props);
 
         this.state = {
+            pendingFramework: true,
             framework: undefined,
             activeView: 'overview',
         };
@@ -88,24 +88,24 @@ export default class Details extends React.PureComponent {
 
     renderEditFrameworkButton = () => {
         const {
-            analysisFrameworkId,
-            framework,
-        } = this.props;
+            framework: {
+                id: frameworkId,
+                isAdmin: isFrameworkAdmin,
+            },
+        } = this.state;
 
-        if (!framework.isAdmin) {
+        if (isFrameworkAdmin) {
             return null;
         }
 
-        const { pending } = this.state;
         const editFrameworkButtonTitle = _ts('project.framework', 'editFrameworkButtonTitle');
 
-        const params = { analysisFrameworkId };
+        const params = { frameworkId };
 
         return (
             <Link
                 className={styles.editFrameworkLink}
                 to={reverseRoute(pathNames.analysisFramework, params)}
-                disabled={pending}
             >
                 { editFrameworkButtonTitle }
             </Link>
@@ -114,11 +114,6 @@ export default class Details extends React.PureComponent {
 
     renderHeader = () => {
         const {
-            framework: {
-                id: frameworkId,
-                title: frameworkTitle,
-                description: frameworkDescription,
-            },
             projectDetails: {
                 analysisFramework: currentFrameworkId,
                 id: projectId,
@@ -128,6 +123,11 @@ export default class Details extends React.PureComponent {
         } = this.props;
 
         const {
+            framework: {
+                id: frameworkId,
+                title: frameworkTitle,
+                description: frameworkDescription,
+            },
             pending,
             activeView,
         } = this.state;
@@ -181,11 +181,13 @@ export default class Details extends React.PureComponent {
 
     render() {
         const {
-            analysisFrameworkId,
+            frameworkId,
             className: classNameFromProps,
         } = this.props;
 
-        requestFramework(analysisFrameworkId, this.frameworkGetRequest);
+        const { pendingFramework } = this.state;
+
+        requestFramework(frameworkId, this.frameworkGetRequest);
 
         const {
             framework,
@@ -201,12 +203,18 @@ export default class Details extends React.PureComponent {
 
         return (
             <div className={className}>
-                <Header />
-                <Preview
-                    activeView={activeView}
-                    className={styles.preview}
-                    framework={framework}
-                />
+                { pendingFramework ? (
+                    <LoadingAnimation large />
+                ) : (
+                    <React.Fragment>
+                        <Header />
+                        <Preview
+                            activeView={activeView}
+                            className={styles.preview}
+                            framework={framework}
+                        />
+                    </React.Fragment>
+                )}
             </div>
         );
     }

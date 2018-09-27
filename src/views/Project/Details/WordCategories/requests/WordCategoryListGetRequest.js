@@ -4,25 +4,21 @@ import {
 } from '#rest';
 import Request from '#utils/Request';
 
-/*
- * Pulls all the Analysis Framework
- * Required:
- * - setState
- * - setCategoryEditors
- */
-export default class ProjectCesRequest extends Request {
+export default class WordCategoryListGetRequest extends Request {
     schemaName = 'categoryEditorList'
 
     handlePreLoad = () => {
-        this.parent.setState({ pending: true });
+        this.parent.setState({ pendingWordCategoryList: true });
     }
 
     handlePostLoad = () => {
-        this.parent.setState({ pending: false });
+        this.parent.setState({ pendingWordCategoryList: false });
     }
 
     handleSuccess = (response) => {
-        this.parent.setCategoryEditors({
+        const { setWordCategoryList } = this.parent;
+
+        setWordCategoryList({
             categoryEditors: response.results,
         });
     }
@@ -36,6 +32,7 @@ export default class ProjectCesRequest extends Request {
             url: urlForCategoryEditors,
             params: createParamsForGet,
         });
+
         return this;
     }
 }

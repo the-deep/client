@@ -710,6 +710,8 @@
         "12500": "Frameworks",
         "12501": "Enter framework description",
         "12502": "Clone framework",
+        "12503": "Word categories",
+        "12504": "Clone category editor",
         "-12279953": "Entry Cleared",
         "-94068330": "All local entries were cleared because associated analysis framework was removed.",
         "-4983139": "Remove lead group",
@@ -1630,6 +1632,19 @@
             "confirmUseFramework": 365,
             "confirmUseFrameworkText": 366,
             "confirmCloneFramework": 354
+        },
+        "project.wordCategory": {
+            "addWordCategoryButtonLabel": 301,
+            "wordCategoryListHeading": 12503,
+
+            "cloneButtonTitle": 353,
+
+            "cloneWordCategoryModalTitle": 12504,
+            "cloneWordCategoryCloneButtonTitle": 353,
+            "cloneWordCategoryCancelButtonTitle": 61,
+
+            "useWordCategoryButtonTitle": 362,
+            "editWordCategoryButtonTitle": 363
         },
         "project": {
             "projectGetFailure": 2500,

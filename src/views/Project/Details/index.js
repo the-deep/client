@@ -16,7 +16,7 @@ import _ts from '#ts';
 import General from './General';
 import Regions from './Regions';
 import Frameworks from './Frameworks';
-import CategoryEditors from './CategoryEditors';
+import WordCategories from './WordCategories';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -72,7 +72,7 @@ export default class ProjectDetails extends React.PureComponent {
                 rendererParams,
             },
             categoryEditors: {
-                component: CategoryEditors,
+                component: WordCategories,
                 rendererParams,
             },
         };

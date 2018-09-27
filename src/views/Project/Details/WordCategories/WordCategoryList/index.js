@@ -14,32 +14,32 @@ import ListItem from '#rscv/List/ListItem';
 import _ts from '#ts';
 import { iconNames } from '#constants';
 
-import AddFrameworkButton from './AddFrameworkButton';
+import AddWordCategoryButton from './AddWordCategoryButton';
 import styles from './styles.scss';
 
 const propTypes = {
-    activeFrameworkId: PropTypes.number.isRequired,
+    activeWordCategoryId: PropTypes.number.isRequired,
     className: PropTypes.string,
-    frameworkList: PropTypes.arrayOf(PropTypes.object),
+    wordCategoryList: PropTypes.arrayOf(PropTypes.object),
     onClick: PropTypes.func.isRequired,
-    selectedFrameworkId: PropTypes.number,
+    selectedWordCategoryId: PropTypes.number,
     projectId: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
     className: '',
-    frameworkList: [],
+    wordCategoryList: [],
 
-    // Apparently there can be no frameworks in projects
-    selectedFrameworkId: undefined,
+    // Apparently there can be no wordCategory in projects
+    selectedWordCategoryId: undefined,
 };
 
 // TODO: move to separate component
-const FrameworkListItem = ({
+const WordCategoryListItem = ({
     className,
     isActive,
     isSelected,
-    framework: { title },
+    wordCategory: { title },
     onClick,
 }) => {
     const iconClassName = `
@@ -61,42 +61,41 @@ const FrameworkListItem = ({
     );
 };
 
-FrameworkListItem.propTypes = {
+WordCategoryListItem.propTypes = {
     className: PropTypes.string,
     isActive: PropTypes.bool.isRequired,
     isSelected: PropTypes.bool.isRequired,
-    framework: PropTypes.shape({
+    wordCategory: PropTypes.shape({
         title: PropTypes.string,
     }).isRequired,
     onClick: PropTypes.func.isRequired,
 };
 
-FrameworkListItem.defaultProps = {
+WordCategoryListItem.defaultProps = {
     className: '',
 };
 
-
-const filterFrameworks = memoize((frameworkList, searchInputValue) => {
-    const displayFrameworkList = frameworkList.filter(
-        framework => caseInsensitiveSubmatch(
-            framework.title,
+const filterWordCategories = memoize((wordCategoryList, searchInputValue) => {
+    const displayWordCategoryList = wordCategoryList.filter(
+        wordCategory => caseInsensitiveSubmatch(
+            wordCategory.title,
             searchInputValue,
         ),
     );
 
-    displayFrameworkList.sort(
+    displayWordCategoryList.sort(
         (a, b) => compareString(
             a.title,
             b.title,
         ),
     );
 
-    return displayFrameworkList;
+    return displayWordCategoryList;
 });
 
-const getFrameworkKey = framework => framework.id;
+const getWordCategoryKey = wordCategory => wordCategory.id;
 
-export default class FrameworkList extends React.PureComponent {
+export default class WordCategoryList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -112,61 +111,61 @@ export default class FrameworkList extends React.PureComponent {
         this.setState({ searchInputValue });
     }
 
-    itemRendererParams = (key, framework) => ({
-        framework,
-        isActive: this.props.activeFrameworkId === framework.id,
-        isSelected: this.props.selectedFrameworkId === framework.id,
-        onClick: () => this.props.onClick(framework.id),
+    itemRendererParams = (key, wordCategory) => ({
+        wordCategory,
+        isActive: this.props.activeWordCategoryId === wordCategory.id,
+        isSelected: this.props.selectedWordCategoryId === wordCategory.id,
+        onClick: () => this.props.onClick(wordCategory.id),
         className: styles.item,
     })
 
     render() {
         const {
             className: classNameFromProps,
-            frameworkList,
+            wordCategoryList,
             projectId,
         } = this.props;
 
         const { searchInputValue } = this.state;
 
-        if (!frameworkList) {
+        if (!wordCategoryList) {
             return null;
         }
 
-        const displayFrameworkList = filterFrameworks(
-            frameworkList,
+        const displayWordCategoryList = filterWordCategories(
+            wordCategoryList,
             searchInputValue,
         );
 
         const className = `
             ${classNameFromProps}
-            ${styles.frameworkList}
+            ${styles.wordCategoryList}
         `;
 
         return (
             <div className={className}>
                 <header className={styles.header}>
                     <h4 className={styles.heading}>
-                        {_ts('project.framework', 'frameworkListHeading')}
+                        {_ts('project.wordCategory', 'wordCategoryListHeading')}
                     </h4>
-                    <AddFrameworkButton
+                    <AddWordCategoryButton
                         projectId={projectId}
                     />
                     <SearchInput
-                        className={styles.frameworkSearchInput}
+                        className={styles.wordCategorySearchInput}
                         value={searchInputValue}
                         onChange={this.handleSearchInputValueChange}
-                        placeholder={_ts('project.framework', 'searchFrameworkInputPlaceholder')}
+                        placeholder={_ts('project.wordCategory', 'searchWordCategoryInputPlaceholder')}
                         showHintAndError={false}
                         showLabel={false}
                     />
                 </header>
                 <ListView
-                    data={displayFrameworkList}
+                    data={displayWordCategoryList}
                     className={styles.content}
-                    renderer={FrameworkListItem}
+                    renderer={WordCategoryListItem}
                     rendererParams={this.itemRendererParams}
-                    keyExtractor={getFrameworkKey}
+                    keyExtractor={getWordCategoryKey}
                 />
             </div>
         );

@@ -1,25 +1,32 @@
 @import '~base-scss/base';
 
-$ce-detail-form-width: 480px;
-$height-header: 39px;
-
-.category-editor-detail {
-    height: 100%;
+.word-category-detail {
+    display: flex;
+    flex-direction: column;
 
     .header {
-        @include background-color($color-background-header);
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        justify-content: space-between;
         border-bottom: $width-separator-thin solid $color-separator;
-        padding: 0 $spacing-small;
-        height: $height-header;
+        background-color: $color-background-header;
+
+        .heading {
+            flex-grow: 1;
+            padding: $spacing-small $spacing-medium;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
 
         .action-buttons {
+            flex-shrink: 0;
+            padding: $spacing-small $spacing-medium;
+
             button {
                 margin-left: $spacing-small;
             }
+
 
             .edit-category-editor-link {
                 @include button-like-link($color-warning);

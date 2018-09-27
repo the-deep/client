@@ -9,7 +9,7 @@ import _ts from '#ts';
 import UseFrameworkRequest from './requests/UseFrameworkRequest';
 
 const propTypes = {
-    currentFrameworkId: PropTypes.number.isRequired,
+    currentFrameworkId: PropTypes.number,
     disabled: PropTypes.bool,
     frameworkId: PropTypes.number.isRequired,
     frameworkTitle: PropTypes.string.isRequired,
@@ -18,6 +18,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    currentFrameworkId: undefined,
     disabled: false,
 };
 
@@ -30,7 +31,7 @@ export default class UseFrameworkButton extends React.PureComponent {
 
         const { setProjectFramework } = this.props;
 
-        this.state = { pending: false };
+        this.state = { pendingFrameworkUse: false };
 
         this.useFrameworkRequest = new UseFrameworkRequest({
             setState: d => this.setState(d),
@@ -56,7 +57,7 @@ export default class UseFrameworkButton extends React.PureComponent {
             currentFrameworkId,
             disabled,
         } = this.props;
-        const { pending } = this.state;
+        const { pendingFrameworkUse } = this.state;
 
         if (frameworkId === currentFrameworkId) {
             // If current framework is already being used
@@ -81,7 +82,7 @@ export default class UseFrameworkButton extends React.PureComponent {
             <WarningConfirmButton
                 iconName={iconNames.check}
                 onClick={this.handleFrameworkConfirmClose}
-                disabled={disabled || pending}
+                disabled={disabled || pendingFrameworkUse}
                 confirmationMessage={confirmationMessage}
             >
                 { useFrameworkButtonLabel }

@@ -4,21 +4,15 @@ import {
 } from '#rest';
 import Request from '#utils/Request';
 
-/*
- * Pulls all the Analysis Framework
- * Required:
- *  - setState
- *  - setProjectFramework
- */
 export default class UseFrameworkRequest extends Request {
     schemaName = 'project'
 
     handlePreLoad = () => {
-        this.parent.setState({ pending: true });
+        this.parent.setState({ pendingFrameworkUse: true });
     }
 
     handleAfterLoad = () => {
-        this.parent.setState({ pending: false });
+        this.parent.setState({ pendingFrameworkUse: false });
     }
 
     handleSuccess = () => {
