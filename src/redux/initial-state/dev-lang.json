@@ -796,8 +796,8 @@
         "-31256073": "Widget",
         "-14972110": "Add from widgets",
         "-59940596": "No project found",
-        "-77657645": "Failed to fetch lead groups.",
         "-24077239": "You can add the following types of widgets inside a conditional widget.",
+        "-77657645": "Failed to fetch lead groups.",
         "-80733191": "The order of the widgets below represents the order in which the conditions are checked.",
         "-17190550": "You can add conditions from these widgets that are currently in your framework."
     },
