@@ -1,4 +1,5 @@
 import { FgRestBuilder } from '#rsu/rest';
+import schema from '#schema';
 import {
     createParamsForGet,
     createUrlForLeadGroupsOfProject,
@@ -16,6 +17,7 @@ export default class LeadGroupsGetRequest {
 
     success = projectId => (response) => {
         try {
+            schema.validate(response, 'leadGroupsGetResponse');
             this.props.setLeadGroups({
                 projectId,
                 leadGroups: response.results,
@@ -36,8 +38,13 @@ export default class LeadGroupsGetRequest {
         });
     }
 
-    fatal = (response) => {
-        console.warn('fatal:', response);
+    fatal = () => {
+        notify.send({
+            title: _ts('leadGroups', 'leadGroupTitle'),
+            type: notify.type.ERROR,
+            message: _ts('leadGroups', 'leadGroupFatalMessage'),
+            duration: notify.duration.MEDIUM,
+        });
     }
 
     create = ({
