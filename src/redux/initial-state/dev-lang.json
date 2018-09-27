@@ -707,11 +707,9 @@
         "12000": "Goto edit entries page for the lead",
         "12001": "Development Language Save",
         "12002": "Hurray!! Development Language Successfully Saved",
-
         "12500": "Frameworks",
         "12501": "Enter framework description",
         "12502": "Clone framework",
-
         "-12279953": "Entry Cleared",
         "-94068330": "All local entries were cleared because associated analysis framework was removed.",
         "-4983139": "Remove lead group",
@@ -796,7 +794,8 @@
         "-29582302": "List of items",
         "-17297015": "Link widgets",
         "-31256073": "Widget",
-        "-14972110": "Add from widgets"
+        "-14972110": "Add from widgets",
+        "-59940596": "No project found"
     },
     "links": {
         "browserExtension": {
@@ -1601,23 +1600,18 @@
             "searchFrameworkInputPlaceholder": 357,
             "addFrameworkModalTitle": 358,
             "noFrameworkText": 359,
-
             "cloneButtonTitle": 353,
             "frameworkTitleInputTitle": 13,
             "frameworkTitleInputPlaceholder": 361,
             "frameworkDescriptionInputTitle": 200,
             "frameworkDescriptionInputPlaceholder": 12501,
-
             "cloneFrameworkModalTitle": 12502,
             "cloneFrameworkCloneButtonTitle": 353,
             "cloneFrameworkCancelButtonTitle": 61,
-
             "addFrameworkFormAddButtonTitle": 301,
             "addFrameworkFormCancelButtonTitle": 61,
-
             "entryOverviewTitle": 781,
             "entryListTitle": 780,
-
             "useFrameworkButtonTitle": 362,
             "editFrameworkButtonTitle": 363,
             "cloneEditFrameworkButtonTitle": 352,
@@ -1724,7 +1718,8 @@
             "regionUpdateOverridden": 982,
             "projectOptions": -72859218,
             "projectOptionsGetFailure": -45091634,
-            "frameworkListHeading": 12500
+            "frameworkListHeading": 12500,
+            "noProjectsFound": -59940596
         },
         "connector": {
             "noConnectorsLabel": 1115,

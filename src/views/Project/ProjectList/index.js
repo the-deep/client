@@ -5,6 +5,7 @@ import memoize from 'memoize-one';
 
 import ListView from '#rscv/List/ListView';
 import SearchInput from '#rsci/SearchInput';
+import Message from '#rscv/Message';
 
 import {
     reverseRoute,
@@ -53,6 +54,9 @@ const filterProjects = memoize((userProjects, searchInputValue) => {
     return displayUserProjects;
 });
 
+const keySelector = project => project.id;
+const rendererParams = (key, project) => ({ project });
+
 export default class ProjectList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -78,11 +82,8 @@ export default class ProjectList extends React.PureComponent {
         this.setState({ searchInputValue });
     };
 
-    renderSidebarItem = (key, project) => (
-        <div
-            key={key}
-            className={this.getStyleName(project.id)}
-        >
+    renderSidebarItem = ({ project }) => (
+        <div className={this.getStyleName(project.id)} >
             <Link
                 to={reverseRoute(pathNames.projects, { projectId: project.id })}
                 className={styles.link}
@@ -92,11 +93,10 @@ export default class ProjectList extends React.PureComponent {
         </div>
     )
 
-    // FIXME: Use strings
     renderEmptyComponent = () => (
-        <div className={styles.empty}>
-            No projects found
-        </div>
+        <Message className={styles.empty}>
+            {_ts('project', 'noProjectsFound')}
+        </Message>
     )
 
     render() {
@@ -149,10 +149,9 @@ export default class ProjectList extends React.PureComponent {
                 <ListView
                     className={styles.projectList}
                     data={displayUserProjects}
-                    keyExtractor={project => project.id}
-
-                    // TODO: use renderer
-                    modifier={this.renderSidebarItem}
+                    keyExtractor={keySelector}
+                    renderer={this.renderSidebarItem}
+                    rendererParams={rendererParams}
                     emptyComponent={this.renderEmptyComponent}
                 />
             </div>
