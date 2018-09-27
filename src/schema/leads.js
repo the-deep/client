@@ -111,4 +111,42 @@ const leadSchema = [];
     leadSchema.push({ name, schema });
 }
 
+{
+    const name = 'leadGroupFull';
+    const schema = {
+        doc: {
+            name: 'LeadGroup',
+            description: 'One of the main entities',
+        },
+        extends: 'dbentity',
+        fields: {
+            id: { type: 'uint', required: true },
+            project: { type: 'uint' },
+            title: { type: 'string', required: true },
+            versionId: { type: 'uint', required: true },
+            leads: { type: 'array', required: false },
+            noOfLeads: { type: 'uint', required: false },
+        },
+    };
+    leadSchema.push({ name, schema });
+}
+
+{
+    const name = 'leadGroupsGetResponse';
+    const schema = {
+        doc: {
+            name: 'Lead Get Response',
+            description: 'Response for GET /leadgroups/?params',
+        },
+        fields: {
+            count: { type: 'uint', required: true },
+            next: { type: 'string' },
+            previous: { type: 'string' },
+            results: { type: 'array.leadGroupFull', required: true },
+        },
+    };
+    leadSchema.push({ name, schema });
+}
+
+
 export default leadSchema;
