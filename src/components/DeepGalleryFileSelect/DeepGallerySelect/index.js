@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 import { connect } from 'react-redux';
 
 import Button from '#rsca/Button';
@@ -18,7 +19,6 @@ import {
     compareString,
     compareDate,
 } from '#rsu/common';
-import { FgRestBuilder } from '#rsu/rest';
 import { UploadBuilder } from '#rsu/upload';
 
 import { iconNames } from '#constants';
@@ -28,14 +28,13 @@ import {
     setUserGalleryFilesAction,
 } from '#redux';
 import {
-    createUrlForGalleryFiles,
-    createParamsForGet,
-
     urlForUpload,
     createParamsForFileUpload,
     transformAndCombineResponseErrors,
 } from '#rest';
 import _ts from '#ts';
+
+import UserGalleryFilesRequest from './requests/UserGalleryFilesRequest';
 
 import styles from './styles.scss';
 
@@ -121,36 +120,28 @@ export default class DgSelect extends React.PureComponent {
             selected: [],
             searchInputValue: undefined,
         };
+
+        this.userGalleryFilesRequest = new UserGalleryFilesRequest({
+            setState: params => this.setState(params),
+            setUserGalleryFiles: this.props.setUserGalleryFiles,
+        });
     }
 
-    componentWillMount() {
-        if (this.userGalleryFilesRequest) {
-            this.userGalleryFilesRequest.stop();
-        }
-
-        this.userGalleryFilesRequest = this.createRequestForUserGalleryFiles({
-            projects: this.props.projects,
-        });
-        this.userGalleryFilesRequest.start();
+    componentDidMount() {
+        const { projects } = this.props;
+        this.userGalleryFilesRequest.init({ projects }).start();
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.projects !== this.props.projects) {
-            if (this.userGalleryFilesRequest) {
-                this.userGalleryFilesRequest.stop();
-            }
-
-            this.userGalleryFilesRequest = this.createRequestForUserGalleryFiles({
-                projects: nextProps.projects,
-            });
-            this.userGalleryFilesRequest.start();
+        const { projects: oldProjects } = this.props;
+        const { projects: newProjects } = nextProps;
+        if (oldProjects !== newProjects) {
+            this.userGalleryFilesRequest.init({ projects: newProjects }).start();
         }
     }
 
     componentWillUnmount() {
-        if (this.userGalleryFilesRequest) {
-            this.userGalleryFilesRequest.stop();
-        }
+        this.userGalleryFilesRequest.stop();
         if (this.uploader) {
             this.uploader.stop();
         }
@@ -171,7 +162,7 @@ export default class DgSelect extends React.PureComponent {
         this.props.onClose(selectedGalleryFiles);
     }
 
-    getTableData = ({ galleryFiles, selected, searchInputValue }) => {
+    getTableData = memoize(({ galleryFiles, selected, searchInputValue }) => {
         const filterdGalleryFiles = galleryFiles.filter(
             file => caseInsensitiveSubmatch(file.title, searchInputValue),
         );
@@ -179,47 +170,7 @@ export default class DgSelect extends React.PureComponent {
         return filterdGalleryFiles.map(file => (
             { ...file, selected: selected.includes(file.id) }
         ));
-    }
-
-    createRequestForUserGalleryFiles = (params) => {
-        const userGalleryFilesRequest = new FgRestBuilder()
-            .url(createUrlForGalleryFiles(params))
-            .params(createParamsForGet)
-            .preLoad(() => {
-                this.setState({
-                    pending: true,
-                });
-            })
-            .postLoad(() => {
-                this.setState({
-                    pending: false,
-                });
-            })
-            .success((response) => {
-                try {
-                    // FIXME: write schema
-                    this.props.setUserGalleryFiles({
-                        galleryFiles: response.results,
-                    });
-                } catch (err) {
-                    console.error(err);
-                }
-            })
-            .failure((response) => {
-                console.error('Failed to get user gallery files', response);
-                this.setState({
-                    pending: false,
-                });
-            })
-            .fatal((response) => {
-                console.error('Fatal error occured while getting users gallery files', response);
-                this.setState({
-                    pending: false,
-                });
-            })
-            .build();
-        return userGalleryFilesRequest;
-    }
+    })
 
     handleUploadButton = (files) => {
         const file = files[0];
@@ -241,21 +192,15 @@ export default class DgSelect extends React.PureComponent {
                     selected: [...this.state.selected, response.id],
                 });
 
-                if (this.userGalleryFilesRequest) {
-                    this.userGalleryFilesRequest.stop();
-                }
-
-                this.userGalleryFilesRequest = this.createRequestForUserGalleryFiles({
-                    projects: this.props.projects,
-                });
-                this.userGalleryFilesRequest.start();
+                const { projects } = this.props;
+                this.userGalleryFilesRequest.init({ projects }).start();
             })
             .failure((response) => {
                 const message = transformAndCombineResponseErrors(response.errors);
-                console.error(message);
+                console.warn(message);
             })
             .fatal(() => {
-                console.error('Couldn\t upload file');
+                console.warn('Could not upload file');
             })
             .build();
 
@@ -322,7 +267,6 @@ export default class DgSelect extends React.PureComponent {
 
         const { galleryFiles } = this.props;
 
-        // FIXME: performance problem
         const tableData = this.getTableData({
             galleryFiles,
             selected,
@@ -333,7 +277,7 @@ export default class DgSelect extends React.PureComponent {
             <ModalHeader
                 key="header"
                 className={styles.modalHeader}
-                title="Select Gallery Files"
+                title={_ts('components.deepGallerySelect', 'modalTitle')}
                 rightComponent={
                     <SearchInput
                         onChange={this.handleSearchInputChange}

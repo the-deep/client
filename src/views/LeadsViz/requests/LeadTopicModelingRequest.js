@@ -32,15 +32,11 @@ export default class LeadTopicModelingRequest {
                 this.setState({ hierarchicalDataPending: false });
             })
             .success((response) => {
-                try {
-                    // FIXME: write schema
-                    this.setLeadVisualization({
-                        hierarchial: response,
-                        projectId: activeProject.id,
-                    });
-                } catch (err) {
-                    console.error(err);
-                }
+                // FIXME: write schema
+                this.setLeadVisualization({
+                    hierarchial: response,
+                    projectId: activeProject.id,
+                });
             })
             .failure((response) => {
                 console.warn('Failure', response);

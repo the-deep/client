@@ -36,15 +36,11 @@ export default class EntriesRequest {
                     console.error(er);
                 }
             })
-            .failure((response) => {
+            .failure(() => {
                 this.setState({ pendingEntries: false });
-                // TODO: notify
-                console.error(response);
             })
             .fatal(() => {
                 this.setState({ pendingEntries: false });
-                // TODO: notify
-                console.error('Failed loading entries of lead');
             })
             .build();
         return entriesRequest;

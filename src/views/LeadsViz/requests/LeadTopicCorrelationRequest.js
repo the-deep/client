@@ -37,15 +37,11 @@ export default class LeadTopicCorrelationRequest {
                 });
             })
             .success((response) => {
-                try {
-                    // FIXME: write schema
-                    this.setLeadVisualization({
-                        correlation: response,
-                        projectId: activeProject.id,
-                    });
-                } catch (err) {
-                    console.error(err);
-                }
+                // FIXME: write schema
+                this.setLeadVisualization({
+                    correlation: response,
+                    projectId: activeProject.id,
+                });
             })
             .failure((response) => {
                 console.warn('Failure', response);

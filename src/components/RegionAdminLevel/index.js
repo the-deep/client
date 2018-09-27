@@ -180,21 +180,17 @@ export default class RegionAdminLevel extends React.PureComponent {
             .preLoad(() => { this.setState({ deletePending: true }); })
             .postLoad(() => { this.setState({ deletePending: false }); })
             .success(() => {
-                try {
-                    // FIXME: write schema
-                    this.props.unsetAdminLevelForRegion({
-                        adminLevelId,
-                        regionId,
-                    });
-                    notify.send({
-                        title: _ts('components.regionAdminLevel', 'adminLevelDelete'),
-                        type: notify.type.SUCCESS,
-                        message: _ts('components.regionAdminLevel', 'adminLevelDeleteSuccess'),
-                        duration: notify.duration.MEDIUM,
-                    });
-                } catch (er) {
-                    console.error(er);
-                }
+                // FIXME: write schema
+                this.props.unsetAdminLevelForRegion({
+                    adminLevelId,
+                    regionId,
+                });
+                notify.send({
+                    title: _ts('components.regionAdminLevel', 'adminLevelDelete'),
+                    type: notify.type.SUCCESS,
+                    message: _ts('components.regionAdminLevel', 'adminLevelDeleteSuccess'),
+                    duration: notify.duration.MEDIUM,
+                });
             })
             .failure(() => {
                 notify.send({

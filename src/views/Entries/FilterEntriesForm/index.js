@@ -203,15 +203,10 @@ export default class FilterEntriesForm extends React.PureComponent {
                 this.setState({ loadingEntryFilters: false });
             })
             .success((response) => {
-                try {
-                    // schema.validate(response, 'projectEntryFilterOptions');
-                    this.props.setEntryFilterOptions({
-                        projectId: activeProject,
-                        entryFilterOptions: response,
-                    });
-                } catch (err) {
-                    console.error(err);
-                }
+                this.props.setEntryFilterOptions({
+                    projectId: activeProject,
+                    entryFilterOptions: response,
+                });
             })
             .build();
 

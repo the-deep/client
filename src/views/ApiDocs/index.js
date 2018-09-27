@@ -58,12 +58,6 @@ export default class ApiDocs extends React.PureComponent {
                     () => console.log(this.state.docs),
                 );
             })
-            .failure((response) => {
-                console.error('FAILURE:', response);
-            })
-            .fatal((response) => {
-                console.error('FATAL:', response);
-            })
             .build();
 
         this.apiDocsRequest.start();

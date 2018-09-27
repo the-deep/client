@@ -29,15 +29,11 @@ export default class LeadNerRequest {
                 this.setState({ geoPointsDataPending: false });
             })
             .success((response) => {
-                try {
-                    // FIXME: write schema
-                    this.setLeadVisualization({
-                        geoPoints: response.locations,
-                        projectId: activeProject.id,
-                    });
-                } catch (err) {
-                    console.error(err);
-                }
+                // FIXME: write schema
+                this.setLeadVisualization({
+                    geoPoints: response.locations,
+                    projectId: activeProject.id,
+                });
             })
             .failure((response) => {
                 console.warn('Failure', response);

@@ -800,7 +800,10 @@
         "-77657645": "Failed to fetch lead groups.",
         "-80733191": "The order of the widgets below represents the order in which the conditions are checked.",
         "-17190550": "You can add conditions from these widgets that are currently in your framework.",
-        "-50186668": "Add from geo"
+        "-50186668": "Add from geo",
+        "-15095273": "Select Gallery Files",
+        "-75331863": "Fatal error occured while getting users gallery files",
+        "-41121825": "Failed to get user gallery files"
     },
     "links": {
         "browserExtension": {
@@ -1027,7 +1030,10 @@
             "searchGalleryPlaceholder": 1206,
             "cancelButtonLabel": 61,
             "addButtonLabel": 301,
-            "uploadFileButtonLabel": 1302
+            "uploadFileButtonLabel": 1302,
+            "modalTitle": -15095273,
+            "fileGetFatal": -75331863,
+            "fileGetFailure": -41121825
         },
         "components.dropboxChooser": {
             "openDropboxChooserText": 1210

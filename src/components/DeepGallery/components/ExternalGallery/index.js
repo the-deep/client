@@ -126,12 +126,12 @@ export default class ExternalGallery extends React.PureComponent {
             })
             .failure((response) => {
                 // server can't fetch the url
-                console.error('Failure: ', response);
+                console.warn('Failure: ', response);
                 this.setState({ ...this.initialState });
             })
             .fatal((response) => {
                 // server can't fetch the url
-                console.error('Fatal: ', response);
+                console.warn('Fatal: ', response);
                 this.setState({ ...this.initialState });
             })
             .build();

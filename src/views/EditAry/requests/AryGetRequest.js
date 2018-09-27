@@ -67,14 +67,6 @@ export default class AryGetRequest {
                     console.error(err);
                 }
             })
-            .failure((response) => {
-                // FIXME: use notify
-                console.info('FAILURE:', response);
-            })
-            .fatal((response) => {
-                // FIXME: use notify
-                console.info('FATAL:', response);
-            })
             .build();
         return aryGetRequest;
     }

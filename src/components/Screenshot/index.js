@@ -137,8 +137,7 @@ export default class Screenshot extends React.PureComponent {
             // TODO: Add to strings
             const captureError = 'Failed to capture screenshot.\n ' +
                 'Please make sure you have latest browser extension installed.';
-
-            console.error(captureError);
+            console.warn(captureError);
             if (this.props.onCaptureError) {
                 this.props.onCaptureError(captureError);
             }

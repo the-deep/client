@@ -165,15 +165,6 @@ export default class Navbar extends React.PureComponent {
                 .url(createUrlForSetUserProject(newActiveUser.userId))
                 .params(() => createParamsForSetUserProject(newActiveProject))
                 .delay(1000) // more delay
-                .success(() => {
-                    console.warn('Successfully patched user project');
-                })
-                .failure((response) => {
-                    console.error('FAILURE: Failed to patch user project', response);
-                })
-                .fatal(() => {
-                    console.error('FATAL: Failed to patch user project');
-                })
                 .build();
             this.setUserProjectRequest.start();
         }

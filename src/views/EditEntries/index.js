@@ -308,7 +308,7 @@ export default class EditEntries extends React.PureComponent {
 
     handleExcerptChange = ({ type, value }, entryKey) => {
         if (!entryKey) {
-            console.error('There is no entry key while changing excerpt.');
+            console.warn('There is no entry key while changing excerpt.');
             // this.handleExcerptCreate({ type, value });
         } else {
             this.props.setExcerpt({
