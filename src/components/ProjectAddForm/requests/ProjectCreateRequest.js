@@ -12,7 +12,7 @@ import _ts from '#ts';
  * - setUserProfileProject
  * - setUsergroupProject
  * - onProjectAdd?
- * - handleModalClose
+ * - onModalClose
  */
 export default class ProjectCreateRequest extends Request {
     schemaName = 'projectCreateResponse';
@@ -41,7 +41,7 @@ export default class ProjectCreateRequest extends Request {
             message: _ts('components.addProject', 'userProjectCreateSuccess'),
             duration: notify.duration.MEDIUM,
         });
-        this.parent.handleModalClose();
+        this.parent.onModalClose();
     }
 
     handleFailure = (faramErrors) => {

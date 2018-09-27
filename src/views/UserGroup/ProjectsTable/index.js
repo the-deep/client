@@ -33,7 +33,7 @@ import {
 } from '#constants';
 import _ts from '#ts';
 
-import UserProjectAdd from '#components/UserProjectAdd';
+import ProjectAddForm from '#components/ProjectAddForm';
 
 import ProjectDeleteRequest from '../requests/ProjectDeleteRequest';
 
@@ -278,9 +278,9 @@ export default class ProjectsTable extends React.PureComponent {
                             }
                         />
                         <ModalBody>
-                            <UserProjectAdd
+                            <ProjectAddForm
                                 userGroups={this.createUserGroupList(usergroup)}
-                                handleModalClose={this.handleAddProjectModalClose}
+                                onModalClose={this.handleAddProjectModalClose}
                             />
                         </ModalBody>
                     </Modal>

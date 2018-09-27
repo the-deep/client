@@ -2,12 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Modal from '#rscv/Modal';
-import ModalBody from '#rscv/Modal/Body';
-import ModalHeader from '#rscv/Modal/Header';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
-
-import UserProjectAdd from '#components/UserProjectAdd';
 import BoundError from '#rscg/BoundError';
 import AppError from '#components/AppError';
 import {
@@ -15,10 +9,9 @@ import {
     setActiveProjectAction,
     projectIdFromRouteSelector,
 } from '#redux';
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
-import Sidebar from './Sidebar';
+import ProjectList from './ProjectList';
 import Details from './Details';
 import styles from './styles.scss';
 
@@ -54,26 +47,8 @@ export default class ProjectPanel extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        this.state = { showAddProjectModal: false };
-    }
-
-    handleProjectAdd = (projectId) => {
-        this.props.setActiveProject({ activeProject: projectId });
-    }
-
-    handleAddProjectClick = () => {
-        this.setState({ showAddProjectModal: true });
-    }
-
-    handleAddProjectModalClose = () => {
-        this.setState({ showAddProjectModal: false });
-    }
-
     render() {
-        const { showAddProjectModal } = this.state;
+        const { setActiveProject } = this.props;
 
         const {
             projectId,
@@ -83,10 +58,11 @@ export default class ProjectPanel extends React.PureComponent {
 
         return (
             <div className={styles.projectPanel}>
-                <Sidebar
+                <ProjectList
                     className={styles.sidebar}
                     userProjects={userProjects}
                     projectId={projectId}
+                    setActiveProject={setActiveProject}
                 />
                 {
                     projectId ? (
@@ -99,32 +75,6 @@ export default class ProjectPanel extends React.PureComponent {
                         <div className={styles.noProjectText}>
                             {_ts('project', 'noProjectText')}
                         </div>
-                    )
-                }
-                {
-                    showAddProjectModal && (
-                        <Modal
-                            closeOnEscape
-                            onClose={this.handleAddProjectModalClose}
-                        >
-                            <ModalHeader
-                                title={_ts('project', 'addProjectModalTitle')}
-                                rightComponent={
-                                    <PrimaryButton
-                                        onClick={this.handleAddProjectModalClose}
-                                        transparent
-                                    >
-                                        <span className={iconNames.close} />
-                                    </PrimaryButton>
-                                }
-                            />
-                            <ModalBody>
-                                <UserProjectAdd
-                                    onProjectAdd={this.handleProjectAdd}
-                                    handleModalClose={this.handleAddProjectModalClose}
-                                />
-                            </ModalBody>
-                        </Modal>
                     )
                 }
             </div>

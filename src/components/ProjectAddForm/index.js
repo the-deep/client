@@ -29,7 +29,9 @@ import ProjectCreateRequest from './requests/ProjectCreateRequest';
 import styles from './styles.scss';
 
 const propTypes = {
-    handleModalClose: PropTypes.func.isRequired,
+    className: PropTypes.string,
+    onModalClose: PropTypes.func.isRequired,
+
     setUserProject: PropTypes.func.isRequired,
     setUserProfileProject: PropTypes.func.isRequired,
     setUsergroupProject: PropTypes.func.isRequired,
@@ -41,6 +43,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     userGroups: [],
     onProjectAdd: undefined,
 };
@@ -52,7 +55,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 @connect(undefined, mapDispatchToProps)
-export default class UserProjectAdd extends React.PureComponent {
+export default class ProjectAddForm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -79,12 +82,16 @@ export default class UserProjectAdd extends React.PureComponent {
             setUsergroupProject: this.props.setUsergroupProject,
 
             onProjectAdd: this.props.onProjectAdd,
-            handleModalClose: this.props.handleModalClose,
+            onModalClose: this.props.onModalClose,
         });
     }
 
     componentWillUnmount() {
         this.projectCreateRequest.stop();
+    }
+
+    onModalClose = () => {
+        this.props.onModalClose();
     }
 
     // FORM RELATED
@@ -109,12 +116,9 @@ export default class UserProjectAdd extends React.PureComponent {
         ).start();
     };
 
-    // BUTTONS
-    handleModalClose = () => {
-        this.props.handleModalClose();
-    }
-
     render() {
+        const { className: classNameFromProps } = this.props;
+
         const {
             faramValues,
             faramErrors,
@@ -122,9 +126,14 @@ export default class UserProjectAdd extends React.PureComponent {
             pristine,
         } = this.state;
 
+        const className = `
+            ${classNameFromProps}
+            ${styles.userProjectAddForm}
+        `;
+
         return (
             <Faram
-                className={styles.userProjectAddForm}
+                className={className}
                 onChange={this.changeCallback}
                 onValidationFailure={this.failureCallback}
                 onValidationSuccess={this.successCallback}
@@ -142,7 +151,7 @@ export default class UserProjectAdd extends React.PureComponent {
                     autoFocus
                 />
                 <div className={styles.actionButtons}>
-                    <DangerButton onClick={this.handleModalClose}>
+                    <DangerButton onClick={this.onModalClose}>
                         {_ts('components.addProject', 'modalCancel')}
                     </DangerButton>
                     <PrimaryButton
