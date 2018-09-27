@@ -1,16 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { FgRestBuilder } from '#rsu/rest';
-
-import {
-    createUrlForGalleryFile,
-    createParamsForGet,
-} from '#rest';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import GalleryViewer from '../GalleryViewer';
+
+import GalleryFileRequest from './requests/GalleryFileRequest';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -42,15 +39,21 @@ export default class InternalGallery extends React.PureComponent {
             fileName: undefined,
             notFound: true,
         };
+
+        this.galleryFileRequest = new GalleryFileRequest({
+            setState: params => this.setState(params),
+        });
     }
 
     componentWillMount() {
-        this.startRequest(this.props.galleryId);
+        this.startGalleryFileRequest(this.props.galleryId);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.galleryId !== nextProps.galleryId) {
-            this.startRequest(nextProps.galleryId);
+        const { galleryId: oldGalleryId } = this.props;
+        const { galleryId: newGalleryId } = nextProps;
+        if (oldGalleryId !== newGalleryId) {
+            this.startGalleryFileRequest(newGalleryId);
         }
     }
 
@@ -60,38 +63,12 @@ export default class InternalGallery extends React.PureComponent {
         }
     }
 
-    startRequest = (galleryId) => {
+    startGalleryFileRequest = (galleryId) => {
         if (!galleryId) {
             this.setState({ notFound: true, pending: false });
             return;
         }
-
-        if (this.galleryFileRequest) {
-            this.galleryFileRequest.stop();
-        }
-
-        this.galleryFileRequest = this.createRequestForGalleryFile(galleryId);
-        this.galleryFileRequest.start();
-    }
-
-    createRequestForGalleryFile = (galleryId) => {
-        const galleryFileRequest = new FgRestBuilder()
-            .url(createUrlForGalleryFile(galleryId))
-            .params(createParamsForGet)
-            .preLoad(() => { this.setState({ pending: true, notFound: true }); })
-            .postLoad(() => { this.setState({ pending: false }); })
-            .success((response) => {
-                // FIXME: write schema
-                this.setState({
-                    fileUrl: response.file,
-                    fileName: response.title,
-                    mimeType: response.mimeType,
-                    notFound: false,
-                });
-            })
-            .build();
-
-        return galleryFileRequest;
+        this.galleryFileRequest.init(this.props.galleryId).start();
     }
 
     renderFileName = ({ className, fileName, fileUrl }) => (
