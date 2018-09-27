@@ -23,7 +23,6 @@ export default class ProjectUserGroupPostRequest extends Request {
     }
 
     handleSuccess = (response) => {
-        // TODO: CHECK VALIDATION
         this.parent.addProjectUserGroup(this.projectId, response);
         this.parent.getMemberships();
         this.parent.setParentPending(false);
@@ -45,12 +44,6 @@ export default class ProjectUserGroupPostRequest extends Request {
 
 export class ProjectUserGroupsGetRequest extends Request {
     // TODO: schemaName =
-
-    handlePreLoad = () => {
-    }
-
-    handleAfterLoad = () => {
-    }
 
     handleSuccess = (response) => {
         const results = response.results || [];

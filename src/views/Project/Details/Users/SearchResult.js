@@ -10,8 +10,8 @@ import {
     addProjectUserGroupAction,
 } from '#redux';
 
-import { ProjectMembershipPostRequest } from '../../requests/ProjectMembershipRequest';
-import ProjectUserGroupPostRequest from '../../requests/ProjectUserGroupRequest';
+import { ProjectMembershipPostRequest } from './requests/ProjectMembershipRequest';
+import ProjectUserGroupPostRequest from './requests/ProjectUserGroupRequest';
 
 
 const propTypes = {
@@ -44,8 +44,6 @@ export default class SearchResult extends React.PureComponent {
 
     constructor(props) {
         super(props);
-        this.state = {
-        };
         this.createProjectMembershipRequest = new ProjectMembershipPostRequest({
             addProjectMember: (projectId, membership) =>
                 this.props.addProjectMember({ projectId, membership }),
@@ -57,7 +55,7 @@ export default class SearchResult extends React.PureComponent {
                 this.props.addProjectUserGroup({ projectId, userGroup }),
             setParentPending: pending => this.props.setParentPending(pending),
             clearSearchInput: () => this.props.clearSearchInput(),
-            getMemberships: () => this.props.getMemberships(),
+            getMemberships: this.props.getMemberships,
         });
     }
 
@@ -120,8 +118,6 @@ export default class SearchResult extends React.PureComponent {
                 </div>
             );
         }
-        // else
-        console.warn('Invalid Search User/UserGroup type');
-        return '';
+        return null;
     }
 }

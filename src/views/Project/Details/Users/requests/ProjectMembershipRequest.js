@@ -24,7 +24,6 @@ export class ProjectMembershipPostRequest extends Request {
     }
 
     handleSuccess = (response) => {
-        // TODO: CHECK VALIDATION
         const results = response.results || [];
         if (results.length > 0) {
             this.parent.addProjectMember(this.projectId, results[0]);
@@ -78,12 +77,6 @@ export class ProjectMembershipDeleteRequest extends Request {
 
 export class ProjectMembershipsGetRequest extends Request {
     // TODO: schemaName
-
-    handlePreLoad = () => {
-    }
-
-    handleAfterLoad = () => {
-    }
 
     handleSuccess = (response) => {
         this.parent.setMemberships(response.results, this.projectId);

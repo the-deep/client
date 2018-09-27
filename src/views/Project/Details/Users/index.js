@@ -35,16 +35,16 @@ import {
     iconNames,
 } from '#constants';
 
-import UsersAndUserGroupsGet from '../../requests/UsersAndUserGroupsRequest';
+import UsersAndUserGroupsGet from './requests/UsersAndUserGroupsRequest';
 import {
     ProjectMembershipDeleteRequest,
     ProjectMembershipsGetRequest,
-} from '../../requests/ProjectMembershipRequest';
+} from './requests/ProjectMembershipRequest';
 
 import {
     ProjectUserGroupsGetRequest,
     ProjectUserGroupDeleteRequest,
-} from '../../requests/ProjectUserGroupRequest';
+} from './requests/ProjectUserGroupRequest';
 import SearchResult from './SearchResult';
 
 import styles from './styles.scss';
@@ -84,11 +84,7 @@ export default class Users extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static faramUserDelete = (users, index) => {
-        const newUsers = [...users];
-        newUsers.splice(index, 1);
-        return newUsers;
-    }
+    static faramUserDelete = (users, index) => users.filter((x, i) => i !== index);
 
     constructor(props) {
         super(props);
@@ -231,7 +227,7 @@ export default class Users extends React.PureComponent {
             removeUserGroup: (projectId, userGroup) =>
                 this.props.removeUserGroup({ projectId, userGroup }),
             setParentPending: pending => this.setState({ pending }),
-            getMemberships: () => this.getMemberships(),
+            getMemberships: this.getMemberships,
         });
 
         const { setProjectMembers, setUserGroups } = this.props;
@@ -292,12 +288,8 @@ export default class Users extends React.PureComponent {
     }
 
     componentWillUnmount() {
-        if (this.projectMembershipsGetRequest) {
-            this.projectMembershipsGetRequest.stop();
-        }
-        if (this.projectUserGroupsGetRequest) {
-            this.projectUserGroupsGetRequest.stop();
-        }
+        this.projectMembershipsGetRequest.stop();
+        this.projectUserGroupsGetRequest.stop();
     }
 
     getMemberships = () => {

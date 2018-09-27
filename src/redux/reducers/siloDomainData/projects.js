@@ -235,20 +235,11 @@ export const removeProjectMembership = (state, action) => {
         membership,
     } = action;
 
-    const {
-        projectsView: {
-            [projectId]: {
-                memberships,
-            },
-        },
-    } = state;
-
-    const index = memberships.findIndex(x => x.id === membership.id);
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
                 memberships: {
-                    $splice: [[index, 1]],
+                    $filter: mem => membership.id !== mem.id,
                 },
             } },
         } },
@@ -262,20 +253,11 @@ export const removeProjectUserGroup = (state, action) => {
         userGroup,
     } = action;
 
-    const {
-        projectsView: {
-            [projectId]: {
-                userGroups,
-            },
-        },
-    } = state;
-
-    const index = userGroups.findIndex(x => x.id === userGroup.id);
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
                 userGroups: {
-                    $splice: [[index, 1]],
+                    $filter: ug => userGroup.id !== ug.id,
                 },
             } },
         } },

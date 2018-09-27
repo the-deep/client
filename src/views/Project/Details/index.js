@@ -66,11 +66,8 @@ export default class ProjectDetails extends React.PureComponent {
                 rendererParams,
             },
             users: {
-                component: () => (
-                    <Users
-                        className={styles.content}
-                    />
-                ),
+                component: Users,
+                rendererParams: () => ({ className: styles.content }),
             },
             regions: {
                 component: Regions,
