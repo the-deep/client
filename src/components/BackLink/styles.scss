@@ -1,0 +1,7 @@
+@import '~base-scss/base';
+
+.back-link {
+    @extend %transparent-button-like-link;
+    padding: $spacing-small $spacing-medium;
+    font-size: $font-size-large;
+}

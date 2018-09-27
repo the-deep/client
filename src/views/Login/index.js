@@ -130,6 +130,7 @@ export default class Login extends React.PureComponent {
     }
 
     checkParamsFromHid = () => {
+        // FIXME: get location value from redux
         const { location } = this.props;
         // Get params from the current url
         // NOTE: hid provides query as hash

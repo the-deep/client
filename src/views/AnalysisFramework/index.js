@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link, Prompt } from 'react-router-dom';
+import { Prompt } from 'react-router-dom';
 
 import BoundError from '#rscg/BoundError';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -12,6 +12,7 @@ import SuccessConfirmButton from '#rsca/ConfirmButton/SuccessConfirmButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import FixedTabs from '#rscv/FixedTabs';
 import Message from '#rscv/Message';
+import BackLink from '#components/BackLink';
 
 import { detachedFaram, requiredCondition } from '#rscg/Faram';
 
@@ -32,10 +33,7 @@ import {
 
     routeUrlSelector,
 } from '#redux';
-import {
-    iconNames,
-    pathNames,
-} from '#constants';
+import { pathNames } from '#constants';
 import _ts from '#ts';
 
 import FrameworkGetRequest from './requests/FrameworkGet';
@@ -267,16 +265,12 @@ export default class AnalysisFramework extends React.PureComponent {
                     }
                 />
                 <header className={styles.header}>
-                    <Link
-                        className={styles.backLink}
-                        title={_ts('framework', 'backButtonTooltip')}
-                        to={{
+                    <BackLink
+                        defaultLink={{
                             pathname: exitPath,
                             hash: '#/frameworks',
                         }}
-                    >
-                        <i className={iconNames.back} />
-                    </Link>
+                    />
                     <h4 className={styles.heading}>
                         { frameworkTitle }
                     </h4>

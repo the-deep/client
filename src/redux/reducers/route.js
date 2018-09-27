@@ -48,7 +48,9 @@ const transform = (params) => {
 
 const setRouteParams = (state, action) => {
     const { path, url, isExact, params } = action.match;
-    const { state: routeState } = action.location;
+    const { state: routeState, key } = action.location;
+
+    const isFirstPage = key === undefined;
 
     const newState = {
         path,
@@ -56,6 +58,10 @@ const setRouteParams = (state, action) => {
         isExact,
         params: transform(params),
         routeState,
+        // NOTE: once isFirstPage is set to false, it cannot be set to true
+        // NOTE: do this because when we use
+        // window.location.replace() it clears the key in location
+        isFirstPage: state.isFirstPage && isFirstPage,
     };
     return newState;
 };
