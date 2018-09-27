@@ -30,9 +30,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-
-    // TODO: Change to onModalClose
-    handleModalClose: PropTypes.func.isRequired,
+    onModalClose: PropTypes.func.isRequired,
 
     setUserProject: PropTypes.func.isRequired,
     setUserProfileProject: PropTypes.func.isRequired,
@@ -56,9 +54,8 @@ const mapDispatchToProps = dispatch => ({
     setUsergroupProject: params => dispatch(setUsergroupViewProjectAction(params)),
 });
 
-// TODO: Rename to ProjectAddForm or something similar
 @connect(undefined, mapDispatchToProps)
-export default class UserProjectAdd extends React.PureComponent {
+export default class ProjectAddForm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -85,12 +82,16 @@ export default class UserProjectAdd extends React.PureComponent {
             setUsergroupProject: this.props.setUsergroupProject,
 
             onProjectAdd: this.props.onProjectAdd,
-            handleModalClose: this.props.handleModalClose,
+            onModalClose: this.props.onModalClose,
         });
     }
 
     componentWillUnmount() {
         this.projectCreateRequest.stop();
+    }
+
+    onModalClose = () => {
+        this.props.onModalClose();
     }
 
     // FORM RELATED
@@ -114,11 +115,6 @@ export default class UserProjectAdd extends React.PureComponent {
             { title, userGroups },
         ).start();
     };
-
-    // BUTTONS
-    handleModalClose = () => {
-        this.props.handleModalClose();
-    }
 
     render() {
         const { className: classNameFromProps } = this.props;
@@ -155,7 +151,7 @@ export default class UserProjectAdd extends React.PureComponent {
                     autoFocus
                 />
                 <div className={styles.actionButtons}>
-                    <DangerButton onClick={this.handleModalClose}>
+                    <DangerButton onClick={this.onModalClose}>
                         {_ts('components.addProject', 'modalCancel')}
                     </DangerButton>
                     <PrimaryButton

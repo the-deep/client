@@ -57,7 +57,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class General extends PureComponent {
+export default class ProjectDetailsGeneral extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 

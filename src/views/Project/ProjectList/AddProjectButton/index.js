@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import UserProjectAdd from '#components/UserProjectAdd';
+import ProjectAddForm from '#components/ProjectAddForm';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
@@ -70,9 +70,9 @@ export default class AddProjectButton extends React.PureComponent {
                     <Modal className={styles.addProjectModal}>
                         <ModalHeader title={_ts('project', 'addProjectModalTitle')} />
                         <ModalBody>
-                            <UserProjectAdd
+                            <ProjectAddForm
                                 onProjectAdd={this.handleProjectAdd}
-                                handleModalClose={this.handleAddProjectModalClose}
+                                onModalClose={this.handleAddProjectModalClose}
                             />
                         </ModalBody>
                     </Modal>

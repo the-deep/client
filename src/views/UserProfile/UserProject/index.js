@@ -36,7 +36,7 @@ import {
 } from '#constants';
 import _ts from '#ts';
 
-import UserProjectAdd from '#components/UserProjectAdd';
+import ProjectAddForm from '#components/ProjectAddForm';
 
 import ProjectDeleteRequest from '../requests/ProjectDeleteRequest';
 
@@ -269,9 +269,9 @@ export default class UserProject extends React.PureComponent {
                             }
                         />
                         <ModalBody>
-                            <UserProjectAdd
-                                handleModalClose={this.handleAddProjectClose}
+                            <ProjectAddForm
                                 userId={isCurrentUser ? userId : undefined}
+                                onModalClose={this.handleAddProjectClose}
                             />
                         </ModalBody>
                     </Modal>
