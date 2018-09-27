@@ -19,8 +19,10 @@ export default class GeoOptionsRequest extends Request {
     }
 
     handleSuccess = (geoOptions) => {
-        const analysisFrameworkId = this.parent.getAnalysisFramework();
-        this.parent.setGeoOptions({ analysisFrameworkId, geoOptions });
+        this.parent.setGeoOptions({
+            analysisFrameworkId: this.analysisFrameworkId,
+            geoOptions,
+        });
     }
 
     handleFailure = (response) => {
@@ -42,7 +44,8 @@ export default class GeoOptionsRequest extends Request {
         });
     }
 
-    init = () => {
+    init = (analysisFrameworkId) => {
+        this.analysisFrameworkId = analysisFrameworkId;
         this.createDefault({
             url: createUrlForGeoOptions(),
             params: createParamsForGet(),

@@ -35,12 +35,20 @@ $height-modal-body: 540px;
             height: 100%;
 
             .header {
+                display: flex;
+                align-items: center;
                 flex-shrink: 0;
+                justify-content: space-between;
                 border-bottom: $width-separator-thin solid $color-separator;
                 padding: $spacing-small;
                 text-transform: uppercase;
                 font-size: $font-size-large;
                 font-weight: $font-weight-light;
+
+                .header-info {
+                    cursor: pointer;
+                    color: $color-info;
+                }
             }
 
             .left-container {

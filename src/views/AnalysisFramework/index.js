@@ -112,7 +112,6 @@ export default class AnalysisFramework extends React.PureComponent {
         this.geoOptionsRequest = new GeoOptionsRequest({
             setState: params => this.setState(params),
             setGeoOptions: this.props.setGeoOptions,
-            getAnalysisFramework: () => this.props.analysisFrameworkId,
         });
 
         this.frameworkSaveRequest = new FrameworkSaveRequest({
@@ -156,7 +155,7 @@ export default class AnalysisFramework extends React.PureComponent {
     componentWillMount() {
         this.frameworkGetRequest.init(this.props.analysisFrameworkId);
         this.frameworkGetRequest.start();
-        this.geoOptionsRequest.init();
+        this.geoOptionsRequest.init(this.props.analysisFrameworkId);
         this.geoOptionsRequest.start();
     }
 

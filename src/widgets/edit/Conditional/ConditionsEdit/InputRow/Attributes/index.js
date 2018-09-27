@@ -49,7 +49,7 @@ const getRegions = memoize(geoOptions => (
                 ]
             );
         }
-        return (acc);
+        return acc;
     }, [])
 ));
 

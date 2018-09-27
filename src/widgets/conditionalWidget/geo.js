@@ -7,7 +7,7 @@ const isSelected = {
     }],
     test: ({ value = [] }, { selections = [] }) => (
         selections.some(selection => (
-            value.indexOf(selection) >= 0
+            value.indexOf(selection) !== -1
         ))
     ),
 };

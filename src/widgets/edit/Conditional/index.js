@@ -14,6 +14,7 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import ModalFooter from '#rscv/Modal/Footer';
 import Faram, { requiredCondition } from '#rscg/Faram';
 import { randomString } from '#rsu/common';
+import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import { widgetList } from '#widgets/conditionalWidget';
@@ -166,6 +167,9 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         const widgetsTitle = _ts('widgets.editor.conditional', 'widgetsTitle');
         const addedWidgetsTitle = _ts('widgets.editor.conditional', 'addedWidgetsTitle');
 
+        const widgetsHeaderInfo = _ts('widgets.editor.conditional', 'supportedWidgetsInfoText');
+        const addedWidgetsHeaderInfo = _ts('widgets.editor.conditional', 'addedWidgetsHeaderInfoText');
+
         const modalClassNames = [styles.modal];
         if (disableEverything) {
             modalClassNames.push(styles.disabledEverything);
@@ -200,6 +204,10 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                                 <div className={styles.leftContainer}>
                                     <header className={styles.header}>
                                         {widgetsTitle}
+                                        <span
+                                            className={`${iconNames.info} ${styles.headerInfo}`}
+                                            title={widgetsHeaderInfo}
+                                        />
                                     </header>
                                     <ListView
                                         className={styles.widgetList}
@@ -212,6 +220,10 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                                 <div className={styles.rightContainer}>
                                     <header className={styles.header}>
                                         {addedWidgetsTitle}
+                                        <span
+                                            className={`${iconNames.info} ${styles.headerInfo}`}
+                                            title={addedWidgetsHeaderInfo}
+                                        />
                                     </header>
                                     <SortableListView
                                         className={styles.editList}

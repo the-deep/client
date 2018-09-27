@@ -88,14 +88,14 @@ const afViewSetAnalysisFramework = (state, action) => {
     };
 
     const settings = {
-        analysisFrameworkView: {
+        analysisFrameworkView: { $auto: {
             [frameworkId]: { $auto: {
                 pristine: { $set: true },
                 data: { $set: analysisFramework },
                 faramValues: { $set: faramValues },
                 faramErrors: { $set: {} },
             } },
-        },
+        } },
     };
     return update(state, settings);
 };
@@ -211,13 +211,13 @@ const afViewSetFaram = (state, action) => {
         analysisFrameworkId,
     } = action;
     const settings = {
-        analysisFrameworkView: {
+        analysisFrameworkView: { $auto: {
             [analysisFrameworkId]: {
                 faramValues: { $set: faramValues },
                 faramErrors: { $set: faramErrors },
                 pristine: { $set: false },
             },
-        },
+        } },
     };
     return update(state, settings);
 };
@@ -229,11 +229,11 @@ const afViewSetGeo = (state, action) => {
     } = action;
 
     const settings = {
-        analysisFrameworkView: {
+        analysisFrameworkView: { $auto: {
             [analysisFrameworkId]: { $auto: {
                 geoOptions: { $set: geoOptions },
             } },
-        },
+        } },
     };
     return update(state, settings);
 };

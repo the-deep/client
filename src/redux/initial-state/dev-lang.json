@@ -796,7 +796,10 @@
         "-31256073": "Widget",
         "-14972110": "Add from widgets",
         "-59940596": "No project found",
-        "-77657645": "Failed to fetch lead groups."
+        "-77657645": "Failed to fetch lead groups.",
+        "-24077239": "You can add the following types of widgets inside a conditional widget.",
+        "-80733191": "The order of the widgets below represents the order in which the conditions are checked.",
+        "-17190550": "You can add conditions from these widgets that are currently in your framework."
     },
     "links": {
         "browserExtension": {
@@ -2219,7 +2222,10 @@
             "widgetTitlePlaceholder": 13,
             "widgetsTitle": -66364403,
             "widgetConditionsTitle": -305229,
-            "operatorSelectLabel": -24214693
+            "operatorSelectLabel": -24214693,
+            "supportedWidgetsInfoText": -24077239,
+            "addedWidgetsHeaderInfoText": -80733191,
+            "frameworkWidgetsInfoText": -17190550
         },
         "widgets.editor.link": {
             "cancelButtonLabel": 61,
