@@ -14,6 +14,7 @@ import OrgChart from '#rscz/OrgChart';
 import HorizontalBar from '#rscz/HorizontalBar';
 import Dendrogram from '#rscz/Dendrogram';
 import ForceDirectedGraph from '#rscz/ForceDirectedGraph';
+import ClusterForceLayout from '#rscz/ClusterForceLayout';
 import CollapsibleTree from '#rscz/CollapsibleTree';
 import RadialDendrogram from '#rscz/RadialDendrogram';
 import PieChart from '#rscz/PieChart';
@@ -31,6 +32,7 @@ import VizError from '#components/VizError';
 
 import barData from './dummydata/barData';
 import chordData from './dummydata/chordData';
+import clusterData from './dummydata/clusterData';
 import correlationData from './dummydata/correlationData';
 import forceDirectedData from './dummydata/forceDirectedData';
 import hierarchicalData from './dummydata/hierarchical';
@@ -52,6 +54,7 @@ const RadialDendrogramView = decorate(RadialDendrogram);
 const TreeMapView = decorate(TreeMap);
 const ZoomableTreeMapView = decorate(ZoomableTreeMap);
 const ForceDirectedGraphView = decorate(ForceDirectedGraph);
+const ClusterForceLayoutView = decorate(ClusterForceLayout);
 const CollapsibleTreeView = decorate(CollapsibleTree);
 const OrgChartView = decorate(OrgChart);
 const HorizontalBarView = decorate(HorizontalBar);
@@ -65,7 +68,6 @@ const DonutChartView = decorate(DonutChart);
 const OrganigramView = decorate(Organigram);
 const GoogleOrgChartView = decorate(GoogleOrgChart);
 const ParallelCoordinatesView = decorate(ParallelCoordinates);
-
 const sizeSelector = d => d.size;
 const nameSelector = d => d.name;
 const valueSelector = d => d.value;
@@ -77,6 +79,9 @@ const timeSelector = d => d.time;
 const orgChartkeySelector = d => d.key;
 const orgChartChildSelector = d => d.organs;
 const orgChartTitleSelector = d => d.title;
+const clusterIdSelector = d => d.id;
+const clusterGroupSelector = d => d.cluster;
+const clusterValueSelector = d => d.value;
 
 export default class Visualization extends React.PureComponent {
     constructor(props) {
@@ -94,6 +99,7 @@ export default class Visualization extends React.PureComponent {
             forcedDirectedGraph: _ts('visualization', 'forcedDirectedGraph'),
             forcedDirectedGraphVoronoi: _ts('visualization', 'forceDirectedGraphVoronoi'),
             googleOrgChart: _ts('visualization', 'googleOrgChart'),
+            clusterForceLayout: _ts('visualization', 'clusterForceLayout'),
             horizontalBar: _ts('visualization', 'horizontalBar'),
             orgChart: _ts('visualization', 'orgChart'),
             organigram: _ts('visualization', 'organigram'),
@@ -186,6 +192,18 @@ export default class Visualization extends React.PureComponent {
                         idSelector={idSelector}
                         groupSelector={groupSelector}
                         valueSelector={valueSelector}
+                    />
+                ),
+            },
+            clusterForceLayout: {
+                component: () => (
+                    <ClusterForceLayoutView
+                        className={styles.clusterForceLayout}
+                        headerText={_ts('visualization', 'clusterForceLayout')}
+                        data={clusterData}
+                        idSelector={clusterIdSelector}
+                        groupSelector={clusterGroupSelector}
+                        valueSelector={clusterValueSelector}
                     />
                 ),
             },
