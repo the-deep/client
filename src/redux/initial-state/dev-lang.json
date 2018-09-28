@@ -598,6 +598,7 @@
         "4018": "Sankey",
         "4019": "Sparklines",
         "4020": "Parallel coordinates",
+        "4022": "GoogleOrgChart",
         "5550": "{count} items selected",
         "5551": "Selected",
         "5552": "All",
@@ -2076,7 +2077,8 @@
             "streamGraph": 4017,
             "sankey": 4018,
             "sparklines": 4019,
-            "parallelCoordinates": 4020
+            "parallelCoordinates": 4020,
+            "googleOrgChart": 4022
         },
         "stringManagement": {
             "devLangSaveTitle": 12001,
