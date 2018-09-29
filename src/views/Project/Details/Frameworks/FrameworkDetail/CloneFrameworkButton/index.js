@@ -28,6 +28,7 @@ const propTypes = {
     disabled: PropTypes.bool,
     frameworkId: PropTypes.number.isRequired,
     projectId: PropTypes.number.isRequired,
+    setActiveFramework: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -56,10 +57,15 @@ export default class CloneFrameworkButton extends React.PureComponent {
             },
         };
 
-        const { addNewFramework } = props;
+        const {
+            addNewFramework,
+            setActiveFramework,
+        } = props;
+
         this.frameworkCloneRequest = new FrameworkCloneRequest({
             setState: v => this.setState(v),
             addNewFramework,
+            setActiveFramework,
         });
     }
 

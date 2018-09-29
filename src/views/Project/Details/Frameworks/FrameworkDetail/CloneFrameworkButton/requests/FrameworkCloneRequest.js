@@ -21,6 +21,8 @@ export default class FrameworkCloneRequest extends Request {
             afDetail: response,
             projectId: this.projectId,
         });
+
+        this.parent.setActiveFramework(response.id);
     }
 
     init = (frameworkId, projectId, faramValues) => {

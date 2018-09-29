@@ -9,7 +9,6 @@ import FixedTabs from '#rscv/FixedTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
-    analysisFrameworkDetailSelector,
     projectDetailsSelector,
     setProjectAfAction,
     addNewAfAction,
@@ -33,6 +32,7 @@ const propTypes = {
     addNewFramework: PropTypes.func.isRequired,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setProjectFramework: PropTypes.func.isRequired,
+    setActiveFramework: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -120,6 +120,7 @@ export default class FrameworkDetail extends React.PureComponent {
             },
             setProjectFramework,
             addNewFramework,
+            setActiveFramework,
         } = this.props;
 
         const {
@@ -163,6 +164,7 @@ export default class FrameworkDetail extends React.PureComponent {
                             projectId={projectId}
                             frameworkId={frameworkId}
                             addNewFramework={addNewFramework}
+                            setActiveFramework={setActiveFramework}
                             disabled={pending}
                         />
                     </div>

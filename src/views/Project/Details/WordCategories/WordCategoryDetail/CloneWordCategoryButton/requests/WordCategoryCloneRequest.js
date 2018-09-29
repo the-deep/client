@@ -21,6 +21,8 @@ export default class ProjectCeCloneRequest extends Request {
             ceDetail: response,
             projectId: this.projectId,
         });
+
+        this.parent.setActiveWordCategory(response.id);
     }
 
     init = (wordCategoryId, projectId, faramValues) => {

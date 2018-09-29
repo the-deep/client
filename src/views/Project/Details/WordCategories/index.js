@@ -92,8 +92,12 @@ export default class ProjectCategoryEditor extends React.PureComponent {
         });
     }
 
-    handleWordCategoryClick = (id) => {
+    setActiveWordCategory = (id) => {
         this.setState({ activeWordCategoryId: id });
+    }
+
+    handleWordCategoryClick = (id) => {
+        this.setActiveWordCategory(id);
     }
 
     renderActiveWordCategoryDetails = ({ activeWordCategoryId }) => {
@@ -111,6 +115,7 @@ export default class ProjectCategoryEditor extends React.PureComponent {
             <WordCategoryDetail
                 className={styles.details}
                 wordCategoryId={activeWordCategoryId}
+                setActiveWordCategory={this.setActiveWordCategory}
             />
         );
     }

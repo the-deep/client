@@ -27,6 +27,7 @@ const propTypes = {
     disabled: PropTypes.bool,
     wordCategoryId: PropTypes.number.isRequired,
     projectId: PropTypes.number.isRequired,
+    setActiveWordCategory: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -54,10 +55,15 @@ export default class CloneWordCategoryButton extends React.PureComponent {
             },
         };
 
-        const { addNewWordCategory } = props;
+        const {
+            addNewWordCategory,
+            setActiveWordCategory,
+        } = props;
+
         this.wordCategoryCloneRequest = new WordCategoryCloneRequest({
             setState: v => this.setState(v),
             addNewWordCategory,
+            setActiveWordCategory,
         });
     }
 

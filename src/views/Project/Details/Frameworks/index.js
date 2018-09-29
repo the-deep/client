@@ -96,8 +96,12 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
         this.frameworkListRequest.stop();
     }
 
-    handleFrameworkClick = (id) => {
+    setActiveFramework = (id) => {
         this.setState({ activeFrameworkId: id });
+    }
+
+    handleFrameworkClick = (id) => {
+        this.setActiveFramework(id);
     }
 
     renderActiveFrameworkDetails = ({ activeFrameworkId }) => {
@@ -115,6 +119,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
             <FrameworkDetail
                 className={styles.details}
                 frameworkId={activeFrameworkId}
+                setActiveFramework={this.setActiveFramework}
             />
         );
     }

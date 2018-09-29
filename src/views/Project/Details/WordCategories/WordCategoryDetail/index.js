@@ -27,6 +27,7 @@ const propTypes = {
     addNewWordCategory: PropTypes.func.isRequired,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setProjectWordCategory: PropTypes.func.isRequired,
+    setActiveWordCategory: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -98,6 +99,7 @@ export default class WordCategoryDetail extends React.PureComponent {
             },
             setProjectWordCategory,
             addNewWordCategory,
+            setActiveWordCategory,
         } = this.props;
 
         const { pending } = this.state;
@@ -123,10 +125,11 @@ export default class WordCategoryDetail extends React.PureComponent {
                     />
                     <EditWordCategoryButton />
                     <CloneWordCategoryButton
+                        addNewWordCategory={addNewWordCategory}
                         disabled={pending}
                         projectId={projectId}
+                        setActiveWordCategory={setActiveWordCategory}
                         wordCategoryId={wordCategoryId}
-                        addNewWordCategory={addNewWordCategory}
                     />
                 </div>
             </header>
