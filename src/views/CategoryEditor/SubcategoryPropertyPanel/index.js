@@ -9,6 +9,8 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
 
+import { iconNames } from '#constants';
+
 import _ts from '#ts';
 import _cs from '#cs';
 import {
@@ -208,9 +210,9 @@ export default class SubcategoryPropertyPanel extends React.PureComponent {
                         <DangerConfirmButton
                             onClick={this.handleSubcategoryRemove}
                             confirmationMessage={confirmMessage}
-                        >
-                            {_ts('categoryEditor', 'removeCategoryButtonLabel')}
-                        </DangerConfirmButton>
+                            title={_ts('categoryEditor', 'removeCategoryButtonLabel')}
+                            iconName={iconNames.delete}
+                        />
                     </div>
                 </header>
                 <section className={styles.properties} >

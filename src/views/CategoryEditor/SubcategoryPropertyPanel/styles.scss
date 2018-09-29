@@ -4,7 +4,7 @@
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    border-top: $width-separator-medium solid $color-separator;
+    border-top: $width-separator-thin solid $color-separator-alt;
     background-color: $color-foreground;
 
     .heading {
@@ -33,7 +33,7 @@
     display: flex;
     flex-basis: 30%;
     flex-direction: column;
-    border-left: $width-separator-medium solid $color-separator;
+    border-left: $width-separator-thin solid $color-separator-alt;
     background-color: $color-foreground;
 
     .header {
@@ -41,7 +41,7 @@
         align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
-        border-bottom: $width-separator-medium solid $color-separator;
+        border-bottom: $width-separator-thin solid $color-separator;
         padding: $spacing-small 0;
 
         .heading {
@@ -78,6 +78,7 @@
 
         >.action-buttons {
             flex-shrink: 0;
+            background-color: $color-foreground-alt;
             padding: $spacing-small;
             text-align: right;
         }

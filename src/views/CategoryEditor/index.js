@@ -1,22 +1,18 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-    Link,
-    Prompt,
-} from 'react-router-dom';
+import { Prompt } from 'react-router-dom';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SelectInput from '#rsci/SelectInput';
+import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { FgRestBuilder } from '#rsu/rest';
 import {
     checkVersion,
     isTruthy,
     randomString,
-    reverseRoute,
     splitInWhitespace,
     trimWhitespace,
 } from '#rsu/common';
@@ -48,10 +44,7 @@ import {
     createParamsForCeViewPatch,
     transformResponseErrorToFormError,
 } from '#rest';
-import {
-    iconNames,
-    pathNames,
-} from '#constants';
+import { iconNames } from '#constants';
 import schema from '#schema';
 import notify from '#notify';
 import _ts from '#ts';
@@ -62,6 +55,7 @@ import NewManualNgramModal from './NewManualNgramModal';
 import NewSubcategoryModal from './NewSubcategoryModal';
 import SubcategoryColumn from './SubcategoryColumn';
 import SubcategoryPropertyPanel from './SubcategoryPropertyPanel';
+import TitleBar from './TitleBar';
 
 import styles from './styles.scss';
 
@@ -109,7 +103,6 @@ const propTypes = {
     setCategoryEditor: PropTypes.func.isRequired,
 
     categoryEditorId: PropTypes.number.isRequired,
-
     projectId: PropTypes.number.isRequired,
 };
 
@@ -478,6 +471,7 @@ export default class CategoryEditor extends React.PureComponent {
             categoryEditorViewTitle,
             projectId,
         } = this.props;
+
         const {
             pending,
             showNewCategoryModal,
@@ -499,89 +493,86 @@ export default class CategoryEditor extends React.PureComponent {
                     when={!categoryEditorViewPristine}
                     message={_ts('common', 'youHaveUnsavedChanges')}
                 />
-                <div className={styles.left}>
-                    <DocumentPanel className={styles.documentPanel} />
-                </div>
-                <div className={styles.right}>
-                    <header className={styles.header}>
-                        <div className={styles.headerContent}>
-                            <h2>
-                                {categoryEditorViewTitle}
-                            </h2>
-                            <SuccessButton
-                                disabled={categoryEditorViewPristine || pending}
-                                onClick={this.handleCategoryEditorSaveButtonClick}
-                            >
-                                {_ts('categoryEditor', 'saveCeButtonLabel')}
-                            </SuccessButton>
-                            <Link
-                                disabled={categoryEditorViewPristine || pending}
-                                className={styles.linkToPp}
-                                to={`${reverseRoute(pathNames.projects, { projectId })}#/categoryEditors`}
-                                replace
-                            >
-                                {_ts('categoryEditor', 'exitButtonLabel')}
-                            </Link>
-                        </div>
-                        <div className={styles.actionButtons}>
-                            <SelectInput
-                                label={_ts('categoryEditor', 'headerCategoryLabel')}
-                                className={styles.categorySelect}
-                                options={categories}
-                                onChange={this.handleCategorySelectChange}
-                                placeholder={_ts('categoryEditor', 'selectCategoryPlaceholder')}
-                                showHintAndError={false}
-                                value={activeCategoryId}
-                                keySelector={d => d.id}
-                                labelSelector={d => d.title}
-                                hideClearButton
-                                disabled={pending}
+                <TitleBar
+                    title={categoryEditorViewTitle}
+                    className={styles.titleBar}
+                    saveButtonDisabled={categoryEditorViewPristine || pending}
+                    onSaveButtonClick={this.handleCategoryEditorSaveButtonClick}
+                    projectId={projectId}
+                />
+                <div className={styles.mainContent}>
+                    <div className={styles.left}>
+                        <DocumentPanel className={styles.documentPanel} />
+                    </div>
+                    <div className={styles.right}>
+                        <header className={styles.header}>
+                            <TextInput
+                                label={_ts('categoryEditor', 'titleInputTitle')}
+                                placeholder={_ts('categoryEditor', 'titleInputPlaceholder')}
+                                className={styles.titleInput}
                             />
-                            <PrimaryButton
-                                className={styles.addCategoryBtn}
-                                onClick={this.handleNewCategory}
-                                disabled={pending}
-                                iconName={iconNames.add}
-                                title={_ts('categoryEditor', 'addCategoryTooltip')}
-                            />
-                            { isTruthy(activeCategoryId) &&
-                                <Fragment>
+                            <div className={styles.categorySelectContainer}>
+                                <SelectInput
+                                    label={_ts('categoryEditor', 'headerCategoryLabel')}
+                                    className={styles.categorySelectInput}
+                                    options={categories}
+                                    onChange={this.handleCategorySelectChange}
+                                    placeholder={_ts('categoryEditor', 'selectCategoryPlaceholder')}
+                                    value={activeCategoryId}
+                                    keySelector={d => d.id}
+                                    labelSelector={d => d.title}
+                                    hideClearButton
+                                    disabled={pending}
+                                />
+                                <div className={styles.actionButtons}>
                                     <PrimaryButton
-                                        className={styles.addCategoryBtn}
-                                        onClick={this.handleEditCategory}
+                                        onClick={this.handleNewCategory}
                                         disabled={pending}
-                                        iconName={iconNames.edit}
-                                        title={_ts('categoryEditor', 'editCategoryTooltip')}
+                                        iconName={iconNames.add}
+                                        title={_ts('categoryEditor', 'addCategoryTooltip')}
                                     />
-                                    <DangerConfirmButton
-                                        className={styles.addCategoryBtn}
-                                        onClick={this.handleRemoveCategory}
-                                        disabled={pending}
-                                        iconName={iconNames.delete}
-                                        title={_ts('categoryEditor', 'deleteCategoryTooltip')}
-                                        confirmationMessage={confirmMessage}
-                                    />
-                                </Fragment>
-                            }
+                                    { isTruthy(activeCategoryId) && (
+                                        <Fragment>
+                                            <PrimaryButton
+                                                onClick={this.handleEditCategory}
+                                                disabled={pending}
+                                                iconName={iconNames.edit}
+                                                title={_ts('categoryEditor', 'editCategoryTooltip')}
+                                            />
+                                            <DangerConfirmButton
+                                                onClick={this.handleRemoveCategory}
+                                                disabled={pending}
+                                                iconName={iconNames.delete}
+                                                title={_ts('categoryEditor', 'deleteCategoryTooltip')}
+                                                confirmationMessage={confirmMessage}
+                                            />
+                                        </Fragment>
+                                    )}
+                                </div>
+                            </div>
+                        </header>
+                        <div className={styles.content}>
+                            <div className={styles.subCategories}>
+                                {
+                                    activeCategoryId ? (
+                                        this.renderSubcategoryColumns()
+                                    ) : (
+                                        <p className={styles.empty}>
+                                            {_ts('categoryEditor', 'nothingHereText')}
+                                        </p>
+                                    )
+                                }
+                            </div>
+                            <SubcategoryPropertyPanel
+                                onNewManualNGram={this.handleNewManualNGram}
+                            />
                         </div>
-                    </header>
-                    <div className={styles.content}>
-                        <div className={styles.subCategories}>
-                            {
-                                activeCategoryId ? (
-                                    this.renderSubcategoryColumns()
-                                ) : (
-                                    <p className={styles.empty}>
-                                        {_ts('categoryEditor', 'nothingHereText')}
-                                    </p>
-                                )
-                            }
-                        </div>
-                        <SubcategoryPropertyPanel
-                            onNewManualNGram={this.handleNewManualNGram}
-                        />
                     </div>
                 </div>
+                <Prompt
+                    when={!categoryEditorViewPristine}
+                    message={_ts('common', 'youHaveUnsavedChanges')}
+                />
                 { showNewCategoryModal &&
                     <NewCategoryModal
                         onSubmit={this.handleNewCategoryModalSubmit}
