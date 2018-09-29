@@ -94,7 +94,7 @@ export default class FrameworkDetail extends React.PureComponent {
             },
         } = this.state;
 
-        if (isFrameworkAdmin) {
+        if (!isFrameworkAdmin) {
             return null;
         }
 

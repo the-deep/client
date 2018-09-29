@@ -61,6 +61,10 @@ export default class CloneWordCategoryButton extends React.PureComponent {
         });
     }
 
+    componentWillUnmount() {
+        this.wordCategoryCloneRequest.stop();
+    }
+
     handleFaramChange = (faramValues, faramErrors) => {
         this.setState({
             faramValues,
@@ -86,12 +90,21 @@ export default class CloneWordCategoryButton extends React.PureComponent {
             .start();
     }
 
+    handleValidationFailure = (faramErrors) => {
+        this.setState({ faramErrors });
+    }
+
     handleClick = () => {
         this.setState({ showCloneWordCategoryModal: true });
     }
 
     handleModalCancelButtonClick = () => {
-        this.setState({ showCloneWordCategoryModal: false });
+        this.setState({
+            showCloneWordCategoryModal: false,
+            faramValues: {},
+            faramErrors: {},
+            pristine: true,
+        });
     }
 
     render() {

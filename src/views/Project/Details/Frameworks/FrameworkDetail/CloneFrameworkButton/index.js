@@ -63,6 +63,10 @@ export default class CloneFrameworkButton extends React.PureComponent {
         });
     }
 
+    componentWillUnmount() {
+        this.frameworkCloneRequest.stop();
+    }
+
     handleFaramChange = (faramValues, faramErrors) => {
         this.setState({
             faramValues,
@@ -88,12 +92,21 @@ export default class CloneFrameworkButton extends React.PureComponent {
             .start();
     }
 
+    handleValidationFailure = (faramErrors) => {
+        this.setSTate({ faramErrors });
+    }
+
     handleClick = () => {
         this.setState({ showCloneFrameworkModal: true });
     }
 
     handleModalCancelButtonClick = () => {
-        this.setState({ showCloneFrameworkModal: false });
+        this.setState({
+            showCloneFrameworkModal: false,
+            faramValues: {},
+            faramErrors: {},
+            pristine: true,
+        });
     }
 
     render() {
