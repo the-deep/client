@@ -28,8 +28,9 @@ export default class UseWordCategoryRequest extends Request {
 
         this.createDefault({
             url: createUrlForProject(projectId),
-            params: createParamsForProjectPatch({ analysisWordCategory: wordCategoryId }),
+            params: createParamsForProjectPatch({ categoryEditor: wordCategoryId }),
         });
+
         return this;
     }
 }

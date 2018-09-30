@@ -30,6 +30,7 @@ const projectMiniUrlFields = [
     'role',
     'assessment_template',
     'analysis_framework',
+    'category_editor',
     'regions',
 ];
 export const urlForProjects = `${wsEndpoint}/projects/member-of/?${p({ fields: projectMiniUrlFields })}`;
