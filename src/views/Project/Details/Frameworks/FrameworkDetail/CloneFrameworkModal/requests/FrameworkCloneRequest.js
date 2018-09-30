@@ -21,7 +21,7 @@ export default class FrameworkCloneRequest extends Request {
         });
 
         this.parent.setActiveFramework(response.id);
-        this.parent.onModalClose();
+        this.parent.closeModal();
     }
 
     init = (frameworkId, projectId, faramValues) => {

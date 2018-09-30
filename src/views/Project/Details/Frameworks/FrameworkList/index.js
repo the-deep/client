@@ -10,12 +10,16 @@ import {
 import SearchInput from '#rsci/SearchInput';
 import ListView from '#rscv/List/ListView';
 import ListItem from '#rscv/List/ListItem';
+import AccentButton from '#rsca/Button/AccentButton';
+import modalize from '#rscg/Modalize';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';
 
-import AddFrameworkButton from './AddFrameworkButton';
+import AddFrameworkModal from './AddFrameworkModal';
 import styles from './styles.scss';
+
+const AccentModalButton = modalize(AccentButton);
 
 const propTypes = {
     activeFrameworkId: PropTypes.number.isRequired,
@@ -151,10 +155,19 @@ export default class FrameworkList extends React.PureComponent {
                     <h4 className={styles.heading}>
                         {_ts('project.framework', 'frameworkListHeading')}
                     </h4>
-                    <AddFrameworkButton
-                        projectId={projectId}
-                        setActiveFramework={setActiveFramework}
-                    />
+
+                    <AccentModalButton
+                        iconName={iconNames.add}
+                        modal={
+                            <AddFrameworkModal
+                                projectId={projectId}
+                                setActiveFramework={setActiveFramework}
+                            />
+                        }
+                    >
+                        { _ts('project.framework', 'addFrameworkButtonLabel')}
+                    </AccentModalButton>
+
                     <SearchInput
                         className={styles.frameworkSearchInput}
                         value={searchInputValue}

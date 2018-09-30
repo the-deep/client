@@ -1,0 +1,38 @@
+@import '~base-scss/base';
+
+$width-add-framework-modal: 480px;
+
+.add-framework-modal {
+    width: $width-add-framework-modal;
+
+    .modal-body {
+        padding: $spacing-large;
+
+        .add-analysis-framework-form {
+            display: flex;
+            position: relative;
+            flex-direction: column;
+            height: 100%;
+
+            .title {
+                margin-bottom: $spacing-medium;
+            }
+
+            .description {
+                :global .input {
+                    resize: none;
+                }
+            }
+
+            .action-buttons {
+                display: flex;
+                justify-content: flex-end;
+                margin-top: $spacing-medium;
+
+                button {
+                    margin-left: $spacing-medium;
+                }
+            }
+        }
+    }
+}
