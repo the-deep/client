@@ -24,11 +24,10 @@ export default class ProjectCeCreateRequest extends Request {
     }
 
     handleSuccess = (response) => {
-        const { projectId } = this.extraParent;
         this.parent.addNewCe({
             ceDetail: response,
-            projectId,
         });
+        this.parent.setActiveWordCategory(response.id);
         this.parent.onModalClose();
     }
 
@@ -42,11 +41,10 @@ export default class ProjectCeCreateRequest extends Request {
         });
     }
 
-    init = (projectId, values) => {
-        this.extraParent = { projectId };
+    init = (values) => {
         this.createDefault({
             url: urlForCeCreate,
-            params: createParamsForCeCreate({ ...values, project: projectId }),
+            params: createParamsForCeCreate({ ...values, project: undefined }),
         });
         return this;
     }

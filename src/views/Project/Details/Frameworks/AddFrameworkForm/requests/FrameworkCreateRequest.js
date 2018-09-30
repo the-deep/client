@@ -21,7 +21,6 @@ export default class FrameworkCreateRequest extends Request {
     handleSuccess = (response) => {
         this.parent.addNewFramework({
             afDetail: response,
-            projectId: this.projectId,
         });
         notify.send({
             title: _ts('project', 'afCreate'),
@@ -29,6 +28,7 @@ export default class FrameworkCreateRequest extends Request {
             message: _ts('project', 'afCreateSuccess'),
             duration: notify.duration.MEDIUM,
         });
+        this.parent.setActiveFramework(response.id);
         this.parent.onModalClose();
     }
 
@@ -48,14 +48,12 @@ export default class FrameworkCreateRequest extends Request {
         });
     }
 
-    init = (projectId, values) => {
-        this.projectId = projectId;
-
+    init = (values) => {
         this.createDefault({
             url: urlForAfCreate,
             params: createParamsForAfCreate({
                 ...values,
-                project: projectId,
+                project: undefined,
             }),
         });
         return this;

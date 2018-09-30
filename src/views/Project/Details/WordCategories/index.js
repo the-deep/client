@@ -153,6 +153,7 @@ export default class ProjectCategoryEditor extends React.PureComponent {
                     activeWordCategoryId={activeWordCategoryId}
                     selectedWordCategoryId={selectedWordCategoryId}
                     wordCategoryList={wordCategoryList}
+                    setActiveWordCategory={this.setActiveWordCategory}
                 />
                 <div className={styles.details}>
                     { pendingWordCategoryList ? (

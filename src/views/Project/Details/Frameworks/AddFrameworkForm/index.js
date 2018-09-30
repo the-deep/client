@@ -23,12 +23,11 @@ const propTypes = {
     className: PropTypes.string,
     addNewFramework: PropTypes.func.isRequired,
     onModalClose: PropTypes.func.isRequired,
-    projectId: PropTypes.number,
+    setActiveFramework: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     className: '',
-    projectId: undefined,
 };
 
 const mapDispatchToProps = dispatch => ({
@@ -60,6 +59,7 @@ export default class AddFrameworkForm extends React.PureComponent {
         this.frameworkCreateRequest = new FrameworkCreateRequest({
             setState: v => this.setState(v),
             addNewFramework: this.props.addNewFramework,
+            setActiveFramework: this.props.setActiveFramework,
             onModalClose: this.props.onModalClose,
         });
     }
@@ -81,9 +81,8 @@ export default class AddFrameworkForm extends React.PureComponent {
     };
 
     handleValidationSuccess = (data) => {
-        const { projectId } = this.props;
         this.frameworkCreateRequest
-            .init(projectId, data)
+            .init(data)
             .start();
     };
 

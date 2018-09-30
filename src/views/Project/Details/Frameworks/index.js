@@ -157,6 +157,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
                     selectedFrameworkId={selectedFrameworkId}
                     frameworkList={frameworkList}
                     projectId={projectId}
+                    setActiveFramework={this.setActiveFramework}
                 />
                 { pendingFrameworkList ? (
                     <LoadingAnimation large />

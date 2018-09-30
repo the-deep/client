@@ -24,6 +24,7 @@ const propTypes = {
     onClick: PropTypes.func.isRequired,
     selectedWordCategoryId: PropTypes.number,
     projectId: PropTypes.number.isRequired,
+    setActiveWordCategory: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -124,6 +125,7 @@ export default class WordCategoryList extends React.PureComponent {
             className: classNameFromProps,
             wordCategoryList,
             projectId,
+            setActiveWordCategory,
         } = this.props;
 
         const { searchInputValue } = this.state;
@@ -150,6 +152,7 @@ export default class WordCategoryList extends React.PureComponent {
                     </h4>
                     <AddWordCategoryButton
                         projectId={projectId}
+                        setActiveWordCategory={setActiveWordCategory}
                     />
                     <SearchInput
                         className={styles.wordCategorySearchInput}

@@ -22,12 +22,11 @@ const propTypes = {
     className: PropTypes.string,
     addNewCe: PropTypes.func.isRequired,
     onModalClose: PropTypes.func.isRequired,
-    projectId: PropTypes.number,
+    setActiveWordCategory: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     className: '',
-    projectId: undefined,
 };
 
 const mapDispatchToProps = dispatch => ({
@@ -59,6 +58,7 @@ export default class AddCategoryEditor extends React.PureComponent {
             setState: v => this.setState(v),
             addNewCe: this.props.addNewCe,
             onModalClose: this.props.onModalClose,
+            setActiveWordCategory: this.props.setActiveWordCategory,
         });
     }
 
@@ -80,8 +80,7 @@ export default class AddCategoryEditor extends React.PureComponent {
     };
 
     handleValidationSuccess = (values) => {
-        const { projectId } = this.props;
-        this.ceCreateRequest.init(projectId, values).start();
+        this.ceCreateRequest.init(values).start();
     };
 
     render() {

@@ -24,6 +24,7 @@ const propTypes = {
     onClick: PropTypes.func.isRequired,
     selectedFrameworkId: PropTypes.number,
     projectId: PropTypes.number.isRequired,
+    setActiveFramework: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -125,6 +126,7 @@ export default class FrameworkList extends React.PureComponent {
             className: classNameFromProps,
             frameworkList,
             projectId,
+            setActiveFramework,
         } = this.props;
 
         const { searchInputValue } = this.state;
@@ -151,6 +153,7 @@ export default class FrameworkList extends React.PureComponent {
                     </h4>
                     <AddFrameworkButton
                         projectId={projectId}
+                        setActiveFramework={setActiveFramework}
                     />
                     <SearchInput
                         className={styles.frameworkSearchInput}

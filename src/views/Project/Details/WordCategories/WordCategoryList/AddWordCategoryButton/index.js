@@ -15,6 +15,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     projectId: PropTypes.number.isRequired,
+    setActiveWordCategory: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -39,6 +40,7 @@ export default class AddWordCategoryButton extends React.PureComponent {
         const {
             projectId,
             className: classNameFromProps,
+            setActiveWordCategory,
         } = this.props;
 
         const { showAddWordCategoryModal } = this.state;
@@ -63,6 +65,7 @@ export default class AddWordCategoryButton extends React.PureComponent {
                             <AddWordCategoryForm
                                 projectId={projectId}
                                 onModalClose={this.handleAddProjectModalClose}
+                                setActiveWordCategory={setActiveWordCategory}
                             />
                         </ModalBody>
                     </Modal>

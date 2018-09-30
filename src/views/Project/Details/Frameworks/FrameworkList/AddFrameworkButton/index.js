@@ -15,6 +15,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     projectId: PropTypes.number.isRequired,
+    setActiveFramework: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -45,6 +46,7 @@ export default class AddFrameworkButton extends React.PureComponent {
         const {
             projectId,
             className: classNameFromProps,
+            setActiveFramework,
         } = this.props;
 
         const { showAddFrameworkModal } = this.state;
@@ -69,6 +71,7 @@ export default class AddFrameworkButton extends React.PureComponent {
                             <AddFrameworkForm
                                 projectId={projectId}
                                 onModalClose={this.handleAddProjectModalClose}
+                                setActiveFramework={setActiveFramework}
                             />
                         </ModalBody>
                     </Modal>
