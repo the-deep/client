@@ -79,6 +79,7 @@ const addNewCe = (state, action) => {
             } },
         } },
     };
+    // TODO: Remove this if not used
     settings.projects = {
         [projectId]: { $auto: {
             categoryEditor: {

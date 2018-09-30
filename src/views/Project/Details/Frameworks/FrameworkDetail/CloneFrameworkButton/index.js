@@ -64,6 +64,7 @@ export default class CloneFrameworkButton extends React.PureComponent {
 
         this.frameworkCloneRequest = new FrameworkCloneRequest({
             setState: v => this.setState(v),
+            onModalClose: this.onModalClose,
             addNewFramework,
             setActiveFramework,
         });
@@ -71,6 +72,15 @@ export default class CloneFrameworkButton extends React.PureComponent {
 
     componentWillUnmount() {
         this.frameworkCloneRequest.stop();
+    }
+
+    onModalClose = () => {
+        this.setState({
+            showCloneFrameworkModal: false,
+            faramValues: {},
+            faramErrors: {},
+            pristine: true,
+        });
     }
 
     handleFaramChange = (faramValues, faramErrors) => {
@@ -104,15 +114,6 @@ export default class CloneFrameworkButton extends React.PureComponent {
 
     handleClick = () => {
         this.setState({ showCloneFrameworkModal: true });
-    }
-
-    handleModalCancelButtonClick = () => {
-        this.setState({
-            showCloneFrameworkModal: false,
-            faramValues: {},
-            faramErrors: {},
-            pristine: true,
-        });
     }
 
     render() {
@@ -164,7 +165,7 @@ export default class CloneFrameworkButton extends React.PureComponent {
                                 />
                             </ModalBody>
                             <ModalFooter>
-                                <DangerButton onClick={this.handleModalCancelButtonClick}>
+                                <DangerButton onClick={this.onModalClose}>
                                     {_ts('project.framework', 'cloneFrameworkCancelButtonTitle')}
                                 </DangerButton>
                                 <PrimaryButton

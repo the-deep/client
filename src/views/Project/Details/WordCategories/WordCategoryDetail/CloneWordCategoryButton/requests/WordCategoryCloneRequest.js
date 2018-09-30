@@ -4,7 +4,7 @@ import {
 } from '#rest';
 import Request from '#utils/Request';
 
-export default class ProjectCeCloneRequest extends Request {
+export default class WordCategoryCloneRequest extends Request {
     schemaName = 'categoryEditor'
 
     handlePreLoad = () => {
@@ -16,13 +16,12 @@ export default class ProjectCeCloneRequest extends Request {
     }
 
     handleSuccess = (response) => {
-        this.parent.setState({ showCloneWordCategoryModal: false });
         this.parent.addNewWordCategory({
             ceDetail: response,
-            projectId: this.projectId,
         });
 
         this.parent.setActiveWordCategory(response.id);
+        this.parent.onModalClose();
     }
 
     init = (wordCategoryId, projectId, faramValues) => {
@@ -33,8 +32,8 @@ export default class ProjectCeCloneRequest extends Request {
 
             // setting project undefined doesn't set the wordCategory to project
             params: createParamsForCeClone({
-                project: undefined,
                 ...faramValues,
+                project: undefined,
             }),
         });
 

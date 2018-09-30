@@ -16,13 +16,12 @@ export default class FrameworkCloneRequest extends Request {
     }
 
     handleSuccess = (response) => {
-        this.parent.setState({ showCloneFrameworkModal: false });
         this.parent.addNewFramework({
             afDetail: response,
-            projectId: this.projectId,
         });
 
         this.parent.setActiveFramework(response.id);
+        this.parent.onModalClose();
     }
 
     init = (frameworkId, projectId, faramValues) => {
@@ -33,8 +32,8 @@ export default class FrameworkCloneRequest extends Request {
 
             // setting project undefined doesn't set the framework to project
             params: createParamsForAfClone({
-                project: undefined,
                 ...faramValues,
+                project: undefined,
             }),
         });
 

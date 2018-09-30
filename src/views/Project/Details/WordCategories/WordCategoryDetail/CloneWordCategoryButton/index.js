@@ -62,6 +62,7 @@ export default class CloneWordCategoryButton extends React.PureComponent {
 
         this.wordCategoryCloneRequest = new WordCategoryCloneRequest({
             setState: v => this.setState(v),
+            onModalClose: this.onModalClose,
             addNewWordCategory,
             setActiveWordCategory,
         });
@@ -69,6 +70,15 @@ export default class CloneWordCategoryButton extends React.PureComponent {
 
     componentWillUnmount() {
         this.wordCategoryCloneRequest.stop();
+    }
+
+    onModalClose = () => {
+        this.setState({
+            showCloneWordCategoryModal: false,
+            faramValues: {},
+            faramErrors: {},
+            pristine: true,
+        });
     }
 
     handleFaramChange = (faramValues, faramErrors) => {
@@ -102,15 +112,6 @@ export default class CloneWordCategoryButton extends React.PureComponent {
 
     handleClick = () => {
         this.setState({ showCloneWordCategoryModal: true });
-    }
-
-    handleModalCancelButtonClick = () => {
-        this.setState({
-            showCloneWordCategoryModal: false,
-            faramValues: {},
-            faramErrors: {},
-            pristine: true,
-        });
     }
 
     render() {
@@ -154,7 +155,7 @@ export default class CloneWordCategoryButton extends React.PureComponent {
                                 />
                             </ModalBody>
                             <ModalFooter>
-                                <DangerButton onClick={this.handleModalCancelButtonClick}>
+                                <DangerButton onClick={this.onModalClose}>
                                     {_ts('project.wordCategory', 'cloneWordCategoryCancelButtonTitle')}
                                 </DangerButton>
                                 <PrimaryButton

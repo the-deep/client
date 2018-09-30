@@ -97,6 +97,7 @@ const addNewAf = (state, action) => {
             } },
         } },
     };
+    // TODO: Remove this if not used
     settings.projects = {
         [projectId]: { $auto: {
             analysisFramework: {
