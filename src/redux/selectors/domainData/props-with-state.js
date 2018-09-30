@@ -7,6 +7,7 @@ import {
 
     afIdFromRoute,
     ceIdFromRoute,
+    wordCategoryIdFromRoute,
 } from './props';
 import {
     leadFilterOptionsSelector,
@@ -337,5 +338,13 @@ export const categoryEditorDetailSelector = createSelector(
     ceIdFromRoute,
     (categoryEditors, ceId) => (
         categoryEditors[ceId] || emptyObject
+    ),
+);
+
+export const wordCategoryDetailSelector = createSelector(
+    categoryEditorsSelector,
+    wordCategoryIdFromRoute,
+    (wordCategories, wordCategoryId) => (
+        wordCategories[wordCategoryId] || emptyObject
     ),
 );

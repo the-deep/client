@@ -12,6 +12,7 @@ const getFromProps = identifier => ({ route }, props) => {
 
 export const afIdFromRoute = getFromProps('analysisFrameworkId');
 export const ceIdFromRoute = getFromProps('categoryEditorId');
+export const wordCategoryIdFromRoute = getFromProps('wordCategoryId');
 export const countryIdFromRoute = getFromProps('countryId');
 export const groupIdFromRoute = getFromProps('userGroupId');
 export const leadIdFromRoute = getFromProps('leadId');

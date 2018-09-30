@@ -9,69 +9,63 @@ import ModalHeader from '#rscv/Modal/Header';
 import _ts from '#ts';
 import { iconNames } from '#constants';
 
-import AddFrameworkForm from '../../AddFrameworkForm';
+import AddWordCategoryForm from '../../AddWordCategoryForm';
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
     projectId: PropTypes.number.isRequired,
-    setActiveFramework: PropTypes.func.isRequired,
+    setActiveWordCategory: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     className: '',
 };
 
-export default class AddFrameworkButton extends React.PureComponent {
+export default class AddWordCategoryButton extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
+    state = { showAddWordCategoryModal: false };
 
-        this.state = {
-            showAddFrameworkModal: false,
-        };
-    }
-
-    handleAddFrameworkButtonClick = () => {
-        this.setState({ showAddFrameworkModal: true });
+    handleAddWordCategoryButtonClick = () => {
+        this.setState({ showAddWordCategoryModal: true });
     }
 
     handleAddProjectModalClose = () => {
-        this.setState({ showAddFrameworkModal: false });
+        this.setState({ showAddWordCategoryModal: false });
     }
 
     render() {
         const {
             projectId,
             className: classNameFromProps,
-            setActiveFramework,
+            setActiveWordCategory,
         } = this.props;
 
-        const { showAddFrameworkModal } = this.state;
+        const { showAddWordCategoryModal } = this.state;
 
         const className = `
             ${classNameFromProps}
-            ${styles.addFrameworkButton}
+            ${styles.addWordCategoryButton}
         `;
         return (
             <React.Fragment>
                 <AccentButton
                     className={className}
                     iconName={iconNames.add}
-                    onClick={this.handleAddFrameworkButtonClick}
+                    onClick={this.handleAddWordCategoryButtonClick}
                 >
-                    { _ts('project.framework', 'addFrameworkButtonLabel')}
+                    { _ts('project.wordCategory', 'addWordCategoryButtonLabel')}
                 </AccentButton>
-                { showAddFrameworkModal && (
-                    <Modal className={styles.addFrameworkModal}>
-                        <ModalHeader title={_ts('project.framework', 'addFrameworkModalTitle')} />
+                { showAddWordCategoryModal && (
+                    <Modal className={styles.addWordCategoryModal}>
+                        <ModalHeader title={_ts('project.wordCategory', 'addWordCategoryModalTitle')} />
                         <ModalBody className={styles.modalBody}>
-                            <AddFrameworkForm
+                            <AddWordCategoryForm
                                 projectId={projectId}
                                 onModalClose={this.handleAddProjectModalClose}
-                                setActiveFramework={setActiveFramework}
+                                setActiveWordCategory={setActiveWordCategory}
                             />
                         </ModalBody>
                     </Modal>

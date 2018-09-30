@@ -47,5 +47,7 @@ export default class FrameworkListGetRequest extends Request {
             url: urlForAnalysisFrameworks,
             params: createParamsForGet,
         });
+
+        return this;
     }
 }

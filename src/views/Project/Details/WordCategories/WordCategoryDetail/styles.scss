@@ -1,0 +1,37 @@
+@import '~base-scss/base';
+
+.word-category-detail {
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        border-bottom: $width-separator-thin solid $color-separator;
+        background-color: $color-background-header;
+
+        .heading {
+            flex-grow: 1;
+            padding: $spacing-small $spacing-medium;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .action-buttons {
+            flex-shrink: 0;
+            padding: $spacing-small $spacing-medium;
+
+            button {
+                margin-left: $spacing-small;
+            }
+
+
+            .edit-category-editor-link {
+                @include button-like-link($color-warning);
+                margin-left: $spacing-small;
+            }
+        }
+    }
+}

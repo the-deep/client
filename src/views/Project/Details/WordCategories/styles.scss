@@ -1,14 +1,14 @@
 @import '~base-scss/base';
 
-$width-framework-list: 240px;
+$width-word-category-list: 240px;
 
-.project-analysis-framework {
+.word-categories {
     display: flex;
     position: relative;
     flex-grow: 1;
 
-    .framework-list {
-        flex-basis: $width-framework-list;
+    .word-category-list {
+        flex-basis: $width-word-category-list;
         flex-shrink: 0;
         border-right: $width-separator-thin solid $color-separator;
     }
@@ -19,7 +19,7 @@ $width-framework-list: 240px;
         overflow: auto;
     }
 
-    .no-framework-message {
+    .no-word-category-message {
         flex-grow: 1;
         height: auto;
     }

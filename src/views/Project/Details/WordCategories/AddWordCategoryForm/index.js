@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
-import TextArea from '#rsci/TextArea';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -12,18 +11,18 @@ import Faram, {
     requiredCondition,
 } from '#rscg/Faram';
 
-import { addNewAfAction } from '#redux';
+import { addNewCeAction } from '#redux';
 import _ts from '#ts';
 
-import FrameworkCreateRequest from './requests/FrameworkCreateRequest';
+import CeCreateRequest from './requests/CeCreateRequest';
 
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    addNewFramework: PropTypes.func.isRequired,
+    addNewCe: PropTypes.func.isRequired,
     onModalClose: PropTypes.func.isRequired,
-    setActiveFramework: PropTypes.func.isRequired,
+    setActiveWordCategory: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -31,11 +30,11 @@ const defaultProps = {
 };
 
 const mapDispatchToProps = dispatch => ({
-    addNewFramework: params => dispatch(addNewAfAction(params)),
+    addNewCe: params => dispatch(addNewCeAction(params)),
 });
 
 @connect(undefined, mapDispatchToProps)
-export default class AddFrameworkForm extends React.PureComponent {
+export default class AddCategoryEditor extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -46,33 +45,33 @@ export default class AddFrameworkForm extends React.PureComponent {
             faramErrors: {},
             faramValues: {},
             pending: false,
-            pristine: true,
+            pristine: false,
         };
 
         this.schema = {
             fields: {
                 title: [requiredCondition],
-                description: [],
             },
         };
 
-        this.frameworkCreateRequest = new FrameworkCreateRequest({
+        this.ceCreateRequest = new CeCreateRequest({
             setState: v => this.setState(v),
-            addNewFramework: this.props.addNewFramework,
-            setActiveFramework: this.props.setActiveFramework,
+            addNewCe: this.props.addNewCe,
             onModalClose: this.props.onModalClose,
+            setActiveWordCategory: this.props.setActiveWordCategory,
         });
     }
 
     componentWillUnmount() {
-        this.frameworkCreateRequest.stop();
+        this.ceCreateRequest.stop();
     }
 
+    // faram RELATED
     handleFaramChange = (faramValues, faramErrors) => {
         this.setState({
             faramValues,
             faramErrors,
-            pristine: false,
+            pristine: true,
         });
     };
 
@@ -80,10 +79,8 @@ export default class AddFrameworkForm extends React.PureComponent {
         this.setState({ faramErrors });
     };
 
-    handleValidationSuccess = (data) => {
-        this.frameworkCreateRequest
-            .init(data)
-            .start();
+    handleValidationSuccess = (values) => {
+        this.ceCreateRequest.init(values).start();
     };
 
     render() {
@@ -94,19 +91,11 @@ export default class AddFrameworkForm extends React.PureComponent {
             pristine,
         } = this.state;
 
-        const {
-            className: classNameFromProps,
-            onModalClose,
-        } = this.props;
-
-        const className = `
-            ${classNameFromProps}
-            ${styles.addAnalysisFrameworkForm}
-        `;
+        const { className } = this.props;
 
         return (
             <Faram
-                className={className}
+                className={`${className} ${styles.addCategoryEditorForm}`}
                 onChange={this.handleFaramChange}
                 onValidationFailure={this.handleValidationFailure}
                 onValidationSuccess={this.handleValidationSuccess}
@@ -118,28 +107,20 @@ export default class AddFrameworkForm extends React.PureComponent {
                 { pending && <LoadingAnimation /> }
                 <NonFieldErrors faramElement />
                 <TextInput
-                    className={styles.title}
-                    label={_ts('project.framework', 'frameworkTitleInputTitle')}
+                    label={_ts('project', 'addAfTitleLabel')}
                     faramElementName="title"
-                    placeholder={_ts('project.framework', 'frameworkTitleInputPlaceholder')}
+                    placeholder={_ts('project', 'addCeTitlePlaceholder')}
                     autoFocus
                 />
-                <TextArea
-                    className={styles.description}
-                    label={_ts('project.framework', 'frameworkDescriptionInputTitle')}
-                    faramElementName="description"
-                    placeholder={_ts('project.framework', 'frameworkDescriptionInputPlaceholder')}
-                    rows={3}
-                />
                 <div className={styles.actionButtons}>
-                    <DangerButton onClick={onModalClose}>
-                        {_ts('project.framework', 'addFrameworkFormCancelButtonTitle')}
+                    <DangerButton onClick={this.props.onModalClose}>
+                        {_ts('project', 'modalCancel')}
                     </DangerButton>
                     <PrimaryButton
-                        disabled={pending || pristine}
+                        disabled={pending || !pristine}
                         type="submit"
                     >
-                        {_ts('project.framework', 'addFrameworkFormAddButtonTitle')}
+                        {_ts('project', 'modalAdd')}
                     </PrimaryButton>
                 </div>
             </Faram>
