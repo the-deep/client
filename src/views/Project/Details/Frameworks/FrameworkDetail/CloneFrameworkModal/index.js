@@ -27,10 +27,11 @@ const propTypes = {
     frameworkId: PropTypes.number.isRequired,
     projectId: PropTypes.number.isRequired,
     setActiveFramework: PropTypes.func.isRequired,
-    closeModal: PropTypes.func.isRequired,
+    closeModal: PropTypes.func,
 };
 
 const defaultProps = {
+    closeModal: () => {},
 };
 
 export default class CloneFrameworkModal extends React.PureComponent {

@@ -23,10 +23,11 @@ import styles from './styles.scss';
 
 const propTypes = {
     setActiveFramework: PropTypes.func.isRequired,
-    closeModal: PropTypes.func.isRequired,
+    closeModal: PropTypes.func,
 };
 
 const defaultProps = {
+    closeModal: () => {},
 };
 
 const mapDispatchToProps = dispatch => ({
