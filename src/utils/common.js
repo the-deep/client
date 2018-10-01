@@ -40,3 +40,30 @@ const decodeTimeInMinutes = (value, separator = ':') => {
 export const compareTime = (a, b) => (
     decodeTimeInMinutes(a) - decodeTimeInMinutes(b)
 );
+
+export const timeFrom = (date) => {
+    const cDate = date instanceof Date ? date : new Date(date);
+
+    const seconds = Math.floor((new Date() - cDate) / 1000);
+
+    const intervals = {
+        year: 31536000,
+        month: 2592000,
+        day: 86400,
+        hour: 3600,
+        minute: 60,
+    };
+
+    let span = 'just now';
+
+    for (const key in intervals) { //eslint-disable-line
+        const interval = Math.floor(seconds / intervals[key]);
+
+        if (interval >= 1) {
+            span = `${interval} ${key}${interval > 1 ? 's' : ''} ago`;
+            break;
+        }
+    }
+
+    return span;
+};

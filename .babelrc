@@ -38,6 +38,7 @@
                     "#rsu": "./src/vendor/react-store/utils",
                     "#rsk": "./src/vendor/react-store/constants",
                     "#request": "./src/request",
+                    "#rc": "./src/vendor/react-components",
                     "#components": "./src/components",
                     "#widgets": "./src/widgets",
                     "#widgetComponents": "./src/widgetComponents",

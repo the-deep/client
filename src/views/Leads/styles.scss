@@ -1,8 +1,6 @@
 @import '~base-scss/base';
 @import '~rs-scss/input-label';
 
-$width-assignee-column: 96px;
-
 .leads {
     display: flex;
     flex-direction: column;
@@ -51,128 +49,42 @@ $width-assignee-column: 96px;
         }
     }
 
-    .table-container {
-        @extend %main-content;
-        @include background-color($color-foreground-alt);
+    .active {
         display: flex;
-        position: relative;
         flex-direction: column;
-        flex-grow: 1;
-        margin: $spacing-small-alt;
-        padding-bottom: $spacing-extra-small;
-        overflow: auto;
+        height: 100%;
+    }
 
-        .scroll-wrapper {
-            flex-grow: 1;
-            height: 100%;
-            overflow: auto;
+    .fixed-tabs {
+        margin-right: $spacing-extra-large;
+        background-color: transparent;
 
-            .leads-table {
-                .header {
-                    position: sticky;
-                    top: 0;
-                }
+        :global {
+            .fixed-tab {
+                border-bottom: none;
+                font-size: $font-size-extra-large;
 
-                .status,
-                .confidentiality {
-                    text-transform: capitalize;
-                }
-
-                .created-by-link,
-                .assignee-link {
-                    @extend %accent-color-link;
-                    margin-right: $spacing-small;
-                }
-
-                .icon-wrapper {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: $font-size-large;
-
-                    button {
-                        font-size: $font-size-large;
-                    }
-                }
-
-                $mime-column-width: 48px;
-
-                :global {
-                    .header {
-                        &.created_by,
-                        &.assignee {
-                            width: $width-assignee-column;
-                        }
-
-                        >div {
-                            border-top: 0;
-                        }
-                    }
-
-                    .cell {
-                        padding: $spacing-small;
-
-                        &.created_by,
-                        &.assignee {
-                            color: $color-text-label;
-                        }
-
-                        &.actions {
-                            padding: 0;
-                        }
-                    }
-
-                    .attachmentMimeType {
-                        width: $mime-column-width;
-                    }
-
-                    .title {
-                        width: auto;
-                    }
-
-                    .actions {
-                        white-space: nowrap;
-                    }
-
-                    .created_at {
-                        time {
-                            white-space: nowrap;
-                        }
-                    }
-
-                    .published_on {
-                        white-space: nowrap;
-                    }
-
-                    .no_of_entries {
-                        width: auto;
-                    }
-
-                    .created_at,
-                    .published_on,
-                    .no_of_entries {
-                        align-items: right;
-                        justify-content: right;
-                        text-align: right;
-                    }
+                &.active {
+                    background-color: $color-background-hover-light;
+                    color: $color-accent;
                 }
             }
         }
+    }
 
-        .empty-message, .empty-filter-message {
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
+    .empty-message, .empty-filter-message {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
 
-            .image {
-                opacity: 0.3;
-                margin: $spacing-large 0;
-                width: $width-icon-extreme-large;
-                height: $width-icon-extreme-large;
-            }
+        .image {
+            opacity: 0.3;
+            margin: $spacing-large 0;
+            width: $width-icon-extreme-large;
+            height: $width-icon-extreme-large;
         }
     }
 
@@ -219,6 +131,15 @@ $width-assignee-column: 96px;
                         direction: rtl;
                     }
                 }
+            }
+        }
+
+        .sorting-container {
+            display: flex;
+            align-items: center;
+
+            > p {
+                margin: 0 $spacing-medium-alt 0 0;
             }
         }
     }

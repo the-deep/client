@@ -26,6 +26,11 @@ const leadSchema = [];
             website: { type: 'string' },
             classifiedDocId: { type: 'number' },
             tabularBook: { type: 'uint' },
+            pageCount: { type: 'int' },
+            wordCount: { type: 'int' },
+            thumbnailHeight: { type: 'int' },
+            thumbnailWidth: { type: 'int' },
+            thumbnail: { type: 'string' }, // url
         },
     };
     leadSchema.push({ name, schema });

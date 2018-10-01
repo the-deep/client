@@ -683,6 +683,10 @@
         "12510": "Are you sure you want to remove membership of {memberName}({memberEmail}) from this project?",
         "12550": "Word category title",
         "12551": "Enter title for word category",
+        "13000": "Sorted By",
+        "13001": "Words",
+        "13002": "Pages",
+        "13003": "Showing {leadsCount} leads out of {totalLeadsCount}",
         "15000": "Quantitative",
         "15001": "Are you sure you want to delete these table sheets? All changes will be lost.",
         "15003": "Separator",
@@ -1497,6 +1501,14 @@
             "emptyWithFilterMessage": -59957290,
             "emptyMessage": -52516388,
             "Preview": -77224022
+        },
+        "leadsGrid": {
+            "publisherLabel": 5,
+            "sortedByLabel": 13000,
+            "wordsLabel": 13001,
+            "pagesLabel": 13002,
+            "leadsRange": 13003,
+            "entriesLabel": 15
         },
         "leadsViz": {
             "chordDiagram": 4007,
