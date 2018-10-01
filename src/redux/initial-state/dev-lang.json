@@ -1156,7 +1156,8 @@
             "entitiesLabel": 508,
             "nlpLabel": 502,
             "notAccurateTextTitle": 505,
-            "infoTooltip": 546
+            "infoTooltip": 546,
+            "sourceSelectionLabel": 83
         },
         "editEntry": {
             "entryUpdate": 987,
@@ -1638,13 +1639,10 @@
         "project.wordCategory": {
             "addWordCategoryButtonLabel": 301,
             "wordCategoryListHeading": 12503,
-
             "cloneButtonTitle": 353,
-
             "cloneWordCategoryModalTitle": 12504,
             "cloneWordCategoryCloneButtonTitle": 353,
             "cloneWordCategoryCancelButtonTitle": 61,
-
             "useWordCategoryButtonTitle": 362,
             "editWordCategoryButtonTitle": 363
         },

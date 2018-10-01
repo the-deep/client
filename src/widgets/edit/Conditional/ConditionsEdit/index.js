@@ -8,7 +8,7 @@ import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import SelectInput from '#rsci/SelectInput';
+import SegmentInput from '#rsci/SegmentInput';
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import ListView from '#rscv/List/ListView';
@@ -214,14 +214,14 @@ class ConditionsEditModal extends React.PureComponent {
                                 <div className={styles.heading}>
                                     {conditionsTitle}
                                 </div>
-                                <SelectInput
+                                <SegmentInput
                                     faramElementName="operator"
+                                    name="operator"
                                     label={operatorSelectLabel}
                                     options={operatorOptions}
                                     keySelector={ConditionsEditModal.operatorKeySelector}
                                     labelSelector={ConditionsEditModal.operatorLabelSelector}
                                     showHintAndError={false}
-                                    hideClearButton
                                 />
                             </header>
                             <FaramList

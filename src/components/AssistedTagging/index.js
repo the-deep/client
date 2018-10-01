@@ -4,7 +4,7 @@ import React from 'react';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import WarningButton from '#rsca/Button/WarningButton';
-import SegmentButton from '#rsca/SegmentButton';
+import SegmentInput from '#rsci/SegmentInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import FloatingContainer from '#rscv/FloatingContainer';
 import ListView from '#rscv/List/ListView';
@@ -50,6 +50,9 @@ const NLP_THRESHOLD = 0.33;
 export default class AssistedTagging extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static sourceKeySelector = d => d.value;
+    static sourceLabelSelector = d => d.label;
 
     constructor(props) {
         super(props);
@@ -592,12 +595,16 @@ export default class AssistedTagging extends React.PureComponent {
 
         return (
             <div className={`assistant-options ${styles.assistantOptions}`}>
-                <SegmentButton
+                <SegmentInput
                     className={styles.assistedSourceChangeBtn}
-                    data={this.assitedTaggingSources}
-                    selected={selectedAssitedTaggingSource}
+                    options={this.assitedTaggingSources}
+                    label={_ts('components.assistedTagging', 'sourceSelectionLabel')}
+                    value={selectedAssitedTaggingSource}
+                    name="source-selection"
                     onChange={this.handleAssitedTaggingSourceChange}
-                    backgroundHighlight
+                    keySelector={AssistedTagging.sourceKeySelector}
+                    labelSelector={AssistedTagging.sourceLabelSelector}
+                    showHintAndError={false}
                 />
                 { selectedAssitedTaggingSource === NLP && (
                     <MultiSelectInput
