@@ -104,4 +104,38 @@ const userGroupSchema = [];
     };
     userGroupSchema.push({ name, schema });
 }
+{
+    const name = 'userOrUserGroup';
+    const schema = {
+        doc: {
+            name: 'User Or UserGroup Item',
+            description: 'Users and UserGroups GET Resposne',
+        },
+        fields: {
+            id: { type: 'uint', required: true },
+            type: { type: 'string', required: true },
+            title: { type: 'string' },
+            firstName: { type: 'string' },
+            username: { type: 'string' },
+            lastName: { type: 'string' },
+        },
+    };
+    userGroupSchema.push({ name, schema });
+}
+{
+    const name = 'usersAndUserGroupsGetResponse';
+    const schema = {
+        doc: {
+            name: 'Users and UserGroups GET Resposne',
+            description: 'Users and UserGroups GET Resposne',
+        },
+        fields: {
+            results: { type: 'array.userOrUserGroup', required: true },
+            count: { type: 'uint' },
+            previous: { type: 'string' },
+            next: { type: 'string' },
+        },
+    };
+    userGroupSchema.push({ name, schema });
+}
 export default userGroupSchema;

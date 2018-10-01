@@ -13,6 +13,9 @@ export const createUrlForProjectJoin = projectId => `${wsEndpoint}/projects/${pr
 export const createUrlForProjectJoinCancel = projectId => `${wsEndpoint}/projects/${projectId}/join/cancel/`;
 export const createUrlForProjectOptions = projectId => `${wsEndpoint}/project-options/?${p({ project: projectId })}`;
 
+export const urlForProjectUserGroup = `${wsEndpoint}/project-usergroups/`;
+export const createUrlForProjectUserGroupGet = project => `${wsEndpoint}/project-usergroups/?${p({ project })}`;
+export const createUrlForProjectUserGroupDelete = userGroupRelationId => `${wsEndpoint}/project-usergroups/${userGroupRelationId}`;
 export const createUrlForProjectAryTemplate = projectId => `${wsEndpoint}/projects/${projectId}/assessment-template/`;
 
 export const createUrlForProjectsOfUser = userId => (
@@ -36,6 +39,7 @@ const projectMiniUrlFields = [
 export const urlForProjects = `${wsEndpoint}/projects/member-of/?${p({ fields: projectMiniUrlFields })}`;
 export const urlForProjectCreate = `${wsEndpoint}/projects/`;
 export const urlForProjectMembership = `${wsEndpoint}/project-memberships/`;
+export const createUrlForProjectMembership = project => `${wsEndpoint}/project-memberships/?${p({ project })}`;
 export const createUrlForUserProjectMembership = membershipId =>
     `${wsEndpoint}/project-memberships/${membershipId}/`;
 
@@ -92,4 +96,10 @@ export const createParamsForProjectDelete = () => ({
 export const createParamsForUserProjectMembershipDelete = () => ({
     method: DELETE,
     headers: commonHeaderForPost,
+});
+
+export const createParamsForProjectUserGroupCreate = projectUserGroup => ({
+    method: POST,
+    headers: commonHeaderForPost,
+    body: JSON.stringify(projectUserGroup),
 });

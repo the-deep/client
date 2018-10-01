@@ -14,6 +14,7 @@ import {
 import _ts from '#ts';
 
 import General from './General';
+import Users from './Users';
 import Regions from './Regions';
 import Frameworks from './Frameworks';
 import WordCategories from './WordCategories';
@@ -46,6 +47,7 @@ export default class ProjectDetails extends React.PureComponent {
 
         this.routes = {
             general: 'General',
+            users: 'Users',
             regions: 'Regions',
             frameworks: 'Framework',
             categoryEditors: 'Category Editor',
@@ -62,6 +64,10 @@ export default class ProjectDetails extends React.PureComponent {
             general: {
                 component: General,
                 rendererParams,
+            },
+            users: {
+                component: Users,
+                rendererParams: () => ({ className: styles.content }),
             },
             regions: {
                 component: Regions,

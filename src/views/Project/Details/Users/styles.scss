@@ -1,0 +1,73 @@
+@import '~base-scss/base';
+
+$width-region-list: 240px;
+
+.users {
+    display: flex;
+    flex-grow: 1;
+
+    .user-details-container {
+        flex-basis: calc(100% - #{$width-region-list});
+
+        .other-users,
+        .other-user-groups {
+            margin-bottom: $spacing-small;
+            background-color: $color-foreground;
+
+            >.heading {
+                padding: $spacing-medium;
+            }
+
+            .content {
+                flex-basis: 100%;
+                flex-grow: 1;
+                background-color: $color-background-row;
+                overflow-y: auto;
+            }
+        }
+    }
+
+    .user-search {
+        display: flex;
+        flex-basis: $width-region-list;
+        flex-direction: column;
+        border-right: $width-separator-thin solid $color-separator-alt;
+
+        >.header {
+            @include background-color($color-background-header);
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            border-bottom: $width-separator-thin solid $color-separator;
+            padding: $spacing-small;
+
+            >.heading {
+                flex-grow: 1;
+            }
+
+            .user-search-input {
+                flex-basis: 100%;
+            }
+        }
+
+        /*.content {
+        flex-grow: 1;
+        overflow-y: auto;
+        }
+         */
+    }
+
+
+    /*
+    .no-users {
+        display: flex;
+        align-items: center;
+        flex-basis: calc(100% - #{$width-region-list});
+        justify-content: center;
+        color: $color-text-disabled;
+        font-size: $font-size-large;
+    }
+    */
+}
+

@@ -4,6 +4,8 @@ export const urlForUserMembership = `${wsEndpoint}/group-memberships/`;
 
 export const createUrlForUserGroup = userGroupId => `${wsEndpoint}/user-groups/${userGroupId}/`;
 
+export const createUrlForUsersAndUserGroups = searchQuery => `${wsEndpoint}/users-user-groups/?${p({ search: searchQuery })}`;
+
 export const createUrlForUserMembership = userMembershipId =>
     `${wsEndpoint}/group-memberships/${userMembershipId}/`;
 
