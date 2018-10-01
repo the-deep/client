@@ -7,6 +7,8 @@ import memoize from 'memoize-one';
 import { reverseRoute } from '#rsu/common';
 import FixedTabs from '#rscv/FixedTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import AccentButton from '#rsca/Button/AccentButton';
+import modalize from '#rscg/Modalize';
 
 import {
     projectDetailsSelector,
@@ -20,11 +22,13 @@ import _ts from '#ts';
 import Preview from './Preview';
 
 import UseFrameworkButton from './UseFrameworkButton';
-import CloneFrameworkButton from './CloneFrameworkButton';
+import CloneFrameworkModal from './CloneFrameworkModal';
 
 import FrameworkGetRequest from './requests/FrameworkGetRequest';
 
 import styles from './styles.scss';
+
+const AccentModalButton = modalize(AccentButton);
 
 const propTypes = {
     className: PropTypes.string,
@@ -100,7 +104,7 @@ export default class FrameworkDetail extends React.PureComponent {
 
         const editFrameworkButtonTitle = _ts('project.framework', 'editFrameworkButtonTitle');
 
-        const params = { frameworkId };
+        const params = { analysisFrameworkId: frameworkId };
 
         return (
             <Link
@@ -159,14 +163,23 @@ export default class FrameworkDetail extends React.PureComponent {
                             projectId={projectId}
                             setProjectFramework={setProjectFramework}
                         />
+
                         <EditFrameworkButton />
-                        <CloneFrameworkButton
-                            projectId={projectId}
-                            frameworkId={frameworkId}
-                            addNewFramework={addNewFramework}
-                            setActiveFramework={setActiveFramework}
+
+                        <AccentModalButton
                             disabled={pending}
-                        />
+                            modal={
+                                <CloneFrameworkModal
+                                    projectId={projectId}
+                                    frameworkId={frameworkId}
+                                    addNewFramework={addNewFramework}
+                                    setActiveFramework={setActiveFramework}
+                                />
+                            }
+                        >
+                            { _ts('project.framework', 'cloneButtonTitle') }
+                        </AccentModalButton>
+
                     </div>
                 </div>
                 { frameworkDescription && (
