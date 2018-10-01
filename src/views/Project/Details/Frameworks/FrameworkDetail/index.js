@@ -104,7 +104,7 @@ export default class FrameworkDetail extends React.PureComponent {
 
         const editFrameworkButtonTitle = _ts('project.framework', 'editFrameworkButtonTitle');
 
-        const params = { frameworkId };
+        const params = { analysisFrameworkId: frameworkId };
 
         return (
             <Link
