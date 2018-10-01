@@ -16,6 +16,9 @@ before_install:
     - git clone https://github.com/toggle-corp/ravl.git src/vendor/ravl
     - git --git-dir=src/vendor/ravl/.git --no-pager show --pretty=fuller --quiet
 
+    - git clone https://github.com/timilsinabishal/react-components.git src/vendor/react-components
+    - git --git-dir=src/vendor/react-components/.git --no-pager show --pretty=fuller --quiet
+
     - docker pull thedeep/deep-client:latest
     - docker build --cache-from thedeep/deep-client:latest --tag thedeep/deep-client:latest .
 

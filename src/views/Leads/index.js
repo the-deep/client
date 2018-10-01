@@ -8,31 +8,39 @@ import {
 
 import Message from '#rscv/Message';
 import AccentButton from '#rsca/Button/AccentButton';
+import Button from '#rsca/Button';
 import FormattedDate from '#rscv/FormattedDate';
-import LoadingAnimation from '#rscv/LoadingAnimation';
+import SelectInput from '#rsci/SelectInput';
 import Pager from '#rscv/Pager';
-import RawTable from '#rscv/RawTable';
-import TableHeader from '#rscv/TableHeader';
 import {
     reverseRoute,
     isObjectEmpty,
 } from '#rsu/common';
 
 import Cloak from '#components/general/Cloak';
-import { iconNames, pathNames, viewsAcl } from '#constants';
+import MultiViewContainer from '#rscv/MultiViewContainer';
+import FixedTabs from '#rscv/FixedTabs';
+import {
+    iconNames,
+    pathNames,
+    viewsAcl,
+} from '#constants';
 import { leadTypeIconMap } from '#entities/lead';
 import {
     activeProjectIdFromStateSelector,
-    leadsForProjectSelector,
     totalLeadsCountForProjectSelector,
 
     setLeadsAction,
+    appendLeadsAction,
 
     leadPageFilterSelector,
     setLeadPageFilterAction,
 
     leadPageActiveSortSelector,
     setLeadPageActiveSortAction,
+
+    leadPageViewSelector,
+    setLeadPageViewAction,
 
     leadPageActivePageSelector,
     setLeadPageActivePageAction,
@@ -55,17 +63,20 @@ import DeleteLeadRequest from './requests/DeleteLeadRequest';
 import LeadsRequest from './requests/LeadsRequest';
 import PatchLeadRequest from './requests/PatchLeadRequest';
 
+import Table from './Table';
+import Grid from './Grid';
+
 import styles from './styles.scss';
 
 const propTypes = {
     filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    leads: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 
     activePage: PropTypes.number.isRequired,
     activeSort: PropTypes.string.isRequired,
     activeProject: PropTypes.number.isRequired,
     leadsPerPage: PropTypes.number.isRequired,
     setLeads: PropTypes.func.isRequired,
+    appendLeads: PropTypes.func.isRequired,
     removeLead: PropTypes.func.isRequired,
     patchLead: PropTypes.func.isRequired,
 
@@ -74,34 +85,41 @@ const propTypes = {
     setLeadPageActiveSort: PropTypes.func.isRequired,
     setLeadPageActivePage: PropTypes.func.isRequired,
     setLeadsPerPage: PropTypes.func.isRequired,
+    setLeadPageView: PropTypes.func.isRequired,
+    view: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
-    leads: [],
     totalLeadsCount: 0,
 };
 
 const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
 
-    leads: leadsForProjectSelector(state),
     totalLeadsCount: totalLeadsCountForProjectSelector(state),
     activePage: leadPageActivePageSelector(state),
     activeSort: leadPageActiveSortSelector(state),
     leadsPerPage: leadPageLeadsPerPageSelector(state),
     filters: leadPageFilterSelector(state),
+    view: leadPageViewSelector(state),
+
 });
 
 const mapDispatchToProps = dispatch => ({
     setLeads: params => dispatch(setLeadsAction(params)),
+    appendLeads: params => dispatch(appendLeadsAction(params)),
     removeLead: params => dispatch(removeLeadAction(params)),
     patchLead: params => dispatch(patchLeadAction(params)),
 
     setLeadPageActivePage: params => dispatch(setLeadPageActivePageAction(params)),
     setLeadPageActiveSort: params => dispatch(setLeadPageActiveSortAction(params)),
+    setLeadPageView: params => dispatch(setLeadPageViewAction(params)),
     setLeadPageFilter: params => dispatch(setLeadPageFilterAction(params)),
     setLeadsPerPage: params => dispatch(setLeadPageLeadsPerPageAction(params)),
 });
+
+const TABLE_VIEW = 'table';
+const GRID_VIEW = 'grid';
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Leads extends React.PureComponent {
@@ -109,6 +127,8 @@ export default class Leads extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static leadKeyExtractor = lead => String(lead.id)
+    static sortKeySelector = s => s.key
+    static sortLabelSelector = s => s.label
 
     constructor(props) {
         super(props);
@@ -158,7 +178,7 @@ export default class Leads extends React.PureComponent {
                 modifier: row => (
                     <Link
                         key={row.createdBy}
-                        className={styles.createdByLink}
+                        className="created-by-link"
                         to={reverseRoute(pathNames.userProfile, { userId: row.createdBy })}
                     >
                         {row.createdByName}
@@ -174,7 +194,7 @@ export default class Leads extends React.PureComponent {
                     assignee ? (
                         <Link
                             key={assignee}
-                            className={styles.assigneeLink}
+                            className="assignee-link"
                             to={reverseRoute(pathNames.userProfile, { userId: assignee })}
                         >
                             {assigneeDetails.displayName}
@@ -200,7 +220,7 @@ export default class Leads extends React.PureComponent {
                 sortable: true,
                 order: 8,
                 modifier: row => (
-                    <div className={styles.confidentiality}>
+                    <div className="confidentiality">
                         {row.confidentiality}
                     </div>
                 ),
@@ -211,7 +231,7 @@ export default class Leads extends React.PureComponent {
                 sortable: true,
                 order: 9,
                 modifier: row => (
-                    <div className={styles.status}>
+                    <div className="status">
                         {row.status}
                     </div>
                 ),
@@ -243,11 +263,45 @@ export default class Leads extends React.PureComponent {
             },
         ];
 
+        this.sortableHeaders = this.headers.filter(h => h.sortable);
+
         this.state = {
             loadingLeads: true,
             redirectTo: undefined,
             showLeadPreview: false,
         };
+
+        this.views = {
+            [TABLE_VIEW]: {
+                component: this.renderTableView,
+                wrapContainer: true,
+                mount: true,
+                lazyMount: true,
+            },
+
+            [GRID_VIEW]: {
+                component: this.renderGridView,
+                wrapContainer: true,
+                mount: true,
+                lazyMount: true,
+            },
+        };
+
+        this.tabs = {
+            [TABLE_VIEW]: TABLE_VIEW,
+            [GRID_VIEW]: GRID_VIEW,
+        };
+
+        const tabsIcons = {
+            [TABLE_VIEW]: iconNames.list,
+            [GRID_VIEW]: iconNames.grid,
+        };
+
+        this.lastFilters = {};
+
+        this.lastProject = {};
+
+        this.tabsModifier = key => <i className={tabsIcons[key]} />;
     }
 
     componentWillMount() {
@@ -281,20 +335,39 @@ export default class Leads extends React.PureComponent {
             filters,
             activePage,
             leadsPerPage,
+            view,
         } = nextProps;
 
         if (
-            this.props.activeProject !== activeProject ||
-            this.props.activeSort !== activeSort ||
-            this.props.filters !== filters ||
-            this.props.activePage !== activePage ||
-            this.props.leadsPerPage !== leadsPerPage
+            this.lastProject[view] !== activeProject ||
+            this.lastFilters[view] !== filters ||
+            (
+                (
+                    this.props.activeSort !== activeSort ||
+                    this.props.activePage !== activePage ||
+                    this.props.leadsPerPage !== leadsPerPage
+                ) &&
+                this.props.view === view
+            )
         ) {
             this.leadRequest.stop();
 
+            // append in case of next page reached in gridview
+            const shouldAppend = this.props.view === GRID_VIEW &&
+                view === GRID_VIEW &&
+                this.props.activeProject === activeProject &&
+                this.props.activeSort === activeSort &&
+                this.props.filters === filters &&
+                this.props.activePage !== activePage &&
+                this.props.leadsPerPage === leadsPerPage &&
+                activePage !== 1;
+
+            const setLeads = shouldAppend ?
+                this.props.appendLeads : this.props.setLeads;
+
             const request = new LeadsRequest({
                 setState: params => this.setState(params),
-                setLeads: this.props.setLeads,
+                setLeads,
             });
 
             this.leadRequest = request.create({
@@ -305,6 +378,9 @@ export default class Leads extends React.PureComponent {
                 leadsPerPage,
             });
             this.leadRequest.start();
+
+            this.lastFilters[view] = filters;
+            this.lastProject[view] = activeProject;
         }
     }
 
@@ -318,8 +394,33 @@ export default class Leads extends React.PureComponent {
 
     // UI
 
+    onGridEndReached = () => {
+        const { activePage, leadsPerPage, totalLeadsCount } = this.props;
+        if (activePage < Math.ceil(totalLeadsCount / leadsPerPage)) {
+            this.props.setLeadPageActivePage({ activePage: activePage + 1 });
+        }
+    }
+
     setLeadPreview = (row) => {
         this.setState({ showLeadPreview: true, value: row });
+    }
+
+    getSortDetails = () => {
+        const { activeSort } = this.props;
+        let sortDirIcon = iconNames.chevronUp;
+        let sortKey = activeSort;
+
+        if (!activeSort) {
+            sortDirIcon = iconNames.chevronUp;
+            sortKey = '';
+        } else if (activeSort[0] === '-') {
+            sortDirIcon = iconNames.chevronDown;
+            sortKey = activeSort.slice(1);
+        }
+        return {
+            sortDirIcon,
+            sortKey,
+        };
     }
 
     unsetLeadPreview = () => {
@@ -379,48 +480,24 @@ export default class Leads extends React.PureComponent {
         this.props.setLeadsPerPage({ leadsPerPage: pageCount });
     }
 
-    // TABLE
-
-    leadModifier = (lead, columnKey) => {
-        const header = this.headers.find(d => d.key === columnKey);
-        if (header.modifier) {
-            return header.modifier(lead);
-        }
-        return lead[columnKey];
-    }
-
-    headerModifier = (headerData) => {
-        const { activeSort } = this.props;
-
-        let sortOrder = '';
-        if (activeSort === headerData.key) {
-            sortOrder = 'asc';
-        } else if (activeSort === `-${headerData.key}`) {
-            sortOrder = 'dsc';
-        }
-        return (
-            <TableHeader
-                label={headerData.label}
-                sortOrder={sortOrder}
-                sortable={headerData.sortable}
-            />
-        );
-    }
-
-    handleTableHeaderClick = (key) => {
-        const headerData = this.headers.find(h => h.key === key);
-        // prevent click on 'actions' column
-        if (!headerData.sortable) {
-            return;
-        }
-
+    handleSortOrderClick = () => {
         let { activeSort } = this.props;
-        if (activeSort === key) {
-            activeSort = `-${key}`;
+        if (!activeSort) {
+            return;
+        } else if (activeSort[0] === '-') {
+            activeSort = activeSort.slice(1);
         } else {
-            activeSort = key;
+            activeSort = `-${activeSort}`;
         }
         this.props.setLeadPageActiveSort({ activeSort });
+    }
+
+    handleSortItemClick = (key) => {
+        this.props.setLeadPageActiveSort({ activeSort: key });
+    }
+
+    handleTabClick = (view) => {
+        this.props.setLeadPageView({ view });
     }
 
     renderMimeType = ({ row }) => {
@@ -435,14 +512,14 @@ export default class Leads extends React.PureComponent {
         }
         if (!url) {
             return (
-                <div className={styles.iconWrapper}>
+                <div className="icon-wrapper">
                     <i className={icon} />
                 </div>
             );
         }
 
         return (
-            <div className={styles.iconWrapper}>
+            <div className="icon-wrapper">
                 <AccentButton
                     iconName={icon}
                     onClick={() => this.setLeadPreview(row)}
@@ -461,6 +538,15 @@ export default class Leads extends React.PureComponent {
         return (
             <header className={styles.header}>
                 <FilterLeadsForm className={styles.filters} />
+                <FixedTabs
+                    tabs={this.tabs}
+                    useHash
+                    replaceHistory
+                    className={styles.fixedTabs}
+                    modifier={this.tabsModifier}
+                    onClick={this.handleTabClick}
+                    defaultHash={this.props.view}
+                />
                 <Cloak
                     {...viewsAcl.addLeads}
                     render={
@@ -482,6 +568,7 @@ export default class Leads extends React.PureComponent {
             activeProject,
             totalLeadsCount,
             activePage,
+            leadsPerPage,
         } = this.props;
 
         const showVisualizationLink = reverseRoute(
@@ -497,6 +584,10 @@ export default class Leads extends React.PureComponent {
             pathNames.leadGroups,
             { projectId: activeProject },
         );
+
+        const leadsCount = Math.min(activePage * leadsPerPage, totalLeadsCount);
+
+        const { sortDirIcon, sortKey } = this.getSortDetails();
 
         return (
             <footer className={styles.footer}>
@@ -536,16 +627,43 @@ export default class Leads extends React.PureComponent {
                         }
                     />
                 </div>
-                <div className={styles.pagerContainer}>
-                    <Pager
-                        activePage={activePage}
-                        className={styles.pager}
-                        itemsCount={totalLeadsCount}
-                        maxItemsPerPage={this.props.leadsPerPage}
-                        onPageClick={this.handlePageClick}
-                        onItemsPerPageChange={this.handleLeadsPerPageChange}
-                    />
-                </div>
+                { this.props.view === TABLE_VIEW ?
+                    (
+                        <div className={styles.pagerContainer}>
+                            <Pager
+                                activePage={activePage}
+                                className={styles.pager}
+                                itemsCount={totalLeadsCount}
+                                maxItemsPerPage={this.props.leadsPerPage}
+                                onPageClick={this.handlePageClick}
+                                onItemsPerPageChange={this.handleLeadsPerPageChange}
+                            />
+                        </div>
+                    )
+                    :
+                    (
+                        <div className={styles.sortingContainer}>
+                            <p>{_ts('leadsGrid', 'leadsRange', { leadsCount, totalLeadsCount })}</p>
+                            <p>{_ts('leadsGrid', 'sortedByLabel')}:</p>
+                            <SelectInput
+                                faramElementName="assignee"
+                                keySelector={this.sortKeySelector}
+                                labelSelector={this.sortLabelSelector}
+                                value={sortKey}
+                                options={this.sortableHeaders}
+                                onChange={this.handleSortItemClick}
+                                placeholder={_ts('leads', 'placeholderAnybody')}
+                                showHintAndError={false}
+                            />
+                            <Button
+                                tabIndex="-1"
+                                iconName={sortDirIcon}
+                                onClick={this.handleSortOrderClick}
+                                transparent
+                            />
+                        </div>
+                    )
+                }
             </footer>
         );
     }
@@ -595,10 +713,34 @@ export default class Leads extends React.PureComponent {
             </Message>
         );
     }
+    renderTableView = () => (
+        <Table
+            headers={this.headers}
+            activeSort={this.props.activeSort}
+            onHeaderClick={this.handleTableHeaderClick}
+            loading={this.state.loadingLeads}
+            setLeadPageActiveSort={this.props.setLeadPageActiveSort}
+            emptyComponent={this.renderEmpty}
+        />
+    )
+
+    renderGridView = () => (
+        <Grid
+            view={this.props.view}
+            loading={this.state.loadingLeads}
+            onEndReached={this.onGridEndReached}
+            setLeadPageActivePage={this.props.setLeadPageActivePage}
+            onSearchSimilarLead={this.handleSearchSimilarLead}
+            onRemoveLead={this.handleLeadDelete}
+            onMarkProcessed={this.handleMarkAsProcessed}
+            onMarkPending={this.handleMarkAsPending}
+            activeProject={this.props.activeProject}
+            emptyComponent={this.renderEmpty}
+        />
+    )
 
     render() {
         const {
-            loadingLeads,
             redirectTo,
             showLeadPreview,
             value,
@@ -619,21 +761,11 @@ export default class Leads extends React.PureComponent {
         return (
             <div className={styles.leads}>
                 <Header />
-                <div className={styles.tableContainer}>
-                    <div className={styles.scrollWrapper}>
-                        <RawTable
-                            data={this.props.leads}
-                            dataModifier={this.leadModifier}
-                            headerModifier={this.headerModifier}
-                            headers={this.headers}
-                            onHeaderClick={this.handleTableHeaderClick}
-                            className={styles.leadsTable}
-                            keySelector={Leads.leadKeyExtractor}
-                            emptyComponent={this.renderEmpty}
-                        />
-                        { loadingLeads && <LoadingAnimation /> }
-                    </div>
-                </div>
+                <MultiViewContainer
+                    views={this.views}
+                    useHash
+                    activeClassName={styles.active}
+                />
                 <Footer />
 
                 { showLeadPreview &&

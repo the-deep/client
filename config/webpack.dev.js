@@ -154,7 +154,7 @@ module.exports = (env) => {
                 messageBefore: 'Generating language map.',
                 command: `
                     find ${appSrc} -name *.js |
-                        xargs /usr/bin/gawk -f ${appSrc}/utils/finder.awk > usage.tmp &&
+                        xargs gawk -f ${appSrc}/utils/finder.awk > usage.tmp &&
                         mkdir -p ${appSrc}/generated &&
                         rsync -c usage.tmp ${appSrc}/generated/usage.js;
                         rm usage.tmp;
