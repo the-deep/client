@@ -165,8 +165,8 @@ export default class DocumentPanel extends React.PureComponent {
         });
     }
 
-    keyExtractorForGalleryFiles = file => file.id
-    keyExtractorForTabs = d => d.key
+    keySelectorForGalleryFiles = file => file.id
+    keySelectorForTabs = d => d.key
 
     renderTabHeader = (key, data, i) => (
         <button
@@ -191,7 +191,7 @@ export default class DocumentPanel extends React.PureComponent {
                 <header className={styles.header}>
                     <List
                         data={this.tabs}
-                        keyExtractor={this.keyExtractorForTabs}
+                        keySelector={this.keySelectorForTabs}
                         modifier={this.renderTabHeader}
                     />
                 </header>

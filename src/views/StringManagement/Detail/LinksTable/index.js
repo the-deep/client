@@ -38,7 +38,7 @@ export default class LinksTable extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = e => e.id;
+    static keySelector = e => e.id;
 
     constructor(props) {
         super(props);
@@ -149,7 +149,7 @@ export default class LinksTable extends React.PureComponent {
                     className={styles.linksTable}
                     data={linkCollection}
                     headers={this.linksTableHeader}
-                    keyExtractor={LinksTable.keyExtractor}
+                    keySelector={LinksTable.keySelector}
                     defaultSort={this.linksTableDefaultSort}
                 />
                 <DeleteConfirm

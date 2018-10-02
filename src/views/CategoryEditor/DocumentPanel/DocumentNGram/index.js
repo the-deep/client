@@ -71,7 +71,7 @@ export default class DocumentNGram extends React.PureComponent {
         e.dataTransfer.dropEffect = 'copy';
     }
 
-    keyExtractorKeywordTuple = keywordTuple => keywordTuple[0];
+    keySelectorKeywordTuple = keywordTuple => keywordTuple[0];
 
     renderNGramSelect = (key, data, i) => (
         <button
@@ -118,7 +118,7 @@ export default class DocumentNGram extends React.PureComponent {
                     className={styles.ngramList}
                     data={selectedNGram}
                     modifier={this.renderNGram}
-                    keyExtractor={this.keyExtractorKeywordTuple}
+                    keySelector={this.keySelectorKeywordTuple}
                 />
                 <div className={styles.ngramSelects}>
                     <h4 className={styles.heading}>
@@ -128,7 +128,7 @@ export default class DocumentNGram extends React.PureComponent {
                         className={styles.ngramSelectList}
                         data={ngramKeys}
                         modifier={this.renderNGramSelect}
-                        keyExtractor={this.keyExtractorKeywordTuple}
+                        keySelector={this.keySelectorKeywordTuple}
                     />
                 </div>
             </div>

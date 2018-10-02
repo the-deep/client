@@ -13,7 +13,7 @@ const propTypes = {
 
 export default class Row extends React.PureComponent {
     static propTypes = propTypes;
-    static keyExtractor = cell => cell.key;
+    static keySelector = cell => cell.key;
 
     rendererParams = (key, cell) => ({
         value: cell.value,
@@ -32,7 +32,7 @@ export default class Row extends React.PureComponent {
                 </div>
                 <ListView
                     data={cells}
-                    keyExtractor={Row.keyExtractor}
+                    keySelector={Row.keySelector}
                     rendererParams={this.rendererParams}
                     renderer={ListItem}
                 />

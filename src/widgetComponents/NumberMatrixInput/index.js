@@ -95,14 +95,14 @@ export default class NumberMatrixInput extends React.PureComponent {
                                 data={data.columnHeaders}
                                 renderer={ColumnHeader}
                                 rendererParams={this.columnHeaderRendererParams}
-                                keyExtractor={NumberMatrixInput.rowKeyExtractor}
+                                keySelector={NumberMatrixInput.rowKeyExtractor}
                             />
                         </tr>
                         <List
                             data={data.rowHeaders}
                             renderer={Row}
                             rendererParams={this.rowRendererParams}
-                            keyExtractor={NumberMatrixInput.rowKeyExtractor}
+                            keySelector={NumberMatrixInput.rowKeyExtractor}
                         />
                     </tbody>
                 </table>

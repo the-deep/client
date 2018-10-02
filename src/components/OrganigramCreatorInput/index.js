@@ -40,7 +40,7 @@ export default class OrganigramCreatorInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = organ => organ.key;
+    static keySelector = organ => organ.key;
 
     handleTextChange = (val) => {
         const settings = {
@@ -139,7 +139,7 @@ export default class OrganigramCreatorInput extends React.PureComponent {
                     <List
                         data={value.organs}
                         renderer={OrganigramCreatorInput}
-                        keyExtractor={OrganigramCreatorInput.keyExtractor}
+                        keySelector={OrganigramCreatorInput.keySelector}
                         rendererParams={this.rendererParams}
                     />
                 </div>

@@ -83,7 +83,7 @@ export default class Matrix1dInput extends React.PureComponent {
             <ListView
                 className={`${styles.overview} ${className}`}
                 data={options}
-                keyExtractor={Matrix1dInput.rowKeyExtractor}
+                keySelector={Matrix1dInput.rowKeyExtractor}
                 renderer={Row}
                 rendererParams={this.rendererParams}
             />

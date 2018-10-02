@@ -205,7 +205,7 @@ class ConditionsEditModal extends React.PureComponent {
                                     data={compatibleWidgets}
                                     renderer={WidgetPreview}
                                     rendererParams={this.widgetListRendererParams}
-                                    keyExtractor={ConditionsEditModal.widgetKeySelector}
+                                    keySelector={ConditionsEditModal.widgetKeySelector}
                                 />
                             </div>
                         </FaramList>

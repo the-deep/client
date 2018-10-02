@@ -246,7 +246,7 @@ export default class Entries extends React.PureComponent {
                                     className={styles.leadGroupedEntriesList}
                                     data={leadGroupedEntriesList}
                                     renderer={LeadGroupedEntries}
-                                    keyExtractor={leadKeySelector}
+                                    keySelector={leadKeySelector}
                                     rendererParams={this.rendererParams}
                                 />
                             </Fragment>

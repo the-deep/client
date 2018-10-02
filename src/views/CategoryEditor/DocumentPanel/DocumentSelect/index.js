@@ -115,7 +115,7 @@ export default class DocumentSelect extends React.PureComponent {
         this.setState({ showGallerySelectModal: true });
     }
 
-    keyExtractorForGalleryFiles = file => file.id
+    keySelectorForGalleryFiles = file => file.id
 
     renderGalleryFilesListItem = (fileId, file) => (
         <div
@@ -157,7 +157,7 @@ export default class DocumentSelect extends React.PureComponent {
                     className={styles.fileListView}
                     modifier={this.renderGalleryFilesListItem}
                     data={selectedFiles}
-                    keyExtractor={this.keyExtractorForGalleryFiles}
+                    keySelector={this.keySelectorForGalleryFiles}
                 />
                 <div className={styles.bottomBar}>
                     <Button

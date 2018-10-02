@@ -54,7 +54,7 @@ export default class Row extends React.PureComponent {
                         data={subsectors}
                         renderer={ListItem}
                         rendererParams={this.rendererParams}
-                        keyExtractor={Row.subsectorKeySelector}
+                        keySelector={Row.subsectorKeySelector}
                     />
                 </div>
             </div>

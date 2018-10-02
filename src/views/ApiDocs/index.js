@@ -107,7 +107,7 @@ export default class ApiDocs extends React.PureComponent {
             <h1>{docs.title}</h1>
             <List
                 data={docs.apis}
-                keyExtractor={this.calcApiKey}
+                keySelector={this.calcApiKey}
                 modifier={this.renderApi}
             />
         </div>
@@ -121,7 +121,7 @@ export default class ApiDocs extends React.PureComponent {
             <h2>api-{api.title}</h2>
             <List
                 data={api.endpoints}
-                keyExtractor={this.calcEndpointKey}
+                keySelector={this.calcEndpointKey}
                 modifier={this.renderEndpoint}
             />
         </div>
@@ -144,7 +144,7 @@ export default class ApiDocs extends React.PureComponent {
                 className={styles.methodsContainer}
                 data={endpoint.methods}
                 modifier={this.renderMethod}
-                keyExtractor={this.calcMethodKey}
+                keySelector={this.calcMethodKey}
             />
         </div>
     )

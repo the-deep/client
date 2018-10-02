@@ -150,7 +150,7 @@ export default class EntriesList extends React.PureComponent {
                 className={styles.entriesList}
                 modifier={this.renderEntryItem}
                 data={this.props.entries}
-                keyExtractor={EntriesList.calcEntryKey}
+                keySelector={EntriesList.calcEntryKey}
             />
         );
     }

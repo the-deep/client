@@ -48,7 +48,7 @@ export default class ConnectorDetails extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = d => d;
+    static keySelector = d => d;
 
     constructor(props) {
         super(props);

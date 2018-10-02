@@ -23,7 +23,7 @@ export default class SubdimensionRow extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = sector => sector.id;
+    static keySelector = sector => sector.id;
 
     rendererParams = (key) => {
         const {
@@ -55,7 +55,7 @@ export default class SubdimensionRow extends React.PureComponent {
                 </td>
                 <List
                     data={sectors}
-                    keyExtractor={SubdimensionRow.keyExtractor}
+                    keySelector={SubdimensionRow.keySelector}
                     renderer={Cell}
                     rendererParams={this.rendererParams}
                 />

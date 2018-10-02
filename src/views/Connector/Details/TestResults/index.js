@@ -140,7 +140,7 @@ export default class ConnectorTestResults extends React.PureComponent {
                     <Table
                         data={testLeads}
                         headers={tableHeader}
-                        keyExtractor={ConnectorTestResults.leadKeySelector}
+                        keySelector={ConnectorTestResults.leadKeySelector}
                     />
                 </div>
             </div>

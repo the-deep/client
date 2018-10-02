@@ -90,7 +90,7 @@ export default class Listing extends React.PureComponent {
                 data={entries}
                 renderer={WidgetFaramContainer}
                 rendererParams={this.rendererParams}
-                keyExtractor={this.keySelector}
+                keySelector={this.keySelector}
                 emptyComponent={EmptyComponent}
             />
         );

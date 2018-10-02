@@ -39,7 +39,7 @@ export default class NavMenu extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = d => d.key
+    static keySelector = d => d.key
 
     static computeSize = (navLinks, menu) => {
         if (!menu) {
@@ -183,7 +183,7 @@ export default class NavMenu extends React.PureComponent {
                 <List
                     data={navLinks}
                     modifier={this.renderNavbarItem}
-                    keyExtractor={NavMenu.keyExtractor}
+                    keySelector={NavMenu.keySelector}
                 />
                 <DropdownMenu
                     iconName={iconNames.overflowHorizontal}
@@ -194,7 +194,7 @@ export default class NavMenu extends React.PureComponent {
                     <List
                         data={overflowMenuLinks}
                         modifier={this.renderOverflowMenuItem}
-                        keyExtractor={NavMenu.keyExtractor}
+                        keySelector={NavMenu.keySelector}
                     />
                 </DropdownMenu>
             </div>

@@ -34,7 +34,7 @@ export default class RowContent extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = elem => elem.key;
+    static keySelector = elem => elem.key;
 
     static addOptionClick = options => ([
         ...options,
@@ -119,7 +119,7 @@ export default class RowContent extends React.PureComponent {
                     </div>
                     <FaramList
                         faramElementName="cells"
-                        keySelector={RowContent.keyExtractor}
+                        keySelector={RowContent.keySelector}
                     >
                         <NonFieldErrors
                             className={styles.error}

@@ -231,7 +231,7 @@ export default class DgSelect extends React.PureComponent {
         });
     };
 
-    keyExtractor = file => file.id
+    keySelector = file => file.id
 
     renderGalleryFileType = (row) => {
         const icon = leadTypeIconMap[row.mimeType] || iconNames.documentText;
@@ -299,7 +299,7 @@ export default class DgSelect extends React.PureComponent {
                 <Table
                     data={tableData}
                     headers={this.galleryFilesHeader}
-                    keyExtractor={this.keyExtractor}
+                    keySelector={this.keySelector}
                     defaultSort={this.defaultSort}
                 />
             </ModalBody>,

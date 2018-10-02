@@ -243,7 +243,7 @@ export default class SubcategoryPropertyPanel extends React.PureComponent {
                             className={styles.ngramSelectList}
                             data={ngramKeys}
                             modifier={this.renderNGramSelect}
-                            keyExtractor={d => d}
+                            keySelector={d => d}
                         />
                     </div>
                     {

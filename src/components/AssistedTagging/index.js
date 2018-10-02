@@ -554,7 +554,7 @@ export default class AssistedTagging extends React.PureComponent {
                             className={styles.sectors}
                             modifier={this.renderSectorList}
                             data={activeHighlightDetails.sectors}
-                            keyExtractor={this.calcSectorKey}
+                            keySelector={this.calcSectorKey}
                         />
                     )}
                     {onEntryAdd && (

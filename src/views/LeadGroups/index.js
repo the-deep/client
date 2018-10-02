@@ -331,7 +331,7 @@ export default class LeadGroups extends React.PureComponent {
                         headerModifier={this.headerModifier}
                         headers={this.headers}
                         onHeaderClick={this.handleTableHeaderClick}
-                        keyExtractor={this.leadGroupKeyExtractor}
+                        keySelector={this.leadGroupKeyExtractor}
                         className={styles.leadGroupsTable}
                     />
                 </div>

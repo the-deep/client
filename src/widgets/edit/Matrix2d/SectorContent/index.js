@@ -33,7 +33,7 @@ export default class SectorContent extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = elem => elem.id;
+    static keySelector = elem => elem.id;
 
     static addSubsectorClick = subsectors => ([
         ...subsectors,
@@ -115,7 +115,7 @@ export default class SectorContent extends React.PureComponent {
                     </div>
                     <FaramList
                         faramElementName="subsectors"
-                        keySelector={SectorContent.keyExtractor}
+                        keySelector={SectorContent.keySelector}
                     >
                         <NonFieldErrors
                             className={styles.error}

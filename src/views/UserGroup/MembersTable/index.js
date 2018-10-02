@@ -219,7 +219,7 @@ export default class MembersTable extends React.PureComponent {
                     <Table
                         data={membershipList}
                         headers={this.memberHeaders}
-                        keyExtractor={this.calcMemberKey}
+                        keySelector={this.calcMemberKey}
                     />
                 </div>
                 { showAddMemberModal &&

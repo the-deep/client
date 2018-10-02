@@ -40,7 +40,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = widget => widget.widgetId;
+    static keySelector = widget => widget.widgetId;
     static itemKeyExtractor = ({ widget }) => widget.key;
 
     static schema = {
@@ -213,7 +213,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                                         className={styles.widgetList}
                                         data={this.widgets}
                                         renderer={WidgetPreview}
-                                        keyExtractor={ConditionalWidgetEdit.keyExtractor}
+                                        keySelector={ConditionalWidgetEdit.keySelector}
                                         rendererParams={this.widgetListRendererParams}
                                     />
                                 </div>

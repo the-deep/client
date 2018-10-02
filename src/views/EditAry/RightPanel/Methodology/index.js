@@ -68,7 +68,7 @@ export default class Methodology extends React.PureComponent {
     static orgLabelSelector = organ => organ.title;
     static orgChildSelector = organ => organ.children;
 
-    static keyExtractor = d => d.key;
+    static keySelector = d => d.key;
 
     static removeAttribute = (attributes, index) => {
         const newAttributes = [...attributes];
@@ -177,7 +177,7 @@ export default class Methodology extends React.PureComponent {
 
                     <FaramList
                         faramElementName="attributes"
-                        keySelector={Methodology.keyExtractor}
+                        keySelector={Methodology.keySelector}
                     >
                         <div className={styles.attributesSection}>
                             <Header

@@ -38,7 +38,7 @@ export default class StringsTable extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = e => e.id;
+    static keySelector = e => e.id;
 
     constructor(props) {
         super(props);
@@ -159,7 +159,7 @@ export default class StringsTable extends React.PureComponent {
                     className={styles.stringsTable}
                     data={allStrings}
                     headers={this.stringsTableHeader}
-                    keyExtractor={StringsTable.keyExtractor}
+                    keySelector={StringsTable.keySelector}
                     defaultSort={this.stringsTableDefaultSort}
                 />
                 <DeleteConfirm

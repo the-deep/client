@@ -329,7 +329,7 @@ export default class ProjectRegions extends React.PureComponent {
                     className={styles.content}
                     modifier={this.renderRegionListItem}
                     data={sortedRegions}
-                    keyExtractor={this.calcRegionKey}
+                    keySelector={this.calcRegionKey}
                 />
             </div>
         );

@@ -214,7 +214,7 @@ export default class ProjectsTable extends React.PureComponent {
         });
     }
 
-    keyExtractor = rowData => rowData.id
+    keySelector = rowData => rowData.id
 
     render() {
         const { usergroup } = this.props;
@@ -258,7 +258,7 @@ export default class ProjectsTable extends React.PureComponent {
                     <Table
                         data={projects}
                         headers={this.projectHeaders}
-                        keyExtractor={this.keyExtractor}
+                        keySelector={this.keySelector}
                     />
                 </div>
                 { showAddProjectModal &&

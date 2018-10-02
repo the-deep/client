@@ -225,7 +225,7 @@ export default class DiscoverProjects extends React.PureComponent {
                 return (
                     <ListView
                         data={adminsList}
-                        keyExtractor={DiscoverProjects.membershipKeySelector}
+                        keySelector={DiscoverProjects.membershipKeySelector}
                         renderer={Admin}
                         rendererParams={rendererParams}
                         emptyComponent={EmptyComponent}
@@ -406,7 +406,7 @@ export default class DiscoverProjects extends React.PureComponent {
                             dataModifier={this.dataModifier}
                             headerModifier={this.headerModifier}
                             onHeaderClick={this.handleTableHeaderClick}
-                            keyExtractor={projectKeyExtractor}
+                            keySelector={projectKeyExtractor}
                             className={styles.projectsTable}
                         />
                         { pending && <LoadingAnimation large /> }

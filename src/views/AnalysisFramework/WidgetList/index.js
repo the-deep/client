@@ -33,7 +33,7 @@ export default class WidgetList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = widget => widget.widgetId;
+    static keySelector = widget => widget.widgetId;
 
     handleItemAdd = (widget) => {
         const {
@@ -86,7 +86,7 @@ export default class WidgetList extends React.PureComponent {
                     className={styles.widgetList}
                     data={widgets}
                     renderer={WidgetPreview}
-                    keyExtractor={WidgetList.keyExtractor}
+                    keySelector={WidgetList.keySelector}
                     rendererParams={this.rendererParams}
                 />
             </div>

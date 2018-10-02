@@ -279,7 +279,7 @@ export default class Connector extends React.PureComponent {
                     <ListView
                         className={styles.connectorsList}
                         data={displayConnectorsList}
-                        keyExtractor={Connector.connectorKeySelector}
+                        keySelector={Connector.connectorKeySelector}
                         modifier={this.renderConnectorListItem}
                     />
                 </div>

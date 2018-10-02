@@ -74,7 +74,7 @@ export default class Matrix1dListOutput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = row => row.title;
+    static keySelector = row => row.title;
 
     constructor(props) {
         super(props);
@@ -113,7 +113,7 @@ export default class Matrix1dListOutput extends React.PureComponent {
             <ListView
                 className={className}
                 data={this.selectedRows}
-                keyExtractor={Matrix1dListOutput.keyExtractor}
+                keySelector={Matrix1dListOutput.keySelector}
                 renderer={Row}
                 rendererParams={this.rendererParams}
             />

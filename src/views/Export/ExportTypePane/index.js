@@ -219,7 +219,7 @@ export default class ExportTypePane extends React.PureComponent {
                         className={styles.exportTypeSelectList}
                         data={this.exportTypes}
                         modifier={this.renderExportType}
-                        keyExtractor={ExportTypePane.exportTypeKeyExtractor}
+                        keySelector={ExportTypePane.exportTypeKeyExtractor}
                     />
                 </div>
                 <div className={styles.exportTypeOptions}>

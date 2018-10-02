@@ -116,7 +116,7 @@ export default class OrganigramListOutput extends React.PureComponent {
             <ListView
                 className={`${className} ${styles.list}`}
                 data={this.selections}
-                keyExtractor={OrganigramListOutput.valueKeySelector}
+                keySelector={OrganigramListOutput.valueKeySelector}
                 renderer={ListItem}
                 rendererParams={this.rendererParams}
             />

@@ -110,7 +110,7 @@ export default class LeadGroupedEntries extends React.PureComponent {
                 data={entries}
                 renderer={Entry}
                 rendererParams={this.getEntryParams}
-                keyExtractor={entryKeySelector}
+                keySelector={entryKeySelector}
             />
         );
     }

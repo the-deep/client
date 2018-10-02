@@ -318,7 +318,7 @@ export default class Arys extends React.PureComponent {
                         headerModifier={this.headerModifier}
                         headers={this.headers}
                         onHeaderClick={this.handleTableHeaderClick}
-                        keyExtractor={this.aryKeyExtractor}
+                        keySelector={this.aryKeyExtractor}
                         className={styles.arysTable}
                     />
                     { loadingArys && <LoadingAnimation large /> }

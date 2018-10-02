@@ -40,7 +40,7 @@ export default class Matrix2dInput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = dimension => dimension.id;
+    static keySelector = dimension => dimension.id;
 
     static titleKeyExtractor = sector => sector.id;
 
@@ -122,7 +122,7 @@ export default class Matrix2dInput extends React.PureComponent {
                             <th />
                             <List
                                 data={sectors}
-                                keyExtractor={Matrix2dInput.titleKeyExtractor}
+                                keySelector={Matrix2dInput.titleKeyExtractor}
                                 renderer={SectorTitle}
                                 rendererParams={this.titleRendererParams}
                             />
@@ -131,7 +131,7 @@ export default class Matrix2dInput extends React.PureComponent {
                     <tbody>
                         <List
                             data={dimensions}
-                            keyExtractor={Matrix2dInput.keyExtractor}
+                            keySelector={Matrix2dInput.keySelector}
                             renderer={DimensionRow}
                             rendererParams={this.rendererParams}
                         />

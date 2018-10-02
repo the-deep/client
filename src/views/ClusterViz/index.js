@@ -431,7 +431,7 @@ export default class ClusterViz extends PureComponent {
                         onBodyHoverOut={this.handleTableHoverOut}
                         onBodyClick={this.handleBodyClick}
                         highlightRowKey={highlightTableId}
-                        keyExtractor={ClusterViz.leadsTableKeyExtractor}
+                        keySelector={ClusterViz.leadsTableKeyExtractor}
                         emptyComponent={leadsEmptyComponent}
                     />
                 </div>
@@ -576,7 +576,7 @@ export default class ClusterViz extends PureComponent {
                             <ListView
                                 className={styles.clusterDetails}
                                 data={this.clusterGroupList}
-                                keyExtractor={ClusterViz.getTableKey}
+                                keySelector={ClusterViz.getTableKey}
                                 modifier={this.renderClusterDetail}
                             />
                         </Fragment>

@@ -359,7 +359,7 @@ export default class UserExports extends React.PureComponent {
                         <Table
                             data={userExports || emptyList}
                             headers={this.exportsTableHeader}
-                            keyExtractor={UserExports.tableKeyExtractor}
+                            keySelector={UserExports.tableKeyExtractor}
                             highlightRowKey={selectedExport}
                             onBodyClick={this.handleRowClick}
                             defaultSort={this.defaultSort}

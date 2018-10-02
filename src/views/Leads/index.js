@@ -555,7 +555,7 @@ export default class Leads extends React.PureComponent {
                             headerModifier={this.headerModifier}
                             headers={this.headers}
                             onHeaderClick={this.handleTableHeaderClick}
-                            keyExtractor={Leads.leadKeyExtractor}
+                            keySelector={Leads.leadKeyExtractor}
                             className={styles.leadsTable}
                         />
                         { loadingLeads && <LoadingAnimation large /> }
