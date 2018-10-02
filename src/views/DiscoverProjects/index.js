@@ -15,6 +15,7 @@ import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
 import SparkLines from '#rscz/SparkLines';
 import Numeral from '#rscv/Numeral';
+import { formatDate } from '#rsu/date';
 
 import {
     discoverProjectsTotalProjectsCountSelector,
@@ -108,8 +109,7 @@ export default class DiscoverProjects extends React.PureComponent {
     static activityDateSelector = a => new Date(a.date).getTime();
     static activityDateModifier = d => `
         ${_ts('discoverProjects.table', 'dateLabel')}:
-        ${FormattedDate.format(new Date(d), 'dd-MM-yyyy')}
-    `;
+        ${formatDate(new Date(d), 'dd-MM-yyyy')} `;
     static entriesActivityNumberModifier = d => `
         ${_ts('discoverProjects.table', 'numberOfEntries')}: ${d}
     `;

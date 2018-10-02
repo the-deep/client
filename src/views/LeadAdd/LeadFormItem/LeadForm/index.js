@@ -14,8 +14,8 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import SelectInput from '#rsci/SelectInput';
 import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
-import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import { formatDate } from '#rsu/date';
 
 import {
     LEAD_TYPE,
@@ -114,7 +114,7 @@ export default class LeadForm extends React.PureComponent {
         // FIXME: don't use this, use utils by dahal
         if (!values.publishedOn) {
             const now = new Date();
-            newValues.publishedOn = FormattedDate.format(now, 'yyyy-MM-dd');
+            newValues.publishedOn = formatDate(now, 'yyyy-MM-dd');
             valuesChanged = true;
         }
 
