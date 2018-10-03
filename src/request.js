@@ -8,7 +8,6 @@ import {
     createRequestClient,
     RestRequest,
 } from '@togglecorp/react-rest-request';
-
 import { wsEndpoint } from '#config/rest';
 import { tokenSelector } from '#redux';
 
