@@ -9,8 +9,9 @@ import {
     createRequestClient,
     RestRequest,
 } from '@togglecorp/react-rest-request';
-import { tokenSelector } from '#redux';
+
 import { wsEndpoint } from '#config/rest';
+import { tokenSelector } from '#redux';
 
 const mapStateToProps = state => ({
     token: tokenSelector(state),
