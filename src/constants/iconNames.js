@@ -80,6 +80,7 @@ const iconNames = {
     thumbsDown: 'ion-thumbsdown',
     upload: 'ion-android-upload',
     user: 'ion-android-contact',
+    userGroup: 'ion-android-contacts',
     warning: 'ion-alert-circled',
     wrench: 'ion-wrench',
     checkAll: 'ion-android-done-all',
