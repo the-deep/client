@@ -1,7 +1,6 @@
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 
-import { tokenSelector } from '#redux';
 import update from '#rsu/immutable-update';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
@@ -9,6 +8,8 @@ import {
     createRequestClient,
     RestRequest,
 } from '@togglecorp/react-rest-request';
+import { tokenSelector } from '#redux';
+import { wsEndpoint } from '#config/rest';
 
 const mapStateToProps = state => ({
     token: tokenSelector(state),
@@ -35,6 +36,14 @@ const CustomRequestCoordinator = createRequestCoordinator({
             ...otherProps
         } = props;
         return otherProps;
+    },
+
+    transformUrl: (url) => {
+        if (/^https?:\/\//i.test(url)) {
+            return url;
+        }
+
+        return `${wsEndpoint}${url}`;
     },
 });
 

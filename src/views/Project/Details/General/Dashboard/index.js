@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import memoize from 'memoize-one';
 
 import SelectInput from '#rsci/SelectInput';
 import FormattedDate from '#rscv/FormattedDate';
@@ -10,7 +9,6 @@ import Message from '#rscv/Message';
 
 import RegionMap from '#components/RegionMap';
 import { RequestCoordinator, RequestClient, requestMethods } from '#request';
-import { createUrlForProject } from '#rest/projects';
 
 import styles from './styles.scss';
 
@@ -31,34 +29,12 @@ const defaultProps = {
 // eslint-disable-next-line no-underscore-dangle
 const _cs = (...names) => names.join(' ');
 
-const calcTopValues = (array, count, selector) => {
-    const sortedArray = [...array]
-        .sort((a, b) => selector(a) - selector(b));
-
-    // In case when last several values are equal,
-    // we take them all even if num > count.
-    let num = count;
-    for (; num <= sortedArray.length; num += 1) {
-        if (sortedArray[num - 1] === sortedArray[num]) {
-            num += 1;
-        }
-    }
-
-    return sortedArray.slice(0, num);
-};
-
-const calcTopSourcers = memoize(project =>
-    calcTopValues(project.memberships, 3, p => p.numberOfLeads));
-
-const calcTopTaggers = memoize(project =>
-    calcTopValues(project.memberships, 3, p => p.numberOfEntries));
-
 const requests = {
     projectRequest: {
         onMount: true,
         onPropsChanged: ['projectId'],
         method: requestMethods.GET,
-        url: props => createUrlForProject(props.projectId),
+        url: ({ props }) => `/projects/${props.projectId}/dashboard/`,
     },
 };
 
@@ -133,19 +109,18 @@ export default class ProjectDashboard extends React.PureComponent {
     )
 
     renderSourcers = () => {
-        const { projectRequest: { response: project } } = this.props;
-        const sourcers = calcTopSourcers(project);
+        const { projectRequest: { response: { topSourcers, numberOfLeads } } } = this.props;
 
         return (
             <div className={styles.userTable}>
                 <h4> Top sourcers </h4>
-                {sourcers.map(sourcer => (
+                {topSourcers.map(sourcer => (
                     <div className={styles.user} key={sourcer.id}>
                         <div className={styles.name}>
-                            {sourcer.memberName}
+                            {sourcer.name}
                         </div>
                         <Numeral
-                            value={(sourcer.numberOfLeads / project.numberOfLeads) * 100}
+                            value={(sourcer.count / numberOfLeads) * 100}
                             suffix="%"
                             precision={0}
                         />
@@ -156,19 +131,18 @@ export default class ProjectDashboard extends React.PureComponent {
     }
 
     renderTaggers = () => {
-        const { projectRequest: { response: project } } = this.props;
-        const taggers = calcTopTaggers(project);
+        const { projectRequest: { response: { topTaggers, numberOfEntries } } } = this.props;
 
         return (
             <div className={styles.userTable}>
                 <h4> Top taggers </h4>
-                {taggers.map(tagger => (
+                {topTaggers.map(tagger => (
                     <div className={styles.user} key={tagger.id}>
                         <div className={styles.name}>
-                            {tagger.memberName}
+                            {tagger.name}
                         </div>
                         <Numeral
-                            value={(tagger.numberOfEntries / project.numberOfEntries) * 100}
+                            value={(tagger.count / numberOfEntries) * 100}
                             suffix="%"
                             precision={0}
                         />
@@ -227,7 +201,7 @@ export default class ProjectDashboard extends React.PureComponent {
                         Project status
                     </div>
                     <div className={styles.value}>
-                        {project.statusTitle}
+                        {project.status}
                     </div>
                 </div>
                 <div className={styles.infoItem}>
@@ -235,7 +209,7 @@ export default class ProjectDashboard extends React.PureComponent {
                         Created by
                     </div>
                     <div className={styles.value}>
-                        {project.createdByName}
+                        {project.createdBy}
                     </div>
                 </div>
                 <div className={styles.infoItem}>
