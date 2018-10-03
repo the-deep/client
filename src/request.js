@@ -1,0 +1,47 @@
+import { compose } from 'redux';
+import { connect } from 'react-redux';
+
+import { tokenSelector } from '#redux';
+import update from '#rsu/immutable-update';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {
+    createRequestCoordinator,
+    createRequestClient,
+    RestRequest,
+} from '@togglecorp/react-rest-request';
+
+const mapStateToProps = state => ({
+    token: tokenSelector(state),
+});
+
+const CustomRequestCoordinator = createRequestCoordinator({
+    transformParams: (params, props) => {
+        const { access } = props.token;
+        if (!access) {
+            return params;
+        }
+
+        const settings = {
+            headers: { $auto: {
+                Authorization: { $set: `Bearer ${access}` },
+            } },
+        };
+
+        return update(params, settings);
+    },
+    transformProps: (props) => {
+        const {
+            token, // eslint-disable-line no-unused-vars
+            ...otherProps
+        } = props;
+        return otherProps;
+    },
+});
+
+export const RequestCoordinator = compose(
+    connect(mapStateToProps),
+    CustomRequestCoordinator,
+);
+
+export const RequestClient = createRequestClient();
+export const requestMethods = RestRequest.methods;

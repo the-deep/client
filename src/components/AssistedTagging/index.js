@@ -45,7 +45,7 @@ const emptyList = [];
 const emptyObject = {};
 
 // Cut off threshold for NLP classification's confidence
-const NLP_THRESHOLD = 0.33;
+const NLP_THRESHOLD = 0.70;
 
 export default class AssistedTagging extends React.PureComponent {
     static propTypes = propTypes;

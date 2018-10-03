@@ -155,6 +155,7 @@
         "redux-persist": "^5.9.1",
         "redux-thunk": "^2.2.0",
         "reselect": "^3.0.1",
+        "resize-observer-polyfill": "^1.5.0",
         "svgsaver": "^0.9.0"
     }
 }
