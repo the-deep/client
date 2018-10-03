@@ -38,7 +38,7 @@
                     "#rscz": "./src/vendor/react-store/components/Visualization",
                     "#rsu": "./src/vendor/react-store/utils",
                     "#rsk": "./src/vendor/react-store/constants",
-                    "#request": "./src/vendor/request/src",
+                    "#request": "./src/request",
                     "#components": "./src/components",
                     "#widgets": "./src/widgets",
                     "#widgetComponents": "./src/widgetComponents",

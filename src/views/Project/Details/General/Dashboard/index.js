@@ -9,7 +9,7 @@ import Numeral from '#rscv/Numeral';
 import Message from '#rscv/Message';
 
 import RegionMap from '#components/RegionMap';
-import RequestCoordinator from '#components/RequestCoordinator';
+import { RequestCoordinator, RequestClient, requestMethods } from '#request';
 import { createUrlForProject } from '#rest/projects';
 
 import styles from './styles.scss';
@@ -17,59 +17,53 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    project: PropTypes.shape({
-        createdAt: PropTypes.string,
-        createdByName: PropTypes.string,
-        numberOfUsers: PropTypes.number,
-        statusTitle: PropTypes.string,
-
-        numberOfLeads: PropTypes.number,
-        leadsActivity: PropTypes.array,
-
-        numberOfEntries: PropTypes.number,
-        entriesActivity: PropTypes.array,
-        regions: PropTypes.array,
-
-        memberships: PropTypes.array,
-    }),
+    projectRequest: PropTypes.shape({
+        pending: PropTypes.bool,
+        response: PropTypes.object,
+    }).isRequired,
 };
 
 const defaultProps = {
     className: '',
-    project: undefined,
 };
 
 
-const classNames = memoize((...names) => names.join(' '));
+// eslint-disable-next-line no-underscore-dangle
+const _cs = (...names) => names.join(' ');
 
-const calcTopSourcers = memoize((project) => {
-    const sortedMemberships = [...project.memberships]
-        .sort((p1, p2) => p1.numberOfLeads - p2.numberOfLeads);
+const calcTopValues = (array, count, selector) => {
+    const sortedArray = [...array]
+        .sort((a, b) => selector(a) - selector(b));
 
-    // FIXME: Do not just slice at 3 for cases when values may be equal.
-    return sortedMemberships.slice(0, 3);
-});
-const calcTopTaggers = memoize((project) => {
-    const sortedMemberships = [...project.memberships]
-        .sort((p1, p2) => p1.numberOfEntries - p2.numberOfEntries);
+    // In case when last several values are equal,
+    // we take them all even if num > count.
+    let num = count;
+    for (; num <= sortedArray.length; num += 1) {
+        if (sortedArray[num - 1] === sortedArray[num]) {
+            num += 1;
+        }
+    }
 
-    // FIXME: Do not just slice at 3 for cases when values may be equal.
-    return sortedMemberships.slice(0, 3);
-});
+    return sortedArray.slice(0, num);
+};
 
+const calcTopSourcers = memoize(project =>
+    calcTopValues(project.memberships, 3, p => p.numberOfLeads));
 
-@RequestCoordinator({
-    initalRequest: {
-        key: 'project',
-        dependencies: ['projectId'],
-        method: 'get',
-        requestData: ({ projectId }) => ({
-            url: createUrlForProject(projectId),
-        }),
-        pendingAction: 'hide',
-        loadingComponent: () => <div>Loading</div>,
+const calcTopTaggers = memoize(project =>
+    calcTopValues(project.memberships, 3, p => p.numberOfEntries));
+
+const requests = {
+    projectRequest: {
+        onMount: true,
+        onPropsChanged: ['projectId'],
+        method: requestMethods.GET,
+        url: props => createUrlForProject(props.projectId),
     },
-})
+};
+
+@RequestCoordinator
+@RequestClient(requests)
 export default class ProjectDashboard extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -94,7 +88,7 @@ export default class ProjectDashboard extends React.PureComponent {
         };
     }
 
-    getClassName = () => classNames(
+    getClassName = () => _cs(
         this.props.className,
         'project-dashboard',
         styles.projectDashboard,
@@ -106,10 +100,12 @@ export default class ProjectDashboard extends React.PureComponent {
 
     renderLeadsActivity = () => (
         <div className={styles.chart}>
-            <h3> Leads Activity </h3>
+            <h4>
+                Leads Activity - Last 7 Days
+            </h4>
             <SparkLines
                 className={styles.sparkLine}
-                data={this.props.project.leadsActivity}
+                data={this.props.projectRequest.response.leadsActivity}
                 yValueSelector={ProjectDashboard.activityCountSelector}
                 xValueSelector={ProjectDashboard.activityDateSelector}
                 xLabelModifier={ProjectDashboard.activityDateModifier}
@@ -121,10 +117,12 @@ export default class ProjectDashboard extends React.PureComponent {
 
     renderEntriesActivity = () => (
         <div className={styles.chart}>
-            <h3> Entries Activity </h3>
+            <h4>
+                Entries Activity - Last 7 Days
+            </h4>
             <SparkLines
                 className={styles.sparkLine}
-                data={this.props.project.entriesActivity}
+                data={this.props.projectRequest.response.entriesActivity}
                 yValueSelector={ProjectDashboard.activityCountSelector}
                 xValueSelector={ProjectDashboard.activityDateSelector}
                 xLabelModifier={ProjectDashboard.activityDateModifier}
@@ -135,12 +133,12 @@ export default class ProjectDashboard extends React.PureComponent {
     )
 
     renderSourcers = () => {
-        const { project } = this.props;
+        const { projectRequest: { response: project } } = this.props;
         const sourcers = calcTopSourcers(project);
 
         return (
             <div className={styles.userTable}>
-                <h3> Top sourcers </h3>
+                <h4> Top sourcers </h4>
                 {sourcers.map(sourcer => (
                     <div className={styles.user} key={sourcer.id}>
                         <div className={styles.name}>
@@ -158,12 +156,12 @@ export default class ProjectDashboard extends React.PureComponent {
     }
 
     renderTaggers = () => {
-        const { project } = this.props;
+        const { projectRequest: { response: project } } = this.props;
         const taggers = calcTopTaggers(project);
 
         return (
             <div className={styles.userTable}>
-                <h3> Top taggers </h3>
+                <h4> Top taggers </h4>
                 {taggers.map(tagger => (
                     <div className={styles.user} key={tagger.id}>
                         <div className={styles.name}>
@@ -181,7 +179,7 @@ export default class ProjectDashboard extends React.PureComponent {
     }
 
     renderSummary = () => {
-        const { project } = this.props;
+        const { projectRequest: { response: project } } = this.props;
 
         return (
             <div className={styles.summary}>
@@ -220,7 +218,7 @@ export default class ProjectDashboard extends React.PureComponent {
     }
 
     renderInfo = () => {
-        const { project } = this.props;
+        const { projectRequest: { response: project } } = this.props;
 
         return (
             <div className={styles.info}>
@@ -255,7 +253,7 @@ export default class ProjectDashboard extends React.PureComponent {
     }
 
     renderMetadata = () => (
-        <div className={classNames(styles.row, styles.metadata)}>
+        <div className={_cs(styles.row, styles.metadata)}>
             <div className={styles.leftSection}>
                 <div className={styles.topSection}>
                     {this.renderLeadsActivity()}
@@ -278,10 +276,10 @@ export default class ProjectDashboard extends React.PureComponent {
     )
 
     renderMap = () => {
-        const { regions } = this.props.project;
+        const { projectRequest: { response: { regions } } } = this.props;
         if (regions.length === 0) {
             return (
-                <div className={classNames(styles.row, styles.map)}>
+                <div className={_cs(styles.row, styles.map)}>
                     <Message>
                         There is no geo region for this project.
                     </Message>
@@ -292,7 +290,7 @@ export default class ProjectDashboard extends React.PureComponent {
         const selectedRegion = this.state.selectedRegion || regions[0].id;
 
         return (
-            <div className={classNames(styles.row, styles.map)}>
+            <div className={_cs(styles.row, styles.map)}>
                 <RegionMap regionId={selectedRegion} />
                 <SelectInput
                     className={styles.regionSelectInput}
@@ -302,6 +300,7 @@ export default class ProjectDashboard extends React.PureComponent {
                     value={selectedRegion}
                     onChange={this.handleRegionChange}
                     showHintAndError={false}
+                    hideClearButton
                 />
             </div>
         );
@@ -312,7 +311,7 @@ export default class ProjectDashboard extends React.PureComponent {
         const Metadata = this.renderMetadata;
         const Map = this.renderMap;
 
-        if (!this.props.project) {
+        if (!this.props.projectRequest.response) {
             return (
                 <div className={className} />
             );
