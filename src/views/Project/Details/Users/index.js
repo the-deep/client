@@ -45,8 +45,8 @@ import {
     ProjectUserGroupsGetRequest,
     ProjectUserGroupDeleteRequest,
 } from './requests/ProjectUserGroupRequest';
-import SearchResult from './SearchResult';
 
+import SearchList from './SearchList';
 import styles from './styles.scss';
 
 
@@ -309,6 +309,7 @@ export default class Users extends React.PureComponent {
             }
             return;
         }
+
         this.getUsersAndUserGroupsRequest.init(trimmedInput);
         this.getUsersAndUserGroupsRequest.start();
     }
@@ -399,52 +400,37 @@ export default class Users extends React.PureComponent {
         );
     };
 
-    renderUserSearch = () => {
-        const searchPlaceholder = _ts('project', 'searchUserPlaceholder');
-        const userUserGroupLabel = _ts('project', 'userUserGroupLabel');
-
-        return (
-            <div className={styles.userSearch}>
-                <header className={styles.header}>
-                    <h4 className={styles.heading}>
-                        { userUserGroupLabel }
-                    </h4>
-                    <SearchInput
-                        className={styles.userSearchInput}
-                        onChange={this.handleSearchChange}
-                        placeholder={searchPlaceholder}
-                        value={this.state.searchInputValue}
-                        showHintAndError={false}
-                        showLabel={false}
-                    />
-                    <ListView
-                        keyExtractor={data => data.type + data.id}
-                        rendererParams={this.searchResultRendererParams}
-                        data={this.state.searchResults}
-                        renderer={SearchResult}
-                    />
-                </header>
-            </div>
-        );
-    }
-
     render() {
         const UserDetails = this.renderUserDetails;
-        const UserSearch = this.renderUserSearch;
 
         const { pending } = this.state;
+        const {
+            className: classNameFromProps,
+            projectId,
+        } = this.props;
+
+        const className = `
+            ${classNameFromProps}
+            ${styles.users}
+        `;
 
         return (
-            <div className={styles.users}>
-                { pending && (
+            <div className={className}>
+                { pending ? (
                     <LoadingAnimation
                         className={styles.loadingAnimation}
                         message={_ts('project', 'updatingProject')}
                         small
                     />
+                ) : (
+                    <React.Fragment>
+                        <SearchList
+                            projectId={projectId}
+                            className={styles.searchList}
+                        />
+                        <UserDetails />
+                    </React.Fragment>
                 )}
-                <UserSearch />
-                <UserDetails />
             </div>
         );
     }
