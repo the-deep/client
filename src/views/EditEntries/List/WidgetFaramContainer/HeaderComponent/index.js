@@ -84,7 +84,7 @@ export default class HeaderComponent extends React.PureComponent {
 
         return (
             <Fragment>
-                { widgetId &&
+                { widgetId === 'excerptWidget' &&
                     <PrimaryConfirmButton
                         title={_ts('editEntry.list.widgetForm', 'formatAllButtonTitle')}
                         tabIndex="-1"
