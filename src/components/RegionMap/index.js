@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import Button from '#rsca/Button';
-import SegmentButton from '#rsca/SegmentButton';
+import SegmentInput from '#rsci/SegmentInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { FgRestBuilder } from '#rsu/rest';
 
@@ -38,6 +38,9 @@ const defaultProps = {
 export default class RegionMap extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static adminLevelKeySelector = d => d.value;
+    static adminLevelLabelSelector = d => d.label;
 
     constructor(props) {
         super(props);
@@ -338,11 +341,14 @@ export default class RegionMap extends React.PureComponent {
                         pending={adminLevelPending[selectedAdminLevelId]}
                     />
                     <div className={styles.bottomBar}>
-                        <SegmentButton
-                            data={segmentButtonData}
-                            selected={selectedAdminLevelId}
-                            backgroundHighlight
+                        <SegmentInput
+                            name="admin-levels"
+                            options={segmentButtonData}
+                            value={selectedAdminLevelId}
                             onChange={this.handleAdminLevelSelection}
+                            keySelector={RegionMap.adminLevelKeySelector}
+                            labelSelector={RegionMap.adminLevelLabelSelector}
+                            showHintAndError={false}
                         />
                     </div>
                 </div>
