@@ -108,7 +108,7 @@ export const calcEntryState = ({ entry, rest, deleteRest }) => {
     return ENTRY_STATUS.pristine;
 };
 
-const getValuesFromRemoteEntry = ({
+export const getValuesFromRemoteEntry = ({
     excerpt,
     image,
     entryType,
