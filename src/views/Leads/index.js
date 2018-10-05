@@ -110,10 +110,10 @@ export default class Leads extends React.PureComponent {
 
         this.headers = [
             {
-                key: 'attachmentMimeType',
+                key: 'mime_type',
                 label: _ts('leads', 'filterSourceType'),
                 order: 1,
-                sortable: false,
+                sortable: true,
                 modifier: (row) => {
                     const MimeType = this.renderMimeType;
                     return (
@@ -408,15 +408,8 @@ export default class Leads extends React.PureComponent {
     }
 
     renderMimeType = ({ row }) => {
-        let icon = iconNames.documentText;
-        let url;
-        if (row.attachment) {
-            icon = leadTypeIconMap[row.attachment.mimeType];
-            url = row.attachment.file;
-        } else if (row.url) {
-            icon = iconNames.globe;
-            url = row.url;
-        }
+        const icon = (row.mimeType && leadTypeIconMap[row.mimeType]) || iconNames.globe;
+        const url = (row.attachment && row.attachment.file) || row.url;
         if (!url) {
             return (
                 <div className={styles.iconWrapper}>

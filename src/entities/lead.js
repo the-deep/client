@@ -35,6 +35,7 @@ export const LEAD_FILTER_STATUS = {
 export const mimeType = {
     docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     rtf: 'application/rtf',
+    html: 'text/html',
     text: 'text/plain',
     otf: 'font/otf',
     pdf: 'application/pdf',
@@ -95,6 +96,7 @@ export const leadPaneTypeMap = {
 
 export const leadTypeIconMap = {
     [mimeType.text]: iconNames.documentText,
+    [mimeType.html]: iconNames.globe,
 
     [mimeType.docx]: iconNames.docx,
     [mimeType.rtf]: iconNames.rtf,
