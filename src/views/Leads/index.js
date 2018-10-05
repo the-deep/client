@@ -217,9 +217,16 @@ export default class Leads extends React.PureComponent {
                 modifier: row => row.noOfEntries,
             },
             {
+                key: 'size_in_bytes',
+                label: _ts('leads', 'tableHeaderSize'),
+                order: 11,
+                sortable: true,
+                modifier: row => row.sizeInBytes && (row.sizeInBytes / 1024).toFixed(2),
+            },
+            {
                 key: 'actions',
                 label: _ts('leads', 'tableHeaderActions'),
-                order: 11,
+                order: 12,
                 sortable: false,
                 modifier: row => (
                     <ActionButtons
@@ -408,7 +415,8 @@ export default class Leads extends React.PureComponent {
     }
 
     renderMimeType = ({ row }) => {
-        const icon = (row.mimeType && leadTypeIconMap[row.mimeType]) || iconNames.globe;
+        const icon = (row.mimeType && leadTypeIconMap[row.mimeType]) ||
+            iconNames.documentText;
         const url = (row.attachment && row.attachment.file) || row.url;
         if (!url) {
             return (

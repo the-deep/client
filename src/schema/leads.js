@@ -25,7 +25,7 @@ const leadSchema = [];
             url: { type: 'string' },
             website: { type: 'string' },
             classifiedDocId: { type: 'number' },
-            size: { type: 'number' },
+            sizeInBytes: { type: 'number' },
             mimeType: { type: 'string' },
         },
     };
