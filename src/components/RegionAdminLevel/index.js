@@ -241,7 +241,7 @@ export default class RegionAdminLevel extends React.PureComponent {
         this.requestForAlDelete.start();
     }
 
-    keyExtractor = rowData => rowData.id
+    keySelector = rowData => rowData.id
 
     render() {
         const {
@@ -297,7 +297,7 @@ export default class RegionAdminLevel extends React.PureComponent {
                     <Table
                         data={adminLevelList}
                         headers={this.adminLevelHeaders}
-                        keyExtractor={this.keyExtractor}
+                        keySelector={this.keySelector}
                     />
                     { this.state.editAdminLevel &&
                         <Modal

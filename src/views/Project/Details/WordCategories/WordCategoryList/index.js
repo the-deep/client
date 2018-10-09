@@ -168,7 +168,7 @@ export default class WordCategoryList extends React.PureComponent {
                     className={styles.content}
                     renderer={WordCategoryListItem}
                     rendererParams={this.itemRendererParams}
-                    keyExtractor={getWordCategoryKey}
+                    keySelector={getWordCategoryKey}
                 />
             </div>
         );

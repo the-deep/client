@@ -15,7 +15,7 @@ const propTypes = {
     index: PropTypes.number.isRequired,
     setSelectedDimension: PropTypes.func.isRequired,
     hasError: PropTypes.bool,
-    keyExtractor: PropTypes.func.isRequired,
+    keySelector: PropTypes.func.isRequired,
 };
 const defaultProps = {
     data: {},
@@ -31,11 +31,11 @@ export default class DimensionTitle extends React.PureComponent {
     handleClick = () => {
         const {
             data,
-            keyExtractor,
+            keySelector,
             setSelectedDimension,
         } = this.props;
 
-        const id = keyExtractor(data);
+        const id = keySelector(data);
         setSelectedDimension(id);
     }
 
@@ -44,12 +44,12 @@ export default class DimensionTitle extends React.PureComponent {
         newOptions.splice(index, 1);
 
         const {
-            keyExtractor,
+            keySelector,
             setSelectedDimension,
         } = this.props;
         const newIndex = Math.min(index, newOptions.length - 1);
         const newKey = newIndex !== -1
-            ? keyExtractor(newOptions[newIndex])
+            ? keySelector(newOptions[newIndex])
             : undefined;
         setSelectedDimension(newKey);
 

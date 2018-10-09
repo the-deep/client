@@ -333,7 +333,7 @@ export default class ConnectorContent extends React.PureComponent {
                         className={styles.table}
                         data={connectorLeads}
                         headers={this.connectorLeadsHeader}
-                        keyExtractor={ConnectorContent.leadKeySelector}
+                        keySelector={ConnectorContent.leadKeySelector}
                     />
                 </div>
                 <footer className={styles.footer} >

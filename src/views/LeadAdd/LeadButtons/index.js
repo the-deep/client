@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 
 import Button from '#rsca/Button';
 import FileInput from '#rsci/FileInput';
-import FormattedDate from '#rscv/FormattedDate';
 import { randomString } from '#rsu/common';
+import { formatDate } from '#rsu/date';
 
 import DropboxChooser from '#components/DropboxChooser';
 import GooglePicker from '#components/GooglePicker';
@@ -351,7 +351,7 @@ export default class LeadButtons extends React.PureComponent {
                     title: l.title,
                     website: l.website,
                     url: l.url,
-                    publishedOn: FormattedDate.format(new Date(l.publishedOn), 'yyyy-MM-dd'),
+                    publishedOn: formatDate(new Date(l.publishedOn), 'yyyy-MM-dd'),
                     source: l.source,
                     sourceType: LEAD_TYPE.website,
                     project: activeProject,

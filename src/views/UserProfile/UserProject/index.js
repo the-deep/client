@@ -280,7 +280,7 @@ export default class UserProject extends React.PureComponent {
                     <Table
                         data={userProjects}
                         headers={this.projectTableHeaders}
-                        keyExtractor={this.projectTableKeyExtractor}
+                        keySelector={this.projectTableKeyExtractor}
                     />
                 </div>
             </div>

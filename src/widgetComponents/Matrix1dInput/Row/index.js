@@ -57,7 +57,7 @@ export default class Matrix1dRow extends React.PureComponent {
                 <ListView
                     data={cells}
                     className={styles.cells}
-                    keyExtractor={Matrix1dRow.cellKeyExtractor}
+                    keySelector={Matrix1dRow.cellKeyExtractor}
                     renderer={Cell}
                     rendererParams={this.rendererParams}
                 />

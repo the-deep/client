@@ -39,7 +39,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = scaleUnit => scaleUnit.key;
+    static keySelector = scaleUnit => scaleUnit.key;
 
     static faramTransform = {
         inbound: (data) => {
@@ -48,12 +48,12 @@ export default class ScaleFrameworkList extends React.PureComponent {
                 scaleUnits: oldScaleUnits,
                 ...otherData
             } = data;
-            const { keyExtractor } = ScaleFrameworkList;
+            const { keySelector } = ScaleFrameworkList;
 
             // For each unit, add a `defaultScaleUnit` boolean value
             const scaleUnits = oldScaleUnits.map(unit => ({
                 ...unit,
-                defaultScaleUnit: keyExtractor(unit) === defaultScaleUnit,
+                defaultScaleUnit: keySelector(unit) === defaultScaleUnit,
             }));
 
             return {
@@ -67,7 +67,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                 scaleUnits,
                 ...otherData
             } = value;
-            const { keyExtractor } = ScaleFrameworkList;
+            const { keySelector } = ScaleFrameworkList;
 
             // We want to only keep one of the default values
             // clearing others if multiple was selected.
@@ -77,13 +77,13 @@ export default class ScaleFrameworkList extends React.PureComponent {
 
             // Find the new default value which was not the old default value
             const newDefaultValue = possibleDefaultValues.find(
-                v => keyExtractor(v) !== oldValue.defaultScaleUnit,
+                v => keySelector(v) !== oldValue.defaultScaleUnit,
             );
 
             return {
                 ...otherData,
                 scaleUnits: scaleUnits.map(v => removeKey(v, 'defaultScaleUnit')),
-                defaultScaleUnit: newDefaultValue && keyExtractor(newDefaultValue),
+                defaultScaleUnit: newDefaultValue && keySelector(newDefaultValue),
             };
         },
     }
@@ -113,7 +113,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                     }
                     return errors;
                 },
-                keySelector: ScaleFrameworkList.keyExtractor,
+                keySelector: ScaleFrameworkList.keySelector,
                 member: {
                     fields: {
                         key: [requiredCondition],
@@ -214,7 +214,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                         <div className={styles.scaleUnits}>
                             <FaramList
                                 faramElementName="scaleUnits"
-                                keySelector={ScaleFrameworkList.keyExtractor}
+                                keySelector={ScaleFrameworkList.keySelector}
                             >
                                 <NonFieldErrors
                                     className={styles.nonFieldErrors}

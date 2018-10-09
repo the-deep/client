@@ -99,7 +99,7 @@ export default class ConditionsInputRow extends React.PureComponent {
                         <ListView
                             className={styles.conditionAttributes}
                             data={this.attributes}
-                            keyExtractor={ConditionsInputRow.attributeKeySelector}
+                            keySelector={ConditionsInputRow.attributeKeySelector}
                             renderer={Attribute}
                             rendererParams={this.attributeRendererParams}
                         />

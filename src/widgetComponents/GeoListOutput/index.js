@@ -104,7 +104,7 @@ export default class GeoListOutput extends React.PureComponent {
             <ListView
                 className={`${className} ${styles.list}`}
                 data={this.geoSelections}
-                keyExtractor={GeoListOutput.valueKeySelector}
+                keySelector={GeoListOutput.valueKeySelector}
                 renderer={ListItem}
                 rendererParams={this.rendererParams}
             />

@@ -303,7 +303,7 @@ export default class LeadAdd extends React.PureComponent {
                             <List
                                 data={addLeadViewLeads}
                                 modifier={this.renderLeadDetail}
-                                keyExtractor={leadAccessor.getKey}
+                                keySelector={leadAccessor.getKey}
                             />
                         )
                     }

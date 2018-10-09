@@ -96,7 +96,7 @@ export default class NumberMatrixListView extends React.PureComponent {
                 data={this.rowsData}
                 renderer={Row}
                 rendererParams={this.rowRendererParams}
-                keyExtractor={NumberMatrixListView.rowKeyExtractor}
+                keySelector={NumberMatrixListView.rowKeyExtractor}
                 emptyComponent={WidgetEmptyComponent}
             />
         );

@@ -41,7 +41,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = elem => elem.key;
+    static keySelector = elem => elem.key;
 
     static schema = {
         fields: {
@@ -88,7 +88,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                 return errors;
                             },
 
-                            keySelector: Matrix1dEditWidget.keyExtractor,
+                            keySelector: Matrix1dEditWidget.keySelector,
                             member: {
                                 fields: {
                                     key: [requiredCondition],
@@ -121,7 +121,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             showNestedLinkModal: false,
 
             selectedRowKey: rows[0]
-                ? Matrix1dEditWidget.keyExtractor(rows[0])
+                ? Matrix1dEditWidget.keySelector(rows[0])
                 : undefined,
         };
     }
@@ -155,7 +155,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             cells: [],
         };
         this.setState({
-            selectedRowKey: Matrix1dEditWidget.keyExtractor(newRow),
+            selectedRowKey: Matrix1dEditWidget.keySelector(newRow),
         });
         return [
             ...rows,
@@ -175,7 +175,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         }));
         this.setState({
             showLinkModal: false,
-            selectedRowKey: Matrix1dEditWidget.keyExtractor(newListOfRows[0]),
+            selectedRowKey: Matrix1dEditWidget.keySelector(newListOfRows[0]),
         });
         return [
             ...rows,
@@ -203,7 +203,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             this.setState({ selectedRowKey: k });
         },
         isSelected: this.state.selectedRowKey === key,
-        keyExtractor: Matrix1dEditWidget.keyExtractor,
+        keySelector: Matrix1dEditWidget.keySelector,
     })
 
     renderDragHandle = (key) => {
@@ -234,7 +234,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
 
         const { rows = [] } = faramValues || {};
         const selectedRowIndex = rows.findIndex(
-            row => Matrix1dEditWidget.keyExtractor(row) === this.state.selectedRowKey,
+            row => Matrix1dEditWidget.keySelector(row) === this.state.selectedRowKey,
         );
 
         const modalClassNames = [styles.editModal];
@@ -270,7 +270,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                         <div className={styles.rows} >
                             <FaramList
                                 faramElementName="rows"
-                                keySelector={Matrix1dEditWidget.keyExtractor}
+                                keySelector={Matrix1dEditWidget.keySelector}
                             >
                                 <NonFieldErrors faramElement className={styles.error} />
                                 <header className={styles.header}>

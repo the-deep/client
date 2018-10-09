@@ -182,7 +182,7 @@ export default class FrameworkList extends React.PureComponent {
                     className={styles.content}
                     renderer={FrameworkListItem}
                     rendererParams={this.itemRendererParams}
-                    keyExtractor={getFrameworkKey}
+                    keySelector={getFrameworkKey}
                 />
             </div>
         );

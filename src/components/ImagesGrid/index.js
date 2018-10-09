@@ -101,7 +101,7 @@ export default class ImagesGrid extends React.PureComponent {
             <div className={`${className} ${styles.imagesGrid}`}>
                 <ListView
                     className={styles.images}
-                    keyExtractor={ImagesGrid.imageKeySelector}
+                    keySelector={ImagesGrid.imageKeySelector}
                     data={images}
                     modifier={this.renderImage}
                 />

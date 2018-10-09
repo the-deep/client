@@ -473,7 +473,7 @@ export default class Export extends React.PureComponent {
                                     data={leads}
                                     headers={this.headers}
                                     defaultSort={this.defaultSort}
-                                    keyExtractor={Export.leadKeyExtractor}
+                                    keySelector={Export.leadKeyExtractor}
                                 />
                             </div>
                         </div>

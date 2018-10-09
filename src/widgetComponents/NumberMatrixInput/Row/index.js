@@ -85,7 +85,7 @@ export default class NumberMatrixRow extends React.PureComponent {
                     data={data.columnHeaders}
                     rendererParams={this.columnRendererParams}
                     renderer={ColumnElement}
-                    keyExtractor={NumberMatrixRow.rowKeyExtractor}
+                    keySelector={NumberMatrixRow.rowKeyExtractor}
                 />
             </tr>
         );

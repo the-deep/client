@@ -25,7 +25,7 @@ describe('<UserGroup />', () => {
                 <Table
                     data={data}
                     headers={headers}
-                    keyExtractor={() => {}}
+                    keySelector={() => {}}
                 />
                 <Modal
                     closeOnEscape

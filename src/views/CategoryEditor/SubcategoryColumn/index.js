@@ -41,7 +41,7 @@ export default class SubcategoryColumn extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractorForSubcategory = d => d.id;
+    static keySelectorForSubcategory = d => d.id;
 
     getSubcategoryStyleName = (id) => {
         const {
@@ -178,7 +178,7 @@ export default class SubcategoryColumn extends React.PureComponent {
                     className={styles.subCategoryList}
                     data={subcategories}
                     modifier={this.renderSubcategory}
-                    keyExtractor={SubcategoryColumn.keyExtractorForSubcategory}
+                    keySelector={SubcategoryColumn.keySelectorForSubcategory}
                 />
             </div>
         );

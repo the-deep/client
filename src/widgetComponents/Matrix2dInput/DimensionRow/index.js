@@ -25,7 +25,7 @@ export default class DimensionRow extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = subdimension => subdimension.id;
+    static keySelector = subdimension => subdimension.id;
 
     // TODO: memoize this function
     static getRowStyle = color => ({
@@ -119,7 +119,7 @@ export default class DimensionRow extends React.PureComponent {
         return (
             <List
                 data={subdimensions}
-                keyExtractor={DimensionRow.keyExtractor}
+                keySelector={DimensionRow.keySelector}
                 renderer={SubdimensionRow}
                 rendererParams={this.rendererParams}
             />

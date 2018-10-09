@@ -47,7 +47,7 @@ export default class NumberMatrixOutputRow extends React.PureComponent {
                     data={rowData.columns}
                     renderer={Column}
                     rendererParams={this.columnRendererParams}
-                    keyExtractor={NumberMatrixOutputRow.rowKeyExtractor}
+                    keySelector={NumberMatrixOutputRow.rowKeyExtractor}
                     emptyComponent={WidgetEmptyComponent}
                 />
             </div>

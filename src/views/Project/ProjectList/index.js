@@ -149,7 +149,7 @@ export default class ProjectList extends React.PureComponent {
                 <ListView
                     className={styles.projectList}
                     data={displayUserProjects}
-                    keyExtractor={keySelector}
+                    keySelector={keySelector}
                     renderer={this.renderSidebarItem}
                     rendererParams={rendererParams}
                     emptyComponent={this.renderEmptyComponent}

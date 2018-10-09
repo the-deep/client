@@ -55,7 +55,7 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                     }
                     return errors;
                 },
-                keySelector: MultiSelectEditWidget.keyExtractor,
+                keySelector: MultiSelectEditWidget.keySelector,
                 member: {
                     fields: {
                         label: [requiredCondition],
@@ -74,7 +74,7 @@ export default class MultiSelectEditWidget extends React.PureComponent {
         },
     ])
 
-    static keyExtractor = elem => elem.key;
+    static keySelector = elem => elem.key;
 
     static rendererParams = (key, elem, i) => ({
         index: i,
@@ -156,7 +156,7 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                         <div className={styles.optionInputs} >
                             <FaramList
                                 faramElementName="options"
-                                keySelector={MultiSelectEditWidget.keyExtractor}
+                                keySelector={MultiSelectEditWidget.keySelector}
                             >
                                 <NonFieldErrors
                                     className={styles.nonFieldErrors}

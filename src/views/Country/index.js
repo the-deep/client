@@ -255,7 +255,7 @@ export default class CountryPanel extends React.PureComponent {
                         className={styles.countryList}
                         modifier={this.renderCountryListItem}
                         data={displayCountryList}
-                        keyExtractor={this.calcCountryListItemKey}
+                        keySelector={this.calcCountryListItemKey}
                     />
                 </div>
                 { this.renderCountryDetail() }

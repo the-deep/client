@@ -362,7 +362,7 @@ export default class Users extends React.PureComponent {
                     className={styles.content}
                     data={userGroups}
                     headers={this.memberHeaders}
-                    keyExtractor={this.calcUserGroupKey}
+                    keySelector={this.calcUserGroupKey}
                 />
             </Fragment>
         );
@@ -381,7 +381,7 @@ export default class Users extends React.PureComponent {
                         className={styles.content}
                         data={this.props.memberships}
                         headers={this.memberHeaders}
-                        keyExtractor={this.calcOtherUserKey}
+                        keySelector={this.calcOtherUserKey}
                     />
                 </div>
                 <div className={styles.otherUserGroups}>
@@ -392,7 +392,7 @@ export default class Users extends React.PureComponent {
                         className={styles.content}
                         data={this.props.userGroups}
                         headers={this.userGroupHeaders}
-                        keyExtractor={this.calcUserGroupKey}
+                        keySelector={this.calcUserGroupKey}
                     />
                 </div>
             </div>
@@ -418,7 +418,7 @@ export default class Users extends React.PureComponent {
                         showLabel={false}
                     />
                     <ListView
-                        keyExtractor={data => data.type + data.id}
+                        keySelector={data => data.type + data.id}
                         rendererParams={this.searchResultRendererParams}
                         data={this.state.searchResults}
                         renderer={SearchResult}

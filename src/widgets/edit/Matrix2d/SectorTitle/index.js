@@ -15,7 +15,7 @@ const propTypes = {
     index: PropTypes.number.isRequired,
     setSelectedSector: PropTypes.func.isRequired,
     hasError: PropTypes.bool,
-    keyExtractor: PropTypes.func.isRequired,
+    keySelector: PropTypes.func.isRequired,
 };
 const defaultProps = {
     data: {},
@@ -31,10 +31,10 @@ export default class SectorTitle extends React.PureComponent {
     handleClick = () => {
         const {
             data,
-            keyExtractor,
+            keySelector,
             setSelectedSector,
         } = this.props;
-        const id = keyExtractor(data);
+        const id = keySelector(data);
         setSelectedSector(id);
     }
 
@@ -43,12 +43,12 @@ export default class SectorTitle extends React.PureComponent {
         newOptions.splice(index, 1);
 
         const {
-            keyExtractor,
+            keySelector,
             setSelectedSector,
         } = this.props;
         const newIndex = Math.min(index, newOptions.length - 1);
         const newKey = newIndex !== -1
-            ? keyExtractor(newOptions[newIndex])
+            ? keySelector(newOptions[newIndex])
             : undefined;
         setSelectedSector(newKey);
 

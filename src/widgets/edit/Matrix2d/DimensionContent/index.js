@@ -34,7 +34,7 @@ export default class DimensionContent extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static keyExtractor = elem => elem.id;
+    static keySelector = elem => elem.id;
 
     static addSubdimensionClick = subdimensions => ([
         ...subdimensions,
@@ -121,7 +121,7 @@ export default class DimensionContent extends React.PureComponent {
                     </div>
                     <FaramList
                         faramElementName="subdimensions"
-                        keySelector={DimensionContent.keyExtractor}
+                        keySelector={DimensionContent.keySelector}
                     >
                         <NonFieldErrors
                             className={styles.error}

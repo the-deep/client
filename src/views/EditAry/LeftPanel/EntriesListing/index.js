@@ -183,7 +183,7 @@ export default class EntriesListing extends React.PureComponent {
                     className={styles.entriesList}
                     modifier={this.renderEntryItem}
                     data={this.state.entries}
-                    keyExtractor={EntriesListing.calcEntryKey}
+                    keySelector={EntriesListing.calcEntryKey}
                 />
                 <div className={styles.leadDetail}>
                     <div className={styles.noOfEntriesWrap}>

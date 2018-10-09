@@ -83,7 +83,7 @@ export default class MultiSelectListOutput extends React.PureComponent {
             <ListView
                 className={`${className} ${styles.list}`}
                 data={this.selections}
-                keyExtractor={keySelector}
+                keySelector={keySelector}
                 renderer={ListItem}
                 rendererParams={this.rendererParams}
             />

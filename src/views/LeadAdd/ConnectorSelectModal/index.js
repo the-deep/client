@@ -413,7 +413,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
                 <ListView
                     className={styles.connectorsList}
                     data={displayConnectorsList}
-                    keyExtractor={ConnectorSelectModal.connectorKeySelector}
+                    keySelector={ConnectorSelectModal.connectorKeySelector}
                     modifier={this.renderConnectorListItem}
                 />
             </div>

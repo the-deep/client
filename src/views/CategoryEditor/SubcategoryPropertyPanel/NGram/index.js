@@ -23,7 +23,7 @@ export default class NGram extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    keyExtractorForKeyword = keyword => keyword;
+    keySelectorForKeyword = keyword => keyword;
 
     renderKeyword = (key, data) => (
         <div
@@ -55,7 +55,7 @@ export default class NGram extends React.PureComponent {
                 className={`${styles.ngram} ${className}`}
                 data={keywords}
                 modifier={this.renderKeyword}
-                keyExtractor={this.keyExtractorForKeyword}
+                keySelector={this.keySelectorForKeyword}
             />
         );
     }

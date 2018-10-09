@@ -156,7 +156,7 @@ export default class Navdrop extends React.PureComponent {
                 <DropdownGroup>
                     <List
                         data={links}
-                        keyExtractor={Navdrop.getDropItemKey}
+                        keySelector={Navdrop.getDropItemKey}
                         modifier={this.renderDropItem}
                     />
                     <Cloak

@@ -15,7 +15,7 @@ const propTypes = {
     index: PropTypes.number.isRequired,
     setSelectedRow: PropTypes.func.isRequired,
     hasError: PropTypes.bool,
-    keyExtractor: PropTypes.func.isRequired,
+    keySelector: PropTypes.func.isRequired,
 };
 const defaultProps = {
     data: {},
@@ -30,7 +30,7 @@ export default class RowTitle extends React.PureComponent {
 
     handleClick = () => {
         const { data } = this.props;
-        const key = this.props.keyExtractor(data);
+        const key = this.props.keySelector(data);
         this.props.setSelectedRow(key);
     }
 
@@ -40,7 +40,7 @@ export default class RowTitle extends React.PureComponent {
 
         const newIndex = Math.min(index, newOptions.length - 1);
         const newKey = newIndex !== -1
-            ? this.props.keyExtractor(newOptions[newIndex])
+            ? this.props.keySelector(newOptions[newIndex])
             : undefined;
         this.props.setSelectedRow(newKey);
 
