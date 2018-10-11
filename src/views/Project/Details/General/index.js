@@ -26,8 +26,8 @@ import Faram, {
 
 import _ts from '#ts';
 
-import ProjectGetRequest from '../../requests/ProjectGetRequest';
-import ProjectPutRequest from '../../requests/ProjectPutRequest';
+import ProjectGetRequest from './requests/ProjectGetRequest';
+import ProjectPutRequest from './requests/ProjectPutRequest';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -65,7 +65,7 @@ export default class ProjectDetailsGeneral extends PureComponent {
         super(props);
 
         this.state = {
-            pendingProjectGet: false,
+            pendingProjectGet: true,
             pendingProjectPut: false,
         };
 
@@ -88,7 +88,6 @@ export default class ProjectDetailsGeneral extends PureComponent {
         this.projectGetRequest = new ProjectGetRequest({
             setState,
             setProjectDetails,
-            projectServerData,
         });
         this.projectPutRequest = new ProjectPutRequest({
             setState,
@@ -98,20 +97,27 @@ export default class ProjectDetailsGeneral extends PureComponent {
     }
 
     componentDidMount() {
-        const { projectId } = this.props;
+        const {
+            projectId,
+            projectServerData,
+        } = this.props;
 
         this.projectGetRequest
-            .init(projectId)
+            .init(projectId, projectServerData)
             .start();
     }
 
     componentWillReceiveProps(nextProps) {
-        const { projectId: newProjectId } = nextProps;
+        const {
+            projectId: newProjectId,
+            projectServerData: newProjectServerData,
+        } = nextProps;
         const { projectId: oldProjectId } = this.props;
 
         if (newProjectId !== oldProjectId) {
+            this.setState({ pendingProjectGet: true });
             this.projectGetRequest
-                .init(newProjectId)
+                .init(newProjectId, newProjectServerData)
                 .start();
         }
     }
@@ -135,10 +141,14 @@ export default class ProjectDetailsGeneral extends PureComponent {
     }
 
     handleFaramCancel = () => {
-        const { projectId } = this.props;
+        const {
+            projectId,
+            projectServerData,
+        } = this.props;
+
         const isBeingCancelled = true;
         this.projectGetRequest
-            .init(projectId, isBeingCancelled)
+            .init(projectId, projectServerData, isBeingCancelled)
             .start();
     }
 

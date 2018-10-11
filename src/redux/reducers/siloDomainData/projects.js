@@ -112,6 +112,7 @@ export const setProjectDetails = (state, action) => {
                     pristine: { $set: true },
                 } },
                 serverData: { $auto: {
+                    projectId: { $set: projectId },
                     versionId: { $set: versionId },
                     role: { $set: role },
                 } },
