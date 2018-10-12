@@ -23,7 +23,7 @@ const projectSchema = [];
             userGroups: { type: 'array.userGroupBase' },
             startDate: { type: 'string' }, // date
             endDate: { type: 'string' }, // date
-            role: { type: 'projectRole' },
+            role: { type: 'uint' },
             memberStatus: { type: 'string' },
             isDefault: { type: 'boolean' },
             numberOfUsers: { type: 'uint' },
@@ -82,6 +82,9 @@ const projectSchema = [];
         fields: {
             id: { type: 'uint', required: true },
             title: { type: 'string', required: true },
+            description: { type: 'string', required: true },
+            isCreatorRole: { type: 'boolean', required: true },
+            isDefaultRole: { type: 'boolean', required: true },
             leadPermissions: { type: 'array.string', required: true },
             entryPermissions: { type: 'array.string', required: true },
             setupPermissions: { type: 'array.string', required: true },
@@ -100,7 +103,7 @@ const projectSchema = [];
         fields: {
             id: { type: 'uint', required: true },
             title: { type: 'string', required: true },
-            role: { type: 'projectRole', required: true },
+            role: { type: 'uint' },
             analysisFramework: { type: 'uint', required: false },
             assessmentTemplate: { type: 'uint', required: false },
             versionId: { type: 'uint', required: true },
@@ -160,6 +163,22 @@ const projectSchema = [];
             previous: { type: 'string' },
             results: { type: 'array.projectMini', required: true },
             // extra: { type: 'projectsExtra', required: true },
+        },
+    };
+    projectSchema.push({ name, schema });
+}
+{
+    const name = 'projectRolesGetResponse';
+    const schema = {
+        doc: {
+            name: 'Project Roles Get Response',
+            description: 'Response for GET /projects-roles/',
+        },
+        fields: {
+            count: { type: 'uint', required: true },
+            next: { type: 'string' },
+            previous: { type: 'string' },
+            results: { type: 'array.projectRole', required: true },
         },
     };
     projectSchema.push({ name, schema });

@@ -18,6 +18,8 @@ export const createUrlForProjectUserGroupGet = project => `${wsEndpoint}/project
 export const createUrlForProjectUserGroupDelete = userGroupRelationId => `${wsEndpoint}/project-usergroups/${userGroupRelationId}`;
 export const createUrlForProjectAryTemplate = projectId => `${wsEndpoint}/projects/${projectId}/assessment-template/`;
 
+export const urlForProjectRoles = `${wsEndpoint}/project-roles/`;
+
 export const createUrlForProjectsOfUser = userId => (
     `${wsEndpoint}/projects/member-of/?${p({ user: userId })}`
 );
