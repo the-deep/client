@@ -20,6 +20,10 @@ export const entryFilterOptionsSelector = ({ domainData }) => (
     domainData.entryFilterOptions || emptyObject
 );
 
+export const projectRolesSelector = ({ domainData }) => (
+    domainData.projectRoles || emptyObject
+);
+
 export const aryFilterOptionsSelector = ({ domainData }) => (
     domainData.aryFilterOptions || emptyObject
 );

@@ -72,18 +72,16 @@ const setProjects = (state, action) => {
 };
 
 const setProjectJoin = (state, action) => {
-    console.warn(action);
-
     const { discoverProjectsView: { projectList = [] } } = state;
     const { projectId, isJoining } = action;
 
     const index = projectList.findIndex(project => project.id === projectId);
-    const newRole = isJoining ? 'pending' : 'none';
+    const newMemberStatus = isJoining ? 'pending' : 'none';
 
     const settings = {
         discoverProjectsView: {
             projectList: {
-                [index]: { role: { $set: newRole } },
+                [index]: { memberStatus: { $set: newMemberStatus } },
             },
         },
     };

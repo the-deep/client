@@ -2,6 +2,7 @@ import SiloTasksManager from '#utils/SiloTasksManager';
 
 import TokenRefresher from './tasks/TokenRefresher';
 import ProjectGet from './tasks/ProjectGet';
+import ProjectRolesGet from './tasks/ProjectRolesGet';
 import PreferencesGet from './tasks/PreferencesGet';
 import LanguagesGet from './tasks/LanguagesGet';
 
@@ -20,6 +21,7 @@ export const stopSiloBackgroundTasksAction = () => ({
 
 const siloBackgroundTasks = (store) => {
     const projectGetter = new ProjectGet(store);
+    const projectRolesGetter = new ProjectRolesGet(store);
     const preferencesGetter = new PreferencesGet(store);
     const tokenRefresher = new TokenRefresher(store);
     const languagesGetter = new LanguagesGet(store);
@@ -39,6 +41,7 @@ const siloBackgroundTasks = (store) => {
                     });
 
                 projectGetter.start();
+                projectRolesGetter.start();
                 preferencesGetter.start();
                 languagesGetter.start();
                 break;
@@ -46,6 +49,7 @@ const siloBackgroundTasks = (store) => {
                 siloBackgroundTaskManager.stop();
 
                 projectGetter.stop();
+                projectRolesGetter.stop();
                 preferencesGetter.stop();
                 languagesGetter.stop();
                 break;

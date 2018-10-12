@@ -2,6 +2,7 @@
 export const readySelector = ({ auth, app }) => (
     auth.authenticated ? (
         !app.waitingForProject &&
+        !app.waitingForProjectRoles &&
         !app.waitingForPreferences &&
         !app.waitingForLanguage &&
         !app.waitingForAvailableLanguages

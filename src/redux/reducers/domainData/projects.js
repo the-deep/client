@@ -12,6 +12,7 @@ export const SET_USERS_PROJECT_MEMBERSHIP = 'domainData/SET_USERS_PROJECT_MEMBER
 export const SET_USER_PROJECT_MEMBERSHIP = 'domainData/SET_USER_PROJECT_MEMBERSHIP';
 export const UNSET_USER_PROJECT_MEMBERSHIP = 'domainData/UNSET_USER_PROJECT_MEMBERSHIP';
 export const UNSET_USER_PROJECT = 'domainData/UNSET_USER_PROJECT';
+export const SET_PROJECT_ROLES = 'domainData/SET_PROJECT_ROLES';
 
 // ACTION-CREATOR
 
@@ -26,6 +27,11 @@ export const setProjectAction = ({ project, userId }) => ({
     type: SET_USER_PROJECT,
     project,
     userId,
+});
+
+export const setProjectRolesAction = ({ projectRoles }) => ({
+    type: SET_PROJECT_ROLES,
+    projectRoles,
 });
 
 export const setProjectOptionsAction = ({ projectId, options }) => ({
@@ -195,8 +201,27 @@ const setUserProjects = (state, action) => {
     return update(state, settings);
 };
 
+const setProjectRoles = (state, action) => {
+    const { projectRoles: roleList } = action;
+
+    const projectRoles = roleList.reduce(
+        (acc, role) => (
+            {
+                ...acc,
+                [role.id]: role,
+            }
+        ),
+        { },
+    );
+    const settings = {
+        projectRoles: { $set: projectRoles },
+    };
+    return update(state, settings);
+};
+
 const reducers = {
     [SET_USER_PROJECTS]: setUserProjects,
+    [SET_PROJECT_ROLES]: setProjectRoles,
     [SET_USER_PROJECT]: setUserProject,
     [UNSET_USER_PROJECT]: unsetUserProject,
     [SET_USER_PROJECT_OPTIONS]: setUserProjectOptions,
