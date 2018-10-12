@@ -14,6 +14,7 @@ import {
     entryFilterOptionsSelector,
     aryFilterOptionsSelector,
     projectsSelector,
+    projectRolesSelector,
     regionsSelector,
     geoOptionsSelector,
     regionsForAllProjectsSelector,
@@ -45,6 +46,12 @@ export const activeProjectSelector = createSelector(
     projectsSelector,
     projectIdFromRoute,
     (projects, projectId) => (projects[projectId] || emptyObject),
+);
+
+export const activeProjectRoleSelector = createSelector(
+    activeProjectSelector,
+    projectRolesSelector,
+    (project, roles) => (project.role && roles[project.role]),
 );
 
 export const userExportsListSelector = createSelector(

@@ -8,7 +8,7 @@ import MultiViewContainer from '#rscv/MultiViewContainer';
 
 import {
     routeUrlSelector,
-    activeProjectSelector,
+    activeProjectRoleSelector,
 } from '#redux';
 
 import _ts from '#ts';
@@ -23,17 +23,17 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     projectId: PropTypes.number,
-    project: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     className: '',
     projectId: undefined,
-    project: {},
+    projectRole: {},
 };
 
 const mapStateToProps = (state, props) => ({
-    project: activeProjectSelector(state, props),
+    projectRole: activeProjectRoleSelector(state, props),
     routeUrl: routeUrlSelector(state),
 });
 
@@ -93,12 +93,10 @@ export default class ProjectDetails extends React.PureComponent {
 
     render() {
         const {
-            project: {
-                role: {
-                    setupPermissions = [],
-                } = {},
-            },
             className: classNameFromProps,
+            projectRole: {
+                setupPermissions = [],
+            },
         } = this.props;
 
         if (setupPermissions.indexOf('modify') === -1) {
