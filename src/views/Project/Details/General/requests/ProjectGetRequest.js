@@ -20,15 +20,12 @@ export default class ProjectGetRequest extends Request {
     }
 
     handleSuccess = (response) => {
-        const {
-            projectServerData,
-            setProjectDetails,
-        } = this.parent;
+        const { setProjectDetails } = this.parent;
 
         const {
             shouldSetValue,
             isValueOverriden,
-        } = checkVersion(projectServerData.versionId, response.versionId);
+        } = checkVersion(this.projectServerData.versionId, response.versionId);
 
         if (shouldSetValue || this.isBeingCancelled) {
             const project = {
@@ -60,9 +57,11 @@ export default class ProjectGetRequest extends Request {
         });
     }
 
-    init = (projectId, isBeingCancelled = false) => {
+    init = (projectId, projectServerData, isBeingCancelled = false) => {
         this.projectId = projectId;
+        this.projectServerData = projectServerData;
         this.isBeingCancelled = isBeingCancelled;
+
         this.createDefault({
             url: createUrlForProject(projectId),
             params: createParamsForGet(),
