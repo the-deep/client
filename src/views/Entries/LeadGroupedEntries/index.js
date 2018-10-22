@@ -10,6 +10,7 @@ import {
 } from '#constants';
 
 import { reverseRoute } from '#rsu/common';
+import Cloak from '#components/Cloak';
 
 import FormattedDate from '#rscv/FormattedDate';
 import ListView from '#rscv/List/ListView';
@@ -39,6 +40,8 @@ const entryKeySelector = d => d.id;
 export default class LeadGroupedEntries extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static shouldHideEntryEdit = ({ entryPermissions }) => !entryPermissions.includes('modify')
 
     getEntryParams = (_, entry) => ({
         entry,
@@ -86,13 +89,18 @@ export default class LeadGroupedEntries extends React.PureComponent {
                 <div className={styles.numberOfEntries}>
                     { entries.length }
                 </div>
-                <Link
-                    className={styles.editEntryLink}
-                    title={_ts('entries', 'editEntryLinkTitle')}
-                    to={route}
-                >
-                    <span className={iconNames.edit} />
-                </Link>
+                <Cloak
+                    hide={LeadGroupedEntries.shouldHideEntryEdit}
+                    render={() => (
+                        <Link
+                            className={styles.editEntryLink}
+                            title={_ts('entries', 'editEntryLinkTitle')}
+                            to={route}
+                        >
+                            <span className={iconNames.edit} />
+                        </Link>
+                    )}
+                />
             </header>
         );
     }

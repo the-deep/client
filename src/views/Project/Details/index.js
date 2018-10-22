@@ -84,7 +84,7 @@ export default class ProjectDetails extends React.PureComponent {
 
         return (
             <Cloak
-                hide={({ projectRole: { setupPermissions = [] } }) => !setupPermissions.includes('modify')}
+                hide={({ setupPermissions }) => !setupPermissions.includes('modify')}
                 render={() => (
                     <div className={`${classNameFromProps} ${styles.projectDetails}`}>
                         <FixedTabs

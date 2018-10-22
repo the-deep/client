@@ -70,7 +70,13 @@ export default class Cloak extends React.Component {
 
             render: Child,
             renderOnHide,
-            projectRole,
+            projectRole: {
+                leadPermissions = [],
+                entryPermissions = [],
+                setupPermissions = [],
+                exportPermissions = [],
+                assessmentPermissions = [],
+            },
         } = this.props;
 
         const isDevMode = process.env.NODE_ENV === 'development';
@@ -84,7 +90,7 @@ export default class Cloak extends React.Component {
         const hasAnalysisFramework = !!currentUserActiveProject.analysisFramework;
         const pathKey = routePathKey;
 
-        const hidden = hide && hide({
+        const params = {
             isDevMode,
             isBeta,
             isAlpha,
@@ -95,26 +101,20 @@ export default class Cloak extends React.Component {
             hasAssessmentTemplate,
             hasAnalysisFramework,
             pathKey,
-            projectRole,
-        });
 
+            leadPermissions,
+            entryPermissions,
+            setupPermissions,
+            exportPermissions,
+            assessmentPermissions,
+        };
+
+        const hidden = hide && hide(params);
         if (hidden) {
             return renderOnHide ? renderOnHide() : null;
         }
 
-        const disabled = disable && disable({
-            isDevMode,
-            isBeta,
-            isAlpha,
-            isNightly,
-            hasProjects,
-            isLoggedIn,
-            isAdmin,
-            hasAssessmentTemplate,
-            hasAnalysisFramework,
-            pathKey,
-            projectRole,
-        });
+        const disabled = disable && disable(params);
         return <Child disabled={disabled} />;
     }
 }

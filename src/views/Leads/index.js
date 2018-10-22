@@ -443,7 +443,7 @@ export default class Leads extends React.PureComponent {
             <header className={styles.header}>
                 <FilterLeadsForm className={styles.filters} />
                 <Cloak
-                    hide={({ projectRole: { leadPermissions = [] } }) => !leadPermissions.includes('create')}
+                    hide={({ leadPermissions }) => !leadPermissions.includes('create')}
                     render={() => (
                         <Link
                             to={addLeadLink}
