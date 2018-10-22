@@ -35,10 +35,10 @@ const defaultProps = {
     selectedFiles: [],
 };
 
-const mapStateToProps = (state, props) => ({
-    selectedFiles: categoryEditorDocumentsSelector(state, props),
-    categoryEditorId: ceIdFromRouteSelector(state, props),
-    projects: categoryEditorProjectsSelector(state, props),
+const mapStateToProps = state => ({
+    selectedFiles: categoryEditorDocumentsSelector(state),
+    categoryEditorId: ceIdFromRouteSelector(state),
+    projects: categoryEditorProjectsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -157,7 +157,7 @@ export default class DocumentSelect extends React.PureComponent {
                     className={styles.fileListView}
                     modifier={this.renderGalleryFilesListItem}
                     data={selectedFiles}
-                    keySelector={this.keySelectorForGalleryFiles}
+                    keySelector={this.keyExtractorForGalleryFiles}
                 />
                 <div className={styles.bottomBar}>
                     <Button

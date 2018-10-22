@@ -37,8 +37,8 @@ const getRegions = memoize(geoOptions => (
 
 const emptyArray = [];
 
-const mapStateToProps = (state, props) => ({
-    geoOptions: afViewGeoOptionsSelector(state, props),
+const mapStateToProps = state => ({
+    geoOptions: afViewGeoOptionsSelector(state),
 });
 
 @FaramActionElement

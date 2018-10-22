@@ -32,8 +32,8 @@ const getOptions = memoize((attribute, widgetData) => (
         : attribute.options(widgetData)
 ));
 
-const mapStateToProps = (state, props) => ({
-    geoOptions: afViewGeoOptionsSelector(state, props),
+const mapStateToProps = state => ({
+    geoOptions: afViewGeoOptionsSelector(state),
 });
 
 const getRegions = memoize(geoOptions => (

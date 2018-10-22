@@ -4,7 +4,6 @@ import {
     groupIdFromRoute,
     countryIdFromRoute,
     projectIdFromRoute,
-
     afIdFromRoute,
     ceIdFromRoute,
     wordCategoryIdFromRoute,

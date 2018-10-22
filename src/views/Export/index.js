@@ -48,11 +48,11 @@ import ExportHeader from './ExportHeader';
 import ExportTypePane from './ExportTypePane';
 import styles from './styles.scss';
 
-const mapStateToProps = (state, props) => ({
-    projectId: projectIdFromRouteSelector(state, props),
-    analysisFramework: analysisFrameworkForProjectSelector(state, props),
-    entriesFilters: entriesViewFilterSelector(state, props),
-    filters: leadPageFilterSelector(state, props),
+const mapStateToProps = state => ({
+    projectId: projectIdFromRouteSelector(state),
+    analysisFramework: analysisFrameworkForProjectSelector(state),
+    entriesFilters: entriesViewFilterSelector(state),
+    filters: leadPageFilterSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

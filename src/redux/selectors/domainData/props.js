@@ -1,5 +1,6 @@
 import { isFalsy } from '#rsu/common';
 
+// gets identifier from route or prop
 const getFromProps = identifier => ({ route }, props) => {
     if (!isFalsy(props) && !isFalsy(props[identifier])) {
         return props[identifier];

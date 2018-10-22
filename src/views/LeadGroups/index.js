@@ -57,14 +57,14 @@ const defaultProps = {
     totalLeadGroupsCount: 0,
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
 
-    leadGroups: leadGroupsForProjectSelector(state, props),
-    totalLeadGroupsCount: totalLeadGroupsCountSelector(state, props),
-    activePage: leadGroupsViewActivePageSelector(state, props),
-    activeSort: leadGroupsViewActiveSortSelector(state, props),
-    filters: leadGroupsViewFilterSelector(state, props),
+    leadGroups: leadGroupsForProjectSelector(state),
+    totalLeadGroupsCount: totalLeadGroupsCountSelector(state),
+    activePage: leadGroupsViewActivePageSelector(state),
+    activeSort: leadGroupsViewActiveSortSelector(state),
+    filters: leadGroupsViewFilterSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

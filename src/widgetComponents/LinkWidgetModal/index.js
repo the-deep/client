@@ -34,8 +34,8 @@ const propTypes = {
 const defaultProps = {
 };
 
-const mapStateToProps = (state, props) => ({
-    widgets: afViewAnalysisFrameworkWidgetsSelector(state, props),
+const mapStateToProps = state => ({
+    widgets: afViewAnalysisFrameworkWidgetsSelector(state),
 });
 
 const emptyArray = [];

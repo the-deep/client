@@ -34,9 +34,9 @@ const defaultProps = {
     subcategory: undefined,
 };
 
-const mapStateToProps = (state, props) => ({
-    subcategory: selectedSubcategorySelector(state, props),
-    categoryEditorId: ceIdFromRouteSelector(state, props),
+const mapStateToProps = state => ({
+    subcategory: selectedSubcategorySelector(state),
+    categoryEditorId: ceIdFromRouteSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -18,8 +18,6 @@ import { randomString } from '#rsu/common';
 import { iconNames } from '#constants';
 
 import {
-    afIdFromRoute,
-
     afViewAnalysisFrameworkSelector,
 } from '#redux';
 import {
@@ -49,9 +47,8 @@ const defaultProps = {
     analysisFramework: undefined,
 };
 
-const mapStateToProps = (state, props) => ({
-    analysisFramework: afViewAnalysisFrameworkSelector(state, props),
-    analysisFrameworkId: afIdFromRoute(state, props),
+const mapStateToProps = state => ({
+    analysisFramework: afViewAnalysisFrameworkSelector(state),
 });
 
 const operatorOptions = [
@@ -59,7 +56,6 @@ const operatorOptions = [
     { key: 'OR', label: 'OR' },
 ];
 
-// @connect(mapStateToProps)
 class ConditionsEditModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

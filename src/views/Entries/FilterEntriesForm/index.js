@@ -39,12 +39,12 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
-    entriesFilters: entriesViewFilterSelector(state, props),
-    entryFilterOptions: entryFilterOptionsForProjectSelector(state, props),
-    geoOptions: geoOptionsForProjectSelector(state, props),
-    projectDetails: projectDetailsSelector(state, props),
+    entriesFilters: entriesViewFilterSelector(state),
+    entryFilterOptions: entryFilterOptionsForProjectSelector(state),
+    geoOptions: geoOptionsForProjectSelector(state),
+    projectDetails: projectDetailsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

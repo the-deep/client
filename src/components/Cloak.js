@@ -9,10 +9,12 @@ import {
     routePathKeySelector,
 } from '#redux';
 
-const mapStateToProps = state => ({
-    activeUser: activeUserSelector(state),
+const mapStateToProps = (state, props) => ({
     userProjects: currentUserProjectsSelector(state),
-    currentUserActiveProject: activeProjectFromStateSelector(state),
+
+    activeUser: activeUserSelector(state, props),
+    currentUserActiveProject: activeProjectFromStateSelector(state, props),
+
     routePathKey: routePathKeySelector(state),
 });
 

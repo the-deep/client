@@ -8,7 +8,7 @@ export const routeUrlSelector = ({ route }) => (
     route.url
 );
 
-export const routePathSelector = ({ route }) => (
+const routePathSelector = ({ route }) => (
     route.path
 );
 
@@ -21,9 +21,9 @@ export const routePathKeySelector = createSelector(
     path => getKeyByValue(pathNames, path),
 );
 
-export const propsSelector = (state, props) => props;
+const propsSelector = (state, props) => props;
 
-export const routeParamsSelector = ({ route }) => (
+const routeParamsSelector = ({ route }) => (
     route.params || emptyObject
 );
 

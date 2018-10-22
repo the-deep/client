@@ -44,10 +44,10 @@ const defaultProps = {
     className: '',
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
     filters: aryPageFilterSelector(state),
-    aryFilterOptions: aryFilterOptionsForProjectSelector(state, props),
+    aryFilterOptions: aryFilterOptionsForProjectSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

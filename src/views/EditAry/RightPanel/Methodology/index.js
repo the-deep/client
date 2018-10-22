@@ -43,17 +43,16 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: '',
     aryTemplateMethodology: [],
     geoOptions: {},
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = state => ({
     affectedGroups: affectedGroupsSelector(state),
     aryTemplateMethodology: aryTemplateMethodologySelector(state),
     focuses: focusesSelector(state),
-    geoOptions: geoOptionsForProjectSelector(state, props),
-    projectDetails: projectDetailsSelector(state, props),
+    geoOptions: geoOptionsForProjectSelector(state),
+    projectDetails: projectDetailsSelector(state),
     sectors: assessmentSectorsSelector(state),
 });
 

@@ -53,10 +53,10 @@ const defaultProps = {
 };
 
 
-const mapStateToProps = (state, props) => ({
-    usergroups: userUserGroupsSelector(state, props),
+const mapStateToProps = state => ({
+    usergroups: userUserGroupsSelector(state),
     activeUser: activeUserSelector(state),
-    userId: userIdFromRouteSelector(state, props),
+    userId: userIdFromRouteSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

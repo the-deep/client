@@ -32,9 +32,9 @@ const defaultProps = {
     projectId: undefined,
 };
 
-const mapStateToProps = (state, props) => ({
-    userProjects: currentUserAdminProjectsSelector(state, props),
-    projectId: projectIdFromRouteSelector(state, props),
+const mapStateToProps = state => ({
+    userProjects: currentUserAdminProjectsSelector(state),
+    projectId: projectIdFromRouteSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

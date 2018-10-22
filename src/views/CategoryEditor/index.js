@@ -67,16 +67,16 @@ import SubcategoryPropertyPanel from './SubcategoryPropertyPanel';
 
 import styles from './styles.scss';
 
-const mapStateToProps = (state, props) => ({
-    categoryEditorViewTitle: categoryEditorViewTitleSelector(state, props),
-    categoryEditorViewVersionId: categoryEditorViewVersionIdSelector(state, props),
-    categoryEditorViewPristine: categoryEditorViewPristineSelector(state, props),
+const mapStateToProps = state => ({
+    categoryEditorViewTitle: categoryEditorViewTitleSelector(state),
+    categoryEditorViewVersionId: categoryEditorViewVersionIdSelector(state),
+    categoryEditorViewPristine: categoryEditorViewPristineSelector(state),
 
-    categories: categoriesSelector(state, props),
-    activeCategoryId: activeCategoryIdSelector(state, props),
+    categories: categoriesSelector(state),
+    activeCategoryId: activeCategoryIdSelector(state),
 
-    categoryEditorId: ceIdFromRouteSelector(state, props),
-    projectId: activeProjectIdFromStateSelector(state, props),
+    categoryEditorId: ceIdFromRouteSelector(state),
+    projectId: activeProjectIdFromStateSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

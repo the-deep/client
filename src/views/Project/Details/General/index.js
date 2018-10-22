@@ -45,9 +45,9 @@ const defaultProps = {
     projectLocalData: {},
 };
 
-const mapStateToProps = (state, props) => ({
-    projectLocalData: projectLocalDataSelector(state, props),
-    projectServerData: projectServerDataSelector(state, props),
+const mapStateToProps = state => ({
+    projectLocalData: projectLocalDataSelector(state),
+    projectServerData: projectServerDataSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

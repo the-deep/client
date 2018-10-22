@@ -63,11 +63,11 @@ const defaultProps = {
     faramErrors: {},
 };
 
-const mapStateToProps = (state, props) => ({
-    analysisFramework: afViewAnalysisFrameworkSelector(state, props),
-    pristine: afViewPristineSelector(state, props),
-    analysisFrameworkId: afIdFromRoute(state, props),
-    projectId: activeProjectIdFromStateSelector(state, props),
+const mapStateToProps = state => ({
+    analysisFramework: afViewAnalysisFrameworkSelector(state),
+    pristine: afViewPristineSelector(state),
+    analysisFrameworkId: afIdFromRoute(state),
+    projectId: activeProjectIdFromStateSelector(state),
     routeUrl: routeUrlSelector(state),
     faramValues: afViewFaramValuesSelector(state),
     faramErrors: afViewFaramErrorsSelector(state),

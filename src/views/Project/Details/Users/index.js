@@ -22,7 +22,6 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import {
     setProjectUserGroupsAction,
     projectUserGroupsSelector,
-    projectIdFromRoute,
 
     setProjectMembershipsAction,
     projectMembershipsSelector,
@@ -69,7 +68,6 @@ const defaultProps = {
 const mapStateToProps = (state, props) => ({
     memberships: projectMembershipsSelector(state, props),
     userGroups: projectUserGroupsSelector(state, props),
-    projectId: projectIdFromRoute(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -48,8 +48,8 @@ const defaultProps = {
     className: '',
 };
 
-const mapStateToProps = (state, props) => ({
-    membershipList: usergroupMembershipsSelector(state, props),
+const mapStateToProps = state => ({
+    membershipList: usergroupMembershipsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

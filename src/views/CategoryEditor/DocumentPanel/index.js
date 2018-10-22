@@ -33,17 +33,15 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: '',
     previewId: undefined,
-    simplified: {},
     selectedFiles: [],
 };
 
-const mapStateToProps = (state, props) => ({
-    selectedFiles: categoryEditorDocumentsSelector(state, props),
-    previewId: categoryEditorSimplifiedPreviewIdSelector(state, props),
+const mapStateToProps = state => ({
+    selectedFiles: categoryEditorDocumentsSelector(state),
+    previewId: categoryEditorSimplifiedPreviewIdSelector(state),
 
-    categoryEditorId: ceIdFromRouteSelector(state, props),
+    categoryEditorId: ceIdFromRouteSelector(state),
 });
 
 

@@ -21,9 +21,9 @@ const defaultProps = {
     projectDetails: {},
 };
 
-const mapStateToProps = (state, props) => ({
-    geoOptions: geoOptionsForProjectSelector(state, props),
-    projectDetails: projectDetailsSelector(state, props),
+const mapStateToProps = state => ({
+    geoOptions: geoOptionsForProjectSelector(state),
+    projectDetails: projectDetailsSelector(state),
 });
 
 @connect(mapStateToProps)
