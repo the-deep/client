@@ -442,13 +442,18 @@ export default class Leads extends React.PureComponent {
         return (
             <header className={styles.header}>
                 <FilterLeadsForm className={styles.filters} />
-                <Link
-                    to={addLeadLink}
-                    className={styles.addLeadLink}
-                >
-                    {/* add icon aswell */}
-                    {_ts('leads', 'addSourcesButtonLabel')}
-                </Link>
+                <Cloak
+                    hide={({ projectRole: { leadPermissions = [] } }) => !leadPermissions.includes('create')}
+                    render={() => (
+                        <Link
+                            to={addLeadLink}
+                            className={styles.addLeadLink}
+                        >
+                            {/* add icon aswell */}
+                            {_ts('leads', 'addSourcesButtonLabel')}
+                        </Link>
+                    )}
+                />
             </header>
         );
     }

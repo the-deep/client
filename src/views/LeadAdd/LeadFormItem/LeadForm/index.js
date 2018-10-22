@@ -323,7 +323,7 @@ export default class LeadForm extends React.PureComponent {
                             />
                         </div>
                     )}
-                    renderOnCloak={() => <div className={styles.leadGroupContainer} />}
+                    renderOnHide={() => <div className={styles.leadGroupContainer} />}
                 />
 
                 <TextInput

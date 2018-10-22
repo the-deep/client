@@ -7,18 +7,21 @@ import {
     currentUserProjectsSelector,
     activeProjectFromStateSelector,
     routePathKeySelector,
+    activeProjectRoleSelector,
 } from '#redux';
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = state => ({
+    projectRole: activeProjectRoleSelector(state),
     userProjects: currentUserProjectsSelector(state),
 
-    activeUser: activeUserSelector(state, props),
-    currentUserActiveProject: activeProjectFromStateSelector(state, props),
+    activeUser: activeUserSelector(state),
+    currentUserActiveProject: activeProjectFromStateSelector(state),
 
     routePathKey: routePathKeySelector(state),
 });
 
 const propTypes = {
+    projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     activeUser: PropTypes.shape({
         userId: PropTypes.number,
     }),
@@ -33,20 +36,21 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     currentUserActiveProject: PropTypes.object.isRequired,
     render: PropTypes.func.isRequired,
-    renderOnCloak: PropTypes.func,
+    renderOnHide: PropTypes.func,
 
     disable: PropTypes.func,
     hide: PropTypes.func,
 };
 
 const defaultProps = {
+    projectRole: {},
     disable: undefined,
     hide: undefined,
 
     activeUser: {},
     userProjects: [],
 
-    renderOnCloak: undefined,
+    renderOnHide: undefined,
 };
 
 @connect(mapStateToProps, undefined)
@@ -65,7 +69,8 @@ export default class Cloak extends React.Component {
             hide,
 
             render: Child,
-            renderOnCloak,
+            renderOnHide,
+            projectRole,
         } = this.props;
 
         const isDevMode = process.env.NODE_ENV === 'development';
@@ -90,10 +95,11 @@ export default class Cloak extends React.Component {
             hasAssessmentTemplate,
             hasAnalysisFramework,
             pathKey,
+            projectRole,
         });
 
         if (hidden) {
-            return renderOnCloak ? renderOnCloak() : null;
+            return renderOnHide ? renderOnHide() : null;
         }
 
         const disabled = disable && disable({
@@ -107,6 +113,7 @@ export default class Cloak extends React.Component {
             hasAssessmentTemplate,
             hasAnalysisFramework,
             pathKey,
+            projectRole,
         });
         return <Child disabled={disabled} />;
     }

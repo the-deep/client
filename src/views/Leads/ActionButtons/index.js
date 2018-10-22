@@ -134,22 +134,32 @@ export default class ActionButtons extends React.PureComponent {
                         transparent
                         iconName={iconNames.search}
                     />
-                    <DangerConfirmButton
-                        tabIndex="-1"
-                        title={_ts('leads', 'removeLeadLeadButtonTitle')}
-                        onClick={() => onRemoveLead(row)}
-                        transparent
-                        iconName={iconNames.delete}
-                        confirmationMessage={_ts('leads', 'leadDeleteConfirmText')}
+                    <Cloak
+                        hide={({ projectRole: { leadPermissions = [] } }) => !leadPermissions.includes('delete')}
+                        render={() => (
+                            <DangerConfirmButton
+                                tabIndex="-1"
+                                title={_ts('leads', 'removeLeadLeadButtonTitle')}
+                                onClick={() => onRemoveLead(row)}
+                                transparent
+                                iconName={iconNames.delete}
+                                confirmationMessage={_ts('leads', 'leadDeleteConfirmText')}
+                            />
+                        )}
                     />
-                    <Link
-                        className={styles.editLink}
-                        tabIndex="-1"
-                        title={_ts('leads', 'editLeadButtonTitle')}
-                        to={links.editLead}
-                    >
-                        <i className={iconNames.edit} />
-                    </Link>
+                    <Cloak
+                        hide={({ projectRole: { leadPermissions = [] } }) => !leadPermissions.includes('modify')}
+                        render={() => (
+                            <Link
+                                className={styles.editLink}
+                                tabIndex="-1"
+                                title={_ts('leads', 'editLeadButtonTitle')}
+                                to={links.editLead}
+                            >
+                                <i className={iconNames.edit} />
+                            </Link>
+                        )}
+                    />
                 </div>
                 <div className={styles.actionGroup}>
                     <Cloak
