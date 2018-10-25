@@ -25,6 +25,7 @@ const leadSchema = [];
             url: { type: 'string' },
             website: { type: 'string' },
             classifiedDocId: { type: 'number' },
+            tabularBook: { type: 'uint' },
         },
     };
     leadSchema.push({ name, schema });

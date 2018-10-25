@@ -5,9 +5,7 @@ import Faram, { requiredCondition } from '#rscg/Faram';
 import FaramGroup from '#rscg/FaramGroup';
 import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
-import NumberInput from '#rsci/NumberInput';
 import SegmentInput from '#rsci/SegmentInput';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
@@ -19,30 +17,14 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import AccentButton from '#rsca/Button/AccentButton';
 
 import update from '#rsu/immutable-update';
-
-import { RequestClient, requestMethods } from '#request';
 import _ts from '#ts';
 
 
-const requests = {
-    saveFieldRequest: {
-        method: requestMethods.PUT,
-        url: ({ props }) => `/tabular-fields/${props.fieldId}/`,
-        body: ({ params }) => params,
-        onSuccess: ({ params, props }) => props.onChange(params),
-    },
-};
-
-@RequestClient(requests)
 class EditFieldModal extends React.PureComponent {
     static propTypes = {
-        // eslint-disable-next-line react/no-unused-prop-types
-        fieldId: PropTypes.string.isRequired,
         initialValue: PropTypes.shape({}).isRequired,
-        // eslint-disable-next-line react/no-unused-prop-types
         onChange: PropTypes.func.isRequired,
         onCancel: PropTypes.func.isRequired,
-        saveFieldRequest: RequestClient.prop.isRequired,
     };
 
     static fieldTypes = [
@@ -61,7 +43,6 @@ class EditFieldModal extends React.PureComponent {
 
         const initialValue = update(props.initialValue, {
             options: { $auto: {
-                precision: { $setDefault: 2 },
                 separator: { $setDefault: 'space' },
             } },
         });
@@ -92,27 +73,19 @@ class EditFieldModal extends React.PureComponent {
     }
 
     handleFaramValidationSuccess = (value) => {
-        this.props.saveFieldRequest.do(value);
+        this.props.onChange(value);
     }
 
     renderSettingsForType = (type) => {
         if (type === 'number') {
             return (
-                <React.Fragment>
-                    <NumberInput
-                        faramElementName="precision"
-                        label={_ts('tabular', 'editFieldPrecisionLabel')}
-                        showLabel
-                        showHintAndError
-                    />
-                    <SegmentInput
-                        faramElementName="separator"
-                        label={_ts('tabular', 'editFieldSeparatorLabel')}
-                        options={EditFieldModal.separatorOptions}
-                        showLabel
-                        showHintAndError
-                    />
-                </React.Fragment>
+                <SegmentInput
+                    faramElementName="separator"
+                    label={_ts('tabular', 'editFieldSeparatorLabel')}
+                    options={EditFieldModal.separatorOptions}
+                    showLabel
+                    showHintAndError
+                />
             );
         }
 
@@ -125,8 +98,6 @@ class EditFieldModal extends React.PureComponent {
             faramErrors,
         } = this.state;
 
-        const { pending } = this.props.saveFieldRequest;
-
         return (
             <Modal>
                 <ModalHeader title={_ts('tabular', 'editFieldTitle')} />
@@ -138,7 +109,6 @@ class EditFieldModal extends React.PureComponent {
                     value={faramValues}
                     error={faramErrors}
                 >
-                    {pending && <LoadingAnimation />}
                     <ModalBody>
                         <TextInput
                             faramElementName="title"
@@ -174,7 +144,6 @@ class EditFieldModal extends React.PureComponent {
 // eslint-disable-next-line react/no-multi-comp
 export default class EditFieldButton extends React.PureComponent {
     static propTypes = {
-        fieldId: PropTypes.string.isRequired,
         onChange: PropTypes.func.isRequired,
         value: PropTypes.shape({}).isRequired,
     };
@@ -204,7 +173,6 @@ export default class EditFieldButton extends React.PureComponent {
 
         return (
             <EditFieldModal
-                fieldId={this.props.fieldId}
                 initialValue={this.props.value}
                 onCancel={this.handleCancel}
                 onChange={this.handleChange}
@@ -214,7 +182,6 @@ export default class EditFieldButton extends React.PureComponent {
 
     render() {
         const {
-            fieldId, // eslint-disable-line no-unused-vars
             value, // eslint-disable-line no-unused-vars
             onChange, // eslint-disable-line no-unused-vars
             ...otherProps

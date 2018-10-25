@@ -127,6 +127,10 @@ export default class LeadFormItem extends React.PureComponent {
         this.submitLeadForm = func;
     }
 
+    setSaveTabularFunction = (func) => {
+        this.saveTabular = func;
+    }
+
     setTabularMode = () => {
         this.setState({ tabularMode: true });
     }
@@ -221,7 +225,20 @@ export default class LeadFormItem extends React.PureComponent {
             this.leadSaveRequest.stop();
         }
         this.leadSaveRequest = onFormSubmitSuccess(lead, newValues);
-        this.leadSaveRequest.start();
+
+        if (!this.saveTabular) {
+            this.leadSaveRequest.start();
+            return;
+        }
+
+        // If we have tabular, first trigger preLoad of lead,
+        // save the tabular data and then save actual lead.
+        // Triggering preLoad is a hack to set pending state of
+        // corresponsing lead before doing actual leadSaveRequest.
+        this.leadSaveRequest.preLoad();
+        this.saveTabular(() => {
+            this.leadSaveRequest.start();
+        });
     }
 
     handleFormChange = (faramValues, faramErrors) => {
@@ -238,7 +255,7 @@ export default class LeadFormItem extends React.PureComponent {
         });
     }
 
-    handleFieldsChange = (fields) => {
+    handleFieldsChange = (fields = {}) => {
         const { lead: { faramValues = {}, faramErrors } = {} } = this.props;
         const newFaramValues = {
             ...faramValues,
@@ -351,6 +368,8 @@ export default class LeadFormItem extends React.PureComponent {
                 <TabularBook
                     bookId={values.tabularBook}
                     onDelete={this.unsetTabularBook}
+                    setSaveTabularFunction={this.setSaveTabularFunction}
+                    onEdited={this.handleFieldsChange}
                     showDelete
                 />
             );

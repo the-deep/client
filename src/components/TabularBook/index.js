@@ -16,11 +16,14 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     bookId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
+    setSaveTabularFunction: PropTypes.func,
+    onEdited: PropTypes.func,
 
     setDefaultRequestParams: PropTypes.func.isRequired,
     extractRequest: RequestClient.prop.isRequired,
     bookRequest: RequestClient.prop.isRequired,
     deleteRequest: RequestClient.prop.isRequired,
+    saveRequest: RequestClient.prop.isRequired,
 
     showDelete: PropTypes.bool,
     onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
@@ -29,6 +32,8 @@ const propTypes = {
 const defaultProps = {
     className: '',
     showDelete: false,
+    setSaveTabularFunction: undefined,
+    onEdited: undefined,
 };
 
 const requests = {
@@ -86,6 +91,16 @@ const requests = {
         url: ({ props }) => `/tabular-books/${props.bookId}/`,
         onSuccess: ({ props }) => props.onDelete(),
     },
+
+    saveRequest: {
+        method: requestMethods.PATCH,
+        url: ({ props }) => `/tabular-books/${props.bookId}/`,
+        query: { fields: 'sheets,options,fields' },
+        body: ({ params: { body } }) => body,
+        onSuccess: ({ params: { callback } }) => {
+            callback();
+        },
+    },
 };
 
 @RequestClient(requests)
@@ -108,6 +123,16 @@ export default class TabularBook extends React.PureComponent {
             setBook: this.setBook,
             setInvalid: this.setInvalid,
         });
+
+        if (props.setSaveTabularFunction) {
+            props.setSaveTabularFunction(this.save);
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.props.setSaveTabularFunction) {
+            this.props.setSaveTabularFunction(undefined);
+        }
     }
 
     getRendererParams = sheetId => ({
@@ -145,10 +170,24 @@ export default class TabularBook extends React.PureComponent {
         this.props.bookRequest.do();
     }
 
+    save = (callback) => {
+        const { sheets } = this.state;
+        this.props.saveRequest.do({
+            callback,
+            body: {
+                sheets: Object.keys(sheets).map(k => sheets[k]),
+            },
+        });
+    }
+
     handleSheetChange = (newSheet) => {
         const sheets = { ...this.state.sheets };
         sheets[newSheet.id] = newSheet;
         this.setState({ sheets });
+
+        if (this.props.onEdited) {
+            this.props.onEdited();
+        }
     }
 
     handleActiveSheetChange = (activeSheet) => {

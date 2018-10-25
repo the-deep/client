@@ -58,7 +58,6 @@ export class Header extends React.PureComponent {
                     className={styles.edit}
                     onChange={this.handleChange}
                     iconName={iconNames.edit}
-                    fieldId={columnKey}
                     value={value}
                     transparent
                 />
@@ -98,7 +97,7 @@ export const NumberCell = ({ value, className, options }) => (
     <Numeral
         className={className}
         value={parseFloat(value)}
-        precision={options.precision}
+        precision={null}
         showSeparator={options.separator !== 'none'}
         separator={separators[options.separator || 'space']}
     />
