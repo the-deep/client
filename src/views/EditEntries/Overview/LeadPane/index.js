@@ -186,23 +186,29 @@ export default class LeftPane extends React.PureComponent {
 
     calculateTabsForLead = (lead, images) => {
         const leadPaneType = LeftPane.getPaneType(lead);
+        let tabs = {};
 
-        let tabs;
+        if (lead.tabularBook) {
+            tabs['tabular-preview'] = _ts('editEntry.overview.leftpane', 'quantitativeTabLabel');
+        }
         switch (leadPaneType) {
             case LEAD_PANE_TYPE.spreadsheet:
                 tabs = {
+                    ...tabs,
                     'original-preview': _ts('editEntry.overview.leftpane', 'tabularTabLabel'),
                     'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
                 };
                 break;
             case LEAD_PANE_TYPE.image:
                 tabs = {
+                    ...tabs,
                     'original-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
                     'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
                 };
                 break;
             case LEAD_PANE_TYPE.text:
                 tabs = {
+                    ...tabs,
                     'simplified-preview': _ts('editEntry.overview.leftpane', 'simplifiedTabLabel'),
                     'assisted-tagging': _ts('editEntry.overview.leftpane', 'assistedTabLabel'),
                     'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
@@ -213,6 +219,7 @@ export default class LeftPane extends React.PureComponent {
             case LEAD_PANE_TYPE.presentation:
             case LEAD_PANE_TYPE.website:
                 tabs = {
+                    ...tabs,
                     'simplified-preview': _ts('editEntry.overview.leftpane', 'simplifiedTabLabel'),
                     'assisted-tagging': _ts('editEntry.overview.leftpane', 'assistedTabLabel'),
                     'original-preview': _ts('editEntry.overview.leftpane', 'originalTabLabel'),
@@ -224,9 +231,6 @@ export default class LeftPane extends React.PureComponent {
         }
         if (!images || images.length <= 0) {
             tabs['images-preview'] = undefined;
-        }
-        if (lead.tabularBook) {
-            tabs['tabular-preview'] = _ts('editEntry.overview.leftpane', 'quantitativeTabLabel');
         }
         tabs['entries-listing'] = _ts('editEntry.overview.leftpane', 'entriesTabLabel');
         return tabs;

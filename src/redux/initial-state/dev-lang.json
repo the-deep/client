@@ -719,7 +719,7 @@
         "12508": "Start search with at least {numberOfCharacters} characters",
         "12509": "Role",
         "12510": "Are you sure you want to remove membership of {memberName}({memberEmail}) from this project?",
-        "15000": "Quantitative Analysis",
+        "15000": "Quantitative",
         "15001": "Are you sure you want to delete these table sheets? All changes will be lost.",
         "15002": "Edit table field",
         "15003": "Separator",

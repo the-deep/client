@@ -7,6 +7,7 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 
 import { iconNames } from '#constants';
 import TabularSheet from '#components/TabularSheet';
+
 import { RequestClient, requestMethods } from '#request';
 import _ts from '#ts';
 import _cs from '#cs';
@@ -195,11 +196,6 @@ export default class TabularBook extends React.PureComponent {
 
     render() {
         const {
-            className,
-            showDelete,
-        } = this.props;
-
-        const {
             tabs,
             sheets,
             activeSheet,
@@ -207,9 +203,12 @@ export default class TabularBook extends React.PureComponent {
             completed,
         } = this.state;
 
+        const className = _cs(this.props.className, styles.tabularBook, 'tabular-book');
+
         if (invalid) {
             return (
-                <div className={_cs(className, styles.tabularBook, 'tabular-book')}>
+                // FIXME: Use _ts and Message
+                <div className={className}>
                     Invalid tabular book
                 </div>
             );
@@ -217,19 +216,19 @@ export default class TabularBook extends React.PureComponent {
 
         if (!completed) {
             return (
-                <div className={_cs(className, styles.tabularBook, 'tabular-book')}>
+                <div className={className}>
                     <LoadingAnimation />
                 </div>
             );
         }
 
         return (
-            <div className={_cs(className, styles.tabularBook, 'tabular-book')}>
+            <div className={className}>
                 <header>
                     <h4>
                         {_ts('tabular', 'title')}
                     </h4>
-                    {showDelete && (
+                    {this.props.showDelete && (
                         <DangerConfirmButton
                             iconName={iconNames.delete}
                             onClick={this.handleDelete}
