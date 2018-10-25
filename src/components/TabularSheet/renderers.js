@@ -40,7 +40,6 @@ export class Header extends React.PureComponent {
     render() {
         const {
             sortOrder,
-            columnKey,
             value,
         } = this.props;
 
@@ -93,13 +92,13 @@ const separators = {
     none: '',
 };
 
-export const NumberCell = ({ value, className, options }) => (
+export const NumberCell = ({ value, className, options: { separator = 'none' } }) => (
     <Numeral
         className={className}
         value={parseFloat(value)}
         precision={null}
-        showSeparator={options.separator !== 'none'}
-        separator={separators[options.separator || 'space']}
+        showSeparator={separator !== 'none'}
+        separator={separators[separator]}
     />
 );
 

@@ -4,21 +4,21 @@
     background-color: $color-foreground;
 
     .header {
-        display: flex;
         position: relative;
         width: 100%;
         height: 100%;
         user-select: none;
 
         .title {
-            flex-grow: 1;
             padding: $spacing-small;
             text-align: left;
         }
 
         .edit {
             display: none;
-            flex-shrink: 0;
+            position: absolute;
+            top: 0;
+            right: -10px;
         }
 
         &:hover {

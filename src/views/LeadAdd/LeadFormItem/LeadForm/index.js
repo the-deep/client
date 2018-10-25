@@ -14,7 +14,6 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import SelectInput from '#rsci/SelectInput';
 import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import { formatDate } from '#rsu/date';
 
 import {
@@ -59,11 +58,9 @@ const propTypes = {
 
     isSaveDisabled: PropTypes.bool.isRequired,
     isFormDisabled: PropTypes.bool.isRequired,
-    isFormLoading: PropTypes.bool.isRequired,
     isBulkActionDisabled: PropTypes.bool.isRequired,
 
     isExtractionDisabled: PropTypes.bool.isRequired,
-    isExtractionLoading: PropTypes.bool.isRequired,
     onExtractClick: PropTypes.func.isRequired,
 
     setSubmitFunction: PropTypes.func,
@@ -239,11 +236,9 @@ export default class LeadForm extends React.PureComponent {
             onFailure,
             onSuccess,
             isFormDisabled,
-            isFormLoading,
             isBulkActionDisabled,
 
             isExtractionDisabled,
-            isExtractionLoading,
             onExtractClick,
             projectDetails,
         } = this.props;
@@ -268,9 +263,6 @@ export default class LeadForm extends React.PureComponent {
                 error={errors}
                 disabled={isFormDisabled}
             >
-                {
-                    (isFormLoading || isExtractionLoading) && <LoadingAnimation />
-                }
                 <header className={styles.header}>
                     <NonFieldErrors faramElement />
                 </header>

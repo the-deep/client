@@ -11,6 +11,7 @@ import {
     requiredCondition,
     urlCondition,
 } from '#rscg/Faram';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import ResizableV from '#rscv/Resizable/ResizableV';
 import update from '#rsu/immutable-update';
 
@@ -47,6 +48,7 @@ const propTypes = {
     leadKey: PropTypes.string.isRequired,
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
+    isFormLoading: PropTypes.bool.isRequired,
     onFormSubmitFailure: PropTypes.func.isRequired,
     onFormSubmitSuccess: PropTypes.func.isRequired,
 
@@ -131,8 +133,8 @@ export default class LeadFormItem extends React.PureComponent {
         this.saveTabular = func;
     }
 
-    setTabularMode = () => {
-        this.setState({ tabularMode: true });
+    setTabularMode = (mimeType) => {
+        this.setState({ tabularMode: true, tabularMimeType: mimeType });
     }
 
     setTabularBook = (tabularBook) => {
@@ -378,6 +380,7 @@ export default class LeadFormItem extends React.PureComponent {
         if (this.state.tabularMode) {
             return (
                 <LeadTabular
+                    mimeType={this.state.tabularMimeType}
                     setTabularBook={this.setTabularBook}
                     onCancel={this.unsetTabularMode}
                     lead={lead}
@@ -455,6 +458,7 @@ export default class LeadFormItem extends React.PureComponent {
         const {
             active,
             lead = {},
+            isFormLoading,
             leadKey, // eslint-disable-line no-unused-vars
             onFormSubmitFailure, // eslint-disable-line no-unused-vars
             onFormSubmitSuccess, // eslint-disable-line no-unused-vars
@@ -472,40 +476,42 @@ export default class LeadFormItem extends React.PureComponent {
 
         const { faramValues = {} } = lead;
         const projectId = faramValues.project;
+        const pending = isFormLoading || this.state.pendingExtraction;
 
         return (
-            <ResizableV
-                className={`${styles.right} ${!active ? styles.hidden : ''}`}
-                topContainerClassName={styles.top}
-                bottomContainerClassName={styles.bottom}
-                disabled={disableResize}
-                topChild={
-                    <Fragment>
-                        <LeadForm
-                            setSubmitFunction={this.setSubmitLeadFormFunction}
-                            className={styles.addLeadForm}
-                            lead={lead}
-                            projectId={projectId}
-                            onChange={this.handleFormChange}
-                            onFailure={this.handleFormFailure}
-                            onSuccess={this.handleFormSuccess}
-                            onApplyAllClick={this.handleApplyAllClick}
-                            onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                            onAddLeadGroupClick={this.handleAddLeadGroupClick}
-                            isExtractionLoading={this.state.pendingExtraction}
-                            isExtractionDisabled={!this.state.isUrlValid}
-                            onExtractClick={this.handleExtractClick}
-                            {...otherProps}
-                        />
-                        <AddLeadGroupModal />
-                    </Fragment>
-                }
-                bottomChild={
-                    active && !this.props.hidePreview
-                        ? <LeadPreview lead={lead} />
-                        : <div />
-                }
-            />
+            <div className={`${styles.right} ${!active ? styles.hidden : ''}`}>
+                { pending && <LoadingAnimation /> }
+                <ResizableV
+                    className={styles.resizable}
+                    topContainerClassName={styles.top}
+                    bottomContainerClassName={styles.bottom}
+                    disabled={disableResize}
+                    topChild={
+                        <Fragment>
+                            <LeadForm
+                                setSubmitFunction={this.setSubmitLeadFormFunction}
+                                lead={lead}
+                                projectId={projectId}
+                                onChange={this.handleFormChange}
+                                onFailure={this.handleFormFailure}
+                                onSuccess={this.handleFormSuccess}
+                                onApplyAllClick={this.handleApplyAllClick}
+                                onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                                onAddLeadGroupClick={this.handleAddLeadGroupClick}
+                                isExtractionDisabled={!this.state.isUrlValid}
+                                onExtractClick={this.handleExtractClick}
+                                {...otherProps}
+                            />
+                            <AddLeadGroupModal />
+                        </Fragment>
+                    }
+                    bottomChild={
+                        active && !this.props.hidePreview
+                            ? <LeadPreview lead={lead} />
+                            : <div />
+                    }
+                />
+            </div>
         );
     }
 }

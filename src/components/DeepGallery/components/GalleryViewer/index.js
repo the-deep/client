@@ -66,6 +66,10 @@ export default class GalleryViewer extends React.PureComponent {
         };
     }
 
+    handleTabularClick = () => {
+        this.props.onTabularClick(this.props.mimeType);
+    }
+
     handleScreenshot = (image) => {
         this.setState({ currentScreenshot: image });
     }
@@ -183,7 +187,7 @@ export default class GalleryViewer extends React.PureComponent {
                         { showTabular &&
                             <AccentButton
                                 iconName={iconNames.tabular}
-                                onClick={this.props.onTabularClick}
+                                onClick={this.handleTabularClick}
                                 title={_ts('components.galleryViewer', 'convertTabular')}
                                 transparent
                             />
@@ -213,7 +217,10 @@ export default class GalleryViewer extends React.PureComponent {
                     notHttps={!isHttps}
                 />
             );
-        } else if (!previewError && galleryMapping[mimeType] === galleryType.HTML) {
+        } else if (!previewError && (
+            galleryMapping[mimeType] === galleryType.HTML ||
+            url.endsWith('csv') || url.endsWith('txt')
+        )) {
             // NOTE: Error can occur if
             // 1. We cannot show iframe
             // 2. If there is no alternative https url and current url is http

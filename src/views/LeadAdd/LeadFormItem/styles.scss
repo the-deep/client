@@ -2,24 +2,27 @@
 
 .right {
     display: flex;
+    position: relative;
     flex-basis: 70%;
-    flex-direction: column;
     background-color: $color-background-alt;
-    overflow-y: auto;
+
+    .resizable {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        overflow-y: auto;
+    }
 
     .top {
+        height: 40%;
         min-height: 108px;
         overflow-y: auto;
-
-        .add-lead-form {
-            flex-shrink: 0;
-        }
     }
 
     .bottom {
         display: flex;
         flex-direction: column;
-        flex-grow: 1;
+        height: 60%;
         min-height: 196px;
 
         .lead-preview {

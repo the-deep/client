@@ -19,6 +19,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    mimeType: PropTypes.string,
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setTabularBook: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     onCancel: PropTypes.func.isRequired,
@@ -27,6 +28,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    mimeType: '',
 };
 
 const requests = {
@@ -40,12 +42,19 @@ const requests = {
     },
 };
 
+const calcFileType = (mimeType) => {
+    if (mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        return 'xlsx';
+    }
+    return 'csv';
+};
+
 @RequestClient(requests)
 export default class LeadTabular extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static FILE_TYPES = [
+    static fileTypes = [
         { key: 'csv', label: 'CSV' },
         { key: 'xlsx', label: 'XLSX' },
     ];
@@ -53,7 +62,10 @@ export default class LeadTabular extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            faramValues: { options: { delimiter: ',' } },
+            faramValues: {
+                fileType: calcFileType(props.mimeType),
+                options: { delimiter: ',' },
+            },
             faramErrors: {},
         };
         this.schema = {
@@ -84,7 +96,6 @@ export default class LeadTabular extends React.PureComponent {
         <TextInput
             faramElementName="delimiter"
             label={_ts('addLeads', 'tabularDelimiterLabel')}
-            options={LeadTabular.FILE_TYPES}
             showLabel
             showHintAndError
         />
@@ -136,7 +147,7 @@ export default class LeadTabular extends React.PureComponent {
                     <SelectInput
                         faramElementName="fileType"
                         label={_ts('addLeads', 'tabularFileTypeLabel')}
-                        options={LeadTabular.FILE_TYPES}
+                        options={LeadTabular.fileTypes}
                         showLabel
                         showHintAndError
                     />

@@ -3,7 +3,6 @@ import React from 'react';
 
 import Faram, { requiredCondition } from '#rscg/Faram';
 import FaramGroup from '#rscg/FaramGroup';
-import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
 import SegmentInput from '#rsci/SegmentInput';
 
@@ -43,7 +42,7 @@ class EditFieldModal extends React.PureComponent {
 
         const initialValue = update(props.initialValue, {
             options: { $auto: {
-                separator: { $setDefault: 'space' },
+                separator: { $setDefault: 'none' },
             } },
         });
 
@@ -116,7 +115,7 @@ class EditFieldModal extends React.PureComponent {
                             showLabel
                             showHintAndError
                         />
-                        <SelectInput
+                        <SegmentInput
                             faramElementName="type"
                             label={_ts('tabular', 'editFieldTypeLabel')}
                             options={EditFieldModal.fieldTypes}
