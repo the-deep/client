@@ -26,6 +26,9 @@ const propTypes = {
     showScreenshot: PropTypes.bool,
     onScreenshotCapture: PropTypes.func,
 
+    showTabular: PropTypes.bool,
+    onTabularClick: PropTypes.func,
+
     invalidUrlMessage: PropTypes.string,
     cannotPreviewUrlMessage: PropTypes.string,
 };
@@ -38,6 +41,8 @@ const defaultProps = {
     showUrl: false,
     showScreenshot: false,
     onScreenshotCapture: undefined,
+    showTabular: false,
+    onTabularClick: undefined,
 
     invalidUrlMessage: undefined,
     cannotPreviewUrlMessage: undefined,
@@ -148,7 +153,7 @@ export default class GalleryViewer extends React.PureComponent {
         );
     }
 
-    renderBar = ({ url, showScreenshot }) => {
+    renderBar = ({ url, showScreenshot, showTabular }) => {
         const isScreenshotable = showScreenshot;
         const urlbarClassNames = [
             styles.urlbar,
@@ -175,6 +180,14 @@ export default class GalleryViewer extends React.PureComponent {
                             <span className={iconNames.openLink} />
                         </a>
                         { isScreenshotable && this.renderScreenshotButton() }
+                        { showTabular &&
+                            <AccentButton
+                                iconName={iconNames.tabular}
+                                onClick={this.props.onTabularClick}
+                                title={_ts('components.galleryViewer', 'convertTabular')}
+                                transparent
+                            />
+                        }
                     </div>
                 }
             </div>
@@ -217,6 +230,7 @@ export default class GalleryViewer extends React.PureComponent {
             canShowIframe,
             showUrl,
             showScreenshot,
+            showTabular,
         } = this.props;
         const { screenshotMode } = this.state;
 
@@ -243,6 +257,7 @@ export default class GalleryViewer extends React.PureComponent {
                         showUrl,
                         showBar,
                         showScreenshot,
+                        showTabular,
                     })
                 }
                 <div className={docContainerClassNames.join(' ')}>

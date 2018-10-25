@@ -102,6 +102,8 @@ const iconNames = {
     trash: 'ion-trash-b',
 
     format: 'ion-android-list',
+
+    tabular: 'ion-ios-grid-view',
 };
 
 export default iconNames;
