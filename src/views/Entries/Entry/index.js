@@ -75,6 +75,7 @@ export default class Entry extends React.PureComponent {
                 entryType,
                 excerpt,
                 image,
+                dataSeries,
             },
         } = this.props;
 
@@ -92,6 +93,7 @@ export default class Entry extends React.PureComponent {
                     entryType={entryType}
                     excerpt={excerpt}
                     image={image}
+                    dataSeries={dataSeries}
                 />
             );
         } else {

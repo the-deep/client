@@ -5,6 +5,7 @@ import TextArea from '#rsci/TextArea';
 import AccentButton from '#rsca/Button/AccentButton';
 import { formatPdfText } from '#rsu/common';
 
+import DataSeries from '#components/DataSeries';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
@@ -16,6 +17,7 @@ const propTypes = {
     entryType: PropTypes.string,
     excerpt: PropTypes.string,
     image: PropTypes.string,
+    dataSeries: PropTypes.shape({}),
     onExcerptChange: PropTypes.func,
     onExcerptCreate: PropTypes.func,
     disabled: PropTypes.bool,
@@ -26,6 +28,7 @@ const defaultProps = {
     entryType: undefined,
     excerpt: undefined,
     image: undefined,
+    dataSeries: undefined,
     disabled: false,
     onExcerptChange: () => {},
     onExcerptCreate: () => {},
@@ -34,6 +37,7 @@ const defaultProps = {
 // FIXME: reuse this from entities.editEntries
 const TEXT = 'excerpt';
 const IMAGE = 'image';
+const DATA_SERIES = 'dataSeries';
 
 export default class Excerpt extends React.PureComponent {
     static propTypes = propTypes;
@@ -128,12 +132,16 @@ export default class Excerpt extends React.PureComponent {
             entryType,
             image,
             excerpt,
+            dataSeries,
             onExcerptChange,
             onExcerptCreate,
         } = this.props;
 
         const hasEntry = !!entryType;
-        const hasExcerpt = (entryType === IMAGE && !!image) || (entryType === TEXT && !!excerpt);
+        const hasExcerpt =
+            (entryType === IMAGE && !!image) ||
+            (entryType === TEXT && !!excerpt) ||
+            (entryType === DATA_SERIES && !!dataSeries);
 
         if (!hasEntry || hasExcerpt) {
             onExcerptCreate({
@@ -165,6 +173,21 @@ export default class Excerpt extends React.PureComponent {
                 className={className}
                 src={image}
                 alt={altText}
+            />
+        );
+    }
+
+    renderDataSeries = () => {
+        const { dataSeries } = this.props;
+        const className = `
+            ${styles.dataSeries}
+            dataSeries
+        `;
+
+        return (
+            <DataSeries
+                className={className}
+                value={dataSeries}
             />
         );
     }
@@ -219,6 +242,7 @@ export default class Excerpt extends React.PureComponent {
 
         const Image = this.renderImage;
         const Text = this.renderText;
+        const DataSeriesInternal = this.renderDataSeries;
 
         const className = `
             ${classNameFromProps}
@@ -236,7 +260,9 @@ export default class Excerpt extends React.PureComponent {
             >
                 <DropContainer show={isBeingDraggedOver} />
                 { !isBeingDraggedOver && (
-                    entryType === IMAGE ? <Image /> : <Text />
+                    (entryType === IMAGE && <Image />) ||
+                    (entryType === TEXT && <Text />) ||
+                    (entryType === DATA_SERIES && <DataSeriesInternal />)
                 ) }
             </div>
         );

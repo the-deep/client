@@ -88,6 +88,7 @@ export const createEntry = ({
     const keysToPick = [
         'excerpt',
         'image',
+        'dataSeries',
         'entryType',
         'lead',
         'order',

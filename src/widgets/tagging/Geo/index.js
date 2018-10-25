@@ -19,6 +19,7 @@ const propTypes = {
     entryType: PropTypes.string,
     excerpt: PropTypes.string,
     image: PropTypes.string,
+    dataSeries: PropTypes.shape({}),
 };
 
 const defaultProps = {
@@ -27,6 +28,7 @@ const defaultProps = {
     entryType: undefined,
     excerpt: undefined,
     image: undefined,
+    dataSeries: undefined,
 };
 
 const mapStateToProps = state => ({
@@ -36,10 +38,12 @@ const mapStateToProps = state => ({
 
 const TEXT = 'excerpt';
 const IMAGE = 'image';
+const DATA_SERIES = 'dataSeries';
 
 const entryTypes = {
     excerpt: 'text',
     image: 'image',
+    dataSeries: 'dataSeries',
 };
 
 @connect(mapStateToProps)
@@ -54,6 +58,7 @@ export default class GeoWidget extends React.PureComponent {
             entryType,
             excerpt,
             image,
+            dataSeries,
         } = this.props;
 
         let excerptValue;
@@ -63,6 +68,9 @@ export default class GeoWidget extends React.PureComponent {
                 break;
             case IMAGE:
                 excerptValue = image;
+                break;
+            case DATA_SERIES:
+                excerptValue = dataSeries;
                 break;
             default:
                 console.error('Unknown entry type', entryType);

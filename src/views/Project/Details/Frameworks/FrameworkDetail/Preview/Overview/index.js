@@ -74,6 +74,7 @@ export default class Overview extends React.PureComponent {
                     entryType="excerpt"
                     excerpt=""
                     image={undefined}
+                    dataSeries={undefined}
 
                     disabled
                 />

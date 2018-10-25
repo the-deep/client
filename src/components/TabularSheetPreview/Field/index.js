@@ -37,6 +37,21 @@ export default class Field extends React.PureComponent {
         ];
     })
 
+    handleOnDragStart = (e) => {
+        const { title, type, data: series, fieldId } = this.props;
+        const data = JSON.stringify({
+            type: 'dataSeries',
+            data: {
+                fieldId,
+                title,
+                type,
+                series,
+            },
+        });
+        e.dataTransfer.setData('text/plain', data);
+        e.dataTransfer.dropEffect = 'copy';
+    }
+
     renderDataItem = ({ value }) => (
         <div className={styles.dataItem}>
             {value}
@@ -57,7 +72,11 @@ export default class Field extends React.PureComponent {
         } = this.props;
 
         return (
-            <div className={_cs(className, styles.field)}>
+            <div
+                className={_cs(className, styles.field)}
+                onDragStart={this.handleOnDragStart}
+                draggable
+            >
                 <h5>
                     {title}
                 </h5>

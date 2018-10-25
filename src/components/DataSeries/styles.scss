@@ -1,0 +1,20 @@
+@import '~base-scss/base';
+
+.data-series {
+    padding: $spacing-medium;
+
+    h5 {
+        color: $color-text;
+    }
+
+    .table {
+        display: flex;
+        flex-direction: row;
+        margin-top: $spacing-small;
+        overflow-x: auto;
+
+        .table-item {
+            margin-right: $spacing-medium;
+        }
+    }
+}
