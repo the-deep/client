@@ -94,7 +94,7 @@ export default class LeadTabular extends React.PureComponent {
         if (fileType === 'csv') {
             return this.renderCsvSettings();
         }
-        return null;
+        return <div />;
     }
 
     render() {
@@ -141,7 +141,6 @@ export default class LeadTabular extends React.PureComponent {
                         showHintAndError
                     />
                     <FaramGroup faramElementName="options">
-                        <div />
                         {this.renderSettingsForFileType(faramValues.fileType)}
                     </FaramGroup>
                     <PrimaryButton type="submit">

@@ -1,8 +1,8 @@
 @import '~base-scss/base';
 
 .tabular-form {
-    flex: 1;
-    border: $width-separator-thin solid $color-separator;
+    flex-grow: 1;
+    border-top: $width-separator-thin solid $color-separator;
     background-color: $color-foreground;
 
     .header {

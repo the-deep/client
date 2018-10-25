@@ -19,8 +19,7 @@ const getSortIcon = sortOrder => ({
 export class Header extends React.PureComponent {
     static propTypes = {
         columnKey: PropTypes.string.isRequired,
-        title: PropTypes.string.isRequired,
-        type: PropTypes.string.isRequired,
+        value: PropTypes.shape({}).isRequired,
         onSortClick: PropTypes.func.isRequired,
         sortOrder: PropTypes.string,
         onChange: PropTypes.func.isRequired,
@@ -41,8 +40,8 @@ export class Header extends React.PureComponent {
     render() {
         const {
             sortOrder,
-            title,
-            type,
+            columnKey,
+            value,
         } = this.props;
 
         return (
@@ -53,14 +52,14 @@ export class Header extends React.PureComponent {
                     iconName={getSortIcon(sortOrder)}
                     transparent
                 >
-                    {title}
+                    {value.title}
                 </Button>
                 <EditField
                     className={styles.edit}
                     onChange={this.handleChange}
                     iconName={iconNames.edit}
-                    title={title}
-                    type={type}
+                    fieldId={columnKey}
+                    value={value}
                     transparent
                 />
             </div>
@@ -71,13 +70,16 @@ export class Header extends React.PureComponent {
 const cellPropTypes = {
     value: PropTypes.string,
     className: PropTypes.string,
+    options: PropTypes.shape({}),
 };
 const cellDefaultProps = {
     value: '',
     className: '',
+    options: {},
 };
 
-export const StringCell = ({ value, className }) => (
+// eslint-disable-next-line no-unused-vars
+export const StringCell = ({ value, className, options }) => (
     <div className={className}>
         { value }
     </div>
@@ -86,10 +88,19 @@ export const StringCell = ({ value, className }) => (
 StringCell.propTypes = cellPropTypes;
 StringCell.defaultProps = cellDefaultProps;
 
-export const NumberCell = ({ value, className }) => (
+const separators = {
+    comma: ',',
+    space: ' ',
+    none: '',
+};
+
+export const NumberCell = ({ value, className, options }) => (
     <Numeral
         className={className}
         value={parseFloat(value)}
+        precision={options.precision}
+        showSeparator={options.separator !== 'none'}
+        separator={separators[options.separator || 'space']}
     />
 );
 

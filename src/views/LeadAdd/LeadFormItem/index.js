@@ -349,7 +349,6 @@ export default class LeadFormItem extends React.PureComponent {
         if (values.tabularBook) {
             return (
                 <TabularBook
-                    className={styles.galleryFile}
                     bookId={values.tabularBook}
                     onDelete={this.unsetTabularBook}
                     showDelete
@@ -360,7 +359,6 @@ export default class LeadFormItem extends React.PureComponent {
         if (this.state.tabularMode) {
             return (
                 <LeadTabular
-                    className={styles.galleryFile}
                     setTabularBook={this.setTabularBook}
                     onCancel={this.unsetTabularMode}
                     lead={lead}

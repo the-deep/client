@@ -2,19 +2,25 @@
 
 .tabular-book {
     display: flex;
-    flex: 1;
     flex-direction: column;
-    border: $width-separator-thin solid $color-separator;
+    border-top: $width-separator-thin solid $color-separator;
 
     header {
         display: flex;
         align-items: center;
+        flex-shrink: 0;
         justify-content: space-between;
         padding: 0 $spacing-medium;
         height: 32px;
     }
 
+    .sheet-view {
+        flex-grow: 1;
+        min-height: 0;
+    }
+
     .tabs {
+        flex-shrink: 0;
         background-color: $color-foreground-alt;
     }
 }

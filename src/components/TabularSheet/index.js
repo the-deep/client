@@ -67,26 +67,20 @@ export default class TabularSheet extends React.PureComponent {
 
     calcSheetColumns = memoize((fields = []) => (
         fields.map(stringifyId).map(this.createColumn)
-    ));
+    ))
 
-    createColumn = ({ id: key, title, type }) => ({
-        key,
-        title,
-        headerRendererParams: ({ column, columnKey }) => ({
-            columnKey,
-            type,
-            onChange: this.handleColumnChange,
-            title: column.title,
-            sortOrder: column.sortOrder,
-            onSortClick: column.onSortClick,
-        }),
+    createColumn = field => ({
+        key: field.id,
+        value: field,
+
+        headerRendererParams: this.headerRendererParams,
         headerRenderer: Header,
-        cellRendererParams: ({ datum }) => ({
-            className: _cs(styles[type], styles.cell),
-            value: datum[key],
-        }),
-        cellRenderer: renderers[type],
-        comparator: (a, b, d) => comparators[type](a[key], b[key], d),
+        cellRendererParams: this.cellRendererParams,
+
+        cellRenderer: renderers[field.type],
+        comparator: (a, b, d) => comparators[field.type](
+            a[field.id], b[field.id], d,
+        ),
     })
 
     handleColumnChange = (key, value) => {
@@ -106,21 +100,34 @@ export default class TabularSheet extends React.PureComponent {
         this.props.onSheetChange(sheet);
     }
 
+    headerRendererParams = ({ column, columnKey }) => ({
+        columnKey,
+        onChange: this.handleColumnChange,
+        value: column.value,
+        sortOrder: column.sortOrder,
+        onSortClick: column.onSortClick,
+    })
+
+    cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({
+        className: _cs(styles[type], styles.cell),
+        value: datum[id],
+        options,
+    })
+
     render() {
         const { className, sheet } = this.props;
         const sheetColumns = this.calcSheetColumns(sheet.fields);
         const sheetSettings = this.calcSheetSettings(sheetColumns, sheet.options);
 
         return (
-            <div className={_cs(className, styles.tabularSheet, 'tabular-sheet')}>
-                <Taebul
-                    data={sheet.data}
-                    settings={sheetSettings}
-                    keySelector={TabularSheet.keySelector}
-                    columns={sheetColumns}
-                    onChange={this.handleSettingsChange}
-                />
-            </div>
+            <Taebul
+                className={_cs(className, styles.tabularSheet, 'tabular-sheet')}
+                data={sheet.data}
+                settings={sheetSettings}
+                keySelector={TabularSheet.keySelector}
+                columns={sheetColumns}
+                onChange={this.handleSettingsChange}
+            />
         );
     }
 }

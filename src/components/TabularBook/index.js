@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import FixedTabs from '#rscv/FixedTabs';
-import MultiViewContainer from '#rscv/MultiViewContainer';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 
@@ -39,7 +38,7 @@ const requests = {
 
         method: requestMethods.GET,
         url: ({ props }) => `/tabular-books/${props.bookId}/`,
-        onSuccess: ({ response, defaultParams: {
+        onSuccess: ({ response, params: {
             triggerExtraction,
             startPolling,
             setBook,
@@ -55,14 +54,14 @@ const requests = {
                 setInvalid();
             }
         },
-        onFailure: ({ defaultParams: { setInvalid } }) => setInvalid(),
-        onFatal: ({ defaultParams: { setInvalid } }) => setInvalid(),
+        onFailure: ({ params: { setInvalid } }) => setInvalid(),
+        onFatal: ({ params: { setInvalid } }) => setInvalid(),
     },
 
     extractRequest: {
         method: requestMethods.POST,
         url: ({ props }) => `/tabular-extraction-trigger/${props.bookId}/`,
-        onSuccess: ({ defaultParams: { startPolling } }) => startPolling(),
+        onSuccess: ({ params: { startPolling } }) => startPolling(),
     },
 
     bookRequest: {
@@ -73,7 +72,7 @@ const requests = {
             maxPollAttempts: 100,
             shouldPoll: r => r.status === 'pending',
         },
-        onSuccess: ({ response, defaultParams: { setBook, setInvalid } }) => {
+        onSuccess: ({ response, params: { setBook, setInvalid } }) => {
             if (response.status === 'success') {
                 setBook(response);
             } else {
@@ -98,7 +97,6 @@ export default class TabularBook extends React.PureComponent {
         super(props);
         this.state = {
             tabs: {},
-            views: {},
             activeSheet: undefined,
             completed: false,
             invalid: false,
@@ -119,21 +117,15 @@ export default class TabularBook extends React.PureComponent {
 
     setBook = (book) => {
         const tabs = {};
-        const views = {};
         const sheets = {};
 
         book.sheets.forEach((sheet) => {
             tabs[sheet.id] = sheet.title;
             sheets[sheet.id] = sheet;
-            views[sheet.id] = {
-                component: TabularSheet,
-                rendererParams: () => this.getRendererParams(sheet.id),
-            };
         });
 
         this.setState({
             tabs,
-            views,
             sheets,
             activeSheet: Object.keys(tabs)[0],
             invalid: false,
@@ -175,7 +167,7 @@ export default class TabularBook extends React.PureComponent {
 
         const {
             tabs,
-            views,
+            sheets,
             activeSheet,
             invalid,
             completed,
@@ -212,9 +204,10 @@ export default class TabularBook extends React.PureComponent {
                         />
                     )}
                 </header>
-                <MultiViewContainer
-                    views={views}
-                    active={activeSheet}
+                <TabularSheet
+                    className={styles.sheetView}
+                    sheet={sheets[activeSheet]}
+                    onSheetChange={this.handleSheetChange}
                 />
                 <FixedTabs
                     className={styles.tabs}

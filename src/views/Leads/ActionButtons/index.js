@@ -90,6 +90,7 @@ export default class ActionButtons extends React.PureComponent {
                     leadGroup: row.leadGroup,
                     url: row.url,
                     text: row.text,
+                    tabularBook: row.tabularBook,
                 },
             },
         };

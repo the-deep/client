@@ -144,6 +144,7 @@ export default class LeadForm extends React.PureComponent {
                 publishedOn: [requiredCondition, dateCondition],
                 sourceType: [requiredCondition],
                 project: [requiredCondition],
+                tabularBook: [],
                 leadGroup: [],
                 ...differentFields[type],
             },
