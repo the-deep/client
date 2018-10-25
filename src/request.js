@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 
@@ -53,4 +54,11 @@ export const RequestCoordinator = compose(
 );
 
 export const RequestClient = createRequestClient();
+RequestClient.prop = PropTypes.shape({
+    do: PropTypes.func,
+    pending: PropTypes.bool,
+    response: PropTypes.object,
+    error: PropTypes.object,
+});
+
 export const requestMethods = RestRequest.methods;
