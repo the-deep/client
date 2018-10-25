@@ -28,6 +28,7 @@ import _ts from '#ts';
 
 import SimplifiedLeadPreview from '#components/SimplifiedLeadPreview';
 import LeadPreview from '#components/LeadPreview';
+import TabularPreview from '#components/TabularPreview';
 import AssistedTagging from '#components/AssistedTagging';
 import ImagesGrid from '#components/ImagesGrid';
 import Highlight from '#components/Highlight';
@@ -120,6 +121,14 @@ export default class LeftPane extends React.PureComponent {
             ),
             mount: true,
             wrapContainer: true,
+        },
+        'tabular-preview': {
+            component: () => (
+                <TabularPreview
+                    className={styles.tabularPreview}
+                    bookId={this.props.lead.tabularBook}
+                />
+            ),
         },
         'assisted-tagging': {
             component: () => (
@@ -215,6 +224,9 @@ export default class LeftPane extends React.PureComponent {
         }
         if (!images || images.length <= 0) {
             tabs['images-preview'] = undefined;
+        }
+        if (lead.tabularBook) {
+            tabs['tabular-preview'] = _ts('editEntry.overview.leftpane', 'quantitativeTabLabel');
         }
         tabs['entries-listing'] = _ts('editEntry.overview.leftpane', 'entriesTabLabel');
         return tabs;

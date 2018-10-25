@@ -80,7 +80,7 @@ class EditFieldModal extends React.PureComponent {
             return (
                 <SegmentInput
                     faramElementName="separator"
-                    label={_ts('tabular', 'editFieldSeparatorLabel')}
+                    label={_ts('tabular.editField', 'separatorLabel')}
                     options={EditFieldModal.separatorOptions}
                     showLabel
                     showHintAndError
@@ -99,7 +99,7 @@ class EditFieldModal extends React.PureComponent {
 
         return (
             <Modal>
-                <ModalHeader title={_ts('tabular', 'editFieldTitle')} />
+                <ModalHeader title={_ts('tabular.editField', 'title')} />
                 <Faram
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
@@ -111,13 +111,13 @@ class EditFieldModal extends React.PureComponent {
                     <ModalBody>
                         <TextInput
                             faramElementName="title"
-                            label={_ts('tabular', 'editFieldTitleLabel')}
+                            label={_ts('tabular.editField', 'titleLabel')}
                             showLabel
                             showHintAndError
                         />
                         <SegmentInput
                             faramElementName="type"
-                            label={_ts('tabular', 'editFieldTypeLabel')}
+                            label={_ts('tabular.editField', 'typeLabel')}
                             options={EditFieldModal.fieldTypes}
                             showLabel
                             showHintAndError
@@ -128,10 +128,10 @@ class EditFieldModal extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerButton onClick={this.props.onCancel}>
-                            {_ts('tabular', 'editFieldCancelLabel')}
+                            {_ts('tabular.editField', 'cancelLabel')}
                         </DangerButton>
                         <PrimaryButton type="submit">
-                            {_ts('tabular', 'editFieldSubmitLabel')}
+                            {_ts('tabular.editField', 'submitLabel')}
                         </PrimaryButton>
                     </ModalFooter>
                 </Faram>

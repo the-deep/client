@@ -135,11 +135,6 @@ export default class TabularBook extends React.PureComponent {
         }
     }
 
-    getRendererParams = sheetId => ({
-        sheet: this.state.sheets[sheetId],
-        onSheetChange: this.handleSheetChange,
-    })
-
     setBook = (book) => {
         const tabs = {};
         const sheets = {};
@@ -232,7 +227,7 @@ export default class TabularBook extends React.PureComponent {
             <div className={_cs(className, styles.tabularBook, 'tabular-book')}>
                 <header>
                     <h4>
-                        Quantitiave Analysis
+                        {_ts('tabular', 'title')}
                     </h4>
                     {showDelete && (
                         <DangerConfirmButton

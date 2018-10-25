@@ -95,7 +95,7 @@ export default class LeadTabular extends React.PureComponent {
     renderCsvSettings = () => (
         <TextInput
             faramElementName="delimiter"
-            label={_ts('addLeads', 'tabularDelimiterLabel')}
+            label={_ts('addLeads.tabular', 'delimiterLabel')}
             showLabel
             showHintAndError
         />
@@ -140,13 +140,13 @@ export default class LeadTabular extends React.PureComponent {
                         transparent
                     />
                     <h4>
-                        Extract Tabular Data from Lead
+                        {_ts('addLeads.tabular', 'title')}
                     </h4>
                 </div>
                 <div className={styles.body}>
                     <SelectInput
                         faramElementName="fileType"
-                        label={_ts('addLeads', 'tabularFileTypeLabel')}
+                        label={_ts('addLeads.tabular', 'fileTypeLabel')}
                         options={LeadTabular.fileTypes}
                         showLabel
                         showHintAndError
@@ -155,7 +155,7 @@ export default class LeadTabular extends React.PureComponent {
                         {this.renderSettingsForFileType(faramValues.fileType)}
                     </FaramGroup>
                     <PrimaryButton type="submit">
-                        {_ts('addLeads', 'tabularExtractLabel')}
+                        {_ts('addLeads.tabular', 'extractLabel')}
                     </PrimaryButton>
                 </div>
             </Faram>
