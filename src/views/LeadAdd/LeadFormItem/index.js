@@ -14,10 +14,13 @@ import {
 import ResizableV from '#rscv/Resizable/ResizableV';
 import update from '#rsu/immutable-update';
 
+import { RequestCoordinator } from '#request';
 import {
     InternalGallery,
     ExternalGallery,
 } from '#components/DeepGallery';
+import TabularBook from '#components/TabularBook';
+
 import {
     addLeadViewLeadChangeAction,
     addLeadViewCopyAllBelowAction,
@@ -36,6 +39,7 @@ import _ts from '#ts';
 
 import LeadForm from './LeadForm';
 import AddLeadGroup from './AddLeadGroup';
+import LeadTabular from './LeadTabular';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -70,6 +74,7 @@ const mapDispatchToProps = dispatch => ({
     addLeadViewCopyAll: params => dispatch(addLeadViewCopyAllAction(params)),
 });
 
+@RequestCoordinator
 @connect(mapStateToProps, mapDispatchToProps)
 export default class LeadFormItem extends React.PureComponent {
     static propTypes = propTypes;
@@ -84,6 +89,7 @@ export default class LeadFormItem extends React.PureComponent {
         const isUrlValid = LeadFormItem.isUrlValid(lead.url);
         this.state = {
             isUrlValid,
+            tabularMode: false,
             pendingExtraction: false,
             showAddLeadGroupModal: false,
         };
@@ -119,6 +125,26 @@ export default class LeadFormItem extends React.PureComponent {
 
     setSubmitLeadFormFunction = (func) => {
         this.submitLeadForm = func;
+    }
+
+    setTabularMode = () => {
+        this.setState({ tabularMode: true });
+    }
+
+    setTabularBook = (tabularBook) => {
+        this.setState({
+            tabularMode: false,
+        }, () => {
+            this.handleFieldsChange({ tabularBook });
+        });
+    }
+
+    unsetTabularMode = () => {
+        this.setState({ tabularMode: false });
+    }
+
+    unsetTabularBook = () => {
+        this.handleFieldsChange({ tabularBook: undefined });
     }
 
     createWebInfoExtractRequest = (url) => {
@@ -210,6 +236,15 @@ export default class LeadFormItem extends React.PureComponent {
             faramErrors,
             uiState: { pristine: false, serverError: false },
         });
+    }
+
+    handleFieldsChange = (fields) => {
+        const { lead: { faramValues = {}, faramErrors } = {} } = this.props;
+        const newFaramValues = {
+            ...faramValues,
+            ...fields,
+        };
+        this.handleFormChange(newFaramValues, faramErrors);
     }
 
     handleFormFailure = (faramErrors) => {
@@ -311,6 +346,28 @@ export default class LeadFormItem extends React.PureComponent {
         const type = leadAccessor.getType(lead);
         const values = leadAccessor.getFaramValues(lead);
 
+        if (values.tabularBook) {
+            return (
+                <TabularBook
+                    className={styles.galleryFile}
+                    bookId={values.tabularBook}
+                    onDelete={this.unsetTabularBook}
+                    showDelete
+                />
+            );
+        }
+
+        if (this.state.tabularMode) {
+            return (
+                <LeadTabular
+                    className={styles.galleryFile}
+                    setTabularBook={this.setTabularBook}
+                    onCancel={this.unsetTabularMode}
+                    lead={lead}
+                />
+            );
+        }
+
         switch (type) {
             case LEAD_TYPE.text:
                 return null;
@@ -322,6 +379,8 @@ export default class LeadFormItem extends React.PureComponent {
                                 <ExternalGallery
                                     className={styles.galleryFile}
                                     url={values.url}
+                                    onTabularClick={this.setTabularMode}
+                                    showTabular
                                     showUrl
                                 />
                             ) : (
@@ -341,6 +400,8 @@ export default class LeadFormItem extends React.PureComponent {
                                     className={styles.galleryFile}
                                     galleryId={values.attachment && values.attachment.id}
                                     notFoundMessage={_ts('addLeads', 'leadFileNotFound')}
+                                    onTabularClick={this.setTabularMode}
+                                    showTabular
                                     showUrl
                                 />
                             ) :

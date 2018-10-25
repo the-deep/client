@@ -1,0 +1,22 @@
+@import '~base-scss/base';
+
+.tabular-form {
+    flex: 1;
+    border: $width-separator-thin solid $color-separator;
+    background-color: $color-foreground;
+
+    .header {
+        display: flex;
+        align-items: center;
+        padding: 0 $spacing-medium;
+        height: $height-navbar;
+    }
+
+    .body {
+        padding: 0 $spacing-large;
+
+        button {
+            margin-right: $spacing-medium;
+        }
+    }
+}

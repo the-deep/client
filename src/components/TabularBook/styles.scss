@@ -1,0 +1,20 @@
+@import '~base-scss/base';
+
+.tabular-book {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    border: $width-separator-thin solid $color-separator;
+
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 $spacing-medium;
+        height: 32px;
+    }
+
+    .tabs {
+        background-color: $color-foreground-alt;
+    }
+}
