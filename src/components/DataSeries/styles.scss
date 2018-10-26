@@ -5,23 +5,45 @@
     flex-direction: column;
     padding: $spacing-medium;
 
-    h5 {
-        flex-shrink: 0;
-        color: $color-text;
-        font-weight: $font-weight-bold;
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 32px;
+
+        h5 {
+            color: $color-text;
+            font-weight: $font-weight-bold;
+        }
+    }
+
+    .preview {
+        height: calc(100% - 32px);
+    }
+
+    .chart {
+        :global {
+            .fill {
+                opacity: 0.3;
+                fill: $color-accent;
+                stroke: $color-accent;
+            }
+            .line {
+                stroke: $color-accent;
+            }
+        }
     }
 
     .table {
         display: grid;
-        flex-grow: 1;
-        margin-top: $spacing-small;
         border: $width-separator-thin solid $color-separator;
         overflow: auto;
         grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+        grid-auto-rows: max-content;
 
         .table-item {
             border: $width-separator-thin solid $color-separator;
-            padding: $spacing-small;
+            padding: $spacing-extra-small $spacing-small;
             overflow:hidden;
             text-overflow: ellipsis;
             white-space: nowrap;

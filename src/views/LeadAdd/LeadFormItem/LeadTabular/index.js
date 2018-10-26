@@ -16,6 +16,8 @@ import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import { iconNames } from '#constants';
 
+import { leadPaneTypeMap, LEAD_PANE_TYPE } from '#entities/lead';
+
 import _ts from '#ts';
 import _cs from '#cs';
 import { RequestClient, requestMethods } from '#request';
@@ -55,11 +57,14 @@ const requests = {
     metaRequest: {
         method: requestMethods.GET,
         url: ({ params: { bookId } }) => `/tabular-books/${bookId}/`,
-        query: { fields: 'metaStatus, meta' },
+        query: { fields: 'meta_status,meta' },
         options: {
             pollTime: 1200,
             maxPollAttempts: 100,
-            shouldPoll: r => r.metaStatus === 'pending',
+            shouldPoll: r => (
+                r.metaStatus === 'pending' ||
+                r.metaStatus === 'initial'
+            ),
         },
         onSuccess: ({ response, params: { setMeta, setInvalid } }) => {
             if (response.metaStatus === 'success') {
@@ -72,7 +77,8 @@ const requests = {
 };
 
 const calcFileType = (mimeType) => {
-    if (mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+    const leadType = leadPaneTypeMap[mimeType];
+    if (leadType === LEAD_PANE_TYPE.spreadsheet) {
         return 'xlsx';
     }
     return 'csv';
@@ -94,7 +100,7 @@ export default class LeadTabular extends React.PureComponent {
         this.state = {
             faramValues: {
                 fileType: calcFileType(props.mimeType),
-                options: { delimiter: ',' },
+                options: {},
             },
             faramErrors: {},
 
@@ -143,7 +149,7 @@ export default class LeadTabular extends React.PureComponent {
         const { bookId: id } = this.state;
         const { faramValues: { title, attachment: file, url } } = this.props.lead;
         this.props.saveBookRequest.do({
-            body: { ...book, id, title, file, url },
+            body: { ...book, id, title, file: file && file.id, url },
             callback: this.handleTabularBook,
         });
     }
@@ -152,6 +158,7 @@ export default class LeadTabular extends React.PureComponent {
         <TextInput
             faramElementName="delimiter"
             label={_ts('addLeads.tabular', 'delimiterLabel')}
+            placeholder="Default: ,"
             showLabel
             showHintAndError
         />
@@ -163,15 +170,14 @@ export default class LeadTabular extends React.PureComponent {
                 {title}
             </div>
             <Checkbox
+                className={styles.checkInput}
                 faramElementName="skip"
                 label={_ts('addLeads.tabular', 'skipLabel')}
-                showLabel
-                showHintAndError
             />
             <NumberInput
                 faramElementName="headerRow"
                 label={_ts('addLeads.tabular', 'headerRowLabel')}
-                placeholder="Default: 0"
+                placeholder="Default: 1"
                 showLabel
                 showHintAndError
             />
@@ -222,8 +228,6 @@ export default class LeadTabular extends React.PureComponent {
             invalid,
             bookId,
         } = this.state;
-
-        const { metaRequest } = this.props;
 
         if (invalid) {
             return (

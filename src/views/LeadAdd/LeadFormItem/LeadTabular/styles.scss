@@ -19,7 +19,16 @@
             button {
                 margin-right: $spacing-medium;
             }
-        }
 
+            .sheet-list {
+                .sheet-title {
+                    font-weight: $font-weight-bold;
+                }
+
+                .check-input {
+                    margin: $spacing-small 0;
+                }
+            }
+        }
     }
 }
