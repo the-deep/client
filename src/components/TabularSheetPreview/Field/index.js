@@ -65,9 +65,7 @@ export default class Field extends React.PureComponent {
     render() {
         const {
             className,
-            fieldId,
             title,
-            type,
             data,
         } = this.props;
 

@@ -1,20 +1,30 @@
 @import '~base-scss/base';
 
 .data-series {
+    display: flex;
+    flex-direction: column;
     padding: $spacing-medium;
 
     h5 {
+        flex-shrink: 0;
         color: $color-text;
+        font-weight: $font-weight-bold;
     }
 
     .table {
-        display: flex;
-        flex-direction: row;
+        display: grid;
+        flex-grow: 1;
         margin-top: $spacing-small;
-        overflow-x: auto;
+        border: $width-separator-thin solid $color-separator;
+        overflow: auto;
+        grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
 
         .table-item {
-            margin-right: $spacing-medium;
+            border: $width-separator-thin solid $color-separator;
+            padding: $spacing-small;
+            overflow:hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
 }

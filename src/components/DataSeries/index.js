@@ -31,7 +31,10 @@ export default class DataSeries extends React.PureComponent {
     static seriesKeySelector = d => d.key;
 
     renderTableItem = ({ value }) => (
-        <div className={styles.tableItem}>
+        <div
+            className={styles.tableItem}
+            title={value}
+        >
             {value}
         </div>
     )
