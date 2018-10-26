@@ -3,10 +3,15 @@ import React from 'react';
 
 import Faram, { requiredCondition } from '#rscg/Faram';
 import FaramGroup from '#rscg/FaramGroup';
-import LoadingAnimation from '#rscv/LoadingAnimation';
+import ListView from '#rscv/List/ListView';
 
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import Message from '#rscv/Message';
+
+import Checkbox from '#rsci/Checkbox';
 import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
+import NumberInput from '#rsci/NumberInput';
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import { iconNames } from '#constants';
@@ -23,7 +28,9 @@ const propTypes = {
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setTabularBook: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     onCancel: PropTypes.func.isRequired,
-    createTabularBook: RequestClient.prop.isRequired,
+
+    saveBookRequest: RequestClient.prop.isRequired,
+    metaRequest: RequestClient.prop.isRequired,
 };
 
 const defaultProps = {
@@ -32,12 +39,34 @@ const defaultProps = {
 };
 
 const requests = {
-    createTabularBook: {
-        method: requestMethods.POST,
-        url: '/tabular-books/',
-        body: ({ params }) => params,
-        onSuccess: ({ props, response }) => {
-            props.setTabularBook(response.id);
+    saveBookRequest: {
+        method: ({ params: { body } }) => (body.id ? requestMethods.PUT : requestMethods.POST),
+        url: ({ params: { body } }) => (body.id ? `/tabular-books/${body.id}/` : '/tabular-books/'),
+        body: ({ params: { body } }) => body,
+        onSuccess: ({ props, params: { callback, body }, response }) => {
+            if (!body.id) {
+                callback(response.id);
+            } else {
+                props.setTabularBook(response.id);
+            }
+        },
+    },
+
+    metaRequest: {
+        method: requestMethods.GET,
+        url: ({ params: { bookId } }) => `/tabular-books/${bookId}/`,
+        query: { fields: 'metaStatus, meta' },
+        options: {
+            pollTime: 1200,
+            maxPollAttempts: 100,
+            shouldPoll: r => r.metaStatus === 'pending',
+        },
+        onSuccess: ({ response, params: { setMeta, setInvalid } }) => {
+            if (response.metaStatus === 'success') {
+                setMeta(response.meta);
+            } else {
+                setInvalid();
+            }
         },
     },
 };
@@ -53,6 +82,7 @@ const calcFileType = (mimeType) => {
 export default class LeadTabular extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+    static sheetKeySelector = d => d.key;
 
     static fileTypes = [
         { key: 'csv', label: 'CSV' },
@@ -67,6 +97,10 @@ export default class LeadTabular extends React.PureComponent {
                 options: { delimiter: ',' },
             },
             faramErrors: {},
+
+            bookId: undefined,
+            meta: undefined,
+            invalid: false,
         };
         this.schema = {
             fields: {
@@ -74,6 +108,24 @@ export default class LeadTabular extends React.PureComponent {
                 options: [],
             },
         };
+    }
+
+    setMeta = (meta) => {
+        this.setState({ meta });
+    }
+
+    setInvalid = () => {
+        this.setState({ invalid: true });
+    }
+
+    handleTabularBook = (bookId) => {
+        this.setState({ bookId }, () => {
+            this.props.metaRequest.do({
+                bookId,
+                setMeta: this.setMeta,
+                setInvalid: this.setInvalid,
+            });
+        });
     }
 
     handleFaramChange = (faramValues, faramErrors) => {
@@ -88,8 +140,12 @@ export default class LeadTabular extends React.PureComponent {
     }
 
     handleFaramValidationSuccess = (book) => {
+        const { bookId: id } = this.state;
         const { faramValues: { title, attachment: file, url } } = this.props.lead;
-        this.props.createTabularBook.do({ ...book, title, file, url });
+        this.props.saveBookRequest.do({
+            body: { ...book, id, title, file, url },
+            callback: this.handleTabularBook,
+        });
     }
 
     renderCsvSettings = () => (
@@ -101,29 +157,85 @@ export default class LeadTabular extends React.PureComponent {
         />
     )
 
+    renderSheetSettings = ({ sheetId, title }) => (
+        <FaramGroup faramElementName={sheetId}>
+            <div className={styles.sheetTitle}>
+                {title}
+            </div>
+            <Checkbox
+                faramElementName="skip"
+                label={_ts('addLeads.tabular', 'skipLabel')}
+                showLabel
+                showHintAndError
+            />
+            <NumberInput
+                faramElementName="headerRow"
+                label={_ts('addLeads.tabular', 'headerRowLabel')}
+                placeholder="Default: 0"
+                showLabel
+                showHintAndError
+            />
+        </FaramGroup>
+    )
+
+    renderSheetParams = (key, sheet) => ({
+        sheetId: sheet.key,
+        title: sheet.title,
+    })
+
+    renderExcelSettings = () => {
+        const { meta: { sheets } = {} } = this.state;
+
+        if (!sheets) {
+            return <div />;
+        }
+
+        return (
+            <FaramGroup faramElementName="sheets">
+                <ListView
+                    className={styles.sheetList}
+                    keySelector={LeadTabular.sheetKeySelector}
+                    rendererParams={this.renderSheetParams}
+                    renderer={this.renderSheetSettings}
+                    data={sheets}
+                />
+            </FaramGroup>
+        );
+    }
+
     renderSettingsForFileType = (fileType) => {
         if (fileType === 'csv') {
             return this.renderCsvSettings();
         }
+
+        if (fileType === 'xlsx') {
+            return this.renderExcelSettings();
+        }
+
         return <div />;
     }
 
-    render() {
-        const {
-            className,
-            onCancel,
-            createTabularBook,
-        } = this.props;
+    renderForm = (pending) => {
         const {
             faramValues,
             faramErrors,
+            invalid,
+            bookId,
         } = this.state;
 
-        const pending = !!(createTabularBook.pending || createTabularBook.response);
+        const { metaRequest } = this.props;
+
+        if (invalid) {
+            return (
+                <Message>
+                    {_ts('addLeads.tabular', 'invalid')}
+                </Message>
+            );
+        }
 
         return (
             <Faram
-                className={_cs(styles.tabularForm, className)}
+                className={styles.form}
                 onChange={this.handleFaramChange}
                 onValidationFailure={this.handleFaramValidationFailure}
                 onValidationSuccess={this.handleFaramValidationSuccess}
@@ -132,6 +244,38 @@ export default class LeadTabular extends React.PureComponent {
                 error={faramErrors}
                 disabled={pending}
             >
+                <SelectInput
+                    faramElementName="fileType"
+                    label={_ts('addLeads.tabular', 'fileTypeLabel')}
+                    options={LeadTabular.fileTypes}
+                    showLabel
+                    showHintAndError
+                />
+                {bookId && (
+                    <FaramGroup faramElementName="options">
+                        {this.renderSettingsForFileType(faramValues.fileType)}
+                    </FaramGroup>
+                )}
+                <PrimaryButton type="submit">
+                    {!bookId && _ts('addLeads.tabular', 'nextLabel')}
+                    {bookId && _ts('addLeads.tabular', 'extractLabel')}
+                </PrimaryButton>
+            </Faram>
+        );
+    }
+
+    render() {
+        const {
+            className,
+            onCancel,
+            saveBookRequest,
+            metaRequest,
+        } = this.props;
+
+        const pending = saveBookRequest.pending || metaRequest.pending;
+
+        return (
+            <div className={_cs(className, styles.leadTabular)}>
                 {pending && (<LoadingAnimation />)}
                 <div className={styles.header}>
                     <Button
@@ -144,21 +288,9 @@ export default class LeadTabular extends React.PureComponent {
                     </h4>
                 </div>
                 <div className={styles.body}>
-                    <SelectInput
-                        faramElementName="fileType"
-                        label={_ts('addLeads.tabular', 'fileTypeLabel')}
-                        options={LeadTabular.fileTypes}
-                        showLabel
-                        showHintAndError
-                    />
-                    <FaramGroup faramElementName="options">
-                        {this.renderSettingsForFileType(faramValues.fileType)}
-                    </FaramGroup>
-                    <PrimaryButton type="submit">
-                        {_ts('addLeads.tabular', 'extractLabel')}
-                    </PrimaryButton>
+                    {this.renderForm(pending)}
                 </div>
-            </Faram>
+            </div>
         );
     }
 }

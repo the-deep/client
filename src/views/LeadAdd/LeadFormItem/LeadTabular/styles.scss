@@ -1,6 +1,6 @@
 @import '~base-scss/base';
 
-.tabular-form {
+.lead-tabular {
     flex-grow: 1;
     border-top: $width-separator-thin solid $color-separator;
     background-color: $color-foreground;
@@ -15,8 +15,11 @@
     .body {
         padding: 0 $spacing-large;
 
-        button {
-            margin-right: $spacing-medium;
+        .form {
+            button {
+                margin-right: $spacing-medium;
+            }
         }
+
     }
 }

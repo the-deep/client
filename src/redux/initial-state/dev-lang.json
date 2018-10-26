@@ -727,6 +727,9 @@
         "15005": "File type",
         "15006": "Extract",
         "15007": "Extract Tabular Data from Lead",
+        "15008": "Reset sort",
+        "15009": "Skip",
+        "15010": "Header row",
         "-12279953": "Entry Cleared",
         "-94068330": "All local entries were cleared because associated analysis framework was removed.",
         "-4983139": "Remove lead group",
@@ -1522,7 +1525,10 @@
             "title": 15007,
             "delimiterLabel": 15004,
             "fileTypeLabel": 15005,
-            "extractLabel": 15006
+            "skipLabel": 15009,
+            "headerRowLabel": 15010,
+            "extractLabel": 15006,
+            "nextLabel": 23
         },
         "register": {
             "checkYourEmailText": 818,
@@ -2243,7 +2249,9 @@
         },
         "tabular": {
             "title": 15000,
-            "deleteMessage": 15001
+            "deleteMessage": 15001,
+            "deleteButtonTooltip": -94736495,
+            "resetSortTitle": 15008
         },
         "tabular.editField": {
             "title": 15002,
