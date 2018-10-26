@@ -3,15 +3,18 @@ import React from 'react';
 
 import FixedTabs from '#rscv/FixedTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import Button from '#rsca/Button';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import update from '#rsu/immutable-update';
 
 import { iconNames } from '#constants';
 import TabularSheet from '#components/TabularSheet';
 
-import { RequestClient, requestMethods } from '#request';
+import { RequestClient } from '#request';
 import _ts from '#ts';
 import _cs from '#cs';
 
+import requests from './requests';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -35,73 +38,6 @@ const defaultProps = {
     showDelete: false,
     setSaveTabularFunction: undefined,
     onEdited: undefined,
-};
-
-const requests = {
-    initialRequest: {
-        onMount: true,
-        onPropsChanged: ['bookId'],
-
-        method: requestMethods.GET,
-        url: ({ props }) => `/tabular-books/${props.bookId}/`,
-        onSuccess: ({ response, params: {
-            triggerExtraction,
-            startPolling,
-            setBook,
-            setInvalid,
-        } }) => {
-            if (response.status === 'initial') {
-                triggerExtraction();
-            } else if (response.status === 'pending') {
-                startPolling();
-            } else if (response.status === 'success') {
-                setBook(response);
-            } else {
-                setInvalid();
-            }
-        },
-        onFailure: ({ params: { setInvalid } }) => setInvalid(),
-        onFatal: ({ params: { setInvalid } }) => setInvalid(),
-    },
-
-    extractRequest: {
-        method: requestMethods.POST,
-        url: ({ props }) => `/tabular-extraction-trigger/${props.bookId}/`,
-        onSuccess: ({ params: { startPolling } }) => startPolling(),
-    },
-
-    bookRequest: {
-        method: requestMethods.GET,
-        url: ({ props }) => `/tabular-books/${props.bookId}/`,
-        options: {
-            pollTime: 1200,
-            maxPollAttempts: 100,
-            shouldPoll: r => r.status === 'pending',
-        },
-        onSuccess: ({ response, params: { setBook, setInvalid } }) => {
-            if (response.status === 'success') {
-                setBook(response);
-            } else {
-                setInvalid();
-            }
-        },
-    },
-
-    deleteRequest: {
-        method: requestMethods.DELETE,
-        url: ({ props }) => `/tabular-books/${props.bookId}/`,
-        onSuccess: ({ props }) => props.onDelete(),
-    },
-
-    saveRequest: {
-        method: requestMethods.PATCH,
-        url: ({ props }) => `/tabular-books/${props.bookId}/`,
-        query: { fields: 'sheets,options,fields' },
-        body: ({ params: { body } }) => body,
-        onSuccess: ({ params: { callback } }) => {
-            callback();
-        },
-    },
 };
 
 @RequestClient(requests)
@@ -176,14 +112,34 @@ export default class TabularBook extends React.PureComponent {
         });
     }
 
-    handleSheetChange = (newSheet) => {
-        const sheets = { ...this.state.sheets };
-        sheets[newSheet.id] = newSheet;
-        this.setState({ sheets });
+    resetSort = () => {
+        const { sheets, activeSheet } = this.state;
+        const settings = {
+            [activeSheet]: { $auto: {
+                options: { $auto: {
+                    sortOrder: { $set: undefined },
+                } },
+            } },
+        };
 
-        if (this.props.onEdited) {
-            this.props.onEdited();
-        }
+        this.setState({ sheets: update(sheets, settings) }, () => {
+            if (this.props.onEdited) {
+                this.props.onEdited();
+            }
+        });
+    }
+
+    handleSheetChange = (newSheet) => {
+        const { sheets } = this.state;
+        const settings = {
+            [newSheet.id]: { $set: newSheet },
+        };
+
+        this.setState({ sheets: update(sheets, settings) }, () => {
+            if (this.props.onEdited) {
+                this.props.onEdited();
+            }
+        });
     }
 
     handleActiveSheetChange = (activeSheet) => {
@@ -228,14 +184,23 @@ export default class TabularBook extends React.PureComponent {
                     <h4>
                         {_ts('tabular', 'title')}
                     </h4>
-                    {this.props.showDelete && (
-                        <DangerConfirmButton
-                            iconName={iconNames.delete}
-                            onClick={this.handleDelete}
-                            confirmationMessage={_ts('tabular', 'deleteMessage')}
+                    <div>
+                        <Button
+                            iconName={iconNames.sort}
+                            onClick={this.resetSort}
+                            title={_ts('tabular', 'resetSortTitle')}
                             transparent
                         />
-                    )}
+                        {this.props.showDelete && (
+                            <DangerConfirmButton
+                                iconName={iconNames.delete}
+                                onClick={this.handleDelete}
+                                confirmationMessage={_ts('tabular', 'deleteMessage')}
+                                title={_ts('tabular', 'deleteButtonTooltip')}
+                                transparent
+                            />
+                        )}
+                    </div>
                 </header>
                 <TabularSheet
                     className={styles.sheetView}
