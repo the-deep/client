@@ -51,18 +51,6 @@ export default class Users extends React.PureComponent {
         this.setState({ searchInputValue });
     }
 
-    // Renderer Params for userAndUserGroups search result
-    searchResultRendererParams = (key, data) => ({
-        key,
-        data: { ...data, projectId: this.props.projectId },
-        handleAdd: this.addUserOrUserGroup,
-        setParentPending: pending => this.setState({ pending }),
-        clearSearchInput: () => this.setState({ searchInputValue: '' }),
-        getMemberships: () => this.getMemberships(),
-    });
-
-    userGroupsRendererParams = (key, data) => ({ key, data })
-
     render() {
         const {
             className: classNameFromProps,

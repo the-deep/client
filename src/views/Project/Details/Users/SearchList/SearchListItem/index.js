@@ -15,8 +15,13 @@ import {
     addProjectMembershipAction,
     addProjectUserGroupAction,
 } from '#redux';
+import _ts from '#ts';
 
 import styles from './styles.scss';
+
+const RequestPropType = PropTypes.shape({
+    pending: PropTypes.bool.isRequired,
+});
 
 const propTypes = {
     className: PropTypes.string,
@@ -25,6 +30,8 @@ const propTypes = {
     projectId: PropTypes.number.isRequired,
     username: PropTypes.string,
     usergroupTitle: PropTypes.string,
+    userMembershipRequest: RequestPropType.isRequired,
+    usergroupMembershipRequest: RequestPropType.isRequired,
 };
 
 const requests = {
@@ -101,7 +108,6 @@ export default class SearchListItem extends React.PureComponent {
             username,
             usergroupTitle,
             className: classNameFromProps,
-            projectId,
         } = this.props;
 
         const USER = 'user';
@@ -128,7 +134,7 @@ export default class SearchListItem extends React.PureComponent {
                         <PrimaryButton
                             onClick={this.handleAddUsergroupButtonClick}
                             iconName={iconNames.add}
-                            title="Add usergroup to the project"
+                            title={_ts('project.users', 'addUsergroupButtonTooltip')}
                         />
                     </div>
                 </div>
@@ -156,7 +162,7 @@ export default class SearchListItem extends React.PureComponent {
                         <PrimaryButton
                             onClick={this.handleAddUserButtonClick}
                             iconName={iconNames.add}
-                            title="Add user to the project"
+                            title={_ts('project.users', 'addUserButtonTooltip')}
                         />
                     </div>
                 </div>

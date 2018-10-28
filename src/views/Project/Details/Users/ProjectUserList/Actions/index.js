@@ -12,6 +12,7 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
+// TODO: pull user role options from server
 const userRoleOptions = [
     {
         key: 1,
@@ -108,7 +109,7 @@ export default class Actions extends React.PureComponent {
                 />
                 <DangerButton
                     smallVerticalPadding
-                    title={_ts('project.user', 'deleteMemberLinkTitle')}
+                    title={_ts('project.users', 'removeMembershipButtonPlaceholder')}
                     iconName={iconNames.delete}
                     onClick={this.handleRemoveMembershipButtonClick}
                     onClickParams={{ row }}

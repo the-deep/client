@@ -15,9 +15,16 @@ import _ts from '#ts';
 import SearchListItem from './SearchListItem';
 import styles from './styles.scss';
 
+const RequestPropType = PropTypes.shape({
+    pending: PropTypes.bool.isRequired,
+});
+
 const propTypes = {
     className: PropTypes.string,
     projectId: PropTypes.number.isRequired,
+    searchInputValue: PropTypes.string.isRequired,
+    onSearchInputChange: PropTypes.func.isRequired,
+    userSearchRequest: RequestPropType.isRequired,
 };
 
 const defaultProps = {
@@ -29,7 +36,8 @@ const emptyObject = {};
 const MIN_SEARCH_TEXT_CHARACTERS = 2;
 
 const EmptySearch = () => {
-    const emptyText = 'No matching user / usergroup found';
+    const emptyText = _ts('project.users', 'searchEmptyText');
+
     return (
         <div className={styles.emptyText}>
             { emptyText }
@@ -38,7 +46,12 @@ const EmptySearch = () => {
 };
 
 const SearchTip = () => {
-    const tipText = 'Start search with at least 2 characters';
+    const tipText = _ts(
+        'project.users',
+        'searchTipText',
+        { numberOfCharacters: MIN_SEARCH_TEXT_CHARACTERS },
+    );
+
     const iconClassName = `
         ${iconNames.info}
         ${styles.icon}
@@ -140,8 +153,7 @@ export default class SearchList extends React.PureComponent {
     }
 
     render() {
-        const searchInputPlaceholder = _ts('project', 'searchUserPlaceholder');
-        const searchListTitle = _ts('project', 'userUserGroupLabel');
+        const searchInputPlaceholder = _ts('project.users', 'searchInputPlaceholder');
 
         const {
             className: classNameFromProps,
@@ -161,11 +173,7 @@ export default class SearchList extends React.PureComponent {
         return (
             <div className={className}>
                 <header className={styles.header}>
-                    <h4>
-                        { searchListTitle }
-                    </h4>
                     <SearchInput
-                        className={styles.searchInput}
                         onChange={onSearchInputChange}
                         placeholder={searchInputPlaceholder}
                         value={searchInputValue}

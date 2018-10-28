@@ -9,10 +9,15 @@ import {
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
+const RequestPropType = PropTypes.shape({
+    pending: PropTypes.bool.isRequired,
+});
+
 const propTypes = {
     row: PropTypes.shape({
         role: PropTypes.string,
     }).isRequired,
+    removeUsergroupMembershipRequest: RequestPropType.isRequired,
 };
 
 const requests = {
@@ -47,7 +52,7 @@ export default class Actions extends React.PureComponent {
         return (
             <DangerButton
                 smallVerticalPadding
-                title={_ts('project', 'deleteMemberLinkTitle')}
+                title={_ts('project.users', 'removeMembershipButtonPlaceholder')}
                 iconName={iconNames.delete}
                 onClick={this.handleRemoveMembershipButtonClick}
                 onClickParams={{ row }}

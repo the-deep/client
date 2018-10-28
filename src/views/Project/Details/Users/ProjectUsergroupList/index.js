@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import memoize from 'memoize-one';
 
 import {
     RequestClient,
@@ -20,6 +19,12 @@ const Table = FaramListElement(NormalTable);
 
 const propTypes = {
     className: PropTypes.string,
+
+    usergroupListRequest: PropTypes.shape({
+        pending: PropTypes.bool.isRequired,
+    }).isRequired,
+
+    // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number.isRequired,
 };
 
@@ -72,7 +77,6 @@ export default class ProjectUsergroupList extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            projectId,
             usergroupListRequest: {
                 pending: pendingUsergroupList,
                 response: {
