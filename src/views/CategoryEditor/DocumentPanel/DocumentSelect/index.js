@@ -157,7 +157,7 @@ export default class DocumentSelect extends React.PureComponent {
                     className={styles.fileListView}
                     modifier={this.renderGalleryFilesListItem}
                     data={selectedFiles}
-                    keySelector={this.keyExtractorForGalleryFiles}
+                    keySelector={this.keySelectorForGalleryFiles}
                 />
                 <div className={styles.bottomBar}>
                     <Button
