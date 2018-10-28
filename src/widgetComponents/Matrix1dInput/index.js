@@ -47,7 +47,6 @@ export default class Matrix1dInput extends React.PureComponent {
         const { type, data } = droppedData;
         this.props.onChange(
             undefined,
-            undefined,
             {
                 action: 'newEntry',
                 excerptType: type,

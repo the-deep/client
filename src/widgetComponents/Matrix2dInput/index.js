@@ -84,7 +84,7 @@ export default class Matrix2dInput extends React.PureComponent {
             },
         };
 
-        this.props.onChange(undefined, undefined, faramInfo);
+        this.props.onChange(undefined, faramInfo);
     }
 
     titleRendererParams = (key, sector) => ({
