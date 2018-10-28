@@ -14,12 +14,6 @@ $height-header: 42px;
         background-color: $color-background-header;
         height: $height-header;
 
-        .back-link {
-            @extend %transparent-button-like-link;
-            padding: $spacing-small $spacing-medium;
-            font-size: $font-size-large;
-        }
-
         .heading {
             flex-grow: 1;
             padding: 0 $spacing-medium;

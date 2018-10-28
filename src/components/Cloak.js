@@ -114,6 +114,8 @@ export default class Cloak extends React.Component {
             return renderOnHide ? renderOnHide() : null;
         }
 
+
+        // FIXME: maybe just inject disable value
         const disabled = disable && disable(params);
         return <Child disabled={disabled} />;
     }

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
+import Cloak from '#components/Cloak';
 
 import { entryAccessor } from '#entities/editEntries';
 import { iconNames } from '#constants';
@@ -50,6 +51,14 @@ const mapDispatchToProps = dispatch => ({
 export default class WidgetFaramContainer extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    shouldHideEntryDelete = ({ entryPermissions }) => (
+        !entryPermissions.includes('delete') && !!entryAccessor.serverId(this.props.entry)
+    )
+
+    shouldHideEntryEdit = ({ entryPermissions }) => (
+        !entryPermissions.includes('modify') && !!entryAccessor.serverId(this.props.entry)
+    )
 
     handleEdit = (e) => {
         const entryKey = entryAccessor.key(this.props.entry);
@@ -102,19 +111,29 @@ export default class WidgetFaramContainer extends React.PureComponent {
         return (
             <div className={className}>
                 <header className={headerClassName}>
-                    <DangerButton
-                        transparent
-                        iconName={iconNames.delete}
-                        title={_ts('editEntry.list.widgetForm', 'deleteButtonTooltip')}
-                        onClick={this.handleEntryDelete}
-                        disabled={pending}
+                    <Cloak
+                        hide={this.shouldHideEntryDelete}
+                        render={() => (
+                            <DangerButton
+                                transparent
+                                iconName={iconNames.delete}
+                                title={_ts('editEntry.list.widgetForm', 'deleteButtonTooltip')}
+                                onClick={this.handleEntryDelete}
+                                disabled={pending}
+                            />
+                        )}
                     />
-                    <WarningButton
-                        transparent
-                        onClick={this.handleEdit}
-                        title={_ts('editEntry.list.widgetForm', 'editButtonTooltip')}
-                        iconName={iconNames.edit}
-                        // NOTE: no need to disable edit
+                    <Cloak
+                        hide={this.shouldHideEntryEdit}
+                        render={() => (
+                            <WarningButton
+                                transparent
+                                onClick={this.handleEdit}
+                                title={_ts('editEntry.list.widgetForm', 'editButtonTooltip')}
+                                iconName={iconNames.edit}
+                                // NOTE: no need to disable edit on save pending
+                            />
+                        )}
                     />
                 </header>
                 <WidgetFaram

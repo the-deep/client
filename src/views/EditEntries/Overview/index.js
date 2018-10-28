@@ -26,6 +26,7 @@ import { VIEW } from '#widgets';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';
+import Cloak from '#components/Cloak';
 
 import WidgetFaram from '../WidgetFaram';
 import LeadPane from './LeadPane';
@@ -78,6 +79,12 @@ export default class Overview extends React.PureComponent {
         const { excerpt, order } = values;
         return excerpt || _ts('editEntry.overview', 'unnamedExcerptTitle', { index: order });
     };
+
+    static shouldHideEntryAdd = ({ entryPermissions }) => !entryPermissions.includes('create')
+
+    shouldHideEntryDelete = ({ entryPermissions }) => (
+        !entryPermissions.includes('delete') && !!entryAccessor.serverId(this.props.entry)
+    )
 
     handleEntrySelect = (entryKey) => {
         this.props.setSelectedEntryKey({
@@ -140,15 +147,26 @@ export default class Overview extends React.PureComponent {
                                 hideClearButton
                             />
                             <div className={styles.actionButtons}>
-                                <DangerButton
-                                    onClick={this.handleEntryDelete}
-                                    disabled={!entry || pending}
-                                    iconName={iconNames.remove}
+                                <Cloak
+                                    hide={this.shouldHideEntryDelete}
+                                    render={() => (
+                                        <DangerButton
+                                            onClick={this.handleEntryDelete}
+                                            disabled={pending}
+                                            // disabled={!entry || pending}
+                                            iconName={iconNames.remove}
+                                        />
+                                    )}
                                 />
-                                <PrimaryButton
-                                    onClick={this.handleEmptyExcerptCreate}
-                                    className={styles.addNewEntryButton}
-                                    iconName={iconNames.add}
+                                <Cloak
+                                    hide={Overview.shouldHideEntryAdd}
+                                    render={() => (
+                                        <PrimaryButton
+                                            onClick={this.handleEmptyExcerptCreate}
+                                            className={styles.addNewEntryButton}
+                                            iconName={iconNames.add}
+                                        />
+                                    )}
                                 />
                             </div>
                         </header>
