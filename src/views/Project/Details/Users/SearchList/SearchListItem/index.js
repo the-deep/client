@@ -4,15 +4,17 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { iconNames } from '#constants';
 
+import {
+    RequestClient,
+    requestMethods,
+} from '#request';
+
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import {
     addProjectMembershipAction,
     addProjectUserGroupAction,
 } from '#redux';
-
-import UserMembershipRequest from './requests/UserMembershipRequest';
-import UsergroupMembershipRequest from './requests/UsergroupMembershipRequest';
 
 import styles from './styles.scss';
 
@@ -23,6 +25,26 @@ const propTypes = {
     projectId: PropTypes.number.isRequired,
     username: PropTypes.string,
     usergroupTitle: PropTypes.string,
+};
+
+const requests = {
+    userMembershipRequest: {
+        url: '/project-memberships/',
+        method: requestMethods.POST,
+        body: ({
+            params: { membership },
+        }) => membership,
+        isUnique: true,
+        group: 'usersRequest',
+    },
+
+    usergroupMembershipRequest: {
+        url: '/project-usergroups/',
+        method: requestMethods.POST,
+        body: ({ params: { membership } }) => membership,
+        isUnique: true,
+        group: 'usersRequest',
+    },
 };
 
 const defaultProps = {
@@ -37,59 +59,40 @@ const mapDispatchToProps = dispatch => ({
 });
 
 @connect(undefined, mapDispatchToProps)
+@RequestClient(requests)
 export default class SearchListItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-
-    constructor(props) {
-        super(props);
-
-        const setState = d => d.setState(d);
-        this.userMembershipRequest = new UserMembershipRequest({
-            setState,
-        });
-
-        this.usergroupMembershipRequest = new UsergroupMembershipRequest({
-            setState,
-        });
-    }
-
-    componentWillUnmount() {
-        this.userMembershipRequest.stop();
-        this.usergroupMembershipRequest.stop();
-    }
-
-    addUser = () => {
+    handleAddUserButtonClick = () => {
         const {
             projectId,
             memberId,
+            userMembershipRequest,
         } = this.props;
 
-        const memberlist = [
-            {
-                project: projectId,
-                member: memberId,
-            },
-        ];
+        const membership = {
+            project: projectId,
+            member: memberId,
+        };
 
-        this.createProjectMembershipRequest.init(projectId, memberlist);
-        this.createProjectMembershipRequest.start();
+        userMembershipRequest.do({ membership });
     }
 
-    addUserGroup = () => {
+    handleAddUsergroupButtonClick = () => {
         const {
             projectId,
             memberId,
+            usergroupMembershipRequest,
         } = this.props;
 
-        const projectUserGroup = {
+        const membership = {
             project: projectId,
             usergroup: memberId,
         };
 
-        this.createProjectUserGroupRequest.init(projectId, projectUserGroup);
-        this.createProjectUserGroupRequest.start();
+        usergroupMembershipRequest
+            .do({ membership });
     }
 
     render() {
@@ -98,6 +101,7 @@ export default class SearchListItem extends React.PureComponent {
             username,
             usergroupTitle,
             className: classNameFromProps,
+            projectId,
         } = this.props;
 
         const USER = 'user';
@@ -150,7 +154,7 @@ export default class SearchListItem extends React.PureComponent {
                     </div>
                     <div className={styles.actionButtons}>
                         <PrimaryButton
-                            onClick={this.handleAdduserButtonClick}
+                            onClick={this.handleAddUserButtonClick}
                             iconName={iconNames.add}
                             title="Add user to the project"
                         />

@@ -52,7 +52,8 @@
                     "#utils": "./src/utils",
                     "#notify": "./src/notify",
                     "#store": "./src/store",
-                    "#ts": "./src/ts"
+                    "#ts": "./src/ts",
+                    "#request": "./src/request"
                 }
             }
         ]

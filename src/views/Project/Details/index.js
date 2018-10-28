@@ -80,7 +80,34 @@ export default class ProjectDetails extends React.PureComponent {
     }
 
     render() {
-        const { className: classNameFromProps } = this.props;
+        // FIXME: use cloak here
+        const {
+            className: classNameFromProps,
+            projectRole: {
+                setupPermissions = [],
+            },
+        } = this.props;
+
+        // FIXME: get role from redux
+        if (false) { // setupPermissions.indexOf('modify') === -1) {
+            const className = `
+                ${classNameFromProps}
+                ${styles.forbiddenText}
+            `;
+            return (
+                <Message
+                    large
+                    className={className}
+                >
+                    {_ts('project', 'forbiddenText')}
+                </Message>
+            );
+        }
+
+        const className = `
+            ${classNameFromProps}
+            ${styles.projectDetails}
+        `;
 
         return (
             <Cloak

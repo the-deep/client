@@ -1647,6 +1647,14 @@
             "useWordCategoryButtonTitle": 362,
             "editWordCategoryButtonTitle": 363
         },
+        "project.users": {
+            "usersTitle": 1119,
+            "usergroupsTitle": 338,
+            "nameTitle": 103,
+            "emailTitle": 184,
+            "actionsTitle": 16,
+            "joinedAtTitle": 161
+        },
         "project": {
             "projectGetFailure": 2500,
             "projectPutFailure": 2501,

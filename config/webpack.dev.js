@@ -35,6 +35,7 @@ module.exports = (env) => {
                 'base-scss': path.resolve(appBase, 'src/stylesheets/'),
                 'rs-scss': path.resolve(appBase, 'src/vendor/react-store/stylesheets/'),
             },
+            symlinks: false,
         },
 
         mode: 'development',
