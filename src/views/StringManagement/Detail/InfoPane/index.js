@@ -49,9 +49,9 @@ const propTypes = {
 const defaultProps = {
 };
 
-const mapStateToProps = (state, props) => ({
-    problemCollection: problemCollectionSelector(state, props),
-    problemCollectionStats: problemCollectionStatsSelector(state, props),
+const mapStateToProps = state => ({
+    problemCollection: problemCollectionSelector(state),
+    problemCollectionStats: problemCollectionStatsSelector(state),
 
     selectedLinkCollectionName: selectedLinkCollectionNameSelector(state),
     selectedLanguageName: selectedLanguageNameSelector(state),

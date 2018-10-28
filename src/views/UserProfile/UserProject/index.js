@@ -55,10 +55,10 @@ const defaultProps = {
     userProjects: [],
 };
 
-const mapStateToProps = (state, props) => ({
-    userProjects: userProjectsSelector(state, props),
+const mapStateToProps = state => ({
+    userProjects: userProjectsSelector(state),
     activeUser: activeUserSelector(state),
-    userId: userIdFromRouteSelector(state, props),
+    userId: userIdFromRouteSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

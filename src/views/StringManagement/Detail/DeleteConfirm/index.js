@@ -37,8 +37,8 @@ const defaultProps = {
     deleteId: undefined,
 };
 
-const mapStateToProps = (state, props) => ({
-    linkCollection: linkCollectionSelector(state, props),
+const mapStateToProps = state => ({
+    linkCollection: linkCollectionSelector(state),
     allStrings: allStringsSelector(state),
     selectedLanguageName: selectedLanguageNameSelector(state),
     selectedLinkCollectionName: selectedLinkCollectionNameSelector(state),

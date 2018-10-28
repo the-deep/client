@@ -35,10 +35,10 @@ const defaultProps = {
     selectedFiles: [],
 };
 
-const mapStateToProps = (state, props) => ({
-    selectedFiles: categoryEditorDocumentsSelector(state, props),
-    categoryEditorId: ceIdFromRouteSelector(state, props),
-    projects: categoryEditorProjectsSelector(state, props),
+const mapStateToProps = state => ({
+    selectedFiles: categoryEditorDocumentsSelector(state),
+    categoryEditorId: ceIdFromRouteSelector(state),
+    projects: categoryEditorProjectsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

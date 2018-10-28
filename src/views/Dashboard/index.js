@@ -15,8 +15,8 @@ const propTypes = {
     currentUserActiveProject: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state, props) => ({
-    currentUserActiveProject: currentUserActiveProjectSelector(state, props),
+const mapStateToProps = state => ({
+    currentUserActiveProject: currentUserActiveProjectSelector(state),
 });
 
 @BoundError(AppError)

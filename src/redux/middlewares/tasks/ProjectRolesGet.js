@@ -29,8 +29,6 @@ export default class ProjectRolesGet extends AbstractTask {
                     store.dispatch(setWaitingForProjectRolesAction(false));
                 } catch (er) {
                     console.error(er);
-                } finally {
-                    console.log('finally');
                 }
             })
             .build();

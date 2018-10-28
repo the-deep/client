@@ -75,15 +75,15 @@ const defaultProps = {
     totalLeadsCount: 0,
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
 
-    leads: leadsForProjectSelector(state, props),
-    totalLeadsCount: totalLeadsCountForProjectSelector(state, props),
-    activePage: leadPageActivePageSelector(state, props),
-    activeSort: leadPageActiveSortSelector(state, props),
-    leadsPerPage: leadPageLeadsPerPageSelector(state, props),
-    filters: leadPageFilterSelector(state, props),
+    leads: leadsForProjectSelector(state),
+    totalLeadsCount: totalLeadsCountForProjectSelector(state),
+    activePage: leadPageActivePageSelector(state),
+    activeSort: leadPageActiveSortSelector(state),
+    leadsPerPage: leadPageLeadsPerPageSelector(state),
+    filters: leadPageFilterSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

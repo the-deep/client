@@ -29,8 +29,8 @@ const propTypes = {
 const defaultProps = {
 };
 
-const mapStateToProps = (state, props) => ({
-    linkCollection: linkCollectionSelector(state, props),
+const mapStateToProps = state => ({
+    linkCollection: linkCollectionSelector(state),
 });
 
 @connect(mapStateToProps)

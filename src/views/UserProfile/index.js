@@ -48,10 +48,10 @@ const propTypes = {
 
 const defaultProps = {};
 
-const mapStateToProps = (state, props) => ({
-    userInformation: userInformationSelector(state, props),
+const mapStateToProps = state => ({
+    userInformation: userInformationSelector(state),
     activeUser: activeUserSelector(state),
-    userId: userIdFromRouteSelector(state, props),
+    userId: userIdFromRouteSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -53,10 +53,10 @@ const defaultProps = {
     leadFilterOptions: {},
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
     filters: leadPageFilterSelector(state),
-    leadFilterOptions: leadFilterOptionsForProjectSelector(state, props),
+    leadFilterOptions: leadFilterOptionsForProjectSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

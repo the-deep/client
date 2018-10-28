@@ -22,8 +22,8 @@ const defaultProps = {
     className: '',
 };
 
-const mapStateToProps = (state, props) => ({
-    ngrams: categoryEditorNgramsSelector(state, props),
+const mapStateToProps = state => ({
+    ngrams: categoryEditorNgramsSelector(state),
 });
 
 

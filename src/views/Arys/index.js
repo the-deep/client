@@ -57,14 +57,14 @@ const defaultProps = {
     totalArysCount: 0,
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
 
-    arys: arysForProjectSelector(state, props),
-    totalArysCount: totalArysCountForProjectSelector(state, props),
-    activePage: aryPageActivePageSelector(state, props),
-    activeSort: aryPageActiveSortSelector(state, props),
-    filters: aryPageFilterSelector(state, props),
+    arys: arysForProjectSelector(state),
+    totalArysCount: totalArysCountForProjectSelector(state),
+    activePage: aryPageActivePageSelector(state),
+    activeSort: aryPageActiveSortSelector(state),
+    filters: aryPageFilterSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

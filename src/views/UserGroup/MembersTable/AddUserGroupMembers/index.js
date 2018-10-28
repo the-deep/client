@@ -41,9 +41,9 @@ const defaultProps = {
     userGroupId: undefined,
 };
 
-const mapStateToProps = (state, props) => ({
-    users: usersInformationListSelector(state, props),
-    membershipsList: usergroupMembershipsSelector(state, props),
+const mapStateToProps = state => ({
+    users: usersInformationListSelector(state),
+    membershipsList: usergroupMembershipsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

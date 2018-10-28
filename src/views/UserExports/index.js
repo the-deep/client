@@ -56,9 +56,9 @@ const defaultProps = {
     projectId: undefined,
 };
 
-const mapStateToProps = (state, props) => ({
-    userExports: userExportsListSelector(state, props),
-    projectId: projectIdFromRouteSelector(state, props),
+const mapStateToProps = state => ({
+    userExports: userExportsListSelector(state),
+    projectId: projectIdFromRouteSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

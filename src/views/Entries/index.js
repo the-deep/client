@@ -34,13 +34,13 @@ import LeadGroupedEntries from './LeadGroupedEntries';
 
 import styles from './styles.scss';
 
-const mapStateToProps = (state, props) => ({
-    activePage: entriesViewActivePageSelector(state, props),
-    entriesFilter: entriesViewFilterSelector(state, props),
-    framework: analysisFrameworkForProjectSelector(state, props),
-    leadGroupedEntriesList: entriesForProjectSelector(state, props),
-    projectId: projectIdFromRouteSelector(state, props),
-    totalEntriesCount: totalEntriesCountForProjectSelector(state, props),
+const mapStateToProps = state => ({
+    activePage: entriesViewActivePageSelector(state),
+    entriesFilter: entriesViewFilterSelector(state),
+    framework: analysisFrameworkForProjectSelector(state),
+    leadGroupedEntriesList: entriesForProjectSelector(state),
+    projectId: projectIdFromRouteSelector(state),
+    totalEntriesCount: totalEntriesCountForProjectSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

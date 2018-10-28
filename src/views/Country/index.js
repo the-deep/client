@@ -42,10 +42,10 @@ const defaultProps = {
     countryId: undefined,
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = state => ({
     countries: regionsListSelector(state),
     activeUser: activeUserSelector(state),
-    countryId: countryIdFromRouteSelector(state, props),
+    countryId: countryIdFromRouteSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

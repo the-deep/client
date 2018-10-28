@@ -67,7 +67,7 @@ export default class ProjectDetails extends React.PureComponent {
             },
             users: {
                 component: Users,
-                rendererParams: () => ({ className: styles.content }),
+                rendererParams,
             },
             regions: {
                 component: Regions,
@@ -92,6 +92,7 @@ export default class ProjectDetails extends React.PureComponent {
     }
 
     render() {
+        // FIXME: use cloak here
         const {
             className: classNameFromProps,
             projectRole: {

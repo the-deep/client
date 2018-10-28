@@ -51,8 +51,8 @@ const defaultProps = {
     className: '',
 };
 
-const mapStateToProps = (state, props) => ({
-    projects: usergroupProjectsSelector(state, props),
+const mapStateToProps = state => ({
+    projects: usergroupProjectsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -42,10 +42,10 @@ const propTypes = {
 
 const defaultProps = {};
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = state => ({
     usergroup: usergroupInformationSelector(state),
     activeUser: activeUserSelector(state),
-    userGroupId: groupIdFromRouteSelector(state, props),
+    userGroupId: groupIdFromRouteSelector(state),
     isCurrentUserAdmin: isCurrentUserAdminOfCurrentUsergroup(state),
 });
 
