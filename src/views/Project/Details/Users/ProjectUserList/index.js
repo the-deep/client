@@ -65,21 +65,21 @@ export default class ProjectUserList extends React.PureComponent {
                 label: _ts('project.users', 'nameTitle'),
                 order: 1,
                 sortable: true,
-                comparator: getComparator(compareString, this.key),
+                comparator: getComparator(compareString, 'memberName'),
             },
             {
                 key: 'memberEmail',
                 label: _ts('project.users', 'emailTitle'),
                 order: 2,
                 sortable: true,
-                comparator: getComparator(compareString, this.key),
+                comparator: getComparator(compareString, 'memberEmail'),
             },
             {
                 key: 'joinedAt',
                 label: _ts('project.users', 'joinedAtTitle'),
                 order: 3,
                 sortable: true,
-                comparator: getComparator(compareDate, this.key),
+                comparator: getComparator(compareDate, 'joinedAt'),
                 modifier: ({ joinedAt }) => (
                     <FormattedDate
                         date={joinedAt}

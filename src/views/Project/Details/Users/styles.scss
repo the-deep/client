@@ -13,7 +13,25 @@ $width-search-list: 240px;
     }
 
     .details {
-        padding: 0;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        %list-base {
+            flex-basis: 50%;
+            flex-grow: 0;
+            flex-shrink: 0;
+            overflow: auto;
+        }
+
+        .user-list {
+            @extend %list-base;
+        }
+
+        .usergroup-list {
+            @extend %list-base;
+            border-top: $width-separator-thin solid $color-separator;
+        }
     }
 }
 

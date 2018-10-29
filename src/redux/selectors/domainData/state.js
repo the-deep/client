@@ -1,5 +1,8 @@
 import { createSelector } from 'reselect';
-import { compareString } from '#rsu/common';
+import {
+    compareString,
+    mapToList,
+} from '#rsu/common';
 
 const emptyList = [];
 const emptyObject = {};
@@ -18,6 +21,10 @@ export const leadFilterOptionsSelector = ({ domainData }) => (
 
 export const entryFilterOptionsSelector = ({ domainData }) => (
     domainData.entryFilterOptions || emptyObject
+);
+
+export const projectRolesListSelector = ({ domainData }) => (
+    mapToList(domainData.projectRoles)
 );
 
 export const projectRolesSelector = ({ domainData }) => (

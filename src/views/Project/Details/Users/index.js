@@ -81,8 +81,14 @@ export default class Users extends React.PureComponent {
                             className={styles.searchList}
                         />
                         <div className={styles.details}>
-                            <ProjectUserList projectId={projectId} />
-                            <ProjectUsergroupList projectId={projectId} />
+                            <ProjectUserList
+                                className={styles.userList}
+                                projectId={projectId}
+                            />
+                            <ProjectUsergroupList
+                                className={styles.usergroupList}
+                                projectId={projectId}
+                            />
                         </div>
                     </React.Fragment>
                 )}

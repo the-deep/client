@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
 import DangerButton from '#rsca/Button/DangerButton';
 import SelectInput from '#rsci/SelectInput';
 
@@ -7,30 +9,13 @@ import {
     RequestClient,
     requestMethods,
 } from '#request';
+import {
+    projectRolesListSelector,
+} from '#redux';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import styles from './styles.scss';
-
-// TODO: pull user role options from server
-const userRoleOptions = [
-    {
-        key: 1,
-        label: 'Admin',
-    },
-    {
-        key: 3,
-        label: 'Sorcerer',
-    },
-    {
-        key: 4,
-        label: 'Tagger',
-    },
-    {
-        key: 2,
-        label: 'Analyst',
-    },
-];
 
 const requests = {
     changeUserRoleRequest: {
@@ -59,8 +44,19 @@ const propTypes = {
     row: PropTypes.shape({
         role: PropTypes.string,
     }).isRequired,
+    projectRoles: PropTypes.shape({
+        title: PropTypes.string,
+    }).isRequired,
 };
 
+const mapStateToProps = state => ({
+    projectRoles: projectRolesListSelector(state),
+});
+
+const projectRoleKeySelector = d => d.id;
+const projectRoleLabelSelector = d => d.title;
+
+@connect(mapStateToProps)
 @RequestClient(requests)
 export default class Actions extends React.PureComponent {
     static propTypes = propTypes;
@@ -93,7 +89,10 @@ export default class Actions extends React.PureComponent {
     }
 
     render() {
-        const { row } = this.props;
+        const {
+            row,
+            projectRoles,
+        } = this.props;
         const { role } = row;
 
         return (
@@ -103,8 +102,10 @@ export default class Actions extends React.PureComponent {
                     placeholder=""
                     hideClearButton
                     value={role}
-                    options={userRoleOptions}
+                    options={projectRoles}
                     onChange={this.handleRoleSelectInputChange}
+                    keySelector={projectRoleKeySelector}
+                    labelSelector={projectRoleLabelSelector}
                     showHintAndError={false}
                 />
                 <DangerButton
@@ -112,7 +113,6 @@ export default class Actions extends React.PureComponent {
                     title={_ts('project.users', 'removeMembershipButtonPlaceholder')}
                     iconName={iconNames.delete}
                     onClick={this.handleRemoveMembershipButtonClick}
-                    onClickParams={{ row }}
                     transparent
                 />
             </div>

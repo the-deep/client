@@ -63,7 +63,7 @@ export default class ProjectUsergroupList extends React.PureComponent {
                 label: _ts('project.users', 'nameTitle'),
                 order: 1,
                 sortable: true,
-                comparator: getComparator(compareString, this.key),
+                comparator: getComparator(compareString, 'title'),
             },
             {
                 key: 'actions',
