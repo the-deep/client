@@ -99,7 +99,7 @@ export default class Actions extends React.PureComponent {
         return (
             <div className={styles.actions}>
                 <SelectInput
-                    label="Role"
+                    label={_ts('project.users', 'roleSelectInputTitle')}
                     placeholder=""
                     hideClearButton
                     value={role}

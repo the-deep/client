@@ -49,6 +49,7 @@ const requests = {
 };
 
 const getComparator = (func, key) => (a, b) => func(a[key], b[key]);
+const userListKeySelector = d => d.id;
 
 @RequestClient(requests)
 export default class ProjectUserList extends React.PureComponent {
@@ -80,7 +81,10 @@ export default class ProjectUserList extends React.PureComponent {
                 sortable: true,
                 comparator: getComparator(compareDate, this.key),
                 modifier: ({ joinedAt }) => (
-                    <FormattedDate date={joinedAt} mode="dd-MM-yyyy" />
+                    <FormattedDate
+                        date={joinedAt}
+                        mode="dd-MM-yyyy"
+                    />
                 ),
             },
             {
@@ -123,7 +127,7 @@ export default class ProjectUserList extends React.PureComponent {
                     <Table
                         data={userList}
                         headers={this.headers}
-                        keySelector={d => d.id}
+                        keySelector={userListKeySelector}
                     />
                 )}
             </div>

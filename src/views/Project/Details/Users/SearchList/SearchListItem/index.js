@@ -139,9 +139,7 @@ export default class SearchListItem extends React.PureComponent {
                     </div>
                 </div>
             );
-        }
-
-        if (type === USER) {
+        } else if (type === USER) {
             const className = `
                 ${classNameFromProps}
                 ${styles.user}

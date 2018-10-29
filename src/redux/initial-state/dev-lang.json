@@ -717,6 +717,7 @@
         "12506": "Add usergroup to the project",
         "12507": "No matching user / usergroup found",
         "12508": "Start search with at least {numberOfCharacters} characters",
+        "12509": "Role",
 
         "-12279953": "Entry Cleared",
         "-94068330": "All local entries were cleared because associated analysis framework was removed.",
@@ -1663,7 +1664,8 @@
             "addUsergroupButtonTooltip": 1220,
             "searchInputPlaceholder": -17852758,
             "searchEmptyText": 12507,
-            "searchTipText": 12508
+            "searchTipText": 12508,
+            "roleSelectInputTitle": 12509
         },
         "project": {
             "projectGetFailure": 2500,

@@ -32,6 +32,8 @@ const defaultProps = {
     className: '',
 };
 
+const usergroupListKeySelector = d => d.id;
+
 const requests = {
     usergroupListRequest: {
         onMount: true,
@@ -103,7 +105,7 @@ export default class ProjectUsergroupList extends React.PureComponent {
                     <Table
                         data={usergroupList}
                         headers={this.headers}
-                        keySelector={d => d.id}
+                        keySelector={usergroupListKeySelector}
                     />
                 )}
             </div>
