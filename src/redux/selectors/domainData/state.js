@@ -23,7 +23,7 @@ export const entryFilterOptionsSelector = ({ domainData }) => (
     domainData.entryFilterOptions || emptyObject
 );
 
-export const projectRolesListSelector = ({ domainData }) => (
+export const projectRoleListSelector = ({ domainData }) => (
     mapToList(domainData.projectRoles)
 );
 
