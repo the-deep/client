@@ -1,0 +1,49 @@
+@import '~base-scss/base';
+
+.search-list {
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        flex-shrink: 0;
+        background-color: $color-background-header;
+        padding: $spacing-medium;
+    }
+
+    .list-container {
+        display: flex;
+        position: relative;
+        flex-direction: column;
+        flex-grow: 1;
+
+        .list {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .empty-text {
+            flex-grow: 1;
+            padding: $spacing-medium;
+            text-align: center;
+            color: $color-text-disabled;
+        }
+
+        .search-tip {
+            display: flex;
+            align-items: center;
+            padding: $spacing-medium 0;
+            color: $color-text-disabled;
+
+            .icon {
+                flex-shrink: 0;
+                padding: 0 $spacing-medium;
+                font-size: $font-size-large;
+            }
+
+            .text {
+                flex-grow: 1;
+                padding: 0 $spacing-medium 0 0;
+            }
+        }
+    }
+}

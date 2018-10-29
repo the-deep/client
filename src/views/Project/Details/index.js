@@ -81,12 +81,16 @@ export default class ProjectDetails extends React.PureComponent {
 
     render() {
         const { className: classNameFromProps } = this.props;
+        const className = `
+            ${classNameFromProps}
+            ${styles.projectDetails}
+        `;
 
         return (
             <Cloak
                 hide={({ setupPermissions }) => !setupPermissions.includes('modify')}
                 render={() => (
-                    <div className={`${classNameFromProps} ${styles.projectDetails}`}>
+                    <div className={className}>
                         <FixedTabs
                             className={styles.tabs}
                             defaultHash={this.defaultHash}

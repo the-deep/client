@@ -713,6 +713,12 @@
         "12502": "Clone framework",
         "12503": "Word categories",
         "12504": "Clone category editor",
+        "12505": "Add user to the project",
+        "12506": "Add usergroup to the project",
+        "12507": "No matching user / usergroup found",
+        "12508": "Start search with at least {numberOfCharacters} characters",
+        "12509": "Role",
+
         "-12279953": "Entry Cleared",
         "-94068330": "All local entries were cleared because associated analysis framework was removed.",
         "-4983139": "Remove lead group",
@@ -1646,6 +1652,20 @@
             "cloneWordCategoryCancelButtonTitle": 61,
             "useWordCategoryButtonTitle": 362,
             "editWordCategoryButtonTitle": 363
+        },
+        "project.users": {
+            "usersTitle": 1119,
+            "usergroupsTitle": 338,
+            "nameTitle": 103,
+            "emailTitle": 184,
+            "actionsTitle": 16,
+            "joinedAtTitle": 161,
+            "addUserButtonTooltip": 1220,
+            "addUsergroupButtonTooltip": 1220,
+            "searchInputPlaceholder": -17852758,
+            "searchEmptyText": 12507,
+            "searchTipText": 12508,
+            "roleSelectInputTitle": 12509
         },
         "project": {
             "projectGetFailure": 2500,

@@ -82,12 +82,18 @@ export const createParamsForProjectCreate = ({ title, userGroups }) => ({
     }),
 });
 
-export const createParamsForProjectMembershipCreate = ({ memberList }) => ({
+export const createParamsForProjectMembershipListCreate = ({ memberList }) => ({
     method: POST,
     headers: commonHeaderForPost,
     body: JSON.stringify({
         list: memberList,
     }),
+});
+
+export const createParamsForProjectMembershipCreate = member => ({
+    method: POST,
+    headers: commonHeaderForPost,
+    body: JSON.stringify(member),
 });
 
 export const createParamsForProjectDelete = () => ({

@@ -1,0 +1,42 @@
+@import '~base-scss/base';
+
+%list-item {
+    display: flex;
+    position: relative;
+    padding: $spacing-medium 0;
+    overflow: hidden;
+
+    .icon {
+        flex-shrink: 0;
+        padding: 0 $spacing-medium;
+    }
+
+    .title {
+        flex-grow: 1;
+        padding: 0 $spacing-medium 0 0;
+        word-break: break-all;
+    }
+
+    .action-buttons {
+        position: absolute;
+        top: $spacing-small;
+        right: $spacing-small;
+        transform: translateX(100%);
+        transition: all $duration-transition-medium ease-in-out;
+        opacity: 0;
+    }
+
+    &:hover {
+        background-color: $color-background-hover;
+
+        .action-buttons {
+            transform: none;
+            opacity: 1;
+        }
+    }
+}
+
+.user,
+.usergroup {
+    @extend %list-item;
+}
