@@ -26,6 +26,7 @@ const propTypes = {
     computeSchema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgetType: PropTypes.string.isRequired,
     pending: PropTypes.bool,
+    disabled: PropTypes.bool,
 
     onExcerptChange: PropTypes.func.isRequired,
     onExcerptCreate: PropTypes.func.isRequired,
@@ -36,6 +37,7 @@ const propTypes = {
 const defaultProps = {
     pending: false,
     className: '',
+    disabled: false,
     entry: undefined,
     widgets: [],
     onChange: () => {},
@@ -227,6 +229,7 @@ export default class WidgetFaram extends React.PureComponent {
             schema,
             computeSchema,
             pending,
+            disabled,
             widgetType,
         } = this.props;
 
@@ -254,7 +257,7 @@ export default class WidgetFaram extends React.PureComponent {
                 computeSchema={computeSchema}
                 value={attributes}
                 error={error}
-                disabled={pending}
+                disabled={pending || disabled}
             >
                 { pending && <LoadingAnimation /> }
                 <GridViewLayout

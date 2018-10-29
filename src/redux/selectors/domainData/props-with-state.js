@@ -4,6 +4,7 @@ import {
     groupIdFromRoute,
     countryIdFromRoute,
     projectIdFromRoute,
+
     afIdFromRoute,
     ceIdFromRoute,
     wordCategoryIdFromRoute,
@@ -13,7 +14,6 @@ import {
     entryFilterOptionsSelector,
     aryFilterOptionsSelector,
     projectsSelector,
-    projectRolesSelector,
     regionsSelector,
     geoOptionsSelector,
     regionsForAllProjectsSelector,
@@ -38,19 +38,6 @@ const currentUserSelector = createSelector(
     activeUserSelector,
     usersSelector,
     (activeUser, users) => (users[activeUser.userId] || emptyObject),
-);
-
-// active project
-export const activeProjectSelector = createSelector(
-    projectsSelector,
-    projectIdFromRoute,
-    (projects, projectId) => (projects[projectId] || emptyObject),
-);
-
-export const activeProjectRoleSelector = createSelector(
-    activeProjectSelector,
-    projectRolesSelector,
-    (project, roles) => (project.role && roles[project.role]),
 );
 
 export const userExportsListSelector = createSelector(

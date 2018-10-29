@@ -238,7 +238,7 @@ class RouteSynchronizer extends React.PureComponent {
             <Cloak
                 {...viewsAcl[name]}
                 render={this.renderBundle}
-                renderOnCloak={this.renderBundleOnCloak}
+                renderOnHide={this.renderBundleOnCloak}
             />
         );
     }

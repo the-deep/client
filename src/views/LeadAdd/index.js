@@ -16,6 +16,7 @@ import { CoordinatorBuilder } from '#rsu/coordinate';
 import List from '#rscv/List';
 import Message from '#rscv/Message';
 import BoundError from '#rscg/BoundError';
+import Cloak from '#components/Cloak';
 
 import AppError from '#components/AppError';
 import {
@@ -288,10 +289,15 @@ export default class LeadAdd extends React.PureComponent {
                 <div className={styles.content}>
                     <div className={styles.left}>
                         <LeadList />
-                        <LeadButtons
-                            uploadCoordinator={this.uploadCoordinator}
-                            driveUploadCoordinator={this.driveUploadCoordinator}
-                            dropboxUploadCoordinator={this.dropboxUploadCoordinator}
+                        <Cloak
+                            hide={({ leadPermissions }) => !leadPermissions.includes('create')}
+                            render={() => (
+                                <LeadButtons
+                                    uploadCoordinator={this.uploadCoordinator}
+                                    driveUploadCoordinator={this.driveUploadCoordinator}
+                                    dropboxUploadCoordinator={this.dropboxUploadCoordinator}
+                                />
+                            )}
                         />
                     </div>
                     {

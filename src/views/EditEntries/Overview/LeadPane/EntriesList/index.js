@@ -6,6 +6,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import ListView from '#rscv/List/ListView';
 
 import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
+import Cloak from '#components/Cloak';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
@@ -38,7 +39,11 @@ export default class EntriesList extends React.PureComponent {
         markedForRemoval: `${iconNames.removeCircle} ${styles.warning}`,
     };
 
-    static calcEntryKey = entry => entryAccessor.key(entry);
+    static calcEntryKey = entry => entryAccessor.key(entry)
+
+    static shouldHideEntryDelete = entry => ({ entryPermissions }) => (
+        !entryPermissions.includes('delete') && entryAccessor.serverId(entry)
+    )
 
     renderEntryLabel = (entry) => {
         const values = entryAccessor.data(entry);
@@ -131,12 +136,17 @@ export default class EntriesList extends React.PureComponent {
                             disabled={pending}
                         />
                     ) : (
-                        <DangerButton
-                            className={styles.removeButton}
-                            onClick={() => handleMarkAsDeletedEntry(currentEntryKey, true)}
-                            iconName={iconNames.delete}
-                            title={_ts('editEntry.overview.leftpane.entryList', 'undoRemoveEntryButtonTitle')}
-                            disabled={pending}
+                        <Cloak
+                            hide={EntriesList.shouldHideEntryDelete(entry)}
+                            render={() => (
+                                <DangerButton
+                                    className={styles.removeButton}
+                                    onClick={() => handleMarkAsDeletedEntry(currentEntryKey, true)}
+                                    iconName={iconNames.delete}
+                                    title={_ts('editEntry.overview.leftpane.entryList', 'undoRemoveEntryButtonTitle')}
+                                    disabled={pending}
+                                />
+                            )}
                         />
                     )
                 }

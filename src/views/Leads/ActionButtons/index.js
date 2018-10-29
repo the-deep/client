@@ -34,6 +34,16 @@ export default class ActionButtons extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static shouldHideLeadDelete = ({ leadPermissions }) => !leadPermissions.includes('delete')
+    static shouldHideLeadEdit = ({ leadPermissions }) => !leadPermissions.includes('modify')
+
+    static shouldHideAssessmentAdd = ({ hasAssessmentTemplate }) => !hasAssessmentTemplate
+
+    static shouldHideEntryAdd = ({ hasAnalysisFramework, entryPermissions }) => (
+        !hasAnalysisFramework ||
+        !entryPermissions.includes('create')
+    )
+
     getLinks = () => {
         const {
             activeProject,
@@ -134,26 +144,36 @@ export default class ActionButtons extends React.PureComponent {
                         transparent
                         iconName={iconNames.search}
                     />
-                    <DangerConfirmButton
-                        tabIndex="-1"
-                        title={_ts('leads', 'removeLeadLeadButtonTitle')}
-                        onClick={() => onRemoveLead(row)}
-                        transparent
-                        iconName={iconNames.delete}
-                        confirmationMessage={_ts('leads', 'leadDeleteConfirmText')}
+                    <Cloak
+                        hide={ActionButtons.shouldHideLeadDelete}
+                        render={() => (
+                            <DangerConfirmButton
+                                tabIndex="-1"
+                                title={_ts('leads', 'removeLeadLeadButtonTitle')}
+                                onClick={() => onRemoveLead(row)}
+                                transparent
+                                iconName={iconNames.delete}
+                                confirmationMessage={_ts('leads', 'leadDeleteConfirmText')}
+                            />
+                        )}
                     />
-                    <Link
-                        className={styles.editLink}
-                        tabIndex="-1"
-                        title={_ts('leads', 'editLeadButtonTitle')}
-                        to={links.editLead}
-                    >
-                        <i className={iconNames.edit} />
-                    </Link>
+                    <Cloak
+                        hide={ActionButtons.shouldHideLeadEdit}
+                        render={() => (
+                            <Link
+                                className={styles.editLink}
+                                tabIndex="-1"
+                                title={_ts('leads', 'editLeadButtonTitle')}
+                                to={links.editLead}
+                            >
+                                <i className={iconNames.edit} />
+                            </Link>
+                        )}
+                    />
                 </div>
                 <div className={styles.actionGroup}>
                     <Cloak
-                        hide={({ hasAssessmentTemplate }) => !hasAssessmentTemplate}
+                        hide={ActionButtons.shouldHideAssessmentAdd}
                         render={({ disabled }) => (
                             <Link
                                 className={`${styles.addAssessmentLink} ${disabled ? styles.disabled : ''}`}
@@ -167,7 +187,7 @@ export default class ActionButtons extends React.PureComponent {
                         )}
                     />
                     <Cloak
-                        hide={({ hasAnalysisFramework }) => !hasAnalysisFramework}
+                        hide={ActionButtons.shouldHideEntryAdd}
                         render={({ disabled }) => (
                             <Link
                                 className={`${styles.addEntryLink} ${disabled ? styles.disabled : ''}`}

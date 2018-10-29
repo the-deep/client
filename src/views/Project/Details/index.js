@@ -1,15 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
 
 import FixedTabs from '#rscv/FixedTabs';
 import Message from '#rscv/Message';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 
-import {
-    routeUrlSelector,
-    activeProjectRoleSelector,
-} from '#redux';
+import Cloak from '#components/Cloak';
 
 import _ts from '#ts';
 
@@ -23,21 +19,13 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     projectId: PropTypes.number,
-    projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     className: '',
     projectId: undefined,
-    projectRole: {},
 };
 
-const mapStateToProps = (state, props) => ({
-    projectRole: activeProjectRoleSelector(state, props),
-    routeUrl: routeUrlSelector(state),
-});
-
-@connect(mapStateToProps)
 export default class ProjectDetails extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -92,48 +80,35 @@ export default class ProjectDetails extends React.PureComponent {
     }
 
     render() {
-        // FIXME: use cloak here
-        const {
-            className: classNameFromProps,
-            projectRole: {
-                setupPermissions = [],
-            },
-        } = this.props;
-
-        if (setupPermissions.indexOf('modify') === -1) {
-            const className = `
-                ${classNameFromProps}
-                ${styles.forbiddenText}
-            `;
-            return (
-                <Message
-                    large
-                    className={className}
-                >
-                    {_ts('project', 'forbiddenText')}
-                </Message>
-            );
-        }
-
-        const className = `
-            ${classNameFromProps}
-            ${styles.projectDetails}
-        `;
+        const { className: classNameFromProps } = this.props;
 
         return (
-            <div className={className}>
-                <FixedTabs
-                    className={styles.tabs}
-                    defaultHash={this.defaultHash}
-                    replaceHistory
-                    useHash
-                    tabs={this.routes}
-                />
-                <MultiViewContainer
-                    useHash
-                    views={this.views}
-                />
-            </div>
+            <Cloak
+                hide={({ setupPermissions }) => !setupPermissions.includes('modify')}
+                render={() => (
+                    <div className={`${classNameFromProps} ${styles.projectDetails}`}>
+                        <FixedTabs
+                            className={styles.tabs}
+                            defaultHash={this.defaultHash}
+                            replaceHistory
+                            useHash
+                            tabs={this.routes}
+                        />
+                        <MultiViewContainer
+                            useHash
+                            views={this.views}
+                        />
+                    </div>
+                )}
+                renderOnHide={() => (
+                    <Message
+                        className={`${classNameFromProps} ${styles.forbiddenText}`}
+                        large
+                    >
+                        {_ts('project', 'forbiddenText')}
+                    </Message>
+                )}
+            />
         );
     }
 }
