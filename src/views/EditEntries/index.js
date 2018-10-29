@@ -293,6 +293,23 @@ export default class EditEntries extends React.PureComponent {
         this.saveRequestCoordinator.stop();
     }
 
+    // PERMISSION
+
+    setEntryData = (val) => {
+        console.warn('Changing entry');
+        this.props.setEntryData(val);
+    }
+
+    setExcerpt = (val) => {
+        console.warn('Changing excerpt');
+        this.props.setExcerpt(val);
+    }
+
+    addEntry = (val) => {
+        console.warn('Adding entry');
+        this.props.addEntry(val);
+    }
+
     // Calculations
     calculateFirstTimeAttributes = attributes => calculateFirstTimeAttributes(
         attributes,
@@ -305,6 +322,7 @@ export default class EditEntries extends React.PureComponent {
         this.props.analysisFramework,
     )
 
+
     // APIS
 
     handleExcerptChange = ({ type, value }, entryKey) => {
@@ -312,7 +330,7 @@ export default class EditEntries extends React.PureComponent {
             console.warn('There is no entry key while changing excerpt.');
             // this.handleExcerptCreate({ type, value });
         } else {
-            this.props.setExcerpt({
+            this.setExcerpt({
                 leadId: this.props.leadId,
                 key: entryKey,
                 excerptType: type,
@@ -322,7 +340,7 @@ export default class EditEntries extends React.PureComponent {
     }
 
     handleExcerptCreate = ({ type, value }) => {
-        this.props.addEntry({
+        this.addEntry({
             leadId: this.props.leadId,
             entry: {
                 analysisFramework: this.props.analysisFramework.id,
@@ -357,7 +375,7 @@ export default class EditEntries extends React.PureComponent {
             attributes = this.calculateFirstTimeAttributes(attributes);
             const color = this.calculateEntryColor(attributes);
 
-            this.props.addEntry({
+            this.addEntry({
                 leadId: this.props.leadId,
                 entry: {
                     excerptType,
@@ -378,7 +396,7 @@ export default class EditEntries extends React.PureComponent {
             const attributes = this.calculateFirstTimeAttributes(faramValues);
             const color = this.calculateEntryColor(attributes);
 
-            this.props.addEntry({
+            this.addEntry({
                 leadId: this.props.leadId,
                 entry: {
                     excerptType,
@@ -391,7 +409,7 @@ export default class EditEntries extends React.PureComponent {
             });
         } else {
             const color = this.calculateEntryColor(faramValues);
-            this.props.setEntryData({
+            this.setEntryData({
                 leadId: this.props.leadId,
                 key: entryKey,
                 values: faramValues,
