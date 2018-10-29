@@ -159,6 +159,7 @@ export default class UserProfile extends React.PureComponent {
             );
         }
 
+        // FIXME: strings, line 166
         return (
             <div className={styles.userProfile}>
                 <header className={styles.header}>

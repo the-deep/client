@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import DangerButton from '#rsca/Button/DangerButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SelectInput from '#rsci/SelectInput';
 
 import {
@@ -10,7 +10,8 @@ import {
     requestMethods,
 } from '#request';
 import {
-    projectRolesListSelector,
+    projectRoleListSelector,
+    activeUserSelector,
 } from '#redux';
 import { iconNames } from '#constants';
 import _ts from '#ts';
@@ -44,13 +45,17 @@ const propTypes = {
     row: PropTypes.shape({
         role: PropTypes.string,
     }).isRequired,
-    projectRoles: PropTypes.shape({
+    projectRoleList: PropTypes.shape({
         title: PropTypes.string,
+    }).isRequired,
+    activeUser: PropTypes.shape({
+        userId: PropTypes.number,
     }).isRequired,
 };
 
 const mapStateToProps = state => ({
-    projectRoles: projectRolesListSelector(state),
+    projectRoleList: projectRoleListSelector(state),
+    activeUser: activeUserSelector(state),
 });
 
 const projectRoleKeySelector = d => d.id;
@@ -91,9 +96,18 @@ export default class Actions extends React.PureComponent {
     render() {
         const {
             row,
-            projectRoles,
+            projectRoleList,
+            activeUser: {
+                userId: activeUserId,
+            },
         } = this.props;
-        const { role } = row;
+
+        const {
+            role,
+            member: memberId,
+            memberName,
+            memberEmail,
+        } = row;
 
         return (
             <div className={styles.actions}>
@@ -102,15 +116,24 @@ export default class Actions extends React.PureComponent {
                     placeholder=""
                     hideClearButton
                     value={role}
-                    options={projectRoles}
+                    options={projectRoleList}
                     onChange={this.handleRoleSelectInputChange}
                     keySelector={projectRoleKeySelector}
                     labelSelector={projectRoleLabelSelector}
                     showHintAndError={false}
+                    disabled={activeUserId === memberId}
                 />
-                <DangerButton
+                <DangerConfirmButton
                     smallVerticalPadding
                     title={_ts('project.users', 'removeMembershipButtonPlaceholder')}
+                    confirmationMessage={_ts(
+                        'project.users',
+                        'removeMembershipConfirmationMessage',
+                        {
+                            memberName,
+                            memberEmail,
+                        },
+                    )}
                     iconName={iconNames.delete}
                     onClick={this.handleRemoveMembershipButtonClick}
                     transparent

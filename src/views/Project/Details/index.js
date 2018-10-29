@@ -34,11 +34,11 @@ export default class ProjectDetails extends React.PureComponent {
         super(props);
 
         this.routes = {
-            general: 'General',
-            users: 'Users',
-            regions: 'Regions',
-            frameworks: 'Framework',
-            categoryEditors: 'Category Editor',
+            general: _ts('project', 'generalDetailsTitle'),
+            users: _ts('project', 'usersTitle'),
+            regions: _ts('project', 'regionsTitle'),
+            frameworks: _ts('project', 'analysisFrameworkTitle'),
+            categoryEditors: _ts('project', 'categoryEditorTitle'),
         };
 
         this.defaultHash = 'general';

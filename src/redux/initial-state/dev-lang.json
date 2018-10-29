@@ -718,6 +718,7 @@
         "12507": "No matching user / usergroup found",
         "12508": "Start search with at least {numberOfCharacters} characters",
         "12509": "Role",
+        "12510": "Are you sure you want to remove membership of {memberName}({memberEmail}) from this project?",
 
         "-12279953": "Entry Cleared",
         "-94068330": "All local entries were cleared because associated analysis framework was removed.",
@@ -1665,7 +1666,8 @@
             "searchInputPlaceholder": -17852758,
             "searchEmptyText": 12507,
             "searchTipText": 12508,
-            "roleSelectInputTitle": 12509
+            "roleSelectInputTitle": 12509,
+            "removeMembershipConfirmationMessage": 12510
         },
         "project": {
             "projectGetFailure": 2500,
@@ -1735,10 +1737,11 @@
             "confirmUseCeText": 373,
             "confirmCloneCe": 354,
             "confirmCloneCeText": 374,
-            "generalDetailsLabel": 377,
-            "regionsLabel": 336,
-            "analysisFrameworkLabel": 379,
-            "categoryEditorLabel": 380,
+            "generalDetailsTitle": 377,
+            "usersTitle": 1119,
+            "regionsTitle": 336,
+            "analysisFrameworkTitle": 379,
+            "categoryEditorTitle": 380,
             "regionLabel": 336,
             "regionRemove": 205,
             "regionRemoveSuccess": 206,
