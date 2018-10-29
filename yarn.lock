@@ -4971,6 +4971,10 @@ gonzales-pe@4.2.3, gonzales-pe@^4.0.3:
   dependencies:
     minimist "1.1.x"
 
+google-charts@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/google-charts/-/google-charts-1.5.0.tgz#acf1412a10991e8b2d6e5eb53619f8136dc73e05"
+
 got@^7.0.0:
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/got/-/got-7.1.0.tgz#05450fd84094e6bbea56f451a43a9c289166385a"

@@ -24,6 +24,7 @@ import StreamGraph from '#rscz/StreamGraph';
 import StackedBarChart from '#rscz/StackedBarChart';
 import SparkLines from '#rscz/SparkLines';
 import Organigram from '#rscz/Organigram';
+import GoogleOrgChart from '#rscz/GoogleOrgChart';
 
 import BoundError from '#rscg/BoundError';
 import VizError from '#components/VizError';
@@ -39,6 +40,7 @@ import parallelData from './dummydata/parallelData';
 import sankeyData from './dummydata/sankeyData';
 import stackedData from './dummydata/stackedData';
 import streamData from './dummydata/streamData';
+import orgChartData from './dummydata/orgChartData';
 
 import styles from './styles.scss';
 
@@ -62,6 +64,7 @@ const SankeyView = decorate(Sankey);
 const PieChartView = decorate(PieChart);
 const DonutChartView = decorate(DonutChart);
 const OrganigramView = decorate(Organigram);
+const GoogleOrgChartView = decorate(GoogleOrgChart);
 const ParallelCoordinatesView = decorate(ParallelCoordinates);
 
 const sizeSelector = d => d.size;
@@ -72,11 +75,17 @@ const idSelector = d => d.id;
 const groupSelector = d => d.group;
 const monthSelector = d => d.month;
 const timeSelector = d => d.time;
+const orgChartkeySelector = d => d.key;
+const orgChartChildSelector = d => d.organs;
+const orgChartTitleSelector = d => d.title;
 
 @BoundError(AppError)
 export default class Visualization extends React.PureComponent {
     constructor(props) {
         super(props);
+        this.state = ({
+            value: [],
+        });
 
         this.tabs = {
             chordDiagram: _ts('visualization', 'chordDiagram'),
@@ -86,6 +95,7 @@ export default class Visualization extends React.PureComponent {
             donutChart: _ts('visualization', 'donutChart'),
             forcedDirectedGraph: _ts('visualization', 'forcedDirectedGraph'),
             forcedDirectedGraphVoronoi: _ts('visualization', 'forceDirectedGraphVoronoi'),
+            googleOrgChart: _ts('visualization', 'googleOrgChart'),
             horizontalBar: _ts('visualization', 'horizontalBar'),
             orgChart: _ts('visualization', 'orgChart'),
             organigram: _ts('visualization', 'organigram'),
@@ -199,6 +209,22 @@ export default class Visualization extends React.PureComponent {
                         headerText={_ts('visualization', 'organigram')}
                         data={hierarchicalData}
                         idSelector={nameSelector}
+                    />
+                ),
+            },
+            googleOrgChart: {
+                component: () => (
+                    <GoogleOrgChartView
+                        className={styles.googleOrgChart}
+                        headerText={_ts('visualization', 'googleOrgChart')}
+                        options={orgChartData}
+                        value={this.state.value}
+                        onChange={this.onChange}
+                        singleSelect
+                        disabled
+                        keySelector={orgChartkeySelector}
+                        childSelector={orgChartChildSelector}
+                        titleSelector={orgChartTitleSelector}
                     />
                 ),
             },
@@ -322,6 +348,12 @@ export default class Visualization extends React.PureComponent {
                 ),
             },
         };
+    }
+
+    onChange = (d, selectedData) => {
+        this.setState({
+            value: d,
+        });
     }
 
     render() {
