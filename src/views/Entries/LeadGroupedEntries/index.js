@@ -41,7 +41,11 @@ export default class LeadGroupedEntries extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static shouldHideEntryEdit = ({ entryPermissions }) => !entryPermissions.includes('modify')
+    static shouldHideEntryEdit = ({ entryPermissions }) => (
+        !entryPermissions.includes('modify') &&
+        !entryPermissions.includes('create') &&
+        !entryPermissions.includes('delete')
+    )
 
     getEntryParams = (_, entry) => ({
         entry,

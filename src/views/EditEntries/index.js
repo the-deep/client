@@ -50,6 +50,7 @@ import {
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
     setRegionsForProjectAction,
+    activeProjectRoleSelector,
 } from '#redux';
 import notify from '#notify';
 import _ts from '#ts';
@@ -69,6 +70,7 @@ import Listing from './List';
 import styles from './styles.scss';
 
 const propTypes = {
+    projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     analysisFramework: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -98,6 +100,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    projectRole: {},
     analysisFramework: undefined,
     entries: [],
     statuses: {},
@@ -106,6 +109,7 @@ const defaultProps = {
 };
 
 const mapStateToProps = state => ({
+    projectRole: activeProjectRoleSelector(state),
     analysisFramework: editEntriesAnalysisFrameworkSelector(state),
     entries: editEntriesEntriesSelector(state),
     lead: editEntriesLeadSelector(state),
@@ -295,19 +299,40 @@ export default class EditEntries extends React.PureComponent {
 
     // PERMISSION
 
-    setEntryData = (val) => {
-        console.warn('Changing entry');
-        this.props.setEntryData(val);
-    }
-
     setExcerpt = (val) => {
-        console.warn('Changing excerpt');
+        if (this.shouldDisableEntryChange(val.id)) {
+            console.warn('No permission to edit entry excerpt');
+            return;
+        }
         this.props.setExcerpt(val);
     }
 
+    setEntryData = (val) => {
+        if (this.shouldDisableEntryChange(val.id)) {
+            console.warn('No permission to edit entry');
+            return;
+        }
+        this.props.setEntryData(val);
+    }
+
     addEntry = (val) => {
-        console.warn('Adding entry');
+        if (this.shouldDisableEntryCreate()) {
+            console.warn('No permission to create entry');
+            return;
+        }
         this.props.addEntry(val);
+    }
+
+    // PERMISSIONS
+
+    shouldDisableEntryChange = (entryId) => {
+        const { projectRole: { entryPermissions = [] } } = this.props;
+        return !entryPermissions.includes('modify') && !!entryId;
+    }
+
+    shouldDisableEntryCreate = () => {
+        const { projectRole: { entryPermissions = [] } } = this.props;
+        return !entryPermissions.includes('create');
     }
 
     // Calculations
@@ -325,7 +350,8 @@ export default class EditEntries extends React.PureComponent {
 
     // APIS
 
-    handleExcerptChange = ({ type, value }, entryKey) => {
+    // can only edit entry
+    handleExcerptChange = ({ type, value }, entryKey, entryId) => {
         if (!entryKey) {
             console.warn('There is no entry key while changing excerpt.');
             // this.handleExcerptCreate({ type, value });
@@ -333,12 +359,14 @@ export default class EditEntries extends React.PureComponent {
             this.setExcerpt({
                 leadId: this.props.leadId,
                 key: entryKey,
+                id: entryId,
                 excerptType: type,
                 excerptValue: value,
             });
         }
     }
 
+    // can only create entry
     handleExcerptCreate = ({ type, value }) => {
         this.addEntry({
             leadId: this.props.leadId,
@@ -353,7 +381,9 @@ export default class EditEntries extends React.PureComponent {
 
     // FARAM
 
-    handleChange = (faramValues, faramErrors, faramInfo, entryKey) => {
+    // can edit/create entry
+    // create when 'newEntry' is on info or entryKey is undefined
+    handleChange = (faramValues, faramErrors, faramInfo, entryKey, entryId) => {
         const { analysisFramework } = this.props;
         if (faramInfo.action === 'newEntry') {
             // TODO: if excerpt already exists modify existing entry
@@ -412,6 +442,7 @@ export default class EditEntries extends React.PureComponent {
             this.setEntryData({
                 leadId: this.props.leadId,
                 key: entryKey,
+                id: entryId,
                 values: faramValues,
                 errors: faramErrors,
                 info: faramInfo,
