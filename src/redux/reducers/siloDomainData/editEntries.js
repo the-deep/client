@@ -61,25 +61,32 @@ export const editEntriesSetPendingAction = ({ leadId, entryKey, pending }) => ({
     pending,
 });
 
-export const editEntriesApplyToAllEntriesAction = ({ leadId, key, value, entryKey }) => ({
+export const editEntriesApplyToAllEntriesAction = ({
+    leadId, key, value, entryKey, modifiable,
+}) => ({
     type: EEB__APPLY_TO_ALL_ENTRIES,
     leadId,
     key,
     value,
     entryKey,
+    modifiable,
 });
 
-export const editEntriesApplyToAllEntriesBelowAction = ({ leadId, key, value, entryKey }) => ({
+export const editEntriesApplyToAllEntriesBelowAction = ({
+    leadId, key, value, entryKey, modifiable,
+}) => ({
     type: EEB__APPLY_TO_ALL_ENTRIES_BELOW,
     leadId,
     key,
     value,
     entryKey,
+    modifiable,
 });
 
-export const editEntriesFormatAllEntriesAction = ({ leadId }) => ({
+export const editEntriesFormatAllEntriesAction = ({ leadId, modifiable }) => ({
     type: EEB__FORMAT_ALL_ENTRIES,
     leadId,
+    modifiable,
 });
 
 export const editEntriesAddEntryAction = ({ leadId, entry }) => ({
@@ -523,7 +530,7 @@ const markAsDeletedEntry = (state, action) => {
 
 const applyToAllEntries = mode => (state, action) => {
     // attribute key and value
-    const { leadId, key, value, entryKey } = action;
+    const { leadId, key, value, entryKey, modifiable } = action;
     const {
         editEntries: { [leadId]: { entries = [] } = {} } = {},
     } = state;
@@ -563,7 +570,10 @@ const applyToAllEntries = mode => (state, action) => {
     iterableEntries.forEach((entry, i) => {
         if (entry === undefined) {
             return;
+        } else if (!modifiable && !!entryAccessor.serverId(entry)) {
+            return;
         }
+
         settings.editEntries[leadId].entries[i] = {
             data: {
                 attributes: { $auto: {
@@ -587,6 +597,7 @@ const applyToAllEntries = mode => (state, action) => {
     });
     const newState = update(state, settings);
 
+    // TODO: this may have been rendered useless
     // re-calculate errors
     const newSettings = {
         editEntries: {
@@ -677,7 +688,7 @@ const editEntriesResetUiState = (state, { leadId }) => {
     return update(state, settings);
 };
 
-const formatAllEntries = (state, { leadId }) => {
+const formatAllEntries = (state, { leadId, modifiable }) => {
     const {
         editEntries: { [leadId]: { entries = [] } = {} } = {},
     } = state;
@@ -691,7 +702,10 @@ const formatAllEntries = (state, { leadId }) => {
     entries.forEach((entry, i) => {
         if (entry.data.entryType !== 'excerpt') {
             return;
+        } else if (!modifiable && !!entryAccessor.serverId(entry)) {
+            return;
         }
+
         const newExcerpt = formatPdfText(entry.data.excerpt);
         if (entry.data.excerpt === newExcerpt) {
             return;
