@@ -11,12 +11,14 @@ import {
     editEntriesApplyToAllEntriesAction,
     editEntriesApplyToAllEntriesBelowAction,
     editEntriesFormatAllEntriesAction,
+    activeProjectRoleSelector,
 } from '#redux';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
 const propTypes = {
+    projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     attributeKey: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
@@ -34,11 +36,13 @@ const propTypes = {
 };
 
 const defaultProps = {
+    projectRole: {},
     attributeData: undefined,
 };
 
 const mapStateToProps = state => ({
     leadId: leadIdFromRoute(state),
+    projectRole: activeProjectRoleSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -52,10 +56,16 @@ export default class HeaderComponent extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    isEntriesModifiable = () => {
+        const { entryPermissions = [] } = this.props.projectRole;
+        return entryPermissions.includes('modify');
+    }
+
     handleFormatAll = () => {
         const { leadId } = this.props;
         this.props.formatAllEntries({
             leadId,
+            modifiable: this.isEntriesModifiable(),
         });
     }
 
@@ -66,6 +76,7 @@ export default class HeaderComponent extends React.PureComponent {
             key: attributeKey,
             value: attributeData,
             entryKey,
+            modifiable: this.isEntriesModifiable(),
         });
     }
 
@@ -76,24 +87,28 @@ export default class HeaderComponent extends React.PureComponent {
             key: attributeKey,
             value: attributeData,
             entryKey,
+            modifiable: this.isEntriesModifiable(),
         });
     }
 
     render() {
         const { widgetId } = this.props;
 
+        if (widgetId === 'excerptWidget') {
+            return (
+                <PrimaryConfirmButton
+                    title={_ts('editEntry.list.widgetForm', 'formatAllButtonTitle')}
+                    tabIndex="-1"
+                    transparent
+                    iconName={iconNames.format}
+                    confirmationMessage={_ts('editEntry.list.widgetForm', 'formatAll')}
+                    onClick={this.handleFormatAll}
+                />
+            );
+        }
+
         return (
             <Fragment>
-                { widgetId === 'excerptWidget' &&
-                    <PrimaryConfirmButton
-                        title={_ts('editEntry.list.widgetForm', 'formatAllButtonTitle')}
-                        tabIndex="-1"
-                        transparent
-                        iconName={iconNames.format}
-                        confirmationMessage={_ts('editEntry.list.widgetForm', 'formatAll')}
-                        onClick={this.handleFormatAll}
-                    />
-                }
                 <AccentConfirmButton
                     title={_ts('editEntry.list.widgetForm', 'applyAllButtonTitle')}
                     tabIndex="-1"

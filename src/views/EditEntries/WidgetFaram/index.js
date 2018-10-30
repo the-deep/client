@@ -56,12 +56,14 @@ export default class WidgetFaram extends React.PureComponent {
 
     handleChange = (faramValues, faramErrors, faramInfo) => {
         const entryKey = entryAccessor.key(this.props.entry);
-        this.props.onChange(faramValues, faramErrors, faramInfo, entryKey);
+        const entryId = entryAccessor.serverId(this.props.entry);
+        this.props.onChange(faramValues, faramErrors, faramInfo, entryKey, entryId);
     }
 
     handleExcerptChange = (excerptData) => {
         const entryKey = entryAccessor.key(this.props.entry);
-        this.props.onExcerptChange(excerptData, entryKey);
+        const entryId = entryAccessor.serverId(this.props.entry);
+        this.props.onExcerptChange(excerptData, entryKey, entryId);
     }
 
     handleExcerptCreate = (excerptData) => {
