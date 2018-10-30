@@ -5,10 +5,10 @@ import memoize from 'memoize-one';
 import Sortable from '#rscv/Taebul/Sortable';
 import ColumnWidth from '#rscv/Taebul/ColumnWidth';
 import NormalTaebul from '#rscv/Taebul';
-import { compareString, compareNumber } from '#rsu/common';
+import { compareString, compareNumber, compareDate } from '#rsu/common';
 import _cs from '#cs';
 
-import { Header, StringCell, NumberCell } from './renderers';
+import { Header, StringCell, NumberCell, DateCell } from './renderers';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from './styles.scss';
@@ -33,11 +33,15 @@ const defaultProps = {
 const comparators = {
     string: compareString,
     number: compareNumber,
+    geo: compareString,
+    date: compareDate,
 };
 
 const renderers = {
     string: StringCell,
     number: NumberCell,
+    geo: StringCell,
+    date: DateCell,
 };
 
 const stringifyId = d => ({

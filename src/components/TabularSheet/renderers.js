@@ -104,3 +104,14 @@ export const NumberCell = ({ value, className, options: { separator = 'none' } }
 
 NumberCell.propTypes = cellPropTypes;
 NumberCell.defaultProps = cellDefaultProps;
+
+
+// eslint-disable-next-line no-unused-vars
+export const DateCell = ({ value, className, options }) => (
+    <div className={className}>
+        { value }
+    </div>
+);
+
+DateCell.propTypes = cellPropTypes;
+DateCell.defaultProps = cellDefaultProps;

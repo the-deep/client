@@ -29,6 +29,8 @@ class EditFieldModal extends React.PureComponent {
     static fieldTypes = [
         { key: 'string', label: 'String' },
         { key: 'number', label: 'Number' },
+        { key: 'date', label: 'Date' },
+        { key: 'geo', label: 'Geo' },
     ];
 
     static separatorOptions = [
