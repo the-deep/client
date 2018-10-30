@@ -1,15 +1,18 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import FixedTabs from '#rscv/FixedTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import Message from '#rscv/Message';
+import FixedTabs from '#rscv/FixedTabs';
+
 import Button from '#rsca/Button';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import update from '#rsu/immutable-update';
 
-import { iconNames } from '#constants';
 import TabularSheet from '#components/TabularSheet';
+import TriggerAndPoll from '#components/TriggerAndPoll';
 
+import { iconNames } from '#constants';
 import { RequestClient } from '#request';
 import _ts from '#ts';
 import _cs from '#cs';
@@ -23,9 +26,6 @@ const propTypes = {
     setSaveTabularFunction: PropTypes.func,
     onEdited: PropTypes.func,
 
-    setDefaultRequestParams: PropTypes.func.isRequired,
-    extractRequest: RequestClient.prop.isRequired,
-    bookRequest: RequestClient.prop.isRequired,
     deleteRequest: RequestClient.prop.isRequired,
     saveRequest: RequestClient.prop.isRequired,
 
@@ -50,16 +50,7 @@ export default class TabularBook extends React.PureComponent {
         this.state = {
             tabs: {},
             activeSheet: undefined,
-            completed: false,
-            invalid: false,
         };
-
-        props.setDefaultRequestParams({
-            triggerExtraction: this.triggerExtraction,
-            startPolling: this.startPolling,
-            setBook: this.setBook,
-            setInvalid: this.setInvalid,
-        });
 
         if (props.setSaveTabularFunction) {
             props.setSaveTabularFunction(this.save);
@@ -85,21 +76,7 @@ export default class TabularBook extends React.PureComponent {
             tabs,
             sheets,
             activeSheet: Object.keys(tabs)[0],
-            invalid: false,
-            completed: true,
         });
-    }
-
-    setInvalid = () => {
-        this.setState({ invalid: true });
-    }
-
-    triggerExtraction = () => {
-        this.props.extractRequest.do();
-    }
-
-    startPolling = () => {
-        this.props.bookRequest.do();
     }
 
     save = (callback) => {
@@ -150,23 +127,20 @@ export default class TabularBook extends React.PureComponent {
         this.props.deleteRequest.do();
     }
 
-    render() {
+    renderActual = ({ invalid, completed }) => {
         const {
             tabs,
             sheets,
             activeSheet,
-            invalid,
-            completed,
         } = this.state;
 
         const className = _cs(this.props.className, styles.tabularBook, 'tabular-book');
 
         if (invalid) {
             return (
-                // FIXME: Use _ts and Message
-                <div className={className}>
-                    Invalid tabular book
-                </div>
+                <Message>
+                    {_ts('tabular', 'invalid')}
+                </Message>
             );
         }
 
@@ -214,6 +188,20 @@ export default class TabularBook extends React.PureComponent {
                     onClick={this.handleActiveSheetChange}
                 />
             </div>
+        );
+    }
+
+    render() {
+        const { bookId } = this.props;
+
+        return (
+            <TriggerAndPoll
+                onDataReceived={this.setBook}
+                url={`/tabular-books/${bookId}/`}
+                triggerUrl={`/tabular-extraction-trigger/${bookId}/`}
+            >
+                {this.renderActual}
+            </TriggerAndPoll>
         );
     }
 }
