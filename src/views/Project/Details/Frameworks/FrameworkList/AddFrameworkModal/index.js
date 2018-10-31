@@ -24,6 +24,7 @@ import styles from './styles.scss';
 const propTypes = {
     setActiveFramework: PropTypes.func.isRequired,
     closeModal: PropTypes.func,
+    addNewFramework: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -60,7 +61,7 @@ export default class AddFrameworkModal extends React.PureComponent {
             setState: v => this.setState(v),
             addNewFramework: this.props.addNewFramework,
             setActiveFramework: this.props.setActiveFramework,
-            onModalClose: this.props.onModalClose,
+            onModalClose: this.props.closeModal,
         });
     }
 
