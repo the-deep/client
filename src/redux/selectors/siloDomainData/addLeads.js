@@ -17,6 +17,10 @@ import {
     projectIdFromRoute,
     connectorIdFromRoute,
 } from '../domainData';
+import {
+    activeProjectRoleSelector,
+} from './common';
+
 
 const emptyList = [];
 const emptyObject = {};
@@ -130,16 +134,21 @@ export const addLeadViewLeadKeysSelector = createSelector(
 
 export const addLeadViewLeadStatesSelector = createSelector(
     // TODO: distribute this later
+    activeProjectRoleSelector,
     addLeadViewLeadRestsSelector,
     addLeadViewLeadUploadsSelector,
     addLeadViewLeadDriveRestsSelector,
     addLeadViewLeadDropboxRestsSelector,
     addLeadViewLeadsSelector,
-    (leadRests, leadUploads, leadDriveRests, leadDropboxRests, leads) => (
+    (projectRole, leadRests, leadUploads, leadDriveRests, leadDropboxRests, leads) => (
         leads.reduce(
             (acc, lead) => {
                 const leadId = leadAccessor.getKey(lead);
                 const serverError = leadAccessor.hasServerError(lead);
+
+                const leadServerId = leadAccessor.getServerId(lead);
+                const { leadPermissions = [] } = projectRole;
+
                 const leadState = calcLeadState({
                     lead,
                     rest: leadRests[leadId],
@@ -148,17 +157,27 @@ export const addLeadViewLeadStatesSelector = createSelector(
                     dropbox: leadDropboxRests[leadId],
                 });
 
+                const canCreate = leadPermissions.includes('create') && !leadServerId;
+                const canEdit = leadPermissions.includes('modify') && !!leadServerId;
+
+                const hasPermission = canCreate || canEdit;
+
                 // NOTE: for serverError save must be enabled
-                const isSaveDisabled = !(
+                const isSaveEnabled = (
                     leadState === LEAD_STATUS.nonPristine ||
-                    (LEAD_STATUS.invalid && serverError)
-                );
+                    (leadState === LEAD_STATUS.invalid && serverError)
+                ) && hasPermission;
+                const isSaveDisabled = !isSaveEnabled;
+
                 const isRemoveDisabled = (leadState === LEAD_STATUS.requesting);
                 const isFormLoading = (leadState === LEAD_STATUS.requesting);
+
                 const isFormDisabled = (
                     leadState === LEAD_STATUS.requesting ||
-                    leadState === LEAD_STATUS.warning
+                    leadState === LEAD_STATUS.warning ||
+                    !hasPermission
                 );
+
                 acc[leadId] = {
                     leadState,
                     isSaveDisabled,

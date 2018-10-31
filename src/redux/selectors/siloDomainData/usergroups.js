@@ -1,8 +1,6 @@
 import { createSelector } from 'reselect';
-import {
-    groupIdFromRoute,
-    activeUserSelector,
-} from '#redux';
+import { groupIdFromRoute } from '../domainData';
+import { activeUserSelector } from '../auth';
 
 const emptyList = [];
 const emptyObject = {};
