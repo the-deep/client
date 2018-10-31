@@ -35,8 +35,8 @@ const propTypes = {
 
     // eslint-disable-next-line react/forbid-prop-types
     currentUserActiveProject: PropTypes.object.isRequired,
-    render: PropTypes.func.isRequired,
-    renderOnHide: PropTypes.func,
+    render: PropTypes.node.isRequired,
+    renderOnHide: PropTypes.node,
 
     disable: PropTypes.func,
     hide: PropTypes.func,
@@ -50,7 +50,7 @@ const defaultProps = {
     activeUser: {},
     userProjects: [],
 
-    renderOnHide: undefined,
+    renderOnHide: null,
 };
 
 @connect(mapStateToProps, undefined)
@@ -68,8 +68,8 @@ export default class Cloak extends React.Component {
             disable,
             hide,
 
-            render: Child,
-            renderOnHide,
+            render: child,
+            renderOnHide: anotherChild,
             projectRole: {
                 leadPermissions = [],
                 entryPermissions = [],
@@ -111,12 +111,10 @@ export default class Cloak extends React.Component {
 
         const hidden = hide && hide(params);
         if (hidden) {
-            return renderOnHide ? renderOnHide() : null;
+            return anotherChild;
         }
 
-
-        // FIXME: maybe just inject disable value
         const disabled = disable && disable(params);
-        return <Child disabled={disabled} />;
+        return React.cloneElement(child, { disabled });
     }
 }

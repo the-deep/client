@@ -138,7 +138,7 @@ export default class EntriesList extends React.PureComponent {
                     ) : (
                         <Cloak
                             hide={EntriesList.shouldHideEntryDelete(entry)}
-                            render={() => (
+                            render={
                                 <DangerButton
                                     className={styles.removeButton}
                                     onClick={() => handleMarkAsDeletedEntry(currentEntryKey, true)}
@@ -146,7 +146,7 @@ export default class EntriesList extends React.PureComponent {
                                     title={_ts('editEntry.overview.leftpane.entryList', 'undoRemoveEntryButtonTitle')}
                                     disabled={pending}
                                 />
-                            )}
+                            }
                         />
                     )
                 }

@@ -22,6 +22,43 @@ import {
 } from '#redux';
 import _ts from '#ts';
 
+
+const Page = ({ name, disabled, ...otherProps }) => {
+    // NOTE: don't show page if it is disabled as well
+    if (disabled) {
+        return <PageError />;
+    }
+
+    return (
+        <Fragment>
+            <Helmet>
+                <meta charSet="utf-8" />
+                <title>
+                    { _ts('pageTitle', name) }
+                </title>
+            </Helmet>
+            <Bundle name={name} {...otherProps} />
+        </Fragment>
+    );
+};
+
+const PageError = () => {
+    const name = 'fourHundredFour';
+    return (
+        <Fragment>
+            <Helmet>
+                <meta charSet="utf-8" />
+                <title>
+                    { _ts('pageTitle', name) }
+                </title>
+            </Helmet>
+            <Bundle
+                load={routes[name].loader}
+            />
+        </Fragment>
+    );
+};
+
 const propTypes = {
     match: PropTypes.shape({
         location: PropTypes.string,
@@ -190,55 +227,22 @@ class RouteSynchronizer extends React.PureComponent {
         }
     }
 
-    renderBundle = ({ disabled }) => {
+    render() {
         const {
-            match, // eslint-disable-line no-unused-vars
             name,
+            match, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
-
-        // NOTE: dont' show page if it is disabled as well
-        if (disabled) {
-            return this.renderBundleOnCloak();
-        }
-
-        return (
-            <Fragment>
-                <Helmet>
-                    <meta charSet="utf-8" />
-                    <title>
-                        { _ts('pageTitle', name) }
-                    </title>
-                </Helmet>
-                <Bundle name={name} {...otherProps} />
-            </Fragment>
-        );
-    }
-
-    renderBundleOnCloak = () => {
-        const name = 'fourHundredFour';
-        return (
-            <Fragment>
-                <Helmet>
-                    <meta charSet="utf-8" />
-                    <title>
-                        { _ts('pageTitle', name) }
-                    </title>
-                </Helmet>
-                <Bundle
-                    load={routes[name].loader}
-                />
-            </Fragment>
-        );
-    }
-
-    render() {
-        const { name } = this.props;
         return (
             <Cloak
                 {...viewsAcl[name]}
-                render={this.renderBundle}
-                renderOnHide={this.renderBundleOnCloak}
+                render={
+                    <Page
+                        name={name}
+                        {...otherProps}
+                    />
+                }
+                renderOnHide={<PageError />}
             />
         );
     }

@@ -95,7 +95,7 @@ export default class LeadGroupedEntries extends React.PureComponent {
                 </div>
                 <Cloak
                     hide={LeadGroupedEntries.shouldHideEntryEdit}
-                    render={() => (
+                    render={
                         <Link
                             className={styles.editEntryLink}
                             title={_ts('entries', 'editEntryLinkTitle')}
@@ -103,7 +103,7 @@ export default class LeadGroupedEntries extends React.PureComponent {
                         >
                             <span className={iconNames.edit} />
                         </Link>
-                    )}
+                    }
                 />
             </header>
         );

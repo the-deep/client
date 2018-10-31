@@ -291,13 +291,13 @@ export default class LeadAdd extends React.PureComponent {
                         <LeadList />
                         <Cloak
                             hide={({ leadPermissions }) => !leadPermissions.includes('create')}
-                            render={() => (
+                            render={
                                 <LeadButtons
                                     uploadCoordinator={this.uploadCoordinator}
                                     driveUploadCoordinator={this.driveUploadCoordinator}
                                     dropboxUploadCoordinator={this.dropboxUploadCoordinator}
                                 />
-                            )}
+                            }
                         />
                     </div>
                     {

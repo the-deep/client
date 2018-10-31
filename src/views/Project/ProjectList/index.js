@@ -125,16 +125,15 @@ export default class ProjectList extends React.PureComponent {
                     </h2>
                     <Cloak
                         hide={({ isBeta }) => isBeta}
-                        render={({ disabled }) => (
+                        render={
                             <Link
                                 to={reverseRoute(pathNames.discoverProjects, {})}
                                 className={styles.link}
-                                disabled={disabled}
                             >
                                 <span className={`${iconNames.discover} ${styles.discoverIcon}`} />
                                 {_ts('project', 'discoverProjectButtonLabel')}
                             </Link>
-                        )}
+                        }
                     />
                     <AddProjectButton setActiveProject={setActiveProject} />
                     <SearchInput

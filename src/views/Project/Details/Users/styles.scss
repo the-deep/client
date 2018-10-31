@@ -4,6 +4,7 @@ $width-search-list: 240px;
 
 .users {
     display: flex;
+    position: relative;
     flex-grow: 1;
 
     .search-list {

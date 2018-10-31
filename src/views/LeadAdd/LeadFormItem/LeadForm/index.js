@@ -199,6 +199,35 @@ export default class LeadForm extends React.PureComponent {
         return false;
     }
 
+    renderLeadGroupElement = ({ disabled, isApplyAllDisabled, leadOptions }) => (
+        <div className={styles.leadGroupContainer}>
+            <ApplyAll
+                className={styles.leadGroup}
+                disabled={isApplyAllDisabled}
+                identiferName="leadGroup"
+                onApplyAllClick={this.handleApplyAllClick}
+                onApplyAllBelowClick={this.handleApplyAllBelowClick}
+            >
+                <SelectInput
+                    faramElementName="leadGroup"
+                    keySelector={LeadForm.keySelector}
+                    label={_ts('addLeads', 'leadGroupLabel')}
+                    labelSelector={LeadForm.labelSelector}
+                    options={leadOptions.leadGroup}
+                    placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
+                    showHintAndError
+                    showLabel
+                />
+            </ApplyAll>
+            <Button
+                onClick={this.handleAddLeadGroupClick}
+                iconName={iconNames.add}
+                transparent
+                disabled={disabled}
+            />
+        </div>
+    )
+
     render() {
         const {
             className,
@@ -223,6 +252,8 @@ export default class LeadForm extends React.PureComponent {
         const errors = leadAccessor.getFaramErrors(lead);
 
         const isApplyAllDisabled = isFormDisabled || isBulkActionDisabled;
+
+        const LeadGroupInput = this.renderLeadGroupElement;
 
         return (
             <Faram
@@ -295,35 +326,15 @@ export default class LeadForm extends React.PureComponent {
 
                 <Cloak
                     hide={() => !projectDetails.assessmentTemplate}
-                    render={({ disabled }) => (
-                        <div className={styles.leadGroupContainer}>
-                            <ApplyAll
-                                className={styles.leadGroup}
-                                disabled={isApplyAllDisabled}
-                                identiferName="leadGroup"
-                                onApplyAllClick={this.handleApplyAllClick}
-                                onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                            >
-                                <SelectInput
-                                    faramElementName="leadGroup"
-                                    keySelector={LeadForm.keySelector}
-                                    label={_ts('addLeads', 'leadGroupLabel')}
-                                    labelSelector={LeadForm.labelSelector}
-                                    options={leadOptions.leadGroup}
-                                    placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
-                                    showHintAndError
-                                    showLabel
-                                />
-                            </ApplyAll>
-                            <Button
-                                onClick={this.handleAddLeadGroupClick}
-                                iconName={iconNames.add}
-                                transparent
-                                disabled={disabled}
-                            />
-                        </div>
-                    )}
-                    renderOnHide={() => <div className={styles.leadGroupContainer} />}
+                    render={
+                        <LeadGroupInput
+                            isApplyAllDisabled={isApplyAllDisabled}
+                            leadOptions={leadOptions}
+                        />
+                    }
+                    renderOnHide={
+                        <div className={styles.leadGroupContainer} />
+                    }
                 />
 
                 <TextInput

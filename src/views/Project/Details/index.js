@@ -89,7 +89,7 @@ export default class ProjectDetails extends React.PureComponent {
         return (
             <Cloak
                 hide={({ setupPermissions }) => !setupPermissions.includes('modify')}
-                render={() => (
+                render={
                     <div className={className}>
                         <FixedTabs
                             className={styles.tabs}
@@ -103,15 +103,15 @@ export default class ProjectDetails extends React.PureComponent {
                             views={this.views}
                         />
                     </div>
-                )}
-                renderOnHide={() => (
+                }
+                renderOnHide={
                     <Message
                         className={`${classNameFromProps} ${styles.forbiddenText}`}
                         large
                     >
                         {_ts('project', 'forbiddenText')}
                     </Message>
-                )}
+                }
             />
         );
     }
