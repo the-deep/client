@@ -126,12 +126,10 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
             widgetKey: key,
             createNewElement: widgetData => ({
                 widget: {
-                    key: `${widgetData.widgetId}-${randomString(16).toLowerCase()}`,
+                    key: `${widgetData.widgetId}-${randomString(16)}`.toLowerCase(),
                     widgetId: widgetData.widgetId,
                     title: _ts('widgetTitle', title),
-                    properties: {
-                        data: {},
-                    },
+                    properties: {},
                 },
                 conditions: {
                     list: [],

@@ -35,6 +35,8 @@ export default class MultiSelectEditWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static keySelector = elem => elem.key;
+
     static schema = {
         fields: {
             title: [requiredCondition],
@@ -73,8 +75,6 @@ export default class MultiSelectEditWidget extends React.PureComponent {
             label: '',
         },
     ])
-
-    static keySelector = elem => elem.key;
 
     static rendererParams = (key, elem, i) => ({
         index: i,
