@@ -369,6 +369,7 @@ export default class LeadFormItem extends React.PureComponent {
             return (
                 <TabularBook
                     bookId={values.tabularBook}
+                    projectId={values.project}
                     onDelete={this.unsetTabularBook}
                     setSaveTabularFunction={this.setSaveTabularFunction}
                     onEdited={this.handleFieldsChange}

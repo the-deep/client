@@ -5,9 +5,9 @@ import { RequestClient, requestMethods } from '#request';
 
 const propTypes = {
     children: PropTypes.func.isRequired,
-    setDefaultRequestParams: PropTypes.func.isRequired,
     onDataReceived: PropTypes.func,
 
+    setDefaultRequestParams: PropTypes.func.isRequired,
     initialRequest: RequestClient.prop.isRequired,
     triggerRequest: RequestClient.prop.isRequired,
     pollRequest: RequestClient.prop.isRequired,
@@ -161,9 +161,12 @@ export default class TriggerAndPoll extends React.PureComponent {
 
     setData = (data) => {
         if (this.props.onDataReceived) {
-            this.props.onDataReceived(data);
+            this.props.onDataReceived(data, () => {
+                this.setState({ data, completed: true, invalid: false });
+            });
+        } else {
+            this.setState({ data, completed: true, invalid: false });
         }
-        this.setState({ data, completed: true, invalid: false });
     }
 
     // TODO Detailed errors

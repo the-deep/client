@@ -22,6 +22,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    projectId: PropTypes.number.isRequired,
     bookId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
     setSaveTabularFunction: PropTypes.func,
     onEdited: PropTypes.func,
@@ -63,7 +64,7 @@ export default class TabularBook extends React.PureComponent {
         }
     }
 
-    setBook = (book) => {
+    setBook = (book, callback) => {
         const tabs = {};
         const sheets = {};
 
@@ -76,7 +77,7 @@ export default class TabularBook extends React.PureComponent {
             tabs,
             sheets,
             activeSheet: Object.keys(tabs)[0],
-        });
+        }, callback);
     }
 
     save = (callback) => {
@@ -85,6 +86,7 @@ export default class TabularBook extends React.PureComponent {
             callback,
             body: {
                 sheets: Object.keys(sheets).map(k => sheets[k]),
+                project: this.props.projectId,
             },
         });
     }

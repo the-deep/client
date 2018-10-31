@@ -1,8 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import Numeral from '#rscv/Numeral';
 import Button from '#rsca/Button';
+
+import TriggerAndPoll from '#components/TriggerAndPoll';
 import { iconNames } from '#constants';
 
 import EditField from './EditField';
@@ -37,6 +40,46 @@ export class Header extends React.PureComponent {
         this.props.onChange(this.props.columnKey, value);
     }
 
+    handleGeoData = (value) => {
+        this.props.onChange(this.props.columnKey, value);
+    }
+
+    renderGeoPending = () => {
+        const { value } = this.props;
+
+        // FIXME: move this outside
+        const shouldExtractGeo = ({ type, geodata }) => (
+            type === 'geo' &&
+            (!geodata || geodata.status === 'pending')
+        );
+        const isValidGeo = ({ type, geodata }) => (
+            type === 'geo' &&
+            (geodata && geodata.status === 'success')
+        );
+
+        if (!shouldExtractGeo(value)) {
+            return null;
+        }
+
+        const { id } = value;
+        return (
+            <TriggerAndPoll
+                url={`/tabular-fields/${id}/`}
+                triggerUrl={`/tabular-geo-extraction-trigger/${id}/`}
+                shouldTrigger={shouldExtractGeo}
+                shouldPoll={shouldExtractGeo}
+                isValid={isValidGeo}
+                onDataReceived={this.handleGeoData}
+            >
+                {({ invalid }) => (!invalid && (
+                    <span className={styles.loadingContainer}>
+                        <LoadingAnimation small />
+                    </span>
+                ))}
+            </TriggerAndPoll>
+        );
+    }
+
     render() {
         const {
             sortOrder,
@@ -53,6 +96,7 @@ export class Header extends React.PureComponent {
                 >
                     {value.title}
                 </Button>
+                {this.renderGeoPending()}
                 <EditField
                     className={styles.edit}
                     onChange={this.handleChange}

@@ -20,6 +20,11 @@
             right: -10px;
         }
 
+        .loading-container {
+            position: relative;
+            margin-left: $spacing-small;
+        }
+
         &:hover {
             .edit {
                 display: initial;
