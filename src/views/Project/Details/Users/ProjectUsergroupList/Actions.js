@@ -18,6 +18,11 @@ const propTypes = {
         role: PropTypes.string,
     }).isRequired,
     removeUsergroupMembershipRequest: RequestPropType.isRequired,
+    disabled: PropTypes.bool.isRequired,
+};
+
+const defaultProps = {
+    disabled: false,
 };
 
 const requests = {
@@ -32,6 +37,7 @@ const requests = {
 @RequestClient(requests)
 export default class Actions extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     handleRemoveMembershipButtonClick = () => {
         const {
@@ -47,7 +53,7 @@ export default class Actions extends React.PureComponent {
     }
 
     render() {
-        const { row } = this.props;
+        const { row, disabled } = this.props;
 
         return (
             <DangerButton
@@ -57,6 +63,7 @@ export default class Actions extends React.PureComponent {
                 onClick={this.handleRemoveMembershipButtonClick}
                 onClickParams={{ row }}
                 transparent
+                disabled={disabled}
             />
         );
     }

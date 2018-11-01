@@ -16,10 +16,12 @@ const propTypes = {
     className: PropTypes.string,
     projectId: PropTypes.number.isRequired,
     setActiveWordCategory: PropTypes.func.isRequired,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
+    disabled: false,
 };
 
 export default class AddWordCategoryButton extends React.PureComponent {
@@ -41,6 +43,7 @@ export default class AddWordCategoryButton extends React.PureComponent {
             projectId,
             className: classNameFromProps,
             setActiveWordCategory,
+            disabled,
         } = this.props;
 
         const { showAddWordCategoryModal } = this.state;
@@ -55,6 +58,7 @@ export default class AddWordCategoryButton extends React.PureComponent {
                     className={className}
                     iconName={iconNames.add}
                     onClick={this.handleAddWordCategoryButtonClick}
+                    disabled={disabled}
                 >
                     { _ts('project.wordCategory', 'addWordCategoryButtonLabel')}
                 </AccentButton>

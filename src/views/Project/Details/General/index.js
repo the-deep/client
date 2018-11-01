@@ -38,11 +38,13 @@ const propTypes = {
     projectServerData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setErrorProjectDetails: PropTypes.func.isRequired,
     projectId: PropTypes.number.isRequired,
+    disabled: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
     className: '',
     projectLocalData: {},
+    disabled: false,
 };
 
 const mapStateToProps = state => ({
@@ -192,6 +194,7 @@ export default class ProjectDetailsGeneral extends PureComponent {
 
     render() {
         const {
+            disabled,
             className: classNameFromProps,
             projectLocalData: {
                 faramValues = {},
@@ -227,7 +230,7 @@ export default class ProjectDetailsGeneral extends PureComponent {
                     schema={this.schema}
                     value={faramValues}
                     error={faramErrors}
-                    disabled={loading}
+                    disabled={loading || disabled}
                 >
                     <div className={styles.visualizations}>
                         Visualizations
@@ -240,7 +243,7 @@ export default class ProjectDetailsGeneral extends PureComponent {
                             />
                             <div className={styles.actionButtons}>
                                 <DangerButton
-                                    disabled={loading || pristine}
+                                    disabled={loading || pristine || disabled}
                                     onClick={this.handleFaramCancel}
                                     className={styles.button}
                                 >
@@ -248,7 +251,7 @@ export default class ProjectDetailsGeneral extends PureComponent {
                                 </DangerButton>
                                 <SuccessButton
                                     className={styles.button}
-                                    disabled={loading || pristine}
+                                    disabled={loading || pristine || disabled}
                                     type="submit"
                                 >
                                     {_ts('project', 'saveButtonLabel')}

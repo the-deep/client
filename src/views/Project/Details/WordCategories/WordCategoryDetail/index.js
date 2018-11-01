@@ -28,10 +28,12 @@ const propTypes = {
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setProjectWordCategory: PropTypes.func.isRequired,
     setActiveWordCategory: PropTypes.func.isRequired,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
+    disabled: false,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -100,6 +102,7 @@ export default class WordCategoryDetail extends React.PureComponent {
             setProjectWordCategory,
             addNewWordCategory,
             setActiveWordCategory,
+            disabled,
         } = this.props;
 
         const { pending } = this.state;
@@ -117,7 +120,7 @@ export default class WordCategoryDetail extends React.PureComponent {
                 <div className={styles.actionButtons}>
                     <UseWordCategoryButton
                         currentWordCategoryId={currentWordCategoryId}
-                        disabled={pending}
+                        disabled={pending || disabled}
                         wordCategoryId={wordCategoryId}
                         wordCategoryTitle={wordCategoryTitle}
                         projectId={projectId}
@@ -126,7 +129,7 @@ export default class WordCategoryDetail extends React.PureComponent {
                     <EditWordCategoryButton />
                     <CloneWordCategoryButton
                         addNewWordCategory={addNewWordCategory}
-                        disabled={pending}
+                        disabled={pending || disabled}
                         projectId={projectId}
                         setActiveWordCategory={setActiveWordCategory}
                         wordCategoryId={wordCategoryId}

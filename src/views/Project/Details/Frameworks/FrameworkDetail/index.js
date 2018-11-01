@@ -37,10 +37,12 @@ const propTypes = {
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setProjectFramework: PropTypes.func.isRequired,
     setActiveFramework: PropTypes.func.isRequired,
+    disabled: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
     className: '',
+    disabled: false,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -125,6 +127,7 @@ export default class FrameworkDetail extends React.PureComponent {
             setProjectFramework,
             addNewFramework,
             setActiveFramework,
+            disabled,
         } = this.props;
 
         const {
@@ -157,7 +160,7 @@ export default class FrameworkDetail extends React.PureComponent {
                     <div className={styles.actionButtons}>
                         <UseFrameworkButton
                             currentFrameworkId={currentFrameworkId}
-                            disabled={pending}
+                            disabled={pending || disabled}
                             frameworkId={frameworkId}
                             frameworkTitle={frameworkTitle}
                             projectId={projectId}
@@ -167,7 +170,7 @@ export default class FrameworkDetail extends React.PureComponent {
                         <EditFrameworkButton />
 
                         <AccentModalButton
-                            disabled={pending}
+                            disabled={pending || disabled}
                             modal={
                                 <CloneFrameworkModal
                                     projectId={projectId}
