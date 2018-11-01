@@ -45,6 +45,7 @@ import LeadNerRequest from './requests/LeadNerRequest';
 import FilterLeadsForm from '../Leads/FilterLeadsForm';
 import styles from './styles.scss';
 
+// FIXME: looks like activeProject is not needed here, projectId would do
 const propTypes = {
     activeProject: PropTypes.shape({
         id: PropTypes.number,

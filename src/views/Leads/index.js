@@ -507,7 +507,6 @@ export default class Leads extends React.PureComponent {
                             <Link
                                 className={styles.link}
                                 to={showLeadGroupsLink}
-                                replace
                             >
                                 {_ts('leads', 'showLeadGroups')}
                             </Link>

@@ -11,14 +11,18 @@ import { Prompt } from 'react-router-dom';
 import {
     isTruthy,
     randomString,
+    reverseRoute,
 } from '#rsu/common';
 import { CoordinatorBuilder } from '#rsu/coordinate';
 import List from '#rscv/List';
 import Message from '#rscv/Message';
 import BoundError from '#rscg/BoundError';
-import Cloak from '#components/Cloak';
 
+import Cloak from '#components/Cloak';
+import BackLink from '#components/BackLink';
 import AppError from '#components/AppError';
+
+import { pathNames } from '#constants/';
 import {
     routeStateSelector,
     leadFilterOptionsSelector,
@@ -37,6 +41,7 @@ import {
 
     addLeadViewResetUiStateAction,
     routeUrlSelector,
+    projectIdFromRouteSelector,
 } from '#redux';
 import { leadAccessor } from '#entities/lead';
 import _ts from '#ts';
@@ -53,6 +58,7 @@ import LeadFormItem from './LeadFormItem';
 import styles from './styles.scss';
 
 const mapStateToProps = state => ({
+    projectId: projectIdFromRouteSelector(state),
     routeState: routeStateSelector(state),
     leadFilterOptions: leadFilterOptionsSelector(state),
     activeLeadId: addLeadViewActiveLeadIdSelector(state),
@@ -73,6 +79,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const propTypes = {
+    projectId: PropTypes.number,
     activeLeadId: PropTypes.string,
     hasActiveLead: PropTypes.bool.isRequired,
     addLeadViewLeads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -102,6 +109,7 @@ const propTypes = {
 
 const defaultProps = {
     activeLeadId: undefined,
+    projectId: undefined,
 };
 
 
@@ -256,6 +264,7 @@ export default class LeadAdd extends React.PureComponent {
             hasActiveLead,
             addLeadViewLeads,
             buttonStates,
+            projectId,
         } = this.props;
         const { isSaveEnabledForAll } = buttonStates;
         const { pendingSubmitAll } = this.state;
@@ -276,6 +285,9 @@ export default class LeadAdd extends React.PureComponent {
                     }
                 />
                 <header className={styles.header}>
+                    <BackLink
+                        defaultLink={reverseRoute(pathNames.leads, { projectId })}
+                    />
                     <LeadFilter />
                     { hasActiveLead &&
                         <LeadActions

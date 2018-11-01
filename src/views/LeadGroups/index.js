@@ -11,6 +11,7 @@ import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
 import BoundError from '#rscg/BoundError';
 
+import BackLink from '#components/BackLink';
 import AppError from '#components/AppError';
 import {
     activeProjectIdFromStateSelector,
@@ -265,33 +266,29 @@ export default class LeadGroups extends React.PureComponent {
         this.props.setLeadGroupsActiveSort({ activeSort });
     }
 
-    renderHeader = () => (
-        <header className={styles.header} >
-            <FilterLeadGroupsForm className={styles.filters} />
-        </header>
-    )
+    renderHeader = () => {
+        const {
+            activeProject,
+        } = this.props;
+        return (
+            <header className={styles.header} >
+                <BackLink
+                    defaultLink={reverseRoute(pathNames.leads, { projectId: activeProject })}
+                />
+                <FilterLeadGroupsForm className={styles.filters} />
+            </header>
+        );
+    }
 
     renderFooter = () => {
         const {
             totalLeadGroupsCount,
             activePage,
-            activeProject,
         } = this.props;
-
-        const showLeadsPageLink = reverseRoute(
-            pathNames.leads,
-            { projectId: activeProject },
-        );
 
         return (
             <footer className={styles.footer}>
-                <Link
-                    className={styles.link}
-                    to={showLeadsPageLink}
-                    replace
-                >
-                    {_ts('leadGroups', 'showLeads')}
-                </Link>
+                <div />
                 <Pager
                     activePage={activePage}
                     className={styles.pager}
