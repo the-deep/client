@@ -4,21 +4,30 @@
     @extend %main-content;
     display: flex;
     flex-direction: column;
+    margin: -$spacing-small-alt;
+    border: 0;
+    background-color: transparent;
+    height: calc(100vh - #{$height-navbar});
 
     .header {
+        @include background-color($color-background-header);
         flex-shrink: 0;
+        border-bottom: $width-separator-thin solid $color-separator-alt;
+        padding: $spacing-small;
     }
 
     .main-content {
+        @include background-color($color-foreground-alt);
         display: flex;
         flex-grow: 1;
-        background-color: $color-foreground;
+        margin: $spacing-small-alt;
+        border: $width-separator-thin solid $color-separator-alt;
+        padding-bottom: $spacing-extra-small;
 
         .filters {
             display: flex;
             flex-basis: 50%;
             flex-direction: column;
-            background-color: $color-background-row;
 
             :global {
                 .entries-filters {
@@ -27,7 +36,6 @@
                     flex-shrink: 0;
                     flex-wrap: wrap;
                     border-bottom: $width-separator-thin solid $color-separator;
-                    background-color: $color-foreground;
                     padding: $spacing-small;
 
                     .entries-filter,
@@ -74,8 +82,6 @@
                             align-items: flex-end;
                             flex-shrink: 0;
                             flex-wrap: wrap;
-                            // border-bottom: $width-separator-thin solid $color-separator;
-                            background-color: $color-foreground;
                             padding: $spacing-small;
 
 

@@ -4,13 +4,18 @@
     @extend %main-content;
     display: flex;
     flex-direction: column;
+    margin: -$spacing-small-alt;
+    border: 0;
+    background-color: transparent;
+    height: calc(100vh - #{$height-navbar});
 
     .header {
+        @include background-color($color-background-header);
         display: flex;
         align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
-        background-color: $color-foreground;
+        border-bottom: $width-separator-thin solid $color-separator-alt;
         padding: $spacing-small;
 
         .filters {
@@ -32,9 +37,12 @@
     }
 
     .table-container {
+        @include background-color($color-foreground-alt);
         position: relative;
         flex-grow: 1;
-        background-color: $color-background-row;
+        margin: $spacing-small-alt;
+        border: $width-separator-thin solid $color-separator-alt;
+        padding-bottom: $spacing-extra-small;
         overflow-y: auto;
 
         .arys-table {

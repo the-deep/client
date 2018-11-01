@@ -19,6 +19,11 @@ $radius-button-border: 2px;
         justify-content: space-between;
         border-bottom: $width-separator-thin solid $color-separator;
         padding: $spacing-small;
+
+        .left-container {
+            display: flex;
+            align-items: center;
+        }
     }
 
     .content {

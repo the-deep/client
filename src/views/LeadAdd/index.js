@@ -285,10 +285,12 @@ export default class LeadAdd extends React.PureComponent {
                     }
                 />
                 <header className={styles.header}>
-                    <BackLink
-                        defaultLink={reverseRoute(pathNames.leads, { projectId })}
-                    />
-                    <LeadFilter />
+                    <div className={styles.leftContainer}>
+                        <BackLink
+                            defaultLink={reverseRoute(pathNames.leads, { projectId })}
+                        />
+                        <LeadFilter />
+                    </div>
                     { hasActiveLead &&
                         <LeadActions
                             leadFormSubmitters={this.leadFormSubmitters}

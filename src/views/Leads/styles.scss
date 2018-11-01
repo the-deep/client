@@ -53,17 +53,17 @@ $width-assignee-column: 96px;
     }
 
     .table-container {
+        @include background-color($color-foreground-alt);
         display: flex;
         position: relative;
         flex-direction: column;
         flex-grow: 1;
         margin: $spacing-small-alt;
+        border: $width-separator-thin solid $color-separator-alt;
+        padding-bottom: $spacing-extra-small;
 
         .scroll-wrapper {
-            @include background-color($color-foreground-alt);
             flex-grow: 1;
-            border: $width-separator-thin solid $color-separator-alt;
-            padding-bottom: $spacing-extra-small;
             overflow: auto;
 
             .leads-table {
@@ -175,9 +175,9 @@ $width-assignee-column: 96px;
 
             .link {
                 margin: 0 $spacing-small;
+                margin-right: $spacing-extra-small;
                 @extend %button-like-link;
                 @include background-color($color-accent);
-                margin-right: $spacing-extra-small;
             }
         }
 
