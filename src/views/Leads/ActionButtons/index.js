@@ -119,21 +119,31 @@ export default class ActionButtons extends React.PureComponent {
         return (
             <div className={containerClassName}>
                 <div className={styles.actionGroup}>
-                    <Button
-                        tabIndex="-1"
-                        title={_ts('leads', 'markAsProcessedTitle')}
-                        iconName={iconNames.check}
-                        onClick={() => onMarkProcessed(row)}
-                        transparent
-                        disabled={row.status !== 'pending'}
+                    <Cloak
+                        hide={ActionButtons.shouldHideLeadEdit}
+                        render={
+                            <Button
+                                tabIndex="-1"
+                                title={_ts('leads', 'markAsProcessedTitle')}
+                                iconName={iconNames.check}
+                                onClick={() => onMarkProcessed(row)}
+                                transparent
+                                disabled={row.status !== 'pending'}
+                            />
+                        }
                     />
-                    <Button
-                        tabIndex="-1"
-                        title={_ts('leads', 'markAsPendingTitle')}
-                        iconName={iconNames.undo}
-                        onClick={() => onMarkPending(row)}
-                        transparent
-                        disabled={row.status !== 'processed'}
+                    <Cloak
+                        hide={ActionButtons.shouldHideLeadEdit}
+                        render={
+                            <Button
+                                tabIndex="-1"
+                                title={_ts('leads', 'markAsPendingTitle')}
+                                iconName={iconNames.undo}
+                                onClick={() => onMarkPending(row)}
+                                transparent
+                                disabled={row.status !== 'processed'}
+                            />
+                        }
                     />
                 </div>
                 <div className={styles.actionGroup}>
