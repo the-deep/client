@@ -115,6 +115,7 @@ export default class NavDrop extends React.PureComponent {
         connectors: iconNames.link,
         notifications: iconNames.notifications,
         visualization: iconNames.pizza,
+        workshop: iconNames.settings,
     };
 
     static getDropItemKey = item => item.key

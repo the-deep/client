@@ -11,6 +11,7 @@ const allLinks = {
     connectors: acl.connectors,
     apiDocs: acl.apiDocs,
     stringManagement: acl.stringManagement,
+    workshop: acl.workshop,
 };
 
 export default allLinks;

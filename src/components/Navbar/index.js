@@ -203,6 +203,7 @@ export default class Navbar extends React.PureComponent {
             'apiDocs',
             'visualization',
             'stringManagement',
+            'workshop',
         ];
 
         this.validNavLinks = Navbar.getValidLinks(navLinks, this.currentPath);
