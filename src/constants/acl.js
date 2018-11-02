@@ -15,8 +15,8 @@ const acl = {
         ),
     },
     export: {
-        hide: ({ isLoggedIn, hasProjects, hasAnalysisFramework }) => (
-            !isLoggedIn || !hasProjects || !hasAnalysisFramework
+        hide: ({ isLoggedIn, hasProjects, hasAnalysisFramework, exportPermissions }) => (
+            !isLoggedIn || !hasProjects || !hasAnalysisFramework || !exportPermissions.includes('create')
         ),
     },
 
