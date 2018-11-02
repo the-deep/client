@@ -38,7 +38,7 @@ const propTypes = {
     projectServerData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setErrorProjectDetails: PropTypes.func.isRequired,
     projectId: PropTypes.number.isRequired,
-    disabled: PropTypes.bool.isRequired,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {

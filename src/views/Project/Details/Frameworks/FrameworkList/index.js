@@ -29,7 +29,7 @@ const propTypes = {
     selectedFrameworkId: PropTypes.number,
     projectId: PropTypes.number.isRequired,
     setActiveFramework: PropTypes.func.isRequired,
-    disabled: PropTypes.bool.isRequired,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {

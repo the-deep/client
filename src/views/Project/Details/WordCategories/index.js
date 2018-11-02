@@ -25,7 +25,7 @@ const propTypes = {
     wordCategoryList: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setWordCategoryList: PropTypes.func.isRequired,
-    disabled: PropTypes.bool.isRequired,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {

@@ -47,7 +47,7 @@ const propTypes = {
 
     setAdminLevelsForRegion: PropTypes.func.isRequired,
     unsetAdminLevelForRegion: PropTypes.func.isRequired,
-    disabled: PropTypes.bool.isRequired,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {

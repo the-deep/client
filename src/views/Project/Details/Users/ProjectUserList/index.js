@@ -29,7 +29,7 @@ const propTypes = {
 
     // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number.isRequired,
-    disabled: PropTypes.bool.isRequired,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {

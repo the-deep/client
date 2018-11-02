@@ -18,7 +18,7 @@ const propTypes = {
         role: PropTypes.string,
     }).isRequired,
     removeUsergroupMembershipRequest: RequestPropType.isRequired,
-    disabled: PropTypes.bool.isRequired,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {

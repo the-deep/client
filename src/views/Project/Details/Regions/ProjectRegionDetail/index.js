@@ -51,7 +51,7 @@ const propTypes = {
     setRegionDetailsErrors: PropTypes.func.isRequired,
     removeProjectRegion: PropTypes.func.isRequired,
     onRegionClone: PropTypes.func,
-    disabled: PropTypes.bool.isRequired,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {

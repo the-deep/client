@@ -24,7 +24,7 @@ const propTypes = {
     usersRequest: PropTypes.shape({
         pending: PropTypes.bool.isRequired,
     }).isRequired,
-    disabled: PropTypes.bool.isRequired,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {

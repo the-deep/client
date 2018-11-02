@@ -51,7 +51,7 @@ const propTypes = {
     activeUser: PropTypes.shape({
         userId: PropTypes.number,
     }).isRequired,
-    disabled: PropTypes.bool.isRequired,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
