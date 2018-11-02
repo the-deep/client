@@ -37,6 +37,11 @@ const acl = {
             !isLoggedIn || !isDevMode
         ),
     },
+    workshop: {
+        hide: ({ isLoggedIn, isAdmin }) => (
+            !isLoggedIn || !isAdmin
+        ),
+    },
     stringManagement: {
         hide: ({ isLoggedIn, isAdmin }) => (
             !isLoggedIn || !isAdmin
@@ -66,6 +71,7 @@ const acl = {
             ![
                 'projects',
                 'dashboard',
+                'workshop',
                 'leadGroups',
                 'leads',
                 'leadsViz',

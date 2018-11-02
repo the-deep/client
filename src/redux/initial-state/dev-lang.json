@@ -815,7 +815,8 @@
         "-41121825": "Failed to get user gallery files",
         "-54185786": "User/Usergroup",
         "-17852758": "Search User/Usergroup",
-        "-1045504": "Go back"
+        "-1045504": "Go back",
+        "-72172702": "Workshop"
     },
     "links": {
         "browserExtension": {
@@ -1598,7 +1599,8 @@
             "browserExtension": 2000,
             "stringManagement": 5572,
             "clusterViz": 2999,
-            "visualization": 3999
+            "visualization": 3999,
+            "workshop": -72172702
         },
         "project.general": {
             "projectNameLabel": 103,

@@ -1,0 +1,6 @@
+@import '~base-scss/base';
+
+.workshop {
+    @extend %main-content;
+    padding: $spacing-small;
+}

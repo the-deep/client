@@ -89,6 +89,14 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'dashboard');
 
+    workshop: {
+        order: 19,
+        type: ROUTE.private,
+        path: '/workshop/',
+        loader: () => import('../views/Workshop'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'workshop');
+
     connectors: {
         order: 22,
         type: ROUTE.private,
