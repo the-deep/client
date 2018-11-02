@@ -30,6 +30,9 @@ export default class ProjectDetails extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static shouldHideDetails = ({ setupPermissions }) => !setupPermissions.includes('view');
+    static shouldDisableDetails = ({ setupPermissions }) => !setupPermissions.includes('modify');
+
     constructor(props) {
         super(props);
 
@@ -43,31 +46,71 @@ export default class ProjectDetails extends React.PureComponent {
 
         this.defaultHash = 'general';
 
-        const rendererParams = () => ({
-            className: styles.content,
-            projectId: this.props.projectId,
-        });
-
         this.views = {
             general: {
-                component: General,
-                rendererParams,
+                component: () => (
+                    <Cloak
+                        disable={ProjectDetails.shouldDisableDetails}
+                        render={
+                            <General
+                                className={styles.content}
+                                projectId={this.props.projectId}
+                            />
+                        }
+                    />
+                ),
             },
             users: {
-                component: Users,
-                rendererParams,
+                component: () => (
+                    <Cloak
+                        disable={ProjectDetails.shouldDisableDetails}
+                        render={
+                            <Users
+                                className={styles.content}
+                                projectId={this.props.projectId}
+                            />
+                        }
+                    />
+                ),
             },
             regions: {
-                component: Regions,
-                rendererParams,
+                component: () => (
+                    <Cloak
+                        disable={ProjectDetails.shouldDisableDetails}
+                        render={
+                            <Regions
+                                className={styles.content}
+                                projectId={this.props.projectId}
+                            />
+                        }
+                    />
+                ),
             },
             frameworks: {
-                component: Frameworks,
-                rendererParams,
+                component: () => (
+                    <Cloak
+                        disable={ProjectDetails.shouldDisableDetails}
+                        render={
+                            <Frameworks
+                                className={styles.content}
+                                projectId={this.props.projectId}
+                            />
+                        }
+                    />
+                ),
             },
             categoryEditors: {
-                component: WordCategories,
-                rendererParams,
+                component: () => (
+                    <Cloak
+                        disable={ProjectDetails.shouldDisableDetails}
+                        render={
+                            <WordCategories
+                                className={styles.content}
+                                projectId={this.props.projectId}
+                            />
+                        }
+                    />
+                ),
             },
         };
 
@@ -88,7 +131,7 @@ export default class ProjectDetails extends React.PureComponent {
 
         return (
             <Cloak
-                hide={({ setupPermissions }) => !setupPermissions.includes('modify')}
+                hide={ProjectDetails.shouldHideDetails}
                 render={
                     <div className={className}>
                         <FixedTabs

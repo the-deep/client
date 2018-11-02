@@ -29,6 +29,7 @@ const propTypes = {
     selectedFrameworkId: PropTypes.number,
     projectId: PropTypes.number.isRequired,
     setActiveFramework: PropTypes.func.isRequired,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -37,6 +38,7 @@ const defaultProps = {
 
     // Apparently there can be no frameworks in projects
     selectedFrameworkId: undefined,
+    disabled: false,
 };
 
 // TODO: move to separate component
@@ -131,6 +133,7 @@ export default class FrameworkList extends React.PureComponent {
             frameworkList,
             projectId,
             setActiveFramework,
+            disabled,
         } = this.props;
 
         const { searchInputValue } = this.state;
@@ -158,6 +161,7 @@ export default class FrameworkList extends React.PureComponent {
 
                     <AccentModalButton
                         iconName={iconNames.add}
+                        disabled={disabled}
                         modal={
                             <AddFrameworkModal
                                 projectId={projectId}

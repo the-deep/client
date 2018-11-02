@@ -51,6 +51,7 @@ const propTypes = {
     setRegionDetailsErrors: PropTypes.func.isRequired,
     removeProjectRegion: PropTypes.func.isRequired,
     onRegionClone: PropTypes.func,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -61,6 +62,7 @@ const defaultProps = {
         faramErrors: {},
         pristine: false,
     },
+    disabled: false,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -184,9 +186,9 @@ export default class ProjectRegionDetail extends React.PureComponent {
 
     renderCloneAndEditButton = () => {
         const {
-            regionDetail,
             countryId,
             activeProject,
+            disabled,
         } = this.props;
         const { faramValues = {} } = this.props.regionDetail;
 
@@ -195,16 +197,11 @@ export default class ProjectRegionDetail extends React.PureComponent {
             regionClonePending,
         } = this.state;
 
-        const isPublic = regionDetail.public;
         const cloneAndEditButtonLabel = _ts('project', 'cloneEditButtonLabel');
-
-        if (!isPublic) {
-            return null;
-        }
 
         return (
             <PrimaryConfirmButton
-                disabled={dataLoading || regionClonePending}
+                disabled={dataLoading || regionClonePending || disabled}
                 onClick={() => this.handleRegionClone(countryId, activeProject)}
                 confirmationMessage={_ts('project', 'confirmCloneText', { title: <b>{faramValues.title}</b> })}
             >
@@ -218,12 +215,13 @@ export default class ProjectRegionDetail extends React.PureComponent {
             regionDetail,
             projectDetails,
             countryId,
+            disabled,
         } = this.props;
 
         const {
             faramValues = {},
             pristine = false,
-        } = this.props.regionDetail;
+        } = regionDetail;
 
         const {
             dataLoading,
@@ -247,25 +245,26 @@ export default class ProjectRegionDetail extends React.PureComponent {
                     {faramValues.title}
                 </h2>
                 <div className={styles.actionButtons}>
-                    <CloneAndEditButton />
-                    {!isPublic &&
+                    { isPublic ? (
+                        <CloneAndEditButton />
+                    ) : (
                         <Fragment>
                             <WarningButton
-                                disabled={!pristine}
+                                disabled={!pristine || disabled}
                                 onClick={this.handleDiscardButtonClick}
                             >
                                 {_ts('project', 'discardButtonLabel')}
                             </WarningButton>
                             <SuccessButton
                                 type="submit"
-                                disabled={!pristine}
+                                disabled={!pristine || disabled}
                             >
                                 {_ts('project', 'saveButtonLabel')}
                             </SuccessButton>
                         </Fragment>
-                    }
+                    ) }
                     <DangerConfirmButton
-                        disabled={pending}
+                        disabled={pending || disabled}
                         onClick={() => this.handleRegionRemove(projectDetails, countryId)}
                         confirmationMessage={
                             _ts('project', 'confirmRemoveText', {
@@ -286,6 +285,7 @@ export default class ProjectRegionDetail extends React.PureComponent {
             countryId,
             activeProject,
             regionDetail,
+            disabled,
         } = this.props;
         const { dataLoading } = this.state;
 
@@ -308,7 +308,10 @@ export default class ProjectRegionDetail extends React.PureComponent {
                             className={styles.regionDetailForm}
                         />
                     </div>
-                    <RegionAdminLevel countryId={countryId} />
+                    <RegionAdminLevel
+                        countryId={countryId}
+                        disabled={disabled}
+                    />
                 </div>
             );
         }
@@ -336,9 +339,12 @@ export default class ProjectRegionDetail extends React.PureComponent {
         const Content = this.renderContent;
 
         const {
-            faramErrors = {},
-            faramValues = {},
-        } = this.props.regionDetail;
+            disabled,
+            regionDetail: {
+                faramErrors = {},
+                faramValues = {},
+            },
+        } = this.props;
 
         const loading = projectPatchPending ||
             regionClonePending ||
@@ -353,7 +359,7 @@ export default class ProjectRegionDetail extends React.PureComponent {
                 schema={this.schema}
                 value={faramValues}
                 error={faramErrors}
-                disabled={loading}
+                disabled={loading || disabled}
             >
                 { loading && <LoadingAnimation /> }
                 <Header />

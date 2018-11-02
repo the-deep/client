@@ -51,6 +51,11 @@ const propTypes = {
     activeUser: PropTypes.shape({
         userId: PropTypes.number,
     }).isRequired,
+    disabled: PropTypes.bool,
+};
+
+const defaultProps = {
+    disabled: false,
 };
 
 const mapStateToProps = state => ({
@@ -65,6 +70,7 @@ const projectRoleLabelSelector = d => d.title;
 @RequestClient(requests)
 export default class Actions extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     handleRoleSelectInputChange = (newRole) => {
         const {
@@ -100,6 +106,7 @@ export default class Actions extends React.PureComponent {
             activeUser: {
                 userId: activeUserId,
             },
+            disabled,
         } = this.props;
 
         const {
@@ -121,11 +128,12 @@ export default class Actions extends React.PureComponent {
                     keySelector={projectRoleKeySelector}
                     labelSelector={projectRoleLabelSelector}
                     showHintAndError={false}
-                    disabled={activeUserId === memberId}
+                    disabled={activeUserId === memberId || disabled}
                 />
                 <DangerConfirmButton
                     smallVerticalPadding
                     title={_ts('project.users', 'removeMembershipButtonPlaceholder')}
+                    disabled={disabled}
                     confirmationMessage={_ts(
                         'project.users',
                         'removeMembershipConfirmationMessage',

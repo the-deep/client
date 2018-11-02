@@ -24,10 +24,12 @@ const propTypes = {
     usersRequest: PropTypes.shape({
         pending: PropTypes.bool.isRequired,
     }).isRequired,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
+    disabled: false,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -55,6 +57,7 @@ export default class Users extends React.PureComponent {
         const {
             className: classNameFromProps,
             projectId,
+            disabled,
             usersRequest: { pending },
         } = this.props;
 
@@ -79,15 +82,18 @@ export default class Users extends React.PureComponent {
                             searchInputValue={searchInputValue}
                             projectId={projectId}
                             className={styles.searchList}
+                            disabled={disabled}
                         />
                         <div className={styles.details}>
                             <ProjectUserList
                                 className={styles.userList}
                                 projectId={projectId}
+                                disabled={disabled}
                             />
                             <ProjectUsergroupList
                                 className={styles.usergroupList}
                                 projectId={projectId}
+                                disabled={disabled}
                             />
                         </div>
                     </React.Fragment>

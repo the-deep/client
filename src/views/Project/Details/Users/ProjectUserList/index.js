@@ -29,10 +29,12 @@ const propTypes = {
 
     // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number.isRequired,
+    disabled: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
+    disabled: false,
 };
 
 const emptyObject = {};
@@ -91,7 +93,12 @@ export default class ProjectUserList extends React.PureComponent {
                 key: 'actions',
                 label: _ts('project.users', 'actionsTitle'),
                 order: 4,
-                modifier: row => <Actions row={row} />,
+                modifier: row => (
+                    <Actions
+                        disabled={this.props.disabled}
+                        row={row}
+                    />
+                ),
             },
         ];
     }
