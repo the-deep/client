@@ -3,4 +3,16 @@
 .workshop {
     @extend %main-content;
     padding: $spacing-small;
+    overflow-y: auto;
+
+    .faram {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+
+        > * {
+            padding: $spacing-small;
+        }
+    }
 }

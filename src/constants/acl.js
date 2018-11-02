@@ -38,8 +38,8 @@ const acl = {
         ),
     },
     workshop: {
-        hide: ({ isLoggedIn, isAdmin }) => (
-            !isLoggedIn || !isAdmin
+        hide: ({ isLoggedIn, isDevMode, isAdmin }) => (
+            !isLoggedIn || (!isDevMode && !isAdmin)
         ),
     },
     stringManagement: {

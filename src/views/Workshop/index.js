@@ -47,6 +47,9 @@ import styles from './styles.scss';
 
 @BoundError(AppError)
 export default class Workshop extends React.PureComponent {
+    static keySelector = elem => elem.key;
+    static labelSelector = elem => elem.label;
+
     static schema = {
         fields: {
             username: [
@@ -166,8 +169,8 @@ export default class Workshop extends React.PureComponent {
             <div className={styles.workshop}>
                 <SegmentInput
                     name="random-name-for-segment-1"
-                    labelSelector={elem => elem.label}
-                    keySelector={elem => elem.key}
+                    labelSelector={Workshop.labelSelector}
+                    keySelector={Workshop.keySelector}
                     value={this.state.faramState}
                     onChange={this.handleFaramStateChange}
                     options={[
@@ -178,6 +181,7 @@ export default class Workshop extends React.PureComponent {
                 />
 
                 <Faram
+                    className={styles.faram}
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
                     onValidationSuccess={this.handleFaramValidationSuccess}
@@ -217,8 +221,8 @@ export default class Workshop extends React.PureComponent {
                     />
                     {/* NOTE: CheckGroup should use label instead of title */}
                     <CheckGroup
-                        labelSelector={elem => elem.label}
-                        keySelector={elem => elem.key}
+                        labelSelector={Workshop.labelSelector}
+                        keySelector={Workshop.keySelector}
                         faramElementName="fruits"
                         title="Fruits"
                         options={[
@@ -253,15 +257,15 @@ export default class Workshop extends React.PureComponent {
                         faramElementName="hiddenValue"
                     />
                     <ListInput
-                        labelSelector={elem => elem.label}
-                        keySelector={elem => elem.key}
+                        labelSelector={Workshop.labelSelector}
+                        keySelector={Workshop.keySelector}
                         faramElementName="places"
                     />
                     {/* NOTE: looks like a duplicate of CheckGroup */}
                     <ListSelection
                         label="Good Places"
-                        labelSelector={elem => elem.label}
-                        keySelector={elem => elem.key}
+                        labelSelector={Workshop.labelSelector}
+                        keySelector={Workshop.keySelector}
                         faramElementName="goodPlaces"
                         options={[
                             { key: 'pokhara', label: 'The Pokhara' },
@@ -272,8 +276,8 @@ export default class Workshop extends React.PureComponent {
                     />
                     <SelectInput
                         label="Worst place"
-                        labelSelector={elem => elem.label}
-                        keySelector={elem => elem.key}
+                        labelSelector={Workshop.labelSelector}
+                        keySelector={Workshop.keySelector}
                         faramElementName="worstPlace"
                         options={[
                             { key: 'pokhara', label: 'The Pokhara' },
@@ -284,8 +288,8 @@ export default class Workshop extends React.PureComponent {
                     />
                     <SelectInputWithList
                         label="Worse place"
-                        labelSelector={elem => elem.label}
-                        keySelector={elem => elem.key}
+                        labelSelector={Workshop.labelSelector}
+                        keySelector={Workshop.keySelector}
                         faramElementName="worsePlaces"
                         options={[
                             { key: 'pokhara', label: 'The Pokhara' },
@@ -296,8 +300,8 @@ export default class Workshop extends React.PureComponent {
                     />
                     <MultiSelectInput
                         label="Bad Places"
-                        labelSelector={elem => elem.label}
-                        keySelector={elem => elem.key}
+                        labelSelector={Workshop.labelSelector}
+                        keySelector={Workshop.keySelector}
                         faramElementName="badPlaces"
                         options={[
                             { key: 'pokhara', label: 'The Pokhara' },
@@ -319,8 +323,8 @@ export default class Workshop extends React.PureComponent {
                     <ScaleInput
                         faramElementName="pollutionIndex"
                         colorSelector={elem => elem.color}
-                        labelSelector={elem => elem.label}
-                        keySelector={elem => elem.key}
+                        labelSelector={Workshop.labelSelector}
+                        keySelector={Workshop.keySelector}
                         isDefault={elem => !!elem.default}
                         options={[
                             { key: 'pokhara', label: '0', color: 'green', default: true },
@@ -332,8 +336,8 @@ export default class Workshop extends React.PureComponent {
                         name="random-name-for-segment-2"
                         faramElementName="gender"
                         label="Gender"
-                        labelSelector={elem => elem.label}
-                        keySelector={elem => elem.key}
+                        labelSelector={Workshop.labelSelector}
+                        keySelector={Workshop.keySelector}
                         options={[
                             { key: 'm', label: 'Male' },
                             { key: 'f', label: 'Female' },
@@ -348,8 +352,8 @@ export default class Workshop extends React.PureComponent {
                             { key: 'd', label: 'gita', position: 2 },
                         ]}
                         label="Positions"
-                        labelSelector={elem => elem.label}
-                        keySelector={elem => elem.key}
+                        labelSelector={Workshop.labelSelector}
+                        keySelector={Workshop.keySelector}
                         tableHeaders={[
                             {
                                 key: 'label',
