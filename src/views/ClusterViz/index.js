@@ -502,12 +502,12 @@ export default class ClusterViz extends PureComponent {
             return (
                 <Cloak
                     hide={({ hasAnalysisFramework }) => !hasAnalysisFramework}
-                    render={() => (
+                    render={
                         <Redirect
                             push
                             to={entryToRedirectTo}
                         />
-                    )}
+                    }
                 />
             );
         }

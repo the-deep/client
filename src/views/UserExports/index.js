@@ -16,6 +16,7 @@ import Table from '#rscv/Table';
 import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
+import BackLink from '#components/BackLink';
 import BoundError from '#rscg/BoundError';
 import AppError from '#components/AppError';
 import {
@@ -338,23 +339,20 @@ export default class UserExports extends React.PureComponent {
 
     render() {
         const { userExports, projectId } = this.props;
-        const { selectedExport } = this.state;
+        const { selectedExport, pendingExports } = this.state;
 
         return (
             <div className={styles.userExports}>
                 <header className={styles.header}>
+                    <BackLink
+                        defaultLink={reverseRoute(pathNames.export, { projectId })}
+                    />
                     <h2>
                         {_ts('export', 'userExportsHeader')}
                     </h2>
-                    <Link
-                        className={styles.exportLink}
-                        to={reverseRoute(pathNames.export, { projectId })}
-                    >
-                        {_ts('export', 'goBackToExportLabel')}
-                    </Link>
                 </header>
                 <div className={styles.mainContainer}>
-                    { this.state.pendingExports && <LoadingAnimation /> }
+                    { pendingExports && <LoadingAnimation /> }
                     <div className={styles.tableContainer}>
                         <Table
                             data={userExports || emptyList}

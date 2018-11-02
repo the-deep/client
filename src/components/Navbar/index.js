@@ -278,21 +278,18 @@ export default class Navbar extends React.PureComponent {
                 <Cloak
                     {...projectSelectInputLink}
                     render={
-                        ({ disabled }) => (
-                            <SelectInput
-                                hideClearButton
-                                keySelector={Navbar.projectKeySelector}
-                                labelSelector={Navbar.projectLabelSelector}
-                                onChange={this.handleProjectChange}
-                                options={userProjects}
-                                placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
-                                showHintAndError={false}
-                                showLabel={false}
-                                className={styles.projectSelectInput}
-                                disabled={disabled}
-                                value={activeProject}
-                            />
-                        )
+                        <SelectInput
+                            hideClearButton
+                            keySelector={Navbar.projectKeySelector}
+                            labelSelector={Navbar.projectLabelSelector}
+                            onChange={this.handleProjectChange}
+                            options={userProjects}
+                            placeholder={_ts('components.navbar', 'selectEventPlaceholder')}
+                            showHintAndError={false}
+                            showLabel={false}
+                            className={styles.projectSelectInput}
+                            value={activeProject}
+                        />
                     }
                 />
 

@@ -7,13 +7,18 @@ $width-assignee-column: 96px;
     @extend %main-content;
     display: flex;
     flex-direction: column;
+    margin: -$spacing-small-alt;
+    border: 0;
+    background-color: transparent;
+    height: calc(100vh - #{$height-navbar});
 
     .header {
+        @include background-color($color-background-header);
         display: flex;
         align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
-        background-color: $color-foreground;
+        border-bottom: $width-separator-thin solid $color-separator-alt;
         padding: $spacing-small;
 
         .add-lead-link {
@@ -48,11 +53,14 @@ $width-assignee-column: 96px;
     }
 
     .table-container {
+        @include background-color($color-foreground-alt);
         display: flex;
         position: relative;
         flex-direction: column;
         flex-grow: 1;
-        background-color: $color-background-row;
+        margin: $spacing-small-alt;
+        border: $width-separator-thin solid $color-separator-alt;
+        padding-bottom: $spacing-extra-small;
 
         .scroll-wrapper {
             flex-grow: 1;
@@ -148,6 +156,7 @@ $width-assignee-column: 96px;
     }
 
     .footer {
+        @include background-color($color-foreground);
         display: flex;
         align-items: center;
         flex-shrink: 0;
@@ -166,9 +175,9 @@ $width-assignee-column: 96px;
 
             .link {
                 margin: 0 $spacing-small;
+                margin-right: $spacing-extra-small;
                 @extend %button-like-link;
                 @include background-color($color-accent);
-                margin-right: $spacing-extra-small;
             }
         }
 

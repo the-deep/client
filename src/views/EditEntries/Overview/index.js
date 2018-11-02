@@ -149,24 +149,24 @@ export default class Overview extends React.PureComponent {
                             <div className={styles.actionButtons}>
                                 <Cloak
                                     hide={this.shouldHideEntryDelete}
-                                    render={() => (
+                                    render={
                                         <DangerButton
                                             onClick={this.handleEntryDelete}
                                             disabled={pending}
                                             // disabled={!entry || pending}
                                             iconName={iconNames.remove}
                                         />
-                                    )}
+                                    }
                                 />
                                 <Cloak
                                     hide={Overview.shouldHideEntryAdd}
-                                    render={() => (
+                                    render={
                                         <PrimaryButton
                                             onClick={this.handleEmptyExcerptCreate}
                                             className={styles.addNewEntryButton}
                                             iconName={iconNames.add}
                                         />
-                                    )}
+                                    }
                                 />
                             </div>
                         </header>

@@ -18,6 +18,19 @@ import _ts from '#ts';
 import Cloak from '../../Cloak';
 import styles from './styles.scss';
 
+const NavItem = ({ itemKey, className, to, disabled }) => (
+    <NavLink
+        activeClassName={styles.active}
+        to={to}
+        className={`${className} ${disabled ? styles.disabled : ''}`}
+        disabled={disabled}
+        exact
+    >
+        { _ts('pageTitle', itemKey) }
+    </NavLink>
+);
+
+
 const propTypes = {
     links: PropTypes.arrayOf(
         PropTypes.object,
@@ -145,17 +158,13 @@ export default class NavMenu extends React.PureComponent {
             <Cloak
                 {...item}
                 key={key}
-                render={({ disabled }) => (
-                    <NavLink
-                        activeClassName={styles.active}
+                render={
+                    <NavItem
+                        className={className}
                         to={route}
-                        className={`${className} ${disabled ? styles.disabled : ''}`}
-                        disabled={disabled}
-                        exact
-                    >
-                        { _ts('pageTitle', key) }
-                    </NavLink>
-                )}
+                        itemKey={key}
+                    />
+                }
             />
         );
     }

@@ -34,6 +34,7 @@ import {
     geoPointsDataSelector,
 } from '#redux';
 import { pathNames } from '#constants/';
+import BackLink from '#components/BackLink';
 
 import LeadKeywordCorrelationRequest from './requests/LeadKeywordCorrelationRequest';
 import LeadTopicCorrelationRequest from './requests/LeadTopicCorrelationRequest';
@@ -44,6 +45,7 @@ import LeadNerRequest from './requests/LeadNerRequest';
 import FilterLeadsForm from '../Leads/FilterLeadsForm';
 import styles from './styles.scss';
 
+// FIXME: looks like activeProject is not needed here, projectId would do
 const propTypes = {
     activeProject: PropTypes.shape({
         id: PropTypes.number,
@@ -350,18 +352,12 @@ export default class LeadsViz extends React.PureComponent {
         return (
             <div className={styles.leads}>
                 <header className={styles.header}>
+                    <BackLink
+                        defaultLink={reverseRoute(pathNames.leads, { projectId: activeProject.id })}
+                    />
                     <FilterLeadsForm className={styles.filters} />
                 </header>
                 { noLeadSelected ? this.renderNoLeadFound() : this.renderCharts() }
-                <footer className={styles.footer}>
-                    <Link
-                        className={styles.link}
-                        to={reverseRoute(pathNames.leads, { projectId: activeProject.id })}
-                        replace
-                    >
-                        { _ts('leadsViz', 'showTable') }
-                    </Link>
-                </footer>
             </div>
         );
     }

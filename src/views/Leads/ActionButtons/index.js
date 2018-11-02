@@ -119,21 +119,31 @@ export default class ActionButtons extends React.PureComponent {
         return (
             <div className={containerClassName}>
                 <div className={styles.actionGroup}>
-                    <Button
-                        tabIndex="-1"
-                        title={_ts('leads', 'markAsProcessedTitle')}
-                        iconName={iconNames.check}
-                        onClick={() => onMarkProcessed(row)}
-                        transparent
-                        disabled={row.status !== 'pending'}
+                    <Cloak
+                        hide={ActionButtons.shouldHideLeadEdit}
+                        render={
+                            <Button
+                                tabIndex="-1"
+                                title={_ts('leads', 'markAsProcessedTitle')}
+                                iconName={iconNames.check}
+                                onClick={() => onMarkProcessed(row)}
+                                transparent
+                                disabled={row.status !== 'pending'}
+                            />
+                        }
                     />
-                    <Button
-                        tabIndex="-1"
-                        title={_ts('leads', 'markAsPendingTitle')}
-                        iconName={iconNames.undo}
-                        onClick={() => onMarkPending(row)}
-                        transparent
-                        disabled={row.status !== 'processed'}
+                    <Cloak
+                        hide={ActionButtons.shouldHideLeadEdit}
+                        render={
+                            <Button
+                                tabIndex="-1"
+                                title={_ts('leads', 'markAsPendingTitle')}
+                                iconName={iconNames.undo}
+                                onClick={() => onMarkPending(row)}
+                                transparent
+                                disabled={row.status !== 'processed'}
+                            />
+                        }
                     />
                 </div>
                 <div className={styles.actionGroup}>
@@ -146,7 +156,7 @@ export default class ActionButtons extends React.PureComponent {
                     />
                     <Cloak
                         hide={ActionButtons.shouldHideLeadDelete}
-                        render={() => (
+                        render={
                             <DangerConfirmButton
                                 tabIndex="-1"
                                 title={_ts('leads', 'removeLeadLeadButtonTitle')}
@@ -155,11 +165,11 @@ export default class ActionButtons extends React.PureComponent {
                                 iconName={iconNames.delete}
                                 confirmationMessage={_ts('leads', 'leadDeleteConfirmText')}
                             />
-                        )}
+                        }
                     />
                     <Cloak
                         hide={ActionButtons.shouldHideLeadEdit}
-                        render={() => (
+                        render={
                             <Link
                                 className={styles.editLink}
                                 tabIndex="-1"
@@ -168,37 +178,35 @@ export default class ActionButtons extends React.PureComponent {
                             >
                                 <i className={iconNames.edit} />
                             </Link>
-                        )}
+                        }
                     />
                 </div>
                 <div className={styles.actionGroup}>
                     <Cloak
                         hide={ActionButtons.shouldHideAssessmentAdd}
-                        render={({ disabled }) => (
+                        render={
                             <Link
-                                className={`${styles.addAssessmentLink} ${disabled ? styles.disabled : ''}`}
+                                className={`${styles.addAssessmentLink}`}
                                 tabIndex="-1"
                                 title={_ts('leads', 'addAssessmentFromLeadButtonTitle')}
                                 to={links.addAssessment}
-                                disabled={disabled}
                             >
                                 <i className={iconNames.forward} />
                             </Link>
-                        )}
+                        }
                     />
                     <Cloak
                         hide={ActionButtons.shouldHideEntryAdd}
-                        render={({ disabled }) => (
+                        render={
                             <Link
-                                className={`${styles.addEntryLink} ${disabled ? styles.disabled : ''}`}
+                                className={`${styles.addEntryLink}`}
                                 tabIndex="-1"
                                 title={_ts('leads', 'addEntryFromLeadButtonTitle')}
                                 to={links.editEntries}
-                                disabled={disabled}
                             >
                                 <i className={iconNames.forward} />
                             </Link>
-                        )}
+                        }
                     />
                 </div>
             </div>

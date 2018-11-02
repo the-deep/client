@@ -113,7 +113,7 @@ export default class WidgetFaramContainer extends React.PureComponent {
                 <header className={headerClassName}>
                     <Cloak
                         hide={this.shouldHideEntryDelete}
-                        render={() => (
+                        render={
                             <DangerButton
                                 transparent
                                 iconName={iconNames.delete}
@@ -121,11 +121,11 @@ export default class WidgetFaramContainer extends React.PureComponent {
                                 onClick={this.handleEntryDelete}
                                 disabled={pending}
                             />
-                        )}
+                        }
                     />
                     <Cloak
                         hide={this.shouldHideEntryEdit}
-                        render={() => (
+                        render={
                             <WarningButton
                                 transparent
                                 onClick={this.handleEdit}
@@ -133,7 +133,7 @@ export default class WidgetFaramContainer extends React.PureComponent {
                                 iconName={iconNames.edit}
                                 // NOTE: no need to disable edit on save pending
                             />
-                        )}
+                        }
                     />
                 </header>
                 <WidgetFaram

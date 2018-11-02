@@ -655,16 +655,16 @@ export default class EditEntries extends React.PureComponent {
                     <div className={styles.actionButtons}>
                         <Cloak
                             hide={() => !isFrameworkAdmin}
-                            render={({ disabled }) => (
+                            render={
                                 <Link
                                     className={styles.editFrameworkLink}
                                     to={frameworkPath}
-                                    disabled={!analysisFrameworkId || disabled}
+                                    disabled={!analysisFrameworkId}
                                 >
                                     <span className={`${iconNames.edit} ${styles.editIcon}`} />
                                     { _ts('editEntry', 'editFrameworkTitle') }
                                 </Link>
-                            )}
+                            }
                         />
                         <DangerConfirmButton
                             disabled={isSaveDisabled}

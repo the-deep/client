@@ -81,7 +81,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
         super(props);
 
         this.state = {
-            pendingFrameworkList: false,
+            pendingFrameworkList: true,
             activeFrameworkId: undefined,
         };
 

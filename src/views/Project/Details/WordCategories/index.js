@@ -82,7 +82,7 @@ export default class ProjectCategoryEditor extends React.PureComponent {
         super(props);
 
         this.state = {
-            pendingWordCategoryList: false,
+            pendingWordCategoryList: true,
             activeWordCategoryId: undefined,
         };
 

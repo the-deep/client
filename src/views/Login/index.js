@@ -22,7 +22,6 @@ import Faram, {
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ReCaptcha from '#rsci/ReCaptcha';
 import TextInput from '#rsci/TextInput';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import { reverseRoute } from '#rsu/common';
 
 import { hidUrl } from '#config/hid';
@@ -282,7 +281,6 @@ export default class Login extends React.PureComponent {
                             </span>
                         </div>
                     </div>
-                    { pending && <LoadingAnimation /> }
                     <Faram
                         className={styles.loginForm}
                         onChange={this.handleFaramChange}
@@ -320,7 +318,10 @@ export default class Login extends React.PureComponent {
                             >
                                 {_ts('login', 'forgotPasswordText')}
                             </Link>
-                            <PrimaryButton type="submit">
+                            <PrimaryButton
+                                type="submit"
+                                pending={pending}
+                            >
                                 {_ts('login', 'loginLabel')}
                             </PrimaryButton>
                         </div>

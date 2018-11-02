@@ -444,15 +444,15 @@ export default class Leads extends React.PureComponent {
                 <FilterLeadsForm className={styles.filters} />
                 <Cloak
                     hide={({ leadPermissions }) => !leadPermissions.includes('create')}
-                    render={() => (
+                    render={
                         <Link
                             to={addLeadLink}
                             className={styles.addLeadLink}
                         >
-                            {/* add icon aswell */}
+                            {/* TODO: add icon aswell */}
                             {_ts('leads', 'addSourcesButtonLabel')}
                         </Link>
-                    )}
+                    }
                 />
             </header>
         );
@@ -485,36 +485,32 @@ export default class Leads extends React.PureComponent {
                     <Link
                         className={styles.link}
                         to={showVisualizationLink}
-                        replace
                     >
                         {_ts('leads', 'showViz')}
                     </Link>
                     <Cloak
                         hide={({ isBeta }) => isBeta}
-                        render={({ disabled }) => (
+                        render={
                             <Link
                                 className={styles.link}
                                 to={showClusterVisualizationLink}
                                 replace
-                                disabled={disabled}
                             >
                                 {_ts('leads', 'showCluster')}
                             </Link>
-                        )}
+                        }
                     />
                     <Cloak
                         hide={({ hasAssessmentTemplate }) => !hasAssessmentTemplate}
                         requireAssessmentTemplate
-                        render={({ disabled }) => (
+                        render={
                             <Link
                                 className={styles.link}
                                 to={showLeadGroupsLink}
-                                replace
-                                disabled={disabled}
                             >
                                 {_ts('leads', 'showLeadGroups')}
                             </Link>
-                        )}
+                        }
                     />
                 </div>
                 <div className={styles.pagerContainer}>

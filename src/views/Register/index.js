@@ -181,7 +181,6 @@ export default class Register extends React.PureComponent {
                 error={faramErrors}
                 disabled={pending}
             >
-                { pending && <LoadingAnimation /> }
                 <NonFieldErrors faramElement />
                 <TextInput
                     faramElementName="firstname"
@@ -211,7 +210,10 @@ export default class Register extends React.PureComponent {
                     reset={pending}
                 />
                 <div className={styles.actionButtons}>
-                    <PrimaryButton type="submit" >
+                    <PrimaryButton
+                        type="submit"
+                        pending={pending}
+                    >
                         { _ts('register', 'registerLabel')}
                     </PrimaryButton>
                 </div>
