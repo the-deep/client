@@ -42,7 +42,7 @@ export default class EntriesList extends React.PureComponent {
     static calcEntryKey = entry => entryAccessor.key(entry)
 
     static shouldHideEntryDelete = entry => ({ entryPermissions }) => (
-        !entryPermissions.includes('delete') && entryAccessor.serverId(entry)
+        !entryPermissions.delete && entryAccessor.serverId(entry)
     )
 
     renderEntryLabel = (entry) => {

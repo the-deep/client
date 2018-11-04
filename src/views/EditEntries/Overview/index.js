@@ -80,10 +80,10 @@ export default class Overview extends React.PureComponent {
         return excerpt || _ts('editEntry.overview', 'unnamedExcerptTitle', { index: order });
     };
 
-    static shouldHideEntryAdd = ({ entryPermissions }) => !entryPermissions.includes('create')
+    static shouldHideEntryAdd = ({ entryPermissions }) => !entryPermissions.create
 
     shouldHideEntryDelete = ({ entryPermissions }) => (
-        !entryPermissions.includes('delete') && !!entryAccessor.serverId(this.props.entry)
+        !entryPermissions.delete && !!entryAccessor.serverId(this.props.entry)
     )
 
     handleEntrySelect = (entryKey) => {

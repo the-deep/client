@@ -57,8 +57,8 @@ export default class HeaderComponent extends React.PureComponent {
     static defaultProps = defaultProps;
 
     isEntriesModifiable = () => {
-        const { entryPermissions = [] } = this.props.projectRole;
-        return entryPermissions.includes('modify');
+        const { entryPermissions = {} } = this.props.projectRole;
+        return entryPermissions.modify;
     }
 
     handleFormatAll = () => {
