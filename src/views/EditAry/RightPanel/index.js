@@ -449,18 +449,29 @@ export default class RightPanel extends React.PureComponent {
     }
 
     render() {
+        const {
+            computeSchema,
+            schema,
+            pending,
+        } = this.state;
+        const {
+            editAryFaramValues,
+            editAryFaramErrors,
+            editAryIsPristine,
+            editAryHasErrors,
+        } = this.props;
+
         return (
             <Faram
-                schema={this.state.schema}
-                computeSchema={this.state.computeSchema}
-                value={this.props.editAryFaramValues}
-                error={this.props.editAryFaramErrors}
                 className={styles.rightPanel}
-
+                schema={schema}
+                computeSchema={computeSchema}
+                value={editAryFaramValues}
+                error={editAryFaramErrors}
                 onChange={this.handleFaramChange}
                 onValidationSuccess={this.handleFaramValidationSuccess}
                 onValidationFailure={this.handleFaramValidationFailure}
-                disabled={this.state.pending}
+                disabled={pending}
             >
                 <FixedTabs
                     className={styles.tabs}
@@ -474,13 +485,12 @@ export default class RightPanel extends React.PureComponent {
                         className={styles.saveButton}
                         type="submit"
                         disabled={
-                            this.props.editAryIsPristine
-                            || this.props.editAryHasErrors
-                            || this.state.pending
+                            editAryIsPristine
+                            || editAryHasErrors
+                            || pending
                         }
                     >
-                        {/* FIXME: use strings */}
-                        Save
+                        {_ts('editAssessment', 'saveButtonLabel')}
                     </SuccessButton>
                 </FixedTabs>
                 <MultiViewContainer

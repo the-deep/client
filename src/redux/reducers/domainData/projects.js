@@ -220,7 +220,6 @@ const setProjectRoles = (state, action) => {
                     (obj, key) => {
                         // Convert every element with key matching *Permissions from array to dict
                         if (key.endsWith('Permissions') && Array.isArray(obj)) {
-                            console.warn(obj);
                             return listToMap(obj, elem => elem, () => true);
                         }
                         return obj;
@@ -233,7 +232,6 @@ const setProjectRoles = (state, action) => {
     const settings = {
         projectRoles: { $set: projectRoles },
     };
-    console.warn(settings);
     return update(state, settings);
 };
 

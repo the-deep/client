@@ -37,10 +37,13 @@ export default class ActionButtons extends React.PureComponent {
     static shouldHideLeadDelete = ({ leadPermissions }) => !leadPermissions.delete
     static shouldHideLeadEdit = ({ leadPermissions }) => !leadPermissions.modify
 
-    static shouldHideAssessmentAdd = ({ hasAssessmentTemplate }) => !hasAssessmentTemplate
 
     static shouldHideEntryAdd = ({ hasAnalysisFramework, entryPermissions }) => (
-        !hasAnalysisFramework || !entryPermissions.create
+        !hasAnalysisFramework || !(entryPermissions.create || entryPermissions.modify)
+    )
+
+    static shouldHideAssessmentAdd = ({ hasAssessmentTemplate, assessmentPermissions }) => (
+        !hasAssessmentTemplate || !(assessmentPermissions.create || assessmentPermissions.modify)
     )
 
     getLinks = () => {
