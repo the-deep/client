@@ -2,12 +2,10 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
-import BoundError from '#rscg/BoundError';
 import List from '#rscv/List';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
 
-import AppError from '#components/AppError';
 import {
     setEntriesAction,
     entriesForProjectSelector,
@@ -80,7 +78,6 @@ const leadKeySelector = d => d.id;
 
 const MAX_ENTRIES_PER_REQUEST = 5;
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Entries extends React.PureComponent {
     static propTypes = propTypes;

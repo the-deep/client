@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import _ts from '#ts';
 
 import {
@@ -20,7 +19,6 @@ import RadialDendrogram from '#rscz/RadialDendrogram';
 import GeoReferencedMap from '#rscz/GeoReferencedMap';
 import BoundError from '#rscg/BoundError';
 import VizError from '#components/VizError';
-import AppError from '#components/AppError';
 
 import {
     projectDetailsSelector,
@@ -90,7 +88,6 @@ const TreeMapView = decorate(ZoomableTreeMap);
 const ForceDirectedGraphView = decorate(ForceDirectedGraph);
 const CollapsibleTreeView = decorate(CollapsibleTree);
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class LeadsViz extends React.PureComponent {
     static propTypes = propTypes;

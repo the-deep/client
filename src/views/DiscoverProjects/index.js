@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import { reverseRoute } from '#rsu/common';
 import { pathNames } from '#constants/';
 
-import BoundError from '#rscg/BoundError';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
 import Pager from '#rscv/Pager';
@@ -32,7 +31,6 @@ import {
     setDiscoverProjectsProjectPerPageAction,
 } from '#redux';
 
-import AppError from '#components/AppError';
 import _ts from '#ts';
 
 import ProjectListRequest from './requests/ProjectListRequest';
@@ -98,7 +96,6 @@ const mapDispatchToProps = dispatch => ({
 });
 
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class DiscoverProjects extends React.PureComponent {
     static propTypes = propTypes;

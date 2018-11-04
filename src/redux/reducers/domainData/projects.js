@@ -1,5 +1,10 @@
 import update from '#rsu/immutable-update';
-import { compareString } from '#rsu/common';
+import {
+    compareString,
+    listToMap,
+    mapToMap,
+} from '#rsu/common';
+
 import { UP__UNSET_USER_PROJECT } from '#redux/reducers/siloDomainData/users';
 import { UG__UNSET_USERGROUP_PROJECT } from '#redux/reducers/siloDomainData/usergroups';
 
@@ -204,11 +209,22 @@ const setUserProjects = (state, action) => {
 const setProjectRoles = (state, action) => {
     const { projectRoles: roleList } = action;
 
+
     const projectRoles = roleList.reduce(
         (acc, role) => (
             {
                 ...acc,
-                [role.id]: role,
+                [role.id]: mapToMap(
+                    role,
+                    undefined,
+                    (obj, key) => {
+                        // Convert every element with key matching *Permissions from array to dict
+                        if (key.endsWith('Permissions') && Array.isArray(obj)) {
+                            return listToMap(obj, elem => elem, () => true);
+                        }
+                        return obj;
+                    },
+                ),
             }
         ),
         { },

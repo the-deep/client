@@ -2,11 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import BoundError from '#rscg/BoundError';
 import ListView from '#rscv/List/ListView';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-
-import AppError from '#components/AppError';
 
 import {
     notificationsSelector,
@@ -45,7 +42,6 @@ const mapDispatchToProps = dispatch => ({
     setNotifications: params => dispatch(setNotificationsAction(params)),
 });
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Notifications extends React.PureComponent {
     static propTypes = propTypes;

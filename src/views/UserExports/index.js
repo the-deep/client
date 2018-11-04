@@ -1,9 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-    Link,
-} from 'react-router-dom';
 
 import {
     reverseRoute,
@@ -17,8 +14,6 @@ import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import BackLink from '#components/BackLink';
-import BoundError from '#rscg/BoundError';
-import AppError from '#components/AppError';
 import {
     createUrlForExport,
     createParamsForGet,
@@ -69,7 +64,6 @@ const mapDispatchToProps = dispatch => ({
 
 const emptyList = [];
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class UserExports extends React.PureComponent {
     static propTypes = propTypes;

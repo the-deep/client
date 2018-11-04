@@ -157,8 +157,8 @@ export const addLeadViewLeadStatesSelector = createSelector(
                     dropbox: leadDropboxRests[leadId],
                 });
 
-                const canCreate = leadPermissions.includes('create') && !leadServerId;
-                const canEdit = leadPermissions.includes('modify') && !!leadServerId;
+                const canCreate = leadPermissions.create && !leadServerId;
+                const canEdit = leadPermissions.modify && !!leadServerId;
 
                 const hasPermission = canCreate || canEdit;
 

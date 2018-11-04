@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
-import BoundError from '#rscg/BoundError';
 import SearchInput from '#rsci/SearchInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import ListView from '#rscv/List/ListView';
@@ -15,7 +14,6 @@ import {
     caseInsensitiveSubmatch,
 } from '#rsu/common';
 
-import AppError from '#components/AppError';
 import {
     connectorsListSelector,
     connectorIdFromRouteSelector,
@@ -60,7 +58,6 @@ const mapDispatchToProps = dispatch => ({
 const emptyObject = {};
 const emptyList = [];
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Connector extends React.PureComponent {
     static propTypes = propTypes;

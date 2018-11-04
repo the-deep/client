@@ -326,13 +326,13 @@ export default class EditEntries extends React.PureComponent {
     // PERMISSIONS
 
     shouldDisableEntryChange = (entryId) => {
-        const { projectRole: { entryPermissions = [] } } = this.props;
-        return !entryPermissions.includes('modify') && !!entryId;
+        const { projectRole: { entryPermissions = {} } } = this.props;
+        return !entryPermissions.modify && !!entryId;
     }
 
     shouldDisableEntryCreate = () => {
-        const { projectRole: { entryPermissions = [] } } = this.props;
-        return !entryPermissions.includes('create');
+        const { projectRole: { entryPermissions = {} } } = this.props;
+        return !entryPermissions.create;
     }
 
     // Calculations

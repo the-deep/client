@@ -28,7 +28,6 @@ import GoogleOrgChart from '#rscz/GoogleOrgChart';
 
 import BoundError from '#rscg/BoundError';
 import VizError from '#components/VizError';
-import AppError from '#components/AppError';
 
 import barData from './dummydata/barData';
 import chordData from './dummydata/chordData';
@@ -79,7 +78,6 @@ const orgChartkeySelector = d => d.key;
 const orgChartChildSelector = d => d.organs;
 const orgChartTitleSelector = d => d.title;
 
-@BoundError(AppError)
 export default class Visualization extends React.PureComponent {
     constructor(props) {
         super(props);

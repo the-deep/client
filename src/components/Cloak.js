@@ -71,11 +71,11 @@ export default class Cloak extends React.Component {
             render: child,
             renderOnHide: anotherChild,
             projectRole: {
-                leadPermissions = [],
-                entryPermissions = [],
-                setupPermissions = [],
-                exportPermissions = [],
-                assessmentPermissions = [],
+                leadPermissions = {},
+                entryPermissions = {},
+                setupPermissions = {},
+                exportPermissions = {},
+                assessmentPermissions = {},
             },
         } = this.props;
 

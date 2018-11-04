@@ -6,7 +6,6 @@ import {
     Redirect,
 } from 'react-router-dom';
 
-import BoundError from '#rscg/BoundError';
 import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
@@ -15,7 +14,6 @@ import TableHeader from '#rscv/TableHeader';
 import { reverseRoute } from '#rsu/common';
 
 import Cloak from '#components/Cloak';
-import AppError from '#components/AppError';
 import { iconNames, pathNames } from '#constants/';
 import { leadTypeIconMap } from '#entities/lead';
 import {
@@ -97,7 +95,6 @@ const mapDispatchToProps = dispatch => ({
     setLeadsPerPage: params => dispatch(setLeadPageLeadsPerPageAction(params)),
 });
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Leads extends React.PureComponent {
     static propTypes = propTypes;
@@ -443,7 +440,7 @@ export default class Leads extends React.PureComponent {
             <header className={styles.header}>
                 <FilterLeadsForm className={styles.filters} />
                 <Cloak
-                    hide={({ leadPermissions }) => !leadPermissions.includes('create')}
+                    hide={({ leadPermissions }) => !leadPermissions.create}
                     render={
                         <Link
                             to={addLeadLink}

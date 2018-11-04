@@ -53,11 +53,11 @@ export default class WidgetFaramContainer extends React.PureComponent {
     static defaultProps = defaultProps;
 
     shouldHideEntryDelete = ({ entryPermissions }) => (
-        !entryPermissions.includes('delete') && !!entryAccessor.serverId(this.props.entry)
+        !entryPermissions.delete && !!entryAccessor.serverId(this.props.entry)
     )
 
     shouldHideEntryEdit = ({ entryPermissions }) => (
-        !entryPermissions.includes('modify') && !!entryAccessor.serverId(this.props.entry)
+        !entryPermissions.modify && !!entryAccessor.serverId(this.props.entry)
     )
 
     handleEdit = (e) => {

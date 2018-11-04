@@ -3,7 +3,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 
-import BoundError from '#rscg/BoundError';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { reverseRoute } from '#rsu/common';
@@ -17,7 +16,6 @@ import BackLink from '#components/BackLink';
 import { detachedFaram, requiredCondition } from '#rscg/Faram';
 
 import { VIEW } from '#widgets';
-import AppError from '#components/AppError';
 import {
     afIdFromRoute,
     setAfViewAnalysisFrameworkAction,
@@ -79,7 +77,6 @@ const mapDispatchToProps = dispatch => ({
     setGeoOptions: params => dispatch(setAfViewGeoOptionsAction(params)),
 });
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class AnalysisFramework extends React.PureComponent {
     static propTypes = propTypes;

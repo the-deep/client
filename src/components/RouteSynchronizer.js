@@ -3,12 +3,14 @@ import Helmet from 'react-helmet';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
+import boundError from '#rscg/BoundError';
 import Bundle from '#rscg/Bundle';
 import withTracker from '#rscg/withTracker';
 import {
     reverseRoute,
 } from '#rsu/common';
 
+import AppError from '#components/AppError';
 import Cloak from '#components/Cloak';
 import { routes } from '#constants/routes';
 import viewsAcl from '#constants/viewsAcl';
@@ -22,6 +24,7 @@ import {
 } from '#redux';
 import _ts from '#ts';
 
+const ErrorBoundBundle = boundError(AppError)(Bundle);
 
 const Page = ({ name, disabled, ...otherProps }) => {
     // NOTE: don't show page if it is disabled as well
@@ -37,7 +40,7 @@ const Page = ({ name, disabled, ...otherProps }) => {
                     { _ts('pageTitle', name) }
                 </title>
             </Helmet>
-            <Bundle name={name} {...otherProps} />
+            <ErrorBoundBundle name={name} {...otherProps} />
         </Fragment>
     );
 };
@@ -52,7 +55,7 @@ const PageError = () => {
                     { _ts('pageTitle', name) }
                 </title>
             </Helmet>
-            <Bundle
+            <ErrorBoundBundle
                 load={routes[name].loader}
             />
         </Fragment>
@@ -233,6 +236,11 @@ class RouteSynchronizer extends React.PureComponent {
             match, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
+
+        if (!viewsAcl[name]) {
+            console.warn('No access control for view', name);
+        }
+
         return (
             <Cloak
                 {...viewsAcl[name]}
