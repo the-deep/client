@@ -9,7 +9,6 @@ import {
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
-import BoundError from '#rscg/BoundError';
 import SelectInput from '#rsci/SelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { FgRestBuilder } from '#rsu/rest';
@@ -56,7 +55,6 @@ import {
 import schema from '#schema';
 import notify from '#notify';
 import _ts from '#ts';
-import AppError from '#components/AppError';
 
 import DocumentPanel from './DocumentPanel';
 import NewCategoryModal from './NewCategoryModal';
@@ -123,7 +121,6 @@ const defaultProps = {
 
 const DEPTH_LIMIT = 5;
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class CategoryEditor extends React.PureComponent {
     static propTypes = propTypes;

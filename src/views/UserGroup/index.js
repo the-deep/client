@@ -3,13 +3,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import BoundError from '#rscg/BoundError';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
 
-import AppError from '#components/AppError';
 import { iconNames } from '#constants';
 import {
     usergroupInformationSelector,
@@ -54,7 +52,6 @@ const mapDispatchToProps = dispatch => ({
     unSetUserGroup: params => dispatch(unSetUserGroupAction(params)),
 });
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Usergroup extends React.PureComponent {
     static propTypes = propTypes;

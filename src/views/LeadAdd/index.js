@@ -16,11 +16,9 @@ import {
 import { CoordinatorBuilder } from '#rsu/coordinate';
 import List from '#rscv/List';
 import Message from '#rscv/Message';
-import BoundError from '#rscg/BoundError';
 
 import Cloak from '#components/Cloak';
 import BackLink from '#components/BackLink';
-import AppError from '#components/AppError';
 
 import { pathNames } from '#constants/';
 import {
@@ -113,7 +111,6 @@ const defaultProps = {
 };
 
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class LeadAdd extends React.PureComponent {
     static propTypes = propTypes;

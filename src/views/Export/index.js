@@ -37,10 +37,8 @@ import {
 import { iconNames } from '#constants';
 import notify from '#notify';
 import schema from '#schema';
-import BoundError from '#rscg/BoundError';
 
 import _ts from '#ts';
-import AppError from '#components/AppError';
 import FilterLeadsForm from '../Leads/FilterLeadsForm';
 import FilterEntriesForm from '../Entries/FilterEntriesForm';
 
@@ -72,7 +70,6 @@ const propTypes = {
 const defaultProps = {
 };
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Export extends React.PureComponent {
     static propTypes = propTypes;

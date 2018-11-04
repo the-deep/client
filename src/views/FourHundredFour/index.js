@@ -2,26 +2,14 @@ import React from 'react';
 import ReactSVG from 'react-svg';
 import { Link } from 'react-router-dom';
 
-import BoundError from '#rscg/BoundError';
-
 import _ts from '#ts';
-import AppError from '#components/AppError';
 import { pathNames } from '#constants';
 import logo from '#resources/img/deep-logo.svg';
 
 import styles from './styles.scss';
 
-const propTypes = {
-};
-
-const defaultProps = {
-};
-
-@BoundError(AppError)
+// eslint-disable-next-line react/prefer-stateless-function
 export default class FourHundredFour extends React.PureComponent {
-    static propTypes = propTypes;
-    static defaultProps = defaultProps;
-
     render() {
         return (
             <div className={styles.fourHundredFour}>

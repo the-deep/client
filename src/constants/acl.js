@@ -1,17 +1,17 @@
 const acl = {
     leads: {
-        hide: ({ isLoggedIn, hasProjects }) => (
-            !isLoggedIn || !hasProjects
+        hide: ({ isLoggedIn, hasProjects, leadPermissions }) => (
+            !isLoggedIn || !hasProjects || !leadPermissions.view
         ),
     },
     entries: {
-        hide: ({ isLoggedIn, hasProjects, hasAnalysisFramework }) => (
-            !isLoggedIn || !hasProjects || !hasAnalysisFramework
+        hide: ({ isLoggedIn, hasProjects, hasAnalysisFramework, entryPermissions }) => (
+            !isLoggedIn || !hasProjects || !hasAnalysisFramework || !entryPermissions.view
         ),
     },
     arys: {
-        hide: ({ isLoggedIn, hasProjects, hasAssessmentTemplate }) => (
-            !isLoggedIn || !hasProjects || !hasAssessmentTemplate
+        hide: ({ isLoggedIn, hasProjects, hasAssessmentTemplate, assessmentPermissions }) => (
+            !isLoggedIn || !hasProjects || !hasAssessmentTemplate || !assessmentPermissions.view
         ),
     },
     export: {
@@ -19,6 +19,8 @@ const acl = {
             !isLoggedIn || !hasProjects || !hasAnalysisFramework || !exportPermissions.create
         ),
     },
+
+    // TODO: add acl for every page
 
     userProfile: {
         hide: ({ isLoggedIn }) => !isLoggedIn,

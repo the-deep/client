@@ -24,7 +24,6 @@ import {
 import Cloak from '#components/Cloak';
 
 import VizError from '#components/VizError';
-import AppError from '#components/AppError';
 import BackLink from '#components/BackLink';
 
 import _ts from '#ts';
@@ -67,7 +66,6 @@ const ForceDirectedGraphView = BoundError(VizError)(wrapViz(ForceDirectedGraph))
 
 const noOfClusters = 5;
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class ClusterViz extends PureComponent {
     static propTypes = propTypes;

@@ -2,8 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import BoundError from '#rscg/BoundError';
-import AppError from '#components/AppError';
 import {
     currentUserAdminProjectsSelector,
     setActiveProjectAction,
@@ -41,7 +39,6 @@ const mapDispatchToProps = dispatch => ({
     setActiveProject: params => dispatch(setActiveProjectAction(params)),
 });
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class ProjectPanel extends React.PureComponent {
     static propTypes = propTypes;

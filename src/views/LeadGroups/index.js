@@ -9,10 +9,8 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
-import BoundError from '#rscg/BoundError';
 
 import BackLink from '#components/BackLink';
-import AppError from '#components/AppError';
 import {
     activeProjectIdFromStateSelector,
 
@@ -77,7 +75,6 @@ const mapDispatchToProps = dispatch => ({
 
 const MAX_LEADGROUPS_PER_REQUEST = 25;
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class LeadGroups extends React.PureComponent {
     static propTypes = propTypes;

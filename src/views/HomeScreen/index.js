@@ -5,14 +5,12 @@ import { connect } from 'react-redux';
 import { Redirect, Link } from 'react-router-dom';
 
 import { reverseRoute } from '#rsu/common';
-import BoundError from '#rscg/BoundError';
 
 import {
     activeProjectIdFromStateSelector,
     activeUserSelector,
     currentUserProjectsSelector,
 } from '#redux';
-import AppError from '#components/AppError';
 import { pathNames } from '#constants';
 import _ts from '#ts';
 import logo from '#resources/img/deep-logo.svg';
@@ -40,7 +38,6 @@ const defaultProps = {
     activeUser: {},
 };
 
-@BoundError(AppError)
 @connect(mapStateToProps, undefined)
 export default class HomeScreen extends React.PureComponent {
     static propTypes = propTypes;

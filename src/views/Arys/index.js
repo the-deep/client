@@ -6,7 +6,6 @@ import {
     Link,
 } from 'react-router-dom';
 
-import BoundError from '#rscg/BoundError';
 import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
@@ -14,7 +13,6 @@ import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
 import { reverseRoute } from '#rsu/common';
 
-import AppError from '#components/AppError';
 import {
     activeProjectIdFromStateSelector,
 
@@ -76,7 +74,6 @@ const mapDispatchToProps = dispatch => ({
 
 const MAX_ARYS_PER_REQUEST = 24;
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Arys extends React.PureComponent {
     static propTypes = propTypes;

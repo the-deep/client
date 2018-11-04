@@ -9,8 +9,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Message from '#rscv/Message';
-import BoundError from '#rscg/BoundError';
-import AppError from '#components/AppError';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
@@ -59,7 +57,6 @@ const mapDispatchToProps = dispatch => ({
     unsetUserProfile: params => dispatch(unsetUserProfileAction(params)),
 });
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class UserProfile extends React.PureComponent {
     static propTypes = propTypes;

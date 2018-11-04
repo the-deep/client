@@ -21,9 +21,6 @@ import _ts from '#ts';
 import { iconNames } from '#constants';
 import AddRegion from '#components/AddRegion';
 
-import BoundError from '#rscg/BoundError';
-import AppError from '#components/AppError';
-
 import CountriesGetRequest from './requests/CountriesGetRequest';
 
 import CountryDetail from './CountryDetail';
@@ -52,7 +49,6 @@ const mapDispatchToProps = dispatch => ({
     setRegions: params => dispatch(setRegionsAction(params)),
 });
 
-@BoundError(AppError)
 @connect(mapStateToProps, mapDispatchToProps)
 export default class CountryPanel extends React.PureComponent {
     static propTypes = propTypes;

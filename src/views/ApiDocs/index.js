@@ -1,7 +1,5 @@
 import React from 'react';
 
-import BoundError from '#rscg/BoundError';
-import AppError from '#components/AppError';
 import { FgRestBuilder } from '#rsu/rest';
 import { isObjectEmpty, compareString } from '#rsu/common';
 import List from '#rscv/List';
@@ -18,7 +16,6 @@ const propTypes = {
 const defaultProps = {
 };
 
-@BoundError(AppError)
 export default class ApiDocs extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

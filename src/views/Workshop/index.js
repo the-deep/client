@@ -1,7 +1,5 @@
 import React from 'react';
 
-import BoundError from '#rscg/BoundError';
-import AppError from '#components/AppError';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
@@ -45,7 +43,6 @@ import styles from './styles.scss';
 7. Remove ListInput
  */
 
-@BoundError(AppError)
 export default class Workshop extends React.PureComponent {
     static keySelector = elem => elem.key;
     static labelSelector = elem => elem.label;
