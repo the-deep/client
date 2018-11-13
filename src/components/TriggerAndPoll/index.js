@@ -27,6 +27,7 @@ const requests = {
     initialRequest: {
         onMount: ({ props }) => !props.pollOnly,
         onPropsChanged: {
+            compareValue: true,
             initialUrl: ({ props }) => !props.pollOnly,
             url: ({ props }) => !props.pollOnly && !props.initialUrl,
             initialQuery: ({ props }) => !props.pollOnly,

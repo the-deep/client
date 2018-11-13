@@ -64,6 +64,7 @@ export class Header extends React.PureComponent {
         const { id } = value;
         return (
             <TriggerAndPoll
+                compareValue={value}
                 url={`/tabular-fields/${id}/`}
                 triggerUrl={`/tabular-geo-extraction-trigger/${id}/`}
                 shouldTrigger={shouldExtractGeo}

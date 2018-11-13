@@ -83,7 +83,19 @@ export default class TabularBook extends React.PureComponent {
     save = (callback) => {
         const { sheets } = this.state;
         this.props.saveRequest.do({
-            callback,
+            callback: (response) => {
+                const newSheets = { ...this.state.sheets };
+                response.sheets.forEach((sheet) => {
+                    newSheets[sheet.id] = {
+                        ...newSheets[sheet.id],
+                        fields: sheet.fields,
+                    };
+                });
+
+                this.setState({ sheets: newSheets }, () => {
+                    callback();
+                });
+            },
             body: {
                 sheets: Object.keys(sheets).map(k => sheets[k]),
                 project: this.props.projectId,
