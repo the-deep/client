@@ -18,11 +18,11 @@ const propTypes = {
         role: PropTypes.string,
     }).isRequired,
     removeUsergroupMembershipRequest: RequestPropType.isRequired,
-    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
-    disabled: false,
+    readOnly: false,
 };
 
 const requests = {
@@ -53,7 +53,7 @@ export default class Actions extends React.PureComponent {
     }
 
     render() {
-        const { row, disabled } = this.props;
+        const { row, readOnly } = this.props;
 
         return (
             <DangerButton
@@ -63,7 +63,7 @@ export default class Actions extends React.PureComponent {
                 onClick={this.handleRemoveMembershipButtonClick}
                 onClickParams={{ row }}
                 transparent
-                disabled={disabled}
+                disabled={readOnly}
             />
         );
     }

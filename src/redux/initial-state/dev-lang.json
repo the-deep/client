@@ -1196,7 +1196,8 @@
             "tabularTabLabel": 142,
             "imagesTabLabel": 519,
             "entriesTabLabel": 15,
-            "unrecognizedLeadMessage": 140
+            "unrecognizedLeadMessage": 140,
+            "saveButtonLabel": 25
         },
         "editAssessment.entriesListing": {
             "altLabel": 512,

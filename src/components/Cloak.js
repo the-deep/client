@@ -39,12 +39,14 @@ const propTypes = {
     renderOnHide: PropTypes.node,
 
     disable: PropTypes.func,
+    makeReadOnly: PropTypes.func,
     hide: PropTypes.func,
 };
 
 const defaultProps = {
     projectRole: {},
     disable: undefined,
+    makeReadOnly: undefined,
     hide: undefined,
 
     activeUser: {},
@@ -66,6 +68,7 @@ export default class Cloak extends React.Component {
             routePathKey,
 
             disable,
+            makeReadOnly,
             hide,
 
             render: child,
@@ -115,6 +118,7 @@ export default class Cloak extends React.Component {
         }
 
         const disabled = disable && disable(params);
-        return React.cloneElement(child, { disabled });
+        const readOnly = makeReadOnly && makeReadOnly(params);
+        return React.cloneElement(child, { disabled, readOnly });
     }
 }

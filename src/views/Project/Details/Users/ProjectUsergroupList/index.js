@@ -26,12 +26,12 @@ const propTypes = {
 
     // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number.isRequired,
-    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
-    disabled: false,
+    readOnly: false,
 };
 
 const usergroupListKeySelector = d => d.id;
@@ -73,7 +73,7 @@ export default class ProjectUsergroupList extends React.PureComponent {
                 order: 4,
                 modifier: row => (
                     <Actions
-                        disabled={this.props.disabled}
+                        readOnly={this.props.readOnly}
                         row={row}
                     />
                 ),

@@ -51,11 +51,11 @@ const propTypes = {
     activeUser: PropTypes.shape({
         userId: PropTypes.number,
     }).isRequired,
-    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
-    disabled: false,
+    readOnly: false,
 };
 
 const mapStateToProps = state => ({
@@ -106,7 +106,7 @@ export default class Actions extends React.PureComponent {
             activeUser: {
                 userId: activeUserId,
             },
-            disabled,
+            readOnly,
         } = this.props;
 
         const {
@@ -128,12 +128,13 @@ export default class Actions extends React.PureComponent {
                     keySelector={projectRoleKeySelector}
                     labelSelector={projectRoleLabelSelector}
                     showHintAndError={false}
-                    disabled={activeUserId === memberId || disabled}
+                    readOnly={readOnly}
+                    disabled={activeUserId === memberId}
                 />
                 <DangerConfirmButton
                     smallVerticalPadding
                     title={_ts('project.users', 'removeMembershipButtonPlaceholder')}
-                    disabled={disabled}
+                    disabled={readOnly}
                     confirmationMessage={_ts(
                         'project.users',
                         'removeMembershipConfirmationMessage',
