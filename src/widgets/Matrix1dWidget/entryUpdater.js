@@ -7,7 +7,8 @@ const createHighlightColor = (attribute, { rows }) => {
 
         const rowExists = Object.keys(row).reduce((acc, k) => acc || row[k], false);
         if (rowExists) {
-            color = rows.find(d => d.key === key).color; // eslint-disable-line prefer-destructuring
+            const selectedRow = rows.find(d => d.key === key);
+            color = selectedRow && selectedRow.color;
         }
     });
 
