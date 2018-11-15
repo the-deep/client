@@ -6,17 +6,22 @@
     justify-content: center;
     background-color: $color-foreground;
 
+    h4 {
+        text-transform: capitalize;
+    }
+
     .row {
         flex: 1;
     }
 
     .metadata {
         display: flex;
+        flex-direction: column;
 
-        .left-section, .right-section {
+        .right-section {
             display: flex;
-            flex: 1;
             flex-direction: column;
+            flex-grow: 1;
             justify-content: center;
 
             .top-section, .bottom-section {
@@ -78,50 +83,25 @@
             }
         }
 
-        .summary {
-            display: flex;
-            flex: 1;
-            justify-content: space-around;
-
-            .summary-item {
-                display: flex;
-                align-items: center;
-                flex-direction: column;
-
-                .value {
-                    margin: $spacing-small;
-                    color: $color-primary;
-                    font-size: $font-size-large;
-                }
-
-                .label {
-                    text-transform: uppercase;
-                    color: $color-text-label;
-                }
-            }
-        }
-
         .info {
-            display: table;
-            align-self: center;
+            display: flex;
+            justify-content: center;
             border-spacing: $spacing-large $spacing-small-alt;
 
             .info-item {
-                display: table-row;
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                padding: $spacing-medium $spacing-large;
 
                 .label {
-                    display: table-cell;
-                    text-align: right;
-                    text-transform: uppercase;
-                    color: $color-text-label;
-
-                    &::after {
-                        content: ':';
-                    }
+                    color: $color-primary;
+                    font-family: $font-family-heading;
+                    font-size: $font-size-medium;
+                    font-weight: $font-weight-heading;
                 }
 
                 .value {
-                    display: table-cell;
                     font-size: $font-size-medium;
                 }
             }

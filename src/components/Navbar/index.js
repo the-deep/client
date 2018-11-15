@@ -8,7 +8,6 @@ import {
     matchPath,
 } from 'react-router-dom';
 
-
 import { BgRestBuilder } from '#rsu/rest';
 import {
     isTruthy,
@@ -156,8 +155,6 @@ export default class Navbar extends React.PureComponent {
 
         // Set user project in server
         if (oldActiveProject !== newActiveProject && isTruthy(newActiveUser.userId)) {
-            console.warn('Project id changed from ', oldActiveProject, 'to', newActiveProject);
-
             if (this.setUserProjectRequest) {
                 this.setUserProjectRequest.stop();
             }

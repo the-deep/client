@@ -30,7 +30,7 @@ export default class ProjectDetails extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static shouldHideDetails = ({ setupPermissions }) => !setupPermissions.view;
+    static shouldHideDetails = () => false;
     static shouldDisableDetails = ({ setupPermissions }) => !setupPermissions.modify;
 
     constructor(props) {
