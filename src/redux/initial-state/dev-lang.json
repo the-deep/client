@@ -835,7 +835,10 @@
         "-62830931": "Top taggers",
         "-89597029": "Total entries",
         "-71534972": "Total leads",
-        "-50725969": "Total users"
+        "-50725969": "Total users",
+        "-48325375": "Entries: {entries}",
+        "-24966730": "Leads: {leads}",
+        "-47407911": "Date: {date}"
     },
     "links": {
         "browserExtension": {
@@ -2282,7 +2285,11 @@
             "topTaggersTitle": -62830931,
             "totalEntriesTitle": -89597029,
             "totalLeadsTitle": -71534972,
-            "totalUsersTitle": -50725969
+            "totalUsersTitle": -50725969,
+            "entriesActivityNumberModifier": -48325375,
+            "leadsActivityNumberModifier": -24966730,
+            "activityDateModifier": -47407911,
+            "noRegionForProject": 343
         }
     }
 }
