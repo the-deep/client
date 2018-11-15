@@ -222,9 +222,9 @@ export default class ProjectDetailsGeneral extends PureComponent {
         }
 
         return (
-            <React.Fragment>
+            <div className={className}>
                 <Faram
-                    className={className}
+                    className={styles.form}
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleValidationFailure}
                     onValidationSuccess={this.handleValidationSuccess}
@@ -234,10 +234,6 @@ export default class ProjectDetailsGeneral extends PureComponent {
                     readOnly={readOnly}
                     disabled={loading}
                 >
-                    <Dashboard
-                        className={styles.dashboard}
-                        projectId={projectId}
-                    />
                     <div className={styles.inputsContainer}>
                         <header className={styles.header}>
                             <NonFieldErrors
@@ -290,8 +286,13 @@ export default class ProjectDetailsGeneral extends PureComponent {
                         </div>
                     </div>
                 </Faram>
+                <Dashboard
+                    className={styles.dashboard}
+                    projectId={projectId}
+                />
+                <div className={styles.activityLog} />
                 <UnsavedChangesPrompt />
-            </React.Fragment>
+            </div>
         );
     }
 }

@@ -827,7 +827,15 @@
         "-54185786": "User/Usergroup",
         "-17852758": "Search User/Usergroup",
         "-1045504": "Go back",
-        "-72172702": "Workshop"
+        "-72172702": "Workshop",
+        "-7863682": "Entries activity - Last 7 days",
+        "-88399268": "Leads activity - Last 7 days",
+        "-13293319": "Project status",
+        "-24496925": "Top sourcers",
+        "-62830931": "Top taggers",
+        "-89597029": "Total entries",
+        "-71534972": "Total leads",
+        "-50725969": "Total users"
     },
     "links": {
         "browserExtension": {
@@ -2263,6 +2271,18 @@
             "typeLabel": 21,
             "cancelLabel": 61,
             "submitLabel": 826
+        },
+        "project.general.dashboard": {
+            "createdAtTitle": 163,
+            "createdByTitle": 538,
+            "entriesActivityTitle": -7863682,
+            "leadsActivityTitle": -88399268,
+            "projectStatusTitle": -13293319,
+            "topSourcersTitle": -24496925,
+            "topTaggersTitle": -62830931,
+            "totalEntriesTitle": -89597029,
+            "totalLeadsTitle": -71534972,
+            "totalUsersTitle": -50725969
         }
     }
 }

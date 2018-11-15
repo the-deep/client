@@ -9,9 +9,9 @@ import Message from '#rscv/Message';
 
 import RegionMap from '#components/RegionMap';
 import { RequestCoordinator, RequestClient, requestMethods } from '#request';
+import _ts from '#ts';
 
 import styles from './styles.scss';
-
 
 const propTypes = {
     className: PropTypes.string,
@@ -25,7 +25,7 @@ const defaultProps = {
     className: '',
 };
 
-
+// TODO: Move to common utils
 // eslint-disable-next-line no-underscore-dangle
 const _cs = (...names) => names.join(' ');
 
@@ -77,7 +77,7 @@ export default class ProjectDashboard extends React.PureComponent {
     renderLeadsActivity = () => (
         <div className={styles.chart}>
             <h4>
-                Leads Activity - Last 7 Days
+                {_ts('project.general.dashboard', 'leadsActivityTitle')}
             </h4>
             <SparkLines
                 className={styles.sparkLine}
@@ -94,7 +94,7 @@ export default class ProjectDashboard extends React.PureComponent {
     renderEntriesActivity = () => (
         <div className={styles.chart}>
             <h4>
-                Entries Activity - Last 7 Days
+                {_ts('project.general.dashboard', 'entriesActivityTitle')}
             </h4>
             <SparkLines
                 className={styles.sparkLine}
@@ -113,7 +113,9 @@ export default class ProjectDashboard extends React.PureComponent {
 
         return (
             <div className={styles.userTable}>
-                <h4> Top sourcers </h4>
+                <h4>
+                    {_ts('project.general.dashboard', 'topSourcersTitle')}
+                </h4>
                 {topSourcers.map(sourcer => (
                     <div className={styles.user} key={sourcer.id}>
                         <div className={styles.name}>
@@ -135,7 +137,9 @@ export default class ProjectDashboard extends React.PureComponent {
 
         return (
             <div className={styles.userTable}>
-                <h4> Top taggers </h4>
+                <h4>
+                    {_ts('project.general.dashboard', 'topTaggersTitle')}
+                </h4>
                 {topTaggers.map(tagger => (
                     <div className={styles.user} key={tagger.id}>
                         <div className={styles.name}>
@@ -152,45 +156,6 @@ export default class ProjectDashboard extends React.PureComponent {
         );
     }
 
-    renderSummary = () => {
-        const { projectRequest: { response: project } } = this.props;
-
-        return (
-            <div className={styles.summary}>
-                <div className={styles.summaryItem}>
-                    <Numeral
-                        className={styles.value}
-                        precision={0}
-                        value={project.numberOfLeads}
-                    />
-                    <div className={styles.label}>
-                        Total leads
-                    </div>
-                </div>
-                <div className={styles.summaryItem}>
-                    <Numeral
-                        className={styles.value}
-                        precision={0}
-                        value={project.numberOfEntries}
-                    />
-                    <div className={styles.label}>
-                        Total entries
-                    </div>
-                </div>
-                <div className={styles.summaryItem}>
-                    <Numeral
-                        className={styles.value}
-                        precision={0}
-                        value={project.numberOfUsers}
-                    />
-                    <div className={styles.label}>
-                        Total users
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     renderInfo = () => {
         const { projectRequest: { response: project } } = this.props;
 
@@ -198,7 +163,7 @@ export default class ProjectDashboard extends React.PureComponent {
             <div className={styles.info}>
                 <div className={styles.infoItem}>
                     <div className={styles.label}>
-                        Project status
+                        {_ts('project.general.dashboard', 'projectStatusTitle')}
                     </div>
                     <div className={styles.value}>
                         {project.status}
@@ -206,7 +171,7 @@ export default class ProjectDashboard extends React.PureComponent {
                 </div>
                 <div className={styles.infoItem}>
                     <div className={styles.label}>
-                        Created by
+                        {_ts('project.general.dashboard', 'createdByTitle')}
                     </div>
                     <div className={styles.value}>
                         {project.createdBy}
@@ -214,7 +179,7 @@ export default class ProjectDashboard extends React.PureComponent {
                 </div>
                 <div className={styles.infoItem}>
                     <div className={styles.label}>
-                        Created at
+                        {_ts('project.general.dashboard', 'createdAtTitle')}
                     </div>
                     <FormattedDate
                         className={styles.value}
@@ -222,13 +187,38 @@ export default class ProjectDashboard extends React.PureComponent {
                         mode="dd-MM-yyyy"
                     />
                 </div>
+                <div className={styles.infoItem}>
+                    <div className={styles.label}>
+                        {_ts('project.general.dashboard', 'totalLeadsTitle')}
+                    </div>
+                    <div className={styles.value}>
+                        {project.numberOfLeads}
+                    </div>
+                </div>
+                <div className={styles.infoItem}>
+                    <div className={styles.label}>
+                        {_ts('project.general.dashboard', 'totalEntriesTitle')}
+                    </div>
+                    <div className={styles.value}>
+                        {project.numberOfEntries}
+                    </div>
+                </div>
+                <div className={styles.infoItem}>
+                    <div className={styles.label}>
+                        {_ts('project.general.dashboard', 'totalUsersTitle')}
+                    </div>
+                    <div className={styles.value}>
+                        {project.numberOfUsers}
+                    </div>
+                </div>
             </div>
         );
     }
 
     renderMetadata = () => (
         <div className={_cs(styles.row, styles.metadata)}>
-            <div className={styles.leftSection}>
+            {this.renderInfo()}
+            <div className={styles.rightSection}>
                 <div className={styles.topSection}>
                     {this.renderLeadsActivity()}
                     {this.renderEntriesActivity()}
@@ -236,14 +226,6 @@ export default class ProjectDashboard extends React.PureComponent {
                 <div className={styles.bottomSection}>
                     {this.renderSourcers()}
                     {this.renderTaggers()}
-                </div>
-            </div>
-            <div className={styles.rightSection}>
-                <div className={styles.topSection}>
-                    {this.renderInfo()}
-                </div>
-                <div className={styles.bottomSection}>
-                    {this.renderSummary()}
                 </div>
             </div>
         </div>
