@@ -3,6 +3,7 @@ import React from 'react';
 
 import SelectInput from '#rsci/SelectInput';
 import FormattedDate from '#rscv/FormattedDate';
+import List from '#rscv/List';
 import SparkLines from '#rscz/SparkLines';
 import Numeral from '#rscv/Numeral';
 import Message from '#rscv/Message';
@@ -36,6 +37,24 @@ const requests = {
         method: requestMethods.GET,
         url: ({ props }) => `/projects/${props.projectId}/dashboard/`,
     },
+};
+
+const UserItem = ({ user, total }) => (
+    <div className={styles.user} key={user.id}>
+        <div className={styles.name}>
+            {user.name}
+        </div>
+        <Numeral
+            value={(user.count / total) * 100}
+            suffix="%"
+            precision={0}
+        />
+    </div>
+);
+
+UserItem.propTypes = {
+    user: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    total: PropTypes.number.isRequired,
 };
 
 @RequestCoordinator
@@ -74,6 +93,24 @@ export default class ProjectDashboard extends React.PureComponent {
         this.setState({ selectedRegion });
     }
 
+    sourcerParams = (key, user) => {
+        const { projectRequest: { response: { numberOfLeads } } } = this.props;
+
+        return ({
+            user,
+            total: numberOfLeads,
+        });
+    }
+
+    taggerParams = (key, user) => {
+        const { projectRequest: { response: { numberOfEntries } } } = this.props;
+
+        return ({
+            user,
+            total: numberOfEntries,
+        });
+    }
+
     renderLeadsActivity = () => (
         <div className={styles.chart}>
             <h4>
@@ -109,49 +146,37 @@ export default class ProjectDashboard extends React.PureComponent {
     )
 
     renderSourcers = () => {
-        const { projectRequest: { response: { topSourcers, numberOfLeads } } } = this.props;
+        const { projectRequest: { response: { topSourcers } } } = this.props;
 
         return (
             <div className={styles.userTable}>
                 <h4>
                     {_ts('project.general.dashboard', 'topSourcersTitle')}
                 </h4>
-                {topSourcers.map(sourcer => (
-                    <div className={styles.user} key={sourcer.id}>
-                        <div className={styles.name}>
-                            {sourcer.name}
-                        </div>
-                        <Numeral
-                            value={(sourcer.count / numberOfLeads) * 100}
-                            suffix="%"
-                            precision={0}
-                        />
-                    </div>
-                ))}
+                <List
+                    data={topSourcers}
+                    renderer={UserItem}
+                    rendererParams={this.sourcerParams}
+                    keySelector={ProjectDashboard.userKeySelector}
+                />
             </div>
         );
     }
 
     renderTaggers = () => {
-        const { projectRequest: { response: { topTaggers, numberOfEntries } } } = this.props;
+        const { projectRequest: { response: { topTaggers } } } = this.props;
 
         return (
             <div className={styles.userTable}>
                 <h4>
                     {_ts('project.general.dashboard', 'topTaggersTitle')}
                 </h4>
-                {topTaggers.map(tagger => (
-                    <div className={styles.user} key={tagger.id}>
-                        <div className={styles.name}>
-                            {tagger.name}
-                        </div>
-                        <Numeral
-                            value={(tagger.count / numberOfEntries) * 100}
-                            suffix="%"
-                            precision={0}
-                        />
-                    </div>
-                ))}
+                <List
+                    data={topTaggers}
+                    renderer={UserItem}
+                    rendererParams={this.taggerParams}
+                    keySelector={ProjectDashboard.userKeySelector}
+                />
             </div>
         );
     }
