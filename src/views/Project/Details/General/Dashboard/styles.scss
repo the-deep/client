@@ -17,12 +17,14 @@
     .metadata {
         display: flex;
         flex-direction: column;
+        border-bottom: $width-separator-thin solid $color-separator;
 
         .right-section {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
             justify-content: center;
+            border-top: $width-separator-thin solid $color-separator;
 
             .top-section, .bottom-section {
                 display: flex;

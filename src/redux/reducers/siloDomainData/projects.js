@@ -1,6 +1,7 @@
 import update from '#rsu/immutable-update';
 
 export const SET_PROJECT_DETAILS = 'siloDomainData/SET_PROJECT_DETAILS';
+export const SET_PROJECT_DASHBOARD_DETAILS = 'siloDomainData/SET_PROJECT_DASHBOARD_DETAILS';
 export const CHANGE_PROJECT_DETAILS = 'siloDomainData/CHANGE_PROJECT_DETAILS';
 export const SET_ERROR_PROJECT_DETAILS = 'siloDomainData/SET_ERROR_PROJECT_DETAILS';
 export const SET_PROJECT_MEMBERSHIPS = 'siloDomainData/SET_PROJECT_MEMBERSHIPS';
@@ -16,6 +17,12 @@ export const REMOVE_PROJECT_USERGROUP = 'siloDomainData/REMOVE_PROJECT_USERGROUP
 
 export const setProjectDetailsAction = ({ project, projectId }) => ({
     type: SET_PROJECT_DETAILS,
+    project,
+    projectId,
+});
+
+export const setProjectDashboardDetailsAction = ({ project, projectId }) => ({
+    type: SET_PROJECT_DASHBOARD_DETAILS,
     project,
     projectId,
 });
@@ -116,6 +123,22 @@ export const setProjectDetails = (state, action) => {
                     versionId: { $set: versionId },
                     role: { $set: role },
                 } },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
+export const setProjectDashboardDetails = (state, action) => {
+    const {
+        project,
+        projectId,
+    } = action;
+
+    const settings = {
+        projectsView: { $auto: {
+            [projectId]: { $auto: {
+                dashboard: { $set: project },
             } },
         } },
     };
@@ -268,6 +291,7 @@ export const removeProjectUserGroup = (state, action) => {
 
 const reducers = {
     [SET_PROJECT_DETAILS]: setProjectDetails,
+    [SET_PROJECT_DASHBOARD_DETAILS]: setProjectDashboardDetails,
     [CHANGE_PROJECT_DETAILS]: changeProjectDetails,
     [SET_ERROR_PROJECT_DETAILS]: setErrorProjectDetails,
     [SET_PROJECT_MEMBERSHIPS]: setProjectMemberships,

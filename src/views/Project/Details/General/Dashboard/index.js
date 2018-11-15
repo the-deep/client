@@ -1,12 +1,20 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import SelectInput from '#rsci/SelectInput';
-import FormattedDate from '#rscv/FormattedDate';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
+import FormattedDate from '#rscv/FormattedDate';
 import SparkLines from '#rscz/SparkLines';
 import Numeral from '#rscv/Numeral';
 import Message from '#rscv/Message';
+import { formatDate } from '#rsu/date';
+
+import {
+    projectDashboardSelector,
+    setProjectDashboardDetailsAction,
+} from '#redux';
 
 import RegionMap from '#components/RegionMap';
 import { RequestCoordinator, RequestClient, requestMethods } from '#request';
@@ -16,6 +24,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    projectDashboard: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     projectRequest: PropTypes.shape({
         pending: PropTypes.bool,
         response: PropTypes.object,
@@ -24,7 +33,16 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    projectDashboard: {},
 };
+
+const mapStateToProps = state => ({
+    projectDashboard: projectDashboardSelector(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+    setProjectDashboardDetails: params => dispatch(setProjectDashboardDetailsAction(params)),
+});
 
 // TODO: Move to common utils
 // eslint-disable-next-line no-underscore-dangle
@@ -36,11 +54,17 @@ const requests = {
         onPropsChanged: ['projectId'],
         method: requestMethods.GET,
         url: ({ props }) => `/projects/${props.projectId}/dashboard/`,
+        onSuccess: ({ response, props }) => {
+            props.setProjectDashboardDetails({
+                project: response,
+                projectId: props.projectId,
+            });
+        },
     },
 };
 
 const UserItem = ({ user, total }) => (
-    <div className={styles.user} key={user.id}>
+    <div className={styles.user} >
         <div className={styles.name}>
             {user.name}
         </div>
@@ -58,6 +82,7 @@ UserItem.propTypes = {
 };
 
 @RequestCoordinator
+@connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requests)
 export default class ProjectDashboard extends React.PureComponent {
     static propTypes = propTypes;
@@ -65,14 +90,30 @@ export default class ProjectDashboard extends React.PureComponent {
 
     static activityCountSelector = a => a.count;
     static activityDateSelector = a => new Date(a.date).getTime();
-    static activityDateModifier = d => `
-        Date:
-        ${FormattedDate.format(new Date(d), 'dd-MM-yyyy')}
-    `;
-    static leadsActivityNumberModifier = d => `Leads: ${d}`;
-    static entriesActivityNumberModifier = d => `Entries: ${d}`;
+    static activityDateModifier = d => _ts(
+        'project.general.dashboard',
+        'activityDateModifier',
+        {
+            date: formatDate(new Date(d), 'dd-MM-yyyy'),
+        },
+    );
+    static leadsActivityNumberModifier = d => _ts(
+        'project.general.dashboard',
+        'leadsActivityNumberModifier',
+        {
+            leads: d,
+        },
+    );
+    static entriesActivityNumberModifier = d => _ts(
+        'project.general.dashboard',
+        'entriesActivityNumberModifier',
+        {
+            entries: d,
+        },
+    );
 
     static regionKeySelector = r => r.id;
+    static userKeySelector = u => u.id;
     static regionLabelSelector = r => r.title;
 
     constructor(props) {
@@ -135,7 +176,7 @@ export default class ProjectDashboard extends React.PureComponent {
             </h4>
             <SparkLines
                 className={styles.sparkLine}
-                data={this.props.projectRequest.response.entriesActivity}
+                data={this.props.projectDashboard.entriesActivity}
                 yValueSelector={ProjectDashboard.activityCountSelector}
                 xValueSelector={ProjectDashboard.activityDateSelector}
                 xLabelModifier={ProjectDashboard.activityDateModifier}
@@ -146,7 +187,7 @@ export default class ProjectDashboard extends React.PureComponent {
     )
 
     renderSourcers = () => {
-        const { projectRequest: { response: { topSourcers } } } = this.props;
+        const { projectDashboard: { topSourcers } } = this.props;
 
         return (
             <div className={styles.userTable}>
@@ -164,7 +205,7 @@ export default class ProjectDashboard extends React.PureComponent {
     }
 
     renderTaggers = () => {
-        const { projectRequest: { response: { topTaggers } } } = this.props;
+        const { projectDashboard: { topTaggers } } = this.props;
 
         return (
             <div className={styles.userTable}>
@@ -182,7 +223,7 @@ export default class ProjectDashboard extends React.PureComponent {
     }
 
     renderInfo = () => {
-        const { projectRequest: { response: project } } = this.props;
+        const { projectDashboard: project } = this.props;
 
         return (
             <div className={styles.info}>
@@ -257,12 +298,13 @@ export default class ProjectDashboard extends React.PureComponent {
     )
 
     renderMap = () => {
-        const { projectRequest: { response: { regions } } } = this.props;
+        const { projectDashboard: { regions } } = this.props;
+
         if (regions.length === 0) {
             return (
                 <div className={_cs(styles.row, styles.map)}>
                     <Message>
-                        There is no geo region for this project.
+                        {_ts('project.general.dashboard', 'noRegionForProject')}
                     </Message>
                 </div>
             );
@@ -292,9 +334,9 @@ export default class ProjectDashboard extends React.PureComponent {
         const Metadata = this.renderMetadata;
         const Map = this.renderMap;
 
-        if (!this.props.projectRequest.response) {
+        if (this.props.projectRequest.pending) {
             return (
-                <div className={className} />
+                <LoadingAnimation className={className} />
             );
         }
 
