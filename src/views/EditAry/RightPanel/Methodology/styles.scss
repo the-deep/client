@@ -98,6 +98,8 @@ $height-bottom: 196px;
         height: $height-center;
 
         %content {
+            display: flex;
+            flex-direction: column;
             flex-basis: calc(100% / 4);
 
             &:not(:last-child) {
@@ -119,20 +121,11 @@ $height-bottom: 196px;
 
         .focuses,
         .sectors {
-            @extend %content;
-
-            :global {
-                .title {
-                    @extend %header;
-                    padding: $spacing-extra-small $spacing-medium;
-                }
-
-                .list-view {
-                    padding: $spacing-small 0;
-                }
-            }
+            padding: 0 $spacing-medium;
+            overflow-y: auto;
         }
 
+        .middle-section-item,
         .location-selection,
         .affected-groups {
             @extend %content;

@@ -8,7 +8,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
 import ListView from '#rscv/List/ListView';
 import TextArea from '#rsci/TextArea';
-import CheckGroup from '#rsci/CheckGroup';
+import ListSelection from '#rsci/ListSelection';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 import { randomString } from '#rsu/common';
@@ -208,22 +208,30 @@ export default class Methodology extends React.PureComponent {
                     </FaramList>
 
                     <section className={styles.middleSection}>
-                        <CheckGroup
-                            className={styles.focuses}
-                            faramElementName="focuses"
-                            title={focusesTitle}
-                            options={focuses}
-                            keySelector={idSelector}
-                            labelSelector={titleSelector}
-                        />
-                        <CheckGroup
-                            faramElementName="sectors"
-                            title={sectorsTitle}
-                            options={sectors}
-                            className={styles.sectors}
-                            keySelector={idSelector}
-                            labelSelector={titleSelector}
-                        />
+                        <div className={styles.middleSectionItem}>
+                            <div className={styles.title}>
+                                {focusesTitle}
+                            </div>
+                            <ListSelection
+                                className={styles.focuses}
+                                faramElementName="focuses"
+                                options={focuses}
+                                keySelector={idSelector}
+                                labelSelector={titleSelector}
+                            />
+                        </div>
+                        <div className={styles.middleSectionItem}>
+                            <div className={styles.title}>
+                                {sectorsTitle}
+                            </div>
+                            <ListSelection
+                                faramElementName="sectors"
+                                options={sectors}
+                                className={styles.sectors}
+                                keySelector={idSelector}
+                                labelSelector={titleSelector}
+                            />
+                        </div>
                         <div className={styles.affectedGroups}>
                             <div className={styles.title}>
                                 {affectedGroupsTitle}
