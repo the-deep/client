@@ -100,7 +100,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
     static addOptionClick = options => ([
         ...options,
         {
-            key: randomString(16).toLowerCase(),
+            key: randomString(16),
             title: '',
         },
     ])

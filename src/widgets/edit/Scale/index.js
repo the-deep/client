@@ -127,7 +127,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
 
     static addOptionClick = options => ([
         ...options,
-        { key: randomString(16).toLowerCase() },
+        { key: randomString(16) },
     ])
 
     constructor(props) {

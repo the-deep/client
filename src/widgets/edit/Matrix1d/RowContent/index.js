@@ -39,7 +39,7 @@ export default class RowContent extends React.PureComponent {
     static addOptionClick = options => ([
         ...options,
         {
-            key: randomString(16).toLowerCase(),
+            key: randomString(16),
             value: '',
         },
     ])
@@ -68,7 +68,7 @@ export default class RowContent extends React.PureComponent {
 
     addFromWidgetClick = (items, _, listOfNewItems) => {
         const newListOfItems = listOfNewItems.map(r => ({
-            key: randomString(16).toLowerCase(),
+            key: randomString(16),
             value: r.label,
             originalWidget: r.originalWidget,
             originalKey: r.originalKey,

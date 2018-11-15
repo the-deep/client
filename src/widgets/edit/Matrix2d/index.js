@@ -319,7 +319,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
 
     addDimensionClick = (options) => {
         const newDimension = {
-            id: randomString(16).toLowerCase(),
+            id: randomString(16),
             color: undefined,
             title: '',
             tooltip: '',
@@ -338,7 +338,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
 
     addDimensionFromWidgetClick = (rows, _, listOfNewRows) => {
         const newListOfRows = listOfNewRows.map(r => ({
-            id: randomString(16).toLowerCase(),
+            id: randomString(16),
             title: r.label,
             originalWidget: r.originalWidget,
             originalKey: r.originalKey,
@@ -370,7 +370,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
 
     addSectorClick = (options) => {
         const newSector = {
-            id: randomString(16).toLowerCase(),
+            id: randomString(16),
             title: '',
             tooltip: '',
             sectors: [],
@@ -388,7 +388,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
 
     addSectorFromWidgetClick = (rows, _, listOfNewRows) => {
         const newListOfRows = listOfNewRows.map(r => ({
-            id: randomString(16).toLowerCase(),
+            id: randomString(16),
             title: r.label,
             originalWidget: r.originalWidget,
             originalKey: r.originalKey,

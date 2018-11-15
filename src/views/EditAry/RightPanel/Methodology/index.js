@@ -78,7 +78,7 @@ export default class Methodology extends React.PureComponent {
     static addAttribute = attributes => ([
         ...attributes,
         {
-            key: randomString(16).toLowerCase(),
+            key: randomString(16),
         },
     ])
 

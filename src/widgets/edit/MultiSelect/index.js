@@ -71,7 +71,7 @@ export default class MultiSelectEditWidget extends React.PureComponent {
     static optionAddClick = options => ([
         ...options,
         {
-            key: randomString(16).toLowerCase(),
+            key: randomString(16),
             label: '',
         },
     ])

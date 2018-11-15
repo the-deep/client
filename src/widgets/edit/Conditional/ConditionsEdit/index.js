@@ -106,7 +106,7 @@ class ConditionsEditModal extends React.PureComponent {
             widget,
             widgetKey: key,
             createNewElement: widgetData => ({
-                key: `condition-${randomString(16).toLowerCase()}`,
+                key: `condition-${randomString(16)}`,
                 widgetId: widgetData.widgetId,
                 widgetKey: widgetData.key,
             }),
