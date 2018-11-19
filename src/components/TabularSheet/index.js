@@ -34,14 +34,14 @@ const comparators = {
     string: compareString,
     number: compareNumber,
     geo: compareString,
-    date: compareDate,
+    datetime: compareDate,
 };
 
 const renderers = {
     string: StringCell,
     number: NumberCell,
     geo: StringCell,
-    date: DateCell,
+    datetime: DateCell,
 };
 
 const stringifyId = d => ({

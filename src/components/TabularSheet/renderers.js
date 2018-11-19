@@ -3,6 +3,7 @@ import React from 'react';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Numeral from '#rscv/Numeral';
+import FormattedDate from '#rscv/FormattedDate';
 import Button from '#rsca/Button';
 
 import TriggerAndPoll from '#components/TriggerAndPoll';
@@ -153,9 +154,10 @@ NumberCell.defaultProps = cellDefaultProps;
 
 // eslint-disable-next-line no-unused-vars
 export const DateCell = ({ value, className, options }) => (
-    <div className={className}>
-        { value }
-    </div>
+    <FormattedDate
+        className={className}
+        value={value}
+    />
 );
 
 DateCell.propTypes = cellPropTypes;
