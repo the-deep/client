@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import FixedTabs from '#rscv/FixedTabs';
-import Message from '#rscv/Message';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 
 import Cloak from '#components/Cloak';
@@ -29,10 +28,6 @@ const defaultProps = {
 export default class ProjectDetails extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    // static shouldHideDetails = ({ setupPermissions }) => !setupPermissions.view;
-    static shouldHideDetails = () => false;
-
     static shouldDisableDetails = ({ setupPermissions }) => !setupPermissions.modify;
 
     constructor(props) {
@@ -132,32 +127,19 @@ export default class ProjectDetails extends React.PureComponent {
         `;
 
         return (
-            <Cloak
-                hide={ProjectDetails.shouldHideDetails}
-                render={
-                    <div className={className}>
-                        <FixedTabs
-                            className={styles.tabs}
-                            defaultHash={this.defaultHash}
-                            replaceHistory
-                            useHash
-                            tabs={this.routes}
-                        />
-                        <MultiViewContainer
-                            useHash
-                            views={this.views}
-                        />
-                    </div>
-                }
-                renderOnHide={
-                    <Message
-                        className={`${classNameFromProps} ${styles.forbiddenText}`}
-                        large
-                    >
-                        {_ts('project', 'forbiddenText')}
-                    </Message>
-                }
-            />
+            <div className={className}>
+                <FixedTabs
+                    className={styles.tabs}
+                    defaultHash={this.defaultHash}
+                    replaceHistory
+                    useHash
+                    tabs={this.routes}
+                />
+                <MultiViewContainer
+                    useHash
+                    views={this.views}
+                />
+            </div>
         );
     }
 }
