@@ -39,6 +39,8 @@ const defaultProps = {
     onApiLoad: undefined,
 };
 
+const POLL_TIME = 3000;
+
 export default class GooglePicker extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -58,99 +60,126 @@ export default class GooglePicker extends React.Component {
             authApiReady: false,
             pickerApiReady: false,
         };
+        this.mounted = false;
     }
 
     componentWillMount() {
         this.pollForReadyState();
     }
 
+    componentDidMount() {
+        this.mounted = true;
+    }
+
     componentWillUnmount() {
         clearTimeout(this.readyCheck);
+        this.mounted = false;
     }
 
     onAuthApiLoad = () => {
-        this.setState({ authApiReady: true });
+        if (this.mounted) {
+            this.setState({ authApiReady: true });
+        }
     }
 
     onPickerApiLoad = () => {
-        this.setState({ pickerApiReady: true });
+        if (this.mounted) {
+            this.setState({ pickerApiReady: true });
+        }
     }
 
-    onApiLoad = () => {
+    onAuth = ({ access_token: accessToken, error }) => {
+        if (!this.mounted) {
+            return;
+        }
+
+        if (accessToken) {
+            this.createPicker(accessToken);
+        } else {
+            console.warn('Google Auth Response:', error);
+            this.props.onAuthenticate(undefined);
+        }
+    }
+
+    pollForReadyState = () => {
+        if (!GooglePicker.isGoogleReady()) {
+            this.readyCheck = setTimeout(this.pollForReadyState, POLL_TIME);
+        }
+
         // only call when api is loaded,
         if (this.props.onApiLoad) {
             this.props.onApiLoad();
         }
         window.gapi.load('auth2', this.onAuthApiLoad);
         window.gapi.load('picker', this.onPickerApiLoad);
-    }
+    };
 
-    onChoose = () => {
-        if (!GooglePicker.isReady() || this.props.disabled) {
+    handleChoose = () => {
+        if (!GooglePicker.isReady()) {
             console.warn('GooglePicker api is not loaded');
             return;
         }
-        this.doAuth(({ access_token: accessToken, error }) => {
-            if (accessToken) {
-                this.createPicker(accessToken);
-            } else {
-                console.warn('Google Auth Response:', error);
-                this.props.onAuthenticate(undefined);
-            }
-        });
+
+        const {
+            clientId,
+            scope,
+        } = this.props;
+
+        window.gapi.auth2.authorize(
+            {
+                client_id: clientId,
+                scope,
+            },
+            this.onAuth,
+        );
     }
 
-    pollForReadyState = () => {
-        if (GooglePicker.isGoogleReady()) {
-            this.onApiLoad();
-        } else {
-            this.readyCheck = setTimeout(this.pollForReadyState, 3000);
-        }
-    };
+    createPicker = (oauthToken) => {
+        const {
+            onAuthenticate,
+            createPicker,
+            viewId,
+            mimeTypes,
+            developerKey,
+            onChange,
+            origin,
+            navHidden,
+            multiselect,
+        } = this.props;
 
-    doAuth(callback) {
-        window.gapi.auth2.authorize({
-            client_id: this.props.clientId,
-            scope: this.props.scope,
-        }, callback);
-    }
+        onAuthenticate(oauthToken);
 
-    createPicker(oauthToken) {
-        this.props.onAuthenticate(oauthToken);
-        if (this.props.createPicker) {
-            return this.props.createPicker(window.google, oauthToken);
+        if (createPicker) {
+            return createPicker(window.google, oauthToken);
         }
 
-        const googleViewId = window.google.picker.ViewId[this.props.viewId];
+        const googleViewId = window.google.picker.ViewId[viewId];
         const view = new window.google.picker.View(googleViewId);
-
-        if (this.props.mimeTypes) {
-            view.setMimeTypes(this.props.mimeTypes.join(','));
-        }
 
         if (!view) {
             console.warn('Can\'t find view by viewId');
             return undefined;
         }
+        if (mimeTypes) {
+            view.setMimeTypes(mimeTypes.join(','));
+        }
 
         const picker = new window.google.picker.PickerBuilder()
             .addView(view)
             .setOAuthToken(oauthToken)
-            .setDeveloperKey(this.props.developerKey)
-            .setCallback(this.props.onChange);
-
-        if (this.props.origin) {
-            picker.setOrigin(this.props.origin);
+            .setDeveloperKey(developerKey)
+            .setCallback(onChange);
+        if (origin) {
+            picker.setOrigin(origin);
         }
-        if (this.props.navHidden) {
+        if (navHidden) {
             picker.enableFeature(window.google.picker.Feature.NAV_HIDDEN);
         }
-        if (this.props.multiselect) {
+        if (multiselect) {
             picker.enableFeature(window.google.picker.Feature.MULTISELECT_ENABLED);
         }
+        picker.build().setVisible(true);
 
-        picker.build()
-            .setVisible(true);
         return picker;
     }
 
@@ -171,8 +200,9 @@ export default class GooglePicker extends React.Component {
         return (
             <Button
                 className={className}
-                onClick={this.onChoose}
-                disabled={disabled || !ready}
+                onClick={this.handleChoose}
+                disabled={disabled}
+                pending={!ready}
                 transparent
             >
                 {
