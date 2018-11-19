@@ -30,7 +30,9 @@ export default class ProjectDetails extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static shouldHideDetails = ({ setupPermissions }) => !setupPermissions.view;
+    // static shouldHideDetails = ({ setupPermissions }) => !setupPermissions.view;
+    static shouldHideDetails = () => false;
+
     static shouldDisableDetails = ({ setupPermissions }) => !setupPermissions.modify;
 
     constructor(props) {
@@ -50,7 +52,7 @@ export default class ProjectDetails extends React.PureComponent {
             general: {
                 component: () => (
                     <Cloak
-                        disable={ProjectDetails.shouldDisableDetails}
+                        makeReadOnly={ProjectDetails.shouldDisableDetails}
                         render={
                             <General
                                 className={styles.content}
@@ -63,7 +65,7 @@ export default class ProjectDetails extends React.PureComponent {
             users: {
                 component: () => (
                     <Cloak
-                        disable={ProjectDetails.shouldDisableDetails}
+                        makeReadOnly={ProjectDetails.shouldDisableDetails}
                         render={
                             <Users
                                 className={styles.content}
@@ -76,7 +78,7 @@ export default class ProjectDetails extends React.PureComponent {
             regions: {
                 component: () => (
                     <Cloak
-                        disable={ProjectDetails.shouldDisableDetails}
+                        makeReadOnly={ProjectDetails.shouldDisableDetails}
                         render={
                             <Regions
                                 className={styles.content}
@@ -89,7 +91,7 @@ export default class ProjectDetails extends React.PureComponent {
             frameworks: {
                 component: () => (
                     <Cloak
-                        disable={ProjectDetails.shouldDisableDetails}
+                        makeReadOnly={ProjectDetails.shouldDisableDetails}
                         render={
                             <Frameworks
                                 className={styles.content}
@@ -102,7 +104,7 @@ export default class ProjectDetails extends React.PureComponent {
             categoryEditors: {
                 component: () => (
                     <Cloak
-                        disable={ProjectDetails.shouldDisableDetails}
+                        makeReadOnly={ProjectDetails.shouldDisableDetails}
                         render={
                             <WordCategories
                                 className={styles.content}

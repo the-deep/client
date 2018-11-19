@@ -25,12 +25,12 @@ const propTypes = {
     searchInputValue: PropTypes.string.isRequired,
     onSearchInputChange: PropTypes.func.isRequired,
     userSearchRequest: RequestPropType.isRequired,
-    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
-    disabled: false,
+    readOnly: false,
 };
 
 const emptyList = [];
@@ -162,7 +162,7 @@ export default class SearchList extends React.PureComponent {
             userSearchRequest,
             searchInputValue,
             onSearchInputChange,
-            disabled,
+            readOnly,
         } = this.props;
 
         const { pending: userSearchPending } = userSearchRequest;
@@ -182,7 +182,7 @@ export default class SearchList extends React.PureComponent {
                         value={searchInputValue}
                         showHintAndError={false}
                         showLabel={false}
-                        disabled={disabled}
+                        disabled={readOnly}
                     />
                 </header>
                 <div className={styles.listContainer}>

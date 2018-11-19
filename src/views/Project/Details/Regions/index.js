@@ -30,11 +30,11 @@ const propTypes = {
     projectId: PropTypes.number.isRequired,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setProjectOptions: PropTypes.func.isRequired,
-    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
-    disabled: false,
+    readOnly: false,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -213,7 +213,7 @@ export default class ProjectRegions extends React.PureComponent {
     renderRegionDetails = ({
         projectDetails = emptyObject,
         selectedRegion,
-        disabled,
+        readOnly,
     }) => {
         if ((projectDetails.regions || emptyList).length > 0) {
             return (
@@ -223,7 +223,7 @@ export default class ProjectRegions extends React.PureComponent {
                         countryId={selectedRegion}
                         projectId={projectDetails.id}
                         onRegionClone={this.handleRegionClone}
-                        disabled={disabled}
+                        readOnly={readOnly}
                     />
                 </div>
             );
@@ -299,7 +299,7 @@ export default class ProjectRegions extends React.PureComponent {
             searchInputValue,
         } = this.state;
         const {
-            disabled,
+            readOnly,
         } = this.props;
 
         const sortedRegions = [...displayRegionList].sort(
@@ -320,7 +320,7 @@ export default class ProjectRegions extends React.PureComponent {
                         iconName={iconNames.add}
                         className={styles.addRegionButton}
                         onClick={this.handleAddRegionButtonClick}
-                        disabled={disabled}
+                        disabled={readOnly}
                     >
                         {addRegionButtonLabel}
                     </AccentButton>
@@ -346,7 +346,7 @@ export default class ProjectRegions extends React.PureComponent {
     render() {
         const {
             projectDetails,
-            disabled,
+            readOnly,
         } = this.props;
         const { selectedRegion } = this.state;
 
@@ -358,7 +358,7 @@ export default class ProjectRegions extends React.PureComponent {
             <div className={styles.projectRegions}>
                 <RegionList />
                 <RegionDetails
-                    disabled={disabled}
+                    readOnly={readOnly}
                     projectDetails={projectDetails}
                     selectedRegion={selectedRegion}
                 />

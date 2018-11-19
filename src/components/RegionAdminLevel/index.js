@@ -47,13 +47,13 @@ const propTypes = {
 
     setAdminLevelsForRegion: PropTypes.func.isRequired,
     unsetAdminLevelForRegion: PropTypes.func.isRequired,
-    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     adminLevelList: [],
-    disabled: false,
+    readOnly: false,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -115,7 +115,7 @@ export default class RegionAdminLevel extends React.PureComponent {
                             smallVerticalPadding
                             transparent
                             iconName={iconNames.edit}
-                            disabled={this.props.disabled}
+                            disabled={this.props.readOnly}
                         />
                         <DangerConfirmButton
                             confirmationMessage={_ts('components.regionAdminLevel', 'removeAdminLevelConfirm', { adminLevel: row.title })}
@@ -123,7 +123,7 @@ export default class RegionAdminLevel extends React.PureComponent {
                             smallVerticalPadding
                             transparent
                             iconName={iconNames.delete}
-                            disabled={this.props.disabled}
+                            disabled={this.props.readOnly}
                         />
                     </div>
                 ),
@@ -252,7 +252,7 @@ export default class RegionAdminLevel extends React.PureComponent {
             className,
             adminLevelList,
             countryId,
-            disabled,
+            readOnly,
         } = this.props;
         const {
             deletePending,
@@ -267,7 +267,7 @@ export default class RegionAdminLevel extends React.PureComponent {
                     </h5>
                     <PrimaryButton
                         iconName={iconNames.add}
-                        disabled={deletePending || disabled}
+                        disabled={deletePending || readOnly}
                         onClick={this.addAdminLevel}
                     >
                         {_ts('components.regionAdminLevel', 'addAdminLevelButtonLabel')}

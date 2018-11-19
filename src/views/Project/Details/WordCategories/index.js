@@ -25,12 +25,12 @@ const propTypes = {
     wordCategoryList: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setWordCategoryList: PropTypes.func.isRequired,
-    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
     wordCategoryList: [],
-    disabled: false,
+    readOnly: false,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -105,7 +105,7 @@ export default class ProjectCategoryEditor extends React.PureComponent {
     renderActiveWordCategoryDetails = ({ activeWordCategoryId }) => {
         const {
             wordCategoryList,
-            disabled,
+            readOnly,
         } = this.props;
 
         if (wordCategoryList.length === 0) {
@@ -121,7 +121,7 @@ export default class ProjectCategoryEditor extends React.PureComponent {
                 className={styles.details}
                 wordCategoryId={activeWordCategoryId}
                 setActiveWordCategory={this.setActiveWordCategory}
-                disabled={disabled}
+                readOnly={readOnly}
             />
         );
     }
@@ -138,7 +138,7 @@ export default class ProjectCategoryEditor extends React.PureComponent {
                 id: projectId,
                 categoryEditor: selectedWordCategoryId,
             },
-            disabled,
+            readOnly,
         } = this.props;
 
         requestForWordCategoryList(projectId, this.wordCategoryListRequest);
@@ -161,7 +161,7 @@ export default class ProjectCategoryEditor extends React.PureComponent {
                     selectedWordCategoryId={selectedWordCategoryId}
                     wordCategoryList={wordCategoryList}
                     setActiveWordCategory={this.setActiveWordCategory}
-                    disabled={disabled}
+                    readOnly={readOnly}
                 />
                 <div className={styles.details}>
                     { pendingWordCategoryList ? (

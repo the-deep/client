@@ -51,7 +51,7 @@ const propTypes = {
     setRegionDetailsErrors: PropTypes.func.isRequired,
     removeProjectRegion: PropTypes.func.isRequired,
     onRegionClone: PropTypes.func,
-    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -62,7 +62,7 @@ const defaultProps = {
         faramErrors: {},
         pristine: false,
     },
-    disabled: false,
+    readOnly: false,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -188,7 +188,7 @@ export default class ProjectRegionDetail extends React.PureComponent {
         const {
             countryId,
             activeProject,
-            disabled,
+            readOnly,
         } = this.props;
         const { faramValues = {} } = this.props.regionDetail;
 
@@ -201,7 +201,7 @@ export default class ProjectRegionDetail extends React.PureComponent {
 
         return (
             <PrimaryConfirmButton
-                disabled={dataLoading || regionClonePending || disabled}
+                disabled={dataLoading || regionClonePending || readOnly}
                 onClick={() => this.handleRegionClone(countryId, activeProject)}
                 confirmationMessage={_ts('project', 'confirmCloneText', { title: <b>{faramValues.title}</b> })}
             >
@@ -215,7 +215,7 @@ export default class ProjectRegionDetail extends React.PureComponent {
             regionDetail,
             projectDetails,
             countryId,
-            disabled,
+            readOnly,
         } = this.props;
 
         const {
@@ -250,21 +250,21 @@ export default class ProjectRegionDetail extends React.PureComponent {
                     ) : (
                         <Fragment>
                             <WarningButton
-                                disabled={!pristine || disabled}
+                                disabled={!pristine || readOnly}
                                 onClick={this.handleDiscardButtonClick}
                             >
                                 {_ts('project', 'discardButtonLabel')}
                             </WarningButton>
                             <SuccessButton
                                 type="submit"
-                                disabled={!pristine || disabled}
+                                disabled={!pristine || readOnly}
                             >
                                 {_ts('project', 'saveButtonLabel')}
                             </SuccessButton>
                         </Fragment>
                     ) }
                     <DangerConfirmButton
-                        disabled={pending || disabled}
+                        disabled={pending || readOnly}
                         onClick={() => this.handleRegionRemove(projectDetails, countryId)}
                         confirmationMessage={
                             _ts('project', 'confirmRemoveText', {
@@ -285,7 +285,7 @@ export default class ProjectRegionDetail extends React.PureComponent {
             countryId,
             activeProject,
             regionDetail,
-            disabled,
+            readOnly,
         } = this.props;
         const { dataLoading } = this.state;
 
@@ -310,7 +310,7 @@ export default class ProjectRegionDetail extends React.PureComponent {
                     </div>
                     <RegionAdminLevel
                         countryId={countryId}
-                        disabled={disabled}
+                        readOnly={readOnly}
                     />
                 </div>
             );
@@ -339,7 +339,7 @@ export default class ProjectRegionDetail extends React.PureComponent {
         const Content = this.renderContent;
 
         const {
-            disabled,
+            readOnly,
             regionDetail: {
                 faramErrors = {},
                 faramValues = {},
@@ -359,7 +359,8 @@ export default class ProjectRegionDetail extends React.PureComponent {
                 schema={this.schema}
                 value={faramValues}
                 error={faramErrors}
-                disabled={loading || disabled}
+                readOnly={readOnly}
+                disabled={loading}
             >
                 { loading && <LoadingAnimation /> }
                 <Header />

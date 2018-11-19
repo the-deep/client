@@ -25,12 +25,12 @@ const propTypes = {
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     projectId: PropTypes.number.isRequired,
     setFrameworkList: PropTypes.func.isRequired,
-    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
     frameworkList: [],
-    disabled: false,
+    readOnly: false,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -109,7 +109,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
     renderActiveFrameworkDetails = ({ activeFrameworkId }) => {
         const {
             frameworkList,
-            disabled,
+            readOnly,
         } = this.props;
 
         if (frameworkList.length === 0) {
@@ -125,7 +125,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
                 className={styles.details}
                 frameworkId={activeFrameworkId}
                 setActiveFramework={this.setActiveFramework}
-                disabled={disabled}
+                readOnly={readOnly}
             />
         );
     }
@@ -142,7 +142,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
                 analysisFramework: selectedFrameworkId,
             },
             projectId,
-            disabled,
+            readOnly,
         } = this.props;
 
         requestForFrameworkList(projectId, this.frameworkListRequest);
@@ -164,7 +164,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
                     selectedFrameworkId={selectedFrameworkId}
                     frameworkList={frameworkList}
                     projectId={projectId}
-                    disabled={disabled}
+                    readOnly={readOnly}
                     setActiveFramework={this.setActiveFramework}
                 />
                 { pendingFrameworkList ? (

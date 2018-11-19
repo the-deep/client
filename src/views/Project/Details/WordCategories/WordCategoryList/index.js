@@ -25,13 +25,13 @@ const propTypes = {
     selectedWordCategoryId: PropTypes.number,
     projectId: PropTypes.number.isRequired,
     setActiveWordCategory: PropTypes.func.isRequired,
-    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     wordCategoryList: [],
-    disabled: false,
+    readOnly: false,
 
     // Apparently there can be no wordCategory in projects
     selectedWordCategoryId: undefined,
@@ -128,7 +128,7 @@ export default class WordCategoryList extends React.PureComponent {
             wordCategoryList,
             projectId,
             setActiveWordCategory,
-            disabled,
+            readOnly,
         } = this.props;
 
         const { searchInputValue } = this.state;
@@ -156,7 +156,7 @@ export default class WordCategoryList extends React.PureComponent {
                     <AddWordCategoryButton
                         projectId={projectId}
                         setActiveWordCategory={setActiveWordCategory}
-                        disabled={disabled}
+                        disabled={readOnly}
                     />
                     <SearchInput
                         className={styles.wordCategorySearchInput}
