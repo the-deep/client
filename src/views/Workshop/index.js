@@ -6,7 +6,6 @@ import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
 import SearchInput from '#rsci/SearchInput';
 import Checkbox from '#rsci/Checkbox';
-import CheckGroup from '#rsci/CheckGroup';
 import ColorInput from '#rsci/ColorInput';
 import DateInput from '#rsci/DateInput';
 import TimeInput from '#rsci/TimeInput';
@@ -34,12 +33,11 @@ import Faram, {
 import styles from './styles.scss';
 
 /*
-1.  DropZone is not an input element
-2.  FileInput is not an input element
+1. DropZone is not an input element
+2. FileInput is not an input element
 3. HierarchicalMultiSelectInput is most probably not used anywhere
 4. Hierarchical SelectInput is most probably not used anywhere
 5. TODO: Add tree selection here
-6. Remove CheckGroup
 7. Remove ListInput
  */
 
@@ -217,18 +215,6 @@ export default class Workshop extends React.PureComponent {
                         placeholder="Tell us about yourself"
                         autoFocus
                     />
-                    {/* NOTE: CheckGroup should use label instead of title */}
-                    <CheckGroup
-                        labelSelector={Workshop.labelSelector}
-                        keySelector={Workshop.keySelector}
-                        faramElementName="fruits"
-                        title="Fruits"
-                        options={[
-                            { key: 'apple', label: 'Apple' },
-                            { key: 'banana', label: 'Banana' },
-                            { key: 'pomegranate', label: 'Pomegranate' },
-                        ]}
-                    />
                     <ColorInput
                         faramElementName="favoriteColor"
                         label="Favorite Color"
@@ -259,7 +245,6 @@ export default class Workshop extends React.PureComponent {
                         keySelector={Workshop.keySelector}
                         faramElementName="places"
                     />
-                    {/* NOTE: looks like a duplicate of CheckGroup */}
                     <ListSelection
                         label="Good Places"
                         labelSelector={Workshop.labelSelector}
