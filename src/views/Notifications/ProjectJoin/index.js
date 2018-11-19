@@ -120,6 +120,7 @@ export default class ProjectJoinItem extends React.PureComponent {
                             <Link
                                 className={styles.link}
                                 target="_blank"
+                                rel="noopener noreferrer"
                                 to={reverseRoute(pathNames.userProfile, { userId: requestedBy.id })}
                             >
                                 {requestedBy.displayName}
@@ -129,6 +130,7 @@ export default class ProjectJoinItem extends React.PureComponent {
                             <Link
                                 className={styles.link}
                                 target="_blank"
+                                rel="noopener noreferrer"
                                 to={reverseRoute(pathNames.projects, { projectId: project.id })}
                             >
                                 {project.title}
@@ -199,6 +201,7 @@ export default class ProjectJoinItem extends React.PureComponent {
                             <Link
                                 className={styles.link}
                                 target="_blank"
+                                rel="noopener noreferrer"
                                 to={reverseRoute(pathNames.userProfile, { userId: requestedBy.id })}
                             >
                                 {requestedBy.displayName}
@@ -208,6 +211,7 @@ export default class ProjectJoinItem extends React.PureComponent {
                             <Link
                                 className={styles.link}
                                 target="_blank"
+                                rel="noopener noreferrer"
                                 to={reverseRoute(pathNames.projects, { projectId: project.id })}
                             >
                                 {project.title}
@@ -217,6 +221,7 @@ export default class ProjectJoinItem extends React.PureComponent {
                             <Link
                                 className={styles.link}
                                 target="_blank"
+                                rel="noopener noreferrer"
                                 to={reverseRoute(pathNames.userProfile, { userId: respondedBy.id })}
                             >
                                 {respondedBy.displayName}

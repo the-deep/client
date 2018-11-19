@@ -35,6 +35,7 @@ const AdminPanelLink = ({ disabled }) => (
         className={`${styles.dropdownItem} ${disabled ? styles.disabled : ''}`}
         href={adminEndpoint}
         target="_blank"
+        rel="noopener noreferrer"
         disabled={disabled}
     >
         <span className={`${styles.icon} ${iconNames.locked}`} />
@@ -203,6 +204,7 @@ export default class NavDrop extends React.PureComponent {
                 </DropdownGroup>
                 <Link
                     target="_blank"
+                    rel="noopener noreferrer"
                     className={styles.dropdownItem}
                     to="https://chrome.google.com/webstore/detail/deep-2-add-lead/kafonkgglonkbldmcigbdojiadfcmcdc"
                 >

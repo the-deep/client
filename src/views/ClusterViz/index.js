@@ -454,6 +454,7 @@ export default class ClusterViz extends PureComponent {
                                         <Link
                                             className={styles.link}
                                             target="_blank"
+                                            rel="noopener noreferrer"
                                             to={reverseRoute(pathNames.addLeads, {
                                                 projectId: this.props.activeProject,
                                             })}

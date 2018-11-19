@@ -76,6 +76,7 @@ export default class InternalGallery extends React.PureComponent {
             className={`${styles.galleryFileName} ${className}`}
             href={fileUrl}
             target="_blank"
+            rel="noopener noreferrer"
         >
             {fileName}
         </a>

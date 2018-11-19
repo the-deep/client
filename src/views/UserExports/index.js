@@ -93,7 +93,7 @@ export default class UserExports extends React.PureComponent {
                     const url = row.file;
                     return (
                         <div className="icon-wrapper">
-                            <a href={url} target="_blank">
+                            <a href={url} target="_blank" rel="noopener noreferrer">
                                 <i className={icon} />
                             </a>
                         </div>
@@ -167,6 +167,7 @@ export default class UserExports extends React.PureComponent {
                         <a
                             href={row.file}
                             target="_blank"
+                            rel="noopener noreferrer"
                             className="file-download"
                         >
                             <span className={iconNames.download} />

@@ -179,6 +179,7 @@ export default class GalleryViewer extends React.PureComponent {
                             className={styles.openLink}
                             href={url}
                             target="_blank"
+                            rel="noopener noreferrer"
                             title={_ts('components.galleryViewer', 'viewLinkTooltip')} // open link in new tab
                         >
                             <span className={iconNames.openLink} />
