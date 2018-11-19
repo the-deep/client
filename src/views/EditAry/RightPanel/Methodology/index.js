@@ -56,7 +56,7 @@ const mapStateToProps = state => ({
     sectors: assessmentSectorsSelector(state),
 });
 
-const idSelector = d => d.id;
+const idSelector = d => String(d.id);
 const titleSelector = d => d.title;
 
 @connect(mapStateToProps)
