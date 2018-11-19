@@ -38,7 +38,7 @@ export default class SectorContent extends React.PureComponent {
     static addSubsectorClick = subsectors => ([
         ...subsectors,
         {
-            id: randomString(16).toLowerCase(),
+            id: randomString(16),
             title: '',
             tooltip: '',
         },
@@ -68,7 +68,7 @@ export default class SectorContent extends React.PureComponent {
 
     addFromWidgetClick = (items, _, listOfNewItems) => {
         const newListOfItems = listOfNewItems.map(r => ({
-            id: randomString(16).toLowerCase(),
+            id: randomString(16),
             title: r.label,
             originalWidget: r.originalWidget,
             originalKey: r.originalKey,

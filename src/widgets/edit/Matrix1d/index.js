@@ -148,7 +148,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
 
     addRowClick = (rows) => {
         const newRow = {
-            key: randomString(16).toLowerCase(),
+            key: randomString(16),
             color: undefined,
             title: '',
             tooltip: '',
@@ -165,7 +165,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
 
     addFromWidgetClick = (rows, _, listOfNewRows) => {
         const newListOfRows = listOfNewRows.map(r => ({
-            key: randomString(16).toLowerCase(),
+            key: randomString(16),
             title: r.label,
             originalWidget: r.originalWidget,
             originalKey: r.originalKey,

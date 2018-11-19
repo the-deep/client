@@ -39,7 +39,7 @@ export default class DimensionContent extends React.PureComponent {
     static addSubdimensionClick = subdimensions => ([
         ...subdimensions,
         {
-            id: randomString(16).toLowerCase(),
+            id: randomString(16),
             title: '',
             tooltip: '',
         },
@@ -69,7 +69,7 @@ export default class DimensionContent extends React.PureComponent {
 
     addFromWidgetClick = (items, _, listOfNewItems) => {
         const newListOfItems = listOfNewItems.map(r => ({
-            id: randomString(16).toLowerCase(),
+            id: randomString(16),
             title: r.label,
             originalWidget: r.originalWidget,
             originalKey: r.originalKey,

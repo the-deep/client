@@ -23,7 +23,7 @@ export default class NotificationsGetRequest extends Request {
         response.results.forEach((n) => {
             notifications.push({
                 ...n,
-                key: randomString(16).toLowerCase(),
+                key: randomString(16),
             });
         });
 
