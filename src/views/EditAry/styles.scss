@@ -3,10 +3,6 @@
 $width-left-min: 390px;
 $width-right-min: 800px;
 
-.no-template {
-    @include background-color($color-foreground-dark);
-}
-
 .assessments {
     @extend %main-content;
     display: flex;

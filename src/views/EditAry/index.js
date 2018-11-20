@@ -4,44 +4,52 @@ import { connect } from 'react-redux';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ResizableH from '#rscv/Resizable/ResizableH';
-import { isFalsy } from '#rsu/common';
+import { checkVersion } from '#rsu/common';
+import Message from '#rscv/Message';
 
+import {
+    RequestCoordinator,
+    RequestClient,
+} from '#request';
 import {
     setAryTemplateAction,
     setAryForEditAryAction,
     setGeoOptionsAction,
 
-    projectDetailsSelector,
+    projectIdFromRoute,
     leadIdFromRouteSelector,
     leadGroupIdFromRouteSelector,
     editAryVersionIdSelector,
 } from '#redux';
+import notify from '#notify';
 import _ts from '#ts';
-
-import LeadRequest from './requests/LeadRequest';
-import LeadGroupRequest from './requests/LeadGroupRequest';
-import AryTemplateRequest from './requests/AryTemplateRequest';
-import AryGetRequest from './requests/AryGetRequest';
-import GeoOptionsRequest from './requests/GeoOptionsRequest';
 
 import LeftPanel from './LeftPanel';
 import RightPanel from './RightPanel';
 import styles from './styles.scss';
 
 const propTypes = {
-    activeLeadId: PropTypes.number,
-    activeLeadGroupId: PropTypes.number,
-    activeProject: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    projectId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
 
-    setAryTemplate: PropTypes.func.isRequired,
-    setAry: PropTypes.func.isRequired,
-    setGeoOptions: PropTypes.func.isRequired,
+    activeLeadId: PropTypes.number, // eslint-disable-line react/no-unused-prop-types
+    activeLeadGroupId: PropTypes.number, // eslint-disable-line react/no-unused-prop-types
+    editAryVersionId: PropTypes.number, // eslint-disable-line react/no-unused-prop-types
+    setAry: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    setAryTemplate: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    setGeoOptions: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
 
-    editAryVersionId: PropTypes.number,
+    // FIXME: use RequestClient.propType.isRequired
+    assessmentRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    leadRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    leadGroupRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    geoOptionsRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/forbid-prop-types
+    assessmentTemplateRequest: PropTypes.object.isRequired,
+    // FIXME: inject for individual request
+    setDefaultRequestParams: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
-    activeProject: {},
     editAryVersionId: undefined,
 
     activeLeadId: undefined,
@@ -49,9 +57,9 @@ const defaultProps = {
 };
 
 const mapStateToProps = state => ({
+    projectId: projectIdFromRoute(state),
     activeLeadId: leadIdFromRouteSelector(state),
     activeLeadGroupId: leadGroupIdFromRouteSelector(state),
-    activeProject: projectDetailsSelector(state),
     editAryVersionId: editAryVersionIdSelector(state),
 });
 
@@ -61,7 +69,95 @@ const mapDispatchToProps = dispatch => ({
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
 });
 
+const requests = {
+    assessmentRequest: {
+        schema: 'aryGetRequest',
+        url: ({ props: { activeLeadId, activeLeadGroupId } }) => (
+            activeLeadId === undefined
+                ? `/lead-group-assessments/${activeLeadGroupId}`
+                : `/lead-assessments/${activeLeadId}`
+        ),
+        onMount: ({ props }) => !!props.activeLeadId || !!props.activeLeadGroupId,
+        onPropsChanged: ['activeLeadId', 'activeLeadGroupId'],
+        onSuccess: ({ props, response }) => {
+            const oldVersionId = props.editAryVersionId;
+
+            const {
+                shouldSetValue,
+                isValueOverriden,
+            } = checkVersion(oldVersionId, response.versionId);
+
+            if (shouldSetValue) {
+                props.setAry({
+                    serverId: response.id,
+                    leadId: response.lead,
+                    leadGroupId: response.leadGroupId,
+                    versionId: response.versionId,
+                    metadata: response.metadata,
+                    methodology: response.methodology,
+                    summary: response.summary,
+                    score: response.score,
+                });
+            }
+            if (isValueOverriden) {
+                // FIXME: use strings
+                notify.send({
+                    type: notify.type.WARNING,
+                    title: 'Assessment',
+                    message: 'Your copy was overridden by server\'s copy.',
+                    duration: notify.duration.SLOW,
+                });
+            }
+        },
+    },
+    leadRequest: {
+        schema: 'lead',
+        url: ({ props: { activeLeadId } }) => `/leads/${activeLeadId}`,
+        onMount: ({ props: { activeLeadId } }) => !!activeLeadId,
+        onPropsChanged: ['activeLeadId'],
+    },
+    leadGroupRequest: {
+        schema: 'leadGroup',
+        url: ({ props: { activeLeadGroupId } }) => `/lead-groups/${activeLeadGroupId}`,
+        onMount: ({ props: { activeLeadGroupId } }) => !!activeLeadGroupId,
+        onPropsChanged: ['activeLeadGroupId'],
+    },
+    assessmentTemplateRequest: {
+        schema: 'aryTemplateGetResponse',
+        url: ({ props: { projectId } }) => `/projects/${projectId}/assessment-template/`,
+        onMount: ({ props: { projectId } }) => !!projectId,
+        onPropsChanged: ['projectId'],
+        onPreLoad: ({ params }) => {
+            params.setState({ noTemplate: false });
+        },
+        onSuccess: ({ props, response }) => {
+            props.setAryTemplate({
+                template: response,
+                projectId: props.projectId,
+            });
+        },
+        onFailure: ({ params }) => {
+            params.setState({ noTemplate: true });
+        },
+    },
+    geoOptionsRequest: {
+        schema: 'geoOptions',
+        url: '/geo-options/',
+        query: ({ props: { projectId } }) => ({ project: projectId }),
+        onMount: ({ props: { projectId } }) => !!projectId,
+        onPropsChanged: ['projectId'],
+        onSuccess: ({ props, response }) => {
+            props.setGeoOptions({
+                projectId: props.projectId,
+                locations: response,
+            });
+        },
+    },
+};
+
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestCoordinator
+@RequestClient(requests)
 export default class EditAry extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -70,182 +166,45 @@ export default class EditAry extends React.PureComponent {
         super(props);
 
         this.state = {
-            pendingAryTemplate: true,
-            pendingLead: true,
-            pendingAry: true,
-            pendingGeo: true,
-
             noTemplate: false,
-
             activeSector: undefined,
         };
 
-        this.leadGroup = new LeadGroupRequest({
-            setState: d => this.setState(d),
+        this.props.setDefaultRequestParams({
+            setState: params => this.setState(params),
         });
-    }
-
-    componentWillMount() {
-        const {
-            activeProject: { id: projectId },
-            activeLeadId: leadId,
-            activeLeadGroupId: leadGroupId,
-        } = this.props;
-
-        if (leadId) {
-            this.startAryGetRequest(leadId);
-            this.startLeadRequest(leadId);
-        } else {
-            this.startAryGetRequest(leadGroupId, true);
-            this.leadGroup.createRequest(leadGroupId);
-            this.leadGroup.request.start();
-        }
-
-        this.startAryTemplateRequest(projectId);
-        this.startGeoOptionsRequest(projectId);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const {
-            activeProject: { id: oldProjectId },
-            activeLeadId: oldLeadId,
-            activeLeadGroupId: oldLeadGroupId,
-        } = this.props;
-
-        const {
-            activeProject: { id: projectId },
-            activeLeadId: leadId,
-            activeLeadGroupId: newLeadGroupId,
-        } = nextProps;
-
-        if (oldProjectId !== projectId) {
-            this.startAryTemplateRequest(projectId);
-            this.startGeoOptionsRequest(projectId);
-        }
-
-        if (oldLeadId !== leadId) {
-            this.startAryGetRequest(leadId);
-            this.startLeadRequest(leadId);
-        }
-
-        if (oldLeadGroupId !== newLeadGroupId) {
-            this.startAryGetRequest(newLeadGroupId, true);
-
-            this.leadGroup.request.stop();
-            this.leadGroup.createRequest(newLeadGroupId);
-            this.leadGroup.request.start();
-        }
-    }
-
-    componentWillUnmount() {
-        if (this.aryTemplateRequest) {
-            this.aryTemplateRequest.stop();
-        }
-        if (this.aryGetRequest) {
-            this.aryGetRequest.stop();
-        }
-        if (this.leadRequest) {
-            this.leadRequest.stop();
-        }
-        if (this.geoOptionsRequest) {
-            this.geoOptionsRequest.stop();
-        }
     }
 
     handleActiveSectorChange = (activeSector) => {
         this.setState({ activeSector });
     }
 
-    startLeadRequest = (leadId) => {
-        if (isFalsy(leadId)) {
-            return;
-        }
-
-        if (this.leadRequest) {
-            this.leadRequest.stop();
-        }
-
-        const leadRequest = new LeadRequest({
-            setState: params => this.setState(params),
-        });
-        this.leadRequest = leadRequest.create(leadId);
-        this.leadRequest.start();
-    }
-
-    startAryGetRequest = (leadId, isLeadGroup) => {
-        if (isFalsy(leadId)) {
-            return;
-        }
-
-        const { setAry } = this.props;
-        if (this.aryGetRequest) {
-            this.aryGetRequest.stop();
-        }
-
-        const aryGetRequest = new AryGetRequest({
-            setAry,
-            setState: params => this.setState(params),
-            getAryVersionId: () => this.props.editAryVersionId,
-        });
-        this.aryGetRequest = aryGetRequest.create(leadId, isLeadGroup);
-        this.aryGetRequest.start();
-    }
-
-    startAryTemplateRequest = (projectId) => {
-        if (isFalsy(projectId)) {
-            return;
-        }
-        if (this.aryTemplateRequest) {
-            this.aryTemplateRequest.stop();
-        }
-
-        const aryTemplateRequest = new AryTemplateRequest({
-            setAryTemplate: this.props.setAryTemplate,
-            setState: params => this.setState(params),
-        });
-        this.aryTemplateRequest = aryTemplateRequest.create(projectId);
-        this.aryTemplateRequest.start();
-    }
-
-    startGeoOptionsRequest = (projectId) => {
-        if (isFalsy(projectId)) {
-            return;
-        }
-        if (this.geoOptionsRequest) {
-            this.geoOptionsRequest.stop();
-        }
-
-        const geoOptionsRequest = new GeoOptionsRequest({
-            setGeoOptions: this.props.setGeoOptions,
-            setState: params => this.setState(params),
-        });
-        this.geoOptionsRequest = geoOptionsRequest.create(projectId);
-        this.geoOptionsRequest.start();
-    }
-
     render() {
         const {
-            pendingLead,
-            pendingAryTemplate,
-            pendingGeo,
-            pendingAry,
+            assessmentRequest,
+            leadRequest,
+            leadGroupRequest,
+            assessmentTemplateRequest,
+            geoOptionsRequest,
+        } = this.props;
+        const {
             noTemplate,
-            lead,
-            leadGroup,
             activeSector,
         } = this.state;
 
         if (noTemplate) {
             return (
-                <div className={styles.noTemplate}>
-                    <p>
-                        {_ts('editAssessment', 'noAryTemplateForProject')}
-                    </p>
-                </div>
+                <Message>
+                    {_ts('editAssessment', 'noAryTemplateForProject')}
+                </Message>
             );
-        }
-
-        if (pendingLead || pendingAryTemplate || pendingAry || pendingGeo) {
+        } else if (
+            leadRequest.pending
+                || leadGroupRequest.pending
+                || assessmentRequest.pending
+                || assessmentTemplateRequest.pending
+                || geoOptionsRequest.pending
+        ) {
             return <LoadingAnimation large />;
         }
 
@@ -256,8 +215,8 @@ export default class EditAry extends React.PureComponent {
                 rightContainerClassName={styles.right}
                 leftChild={
                     <LeftPanel
-                        lead={lead}
-                        leadGroup={leadGroup}
+                        lead={leadRequest.response}
+                        leadGroup={leadGroupRequest.response}
                         activeSector={activeSector}
                     />
                 }
