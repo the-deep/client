@@ -31,7 +31,6 @@ import {
     editAryFaramErrorsSelector,
     editAryHasErrorsSelector,
     editAryIsPristineSelector,
-
 } from '#redux';
 import _ts from '#ts';
 import Baksa from '#components/Baksa';
@@ -439,7 +438,6 @@ export default class RightPanel extends React.PureComponent {
 
     renderTab = (tabKey) => {
         const title = this.tabs[tabKey];
-
         return (
             <TabTitle
                 title={title}

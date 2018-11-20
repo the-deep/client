@@ -73,6 +73,7 @@ const requests = {
         url: '/users-user-groups/',
         onMount: ({ props: { searchInputValue } }) => {
             const searchText = searchInputValue.trim();
+            // FIXME: anti-pattern
             if (searchText.length < MIN_SEARCH_TEXT_CHARACTERS) {
                 return false;
             }

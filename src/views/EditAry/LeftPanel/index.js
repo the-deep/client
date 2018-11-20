@@ -315,6 +315,7 @@ export default class LeftPanel extends React.PureComponent {
                             showLabel={false}
                             showHintAndError={false}
                             options={this.leads}
+                            // FIXME: no inline function in props
                             keySelector={d => d.id}
                             labelSelector={d => d.title}
                             value={currentLeadId}

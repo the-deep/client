@@ -3,7 +3,6 @@
 
 .list {
     display: inline-block;
-    background-color: $color-foreground;
 
     .widget {
         @extend %widget;

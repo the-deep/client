@@ -49,6 +49,7 @@ export default class EntriesListing extends React.PureComponent {
 
     static calcEntryKey = entry => entry.id;
 
+    // TODO: fix this method
     static calcEntryWithSector = (entry) => {
         const attr = entry.attributes.find(
             a => (a.widgetObj || emptyObject).widgetId === 'matrix2dWidget',
