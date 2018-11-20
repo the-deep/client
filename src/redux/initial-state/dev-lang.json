@@ -838,7 +838,11 @@
         "-50725969": "Total users",
         "-48325375": "Entries: {entries}",
         "-24966730": "Leads: {leads}",
-        "-47407911": "Date: {date}"
+        "-47407911": "Date: {date}",
+        "-74417500": "{field} was changed from {oldValue} to {newValue}.",
+        "-69587895": "{field} was changed to {newValue}.",
+        "-68605986": "{field} was set to {newValue}.",
+        "-63520825": "{fields} were modified."
     },
     "links": {
         "browserExtension": {
@@ -2290,6 +2294,11 @@
             "leadsActivityNumberModifier": -24966730,
             "activityDateModifier": -47407911,
             "noRegionForProject": 343
+        },
+        "components.activityLog": {
+            "logDescription": -74417500,
+            "logDescriptionNew": -68605986,
+            "aggregatedLogItem": -63520825
         }
     }
 }

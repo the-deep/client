@@ -10,8 +10,10 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import DateInput from '#rsci/DateInput';
 import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
+import ActivityLog from '#components/ActivityLog';
 
 import {
+    projectActivityLogSelector,
     projectLocalDataSelector,
     projectServerDataSelector,
     setProjectDetailsAction,
@@ -34,6 +36,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     projectLocalData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    activityLog: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     changeProjectDetails: PropTypes.func.isRequired,
     setProjectDetails: PropTypes.func.isRequired,
     projectServerData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -49,6 +52,7 @@ const defaultProps = {
 };
 
 const mapStateToProps = state => ({
+    activityLog: projectActivityLogSelector(state),
     projectLocalData: projectLocalDataSelector(state),
     projectServerData: projectServerDataSelector(state),
 });
@@ -196,6 +200,7 @@ export default class ProjectDetailsGeneral extends PureComponent {
         const {
             readOnly,
             className: classNameFromProps,
+            activityLog,
             projectId,
             projectLocalData: {
                 faramValues = {},
@@ -290,7 +295,10 @@ export default class ProjectDetailsGeneral extends PureComponent {
                     className={styles.dashboard}
                     projectId={projectId}
                 />
-                <div className={styles.activityLog} />
+                <ActivityLog
+                    log={activityLog}
+                    className={styles.activityLog}
+                />
                 <UnsavedChangesPrompt />
             </div>
         );

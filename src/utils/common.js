@@ -20,3 +20,8 @@ export const pick = (obj, keys) => keys.reduce(
     (acc, key) => ({ ...acc, [key]: obj[key] }),
     {},
 );
+
+export const camelToNormalCase = (text) => {
+    const result = text.replace(/([A-Z])/g, ' $1');
+    return result.charAt(0).toUpperCase() + result.slice(1);
+};

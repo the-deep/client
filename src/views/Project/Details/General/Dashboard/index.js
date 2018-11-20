@@ -33,7 +33,12 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    projectDashboard: {},
+    projectDashboard: {
+        response: {
+            leadsActivity: [],
+            entriesActivity: [],
+        },
+    },
 };
 
 const mapStateToProps = state => ({

@@ -24,6 +24,11 @@ export const projectDashboardSelector = createSelector(
     project => project.dashboard || emptyObject,
 );
 
+export const projectActivityLogSelector = createSelector(
+    projectDashboardSelector,
+    dashboard => dashboard.activityLog || emptyArray,
+);
+
 export const projectServerDataSelector = createSelector(
     projectSelector,
     project => project.serverData || emptyObject,
