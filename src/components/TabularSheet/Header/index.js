@@ -19,6 +19,10 @@ const getSortIcon = sortOrder => ({
 
 const shouldExtractGeo = ({ type, geodata }) => (
     type === 'geo' &&
+    (!geodata || geodata.status !== 'success')
+);
+const shouldPollGeo = ({ type, geodata }) => (
+    type === 'geo' &&
     (!geodata || geodata.status === 'pending')
 );
 const isValidGeo = ({ type, geodata }) => (
@@ -65,7 +69,7 @@ export default class Header extends React.PureComponent {
                 url={`/tabular-fields/${id}/`}
                 triggerUrl={`/tabular-geo-extraction-trigger/${id}/`}
                 shouldTrigger={shouldExtractGeo}
-                shouldPoll={shouldExtractGeo}
+                shouldPoll={shouldPollGeo}
                 isValid={isValidGeo}
                 onDataReceived={this.handleGeoData}
             >
