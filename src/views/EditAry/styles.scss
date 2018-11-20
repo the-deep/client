@@ -1,24 +1,68 @@
 @import '~base-scss/base';
 
+$height-header: 42px;
+
 $width-left-min: 390px;
 $width-right-min: 800px;
 
-.assessments {
-    @extend %main-content;
-    display: flex;
+.edit-assessment {
+    margin: -$spacing-small;
+    padding: 0;
+    height: 100%;
 
-    .left {
-        border-right: $width-separator-thin solid $color-separator;
-        width: 30%;
-        min-width: $width-left-min;
-        height: 100%;
+    .header {
+        display: flex;
+        align-items: center;
+        border-bottom: $width-separator-thin solid $color-separator-alt;
+        background-color: $color-background-header;
+        height: $height-header;
+
+        .heading {
+            flex-grow: 1;
+            padding: 0 $spacing-medium;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .action-buttons {
+            flex-shrink: 0;
+            padding: 0 $spacing-medium;
+
+            >button {
+                margin-left: $spacing-medium;
+            }
+        }
     }
 
-    .right {
-        display: flex;
-        flex-direction: column;
-        width: 70%;
-        min-width: $width-right-min;
+    .content {
+        @extend %main-content;
+        margin: $spacing-small;
+        height: calc(100% - #{$height-header});
+
+        &.active {
+            display: block;
+        }
+
+        .assessments {
+            display: flex;
+            height: 100%;
+
+            .left {
+                border-right: $width-separator-thin solid $color-separator;
+                width: 30%;
+                min-width: $width-left-min;
+                height: 100%;
+            }
+
+            .right {
+                display: flex;
+                flex-direction: column;
+                width: 70%;
+                min-width: $width-right-min;
+            }
+        }
+
     }
 }
 

@@ -4,8 +4,9 @@ import { connect } from 'react-redux';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ResizableH from '#rscv/Resizable/ResizableH';
-import { checkVersion } from '#rsu/common';
+import { reverseRoute, checkVersion } from '#rsu/common';
 import Message from '#rscv/Message';
+import SuccessButton from '#rsca/Button/SuccessButton';
 
 import {
     RequestCoordinator,
@@ -21,8 +22,10 @@ import {
     leadGroupIdFromRouteSelector,
     editAryVersionIdSelector,
 } from '#redux';
+import { pathNames } from '#constants';
 import notify from '#notify';
 import _ts from '#ts';
+import BackLink from '#components/BackLink';
 
 import LeftPanel from './LeftPanel';
 import RightPanel from './RightPanel';
@@ -115,12 +118,14 @@ const requests = {
         url: ({ props: { activeLeadId } }) => `/leads/${activeLeadId}`,
         onMount: ({ props: { activeLeadId } }) => !!activeLeadId,
         onPropsChanged: ['activeLeadId'],
+        // TODO: check mismatch between project and lead
     },
     leadGroupRequest: {
         schema: 'leadGroup',
         url: ({ props: { activeLeadGroupId } }) => `/lead-groups/${activeLeadGroupId}`,
         onMount: ({ props: { activeLeadGroupId } }) => !!activeLeadGroupId,
         onPropsChanged: ['activeLeadGroupId'],
+        // TODO: check mismatch between project and leadGroup
     },
     assessmentTemplateRequest: {
         schema: 'aryTemplateGetResponse',
@@ -186,6 +191,8 @@ export default class EditAry extends React.PureComponent {
             leadGroupRequest,
             assessmentTemplateRequest,
             geoOptionsRequest,
+            projectId,
+            activeLeadId,
         } = this.props;
         const {
             noTemplate,
@@ -208,24 +215,53 @@ export default class EditAry extends React.PureComponent {
             return <LoadingAnimation large />;
         }
 
+        const exitPath = reverseRoute(pathNames.leads, {
+            projectId,
+        });
+
+        const title = activeLeadId
+            ? leadRequest.response.title
+            : (leadGroupRequest.response.leads || []).map(lead => lead.title).join(',');
+
+        // FIXME: add prompt on leaving page
+
         return (
-            <ResizableH
-                className={styles.assessments}
-                leftContainerClassName={styles.left}
-                rightContainerClassName={styles.right}
-                leftChild={
-                    <LeftPanel
-                        lead={leadRequest.response}
-                        leadGroup={leadGroupRequest.response}
-                        activeSector={activeSector}
+            <div className={styles.editAssessment}>
+                <header className={styles.header}>
+                    <BackLink
+                        defaultLink={exitPath}
                     />
-                }
-                rightChild={
-                    <RightPanel
-                        onActiveSectorChange={this.handleActiveSectorChange}
+                    <h4 className={styles.heading}>
+                        {title}
+                    </h4>
+                    <div className={styles.actionButtons}>
+                        <SuccessButton
+                            disabled
+                        >
+                            { _ts('editAssessment', 'saveButtonTitle') }
+                        </SuccessButton>
+                    </div>
+                </header>
+                <div className={styles.content}>
+                    <ResizableH
+                        className={styles.assessments}
+                        leftContainerClassName={styles.left}
+                        rightContainerClassName={styles.right}
+                        leftChild={
+                            <LeftPanel
+                                lead={leadRequest.response}
+                                leadGroup={leadGroupRequest.response}
+                                activeSector={activeSector}
+                            />
+                        }
+                        rightChild={
+                            <RightPanel
+                                onActiveSectorChange={this.handleActiveSectorChange}
+                            />
+                        }
                     />
-                }
-            />
+                </div>
+            </div>
         );
     }
 }

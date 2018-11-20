@@ -5,7 +5,7 @@ $height-lead-select-input-wrap: 36px;
 $height-header: $height-tabs + $height-lead-select-input-wrap;
 
 .header {
-    background-color: $color-foreground-alt;
+    background-color: $color-foreground;
     height: $height-header;
 
     .lead-select-input-wrap {
@@ -18,7 +18,7 @@ $height-header: $height-tabs + $height-lead-select-input-wrap;
             flex-shrink: 0;
             padding-right: $spacing-small;
             width: auto;
-            
+
             &:after {
                 content: ':';
             }
