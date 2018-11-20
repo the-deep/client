@@ -3,7 +3,6 @@
 $radius-button-border: 2px;
 
 .add-lead {
-    @extend %main-content;
     display: flex;
     flex-direction: column;
     margin: -$spacing-small-alt;
@@ -27,11 +26,13 @@ $radius-button-border: 2px;
     }
 
     .content {
+        @extend %main-content;
         display: flex;
         flex-basis: 100%;
         flex-grow: 1;
         margin: $spacing-small-alt;
         border: $width-separator-thin solid $color-separator-alt;
+        height: 1px;
 
         .left {
             display: flex;

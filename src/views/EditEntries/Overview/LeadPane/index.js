@@ -192,6 +192,8 @@ export default class LeftPane extends React.PureComponent {
             tabs['tabular-preview'] = _ts('editEntry.overview.leftpane', 'quantitativeTabLabel');
         }
         switch (leadPaneType) {
+            case LEAD_PANE_TYPE.csv:
+                break;
             case LEAD_PANE_TYPE.spreadsheet:
                 tabs = {
                     ...tabs,

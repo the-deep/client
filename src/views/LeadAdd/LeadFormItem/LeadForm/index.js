@@ -228,7 +228,7 @@ export default class LeadForm extends React.PureComponent {
 
     render() {
         const {
-            className,
+            className: classNameFromProps,
             lead,
 
             leadOptions = {},
@@ -250,11 +250,15 @@ export default class LeadForm extends React.PureComponent {
         const isApplyAllDisabled = isFormDisabled || isBulkActionDisabled;
 
         const LeadGroupInput = this.renderLeadGroupElement;
+        const className = `
+            ${classNameFromProps}
+            ${styles.addLeadForm}
+        `;
 
         return (
             <Faram
                 setSubmitFunction={this.setSubmitFormFunction}
-                className={`${styles.addLeadForm} ${className}`}
+                className={className}
                 onChange={onChange}
                 onValidationFailure={onFailure}
                 onValidationSuccess={onSuccess}

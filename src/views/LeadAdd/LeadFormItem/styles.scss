@@ -5,66 +5,67 @@
     position: relative;
     flex-basis: 70%;
     background-color: $color-background-alt;
+    overflow: auto;
 
     .resizable {
         display: flex;
-        flex: 1;
         flex-direction: column;
-        overflow-y: auto;
-    }
+        overflow: auto;
 
-    .top {
-        height: 40%;
-        min-height: 108px;
-        overflow-y: auto;
-    }
+        .top {
+            height: 40%;
+            min-height: 108px;
+            overflow: auto;
+        }
 
-    .bottom {
-        display: flex;
-        flex-direction: column;
-        height: 60%;
-        min-height: 196px;
-
-        .lead-preview {
+        .bottom {
             display: flex;
             flex-direction: column;
-            flex-grow: 1;
-            border-top: $width-separator-thin solid $color-separator;
+            height: 60%;
+            min-height: 196px;
 
-            .gallery-file {
+            .lead-preview {
                 display: flex;
                 flex-direction: column;
                 flex-grow: 1;
+                border-top: $width-separator-thin solid $color-separator;
+                overflow: auto;
 
-                :global {
-                    .urlbar {
-                        flex-shrink: 0;
-                    }
+                .gallery-file {
+                    display: flex;
+                    flex-direction: column;
+                    flex-grow: 1;
 
-                    .doc-container {
-                        display: flex;
-                        flex-direction: column;
-                        flex-grow: 1;
+                    :global {
+                        .urlbar {
+                            flex-shrink: 0;
+                        }
 
-                        .gallery-docs {
+                        .doc-container {
                             display: flex;
                             flex-direction: column;
                             flex-grow: 1;
-                        }
 
-                        iframe {
-                            flex-grow: 1;
+                            .gallery-docs {
+                                display: flex;
+                                flex-direction: column;
+                                flex-grow: 1;
+                            }
+
+                            iframe {
+                                flex-grow: 1;
+                            }
                         }
                     }
                 }
-            }
 
-            .preview-text {
-                display: flex;
-                align-items: center;
-                flex-grow: 1;
-                justify-content: center;
-                color: $color-text-disabled;
+                .preview-text {
+                    display: flex;
+                    align-items: center;
+                    flex-grow: 1;
+                    justify-content: center;
+                    color: $color-text-disabled;
+                }
             }
         }
     }

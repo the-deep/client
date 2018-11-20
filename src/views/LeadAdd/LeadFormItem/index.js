@@ -361,13 +361,17 @@ export default class LeadFormItem extends React.PureComponent {
     // RENDER
 
 
-    renderLeadPreview = ({ lead }) => {
+    renderLeadPreview = ({
+        lead,
+        className,
+    }) => {
         const type = leadAccessor.getType(lead);
         const values = leadAccessor.getFaramValues(lead);
 
         if (values.tabularBook) {
             return (
                 <TabularBook
+                    className={className}
                     bookId={values.tabularBook}
                     projectId={values.project}
                     onDelete={this.unsetTabularBook}
@@ -378,10 +382,16 @@ export default class LeadFormItem extends React.PureComponent {
             );
         }
 
-        if (this.state.tabularMode) {
+        const {
+            tabularMode,
+            tabularMimeType,
+        } = this.state;
+
+        if (tabularMode) {
             return (
                 <LeadTabular
-                    mimeType={this.state.tabularMimeType}
+                    className={className}
+                    mimeType={tabularMimeType}
                     setTabularBook={this.setTabularBook}
                     onCancel={this.unsetTabularMode}
                     lead={lead}
@@ -398,14 +408,14 @@ export default class LeadFormItem extends React.PureComponent {
                         {
                             values.url ? (
                                 <ExternalGallery
-                                    className={styles.galleryFile}
+                                    className={`${className} ${styles.galleryFile}`}
                                     url={values.url}
                                     onTabularClick={this.setTabularMode}
                                     showTabular
                                     showUrl
                                 />
                             ) : (
-                                <div className={styles.previewText}>
+                                <div className={`${className} ${styles.previewText}`}>
                                     {_ts('addLeads', 'sourcePreview')}
                                 </div>
                             )
@@ -414,7 +424,7 @@ export default class LeadFormItem extends React.PureComponent {
                 );
             default:
                 return (
-                    <div className={styles.leadPreview} >
+                    <div className={className} >
                         {
                             values.attachment ? (
                                 <InternalGallery
@@ -479,8 +489,13 @@ export default class LeadFormItem extends React.PureComponent {
         const projectId = faramValues.project;
         const pending = isFormLoading || this.state.pendingExtraction;
 
+        const className = `
+            ${styles.right}
+            ${!active ? styles.hidden : ''}
+        `;
+
         return (
-            <div className={`${styles.right} ${!active ? styles.hidden : ''}`}>
+            <div className={className}>
                 { pending && <LoadingAnimation /> }
                 <ResizableV
                     className={styles.resizable}
@@ -508,8 +523,10 @@ export default class LeadFormItem extends React.PureComponent {
                     }
                     bottomChild={
                         active && !this.props.hidePreview
-                            ? <LeadPreview lead={lead} />
-                            : <div />
+                            ? <LeadPreview
+                                lead={lead}
+                                className={styles.leadPreview}
+                            /> : null
                     }
                 />
             </div>
