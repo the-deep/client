@@ -333,7 +333,7 @@ export default class Baksa extends React.PureComponent {
 
         return (
             <div className={styles.selection}>
-                <a href={value.url} target="_blank">
+                <a href={value.url} target="_blank" rel="noopener noreferrer">
                     { value.name }
                 </a>
                 <DangerButton

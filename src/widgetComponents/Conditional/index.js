@@ -16,6 +16,7 @@ const propTypes = {
     entryType: PropTypes.string,
     excerpt: PropTypes.string,
     image: PropTypes.string,
+    dataSeries: PropTypes.shape({}),
     isView: PropTypes.bool,
 
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -27,6 +28,7 @@ const defaultProps = {
     entryType: 'excerpt',
     excerpt: undefined,
     image: undefined,
+    dataSeries: undefined,
     isView: false,
 
     value: {},
@@ -79,6 +81,7 @@ export default class Conditional extends React.PureComponent {
             entryType,
             excerpt,
             image,
+            dataSeries,
         } = this.props;
 
         let child = null;
@@ -93,6 +96,7 @@ export default class Conditional extends React.PureComponent {
                         entryType={entryType}
                         excerpt={excerpt}
                         image={image}
+                        dataSeries={dataSeries}
                     />
                 );
                 break;

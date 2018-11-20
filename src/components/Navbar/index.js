@@ -304,6 +304,7 @@ export default class Navbar extends React.PureComponent {
                     className={styles.joinLink}
                     href={slackLink}
                     target="_blank"
+                    rel="noopener noreferrer"
                 >
                     <img
                         className={styles.image}
@@ -316,6 +317,7 @@ export default class Navbar extends React.PureComponent {
                     className={styles.joinLink}
                     href={skypeLink}
                     target="_blank"
+                    rel="noopener noreferrer"
                 >
                     <img
                         className={styles.image}

@@ -1,0 +1,30 @@
+@import '~base-scss/base';
+
+.header {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+
+    .title {
+        padding: $spacing-small;
+    }
+
+    .edit {
+        display: none;
+        position: absolute;
+        top: 0;
+        right: -10px;
+    }
+
+    .loading-container {
+        position: relative;
+        margin-left: $spacing-small;
+    }
+
+    &:hover {
+        .edit {
+            display: initial;
+        }
+    }
+}

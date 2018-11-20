@@ -1,0 +1,10 @@
+@import '~base-scss/base';
+
+.tabular-sheet {
+    background-color: $color-foreground;
+
+    .cell {
+        display: block;
+        padding: $spacing-small;
+    }
+}

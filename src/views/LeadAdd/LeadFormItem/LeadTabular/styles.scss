@@ -1,0 +1,34 @@
+@import '~base-scss/base';
+
+.lead-tabular {
+    flex-grow: 1;
+    border-top: $width-separator-thin solid $color-separator;
+    background-color: $color-foreground;
+
+    .header {
+        display: flex;
+        align-items: center;
+        padding: 0 $spacing-medium;
+        height: $height-navbar;
+    }
+
+    .body {
+        padding: 0 $spacing-large;
+
+        .form {
+            button {
+                margin-right: $spacing-medium;
+            }
+
+            .sheet-list {
+                .sheet-title {
+                    font-weight: $font-weight-bold;
+                }
+
+                .check-input {
+                    margin: $spacing-small 0;
+                }
+            }
+        }
+    }
+}

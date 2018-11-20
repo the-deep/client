@@ -17,6 +17,8 @@ import { CoordinatorBuilder } from '#rsu/coordinate';
 import BackLink from '#components/BackLink';
 import Cloak from '#components/Cloak';
 import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
+
+import { RequestCoordinator } from '#request';
 import {
     iconNames,
     pathNames,
@@ -139,7 +141,7 @@ const mapDispatchToProps = dispatch => ({
     resetUiState: params => dispatch(editEntriesResetUiStateAction(params)),
 });
 
-
+@RequestCoordinator
 @connect(mapStateToProps, mapDispatchToProps)
 export default class EditEntries extends React.PureComponent {
     static propTypes = propTypes;

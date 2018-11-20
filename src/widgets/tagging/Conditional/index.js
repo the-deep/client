@@ -11,11 +11,13 @@ const propTypes = {
     entryType: PropTypes.string.isRequired,
     excerpt: PropTypes.string,
     image: PropTypes.string,
+    dataSeries: PropTypes.shape({}),
 };
 
 const defaultProps = {
     excerpt: undefined,
     image: undefined,
+    dataSeries: undefined,
 };
 
 

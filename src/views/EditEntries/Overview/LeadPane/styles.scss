@@ -27,6 +27,10 @@ $height-tabs: 48px;
     @extend %container;
 }
 
+.tabular-preview {
+    @extend %container;
+}
+
 .assisted-tagging {
     @extend %container;
 

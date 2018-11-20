@@ -423,7 +423,7 @@ export default class Leads extends React.PureComponent {
         }
         return (
             <div className={styles.iconWrapper}>
-                <a href={url} target="_blank">
+                <a href={url} target="_blank" rel="noopener noreferrer">
                     <i className={icon} />
                 </a>
             </div>

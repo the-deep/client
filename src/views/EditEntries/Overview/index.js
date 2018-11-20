@@ -76,8 +76,17 @@ export default class Overview extends React.PureComponent {
 
     static entryLabelSelector = (entry) => {
         const values = entryAccessor.data(entry);
-        const { excerpt, order } = values;
-        return excerpt || _ts('editEntry.overview', 'unnamedExcerptTitle', { index: order });
+        const { excerpt, dataSeries, order } = values;
+
+        if (excerpt) {
+            return excerpt;
+        }
+
+        if (dataSeries) {
+            return dataSeries.title;
+        }
+
+        return _ts('editEntry.overview', 'unnamedExcerptTitle', { index: order });
     };
 
     static shouldHideEntryAdd = ({ entryPermissions }) => !entryPermissions.create

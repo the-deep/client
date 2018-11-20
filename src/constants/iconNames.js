@@ -102,6 +102,13 @@ const iconNames = {
     trash: 'ion-trash-b',
 
     format: 'ion-android-list',
+
+    tabular: 'ion-ios-grid-view',
+    sort: 'fa fa-sort',
+    sortAscending: 'fa fa-sort-asc',
+    sortDescending: 'fa fa-sort-desc',
+
+    swap: 'ion-arrow-swap',
 };
 
 export default iconNames;

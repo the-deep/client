@@ -120,17 +120,14 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
             .pollTime(2000)
             .shouldPoll(response => (
                 this.hasTriggeredOnce &&
-                isFalsy(response.text) &&
-                response.images.length === 0
+                isFalsy(response.id)
             ))
             .success((response) => {
                 if (isFalsy(response.text) && response.images.length === 0) {
-                    this.hasTriggeredOnce = true;
-                    if (this.triggerRequest) {
-                        this.triggerRequest.stop();
-                    }
-                    this.triggerRequest = this.createTriggerRequest(leadId);
-                    this.triggerRequest.start();
+                    this.setState({
+                        pending: false,
+                        error: _ts('components.simplifiedLeadPreview', 'serverErrorText'),
+                    });
                 } else {
                     this.setState({
                         pending: false,

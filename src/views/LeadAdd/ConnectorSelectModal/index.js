@@ -433,6 +433,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
                     <Link
                         className={styles.settingsLink}
                         target="_blank"
+                        rel="noopener noreferrer"
                         to={reverseRoute(pathNames.connectors, { })}
                     >
                         <span className={iconNames.settings} />

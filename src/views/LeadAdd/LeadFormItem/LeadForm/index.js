@@ -14,7 +14,6 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import SelectInput from '#rsci/SelectInput';
 import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import { formatDate } from '#rsu/date';
 
 import {
@@ -59,11 +58,9 @@ const propTypes = {
 
     isSaveDisabled: PropTypes.bool.isRequired,
     isFormDisabled: PropTypes.bool.isRequired,
-    isFormLoading: PropTypes.bool.isRequired,
     isBulkActionDisabled: PropTypes.bool.isRequired,
 
     isExtractionDisabled: PropTypes.bool.isRequired,
-    isExtractionLoading: PropTypes.bool.isRequired,
     onExtractClick: PropTypes.func.isRequired,
 
     setSubmitFunction: PropTypes.func,
@@ -144,6 +141,7 @@ export default class LeadForm extends React.PureComponent {
                 publishedOn: [requiredCondition, dateCondition],
                 sourceType: [requiredCondition],
                 project: [requiredCondition],
+                tabularBook: [],
                 leadGroup: [],
                 ...differentFields[type],
             },
@@ -230,7 +228,7 @@ export default class LeadForm extends React.PureComponent {
 
     render() {
         const {
-            className,
+            className: classNameFromProps,
             lead,
 
             leadOptions = {},
@@ -238,11 +236,9 @@ export default class LeadForm extends React.PureComponent {
             onFailure,
             onSuccess,
             isFormDisabled,
-            isFormLoading,
             isBulkActionDisabled,
 
             isExtractionDisabled,
-            isExtractionLoading,
             onExtractClick,
             projectDetails,
         } = this.props;
@@ -254,11 +250,15 @@ export default class LeadForm extends React.PureComponent {
         const isApplyAllDisabled = isFormDisabled || isBulkActionDisabled;
 
         const LeadGroupInput = this.renderLeadGroupElement;
+        const className = `
+            ${classNameFromProps}
+            ${styles.addLeadForm}
+        `;
 
         return (
             <Faram
                 setSubmitFunction={this.setSubmitFormFunction}
-                className={`${styles.addLeadForm} ${className}`}
+                className={className}
                 onChange={onChange}
                 onValidationFailure={onFailure}
                 onValidationSuccess={onSuccess}
@@ -267,9 +267,6 @@ export default class LeadForm extends React.PureComponent {
                 error={errors}
                 disabled={isFormDisabled}
             >
-                {
-                    (isFormLoading || isExtractionLoading) && <LoadingAnimation />
-                }
                 <header className={styles.header}>
                     <NonFieldErrors faramElement />
                 </header>

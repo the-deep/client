@@ -22,7 +22,7 @@
         "22": "Prev",
         "23": "Next",
         "25": "Save",
-        "28": "We cannot currently preview this publisher. Please open it in a new tab or copy thRL.",
+        "28": "We cannot currently preview this publisher. Please open it in a new tab or copy the URL.",
         "30": "Invalid URL",
         "31": "Project",
         "32": "URL",
@@ -719,6 +719,17 @@
         "12508": "Start search with at least {numberOfCharacters} characters",
         "12509": "Role",
         "12510": "Are you sure you want to remove membership of {memberName}({memberEmail}) from this project?",
+        "15000": "Quantitative",
+        "15001": "Are you sure you want to delete these table sheets? All changes will be lost.",
+        "15002": "Edit table field",
+        "15003": "Separator",
+        "15004": "Delimiter",
+        "15005": "File type",
+        "15006": "Extract",
+        "15007": "Extract Tabular Data from Lead",
+        "15008": "Reset sort",
+        "15009": "Skip this sheet",
+        "15010": "Header row",
         "-12279953": "Entry Cleared",
         "-94068330": "All local entries were cleared because associated analysis framework was removed.",
         "-4983139": "Remove lead group",
@@ -1511,6 +1522,15 @@
             "applyFilterLabel": 427,
             "noFiltersMessage": 1139
         },
+        "addLeads.tabular": {
+            "title": 15007,
+            "delimiterLabel": 15004,
+            "fileTypeLabel": 15005,
+            "skipLabel": 15009,
+            "headerRowLabel": 15010,
+            "extractLabel": 15006,
+            "nextLabel": 23
+        },
         "register": {
             "checkYourEmailText": 818,
             "firstNameLabel": 150,
@@ -2073,6 +2093,7 @@
             "assistedTabLabel": 517,
             "originalTabLabel": 518,
             "tabularTabLabel": 142,
+            "quantitativeTabLabel": 15000,
             "imagesTabLabel": 519,
             "entriesTabLabel": 15,
             "unrecognizedLeadMessage": 140
@@ -2226,6 +2247,20 @@
         },
         "components.backLink": {
             "backButtonTooltip": -1045504
+        },
+        "tabular": {
+            "title": 15000,
+            "deleteMessage": 15001,
+            "deleteButtonTooltip": -94736495,
+            "resetSortTitle": 15008
+        },
+        "tabular.editField": {
+            "title": 15002,
+            "separatorLabel": 15003,
+            "titleLabel": 13,
+            "typeLabel": 21,
+            "cancelLabel": 61,
+            "submitLabel": 826
         }
     }
 }

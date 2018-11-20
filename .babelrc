@@ -7,7 +7,6 @@
         [
             "@babel/plugin-transform-runtime",
             {
-                "polyfill": false,
                 "regenerator": true
             }
         ],
@@ -52,8 +51,9 @@
                     "#utils": "./src/utils",
                     "#notify": "./src/notify",
                     "#store": "./src/store",
+                    "#request": "./src/request",
                     "#ts": "./src/ts",
-                    "#request": "./src/request"
+                    "#cs": "./src/cs"
                 }
             }
         ]

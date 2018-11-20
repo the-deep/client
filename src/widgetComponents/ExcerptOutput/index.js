@@ -1,10 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import DataSeries from '#components/DataSeries';
 
 import styles from './styles.scss';
 
 const TEXT = 'text';
 const IMAGE = 'image';
+const DATA_SERIES = 'dataSeries';
 
 const propTypes = {
     className: PropTypes.string,
@@ -12,9 +14,13 @@ const propTypes = {
     type: PropTypes.oneOf([
         TEXT,
         IMAGE,
+        DATA_SERIES,
     ]),
 
-    value: PropTypes.string,
+    value: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.object,
+    ]),
 };
 
 const defaultProps = {
@@ -59,6 +65,14 @@ export default class ExcerptOutput extends React.PureComponent {
                 );
                 break;
             }
+            case DATA_SERIES:
+                children = (
+                    <DataSeries
+                        className={styles.dataSeries}
+                        value={value}
+                    />
+                );
+                break;
             default:
                 console.error('Excerpt should either be image or text');
                 break;

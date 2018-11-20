@@ -76,6 +76,8 @@ const entrySchema = [];
 
             image: { type: 'string' },
             excerpt: { type: 'string' },
+            dataSeries: { type: 'object' },
+            project: { type: 'uint' },
             clientId: { type: 'string' },
             lead: { type: 'uint', required: true },
             entryType: { type: 'string', required: true },
@@ -86,7 +88,7 @@ const entrySchema = [];
             order: { type: 'uint', required: true },
         },
         validator: (self, context) => {
-            if (isFalsy(self.excerpt) && isFalsy(self.image)) {
+            if (isFalsy(self.excerpt) && isFalsy(self.image) && isFalsy(self.dataSeries)) {
                 throw new RavlError('image or excerpt is required', context);
             }
         },

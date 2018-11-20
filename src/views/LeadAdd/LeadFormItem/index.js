@@ -11,13 +11,17 @@ import {
     requiredCondition,
     urlCondition,
 } from '#rscg/Faram';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import ResizableV from '#rscv/Resizable/ResizableV';
 import update from '#rsu/immutable-update';
 
+import { RequestCoordinator } from '#request';
 import {
     InternalGallery,
     ExternalGallery,
 } from '#components/DeepGallery';
+import TabularBook from '#components/TabularBook';
+
 import {
     addLeadViewLeadChangeAction,
     addLeadViewCopyAllBelowAction,
@@ -36,6 +40,7 @@ import _ts from '#ts';
 
 import LeadForm from './LeadForm';
 import AddLeadGroup from './AddLeadGroup';
+import LeadTabular from './LeadTabular';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -43,6 +48,7 @@ const propTypes = {
     leadKey: PropTypes.string.isRequired,
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
+    isFormLoading: PropTypes.bool.isRequired,
     onFormSubmitFailure: PropTypes.func.isRequired,
     onFormSubmitSuccess: PropTypes.func.isRequired,
 
@@ -70,6 +76,7 @@ const mapDispatchToProps = dispatch => ({
     addLeadViewCopyAll: params => dispatch(addLeadViewCopyAllAction(params)),
 });
 
+@RequestCoordinator
 @connect(mapStateToProps, mapDispatchToProps)
 export default class LeadFormItem extends React.PureComponent {
     static propTypes = propTypes;
@@ -84,6 +91,7 @@ export default class LeadFormItem extends React.PureComponent {
         const isUrlValid = LeadFormItem.isUrlValid(lead.url);
         this.state = {
             isUrlValid,
+            tabularMode: false,
             pendingExtraction: false,
             showAddLeadGroupModal: false,
         };
@@ -119,6 +127,30 @@ export default class LeadFormItem extends React.PureComponent {
 
     setSubmitLeadFormFunction = (func) => {
         this.submitLeadForm = func;
+    }
+
+    setSaveTabularFunction = (func) => {
+        this.saveTabular = func;
+    }
+
+    setTabularMode = (mimeType) => {
+        this.setState({ tabularMode: true, tabularMimeType: mimeType });
+    }
+
+    setTabularBook = (tabularBook) => {
+        this.setState({
+            tabularMode: false,
+        }, () => {
+            this.handleFieldsChange({ tabularBook });
+        });
+    }
+
+    unsetTabularMode = () => {
+        this.setState({ tabularMode: false });
+    }
+
+    unsetTabularBook = () => {
+        this.handleFieldsChange({ tabularBook: undefined });
     }
 
     createWebInfoExtractRequest = (url) => {
@@ -195,7 +227,20 @@ export default class LeadFormItem extends React.PureComponent {
             this.leadSaveRequest.stop();
         }
         this.leadSaveRequest = onFormSubmitSuccess(lead, newValues);
-        this.leadSaveRequest.start();
+
+        if (!this.saveTabular) {
+            this.leadSaveRequest.start();
+            return;
+        }
+
+        // If we have tabular, first trigger preLoad of lead,
+        // save the tabular data and then save actual lead.
+        // Triggering preLoad is a hack to set pending state of
+        // corresponsing lead before doing actual leadSaveRequest.
+        this.leadSaveRequest.preLoad();
+        this.saveTabular(() => {
+            this.leadSaveRequest.start();
+        });
     }
 
     handleFormChange = (faramValues, faramErrors) => {
@@ -210,6 +255,15 @@ export default class LeadFormItem extends React.PureComponent {
             faramErrors,
             uiState: { pristine: false, serverError: false },
         });
+    }
+
+    handleFieldsChange = (fields = {}) => {
+        const { lead: { faramValues = {}, faramErrors } = {} } = this.props;
+        const newFaramValues = {
+            ...faramValues,
+            ...fields,
+        };
+        this.handleFormChange(newFaramValues, faramErrors);
     }
 
     handleFormFailure = (faramErrors) => {
@@ -307,9 +361,43 @@ export default class LeadFormItem extends React.PureComponent {
     // RENDER
 
 
-    renderLeadPreview = ({ lead }) => {
+    renderLeadPreview = ({
+        lead,
+        className,
+    }) => {
         const type = leadAccessor.getType(lead);
         const values = leadAccessor.getFaramValues(lead);
+
+        if (values.tabularBook) {
+            return (
+                <TabularBook
+                    className={className}
+                    bookId={values.tabularBook}
+                    projectId={values.project}
+                    onDelete={this.unsetTabularBook}
+                    setSaveTabularFunction={this.setSaveTabularFunction}
+                    onEdited={this.handleFieldsChange}
+                    showDelete
+                />
+            );
+        }
+
+        const {
+            tabularMode,
+            tabularMimeType,
+        } = this.state;
+
+        if (tabularMode) {
+            return (
+                <LeadTabular
+                    className={className}
+                    mimeType={tabularMimeType}
+                    setTabularBook={this.setTabularBook}
+                    onCancel={this.unsetTabularMode}
+                    lead={lead}
+                />
+            );
+        }
 
         switch (type) {
             case LEAD_TYPE.text:
@@ -320,12 +408,14 @@ export default class LeadFormItem extends React.PureComponent {
                         {
                             values.url ? (
                                 <ExternalGallery
-                                    className={styles.galleryFile}
+                                    className={`${className} ${styles.galleryFile}`}
                                     url={values.url}
+                                    onTabularClick={this.setTabularMode}
+                                    showTabular
                                     showUrl
                                 />
                             ) : (
-                                <div className={styles.previewText}>
+                                <div className={`${className} ${styles.previewText}`}>
                                     {_ts('addLeads', 'sourcePreview')}
                                 </div>
                             )
@@ -334,13 +424,15 @@ export default class LeadFormItem extends React.PureComponent {
                 );
             default:
                 return (
-                    <div className={styles.leadPreview} >
+                    <div className={className} >
                         {
                             values.attachment ? (
                                 <InternalGallery
                                     className={styles.galleryFile}
                                     galleryId={values.attachment && values.attachment.id}
                                     notFoundMessage={_ts('addLeads', 'leadFileNotFound')}
+                                    onTabularClick={this.setTabularMode}
+                                    showTabular
                                     showUrl
                                 />
                             ) :
@@ -377,6 +469,7 @@ export default class LeadFormItem extends React.PureComponent {
         const {
             active,
             lead = {},
+            isFormLoading,
             leadKey, // eslint-disable-line no-unused-vars
             onFormSubmitFailure, // eslint-disable-line no-unused-vars
             onFormSubmitSuccess, // eslint-disable-line no-unused-vars
@@ -394,40 +487,49 @@ export default class LeadFormItem extends React.PureComponent {
 
         const { faramValues = {} } = lead;
         const projectId = faramValues.project;
+        const pending = isFormLoading || this.state.pendingExtraction;
+
+        const className = `
+            ${styles.right}
+            ${!active ? styles.hidden : ''}
+        `;
 
         return (
-            <ResizableV
-                className={`${styles.right} ${!active ? styles.hidden : ''}`}
-                topContainerClassName={styles.top}
-                bottomContainerClassName={styles.bottom}
-                disabled={disableResize}
-                topChild={
-                    <Fragment>
-                        <LeadForm
-                            setSubmitFunction={this.setSubmitLeadFormFunction}
-                            className={styles.addLeadForm}
-                            lead={lead}
-                            projectId={projectId}
-                            onChange={this.handleFormChange}
-                            onFailure={this.handleFormFailure}
-                            onSuccess={this.handleFormSuccess}
-                            onApplyAllClick={this.handleApplyAllClick}
-                            onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                            onAddLeadGroupClick={this.handleAddLeadGroupClick}
-                            isExtractionLoading={this.state.pendingExtraction}
-                            isExtractionDisabled={!this.state.isUrlValid}
-                            onExtractClick={this.handleExtractClick}
-                            {...otherProps}
-                        />
-                        <AddLeadGroupModal />
-                    </Fragment>
-                }
-                bottomChild={
-                    active && !this.props.hidePreview
-                        ? <LeadPreview lead={lead} />
-                        : <div />
-                }
-            />
+            <div className={className}>
+                { pending && <LoadingAnimation /> }
+                <ResizableV
+                    className={styles.resizable}
+                    topContainerClassName={styles.top}
+                    bottomContainerClassName={styles.bottom}
+                    disabled={disableResize}
+                    topChild={
+                        <Fragment>
+                            <LeadForm
+                                setSubmitFunction={this.setSubmitLeadFormFunction}
+                                lead={lead}
+                                projectId={projectId}
+                                onChange={this.handleFormChange}
+                                onFailure={this.handleFormFailure}
+                                onSuccess={this.handleFormSuccess}
+                                onApplyAllClick={this.handleApplyAllClick}
+                                onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                                onAddLeadGroupClick={this.handleAddLeadGroupClick}
+                                isExtractionDisabled={!this.state.isUrlValid}
+                                onExtractClick={this.handleExtractClick}
+                                {...otherProps}
+                            />
+                            <AddLeadGroupModal />
+                        </Fragment>
+                    }
+                    bottomChild={
+                        active && !this.props.hidePreview
+                            ? <LeadPreview
+                                lead={lead}
+                                className={styles.leadPreview}
+                            /> : null
+                    }
+                />
+            </div>
         );
     }
 }

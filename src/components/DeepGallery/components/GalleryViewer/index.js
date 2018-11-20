@@ -26,6 +26,9 @@ const propTypes = {
     showScreenshot: PropTypes.bool,
     onScreenshotCapture: PropTypes.func,
 
+    showTabular: PropTypes.bool,
+    onTabularClick: PropTypes.func,
+
     invalidUrlMessage: PropTypes.string,
     cannotPreviewUrlMessage: PropTypes.string,
 };
@@ -38,6 +41,8 @@ const defaultProps = {
     showUrl: false,
     showScreenshot: false,
     onScreenshotCapture: undefined,
+    showTabular: false,
+    onTabularClick: undefined,
 
     invalidUrlMessage: undefined,
     cannotPreviewUrlMessage: undefined,
@@ -59,6 +64,10 @@ export default class GalleryViewer extends React.PureComponent {
         this.state = {
             screenshotMode: false,
         };
+    }
+
+    handleTabularClick = () => {
+        this.props.onTabularClick(this.props.mimeType);
     }
 
     handleScreenshot = (image) => {
@@ -148,7 +157,7 @@ export default class GalleryViewer extends React.PureComponent {
         );
     }
 
-    renderBar = ({ url, showScreenshot }) => {
+    renderBar = ({ url, showScreenshot, showTabular }) => {
         const isScreenshotable = showScreenshot;
         const urlbarClassNames = [
             styles.urlbar,
@@ -170,11 +179,20 @@ export default class GalleryViewer extends React.PureComponent {
                             className={styles.openLink}
                             href={url}
                             target="_blank"
+                            rel="noopener noreferrer"
                             title={_ts('components.galleryViewer', 'viewLinkTooltip')} // open link in new tab
                         >
                             <span className={iconNames.openLink} />
                         </a>
                         { isScreenshotable && this.renderScreenshotButton() }
+                        { showTabular &&
+                            <AccentButton
+                                iconName={iconNames.tabular}
+                                onClick={this.handleTabularClick}
+                                title={_ts('components.galleryViewer', 'convertTabular')}
+                                transparent
+                            />
+                        }
                     </div>
                 }
             </div>
@@ -200,7 +218,10 @@ export default class GalleryViewer extends React.PureComponent {
                     notHttps={!isHttps}
                 />
             );
-        } else if (!previewError && galleryMapping[mimeType] === galleryType.HTML) {
+        } else if (!previewError && (
+            galleryMapping[mimeType] === galleryType.HTML ||
+            url.endsWith('csv') || url.endsWith('txt')
+        )) {
             // NOTE: Error can occur if
             // 1. We cannot show iframe
             // 2. If there is no alternative https url and current url is http
@@ -217,6 +238,7 @@ export default class GalleryViewer extends React.PureComponent {
             canShowIframe,
             showUrl,
             showScreenshot,
+            showTabular,
         } = this.props;
         const { screenshotMode } = this.state;
 
@@ -243,6 +265,7 @@ export default class GalleryViewer extends React.PureComponent {
                         showUrl,
                         showBar,
                         showScreenshot,
+                        showTabular,
                     })
                 }
                 <div className={docContainerClassNames.join(' ')}>

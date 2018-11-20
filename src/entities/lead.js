@@ -42,6 +42,7 @@ export const mimeType = {
     ppt: 'application/vnd.ms-powerpoint',
     xls: 'application/vnd.ms-excel',
     xlxs: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    xlxs2: 'application/wps-office.xlsx',
     csv: 'text/csv',
     png: 'image/png',
     jpg: 'image/jpg',
@@ -86,6 +87,7 @@ export const leadPaneTypeMap = {
 
     [mimeType.xls]: LEAD_PANE_TYPE.spreadsheet,
     [mimeType.xlxs]: LEAD_PANE_TYPE.spreadsheet,
+    [mimeType.xlxs2]: LEAD_PANE_TYPE.spreadsheet,
 
     [mimeType.png]: LEAD_PANE_TYPE.image,
     [mimeType.jpg]: LEAD_PANE_TYPE.image,

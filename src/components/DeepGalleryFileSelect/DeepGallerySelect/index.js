@@ -242,7 +242,7 @@ export default class DgSelect extends React.PureComponent {
             );
         }
         return (
-            <a href={url} target="_blank">
+            <a href={url} target="_blank" rel="noopener noreferrer">
                 <i className={icon} />
             </a>
         );
