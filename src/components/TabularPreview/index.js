@@ -2,10 +2,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import Message from '#rscv/Message';
 import FixedTabs from '#rscv/FixedTabs';
 
 import SheetPreview from '#components/TabularSheetPreview';
 import { RequestClient } from '#request';
+import _ts from '#ts';
 import _cs from '#cs';
 
 import requests from './requests';
@@ -94,10 +96,9 @@ export default class TabularPreview extends React.PureComponent {
 
         if (invalid) {
             return (
-                // FIXME: Use _ts and Message
-                <div className={className}>
-                    Invalid tabular book
-                </div>
+                <Message className={className}>
+                    {_ts('tabular', 'invalid')}
+                </Message>
             );
         }
 

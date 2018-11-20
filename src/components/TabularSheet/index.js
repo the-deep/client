@@ -8,9 +8,9 @@ import NormalTaebul from '#rscv/Taebul';
 import { compareString, compareNumber, compareDate } from '#rsu/common';
 import _cs from '#cs';
 
-import { Header, StringCell, NumberCell, DateCell } from './renderers';
+import Header from './Header';
+import { StringCell, NumberCell, DateCell } from './renderers';
 
-// eslint-disable-next-line css-modules/no-unused-class
 import styles from './styles.scss';
 
 const Taebul = Sortable(ColumnWidth(NormalTaebul));

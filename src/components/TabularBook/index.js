@@ -152,7 +152,7 @@ export default class TabularBook extends React.PureComponent {
 
         if (invalid) {
             return (
-                <Message>
+                <Message className={className}>
                     {_ts('tabular', 'invalid')}
                 </Message>
             );
