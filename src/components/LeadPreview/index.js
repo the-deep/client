@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Message from '#rscv/Message';
 import { LEAD_TYPE } from '#entities/lead';
 import {
     InternalGallery,
@@ -13,9 +14,11 @@ import styles from './styles.scss';
 const propTypes = {
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     handleScreenshot: PropTypes.func.isRequired,
+    showScreenshot: PropTypes.boolean,
 };
 
 const defaultProps = {
+    showScreenshot: false,
 };
 
 export default class LeadPreview extends React.PureComponent {
@@ -29,7 +32,10 @@ export default class LeadPreview extends React.PureComponent {
     );
 
     render() {
-        const { lead } = this.props;
+        const {
+            lead,
+            showScreenshot,
+        } = this.props;
         const { sourceType: type, url, attachment } = lead;
 
         if (LeadPreview.isTypeWithUrl(type) && url) {
@@ -38,7 +44,7 @@ export default class LeadPreview extends React.PureComponent {
                     className={styles.preview}
                     url={url}
                     onScreenshotCapture={this.props.handleScreenshot}
-                    showScreenshot
+                    showScreenshot={showScreenshot}
                     showUrl
                 />
             );
@@ -48,19 +54,16 @@ export default class LeadPreview extends React.PureComponent {
                     className={styles.preview}
                     galleryId={attachment.id}
                     onScreenshotCapture={this.props.handleScreenshot}
-                    showScreenshot
+                    showScreenshot={showScreenshot}
                     showUrl
                 />
             );
         }
 
-        // FIXME: use message component
         return (
-            <div className={styles.emptyText}>
-                <h1>
-                    {_ts('components.leadPreview', 'previewNotAvailableText')}
-                </h1>
-            </div>
+            <Message>
+                {_ts('components.leadPreview', 'previewNotAvailableText')}
+            </Message>
         );
     }
 }
