@@ -4,7 +4,6 @@
 $width-assignee-column: 96px;
 
 .leads {
-    @extend %main-content;
     display: flex;
     flex-direction: column;
     margin: -$spacing-small-alt;
@@ -19,7 +18,7 @@ $width-assignee-column: 96px;
         flex-shrink: 0;
         justify-content: space-between;
         border-bottom: $width-separator-thin solid $color-separator-alt;
-        padding: $spacing-small;
+        padding: $spacing-small $spacing-medium;
 
         .add-lead-link {
             @extend %button-like-link;
@@ -53,14 +52,15 @@ $width-assignee-column: 96px;
     }
 
     .table-container {
+        @extend %main-content;
         @include background-color($color-foreground-alt);
         display: flex;
         position: relative;
         flex-direction: column;
         flex-grow: 1;
         margin: $spacing-small-alt;
-        border: $width-separator-thin solid $color-separator-alt;
         padding-bottom: $spacing-extra-small;
+        overflow: auto;
 
         .scroll-wrapper {
             flex-grow: 1;
@@ -102,7 +102,12 @@ $width-assignee-column: 96px;
                         &.assignee {
                             width: $width-assignee-column;
                         }
+
+                        >div {
+                            border-top: 0;
+                        }
                     }
+
                     .cell {
                         padding: $spacing-small;
 
@@ -149,21 +154,20 @@ $width-assignee-column: 96px;
                         justify-content: right;
                         text-align: right;
                     }
-
                 }
             }
         }
     }
 
     .footer {
-        @include background-color($color-foreground);
+        @include background-color($color-background-alt);
         display: flex;
         align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
         border-top: $width-separator-thin solid $color-separator;
         background-color: $color-foreground-alt;
-        padding: $spacing-small $spacing-medium-alt;
+        padding: $spacing-medium;
 
         .pager {
             display: flex;
@@ -177,7 +181,7 @@ $width-assignee-column: 96px;
                 margin: 0 $spacing-small;
                 margin-right: $spacing-extra-small;
                 @extend %button-like-link;
-                @include background-color($color-accent);
+                // @include background-color($color-accent);
             }
         }
 
