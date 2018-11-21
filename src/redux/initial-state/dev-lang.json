@@ -730,6 +730,8 @@
         "15008": "Reset sort",
         "15009": "Skip this sheet",
         "15010": "Header row",
+        "15011": "Convert to tabular",
+
         "-12279953": "Entry Cleared",
         "-94068330": "All local entries were cleared because associated analysis framework was removed.",
         "-4983139": "Remove lead group",
@@ -1036,7 +1038,8 @@
             "errorTitle": -35038655,
             "saveButtonTitle": -49385196,
             "screenshotButtonTitle": -7205609,
-            "viewLinkTooltip": -2224039
+            "viewLinkTooltip": -2224039,
+            "convertTabular": 15011
         },
         "components.internalGallery": {
             "loadingFileLabel": 1209,

@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 
 import AccentButton from '#rsca/Button/AccentButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
 import Message from '#rscv/Message';
 import urlRegex from '#rsu/regexForWeburl';
@@ -186,12 +187,13 @@ export default class GalleryViewer extends React.PureComponent {
                         </a>
                         { isScreenshotable && this.renderScreenshotButton() }
                         { showTabular &&
-                            <AccentButton
+                            <PrimaryButton
                                 iconName={iconNames.tabular}
                                 onClick={this.handleTabularClick}
                                 title={_ts('components.galleryViewer', 'convertTabular')}
-                                transparent
-                            />
+                            >
+                                {_ts('components.galleryViewer', 'convertTabular')}
+                            </PrimaryButton>
                         }
                     </div>
                 }

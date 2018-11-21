@@ -166,21 +166,26 @@ export default class LeadTabular extends React.PureComponent {
 
     renderSheetSettings = ({ sheetId, title }) => (
         <FaramGroup faramElementName={sheetId}>
-            <div className={styles.sheetTitle}>
-                {title}
+            <div className={styles.sheetSetting}>
+                <header className={styles.header}>
+                    <h4 className={styles.sheetTitle}>
+                        {title}
+                    </h4>
+                    <Checkbox
+                        className={styles.checkInput}
+                        faramElementName="skip"
+                        label={_ts('addLeads.tabular', 'skipLabel')}
+                    />
+                </header>
+                <NumberInput
+                    className={styles.sheetHeaderRowInput}
+                    faramElementName="headerRow"
+                    label={_ts('addLeads.tabular', 'headerRowLabel')}
+                    placeholder="Default: 1"
+                    showLabel
+                    showHintAndError
+                />
             </div>
-            <Checkbox
-                className={styles.checkInput}
-                faramElementName="skip"
-                label={_ts('addLeads.tabular', 'skipLabel')}
-            />
-            <NumberInput
-                faramElementName="headerRow"
-                label={_ts('addLeads.tabular', 'headerRowLabel')}
-                placeholder="Default: 1"
-                showLabel
-                showHintAndError
-            />
         </FaramGroup>
     )
 
@@ -193,6 +198,7 @@ export default class LeadTabular extends React.PureComponent {
         const { meta: { sheets } = {} } = this.state;
 
         if (!sheets) {
+            // FIXME: Error message or something
             return <div />;
         }
 
@@ -249,18 +255,24 @@ export default class LeadTabular extends React.PureComponent {
                 disabled={pending}
             >
                 <SelectInput
+                    className={styles.fileTypeSelect}
                     faramElementName="fileType"
                     label={_ts('addLeads.tabular', 'fileTypeLabel')}
                     options={LeadTabular.fileTypes}
                     showLabel
                     showHintAndError
+                    hideClearButton
+                    disabled={!!bookId}
                 />
                 {bookId && (
                     <FaramGroup faramElementName="options">
                         {this.renderSettingsForFileType(faramValues.fileType)}
                     </FaramGroup>
                 )}
-                <PrimaryButton type="submit">
+                <PrimaryButton
+                    type="submit"
+                    className={styles.submitButton}
+                >
                     {!bookId && _ts('addLeads.tabular', 'nextLabel')}
                     {bookId && _ts('addLeads.tabular', 'extractLabel')}
                 </PrimaryButton>
@@ -283,15 +295,16 @@ export default class LeadTabular extends React.PureComponent {
                 {pending && (<LoadingAnimation />)}
                 <div className={styles.header}>
                     <Button
-                        iconName={iconNames.prev}
+                        className={styles.backButton}
+                        iconName={iconNames.back}
                         onClick={onCancel}
                         transparent
                     />
-                    <h4>
+                    <h4 className={styles.title}>
                         {_ts('addLeads.tabular', 'title')}
                     </h4>
                 </div>
-                <div className={styles.body}>
+                <div className={styles.content}>
                     {this.renderForm(pending)}
                 </div>
             </div>
