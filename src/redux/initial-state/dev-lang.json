@@ -697,6 +697,9 @@
         "15009": "Skip this sheet",
         "15010": "Header row",
         "15011": "Number of entries from this lead",
+
+        "-12279953": "Entry Cleared",
+        "-94068330": "All local entries were cleared because associated analysis framework was removed.",
         "-4983139": "Remove lead group",
         "-49385196": "Save screenshot",
         "-42880698": "Discard screenshot",
