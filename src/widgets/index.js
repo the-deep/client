@@ -398,10 +398,16 @@ export const fetchWidgetViewComponent = widgetId => fetchWidget(
 // Same as above but also check if a frameworkComponent exists
 export const fetchWidgetFrameworkComponent = (widgetId, view, addedFrom) => {
     const { frameworkComponent } = fetchWidget(view, widgetId);
+    const tagComponent = fetchWidgetTagComponent(widgetId, view, addedFrom);
+    if (!tagComponent) {
+        return undefined;
+    }
+
     if (frameworkComponent) {
         return frameworkComponent;
     }
-    return fetchWidgetTagComponent(widgetId, view, addedFrom);
+
+    return tagComponent;
 };
 
 // Identify if there is a tag component
