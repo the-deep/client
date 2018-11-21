@@ -7,6 +7,7 @@ import Message from '#rscv/Message';
 import FixedTabs from '#rscv/FixedTabs';
 
 import {
+    activeProjectRoleSelector,
     editEntriesLeadSelector,
     editEntriesEntriesSelector,
     editEntriesFilteredEntriesSelector,
@@ -38,6 +39,7 @@ import EntriesList from './EntriesList';
 import styles from './styles.scss';
 
 const propTypes = {
+    projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     onExcerptCreate: PropTypes.func.isRequired,
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -49,6 +51,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    projectRole: {},
     entries: [],
     filteredEntries: [],
     statuses: {},
@@ -56,6 +59,7 @@ const defaultProps = {
 };
 
 const mapStateToProps = state => ({
+    projectRole: activeProjectRoleSelector(state),
     lead: editEntriesLeadSelector(state),
     entries: editEntriesEntriesSelector(state),
     filteredEntries: editEntriesFilteredEntriesSelector(state),
@@ -111,7 +115,7 @@ export default class LeftPane extends React.PureComponent {
                 <SimplifiedLeadPreview
                     className={styles.simplifiedPreview}
                     leadId={this.props.lead.id}
-                    // FIXME: Do not always call calculateHighlights here
+                    // FIXME: use memoize here
                     highlights={this.calculateHighlights()}
                     onLoad={this.handleLoadImages}
 
@@ -129,6 +133,9 @@ export default class LeftPane extends React.PureComponent {
                     bookId={this.props.lead.tabularBook}
                 />
             ),
+            mount: true,
+            lazyMount: true,
+            wrapContainer: true,
         },
         'assisted-tagging': {
             component: () => (
@@ -144,14 +151,23 @@ export default class LeftPane extends React.PureComponent {
             wrapContainer: true,
         },
         'original-preview': {
-            component: () => (
-                <div className={styles.originalPreview}>
-                    <LeadPreview
-                        lead={this.props.lead}
-                        handleScreenshot={this.handleScreenshot}
-                    />
-                </div>
-            ),
+            component: () => {
+                const {
+                    projectRole: {
+                        entryPermissions = {},
+                    },
+                } = this.props;
+
+                return (
+                    <div className={styles.originalPreview}>
+                        <LeadPreview
+                            lead={this.props.lead}
+                            handleScreenshot={this.handleScreenshot}
+                            showScreenshot={entryPermissions.create}
+                        />
+                    </div>
+                );
+            },
             mount: true,
             lazyMount: true,
             wrapContainer: true,
@@ -180,6 +196,7 @@ export default class LeftPane extends React.PureComponent {
                 </div>
             ),
             mount: true,
+            lazyMount: true,
             wrapContainer: true,
         },
     })
@@ -187,10 +204,12 @@ export default class LeftPane extends React.PureComponent {
     calculateTabsForLead = (lead, images) => {
         const leadPaneType = LeftPane.getPaneType(lead);
         let tabs = {};
+        const {
+            projectRole: {
+                entryPermissions = {},
+            },
+        } = this.props;
 
-        if (lead.tabularBook) {
-            tabs['tabular-preview'] = _ts('editEntry.overview.leftpane', 'quantitativeTabLabel');
-        }
         switch (leadPaneType) {
             case LEAD_PANE_TYPE.csv:
                 break;
@@ -231,10 +250,20 @@ export default class LeftPane extends React.PureComponent {
             default:
                 return undefined;
         }
+
+        // Adding other tabs
+        tabs['entries-listing'] = _ts('editEntry.overview.leftpane', 'entriesTabLabel');
+        if (lead.tabularBook) {
+            tabs['tabular-preview'] = _ts('editEntry.overview.leftpane', 'quantitativeTabLabel');
+        }
+
+        // Hiding tabs using conditional
         if (!images || images.length <= 0) {
             tabs['images-preview'] = undefined;
         }
-        tabs['entries-listing'] = _ts('editEntry.overview.leftpane', 'entriesTabLabel');
+        if (!entryPermissions.create) {
+            tabs['assisted-tagging'] = undefined;
+        }
         return tabs;
     }
 
