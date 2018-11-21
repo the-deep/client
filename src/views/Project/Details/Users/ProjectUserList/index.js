@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import {
     RequestClient,
@@ -15,6 +16,11 @@ import {
     compareDate,
 } from '#rsu/common';
 
+import {
+    setProjectMembershipsAction,
+    projectMembershipListSelector,
+} from '#redux';
+
 import Actions from './Actions';
 
 import styles from './styles.scss';
@@ -26,6 +32,9 @@ const propTypes = {
     userListRequest: PropTypes.shape({
         pending: PropTypes.bool.isRequired,
     }).isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
+    setProjectMemberships: PropTypes.func.isRequired,
+    memberships: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
 
     // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number.isRequired,
@@ -37,9 +46,6 @@ const defaultProps = {
     readOnly: false,
 };
 
-const emptyObject = {};
-const emptyList = [];
-
 const requests = {
     userListRequest: {
         onMount: true,
@@ -47,12 +53,33 @@ const requests = {
         url: '/project-memberships/',
         method: requestMethods.GET,
         query: ({ props: { projectId } }) => ({ project: projectId }),
+        onSuccess: ({
+            response = {},
+            props: {
+                projectId,
+                setProjectMemberships,
+            },
+        }) => {
+            setProjectMemberships({
+                projectId,
+                memberships: response.results,
+            });
+        },
     },
 };
 
 const getComparator = (func, key) => (a, b) => func(a[key], b[key]);
 const userListKeySelector = d => d.id;
 
+const mapStateToProps = state => ({
+    memberships: projectMembershipListSelector(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+    setProjectMemberships: params => dispatch(setProjectMembershipsAction(params)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requests)
 export default class ProjectUserList extends React.PureComponent {
     static propTypes = propTypes;
@@ -96,6 +123,7 @@ export default class ProjectUserList extends React.PureComponent {
                 modifier: row => (
                     <Actions
                         readOnly={this.props.readOnly}
+                        projectId={this.props.projectId}
                         row={row}
                     />
                 ),
@@ -107,6 +135,7 @@ export default class ProjectUserList extends React.PureComponent {
         const {
             className: classNameFromProps,
             userListRequest,
+            memberships = {},
         } = this.props;
 
         const className = `
@@ -114,12 +143,7 @@ export default class ProjectUserList extends React.PureComponent {
             ${styles.projectUserList}
         `;
 
-        const {
-            pending: pendingUserList,
-            response: {
-                results: userList = emptyList,
-            } = emptyObject,
-        } = userListRequest;
+        const { pending: pendingUserList } = userListRequest;
 
         return (
             <div className={className}>
@@ -132,7 +156,8 @@ export default class ProjectUserList extends React.PureComponent {
                     <LoadingAnimation />
                 ) : (
                     <Table
-                        data={userList}
+                        data={memberships}
+                        className={styles.table}
                         headers={this.headers}
                         keySelector={userListKeySelector}
                     />

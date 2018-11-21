@@ -1,4 +1,5 @@
 import update from '#rsu/immutable-update';
+import { listToMap } from '#rsu/common';
 
 export const SET_PROJECT_DETAILS = 'siloDomainData/SET_PROJECT_DETAILS';
 export const SET_PROJECT_DASHBOARD_DETAILS = 'siloDomainData/SET_PROJECT_DASHBOARD_DETAILS';
@@ -12,6 +13,8 @@ export const ADD_PROJECT_USERGROUP = 'siloDomainData/ADD_PROJECT_USERGROUP';
 export const REMOVE_PROJECT_MEMBERSHIP = 'siloDomainData/REMOVE_PROJECT_MEMBERSHIP';
 
 export const REMOVE_PROJECT_USERGROUP = 'siloDomainData/REMOVE_PROJECT_USERGROUP';
+
+const emptyObject = {};
 
 // REDUCER
 
@@ -51,10 +54,10 @@ export const setProjectUserGroupsAction = ({ userGroups, projectId }) => ({
     projectId,
 });
 
-export const removeProjectMembershipAction = ({ projectId, membership }) => ({
+export const removeProjectMembershipAction = ({ projectId, membershipId }) => ({
     type: REMOVE_PROJECT_MEMBERSHIP,
     projectId,
-    membership,
+    membershipId,
 });
 
 export const removeProjectUserGroupAction = ({ projectId, userGroup }) => ({
@@ -98,9 +101,11 @@ export const setProjectDetails = (state, action) => {
         role,
         versionId,
         regions,
-        memberships,
         userGroups,
+        memberships: membershipList,
     } = faramValues;
+
+    const memberships = listToMap(membershipList, m => m.id) || emptyObject;
 
     const settings = {
         projectsView: { $auto: {
@@ -112,7 +117,6 @@ export const setProjectDetails = (state, action) => {
                         startDate,
                         endDate,
                         regions,
-                        memberships,
                         userGroups,
                     } },
                     faramErrors: { $set: {} },
@@ -123,6 +127,9 @@ export const setProjectDetails = (state, action) => {
                     versionId: { $set: versionId },
                     role: { $set: role },
                 } },
+                memberships: {
+                    $set: memberships,
+                },
             } },
         } },
     };
@@ -168,8 +175,10 @@ export const changeProjectDetails = (state, action) => {
 export const setProjectMemberships = (state, action) => {
     const {
         projectId,
-        memberships,
+        memberships: membershipList,
     } = action;
+    const memberships = listToMap(membershipList, m => m.id) || emptyObject;
+
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
@@ -187,11 +196,12 @@ export const addProjectMembership = (state, action) => {
         projectId,
         membership,
     } = action;
+
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
-                memberships: { $autoArray: {
-                    $push: [membership],
+                memberships: { $auto: {
+                    [membership.id]: { $set: membership },
                 } },
             } },
         } },
@@ -252,19 +262,16 @@ export const setErrorProjectDetails = (state, action) => {
     return update(state, settings);
 };
 
-
 export const removeProjectMembership = (state, action) => {
     const {
         projectId,
-        membership,
+        membershipId,
     } = action;
 
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
-                memberships: {
-                    $filter: mem => membership.id !== mem.id,
-                },
+                memberships: { $unset: [membershipId] },
             } },
         } },
     };

@@ -1,4 +1,6 @@
 import { createSelector } from 'reselect';
+import { mapToList } from '#rsu/common';
+
 import { projectIdFromRoute } from '../domainData';
 
 const emptyObject = {};
@@ -39,7 +41,6 @@ export const projectFaramValueSelector = createSelector(
     localdata => localdata.faramValues || emptyObject,
 );
 
-
 export const projectUserGroupsSelector = createSelector(
     projectSelector,
     project => project.userGroups || emptyArray,
@@ -48,4 +49,14 @@ export const projectUserGroupsSelector = createSelector(
 export const projectMembershipsSelector = createSelector(
     projectSelector,
     project => project.memberships || emptyArray,
+);
+
+export const projectMembershipListSelector = createSelector(
+    projectMembershipsSelector,
+    memberships => mapToList(
+        memberships,
+        membership => ({
+            ...membership,
+        }),
+    ) || emptyArray,
 );

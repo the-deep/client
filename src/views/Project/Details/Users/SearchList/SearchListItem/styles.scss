@@ -3,6 +3,7 @@
 %list-item {
     display: flex;
     position: relative;
+    border-bottom: $width-separator-thin solid $color-separator;
     padding: $spacing-medium 0;
     overflow: hidden;
 
@@ -24,6 +25,11 @@
         transform: translateX(100%);
         transition: all $duration-transition-medium ease-in-out;
         opacity: 0;
+
+        &.pending {
+            transform: none;
+            opacity: 1;
+        }
     }
 
     &:hover {

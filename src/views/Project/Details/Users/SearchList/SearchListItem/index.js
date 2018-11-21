@@ -29,6 +29,8 @@ const propTypes = {
     memberId: PropTypes.number.isRequired,
     projectId: PropTypes.number.isRequired,
     username: PropTypes.string,
+    // eslint-disable-next-line react/no-unused-prop-types
+    onItemRemove: PropTypes.func.isRequired,
     usergroupTitle: PropTypes.string,
     userMembershipRequest: RequestPropType.isRequired,
     usergroupMembershipRequest: RequestPropType.isRequired,
@@ -41,16 +43,31 @@ const requests = {
         body: ({
             params: { membership },
         }) => membership,
-        isUnique: true,
-        group: 'usersRequest',
+        onSuccess: ({
+            response,
+            params: {
+                membership: {
+                    member,
+                } = {},
+            } = {},
+            props: {
+                projectId,
+                addProjectMember,
+                onItemRemove,
+            },
+        }) => {
+            addProjectMember({
+                projectId,
+                membership: response,
+            });
+            onItemRemove(member);
+        },
     },
 
     usergroupMembershipRequest: {
         url: '/project-usergroups/',
         method: requestMethods.POST,
         body: ({ params: { membership } }) => membership,
-        isUnique: true,
-        group: 'usersRequest',
     },
 };
 
@@ -107,11 +124,17 @@ export default class SearchListItem extends React.PureComponent {
             type,
             username,
             usergroupTitle,
+            usergroupMembershipRequest,
+            userMembershipRequest,
             className: classNameFromProps,
         } = this.props;
 
         const USER = 'user';
         const USERGROUP = 'user_group';
+        const actionButtonsClassNames = [styles.actionButtons];
+        if (usergroupMembershipRequest.pending || userMembershipRequest.pending) {
+            actionButtonsClassNames.push(styles.pending);
+        }
 
         if (type === USERGROUP) {
             const className = `
@@ -130,11 +153,12 @@ export default class SearchListItem extends React.PureComponent {
                     <div className={styles.title}>
                         { usergroupTitle }
                     </div>
-                    <div className={styles.actionButtons}>
+                    <div className={actionButtonsClassNames.join(' ')}>
                         <PrimaryButton
                             onClick={this.handleAddUsergroupButtonClick}
                             iconName={iconNames.add}
                             title={_ts('project.users', 'addUsergroupButtonTooltip')}
+                            pending={usergroupMembershipRequest.pending}
                         />
                     </div>
                 </div>
@@ -156,11 +180,12 @@ export default class SearchListItem extends React.PureComponent {
                     <div className={styles.title}>
                         { username }
                     </div>
-                    <div className={styles.actionButtons}>
+                    <div className={actionButtonsClassNames.join(' ')}>
                         <PrimaryButton
                             onClick={this.handleAddUserButtonClick}
                             iconName={iconNames.add}
                             title={_ts('project.users', 'addUserButtonTooltip')}
+                            pending={userMembershipRequest.pending}
                         />
                     </div>
                 </div>

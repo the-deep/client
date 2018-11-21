@@ -1696,7 +1696,8 @@
             "searchTipText": 12508,
             "roleSelectInputTitle": 12509,
             "removeMembershipConfirmationMessage": 12510,
-            "removeMembershipButtonPlaceholder": 419
+            "removeMembershipButtonPlaceholder": 419,
+            "userListHeading": -54185786
         },
         "project": {
             "projectGetFailure": 2500,

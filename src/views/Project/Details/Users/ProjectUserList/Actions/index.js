@@ -10,6 +10,7 @@ import {
     requestMethods,
 } from '#request';
 import {
+    removeProjectMembershipAction,
     projectRoleListSelector,
     activeUserSelector,
 } from '#redux';
@@ -24,14 +25,24 @@ const requests = {
         method: requestMethods.PATCH,
         body: ({ params: { membership } }) => membership,
         isUnique: true,
-        group: 'usersRequest',
     },
 
     removeUserMembershipRequest: {
         url: ({ params: { membershipId } }) => `/project-memberships/${membershipId}/`,
         method: requestMethods.DELETE,
+        onSuccess: ({
+            params: { membershipId },
+            props: {
+                removeProjectMembership,
+                projectId,
+            },
+        }) => {
+            removeProjectMembership({
+                projectId,
+                membershipId,
+            });
+        },
         isUnique: true,
-        group: 'usersRequest',
     },
 };
 
@@ -42,6 +53,8 @@ const RequestPropType = PropTypes.shape({
 const propTypes = {
     changeUserRoleRequest: RequestPropType.isRequired,
     removeUserMembershipRequest: RequestPropType.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
+    removeProjectMembership: PropTypes.func.isRequired,
     row: PropTypes.shape({
         role: PropTypes.string,
     }).isRequired,
@@ -63,10 +76,14 @@ const mapStateToProps = state => ({
     activeUser: activeUserSelector(state),
 });
 
+const mapDispatchToProps = dispatch => ({
+    removeProjectMembership: params => dispatch(removeProjectMembershipAction(params)),
+});
+
 const projectRoleKeySelector = d => d.id;
 const projectRoleLabelSelector = d => d.title;
 
-@connect(mapStateToProps)
+@connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requests)
 export default class Actions extends React.PureComponent {
     static propTypes = propTypes;
@@ -90,9 +107,7 @@ export default class Actions extends React.PureComponent {
 
     handleRemoveMembershipButtonClick = () => {
         const {
-            row: {
-                id: membershipId,
-            },
+            row: { id: membershipId },
             removeUserMembershipRequest,
         } = this.props;
 

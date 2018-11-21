@@ -8,6 +8,10 @@
         flex-shrink: 0;
         background-color: $color-background-header;
         padding: $spacing-medium;
+
+        .heading {
+            padding-bottom: $spacing-small;
+        }
     }
 
     .list-container {

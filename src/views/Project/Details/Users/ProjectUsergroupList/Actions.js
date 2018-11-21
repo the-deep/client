@@ -30,7 +30,6 @@ const requests = {
         url: ({ params: { membershipId } }) => `/project-usergroups/${membershipId}/`,
         method: requestMethods.DELETE,
         isUnique: true,
-        group: 'usersRequest',
     },
 };
 
