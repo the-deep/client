@@ -632,7 +632,7 @@ export default class EditEntries extends React.PureComponent {
                             const { routeUrl } = this.props;
                             if (location.pathname === routeUrl) {
                                 return true;
-                            } else if (isSaveDisabled) {
+                            } else if (!hasSavableEntries) {
                                 return true;
                             }
                             return _ts('common', 'youHaveUnsavedChanges');
@@ -678,6 +678,7 @@ export default class EditEntries extends React.PureComponent {
                         <SuccessButton
                             disabled={isSaveDisabled}
                             onClick={this.handleSave}
+                            pending={pendingEditEntryData}
                         >
                             { _ts('editEntry', 'saveButtonTitle') }
                         </SuccessButton>

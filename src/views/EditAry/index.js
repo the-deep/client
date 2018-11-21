@@ -1,26 +1,38 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Prompt } from 'react-router-dom';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import { reverseRoute, checkVersion } from '#rsu/common';
 import Message from '#rscv/Message';
 import SuccessButton from '#rsca/Button/SuccessButton';
+import DangerButton from '#rsca/Button/DangerButton';
+import { detachedFaram } from '#rscg/Faram';
 
+import Cloak from '#components/Cloak';
 import {
     RequestCoordinator,
     RequestClient,
+    requestMethods,
 } from '#request';
 import {
+    routeUrlSelector,
     setAryTemplateAction,
     setAryForEditAryAction,
     setGeoOptionsAction,
+    setErrorAryForEditAryAction,
+    editAryHasErrorsSelector,
+    editAryIsPristineSelector,
+    assessmentSchemaSelector,
 
+    editAryFaramValuesSelector,
     projectIdFromRoute,
     leadIdFromRouteSelector,
     leadGroupIdFromRouteSelector,
     editAryVersionIdSelector,
+    editAryServerIdSelector,
 } from '#redux';
 import { pathNames } from '#constants';
 import notify from '#notify';
@@ -32,11 +44,19 @@ import RightPanel from './RightPanel';
 import styles from './styles.scss';
 
 const propTypes = {
+    routeUrl: PropTypes.string.isRequired,
     projectId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
+
+    editAryFaramValues: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    schema: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    editAryHasErrors: PropTypes.bool.isRequired,
+    editAryIsPristine: PropTypes.bool.isRequired,
+    setErrorAry: PropTypes.func.isRequired,
 
     activeLeadId: PropTypes.number, // eslint-disable-line react/no-unused-prop-types
     activeLeadGroupId: PropTypes.number, // eslint-disable-line react/no-unused-prop-types
     editAryVersionId: PropTypes.number, // eslint-disable-line react/no-unused-prop-types
+    editAryServerId: PropTypes.number,
     setAry: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     setAryTemplate: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     setGeoOptions: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
@@ -46,6 +66,7 @@ const propTypes = {
     leadRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     leadGroupRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     geoOptionsRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    arySaveRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     // eslint-disable-next-line react/forbid-prop-types
     assessmentTemplateRequest: PropTypes.object.isRequired,
     // FIXME: inject for individual request
@@ -53,10 +74,13 @@ const propTypes = {
 };
 
 const defaultProps = {
+    schema: {},
     editAryVersionId: undefined,
+    editAryServerId: undefined,
 
     activeLeadId: undefined,
     activeLeadGroupId: undefined,
+    editAryFaramValues: {},
 };
 
 const mapStateToProps = state => ({
@@ -64,9 +88,16 @@ const mapStateToProps = state => ({
     activeLeadId: leadIdFromRouteSelector(state),
     activeLeadGroupId: leadGroupIdFromRouteSelector(state),
     editAryVersionId: editAryVersionIdSelector(state),
+    editAryServerId: editAryServerIdSelector(state),
+    editAryHasErrors: editAryHasErrorsSelector(state),
+    editAryIsPristine: editAryIsPristineSelector(state),
+    editAryFaramValues: editAryFaramValuesSelector(state),
+    schema: assessmentSchemaSelector(state),
+    routeUrl: routeUrlSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
+    setErrorAry: params => dispatch(setErrorAryForEditAryAction(params)),
     setAryTemplate: params => dispatch(setAryTemplateAction(params)),
     setAry: params => dispatch(setAryForEditAryAction(params)),
     setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
@@ -82,13 +113,18 @@ const requests = {
         ),
         onMount: ({ props }) => !!props.activeLeadId || !!props.activeLeadGroupId,
         onPropsChanged: ['activeLeadId', 'activeLeadGroupId'],
-        onSuccess: ({ props, response }) => {
+        onSuccess: ({ props, response, params }) => {
             const oldVersionId = props.editAryVersionId;
 
-            const {
-                shouldSetValue,
-                isValueOverriden,
-            } = checkVersion(oldVersionId, response.versionId);
+            let shouldSetValue = true;
+            let isValueOverriden = false;
+
+            if (!params.override) {
+                ({
+                    shouldSetValue,
+                    isValueOverriden,
+                } = checkVersion(oldVersionId, response.versionId));
+            }
 
             if (shouldSetValue) {
                 props.setAry({
@@ -158,6 +194,31 @@ const requests = {
             });
         },
     },
+    arySaveRequest: {
+        schema: 'aryPutResponse',
+        url: ({ params: { value } }) => (value.id ? `/assessments/${value.id}/` : '/assessments/'),
+        method: ({ params: { value } }) => (value.id ? requestMethods.PUT : requestMethods.POST),
+        body: ({ params }) => params.value,
+        onSuccess: ({ props, response }) => {
+            props.setAry({
+                leadId: response.lead,
+                serverId: response.id,
+                versionId: response.versionId,
+                metadata: response.metadata,
+                methodology: response.methodology,
+                summary: response.summary,
+                score: response.score,
+            });
+
+            // FIXME: use strings
+            notify.send({
+                type: notify.type.SUCCESS,
+                title: 'Assessment',
+                message: 'Assessment save successful.',
+                duration: notify.duration.MEDIUM,
+            });
+        },
+    },
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -180,8 +241,52 @@ export default class EditAry extends React.PureComponent {
         });
     }
 
+    shouldHideSaveButton = ({ assessmentPermissions }) => (
+        this.props.editAryServerId
+            ? !assessmentPermissions.modify
+            : !assessmentPermissions.create
+    )
+
     handleActiveSectorChange = (activeSector) => {
         this.setState({ activeSector });
+    }
+
+    handleCancelButtonClick = () => {
+        this.props.assessmentRequest.do({
+            override: true,
+        });
+    }
+
+    handleFaramValidationSuccess = (value) => {
+        this.props.arySaveRequest.do({
+            value: {
+                ...value,
+                id: this.props.editAryServerId,
+            },
+        });
+    };
+
+    handleFaramValidationFailure = (faramErrors) => {
+        if (this.props.activeLeadId) {
+            this.props.setErrorAry({
+                leadId: this.props.activeLeadId,
+                faramErrors,
+            });
+        } else {
+            this.props.setErrorAry({
+                leadGroupId: this.props.activeLeadGroupId,
+                faramErrors,
+            });
+        }
+    };
+
+    handleSaveButtonClick = () => {
+        detachedFaram({
+            value: this.props.editAryFaramValues,
+            schema: this.props.schema,
+            onValidationFailure: this.handleFaramValidationFailure,
+            onValidationSuccess: this.handleFaramValidationSuccess,
+        });
     }
 
     render() {
@@ -191,9 +296,14 @@ export default class EditAry extends React.PureComponent {
             leadGroupRequest,
             assessmentTemplateRequest,
             geoOptionsRequest,
+            arySaveRequest,
+
             projectId,
             activeLeadId,
+            editAryIsPristine,
+            editAryHasErrors,
         } = this.props;
+
         const {
             noTemplate,
             activeSector,
@@ -208,6 +318,7 @@ export default class EditAry extends React.PureComponent {
         } else if (
             leadRequest.pending
                 || leadGroupRequest.pending
+                // FIXME: remove following line after Request has been fixed
                 || assessmentRequest.pending
                 || assessmentTemplateRequest.pending
                 || geoOptionsRequest.pending
@@ -219,14 +330,28 @@ export default class EditAry extends React.PureComponent {
             projectId,
         });
 
+        // FIXME: leadRequest.response was undefined once
         const title = activeLeadId
             ? leadRequest.response.title
             : (leadGroupRequest.response.leads || []).map(lead => lead.title).join(',');
 
-        // FIXME: add prompt on leaving page
+        const shouldHidePrompt = editAryIsPristine;
 
         return (
             <div className={styles.editAssessment}>
+                <Prompt
+                    message={
+                        (location) => {
+                            const { routeUrl } = this.props;
+                            if (location.pathname === routeUrl) {
+                                return true;
+                            } else if (shouldHidePrompt) {
+                                return true;
+                            }
+                            return _ts('common', 'youHaveUnsavedChanges');
+                        }
+                    }
+                />
                 <header className={styles.header}>
                     <BackLink
                         defaultLink={exitPath}
@@ -234,13 +359,30 @@ export default class EditAry extends React.PureComponent {
                     <h4 className={styles.heading}>
                         {title}
                     </h4>
-                    <div className={styles.actionButtons}>
-                        <SuccessButton
-                            disabled
-                        >
-                            { _ts('editAssessment', 'saveButtonTitle') }
-                        </SuccessButton>
-                    </div>
+                    <Cloak
+                        hide={this.shouldHideSaveButton}
+                        render={
+                            <div className={styles.actionButtons}>
+                                <DangerButton
+                                    disabled={editAryIsPristine || assessmentRequest.pending}
+                                    onClick={this.handleCancelButtonClick}
+                                >
+                                    { _ts('editAssessment', 'cancelButtonTitle') }
+                                </DangerButton>
+                                <SuccessButton
+                                    pending={arySaveRequest.pending}
+                                    onClick={this.handleSaveButtonClick}
+                                    disabled={
+                                        editAryIsPristine
+                                            || editAryHasErrors
+                                            || assessmentRequest.pending
+                                    }
+                                >
+                                    { _ts('editAssessment', 'saveButtonTitle') }
+                                </SuccessButton>
+                            </div>
+                        }
+                    />
                 </header>
                 <div className={styles.content}>
                     <ResizableH
@@ -255,8 +397,16 @@ export default class EditAry extends React.PureComponent {
                             />
                         }
                         rightChild={
-                            <RightPanel
-                                onActiveSectorChange={this.handleActiveSectorChange}
+                            <Cloak
+                                makeReadOnly={this.shouldHideSaveButton}
+                                render={
+                                    <RightPanel
+                                        onActiveSectorChange={this.handleActiveSectorChange}
+                                        pending={
+                                            arySaveRequest.pending || assessmentRequest.pending
+                                        }
+                                    />
+                                }
                             />
                         }
                     />

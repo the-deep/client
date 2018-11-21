@@ -1,4 +1,13 @@
 import { createSelector } from 'reselect';
+
+import { getObjectChildren } from '#rsu/common';
+import { median, sum, bucket } from '#rsu/stats';
+import {
+    requiredCondition,
+    dateCondition,
+} from '#rscg/Faram';
+import Baksa from '#components/Baksa';
+
 import { activeUserSelector } from '../auth';
 import {
     groupIdFromRoute,
@@ -31,6 +40,115 @@ import {
 
 const emptyList = [];
 const emptyObject = {};
+
+// helpers
+
+const createScoreSchema = (scorePillars = [], scoreMatrixPillars = []) => {
+    const scoreSchema = {
+        fields: {
+            pillars: [],
+            matrixPillars: [],
+
+            finalScore: [],
+        },
+    };
+
+    scorePillars.forEach((pillar) => {
+        scoreSchema.fields[`${pillar.id}-score`] = [];
+    });
+    scoreMatrixPillars.forEach((pillar) => {
+        scoreSchema.fields[`${pillar.id}-matrix-score`] = [];
+    });
+
+    return scoreSchema;
+};
+
+const createAdditionalDocumentsSchema = () => {
+    const {
+        bothPageRequiredCondition,
+        validPageRangeCondition,
+        validPageNumbersCondition,
+        pendingCondition,
+    } = Baksa;
+
+    const schema = { fields: {
+        executiveSummary: [
+            bothPageRequiredCondition,
+            validPageRangeCondition,
+            validPageNumbersCondition,
+            pendingCondition,
+        ],
+        assessmentData: [pendingCondition],
+        questionnaire: [
+            bothPageRequiredCondition,
+            validPageRangeCondition,
+            validPageNumbersCondition,
+            pendingCondition,
+        ],
+    } };
+    return schema;
+};
+
+const createBasicInformationSchema = (aryTemplateMetadata = {}) => {
+    // Dynamic fields from metadataGroup
+    const dynamicFields = {};
+    Object.keys(aryTemplateMetadata).forEach((key) => {
+        aryTemplateMetadata[key].fields.forEach((field) => {
+            if (field.fieldType === 'date') {
+                dynamicFields[field.id] = [requiredCondition, dateCondition];
+            } else {
+                dynamicFields[field.id] = [requiredCondition];
+            }
+        });
+    });
+
+    const schema = { fields: dynamicFields };
+    return schema;
+};
+
+const createMethodologySchema = (aryTemplateMethodology = {}) => {
+    const schema = { fields: {
+        attributes: {
+            keySelector: d => d.key,
+            member: { fields: {
+                // NOTE: inject here
+            } },
+            validation: (value) => {
+                const errors = [];
+                if (!value || value.length < 1) {
+                    // FIXME: Use strings
+                    errors.push('There should be at least one value');
+                }
+                return errors;
+            },
+        },
+
+        sectors: [],
+        focuses: [],
+        locations: [],
+        affectedGroups: [],
+
+        objectives: [],
+        dataCollectionTechniques: [],
+        sampling: [],
+        limitations: [],
+    } };
+
+    const dynamicFields = {};
+    Object.keys(aryTemplateMethodology).forEach((key) => {
+        const methodologyGroup = aryTemplateMethodology[key];
+        methodologyGroup.fields.forEach((field) => {
+            if (field.fieldType === 'date') {
+                dynamicFields[field.id] = [requiredCondition, dateCondition];
+            } else {
+                dynamicFields[field.id] = [requiredCondition];
+            }
+        });
+    });
+    schema.fields.attributes.member.fields = dynamicFields;
+
+    return schema;
+};
 
 
 // active user
@@ -189,9 +307,9 @@ export const projectOptionsSelector = createSelector(
 // projectIdFromRoute
 export const aryTemplateSelector = createSelector(
     aryTemplatesSelector,
-    projectDetailsSelector,
-    (aryTemplates, project) => (
-        aryTemplates[project.id] || emptyObject
+    projectIdFromRoute,
+    (aryTemplates, projectId) => (
+        aryTemplates[projectId] || emptyObject
     ),
 );
 
@@ -314,6 +432,91 @@ export const assessmentMinFinalScoreSelector = createSelector(
 export const assessmentMaxFinalScoreSelector = createSelector(
     assessmentScoreBucketsSelector,
     buckets => Math.max(...buckets.map(s => s[2])),
+);
+
+export const assessmentSchemaSelector = createSelector(
+    aryTemplateMetadataSelector,
+    aryTemplateMethodologySelector,
+    assessmentPillarsSelector,
+    assessmentMatrixPillarsSelector,
+    (
+        aryTemplateMetadata,
+        aryTemplateMethodology,
+        scorePillars,
+        scoreMatrixPillars,
+    ) => {
+        const schema = { fields: {
+            metadata: {
+                fields: {
+                    basicInformation: createBasicInformationSchema(aryTemplateMetadata),
+                    additionalDocuments: createAdditionalDocumentsSchema(),
+                },
+            },
+            methodology: createMethodologySchema(aryTemplateMethodology),
+            summary: [],
+            score: createScoreSchema(scorePillars, scoreMatrixPillars),
+        } };
+        return schema;
+    },
+);
+
+export const assessmentComputeSchemaSelector = createSelector(
+    assessmentPillarsSelector,
+    assessmentMatrixPillarsSelector,
+    assessmentScoreScalesSelector,
+    assessmentScoreBucketsSelector,
+    (
+        scorePillars = [],
+        scoreMatrixPillars = [],
+        scoreScales = [],
+        scoreBuckets = [],
+    ) => {
+        if (scoreScales.length === 0) {
+            return {};
+        }
+
+        const scoreSchema = {};
+
+        const getScaleVal = v => scoreScales.find(s => String(s.value) === String(v)).value;
+
+        scorePillars.forEach((pillar) => {
+            scoreSchema[`${pillar.id}-score`] = (data, score) => {
+                const pillarObj = getObjectChildren(score, ['pillars', pillar.id]) || emptyObject;
+                const pillarValues = Object.values(pillarObj).map(v => getScaleVal(v));
+                return sum(pillarValues);
+            };
+        });
+
+        scoreMatrixPillars.forEach((pillar) => {
+            const scales = Object.values(pillar.scales).reduce(
+                (acc, b) => [...acc, ...Object.values(b)],
+                [],
+            );
+            const getMatrixScaleVal = v => scales.find(s => String(s.id) === String(v)).value;
+
+            scoreSchema[`${pillar.id}-matrix-score`] = (data, score) => {
+                const pillarObj = getObjectChildren(score, ['matrixPillars', pillar.id]) || emptyObject;
+                const pillarValues = Object.values(pillarObj).map(v => getMatrixScaleVal(v));
+                return median(pillarValues) * 5;
+            };
+        });
+
+        scoreSchema.finalScore = (data, score) => {
+            const pillarScores = scorePillars.map(
+                p => (getObjectChildren(score, [`${p.id}-score`]) || 0) * p.weight,
+            );
+            const matrixPillarScores = scoreMatrixPillars.map(
+                p => (getObjectChildren(score, [`${p.id}-matrix-score`]) || 0) * p.weight,
+            );
+
+            const average = sum([...pillarScores, ...matrixPillarScores]);
+            return bucket(average, scoreBuckets);
+        };
+
+        return { fields: {
+            score: { fields: scoreSchema },
+        } };
+    },
 );
 
 // afIdFromRoute

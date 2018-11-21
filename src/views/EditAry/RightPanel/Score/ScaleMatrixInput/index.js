@@ -16,9 +16,12 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     scales: PropTypes.object,
     // eslint-disable-next-line react/forbid-prop-types
-    scaleValues: PropTypes.object,
+    scaleValues: PropTypes.array,
     value: PropTypes.number,
     onChange: PropTypes.func,
+
+    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 
     keySelector: PropTypes.func.isRequired,
     colorSelector: PropTypes.func.isRequired,
@@ -28,9 +31,11 @@ const defaultProps = {
     rows: [],
     columns: [],
     scales: {},
-    scaleValues: {},
+    scaleValues: [],
     value: undefined,
     onChange: () => {},
+    disabled: false,
+    readOnly: false,
 };
 
 @FaramInputElement
@@ -123,6 +128,10 @@ export default class ScaleMatrixInput extends React.PureComponent {
             scales,
             scaleValues,
             value,
+            keySelector,
+            colorSelector,
+            disabled,
+            readOnly,
         } = this.props;
 
         const {
@@ -133,11 +142,9 @@ export default class ScaleMatrixInput extends React.PureComponent {
         const scale = scales[rowKey][columnKey];
 
         const scaleValue = scaleValues.find(
-            sv => scale.value === this.props.keySelector(sv),
+            sv => scale.value === keySelector(sv),
         );
-        const scaleValueColor = this.props.colorSelector(scaleValue);
-
-        // const scaleValue = scaleValues[scale.value];
+        const scaleValueColor = colorSelector(scaleValue);
 
         const title = `${rowTitles[rowKey]}\n\n${columnTitles[columnKey]}`;
 
@@ -165,6 +172,7 @@ export default class ScaleMatrixInput extends React.PureComponent {
                     className={styles.button}
                     onClick={() => { this.handleCellClick(scale.id); }}
                     type="button"
+                    disabled={readOnly || disabled}
                 >
                     { scale.value }
                 </button>
