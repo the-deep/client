@@ -69,9 +69,9 @@ LogoutLink.defaultProps = {
     disabled: false,
 };
 
-const DropItem = ({ itemKey, disabled, to, iconName }) => (
+const DropItem = ({ itemKey, disabled, iconName, ...otherProps }) => (
     <Link
-        to={to}
+        to={reverseRoute(pathNames[itemKey], otherProps)}
         className={`${styles.dropdownItem} ${disabled ? styles.disabled : ''}`}
         disabled={disabled}
     >
@@ -90,8 +90,8 @@ DropItem.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-    activeProject: activeProjectIdFromStateSelector(state),
-    activeCountry: activeCountryIdFromStateSelector(state),
+    activeProjectId: activeProjectIdFromStateSelector(state),
+    activeCountryId: activeCountryIdFromStateSelector(state),
     activeUser: activeUserSelector(state),
     userInformation: currentUserInformationSelector(state),
 });
@@ -103,8 +103,8 @@ const mapDispatchToProps = dispatch => ({
 
 const propTypes = {
     className: PropTypes.string,
-    activeCountry: PropTypes.number,
-    activeProject: PropTypes.number,
+    activeCountryId: PropTypes.number,
+    activeProjectId: PropTypes.number,
     logout: PropTypes.func.isRequired,
     stopSiloTasks: PropTypes.func.isRequired,
     activeUser: PropTypes.shape({
@@ -117,8 +117,8 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    activeProject: undefined,
-    activeCountry: undefined,
+    activeProjectId: undefined,
+    activeCountryId: undefined,
     activeUser: {},
     userInformation: {},
 };
@@ -150,19 +150,14 @@ export default class NavDrop extends React.PureComponent {
 
     renderDropItem = (key, item) => {
         const {
-            activeProject,
-            activeCountry,
+            activeProjectId,
+            activeCountryId,
             activeUser = {},
         } = this.props;
 
-        const params = {
-            projectId: activeProject,
-            countryId: activeCountry,
-            userId: activeUser.userId,
-        };
+        console.warn(activeUser);
 
         const iconName = NavDrop.dropdownItemIcons[key];
-        const to = reverseRoute(pathNames[key], params);
 
         return (
             <Cloak
@@ -171,8 +166,10 @@ export default class NavDrop extends React.PureComponent {
                 render={
                     <DropItem
                         itemKey={key}
-                        to={to}
                         iconName={iconName}
+                        projectId={activeProjectId}
+                        countryId={activeCountryId}
+                        userId={activeUser.userId}
                     />
                 }
             />

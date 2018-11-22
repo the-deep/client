@@ -108,7 +108,6 @@ export default class LeadForm extends React.PureComponent {
             valuesChanged = true;
         }
 
-        // FIXME: don't use this, use utils by dahal
         if (!values.publishedOn) {
             const now = new Date();
             newValues.publishedOn = formatDate(now, 'yyyy-MM-dd');
