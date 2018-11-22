@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import {
     RequestClient,
@@ -10,6 +11,11 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import { FaramListElement } from '#rscg/FaramElements';
 import NormalTable from '#rscv/Table';
 import { compareString } from '#rsu/common';
+
+import {
+    setProjectUsergroupsAction,
+    projectUsergroupListSelector,
+} from '#redux';
 
 import Actions from './Actions';
 
@@ -23,6 +29,9 @@ const propTypes = {
     usergroupListRequest: PropTypes.shape({
         pending: PropTypes.bool.isRequired,
     }).isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
+    setProjectUsergroups: PropTypes.func.isRequired,
+    usergroups: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
 
     // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number.isRequired,
@@ -40,17 +49,35 @@ const requests = {
     usergroupListRequest: {
         onMount: true,
         onPropsChange: ['projectId'],
-        url: '/project-usergroups',
+        url: '/project-usergroups/',
         method: requestMethods.GET,
         query: ({ props: { projectId } }) => ({ project: projectId }),
+        onSuccess: ({
+            response = {},
+            props: {
+                projectId,
+                setProjectUsergroups,
+            },
+        }) => {
+            setProjectUsergroups({
+                projectId,
+                usergroups: response.results,
+            });
+        },
     },
 };
 
-const emptyObject = {};
-const emptyList = [];
-
 const getComparator = (func, key) => (a, b) => func(a[key], b[key]);
 
+const mapStateToProps = state => ({
+    usergroups: projectUsergroupListSelector(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+    setProjectUsergroups: params => dispatch(setProjectUsergroupsAction(params)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requests)
 export default class ProjectUsergroupList extends React.PureComponent {
     static propTypes = propTypes;
@@ -73,6 +100,7 @@ export default class ProjectUsergroupList extends React.PureComponent {
                 order: 4,
                 modifier: row => (
                     <Actions
+                        projectId={this.props.projectId}
                         readOnly={this.props.readOnly}
                         row={row}
                     />
@@ -86,10 +114,8 @@ export default class ProjectUsergroupList extends React.PureComponent {
             className: classNameFromProps,
             usergroupListRequest: {
                 pending: pendingUsergroupList,
-                response: {
-                    results: usergroupList = emptyList,
-                } = emptyObject,
             },
+            usergroups,
         } = this.props;
 
         const className = `
@@ -108,7 +134,8 @@ export default class ProjectUsergroupList extends React.PureComponent {
                     <LoadingAnimation />
                 ) : (
                     <Table
-                        data={usergroupList}
+                        data={usergroups}
+                        className={styles.table}
                         headers={this.headers}
                         keySelector={usergroupListKeySelector}
                     />

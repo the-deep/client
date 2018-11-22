@@ -11,7 +11,6 @@ export const SET_PROJECT_USERGROUPS = 'siloDomainData/SET_PROJECT_USERGROUPS';
 export const ADD_PROJECT_USERGROUP = 'siloDomainData/ADD_PROJECT_USERGROUP';
 
 export const REMOVE_PROJECT_MEMBERSHIP = 'siloDomainData/REMOVE_PROJECT_MEMBERSHIP';
-
 export const REMOVE_PROJECT_USERGROUP = 'siloDomainData/REMOVE_PROJECT_USERGROUP';
 
 const emptyObject = {};
@@ -42,15 +41,15 @@ export const addProjectMembershipAction = ({ projectId, membership }) => ({
     membership,
 });
 
-export const addProjectUserGroupAction = ({ projectId, userGroup }) => ({
+export const addProjectUsergroupAction = ({ projectId, usergroup }) => ({
     type: ADD_PROJECT_USERGROUP,
     projectId,
-    userGroup,
+    usergroup,
 });
 
-export const setProjectUserGroupsAction = ({ userGroups, projectId }) => ({
+export const setProjectUsergroupsAction = ({ usergroups, projectId }) => ({
     type: SET_PROJECT_USERGROUPS,
-    userGroups,
+    usergroups,
     projectId,
 });
 
@@ -60,10 +59,10 @@ export const removeProjectMembershipAction = ({ projectId, membershipId }) => ({
     membershipId,
 });
 
-export const removeProjectUserGroupAction = ({ projectId, userGroup }) => ({
+export const removeProjectUserGroupAction = ({ projectId, usergroupId }) => ({
     type: REMOVE_PROJECT_USERGROUP,
     projectId,
-    userGroup,
+    usergroupId,
 });
 
 
@@ -101,11 +100,12 @@ export const setProjectDetails = (state, action) => {
         role,
         versionId,
         regions,
-        userGroups,
+        userGroups: usergroupList,
         memberships: membershipList,
     } = faramValues;
 
     const memberships = listToMap(membershipList, m => m.id) || emptyObject;
+    const usergroups = listToMap(usergroupList, m => m.id) || emptyObject;
 
     const settings = {
         projectsView: { $auto: {
@@ -117,7 +117,6 @@ export const setProjectDetails = (state, action) => {
                         startDate,
                         endDate,
                         regions,
-                        userGroups,
                     } },
                     faramErrors: { $set: {} },
                     pristine: { $set: true },
@@ -129,6 +128,9 @@ export const setProjectDetails = (state, action) => {
                 } },
                 memberships: {
                     $set: memberships,
+                },
+                usergroups: {
+                    $set: usergroups,
                 },
             } },
         } },
@@ -209,16 +211,18 @@ export const addProjectMembership = (state, action) => {
     return update(state, settings);
 };
 
-export const setProjectUserGroups = (state, action) => {
+export const setProjectUsergroups = (state, action) => {
     const {
         projectId,
-        userGroups,
+        usergroups: usergroupList,
     } = action;
+    const usergroups = listToMap(usergroupList, u => u.id) || emptyObject;
+
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
-                userGroups: {
-                    $set: userGroups,
+                usergroups: {
+                    $set: usergroups,
                 },
             } },
         } },
@@ -226,16 +230,16 @@ export const setProjectUserGroups = (state, action) => {
     return update(state, settings);
 };
 
-export const addProjectUserGroup = (state, action) => {
+export const addProjectUsergroup = (state, action) => {
     const {
         projectId,
-        userGroup,
+        usergroup,
     } = action;
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
-                userGroups: { $autoArray: {
-                    $push: [userGroup],
+                usergroups: { $auto: {
+                    [usergroup.id]: { $set: usergroup },
                 } },
             } },
         } },
@@ -278,18 +282,16 @@ export const removeProjectMembership = (state, action) => {
     return update(state, settings);
 };
 
-export const removeProjectUserGroup = (state, action) => {
+export const removeProjectUsergroup = (state, action) => {
     const {
         projectId,
-        userGroup,
+        usergroupId,
     } = action;
 
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
-                userGroups: {
-                    $filter: ug => userGroup.id !== ug.id,
-                },
+                usergroups: { $unset: [usergroupId] },
             } },
         } },
     };
@@ -303,11 +305,11 @@ const reducers = {
     [SET_ERROR_PROJECT_DETAILS]: setErrorProjectDetails,
     [SET_PROJECT_MEMBERSHIPS]: setProjectMemberships,
     [ADD_PROJECT_MEMBERSHIP]: addProjectMembership,
-    [SET_PROJECT_USERGROUPS]: setProjectUserGroups,
-    [ADD_PROJECT_USERGROUP]: addProjectUserGroup,
+    [SET_PROJECT_USERGROUPS]: setProjectUsergroups,
+    [ADD_PROJECT_USERGROUP]: addProjectUsergroup,
 
     [REMOVE_PROJECT_MEMBERSHIP]: removeProjectMembership,
-    [REMOVE_PROJECT_USERGROUP]: removeProjectUserGroup,
+    [REMOVE_PROJECT_USERGROUP]: removeProjectUsergroup,
 };
 
 export default reducers;

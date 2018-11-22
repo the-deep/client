@@ -13,7 +13,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import {
     addProjectMembershipAction,
-    addProjectUserGroupAction,
+    addProjectUsergroupAction,
 } from '#redux';
 import _ts from '#ts';
 
@@ -60,7 +60,7 @@ const requests = {
                 projectId,
                 membership: response,
             });
-            onItemRemove(member);
+            onItemRemove(member, 'user');
         },
     },
 
@@ -68,6 +68,25 @@ const requests = {
         url: '/project-usergroups/',
         method: requestMethods.POST,
         body: ({ params: { membership } }) => membership,
+        onSuccess: ({
+            response,
+            params: {
+                membership: {
+                    usergroup,
+                } = {},
+            } = {},
+            props: {
+                projectId,
+                addProjectUsergroup,
+                onItemRemove,
+            },
+        }) => {
+            addProjectUsergroup({
+                projectId,
+                usergroup: response,
+            });
+            onItemRemove(usergroup, 'user_group');
+        },
     },
 };
 
@@ -79,7 +98,7 @@ const defaultProps = {
 
 const mapDispatchToProps = dispatch => ({
     addProjectMember: params => dispatch(addProjectMembershipAction(params)),
-    addProjectUserGroup: params => dispatch(addProjectUserGroupAction(params)),
+    addProjectUsergroup: params => dispatch(addProjectUsergroupAction(params)),
 });
 
 @connect(undefined, mapDispatchToProps)

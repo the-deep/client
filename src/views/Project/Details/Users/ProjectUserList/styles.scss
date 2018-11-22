@@ -10,7 +10,7 @@
     .table {
         :global {
             .header {
-                background-color: transparent;
+                background-color: $color-foreground-alt;
             }
 
             .row {

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SelectInput from '#rsci/SelectInput';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
     RequestClient,
@@ -24,7 +25,6 @@ const requests = {
         url: ({ params: { membership } }) => `/project-memberships/${membership.id}/`,
         method: requestMethods.PATCH,
         body: ({ params: { membership } }) => membership,
-        isUnique: true,
     },
 
     removeUserMembershipRequest: {
@@ -42,7 +42,6 @@ const requests = {
                 membershipId,
             });
         },
-        isUnique: true,
     },
 };
 
@@ -121,6 +120,8 @@ export default class Actions extends React.PureComponent {
             activeUser: {
                 userId: activeUserId,
             },
+            changeUserRoleRequest,
+            removeUserMembershipRequest,
             readOnly,
         } = this.props;
 
@@ -130,9 +131,11 @@ export default class Actions extends React.PureComponent {
             memberName,
             memberEmail,
         } = row;
+        const pending = changeUserRoleRequest.pending || removeUserMembershipRequest.pending;
 
         return (
             <div className={styles.actions}>
+                {pending && <LoadingAnimation small /> }
                 <SelectInput
                     label={_ts('project.users', 'roleSelectInputTitle')}
                     placeholder=""
@@ -144,12 +147,12 @@ export default class Actions extends React.PureComponent {
                     labelSelector={projectRoleLabelSelector}
                     showHintAndError={false}
                     readOnly={readOnly}
-                    disabled={activeUserId === memberId}
+                    disabled={activeUserId === memberId || pending}
                 />
                 <DangerConfirmButton
                     smallVerticalPadding
                     title={_ts('project.users', 'removeMembershipButtonPlaceholder')}
-                    disabled={readOnly}
+                    disabled={readOnly || pending}
                     confirmationMessage={_ts(
                         'project.users',
                         'removeMembershipConfirmationMessage',

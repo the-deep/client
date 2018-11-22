@@ -41,9 +41,19 @@ export const projectFaramValueSelector = createSelector(
     localdata => localdata.faramValues || emptyObject,
 );
 
-export const projectUserGroupsSelector = createSelector(
+export const projectUsergroupsSelector = createSelector(
     projectSelector,
-    project => project.userGroups || emptyArray,
+    project => project.usergroups || emptyArray,
+);
+
+export const projectUsergroupListSelector = createSelector(
+    projectUsergroupsSelector,
+    usergroups => mapToList(
+        usergroups,
+        usergroup => ({
+            ...usergroup,
+        }),
+    ) || emptyArray,
 );
 
 export const projectMembershipsSelector = createSelector(
