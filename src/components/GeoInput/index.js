@@ -22,6 +22,7 @@ const propTypes = {
     label: PropTypes.string,
     showLabel: PropTypes.bool,
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
     hideList: PropTypes.bool,
     hideInput: PropTypes.bool,
     modalLeftComponent: PropTypes.node,
@@ -34,6 +35,7 @@ const defaultProps = {
     onChange: undefined,
     geoOptionsByRegion: {},
     disabled: false,
+    readOnly: false,
     hideList: false,
     hideInput: false,
     value: [],
@@ -183,14 +185,14 @@ export default class GeoInput extends React.PureComponent {
     }
 
     renderShowModalButton = () => {
-        const { disabled } = this.props;
+        const { disabled, readOnly } = this.props;
 
         return (
             <AccentButton
                 className={styles.action}
                 iconName={iconNames.globe}
                 onClick={this.handleShowModal}
-                disabled={disabled}
+                disabled={disabled || readOnly}
                 transparent
             />
         );
@@ -205,6 +207,7 @@ export default class GeoInput extends React.PureComponent {
         const {
             value,
             disabled,
+            readOnly,
             hideList,
             label,
             hideInput,
@@ -223,13 +226,14 @@ export default class GeoInput extends React.PureComponent {
                         showHintAndError={false}
                         hideSelectAllButton
                         disabled={disabled}
+                        readOnly={readOnly}
                     />
                     }
                     <AccentButton
                         className={styles.action}
                         iconName={iconNames.globe}
                         onClick={this.handleShowModal}
-                        disabled={disabled}
+                        disabled={disabled || readOnly}
                         transparent
                     >
                         {hideInput && label}
@@ -249,6 +253,7 @@ export default class GeoInput extends React.PureComponent {
                 topRightChild={this.renderShowModalButton}
                 hideSelectAllButton
                 disabled={disabled}
+                readOnly={readOnly}
             />
         );
     }

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import FaramGroup from '#rscg/FaramGroup';
-import iconNames from '#constants/iconNames';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
 import ListView from '#rscv/List/ListView';
 import ScaleInput from '#rsci/ScaleInput';
@@ -21,6 +21,7 @@ import {
     editArySelectedSectorsSelector,
     assessmentSectorsSelector,
 } from '#redux';
+import iconNames from '#constants/iconNames';
 
 import ScaleMatrixInput from './ScaleMatrixInput';
 import ScoreItem from './ScoreItem';
@@ -45,10 +46,13 @@ const propTypes = {
     maxFinalScore: PropTypes.number.isRequired,
     minScaleColor: PropTypes.string.isRequired,
     maxScaleColor: PropTypes.string.isRequired,
+
+    pending: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
+    pending: false,
 };
 
 const mapStateToProps = state => ({
@@ -260,6 +264,7 @@ export default class Score extends React.PureComponent {
             maxFinalScore,
             minScaleColor,
             maxScaleColor,
+            pending,
         } = this.props;
 
         const className = this.getClassName();
@@ -267,6 +272,7 @@ export default class Score extends React.PureComponent {
         return (
             <div className={className}>
                 <FaramGroup faramElementName="score">
+                    {pending && <LoadingAnimation large />}
                     <div className={styles.summary}>
                         <div className={styles.left}>
                             <List

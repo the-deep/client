@@ -33,6 +33,7 @@ const propTypes = {
     urlLabel: PropTypes.string,
 
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
     error: PropTypes.string,
     hint: PropTypes.string,
     showHintAndError: PropTypes.bool,
@@ -49,6 +50,7 @@ const defaultProps = {
     urlLabel: 'External link',
 
     disabled: false,
+    readOnly: false,
     error: '',
     hint: '',
     showHintAndError: true,
@@ -159,7 +161,6 @@ export default class Baksa extends React.PureComponent {
         const { url } = this.state;
 
         // TODO: Check if url is valid
-
         if (onChange) {
             onChange({
                 type: 'url',
@@ -263,7 +264,12 @@ export default class Baksa extends React.PureComponent {
     }
 
     renderDropFileInput = () => {
-        const { acceptUrl, urlLabel, disabled } = this.props;
+        const {
+            acceptUrl,
+            urlLabel,
+            disabled,
+            readOnly,
+        } = this.props;
         const elements = [];
 
         // TODO: use string below:
@@ -272,7 +278,7 @@ export default class Baksa extends React.PureComponent {
                 className={styles.dropZone}
                 onDrop={this.handleFileChange}
                 key="drop-zone"
-                disabled={disabled}
+                disabled={disabled || readOnly}
             >
                 {/* Empty value in FileInput below cancels the selection automatically */}
                 <FileInput
@@ -280,7 +286,7 @@ export default class Baksa extends React.PureComponent {
                     onChange={this.handleFileChange}
                     showStatus={false}
                     value=""
-                    disabled={disabled}
+                    disabled={disabled || readOnly}
                 >
                     Drop a file or click to select
                 </FileInput>
@@ -300,11 +306,12 @@ export default class Baksa extends React.PureComponent {
                         onChange={this.handleUrlChange}
                         showHintAndError={false}
                         disabled={disabled}
+                        readOnly={readOnly}
                     />
                     <PrimaryButton
                         className={styles.action}
                         onClick={this.handleUrlAdd}
-                        disabled={disabled}
+                        disabled={disabled || readOnly}
                     >
                         Add
                     </PrimaryButton>
@@ -329,7 +336,11 @@ export default class Baksa extends React.PureComponent {
     }
 
     renderSelection = () => {
-        const { value, disabled } = this.props;
+        const {
+            value,
+            disabled,
+            readOnly,
+        } = this.props;
 
         return (
             <div className={styles.selection}>
@@ -340,7 +351,7 @@ export default class Baksa extends React.PureComponent {
                     className={styles.action}
                     iconName={iconNames.close}
                     onClick={this.resetValue}
-                    disabled={disabled}
+                    disabled={disabled || readOnly}
                     // FIXME: Use strings
                     title="Remove"
                     transparent
@@ -350,7 +361,11 @@ export default class Baksa extends React.PureComponent {
     }
 
     renderPageRange = () => {
-        const { value: { startPage, endPage }, disabled } = this.props;
+        const {
+            value: { startPage, endPage },
+            readOnly,
+            disabled,
+        } = this.props;
 
         return (
             <div className={styles.pageRange}>
@@ -359,6 +374,7 @@ export default class Baksa extends React.PureComponent {
                     value={startPage}
                     onChange={this.handleStartPageChange}
                     disabled={disabled}
+                    readOnly={readOnly}
                     hint="Start Page"
                     separator=" "
                 />
@@ -370,6 +386,7 @@ export default class Baksa extends React.PureComponent {
                     value={endPage}
                     onChange={this.handleEndPageChange}
                     disabled={disabled}
+                    readOnly={readOnly}
                     hint="End Page"
                     separator=" "
                 />

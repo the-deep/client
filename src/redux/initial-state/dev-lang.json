@@ -1209,7 +1209,8 @@
             "entriesTabLabel": 15,
             "unrecognizedLeadMessage": 140,
             "saveButtonLabel": 25,
-            "saveButtonTitle": 25
+            "saveButtonTitle": 25,
+            "cancelButtonTitle": 61
         },
         "editAssessment.entriesListing": {
             "altLabel": 512,

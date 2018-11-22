@@ -30,6 +30,7 @@ const propTypes = {
     labelSelector: PropTypes.func,
     childSelector: PropTypes.func,
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
     label: PropTypes.string,
     showLabel: PropTypes.bool,
     hideList: PropTypes.bool,
@@ -45,6 +46,7 @@ const defaultProps = {
     hideList: false,
     value: [],
     disabled: false,
+    readOnly: false,
     idSelector: organ => organ.id,
     labelSelector: organ => organ.title,
     childSelector: organ => organ.children,
@@ -239,7 +241,7 @@ export default class OrganigramInput extends React.PureComponent {
     }
 
     renderShowModalButton = () => {
-        const { disabled } = this.props;
+        const { disabled, readOnly } = this.props;
 
         return (
             <AccentButton
@@ -247,7 +249,7 @@ export default class OrganigramInput extends React.PureComponent {
                 iconName={iconNames.chart}
                 onClick={this.handleShowModal}
                 transparent
-                disabled={disabled}
+                disabled={disabled || readOnly}
             />
         );
     }
@@ -262,6 +264,7 @@ export default class OrganigramInput extends React.PureComponent {
             value,
             hideList,
             disabled,
+            readOnly,
         } = this.props;
 
         if (!this.mountSelectInput) {
@@ -281,12 +284,13 @@ export default class OrganigramInput extends React.PureComponent {
                         showHintAndError={false}
                         hideSelectAllButton
                         disabled={disabled}
+                        readOnly={readOnly}
                     />
                     <AccentButton
                         className={styles.action}
                         iconName={iconNames.chart}
                         onClick={this.handleShowModal}
-                        disabled={disabled}
+                        disabled={disabled || readOnly}
                         transparent
                     />
                 </div>
@@ -304,6 +308,7 @@ export default class OrganigramInput extends React.PureComponent {
                 topRightChild={this.renderShowModalButton}
                 hideSelectAllButton
                 disabled={disabled}
+                readOnly={readOnly}
             />
         );
     }
