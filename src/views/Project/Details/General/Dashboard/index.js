@@ -33,12 +33,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    projectDashboard: {
-        response: {
-            leadsActivity: [],
-            entriesActivity: [],
-        },
-    },
+    projectDashboard: {},
 };
 
 const mapStateToProps = state => ({
@@ -48,6 +43,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     setProjectDashboardDetails: params => dispatch(setProjectDashboardDetailsAction(params)),
 });
+
+const emptyObject = {};
 
 // TODO: Move to common utils
 // eslint-disable-next-line no-underscore-dangle
@@ -135,6 +132,10 @@ export default class ProjectDashboard extends React.PureComponent {
         styles.projectDashboard,
     )
 
+    getProjectRequestResponse = () => (
+        (this.props.projectRequest || emptyObject).response || emptyObject
+    )
+
     handleRegionChange = (selectedRegion) => {
         this.setState({ selectedRegion });
     }
@@ -157,39 +158,59 @@ export default class ProjectDashboard extends React.PureComponent {
         });
     }
 
-    renderLeadsActivity = () => (
-        <div className={styles.chart}>
-            <h4>
-                {_ts('project.general.dashboard', 'leadsActivityTitle')}
-            </h4>
-            <SparkLines
-                className={styles.sparkLine}
-                data={this.props.projectRequest.response.leadsActivity}
-                yValueSelector={ProjectDashboard.activityCountSelector}
-                xValueSelector={ProjectDashboard.activityDateSelector}
-                xLabelModifier={ProjectDashboard.activityDateModifier}
-                yLabelModifier={ProjectDashboard.leadsActivityNumberModifier}
-                fill
-            />
-        </div>
-    )
+    renderLeadsActivity = () => {
+        const {
+            projectRequest: {
+                response: {
+                    leadsActivity = [],
+                } = {},
+            } = {},
+        } = this.props;
 
-    renderEntriesActivity = () => (
-        <div className={styles.chart}>
-            <h4>
-                {_ts('project.general.dashboard', 'entriesActivityTitle')}
-            </h4>
-            <SparkLines
-                className={styles.sparkLine}
-                data={this.props.projectDashboard.entriesActivity}
-                yValueSelector={ProjectDashboard.activityCountSelector}
-                xValueSelector={ProjectDashboard.activityDateSelector}
-                xLabelModifier={ProjectDashboard.activityDateModifier}
-                yLabelModifier={ProjectDashboard.entriesActivityNumberModifier}
-                fill
-            />
-        </div>
-    )
+        return (
+            <div className={styles.chart}>
+                <h4>
+                    {_ts('project.general.dashboard', 'leadsActivityTitle')}
+                </h4>
+                <SparkLines
+                    className={styles.sparkLine}
+                    data={leadsActivity}
+                    yValueSelector={ProjectDashboard.activityCountSelector}
+                    xValueSelector={ProjectDashboard.activityDateSelector}
+                    xLabelModifier={ProjectDashboard.activityDateModifier}
+                    yLabelModifier={ProjectDashboard.leadsActivityNumberModifier}
+                    fill
+                />
+            </div>
+        );
+    }
+
+    renderEntriesActivity = () => {
+        const {
+            projectRequest: {
+                response: {
+                    entriesActivity = [],
+                } = {},
+            } = {},
+        } = this.props;
+
+        return (
+            <div className={styles.chart}>
+                <h4>
+                    {_ts('project.general.dashboard', 'entriesActivityTitle')}
+                </h4>
+                <SparkLines
+                    className={styles.sparkLine}
+                    data={entriesActivity}
+                    yValueSelector={ProjectDashboard.activityCountSelector}
+                    xValueSelector={ProjectDashboard.activityDateSelector}
+                    xLabelModifier={ProjectDashboard.activityDateModifier}
+                    yLabelModifier={ProjectDashboard.entriesActivityNumberModifier}
+                    fill
+                />
+            </div>
+        );
+    }
 
     renderSourcers = () => {
         const { projectDashboard: { topSourcers } } = this.props;

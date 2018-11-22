@@ -2298,7 +2298,8 @@
         "components.activityLog": {
             "logDescription": -74417500,
             "logDescriptionNew": -68605986,
-            "aggregatedLogItem": -63520825
+            "aggregatedLogItem": -63520825,
+            "activityLogTitle": 202
         }
     }
 }

@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import ListView from '#rscv/List/ListView';
+import _ts from '#ts';
+
 import LogItem from './LogItem';
 
 import styles from './styles.scss';
@@ -22,11 +24,6 @@ export default class ActivityLog extends React.PureComponent {
 
     static logItemKeySelector = l => l.key;
 
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
-
     logParam = (key, log) => ({
         user: log.user,
         time: log.timestamp,
@@ -42,7 +39,7 @@ export default class ActivityLog extends React.PureComponent {
         return (
             <div className={`${styles.activityLog} ${className}`}>
                 <h3 className={styles.header}>
-                    Activity Log
+                    {_ts('components.activityLog', 'activityLogTitle')}
                 </h3>
                 <ListView
                     className={styles.log}

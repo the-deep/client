@@ -16,6 +16,7 @@ const LogItem = ({
     time,
     fields,
 }) => {
+    // If the number of fields is more than one, we show aggregated log item
     if (Object.keys(fields).length > 1) {
         return (
             <AggregatedLogItem
