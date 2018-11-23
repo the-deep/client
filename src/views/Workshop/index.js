@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
@@ -21,6 +22,7 @@ import ScaleInput from '#rsci/ScaleInput';
 import MultiSegmentInput from '#rsci/MultiSegmentInput';
 import SegmentInput from '#rsci/SegmentInput';
 import TabularSelectInput from '#rsci/TabularSelectInput';
+import Wizard from '#rscv/Wizard';
 
 import { compareNumber } from '#rsu/common';
 
@@ -41,6 +43,31 @@ import styles from './styles.scss';
 5. TODO: Add tree selection here
 7. Remove ListInput
  */
+
+const Container = ({ page, onNext, onPrev }) => {
+    console.warn('Rending page', page);
+    return (
+        <div>
+            <Button
+                onClick={onPrev}
+                disabled={!onPrev}
+                transparent
+            >
+                Prev
+            </Button>
+            <Button
+                onClick={onNext}
+                disabled={!onNext}
+                transparent
+            >
+                Next
+            </Button>
+            <div className={styles.page}>
+                Page {page}
+            </div>
+        </div>
+    );
+};
 
 export default class Workshop extends React.PureComponent {
     static keySelector = elem => elem.key;
@@ -165,6 +192,14 @@ export default class Workshop extends React.PureComponent {
 
         return (
             <div className={styles.workshop}>
+                <Wizard>
+                    <Container />
+                    <Container />
+                    <Container />
+                    <Container />
+                    <Container />
+                    <Container />
+                </Wizard>
                 <SegmentInput
                     name="random-name-for-segment-1"
                     labelSelector={Workshop.labelSelector}

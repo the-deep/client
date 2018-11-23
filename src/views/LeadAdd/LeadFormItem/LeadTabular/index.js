@@ -108,6 +108,7 @@ export default class LeadTabular extends React.PureComponent {
             meta: undefined,
             invalid: false,
         };
+
         this.schema = {
             fields: {
                 fileType: [requiredCondition],
@@ -116,20 +117,12 @@ export default class LeadTabular extends React.PureComponent {
         };
     }
 
-    setMeta = (meta) => {
-        this.setState({ meta });
-    }
-
-    setInvalid = () => {
-        this.setState({ invalid: true });
-    }
-
     handleTabularBook = (bookId) => {
         this.setState({ bookId }, () => {
             this.props.metaRequest.do({
                 bookId,
-                setMeta: this.setMeta,
-                setInvalid: this.setInvalid,
+                setMeta: meta => this.setState({ meta }),
+                setInvalid: () => this.setState({ invalid: true }),
             });
         });
     }
@@ -158,7 +151,7 @@ export default class LeadTabular extends React.PureComponent {
         <TextInput
             faramElementName="delimiter"
             label={_ts('addLeads.tabular', 'delimiterLabel')}
-            placeholder="Default: ,"
+            placeholder={_ts('addLeads.tabular', 'delimiterPlaceholder')}
             showLabel
             showHintAndError
         />
@@ -181,7 +174,7 @@ export default class LeadTabular extends React.PureComponent {
                     className={styles.sheetHeaderRowInput}
                     faramElementName="headerRow"
                     label={_ts('addLeads.tabular', 'headerRowLabel')}
-                    placeholder="Default: 1"
+                    placeholder={_ts('addLeads.tabular', 'headerRowPlaceholder')}
                     showLabel
                     showHintAndError
                 />
@@ -224,10 +217,10 @@ export default class LeadTabular extends React.PureComponent {
             return this.renderExcelSettings();
         }
 
-        return <div />;
+        return null;
     }
 
-    renderForm = (pending) => {
+    renderForm = ({ pending }) => {
         const {
             faramValues,
             faramErrors,
@@ -273,8 +266,11 @@ export default class LeadTabular extends React.PureComponent {
                     type="submit"
                     className={styles.submitButton}
                 >
-                    {!bookId && _ts('addLeads.tabular', 'nextLabel')}
-                    {bookId && _ts('addLeads.tabular', 'extractLabel')}
+                    {
+                        bookId
+                            ? _ts('addLeads.tabular', 'extractLabel')
+                            : _ts('addLeads.tabular', 'nextLabel')
+                    }
                 </PrimaryButton>
             </Faram>
         );
@@ -289,10 +285,11 @@ export default class LeadTabular extends React.PureComponent {
         } = this.props;
 
         const pending = saveBookRequest.pending || metaRequest.pending;
+        const Form = this.renderForm;
 
         return (
             <div className={_cs(className, styles.leadTabular)}>
-                {pending && (<LoadingAnimation />)}
+                {pending && <LoadingAnimation />}
                 <div className={styles.header}>
                     <Button
                         className={styles.backButton}
@@ -305,7 +302,7 @@ export default class LeadTabular extends React.PureComponent {
                     </h4>
                 </div>
                 <div className={styles.content}>
-                    {this.renderForm(pending)}
+                    <Form pending={pending} />
                 </div>
             </div>
         );
