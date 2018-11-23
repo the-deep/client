@@ -21,7 +21,10 @@ export const pick = (obj, keys) => keys.reduce(
     {},
 );
 
+const reOne = /([a-z])([A-Z])/g;
+const reTwo = /([A-Z])([A-Z])([a-z])/g;
 export const camelToNormalCase = (text) => {
-    const result = text.replace(/([A-Z])/g, ' $1').replace(/([A-Z][a-z])/g, ' $1');
-    return result.charAt(0).toUpperCase() + result.slice(1);
+    const firstPhase = text.replace(reOne, '$1 $2');
+    const secondPhase = firstPhase.replace(reTwo, '$1 $2$3');
+    return secondPhase;
 };
