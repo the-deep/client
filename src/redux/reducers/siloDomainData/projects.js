@@ -74,11 +74,13 @@ export const modifyProjectUserGroupAction = ({ projectId, usergroupId, newRole }
     newRole,
 });
 
-export const modifyProjectMembershipAction = ({ projectId, membershipId, newRole }) => ({
+export const modifyProjectMembershipAction = ({
+    projectId,
+    membership,
+}) => ({
     type: MODIFY_PROJECT_MEMBERSHIP,
     projectId,
-    membershipId,
-    newRole,
+    membership,
 });
 
 export const changeProjectDetailsAction =
@@ -297,20 +299,17 @@ export const removeProjectMembership = (state, action) => {
     return update(state, settings);
 };
 
-export const modifyRoleProjectMembership = (state, action) => {
+export const modifyProjectMembership = (state, action) => {
     const {
         projectId,
-        membershipId,
-        newRole,
+        membership,
     } = action;
 
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
                 memberships: { $auto: {
-                    [membershipId]: {
-                        role: { $set: newRole },
-                    },
+                    [membership.id]: { $set: membership },
                 } },
             } },
         } },
@@ -334,7 +333,7 @@ export const removeProjectUsergroup = (state, action) => {
     return update(state, settings);
 };
 
-export const modifyRoleProjectUserGroup = (state, action) => {
+export const modifyProjectUserGroup = (state, action) => {
     const {
         projectId,
         usergroupId,
@@ -367,8 +366,8 @@ const reducers = {
 
     [REMOVE_PROJECT_MEMBERSHIP]: removeProjectMembership,
     [REMOVE_PROJECT_USERGROUP]: removeProjectUsergroup,
-    [MODIFY_PROJECT_MEMBERSHIP]: modifyRoleProjectMembership,
-    [MODIFY_PROJECT_USERGROUP]: modifyRoleProjectUserGroup,
+    [MODIFY_PROJECT_MEMBERSHIP]: modifyProjectMembership,
+    [MODIFY_PROJECT_USERGROUP]: modifyProjectUserGroup,
 };
 
 export default reducers;

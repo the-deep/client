@@ -843,7 +843,9 @@
         "-69587895": "{field} was changed to {newValue}.",
         "-68605986": "{field} was set to {newValue}.",
         "-63520825": "{fields} were modified.",
-        "-30665346": "Are you sure you want to remove the usergroup {title}?"
+        "-30665346": "Are you sure you want to remove the usergroup {title}?",
+        "-42425639": "Linked group",
+        "-99213668": "Independent member"
     },
     "links": {
         "browserExtension": {
@@ -1698,7 +1700,9 @@
             "roleSelectInputTitle": 12509,
             "removeMembershipConfirmationMessage": 12510,
             "removeMembershipButtonPlaceholder": 419,
-            "userListHeading": -54185786
+            "userListHeading": -54185786,
+            "linkedGroupTitle": -42425639,
+            "linkedGroupPlaceholder": -99213668
         },
         "project": {
             "projectGetFailure": 2500,

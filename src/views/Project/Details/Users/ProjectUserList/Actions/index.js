@@ -22,12 +22,12 @@ import _ts from '#ts';
 import styles from './styles.scss';
 
 const requests = {
-    changeUserRoleRequest: {
+    changeMembershipRequest: {
         url: ({ params: { membership } }) => `/project-memberships/${membership.id}/`,
-        method: requestMethods.PATCH,
+        method: requestMethods.PUT,
         body: ({ params: { membership } }) => membership,
         onSuccess: ({
-            params: { membership },
+            response: membership,
             props: {
                 projectId,
                 modifyProjectMembership,
@@ -35,8 +35,7 @@ const requests = {
         }) => {
             modifyProjectMembership({
                 projectId,
-                membershipId: membership.id,
-                newRole: membership.role,
+                membership,
             });
         },
     },
@@ -64,7 +63,7 @@ const RequestPropType = PropTypes.shape({
 });
 
 const propTypes = {
-    changeUserRoleRequest: RequestPropType.isRequired,
+    changeMembershipRequest: RequestPropType.isRequired,
     removeUserMembershipRequest: RequestPropType.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     removeProjectMembership: PropTypes.func.isRequired,
@@ -97,6 +96,9 @@ const mapDispatchToProps = dispatch => ({
 const projectRoleKeySelector = d => d.id;
 const projectRoleLabelSelector = d => d.title;
 
+const userGroupKeySelector = userGroup => userGroup.id;
+const userGroupLabelSelector = userGroup => userGroup.title;
+
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requests)
 export default class Actions extends React.PureComponent {
@@ -105,16 +107,28 @@ export default class Actions extends React.PureComponent {
 
     handleRoleSelectInputChange = (newRole) => {
         const {
-            row: {
-                id: membershipId,
-            },
-            changeUserRoleRequest,
+            row,
+            changeMembershipRequest,
         } = this.props;
 
-        changeUserRoleRequest.do({
+        changeMembershipRequest.do({
             membership: {
-                id: membershipId,
+                ...row,
                 role: newRole,
+            },
+        });
+    }
+
+    handleLinkedGroupChange = (newGroup) => {
+        const {
+            row,
+            changeMembershipRequest,
+        } = this.props;
+
+        changeMembershipRequest.do({
+            membership: {
+                ...row,
+                linkedGroup: newGroup || null, // We need to pass null to unset
             },
         });
     }
@@ -135,7 +149,7 @@ export default class Actions extends React.PureComponent {
             activeUser: {
                 userId: activeUserId,
             },
-            changeUserRoleRequest,
+            changeMembershipRequest,
             removeUserMembershipRequest,
             readOnly,
         } = this.props;
@@ -145,13 +159,15 @@ export default class Actions extends React.PureComponent {
             member: memberId,
             memberName,
             memberEmail,
+            linkedGroup,
         } = row;
-        const pending = changeUserRoleRequest.pending || removeUserMembershipRequest.pending;
+        const pending = changeMembershipRequest.pending || removeUserMembershipRequest.pending;
 
         return (
             <div className={styles.actions}>
                 {pending && <LoadingAnimation small /> }
                 <SelectInput
+                    className={styles.inputElement}
                     label={_ts('project.users', 'roleSelectInputTitle')}
                     placeholder=""
                     hideClearButton
@@ -162,7 +178,20 @@ export default class Actions extends React.PureComponent {
                     labelSelector={projectRoleLabelSelector}
                     showHintAndError={false}
                     readOnly={readOnly}
+                    disabled={!!linkedGroup || activeUserId === memberId || pending}
+                />
+                <SelectInput
+                    className={styles.inputElement}
+                    label={_ts('project.users', 'linkedGroupTitle')}
+                    placeholder={_ts('project.users', 'linkedGroupPlaceholder')}
+                    value={row.linkedGroup}
+                    options={row.userGroupOptions}
+                    onChange={this.handleLinkedGroupChange}
+                    keySelector={userGroupKeySelector}
+                    labelSelector={userGroupLabelSelector}
+                    showHintAndError={false}
                     disabled={activeUserId === memberId || pending}
+                    readOnly={readOnly}
                 />
                 <DangerConfirmButton
                     smallVerticalPadding
