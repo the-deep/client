@@ -9,7 +9,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 
 import Checkbox from '#rsci/Checkbox';
-import SelectInput from '#rsci/SelectInput';
+import SegmentInput from '#rsci/SegmentInput';
 import TextInput from '#rsci/TextInput';
 import NumberInput from '#rsci/NumberInput';
 import Button from '#rsca/Button';
@@ -76,55 +76,48 @@ const requests = {
     },
 };
 
-const calcFileType = (mimeType) => {
-    const leadType = leadPaneTypeMap[mimeType];
-    if (leadType === LEAD_PANE_TYPE.spreadsheet) {
-        return 'xlsx';
-    }
-    return 'csv';
-};
-
 @RequestClient(requests)
 export default class LeadTabular extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
     static sheetKeySelector = d => d.key;
 
+    // first page
     static fileTypes = [
         { key: 'csv', label: 'CSV' },
         { key: 'xlsx', label: 'XLSX' },
     ];
 
+    // first page
+    static calcFileType = (mimeType) => {
+        const leadType = leadPaneTypeMap[mimeType];
+        if (leadType === LEAD_PANE_TYPE.spreadsheet) {
+            return 'xlsx';
+        }
+        return 'csv';
+    };
+
     constructor(props) {
         super(props);
+
         this.state = {
             faramValues: {
-                fileType: calcFileType(props.mimeType),
+                fileType: LeadTabular.calcFileType(props.mimeType),
                 options: {},
             },
             faramErrors: {},
-
             bookId: undefined,
             meta: undefined,
             invalid: false,
         };
 
+        // TODO: split schema for first and second page
         this.schema = {
             fields: {
                 fileType: [requiredCondition],
                 options: [],
             },
         };
-    }
-
-    handleTabularBook = (bookId) => {
-        this.setState({ bookId }, () => {
-            this.props.metaRequest.do({
-                bookId,
-                setMeta: meta => this.setState({ meta }),
-                setInvalid: () => this.setState({ invalid: true }),
-            });
-        });
     }
 
     handleFaramChange = (faramValues, faramErrors) => {
@@ -139,11 +132,32 @@ export default class LeadTabular extends React.PureComponent {
     }
 
     handleFaramValidationSuccess = (book) => {
+        const { faramValues: {
+            title,
+            attachment: file,
+            url,
+        } } = this.props.lead;
         const { bookId: id } = this.state;
-        const { faramValues: { title, attachment: file, url } } = this.props.lead;
+
         this.props.saveBookRequest.do({
-            body: { ...book, id, title, file: file && file.id, url },
+            body: {
+                ...book,
+                id,
+                title,
+                file: file && file.id,
+                url,
+            },
             callback: this.handleTabularBook,
+        });
+    }
+
+    handleTabularBook = (bookId) => {
+        this.setState({ bookId }, () => {
+            this.props.metaRequest.do({
+                bookId,
+                setMeta: meta => this.setState({ meta }),
+                setInvalid: () => this.setState({ invalid: true }),
+            });
         });
     }
 
@@ -191,8 +205,11 @@ export default class LeadTabular extends React.PureComponent {
         const { meta: { sheets } = {} } = this.state;
 
         if (!sheets) {
-            // FIXME: Error message or something
-            return <div />;
+            return (
+                <Message>
+                    {_ts('addLeads.tabular', 'invalidExcel')}
+                </Message>
+            );
         }
 
         return (
@@ -209,15 +226,14 @@ export default class LeadTabular extends React.PureComponent {
     }
 
     renderSettingsForFileType = (fileType) => {
-        if (fileType === 'csv') {
-            return this.renderCsvSettings();
+        switch (fileType) {
+            case 'csv':
+                return this.renderCsvSettings();
+            case 'xlsx':
+                return this.renderExcelSettings();
+            default:
+                return null;
         }
-
-        if (fileType === 'xlsx') {
-            return this.renderExcelSettings();
-        }
-
-        return null;
     }
 
     renderForm = ({ pending }) => {
@@ -236,7 +252,7 @@ export default class LeadTabular extends React.PureComponent {
             );
         }
 
-        return (
+        const firstPage = (
             <Faram
                 className={styles.form}
                 onChange={this.handleFaramChange}
@@ -247,7 +263,8 @@ export default class LeadTabular extends React.PureComponent {
                 error={faramErrors}
                 disabled={pending}
             >
-                <SelectInput
+                <SegmentInput
+                    name="file-type-selection"
                     className={styles.fileTypeSelect}
                     faramElementName="fileType"
                     label={_ts('addLeads.tabular', 'fileTypeLabel')}
@@ -255,25 +272,43 @@ export default class LeadTabular extends React.PureComponent {
                     showLabel
                     showHintAndError
                     hideClearButton
-                    disabled={!!bookId}
                 />
-                {bookId && (
-                    <FaramGroup faramElementName="options">
-                        {this.renderSettingsForFileType(faramValues.fileType)}
-                    </FaramGroup>
-                )}
                 <PrimaryButton
                     type="submit"
                     className={styles.submitButton}
                 >
-                    {
-                        bookId
-                            ? _ts('addLeads.tabular', 'extractLabel')
-                            : _ts('addLeads.tabular', 'nextLabel')
-                    }
+                    {_ts('addLeads.tabular', 'nextLabel')}
                 </PrimaryButton>
             </Faram>
         );
+
+        const secondPage = (
+            <Faram
+                className={styles.form}
+                onChange={this.handleFaramChange}
+                onValidationFailure={this.handleFaramValidationFailure}
+                onValidationSuccess={this.handleFaramValidationSuccess}
+                schema={this.schema}
+                value={faramValues}
+                error={faramErrors}
+                disabled={pending}
+            >
+                <FaramGroup faramElementName="options">
+                    {this.renderSettingsForFileType(faramValues.fileType)}
+                </FaramGroup>
+                <PrimaryButton
+                    type="submit"
+                    className={styles.submitButton}
+                >
+                    {_ts('addLeads.tabular', 'extractLabel')}
+                </PrimaryButton>
+            </Faram>
+        );
+
+        if (bookId) {
+            return secondPage;
+        }
+        return firstPage;
     }
 
     render() {
@@ -293,7 +328,7 @@ export default class LeadTabular extends React.PureComponent {
                 <div className={styles.header}>
                     <Button
                         className={styles.backButton}
-                        iconName={iconNames.back}
+                        iconName={iconNames.close}
                         onClick={onCancel}
                         transparent
                     />
