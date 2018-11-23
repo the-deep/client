@@ -31,8 +31,8 @@ const propTypes = {
     setTabularBook: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     onCancel: PropTypes.func.isRequired,
 
-    saveBookRequest: RequestClient.prop.isRequired,
-    metaRequest: RequestClient.prop.isRequired,
+    saveBookRequest: RequestClient.propType.isRequired,
+    metaRequest: RequestClient.propType.isRequired,
 };
 
 const defaultProps = {

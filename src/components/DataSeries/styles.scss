@@ -3,13 +3,13 @@
 .data-series {
     display: flex;
     flex-direction: column;
-    padding: $spacing-medium;
+    padding: $spacing-small $spacing-medium;
 
     header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        height: 32px;
+        height: 24px;
 
         h5 {
             color: $color-text;

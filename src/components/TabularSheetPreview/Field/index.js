@@ -12,10 +12,14 @@ const propTypes = {
     title: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
+    options: PropTypes.shape({}),
+    geodata: PropTypes.shape({}),
 };
 
 const defaultProps = {
     className: '',
+    geodata: undefined,
+    options: undefined,
 };
 
 export default class Field extends React.PureComponent {
@@ -38,7 +42,14 @@ export default class Field extends React.PureComponent {
     })
 
     handleOnDragStart = (e) => {
-        const { title, type, data: series, fieldId } = this.props;
+        const {
+            title,
+            type,
+            data: series,
+            options,
+            geodata,
+            fieldId,
+        } = this.props;
         const data = JSON.stringify({
             type: 'dataSeries',
             data: {
@@ -46,6 +57,8 @@ export default class Field extends React.PureComponent {
                 title,
                 type,
                 series,
+                options,
+                geodata,
             },
         });
         e.dataTransfer.setData('text/plain', data);

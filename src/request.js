@@ -84,7 +84,7 @@ export const RequestCoordinator = compose(
 );
 
 export const RequestClient = createRequestClient();
-RequestClient.prop = PropTypes.shape({
+RequestClient.propType = PropTypes.shape({
     do: PropTypes.func,
     pending: PropTypes.bool,
     response: PropTypes.object,

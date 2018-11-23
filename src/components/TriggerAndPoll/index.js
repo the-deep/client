@@ -8,10 +8,10 @@ const propTypes = {
     onDataReceived: PropTypes.func,
 
     setDefaultRequestParams: PropTypes.func.isRequired,
-    initialRequest: RequestClient.prop.isRequired,
-    triggerRequest: RequestClient.prop.isRequired,
-    pollRequest: RequestClient.prop.isRequired,
-    dataRequest: RequestClient.prop.isRequired,
+    initialRequest: RequestClient.propType.isRequired,
+    triggerRequest: RequestClient.propType.isRequired,
+    pollRequest: RequestClient.propType.isRequired,
+    dataRequest: RequestClient.propType.isRequired,
 };
 
 const defaultProps = {

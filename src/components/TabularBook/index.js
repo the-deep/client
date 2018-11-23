@@ -27,8 +27,8 @@ const propTypes = {
     setSaveTabularFunction: PropTypes.func,
     onEdited: PropTypes.func,
 
-    deleteRequest: RequestClient.prop.isRequired,
-    saveRequest: RequestClient.prop.isRequired,
+    deleteRequest: RequestClient.propType.isRequired,
+    saveRequest: RequestClient.propType.isRequired,
 
     showDelete: PropTypes.bool,
     onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
