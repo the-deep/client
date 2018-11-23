@@ -160,6 +160,7 @@ export default class Actions extends React.PureComponent {
             memberName,
             memberEmail,
             linkedGroup,
+            userGroupOptions,
         } = row;
         const pending = changeMembershipRequest.pending || removeUserMembershipRequest.pending;
 
@@ -184,13 +185,13 @@ export default class Actions extends React.PureComponent {
                     className={styles.inputElement}
                     label={_ts('project.users', 'linkedGroupTitle')}
                     placeholder={_ts('project.users', 'linkedGroupPlaceholder')}
-                    value={row.linkedGroup}
-                    options={row.userGroupOptions}
+                    value={linkedGroup}
+                    options={userGroupOptions}
                     onChange={this.handleLinkedGroupChange}
                     keySelector={userGroupKeySelector}
                     labelSelector={userGroupLabelSelector}
                     showHintAndError={false}
-                    disabled={activeUserId === memberId || pending}
+                    disabled={userGroupOptions.length === 0 || activeUserId === memberId || pending}
                     readOnly={readOnly}
                 />
                 <DangerConfirmButton

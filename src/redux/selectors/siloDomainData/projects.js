@@ -50,9 +50,7 @@ export const projectUsergroupListSelector = createSelector(
     projectUsergroupsSelector,
     usergroups => mapToList(
         usergroups,
-        usergroup => ({
-            ...usergroup,
-        }),
+        usergroup => usergroup,
     ) || emptyArray,
 );
 
@@ -65,8 +63,6 @@ export const projectMembershipListSelector = createSelector(
     projectMembershipsSelector,
     memberships => mapToList(
         memberships,
-        membership => ({
-            ...membership,
-        }),
+        membership => membership,
     ) || emptyArray,
 );

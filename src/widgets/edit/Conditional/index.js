@@ -109,7 +109,6 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
             title,
             widgets,
         } = values;
-        console.warn(widgets);
 
         this.props.onSave({ widgets }, title);
     }

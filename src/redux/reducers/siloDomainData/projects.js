@@ -201,9 +201,7 @@ export const setProjectMemberships = (state, action) => {
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
-                memberships: {
-                    $set: memberships,
-                },
+                memberships: { $set: memberships },
             } },
         } },
     };
@@ -238,9 +236,9 @@ export const setProjectUsergroups = (state, action) => {
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
-                usergroups: {
+                usergroups: { $auto: {
                     $set: usergroups,
-                },
+                } },
             } },
         } },
     };
@@ -344,9 +342,9 @@ export const modifyProjectUserGroup = (state, action) => {
         projectsView: { $auto: {
             [projectId]: { $auto: {
                 usergroups: { $auto: {
-                    [usergroupId]: {
+                    [usergroupId]: { $auto: {
                         role: { $set: newRole },
-                    },
+                    } },
                 } },
             } },
         } },
