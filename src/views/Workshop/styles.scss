@@ -5,6 +5,12 @@
     padding: $spacing-small;
     overflow-y: auto;
 
+
+    .page {
+        background-color: $color-foreground;
+        padding: $spacing-extra-large;
+    }
+
     .faram {
         display: flex;
         align-items: center;

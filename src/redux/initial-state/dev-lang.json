@@ -731,7 +731,6 @@
         "15009": "Skip this sheet",
         "15010": "Header row",
         "15011": "Convert to tabular",
-
         "-12279953": "Entry Cleared",
         "-94068330": "All local entries were cleared because associated analysis framework was removed.",
         "-4983139": "Remove lead group",
@@ -829,7 +828,10 @@
         "-54185786": "User/Usergroup",
         "-17852758": "Search User/Usergroup",
         "-1045504": "Go back",
-        "-72172702": "Workshop"
+        "-72172702": "Workshop",
+        "-63188496": "Couldn't read tabular data.",
+        "-47036305": "Default: ,",
+        "-45402687": "Default: 1"
     },
     "links": {
         "browserExtension": {
@@ -1534,7 +1536,10 @@
             "skipLabel": 15009,
             "headerRowLabel": 15010,
             "extractLabel": 15006,
-            "nextLabel": 23
+            "nextLabel": 23,
+            "invalid": -63188496,
+            "headerRowPlaceholder": -45402687,
+            "delimiterPlaceholder": -47036305
         },
         "register": {
             "checkYourEmailText": 818,
