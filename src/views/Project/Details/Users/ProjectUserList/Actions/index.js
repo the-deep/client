@@ -12,6 +12,7 @@ import {
 } from '#request';
 import {
     removeProjectMembershipAction,
+    modifyProjectMembershipAction,
     projectRoleListSelector,
     activeUserSelector,
 } from '#redux';
@@ -25,6 +26,19 @@ const requests = {
         url: ({ params: { membership } }) => `/project-memberships/${membership.id}/`,
         method: requestMethods.PATCH,
         body: ({ params: { membership } }) => membership,
+        onSuccess: ({
+            params: { membership },
+            props: {
+                projectId,
+                modifyProjectMembership,
+            },
+        }) => {
+            modifyProjectMembership({
+                projectId,
+                membershipId: membership.id,
+                newRole: membership.role,
+            });
+        },
     },
 
     removeUserMembershipRequest: {
@@ -77,6 +91,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     removeProjectMembership: params => dispatch(removeProjectMembershipAction(params)),
+    modifyProjectMembership: params => dispatch(modifyProjectMembershipAction(params)),
 });
 
 const projectRoleKeySelector = d => d.id;

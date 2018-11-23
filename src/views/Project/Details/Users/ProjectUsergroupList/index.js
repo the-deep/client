@@ -21,6 +21,10 @@ import Actions from './Actions';
 
 import styles from './styles.scss';
 
+// FIXME: User group name is not consistent anywhere
+// It should be userGroup but 'usergroup' is also used
+// Should be fixed in server as well
+
 const Table = FaramListElement(NormalTable);
 
 const propTypes = {

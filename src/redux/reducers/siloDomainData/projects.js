@@ -12,6 +12,8 @@ export const ADD_PROJECT_USERGROUP = 'siloDomainData/ADD_PROJECT_USERGROUP';
 
 export const REMOVE_PROJECT_MEMBERSHIP = 'siloDomainData/REMOVE_PROJECT_MEMBERSHIP';
 export const REMOVE_PROJECT_USERGROUP = 'siloDomainData/REMOVE_PROJECT_USERGROUP';
+export const MODIFY_PROJECT_MEMBERSHIP = 'siloDomainData/MODIFY_PROJECT_MEMBERSHIP';
+export const MODIFY_PROJECT_USERGROUP = 'siloDomainData/MODIFY_PROJECT_USERGROUP';
 
 const emptyObject = {};
 
@@ -65,6 +67,19 @@ export const removeProjectUserGroupAction = ({ projectId, usergroupId }) => ({
     usergroupId,
 });
 
+export const modifyProjectUserGroupAction = ({ projectId, usergroupId, newRole }) => ({
+    type: MODIFY_PROJECT_USERGROUP,
+    projectId,
+    usergroupId,
+    newRole,
+});
+
+export const modifyProjectMembershipAction = ({ projectId, membershipId, newRole }) => ({
+    type: MODIFY_PROJECT_MEMBERSHIP,
+    projectId,
+    membershipId,
+    newRole,
+});
 
 export const changeProjectDetailsAction =
     ({ faramValues, faramErrors, projectId }) => ({
@@ -282,6 +297,27 @@ export const removeProjectMembership = (state, action) => {
     return update(state, settings);
 };
 
+export const modifyRoleProjectMembership = (state, action) => {
+    const {
+        projectId,
+        membershipId,
+        newRole,
+    } = action;
+
+    const settings = {
+        projectsView: { $auto: {
+            [projectId]: { $auto: {
+                memberships: { $auto: {
+                    [membershipId]: {
+                        role: { $set: newRole },
+                    },
+                } },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
 export const removeProjectUsergroup = (state, action) => {
     const {
         projectId,
@@ -292,6 +328,27 @@ export const removeProjectUsergroup = (state, action) => {
         projectsView: { $auto: {
             [projectId]: { $auto: {
                 usergroups: { $unset: [usergroupId] },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
+export const modifyRoleProjectUserGroup = (state, action) => {
+    const {
+        projectId,
+        usergroupId,
+        newRole,
+    } = action;
+
+    const settings = {
+        projectsView: { $auto: {
+            [projectId]: { $auto: {
+                usergroups: { $auto: {
+                    [usergroupId]: {
+                        role: { $set: newRole },
+                    },
+                } },
             } },
         } },
     };
@@ -310,6 +367,8 @@ const reducers = {
 
     [REMOVE_PROJECT_MEMBERSHIP]: removeProjectMembership,
     [REMOVE_PROJECT_USERGROUP]: removeProjectUsergroup,
+    [MODIFY_PROJECT_MEMBERSHIP]: modifyRoleProjectMembership,
+    [MODIFY_PROJECT_USERGROUP]: modifyRoleProjectUserGroup,
 };
 
 export default reducers;

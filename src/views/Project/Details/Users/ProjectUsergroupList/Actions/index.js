@@ -11,6 +11,7 @@ import {
 } from '#request';
 import {
     removeProjectUserGroupAction,
+    modifyProjectUserGroupAction,
     projectRoleListSelector,
 } from '#redux';
 
@@ -44,6 +45,19 @@ const requests = {
         url: ({ params: { usergroupMembership } }) => `/project-usergroups/${usergroupMembership.id}/`,
         method: requestMethods.PATCH,
         body: ({ params: { usergroupMembership } }) => usergroupMembership,
+        onSuccess: ({
+            params: { usergroupMembership },
+            props: {
+                modifyProjectUserGroup,
+                projectId,
+            },
+        }) => {
+            modifyProjectUserGroup({
+                projectId,
+                usergroupId: usergroupMembership.id,
+                newRole: usergroupMembership.role,
+            });
+        },
     },
     removeUsergroupMembershipRequest: {
         url: ({ params: { membershipId } }) => `/project-usergroups/${membershipId}/`,
@@ -69,6 +83,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     removeProjectUsergroup: params => dispatch(removeProjectUserGroupAction(params)),
+    modifyProjectUserGroup: params => dispatch(modifyProjectUserGroupAction(params)),
 });
 
 const projectRoleKeySelector = d => d.id;
