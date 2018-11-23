@@ -48,7 +48,7 @@ const usergroupListKeySelector = d => d.id;
 const requests = {
     usergroupListRequest: {
         onMount: true,
-        onPropsChange: ['projectId'],
+        onPropsChanged: ['projectId'],
         url: '/project-usergroups/',
         method: requestMethods.GET,
         query: ({ props: { projectId } }) => ({ project: projectId }),

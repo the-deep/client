@@ -18,6 +18,7 @@ import {
 
 import {
     setProjectMembershipsAction,
+    projectUsergroupListSelector,
     projectMembershipListSelector,
 } from '#redux';
 
@@ -37,6 +38,9 @@ const propTypes = {
     memberships: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
 
     // eslint-disable-next-line react/no-unused-prop-types
+    usergroups: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+
+    // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number.isRequired,
     readOnly: PropTypes.bool,
 };
@@ -49,7 +53,7 @@ const defaultProps = {
 const requests = {
     userListRequest: {
         onMount: true,
-        onPropsChange: ['projectId'],
+        onPropsChanged: ['projectId', 'usergroups'],
         url: '/project-memberships/',
         method: requestMethods.GET,
         query: ({ props: { projectId } }) => ({ project: projectId }),
@@ -73,6 +77,7 @@ const userListKeySelector = d => d.id;
 
 const mapStateToProps = state => ({
     memberships: projectMembershipListSelector(state),
+    usergroups: projectUsergroupListSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({

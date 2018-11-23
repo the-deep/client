@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import SelectInput from '#rsci/SelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import {
     RequestClient,
@@ -10,6 +11,7 @@ import {
 } from '#request';
 import {
     removeProjectUserGroupAction,
+    projectRoleListSelector,
 } from '#redux';
 
 import { iconNames } from '#constants';
@@ -25,7 +27,11 @@ const propTypes = {
     row: PropTypes.shape({
         role: PropTypes.string,
     }).isRequired,
+    projectRoleList: PropTypes.shape({
+        title: PropTypes.string,
+    }).isRequired,
     removeUsergroupMembershipRequest: RequestPropType.isRequired,
+    changeUserGroupRoleRequest: RequestPropType.isRequired,
     readOnly: PropTypes.bool,
 };
 
@@ -34,6 +40,11 @@ const defaultProps = {
 };
 
 const requests = {
+    changeUserGroupRoleRequest: {
+        url: ({ params: { usergroupMembership } }) => `/project-usergroups/${usergroupMembership.id}/`,
+        method: requestMethods.PATCH,
+        body: ({ params: { usergroupMembership } }) => usergroupMembership,
+    },
     removeUsergroupMembershipRequest: {
         url: ({ params: { membershipId } }) => `/project-usergroups/${membershipId}/`,
         method: requestMethods.DELETE,
@@ -49,19 +60,41 @@ const requests = {
                 usergroupId: membershipId,
             });
         },
-        isUnique: true,
     },
 };
+
+const mapStateToProps = state => ({
+    projectRoleList: projectRoleListSelector(state),
+});
 
 const mapDispatchToProps = dispatch => ({
     removeProjectUsergroup: params => dispatch(removeProjectUserGroupAction(params)),
 });
 
-@connect(undefined, mapDispatchToProps)
+const projectRoleKeySelector = d => d.id;
+const projectRoleLabelSelector = d => d.title;
+
+@connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requests)
 export default class Actions extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    handleRoleSelectInputChange = (newRole) => {
+        const {
+            row: {
+                id,
+            },
+            changeUserGroupRoleRequest,
+        } = this.props;
+
+        changeUserGroupRoleRequest.do({
+            usergroupMembership: {
+                id,
+                role: newRole,
+            },
+        });
+    }
 
     handleRemoveMembershipButtonClick = () => {
         const {
@@ -79,15 +112,33 @@ export default class Actions extends React.PureComponent {
     render() {
         const {
             readOnly,
+            projectRoleList,
             row,
             removeUsergroupMembershipRequest: {
                 pending = false,
             } = {},
         } = this.props;
 
+        const {
+            role,
+        } = row;
+
         return (
             <div className={styles.actions} >
                 {pending && <LoadingAnimation small />}
+                <SelectInput
+                    label={_ts('project.users', 'roleSelectInputTitle')}
+                    placeholder=""
+                    hideClearButton
+                    value={role}
+                    options={projectRoleList}
+                    onChange={this.handleRoleSelectInputChange}
+                    keySelector={projectRoleKeySelector}
+                    labelSelector={projectRoleLabelSelector}
+                    showHintAndError={false}
+                    readOnly={readOnly}
+                    disabled={pending}
+                />
                 <DangerConfirmButton
                     smallVerticalPadding
                     title={_ts('project.users', 'removeMembershipButtonPlaceholder')}

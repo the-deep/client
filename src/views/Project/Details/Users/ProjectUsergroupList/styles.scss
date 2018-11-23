@@ -1,6 +1,8 @@
 @import '~base-scss/base';
 
 .project-usergroup-list {
+    position: relative;
+
     .header {
         .heading {
             padding: $spacing-medium;
