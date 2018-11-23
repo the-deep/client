@@ -29,7 +29,7 @@ export default class ScaleWidget extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static keySelector = option => option.key;
-    static labelSelector = option => option.title;
+    static labelSelector = option => option.label;
     static colorSelector = option => option.color;
 
     isDefaultSelector = (option) => {
