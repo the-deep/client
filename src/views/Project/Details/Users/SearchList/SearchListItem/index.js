@@ -13,7 +13,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import {
     addProjectMembershipAction,
-    addProjectUserGroupAction,
+    addProjectUsergroupAction,
 } from '#redux';
 import _ts from '#ts';
 
@@ -29,6 +29,8 @@ const propTypes = {
     memberId: PropTypes.number.isRequired,
     projectId: PropTypes.number.isRequired,
     username: PropTypes.string,
+    // eslint-disable-next-line react/no-unused-prop-types
+    onItemRemove: PropTypes.func.isRequired,
     usergroupTitle: PropTypes.string,
     userMembershipRequest: RequestPropType.isRequired,
     usergroupMembershipRequest: RequestPropType.isRequired,
@@ -41,16 +43,50 @@ const requests = {
         body: ({
             params: { membership },
         }) => membership,
-        isUnique: true,
-        group: 'usersRequest',
+        onSuccess: ({
+            response,
+            params: {
+                membership: {
+                    member,
+                } = {},
+            } = {},
+            props: {
+                projectId,
+                addProjectMember,
+                onItemRemove,
+            },
+        }) => {
+            addProjectMember({
+                projectId,
+                membership: response,
+            });
+            onItemRemove(member, 'user');
+        },
     },
 
     usergroupMembershipRequest: {
         url: '/project-usergroups/',
         method: requestMethods.POST,
         body: ({ params: { membership } }) => membership,
-        isUnique: true,
-        group: 'usersRequest',
+        onSuccess: ({
+            response,
+            params: {
+                membership: {
+                    usergroup,
+                } = {},
+            } = {},
+            props: {
+                projectId,
+                addProjectUsergroup,
+                onItemRemove,
+            },
+        }) => {
+            addProjectUsergroup({
+                projectId,
+                usergroup: response,
+            });
+            onItemRemove(usergroup, 'user_group');
+        },
     },
 };
 
@@ -62,7 +98,7 @@ const defaultProps = {
 
 const mapDispatchToProps = dispatch => ({
     addProjectMember: params => dispatch(addProjectMembershipAction(params)),
-    addProjectUserGroup: params => dispatch(addProjectUserGroupAction(params)),
+    addProjectUsergroup: params => dispatch(addProjectUsergroupAction(params)),
 });
 
 @connect(undefined, mapDispatchToProps)
@@ -107,11 +143,17 @@ export default class SearchListItem extends React.PureComponent {
             type,
             username,
             usergroupTitle,
+            usergroupMembershipRequest,
+            userMembershipRequest,
             className: classNameFromProps,
         } = this.props;
 
         const USER = 'user';
         const USERGROUP = 'user_group';
+        const actionButtonsClassNames = [styles.actionButtons];
+        if (usergroupMembershipRequest.pending || userMembershipRequest.pending) {
+            actionButtonsClassNames.push(styles.pending);
+        }
 
         if (type === USERGROUP) {
             const className = `
@@ -130,11 +172,12 @@ export default class SearchListItem extends React.PureComponent {
                     <div className={styles.title}>
                         { usergroupTitle }
                     </div>
-                    <div className={styles.actionButtons}>
+                    <div className={actionButtonsClassNames.join(' ')}>
                         <PrimaryButton
                             onClick={this.handleAddUsergroupButtonClick}
                             iconName={iconNames.add}
                             title={_ts('project.users', 'addUsergroupButtonTooltip')}
+                            pending={usergroupMembershipRequest.pending}
                         />
                     </div>
                 </div>
@@ -156,11 +199,12 @@ export default class SearchListItem extends React.PureComponent {
                     <div className={styles.title}>
                         { username }
                     </div>
-                    <div className={styles.actionButtons}>
+                    <div className={actionButtonsClassNames.join(' ')}>
                         <PrimaryButton
                             onClick={this.handleAddUserButtonClick}
                             iconName={iconNames.add}
                             title={_ts('project.users', 'addUserButtonTooltip')}
+                            pending={userMembershipRequest.pending}
                         />
                     </div>
                 </div>

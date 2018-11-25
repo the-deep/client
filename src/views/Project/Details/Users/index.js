@@ -4,13 +4,8 @@ import { connect } from 'react-redux';
 
 import { projectIdFromRoute } from '#redux';
 
-import {
-    RequestCoordinator,
-    RequestClient,
-} from '#request';
-
-import _ts from '#ts';
-import LoadingAnimation from '#rscv/LoadingAnimation';
+import { RequestCoordinator } from '#request';
+import update from '#rsu/immutable-update';
 
 import SearchList from './SearchList';
 import ProjectUserList from './ProjectUserList';
@@ -21,9 +16,6 @@ import styles from './styles.scss';
 const propTypes = {
     projectId: PropTypes.number.isRequired,
     className: PropTypes.string,
-    usersRequest: PropTypes.shape({
-        pending: PropTypes.bool.isRequired,
-    }).isRequired,
     readOnly: PropTypes.bool,
 };
 
@@ -36,21 +28,32 @@ const mapStateToProps = (state, props) => ({
     projectId: projectIdFromRoute(state, props),
 });
 
-const requestListToListen = [
-    'usersRequest',
-];
-
 @connect(mapStateToProps)
 @RequestCoordinator
-@RequestClient(undefined, requestListToListen)
 export default class Users extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    state = { searchInputValue: '' };
+    state = {
+        searchInputValue: '',
+        searchItems: [],
+    };
 
     handleSearchInputChange = (searchInputValue) => {
         this.setState({ searchInputValue });
+    }
+
+    handleSearchItemsPull = (searchItems = []) => {
+        this.setState({ searchItems });
+    }
+
+    handleSearchItemRemove = (itemId, type) => {
+        const settings = { $autoArray: {
+            $filter: i => i.id !== itemId && i.type === type,
+        } };
+        this.setState({
+            searchItems: update(this.state.searchItems, settings),
+        });
     }
 
     render() {
@@ -58,10 +61,12 @@ export default class Users extends React.PureComponent {
             className: classNameFromProps,
             projectId,
             readOnly,
-            usersRequest: { pending },
         } = this.props;
 
-        const { searchInputValue } = this.state;
+        const {
+            searchInputValue,
+            searchItems,
+        } = this.state;
 
         const className = `
             ${classNameFromProps}
@@ -70,34 +75,28 @@ export default class Users extends React.PureComponent {
 
         return (
             <div className={className}>
-                { pending ? (
-                    <LoadingAnimation
-                        message={_ts('project', 'updatingProject')}
-                        small
+                <SearchList
+                    onSearchInputChange={this.handleSearchInputChange}
+                    onItemRemove={this.handleSearchItemRemove}
+                    onItemsPull={this.handleSearchItemsPull}
+                    searchInputValue={searchInputValue}
+                    searchItems={searchItems}
+                    projectId={projectId}
+                    className={styles.searchList}
+                    readOnly={readOnly}
+                />
+                <div className={styles.details}>
+                    <ProjectUserList
+                        className={styles.userList}
+                        projectId={projectId}
+                        readOnly={readOnly}
                     />
-                ) : (
-                    <React.Fragment>
-                        <SearchList
-                            onSearchInputChange={this.handleSearchInputChange}
-                            searchInputValue={searchInputValue}
-                            projectId={projectId}
-                            className={styles.searchList}
-                            readOnly={readOnly}
-                        />
-                        <div className={styles.details}>
-                            <ProjectUserList
-                                className={styles.userList}
-                                projectId={projectId}
-                                readOnly={readOnly}
-                            />
-                            <ProjectUsergroupList
-                                className={styles.usergroupList}
-                                projectId={projectId}
-                                readOnly={readOnly}
-                            />
-                        </div>
-                    </React.Fragment>
-                )}
+                    <ProjectUsergroupList
+                        className={styles.usergroupList}
+                        projectId={projectId}
+                        readOnly={readOnly}
+                    />
+                </div>
             </div>
         );
     }

@@ -36,7 +36,6 @@ const defaultProps = {
     onChange: () => {},
 };
 
-
 @FaramInputElement
 export default class Conditional extends React.PureComponent {
     static propTypes = propTypes;

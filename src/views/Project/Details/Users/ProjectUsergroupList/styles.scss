@@ -1,9 +1,24 @@
 @import '~base-scss/base';
 
 .project-usergroup-list {
+    position: relative;
+
     .header {
         .heading {
             padding: $spacing-medium;
+        }
+    }
+
+    .table {
+        :global {
+            .header {
+                background-color: $color-foreground-alt;
+            }
+
+            .row {
+                border-bottom: $width-separator-thin solid $color-separator;
+                background-color: transparent;
+            }
         }
     }
 }

@@ -4,12 +4,15 @@ import { connect } from 'react-redux';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SelectInput from '#rsci/SelectInput';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
     RequestClient,
     requestMethods,
 } from '#request';
 import {
+    removeProjectMembershipAction,
+    modifyProjectMembershipAction,
     projectRoleListSelector,
     activeUserSelector,
 } from '#redux';
@@ -19,19 +22,39 @@ import _ts from '#ts';
 import styles from './styles.scss';
 
 const requests = {
-    changeUserRoleRequest: {
+    changeMembershipRequest: {
         url: ({ params: { membership } }) => `/project-memberships/${membership.id}/`,
-        method: requestMethods.PATCH,
+        method: requestMethods.PUT,
         body: ({ params: { membership } }) => membership,
-        isUnique: true,
-        group: 'usersRequest',
+        onSuccess: ({
+            response: membership,
+            props: {
+                projectId,
+                modifyProjectMembership,
+            },
+        }) => {
+            modifyProjectMembership({
+                projectId,
+                membership,
+            });
+        },
     },
 
     removeUserMembershipRequest: {
         url: ({ params: { membershipId } }) => `/project-memberships/${membershipId}/`,
         method: requestMethods.DELETE,
-        isUnique: true,
-        group: 'usersRequest',
+        onSuccess: ({
+            params: { membershipId },
+            props: {
+                removeProjectMembership,
+                projectId,
+            },
+        }) => {
+            removeProjectMembership({
+                projectId,
+                membershipId,
+            });
+        },
     },
 };
 
@@ -40,8 +63,10 @@ const RequestPropType = PropTypes.shape({
 });
 
 const propTypes = {
-    changeUserRoleRequest: RequestPropType.isRequired,
+    changeMembershipRequest: RequestPropType.isRequired,
     removeUserMembershipRequest: RequestPropType.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
+    removeProjectMembership: PropTypes.func.isRequired,
     row: PropTypes.shape({
         role: PropTypes.string,
     }).isRequired,
@@ -63,10 +88,18 @@ const mapStateToProps = state => ({
     activeUser: activeUserSelector(state),
 });
 
+const mapDispatchToProps = dispatch => ({
+    removeProjectMembership: params => dispatch(removeProjectMembershipAction(params)),
+    modifyProjectMembership: params => dispatch(modifyProjectMembershipAction(params)),
+});
+
 const projectRoleKeySelector = d => d.id;
 const projectRoleLabelSelector = d => d.title;
 
-@connect(mapStateToProps)
+const userGroupKeySelector = userGroup => userGroup.id;
+const userGroupLabelSelector = userGroup => userGroup.title;
+
+@connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requests)
 export default class Actions extends React.PureComponent {
     static propTypes = propTypes;
@@ -74,25 +107,35 @@ export default class Actions extends React.PureComponent {
 
     handleRoleSelectInputChange = (newRole) => {
         const {
-            row: {
-                id: membershipId,
-            },
-            changeUserRoleRequest,
+            row,
+            changeMembershipRequest,
         } = this.props;
 
-        changeUserRoleRequest.do({
+        changeMembershipRequest.do({
             membership: {
-                id: membershipId,
+                ...row,
                 role: newRole,
+            },
+        });
+    }
+
+    handleLinkedGroupChange = (newGroup) => {
+        const {
+            row,
+            changeMembershipRequest,
+        } = this.props;
+
+        changeMembershipRequest.do({
+            membership: {
+                ...row,
+                linkedGroup: newGroup || null, // We need to pass null to unset
             },
         });
     }
 
     handleRemoveMembershipButtonClick = () => {
         const {
-            row: {
-                id: membershipId,
-            },
+            row: { id: membershipId },
             removeUserMembershipRequest,
         } = this.props;
 
@@ -106,6 +149,8 @@ export default class Actions extends React.PureComponent {
             activeUser: {
                 userId: activeUserId,
             },
+            changeMembershipRequest,
+            removeUserMembershipRequest,
             readOnly,
         } = this.props;
 
@@ -114,11 +159,16 @@ export default class Actions extends React.PureComponent {
             member: memberId,
             memberName,
             memberEmail,
+            linkedGroup,
+            userGroupOptions,
         } = row;
+        const pending = changeMembershipRequest.pending || removeUserMembershipRequest.pending;
 
         return (
             <div className={styles.actions}>
+                {pending && <LoadingAnimation small /> }
                 <SelectInput
+                    className={styles.inputElement}
                     label={_ts('project.users', 'roleSelectInputTitle')}
                     placeholder=""
                     hideClearButton
@@ -129,12 +179,25 @@ export default class Actions extends React.PureComponent {
                     labelSelector={projectRoleLabelSelector}
                     showHintAndError={false}
                     readOnly={readOnly}
-                    disabled={activeUserId === memberId}
+                    disabled={!!linkedGroup || activeUserId === memberId || pending}
+                />
+                <SelectInput
+                    className={styles.inputElement}
+                    label={_ts('project.users', 'linkedGroupTitle')}
+                    placeholder={_ts('project.users', 'linkedGroupPlaceholder')}
+                    value={linkedGroup}
+                    options={userGroupOptions}
+                    onChange={this.handleLinkedGroupChange}
+                    keySelector={userGroupKeySelector}
+                    labelSelector={userGroupLabelSelector}
+                    showHintAndError={false}
+                    disabled={userGroupOptions.length === 0 || activeUserId === memberId || pending}
+                    readOnly={readOnly}
                 />
                 <DangerConfirmButton
                     smallVerticalPadding
                     title={_ts('project.users', 'removeMembershipButtonPlaceholder')}
-                    disabled={readOnly}
+                    disabled={readOnly || pending}
                     confirmationMessage={_ts(
                         'project.users',
                         'removeMembershipConfirmationMessage',

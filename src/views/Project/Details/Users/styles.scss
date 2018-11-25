@@ -6,6 +6,7 @@ $width-search-list: 240px;
     display: flex;
     position: relative;
     flex-grow: 1;
+    background-color: $color-foreground;
 
     .search-list {
         flex-basis: $width-search-list;

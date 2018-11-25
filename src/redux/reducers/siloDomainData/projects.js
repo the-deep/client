@@ -1,4 +1,5 @@
 import update from '#rsu/immutable-update';
+import { listToMap } from '#rsu/common';
 
 export const SET_PROJECT_DETAILS = 'siloDomainData/SET_PROJECT_DETAILS';
 export const SET_PROJECT_DASHBOARD_DETAILS = 'siloDomainData/SET_PROJECT_DASHBOARD_DETAILS';
@@ -10,8 +11,11 @@ export const SET_PROJECT_USERGROUPS = 'siloDomainData/SET_PROJECT_USERGROUPS';
 export const ADD_PROJECT_USERGROUP = 'siloDomainData/ADD_PROJECT_USERGROUP';
 
 export const REMOVE_PROJECT_MEMBERSHIP = 'siloDomainData/REMOVE_PROJECT_MEMBERSHIP';
-
 export const REMOVE_PROJECT_USERGROUP = 'siloDomainData/REMOVE_PROJECT_USERGROUP';
+export const MODIFY_PROJECT_MEMBERSHIP = 'siloDomainData/MODIFY_PROJECT_MEMBERSHIP';
+export const MODIFY_PROJECT_USERGROUP = 'siloDomainData/MODIFY_PROJECT_USERGROUP';
+
+const emptyObject = {};
 
 // REDUCER
 
@@ -39,30 +43,45 @@ export const addProjectMembershipAction = ({ projectId, membership }) => ({
     membership,
 });
 
-export const addProjectUserGroupAction = ({ projectId, userGroup }) => ({
+export const addProjectUsergroupAction = ({ projectId, usergroup }) => ({
     type: ADD_PROJECT_USERGROUP,
     projectId,
-    userGroup,
+    usergroup,
 });
 
-export const setProjectUserGroupsAction = ({ userGroups, projectId }) => ({
+export const setProjectUsergroupsAction = ({ usergroups, projectId }) => ({
     type: SET_PROJECT_USERGROUPS,
-    userGroups,
+    usergroups,
     projectId,
 });
 
-export const removeProjectMembershipAction = ({ projectId, membership }) => ({
+export const removeProjectMembershipAction = ({ projectId, membershipId }) => ({
     type: REMOVE_PROJECT_MEMBERSHIP,
+    projectId,
+    membershipId,
+});
+
+export const removeProjectUserGroupAction = ({ projectId, usergroupId }) => ({
+    type: REMOVE_PROJECT_USERGROUP,
+    projectId,
+    usergroupId,
+});
+
+export const modifyProjectUserGroupAction = ({ projectId, usergroupId, newRole }) => ({
+    type: MODIFY_PROJECT_USERGROUP,
+    projectId,
+    usergroupId,
+    newRole,
+});
+
+export const modifyProjectMembershipAction = ({
+    projectId,
+    membership,
+}) => ({
+    type: MODIFY_PROJECT_MEMBERSHIP,
     projectId,
     membership,
 });
-
-export const removeProjectUserGroupAction = ({ projectId, userGroup }) => ({
-    type: REMOVE_PROJECT_USERGROUP,
-    projectId,
-    userGroup,
-});
-
 
 export const changeProjectDetailsAction =
     ({ faramValues, faramErrors, projectId }) => ({
@@ -98,9 +117,12 @@ export const setProjectDetails = (state, action) => {
         role,
         versionId,
         regions,
-        memberships,
-        userGroups,
+        userGroups: usergroupList,
+        memberships: membershipList,
     } = faramValues;
+
+    const memberships = listToMap(membershipList, m => m.id) || emptyObject;
+    const usergroups = listToMap(usergroupList, m => m.id) || emptyObject;
 
     const settings = {
         projectsView: { $auto: {
@@ -112,8 +134,6 @@ export const setProjectDetails = (state, action) => {
                         startDate,
                         endDate,
                         regions,
-                        memberships,
-                        userGroups,
                     } },
                     faramErrors: { $set: {} },
                     pristine: { $set: true },
@@ -123,6 +143,12 @@ export const setProjectDetails = (state, action) => {
                     versionId: { $set: versionId },
                     role: { $set: role },
                 } },
+                memberships: {
+                    $set: memberships,
+                },
+                usergroups: {
+                    $set: usergroups,
+                },
             } },
         } },
     };
@@ -168,14 +194,14 @@ export const changeProjectDetails = (state, action) => {
 export const setProjectMemberships = (state, action) => {
     const {
         projectId,
-        memberships,
+        memberships: membershipList,
     } = action;
+    const memberships = listToMap(membershipList, m => m.id) || emptyObject;
+
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
-                memberships: {
-                    $set: memberships,
-                },
+                memberships: { $set: memberships },
             } },
         } },
     };
@@ -187,11 +213,12 @@ export const addProjectMembership = (state, action) => {
         projectId,
         membership,
     } = action;
+
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
-                memberships: { $autoArray: {
-                    $push: [membership],
+                memberships: { $auto: {
+                    [membership.id]: { $set: membership },
                 } },
             } },
         } },
@@ -199,33 +226,35 @@ export const addProjectMembership = (state, action) => {
     return update(state, settings);
 };
 
-export const setProjectUserGroups = (state, action) => {
+export const setProjectUsergroups = (state, action) => {
     const {
         projectId,
-        userGroups,
+        usergroups: usergroupList,
     } = action;
+    const usergroups = listToMap(usergroupList, u => u.id) || emptyObject;
+
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
-                userGroups: {
-                    $set: userGroups,
-                },
+                usergroups: { $auto: {
+                    $set: usergroups,
+                } },
             } },
         } },
     };
     return update(state, settings);
 };
 
-export const addProjectUserGroup = (state, action) => {
+export const addProjectUsergroup = (state, action) => {
     const {
         projectId,
-        userGroup,
+        usergroup,
     } = action;
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
-                userGroups: { $autoArray: {
-                    $push: [userGroup],
+                usergroups: { $auto: {
+                    [usergroup.id]: { $set: usergroup },
                 } },
             } },
         } },
@@ -252,8 +281,23 @@ export const setErrorProjectDetails = (state, action) => {
     return update(state, settings);
 };
 
-
 export const removeProjectMembership = (state, action) => {
+    const {
+        projectId,
+        membershipId,
+    } = action;
+
+    const settings = {
+        projectsView: { $auto: {
+            [projectId]: { $auto: {
+                memberships: { $unset: [membershipId] },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
+export const modifyProjectMembership = (state, action) => {
     const {
         projectId,
         membership,
@@ -262,27 +306,46 @@ export const removeProjectMembership = (state, action) => {
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
-                memberships: {
-                    $filter: mem => membership.id !== mem.id,
-                },
+                memberships: { $auto: {
+                    [membership.id]: { $set: membership },
+                } },
             } },
         } },
     };
     return update(state, settings);
 };
 
-export const removeProjectUserGroup = (state, action) => {
+export const removeProjectUsergroup = (state, action) => {
     const {
         projectId,
-        userGroup,
+        usergroupId,
     } = action;
 
     const settings = {
         projectsView: { $auto: {
             [projectId]: { $auto: {
-                userGroups: {
-                    $filter: ug => userGroup.id !== ug.id,
-                },
+                usergroups: { $unset: [usergroupId] },
+            } },
+        } },
+    };
+    return update(state, settings);
+};
+
+export const modifyProjectUserGroup = (state, action) => {
+    const {
+        projectId,
+        usergroupId,
+        newRole,
+    } = action;
+
+    const settings = {
+        projectsView: { $auto: {
+            [projectId]: { $auto: {
+                usergroups: { $auto: {
+                    [usergroupId]: { $auto: {
+                        role: { $set: newRole },
+                    } },
+                } },
             } },
         } },
     };
@@ -296,11 +359,13 @@ const reducers = {
     [SET_ERROR_PROJECT_DETAILS]: setErrorProjectDetails,
     [SET_PROJECT_MEMBERSHIPS]: setProjectMemberships,
     [ADD_PROJECT_MEMBERSHIP]: addProjectMembership,
-    [SET_PROJECT_USERGROUPS]: setProjectUserGroups,
-    [ADD_PROJECT_USERGROUP]: addProjectUserGroup,
+    [SET_PROJECT_USERGROUPS]: setProjectUsergroups,
+    [ADD_PROJECT_USERGROUP]: addProjectUsergroup,
 
     [REMOVE_PROJECT_MEMBERSHIP]: removeProjectMembership,
-    [REMOVE_PROJECT_USERGROUP]: removeProjectUserGroup,
+    [REMOVE_PROJECT_USERGROUP]: removeProjectUsergroup,
+    [MODIFY_PROJECT_MEMBERSHIP]: modifyProjectMembership,
+    [MODIFY_PROJECT_USERGROUP]: modifyProjectUserGroup,
 };
 
 export default reducers;

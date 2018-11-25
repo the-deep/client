@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import SearchInput from '#rsci/SearchInput';
 import ListView from '#rscv/List/ListView';
@@ -9,6 +10,7 @@ import {
     RequestClient,
     requestMethods,
 } from '#request';
+import { projectMembershipListSelector } from '#redux';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
@@ -20,10 +22,16 @@ const RequestPropType = PropTypes.shape({
 });
 
 const propTypes = {
+    // eslint-disable-next-line react/no-unused-prop-types
+    memberships: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     className: PropTypes.string,
     projectId: PropTypes.number.isRequired,
     searchInputValue: PropTypes.string.isRequired,
     onSearchInputChange: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
+    onItemRemove: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
+    onItemsPull: PropTypes.func.isRequired,
     userSearchRequest: RequestPropType.isRequired,
     readOnly: PropTypes.bool,
 };
@@ -33,8 +41,6 @@ const defaultProps = {
     readOnly: false,
 };
 
-const emptyList = [];
-const emptyObject = {};
 const MIN_SEARCH_TEXT_CHARACTERS = 2;
 
 const EmptySearch = () => {
@@ -86,7 +92,13 @@ const requests = {
                     searchInputValue,
                     userSearchRequest,
                 },
+                prevProps: {
+                    searchInputValue: oldSearchInputValue,
+                },
             }) => {
+                if (oldSearchInputValue === searchInputValue) {
+                    return false;
+                }
                 const searchText = searchInputValue.trim();
                 if (searchText.length < MIN_SEARCH_TEXT_CHARACTERS) {
                     userSearchRequest.abort();
@@ -95,9 +107,22 @@ const requests = {
 
                 return true;
             },
+            memberships: ({
+                props: {
+                    memberships: newMemberships,
+                    searchInputValue,
+                },
+                prevProps: { memberships: oldMemberships },
+            }) => {
+                if (newMemberships.length < oldMemberships.length &&
+                    searchInputValue.trim().length >= MIN_SEARCH_TEXT_CHARACTERS
+                ) {
+                    return true;
+                }
+                return false;
+            },
         },
         method: requestMethods.GET,
-        isUnique: true,
         query: ({
             props: {
                 projectId,
@@ -107,13 +132,23 @@ const requests = {
             search: searchInputValue.trim(),
             project: projectId,
         }),
+        onSuccess: ({ props: { onItemsPull }, response = {} }) => {
+            onItemsPull(response.results);
+        },
     },
 };
 
+const mapStateToProps = state => ({
+    memberships: projectMembershipListSelector(state),
+});
+
+@connect(mapStateToProps)
 @RequestClient(requests)
 export default class SearchList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static searchItemKeySelector = d => `${d.type}-${d.id}`;
 
     searchListItemRendererParams = (key, {
         title: usergroupTitle,
@@ -126,29 +161,25 @@ export default class SearchList extends React.PureComponent {
         type,
         memberId,
         projectId: this.props.projectId,
+        onItemRemove: this.props.onItemRemove,
     });
 
     renderUserList = () => {
-        const { searchInputValue } = this.props;
-
         const {
-            userSearchRequest: {
-                response: {
-                    results: userList = emptyList,
-                } = emptyObject,
-            } = emptyObject,
+            searchInputValue,
+            searchItems,
         } = this.props;
 
-        if (userList.length === 0 && searchInputValue.length < MIN_SEARCH_TEXT_CHARACTERS) {
+        if (searchItems.length === 0 || searchInputValue.length < MIN_SEARCH_TEXT_CHARACTERS) {
             return <SearchTip />;
         }
 
         return (
             <ListView
                 className={styles.list}
-                keySelector={data => `${data.type}-${data.id}`}
+                keySelector={SearchList.searchItemKeySelector}
                 rendererParams={this.searchListItemRendererParams}
-                data={userList}
+                data={searchItems}
                 renderer={SearchListItem}
                 emptyComponent={EmptySearch}
             />
@@ -177,6 +208,9 @@ export default class SearchList extends React.PureComponent {
         return (
             <div className={className}>
                 <header className={styles.header}>
+                    <h4 className={styles.heading}>
+                        {_ts('project.users', 'userListHeading')}
+                    </h4>
                     <SearchInput
                         onChange={onSearchInputChange}
                         placeholder={searchInputPlaceholder}

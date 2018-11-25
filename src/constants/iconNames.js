@@ -67,6 +67,7 @@ const iconNames = {
     link: 'ion-link',
     list: 'ion-ios-list-outline',
     loading: 'ion-load-c',
+    spinner: 'fa fa-spinner fa-spin fa-3x fa-fw',
     locked: 'ion-locked',
     logout: 'ion-log-out',
     openLink: 'ion-android-open',

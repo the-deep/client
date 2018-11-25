@@ -8,8 +8,8 @@ import reducers, {
 
     setProjectMembershipsAction,
     addProjectMembershipAction,
-    setProjectUserGroupsAction,
-    addProjectUserGroupAction,
+    setProjectUsergroupsAction,
+    addProjectUsergroupAction,
     removeProjectMembershipAction,
     removeProjectUserGroupAction,
 } from './projects';
@@ -43,7 +43,10 @@ test('should set project memberships', () => {
     const after = {
         projectsView: {
             1: {
-                memberships,
+                memberships: memberships.reduce((acc, m) => ({
+                    ...acc,
+                    [m.id]: m,
+                }), {}),
             },
         },
     };
@@ -52,8 +55,8 @@ test('should set project memberships', () => {
 });
 
 test('should add project membership', () => {
-    const memberships = [
-        {
+    const memberships = {
+        9: {
             memberEmail: 'test@test.com',
             memberName: 'Nameless',
             member: 2,
@@ -62,7 +65,7 @@ test('should add project membership', () => {
             joinedAt: '2018-09-11T09:01:09.942690Z',
             project: 1,
         },
-    ];
+    };
     const state = {
         projectsView: {
             1: {
@@ -91,7 +94,10 @@ test('should add project membership', () => {
     const after = {
         projectsView: {
             1: {
-                memberships: [...memberships, membership],
+                memberships: {
+                    ...memberships,
+                    [membership.id]: membership,
+                },
             },
         },
     };
@@ -108,7 +114,7 @@ test('should set project usergroups', () => {
     };
 
     const projectId = 1;
-    const userGroups = [
+    const usergroups = [
         {
             id: 7,
             title: 'My usergroup',
@@ -119,15 +125,18 @@ test('should set project usergroups', () => {
         },
     ];
 
-    const action = setProjectUserGroupsAction({
-        userGroups,
+    const action = setProjectUsergroupsAction({
+        usergroups: usergroups,
         projectId,
     });
 
     const after = {
         projectsView: {
             1: {
-                userGroups,
+                usergroups: usergroups.reduce((acc, ug) => ({
+                    ...acc,
+                    [ug.id]: ug,
+                }), {}),
             },
         },
     };
@@ -135,8 +144,8 @@ test('should set project usergroups', () => {
 });
 
 test('should add project usergroup', () => {
-    const userGroups = [
-        {
+    const usergroups = {
+        7: {
             id: 7,
             title: 'My usergroup',
             joinedAt: '2018-09-13T12:42:14.398602Z',
@@ -144,17 +153,17 @@ test('should add project usergroup', () => {
             usergroup: 1,
             addedBy: null,
         },
-    ];
+    };
     const state = {
         projectsView: {
             1: {
-                userGroups,
+                usergroups,
             },
         },
     };
 
     const projectId = 1;
-    const userGroup = {
+    const usergroup = {
         id: 6,
         title: 'Next Usergroup',
         joinedAt: '2018-09-13T12:42:14.398602Z',
@@ -163,15 +172,18 @@ test('should add project usergroup', () => {
         addedBy: null,
     };
 
-    const action = addProjectUserGroupAction({
-        userGroup,
+    const action = addProjectUsergroupAction({
+        usergroup,
         projectId,
     });
 
     const after = {
         projectsView: {
             1: {
-                userGroups: [...userGroups, userGroup],
+                usergroups: {
+                    ...usergroups,
+                    [usergroup.id]: usergroup,
+                },
             },
         },
     };
@@ -179,8 +191,8 @@ test('should add project usergroup', () => {
 });
 
 test('should remove project membership', () => {
-    const memberships = [
-        {
+    const memberships = {
+        9: {
             memberEmail: 'test@test.com',
             memberName: 'Nameless',
             member: 2,
@@ -189,7 +201,7 @@ test('should remove project membership', () => {
             joinedAt: '2018-09-11T09:01:09.942690Z',
             project: 1,
         },
-        {
+        8: {
             memberEmail: 'test@test.com',
             memberName: 'Test User',
             member: 3,
@@ -198,7 +210,7 @@ test('should remove project membership', () => {
             joinedAt: '2018-09-13T09:01:09.942690Z',
             project: 1,
         },
-    ];
+    };
     const state = {
         projectsView: {
             1: {
@@ -211,14 +223,16 @@ test('should remove project membership', () => {
     // first test removing first member
 
     const action = removeProjectMembershipAction({
-        membership: memberships[0],
+        membershipId: 8,
         projectId,
     });
 
     const after = {
         projectsView: {
             1: {
-                memberships: [memberships[1]],
+                memberships: {
+                    9: memberships[9],
+                },
             },
         },
     };
@@ -226,14 +240,16 @@ test('should remove project membership', () => {
 
     // test removing next member
     const action1 = removeProjectMembershipAction({
-        membership: memberships[1],
+        membershipId: 9,
         projectId,
     });
 
     const after1 = {
         projectsView: {
             1: {
-                memberships: [memberships[0]],
+                memberships: {
+                    8: memberships[8],
+                },
             },
         },
     };
@@ -241,8 +257,8 @@ test('should remove project membership', () => {
 });
 
 test('should remove project usergroup', () => {
-    const userGroups = [
-        {
+    const usergroups = {
+        7: {
             id: 7,
             title: 'My usergroup',
             joinedAt: '2018-09-13T12:42:14.398602Z',
@@ -250,7 +266,7 @@ test('should remove project usergroup', () => {
             usergroup: 1,
             addedBy: null,
         },
-        {
+        6: {
             id: 6,
             title: 'Next Usergroup',
             joinedAt: '2018-09-13T12:42:14.398602Z',
@@ -258,27 +274,29 @@ test('should remove project usergroup', () => {
             usergroup: 2,
             addedBy: null,
         },
-    ];
+    };
     const projectId = 1;
 
     const state = {
         projectsView: {
             1: {
-                userGroups,
+                usergroups,
             },
         },
     };
 
     // remove first usergroup
     const action = removeProjectUserGroupAction({
-        userGroup: userGroups[0],
+        usergroupId: 7,
         projectId,
     });
 
     const after = {
         projectsView: {
             1: {
-                userGroups: [userGroups[1]],
+                usergroups: {
+                    6: usergroups[6],
+                },
             },
         },
     };
@@ -286,14 +304,16 @@ test('should remove project usergroup', () => {
 
     // remove second usergroup
     const action1 = removeProjectUserGroupAction({
-        userGroup: userGroups[1],
+        usergroupId: 6,
         projectId,
     });
 
     const after1 = {
         projectsView: {
             1: {
-                userGroups: [userGroups[0]],
+                usergroups: {
+                    7: usergroups[7],
+                },
             },
         },
     };

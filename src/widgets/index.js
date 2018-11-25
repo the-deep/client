@@ -399,6 +399,7 @@ export const fetchWidgetViewComponent = widgetId => fetchWidget(
 export const fetchWidgetFrameworkComponent = (widgetId, view, addedFrom) => {
     const { frameworkComponent } = fetchWidget(view, widgetId);
     const tagComponent = fetchWidgetTagComponent(widgetId, view, addedFrom);
+
     if (!tagComponent) {
         return undefined;
     }
