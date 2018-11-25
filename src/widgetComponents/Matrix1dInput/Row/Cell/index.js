@@ -9,6 +9,7 @@ const propTypes = {
     onClick: PropTypes.func,
     onDrop: PropTypes.func,
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -17,6 +18,7 @@ const defaultProps = {
     onClick: undefined,
     onDrop: () => {},
     disabled: false,
+    readOnly: false,
 };
 
 export default class Matrix1dCell extends React.PureComponent {
@@ -80,6 +82,7 @@ export default class Matrix1dCell extends React.PureComponent {
             children,
             onClick,
             disabled,
+            readOnly,
         } = this.props;
 
         return (
@@ -92,7 +95,7 @@ export default class Matrix1dCell extends React.PureComponent {
                 onClick={onClick}
                 type="button"
                 tabIndex="-1"
-                disabled={disabled}
+                disabled={disabled || readOnly}
             >
                 { children }
             </button>

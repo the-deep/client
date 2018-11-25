@@ -16,6 +16,7 @@ const propTypes = {
     rowData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     value: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool.isRequired,
+    readOnly: PropTypes.bool.isRequired,
     onChangeNumberField: PropTypes.func.isRequired,
 };
 
@@ -51,6 +52,7 @@ export default class NumberMatrixRow extends React.PureComponent {
             value,
             rowKey,
             disabled,
+            readOnly,
             onChangeNumberField,
         } = this.props;
 
@@ -60,6 +62,7 @@ export default class NumberMatrixRow extends React.PureComponent {
             rowKey,
             columnKey,
             disabled,
+            readOnly,
             columnValue,
             onChangeNumberField,
         });

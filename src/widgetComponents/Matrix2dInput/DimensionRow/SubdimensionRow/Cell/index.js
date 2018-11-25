@@ -15,11 +15,13 @@ const propTypes = {
 
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
     value: undefined,
     disabled: false,
+    readOnly: false,
     activeCellStyle: undefined,
     hoverStyle: undefined,
 };
@@ -47,19 +49,45 @@ export default class Cell extends React.PureComponent {
     }
 
     handleDragEnter = () => {
+        const { disabled, readOnly } = this.props;
+
+        // prevent drop when disabled
+        if (disabled || readOnly) {
+            return;
+        }
+
         this.setState({ isBeingDraggedOver: true });
     }
 
     handleDragExit = () => {
+        const { disabled, readOnly } = this.props;
+
+        // prevent drop when disabled
+        if (disabled || readOnly) {
+            return;
+        }
+
         this.setState({ isBeingDraggedOver: false });
     }
 
     handleDragOver = (e) => {
+        const { disabled, readOnly } = this.props;
+
+        // prevent drop when disabled
+        if (disabled || readOnly) {
+            return;
+        }
+
         e.preventDefault();
     }
 
     handleDrop = (e) => {
-        e.preventDefault();
+        const { disabled, readOnly } = this.props;
+
+        // prevent drop when disabled
+        if (disabled || readOnly) {
+            return;
+        }
 
         const {
             dimensionId,
@@ -95,6 +123,7 @@ export default class Cell extends React.PureComponent {
         const {
             activeCellStyle,
             disabled,
+            readOnly,
             hoverStyle,
         } = this.props;
         const { isBeingDraggedOver } = this.state;
@@ -107,15 +136,19 @@ export default class Cell extends React.PureComponent {
         return (
             <td
                 className={styles.cell}
-                disabled={disabled}
                 role="gridcell"
                 style={style}
-                onDragEnter={this.handleDragEnter}
-                onDragLeave={this.handleDragExit}
-                onDragOver={this.handleDragOver}
-                onDrop={this.handleDrop}
-                onClick={this.handleClick}
-            />
+            >
+                <button
+                    className={styles.cellButton}
+                    disabled={disabled || readOnly}
+                    onDragEnter={this.handleDragEnter}
+                    onDragLeave={this.handleDragExit}
+                    onDragOver={this.handleDragOver}
+                    onDrop={this.handleDrop}
+                    onClick={this.handleClick}
+                />
+            </td>
         );
     }
 }

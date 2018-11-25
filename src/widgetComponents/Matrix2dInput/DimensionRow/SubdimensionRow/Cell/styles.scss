@@ -1,5 +1,16 @@
 @import '~base-scss/base';
+@import '../../../../../vendor/react-store/stylesheets/button-base';
 
 .cell {
-    cursor: pointer;
+    position: relative;
+
+    .cell-button {
+        @extend %button-base;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: transparent;
+        width: 100%;
+        height: 100%;
+    }
 }

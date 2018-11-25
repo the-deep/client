@@ -23,7 +23,6 @@ const propTypes = {
     sectors: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    disabled: PropTypes.bool,
     onChange: PropTypes.func, // eslint-disable-line react/forbid-prop-types
 };
 
@@ -31,7 +30,6 @@ const defaultProps = {
     dimensions: [],
     sectors: [],
     value: undefined,
-    disabled: false,
     onChange: () => {},
 };
 
