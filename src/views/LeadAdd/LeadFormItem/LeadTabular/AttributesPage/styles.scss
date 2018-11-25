@@ -1,0 +1,16 @@
+@import '~base-scss/base';
+
+.form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
+
+    .submit-button {
+        align-self: flex-start;
+        flex-shrink: 0;
+        margin: $spacing-medium;
+        width: auto;
+    }
+}
+

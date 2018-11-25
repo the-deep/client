@@ -1,0 +1,24 @@
+@import '~base-scss/base';
+
+$width-input-max: 240px;
+
+.form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
+
+    .file-type-select {
+        flex-shrink: 0;
+        margin: $spacing-small $spacing-medium;
+        width: 100%;
+        max-width: $width-input-max;
+    }
+
+    .submit-button {
+        align-self: flex-start;
+        flex-shrink: 0;
+        margin: $spacing-medium;
+        width: auto;
+    }
+}
