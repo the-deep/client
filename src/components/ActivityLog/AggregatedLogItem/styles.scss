@@ -1,0 +1,37 @@
+@import '~base-scss/base';
+
+.log-item {
+    display: flex;
+    flex-direction: column;
+    border-bottom: $width-separator-thin solid $color-separator;
+    padding: $spacing-medium;
+
+    .log {
+        .fields {
+            font-weight: $font-weight-bold;
+        }
+    }
+
+    .meta-data {
+        display: flex;
+        align-items: baseline;
+        justify-content: flex-end;
+        padding-top: $spacing-small;
+        color: $color-text-label;
+
+        .user {
+            padding-right: $spacing-extra-small;
+            text-transform: capitalize;
+            text-decoration: underline;
+            color: $color-primary;
+
+            &:after {
+                content: ',';
+            }
+        }
+
+        .date {
+            font-size: $font-size-small;
+        }
+    }
+}

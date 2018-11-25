@@ -1,58 +1,69 @@
 @import '~base-scss/base';
 
 $width-min-inputs-container: 320px;
+$width-dashboard: 760px;
+$width-min-dashboard: 480px;
 
 .general {
     display: flex;
     position: relative;
     flex-grow: 1;
+    background-color: $color-foreground-light;
     overflow-y: auto;
 
-    .inputs-container {
-        flex-basis: 40%;
-        min-width: $width-min-inputs-container;
+    .form {
+        flex-basis: calc(calc(100% - #{$width-dashboard}) / 2);
 
-        .header {
-            display: flex;
-            flex-shrink: 0;
-            padding: $spacing-large;
+        .inputs-container {
+            min-width: $width-min-inputs-container;
 
-            .non-field-errors {
-                flex-grow: 1;
-            }
-
-            .action-buttons {
+            .header {
+                display: flex;
                 flex-shrink: 0;
+                padding: $spacing-large;
 
-                .button {
-                    margin-left: $spacing-medium;
+                .non-field-errors {
+                    flex-grow: 1;
+                }
+
+                .action-buttons {
+                    flex-shrink: 0;
+
+                    .button {
+                        margin-left: $spacing-medium;
+                    }
                 }
             }
-        }
 
-        .content {
-            flex-shrink: 0;
-            padding: $spacing-large;
+            .content {
+                flex-shrink: 0;
+                padding: $spacing-large;
 
-            .start-date,
-            .end-date,
-            .name {
-                margin-bottom: $spacing-medium;
-            }
+                .start-date,
+                .end-date,
+                .name {
+                    margin-bottom: $spacing-medium;
+                }
 
-            .description {
-                :global .input {
-                    resize: none;
+                .description {
+                    :global .input {
+                        resize: none;
+                    }
                 }
             }
         }
     }
 
-    .visualizations {
+    .dashboard {
         display: flex;
-        align-items: center;
-        flex-grow: 1;
-        justify-content: center;
-        background-color: $color-foreground;
+        flex-basis: $width-dashboard;
+        border-right: $width-separator-thin solid $color-separator;
+        border-left: $width-separator-thin solid $color-separator;
+        min-width: $width-min-dashboard;
+    }
+
+    .activity-log {
+        display: flex;
+        flex-basis: calc(calc(100% - #{$width-dashboard}) / 2);
     }
 }

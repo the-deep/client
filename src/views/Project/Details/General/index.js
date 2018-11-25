@@ -10,8 +10,10 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import DateInput from '#rsci/DateInput';
 import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
+import ActivityLog from '#components/ActivityLog';
 
 import {
+    projectActivityLogSelector,
     projectLocalDataSelector,
     projectServerDataSelector,
     setProjectDetailsAction,
@@ -28,11 +30,13 @@ import _ts from '#ts';
 
 import ProjectGetRequest from './requests/ProjectGetRequest';
 import ProjectPutRequest from './requests/ProjectPutRequest';
+import Dashboard from './Dashboard';
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
     projectLocalData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    activityLog: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     changeProjectDetails: PropTypes.func.isRequired,
     setProjectDetails: PropTypes.func.isRequired,
     projectServerData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -48,6 +52,7 @@ const defaultProps = {
 };
 
 const mapStateToProps = state => ({
+    activityLog: projectActivityLogSelector(state),
     projectLocalData: projectLocalDataSelector(state),
     projectServerData: projectServerDataSelector(state),
 });
@@ -82,7 +87,6 @@ export default class ProjectDetailsGeneral extends PureComponent {
 
         const {
             setProjectDetails,
-            projectServerData,
             setErrorProjectDetails,
         } = this.props;
 
@@ -196,6 +200,8 @@ export default class ProjectDetailsGeneral extends PureComponent {
         const {
             readOnly,
             className: classNameFromProps,
+            activityLog,
+            projectId,
             projectLocalData: {
                 faramValues = {},
                 faramErrors,
@@ -221,9 +227,9 @@ export default class ProjectDetailsGeneral extends PureComponent {
         }
 
         return (
-            <React.Fragment>
+            <div className={className}>
                 <Faram
-                    className={className}
+                    className={styles.form}
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleValidationFailure}
                     onValidationSuccess={this.handleValidationSuccess}
@@ -233,9 +239,6 @@ export default class ProjectDetailsGeneral extends PureComponent {
                     readOnly={readOnly}
                     disabled={loading}
                 >
-                    <div className={styles.visualizations}>
-                        Visualizations
-                    </div>
                     <div className={styles.inputsContainer}>
                         <header className={styles.header}>
                             <NonFieldErrors
@@ -288,8 +291,16 @@ export default class ProjectDetailsGeneral extends PureComponent {
                         </div>
                     </div>
                 </Faram>
+                <Dashboard
+                    className={styles.dashboard}
+                    projectId={projectId}
+                />
+                <ActivityLog
+                    log={activityLog}
+                    className={styles.activityLog}
+                />
                 <UnsavedChangesPrompt />
-            </React.Fragment>
+            </div>
         );
     }
 }

@@ -19,6 +19,16 @@ export const projectLocalDataSelector = createSelector(
     project => project.localData || emptyObject,
 );
 
+export const projectDashboardSelector = createSelector(
+    projectSelector,
+    project => project.dashboard || emptyObject,
+);
+
+export const projectActivityLogSelector = createSelector(
+    projectDashboardSelector,
+    dashboard => dashboard.activityLog || emptyArray,
+);
+
 export const projectServerDataSelector = createSelector(
     projectSelector,
     project => project.serverData || emptyObject,

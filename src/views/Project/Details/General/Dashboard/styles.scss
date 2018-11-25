@@ -1,0 +1,127 @@
+@import '~base-scss/base';
+
+.project-dashboard {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: $color-foreground;
+
+    h4 {
+        text-transform: capitalize;
+    }
+
+    .row {
+        flex: 1;
+    }
+
+    .metadata {
+        display: flex;
+        flex-direction: column;
+        border-bottom: $width-separator-thin solid $color-separator;
+
+        .right-section {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: center;
+            border-top: $width-separator-thin solid $color-separator;
+
+            .top-section, .bottom-section {
+                display: flex;
+                flex: 1;
+                justify-content: space-around;
+            }
+
+            .bottom-section {
+                margin-top: $spacing-super-large;
+            }
+        }
+
+        .chart {
+            display: flex;
+            align-items: center;
+            align-self: center;
+            flex-direction: column;
+
+            h4 {
+                margin-bottom: $spacing-medium-alt;
+            }
+
+            .spark-line {
+                width: 196px;
+                height: 72px;
+
+                :global {
+                    .fill {
+                        opacity: 0.3;
+                        fill: $color-accent;
+                        stroke: $color-accent;
+                    }
+                    .line {
+                        stroke: $color-accent;
+                    }
+                }
+            }
+        }
+
+        .user-table {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+
+            h4 {
+                margin-bottom: $spacing-medium-alt;
+            }
+
+            .user {
+                display: flex;
+                justify-content: space-between;
+                border-bottom: $width-separator-thin solid $color-separator;
+                width: 176px;
+
+                .name {
+                    margin-right: $spacing-extra-large;
+                }
+            }
+        }
+
+        .info {
+            display: flex;
+            justify-content: center;
+            border-spacing: $spacing-large $spacing-small-alt;
+
+            .info-item {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                padding: $spacing-medium $spacing-large;
+
+                .label {
+                    color: $color-primary;
+                    font-family: $font-family-heading;
+                    font-size: $font-size-medium;
+                    font-weight: $font-weight-heading;
+                }
+
+                .value {
+                    font-size: $font-size-medium;
+                }
+            }
+        }
+    }
+
+    .map {
+        position: relative;
+
+        .region-select-input {
+            position: absolute;
+            top: $spacing-small;
+            left: $spacing-small;
+            z-index: 20;
+            border: $width-separator-thin solid $color-separator-alt;
+            background-color: $color-foreground;
+            padding: $spacing-small;
+        }
+    }
+}
+

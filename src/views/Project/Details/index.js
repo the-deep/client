@@ -28,6 +28,7 @@ const defaultProps = {
 export default class ProjectDetails extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
     static shouldDisableDetails = ({ setupPermissions }) => !setupPermissions.modify;
 
     constructor(props) {
