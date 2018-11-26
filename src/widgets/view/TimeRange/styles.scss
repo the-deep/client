@@ -1,12 +1,12 @@
 @import '~base-scss/base';
 
-.date-range {
+.time-range {
     display: flex;
     align-items: center;
     height: 100%;
     overflow: auto;
 
-    .date {
+    .time {
         padding: $spacing-extra-small $spacing-small;
     }
 

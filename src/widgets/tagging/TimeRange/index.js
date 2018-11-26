@@ -20,15 +20,15 @@ export default class TimeRangeWidget extends React.PureComponent {
 
     render() {
         return (
-            <div className={styles.dateRange}>
+            <div className={styles.timeRange}>
                 <div className={styles.to}>
                     <Label
-                        text={_ts('widgets.tagging.dateRange', 'fromLabel')}
+                        text={_ts('widgets.tagging.timeRange', 'fromLabel')}
                         className={styles.label}
                         show
                     />
                     <TimeInput
-                        className={styles.dateInput}
+                        className={styles.timeInput}
                         faramElementName="fromValue"
                         showLabel={false}
                         showHintAndError={false}
@@ -36,12 +36,12 @@ export default class TimeRangeWidget extends React.PureComponent {
                 </div>
                 <div className={styles.from}>
                     <Label
-                        text={_ts('widgets.tagging.dateRange', 'toLabel')}
+                        text={_ts('widgets.tagging.timeRange', 'toLabel')}
                         className={styles.label}
                         show
                     />
                     <TimeInput
-                        className={styles.dateInput}
+                        className={styles.timeInput}
                         faramElementName="toValue"
                         showLabel={false}
                         showHintAndError={false}

@@ -2311,6 +2311,13 @@
         },
         "project.usergroups": {
             "removeUsergroupConfirmationMessage": -30665346
+        },
+        "widgets.tagging.timeRange": {
+            "fromLabel": 1009,
+            "toLabel": 1000
+        },
+        "widgets.view.timeRange": {
+            "toLabel": 1000
         }
     }
 }

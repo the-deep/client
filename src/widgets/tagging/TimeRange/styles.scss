@@ -1,6 +1,6 @@
 @import '~base-scss/base';
 
-.date-range {
+.time-range {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -21,7 +21,7 @@
             width: 32px;
         }
 
-        .date-input {
+        .time-input {
             flex-grow: 1;
             width: auto;
         }

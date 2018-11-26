@@ -35,19 +35,19 @@ export default class TimeRangeViewWidget extends React.PureComponent {
         } = this.props;
 
         return (
-            <div className={`${className} ${styles.dateRange}`}>
+            <div className={`${className} ${styles.timeRange}`}>
                 <FormattedTime
                     faramElementName="fromValue"
-                    className={styles.date}
+                    className={styles.time}
                     mode="hh:mm"
                     emptyComponent={emptyComponent}
                 />
                 <span className={styles.to}>
-                    {_ts('widgets.view.dateRange', 'toLabel')}
+                    {_ts('widgets.view.timeRange', 'toLabel')}
                 </span>
                 <FormattedTime
                     faramElementName="toValue"
-                    className={styles.date}
+                    className={styles.time}
                     mode="hh:mm"
                     emptyComponent={emptyComponent}
                 />
