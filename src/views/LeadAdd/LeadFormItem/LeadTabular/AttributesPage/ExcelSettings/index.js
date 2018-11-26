@@ -11,6 +11,8 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
+export const xlsxSchema = [];
+
 export default class ExcelSettings extends React.PureComponent {
     static sheetKeySelector = d => d.key;
 
@@ -58,7 +60,7 @@ export default class ExcelSettings extends React.PureComponent {
         if (!sheets) {
             return (
                 <Message>
-                    {_ts('addLeads.tabular', 'invalidExcel')}
+                    {_ts('addLeads.tabular', 'invalid')}
                 </Message>
             );
         }
@@ -76,4 +78,3 @@ export default class ExcelSettings extends React.PureComponent {
         );
     }
 }
-

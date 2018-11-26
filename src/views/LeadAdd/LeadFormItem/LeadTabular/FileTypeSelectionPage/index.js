@@ -2,26 +2,62 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import Faram, { requiredCondition } from '#rscg/Faram';
+import NonFieldErrors from '#rsci/NonFieldErrors';
 import SegmentInput from '#rsci/SegmentInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
+import { leadPaneTypeMap, LEAD_PANE_TYPE } from '#entities/lead';
+import { RequestClient, requestMethods } from '#request';
 import _ts from '#ts';
 
 import styles from './styles.scss';
 
+const noOp = () => {};
+
 const propTypes = {
-    fileType: PropTypes.string.isRequired,
-    onNext: PropTypes.func,
-    setFileType: PropTypes.func.isRequired,
-    pending: PropTypes.bool,
+    onComplete: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
+    onNext: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
+
+    lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    mimeType: PropTypes.string,
+
+    createBookRequest: RequestClient.prop.isRequired,
 };
 
 const defaultProps = {
-    fileType: undefined,
-    pending: false,
-    onNext: () => {},
+    onComplete: noOp,
+    onNext: noOp,
+    mimeType: '',
 };
 
+const requests = {
+    createBookRequest: {
+        method: requestMethods.POST,
+        url: '/tabular-books/',
+        body: ({ params: { body } }) => body,
+        onSuccess: ({ props, response }) => {
+            props.onComplete(response.id, response.fileType, props.onNext);
+        },
+        onFailure: ({ error: { faramErrors }, params: { handleFaramError } }) => {
+            handleFaramError(faramErrors);
+        },
+        onFatal: ({ params: { handleFaramError } }) => {
+            handleFaramError({
+                $internal: ['SERVER ERROR'],
+            });
+        },
+    },
+};
+
+const calcFileType = (mimeType) => {
+    const leadType = leadPaneTypeMap[mimeType];
+    if (leadType === LEAD_PANE_TYPE.spreadsheet) {
+        return 'xlsx';
+    }
+    return 'csv';
+};
+
+@RequestClient(requests)
 export default class FileTypeSelectionPage extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -35,7 +71,7 @@ export default class FileTypeSelectionPage extends React.PureComponent {
         super(props);
         this.state = {
             faramValues: {
-                fileType: props.fileType,
+                fileType: calcFileType(props.mimeType),
             },
             faramErrors: {},
         };
@@ -54,12 +90,22 @@ export default class FileTypeSelectionPage extends React.PureComponent {
     }
 
     handleFaramValidationFailure = (faramErrors) => {
+        console.warn(faramErrors);
         this.setState({ faramErrors });
     }
 
     handleFaramValidationSuccess = (faramValues) => {
-        this.props.setFileType(faramValues.fileType);
-        this.props.onNext();
+        const { lead } = this.props;
+        const { faramValues: { title, attachment: file, url } } = lead;
+        this.props.createBookRequest.do({
+            body: {
+                ...faramValues,
+                title,
+                url,
+                file: file && file.id,
+            },
+            handleFaramError: this.handleFaramValidationFailure,
+        });
     }
 
     render() {
@@ -67,7 +113,10 @@ export default class FileTypeSelectionPage extends React.PureComponent {
             faramValues,
             faramErrors,
         } = this.state;
-        const { pending } = this.props;
+        const { createBookRequest } = this.props;
+
+        // TODO: Handle error
+        const { pending } = createBookRequest;
 
         return (
             <Faram
@@ -80,6 +129,7 @@ export default class FileTypeSelectionPage extends React.PureComponent {
                 error={faramErrors}
                 disabled={pending}
             >
+                <NonFieldErrors faramElement />
                 <SegmentInput
                     name="file-type-selection"
                     className={styles.fileTypeSelect}
@@ -93,6 +143,7 @@ export default class FileTypeSelectionPage extends React.PureComponent {
                 <PrimaryButton
                     type="submit"
                     className={styles.submitButton}
+                    pending={pending}
                 >
                     {_ts('addLeads.tabular', 'nextLabel')}
                 </PrimaryButton>

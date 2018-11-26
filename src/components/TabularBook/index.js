@@ -147,6 +147,7 @@ export default class TabularBook extends React.PureComponent {
             sheets,
             activeSheet,
         } = this.state;
+        const { deleteRequest } = this.props;
 
         const className = _cs(this.props.className, styles.tabularBook, 'tabular-book');
 
@@ -168,6 +169,7 @@ export default class TabularBook extends React.PureComponent {
 
         return (
             <div className={className}>
+                {deleteRequest.pending && <LoadingAnimation />}
                 <header>
                     <h4>
                         {_ts('tabular', 'title')}

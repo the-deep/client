@@ -886,7 +886,8 @@
         "-60104332": "Can't drop here!",
         "-63188496": "Couldn't read tabular data.",
         "-47036305": "Default: ,",
-        "-45402687": "Default: 1"
+        "-45402687": "Default: 1",
+        "-53408079": "Back"
     },
     "links": {
         "browserExtension": {
@@ -1627,7 +1628,8 @@
             "nextLabel": 23,
             "invalid": -63188496,
             "headerRowPlaceholder": -45402687,
-            "delimiterPlaceholder": -47036305
+            "delimiterPlaceholder": -47036305,
+            "backLabel": -53408079
         },
         "register": {
             "checkYourEmailText": 818,

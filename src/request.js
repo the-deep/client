@@ -1,6 +1,10 @@
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+
+import { alterResponseErrorToFaramError } from '#rest';
+import update from '#rsu/immutable-update';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import {
     createRequestCoordinator,
     createRequestClient,
@@ -72,10 +76,20 @@ const CustomRequestCoordinator = createRequestCoordinator({
         return body;
     },
 
+    /*
+     * FIXME: Use this one
     transformErrors: ({ errors, ...otherProps }) => ({
         ...otherProps,
         body: alterResponseErrorToFaramError(errors),
     }),
+    */
+    transformErrors: (response) => {
+        const faramErrors = alterResponseErrorToFaramError(response.errors);
+        return {
+            response,
+            faramErrors,
+        };
+    },
 });
 
 export const RequestCoordinator = compose(

@@ -195,10 +195,10 @@ export default class TriggerAndPoll extends React.PureComponent {
             completed,
             data,
             invalid,
-            pollPending: pollRequest.pending,
-            triggerRequest: triggerRequest.pending,
-            dataRequest: dataRequest.pending,
-            initialRequest: initialRequest.pending,
+            pollRequest,
+            triggerRequest,
+            dataRequest,
+            initialRequest,
         });
     }
 }

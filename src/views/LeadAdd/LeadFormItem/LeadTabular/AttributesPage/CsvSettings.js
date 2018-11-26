@@ -1,9 +1,16 @@
 import React from 'react';
 
+import { requiredCondition } from '#rscg/Faram';
 import TextInput from '#rsci/TextInput';
 import _ts from '#ts';
 
-const CsvSettings = () => (
+export const csvSchema = {
+    fields: {
+        delimiter: [requiredCondition],
+    },
+};
+
+export default () => (
     <TextInput
         faramElementName="delimiter"
         label={_ts('addLeads.tabular', 'delimiterLabel')}
@@ -12,5 +19,3 @@ const CsvSettings = () => (
         showHintAndError
     />
 );
-
-export default CsvSettings;
