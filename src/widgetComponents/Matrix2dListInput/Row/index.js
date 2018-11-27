@@ -14,11 +14,13 @@ const propTypes = {
     subsectors: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     onChange: PropTypes.func.isRequired, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
     subsectors: [],
     disabled: false,
+    readOnly: false,
 };
 
 export default class Row extends React.PureComponent {
@@ -46,6 +48,7 @@ export default class Row extends React.PureComponent {
             sector,
             subsectors,
             disabled,
+            readOnly,
         } = this.props;
 
         return (
@@ -71,6 +74,7 @@ export default class Row extends React.PureComponent {
                         placeholder={_ts('widgets.tagging.matrix2d', 'subsectorsLabel')}
                         label={_ts('widgets.tagging.matrix2d', 'subsectorsLabel')}
                         showHintAndError={false}
+                        readOnly={readOnly}
                         disabled={disabled}
                     />
                 </div>

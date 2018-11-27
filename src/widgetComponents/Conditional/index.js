@@ -22,6 +22,7 @@ const propTypes = {
 
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
     onChange: PropTypes.func, // eslint-disable-line react/forbid-prop-types
 };
 
@@ -34,6 +35,7 @@ const defaultProps = {
 
     value: {},
     disabled: false,
+    readOnly: false,
     onChange: () => {},
 };
 
@@ -128,7 +130,13 @@ export default class Conditional extends React.PureComponent {
     }
 
     render() {
-        const { value, onChange, disabled } = this.props;
+        const {
+            value,
+            onChange,
+            disabled,
+            readOnly,
+        } = this.props;
+
         const { selectedWidgetKey } = value;
         const widget = this.getWidgetData(selectedWidgetKey);
         const WidgetView = this.getWidgetView(widget);
@@ -139,6 +147,7 @@ export default class Conditional extends React.PureComponent {
                     value={value}
                     onChange={onChange}
                     disabled={disabled}
+                    readOnly={readOnly}
                 >
                     {WidgetView}
                 </FaramGroup>

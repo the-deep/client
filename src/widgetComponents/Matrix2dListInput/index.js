@@ -15,6 +15,7 @@ const propTypes = {
 
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
     onChange: PropTypes.func, // eslint-disable-line react/forbid-prop-types
 };
 
@@ -24,6 +25,7 @@ const defaultProps = {
     sectors: [],
     value: undefined,
     disabled: false,
+    readOnly: false,
     onChange: () => {},
 };
 
@@ -96,6 +98,7 @@ export default class Matrix2dListInput extends React.PureComponent {
         sector: row.sector,
         subsectors: row.subsectors,
         disabled: this.props.disabled,
+        readOnly: this.props.readOnly,
         onChange: this.handleChange,
     })
 

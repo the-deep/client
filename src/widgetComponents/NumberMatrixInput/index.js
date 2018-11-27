@@ -26,11 +26,13 @@ const propTypes = {
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     data: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
     onChange: PropTypes.func,
 };
 
 const defaultProps = {
     disabled: false,
+    readOnly: false,
     data: {},
     value: {},
     onChange: undefined,
@@ -71,6 +73,7 @@ export default class NumberMatrixInput extends React.PureComponent {
             data,
             value,
             disabled,
+            readOnly,
         } = this.props;
 
         return ({
@@ -79,6 +82,7 @@ export default class NumberMatrixInput extends React.PureComponent {
             rowData,
             value,
             disabled,
+            readOnly,
             onChangeNumberField: this.onChangeNumberField,
         });
     }

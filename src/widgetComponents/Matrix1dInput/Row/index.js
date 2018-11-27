@@ -14,6 +14,7 @@ const propTypes = {
     onCellDrop: PropTypes.func,
     selectedCells: PropTypes.objectOf(PropTypes.bool),
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -23,6 +24,7 @@ const defaultProps = {
     onCellDrop: undefined,
     selectedCells: {},
     disabled: false,
+    readOnly: false,
 };
 
 export default class Matrix1dRow extends React.PureComponent {
@@ -37,6 +39,7 @@ export default class Matrix1dRow extends React.PureComponent {
         onDrop: droppedData => this.props.onCellDrop(key, droppedData),
         active: this.props.selectedCells[key],
         disabled: this.props.disabled,
+        readOnly: this.props.readOnly,
     })
 
     render() {

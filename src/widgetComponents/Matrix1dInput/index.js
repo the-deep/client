@@ -13,6 +13,7 @@ const propTypes = {
     options: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
     onChange: PropTypes.func, // eslint-disable-line react/forbid-prop-types
 };
 
@@ -21,6 +22,7 @@ const defaultProps = {
     options: [],
     value: undefined,
     disabled: false,
+    readOnly: false,
     onChange: () => {},
 };
 
@@ -70,6 +72,7 @@ export default class Matrix1dInput extends React.PureComponent {
         onCellDrop: (cellKey, droppedData) => this.handleCellDrop(key, cellKey, droppedData),
         selectedCells: this.props.value ? this.props.value[key] : undefined,
         disabled: this.props.disabled,
+        readOnly: this.props.readOnly,
     })
 
     render() {

@@ -10,6 +10,7 @@ const propTypes = {
     columnKey: PropTypes.string.isRequired,
     columnValue: PropTypes.number,
     disabled: PropTypes.bool.isRequired,
+    readOnly: PropTypes.bool.isRequired,
     onChangeNumberField: PropTypes.func.isRequired,
 };
 
@@ -35,6 +36,7 @@ export default class ColumnElement extends React.PureComponent {
         const {
             columnValue,
             disabled,
+            readOnly,
         } = this.props;
 
         return (
@@ -46,6 +48,7 @@ export default class ColumnElement extends React.PureComponent {
                     showHintAndError={false}
                     separator=" "
                     disabled={disabled}
+                    readOnly={readOnly}
                 />
             </td>
         );

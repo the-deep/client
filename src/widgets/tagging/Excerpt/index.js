@@ -21,6 +21,7 @@ const propTypes = {
     onExcerptChange: PropTypes.func,
     onExcerptCreate: PropTypes.func,
     disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -30,6 +31,7 @@ const defaultProps = {
     image: undefined,
     dataSeries: undefined,
     disabled: false,
+    readOnly: false,
     onExcerptChange: () => {},
     onExcerptCreate: () => {},
 };
@@ -196,6 +198,7 @@ export default class Excerpt extends React.PureComponent {
             entryType,
             excerpt,
             disabled,
+            readOnly,
         } = this.props;
 
         const className = `
@@ -213,6 +216,7 @@ export default class Excerpt extends React.PureComponent {
                     value={excerpt}
                     onChange={this.handleTextChange}
                     disabled={disabled}
+                    readOnly={readOnly}
                 />
                 { entryType &&
                     <AccentButton
@@ -224,7 +228,7 @@ export default class Excerpt extends React.PureComponent {
                         smallVerticalPadding
                         smallHorizontalPadding
                         transparent
-                        disabled={disabled || this.disableFormat}
+                        disabled={disabled || this.disableFormat || readOnly}
                     />
                 }
             </Fragment>
