@@ -35,7 +35,7 @@ const propTypes = {
     widgetTitle: PropTypes.string.isRequired,
     conditions: PropTypes.shape({
         list: PropTypes.array,
-        operator: PropTypes.oneOf(['AND', 'OR']),
+        operator: PropTypes.oneOf(['AND', 'OR', 'XOR']),
     }).isRequired,
     onSave: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
@@ -54,6 +54,7 @@ const mapStateToProps = state => ({
 const operatorOptions = [
     { key: 'AND', label: 'AND' },
     { key: 'OR', label: 'OR' },
+    { key: 'XOR', label: 'XOR' },
 ];
 
 class ConditionsEditModal extends React.PureComponent {
@@ -75,6 +76,7 @@ class ConditionsEditModal extends React.PureComponent {
                         widgetId: [],
                         widgetKey: [],
                         conditionType: [],
+                        invertLogic: [],
                         attributes: [],
                     },
                 },

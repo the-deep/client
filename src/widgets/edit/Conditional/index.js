@@ -5,6 +5,7 @@ import FaramList from '#rscg/FaramList';
 import ListView from '#rscv/List/ListView';
 import SortableListView from '#rscv/SortableListView';
 import DangerButton from '#rsca/Button/DangerButton';
+import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Modal from '#rscv/Modal';
@@ -41,13 +42,15 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static keySelector = widget => widget.widgetId;
-    static itemKeyExtractor = ({ widget }) => widget.key;
+    static itemKeySelector = ({ widget }) => widget.key;
+    static itemLabelSelector = ({ widget }) => widget.title;
 
     static schema = {
         fields: {
             title: [requiredCondition],
+            defaultWidget: [],
             widgets: {
-                keySelector: ConditionalWidgetEdit.itemKeyExtractor,
+                keySelector: ConditionalWidgetEdit.itemKeySelector,
                 member: {
                     fields: {
                         widget: {
@@ -70,7 +73,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
 
         const {
             title,
-            data: { widgets },
+            data,
             properties: { addedFrom },
         } = this.props;
 
@@ -78,7 +81,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
             faramErrors: {},
             faramValues: {
                 title,
-                widgets,
+                ...data,
             },
             pristine: false,
             disableEverything: false,
@@ -107,10 +110,10 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
     handleFaramValidationSuccess = (_, values) => {
         const {
             title,
-            widgets,
+            ...otherValues
         } = values;
 
-        this.props.onSave({ widgets }, title);
+        this.props.onSave(otherValues, title);
     }
 
     handleModalVisibilityChange = (disableEverything) => {
@@ -186,18 +189,29 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                     <ModalHeader title={title} />
                     <ModalBody className={styles.modalBody} >
                         <NonFieldErrors faramElement />
-                        <TextInput
-                            faramElementName="title"
-                            label={titleInputLabel}
-                            placeholder={titleInputPlaceholder}
-                            className={styles.textInput}
-                            autoFocus
-                            selectOnFocus
-                        />
+                        <div className={styles.widgetsHeader}>
+                            <TextInput
+                                className={styles.textInput}
+                                faramElementName="title"
+                                label={titleInputLabel}
+                                placeholder={titleInputPlaceholder}
+                                autoFocus
+                                selectOnFocus
+                            />
+                            <SelectInput
+                                faramElementName="defaultWidget"
+                                options={faramValues.widgets}
+                                keySelector={ConditionalWidgetEdit.itemKeySelector}
+                                labelSelector={ConditionalWidgetEdit.itemLabelSelector}
+                                label={_ts('widgets.editor.conditional', 'defaultWidgetLabel')}
+                                placeholder={_ts('widgets.editor.conditional', 'defaultWidgetPlaceholder')}
+
+                            />
+                        </div>
                         <div className={styles.widgetsContainer}>
                             <FaramList
                                 faramElementName="widgets"
-                                keySelector={ConditionalWidgetEdit.itemKeyExtractor}
+                                keySelector={ConditionalWidgetEdit.itemKeySelector}
                             >
                                 <div className={styles.leftContainer}>
                                     <header className={styles.header}>

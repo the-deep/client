@@ -11,6 +11,13 @@
         padding-right: $spacing-medium;
     }
 
+    .invert-checkbox {
+        flex-shrink: 0;
+        margin-right: $spacing-small;
+        width: auto;
+        text-transform: uppercase;
+    }
+
     .condition-attributes {
         display: flex;
         flex-grow: 1;

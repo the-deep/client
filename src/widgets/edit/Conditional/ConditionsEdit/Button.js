@@ -12,7 +12,7 @@ const propTypes = {
     widgetTitle: PropTypes.string.isRequired,
     value: PropTypes.shape({
         list: PropTypes.array,
-        operator: PropTypes.oneOf(['AND', 'OR']),
+        operator: PropTypes.oneOf(['AND', 'OR', 'XOR']),
     }).isRequired,
     onChange: PropTypes.func.isRequired,
     onModalVisibilityChange: PropTypes.func,
