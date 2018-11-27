@@ -132,9 +132,8 @@ export default class PasswordReset extends React.PureComponent {
             })
             .fatal((response) => {
                 console.info('FATAL:', response);
-                // FIXME: use strings
                 this.setState({
-                    faramErrors: { $internal: ['Error while trying to reset password.'] },
+                    faramErrors: { $internal: [_ts('passwordReset', 'passwordResetError')] },
                 });
             })
             .build();

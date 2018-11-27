@@ -228,9 +228,8 @@ export default class Login extends React.PureComponent {
                 }
             })
             .fatal(() => {
-                // FIXME: Use strings
                 this.setState({
-                    faramErrors: { $internal: ['Error while trying to log in.'] },
+                    faramErrors: { $internal: [_ts('login', 'loginError')] },
                     pending: false,
                 });
             })

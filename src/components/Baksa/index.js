@@ -272,7 +272,6 @@ export default class Baksa extends React.PureComponent {
         } = this.props;
         const elements = [];
 
-        // TODO: use string below:
         elements.push(
             <DropZone
                 className={styles.dropZone}
@@ -287,6 +286,7 @@ export default class Baksa extends React.PureComponent {
                     showStatus={false}
                     value=""
                     disabled={disabled || readOnly}
+                    // FIXME: Use strings
                 >
                     Drop a file or click to select
                 </FileInput>
@@ -312,6 +312,7 @@ export default class Baksa extends React.PureComponent {
                         className={styles.action}
                         onClick={this.handleUrlAdd}
                         disabled={disabled || readOnly}
+                        // FIXME: Use strings
                     >
                         Add
                     </PrimaryButton>
@@ -375,6 +376,7 @@ export default class Baksa extends React.PureComponent {
                     onChange={this.handleStartPageChange}
                     disabled={disabled}
                     readOnly={readOnly}
+                    // FIXME: Use strings
                     hint="Start Page"
                     separator=" "
                 />
@@ -387,6 +389,7 @@ export default class Baksa extends React.PureComponent {
                     onChange={this.handleEndPageChange}
                     disabled={disabled}
                     readOnly={readOnly}
+                    // FIXME: Use strings
                     hint="End Page"
                     separator=" "
                 />

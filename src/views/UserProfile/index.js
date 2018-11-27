@@ -156,11 +156,12 @@ export default class UserProfile extends React.PureComponent {
             );
         }
 
-        // FIXME: strings, line 166
         return (
             <div className={styles.userProfile}>
                 <header className={styles.header}>
-                    <h2>User Profile</h2>
+                    <h2>
+                        {_ts('userProfile', 'userProfileTitle')}
+                    </h2>
                 </header>
                 <div className={styles.info}>
                     {/* FIXME: add a default image in img */}

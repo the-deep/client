@@ -121,6 +121,7 @@ export default class AddRegion extends React.PureComponent {
                             regionDetail: response,
                         });
                         this.props.onModalClose();
+
                         // FIXME: this may cause setting state on unmounted component
                         this.setState({
                             redirectTo: reverseRoute(

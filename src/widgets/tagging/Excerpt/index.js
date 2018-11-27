@@ -37,6 +37,7 @@ const defaultProps = {
 // FIXME: reuse this from entities.editEntries
 const TEXT = 'excerpt';
 const IMAGE = 'image';
+
 const DATA_SERIES = 'dataSeries';
 
 export default class Excerpt extends React.PureComponent {
@@ -166,13 +167,11 @@ export default class Excerpt extends React.PureComponent {
             image
         `;
 
-        // FIXME: use translation
-        const altText = 'Excerpt image';
         return (
             <img
                 className={className}
                 src={image}
-                alt={altText}
+                alt={_ts('widgets.tagging.excerpt', 'imageAltText')}
             />
         );
     }

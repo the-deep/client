@@ -7,6 +7,7 @@ import {
     fetchWidgetTagComponent,
     fetchWidgetViewComponent,
 } from '#widgets';
+import _ts from '#ts';
 
 const propTypes = {
     widget: PropTypes.shape({
@@ -63,8 +64,11 @@ export default class Conditional extends React.PureComponent {
 
     getWidgetView = (widget) => {
         if (!widget) {
-            // FIXME: Use strings
-            return (<div>No widget</div>);
+            return (
+                <div>
+                    {_ts('widgets.tagging.conditional', 'noWidgetFoundText')}
+                </div>
+            );
         }
 
         const { widgetId } = widget;
