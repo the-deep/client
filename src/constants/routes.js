@@ -289,6 +289,14 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'visualization');
 
+    fourHundredThree: {
+        order: 980,
+        type: ROUTE.public,
+        path: '/403/',
+        loader: () => import('../views/FourHundredThree'),
+        hideNavbar: false,
+        links: allLinks,
+    }, // _ts('pageTitle', 'fourHundredThree');
     fourHundredFour: {
         order: 990,
         type: ROUTE.public,

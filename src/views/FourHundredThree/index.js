@@ -9,27 +9,25 @@ import logo from '#resources/img/deep-logo.svg';
 import styles from './styles.scss';
 
 // eslint-disable-next-line react/prefer-stateless-function
-export default class FourHundredFour extends React.PureComponent {
+export default class FourHundredThree extends React.PureComponent {
     render() {
         return (
-            <div className={styles.fourHundredFour}>
+            <div className={styles.fourHundredThree}>
                 <ReactSVG
                     svgClassName={styles.deepLogo}
                     path={logo}
                 />
                 <h1 className={styles.heading}>
-                    {_ts('fourHundredFour', 'errorFourHundredFour')}
+                    {_ts('fourHundredThree', 'errorThreeHundredThree')}
                 </h1>
                 <p className={styles.message}>
-                    {_ts('fourHundredFour', 'message1')}
-                    <br />
-                    {_ts('fourHundredFour', 'message2')}
+                    {_ts('fourHundredThree', 'message1')}
                 </p>
                 <BackLink
                     defaultLink={pathNames.homeScreen}
                     className={styles.homeScreenLink}
                 >
-                    {_ts('fourHundredFour', 'backToDeep')}
+                    {_ts('fourHundredThree', 'backToDeep')}
                 </BackLink>
             </div>
         );

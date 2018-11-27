@@ -1,0 +1,42 @@
+@import '~base-scss/base';
+
+$color-text-on-primary: get-text-color($color-primary);
+$width-message-max: 540px;
+
+.four-hundred-three {
+    @extend %main-content;
+    @include background-color($color-foreground-alt);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 2;
+
+    .deep-logo {
+        margin-bottom: $spacing-large;
+        width: 256px;
+        height: 256px;
+
+        path {
+            fill: $color-text-disabled;
+        }
+    }
+
+    .heading {
+        color: $color-danger;
+        font-size: $font-size-super-large-alt;
+        font-weight: $font-weight-bold;
+    }
+
+    .message {
+        margin: $spacing-large 0;
+        max-width: $width-message-max;
+        text-align: center;
+        font-size: $font-size-large-alt;
+    }
+
+    .home-screen-link {
+        color: $color-accent;
+        font-size: $font-size-large;
+    }
+}

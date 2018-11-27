@@ -374,6 +374,7 @@
         "871": "Oops! You have come too DEEP",
         "872": "This is where the DEEP Kraken rests",
         "873": "Go to DEEP",
+        "874": "Back to DEEP",
         "875": "Welcome to the",
         "876": "DEEP",
         "877": "Seems like you do not have any projects yet.",
@@ -850,7 +851,10 @@
         "-87861842": "dd-mm-yyyy",
         "-78904030": "Excerpt Image",
         "-99467671": "Couldn't find the widget.",
-        "-65673584": "Error while trying to log in."
+        "-65673584": "Error while trying to log in.",
+        "-17483186": "Error 403",
+        "-83729493": "Oops! It looks like you don't have the permissions to view this page. Please contact the project adminstrator to grant you permission.",
+        "-44264923": "403"
     },
     "links": {
         "browserExtension": {
@@ -1297,7 +1301,7 @@
             "errorFourHundredFour": 870,
             "message1": 871,
             "message2": 872,
-            "goToDeep": 873
+            "backToDeep": 874
         },
         "homescreen": {
             "welcomeText": 875,
@@ -1649,7 +1653,8 @@
             "stringManagement": 5572,
             "clusterViz": 2999,
             "visualization": 3999,
-            "workshop": -72172702
+            "workshop": -72172702,
+            "fourHundredThree": -44264923
         },
         "project.general": {
             "projectNameLabel": 103,
@@ -2337,6 +2342,11 @@
         },
         "widgets.tagging.conditional": {
             "noWidgetFoundText": -99467671
+        },
+        "fourHundredThree": {
+            "errorThreeHundredThree": -17483186,
+            "backToDeep": 874,
+            "message1": -83729493
         }
     }
 }

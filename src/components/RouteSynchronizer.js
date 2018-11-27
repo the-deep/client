@@ -46,7 +46,7 @@ const Page = ({ name, disabled, ...otherProps }) => {
 };
 
 const PageError = () => {
-    const name = 'fourHundredFour';
+    const name = 'fourHundredThree';
     return (
         <Fragment>
             <Helmet>
