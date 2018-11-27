@@ -850,7 +850,10 @@
         "-87861842": "dd-mm-yyyy",
         "-78904030": "Excerpt Image",
         "-99467671": "Couldn't find the widget.",
-        "-65673584": "Error while trying to log in."
+        "-65673584": "Error while trying to log in.",
+        "-17483186": "Error 403",
+        "-83729493": "Oops! You do not have enough permission. Please contact your Administrator.",
+        "-44264923": "403"
     },
     "links": {
         "browserExtension": {
@@ -1649,7 +1652,8 @@
             "stringManagement": 5572,
             "clusterViz": 2999,
             "visualization": 3999,
-            "workshop": -72172702
+            "workshop": -72172702,
+            "fourHundredThree": -44264923
         },
         "project.general": {
             "projectNameLabel": 103,
@@ -2337,6 +2341,11 @@
         },
         "widgets.tagging.conditional": {
             "noWidgetFoundText": -99467671
+        },
+        "fourHundredThree": {
+            "errorThreeHundredThree": -17483186,
+            "goToDeep": 873,
+            "message1": -83729493
         }
     }
 }
