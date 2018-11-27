@@ -21,7 +21,6 @@ export default class DateWidget extends React.PureComponent {
                 <DateInput
                     faramElementName="value"
                     showLabel={false}
-                    showHintAndError={false}
                 />
             </div>
         );

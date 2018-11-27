@@ -21,7 +21,6 @@ export default class TimeWidget extends React.PureComponent {
                 <TimeInput
                     faramElementName="value"
                     showLabel={false}
-                    showHintAndError={false}
                 />
             </div>
         );

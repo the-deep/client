@@ -40,7 +40,6 @@ export default class TimeRangeWidget extends React.PureComponent {
                             className={styles.timeInput}
                             faramElementName="fromValue"
                             showLabel={false}
-                            showHintAndError={false}
                         />
                     </div>
                     <div className={styles.from}>
@@ -53,7 +52,6 @@ export default class TimeRangeWidget extends React.PureComponent {
                             className={styles.timeInput}
                             faramElementName="toValue"
                             showLabel={false}
-                            showHintAndError={false}
                         />
                     </div>
                 </div>
