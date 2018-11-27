@@ -881,7 +881,8 @@
         "-4183681": "Swap values",
         "-48777298": "Not",
         "-50025960": "Default widget",
-        "-38162962": "No widget selected"
+        "-38162962": "No widget selected",
+        "-25265886": "All required"
     },
     "links": {
         "browserExtension": {
@@ -2340,6 +2341,7 @@
             "defaultWidgetPlaceholder": -38162962,
             "cancelConfirmMessage": -14675920,
             "invertLogicLabel": -48777298,
+            "testEveryTitle": -25265886
         },
         "widgets.editor.link": {
             "cancelButtonLabel": 61,

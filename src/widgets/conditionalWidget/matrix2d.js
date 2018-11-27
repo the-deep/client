@@ -1,3 +1,5 @@
+import testMultiSelect from './testMultiSelect';
+
 const emptyObject = {};
 
 const isObjectEmpty = obj => (
@@ -43,97 +45,101 @@ const getSubsectorOptions = ({ sectors = emptyArray } = {}) => (
 const containsDimension = {
     title: 'Contains dimension',
     attributes: [{
-        key: 'dimension',
-        type: 'select',
+        key: 'dimensions',
+        type: 'multiselect',
         title: 'Dimension',
         options: getDimensionOptions,
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
-    test: ({ value = {} }, { dimension }) => {
-        const dimensionValue = value[dimension];
-        if (!dimensionValue) {
-            return false;
-        }
+    test: ({ value = {} }, { dimensions }) =>
+        testMultiSelect((dimension) => {
+            const dimensionValue = value[dimension];
+            if (!dimensionValue) {
+                return false;
+            }
 
-        const selectedKeys = Object.keys(dimensionValue)
-            .filter(k => !isObjectEmpty(dimensionValue[k]));
-        return selectedKeys.length !== 0;
-    },
+            const selectedKeys = Object.keys(dimensionValue)
+                .filter(k => !isObjectEmpty(dimensionValue[k]));
+            return selectedKeys.length !== 0;
+        }, dimensions),
 };
 
 const containsSubdimension = {
     title: 'Contains subdimension',
     attributes: [{
-        key: 'subdimension',
-        type: 'select',
+        key: 'subdimensions',
+        type: 'multiselect',
         title: 'Subdimension',
         options: getSubdimensionOptions,
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
-    test: ({ value = {} }, { subdimension }) => {
-        const dimensionOfSubdimension = Object.keys(value)
-            .find(v => (value[v] || emptyObject)[subdimension] !== undefined);
-        if (!dimensionOfSubdimension) {
-            return false;
-        }
-        return !isObjectEmpty((value[dimensionOfSubdimension] || emptyObject)[subdimension]);
-    },
+    test: ({ value = {} }, { subdimensions }) =>
+        testMultiSelect((subdimension) => {
+            const dimensionOfSubdimension = Object.keys(value)
+                .find(v => (value[v] || emptyObject)[subdimension] !== undefined);
+            if (!dimensionOfSubdimension) {
+                return false;
+            }
+            return !isObjectEmpty((value[dimensionOfSubdimension] || emptyObject)[subdimension]);
+        }, subdimensions),
 };
 
 const containsSector = {
     title: 'Contains sector',
     attributes: [{
-        key: 'sector',
-        type: 'select',
+        key: 'sectors',
+        type: 'multiselect',
         title: 'Sector',
         options: getSectorOptions,
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
-    test: ({ value = {} }, { sector }) => (
-        Object.keys(value).some((v) => {
-            const subdimen = value[v];
-            if (isObjectEmpty(subdimen)) {
-                return false;
-            }
+    test: ({ value = {} }, { sectors }) =>
+        testMultiSelect(sector => (
+            Object.keys(value).some((v) => {
+                const subdimen = value[v];
+                if (isObjectEmpty(subdimen)) {
+                    return false;
+                }
 
-            return Object.keys(subdimen).some(sd => (
-                subdimen[sd] && subdimen[sd][sector]
-            ));
-        })
-    ),
+                return Object.keys(subdimen).some(sd => (
+                    subdimen[sd] && subdimen[sd][sector]
+                ));
+            })
+        ), sectors),
 };
 
 const containsSubsector = {
     title: 'Contains subsector',
     attributes: [{
-        key: 'subsector',
-        type: 'select',
+        key: 'subsectors',
+        type: 'multiselect',
         title: 'Subsector',
         options: getSubsectorOptions,
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
-    test: ({ value = {} }, { subsector }) => (
-        Object.keys(value).some((v) => {
-            const subdimen = value[v];
-            if (isObjectEmpty(subdimen)) {
-                return false;
-            }
-
-            return Object.keys(subdimen).some((sd) => {
-                const subdimenSector = subdimen[sd];
-                if (isObjectEmpty(subdimenSector)) {
+    test: ({ value = {} }, { subsectors }) =>
+        testMultiSelect(subsector => (
+            Object.keys(value).some((v) => {
+                const subdimen = value[v];
+                if (isObjectEmpty(subdimen)) {
                     return false;
                 }
-                return Object.keys(subdimenSector).some(sds => (
-                    subdimenSector[sds].indexOf(subsector) >= 0
-                ));
-            });
-        })
-    ),
+
+                return Object.keys(subdimen).some((sd) => {
+                    const subdimenSector = subdimen[sd];
+                    if (isObjectEmpty(subdimenSector)) {
+                        return false;
+                    }
+                    return Object.keys(subdimenSector).some(sds => (
+                        subdimenSector[sds].indexOf(subsector) >= 0
+                    ));
+                });
+            })
+        ), subsectors),
 };
 
 export default {

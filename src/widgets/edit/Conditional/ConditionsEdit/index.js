@@ -111,6 +111,7 @@ class ConditionsEditModal extends React.PureComponent {
             createNewElement: (widgetData) => {
                 const conditionList = conditionsAttributes[widgetData.widgetId];
                 const condition = conditionList && conditionList[0];
+
                 return {
                     key: `condition-${randomString(16)}`,
                     widgetId: widgetData.widgetId,

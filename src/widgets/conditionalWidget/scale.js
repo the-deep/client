@@ -1,3 +1,5 @@
+import testMultiSelect from './testMultiSelect';
+
 const emptyArray = [];
 
 const getScaleOptions = ({ scaleUnits } = {}) => (
@@ -7,47 +9,54 @@ const getScaleOptions = ({ scaleUnits } = {}) => (
 const isEqualTo = {
     title: 'Is equal to',
     attributes: [{
-        key: 'scale',
-        type: 'select',
+        key: 'scales',
+        type: 'multiselect',
         title: 'Scale',
         options: getScaleOptions,
         keySelector: d => d.key,
         labelSelector: d => d.label,
     }],
-    test: ({ value }, { scale }) => (
-        value === scale
+    test: ({ value }, { scales }) => testMultiSelect(
+        scale => value === scale,
+        scales,
     ),
 };
 
 const isGreaterThan = {
     title: 'At least',
     attributes: [{
-        key: 'scale',
-        type: 'select',
+        key: 'scales',
+        type: 'multiselect',
         title: 'Scale',
         options: getScaleOptions,
         keySelector: d => d.key,
         labelSelector: d => d.label,
     }],
-    test: ({ value }, { scale }, { scaleUnits = [] }) => (
-        scaleUnits.findIndex(s => s.key === value) >=
-        scaleUnits.findIndex(s => s.key === scale)
+    test: ({ value }, { scales }, { scaleUnits = [] }) => testMultiSelect(
+        scale => (
+            scaleUnits.findIndex(s => s.key === value) >=
+            scaleUnits.findIndex(s => s.key === scale)
+        ),
+        scales,
     ),
 };
 
 const isLessThan = {
     title: 'At most',
     attributes: [{
-        key: 'scale',
-        type: 'select',
+        key: 'scales',
+        type: 'multiselect',
         title: 'Scale',
         options: getScaleOptions,
         keySelector: d => d.key,
         labelSelector: d => d.label,
     }],
-    test: ({ value }, { scale }, { scaleUnits = [] }) => (
-        scaleUnits.findIndex(s => s.key === value) <=
-        scaleUnits.findIndex(s => s.key === scale)
+    test: ({ value }, { scales }, { scaleUnits = [] }) => testMultiSelect(
+        scale => (
+            scaleUnits.findIndex(s => s.key === value) <=
+            scaleUnits.findIndex(s => s.key === scale)
+        ),
+        scales,
     ),
 };
 

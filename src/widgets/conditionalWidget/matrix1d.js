@@ -1,3 +1,5 @@
+import testMultiSelect from './testMultiSelect';
+
 const emptyObject = {};
 const emptyArray = [];
 
@@ -21,37 +23,39 @@ const getSubpillarOptions = ({ rows = emptyArray } = {}) => (
 const containsPillar = {
     title: 'Contains pillar',
     attributes: [{
-        key: 'pillar',
-        type: 'select',
+        key: 'pillars',
+        type: 'multiselect',
         title: 'Pillar',
         options: getPillarOptions,
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
-    test: ({ value = {} }, { pillar }) => {
-        const subpillars = value[pillar] || emptyObject;
-        return Object.keys(subpillars).some(key => subpillars[key]);
-    },
+    test: ({ value = {} }, { pillars }) =>
+        testMultiSelect((pillar) => {
+            const subpillars = value[pillar] || emptyObject;
+            return Object.keys(subpillars).some(key => subpillars[key]);
+        }, pillars),
 };
 
 const containsSubpillar = {
     title: 'Contains subpillar',
     attributes: [{
-        key: 'subpillar',
-        type: 'select',
+        key: 'subpillars',
+        type: 'multiselect',
         title: 'Subpillar',
         options: getSubpillarOptions,
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
-    test: ({ value = {} }, { subpillar }) => (
-        Object.keys(value).some((p) => {
-            const subpillars = value[p] || emptyObject;
-            return Object.keys(subpillars).some(sp => (
-                sp === subpillar && subpillars[sp]
-            ));
-        })
-    ),
+    test: ({ value = {} }, { subpillars }) =>
+        testMultiSelect(subpillar => (
+            Object.keys(value).some((p) => {
+                const children = value[p] || emptyObject;
+                return Object.keys(children).some(sp => (
+                    sp === subpillar && children[sp]
+                ));
+            })
+        ), subpillars),
 };
 
 
