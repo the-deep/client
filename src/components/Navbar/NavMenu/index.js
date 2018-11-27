@@ -29,6 +29,16 @@ const NavItem = ({ itemKey, className, to, disabled }) => (
         { _ts('pageTitle', itemKey) }
     </NavLink>
 );
+NavItem.propTypes = {
+    itemKey: PropTypes.string.isRequired,
+    className: PropTypes.string,
+    to: PropTypes.string.isRequired,
+    disabled: PropTypes.bool,
+};
+NavItem.defaultProps = {
+    className: '',
+    disabled: false,
+};
 
 
 const propTypes = {

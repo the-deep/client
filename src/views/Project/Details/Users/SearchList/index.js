@@ -27,6 +27,7 @@ const propTypes = {
     className: PropTypes.string,
     projectId: PropTypes.number.isRequired,
     searchInputValue: PropTypes.string.isRequired,
+    searchItems: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     onSearchInputChange: PropTypes.func.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     onItemRemove: PropTypes.func.isRequired,
@@ -39,6 +40,7 @@ const propTypes = {
 const defaultProps = {
     className: '',
     readOnly: false,
+    searchItems: [],
 };
 
 const MIN_SEARCH_TEXT_CHARACTERS = 2;

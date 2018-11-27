@@ -4,9 +4,6 @@ import {
     createParamsForConnectorTest,
     createUrlForConnectorTest,
 } from '#rest';
-import {
-    randomString,
-} from '#rsu/common';
 import _ts from '#ts';
 import schema from '#schema';
 import notify from '#notify';

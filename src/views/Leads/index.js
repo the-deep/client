@@ -412,7 +412,7 @@ export default class Leads extends React.PureComponent {
             url = row.attachment.file;
         } else if (row.url) {
             icon = iconNames.globe;
-            url = row.url;
+            ({ url } = row);
         }
         if (!url) {
             return (

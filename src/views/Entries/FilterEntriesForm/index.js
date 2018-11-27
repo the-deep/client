@@ -197,12 +197,6 @@ export default class FilterEntriesForm extends React.PureComponent {
         const entryFilterOptionsRequest = new FgRestBuilder()
             .url(urlForProjectFilterOptions)
             .params(createParamsForGet)
-            .preLoad(() => {
-                this.setState({ loadingEntryFilters: true });
-            })
-            .postLoad(() => {
-                this.setState({ loadingEntryFilters: false });
-            })
             .success((response) => {
                 this.props.setEntryFilterOptions({
                     projectId: activeProject,

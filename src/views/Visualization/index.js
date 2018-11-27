@@ -348,10 +348,8 @@ export default class Visualization extends React.PureComponent {
         };
     }
 
-    onChange = (d, selectedData) => {
-        this.setState({
-            value: d,
-        });
+    onChange = (d) => {
+        this.setState({ value: d });
     }
 
     render() {

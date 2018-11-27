@@ -366,6 +366,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         }
     }
 
+    // FIXME: create static function
     getOptionsForUser = (users, members) => {
         if (!members) {
             return emptyList;
@@ -396,6 +397,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         return finalOptions.sort((a, b) => compareString(a.sortKey, b.sortKey));
     }
 
+    // FIXME: create static function
     getOptionsForProjects = (allProjects, connectorProjects) => {
         if (!connectorProjects) {
             return emptyList;
@@ -428,6 +430,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         return finalOptions.sort((a, b) => compareString(a.sortKey, b.sortKey));
     }
 
+    // FIXME: create static function
     createSchema = (props) => {
         // FIXME: potential problem here with params,
         // it should be empty array not empty object
@@ -737,7 +740,6 @@ export default class ConnectorDetailsForm extends React.PureComponent {
             projectDataLoading,
             userDataLoading,
             disableTest,
-            pendingRssFields,
         } = this.state;
 
         const {

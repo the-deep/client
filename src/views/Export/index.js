@@ -292,7 +292,6 @@ export default class Export extends React.PureComponent {
                 try {
                     schema.validate(response, 'analysisFramework');
                     this.props.setAnalysisFramework({ analysisFramework: response });
-                    this.setState({ pendingEntries: true });
                 } catch (er) {
                     console.error(er);
                 }

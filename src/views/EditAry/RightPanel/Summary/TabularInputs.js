@@ -16,7 +16,6 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: '',
 };
 
 export default class TabularInputs extends React.PureComponent {

@@ -69,7 +69,7 @@ export default class LeftPanel extends React.PureComponent {
         }
 
         if (leadGroup) {
-            leads = leadGroup.leads;
+            ({ leads } = leadGroup.leads);
         }
 
         this.state = {
@@ -104,7 +104,7 @@ export default class LeftPanel extends React.PureComponent {
         }
 
         if (newLeadGroup && newLeadGroup !== oldLeadGroup) {
-            leads = newLeadGroup.leads;
+            ({ leads } = newLeadGroup.leads);
             changed = true;
         }
 
@@ -257,8 +257,6 @@ export default class LeftPanel extends React.PureComponent {
         }
     }
 
-    // Assisted Tagging
-
     // Lead Preview
 
     handleScreenshot = (/* image */) => {
@@ -308,6 +306,7 @@ export default class LeftPanel extends React.PureComponent {
                             className={styles.label}
                             show
                             text="Lead"
+                            // FIXME: use strings
                         />
                         <SelectInput
                             hideClearButton
