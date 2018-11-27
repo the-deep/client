@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-// import { Tabs, TabLink, TabContent } from 'react-tabs-redux';
 
 import List from '#rscv/List';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -61,7 +60,6 @@ export default class DocumentPanel extends React.PureComponent {
         this.state = {
             pending: false,
             selectedFiles: [],
-            showGallerySelectModal: false,
             fileIds: props.selectedFiles.map(file => file.id),
             activeTabIndex: 0,
         };
@@ -140,7 +138,6 @@ export default class DocumentPanel extends React.PureComponent {
         ));
 
         this.setState({
-            showGallerySelectModal: false,
             selectedFiles: selectedFiles.concat(newSelectedFiles),
         });
     }

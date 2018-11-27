@@ -29,7 +29,7 @@ const parseColor = (color) => {
     // Obviously, the numeric values will be easier to parse than names.So we do those first.
     mm = color.match(/^#?([0-9a-f]{3})$/i);
     if (mm) {
-        m = mm[1];
+        [, m] = mm;
         // in three-character format, each value is multiplied by 0x11 to give an
         // even scale from 0x00 to 0xff
         return {
@@ -42,7 +42,7 @@ const parseColor = (color) => {
     // That's one. Now for the full six-digit format:
     mm = color.match(/^#?([0-9a-f]{6})$/i);
     if (mm) {
-        m = mm[1];
+        [, m] = mm;
         return {
             r: parseInt(m.substr(0, 2), 16),
             g: parseInt(m.substr(2, 2), 16),

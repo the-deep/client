@@ -8,7 +8,6 @@ import {
 } from '#request';
 import _ts from '#ts';
 
-import SelectInput from '#rsci/SelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import FormattedDate from '#rscv/FormattedDate';
 import { FaramListElement } from '#rscg/FaramElements';

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import memoize from 'memoize-one';
+// import memoize from 'memoize-one';
 
 import { reverseRoute } from '#rsu/common';
 
@@ -47,12 +47,14 @@ const mapDispatchToProps = dispatch => ({
 });
 
 // TODO: use this request to get wordCategory instead from the redux
+/*
 const requestWordCategory = memoize((wordCategoryId, wordCategoryGetRequest) => {
     wordCategoryGetRequest.stop();
     wordCategoryGetRequest
         .init(wordCategoryId)
         .start();
 });
+*/
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class WordCategoryDetail extends React.PureComponent {

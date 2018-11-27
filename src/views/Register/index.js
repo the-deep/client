@@ -13,7 +13,6 @@ import Faram, {
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ReCaptcha from '#rsci/ReCaptcha';
 import TextInput from '#rsci/TextInput';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import { reverseRoute } from '#rsu/common';
 import { FgRestBuilder } from '#rsu/rest';
 

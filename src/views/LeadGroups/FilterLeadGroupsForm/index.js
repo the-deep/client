@@ -9,8 +9,6 @@ import Faram from '#rscg/Faram';
 import SearchInput from '#rsci/SearchInput';
 
 import {
-    activeProjectIdFromStateSelector,
-
     setLeadGroupsFilterAction,
     leadGroupsViewFilterSelector,
     unsetLeadGroupsFilterAction,
@@ -18,9 +16,6 @@ import {
 import _ts from '#ts';
 
 const propTypes = {
-    activeProject: PropTypes.number.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-
     className: PropTypes.string,
 
     // eslint-disable-next-line react/forbid-prop-types
@@ -35,7 +30,6 @@ const defaultProps = {
 };
 
 const mapStateToProps = state => ({
-    activeProject: activeProjectIdFromStateSelector(state),
     filters: leadGroupsViewFilterSelector(state),
 });
 
@@ -67,14 +61,8 @@ export default class FilterArysForm extends React.PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        const {
-            filters: oldFilters,
-            activeProject: oldActiveProject,
-        } = this.props;
-        const {
-            filters: newFilters,
-            activeProject: newActiveProject,
-        } = nextProps;
+        const { filters: oldFilters } = this.props;
+        const { filters: newFilters } = nextProps;
 
         if (oldFilters !== newFilters) {
             // eslint-disable-next-line no-unused-vars

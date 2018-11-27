@@ -42,6 +42,12 @@ const AdminPanelLink = ({ disabled }) => (
         {_ts('components.navbar', 'adminPanelLabel')}
     </a>
 );
+AdminPanelLink.propTypes = {
+    disabled: PropTypes.bool,
+};
+AdminPanelLink.defaultProps = {
+    disabled: false,
+};
 
 const LogoutLink = ({ disabled, onClick }) => (
     <DropdownGroup>
@@ -55,6 +61,13 @@ const LogoutLink = ({ disabled, onClick }) => (
         </button>
     </DropdownGroup>
 );
+LogoutLink.propTypes = {
+    disabled: PropTypes.bool,
+    onClick: PropTypes.func.isRequired,
+};
+LogoutLink.defaultProps = {
+    disabled: false,
+};
 
 const DropItem = ({ itemKey, disabled, to, iconName }) => (
     <Link
@@ -66,6 +79,15 @@ const DropItem = ({ itemKey, disabled, to, iconName }) => (
         { _ts('pageTitle', itemKey) }
     </Link>
 );
+DropItem.propTypes = {
+    itemKey: PropTypes.string.isRequired,
+    iconName: PropTypes.string.isRequired,
+    to: PropTypes.string.isRequired,
+    disabled: PropTypes.bool,
+};
+DropItem.defaultProps = {
+    disabled: false,
+};
 
 const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),

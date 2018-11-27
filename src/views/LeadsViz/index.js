@@ -60,8 +60,6 @@ const propTypes = {
 };
 
 const defaultProps = {
-    className: '',
-    totalLeadsCount: 0,
 };
 
 const mapStateToProps = state => ({
