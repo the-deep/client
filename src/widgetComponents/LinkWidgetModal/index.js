@@ -239,6 +239,8 @@ export default class LinkWidgetModal extends React.PureComponent {
         const rootNodeLabel = _ts('widgets.editor.link', 'rootNodeLabel');
         const cancelConfirmMessage = _ts('widgets.editor.link', 'cancelConfirmMessage');
 
+        const areOptionTypesMultiple = this.selectedWidgetOptions.length > 1;
+
         return (
             <Modal className={styles.modal} >
                 <ModalHeader title={modalTitle} />
@@ -253,17 +255,20 @@ export default class LinkWidgetModal extends React.PureComponent {
                             onChange={this.handleWidgetChange}
                             value={selectedWidget}
                             showHintAndError={false}
+                            hideClearButton
                         />
-                        <SelectInput
-                            className={styles.selectInput}
-                            label={optionsTypeSelectionLabel}
-                            options={this.selectedWidgetOptions}
-                            keySelector={LinkWidgetModal.optionsKeySelector}
-                            labelSelector={LinkWidgetModal.optionsLabelSelector}
-                            onChange={this.handleWidgetOptionChange}
-                            value={selectedWidgetItem}
-                            showHintAndError={false}
-                        />
+                        {areOptionTypesMultiple &&
+                            <SelectInput
+                                className={styles.selectInput}
+                                label={optionsTypeSelectionLabel}
+                                options={this.selectedWidgetOptions}
+                                keySelector={LinkWidgetModal.optionsKeySelector}
+                                labelSelector={LinkWidgetModal.optionsLabelSelector}
+                                onChange={this.handleWidgetOptionChange}
+                                value={selectedWidgetItem}
+                                showHintAndError={false}
+                            />
+                        }
                     </div>
                     <div className={styles.selectionBox} >
                         <header className={styles.header}>
