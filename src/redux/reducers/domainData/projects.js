@@ -5,8 +5,11 @@ import {
     mapToMap,
 } from '#rsu/common';
 
-import { UP__UNSET_USER_PROJECT } from '#redux/reducers/siloDomainData/users';
 import { UG__UNSET_USERGROUP_PROJECT } from '#redux/reducers/siloDomainData/usergroups';
+import {
+    SET_PROJECT_DETAILS as PP__SET_PROJECT_DETAILS,
+    UNSET_PROJECT as PP__UNSET_PROJECT,
+} from '#redux/reducers/siloDomainData/projects';
 
 // TYPE
 
@@ -73,6 +76,38 @@ const emptyList = [];
 const emptyObject = {};
 
 // REDUCER
+
+const setUserProjectTitle = (state, action) => {
+    const {
+        project: { faramValues },
+        projectId,
+    } = action;
+    // These are the projectMiniUrlFields
+    const fields = [
+        'id',
+        'title',
+        'versionId',
+        'role',
+        'assessmentTemplate',
+        'analysisFramework',
+        'categoryEditor',
+        'regions',
+        'memberStatus',
+    ];
+    const projectDetail = fields.reduce(
+        (acc, field) => ({
+            ...acc,
+            [field]: { $set: faramValues[field] },
+        }),
+        {},
+    );
+    const settings = {
+        projects: {
+            [projectId]: projectDetail,
+        },
+    };
+    return update(state, settings);
+};
 
 const setUserProject = (state, action) => {
     const { project } = action;
@@ -246,7 +281,8 @@ const reducers = {
     [UNSET_USER_PROJECT_MEMBERSHIP]: unsetUserProjectMembership,
 
     // From Silo
-    [UP__UNSET_USER_PROJECT]: unsetUserProject,
+    [PP__SET_PROJECT_DETAILS]: setUserProjectTitle,
+    [PP__UNSET_PROJECT]: unsetUserProject,
     [UG__UNSET_USERGROUP_PROJECT]: unsetUserProject,
 };
 export default reducers;

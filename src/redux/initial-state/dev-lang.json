@@ -857,7 +857,11 @@
         "-44264923": "403",
         "-48777298": "Not",
         "-50025960": "Default widget",
-        "-38162962": "No widget selected"
+        "-38162962": "No widget selected",
+        "-68148611": "You are about to delete your project, {title}. This action cannot be undone.",
+        "-2414762": "If you would like to proceed, please enter the name of the project below.",
+        "-72636032": "Project Delete",
+        "-73810799": "Once you delete this project there is no going back. Please be certain."
     },
     "links": {
         "browserExtension": {
@@ -1778,7 +1782,15 @@
             "regionUpdateOverridden": 982,
             "projectOptions": -72859218,
             "projectOptionsGetFailure": -45091634,
-            "noProjectsFound": -59940596
+            "noProjectsFound": -59940596,
+            "deleteConfirmMessage": -68148611,
+            "deleteConfirmPlaceholder": 181,
+            "deleteButtonTitle": 172,
+            "deleteConfirmLabel": -2414762,
+            "projectDeleteSuccess": 913,
+            "projectDeleteFailure": 915,
+            "projectDelete": -72636032,
+            "projectDeleteInfoText": -73810799
         },
         "connector": {
             "noConnectorsLabel": 1115,

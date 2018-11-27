@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -15,7 +15,6 @@ import {
     compareLength,
     compareString,
 } from '#rsu/common';
-import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import FormattedDate from '#rscv/FormattedDate';
@@ -27,8 +26,8 @@ import Table from '#rscv/Table';
 import {
     userProjectsSelector,
     activeUserSelector,
-    unsetUserProfileProjectAction,
     userIdFromRouteSelector,
+    projectRolesSelector,
 } from '#redux';
 import {
     iconNames,
@@ -38,15 +37,13 @@ import _ts from '#ts';
 
 import ProjectAddForm from '#components/ProjectAddForm';
 
-import ProjectDeleteRequest from '../requests/ProjectDeleteRequest';
-
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    unsetProject: PropTypes.func.isRequired,
     userProjects: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    projectRoles: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     userId: PropTypes.number.isRequired,
 };
 
@@ -59,13 +56,10 @@ const mapStateToProps = state => ({
     userProjects: userProjectsSelector(state),
     activeUser: activeUserSelector(state),
     userId: userIdFromRouteSelector(state),
+    projectRoles: projectRolesSelector(state),
 });
 
-const mapDispatchToProps = dispatch => ({
-    unsetProject: params => dispatch(unsetUserProfileProjectAction(params)),
-});
-
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(mapStateToProps)
 export default class UserProject extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -95,8 +89,11 @@ export default class UserProject extends React.PureComponent {
                 label: _ts('userProfile', 'tableHeaderRights'),
                 order: 2,
                 sortable: true,
-                comparator: (a, b) => compareString(a.role, b.role),
-                modifier: row => row.role.title,
+                comparator: (a, b) => compareString(
+                    this.getProjectRoleTitle(a.role),
+                    this.getProjectRoleTitle(b.role),
+                ),
+                modifier: row => this.getProjectRoleTitle(row.role),
             },
             {
                 key: 'createdAt',
@@ -146,8 +143,13 @@ export default class UserProject extends React.PureComponent {
                     const { activeUser } = this.props;
                     const activeUserMembership = (d.memberships || [])
                         .find(e => e.member === activeUser.userId);
-
-                    if (activeUserMembership && activeUserMembership.role === 'normal') {
+                    if (
+                        activeUserMembership &&
+                        (
+                            activeUserMembership.memberStatus === 'member' ||
+                            activeUserMembership.memberStatus === 'admin'
+                        )
+                    ) {
                         return (
                             <Link
                                 title={_ts('userProfile', 'viewProjectLinkTitle')}
@@ -159,50 +161,19 @@ export default class UserProject extends React.PureComponent {
                         );
                     }
 
-                    if (activeUserMembership && activeUserMembership.role === 'admin') {
-                        const confirmMsg = _ts('userProfile', 'confirmTextDeleteProject', {
-                            title: (<b>{d.title}</b>),
-                        });
-
-                        return (
-                            <Fragment>
-                                <Link
-                                    title={_ts('userProfile', 'editProjectLinkTitle')}
-                                    to={reverseRoute(pathNames.projects, { projectId: d.id })}
-                                    className={styles.link}
-                                >
-                                    <span className={iconNames.edit} />
-                                </Link>
-                                <DangerConfirmButton
-                                    title={_ts('userProfile', 'deleteProjectLinkTitle')}
-                                    onClick={() => this.handleDeleteProjectClick(d)}
-                                    iconName={iconNames.delete}
-                                    smallVerticalPadding
-                                    transparent
-                                    confirmationMessage={confirmMsg}
-                                />
-                            </Fragment>
-                        );
-                    }
-
                     return null;
                 },
             },
         ];
         this.projectTableKeyExtractor = rowData => rowData.id;
-
-        // Request
-        this.projectDeleteRequest = new ProjectDeleteRequest({
-            unsetProject: this.props.unsetProject,
-            setState: v => this.setState(v),
-        });
-    }
-
-    componentWillUnmount() {
-        this.projectDeleteRequest.stop();
     }
 
     // BUTTONS
+
+    getProjectRoleTitle = role => (
+        this.props.projectRoles && this.props.projectRoles[role] &&
+        this.props.projectRoles[role].title
+    )
 
     handleAddProjectClick = () => {
         this.setState({ addProject: true });
@@ -210,15 +181,6 @@ export default class UserProject extends React.PureComponent {
 
     handleAddProjectClose = () => {
         this.setState({ addProject: false });
-    }
-
-    // Table Actions
-
-    handleDeleteProjectClick = (selectedProject) => {
-        this.projectDeleteRequest.init(
-            selectedProject.id,
-            this.props.activeUser.userId,
-        ).start();
     }
 
     render() {

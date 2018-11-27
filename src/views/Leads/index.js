@@ -102,6 +102,8 @@ export default class Leads extends React.PureComponent {
 
     static leadKeyExtractor = lead => String(lead.id)
 
+    static shouldHideLeadCreateButton = ({ leadPermissions }) => !leadPermissions.create;
+
     constructor(props) {
         super(props);
 
@@ -440,7 +442,7 @@ export default class Leads extends React.PureComponent {
             <header className={styles.header}>
                 <FilterLeadsForm className={styles.filters} />
                 <Cloak
-                    hide={({ leadPermissions }) => !leadPermissions.create}
+                    hide={Leads.shouldHideLeadCreateButton}
                     render={
                         <Link
                             to={addLeadLink}

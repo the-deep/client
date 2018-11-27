@@ -9,7 +9,6 @@ export const UP__SET_USER_PROJECT = 'siloDomainData/USER_PROFILE/SET_USER_PROJEC
 export const UP__SET_USER_USERGROUP = 'siloDomainData/USER_PROFILE/SET_USER_USERGROUP';
 
 export const UP__UNSET_USER_PROFILE = 'domainData/USER_PROFILE/UNSET_USER_PROFILE';
-export const UP__UNSET_USER_PROJECT = 'domainData/USER_PROFILE/UNSET_USER_PROJECT';
 export const UP__UNSET_USER_USERGROUP = 'domainData/USER_PROFILE/UNSET_USER_USERGROUP';
 
 // ACTION-CREATOR
@@ -45,12 +44,6 @@ export const unsetUserProfileAction = ({ userId }) => ({
     userId,
 });
 
-
-export const unsetUserProfileProjectAction = ({ userId, projectId }) => ({
-    type: UP__UNSET_USER_PROJECT,
-    userId,
-    projectId,
-});
 
 export const unsetUserProfileUsergroupAction = ({ userId, usergroupId }) => ({
     type: UP__UNSET_USER_USERGROUP,
@@ -128,19 +121,6 @@ const unsetUserProfile = (state, action) => {
     return update(state, settings);
 };
 
-const unsetUserProject = (state, { userId, projectId }) => {
-    const settings = {
-        userView: {
-            [userId]: { $auto: {
-                projects: { $autoArray: {
-                    $filter: project => project.id !== projectId,
-                } },
-            } },
-        },
-    };
-    return update(state, settings);
-};
-
 const unsetUserUsergroup = (state, { userId, usergroupId }) => {
     const settings = {
         userView: {
@@ -162,7 +142,6 @@ const reducers = {
     [UP__SET_USER_USERGROUP]: setUserUsergroup,
 
     [UP__UNSET_USER_PROFILE]: unsetUserProfile,
-    [UP__UNSET_USER_PROJECT]: unsetUserProject,
     [UP__UNSET_USER_USERGROUP]: unsetUserUsergroup,
 };
 

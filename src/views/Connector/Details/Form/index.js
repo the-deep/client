@@ -419,11 +419,11 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                     title: a.title,
                     role: 'self',
                     project: a.id,
-                    admin: a.role,
+                    admin: a.memberStatus,
                     sortKey: `${a.title}-${a.id}`,
                 });
             } else {
-                finalOptions[memberIndex].admin = a.role;
+                finalOptions[memberIndex].admin = a.memberStatus;
             }
         });
 

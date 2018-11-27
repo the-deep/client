@@ -11,6 +11,13 @@ import DateInput from '#rsci/DateInput';
 import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
 import ActivityLog from '#components/ActivityLog';
+import Cloak from '#components/Cloak';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+
+import {
+    RequestCoordinator,
+    RequestClient,
+} from '#request';
 
 import {
     projectActivityLogSelector,
@@ -19,6 +26,8 @@ import {
     setProjectDetailsAction,
     changeProjectDetailsAction,
     setErrorProjectDetailsAction,
+    projectDetailsSelector,
+    unsetProjectDetailsAction,
 } from '#redux';
 
 import Faram, {
@@ -26,23 +35,36 @@ import Faram, {
     dateCondition,
 } from '#rscg/Faram';
 
+import { iconNames } from '#constants';
 import _ts from '#ts';
 
-import ProjectGetRequest from './requests/ProjectGetRequest';
-import ProjectPutRequest from './requests/ProjectPutRequest';
+import requests from './requests';
 import Dashboard from './Dashboard';
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    projectDetail: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     projectLocalData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     activityLog: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     changeProjectDetails: PropTypes.func.isRequired,
-    setProjectDetails: PropTypes.func.isRequired,
-    projectServerData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setErrorProjectDetails: PropTypes.func.isRequired,
     projectId: PropTypes.number.isRequired,
     readOnly: PropTypes.bool,
+
+    // Requests Props
+    // eslint-disable-next-line react/no-unused-prop-types
+    setProjectDetails: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
+    projectServerData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/no-unused-prop-types
+    unsetProject: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    projectGetRequest: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    projectPutRequest: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    projectDeleteRequest: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -55,26 +77,27 @@ const mapStateToProps = state => ({
     activityLog: projectActivityLogSelector(state),
     projectLocalData: projectLocalDataSelector(state),
     projectServerData: projectServerDataSelector(state),
+    projectDetail: projectDetailsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
     setProjectDetails: params => dispatch(setProjectDetailsAction(params)),
     changeProjectDetails: params => dispatch(changeProjectDetailsAction(params)),
     setErrorProjectDetails: params => dispatch(setErrorProjectDetailsAction(params)),
+    unsetProject: params => dispatch(unsetProjectDetailsAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestCoordinator
+@RequestClient(requests)
 export default class ProjectDetailsGeneral extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static shouldHideProjectDeleteButton = ({ setupPermissions }) => !setupPermissions.delete;
+
     constructor(props) {
         super(props);
-
-        this.state = {
-            pendingProjectGet: true,
-            pendingProjectPut: false,
-        };
 
         this.schema = {
             fields: {
@@ -84,54 +107,6 @@ export default class ProjectDetailsGeneral extends PureComponent {
                 description: [],
             },
         };
-
-        const {
-            setProjectDetails,
-            setErrorProjectDetails,
-        } = this.props;
-
-        const setState = d => this.setState(d);
-        this.projectGetRequest = new ProjectGetRequest({
-            setState,
-            setProjectDetails,
-            setErrorProjectDetails,
-        });
-        this.projectPutRequest = new ProjectPutRequest({
-            setState,
-            setProjectDetails,
-            setErrorProjectDetails,
-        });
-    }
-
-    componentDidMount() {
-        const {
-            projectId,
-            projectServerData,
-        } = this.props;
-
-        this.projectGetRequest
-            .init(projectId, projectServerData)
-            .start();
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const {
-            projectId: newProjectId,
-            projectServerData: newProjectServerData,
-        } = nextProps;
-        const { projectId: oldProjectId } = this.props;
-
-        if (newProjectId !== oldProjectId) {
-            this.setState({ pendingProjectGet: true });
-            this.projectGetRequest
-                .init(newProjectId, newProjectServerData)
-                .start();
-        }
-    }
-
-    componentWillUnmount() {
-        this.projectGetRequest.stop();
-        this.projectPutRequest.stop();
     }
 
     handleFaramChange = (faramValues, faramErrors) => {
@@ -148,15 +123,7 @@ export default class ProjectDetailsGeneral extends PureComponent {
     }
 
     handleFaramCancel = () => {
-        const {
-            projectId,
-            projectServerData,
-        } = this.props;
-
-        const isBeingCancelled = true;
-        this.projectGetRequest
-            .init(projectId, projectServerData, isBeingCancelled)
-            .start();
+        this.props.projectGetRequest.do({ isBeingCancelled: true });
     }
 
     handleValidationFailure = (faramErrors) => {
@@ -172,9 +139,13 @@ export default class ProjectDetailsGeneral extends PureComponent {
     }
 
     handleValidationSuccess = (projectDetails) => {
-        const { projectId } = this.props;
-        this.projectPutRequest.init(projectDetails, projectId);
-        this.projectPutRequest.start();
+        this.props.projectPutRequest.do({ projectDetails });
+    }
+
+    handleProjectDelete = () => {
+        this.props.projectDeleteRequest.do({
+            projectId: this.props.projectId,
+        });
     }
 
     renderUnsavedChangesPrompt = () => (
@@ -203,19 +174,22 @@ export default class ProjectDetailsGeneral extends PureComponent {
             className: classNameFromProps,
             activityLog,
             projectId,
+            projectDetail,
             projectLocalData: {
                 faramValues = {},
                 faramErrors,
                 pristine,
             },
+            projectGetRequest,
+            projectPutRequest,
+            projectDeleteRequest,
         } = this.props;
 
-        const {
-            pendingProjectGet,
-            pendingProjectPut,
-        } = this.state;
-
-        const loading = pendingProjectGet || pendingProjectPut;
+        const loading = (
+            projectGetRequest.pending
+            || projectPutRequest.pending
+            || projectDeleteRequest.pending
+        );
         const UnsavedChangesPrompt = this.renderUnsavedChangesPrompt;
 
         const className = `
@@ -291,6 +265,31 @@ export default class ProjectDetailsGeneral extends PureComponent {
                             />
                         </div>
                     </div>
+                    <Cloak
+                        hide={ProjectDetailsGeneral.shouldHideProjectDeleteButton}
+                        render={
+                            <div className={styles.bottomContainer}>
+                                <span className={`${styles.info} ${iconNames.info}`} />
+                                <span className={styles.infoText}>
+                                    {_ts('project', 'projectDeleteInfoText')}
+                                </span>
+                                <DangerConfirmButton
+                                    iconName={iconNames.delete}
+                                    onClick={this.handleProjectDelete}
+                                    confirmationTitle="Warning!"
+                                    confirmationMessage={_ts('project', 'deleteConfirmMessage', {
+                                        title: <strong>{projectDetail.title}</strong>,
+                                    })}
+                                    challengeLabel={_ts('project', 'deleteConfirmLabel')}
+                                    challengePlaceholder={_ts('project', 'deleteConfirmPlaceholder')}
+                                    challengeValue={projectDetail.title}
+                                    className={styles.deleteButton}
+                                >
+                                    {_ts('project', 'deleteButtonTitle')}
+                                </DangerConfirmButton>
+                            </div>
+                        }
+                    />
                 </Faram>
                 <Dashboard
                     className={styles.dashboard}
