@@ -2,12 +2,14 @@ import React from 'react';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
+import Cloak from '#components/Cloak';
 import { handleException, handleReport } from '#config/sentry';
 import _ts from '#ts';
 import styles from './styles.scss';
 
 export default class AppError extends React.PureComponent {
     static handleException = handleException;
+    static shouldHideReport = ({ isDevMode }) => isDevMode;
 
     render() {
         const errorText = _ts('components.appError', 'problemText');
@@ -16,13 +18,17 @@ export default class AppError extends React.PureComponent {
         return (
             <div className={styles.messageContainer}>
                 { errorText }
-                <PrimaryButton
-                    // Use cloak for development
-                    onClick={handleReport}
-                    className={styles.button}
-                >
-                    {reportErrorTitle}
-                </PrimaryButton>
+                <Cloak
+                    hide={AppError.shouldHideReport}
+                    render={
+                        <PrimaryButton
+                            onClick={handleReport}
+                            className={styles.button}
+                        >
+                            {reportErrorTitle}
+                        </PrimaryButton>
+                    }
+                />
             </div>
         );
     }

@@ -8,6 +8,7 @@ import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 import DangerButton from '#rsca/Button/DangerButton';
 
+import Cloak from '#components/Cloak';
 import { handleException, handleReport } from '#config/sentry';
 import _ts from '#ts';
 
@@ -24,6 +25,8 @@ export default class FrameworkWidgetError extends React.PureComponent {
     static handleException = handleException;
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static shouldHideReport = ({ isDevMode }) => isDevMode;
 
     render() {
         const errorText = _ts('components.frameworkWidgetError', 'problemText');
@@ -44,12 +47,17 @@ export default class FrameworkWidgetError extends React.PureComponent {
                     <DangerButton onClick={onClose}>
                         {_ts('components.frameworkWidgetError', 'dismissTitle')}
                     </DangerButton>
-                    <PrimaryButton
-                        // Use cloak for development
-                        onClick={handleReport}
-                    >
-                        {reportErrorTitle}
-                    </PrimaryButton>
+                    <Cloak
+                        hide={FrameworkWidgetError.shouldHideReport}
+                        render={
+                            <PrimaryButton
+                                // Use cloak for development
+                                onClick={handleReport}
+                            >
+                                {reportErrorTitle}
+                            </PrimaryButton>
+                        }
+                    />
                 </ModalFooter>
             </Modal>
         );
