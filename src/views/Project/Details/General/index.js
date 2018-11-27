@@ -94,6 +94,7 @@ export default class ProjectDetailsGeneral extends PureComponent {
         this.projectGetRequest = new ProjectGetRequest({
             setState,
             setProjectDetails,
+            setErrorProjectDetails,
         });
         this.projectPutRequest = new ProjectPutRequest({
             setState,

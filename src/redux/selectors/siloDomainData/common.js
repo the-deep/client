@@ -6,6 +6,10 @@ import {
 
 const emptyObject = {};
 
+export const activeCountryIdFromStateSelector = ({ siloDomainData }) => (
+    siloDomainData.activeCountry
+);
+
 // FIXME: don't use this as much as possible
 export const activeProjectIdFromStateSelector = ({ siloDomainData }) => (
     siloDomainData.activeProject
@@ -23,9 +27,4 @@ export const activeProjectRoleSelector = createSelector(
     activeProjectFromStateSelector,
     projectRolesSelector,
     (project, roles) => (project.role && roles[project.role]),
-);
-
-
-export const activeCountryIdFromStateSelector = ({ siloDomainData }) => (
-    siloDomainData.activeCountry
 );

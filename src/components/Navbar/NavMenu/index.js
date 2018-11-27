@@ -18,10 +18,10 @@ import _ts from '#ts';
 import Cloak from '../../Cloak';
 import styles from './styles.scss';
 
-const NavItem = ({ itemKey, className, to, disabled }) => (
+const NavItem = ({ itemKey, className, disabled, ...otherProps }) => (
     <NavLink
         activeClassName={styles.active}
-        to={to}
+        to={reverseRoute(pathNames[itemKey], otherProps)}
         className={`${className} ${disabled ? styles.disabled : ''}`}
         disabled={disabled}
         exact
@@ -159,20 +159,16 @@ export default class NavMenu extends React.PureComponent {
             countryId,
         } = this.props;
 
-        const route = reverseRoute(
-            pathNames[key],
-            { projectId, countryId },
-        );
-
         return (
             <Cloak
                 {...item}
                 key={key}
                 render={
                     <NavItem
-                        className={className}
-                        to={route}
                         itemKey={key}
+                        className={className}
+                        projectId={projectId}
+                        countryId={countryId}
                     />
                 }
             />
