@@ -45,6 +45,12 @@
                 }
             }
 
+            .content {
+                &.disabled {
+                    background-color: $color-background-alt;
+                }
+            }
+
             &:hover {
                 .header {
                     .action-buttons {

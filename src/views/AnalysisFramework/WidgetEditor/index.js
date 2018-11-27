@@ -186,8 +186,15 @@ export default class WidgetEditor extends React.PureComponent {
             addedFrom,
         );
 
+        const isDisabled = shouldShowAltTagComponent(widgetId, widgetType, addedFrom);
+
+        const className = `
+            ${styles.content}
+            ${isDisabled ? styles.disabled : ''}
+        `;
+
         return (
-            <div className={styles.content}>
+            <div className={className}>
                 <FaramGroup faramElementName={String(id)}>
                     <FaramGroup faramElementName="data">
                         <Widget
