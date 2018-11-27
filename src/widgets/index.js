@@ -30,6 +30,7 @@ import NumberMatrixWidget from './tagging/NumberMatrix';
 import NumberMatrixListWidget from './tagging/NumberMatrixList';
 // list
 import DateWidget from './tagging/Date';
+import TimeRangeWidget from './tagging/TimeRange';
 import DateRangeWidget from './tagging/DateRange';
 import GeoWidget from './tagging/Geo';
 import MultiSelectWidget from './tagging/MultiSelect';
@@ -47,6 +48,7 @@ import Matrix2dListViewWidget from './view/Matrix2dList';
 import NumberMatrixListViewWidget from './view/NumberMatrixList';
 // list
 import DateViewWidget from './view/Date';
+import TimeRangeViewWidget from './view/TimeRange';
 import DateRangeViewWidget from './view/DateRange';
 import GeoViewWidget from './view/Geo';
 import MultiSelectViewWidget from './view/MultiSelect';
@@ -158,14 +160,30 @@ export const globalWidgets = {
         editComponent: DefaultEditWidget,
 
         overview: {
-            minSize: { w: 11, h: 5 },
+            minSize: { w: 7, h: 5 },
             tagComponent: TimeWidget,
         },
         list: {
-            minSize: { w: 11, h: 5 },
+            minSize: { w: 7, h: 5 },
             tagComponent: TimeWidget,
             altTagComponent: TimeViewWidget,
             viewComponent: TimeViewWidget,
+        },
+    },
+    timeRangeWidget: {
+        // NOTE: used as _ts('widgetTitle', 'timeRangeWidgetLabel')
+        title: 'timeRangeWidgetLabel',
+        editComponent: DefaultEditWidget,
+
+        overview: {
+            minSize: { w: 16, h: 5 },
+            tagComponent: TimeRangeWidget,
+        },
+        list: {
+            minSize: { w: 16, h: 5 },
+            tagComponent: TimeRangeWidget,
+            altTagComponent: TimeRangeViewWidget,
+            viewComponent: TimeRangeViewWidget,
         },
     },
     dateRangeWidget: {

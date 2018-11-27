@@ -1,0 +1,29 @@
+@import '~base-scss/base';
+
+.time-range {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+
+    .to,
+    .from {
+        display: flex;
+        align-items: center;
+        padding: 0 $spacing-small;
+
+        .label {
+            flex-shrink: 0;
+            padding-right: $spacing-small;
+            width: 32px;
+        }
+
+        .time-input {
+            flex-grow: 1;
+            width: auto;
+        }
+    }
+}

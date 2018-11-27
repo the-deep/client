@@ -845,7 +845,8 @@
         "-63520825": "{fields} were modified.",
         "-30665346": "Are you sure you want to remove the usergroup {title}?",
         "-42425639": "Linked group",
-        "-99213668": "Independent member"
+        "-99213668": "Independent member",
+        "-557230": "Time Range"
     },
     "links": {
         "browserExtension": {
@@ -1604,7 +1605,8 @@
             "numberWidgetLabel": 752,
             "organigramWidgetLabel": 753,
             "scaleWidgetLabel": 757,
-            "conditionalWidgetLabel": -86548021
+            "conditionalWidgetLabel": -86548021,
+            "timeRangeWidgetLabel": -557230
         },
         "pageTitle": {
             "login": 814,
@@ -2309,6 +2311,13 @@
         },
         "project.usergroups": {
             "removeUsergroupConfirmationMessage": -30665346
+        },
+        "widgets.tagging.timeRange": {
+            "fromLabel": 1009,
+            "toLabel": 1000
+        },
+        "widgets.view.timeRange": {
+            "toLabel": 1000
         }
     }
 }

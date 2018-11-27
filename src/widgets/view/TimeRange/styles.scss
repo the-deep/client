@@ -1,0 +1,16 @@
+@import '~base-scss/base';
+
+.time-range {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    overflow: auto;
+
+    .time {
+        padding: $spacing-extra-small $spacing-small;
+    }
+
+    .empty {
+        color: $color-text-placeholder;
+    }
+}
