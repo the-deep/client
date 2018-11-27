@@ -69,7 +69,6 @@ export default class ProjectAfDetail extends React.PureComponent {
         return (
             <div className={className}>
                 <Faram
-                    disabled
                     readOnly
                     schema={emptyObject}
                     value={emptyObject}
