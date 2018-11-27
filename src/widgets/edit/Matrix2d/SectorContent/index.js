@@ -7,7 +7,12 @@ import SortableListView from '#rscv/SortableListView';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
-import { randomString } from '#rsu/common';
+import {
+    findDuplicates,
+    randomString,
+    listToMap,
+} from '#rsu/common';
+import Confirm from '#rscv/Modal/Confirm';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';
@@ -51,7 +56,17 @@ export default class SectorContent extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = { showLinkModal: false };
+        this.state = {
+            showLinkModal: false,
+            showDuplicateConfirm: false,
+            duplicateItems: [],
+        };
+    }
+
+    handleDuplicatesConfirmClose = () => {
+        this.setState({
+            showDuplicateConfirm: false,
+        }, () => this.props.onNestedModalChange(false));
     }
 
     handleAddFromWidgetClick = () => {
@@ -66,8 +81,8 @@ export default class SectorContent extends React.PureComponent {
         }, () => this.props.onNestedModalChange(false));
     }
 
-    addFromWidgetClick = (items, _, listOfNewItems) => {
-        const newListOfItems = listOfNewItems.map(r => ({
+    addFromWidgetClick = (items, _, newItems) => {
+        const newListOfItems = newItems.map(r => ({
             id: randomString(16),
             title: r.label,
             originalWidget: r.originalWidget,
@@ -75,18 +90,39 @@ export default class SectorContent extends React.PureComponent {
             tooltip: '',
         }));
 
-        this.setState({
-            showLinkModal: false,
-        }, () => this.props.onNestedModalChange(false));
+        let finalRows = [...items, ...newListOfItems];
+        const duplicates = findDuplicates(finalRows, d => d.title);
 
-        return [
-            ...items,
-            ...newListOfItems,
-        ];
+        if (duplicates.length > 0) {
+            this.setState({
+                showLinkModal: false,
+                showDuplicateConfirm: true,
+                duplicateItems: duplicates,
+            }, () => this.props.onNestedModalChange(true));
+
+            const duplicatesMap = listToMap(
+                duplicates,
+                d => d,
+            );
+            const newRowsWithoutDuplicates = newListOfItems
+                .filter(row => !duplicatesMap[row.title]);
+
+            finalRows = [...items, ...newRowsWithoutDuplicates];
+        } else {
+            this.setState({
+                showLinkModal: false,
+            }, () => this.props.onNestedModalChange(false));
+        }
+
+        return finalRows;
     };
 
     render() {
-        const { showLinkModal } = this.state;
+        const {
+            showLinkModal,
+            showDuplicateConfirm,
+            duplicateItems,
+        } = this.state;
 
         const {
             index,
@@ -165,6 +201,38 @@ export default class SectorContent extends React.PureComponent {
                         />
                     </FaramList>
                 </FaramGroup>
+                <Confirm
+                    show={showDuplicateConfirm}
+                    hideCancel
+                    title={_ts('widgets.editor.matrix2d', 'duplicatesConfirmTitle')}
+                    onClose={this.handleDuplicatesConfirmClose}
+                >
+                    {duplicateItems.length > 1 ? (
+                        _ts(
+                            'widgets.editor.matrix2d',
+                            'duplicatesConfirmText',
+                            {
+                                duplicates: (
+                                    <span className={styles.duplicateItems}>
+                                        {duplicateItems.join(', ')}
+                                    </span>
+                                ),
+                            },
+                        )
+                    ) : (
+                        _ts(
+                            'widgets.editor.matrix2d',
+                            'duplicateConfirmText',
+                            {
+                                duplicate: (
+                                    <span className={styles.duplicateItems}>
+                                        {duplicateItems[0]}
+                                    </span>
+                                ),
+                            },
+                        )
+                    )}
+                </Confirm>
             </div>
         );
     }

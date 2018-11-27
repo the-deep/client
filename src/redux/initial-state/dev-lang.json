@@ -886,7 +886,10 @@
         "-48490028": "Looks like you don’t have access to this project or it doesn’t exist!",
         "-69684282": "Please contact your project administrator to be granted the needed rights, or if you think this is a bug please notify the DEEP administrators using the Feedback button",
         "-84343027": "Please contact the project administrator to be added, or if you think this is a bug please notify the DEEP administrators using the Feedback button",
-        "-24177081": "{name} (me)"
+        "-24177081": "{name} (me)",
+        "-47600296": "Duplicate items found",
+        "-76890842": "The values {duplicates} were not added because they already exist.",
+        "-35530735": "The value {duplicate} was not added because is already exists."
     },
     "links": {
         "browserExtension": {
@@ -2293,7 +2296,10 @@
             "unnamedCellTitle": -17919979,
             "removeCellButtonTitle": -53055304,
             "addFromWidgets": -14972110,
-            "cancelConfirmMessage": -14675920
+            "cancelConfirmMessage": -14675920,
+            "duplicatesConfirmTitle": -47600296,
+            "duplicatesConfirmText": -76890842,
+            "duplicateConfirmText": -35530735
         },
         "widgets.editor.matrix2d": {
             "atLeastOneError": 1007,
@@ -2322,7 +2328,9 @@
             "unnamedSubsectorLabel": -13931386,
             "removeSubsectorButtonTooltip": -24172161,
             "addFromWidgets": -14972110,
-            "cancelConfirmMessage": -14675920
+            "cancelConfirmMessage": -14675920,
+            "duplicateConfirmText": -35530735,
+            "duplicatesConfirmText": -76890842
         },
         "editEntry.list": {
             "noEntriesText": 543

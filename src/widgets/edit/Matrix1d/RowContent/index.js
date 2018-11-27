@@ -8,7 +8,12 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
 import ColorInput from '#rsci/ColorInput';
-import { randomString } from '#rsu/common';
+import {
+    findDuplicates,
+    listToMap,
+    randomString,
+} from '#rsu/common';
+import Confirm from '#rscv/Modal/Confirm';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';
@@ -51,7 +56,11 @@ export default class RowContent extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.state = { showLinkModal: false };
+        this.state = {
+            showLinkModal: false,
+            duplicateItems: [],
+            showDuplicateConfirm: false,
+        };
     }
 
     handleAddFromWidgetClick = () => {
@@ -60,28 +69,51 @@ export default class RowContent extends React.PureComponent {
         }, () => this.props.onNestedModalChange(true));
     }
 
+    handleDuplicatesConfirmClose = () => {
+        this.setState({
+            showDuplicateConfirm: false,
+        }, () => this.props.onNestedModalChange(false));
+    }
+
     handleLinkModalClose = () => {
         this.setState({
             showLinkModal: false,
         }, () => this.props.onNestedModalChange(false));
     }
 
-    addFromWidgetClick = (items, _, listOfNewItems) => {
-        const newListOfItems = listOfNewItems.map(r => ({
+    addFromWidgetClick = (items, _, newItems) => {
+        const newListOfItems = newItems.map(r => ({
             key: randomString(16),
             value: r.label,
             originalWidget: r.originalWidget,
             originalKey: r.originalKey,
         }));
 
-        this.setState({
-            showLinkModal: false,
-        }, () => this.props.onNestedModalChange(false));
+        let finalRows = [...items, ...newListOfItems];
+        const duplicates = findDuplicates(finalRows, d => d.value);
 
-        return [
-            ...items,
-            ...newListOfItems,
-        ];
+        if (duplicates.length > 0) {
+            this.setState({
+                showLinkModal: false,
+                showDuplicateConfirm: true,
+                duplicateItems: duplicates,
+            }, () => this.props.onNestedModalChange(true));
+
+            const duplicatesMap = listToMap(
+                duplicates,
+                d => d,
+            );
+            const newRowsWithoutDuplicates = newListOfItems
+                .filter(row => !duplicatesMap[row.value]);
+
+            finalRows = [...items, ...newRowsWithoutDuplicates];
+        } else {
+            this.setState({
+                showLinkModal: false,
+            }, () => this.props.onNestedModalChange(false));
+        }
+
+        return finalRows;
     };
 
     render() {
@@ -90,7 +122,11 @@ export default class RowContent extends React.PureComponent {
             className,
         } = this.props;
 
-        const { showLinkModal } = this.state;
+        const {
+            duplicateItems,
+            showDuplicateConfirm,
+            showLinkModal,
+        } = this.state;
 
         return (
             <div className={className}>
@@ -169,6 +205,38 @@ export default class RowContent extends React.PureComponent {
                         />
                     </FaramList>
                 </FaramGroup>
+                <Confirm
+                    show={showDuplicateConfirm}
+                    hideCancel
+                    title={_ts('widgets.editor.matrix1d', 'duplicatesConfirmTitle')}
+                    onClose={this.handleDuplicatesConfirmClose}
+                >
+                    {duplicateItems.length > 1 ? (
+                        _ts(
+                            'widgets.editor.matrix1d',
+                            'duplicatesConfirmText',
+                            {
+                                duplicates: (
+                                    <span className={styles.duplicateItems}>
+                                        {duplicateItems.join(', ')}
+                                    </span>
+                                ),
+                            },
+                        )
+                    ) : (
+                        _ts(
+                            'widgets.editor.matrix1d',
+                            'duplicateConfirmText',
+                            {
+                                duplicate: (
+                                    <span className={styles.duplicateItems}>
+                                        {duplicateItems[0]}
+                                    </span>
+                                ),
+                            },
+                        )
+                    )}
+                </Confirm>
             </div>
         );
     }
