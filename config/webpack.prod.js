@@ -12,6 +12,7 @@ const WebpackPwaManifest = require('webpack-pwa-manifest');
 const getEnvVariables = require('./env.js');
 
 const appBase = process.cwd();
+const eslintFile = path.resolve(appBase, '.eslintrc-loader');
 const appSrc = path.resolve(appBase, 'src/');
 const appDist = path.resolve(appBase, 'build/');
 const appIndexJs = path.resolve(appBase, 'src/index.js');
@@ -76,7 +77,12 @@ module.exports = (env) => {
                     include: appSrc,
                     use: [
                         'babel-loader',
-                        'eslint-loader',
+                        {
+                            loader: 'eslint-loader',
+                            options: {
+                                configFile: eslintFile,
+                            },
+                        },
                     ],
                 },
                 {
