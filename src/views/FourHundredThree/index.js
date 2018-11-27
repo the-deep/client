@@ -1,15 +1,15 @@
 import React from 'react';
 import ReactSVG from 'react-svg';
-import { Link } from 'react-router-dom';
 
 import _ts from '#ts';
+import BackLink from '#components/BackLink';
 import { pathNames } from '#constants';
 import logo from '#resources/img/deep-logo.svg';
 
 import styles from './styles.scss';
 
 // eslint-disable-next-line react/prefer-stateless-function
-export default class ThreeHundredThree extends React.PureComponent {
+export default class FourHundredThree extends React.PureComponent {
     render() {
         return (
             <div className={styles.fourHundredThree}>
@@ -23,12 +23,12 @@ export default class ThreeHundredThree extends React.PureComponent {
                 <p className={styles.message}>
                     {_ts('fourHundredThree', 'message1')}
                 </p>
-                <Link
-                    to={pathNames.homeScreen}
+                <BackLink
+                    defaultLink={pathNames.homeScreen}
                     className={styles.homeScreenLink}
                 >
-                    {_ts('fourHundredThree', 'goToDeep')}
-                </Link>
+                    {_ts('fourHundredThree', 'backToDeep')}
+                </BackLink>
             </div>
         );
     }

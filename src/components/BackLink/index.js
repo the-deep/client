@@ -22,6 +22,7 @@ const propTypes = {
     title: PropTypes.string,
     className: PropTypes.string,
     iconName: PropTypes.string,
+    children: PropTypes.node,
 };
 
 
@@ -29,6 +30,7 @@ const defaultProps = {
     title: undefined,
     iconName: undefined,
     className: '',
+    children: undefined,
 };
 
 @connect(mapStateToProps)
@@ -48,9 +50,10 @@ export default class BackLink extends React.PureComponent {
         const {
             isFirstPage,
             defaultLink,
-            title,
+            title = _ts('components.backLink', 'backButtonTooltip'),
             className,
-            iconName,
+            iconName = iconNames.back,
+            children,
         } = this.props;
 
         const classNames = [
@@ -65,11 +68,11 @@ export default class BackLink extends React.PureComponent {
         return (
             <Link
                 className={classNames.join(' ')}
-                title={title || _ts('components.backLink', 'backButtonTooltip')}
+                title={title}
                 to={defaultLink}
                 onClick={onClick}
             >
-                <i className={iconName || iconNames.back} />
+                { children || <i className={iconName} /> }
             </Link>
         );
     }

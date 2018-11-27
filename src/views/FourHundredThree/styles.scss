@@ -1,6 +1,7 @@
 @import '~base-scss/base';
 
 $color-text-on-primary: get-text-color($color-primary);
+$width-message-max: 540px;
 
 .four-hundred-three {
     @extend %main-content;
@@ -29,6 +30,7 @@ $color-text-on-primary: get-text-color($color-primary);
 
     .message {
         margin: $spacing-large 0;
+        max-width: $width-message-max;
         text-align: center;
         font-size: $font-size-large-alt;
     }

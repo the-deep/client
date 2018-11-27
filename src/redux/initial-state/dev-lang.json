@@ -374,6 +374,7 @@
         "871": "Oops! You have come too DEEP",
         "872": "This is where the DEEP Kraken rests",
         "873": "Go to DEEP",
+        "874": "Back to DEEP",
         "875": "Welcome to the",
         "876": "DEEP",
         "877": "Seems like you do not have any projects yet.",
@@ -852,7 +853,7 @@
         "-99467671": "Couldn't find the widget.",
         "-65673584": "Error while trying to log in.",
         "-17483186": "Error 403",
-        "-83729493": "Oops! You do not have enough permission. Please contact your Administrator.",
+        "-83729493": "Oops! It looks like you don't have the permissions to view this page. Please contact the project adminstrator to grant you permission.",
         "-44264923": "403"
     },
     "links": {
@@ -1300,7 +1301,7 @@
             "errorFourHundredFour": 870,
             "message1": 871,
             "message2": 872,
-            "goToDeep": 873
+            "backToDeep": 874
         },
         "homescreen": {
             "welcomeText": 875,
@@ -2344,7 +2345,7 @@
         },
         "fourHundredThree": {
             "errorThreeHundredThree": -17483186,
-            "goToDeep": 873,
+            "backToDeep": 874,
             "message1": -83729493
         }
     }

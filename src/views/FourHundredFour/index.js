@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactSVG from 'react-svg';
-import { Link } from 'react-router-dom';
 
 import _ts from '#ts';
+import BackLink from '#components/BackLink';
 import { pathNames } from '#constants';
 import logo from '#resources/img/deep-logo.svg';
 
@@ -25,12 +25,12 @@ export default class FourHundredFour extends React.PureComponent {
                     <br />
                     {_ts('fourHundredFour', 'message2')}
                 </p>
-                <Link
-                    to={pathNames.homeScreen}
+                <BackLink
+                    defaultLink={pathNames.homeScreen}
                     className={styles.homeScreenLink}
                 >
-                    {_ts('fourHundredFour', 'goToDeep')}
-                </Link>
+                    {_ts('fourHundredFour', 'backToDeep')}
+                </BackLink>
             </div>
         );
     }
