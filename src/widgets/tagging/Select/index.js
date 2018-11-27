@@ -34,7 +34,6 @@ export default class SelectWidget extends React.PureComponent {
                     faramElementName="value"
                     options={options}
                     showLabel={false}
-                    showHintAndError={false}
                 />
             </div>
         );

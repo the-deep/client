@@ -210,7 +210,6 @@ export default class Excerpt extends React.PureComponent {
                 <TextArea
                     className={className}
                     showLabel={false}
-                    showHintAndError={false}
                     value={excerpt}
                     onChange={this.handleTextChange}
                     disabled={disabled}

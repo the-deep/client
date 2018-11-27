@@ -40,7 +40,6 @@ export default class DateRangeWidget extends React.PureComponent {
                             className={styles.dateInput}
                             faramElementName="fromValue"
                             showLabel={false}
-                            showHintAndError={false}
                         />
                     </div>
                     <div className={styles.from}>
@@ -53,7 +52,6 @@ export default class DateRangeWidget extends React.PureComponent {
                             className={styles.dateInput}
                             faramElementName="toValue"
                             showLabel={false}
-                            showHintAndError={false}
                         />
                     </div>
                 </div>

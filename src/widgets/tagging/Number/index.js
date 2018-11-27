@@ -28,7 +28,6 @@ export default class NumberWidget extends React.PureComponent {
                     placeholder={_ts('widgets.tagging.number', 'numberPlaceholder')}
                     separator={separatorText}
                     showLabel={false}
-                    showHintAndError={false}
                     // NOTE: example usage of faramInfo
                     // faramInfo={{
                     //     action: 'changeExcerpt',
