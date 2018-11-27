@@ -2,28 +2,33 @@
 
 .date-range {
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: center;
     width: 100%;
     height: 100%;
     overflow: auto;
 
-    .to,
-    .from {
+    .inputs {
         display: flex;
         align-items: center;
-        padding: 0 $spacing-small;
+        flex-grow: 1;
+        flex-wrap: wrap;
+        justify-content: center;
 
-        .label {
-            flex-shrink: 0;
-            padding-right: $spacing-small;
-            width: 32px;
-        }
+        .to,
+        .from {
+            display: flex;
+            align-items: center;
+            padding: 0 $spacing-small;
 
-        .date-input {
-            flex-grow: 1;
-            width: auto;
+            .label {
+                flex-shrink: 0;
+                padding-right: $spacing-small;
+                width: 32px;
+            }
+
+            .date-input {
+                flex-grow: 1;
+                width: auto;
+            }
         }
     }
 }

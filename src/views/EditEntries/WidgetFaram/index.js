@@ -113,10 +113,8 @@ export default class WidgetFaram extends React.PureComponent {
                     title={error || title}
                     className={styles.heading}
                 >
-                    { hasError &&
-                        <span className={iconNames.warning} />
-                    }
-                    { title }
+                    { hasError && <span className={iconNames.warning} /> }
+                    { hasError ? `${title} : ${error}` : title }
                 </h5>
                 { ActionComponent && entry && isViewPage && (
                     <div className={styles.actionButtons}>
