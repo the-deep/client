@@ -123,7 +123,7 @@ const checkConditions = (widgetConditions, globalWidgets, entryAttributes) => {
     );
 };
 
-export const resolveWidget = (widgets, globalWidgets, entryAttributes) => {
+export const resolveWidget = (widgets = [], globalWidgets, entryAttributes) => {
     const widget = widgets.find(w => checkConditions(
         w.conditions,
         globalWidgets,

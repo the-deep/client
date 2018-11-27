@@ -15,7 +15,7 @@ const getComputeSchemaForWidget = (widget, globalWidgets) => {
                     widgetData.widgets,
                     globalWidgets,
                     attributes,
-                );
+                ) || widgetData.defaultWidget;
 
                 // Note: do not create new value unless required.
                 if (v.selectedWidgetKey === selectedWidgetKey) {

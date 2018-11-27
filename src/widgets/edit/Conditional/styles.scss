@@ -23,10 +23,16 @@ $height-modal-body: 540px;
         height: $height-modal-body;
         max-height: 80vh;
 
-        .text-input {
+        .widgets-header {
+            display: flex;
             flex-shrink: 0;
             border-bottom: $width-separator-thin solid $color-separator;
             padding: $spacing-small;
+
+            .text-input {
+                flex-grow: 1;
+                margin-right: $spacing-small;
+            }
         }
 
         .widgets-container {

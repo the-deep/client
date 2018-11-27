@@ -855,7 +855,9 @@
         "-17483186": "Error 403",
         "-83729493": "Oops! It looks like you don't have the permissions to view this page. Please contact the project adminstrator to grant you permission.",
         "-44264923": "403",
-        "-48777298": "Not"
+        "-48777298": "Not",
+        "-50025960": "Default widget",
+        "-38162962": "No widget selected"
     },
     "links": {
         "browserExtension": {
@@ -2274,7 +2276,9 @@
             "supportedWidgetsInfoText": -24077239,
             "addedWidgetsHeaderInfoText": -80733191,
             "frameworkWidgetsInfoText": -17190550,
-            "invertLogicLabel": -48777298
+            "invertLogicLabel": -48777298,
+            "defaultWidgetLabel": -50025960,
+            "defaultWidgetPlaceholder": -38162962
         },
         "widgets.editor.link": {
             "cancelButtonLabel": 61,

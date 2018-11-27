@@ -105,12 +105,12 @@ export default class ConditionsInputRow extends React.PureComponent {
                             rendererParams={this.attributeRendererParams}
                         />
                     </FaramGroup>
+                    <Checkbox
+                        className={styles.invertCheckbox}
+                        faramElementName="invertLogic"
+                        label={_ts('widgets.editor.conditional', 'invertLogicLabel')}
+                    />
                 </FaramGroup>
-                <Checkbox
-                    className={styles.invertCheckbox}
-                    faramElementName="invertLogic"
-                    label={_ts('widgets.editor.conditional', 'invertLogicLabel')}
-                />
                 <DangerButton
                     className={styles.deleteButton}
                     iconName={iconNames.delete}
