@@ -77,12 +77,14 @@ const checkConditions = (widgetConditions, globalWidgets, entryAttributes) => {
         return false;
     }
 
+    let onceTrue = false;
     for (let i = 0; i < conditionList.length; i += 1) {
         const {
             widgetId,
             widgetKey,
             conditionType,
             attributes: conditionAttributes,
+            invertLogic,
         } = conditionList[i];
 
         const widgetToCheck = globalWidgets.find(w => w.key === widgetKey);
@@ -90,11 +92,15 @@ const checkConditions = (widgetConditions, globalWidgets, entryAttributes) => {
         const { properties: { data: widgetData } = {} } = widgetToCheck;
 
         const evaluator = conditionsAsMap[widgetId][conditionType].test;
-        const evaluation = evaluator && evaluator(
+        let evaluation = evaluator && evaluator(
             attributes.data || emptyObject,
             conditionAttributes || emptyObject,
             widgetData || emptyObject,
         );
+
+        if (invertLogic) {
+            evaluation = !evaluation;
+        }
 
         if (operator === 'AND' && !evaluation) {
             return false;
@@ -102,9 +108,19 @@ const checkConditions = (widgetConditions, globalWidgets, entryAttributes) => {
         if (operator === 'OR' && evaluation) {
             return true;
         }
+        if (operator === 'XOR' && evaluation) {
+            if (!onceTrue) {
+                onceTrue = true;
+            } else {
+                return false;
+            }
+        }
     }
 
-    return operator === 'AND';
+    return (
+        (operator === 'XOR' && onceTrue) ||
+        (operator === 'AND')
+    );
 };
 
 export const resolveWidget = (widgets, globalWidgets, entryAttributes) => {

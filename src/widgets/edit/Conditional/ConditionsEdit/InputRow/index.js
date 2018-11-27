@@ -6,6 +6,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import ListView from '#rscv/List/ListView';
 import FaramGroup from '#rscg/FaramGroup';
 import SelectInput from '#rsci/SelectInput';
+import Checkbox from '#rsci/Checkbox';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';
@@ -105,6 +106,11 @@ export default class ConditionsInputRow extends React.PureComponent {
                         />
                     </FaramGroup>
                 </FaramGroup>
+                <Checkbox
+                    className={styles.invertCheckbox}
+                    faramElementName="invertLogic"
+                    label={_ts('widgets.editor.conditional', 'invertLogicLabel')}
+                />
                 <DangerButton
                     className={styles.deleteButton}
                     iconName={iconNames.delete}
