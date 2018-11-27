@@ -3,3 +3,8 @@
 .input {
     margin-right: $spacing-small;
 }
+
+.multi-select-container {
+    display: flex;
+    align-items: flex-end;
+}

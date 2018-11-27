@@ -92,20 +92,22 @@ export default class ConditionAttribute extends React.PureComponent {
                     key={attribute.key}
                     faramElementName={attribute.key}
                 >
-                    <MultiSelectInput
-                        className={styles.input}
-                        faramElementName="values"
-                        label={attribute.title}
-                        options={options}
-                        keySelector={attribute.keySelector}
-                        labelSelector={attribute.labelSelector}
-                        showHintAndError={false}
-                    />
-                    <Checkbox
-                        className={styles.input}
-                        faramElementName="testEvery"
-                        label={_ts('widgets.editor.conditional', 'testEveryTitle')}
-                    />
+                    <div className={styles.multiSelectContainer}>
+                        <MultiSelectInput
+                            className={styles.input}
+                            faramElementName="values"
+                            label={attribute.title}
+                            options={options}
+                            keySelector={attribute.keySelector}
+                            labelSelector={attribute.labelSelector}
+                            showHintAndError={false}
+                        />
+                        <Checkbox
+                            className={styles.input}
+                            faramElementName="testEvery"
+                            label={_ts('widgets.editor.conditional', 'testEveryTitle')}
+                        />
+                    </div>
                 </FaramGroup>
             );
         } else if (attribute.type === 'number') {

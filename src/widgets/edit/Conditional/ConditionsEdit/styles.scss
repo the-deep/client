@@ -1,15 +1,18 @@
 @import '~base-scss/base';
 
+$spacing-drag-handle: 14px;
+
 .sortable-unit {
     border-top: $width-separator-thin solid $color-separator;
     border-bottom: $width-separator-thin solid $color-separator;
 
     .drag-handle {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         align-self: stretch;
+        justify-content: center;
         background-color: $color-foreground;
-        padding: $spacing-small;
+        padding: $spacing-drag-handle $spacing-small-alt;
     }
 }
 
@@ -19,7 +22,7 @@
     .modal-body {
         display: flex;
         padding: 0;
-
+        height: 720px;
 
         .left-container {
             display: flex;
@@ -50,6 +53,7 @@
         }
 
         .right-container {
+            display: flex;
             flex-direction: column;
             flex-grow: 1;
 
@@ -69,6 +73,7 @@
             }
 
             .edit-list {
+                flex-grow: 1;
                 overflow-y: auto;
 
                 .sortable-unit {
