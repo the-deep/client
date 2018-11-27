@@ -3,7 +3,7 @@ import { FgRestBuilder } from '#rsu/rest';
 import {
     createParamsForProjectJoinResponse,
     createUrlForProjectJoinResponse,
-    alterAndCombineResponseErrors,
+    alterAndCombineResponseError,
 } from '#rest';
 
 import _ts from '#ts';
@@ -19,7 +19,7 @@ export default class ProjectJoinResponseRequest {
     }
 
     failure = (response) => {
-        const message = alterAndCombineResponseErrors(response.errors);
+        const message = alterAndCombineResponseError(response.errors);
         notify.send({
             title: _ts('notifications', 'projectJoinResponse'),
             type: notify.type.ERROR,

@@ -2,7 +2,7 @@ import { FgRestBuilder } from '#rsu/rest';
 import {
     createParamsForConnectorLeads,
     createUrlForConnectorleads,
-    alterAndCombineResponseErrors,
+    alterAndCombineResponseError,
 } from '#rest';
 import _ts from '#ts';
 import schema from '#schema';
@@ -38,7 +38,7 @@ export default class ConnectorLeadsRequest {
     }
 
     failure = (response) => {
-        const message = alterAndCombineResponseErrors(response.errors);
+        const message = alterAndCombineResponseError(response.errors);
         notify.send({
             title: _ts('addLeads', 'connectorSourcesTitle'),
             type: notify.type.ERROR,
