@@ -1,9 +1,11 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 
+import AccentButton from '#rsca/Button/AccentButton';
 import TimeInput from '#rsci/TimeInput';
 import Label from '#rsci/Label';
 import _ts from '#ts';
+import { iconNames } from '#constants';
 
 import styles from './styles.scss';
 
@@ -17,6 +19,12 @@ const defaultProps = {
 export default class TimeRangeWidget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static handleValueSwap = value => ({
+        ...value,
+        toValue: value.fromValue,
+        fromValue: value.toValue,
+    })
 
     render() {
         return (
@@ -47,6 +55,13 @@ export default class TimeRangeWidget extends React.PureComponent {
                         showHintAndError={false}
                     />
                 </div>
+                <AccentButton
+                    title={_ts('widgets.tagging.timeRange', 'swapButtonTitle')}
+                    iconName={iconNames.swap}
+                    faramElementName="swap-button"
+                    faramAction={TimeRangeWidget.handleValueSwap}
+                    transparent
+                />
             </div>
         );
     }
