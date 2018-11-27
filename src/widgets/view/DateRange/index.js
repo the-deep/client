@@ -18,9 +18,8 @@ const defaultProps = {
 };
 
 const emptyComponent = () => (
-    // FIXME: use strings
     <div className={styles.empty}>
-        dd-mm-yyyy
+        {_ts('widgets.view.dateRange', 'datePlaceholder')}_
     </div>
 );
 

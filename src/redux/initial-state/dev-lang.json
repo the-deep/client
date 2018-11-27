@@ -846,7 +846,11 @@
         "-30665346": "Are you sure you want to remove the usergroup {title}?",
         "-42425639": "Linked group",
         "-99213668": "Independent member",
-        "-557230": "Time Range"
+        "-557230": "Time Range",
+        "-87861842": "dd-mm-yyyy",
+        "-78904030": "Excerpt Image",
+        "-99467671": "Couldn't find the widget.",
+        "-65673584": "Error while trying to log in."
     },
     "links": {
         "browserExtension": {
@@ -1574,7 +1578,8 @@
             "submitForgetPassword": 826,
             "emailLabel": 184,
             "emailPlaceholder": 813,
-            "retryRecaptcha": 894
+            "retryRecaptcha": 894,
+            "passwordResetError": -84190220
         },
         "login": {
             "welcomeToText": 803,
@@ -1589,7 +1594,8 @@
             "registerLabel": 811,
             "enterRecaptcha": 893,
             "retryRecaptcha": 894,
-            "passwordPlaceholder": -67300185
+            "passwordPlaceholder": -67300185,
+            "loginError": -65673584
         },
         "widgetTitle": {
             "dateWidgetLabel": 704,
@@ -1939,7 +1945,8 @@
             "userProjectsGetFatal": -5184045,
             "userUserGroupGetFatal": -59897985,
             "userGroupPostFatal": 204,
-            "userPatchFatal": -71533605
+            "userPatchFatal": -71533605,
+            "userProfileTitle": 5566
         },
         "notifications": {
             "notificationHeaderTitle": 1929,
@@ -2134,7 +2141,8 @@
         },
         "widgets.tagging.excerpt": {
             "dropHereText": -81226372,
-            "formatExcerpt": 515
+            "formatExcerpt": 515,
+            "imageAltText": -78904030
         },
         "widgets.editor.number": {
             "widgetTitlePlaceholder": 13,
@@ -2191,7 +2199,8 @@
             "numberPlaceholder": 768
         },
         "widgets.view.dateRange": {
-            "toLabel": 1000
+            "toLabel": 1000,
+            "datePlaceholder": -87861842
         },
         "widgets.editor.matrix1d": {
             "titleLabel": 13,
@@ -2318,6 +2327,16 @@
         },
         "widgets.view.timeRange": {
             "toLabel": 1000
+        },
+        "dashboard": {
+            "alphaLabel": 1238,
+            "betaLabel": 1237,
+            "deepLabel": 876,
+            "devLabel": 1240,
+            "nightlyLabel": 1239
+        },
+        "widgets.tagging.conditional": {
+            "noWidgetFoundText": -99467671
         }
     }
 }

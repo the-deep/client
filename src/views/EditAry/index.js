@@ -318,8 +318,6 @@ export default class EditAry extends React.PureComponent {
         } else if (
             leadRequest.pending
                 || leadGroupRequest.pending
-                // FIXME: remove following line after Request has been fixed
-                || assessmentRequest.pending
                 || assessmentTemplateRequest.pending
                 || geoOptionsRequest.pending
         ) {
@@ -330,7 +328,6 @@ export default class EditAry extends React.PureComponent {
             projectId,
         });
 
-        // FIXME: leadRequest.response was undefined once
         const title = activeLeadId
             ? leadRequest.response.title
             : (leadGroupRequest.response.leads || []).map(lead => lead.title).join(',');

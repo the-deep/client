@@ -255,7 +255,7 @@ export default class OrganigramInput extends React.PureComponent {
     }
 
     renderSelection = () => {
-        /* TODO: Don't toggle between MultiSelect & SelectInputWithList
+        /* TODO: Don't toggle between MultiSelectInput & SelectInputWithList
             Make a separate ListComponent and use that in SelectInputWithList
             Use that component to build custom SelectInputWithList to use in GeoInput
             and organigram input

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import { currentUserActiveProjectSelector } from '#redux';
 import logo from '#resources/img/deep-logo.svg';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -24,7 +25,22 @@ export default class Dashboard extends React.PureComponent {
     render() {
         const { currentUserActiveProject } = this.props;
 
-        // FIXME: Use strings
+        let betaLabel;
+        switch (process.env.REACT_APP_DEEP_ENVIRONMENT) {
+            case 'beta':
+                betaLabel = _ts('dashboard', 'betaLabel');
+                break;
+            case 'alpha':
+                betaLabel = _ts('dashboard', 'alphaLabel');
+                break;
+            case 'nightly':
+                betaLabel = _ts('dashboard', 'nightlyLabel');
+                break;
+            default:
+                betaLabel = _ts('dashboard', 'devLabel');
+                break;
+        }
+
         return (
             <div className={styles.dashboard}>
                 <p className={styles.header}>
@@ -36,7 +52,7 @@ export default class Dashboard extends React.PureComponent {
                         path={logo}
                     />
                     <div className={styles.deepText} >
-                        DEEP Beta
+                        {_ts('dashboard', 'deepLabel')} {betaLabel}
                     </div>
                 </div>
             </div>
