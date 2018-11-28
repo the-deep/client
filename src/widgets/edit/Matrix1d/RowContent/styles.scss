@@ -12,10 +12,6 @@
         align-self: stretch;
         background-color: $color-foreground;
         padding: $spacing-small;
-
-        &.active {
-            @include background-color($color-accent);
-        }
     }
 }
 
@@ -59,8 +55,4 @@
     .item {
         border-top-color: transparent;
     }
-}
-
-.duplicate-items {
-    font-weight: $font-weight-bold;
 }

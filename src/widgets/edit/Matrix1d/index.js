@@ -11,16 +11,14 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
-import Confirm from '#rscv/Modal/Confirm';
 import Faram, { requiredCondition } from '#rscg/Faram';
 import {
     findDuplicates,
-    listToMap,
     randomString,
 } from '#rsu/common';
 import { iconNames } from '#constants';
 
-import LinkWidgetModal from '#widgetComponents/LinkWidgetModal';
+import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
 import _ts from '#ts';
 
@@ -47,6 +45,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static keySelector = elem => elem.key;
+    static rowTitleSelector = d => d.title;
 
     static schema = {
         fields: {
@@ -125,8 +124,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             hasError: false,
             showLinkModal: false,
             showNestedLinkModal: false,
-            showDuplicateConfirm: false,
-            duplicateItems: [],
 
             selectedRowKey: rows[0]
                 ? Matrix1dEditWidget.keySelector(rows[0])
@@ -140,7 +137,12 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             faramErrors,
             pristine: false,
             hasError: faramInfo.hasError,
+            selectedRowKey: Matrix1dEditWidget.keySelector(faramInfo.lastItem),
         });
+    };
+
+    handleModalVisiblityChange = (isShown) => {
+        this.setState({ showLinkModal: isShown });
     };
 
     handleFaramValidationFailure = (faramErrors) => {
@@ -154,10 +156,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         const { title, rows } = faramValues;
         this.props.onSave({ rows }, title);
     };
-
-    handleDuplicatesConfirmClose = () => {
-        this.setState({ showDuplicateConfirm: false });
-    }
 
     addRowClick = (rows) => {
         const newRow = {
@@ -176,49 +174,15 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         ];
     }
 
-    addFromWidgetClick = (rows, _, newRows) => {
-        const newListOfRows = newRows.map(r => ({
-            key: randomString(16),
-            title: r.label,
-            originalWidget: r.originalWidget,
-            originalKey: r.originalKey,
-            color: undefined,
-            tooltip: '',
-            cells: [],
-        }));
-
-        let finalRows = [...rows, ...newListOfRows];
-        const duplicates = findDuplicates(finalRows, d => d.title);
-
-        if (duplicates.length > 0) {
-            this.setState({
-                showDuplicateConfirm: true,
-                duplicateItems: duplicates,
-            });
-
-            const duplicatesMap = listToMap(
-                duplicates,
-                d => d,
-            );
-            const newRowsWithoutDuplicates = newListOfRows.filter(row => !duplicatesMap[row.title]);
-            finalRows = [...rows, ...newRowsWithoutDuplicates];
-        }
-
-        this.setState({
-            showLinkModal: false,
-            selectedRowKey: Matrix1dEditWidget.keySelector(finalRows[finalRows.length - 1]),
-        });
-
-        return finalRows;
-    };
-
-    handleLinkModalClose = () => {
-        this.setState({ showLinkModal: false });
-    }
-
-    handleAddFromWidgetClick = () => {
-        this.setState({ showLinkModal: true });
-    }
+    rowsModifier = rows => rows.map(r => ({
+        key: randomString(16),
+        title: r.label,
+        originalWidget: r.originalWidget,
+        originalKey: r.originalKey,
+        color: undefined,
+        tooltip: '',
+        cells: [],
+    }));
 
     handleNestedModalChange = (showNestedLinkModal) => {
         this.setState({ showNestedLinkModal });
@@ -255,8 +219,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             hasError,
             showLinkModal,
             showNestedLinkModal,
-            showDuplicateConfirm,
-            duplicateItems,
         } = this.state;
 
         const {
@@ -270,147 +232,117 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         );
 
         const modalClassNames = [styles.editModal];
-        if (showLinkModal || showNestedLinkModal || showDuplicateConfirm) {
+        if (showLinkModal || showNestedLinkModal) {
             modalClassNames.push(styles.disabled);
         }
 
         return (
-            <React.Fragment>
-                <Modal className={modalClassNames.join(' ')}>
-                    <Faram
-                        className={styles.form}
-                        onChange={this.handleFaramChange}
-                        onValidationFailure={this.handleFaramValidationFailure}
-                        onValidationSuccess={this.handleFaramValidationSuccess}
-                        schema={Matrix1dEditWidget.schema}
-                        value={faramValues}
-                        error={faramErrors}
-                    >
-                        <ModalHeader title={title} />
-                        <ModalBody className={styles.body}>
-                            <NonFieldErrors
-                                faramElement
-                                className={styles.error}
-                            />
-                            <TextInput
-                                className={styles.titleInput}
-                                faramElementName="title"
-                                autoFocus
-                                label={_ts('widgets.editor.matrix1d', 'titleLabel')}
-                                placeholder={_ts('widgets.editor.matrix1d', 'widgetTitlePlaceholder')}
-                                selectOnFocus
-                            />
-                            <div className={styles.rows} >
-                                <FaramList
-                                    faramElementName="rows"
-                                    keySelector={Matrix1dEditWidget.keySelector}
-                                >
-                                    <NonFieldErrors faramElement className={styles.error} />
-                                    <header className={styles.header}>
-                                        <h4>
-                                            {_ts('widgets.editor.matrix1d', 'rowTitle')}
-                                        </h4>
-                                        <div className={styles.buttonContainer} >
-                                            <GeoLink
-                                                faramElementName="add-from-geo-btn"
-                                                faramAction={this.addFromWidgetClick}
-                                            />
-                                            <PrimaryButton
-                                                transparent
-                                                iconName={iconNames.add}
-                                                onClick={this.handleAddFromWidgetClick}
-                                            >
-                                                {_ts('widgets.editor.matrix1d', 'addFromWidgets')}
-                                            </PrimaryButton>
-                                            {showLinkModal &&
-                                                <LinkWidgetModal
-                                                    onClose={this.handleLinkModalClose}
-                                                    widgetKey={this.props.widgetKey}
-                                                    faramElementName="add-from-widget-btn"
-                                                    faramAction={this.addFromWidgetClick}
-                                                />
-                                            }
-                                            <PrimaryButton
-                                                faramElementName="add-btn"
-                                                faramAction={this.addRowClick}
-                                                iconName={iconNames.add}
-                                                transparent
-                                            >
-                                                {_ts('widgets.editor.matrix1d', 'addRowButtonTitle')}
-                                            </PrimaryButton>
-                                        </div>
-                                    </header>
-                                    <div className={styles.panels}>
-                                        <SortableListView
-                                            className={styles.leftPanel}
-                                            dragHandleModifier={this.renderDragHandle}
-                                            faramElement
-                                            rendererParams={this.rendererParams}
-                                            itemClassName={styles.item}
-                                            renderer={RowTitle}
-                                        />
-                                        { rows.length > 0 && selectedRowIndex !== -1 &&
-                                            <RowContent
-                                                index={selectedRowIndex}
-                                                widgetKey={this.props.widgetKey}
-                                                className={styles.rightPanel}
-                                                onNestedModalChange={this.handleNestedModalChange}
-                                            />
-                                        }
-                                    </div>
-                                </FaramList>
-                            </div>
-                        </ModalBody>
-                        <ModalFooter>
-                            <DangerConfirmButton
-                                onClick={onClose}
-                                confirmationMessage={_ts('widgets.editor.matrix1d', 'cancelConfirmMessage')}
-                                skipConfirmation={pristine}
-                            >
-                                {_ts('widgets.editor.matrix1d', 'cancelButtonLabel')}
-                            </DangerConfirmButton>
-                            <PrimaryButton
-                                type="submit"
-                                disabled={pristine || hasError}
-                            >
-                                {_ts('widgets.editor.matrix1d', 'saveButtonLabel')}
-                            </PrimaryButton>
-                        </ModalFooter>
-                    </Faram>
-                </Modal>
-                <Confirm
-                    show={showDuplicateConfirm}
-                    hideCancel
-                    title={_ts('widgets.editor.matrix1d', 'duplicatesConfirmTitle')}
-                    onClose={this.handleDuplicatesConfirmClose}
+            <Modal className={modalClassNames.join(' ')}>
+                <Faram
+                    className={styles.form}
+                    onChange={this.handleFaramChange}
+                    onValidationFailure={this.handleFaramValidationFailure}
+                    onValidationSuccess={this.handleFaramValidationSuccess}
+                    schema={Matrix1dEditWidget.schema}
+                    value={faramValues}
+                    error={faramErrors}
                 >
-                    {duplicateItems.length > 1 ? (
-                        _ts(
-                            'widgets.editor.matrix1d',
-                            'duplicatesConfirmText',
-                            {
-                                duplicates: (
-                                    <span className={styles.duplicateItems}>
-                                        {duplicateItems.join(', ')}
-                                    </span>
-                                ),
-                            },
-                        )
-                    ) : (
-                        _ts(
-                            'widgets.editor.matrix1d',
-                            'duplicateConfirmText',
-                            {
-                                duplicate: (
-                                    <span className={styles.duplicateItems}>
-                                        {duplicateItems[0]}
-                                    </span>
-                                ),
-                            },
-                        )
-                    )}
-                </Confirm>
-            </React.Fragment>
+                    <ModalHeader title={title} />
+                    <ModalBody className={styles.body}>
+                        <NonFieldErrors
+                            faramElement
+                            className={styles.error}
+                        />
+                        <TextInput
+                            className={styles.titleInput}
+                            faramElementName="title"
+                            autoFocus
+                            label={_ts('widgets.editor.matrix1d', 'titleLabel')}
+                            placeholder={_ts('widgets.editor.matrix1d', 'widgetTitlePlaceholder')}
+                            selectOnFocus
+                        />
+                        <div className={styles.rows} >
+                            <FaramList
+                                faramElementName="rows"
+                                keySelector={Matrix1dEditWidget.keySelector}
+                            >
+                                <NonFieldErrors faramElement className={styles.error} />
+                            </FaramList>
+                            <header className={styles.header}>
+                                <h4>
+                                    {_ts('widgets.editor.matrix1d', 'rowTitle')}
+                                </h4>
+                                <div className={styles.buttonContainer} >
+                                    <GeoLink
+                                        faramElementName="rows"
+                                        titleSelector={Matrix1dEditWidget.rowTitleSelector}
+                                        dataModifier={this.rowsModifier}
+                                        onModalVisibilityChange={this.handleModalVisiblityChange}
+                                    />
+                                    <LinkWidgetModalButton
+                                        faramElementName="rows"
+                                        widgetKey={this.props.widgetKey}
+                                        titleSelector={Matrix1dEditWidget.rowTitleSelector}
+                                        dataModifier={this.rowsModifier}
+                                        onModalVisibilityChange={this.handleModalVisiblityChange}
+                                    />
+                                    <FaramList
+                                        faramElementName="rows"
+                                        keySelector={Matrix1dEditWidget.keySelector}
+                                    >
+                                        <PrimaryButton
+                                            faramElementName="add-btn"
+                                            faramAction={this.addRowClick}
+                                            iconName={iconNames.add}
+                                            transparent
+                                        >
+                                            {_ts('widgets.editor.matrix1d', 'addRowButtonTitle')}
+                                        </PrimaryButton>
+                                    </FaramList>
+                                </div>
+                            </header>
+                            <FaramList
+                                faramElementName="rows"
+                                keySelector={Matrix1dEditWidget.keySelector}
+                            >
+                                <div className={styles.panels}>
+                                    <SortableListView
+                                        className={styles.leftPanel}
+                                        dragHandleModifier={this.renderDragHandle}
+                                        faramElement
+                                        rendererParams={this.rendererParams}
+                                        itemClassName={styles.item}
+                                        renderer={RowTitle}
+                                    />
+                                    { rows.length > 0 && selectedRowIndex !== -1 &&
+                                        <RowContent
+                                            index={selectedRowIndex}
+                                            widgetKey={this.props.widgetKey}
+                                            className={styles.rightPanel}
+                                            onNestedModalChange={this.handleNestedModalChange}
+                                        />
+                                    }
+                                </div>
+                            </FaramList>
+                        </div>
+                    </ModalBody>
+                    <ModalFooter>
+                        <DangerConfirmButton
+                            onClick={onClose}
+                            confirmationMessage={_ts('widgets.editor.matrix1d', 'cancelConfirmMessage')}
+                            skipConfirmation={pristine}
+                        >
+                            {_ts('widgets.editor.matrix1d', 'cancelButtonLabel')}
+                        </DangerConfirmButton>
+                        <PrimaryButton
+                            type="submit"
+                            disabled={pristine || hasError}
+                        >
+                            {_ts('widgets.editor.matrix1d', 'saveButtonLabel')}
+                        </PrimaryButton>
+                    </ModalFooter>
+                </Faram>
+            </Modal>
         );
     }
 }

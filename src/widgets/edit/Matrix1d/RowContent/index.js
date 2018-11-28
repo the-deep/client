@@ -8,17 +8,12 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
 import ColorInput from '#rsci/ColorInput';
-import {
-    findDuplicates,
-    listToMap,
-    randomString,
-} from '#rsu/common';
-import Confirm from '#rscv/Modal/Confirm';
+import { randomString } from '#rsu/common';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';
 
-import LinkWidgetModal from '#widgetComponents/LinkWidgetModal';
+import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
 
 import InputRow from './InputRow';
@@ -40,6 +35,7 @@ export default class RowContent extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static keySelector = elem => elem.key;
+    static rowTitleSelector = d => d.value;
 
     static addOptionClick = options => ([
         ...options,
@@ -53,80 +49,19 @@ export default class RowContent extends React.PureComponent {
         index: i,
     })
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            showLinkModal: false,
-            duplicateItems: [],
-            showDuplicateConfirm: false,
-        };
-    }
-
-    handleAddFromWidgetClick = () => {
-        this.setState({
-            showLinkModal: true,
-        }, () => this.props.onNestedModalChange(true));
-    }
-
-    handleDuplicatesConfirmClose = () => {
-        this.setState({
-            showDuplicateConfirm: false,
-        }, () => this.props.onNestedModalChange(false));
-    }
-
-    handleLinkModalClose = () => {
-        this.setState({
-            showLinkModal: false,
-        }, () => this.props.onNestedModalChange(false));
-    }
-
-    addFromWidgetClick = (items, _, newItems) => {
-        const newListOfItems = newItems.map(r => ({
-            key: randomString(16),
-            value: r.label,
-            originalWidget: r.originalWidget,
-            originalKey: r.originalKey,
-        }));
-
-        let finalRows = [...items, ...newListOfItems];
-        const duplicates = findDuplicates(finalRows, d => d.value);
-
-        if (duplicates.length > 0) {
-            this.setState({
-                showLinkModal: false,
-                showDuplicateConfirm: true,
-                duplicateItems: duplicates,
-            }, () => this.props.onNestedModalChange(true));
-
-            const duplicatesMap = listToMap(
-                duplicates,
-                d => d,
-            );
-            const newRowsWithoutDuplicates = newListOfItems
-                .filter(row => !duplicatesMap[row.value]);
-
-            finalRows = [...items, ...newRowsWithoutDuplicates];
-        } else {
-            this.setState({
-                showLinkModal: false,
-            }, () => this.props.onNestedModalChange(false));
-        }
-
-        return finalRows;
-    };
+    rowsModifier = rows => rows.map(r => ({
+        key: randomString(16),
+        value: r.label,
+        originalWidget: r.originalWidget,
+        originalKey: r.originalKey,
+    }));
 
     render() {
         const {
             index,
             className,
+            onNestedModalChange,
         } = this.props;
-
-        const {
-            duplicateItems,
-            showDuplicateConfirm,
-            showLinkModal,
-        } = this.state;
 
         return (
             <div className={className}>
@@ -161,30 +96,29 @@ export default class RowContent extends React.PureComponent {
                             className={styles.error}
                             faramElement
                         />
-                        <header className={styles.header}>
-                            <h4>
-                                {_ts('widgets.editor.matrix1d', 'cellsHeaderTitle')}
-                            </h4>
-                            <div className={styles.buttonContainer} >
-                                <GeoLink
-                                    faramElementName="add-from-geo-btn"
-                                    faramAction={this.addFromWidgetClick}
-                                />
-                                <PrimaryButton
-                                    transparent
-                                    iconName={iconNames.add}
-                                    onClick={this.handleAddFromWidgetClick}
-                                >
-                                    {_ts('widgets.editor.matrix1d', 'addFromWidgets')}
-                                </PrimaryButton>
-                                {showLinkModal &&
-                                    <LinkWidgetModal
-                                        onClose={this.handleLinkModalClose}
-                                        widgetKey={this.props.widgetKey}
-                                        faramElementName="add-from-widget-btn"
-                                        faramAction={this.addFromWidgetClick}
-                                    />
-                                }
+                    </FaramList>
+                    <header className={styles.header}>
+                        <h4>
+                            {_ts('widgets.editor.matrix1d', 'cellsHeaderTitle')}
+                        </h4>
+                        <div className={styles.buttonContainer} >
+                            <GeoLink
+                                faramElementName="cells"
+                                titleSelector={RowContent.rowTitleSelector}
+                                dataModifier={this.rowsModifier}
+                                onModalVisibilityChange={onNestedModalChange}
+                            />
+                            <LinkWidgetModalButton
+                                faramElementName="cells"
+                                widgetKey={this.props.widgetKey}
+                                titleSelector={RowContent.rowTitleSelector}
+                                dataModifier={this.rowsModifier}
+                                onModalVisibilityChange={onNestedModalChange}
+                            />
+                            <FaramList
+                                faramElementName="cells"
+                                keySelector={RowContent.keySelector}
+                            >
                                 <PrimaryButton
                                     faramElementName="add-btn"
                                     faramAction={RowContent.addOptionClick}
@@ -193,8 +127,13 @@ export default class RowContent extends React.PureComponent {
                                 >
                                     {_ts('widgets.editor.matrix1d', 'addCellButtonTitle')}
                                 </PrimaryButton>
-                            </div>
-                        </header>
+                            </FaramList>
+                        </div>
+                    </header>
+                    <FaramList
+                        faramElementName="cells"
+                        keySelector={RowContent.keySelector}
+                    >
                         <SortableListView
                             faramElement
                             className={styles.cellList}
@@ -205,38 +144,6 @@ export default class RowContent extends React.PureComponent {
                         />
                     </FaramList>
                 </FaramGroup>
-                <Confirm
-                    show={showDuplicateConfirm}
-                    hideCancel
-                    title={_ts('widgets.editor.matrix1d', 'duplicatesConfirmTitle')}
-                    onClose={this.handleDuplicatesConfirmClose}
-                >
-                    {duplicateItems.length > 1 ? (
-                        _ts(
-                            'widgets.editor.matrix1d',
-                            'duplicatesConfirmText',
-                            {
-                                duplicates: (
-                                    <span className={styles.duplicateItems}>
-                                        {duplicateItems.join(', ')}
-                                    </span>
-                                ),
-                            },
-                        )
-                    ) : (
-                        _ts(
-                            'widgets.editor.matrix1d',
-                            'duplicateConfirmText',
-                            {
-                                duplicate: (
-                                    <span className={styles.duplicateItems}>
-                                        {duplicateItems[0]}
-                                    </span>
-                                ),
-                            },
-                        )
-                    )}
-                </Confirm>
             </div>
         );
     }

@@ -17,15 +17,13 @@ import MultiViewContainer from '#rscv/MultiViewContainer';
 import {
     findDuplicates,
     randomString,
-    listToMap,
 } from '#rsu/common';
-import Confirm from '#rscv/Modal/Confirm';
 
 import TabTitle from '#components/TabTitle';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
-import LinkWidgetModal from '#widgetComponents/LinkWidgetModal';
+import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
 
 import SectorTitle from './SectorTitle';
@@ -53,6 +51,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static keySelector = elem => elem.id;
+    static titleSelector = elem => elem.title;
 
     static schema = {
         fields: {
@@ -185,8 +184,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             hasError: false,
             showLinkModal: false,
             showNestedLinkModal: false,
-            showDuplicateConfirm: false,
-            duplicateItems: false,
 
             selectedDimensionKey: dimensions[0]
                 ? Matrix2dEditWidget.keySelector(dimensions[0])
@@ -299,9 +296,14 @@ export default class Matrix2dEditWidget extends React.PureComponent {
     }
 
     handleFaramChange = (faramValues, faramErrors, faramInfo) => {
+        const { selectedTab } = this.state;
+        const tabName = selectedTab === 'dimensions' ? 'selectedDimensionKey' : 'selectedSectorKey';
+
         this.setState({
             faramValues,
             faramErrors,
+            pristine: true,
+            [tabName]: Matrix2dEditWidget.keySelector(faramInfo.lastItem),
             pristine: false,
             hasError: faramInfo.hasError,
         });
@@ -345,49 +347,24 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         ];
     }
 
-    addDimensionFromWidgetClick = (rows, _, newRows) => {
-        const newListOfRows = newRows.map(r => ({
-            id: randomString(16),
-            title: r.label,
-            originalWidget: r.originalWidget,
-            originalKey: r.originalKey,
-            color: undefined,
-            tooltip: '',
-            subdimensions: [],
-        }));
+    dimensionDataModifier = row => row.map(r => ({
+        id: randomString(16),
+        title: r.label,
+        originalWidget: r.originalWidget,
+        originalKey: r.originalKey,
+        color: undefined,
+        tooltip: '',
+        subdimensions: [],
+    }));
 
-        let finalRows = [...rows, ...newListOfRows];
-        const duplicates = findDuplicates(finalRows, d => d.title);
-
-        if (duplicates.length > 0) {
-            this.setState({
-                showDuplicateConfirm: true,
-                duplicateItems: duplicates,
-            });
-
-            const duplicatesMap = listToMap(
-                duplicates,
-                d => d,
-            );
-            const newRowsWithoutDuplicates = newListOfRows.filter(row => !duplicatesMap[row.title]);
-            finalRows = [...rows, ...newRowsWithoutDuplicates];
-        }
-
-        this.setState({
-            showLinkModal: false,
-            selectedDimensionKey: Matrix2dEditWidget.keySelector(finalRows[finalRows.length - 1]),
-        });
-
-        return finalRows;
-    };
-
-    handleLinkModalClose = () => {
-        this.setState({ showLinkModal: false });
-    }
-
-    handleAddFromWidgetClick = () => {
-        this.setState({ showLinkModal: true });
-    }
+    sectorDataModifier = row => row.map(r => ({
+        id: randomString(16),
+        title: r.label,
+        originalWidget: r.originalWidget,
+        originalKey: r.originalKey,
+        tooltip: '',
+        subsectors: [],
+    }));
 
     handleNestedModalChange = (showNestedLinkModal) => {
         this.setState({ showNestedLinkModal });
@@ -411,58 +388,20 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         ];
     }
 
-    handleDuplicatesConfirmClose = () => {
-        this.setState({ showDuplicateConfirm: false });
-    }
-
-    addSectorFromWidgetClick = (rows, _, newRows) => {
-        const newListOfRows = newRows.map(r => ({
-            id: randomString(16),
-            title: r.label,
-            originalWidget: r.originalWidget,
-            originalKey: r.originalKey,
-            tooltip: '',
-            subsectors: [],
-        }));
-
-        let finalRows = [...rows, ...newListOfRows];
-        const duplicates = findDuplicates(finalRows, d => d.title);
-
-        if (duplicates.length > 0) {
-            this.setState({
-                showDuplicateConfirm: true,
-                duplicateItems: duplicates,
-            });
-
-            const duplicatesMap = listToMap(
-                duplicates,
-                d => d,
-            );
-            const newRowsWithoutDuplicates = newListOfRows.filter(row => !duplicatesMap[row.title]);
-            finalRows = [...rows, ...newRowsWithoutDuplicates];
-        }
-
-        this.setState({
-            showLinkModal: false,
-            selectedSectorKey: Matrix2dEditWidget.keySelector(finalRows[finalRows.length - 1]),
-        });
-
-        return finalRows;
-    };
-
     handleTabSelect = (selectedTab) => {
         this.setState({ selectedTab });
     }
 
-    renderTabsWithButton = () => {
-        const {
-            selectedTab,
-            showLinkModal,
-        } = this.state;
+    handleModalVisiblityChange = (isShown) => {
+        this.setState({ showLinkModal: isShown });
+    };
 
-        const addFromWidgetFaramAction = selectedTab === 'dimensions'
-            ? this.addDimensionFromWidgetClick
-            : this.addSectorFromWidgetClick;
+    renderTabsWithButton = () => {
+        const { selectedTab } = this.state;
+
+        const dataModifier = selectedTab === 'dimensions'
+            ? this.dimensionDataModifier
+            : this.sectorDataModifier;
 
         return (
             <div className={styles.tabsContainer}>
@@ -480,26 +419,20 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     modifier={this.renderTab}
                 >
                     <div className={styles.buttonContainer}>
+                        <GeoLink
+                            faramElementName={selectedTab}
+                            titleSelector={Matrix2dEditWidget.titleSelector}
+                            dataModifier={dataModifier}
+                            onModalVisibilityChange={this.handleModalVisiblityChange}
+                        />
+                        <LinkWidgetModalButton
+                            faramElementName={selectedTab}
+                            widgetKey={this.props.widgetKey}
+                            titleSelector={Matrix2dEditWidget.titleSelector}
+                            dataModifier={dataModifier}
+                            onModalVisibilityChange={this.handleModalVisiblityChange}
+                        />
                         <FaramList faramElementName={selectedTab}>
-                            <GeoLink
-                                faramElementName="add-from-geo-btn"
-                                faramAction={addFromWidgetFaramAction}
-                            />
-                            <PrimaryButton
-                                transparent
-                                iconName={iconNames.add}
-                                onClick={this.handleAddFromWidgetClick}
-                            >
-                                {_ts('widgets.editor.matrix2d', 'addFromWidgets')}
-                            </PrimaryButton>
-                            {showLinkModal &&
-                                <LinkWidgetModal
-                                    onClose={this.handleLinkModalClose}
-                                    widgetKey={this.props.widgetKey}
-                                    faramElementName="add-from-widget-btn"
-                                    faramAction={addFromWidgetFaramAction}
-                                />
-                            }
                             {
                                 selectedTab === 'dimensions' ? (
                                     <PrimaryButton
@@ -593,8 +526,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             selectedTab,
             showLinkModal,
             showNestedLinkModal,
-            duplicateItems,
-            showDuplicateConfirm,
         } = this.state;
 
         const {
@@ -605,93 +536,59 @@ export default class Matrix2dEditWidget extends React.PureComponent {
 
         const TabsWithButton = this.renderTabsWithButton;
         const modalClassnames = [styles.editModal];
-        if (showLinkModal || showNestedLinkModal || showDuplicateConfirm) {
+        if (showLinkModal || showNestedLinkModal) {
             modalClassnames.push(styles.disabled);
         }
 
         return (
-            <React.Fragment>
-                <Modal className={modalClassnames.join(' ')}>
-                    <Faram
-                        className={styles.form}
-                        onChange={this.handleFaramChange}
-                        onValidationFailure={this.handleFaramValidationFailure}
-                        onValidationSuccess={this.handleFaramValidationSuccess}
-                        schema={Matrix2dEditWidget.schema}
-                        value={faramValues}
-                        error={faramErrors}
-                    >
-                        <ModalHeader title={title} />
-                        <ModalBody className={styles.body}>
-                            <NonFieldErrors
-                                faramElement
-                                className={styles.error}
-                            />
-                            <TextInput
-                                className={styles.titleInput}
-                                faramElementName="title"
-                                autoFocus
-                                label={_ts('widgets.editor.matrix2d', 'titleLabel')}
-                                placeholder={_ts('widgets.editor.matrix2d', 'widgetTitlePlaceholder')}
-                                selectOnFocus
-                            />
-                            <TabsWithButton />
-                            <MultiViewContainer
-                                views={this.views}
-                                containerClassName={styles.modalUnitContainer}
-                                active={selectedTab}
-                            />
-                        </ModalBody>
-                        <ModalFooter>
-                            <DangerConfirmButton
-                                onClick={onClose}
-                                confirmationMessage={_ts('widgets.editor.matrix2d', 'cancelConfirmMessage')}
-                                skipConfirmation={pristine}
-                            >
-                                {_ts('widgets.editor.matrix2d', 'cancelButtonLabel')}
-                            </DangerConfirmButton>
-                            <PrimaryButton
-                                type="submit"
-                                disabled={pristine || hasError}
-                            >
-                                {_ts('widgets.editor.matrix2d', 'saveButtonLabel')}
-                            </PrimaryButton>
-                        </ModalFooter>
-                    </Faram>
-                </Modal>
-                <Confirm
-                    show={showDuplicateConfirm}
-                    hideCancel
-                    title={_ts('widgets.editor.matrix2d', 'duplicatesConfirmTitle')}
-                    onClose={this.handleDuplicatesConfirmClose}
+            <Modal className={modalClassnames.join(' ')}>
+                <Faram
+                    className={styles.form}
+                    onChange={this.handleFaramChange}
+                    onValidationFailure={this.handleFaramValidationFailure}
+                    onValidationSuccess={this.handleFaramValidationSuccess}
+                    schema={Matrix2dEditWidget.schema}
+                    value={faramValues}
+                    error={faramErrors}
                 >
-                    {duplicateItems.length > 1 ? (
-                        _ts(
-                            'widgets.editor.matrix2d',
-                            'duplicatesConfirmText',
-                            {
-                                duplicates: (
-                                    <span className={styles.duplicateItems}>
-                                        {duplicateItems.join(', ')}
-                                    </span>
-                                ),
-                            },
-                        )
-                    ) : (
-                        _ts(
-                            'widgets.editor.matrix2d',
-                            'duplicateConfirmText',
-                            {
-                                duplicate: (
-                                    <span className={styles.duplicateItems}>
-                                        {duplicateItems[0]}
-                                    </span>
-                                ),
-                            },
-                        )
-                    )}
-                </Confirm>
-            </React.Fragment>
+                    <ModalHeader title={title} />
+                    <ModalBody className={styles.body}>
+                        <NonFieldErrors
+                            faramElement
+                            className={styles.error}
+                        />
+                        <TextInput
+                            className={styles.titleInput}
+                            faramElementName="title"
+                            autoFocus
+                            label={_ts('widgets.editor.matrix2d', 'titleLabel')}
+                            placeholder={_ts('widgets.editor.matrix2d', 'widgetTitlePlaceholder')}
+                            selectOnFocus
+                        />
+                        <TabsWithButton />
+                        <MultiViewContainer
+                            views={this.views}
+                            containerClassName={styles.modalUnitContainer}
+                            active={selectedTab}
+                        />
+                    </ModalBody>
+                    <ModalFooter>
+                        <DangerConfirmButton
+                            onClick={onClose}
+                            confirmationMessage={_ts('widgets.editor.matrix2d', 'cancelConfirmMessage')}
+                            skipConfirmation={pristine}
+                        >
+                            {_ts('widgets.editor.matrix2d', 'cancelButtonLabel')}
+                        </DangerConfirmButton>
+                        <PrimaryButton
+                            type="submit"
+                            disabled={pristine || hasError}
+                        >
+                            {_ts('widgets.editor.matrix2d', 'saveButtonLabel')}
+                        </PrimaryButton>
+                    </ModalFooter>
+                </Faram>
+            </Modal>
         );
     }
 }

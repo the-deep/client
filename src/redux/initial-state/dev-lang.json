@@ -888,8 +888,9 @@
         "-84343027": "Please contact the project administrator to be added, or if you think this is a bug please notify the DEEP administrators using the Feedback button",
         "-24177081": "{name} (me)",
         "-47600296": "Duplicate items found",
-        "-76890842": "The values {duplicates} were not added because they already exist.",
-        "-35530735": "The value {duplicate} was not added because is already exists."
+        "-76890842": "The following values were not added because they already exist: {duplicates}",
+        "-35530735": "The value {duplicate} was not added because is already exists.",
+        "-867218": "The following items were added: {nonDuplicates}"
     },
     "links": {
         "browserExtension": {
@@ -2299,7 +2300,8 @@
             "cancelConfirmMessage": -14675920,
             "duplicatesConfirmTitle": -47600296,
             "duplicatesConfirmText": -76890842,
-            "duplicateConfirmText": -35530735
+            "duplicateConfirmText": -35530735,
+            "removeCellButtonTitle": -53055304
         },
         "widgets.editor.matrix2d": {
             "atLeastOneError": 1007,
@@ -2330,7 +2332,8 @@
             "addFromWidgets": -14972110,
             "cancelConfirmMessage": -14675920,
             "duplicateConfirmText": -35530735,
-            "duplicatesConfirmText": -76890842
+            "duplicatesConfirmText": -76890842,
+            "removeSubsectorButtonTooltip": -24172161
         },
         "editEntry.list": {
             "noEntriesText": 543
@@ -2367,7 +2370,12 @@
             "widgetSelectionLabel": -31256073,
             "rootNodeLabel": 5552,
             "addFromGeoLabel": -50186668,
-            "cancelConfirmMessage": -14675920
+            "cancelConfirmMessage": -14675920,
+            "addFromWidgets": -14972110,
+            "duplicateConfirmText": -35530735,
+            "duplicatesConfirmText": -76890842,
+            "duplicatesConfirmTitle": -47600296,
+            "nonDuplicatesConfirmText": -867218
         },
         "components.backLink": {
             "backButtonTooltip": -1045504

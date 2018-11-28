@@ -25,6 +25,7 @@ import {
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     widgets: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     onClick: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
@@ -32,6 +33,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
 };
 
 const mapStateToProps = state => ({
@@ -211,6 +213,7 @@ export default class LinkWidgetModal extends React.PureComponent {
             onClose,
             widgets,
             widgetKey,
+            className,
         } = this.props;
 
         const {
@@ -242,7 +245,7 @@ export default class LinkWidgetModal extends React.PureComponent {
         const areOptionTypesMultiple = this.selectedWidgetOptions.length > 1;
 
         return (
-            <Modal className={styles.modal} >
+            <Modal className={`${styles.modal} ${className}`} >
                 <ModalHeader title={modalTitle} />
                 <ModalBody className={styles.modalBody} >
                     <div className={styles.selectionBar} >
