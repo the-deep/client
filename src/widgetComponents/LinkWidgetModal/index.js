@@ -106,6 +106,7 @@ export default class LinkWidgetModal extends React.PureComponent {
             selectedWidget: '',
             selectedWidgetItem: '',
             itemValues: emptyObject,
+            pristine: true,
         };
     }
 
@@ -167,7 +168,10 @@ export default class LinkWidgetModal extends React.PureComponent {
     }
 
     handleItemValuesChange = (itemValues) => {
-        this.setState({ itemValues });
+        this.setState({
+            itemValues,
+            pristine: false,
+        });
     }
 
     handleSaveClick = () => {
@@ -212,6 +216,7 @@ export default class LinkWidgetModal extends React.PureComponent {
         const {
             items,
             itemValues,
+            pristine,
             treeKeySelector,
             treeLabelSelector,
             treeNodesSelector,
@@ -284,12 +289,13 @@ export default class LinkWidgetModal extends React.PureComponent {
                     <DangerConfirmButton
                         onClick={onClose}
                         confirmationMessage={cancelConfirmMessage}
-                        // TODO: Add skipConfirmation if pristine is set
+                        skipConfirmation={pristine}
                     >
                         {cancelButtonLabel}
                     </DangerConfirmButton>
                     <PrimaryButton
                         onClick={this.handleSaveClick}
+                        disabled={pristine}
                     >
                         {saveButtonLabel}
                     </PrimaryButton>

@@ -29,10 +29,24 @@ $font-weight-heading: 500;
 
 :global {
     .modal-shown {
+        overflow: hidden;
+
         #root {
             filter: brightness(50%);
             pointer-events: none;
             user-select: none;
+        }
+
+        .focus-trap-wrapper {
+            &:not(:last-child) {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                filter: brightness(50%);
+                pointer-events: none;
+            }
         }
     }
 }
