@@ -890,7 +890,12 @@
         "-47600296": "Duplicate items found",
         "-76890842": "The following values were not added because they already exist: {duplicates}",
         "-35530735": "The value {duplicate} was not added because is already exists.",
-        "-867218": "The following items were added: {nonDuplicates}"
+        "-867218": "The following items were added: {nonDuplicates}",
+        "-53100629": "Skype",
+        "-17378901": "Slack",
+        "-49506348": "User Guide",
+        "-85406765": "See DEEP User Guide",
+        "-56453375": "User Guide"
     },
     "links": {
         "browserExtension": {
@@ -1176,7 +1181,11 @@
             "logoutLabel": 1221,
             "anonymousLabel": 1217,
             "skypeLinkTitle": -28004665,
-            "slackLinkTitle": -86309773
+            "slackLinkTitle": -86309773,
+            "skypeTitle": -53100629,
+            "slackTitle": -17378901,
+            "zendeskLinkTitle": -85406765,
+            "zendeskTitle": -49506348
         },
         "common": {
             "underConstructionLabel": 253,

@@ -1,0 +1,29 @@
+@import '~base-scss/base';
+
+.user-dropdown {
+    min-width: 120px;
+
+    .join-link {
+        @include transition-medium();
+        display: flex;
+        align-items: center;
+        padding: $spacing-small;
+
+        .image {
+            margin-right: $spacing-small;
+            width: $font-size-large;
+            height: $font-size-large;
+        }
+
+        p {
+            margin: $spacing-small 0;
+        }
+
+        &:hover {
+            background-color: $color-background-hover;
+        }
+    }
+}
+
+
+
