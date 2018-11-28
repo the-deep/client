@@ -3,9 +3,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Link } from 'react-router-dom';
-import { reverseRoute } from '#rsu/common';
 import { pathNames } from '#constants/';
+import {
+    reverseRoute,
+    isObjectEmpty,
+} from '#rsu/common';
 
+import Message from '#rscv/Message';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
 import Pager from '#rscv/Pager';
@@ -380,11 +384,37 @@ export default class DiscoverProjects extends React.PureComponent {
         );
     }
 
+    renderEmpty = () => {
+        const isFilterEmpty = isObjectEmpty(this.props.filters);
+
+        if (!isFilterEmpty) {
+            return (
+                <Message>
+                    {_ts('discoverProjects.table', 'emptyWithFilterMessage')}
+                </Message>
+            );
+        }
+
+        return (
+            <Message>
+                {_ts('discoverProjects.table', 'emptyMessage')}
+            </Message>
+        );
+    }
+
     render() {
         const { projectList } = this.props;
-        const { pendingProjectList, pendingProjectJoin, pendingProjectJoinCancel } = this.state;
+        const {
+            pendingProjectList,
+            pendingProjectJoin,
+            pendingProjectJoinCancel,
+        } = this.state;
 
-        const pending = pendingProjectList || pendingProjectJoin || pendingProjectJoinCancel;
+        const pending = (
+            pendingProjectList ||
+            pendingProjectJoin ||
+            pendingProjectJoinCancel
+        );
 
         const projectKeyExtractor = d => d.id;
 
@@ -404,6 +434,8 @@ export default class DiscoverProjects extends React.PureComponent {
                             onHeaderClick={this.handleTableHeaderClick}
                             keySelector={projectKeyExtractor}
                             className={styles.projectsTable}
+                            // FIXME: @AdityaKhatri please fix the style issue
+                            emptyComponent={this.renderEmpty}
                         />
                         { pending && <LoadingAnimation large /> }
                     </div>

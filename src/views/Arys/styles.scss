@@ -9,6 +9,10 @@
     background-color: transparent;
     height: calc(100vh - #{$height-navbar});
 
+    .empty-link-message {
+        text-transform: initial;
+    }
+
     .header {
         @include background-color($color-background-header);
         display: flex;

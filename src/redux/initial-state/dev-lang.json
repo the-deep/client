@@ -866,7 +866,14 @@
         "-14456695": "{title} Overview",
         "-86091592": "Looks like your project doesn't have any entries.",
         "-15556514": "Go to leads to add some entries.",
-        "-21972443": "Looks like there are no entries that match your filtering criteria. Try changing what you're looking for and search again."
+        "-21972443": "Looks like there are no entries that match your filtering criteria. Try changing what you're looking for and search again.",
+        "-59957290": "Looks like there are no leads that match your filtering criteria. Try changing what you're looking for and search again.",
+        "-52516388": "Looks like your project doesn't have any leads. Click on {addLeadButtonLabel} to add some to your project.",
+        "-94305439": "Looks like there are no assessments that match your filtering criteria. Try changing what you're looking for and search again.",
+        "-97447888": "Looks like your project doesn't have any assessments.",
+        "-52524002": "Add some assessments from the lead page to get started.",
+        "-7027140": "Looks like there are no projects that match your filtering criteria. Try changing what you're looking for and search again.",
+        "-5727164": "Looks like there are no projects right now to discover. Why not add one?"
     },
     "links": {
         "browserExtension": {
@@ -902,7 +909,9 @@
             "editProjectTooltip": 171,
             "dateLabel": 704,
             "numberOfEntries": -66570762,
-            "numberOfLeads": -43947547
+            "numberOfLeads": -43947547,
+            "emptyWithFilterMessage": -7027140,
+            "emptyMessage": -5727164
         },
         "discoverProjects.filter": {
             "status": 8,
@@ -1345,7 +1354,10 @@
             "filterApplyFilter": 427,
             "filterClearFilter": 528,
             "removeAryButtonTitle": 8101,
-            "editAryButtonTitle": 8102
+            "editAryButtonTitle": 8102,
+            "emptyWithFilterMessage": -94305439,
+            "emptyMessage": -97447888,
+            "emptyLinkMessage": -52524002
         },
         "editAssessment.metadata": {
             "basicInformationTitle": 9020,
@@ -1435,7 +1447,9 @@
             "leadsPatchFailure": 8050,
             "leadsPatchSuccess": 8051,
             "leadsPendingSuccess": -74575009,
-            "leadsProcessedSuccess": -35157722
+            "leadsProcessedSuccess": -35157722,
+            "emptyWithFilterMessage": -59957290,
+            "emptyMessage": -52516388
         },
         "leadsViz": {
             "chordDiagram": 4007,

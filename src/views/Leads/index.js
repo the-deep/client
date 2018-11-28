@@ -6,12 +6,16 @@ import {
     Redirect,
 } from 'react-router-dom';
 
+import Message from '#rscv/Message';
 import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
-import { reverseRoute } from '#rsu/common';
+import {
+    reverseRoute,
+    isObjectEmpty,
+} from '#rsu/common';
 
 import Cloak from '#components/Cloak';
 import { iconNames, pathNames } from '#constants/';
@@ -526,6 +530,31 @@ export default class Leads extends React.PureComponent {
         );
     }
 
+    renderEmpty = () => {
+        const isFilterEmpty = isObjectEmpty(this.props.filters);
+
+        if (!isFilterEmpty) {
+            return (
+                <Message>
+                    {_ts('leads', 'emptyWithFilterMessage')}
+                </Message>
+            );
+        }
+
+        return (
+            <Message>
+                {_ts('leads', 'emptyMessage', {
+                    addLeadButtonLabel: (
+                        // FIXME: @AdityaKhatri please fix the style issue
+                        <strong>
+                            {_ts('leads', 'addSourcesButtonLabel')}
+                        </strong>
+                    ),
+                })}
+            </Message>
+        );
+    }
+
     render() {
         const {
             loadingLeads,
@@ -557,6 +586,8 @@ export default class Leads extends React.PureComponent {
                             onHeaderClick={this.handleTableHeaderClick}
                             keySelector={Leads.leadKeyExtractor}
                             className={styles.leadsTable}
+                            // FIXME: @AdityaKhatri please fix the style issue
+                            emptyComponent={this.renderEmpty}
                         />
                         { loadingLeads && <LoadingAnimation large /> }
                     </div>
