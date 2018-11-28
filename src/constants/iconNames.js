@@ -72,6 +72,7 @@ const iconNames = {
     spinner: 'fa fa-spinner fa-spin fa-3x fa-fw',
     locked: 'ion-locked',
     logout: 'ion-log-out',
+    notification: 'ion-android-notifications',
     openLink: 'ion-android-open',
     overflowHorizontal: 'ion-android-more-horizontal',
     person: 'ion-android-person',

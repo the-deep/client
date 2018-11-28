@@ -40,6 +40,7 @@ import Cloak from '../Cloak';
 import NavMenu from './NavMenu';
 import NavDrop from './NavDrop';
 import Community from './Community';
+import Notifica from './Notifica';
 import styles from './styles.scss';
 
 const mapStateToProps = state => ({
@@ -236,11 +237,6 @@ export default class Navbar extends React.PureComponent {
                 break;
         }
 
-        const slackLink = 'https://goo.gl/13pcuA';
-        const skypeLink = 'https://join.skype.com/idYxL8ozLDOD';
-        const slackLinkTitle = _ts('components.navbar', 'slackLinkTitle');
-        const skypeLinkTitle = _ts('components.navbar', 'skypeLinkTitle');
-
         return (
             <nav className={`${className} ${styles.navbar}`}>
                 <Link
@@ -287,9 +283,8 @@ export default class Navbar extends React.PureComponent {
                     projectId={activeProject}
                     countryId={activeCountry}
                 />
-                <Community
-                    className={styles.commMenu}
-                />
+                <Community />
+                <Notifica />
                 <NavDrop
                     className={styles.userMenu}
                     links={this.validDropLinks}

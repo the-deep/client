@@ -75,7 +75,10 @@ export default class ProjectJoinItem extends React.PureComponent {
         this.requestForProjectJoinResponse.start();
     }
 
-    handleRequestApproval = () => {
+    handleRequestApproval = ({ event: e }) => {
+        e.preventDefault();
+        e.stopPropagation();
+
         const { data } = this.props;
         const {
             id,
@@ -85,7 +88,10 @@ export default class ProjectJoinItem extends React.PureComponent {
         this.startProjectJoinResponseRequest(project.id, id, true, 'normal');
     }
 
-    handleRequestAdminApproval = () => {
+    handleRequestAdminApproval = ({ event: e }) => {
+        e.preventDefault();
+        e.stopPropagation();
+
         const { data } = this.props;
         const {
             id,
@@ -95,7 +101,9 @@ export default class ProjectJoinItem extends React.PureComponent {
         this.startProjectJoinResponseRequest(project.id, id, true, 'admin');
     }
 
-    handleRequestRejection = () => {
+    handleRequestRejection = ({ event: e }) => {
+        e.preventDefault();
+        e.stopPropagation();
         const { data } = this.props;
         const {
             id,
