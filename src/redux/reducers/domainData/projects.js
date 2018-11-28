@@ -7,6 +7,9 @@ import {
 
 import { UP__UNSET_USER_PROJECT } from '#redux/reducers/siloDomainData/users';
 import { UG__UNSET_USERGROUP_PROJECT } from '#redux/reducers/siloDomainData/usergroups';
+import {
+    REMOVE_PROJECT_MEMBERSHIP as PP_REMOVE_PROJECT_MEMBERSHIP,
+} from '#redux/reducers/siloDomainData/projects';
 
 // TYPE
 
@@ -188,6 +191,22 @@ const unsetUserProject = (state, action) => {
     return update(state, settings);
 };
 
+const unsetUserProjectForMembershipDelete = (state, action) => {
+    const {
+        projectId,
+        removeProject,
+    } = action;
+    if (removeProject) {
+        const settings = {
+            projects: { $auto: {
+                $unset: [projectId],
+            } },
+        };
+        return update(state, settings);
+    }
+    return state;
+};
+
 const setUserProjects = (state, action) => {
     const { projects: projectList } = action;
 
@@ -248,5 +267,6 @@ const reducers = {
     // From Silo
     [UP__UNSET_USER_PROJECT]: unsetUserProject,
     [UG__UNSET_USERGROUP_PROJECT]: unsetUserProject,
+    [PP_REMOVE_PROJECT_MEMBERSHIP]: unsetUserProjectForMembershipDelete,
 };
 export default reducers;

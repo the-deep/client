@@ -55,10 +55,11 @@ export const setProjectUsergroupsAction = ({ usergroups, projectId }) => ({
     projectId,
 });
 
-export const removeProjectMembershipAction = ({ projectId, membershipId }) => ({
+export const removeProjectMembershipAction = ({ projectId, membershipId, removeProject }) => ({
     type: REMOVE_PROJECT_MEMBERSHIP,
     projectId,
     membershipId,
+    removeProject,
 });
 
 export const removeProjectUserGroupAction = ({ projectId, usergroupId }) => ({
@@ -285,7 +286,17 @@ export const removeProjectMembership = (state, action) => {
     const {
         projectId,
         membershipId,
+        removeProject,
     } = action;
+
+    if (removeProject) {
+        const settings = {
+            projectsView: { $auto: {
+                $unset: [projectId],
+            } },
+        };
+        return update(state, settings);
+    }
 
     const settings = {
         projectsView: { $auto: {

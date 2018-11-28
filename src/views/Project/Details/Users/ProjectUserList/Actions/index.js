@@ -41,18 +41,26 @@ const requests = {
     },
 
     removeUserMembershipRequest: {
-        url: ({ params: { membershipId } }) => `/project-memberships/${membershipId}/`,
+        url: ({ params: { membership: { id } } }) => `/project-memberships/${id}/`,
         method: requestMethods.DELETE,
         onSuccess: ({
-            params: { membershipId },
+            params: { membership },
             props: {
                 removeProjectMembership,
                 projectId,
+                activeUser: {
+                    userId: activeUserId,
+                },
             },
         }) => {
+            const {
+                id: membershipId,
+                member: memberId,
+            } = membership;
             removeProjectMembership({
                 projectId,
                 membershipId,
+                removeProject: activeUserId === memberId,
             });
         },
     },
@@ -135,11 +143,11 @@ export default class Actions extends React.PureComponent {
 
     handleRemoveMembershipButtonClick = () => {
         const {
-            row: { id: membershipId },
+            row: membership,
             removeUserMembershipRequest,
         } = this.props;
 
-        removeUserMembershipRequest.do({ membershipId });
+        removeUserMembershipRequest.do({ membership });
     }
 
     render() {
