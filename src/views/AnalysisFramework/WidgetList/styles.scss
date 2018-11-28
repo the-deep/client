@@ -15,5 +15,24 @@
         flex-grow: 1;
         background-color: $color-background-row-alt;
         overflow-y: auto;
+
+        .group {
+            background-color: $color-background-row;
+            padding: $spacing-small $spacing-medium;
+            text-transform: uppercase;
+            font-size: $font-size-small;
+
+            &:not(:first-child) {
+                margin-top: $spacing-medium;
+            }
+        }
+
+        .item {
+            border-top: $width-separator-thin solid $color-separator;
+        }
+
+        .group + .item {
+            border-top: 0;
+        }
     }
 }
