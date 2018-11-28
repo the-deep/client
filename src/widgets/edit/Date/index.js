@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import Checkbox from '#rsci/Checkbox';
-import DangerButton from '#rsca/Button/DangerButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
@@ -97,6 +97,7 @@ export default class DateFrameworkList extends React.PureComponent {
         const checkboxLabel = _ts('widgets.editor.date', 'informationDateCheckboxLabel');
         const cancelButtonLabel = _ts('widgets.editor.date', 'cancelButtonLabel');
         const saveButtonLabel = _ts('widgets.editor.date', 'saveButtonLabel');
+        const cancelConfirmMessage = _ts('widgets.editor.date', 'cancelConfirmMessage');
 
         return (
             <Modal className={styles.editModal}>
@@ -126,9 +127,13 @@ export default class DateFrameworkList extends React.PureComponent {
                         />
                     </ModalBody>
                     <ModalFooter>
-                        <DangerButton onClick={onClose}>
+                        <DangerConfirmButton
+                            onClick={onClose}
+                            confirmationMessage={cancelConfirmMessage}
+                            skipConfirmation={pristine}
+                        >
                             {cancelButtonLabel}
-                        </DangerButton>
+                        </DangerConfirmButton>
                         <PrimaryButton
                             type="submit"
                             disabled={!pristine}

@@ -10,7 +10,7 @@ import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 import { FaramActionElement } from '#rscg/FaramElements';
-import DangerButton from '#rsca/Button/DangerButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import { afViewAnalysisFrameworkWidgetsSelector } from '#redux';
@@ -232,6 +232,7 @@ export default class LinkWidgetModal extends React.PureComponent {
         const saveButtonLabel = _ts('widgets.editor.link', 'saveButtonLabel');
         const cancelButtonLabel = _ts('widgets.editor.link', 'cancelButtonLabel');
         const rootNodeLabel = _ts('widgets.editor.link', 'rootNodeLabel');
+        const cancelConfirmMessage = _ts('widgets.editor.link', 'cancelConfirmMessage');
 
         return (
             <Modal className={styles.modal} >
@@ -280,9 +281,13 @@ export default class LinkWidgetModal extends React.PureComponent {
                     </div>
                 </ModalBody>
                 <ModalFooter>
-                    <DangerButton onClick={onClose}>
+                    <DangerConfirmButton
+                        onClick={onClose}
+                        confirmationMessage={cancelConfirmMessage}
+                        // TODO: Add skipConfirmation if pristine is set
+                    >
                         {cancelButtonLabel}
-                    </DangerButton>
+                    </DangerConfirmButton>
                     <PrimaryButton
                         onClick={this.handleSaveClick}
                     >

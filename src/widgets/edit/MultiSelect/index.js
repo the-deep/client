@@ -3,7 +3,7 @@ import React from 'react';
 
 import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
-import DangerButton from '#rsca/Button/DangerButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
@@ -90,22 +90,23 @@ export default class MultiSelectEditWidget extends React.PureComponent {
         this.state = {
             faramValues: { title, options },
             faramErrors: {},
-            pristine: false,
+            pristine: true,
         };
     }
 
-    handleFaramChange = (faramValues, faramErrors) => {
+    handleFaramChange = (faramValues, faramErrors, faramInfo) => {
         this.setState({
             faramValues,
             faramErrors,
-            pristine: true,
+            pristine: false,
+            hasError: faramInfo.hasError,
         });
     };
 
     handleFaramValidationFailure = (faramErrors) => {
         this.setState({
             faramErrors,
-            pristine: false,
+            hasError: true,
         });
     };
 
@@ -119,14 +120,16 @@ export default class MultiSelectEditWidget extends React.PureComponent {
             faramValues,
             faramErrors,
             pristine,
+            hasError,
         } = this.state;
         const {
             onClose,
             title,
         } = this.props;
 
-        const cancelButtonLabel = 'Cancel';
-        const saveButtonLabel = 'Save';
+        const cancelButtonLabel = _ts('widgets.editor.multiselect', 'cancelButtonLabel');
+        const saveButtonLabel = _ts('widgets.editor.multiselect', 'saveButtonLabel');
+        const cancelConfirmMessage = _ts('widgets.editor.multiselect', 'cancelConfirmMessage');
 
         return (
             <Modal className={styles.editModal}>
@@ -187,12 +190,16 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <DangerButton onClick={onClose}>
+                        <DangerConfirmButton
+                            onClick={onClose}
+                            confirmationMessage={cancelConfirmMessage}
+                            skipConfirmation={pristine}
+                        >
                             {cancelButtonLabel}
-                        </DangerButton>
+                        </DangerConfirmButton>
                         <PrimaryButton
                             type="submit"
-                            disabled={!pristine}
+                            disabled={pristine || hasError}
                         >
                             {saveButtonLabel}
                         </PrimaryButton>

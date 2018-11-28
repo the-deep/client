@@ -7,7 +7,7 @@ import Faram, {
 import FaramList from '#rscg/FaramList';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import SortableListView from '#rscv/SortableListView';
-import DangerButton from '#rsca/Button/DangerButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
 import Modal from '#rscv/Modal';
@@ -148,22 +148,24 @@ export default class ScaleFrameworkList extends React.PureComponent {
                 defaultScaleUnit,
             },
             faramErrors: {},
-            pristine: false,
+            pristine: true,
+            hasError: false,
         };
     }
 
-    handleFaramChange = (faramValues, faramErrors) => {
+    handleFaramChange = (faramValues, faramErrors, faramInfo) => {
         this.setState({
             faramValues,
             faramErrors,
-            pristine: true,
+            pristine: false,
+            hasError: faramInfo.hasError,
         });
     };
 
     handleFaramValidationFailure = (faramErrors) => {
         this.setState({
             faramErrors,
-            pristine: false,
+            hasError: true,
         });
     };
 
@@ -177,6 +179,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
             faramValues,
             faramErrors,
             pristine,
+            hasError,
         } = this.state;
         const {
             title,
@@ -245,12 +248,16 @@ export default class ScaleFrameworkList extends React.PureComponent {
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <DangerButton onClick={onClose}>
+                        <DangerConfirmButton
+                            onClick={onClose}
+                            confirmationMessage={_ts('widgets.editor.scale', 'cancelConfirmMessage')}
+                            skipConfirmation={pristine}
+                        >
                             {_ts('widgets.editor.scale', 'cancelButtonLabel')}
-                        </DangerButton>
+                        </DangerConfirmButton>
                         <PrimaryButton
                             type="submit"
-                            disabled={!pristine}
+                            disabled={pristine || hasError}
                         >
                             {_ts('widgets.editor.scale', 'saveButtonLabel')}
                         </PrimaryButton>

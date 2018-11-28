@@ -4,7 +4,7 @@ import React from 'react';
 import TextInput from '#rsci/TextInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
-import DangerButton from '#rsca/Button/DangerButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
@@ -123,7 +123,8 @@ export default class NumberMatrixOverview extends React.PureComponent {
         this.state = {
             faramValues: { title, rowHeaders, columnHeaders },
             faramErrors: {},
-            pristine: false,
+            pristine: true,
+            hasError: false,
             selectedTab: 'rowHeaders',
         };
 
@@ -172,18 +173,19 @@ export default class NumberMatrixOverview extends React.PureComponent {
         };
     }
 
-    handleFaramChange = (faramValues, faramErrors) => {
+    handleFaramChange = (faramValues, faramErrors, faramInfo) => {
         this.setState({
             faramValues,
             faramErrors,
-            pristine: true,
+            pristine: false,
+            hasError: faramInfo.hasError,
         });
     };
 
     handleFaramValidationFailure = (faramErrors) => {
         this.setState({
             faramErrors,
-            pristine: false,
+            hasError: true,
         });
     };
 
@@ -252,6 +254,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
             faramValues,
             faramErrors,
             pristine,
+            hasError,
             selectedTab,
         } = this.state;
 
@@ -298,12 +301,16 @@ export default class NumberMatrixOverview extends React.PureComponent {
                         />
                     </ModalBody>
                     <ModalFooter>
-                        <DangerButton onClick={onClose}>
+                        <DangerConfirmButton
+                            onClick={onClose}
+                            confirmationMessage={_ts('widgets.editor.numberMatrix', 'cancelConfirmMessage')}
+                            skipConfirmation={pristine}
+                        >
                             {_ts('widgets.editor.numberMatrix', 'cancelButtonLabel')}
-                        </DangerButton>
+                        </DangerConfirmButton>
                         <PrimaryButton
                             type="submit"
-                            disabled={!pristine}
+                            disabled={pristine || hasError}
                         >
                             {_ts('widgets.editor.numberMatrix', 'saveButtonLabel')}
                         </PrimaryButton>
