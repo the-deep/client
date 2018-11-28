@@ -38,4 +38,8 @@
         background-color: $color-foreground;
         padding: $spacing-small;
     }
+
+    .empty-entries-link-message {
+        text-transform: initial;
+    }
 }
