@@ -155,8 +155,6 @@ export default class NavDrop extends React.PureComponent {
             activeUser = {},
         } = this.props;
 
-        console.warn(activeUser);
-
         const iconName = NavDrop.dropdownItemIcons[key];
 
         return (
