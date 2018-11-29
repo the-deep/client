@@ -717,7 +717,7 @@
         "12505": "Add user to the project",
         "12506": "Add usergroup to the project",
         "12507": "No matching user / usergroup found",
-        "12508": "Start search with at least {numberOfCharacters} characters",
+        "12508": "Start typing and results will be returned by their relevance to you",
         "12509": "Role",
         "12510": "Are you sure you want to remove membership of {memberName}({memberEmail}) from this project?",
         "15000": "Quantitative",
@@ -858,6 +858,7 @@
         "-48777298": "Not",
         "-50025960": "Default widget",
         "-38162962": "No widget selected",
+<<<<<<< HEAD
         "-68148611": "You are about to delete your project, {title}. This action cannot be undone.",
         "-2414762": "If you would like to proceed, please enter the name of the project below.",
         "-72636032": "Project Delete",
@@ -884,6 +885,9 @@
         "-38162962": "No widget selected",
         "-25265886": "All required",
         "-72702692": "Invalid range"
+=======
+        "-10595927": "No users or usergoups found"
+>>>>>>> Fix search results actions in Users Tab
     },
     "links": {
         "browserExtension": {
@@ -1762,8 +1766,12 @@
             "userListHeading": -54185786,
             "linkedGroupTitle": -42425639,
             "linkedGroupPlaceholder": -99213668,
+<<<<<<< HEAD
             "searchUserTitle": 1119,
             "searchUsergroupTitle": 338
+=======
+            "noResultsFound": -10595927
+>>>>>>> Fix search results actions in Users Tab
         },
         "project": {
             "projectGetFailure": 2500,
