@@ -43,7 +43,7 @@ export const widgetList = mapToList(
 
 // Conditions for all widgets that support
 // conditions.
-const conditionsAsMap = {
+export const conditionsAsMap = {
     matrix1dWidget: matrix1dConditions,
     matrix2dWidget: matrix2dConditions,
     numberWidget: numberConditions,

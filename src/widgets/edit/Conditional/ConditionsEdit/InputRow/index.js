@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 
+import NonFieldErrors from '#rsci/NonFieldErrors';
 import DangerButton from '#rsca/Button/DangerButton';
 import ListView from '#rscv/List/ListView';
 import FaramGroup from '#rscg/FaramGroup';
@@ -88,6 +89,7 @@ export default class ConditionsInputRow extends React.PureComponent {
                     </div>
                     <div className={styles.rightContainer}>
                         <FaramGroup faramElementName={String(index)} >
+                            <NonFieldErrors faramElement />
                             <Checkbox
                                 className={styles.invertCheckbox}
                                 faramElementName="invertLogic"
