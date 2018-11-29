@@ -302,7 +302,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         this.setState({
             faramValues,
             faramErrors,
-            pristine: true,
             [tabName]: Matrix2dEditWidget.keySelector(faramInfo.lastItem),
             pristine: false,
             hasError: faramInfo.hasError,
