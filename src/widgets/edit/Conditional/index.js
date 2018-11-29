@@ -18,7 +18,10 @@ import { randomString } from '#rsu/common';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
-import { widgetList } from '#widgets/conditionalWidget';
+import {
+    widgetList,
+    widgetGroups,
+} from '#widgets/conditionalWidget';
 import { widgetListingVisibility } from '#widgets';
 
 import WidgetPreview from './WidgetPreview';
@@ -42,8 +45,19 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static keySelector = widget => widget.widgetId;
+    static groupKeySelector = widget => widget.groupId;
     static itemKeySelector = ({ widget }) => widget.key;
     static itemLabelSelector = ({ widget }) => widget.title;
+
+    static groupRendererParams = (groupKey) => {
+        const { title } = widgetGroups[groupKey];
+        const children = !title ? '' : _ts('widgetGroupTitle', title);
+        return {
+            children,
+        };
+    }
+
+    static groupComparator = (a, b) => widgetGroups[a].order - widgetGroups[b].order;
 
     static schema = {
         fields: {
@@ -220,6 +234,13 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                                         renderer={WidgetPreview}
                                         keySelector={ConditionalWidgetEdit.keySelector}
                                         rendererParams={this.widgetListRendererParams}
+                                        rendererClassName={styles.item}
+                                        groupKeySelector={ConditionalWidgetEdit.groupKeySelector}
+                                        groupRendererParams={
+                                            ConditionalWidgetEdit.groupRendererParams
+                                        }
+                                        groupRendererClassName={styles.group}
+                                        groupComparator={ConditionalWidgetEdit.groupComparator}
                                     />
                                 </div>
                                 <div className={styles.rightContainer}>

@@ -49,6 +49,24 @@ $spacing-drag-handle: 14px;
 
             .widget-list {
                 overflow-y: auto;
+
+                .group {
+                    background-color: $color-background-row-alt;
+                    padding: $spacing-small $spacing-medium;
+                    font-size: $font-size-medium-alt;
+
+                    &:not(:first-child) {
+                        margin-top: $spacing-medium;
+                    }
+                }
+
+                .item {
+                    border-top: $width-separator-thin solid $color-separator;
+                }
+
+                .group + .item {
+                    border-top: 0;
+                }
             }
         }
 

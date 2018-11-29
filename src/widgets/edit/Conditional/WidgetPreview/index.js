@@ -13,10 +13,16 @@ const propTypes = {
     createNewElement: PropTypes.func.isRequired,
     widget: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     widgetKey: PropTypes.string.isRequired, // eslint-disable-line react/forbid-prop-types
+    className: PropTypes.string,
+};
+
+const defaultProps = {
+    className: '',
 };
 
 export default class WidgetPreview extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     addRowClick = (rows) => {
         const {
@@ -34,11 +40,12 @@ export default class WidgetPreview extends React.PureComponent {
     render() {
         const {
             title,
+            className,
             widgetKey,
         } = this.props;
 
         return (
-            <div className={styles.widgetListItem}>
+            <div className={`${styles.widgetListItem} ${className}`}>
                 <div className={styles.title}>
                     {title}
                 </div>

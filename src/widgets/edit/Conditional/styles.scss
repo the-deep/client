@@ -1,6 +1,7 @@
 @import '~base-scss/base';
 
-$height-modal-body: 540px;
+$height-modal-body: 720px;
+$width-modal: 720px;
 
 .sortable-unit {
     border-top: $width-separator-thin solid $color-separator;
@@ -16,6 +17,8 @@ $height-modal-body: 540px;
 }
 
 .modal {
+    width: $width-modal;
+
     .modal-body {
         display: flex;
         flex-direction: column;
@@ -65,6 +68,24 @@ $height-modal-body: 540px;
 
                 .widget-list {
                     overflow-y: auto;
+
+                    .group {
+                        background-color: $color-background-row-alt;
+                        padding: $spacing-small $spacing-medium;
+                        font-size: $font-size-medium-alt;
+
+                        &:not(:first-child) {
+                            margin-top: $spacing-medium;
+                        }
+                    }
+
+                    .item {
+                        border-top: $width-separator-thin solid $color-separator;
+                    }
+
+                    .group + .item {
+                        border-top: 0;
+                    }
                 }
             }
 
