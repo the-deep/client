@@ -35,14 +35,14 @@ export default class ConditionsInputRow extends React.PureComponent {
 
     static attributeKeySelector = c => c.key;
 
-    static getCondtionTypes = memoize(conditions => (
+    getCondtionTypes = memoize(conditions => (
         conditions.map(condition => ({
             key: condition.key,
             title: condition.title,
         }))
     ))
 
-    static getAttributesForConditionType = memoize((conditionType, conditions) => {
+    getAttributesForConditionType = memoize((conditionType, conditions) => {
         if (!conditionType) {
             return emptyArray;
         }
@@ -73,12 +73,12 @@ export default class ConditionsInputRow extends React.PureComponent {
             conditions,
         } = this.props;
 
-        this.attributes = ConditionsInputRow.getAttributesForConditionType(
+        this.attributes = this.getAttributesForConditionType(
             conditionType,
             conditions,
         );
 
-        this.conditionTypes = ConditionsInputRow.getCondtionTypes(conditions);
+        this.conditionTypes = this.getCondtionTypes(conditions);
 
         return (
             <div className={styles.inputContainer}>
