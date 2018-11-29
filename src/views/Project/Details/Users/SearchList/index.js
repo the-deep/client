@@ -15,7 +15,7 @@ import { projectMembershipListSelector } from '#redux';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
-import noSearch from '#resources/img/no-search.png';
+import noSearch from '#resources/img/no-filter.png';
 import SearchListItem from './SearchListItem';
 import styles from './styles.scss';
 
@@ -223,7 +223,7 @@ export default class SearchList extends React.PureComponent {
             );
         }
 
-        if (searchInputValue.length <= MIN_SEARCH_TEXT_CHARACTERS) {
+        if (searchInputValue.length < MIN_SEARCH_TEXT_CHARACTERS) {
             return <SearchTip />;
         }
         return <SearchValueNotFound />;

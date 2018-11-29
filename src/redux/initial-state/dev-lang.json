@@ -193,7 +193,7 @@
         "336": "Regions",
         "337": "Select regions",
         "338": "User groups",
-        "339": "Select user groups",
+        "339": "Select User Groups",
         "341": "Search regions",
         "342": "Add region",
         "343": "There are no regions in this project.",
@@ -825,8 +825,8 @@
         "-15095273": "Select Gallery Files",
         "-75331863": "Fatal error occured while getting users gallery files",
         "-41121825": "Failed to get user gallery files",
-        "-54185786": "User/Usergroup",
-        "-17852758": "Search User/Usergroup",
+        "-54185786": "Users/User Groups",
+        "-17852758": "Search Users/User Groups",
         "-1045504": "Go back",
         "-72172702": "Workshop",
         "-7863682": "Entries activity - Last 7 days",
@@ -858,7 +858,6 @@
         "-48777298": "Not",
         "-50025960": "Default widget",
         "-38162962": "No widget selected",
-<<<<<<< HEAD
         "-68148611": "You are about to delete your project, {title}. This action cannot be undone.",
         "-2414762": "If you would like to proceed, please enter the name of the project below.",
         "-72636032": "Project Delete",
@@ -884,10 +883,8 @@
         "-50025960": "Default widget",
         "-38162962": "No widget selected",
         "-25265886": "All required",
-        "-72702692": "Invalid range"
-=======
+        "-72702692": "Invalid range",
         "-10595927": "No users or usergoups found"
->>>>>>> Fix search results actions in Users Tab
     },
     "links": {
         "browserExtension": {
@@ -1766,12 +1763,9 @@
             "userListHeading": -54185786,
             "linkedGroupTitle": -42425639,
             "linkedGroupPlaceholder": -99213668,
-<<<<<<< HEAD
             "searchUserTitle": 1119,
-            "searchUsergroupTitle": 338
-=======
+            "searchUsergroupTitle": 338,
             "noResultsFound": -10595927
->>>>>>> Fix search results actions in Users Tab
         },
         "project": {
             "projectGetFailure": 2500,
