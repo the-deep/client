@@ -13,14 +13,14 @@
 
     .widget-list {
         flex-grow: 1;
-        background-color: $color-background-row-alt;
+        background-color: $color-background-row;
         overflow-y: auto;
 
         .group {
-            background-color: $color-background-row;
+            background-color: $color-background-row-alt;
             padding: $spacing-small $spacing-medium;
-            text-transform: uppercase;
-            font-size: $font-size-small;
+            // text-transform: uppercase;
+            font-size: $font-size-medium-alt;
 
             &:not(:first-child) {
                 margin-top: $spacing-medium;
