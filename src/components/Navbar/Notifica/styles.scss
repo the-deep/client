@@ -1,5 +1,29 @@
 @import '~base-scss/base';
 
+.notifica {
+    position: relative;
+
+    .count {
+        @include background-color($color-danger);
+        display: flex;
+        position: absolute;
+        top: $spacing-small;
+        right: $spacing-small;
+        align-items: center;
+        justify-content: center;
+        border-radius: ($font-size-extra-small + $spacing-extra-small * 2) / 2;
+        padding: $spacing-extra-small;
+        min-width: $font-size-extra-small + $spacing-extra-small * 2;
+        font-size: $font-size-extra-small;
+        font-weight: $font-weight-bold;
+    }
+
+    .dropdown-menu {
+        width: 100%;
+        height: 100%;
+    }
+}
+
 .notification-dropdown {
     min-width: 420px;
     height: 520px;
@@ -10,8 +34,5 @@
 }
 
 .icon {
-    font-size: $font-size-large;
+    font-size: $font-size-super-large;
 }
-
-
-

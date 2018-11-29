@@ -1,6 +1,6 @@
 @import '~base-scss/base';
 
-.user-dropdown {
+.community-dropdown {
     min-width: 120px;
 
     .join-link {
@@ -10,13 +10,13 @@
         padding: $spacing-small;
 
         .image {
-            margin-right: $spacing-small;
-            width: $font-size-large;
-            height: $font-size-large;
+            margin: $spacing-small $spacing-medium;
+            width: $font-size-medium-alt;
+            height: $font-size-medium-alt;
         }
 
-        p {
-            margin: $spacing-small 0;
+        .title {
+            padding: $spacing-small $spacing-medium;
         }
 
         &:hover {
@@ -27,8 +27,5 @@
 
 .icon {
     color: $color-text-alt;
-    font-size: $font-size-large;
+    font-size: $font-size-super-large;
 }
-
-
-

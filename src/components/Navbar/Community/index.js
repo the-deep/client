@@ -47,7 +47,7 @@ export default class Community extends React.PureComponent {
         return (
             <DropdownMenu
                 className={className}
-                dropdownClassName={styles.userDropdown}
+                dropdownClassName={styles.communityDropdown}
                 dropdownIcon={iconClassName}
             >
                 <a
@@ -62,7 +62,7 @@ export default class Community extends React.PureComponent {
                         alt=""
                         title={slackLinkTitle}
                     />
-                    <p>{slackTitle}</p>
+                    <div className={styles.title}>{slackTitle}</div>
                 </a>
                 <a
                     className={styles.joinLink}
@@ -76,7 +76,7 @@ export default class Community extends React.PureComponent {
                         alt=""
                         src={skypeLogo}
                     />
-                    <p>{skypeTitle}</p>
+                    <div className={styles.title}>{skypeTitle}</div>
                 </a>
                 <a
                     className={styles.joinLink}
@@ -90,7 +90,7 @@ export default class Community extends React.PureComponent {
                         alt=""
                         src={zendeskLogo}
                     />
-                    <p>{zendeskTitle}</p>
+                    <div className={styles.title}>{zendeskTitle}</div>
                 </a>
             </DropdownMenu>
         );
