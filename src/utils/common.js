@@ -28,3 +28,15 @@ export const camelToNormalCase = (text) => {
     const secondPhase = firstPhase.replace(reTwo, '$1 $2$3');
     return secondPhase;
 };
+
+const decodeTimeInMinutes = (value, separator = ':') => {
+    if (!value) {
+        return 0;
+    }
+    const values = value.split(separator);
+    return ((+values[0] * 60) + values[1]);
+};
+
+export const compareTime = (a, b) => (
+    decodeTimeInMinutes(a) - decodeTimeInMinutes(b)
+);

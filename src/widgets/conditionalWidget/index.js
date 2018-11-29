@@ -7,6 +7,8 @@ import scaleConditions from './scale';
 import selectConditions from './select';
 import dateConditions from './date';
 import timeConditions from './time';
+import dateRangeConditions from './dateRange';
+import timeRangeConditions from './timeRange';
 import organigramConditions from './organigram';
 import numberMatrixConditions from './numberMatrix';
 import geoOptions from './geo';
@@ -22,6 +24,7 @@ const widgetTitles = {
     dateWidget: 'dateWidgetLabel',
     timeWidget: 'timeWidgetLabel',
     dateRangeWidget: 'dateRangeWidgetLabel',
+    timeRangeWidget: 'timeRangeWidgetLabel',
     numberWidget: 'numberWidgetLabel',
     scaleWidget: 'scaleWidgetLabel',
     geoWidget: 'geoWidgetLabel',
@@ -51,6 +54,8 @@ export const conditionsAsMap = {
     selectWidget: selectConditions,
     multiselectWidget: selectConditions,
     dateWidget: dateConditions,
+    dateRangeWidget: dateRangeConditions,
+    timeRangeWidget: timeRangeConditions,
     timeWidget: timeConditions,
     organigramWidget: organigramConditions,
     numberMatrixWidget: numberMatrixConditions,
