@@ -14,7 +14,7 @@ const getSubpillarOptions = ({ rows = emptyArray } = {}) => (
     rows.reduce((acc, r = emptyObject) => [
         ...(r.cells || emptyArray).map(c => ({
             key: c.key,
-            title: c.value,
+            title: `${r.title} / ${c.value}`,
         })),
         ...acc,
     ], [])
