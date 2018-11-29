@@ -1,62 +1,62 @@
 @import '~base-scss/base';
 
-$width-notification: 520px;
-$display-picture-size: 48px;
+$display-picture-size: 42px;
 
 .link {
     @extend %accent-color-link;
 }
 
 .project-join-item {
-    display: flex;
-    position: relative;
-    margin: auto;
     border-bottom: $width-separator-thin solid $color-separator;
-    padding: $spacing-extra-small $spacing-medium;
-    width: $width-notification;
+    padding: $spacing-small $spacing-medium;
 
-    .display-picture {
-        flex-shrink: 0;
-        margin: $spacing-medium 0;
-        border: $width-separator-thin solid $color-accent;
-        border-radius: 50%;
-        width: $display-picture-size;
-        height: $display-picture-size;
-    }
-
-    .details {
+    .top {
         display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        padding: $spacing-medium;
 
-        .description {
-            padding: $spacing-extra-small $spacing-medium;
+        .display-picture {
+            flex-shrink: 0;
+            margin: $spacing-medium 0;
+            border: $width-separator-thin solid $color-accent;
+            border-radius: 50%;
+            width: $display-picture-size;
+            height: $display-picture-size;
         }
 
-        .date {
-            padding: $spacing-extra-small $spacing-medium;
-            color: $color-text-label;
-            font-size: $font-size-small;
+        .details {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: $spacing-medium;
 
-            .label {
-                margin-right: $spacing-extra-small;
-                text-transform: uppercase;
+            .description {
+                padding: $spacing-extra-small $spacing-medium;
+            }
 
-                &:after {
-                    content: ':';
+            .date {
+                padding: $spacing-extra-small $spacing-medium;
+                color: $color-text-label;
+
+                >span {
+                    display: inline-block;
+                    margin-right: $spacing-small;
+                    color: $color-text;
+                }
+            }
+
+            .action-buttons {
+                display: flex;
+
+                .button {
+                    margin-left: $spacing-medium;
                 }
             }
         }
+    }
 
-        .action-buttons {
-            display: flex;
-            justify-content: flex-end;
-            padding: $spacing-small $spacing-medium;
-
-            .button {
-                margin-left: $spacing-medium;
-            }
+    .action-buttons {
+        .button {
+            margin-right: $spacing-medium;
+            font-size: $font-size-medium;
         }
     }
 }

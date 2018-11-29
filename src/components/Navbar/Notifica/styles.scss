@@ -1,9 +1,17 @@
 @import '~base-scss/base';
 
-.user-dropdown {
-    min-width: 120px;
+.notification-dropdown {
+    min-width: 420px;
     height: 520px;
-    overflow-y: auto;
+
+    .notifications {
+        height: 100%;
+    }
 }
+
+.icon {
+    font-size: $font-size-large;
+}
+
 
 

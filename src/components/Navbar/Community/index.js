@@ -39,11 +39,16 @@ export default class Community extends React.PureComponent {
         const skypeTitle = _ts('components.navbar', 'skypeTitle');
         const zendeskTitle = _ts('components.navbar', 'zendeskTitle');
 
+        const iconClassName = `
+            ${iconNames.chat}
+            ${styles.icon}
+        `;
+
         return (
             <DropdownMenu
                 className={className}
                 dropdownClassName={styles.userDropdown}
-                dropdownIcon={iconNames.chat}
+                dropdownIcon={iconClassName}
             >
                 <a
                     className={styles.joinLink}

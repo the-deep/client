@@ -42,14 +42,27 @@ const mapDispatchToProps = dispatch => ({
     setNotifications: params => dispatch(setNotificationsAction(params)),
 });
 
+const notificationItems = {
+    project_join_request: ProjectJoin,
+};
+
+const NotificationItem = ({ data }) => {
+    const Item = notificationItems[data.type];
+
+    if (Item) {
+        return <Item data={data} />;
+    }
+
+    return null;
+};
+
+const notificationKeyExtractor = n => n.key;
+const notificationItemRendererParams = (_, d) => ({ data: d });
+
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Notifications extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-    static notificationKeyExtractor = n => n.key;
-    static notificationItems = {
-        project_join_request: ProjectJoin,
-    }
 
     constructor(props) {
         super(props);
@@ -76,17 +89,6 @@ export default class Notifications extends React.PureComponent {
         this.notificationsRequest.start();
     }
 
-    renderNotificationItem = (key, data) => {
-        const NotificationItem = Notifications.notificationItems[data.type];
-
-        return (
-            <NotificationItem
-                key={key}
-                data={data}
-            />
-        );
-    }
-
     renderEmptyComponent = () => (
         <div className={styles.emptyComponent} >
             {_ts('notifications', 'noNotificationsText')}
@@ -95,21 +97,30 @@ export default class Notifications extends React.PureComponent {
 
     render() {
         const { notificationsLoading } = this.state;
-        const { notifications } = this.props;
+        const {
+            notifications,
+            className: classNameFromProps,
+        } = this.props;
+
+        const className = `
+            ${classNameFromProps}
+            ${styles.notifications}
+        `;
 
         return (
-            <div className={styles.notifications} >
+            <div className={className} >
                 {notificationsLoading && <LoadingAnimation />}
                 <header className={styles.header} >
-                    <h2 className={styles.heading} >
+                    <h3 className={styles.heading} >
                         {_ts('notifications', 'notificationHeaderTitle')}
-                    </h2>
+                    </h3>
                 </header>
                 <ListView
                     className={styles.content}
                     data={notifications}
-                    keySelector={Notifications.notificationKeyExtractor}
-                    modifier={this.renderNotificationItem}
+                    keySelector={notificationKeyExtractor}
+                    renderer={NotificationItem}
+                    rendererParams={notificationItemRendererParams}
                     emptyComponent={this.renderEmptyComponent}
                 />
             </div>

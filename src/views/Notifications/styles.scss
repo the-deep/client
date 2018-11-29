@@ -1,9 +1,6 @@
 @import '~base-scss/base';
 
-$width-notification: 520px;
-
 .notifications {
-    @extend %main-content;
     display: flex;
     flex-direction: column;
     background-color: $color-foreground;
@@ -13,8 +10,7 @@ $width-notification: 520px;
         align-items: center;
         flex-shrink: 0;
         border-bottom: $width-separator-thin solid $color-separator;
-        background-color: $color-background-header;
-        padding: $spacing-small;
+        padding: $spacing-medium;
 
         .heading {
             flex-grow: 1;
@@ -27,16 +23,16 @@ $width-notification: 520px;
         overflow-y: auto;
 
         .empty-component {
+            color: $color-text-label;
+            font-size: $font-size-large;
+        }
+    }
+
+    :global {
+        .list-view-empty {
             display: flex;
-            position: relative;
             align-items: center;
             justify-content: center;
-            margin: auto;
-            border-bottom: $width-separator-thin solid $color-separator;
-            padding: $spacing-extra-small $spacing-medium;
-            width: $width-notification;
-            height: 96px;
-            color: $color-text-label;
         }
     }
 }

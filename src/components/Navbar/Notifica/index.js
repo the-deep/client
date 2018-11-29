@@ -5,7 +5,7 @@ import DropdownMenu from '#rsca/DropdownMenu';
 
 import { iconNames } from '#constants';
 
-import Notifications from '../../../views/Notifications';
+import Notifications from '#views/Notifications';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -21,17 +21,20 @@ export default class Notifica extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        const {
-            className,
-        } = this.props;
+        const { className } = this.props;
+
+        const iconClassName = `
+            ${iconNames.notification}
+            ${styles.icon}
+        `;
 
         return (
             <DropdownMenu
                 className={className}
-                dropdownClassName={styles.userDropdown}
-                dropdownIcon={iconNames.notification}
+                dropdownClassName={styles.notificationDropdown}
+                dropdownIcon={iconClassName}
             >
-                <Notifications />
+                <Notifications className={styles.notifications} />
             </DropdownMenu>
         );
     }

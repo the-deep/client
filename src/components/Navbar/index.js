@@ -283,8 +283,8 @@ export default class Navbar extends React.PureComponent {
                     projectId={activeProject}
                     countryId={activeCountry}
                 />
-                <Community />
-                <Notifica />
+                <Community className={styles.communityDropdown} />
+                <Notifica className={styles.notificationDropdown} />
                 <NavDrop
                     className={styles.userMenu}
                     links={this.validDropLinks}

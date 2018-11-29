@@ -147,40 +147,44 @@ export default class ProjectJoinItem extends React.PureComponent {
                     })}
                 </div>
                 <div className={styles.date} >
-                    <span className={styles.label} >
-                        {_ts('notifications.projectJoin', 'date')}
-                    </span>
+                    <span className={iconNames.calendar} />
                     <FormattedDate
                         date={data.date}
                         mode="dd-MM-yyyy"
                     />
                 </div>
-                <div className={styles.actionButtons} >
-                    <DangerButton
-                        className={styles.button}
-                        iconName={iconNames.close}
-                        onClick={this.handleRequestRejection}
-                    >
-                        {_ts('notifications.projectJoin', 'rejectButton')}
-                    </DangerButton>
-                    <SuccessButton
-                        className={styles.button}
-                        iconName={iconNames.check}
-                        onClick={this.handleRequestApproval}
-                    >
-                        {_ts('notifications.projectJoin', 'acceptButton')}
-                    </SuccessButton>
-                    <SuccessButton
-                        className={styles.button}
-                        iconName={iconNames.check}
-                        onClick={this.handleRequestAdminApproval}
-                    >
-                        {_ts('notifications.projectJoin', 'acceptAsAdminButton')}
-                    </SuccessButton>
-                </div>
             </Fragment>
         );
     }
+
+    renderActionButtons = () => (
+        <div className={styles.actionButtons} >
+            <SuccessButton
+                className={styles.button}
+                iconName={iconNames.check}
+                onClick={this.handleRequestApproval}
+                transparent
+            >
+                {_ts('notifications.projectJoin', 'acceptButton')}
+            </SuccessButton>
+            <SuccessButton
+                className={styles.button}
+                iconName={iconNames.check}
+                onClick={this.handleRequestAdminApproval}
+                transparent
+            >
+                {_ts('notifications.projectJoin', 'acceptAsAdminButton')}
+            </SuccessButton>
+            <DangerButton
+                className={styles.button}
+                iconName={iconNames.close}
+                onClick={this.handleRequestRejection}
+                transparent
+            >
+                {_ts('notifications.projectJoin', 'rejectButton')}
+            </DangerButton>
+        </div>
+    )
 
     renderRespondedDescription = () => {
         const { data } = this.props;
@@ -251,8 +255,13 @@ export default class ProjectJoinItem extends React.PureComponent {
     }
 
     renderDescription = () => {
-        const { data } = this.props;
-        const { status } = data.details;
+        const {
+            data: {
+                details: {
+                    status,
+                },
+            },
+        } = this.props;
 
         const PendingDescription = this.renderPendingDescription;
         const RespondedDescription = this.renderRespondedDescription;
@@ -266,17 +275,21 @@ export default class ProjectJoinItem extends React.PureComponent {
         const { approvalLoading } = this.state;
 
         const Description = this.renderDescription;
+        const ActionButtons = this.renderActionButtons;
 
         return (
             <div className={styles.projectJoinItem} >
                 { approvalLoading && <LoadingAnimation />}
-                <DisplayPicture
-                    className={styles.displayPicture}
-                    galleryId={requestedBy.displayPicture}
-                />
-                <div className={styles.details}>
-                    <Description />
+                <div className={styles.top}>
+                    <DisplayPicture
+                        className={styles.displayPicture}
+                        galleryId={requestedBy.displayPicture}
+                    />
+                    <div className={styles.details}>
+                        <Description />
+                    </div>
                 </div>
+                <ActionButtons />
             </div>
         );
     }
