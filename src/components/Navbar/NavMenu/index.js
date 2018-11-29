@@ -32,7 +32,6 @@ const NavItem = ({ itemKey, className, disabled, ...otherProps }) => (
 NavItem.propTypes = {
     itemKey: PropTypes.string.isRequired,
     className: PropTypes.string,
-    to: PropTypes.string.isRequired,
     disabled: PropTypes.bool,
 };
 NavItem.defaultProps = {

@@ -883,7 +883,7 @@
         "-50025960": "Default widget",
         "-38162962": "No widget selected",
         "-25265886": "All required",
-        "-72702692": "Invalid scale range"
+        "-72702692": "Invalid range"
     },
     "links": {
         "browserExtension": {
@@ -2428,6 +2428,15 @@
             "excerptsGroupLabel": 514
         },
         "conditional.scale": {
+            "invalidRangeErrorMessage": -72702692
+        },
+        "conditional.date": {
+            "invalidRangeErrorMessage": -72702692
+        },
+        "conditional.number": {
+            "invalidRangeErrorMessage": -72702692
+        },
+        "conditional.time": {
             "invalidRangeErrorMessage": -72702692
         }
     }

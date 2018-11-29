@@ -82,7 +82,6 @@ const DropItem = ({ itemKey, disabled, iconName, ...otherProps }) => (
 DropItem.propTypes = {
     itemKey: PropTypes.string.isRequired,
     iconName: PropTypes.string.isRequired,
-    to: PropTypes.string.isRequired,
     disabled: PropTypes.bool,
 };
 DropItem.defaultProps = {
