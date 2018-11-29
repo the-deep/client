@@ -11,6 +11,17 @@
         position: absolute;
         top: $spacing-small;
         left: $spacing-small;
+        z-index: 20;
+        border: $width-separator-thin solid $color-separator-alt;
+        background-color: $color-foreground;
+        padding: $spacing-small;
+    }
+
+    .refresh-button {
+        position: absolute;
+        top: $spacing-small;
+        right: $spacing-small;
+        z-index: 20;
     }
 
     .map {

@@ -18,7 +18,9 @@ const emptyObject = {};
 
 const propTypes = {
     className: PropTypes.string,
+    // eslint-disable-next-line react/no-unused-prop-types
     regionId: PropTypes.number.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     onAdminLevelsFetched: PropTypes.func.isRequired,
     adminLevels: PropTypes.arrayOf(PropTypes.object),
     adminLevelId: PropTypes.string,
@@ -44,7 +46,8 @@ const requests = {
     },
 };
 
-// TODO POINT TYPE LAYERS
+const boundsFilter = ['==', '$type', 'Polygon'];
+const pointsFilter = ['==', '$type', 'Point'];
 
 @RequestClient(requests)
 export default class Region extends React.PureComponent {
@@ -65,23 +68,23 @@ export default class Region extends React.PureComponent {
         this.borderPaints = {};
     }
 
-    calcFillPaint = memoize(adminLevel => ({
+    calcFillPaint = memoize(() => ({
         'fill-color': '#088',
         'fill-opacity': 0.5,
     }))
 
-    calcSelectionFillPaint = memoize(adminLevel => ({
+    calcSelectionFillPaint = memoize(() => ({
         'fill-color': '#6e599f',
         'fill-opacity': 0.5,
     }))
 
-    calcBorderPaint = memoize(adminLevel => ({
+    calcBorderPaint = memoize(() => ({
         'line-color': '#fff',
         'line-opacity': 1,
         'line-width': 1,
     }))
 
-    calcHoverInfo = memoize(adminLevel => ({
+    calcBoundsHoverInfo = memoize(() => ({
         paint: {
             'fill-color': '#fff',
             'fill-opacity': 0.2,
@@ -90,8 +93,47 @@ export default class Region extends React.PureComponent {
         tooltipProperty: 'title',
     }))
 
-    calcSelectedFilter = memoize(value => ['in', 'pk', ...value])
-    calcNonSelectedFilter = memoize(value => ['!in', 'pk', ...value])
+    calcPointPaint = memoize(() => ({
+        'circle-color': '#088',
+        'circle-radius': 8,
+    }))
+
+    calcSelectionPointPaint = memoize(() => ({
+        'circle-color': '#6e599f',
+        'circle-opacity': 0.5,
+        'circle-radius': 8,
+    }))
+
+    calcPointHoverInfo = memoize(() => ({
+        paint: {
+            'circle-color': '#fff',
+            'circle-opacity': 0.2,
+        },
+        showTooltip: true,
+        tooltipProperty: 'title',
+    }))
+
+    calcSelectedBoundsFilter = memoize(value => [
+        'all',
+        boundsFilter,
+        ['in', 'pk', ...value],
+    ])
+    calcNonSelectedBoundsFilter = memoize(value => [
+        'all',
+        boundsFilter,
+        ['!in', 'pk', ...value],
+    ])
+
+    calcSelectedPointsFilter = memoize(value => [
+        'all',
+        pointsFilter,
+        ['in', 'pk', ...value],
+    ])
+    calcNonSelectedPointsFilter = memoize(value => [
+        'all',
+        pointsFilter,
+        ['!in', 'pk', ...value],
+    ])
 
     handleGeoJsonRequest = (request, adminLevel) => {
         this.setState({
@@ -127,70 +169,81 @@ export default class Region extends React.PureComponent {
         </React.Fragment>
     )
 
-    renderMap = (geoJsonRequest, geoBoundsRequest) => {
+    renderMapLayers = ({ geoJsonRequest, pending, error }) => {
         const {
-            className,
             adminLevels,
             adminLevelId,
             value,
         } = this.props;
 
-        if (!geoJsonRequest || !geoBoundsRequest) {
+        if (pending) {
+            return <LoadingAnimation />;
+        }
+
+        if (error) {
             return (
                 <Message>
-                    {_ts('geoViz', 'invalidAdminLevel')}
+                    {_ts('geoViz', 'invalidRegion')}
                 </Message>
             );
         }
 
         const adminLevel = adminLevels.find(a => String(a.id) === adminLevelId);
         const { response: geoJson } = geoJsonRequest;
-        const { bounds } = geoBoundsRequest;
 
         return (
-            <Map
-                className={className}
-                bounds={bounds}
-                boundsPadding={8}
+            <MapSource
+                sourceKey="bounds"
+                geoJson={geoJson}
+                supportHover
             >
-                <MapSource
-                    sourceKey="bounds"
-                    geoJson={geoJson}
-                    supportHover
-                >
-                    <MapLayer
-                        layerKey="bounds-fill"
-                        type="fill"
-                        property="pk"
-                        filter={this.calcNonSelectedFilter(value)}
-                        paint={this.calcFillPaint(adminLevel)}
-                        hoverInfo={this.calcHoverInfo(adminLevel)}
-                    />
-                    <MapLayer
-                        layerKey="bounds-fill-selection"
-                        type="fill"
-                        property="pk"
-                        filter={this.calcSelectedFilter(value)}
-                        paint={this.calcSelectionFillPaint(adminLevel)}
-                        hoverInfo={this.calcHoverInfo(adminLevel)}
-                    />
-                    <MapLayer
-                        layerKey="bounds-border"
-                        type="line"
-                        paint={this.calcBorderPaint(adminLevel)}
-                    />
-                </MapSource>
-            </Map>
+                <MapLayer
+                    layerKey="bounds-fill"
+                    type="fill"
+                    property="pk"
+                    filter={this.calcNonSelectedBoundsFilter(value)}
+                    paint={this.calcFillPaint(adminLevel)}
+                    hoverInfo={this.calcBoundsHoverInfo(adminLevel)}
+                />
+                <MapLayer
+                    layerKey="bounds-fill-selection"
+                    type="fill"
+                    property="pk"
+                    filter={this.calcSelectedBoundsFilter(value)}
+                    paint={this.calcSelectionFillPaint(adminLevel)}
+                    hoverInfo={this.calcBoundsHoverInfo(adminLevel)}
+                />
+                <MapLayer
+                    layerKey="bounds-border"
+                    type="line"
+                    filter={boundsFilter}
+                    paint={this.calcBorderPaint(adminLevel)}
+                />
+
+                <MapLayer
+                    layerKey="points"
+                    type="circle"
+                    property="pk"
+                    filter={this.calcNonSelectedPointsFilter(value)}
+                    paint={this.calcPointPaint(adminLevel)}
+                    hoverInfo={this.calcPointHoverInfo(adminLevel)}
+                />
+                <MapLayer
+                    layerKey="points-selection"
+                    type="circle"
+                    property="pk"
+                    filter={this.calcSelectedPointsFilter(value)}
+                    paint={this.calcSelectionPointPaint(adminLevel)}
+                    hoverInfo={this.calcPointHoverInfo(adminLevel)}
+                />
+            </MapSource>
         );
     }
 
     renderContent = () => {
         const {
             className,
-            regionId,
-            adminLevels,
             adminLevelId,
-            onAdminLevelsFetched,
             regionRequest,
         } = this.props;
 
@@ -200,33 +253,34 @@ export default class Region extends React.PureComponent {
         const geoBoundsKey = adminLevelId && `geoBounds-${adminLevelId}`;
         const geoBoundsRequest = (geoBoundsKey && this.state[geoBoundsKey]) || emptyObject;
 
-        if (
+        const pending = (
             regionRequest.pending ||
             geoJsonRequest.pending ||
             geoBoundsRequest.pending
-        ) {
-            return (
-                <div className={className}>
-                    <LoadingAnimation />
-                </div>
-            );
-        }
-
-        if (
+        );
+        const error = (
             regionRequest.responseError ||
             geoJsonRequest.responseError ||
             geoBoundsRequest.responseError
-        ) {
-            return (
-                <div className={className}>
-                    <Message>
-                        {_ts('geoViz', 'invalidRegion')}
-                    </Message>
-                </div>
-            );
-        }
+        );
+        const { bounds } = geoBoundsRequest;
 
-        return this.renderMap(geoJsonRequest, geoBoundsRequest);
+        const MapLayers = this.renderMapLayers;
+
+        return (
+            <Map
+                className={className}
+                bounds={bounds}
+                boundsPadding={8}
+                hideNavControl
+            >
+                <MapLayers
+                    geoJsonRequest={geoJsonRequest}
+                    pending={pending}
+                    error={!!error}
+                />
+            </Map>
+        );
     }
 
     render() {

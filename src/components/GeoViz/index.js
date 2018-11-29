@@ -1,10 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Button from '#rsca/Button';
 import SelectInput from '#rsci/SelectInput';
 import SegmentInput from '#rsci/SegmentInput';
 import Message from '#rscv/Message';
+import { randomString } from '#rsu/common';
 
+import { iconNames } from '#constants';
 import _cs from '#cs';
 import _ts from '#ts';
 
@@ -40,7 +43,16 @@ export default class GeoViz extends React.PureComponent {
             regionId: regions[0] && GeoViz.entityKeySelector(regions[0]),
             adminLevelId: undefined,
             adminLevels: undefined,
+
+            // Unique key to recreate map everytime the user refreshes
+            uniqueKey: randomString(),
         };
+    }
+
+    handleRefresh = () => {
+        this.setState({
+            uniqueKey: randomString(),
+        });
     }
 
     handleRegionChange = (regionId) => {
@@ -73,6 +85,7 @@ export default class GeoViz extends React.PureComponent {
             regionId,
             adminLevelId,
             adminLevels,
+            uniqueKey,
         } = this.state;
 
         return (
@@ -84,9 +97,18 @@ export default class GeoViz extends React.PureComponent {
                     labelSelector={GeoViz.entityLabelSelector}
                     value={regionId}
                     onChange={this.handleRegionChange}
+                    showHintAndError={false}
+                    hideClearButton
                 />
+                <Button
+                    className={styles.refreshButton}
+                    onClick={this.handleRefresh}
+                >
+                    <span className={iconNames.refresh} />
+                </Button>
                 {regionId && (
                     <Region
+                        key={uniqueKey}
                         className={styles.map}
                         regionId={regionId}
                         adminLevelId={adminLevelId}
