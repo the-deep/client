@@ -38,9 +38,11 @@
         flex-direction: column;
         flex-grow: 1;
         background-color: $color-background-row;
+        height: 100%;
 
         .scroll-wrapper {
             flex-grow: 1;
+            height: 100%;
             overflow: auto;
 
             .projects-table {
@@ -80,6 +82,22 @@
 
             &:not(:last-child)::after {
                 content: ', ';
+            }
+        }
+
+        .empty-message, .empty-filter-message {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+
+            .image {
+                opacity: 0.3;
+                margin: $spacing-large 0;
+                width: $width-icon-extreme-large;
+                height: $width-icon-extreme-large;
             }
         }
     }

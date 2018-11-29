@@ -27,6 +27,27 @@
             top: 0;
             z-index: 1;
         }
+
+        .empty-message, .empty-filter-message {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+
+            .image {
+                opacity: 0.3;
+                margin: $spacing-large 0;
+                width: $width-icon-extreme-large;
+                height: $width-icon-extreme-large;
+            }
+
+            .empty-link-message {
+                margin: $spacing-medium 0;
+                text-transform: none;
+                color: $color-accent;
+            }
+        }
+
     }
 
     .footer {
@@ -37,9 +58,5 @@
         border-top: $width-separator-thin solid $color-separator;
         background-color: $color-foreground;
         padding: $spacing-small;
-    }
-
-    .empty-entries-link-message {
-        text-transform: initial;
     }
 }

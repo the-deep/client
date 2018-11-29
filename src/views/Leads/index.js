@@ -43,6 +43,8 @@ import {
     patchLeadAction,
 } from '#redux';
 import _ts from '#ts';
+import noSearch from '#resources/img/no-search.png';
+import noFilter from '#resources/img/no-filter.png';
 
 import ActionButtons from './ActionButtons';
 import FilterLeadsForm from './FilterLeadsForm';
@@ -535,22 +537,37 @@ export default class Leads extends React.PureComponent {
 
         if (!isFilterEmpty) {
             return (
-                <Message>
-                    {_ts('leads', 'emptyWithFilterMessage')}
+                <Message
+                    className={styles.emptyFilterMessage}
+                >
+                    <img
+                        className={styles.image}
+                        src={noFilter}
+                        alt=""
+                    />
+                    <span>{_ts('leads', 'emptyWithFilterMessage')}</span>
                 </Message>
             );
         }
 
         return (
-            <Message>
-                {_ts('leads', 'emptyMessage', {
-                    addLeadButtonLabel: (
-                        // FIXME: @AdityaKhatri please fix the style issue
-                        <strong>
-                            {_ts('leads', 'addSourcesButtonLabel')}
-                        </strong>
-                    ),
-                })}
+            <Message
+                className={styles.emptyMessage}
+            >
+                <img
+                    className={styles.image}
+                    src={noSearch}
+                    alt=""
+                />
+                <span>
+                    {_ts('leads', 'emptyMessage', {
+                        addLeadButtonLabel: (
+                            <strong>
+                                {_ts('leads', 'addSourcesButtonLabel')}
+                            </strong>
+                        ),
+                    })}
+                </span>
             </Message>
         );
     }
@@ -586,7 +603,6 @@ export default class Leads extends React.PureComponent {
                             onHeaderClick={this.handleTableHeaderClick}
                             keySelector={Leads.leadKeyExtractor}
                             className={styles.leadsTable}
-                            // FIXME: @AdityaKhatri please fix the style issue
                             emptyComponent={this.renderEmpty}
                         />
                         { loadingLeads && <LoadingAnimation large /> }

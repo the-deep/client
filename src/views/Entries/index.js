@@ -15,6 +15,9 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
 
 import _ts from '#ts';
+import noSearch from '#resources/img/no-search.png';
+import noFilter from '#resources/img/no-filter.png';
+
 
 import {
     setEntriesAction,
@@ -228,16 +231,30 @@ export default class Entries extends React.PureComponent {
 
         if (!isFilterEmpty) {
             return (
-                <Message>
-                    { _ts('entries', 'emptyEntriesForFilterMessage') }
+                <Message
+                    className={styles.emptyFilterMessage}
+                >
+                    <img
+                        className={styles.image}
+                        src={noFilter}
+                        alt=""
+                    />
+                    <span>{ _ts('entries', 'emptyEntriesForFilterMessage') }</span>
                 </Message>
             );
         }
         return (
-            <Message>
-                { _ts('entries', 'emptyEntriesMessage') }
+            <Message
+                className={styles.emptyMessage}
+            >
+                <img
+                    className={styles.image}
+                    src={noSearch}
+                    alt=""
+                />
+                <span>{ _ts('entries', 'emptyEntriesMessage') }</span>
                 <Link
-                    className={styles.emptyEntriesLinkMessage}
+                    className={styles.emptyLinkMessage}
                     to={reverseRoute(pathNames.leads, { projectId })}
                 >
                     { _ts('entries', 'emptyEntriesLinkMessage') }

@@ -36,6 +36,8 @@ import {
 } from '#redux';
 
 import _ts from '#ts';
+import noSearch from '#resources/img/no-search.png';
+import noFilter from '#resources/img/no-filter.png';
 
 import ProjectListRequest from './requests/ProjectListRequest';
 import ProjectJoinRequest from './requests/ProjectJoinRequest';
@@ -389,15 +391,29 @@ export default class DiscoverProjects extends React.PureComponent {
 
         if (!isFilterEmpty) {
             return (
-                <Message>
-                    {_ts('discoverProjects.table', 'emptyWithFilterMessage')}
+                <Message
+                    className={styles.emptyFilterMessage}
+                >
+                    <img
+                        className={styles.image}
+                        src={noFilter}
+                        alt=""
+                    />
+                    <span>{_ts('discoverProjects.table', 'emptyWithFilterMessage')}</span>
                 </Message>
             );
         }
 
         return (
-            <Message>
-                {_ts('discoverProjects.table', 'emptyMessage')}
+            <Message
+                className={styles.emptyMessage}
+            >
+                <img
+                    className={styles.image}
+                    src={noSearch}
+                    alt=""
+                />
+                <span>{_ts('discoverProjects.table', 'emptyMessage')}</span>
             </Message>
         );
     }
@@ -434,7 +450,6 @@ export default class DiscoverProjects extends React.PureComponent {
                             onHeaderClick={this.handleTableHeaderClick}
                             keySelector={projectKeyExtractor}
                             className={styles.projectsTable}
-                            // FIXME: @AdityaKhatri please fix the style issue
                             emptyComponent={this.renderEmpty}
                         />
                         { pending && <LoadingAnimation large /> }

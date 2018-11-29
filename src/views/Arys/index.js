@@ -34,6 +34,8 @@ import {
 import { pathNames } from '#constants/';
 import _ts from '#ts';
 
+import noSearch from '#resources/img/no-search.png';
+import noFilter from '#resources/img/no-filter.png';
 import ActionButtons from './ActionButtons';
 import FilterArysForm from './FilterArysForm';
 import ArysGetRequest from './requests/ArysGetRequest';
@@ -302,15 +304,29 @@ export default class Arys extends React.PureComponent {
 
         if (!isFilterEmpty) {
             return (
-                <Message>
-                    {_ts('assessments', 'emptyWithFilterMessage')}
+                <Message
+                    className={styles.emptyFilterMessage}
+                >
+                    <img
+                        className={styles.image}
+                        src={noFilter}
+                        alt=""
+                    />
+                    <span>{_ts('assessments', 'emptyWithFilterMessage')}</span>
                 </Message>
             );
         }
 
         return (
-            <Message>
-                { _ts('assessments', 'emptyMessage') }
+            <Message
+                className={styles.emptyMessage}
+            >
+                <img
+                    className={styles.image}
+                    src={noSearch}
+                    alt=""
+                />
+                <span>{ _ts('assessments', 'emptyMessage') }</span>
                 <Link
                     className={styles.emptyLinkMessage}
                     to={reverseRoute(pathNames.leads, { projectId })}
@@ -352,7 +368,6 @@ export default class Arys extends React.PureComponent {
                         onHeaderClick={this.handleTableHeaderClick}
                         keySelector={this.aryKeyExtractor}
                         className={styles.arysTable}
-                        // FIXME: @AdityaKhatri please fix the style issue
                         emptyComponent={this.renderEmpty}
                     />
                     { loadingArys && <LoadingAnimation large /> }
