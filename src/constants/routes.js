@@ -105,14 +105,6 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'connectors');
 
-    leads: {
-        order: 30,
-        type: ROUTE.private,
-        path: '/projects/:projectId/leads/',
-        loader: () => import('../views/Leads'),
-        links: allLinks,
-    }, // _ts('pageTitle', 'leads');
-
     leadsViz: {
         order: 31,
         type: ROUTE.private,
@@ -120,14 +112,21 @@ export const routes = {
         loader: () => import('../views/LeadsViz'),
         links: allLinks,
     }, // _ts('pageTitle', 'leadsViz');
-
-    addLeads: {
-        order: 32,
+    clusterViz: {
+        order: 34,
         type: ROUTE.private,
-        path: '/projects/:projectId/leads/add/',
-        loader: () => import('../views/LeadAdd'),
+        path: '/projects/:projectId/clusterviz',
+        loader: () => import('../views/ClusterViz'),
         links: allLinks,
-    }, // _ts('pageTitle', 'addLeads');
+    }, // _ts('pageTitle', 'clusterViz');
+
+    leads: {
+        order: 30,
+        type: ROUTE.private,
+        path: '/projects/:projectId/leads/',
+        loader: () => import('../views/Leads'),
+        links: allLinks,
+    }, // _ts('pageTitle', 'leads');
 
     leadGroups: {
         order: 33,
@@ -137,13 +136,13 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'leadGroups');
 
-    clusterViz: {
-        order: 34,
+    addLeads: {
+        order: 32,
         type: ROUTE.private,
-        path: '/projects/:projectId/clusterviz',
-        loader: () => import('../views/ClusterViz'),
+        path: '/projects/:projectId/leads/add/',
+        loader: () => import('../views/LeadAdd'),
         links: allLinks,
-    }, // _ts('pageTitle', 'clusterViz');
+    }, // _ts('pageTitle', 'addLeads');
 
     entries: {
         order: 40,
@@ -168,7 +167,6 @@ export const routes = {
         loader: () => import('../views/Arys/'),
         links: allLinks,
     }, // _ts('pageTitle', 'arys');
-
     editAry: {
         order: 51,
         type: ROUTE.private,
@@ -176,7 +174,6 @@ export const routes = {
         loader: () => import('../views/EditAry'),
         links: allLinks,
     }, // _ts('pageTitle', 'editAry');
-
     editLeadGroupAssessment: {
         order: 51,
         type: ROUTE.private,
