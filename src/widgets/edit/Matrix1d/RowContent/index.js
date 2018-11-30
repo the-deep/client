@@ -23,7 +23,6 @@ const propTypes = {
     index: PropTypes.number.isRequired,
     className: PropTypes.string,
     widgetKey: PropTypes.string.isRequired,
-    onNestedModalChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -49,7 +48,7 @@ export default class RowContent extends React.PureComponent {
         index: i,
     })
 
-    rowsModifier = rows => rows.map(r => ({
+    static rowsModifier = rows => rows.map(r => ({
         key: randomString(16),
         value: r.label,
         originalWidget: r.originalWidget,
@@ -60,7 +59,6 @@ export default class RowContent extends React.PureComponent {
         const {
             index,
             className,
-            onNestedModalChange,
         } = this.props;
 
         return (
@@ -105,15 +103,13 @@ export default class RowContent extends React.PureComponent {
                             <GeoLink
                                 faramElementName="cells"
                                 titleSelector={RowContent.rowTitleSelector}
-                                dataModifier={this.rowsModifier}
-                                onModalVisibilityChange={onNestedModalChange}
+                                dataModifier={RowContent.rowsModifier}
                             />
                             <LinkWidgetModalButton
                                 faramElementName="cells"
                                 widgetKey={this.props.widgetKey}
                                 titleSelector={RowContent.rowTitleSelector}
-                                dataModifier={this.rowsModifier}
-                                onModalVisibilityChange={onNestedModalChange}
+                                dataModifier={RowContent.rowsModifier}
                             />
                             <FaramList
                                 faramElementName="cells"

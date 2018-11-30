@@ -23,7 +23,6 @@ const propTypes = {
     index: PropTypes.number.isRequired,
     className: PropTypes.string,
     widgetKey: PropTypes.string.isRequired,
-    onNestedModalChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -50,7 +49,7 @@ export default class DimensionContent extends React.PureComponent {
         index: i,
     })
 
-    rowsModifier = rows => rows.map(r => ({
+    static rowsModifier = rows => rows.map(r => ({
         id: randomString(16),
         title: r.label,
         originalWidget: r.originalWidget,
@@ -62,7 +61,6 @@ export default class DimensionContent extends React.PureComponent {
         const {
             index,
             className,
-            onNestedModalChange,
         } = this.props;
 
         return (
@@ -107,15 +105,13 @@ export default class DimensionContent extends React.PureComponent {
                             <GeoLink
                                 faramElementName="subdimensions"
                                 titleSelector={DimensionContent.rowTitleSelector}
-                                dataModifier={this.rowsModifier}
-                                onModalVisibilityChange={onNestedModalChange}
+                                dataModifier={DimensionContent.rowsModifier}
                             />
                             <LinkWidgetModalButton
                                 faramElementName="subdimensions"
                                 widgetKey={this.props.widgetKey}
                                 titleSelector={DimensionContent.rowTitleSelector}
-                                dataModifier={this.rowsModifier}
-                                onModalVisibilityChange={onNestedModalChange}
+                                dataModifier={DimensionContent.rowsModifier}
                             />
                             <FaramList
                                 faramElementName="subdimensions"

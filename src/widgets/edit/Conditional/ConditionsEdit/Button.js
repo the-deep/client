@@ -15,17 +15,11 @@ const propTypes = {
         operator: PropTypes.oneOf(['AND', 'OR', 'XOR']),
     }).isRequired,
     onChange: PropTypes.func.isRequired,
-    onModalVisibilityChange: PropTypes.func,
-};
-
-const defaultProps = {
-    onModalVisibilityChange: () => {},
 };
 
 @FaramInputElement
 export default class ConditionsEditButton extends React.PureComponent {
     static propTypes = propTypes;
-    static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
@@ -35,15 +29,11 @@ export default class ConditionsEditButton extends React.PureComponent {
     }
 
     handleClick = () => {
-        this.setState({
-            showModal: true,
-        }, () => this.props.onModalVisibilityChange(true));
+        this.setState({ showModal: true });
     }
 
     handleCancel = () => {
-        this.setState({
-            showModal: false,
-        }, () => this.props.onModalVisibilityChange(false));
+        this.setState({ showModal: false });
     }
 
     handleSave = (value) => {
@@ -51,7 +41,6 @@ export default class ConditionsEditButton extends React.PureComponent {
             showModal: false,
         }, () => {
             this.props.onChange(value);
-            this.props.onModalVisibilityChange(false);
         });
     }
 

@@ -85,7 +85,6 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
             },
             pristine: true,
             hasError: false,
-            disableEverything: false,
         };
 
         this.widgets = widgetList.filter(
@@ -118,10 +117,6 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         this.props.onSave(otherValues, title);
     }
 
-    handleModalVisibilityChange = (disableEverything) => {
-        this.setState({ disableEverything });
-    }
-
     widgetListRendererParams = (key, widget) => {
         const { title } = widget;
 
@@ -147,7 +142,6 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
     itemRendererParams = (key, elem, i) => ({
         index: i,
         item: elem,
-        onModalVisibilityChange: this.handleModalVisibilityChange,
     });
 
     render() {
@@ -156,7 +150,6 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
             faramErrors,
             pristine,
             hasError,
-            disableEverything,
         } = this.state;
 
         const {
@@ -176,10 +169,6 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         const addedWidgetsHeaderInfo = _ts('widgets.editor.conditional', 'addedWidgetsHeaderInfoText');
 
         const modalClassNames = [styles.modal];
-        if (disableEverything) {
-            modalClassNames.push(styles.disabledEverything);
-        }
-
         return (
             <Modal className={modalClassNames.join(' ')}>
                 <Faram

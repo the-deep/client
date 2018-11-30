@@ -11,17 +11,11 @@ const propTypes = {
     value: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     onChange: PropTypes.func.isRequired,
     renderer: PropTypes.func.isRequired,
-    onModalVisibilityChange: PropTypes.func,
-};
-
-const defaultProps = {
-    onModalVisibilityChange: () => {},
 };
 
 @FaramInputElement
 export default class FrameworkEditButton extends React.PureComponent {
     static propTypes = propTypes;
-    static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
@@ -31,15 +25,11 @@ export default class FrameworkEditButton extends React.PureComponent {
     }
 
     handleEditClick = () => {
-        this.setState({
-            showModal: true,
-        }, () => this.props.onModalVisibilityChange(true));
+        this.setState({ showModal: true });
     }
 
     handleCancel = () => {
-        this.setState({
-            showModal: false,
-        }, () => this.props.onModalVisibilityChange(false));
+        this.setState({ showModal: false });
     }
 
     handleSave = (data, title) => {
@@ -56,9 +46,7 @@ export default class FrameworkEditButton extends React.PureComponent {
         const newValue = update(value, settings);
 
         this.props.onChange(newValue);
-        this.setState({
-            showModal: false,
-        }, () => this.props.onModalVisibilityChange(false));
+        this.setState({ showModal: false });
     }
 
     render() {

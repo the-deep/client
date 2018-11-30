@@ -20,18 +20,12 @@ const propTypes = {
     dataModifier: PropTypes.func.isRequired,
     titleSelector: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired, // eslint-disable-line
-    onModalVisibilityChange: PropTypes.func,
     widgetKey: PropTypes.string.isRequired,
-};
-
-const defaultProps = {
-    onModalVisibilityChange: () => {},
 };
 
 @FaramInputElement
 export default class LinkWidgetModalButton extends React.PureComponent {
     static propTypes = propTypes;
-    static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
@@ -44,9 +38,7 @@ export default class LinkWidgetModalButton extends React.PureComponent {
     }
 
     handleClick = () => {
-        this.setState({
-            showModal: true,
-        }, () => this.props.onModalVisibilityChange(true));
+        this.setState({ showModal: true });
     }
 
     handleDuplicatesConfirmClose = () => {
@@ -57,14 +49,11 @@ export default class LinkWidgetModalButton extends React.PureComponent {
             showDuplicateConfirm: false,
         }, () => {
             this.props.onChange(newValue, { lastItem: newValue[newValue.length - 1] });
-            this.props.onModalVisibilityChange(false);
         });
     }
 
     handleClose = () => {
-        this.setState({
-            showModal: false,
-        }, () => this.props.onModalVisibilityChange(false));
+        this.setState({ showModal: false });
     }
 
     handleSave = (newItems) => {
@@ -91,15 +80,12 @@ export default class LinkWidgetModalButton extends React.PureComponent {
                 duplicateItems: duplicates,
                 nonDuplicateItems: newRowsWithoutDuplicates.map(u => titleSelector(u)),
                 newValue: finalRows,
-            }, () => {
-                this.props.onModalVisibilityChange(true);
             });
         } else {
             this.setState({
                 showModal: false,
             }, () => {
                 this.props.onChange(finalRows, { lastItem: finalRows[finalRows.length - 1] });
-                this.props.onModalVisibilityChange(false);
             });
         }
     }

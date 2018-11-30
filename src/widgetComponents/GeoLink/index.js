@@ -21,12 +21,10 @@ const propTypes = {
     dataModifier: PropTypes.func.isRequired,
     titleSelector: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired, // eslint-disable-line
-    onModalVisibilityChange: PropTypes.func,
 };
 
 const defaultProps = {
     geoOptions: {},
-    onModalVisibilityChange: () => {},
 };
 
 const getRegions = memoize(geoOptions => (
@@ -75,7 +73,6 @@ export default class GeoLink extends React.PureComponent {
             showDuplicateConfirm: false,
         }, () => {
             this.props.onChange(newValue, { lastItem: newValue[newValue.length - 1] });
-            this.props.onModalVisibilityChange(false);
         });
     }
 
@@ -113,12 +110,9 @@ export default class GeoLink extends React.PureComponent {
                 duplicateItems: duplicates,
                 nonDuplicateItems: newRowsWithoutDuplicates.map(u => titleSelector(u)),
                 newValue: finalRows,
-            }, () => {
-                this.props.onModalVisibilityChange(true);
             });
         } else {
             this.props.onChange(finalRows, { lastItem: finalRows[finalRows.length - 1] });
-            this.props.onModalVisibilityChange(false);
         }
     }
 
@@ -144,7 +138,6 @@ export default class GeoLink extends React.PureComponent {
                     className={modalClassNames.join(' ')}
                     geoOptionsByRegion={geoOptions}
                     label={label}
-                    value={emptyArray}
                     onChange={this.handleGeoChange}
                     regions={regions}
                     showLabel={false}

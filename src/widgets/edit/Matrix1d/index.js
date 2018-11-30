@@ -106,6 +106,17 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         },
     };
 
+    static rowsModifier = rows => rows.map(r => ({
+        key: randomString(16),
+        title: r.label,
+        originalWidget: r.originalWidget,
+        originalKey: r.originalKey,
+        color: undefined,
+        tooltip: '',
+        cells: [],
+    }));
+
+
     constructor(props) {
         super(props);
 
@@ -122,8 +133,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             faramErrors: {},
             pristine: true,
             hasError: false,
-            showLinkModal: false,
-            showNestedLinkModal: false,
 
             selectedRowKey: rows[0]
                 ? Matrix1dEditWidget.keySelector(rows[0])
@@ -132,17 +141,18 @@ export default class Matrix1dEditWidget extends React.PureComponent {
     }
 
     handleFaramChange = (faramValues, faramErrors, faramInfo) => {
+        const selectedRowKey = faramInfo.lastItem ? (
+            Matrix1dEditWidget.keySelector(faramInfo.lastItem)
+        ) : (
+            this.state.selectedRowKey
+        );
         this.setState({
             faramValues,
             faramErrors,
             pristine: false,
             hasError: faramInfo.hasError,
-            selectedRowKey: Matrix1dEditWidget.keySelector(faramInfo.lastItem),
+            selectedRowKey,
         });
-    };
-
-    handleModalVisiblityChange = (isShown) => {
-        this.setState({ showLinkModal: isShown });
     };
 
     handleFaramValidationFailure = (faramErrors) => {
@@ -174,20 +184,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         ];
     }
 
-    rowsModifier = rows => rows.map(r => ({
-        key: randomString(16),
-        title: r.label,
-        originalWidget: r.originalWidget,
-        originalKey: r.originalKey,
-        color: undefined,
-        tooltip: '',
-        cells: [],
-    }));
-
-    handleNestedModalChange = (showNestedLinkModal) => {
-        this.setState({ showNestedLinkModal });
-    }
-
     rendererParams = (key, elem, i) => ({
         index: i,
         faramElementName: String(i),
@@ -217,8 +213,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             faramErrors,
             pristine,
             hasError,
-            showLinkModal,
-            showNestedLinkModal,
         } = this.state;
 
         const {
@@ -232,9 +226,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         );
 
         const modalClassNames = [styles.editModal];
-        if (showLinkModal || showNestedLinkModal) {
-            modalClassNames.push(styles.disabled);
-        }
 
         return (
             <Modal className={modalClassNames.join(' ')}>
@@ -276,14 +267,14 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                     <GeoLink
                                         faramElementName="rows"
                                         titleSelector={Matrix1dEditWidget.rowTitleSelector}
-                                        dataModifier={this.rowsModifier}
+                                        dataModifier={Matrix1dEditWidget.rowsModifier}
                                         onModalVisibilityChange={this.handleModalVisiblityChange}
                                     />
                                     <LinkWidgetModalButton
                                         faramElementName="rows"
                                         widgetKey={this.props.widgetKey}
                                         titleSelector={Matrix1dEditWidget.rowTitleSelector}
-                                        dataModifier={this.rowsModifier}
+                                        dataModifier={Matrix1dEditWidget.rowsModifier}
                                         onModalVisibilityChange={this.handleModalVisiblityChange}
                                     />
                                     <FaramList
