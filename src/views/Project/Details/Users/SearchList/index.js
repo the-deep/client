@@ -10,6 +10,7 @@ import {
     RequestClient,
     requestMethods,
 } from '#request';
+import { compareString } from '#rsu/common';
 import { projectMembershipListSelector } from '#redux';
 import { iconNames } from '#constants';
 import _ts from '#ts';
@@ -151,6 +152,7 @@ export default class SearchList extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static searchItemKeySelector = d => `${d.type}-${d.id}`;
+    static groupKeySelector = d => d.type;
 
     searchListItemRendererParams = (key, {
         title: usergroupTitle,
@@ -166,6 +168,16 @@ export default class SearchList extends React.PureComponent {
         onItemRemove: this.props.onItemRemove,
     });
 
+    groupComparator = (a, b) => compareString(a, b);
+
+    groupRendererParams = (groupKey) => {
+        const userTitle = _ts('project.users', 'searchUserTitle');
+        const usergroupTitle = _ts('project.users', 'searchUsergroupTitle');
+        return {
+            children: groupKey === 'user' ? userTitle : usergroupTitle,
+        };
+    }
+
     renderUserList = () => {
         const {
             searchInputValue,
@@ -180,10 +192,15 @@ export default class SearchList extends React.PureComponent {
             <ListView
                 className={styles.list}
                 keySelector={SearchList.searchItemKeySelector}
-                rendererParams={this.searchListItemRendererParams}
                 data={searchItems}
-                renderer={SearchListItem}
                 emptyComponent={EmptySearch}
+                rendererParams={this.searchListItemRendererParams}
+                rendererClassName={styles.listItem}
+                renderer={SearchListItem}
+                groupKeySelector={SearchList.groupKeySelector}
+                groupRendererParams={this.groupRendererParams}
+                groupRendererClassName={styles.listGroup}
+                groupComparator={this.groupComparator}
             />
         );
     }
