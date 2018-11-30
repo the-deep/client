@@ -41,6 +41,7 @@ import skypeLogo from '#resources/img/skype.png';
 import Cloak from '../Cloak';
 import NavMenu from './NavMenu';
 import NavDrop from './NavDrop';
+import ZendeskHelpLink from './ZendeskHelpLink';
 import styles from './styles.scss';
 
 const mapStateToProps = state => ({
@@ -296,6 +297,9 @@ export default class Navbar extends React.PureComponent {
                     className={styles.mainMenu}
                     projectId={activeProject}
                     countryId={activeCountry}
+                />
+                <ZendeskHelpLink
+                    currentPath={this.currentPath}
                 />
                 <a
                     className={styles.joinLink}
