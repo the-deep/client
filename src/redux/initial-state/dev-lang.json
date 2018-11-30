@@ -1729,7 +1729,9 @@
             "removeMembershipButtonPlaceholder": 419,
             "userListHeading": -54185786,
             "linkedGroupTitle": -42425639,
-            "linkedGroupPlaceholder": -99213668
+            "linkedGroupPlaceholder": -99213668,
+            "searchUserTitle": 1119,
+            "searchUsergroupTitle": 338
         },
         "project": {
             "projectGetFailure": 2500,

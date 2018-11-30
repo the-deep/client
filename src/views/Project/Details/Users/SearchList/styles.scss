@@ -23,6 +23,23 @@
         .list {
             flex-grow: 1;
             overflow-y: auto;
+
+            .list-item {
+                border-top: $width-separator-thin solid $color-separator;
+                border-bottom: 0;
+            }
+
+            .list-group + .list-item {
+                border-top: 0;
+            }
+
+            .list-group {
+                background-color: $color-foreground-alt;
+
+                &:not(:first-child) {
+                    margin-top: $spacing-small;
+                }
+            }
         }
 
         .empty-text {
