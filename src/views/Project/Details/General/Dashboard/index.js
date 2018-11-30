@@ -142,7 +142,7 @@ export default class ProjectDashboard extends React.PureComponent {
     }
 
     sourcerParams = (key, user) => {
-        const { projectRequest: { response: { numberOfLeads } } } = this.props;
+        const { projectRequest: { response: { numberOfLeads } = {} } = {} } = this.props;
 
         return ({
             user,
@@ -151,7 +151,7 @@ export default class ProjectDashboard extends React.PureComponent {
     }
 
     taggerParams = (key, user) => {
-        const { projectRequest: { response: { numberOfEntries } } } = this.props;
+        const { projectRequest: { response: { numberOfEntries } = {} } = {} } = this.props;
 
         return ({
             user,

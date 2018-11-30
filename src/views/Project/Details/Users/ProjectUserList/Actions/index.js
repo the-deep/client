@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SelectInput from '#rsci/SelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import { getNewActiveProjectId } from '#entities/project';
 
 import {
     RequestClient,
@@ -15,6 +16,7 @@ import {
     modifyProjectMembershipAction,
     projectRoleListSelector,
     activeUserSelector,
+    currentUserProjectsSelector,
 } from '#redux';
 import { iconNames } from '#constants';
 import _ts from '#ts';
@@ -48,6 +50,7 @@ const requests = {
             props: {
                 removeProjectMembership,
                 projectId,
+                userProjects,
                 activeUser: {
                     userId: activeUserId,
                 },
@@ -57,10 +60,13 @@ const requests = {
                 id: membershipId,
                 member: memberId,
             } = membership;
+            const shouldRemoveProject = activeUserId === memberId;
             removeProjectMembership({
                 projectId,
                 membershipId,
-                removeProject: activeUserId === memberId,
+                shouldRemoveProject,
+                newActiveProjectId: shouldRemoveProject ?
+                    getNewActiveProjectId(userProjects, projectId) : undefined,
             });
         },
     },
@@ -71,6 +77,8 @@ const RequestPropType = PropTypes.shape({
 });
 
 const propTypes = {
+    // eslint-disable-next-line react/no-unused-prop-types, react/forbid-prop-types
+    userProjects: PropTypes.array.isRequired,
     changeMembershipRequest: RequestPropType.isRequired,
     removeUserMembershipRequest: RequestPropType.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
@@ -93,6 +101,7 @@ const defaultProps = {
 
 const mapStateToProps = state => ({
     projectRoleList: projectRoleListSelector(state),
+    userProjects: currentUserProjectsSelector(state),
     activeUser: activeUserSelector(state),
 });
 

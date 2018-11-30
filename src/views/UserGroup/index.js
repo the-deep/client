@@ -157,7 +157,6 @@ export default class Usergroup extends React.PureComponent {
                 </div>
                 <ProjectsTable
                     className={styles.projects}
-                    isCurrentUserAdmin={isCurrentUserAdmin}
                     usergroup={usergroup}
                 />
                 <MembersTable

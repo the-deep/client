@@ -5,6 +5,7 @@ const allLinks = {
     entries: acl.entries,
     arys: acl.arys,
     export: acl.export,
+    dashboard: acl.dashboard,
     userProfile: acl.userProfile,
     projects: acl.projects,
     countries: acl.countries,

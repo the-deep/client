@@ -1,6 +1,9 @@
 import { createSelector } from 'reselect';
 
-import { getObjectChildren } from '#rsu/common';
+import {
+    getObjectChildren,
+    compareString,
+} from '#rsu/common';
 import { median, sum, bucket } from '#rsu/stats';
 import {
     requiredCondition,
@@ -237,7 +240,14 @@ export const currentUserInformationSelector = createSelector(
 // activeUser
 export const currentUserProjectsSelector = createSelector(
     projectsSelector,
-    projects => Object.keys(projects).map(projectId => projects[projectId]),
+    projects => Object.keys(projects).map(
+        projectId => projects[projectId],
+    ).sort(
+        (a, b) => compareString(
+            a.title,
+            b.title,
+        ),
+    ),
 );
 
 // activeUser

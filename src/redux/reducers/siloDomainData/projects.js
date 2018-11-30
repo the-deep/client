@@ -56,11 +56,15 @@ export const setProjectUsergroupsAction = ({ usergroups, projectId }) => ({
     projectId,
 });
 
-export const removeProjectMembershipAction = ({ projectId, membershipId, removeProject }) => ({
+export const removeProjectMembershipAction = ({
+    projectId,
+    membershipId,
+    shouldRemoveProject,
+}) => ({
     type: REMOVE_PROJECT_MEMBERSHIP,
     projectId,
     membershipId,
-    removeProject,
+    shouldRemoveProject,
 });
 
 export const removeProjectUserGroupAction = ({ projectId, usergroupId }) => ({
@@ -101,9 +105,10 @@ export const setErrorProjectDetailsAction =
         projectId,
     });
 
-export const unsetProjectDetailsAction = ({ projectId }) => ({
+export const unsetProjectDetailsAction = ({ projectId, newActiveProjectId }) => ({
     type: UNSET_PROJECT,
     projectId,
+    newActiveProjectId,
 });
 
 
@@ -289,20 +294,32 @@ export const setErrorProjectDetails = (state, action) => {
     return update(state, settings);
 };
 
+export const unsetProject = (state, action) => {
+    const {
+        projectId,
+        newActiveProjectId,
+    } = action;
+    const settings = {
+        projectsView: { $auto: {
+            $unset: [projectId],
+        } },
+        activeProjectId: {
+            $set: newActiveProjectId,
+        },
+    };
+    return update(state, settings);
+};
+
 export const removeProjectMembership = (state, action) => {
     const {
         projectId,
         membershipId,
-        removeProject,
+        shouldRemoveProject,
+        newActiveProjectId,
     } = action;
 
-    if (removeProject) {
-        const settings = {
-            projectsView: { $auto: {
-                $unset: [projectId],
-            } },
-        };
-        return update(state, settings);
+    if (shouldRemoveProject) {
+        return unsetProject(state, { projectId, newActiveProjectId });
     }
 
     const settings = {
@@ -369,17 +386,6 @@ export const modifyProjectUserGroup = (state, action) => {
     };
     return update(state, settings);
 };
-
-export const unsetProject = (state, action) => {
-    const { projectId } = action;
-    const settings = {
-        projectsView: { $auto: {
-            $unset: [projectId],
-        } },
-    };
-    return update(state, settings);
-};
-
 
 const reducers = {
     [SET_PROJECT_DETAILS]: setProjectDetails,

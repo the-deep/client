@@ -10,7 +10,6 @@ import Message from '#rscv/Message';
 import {
     reverseRoute,
     caseInsensitiveSubmatch,
-    compareString,
 } from '#rsu/common';
 import Cloak from '#components/Cloak';
 
@@ -41,13 +40,6 @@ const filterProjects = memoize((userProjects, searchInputValue) => {
         project => caseInsensitiveSubmatch(
             project.title,
             searchInputValue,
-        ),
-    );
-
-    displayUserProjects.sort(
-        (a, b) => compareString(
-            a.title,
-            b.title,
         ),
     );
 

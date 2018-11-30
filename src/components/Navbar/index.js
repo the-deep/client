@@ -127,31 +127,14 @@ export default class Navbar extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         const {
-            userProjects: oldUserProjects,
             activeProject: oldActiveProject,
             location: oldLocation,
         } = this.props;
         const {
-            userProjects: newUserProjects,
             activeProject: newActiveProject,
             activeUser: newActiveUser,
             location: newLocation,
         } = nextProps;
-
-        // TODO: move this block to reducers of siloDomainData:common
-        // If active project has changed, then set active project
-        // NOTE: if active project id is not in userProjects,
-        // then set first project id from users project
-        if (oldUserProjects !== newUserProjects) {
-            const activeProjectIndex = newUserProjects.findIndex(
-                p => p.id === newActiveProject,
-            );
-            if (activeProjectIndex === -1) {
-                this.props.setActiveProject({
-                    activeProject: (newUserProjects.length > 0) ? newUserProjects[0].id : undefined,
-                });
-            }
-        }
 
         // Set user project in server
         if (oldActiveProject !== newActiveProject && isTruthy(newActiveUser.userId)) {

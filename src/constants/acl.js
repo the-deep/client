@@ -1,4 +1,6 @@
 const acl = {
+    // NOTE: Don't forget to modify viewsAcl.js or linkAcl.js
+
     leads: {
         hide: ({ isLoggedIn, hasProjects, leadPermissions }) => (
             !isLoggedIn || !hasProjects || !leadPermissions.view
@@ -21,6 +23,12 @@ const acl = {
     },
 
     // TODO: add acl for every page
+
+    dashboard: {
+        hide: ({ isLoggedIn, hasProjects, setupPermissions }) => (
+            !isLoggedIn || !hasProjects || !setupPermissions.view
+        ),
+    },
 
     userProfile: {
         hide: ({ isLoggedIn }) => !isLoggedIn,

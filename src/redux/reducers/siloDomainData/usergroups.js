@@ -9,7 +9,6 @@ export const UG__ADD_USERGROUP_MEMBERSHIPS = 'siloDomainData/USERGROUP_VIEW/ADD_
 export const UG__SET_USERGROUP_PROJECT = 'siloDomainData/USERGROUP_VIEW/SET_USERGROUP_PROJECT';
 
 export const UG__UNSET_USERGROUP_MEMBERSHIP = 'siloDomainData/USERGROUP_VIEW/UNSET_USERGROUP_MEMBERSHIP';
-export const UG__UNSET_USERGROUP_PROJECT = 'siloDomainData/USERGROUP_VIEW/UNSET_USERGROUP_PROJECT';
 
 // ACTION-CREATOR
 
@@ -45,13 +44,6 @@ export const unsetUsergroupViewMembershipAction = ({ usergroupId, membershipId }
     membershipId,
     type: UG__UNSET_USERGROUP_MEMBERSHIP,
 });
-
-export const unsetUsergroupViewProjectAction = ({ usergroupId, projectId }) => ({
-    usergroupId,
-    projectId,
-    type: UG__UNSET_USERGROUP_PROJECT,
-});
-
 
 // REDUCER
 
@@ -161,19 +153,6 @@ const unsetUsergroupMembership = (state, { usergroupId, membershipId }) => {
     return update(state, settings);
 };
 
-const unsetUserProject = (state, { usergroupId, projectId }) => {
-    const settings = {
-        usergroupView: {
-            [usergroupId]: { $auto: {
-                projects: { $autoArray: {
-                    $filter: project => project.id !== projectId,
-                } },
-            } },
-        },
-    };
-    return update(state, settings);
-};
-
 
 // REDUCER MAP
 
@@ -184,7 +163,6 @@ const reducers = {
     [UG__SET_USERGROUP_PROJECT]: setUserProject,
 
     [UG__UNSET_USERGROUP_MEMBERSHIP]: unsetUsergroupMembership,
-    [UG__UNSET_USERGROUP_PROJECT]: unsetUserProject,
 };
 
 export default reducers;
