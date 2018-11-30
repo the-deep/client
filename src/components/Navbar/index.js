@@ -134,6 +134,7 @@ export default class Navbar extends React.PureComponent {
             activeProject: newActiveProject,
             activeUser: newActiveUser,
             location: newLocation,
+            userProjects,
         } = nextProps;
 
         // Set user project in server
@@ -141,9 +142,16 @@ export default class Navbar extends React.PureComponent {
             if (this.setUserProjectRequest) {
                 this.setUserProjectRequest.stop();
             }
+
+            const validProjectId = userProjects.findIndex(
+                project => Navbar.projectKeySelector(project) === newActiveProject,
+            ) !== -1;
+
             this.setUserProjectRequest = new BgRestBuilder()
                 .url(createUrlForSetUserProject(newActiveUser.userId))
-                .params(() => createParamsForSetUserProject(newActiveProject))
+                .params(() => createParamsForSetUserProject(
+                    validProjectId ? newActiveProject : null,
+                ))
                 .delay(1000) // more delay
                 .build();
             this.setUserProjectRequest.start();

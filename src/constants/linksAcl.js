@@ -6,6 +6,7 @@ export const allLinks = {
     entries: viewsAcl.entries,
     arys: viewsAcl.arys,
     export: viewsAcl.export,
+
     userProfile: viewsAcl.userProfile,
     projects: viewsAcl.projects,
     countries: viewsAcl.countries,
@@ -16,7 +17,7 @@ export const allLinks = {
     visualization: viewsAcl.visualization,
     adminPanel: viewsAcl.adminPanel,
 
-    // this is an element
+    // TODO: do not disable if there is a 403 error inside
     projectSelect: {
         hide: ({ isLoggedIn }) => !isLoggedIn,
         disable: ({ pathKey, hasProjects }) => (

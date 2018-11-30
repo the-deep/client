@@ -19,7 +19,9 @@ export default class ProjectDenied extends React.PureComponent {
                     {_ts('projectDenied', 'errorThreeHundredThree')}
                 </h1>
                 <p className={styles.message}>
-                    {_ts('projectDenied', 'message1')}
+                    <strong>{_ts('projectDenied', 'message1')}</strong>
+                    <br />
+                    {_ts('projectDenied', 'message2')}
                 </p>
             </div>
         );

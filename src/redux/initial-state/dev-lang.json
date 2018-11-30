@@ -853,7 +853,7 @@
         "-99467671": "Couldn't find the widget.",
         "-65673584": "Error while trying to log in.",
         "-17483186": "Error 403",
-        "-83729493": "Looks like you don’t have the required permissions to view this page! Please contact your project administrator to be granted the needed rights, or if you think this is a bug please notify the DEEP administrators using the Feedback button",
+        "-83729493": "Looks like you don’t have the required permissions to view this page!",
         "-44264923": "403",
         "-48777298": "Not",
         "-50025960": "Default widget",
@@ -887,7 +887,9 @@
         "-72702692": "Invalid range",
         "-10595927": "No users or usergoups found",
         "-66757442": "Looks like you don’t have access to this project or it doesn’t exist! Please contact the project administrator to be added, or if you think this is a bug please notify the DEEP administrators using the Feedback button",
-        "-48490028": "Looks like you don’t have access to this project or it doesn’t exist!"
+        "-48490028": "Looks like you don’t have access to this project or it doesn’t exist!",
+        "-69684282": "Please contact your project administrator to be granted the needed rights, or if you think this is a bug please notify the DEEP administrators using the Feedback button",
+        "-84343027": "Please contact the project administrator to be added, or if you think this is a bug please notify the DEEP administrators using the Feedback button"
     },
     "links": {
         "browserExtension": {
@@ -2424,7 +2426,8 @@
         "fourHundredThree": {
             "errorThreeHundredThree": -17483186,
             "backToDeep": 874,
-            "message1": -83729493
+            "message1": -83729493,
+            "message2": -69684282
         },
         "widgetGroupTitle": {
             "matricesGroupLabel": -18730432,
@@ -2448,7 +2451,8 @@
         },
         "projectDenied": {
             "errorThreeHundredThree": -17483186,
-            "message1": -66757442
+            "message1": -48490028,
+            "message2": -84343027
         }
     }
 }

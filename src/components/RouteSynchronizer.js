@@ -100,7 +100,7 @@ const propTypes = {
     setRouteParams: PropTypes.func.isRequired,
 
     name: PropTypes.string.isRequired,
-    path: PropTypes.string.isRequired,
+    path: PropTypes.string,
 
     projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
@@ -109,6 +109,7 @@ const defaultProps = {
     activeProjectId: undefined,
     activeCountryId: undefined,
     projectRole: {},
+    path: '',
 };
 
 const mapStateToProps = state => ({
