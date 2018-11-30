@@ -7,6 +7,7 @@ import boundError from '#rscg/BoundError';
 import Bundle from '#rscg/Bundle';
 import withTracker from '#rscg/withTracker';
 import {
+    isParamRequired,
     reverseRoute,
 } from '#rsu/common';
 
@@ -26,27 +27,12 @@ import _ts from '#ts';
 
 const ErrorBoundBundle = boundError(AppError)(Bundle);
 
-const Page = ({ name, disabled, ...otherProps }) => {
-    // NOTE: don't show page if it is disabled as well
-    if (disabled) {
-        return <PageError />;
-    }
+// TODO: show different error 403 error if no project
+const PageError = ({ noProjectPermission }) => {
+    const name = noProjectPermission
+        ? 'fourHundredThree'
+        : 'projectDenied';
 
-    return (
-        <Fragment>
-            <Helmet>
-                <meta charSet="utf-8" />
-                <title>
-                    { _ts('pageTitle', name) }
-                </title>
-            </Helmet>
-            <ErrorBoundBundle name={name} {...otherProps} />
-        </Fragment>
-    );
-};
-
-const PageError = () => {
-    const name = 'fourHundredThree';
     return (
         <Fragment>
             <Helmet>
@@ -58,6 +44,31 @@ const PageError = () => {
             <ErrorBoundBundle
                 load={routes[name].loader}
             />
+        </Fragment>
+    );
+};
+PageError.propTypes = {
+    noProjectPermission: PropTypes.bool,
+};
+PageError.defaultProps = {
+    noProjectPermission: false,
+};
+
+const Page = ({ name, disabled, noProjectPermission, ...otherProps }) => {
+    // NOTE: don't show page if it is disabled as well
+    if (disabled) {
+        return <PageError noProjectPermission={noProjectPermission} />;
+    }
+
+    return (
+        <Fragment>
+            <Helmet>
+                <meta charSet="utf-8" />
+                <title>
+                    { _ts('pageTitle', name) }
+                </title>
+            </Helmet>
+            <ErrorBoundBundle name={name} {...otherProps} />
         </Fragment>
     );
 };
@@ -84,6 +95,7 @@ const propTypes = {
     setRouteParams: PropTypes.func.isRequired,
 
     name: PropTypes.string.isRequired,
+    path: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -234,8 +246,16 @@ class RouteSynchronizer extends React.PureComponent {
         const {
             name,
             match, // eslint-disable-line no-unused-vars
+            path,
+            projectRole,
             ...otherProps
         } = this.props;
+
+        const {
+            setupPermissions = {},
+        } = projectRole;
+
+        const noProjectPermission = isParamRequired(path, 'projectId') && !setupPermissions.view;
 
         if (!viewsAcl[name]) {
             console.warn('No access control for view', name);
@@ -247,10 +267,13 @@ class RouteSynchronizer extends React.PureComponent {
                 render={
                     <Page
                         name={name}
+                        noProjectPermission={noProjectPermission}
                         {...otherProps}
                     />
                 }
-                renderOnHide={<PageError />}
+                renderOnHide={
+                    <PageError noProjectPermission={noProjectPermission} />
+                }
             />
         );
     }

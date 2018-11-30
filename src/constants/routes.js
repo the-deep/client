@@ -289,6 +289,14 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'visualization');
 
+    projectDenied: {
+        order: 970,
+        type: ROUTE.public,
+        path: '/project-denied/',
+        loader: () => import('../views/ProjectDenied'),
+        hideNavbar: false,
+        links: allLinks,
+    }, // _ts('pageTitle', 'fourHundredThree');
     fourHundredThree: {
         order: 980,
         type: ROUTE.public,
