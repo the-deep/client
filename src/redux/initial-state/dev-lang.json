@@ -861,7 +861,8 @@
         "-68148611": "You are about to delete your project, {title}. This action cannot be undone.",
         "-2414762": "If you would like to proceed, please enter the name of the project below.",
         "-72636032": "Project Delete",
-        "-73810799": "Once you delete this project there is no going back. Please be certain."
+        "-73810799": "Once you delete this project there is no going back. Please be certain.",
+        "-14675920": "Are you sure you want to leave? Any unsaved changes will be lost."
     },
     "links": {
         "browserExtension": {
@@ -927,18 +928,23 @@
             "widgetTitlePlaceholder": 13,
             "titleLabel": 13,
             "saveButtonLabel": 25,
-            "cancelButtonLabel": 61
+            "cancelButtonLabel": 61,
+            "cancelConfirmMessage": -14675920
         },
         "widgets.editor.default": {
             "widgetTitlePlaceholder": 13,
-            "titleLabel": 13
+            "titleLabel": 13,
+            "cancelConfirmMessage": -14675920,
+            "cancelButtonLabel": 61,
+            "saveButtonLabel": 25
         },
         "widgets.editor.organigram": {
             "organigramStructureTitle": 774,
             "saveButtonLabel": 25,
             "cancelButtonLabel": 61,
             "titleLabel": 13,
-            "titlePlaceholderScale": 758
+            "titlePlaceholderScale": 758,
+            "cancelConfirmMessage": -14675920
         },
         "widgets.editor.scale": {
             "addOptionButtonLabel": 760,
@@ -952,7 +958,8 @@
             "titleLabel": 13,
             "requiredErrorMessage": 1007,
             "duplicateErrorMessage": 1008,
-            "defaultLabel": -82545000
+            "defaultLabel": -82545000,
+            "cancelConfirmMessage": -14675920
         },
         "widgets.tagging.matrix2d": {
             "subsectorsLabel": 7039
@@ -2172,7 +2179,8 @@
             "numberPlaceholder": 768,
             "maxValueLabel": -86245438,
             "minValueLabel": -56080300,
-            "minGreaterThanMaxError": -11395011
+            "minGreaterThanMaxError": -11395011,
+            "cancelConfirmMessage": -14675920
         },
         "widgets.editor.numberMatrix": {
             "addColumnUnitButtonLabel": 751,
@@ -2186,7 +2194,8 @@
             "removeOptionButtonTitle": -44749689,
             "optionLabel": -80421535,
             "atLeastOneError": 1007,
-            "duplicationError": 1008
+            "duplicationError": 1008,
+            "cancelConfirmMessage": -14675920
         },
         "widgets.editor.multiselect": {
             "removeOptionButtonTitle": -44749689,
@@ -2196,7 +2205,10 @@
             "optionsHeader": 775,
             "titleLabel": 13,
             "addOptionButtonLabel": 301,
-            "widgetTitlePlaceholder": 13
+            "widgetTitlePlaceholder": 13,
+            "cancelConfirmMessage": -14675920,
+            "saveButtonLabel": 25,
+            "cancelButtonLabel": 61
         },
         "components.organigramCreator": {
             "addChildButtonTitle": 766,
@@ -2238,7 +2250,8 @@
             "tooltipLabel": 733,
             "unnamedCellTitle": -17919979,
             "removeCellButtonTitle": -53055304,
-            "addFromWidgets": -14972110
+            "addFromWidgets": -14972110,
+            "cancelConfirmMessage": -14675920
         },
         "widgets.editor.matrix2d": {
             "atLeastOneError": 1007,
@@ -2266,7 +2279,8 @@
             "subsectorsHeaderTitle": 7039,
             "unnamedSubsectorLabel": -13931386,
             "removeSubsectorButtonTooltip": -24172161,
-            "addFromWidgets": -14972110
+            "addFromWidgets": -14972110,
+            "cancelConfirmMessage": -14675920
         },
         "editEntry.list": {
             "noEntriesText": 543
@@ -2290,7 +2304,8 @@
             "frameworkWidgetsInfoText": -17190550,
             "invertLogicLabel": -48777298,
             "defaultWidgetLabel": -50025960,
-            "defaultWidgetPlaceholder": -38162962
+            "defaultWidgetPlaceholder": -38162962,
+            "cancelConfirmMessage": -14675920
         },
         "widgets.editor.link": {
             "cancelButtonLabel": 61,
@@ -2300,7 +2315,8 @@
             "optionsTypeSelectionLabel": 21,
             "widgetSelectionLabel": -31256073,
             "rootNodeLabel": 5552,
-            "addFromGeoLabel": -50186668
+            "addFromGeoLabel": -50186668,
+            "cancelConfirmMessage": -14675920
         },
         "components.backLink": {
             "backButtonTooltip": -1045504

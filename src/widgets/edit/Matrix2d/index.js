@@ -3,7 +3,7 @@ import React from 'react';
 
 import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
-import DangerButton from '#rsca/Button/DangerButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
@@ -176,7 +176,8 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                 sectors,
             },
             faramErrors: {},
-            pristine: false,
+            pristine: true,
+            hasError: false,
             showLinkModal: false,
             showNestedLinkModal: false,
 
@@ -290,18 +291,19 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         };
     }
 
-    handleFaramChange = (faramValues, faramErrors) => {
+    handleFaramChange = (faramValues, faramErrors, faramInfo) => {
         this.setState({
             faramValues,
             faramErrors,
-            pristine: true,
+            pristine: false,
+            hasError: faramInfo.hasError,
         });
     };
 
     handleFaramValidationFailure = (faramErrors) => {
         this.setState({
             faramErrors,
-            pristine: false,
+            hasError: true,
         });
     };
 
@@ -545,6 +547,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             faramValues,
             faramErrors,
             pristine,
+            hasError,
             selectedTab,
             showLinkModal,
             showNestedLinkModal,
@@ -595,12 +598,16 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                         />
                     </ModalBody>
                     <ModalFooter>
-                        <DangerButton onClick={onClose}>
+                        <DangerConfirmButton
+                            onClick={onClose}
+                            confirmationMessage={_ts('widgets.editor.matrix2d', 'cancelConfirmMessage')}
+                            skipConfirmation={pristine}
+                        >
                             {_ts('widgets.editor.matrix2d', 'cancelButtonLabel')}
-                        </DangerButton>
+                        </DangerConfirmButton>
                         <PrimaryButton
                             type="submit"
-                            disabled={!pristine}
+                            disabled={pristine || hasError}
                         >
                             {_ts('widgets.editor.matrix2d', 'saveButtonLabel')}
                         </PrimaryButton>

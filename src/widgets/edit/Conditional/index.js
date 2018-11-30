@@ -4,7 +4,7 @@ import React from 'react';
 import FaramList from '#rscg/FaramList';
 import ListView from '#rscv/List/ListView';
 import SortableListView from '#rscv/SortableListView';
-import DangerButton from '#rsca/Button/DangerButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -83,7 +83,8 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                 title,
                 ...data,
             },
-            pristine: false,
+            pristine: true,
+            hasError: false,
             disableEverything: false,
         };
 
@@ -92,18 +93,19 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         );
     }
 
-    handleFaramChange = (faramValues, faramErrors) => {
+    handleFaramChange = (faramValues, faramErrors, faramInfo) => {
         this.setState({
             faramValues,
             faramErrors,
-            pristine: true,
+            pristine: false,
+            hasError: faramInfo.hasError,
         });
     }
 
     handleFaramValidationFailure = (faramErrors) => {
         this.setState({
             faramErrors,
-            pristine: false,
+            hasError: true,
         });
     }
 
@@ -153,6 +155,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
             faramValues,
             faramErrors,
             pristine,
+            hasError,
             disableEverything,
         } = this.state;
 
@@ -167,6 +170,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         const saveButtonLabel = _ts('widgets.editor.conditional', 'saveButtonLabel');
         const widgetsTitle = _ts('widgets.editor.conditional', 'widgetsTitle');
         const addedWidgetsTitle = _ts('widgets.editor.conditional', 'addedWidgetsTitle');
+        const cancelConfirmMessage = _ts('widgets.editor.conditional', 'cancelConfirmMessage');
 
         const widgetsHeaderInfo = _ts('widgets.editor.conditional', 'supportedWidgetsInfoText');
         const addedWidgetsHeaderInfo = _ts('widgets.editor.conditional', 'addedWidgetsHeaderInfoText');
@@ -250,12 +254,16 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <DangerButton onClick={onClose}>
+                        <DangerConfirmButton
+                            onClick={onClose}
+                            confirmationMessage={cancelConfirmMessage}
+                            skipConfirmation={pristine}
+                        >
                             {cancelButtonLabel}
-                        </DangerButton>
+                        </DangerConfirmButton>
                         <PrimaryButton
                             type="submit"
-                            disabled={!pristine}
+                            disabled={pristine || hasError}
                         >
                             {saveButtonLabel}
                         </PrimaryButton>

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import DangerButton from '#rsca/Button/DangerButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
@@ -53,21 +53,24 @@ export default class Organigram extends React.PureComponent {
                 data,
             },
             faramErrors: {},
+            pristine: true,
+            hasError: false,
         };
     }
 
-    handleFaramChange = (faramValues, faramErrors) => {
+    handleFaramChange = (faramValues, faramErrors, faramInfo) => {
         this.setState({
             faramValues,
             faramErrors,
-            pristine: true,
+            pristine: false,
+            hasError: faramInfo.hasError,
         });
     };
 
     handleFaramValidationFailure = (faramErrors) => {
         this.setState({
             faramErrors,
-            pristine: false,
+            hasError: true,
         });
     };
 
@@ -84,6 +87,7 @@ export default class Organigram extends React.PureComponent {
             faramValues,
             faramErrors,
             pristine,
+            hasError,
         } = this.state;
         const {
             onClose,
@@ -95,6 +99,7 @@ export default class Organigram extends React.PureComponent {
         const cancelButtonLabel = _ts('widgets.editor.organigram', 'cancelButtonLabel');
         const saveButtonLabel = _ts('widgets.editor.organigram', 'saveButtonLabel');
         const organigramStructureTitle = _ts('widgets.editor.organigram', 'organigramStructureTitle');
+        const cancelConfirmMessage = _ts('widgets.editor.organigram', 'cancelConfirmMessage');
 
         return (
             <Modal className={styles.editModal}>
@@ -133,12 +138,16 @@ export default class Organigram extends React.PureComponent {
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <DangerButton onClick={onClose}>
+                        <DangerConfirmButton
+                            onClick={onClose}
+                            confirmationMessage={cancelConfirmMessage}
+                            skipConfirmation={pristine}
+                        >
                             {cancelButtonLabel}
-                        </DangerButton>
+                        </DangerConfirmButton>
                         <PrimaryButton
                             type="submit"
-                            disabled={!pristine}
+                            disabled={pristine || hasError}
                         >
                             {saveButtonLabel}
                         </PrimaryButton>

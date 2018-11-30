@@ -6,7 +6,7 @@ import memoize from 'memoize-one';
 import Faram from '#rscg/Faram';
 import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
-import DangerButton from '#rsca/Button/DangerButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SegmentInput from '#rsci/SegmentInput';
 import Modal from '#rscv/Modal';
@@ -93,6 +93,7 @@ class ConditionsEditModal extends React.PureComponent {
             faramValues: conditions,
             faramErrors: {},
             pristine: true,
+            hasError: false,
         };
     }
 
@@ -132,18 +133,19 @@ class ConditionsEditModal extends React.PureComponent {
         });
     }
 
-    handleFaramChange = (faramValues, faramErrors) => {
+    handleFaramChange = (faramValues, faramErrors, faramInfo) => {
         this.setState({
             faramValues,
             faramErrors,
             pristine: false,
+            hasError: faramInfo.hasError,
         });
     };
 
     handleFaramValidationFailure = (faramErrors) => {
         this.setState({
             faramErrors,
-            pristine: true,
+            hasError: true,
         });
     };
 
@@ -161,6 +163,7 @@ class ConditionsEditModal extends React.PureComponent {
             faramValues,
             faramErrors,
             pristine,
+            hasError,
         } = this.state;
 
         const widgetsTitle = _ts('widgets.editor.conditional', 'widgetsTitle');
@@ -169,6 +172,7 @@ class ConditionsEditModal extends React.PureComponent {
         const cancelLabel = _ts('widgets.editor.conditional', 'cancelButtonLabel');
         const saveLabel = _ts('widgets.editor.conditional', 'saveButtonLabel');
         const operatorSelectLabel = _ts('widgets.editor.conditional', 'operatorSelectLabel');
+        const cancelConfirmMessage = _ts('widgets.editor.conditional', 'cancelConfirmMessage');
 
         const widgetsHeaderInfo = _ts('widgets.editor.conditional', 'frameworkWidgetsInfoText');
 
@@ -238,12 +242,16 @@ class ConditionsEditModal extends React.PureComponent {
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <DangerButton onClick={onClose}>
+                        <DangerConfirmButton
+                            onClick={onClose}
+                            confirmationMessage={cancelConfirmMessage}
+                            skipConfirmation={pristine}
+                        >
                             {cancelLabel}
-                        </DangerButton>
+                        </DangerConfirmButton>
                         <PrimaryButton
                             type="submit"
-                            disabled={pristine}
+                            disabled={pristine || hasError}
                         >
                             {saveLabel}
                         </PrimaryButton>

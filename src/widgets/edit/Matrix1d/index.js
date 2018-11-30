@@ -8,7 +8,7 @@ import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 import NonFieldErrors from '#rsci/NonFieldErrors';
-import DangerButton from '#rsca/Button/DangerButton';
+import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
 import Faram, { requiredCondition } from '#rscg/Faram';
@@ -116,7 +116,8 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                 rows,
             },
             faramErrors: {},
-            pristine: false,
+            pristine: true,
+            hasError: false,
             showLinkModal: false,
             showNestedLinkModal: false,
 
@@ -126,18 +127,19 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         };
     }
 
-    handleFaramChange = (faramValues, faramErrors) => {
+    handleFaramChange = (faramValues, faramErrors, faramInfo) => {
         this.setState({
             faramValues,
             faramErrors,
-            pristine: true,
+            pristine: false,
+            hasError: faramInfo.hasError,
         });
     };
 
     handleFaramValidationFailure = (faramErrors) => {
         this.setState({
             faramErrors,
-            pristine: false,
+            hasError: true,
         });
     };
 
@@ -223,6 +225,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             faramValues,
             faramErrors,
             pristine,
+            hasError,
             showLinkModal,
             showNestedLinkModal,
         } = this.state;
@@ -329,12 +332,16 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <DangerButton onClick={onClose}>
+                        <DangerConfirmButton
+                            onClick={onClose}
+                            confirmationMessage={_ts('widgets.editor.matrix1d', 'cancelConfirmMessage')}
+                            skipConfirmation={pristine}
+                        >
                             {_ts('widgets.editor.matrix1d', 'cancelButtonLabel')}
-                        </DangerButton>
+                        </DangerConfirmButton>
                         <PrimaryButton
                             type="submit"
-                            disabled={!pristine}
+                            disabled={pristine || hasError}
                         >
                             {_ts('widgets.editor.matrix1d', 'saveButtonLabel')}
                         </PrimaryButton>
