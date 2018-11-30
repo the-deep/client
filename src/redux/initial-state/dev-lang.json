@@ -864,6 +864,7 @@
         "-73810799": "Once you delete this project there is no going back. Please be certain.",
         "-14675920": "Are you sure you want to leave? Any unsaved changes will be lost.",
         "-14456695": "{title} Overview",
+<<<<<<< HEAD
         "-86091592": "Looks like your project doesn't have any entries.",
         "-15556514": "Go to leads to add some entries.",
         "-21972443": "Looks like there are no entries that match your filtering criteria. Try changing what you're looking for and search again.",
@@ -885,7 +886,8 @@
         "-25265886": "All required",
         "-72702692": "Invalid range",
         "-10595927": "No users or usergoups found",
-        "-66757442": "Looks like you don’t have access to this project or it doesn’t exist! Please contact the project administrator to be added, or if you think this is a bug please notify the DEEP administrators using the Feedback button"
+        "-66757442": "Looks like you don’t have access to this project or it doesn’t exist! Please contact the project administrator to be added, or if you think this is a bug please notify the DEEP administrators using the Feedback button",
+        "-48490028": "Looks like you don’t have access to this project or it doesn’t exist!"
     },
     "links": {
         "browserExtension": {
@@ -1835,7 +1837,8 @@
             "projectDeleteSuccess": 913,
             "projectDeleteFailure": 915,
             "projectDelete": -72636032,
-            "projectDeleteInfoText": -73810799
+            "projectDeleteInfoText": -73810799,
+            "noProjectPermissionText": -48490028
         },
         "connector": {
             "noConnectorsLabel": 1115,
