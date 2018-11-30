@@ -9,7 +9,24 @@ $height-grid-layout: 50vh;
     height: 100%;
 
     .widget-list {
-        width: 30%;
+        overflow: auto;
+
+        :global {
+            .widget-list-item {
+                display: inline-flex;
+                margin: $spacing-extra-small;
+                border: $width-separator-thin solid $color-separator;
+            }
+
+            .widget-list-group + .widget-list-item {
+                margin-left: $spacing-medium;
+                border: $width-separator-thin solid $color-separator;
+            }
+
+            .widget-list-group {
+                background-color: transparent;
+            }
+        }
     }
 
     .grid-layout-wrapper {

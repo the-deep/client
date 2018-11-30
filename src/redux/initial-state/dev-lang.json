@@ -323,7 +323,7 @@
         "720": "Add cell",
         "723": "Matrix 2D",
         "733": "Tooltip",
-        "737": "Dropdown List (Multiple Selection)",
+        "737": "Multiple Selection",
         "742": "Number matrix",
         "748": "Rows",
         "749": "Add row",
@@ -781,7 +781,7 @@
         "-86245438": "Max value (optional)",
         "-18776228": "Just me",
         "-84222321": "All project members",
-        "-78389530": "Dropdown List (Single Selection)",
+        "-78389530": "Single Selection",
         "-35292998": "I want to receive approval notifications by email for when other users request to join my projects",
         "-63441199": "I want to receive news and updates from DEEP",
         "-43376795": "Failed to fetch cluster data.",
@@ -873,7 +873,12 @@
         "-97447888": "Looks like your project doesn't have any assessments.",
         "-52524002": "Add some assessments from the lead page to get started.",
         "-7027140": "Looks like there are no projects that match your filtering criteria. Try changing what you're looking for and search again.",
-        "-5727164": "Looks like there are no projects right now to discover. Why not add one?"
+        "-5727164": "Looks like there are no projects right now to discover. Why not add one?",
+        "-18730432": "Matrices",
+        "-33584850": "Time and Date",
+        "-57850283": "Others",
+        "-52135328": "Dropdowns",
+        "-4183681": "Swap values"
     },
     "links": {
         "browserExtension": {
@@ -1246,7 +1251,8 @@
         },
         "widgets.tagging.dateRange": {
             "fromLabel": 1009,
-            "toLabel": 1000
+            "toLabel": 1000,
+            "swapButtonTitle": -4183681
         },
         "editAssessment": {
             "metadataTabLabel": 7001,
@@ -2386,7 +2392,8 @@
         },
         "widgets.tagging.timeRange": {
             "fromLabel": 1009,
-            "toLabel": 1000
+            "toLabel": 1000,
+            "swapButtonTitle": -4183681
         },
         "widgets.view.timeRange": {
             "toLabel": 1000
@@ -2405,6 +2412,14 @@
             "errorThreeHundredThree": -17483186,
             "backToDeep": 874,
             "message1": -83729493
+        },
+        "widgetGroupTitle": {
+            "matricesGroupLabel": -18730432,
+            "temporalsGroupLabel": -33584850,
+            "miscGroupLabel": -57850283,
+            "selectionsGroupLabel": -52135328,
+            "conditionalsGroupLabel": -86548021,
+            "excerptsGroupLabel": 514
         }
     }
 }

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import ListView from '#rscv/List/ListView';
 import { randomString } from '#rsu/common';
 
+import { widgetGroups } from '#widgets';
 import { addAfViewWidgetAction } from '#redux';
 import _ts from '#ts';
 
@@ -34,6 +35,7 @@ export default class WidgetList extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static keySelector = widget => widget.widgetId;
+    static groupKeySelector = widget => widget.groupId;
 
     handleItemAdd = (widget) => {
         const {
@@ -46,7 +48,7 @@ export default class WidgetList extends React.PureComponent {
             widgetType,
         } = this.props;
 
-        // TODO: calculate new position appropriately
+        // TODO: calculate new appropriately while adding new widget
         const widgetInfo = {
             key: `${widgetType}-${widgetId}-${randomString(16)}`,
             widgetId,
@@ -59,6 +61,16 @@ export default class WidgetList extends React.PureComponent {
             widget: widgetInfo,
         });
     }
+
+    groupRendererParams = (groupKey) => {
+        const { title } = widgetGroups[groupKey];
+        const children = !title ? '' : _ts('widgetGroupTitle', title);
+        return {
+            children,
+        };
+    }
+
+    groupComparator = (a, b) => widgetGroups[a].order - widgetGroups[b].order;
 
     rendererParams = (key, widget) => ({
         widget,
@@ -88,6 +100,11 @@ export default class WidgetList extends React.PureComponent {
                     renderer={WidgetPreview}
                     keySelector={WidgetList.keySelector}
                     rendererParams={this.rendererParams}
+                    groupKeySelector={WidgetList.groupKeySelector}
+                    rendererClassName={`${styles.item} widget-list-item`}
+                    groupRendererParams={this.groupRendererParams}
+                    groupRendererClassName={`${styles.group} widget-list-group`}
+                    groupComparator={this.groupComparator}
                 />
             </div>
         );

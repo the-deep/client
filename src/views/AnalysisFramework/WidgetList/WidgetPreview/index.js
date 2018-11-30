@@ -29,9 +29,18 @@ export default class WidgetPreview extends React.PureComponent {
     }
 
     render() {
-        const { widget } = this.props;
+        const {
+            widget,
+            className: classNameFromProps,
+        } = this.props;
+
+        const className = `
+            ${classNameFromProps}
+            ${styles.widgetListItem}
+        `;
+
         return (
-            <div className={styles.widgetListItem}>
+            <div className={className}>
                 <div className={styles.title}>
                     {_ts('widgetTitle', widget.title)}
                 </div>

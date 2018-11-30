@@ -75,8 +75,45 @@ export const VIEW = {
 const editDecorator = boundError(FrameworkWidgetError);
 const decorator = boundError(WidgetError);
 
+export const widgetGroups = {
+    // NOTE: misc is a special kind of widgetGroup (should always be defined)
+    misc: {
+        // NOTE: used as _ts('widgetGroupTitle', 'miscGroupLabel')
+        title: 'miscGroupLabel',
+        order: 5,
+    },
+
+    excerpts: {
+        // NOTE: used as _ts('widgetGroupTitle', 'excerptsGroupLabel')
+        title: 'excerptsGroupLabel',
+        order: 1,
+    },
+    matrices: {
+        // NOTE: used as _ts('widgetGroupTitle', 'matricesGroupLabel')
+        title: 'matricesGroupLabel',
+        order: 2,
+    },
+    temporals: {
+        // NOTE: used as _ts('widgetGroupTitle', 'temporalsGroupLabel')
+        title: 'temporalsGroupLabel',
+        order: 3,
+    },
+    selections: {
+        // NOTE: used as _ts('widgetGroupTitle', 'selectionsGroupLabel')
+        title: 'selectionsGroupLabel',
+        order: 4,
+    },
+    conditionals: {
+        // NOTE: used as _ts('widgetGroupTitle', 'conditionalsGroupLabel')
+        title: 'conditionalsGroupLabel',
+        order: 6,
+    },
+};
+
 export const globalWidgets = {
     excerptWidget: {
+        groupId: 'excerpts',
+
         // NOTE: used as _ts('widgetTitle', 'excerptWidgetLabel')
         title: 'excerptWidgetLabel',
         editComponent: DefaultEditWidget,
@@ -91,7 +128,10 @@ export const globalWidgets = {
             viewComponent: ExcerptViewWidget,
         },
     },
+
     matrix1dWidget: {
+        groupId: 'matrices',
+
         // NOTE: used as _ts('widgetTitle', 'matrix1DWidgetLabel')
         title: 'matrix1DWidgetLabel',
         editComponent: Matrix1dEditWidget,
@@ -107,6 +147,8 @@ export const globalWidgets = {
         },
     },
     matrix2dWidget: {
+        groupId: 'matrices',
+
         // NOTE: used as _ts('widgetTitle', 'matrix2DWidgetLabel')
         title: 'matrix2DWidgetLabel',
         editComponent: Matrix2dEditWidget,
@@ -122,6 +164,8 @@ export const globalWidgets = {
         },
     },
     numberMatrixWidget: {
+        groupId: 'matrices',
+
         // NOTE: used as _ts('widgetTitle', 'numberMatrixWidgetLabel')
         title: 'numberMatrixWidgetLabel',
         editComponent: NumberMatrixEditWidget,
@@ -139,6 +183,8 @@ export const globalWidgets = {
 
 
     dateWidget: {
+        groupId: 'temporals',
+
         // NOTE: used as _ts('widgetTitle', 'dateWidgetLabel')
         title: 'dateWidgetLabel',
         editComponent: DefaultEditWidget,
@@ -155,6 +201,8 @@ export const globalWidgets = {
         },
     },
     timeWidget: {
+        groupId: 'temporals',
+
         // NOTE: used as _ts('widgetTitle', 'timeWidgetLabel')
         title: 'timeWidgetLabel',
         editComponent: DefaultEditWidget,
@@ -171,6 +219,8 @@ export const globalWidgets = {
         },
     },
     timeRangeWidget: {
+        groupId: 'temporals',
+
         // NOTE: used as _ts('widgetTitle', 'timeRangeWidgetLabel')
         title: 'timeRangeWidgetLabel',
         editComponent: DefaultEditWidget,
@@ -187,6 +237,8 @@ export const globalWidgets = {
         },
     },
     dateRangeWidget: {
+        groupId: 'temporals',
+
         // NOTE: used as _ts('widgetTitle', 'dateRangeWidgetLabel')
         title: 'dateRangeWidgetLabel',
         editComponent: DefaultEditWidget,
@@ -202,7 +254,10 @@ export const globalWidgets = {
             viewComponent: DateRangeViewWidget,
         },
     },
+
     numberWidget: {
+        groupId: 'misc',
+
         // NOTE: used as _ts('widgetTitle', 'numberWidgetLabel')
         title: 'numberWidgetLabel',
         editComponent: NumberEditWidget,
@@ -219,6 +274,8 @@ export const globalWidgets = {
         },
     },
     scaleWidget: {
+        groupId: 'misc',
+
         // NOTE: used as _ts('widgetTitle', 'scaleWidgetLabel')
         title: 'scaleWidgetLabel',
         editComponent: ScaleEditWidget,
@@ -235,6 +292,8 @@ export const globalWidgets = {
         },
     },
     geoWidget: {
+        groupId: 'misc',
+
         // NOTE: used as _ts('widgetTitle', 'geoWidgetLabel')
         title: 'geoWidgetLabel',
         editComponent: DefaultEditWidget,
@@ -251,6 +310,8 @@ export const globalWidgets = {
         },
     },
     organigramWidget: {
+        groupId: 'misc',
+
         // NOTE: used as _ts('widgetTitle', 'organigramWidgetLabel')
         title: 'organigramWidgetLabel',
         editComponent: OrganigramEditWidget,
@@ -266,7 +327,10 @@ export const globalWidgets = {
             viewComponent: OrganigramViewWidget,
         },
     },
+
     selectWidget: {
+        groupId: 'selections',
+
         // NOTE: used as _ts('widgetTitle', 'selectWidgetLabel')
         title: 'selectWidgetLabel',
         editComponent: MultiSelectEditWidget,
@@ -283,6 +347,8 @@ export const globalWidgets = {
         },
     },
     multiselectWidget: {
+        groupId: 'selections',
+
         // NOTE: used as _ts('widgetTitle', 'multiselectWidgetLabel')
         title: 'multiselectWidgetLabel',
         editComponent: MultiSelectEditWidget,
@@ -298,7 +364,10 @@ export const globalWidgets = {
             viewComponent: MultiSelectViewWidget,
         },
     },
+
     conditionalWidget: {
+        groupId: 'conditionals',
+
         // NOTE: used as _ts('widgetTitle', 'conditionalWidgetLabel')
         title: 'conditionalWidgetLabel',
         editComponent: ConditionalEditWidget,
@@ -328,12 +397,21 @@ const widgets = mapToMap(
             frameworkComponent,
             list,
             overview,
+            groupId = 'misc',
         } = widget;
 
         const prepareMinSize = ms => ({
             width: gridSize.width * ms.w,
             height: gridSize.height * ms.h,
         });
+
+        /*
+        let groupInfo = widgetGroups[groupId];
+        if (!groupInfo) {
+            console.error(`Undefined group ${groupId} for widget`);
+            groupInfo = widgetGroups.misc;
+        }
+        */
 
         const componentSettings = {
             initialLayout: { $set: {
@@ -351,11 +429,16 @@ const widgets = mapToMap(
             title: { $set: title },
             editComponent: { $set: editDecorator(editComponent) },
             frameworkComponent: { $set: frameworkComponent },
+            groupId: { $set: groupId },
 
             minSize: { $apply: prepareMinSize },
             tagComponent: { $apply: c => (c ? decorator(c) : undefined) },
             altTagComponent: { $apply: c => (c ? decorator(c) : undefined) },
             viewComponent: { $apply: c => (c ? decorator(c) : undefined) },
+
+            // groupOrder: { $set: groupInfo.order },
+            // groupTitle: { $set: groupInfo.title },
+            // groupId: { $setDefault: 'misc' },
         };
 
         const settings = {
