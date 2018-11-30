@@ -3,8 +3,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 
+import FaramGroup from '#rscg/FaramGroup';
 import GeoInput from '#components/GeoInput';
 import SelectInput from '#rsci/SelectInput';
+import MultiSelectInput from '#rsci/MultiSelectInput';
+import Checkbox from '#rsci/Checkbox';
 import NumberInput from '#rsci/NumberInput';
 import DateInput from '#rsci/DateInput';
 import TimeInput from '#rsci/TimeInput';
@@ -12,6 +15,7 @@ import TimeInput from '#rsci/TimeInput';
 import {
     afViewGeoOptionsSelector,
 } from '#redux';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -69,7 +73,6 @@ export default class ConditionAttribute extends React.PureComponent {
 
         if (attribute.type === 'select') {
             const options = getOptions(attribute, widgetData);
-
             return (
                 <SelectInput
                     className={styles.input}
@@ -81,6 +84,31 @@ export default class ConditionAttribute extends React.PureComponent {
                     labelSelector={attribute.labelSelector}
                     showHintAndError={false}
                 />
+            );
+        } else if (attribute.type === 'multiselect') {
+            const options = getOptions(attribute, widgetData);
+            return (
+                <FaramGroup
+                    key={attribute.key}
+                    faramElementName={attribute.key}
+                >
+                    <div className={styles.multiSelectContainer}>
+                        <MultiSelectInput
+                            className={styles.input}
+                            faramElementName="values"
+                            label={attribute.title}
+                            options={options}
+                            keySelector={attribute.keySelector}
+                            labelSelector={attribute.labelSelector}
+                            showHintAndError={false}
+                        />
+                        <Checkbox
+                            className={styles.input}
+                            faramElementName="testEvery"
+                            label={_ts('widgets.editor.conditional', 'testEveryTitle')}
+                        />
+                    </div>
+                </FaramGroup>
             );
         } else if (attribute.type === 'number') {
             return (

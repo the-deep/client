@@ -2,29 +2,49 @@
 
 .input-container {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    // border-left: $width-separator-thin solid $color-separator;
     background-color: $color-foreground;
-    padding: $spacing-small;
+    padding: $spacing-small $spacing-extra-small;
     width: 100%;
 
-    .title {
-        padding-right: $spacing-medium;
-    }
-
-    .invert-checkbox {
-        flex-shrink: 0;
-        margin-right: $spacing-small;
-        width: auto;
-        text-transform: uppercase;
-    }
-
-    .condition-attributes {
+    .header {
         display: flex;
-        flex-grow: 1;
-        padding-left: $spacing-small;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: $spacing-small;
+
+        .title {
+            font-weight: $font-weight-bold;
+        }
+
+        .right-container {
+            display: flex;
+            align-items: center;
+
+            .delete-button {
+                flex-shrink: 0;
+                font-size: $font-size-large;
+            }
+
+            .invert-checkbox {
+                flex-shrink: 0;
+                margin-right: $spacing-small;
+                width: auto;
+                text-transform: uppercase;
+            }
+        }
     }
 
-    .delete-button {
-        flex-shrink: 0;
+    .select-inputs {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+
+        .condition-attributes {
+            display: flex;
+            flex-grow: 1;
+            padding-left: $spacing-small;
+        }
     }
 }

@@ -878,7 +878,11 @@
         "-33584850": "Time and Date",
         "-57850283": "Others",
         "-52135328": "Dropdowns",
-        "-4183681": "Swap values"
+        "-4183681": "Swap values",
+        "-48777298": "Not",
+        "-50025960": "Default widget",
+        "-38162962": "No widget selected",
+        "-25265886": "All required"
     },
     "links": {
         "browserExtension": {
@@ -2335,7 +2339,9 @@
             "invertLogicLabel": -48777298,
             "defaultWidgetLabel": -50025960,
             "defaultWidgetPlaceholder": -38162962,
-            "cancelConfirmMessage": -14675920
+            "cancelConfirmMessage": -14675920,
+            "invertLogicLabel": -48777298,
+            "testEveryTitle": -25265886
         },
         "widgets.editor.link": {
             "cancelButtonLabel": 61,

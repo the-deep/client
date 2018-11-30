@@ -1,5 +1,6 @@
 import memoize from 'memoize-one';
 import { isFalsy } from '#rsu/common';
+import testMultiSelect from './testMultiSelect';
 
 const emptyObject = {};
 const emptyArray = [];
@@ -51,35 +52,38 @@ const getOrganigramOptions = memoize((widgetData) => {
 const isEqualTo = {
     title: 'Is equal to',
     attributes: [{
-        key: 'selection',
-        type: 'select',
+        key: 'selections',
+        type: 'multiselect',
         title: 'Value',
         options: getOrganigramOptions,
         keySelector: d => d.id,
         labelSelector: d => d.name,
     }],
-    test: ({ value = [] }, { selection }) => (
-        value.some(v => (v === selection))
+    test: ({ value = [] }, { selections }) => testMultiSelect(
+        selection => value.some(v => (v === selection)),
+        selections,
     ),
 };
 
 const isDescendentOf = {
     title: 'has descendent of',
     attributes: [{
-        key: 'selection',
-        type: 'select',
+        key: 'selections',
+        type: 'multiselect',
         title: 'has descendent of',
         options: getOrganigramOptions,
         keySelector: d => d.id,
         labelSelector: d => d.name,
     }],
-    test: ({ value = [] }, { selection }, widgetData) => (
-        value.some((v) => {
-            const { parents = [] } = getOrganigramOptions(widgetData)
-                .find(o => o.id === v) ||
-                emptyObject;
-            return parents.indexOf(selection) >= 0;
-        })
+    test: ({ value = [] }, { selections }, widgetData) => testMultiSelect(
+        selection =>
+            value.some((v) => {
+                const { parents = [] } = getOrganigramOptions(widgetData)
+                    .find(o => o.id === v) ||
+                    emptyObject;
+                return parents.indexOf(selection) >= 0;
+            }),
+        selections,
     ),
 };
 

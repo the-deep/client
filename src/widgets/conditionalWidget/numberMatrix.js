@@ -2,6 +2,7 @@ import {
     unique,
     isTruthy,
 } from '#rsu/common';
+import testMultiSelect from './testMultiSelect';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -17,33 +18,35 @@ const getOptionsForColumn = (widgetData = {}) => (
 const sameValuesInRow = {
     title: 'Same values in row',
     attributes: [{
-        key: 'row',
+        key: 'rows',
         title: 'Value',
-        type: 'select',
+        type: 'multiselect',
         options: getOptionsForRow,
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
-    test: ({ value = {} }, { row }, { columnHeaders = [] }) => {
-        const values = Object.values(value[row] || emptyObject).filter(v => isTruthy(v));
-        return columnHeaders.length === values.length && unique(values).length === 1;
-    },
+    test: ({ value = {} }, { rows }, { columnHeaders = [] }) =>
+        testMultiSelect((row) => {
+            const values = Object.values(value[row] || emptyObject).filter(v => isTruthy(v));
+            return columnHeaders.length === values.length && unique(values).length === 1;
+        }, rows),
 };
 
 const differentValuesInRow = {
     title: 'Different values in row',
     attributes: [{
-        key: 'row',
+        key: 'rows',
         title: 'Value',
-        type: 'select',
+        type: 'multiselect',
         options: getOptionsForRow,
         keySelector: d => d.key,
         labelSelector: d => d.title,
     }],
-    test: ({ value = {} }, { row }, { columnHeaders = [] }) => {
-        const values = Object.values(value[row] || emptyObject).filter(v => isTruthy(v));
-        return columnHeaders.length === values.length && unique(values).length > 1;
-    },
+    test: ({ value = {} }, { rows }, { columnHeaders = [] }) =>
+        testMultiSelect((row) => {
+            const values = Object.values(value[row] || emptyObject).filter(v => isTruthy(v));
+            return columnHeaders.length === values.length && unique(values).length > 1;
+        }, rows),
 };
 
 const hasValue = {

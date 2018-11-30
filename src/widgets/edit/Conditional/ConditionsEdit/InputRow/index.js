@@ -82,43 +82,51 @@ export default class ConditionsInputRow extends React.PureComponent {
 
         return (
             <div className={styles.inputContainer}>
-                <FaramGroup faramElementName={String(index)} >
+                <div className={styles.header} >
                     <div className={styles.title}>
                         {widgetData.title}
                     </div>
-                    <SelectInput
-                        hideClearButton
-                        keySelector={ConditionsInputRow.conditionTypeKeySelector}
-                        labelSelector={ConditionsInputRow.conditionTypeLabelSelector}
-                        options={this.conditionTypes}
-                        label={_ts('widgets.editor.conditional', 'conditionTypeLabel')}
-                        placeholder={_ts('widgets.editor.conditional', 'conditionTypePlaceholder')}
-                        faramElementName="conditionType"
-                        showHintAndError={false}
-                    />
-                    <FaramGroup faramElementName="attributes" >
-                        <ListView
-                            className={styles.conditionAttributes}
-                            data={this.attributes}
-                            keySelector={ConditionsInputRow.attributeKeySelector}
-                            renderer={Attribute}
-                            rendererParams={this.attributeRendererParams}
+                    <div className={styles.rightContainer}>
+                        <FaramGroup faramElementName={String(index)} >
+                            <Checkbox
+                                className={styles.invertCheckbox}
+                                faramElementName="invertLogic"
+                                label={_ts('widgets.editor.conditional', 'invertLogicLabel')}
+                            />
+                        </FaramGroup>
+                        <DangerButton
+                            className={styles.deleteButton}
+                            iconName={iconNames.delete}
+                            title={_ts('widgets.editor.conditional', 'removeOptionButtonTitle')}
+                            faramAction={deleteClick}
+                            faramElementName={index}
+                            transparent
                         />
-                    </FaramGroup>
-                    <Checkbox
-                        className={styles.invertCheckbox}
-                        faramElementName="invertLogic"
-                        label={_ts('widgets.editor.conditional', 'invertLogicLabel')}
-                    />
+                    </div>
+                </div>
+                <FaramGroup faramElementName={String(index)} >
+                    <div className={styles.selectInputs}>
+                        <SelectInput
+                            hideClearButton
+                            keySelector={ConditionsInputRow.conditionTypeKeySelector}
+                            labelSelector={ConditionsInputRow.conditionTypeLabelSelector}
+                            options={this.conditionTypes}
+                            label={_ts('widgets.editor.conditional', 'conditionTypeLabel')}
+                            placeholder={_ts('widgets.editor.conditional', 'conditionTypePlaceholder')}
+                            faramElementName="conditionType"
+                            showHintAndError={false}
+                        />
+                        <FaramGroup faramElementName="attributes" >
+                            <ListView
+                                className={styles.conditionAttributes}
+                                data={this.attributes}
+                                keySelector={ConditionsInputRow.attributeKeySelector}
+                                renderer={Attribute}
+                                rendererParams={this.attributeRendererParams}
+                            />
+                        </FaramGroup>
+                    </div>
                 </FaramGroup>
-                <DangerButton
-                    className={styles.deleteButton}
-                    iconName={iconNames.delete}
-                    title={_ts('widgets.editor.conditional', 'removeOptionButtonTitle')}
-                    faramAction={deleteClick}
-                    faramElementName={index}
-                    transparent
-                />
             </div>
         );
     }
