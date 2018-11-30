@@ -6,12 +6,16 @@ import {
     Redirect,
 } from 'react-router-dom';
 
+import Message from '#rscv/Message';
 import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
-import { reverseRoute } from '#rsu/common';
+import {
+    reverseRoute,
+    isObjectEmpty,
+} from '#rsu/common';
 
 import Cloak from '#components/Cloak';
 import { iconNames, pathNames } from '#constants/';
@@ -39,6 +43,8 @@ import {
     patchLeadAction,
 } from '#redux';
 import _ts from '#ts';
+import noSearch from '#resources/img/no-search.png';
+import noFilter from '#resources/img/no-filter.png';
 
 import ActionButtons from './ActionButtons';
 import FilterLeadsForm from './FilterLeadsForm';
@@ -526,6 +532,46 @@ export default class Leads extends React.PureComponent {
         );
     }
 
+    renderEmpty = () => {
+        const isFilterEmpty = isObjectEmpty(this.props.filters);
+
+        if (!isFilterEmpty) {
+            return (
+                <Message
+                    className={styles.emptyFilterMessage}
+                >
+                    <img
+                        className={styles.image}
+                        src={noFilter}
+                        alt=""
+                    />
+                    <span>{_ts('leads', 'emptyWithFilterMessage')}</span>
+                </Message>
+            );
+        }
+
+        return (
+            <Message
+                className={styles.emptyMessage}
+            >
+                <img
+                    className={styles.image}
+                    src={noSearch}
+                    alt=""
+                />
+                <span>
+                    {_ts('leads', 'emptyMessage', {
+                        addLeadButtonLabel: (
+                            <strong>
+                                {_ts('leads', 'addSourcesButtonLabel')}
+                            </strong>
+                        ),
+                    })}
+                </span>
+            </Message>
+        );
+    }
+
     render() {
         const {
             loadingLeads,
@@ -557,6 +603,7 @@ export default class Leads extends React.PureComponent {
                             onHeaderClick={this.handleTableHeaderClick}
                             keySelector={Leads.leadKeyExtractor}
                             className={styles.leadsTable}
+                            emptyComponent={this.renderEmpty}
                         />
                         { loadingLeads && <LoadingAnimation large /> }
                     </div>

@@ -64,6 +64,7 @@ $width-assignee-column: 96px;
 
         .scroll-wrapper {
             flex-grow: 1;
+            height: 100%;
             overflow: auto;
 
             .leads-table {
@@ -155,6 +156,22 @@ $width-assignee-column: 96px;
                         text-align: right;
                     }
                 }
+            }
+        }
+
+        .empty-message, .empty-filter-message {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+
+            .image {
+                opacity: 0.3;
+                margin: $spacing-large 0;
+                width: $width-icon-extreme-large;
+                height: $width-icon-extreme-large;
             }
         }
     }

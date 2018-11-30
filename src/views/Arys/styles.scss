@@ -43,6 +43,7 @@
         margin: $spacing-small-alt;
         border: $width-separator-thin solid $color-separator-alt;
         padding-bottom: $spacing-extra-small;
+        height: 100%;
         overflow-y: auto;
 
         .arys-table {
@@ -76,6 +77,26 @@
                 }
             }
         }
+
+        .empty-message, .empty-filter-message {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+
+            .image {
+                opacity: 0.3;
+                margin: $spacing-large 0;
+                width: $width-icon-extreme-large;
+                height: $width-icon-extreme-large;
+            }
+
+            .empty-link-message {
+                margin: $spacing-medium 0;
+                text-transform: none;
+                color: $color-accent;
+            }
+        }
     }
 
     .footer {
@@ -92,3 +113,5 @@
         }
     }
 }
+
+

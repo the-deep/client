@@ -3,9 +3,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Link } from 'react-router-dom';
-import { reverseRoute } from '#rsu/common';
 import { pathNames } from '#constants/';
+import {
+    reverseRoute,
+    isObjectEmpty,
+} from '#rsu/common';
 
+import Message from '#rscv/Message';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
 import Pager from '#rscv/Pager';
@@ -32,6 +36,8 @@ import {
 } from '#redux';
 
 import _ts from '#ts';
+import noSearch from '#resources/img/no-search.png';
+import noFilter from '#resources/img/no-filter.png';
 
 import ProjectListRequest from './requests/ProjectListRequest';
 import ProjectJoinRequest from './requests/ProjectJoinRequest';
@@ -380,11 +386,51 @@ export default class DiscoverProjects extends React.PureComponent {
         );
     }
 
+    renderEmpty = () => {
+        const isFilterEmpty = isObjectEmpty(this.props.filters);
+
+        if (!isFilterEmpty) {
+            return (
+                <Message
+                    className={styles.emptyFilterMessage}
+                >
+                    <img
+                        className={styles.image}
+                        src={noFilter}
+                        alt=""
+                    />
+                    <span>{_ts('discoverProjects.table', 'emptyWithFilterMessage')}</span>
+                </Message>
+            );
+        }
+
+        return (
+            <Message
+                className={styles.emptyMessage}
+            >
+                <img
+                    className={styles.image}
+                    src={noSearch}
+                    alt=""
+                />
+                <span>{_ts('discoverProjects.table', 'emptyMessage')}</span>
+            </Message>
+        );
+    }
+
     render() {
         const { projectList } = this.props;
-        const { pendingProjectList, pendingProjectJoin, pendingProjectJoinCancel } = this.state;
+        const {
+            pendingProjectList,
+            pendingProjectJoin,
+            pendingProjectJoinCancel,
+        } = this.state;
 
-        const pending = pendingProjectList || pendingProjectJoin || pendingProjectJoinCancel;
+        const pending = (
+            pendingProjectList ||
+            pendingProjectJoin ||
+            pendingProjectJoinCancel
+        );
 
         const projectKeyExtractor = d => d.id;
 
@@ -404,6 +450,7 @@ export default class DiscoverProjects extends React.PureComponent {
                             onHeaderClick={this.handleTableHeaderClick}
                             keySelector={projectKeyExtractor}
                             className={styles.projectsTable}
+                            emptyComponent={this.renderEmpty}
                         />
                         { pending && <LoadingAnimation large /> }
                     </div>

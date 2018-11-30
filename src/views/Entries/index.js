@@ -2,9 +2,22 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
+import { Link } from 'react-router-dom';
+import { pathNames } from '#constants/';
+import {
+    reverseRoute,
+    isObjectEmpty,
+} from '#rsu/common';
+
+import Message from '#rscv/Message';
 import List from '#rscv/List';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
+
+import _ts from '#ts';
+import noSearch from '#resources/img/no-search.png';
+import noFilter from '#resources/img/no-filter.png';
+
 
 import {
     setEntriesAction,
@@ -39,6 +52,7 @@ const mapStateToProps = state => ({
     leadGroupedEntriesList: entriesForProjectSelector(state),
     projectId: projectIdFromRouteSelector(state),
     totalEntriesCount: totalEntriesCountForProjectSelector(state),
+    entriesFilters: entriesViewFilterSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -67,6 +81,7 @@ const propTypes = {
     setFramework: PropTypes.func.isRequired,
     setGeoOptions: PropTypes.func.isRequired,
     unsetEntriesViewFilter: PropTypes.func.isRequired,
+    entriesFilters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -207,6 +222,47 @@ export default class Entries extends React.PureComponent {
         });
     }
 
+    renderEmptyEntriesMessage = () => {
+        const {
+            projectId,
+            entriesFilters,
+        } = this.props;
+        const isFilterEmpty = isObjectEmpty(entriesFilters);
+
+        if (!isFilterEmpty) {
+            return (
+                <Message
+                    className={styles.emptyFilterMessage}
+                >
+                    <img
+                        className={styles.image}
+                        src={noFilter}
+                        alt=""
+                    />
+                    <span>{ _ts('entries', 'emptyEntriesForFilterMessage') }</span>
+                </Message>
+            );
+        }
+        return (
+            <Message
+                className={styles.emptyMessage}
+            >
+                <img
+                    className={styles.image}
+                    src={noSearch}
+                    alt=""
+                />
+                <span>{ _ts('entries', 'emptyEntriesMessage') }</span>
+                <Link
+                    className={styles.emptyLinkMessage}
+                    to={reverseRoute(pathNames.leads, { projectId })}
+                >
+                    { _ts('entries', 'emptyEntriesLinkMessage') }
+                </Link>
+            </Message>
+        );
+    }
+
     render() {
         const {
             leadGroupedEntriesList,
@@ -239,13 +295,17 @@ export default class Entries extends React.PureComponent {
                         ) : (
                             <Fragment>
                                 { nonBlockedLoading && <LoadingAnimation /> }
-                                <List
-                                    className={styles.leadGroupedEntriesList}
-                                    data={leadGroupedEntriesList}
-                                    renderer={LeadGroupedEntries}
-                                    keySelector={leadKeySelector}
-                                    rendererParams={this.rendererParams}
-                                />
+                                {
+                                    leadGroupedEntriesList.length > 0
+                                        ? <List
+                                            className={styles.leadGroupedEntriesList}
+                                            data={leadGroupedEntriesList}
+                                            renderer={LeadGroupedEntries}
+                                            keySelector={leadKeySelector}
+                                            rendererParams={this.rendererParams}
+                                        />
+                                        : this.renderEmptyEntriesMessage()
+                                }
                             </Fragment>
                         )
                     }

@@ -6,15 +6,20 @@ import {
     Link,
 } from 'react-router-dom';
 
+import Message from '#rscv/Message';
 import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
-import { reverseRoute } from '#rsu/common';
+import {
+    reverseRoute,
+    isObjectEmpty,
+} from '#rsu/common';
 
 import {
     activeProjectIdFromStateSelector,
+    projectIdFromRouteSelector,
 
     arysForProjectSelector,
     totalArysCountForProjectSelector,
@@ -29,6 +34,8 @@ import {
 import { pathNames } from '#constants/';
 import _ts from '#ts';
 
+import noSearch from '#resources/img/no-search.png';
+import noFilter from '#resources/img/no-filter.png';
 import ActionButtons from './ActionButtons';
 import FilterArysForm from './FilterArysForm';
 import ArysGetRequest from './requests/ArysGetRequest';
@@ -40,6 +47,7 @@ const propTypes = {
     filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     arys: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 
+    projectId: PropTypes.number.isRequired,
     activePage: PropTypes.number.isRequired,
     activeSort: PropTypes.string.isRequired,
     activeProject: PropTypes.number.isRequired,
@@ -58,6 +66,7 @@ const defaultProps = {
 const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
 
+    projectId: projectIdFromRouteSelector(state),
     arys: arysForProjectSelector(state),
     totalArysCount: totalArysCountForProjectSelector(state),
     activePage: aryPageActivePageSelector(state),
@@ -286,6 +295,48 @@ export default class Arys extends React.PureComponent {
         );
     }
 
+    renderEmpty = () => {
+        const {
+            filters,
+            projectId,
+        } = this.props;
+        const isFilterEmpty = isObjectEmpty(filters);
+
+        if (!isFilterEmpty) {
+            return (
+                <Message
+                    className={styles.emptyFilterMessage}
+                >
+                    <img
+                        className={styles.image}
+                        src={noFilter}
+                        alt=""
+                    />
+                    <span>{_ts('assessments', 'emptyWithFilterMessage')}</span>
+                </Message>
+            );
+        }
+
+        return (
+            <Message
+                className={styles.emptyMessage}
+            >
+                <img
+                    className={styles.image}
+                    src={noSearch}
+                    alt=""
+                />
+                <span>{ _ts('assessments', 'emptyMessage') }</span>
+                <Link
+                    className={styles.emptyLinkMessage}
+                    to={reverseRoute(pathNames.leads, { projectId })}
+                >
+                    { _ts('assessments', 'emptyLinkMessage') }
+                </Link>
+            </Message>
+        );
+    }
+
     render() {
         const {
             loadingArys,
@@ -317,6 +368,7 @@ export default class Arys extends React.PureComponent {
                         onHeaderClick={this.handleTableHeaderClick}
                         keySelector={this.aryKeyExtractor}
                         className={styles.arysTable}
+                        emptyComponent={this.renderEmpty}
                     />
                     { loadingArys && <LoadingAnimation large /> }
                 </div>
