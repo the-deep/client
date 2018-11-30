@@ -51,6 +51,7 @@ export default class PreferencesGet extends AbstractTask {
 
                     const activeProjectId = activeProjectIdFromStateSelector(store.getState());
                     if (isFalsy(activeProjectId)) {
+                        console.warn('Setting user projectId form memory', lastActiveProject);
                         store.dispatch(setActiveProjectAction({
                             activeProject: lastActiveProject,
                         }));

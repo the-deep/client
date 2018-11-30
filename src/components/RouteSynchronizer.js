@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
 
 import boundError from '#rscg/BoundError';
 import Bundle from '#rscg/Bundle';
@@ -151,15 +152,6 @@ class RouteSynchronizer extends React.PureComponent {
             });
         }
 
-        const newUrlParams = this.getNewUrlParams(nextProps);
-        if (newUrlParams) {
-            this.syncUrl(nextProps, newUrlParams);
-        } else {
-            this.syncState(nextProps);
-        }
-    }
-
-    getNewUrlParams = (nextProps) => {
         const {
             activeProjectId: oldProjectId,
             activeCountryId: oldCountryId,
@@ -169,28 +161,38 @@ class RouteSynchronizer extends React.PureComponent {
             activeProjectId: newProjectId,
             activeCountryId: newCountryId,
         } = nextProps;
-        const {
-            projectId,
-            countryId,
-        } = params;
 
-        const changed = (
-            (projectId && oldProjectId !== newProjectId) ||
-            (countryId && oldCountryId !== newCountryId)
+        const newUrlParams = this.getNewUrlParams(
+            oldProjectId,
+            oldCountryId,
+            newProjectId,
+            newCountryId,
         );
 
+        if (newUrlParams) {
+            this.syncUrl(nextProps, { ...params, ...newUrlParams });
+        } else {
+            this.syncState(nextProps);
+        }
+    }
+
+    getNewUrlParams = memoize((oldProjectId, oldCountryId, newProjectId, newCountryId) => {
+        const changed = (
+            (oldProjectId !== newProjectId) ||
+            (oldCountryId !== newCountryId)
+        );
         if (!changed) {
             return undefined;
         }
+
         return {
-            ...params,
             projectId: newProjectId,
             countryId: newCountryId,
         };
-    };
+    });
 
     syncUrl = (nextProps, newUrlParams) => {
-        const { history, match: { path } } = nextProps;
+        const { history, match: { path }, location: { hash } } = nextProps;
         const { location } = this.props;
         const newPath = reverseRoute(path, newUrlParams);
 
@@ -199,7 +201,7 @@ class RouteSynchronizer extends React.PureComponent {
             return;
         }
 
-        if (location.hash === nextProps.location.hash) {
+        if (location.hash === hash) {
             history.push({
                 ...location,
                 pathname: newPath,
@@ -243,11 +245,11 @@ class RouteSynchronizer extends React.PureComponent {
         }
 
         if (newMatchProjectId && oldActiveProjectId !== +newMatchProjectId) {
-            console.warn('Syncing state: projectId');
+            console.warn('Syncing state: projectId', +newMatchProjectId);
             newProps.setActiveProject({ activeProject: +newMatchProjectId });
         }
         if (newMatchCountryId && oldActiveCountryId !== +newMatchCountryId) {
-            console.warn('Syncing state: countryId');
+            console.warn('Syncing state: countryId', +newMatchCountryId);
             newProps.setActiveCountry({ activeCountry: +newMatchCountryId });
         }
     }

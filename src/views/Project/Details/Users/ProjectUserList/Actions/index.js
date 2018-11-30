@@ -65,8 +65,9 @@ const requests = {
                 projectId,
                 membershipId,
                 shouldRemoveProject,
-                newActiveProjectId: shouldRemoveProject ?
-                    getNewActiveProjectId(userProjects, projectId) : undefined,
+                newActiveProjectId: shouldRemoveProject
+                    ? getNewActiveProjectId(userProjects, projectId)
+                    : undefined,
             });
         },
     },

@@ -60,11 +60,13 @@ export const removeProjectMembershipAction = ({
     projectId,
     membershipId,
     shouldRemoveProject,
+    newActiveProjectId,
 }) => ({
     type: REMOVE_PROJECT_MEMBERSHIP,
     projectId,
     membershipId,
     shouldRemoveProject,
+    newActiveProjectId,
 });
 
 export const removeProjectUserGroupAction = ({ projectId, usergroupId }) => ({
@@ -303,7 +305,7 @@ export const unsetProject = (state, action) => {
         projectsView: { $auto: {
             $unset: [projectId],
         } },
-        activeProjectId: {
+        activeProject: {
             $set: newActiveProjectId,
         },
     };
