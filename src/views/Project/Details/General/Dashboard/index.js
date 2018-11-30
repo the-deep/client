@@ -45,6 +45,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const emptyObject = {};
+const emptyList = [];
 
 // TODO: Move to common utils
 // eslint-disable-next-line no-underscore-dangle
@@ -162,7 +163,7 @@ export default class ProjectDashboard extends React.PureComponent {
         const {
             projectRequest: {
                 response: {
-                    leadsActivity = [],
+                    leadsActivity = emptyList,
                 } = {},
             } = {},
         } = this.props;
@@ -189,7 +190,7 @@ export default class ProjectDashboard extends React.PureComponent {
         const {
             projectRequest: {
                 response: {
-                    entriesActivity = [],
+                    entriesActivity = emptyList,
                 } = {},
             } = {},
         } = this.props;
@@ -213,7 +214,7 @@ export default class ProjectDashboard extends React.PureComponent {
     }
 
     renderSourcers = () => {
-        const { projectDashboard: { topSourcers } } = this.props;
+        const { projectDashboard: { topSourcers = emptyList } } = this.props;
 
         return (
             <div className={styles.userTable}>
@@ -231,7 +232,7 @@ export default class ProjectDashboard extends React.PureComponent {
     }
 
     renderTaggers = () => {
-        const { projectDashboard: { topTaggers } } = this.props;
+        const { projectDashboard: { topTaggers = emptyList } } = this.props;
 
         return (
             <div className={styles.userTable}>
@@ -324,7 +325,7 @@ export default class ProjectDashboard extends React.PureComponent {
     )
 
     renderMap = () => {
-        const { projectDashboard: { regions } } = this.props;
+        const { projectDashboard: { regions = emptyList } } = this.props;
 
         if (regions.length === 0) {
             return (

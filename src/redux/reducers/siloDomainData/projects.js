@@ -10,6 +10,7 @@ export const ADD_PROJECT_MEMBERSHIP = 'siloDomainData/ADD_PROJECT_MEMBERSHIP';
 export const SET_PROJECT_USERGROUPS = 'siloDomainData/SET_PROJECT_USERGROUPS';
 export const ADD_PROJECT_USERGROUP = 'siloDomainData/ADD_PROJECT_USERGROUP';
 
+export const UNSET_PROJECT = 'siloDomainData/UNSET_PROJECT';
 export const REMOVE_PROJECT_MEMBERSHIP = 'siloDomainData/REMOVE_PROJECT_MEMBERSHIP';
 export const REMOVE_PROJECT_USERGROUP = 'siloDomainData/REMOVE_PROJECT_USERGROUP';
 export const MODIFY_PROJECT_MEMBERSHIP = 'siloDomainData/MODIFY_PROJECT_MEMBERSHIP';
@@ -55,10 +56,11 @@ export const setProjectUsergroupsAction = ({ usergroups, projectId }) => ({
     projectId,
 });
 
-export const removeProjectMembershipAction = ({ projectId, membershipId }) => ({
+export const removeProjectMembershipAction = ({ projectId, membershipId, removeProject }) => ({
     type: REMOVE_PROJECT_MEMBERSHIP,
     projectId,
     membershipId,
+    removeProject,
 });
 
 export const removeProjectUserGroupAction = ({ projectId, usergroupId }) => ({
@@ -98,6 +100,12 @@ export const setErrorProjectDetailsAction =
         faramErrors,
         projectId,
     });
+
+export const unsetProjectDetailsAction = ({ projectId }) => ({
+    type: UNSET_PROJECT,
+    projectId,
+});
+
 
 export const setProjectDetails = (state, action) => {
     const {
@@ -285,7 +293,17 @@ export const removeProjectMembership = (state, action) => {
     const {
         projectId,
         membershipId,
+        removeProject,
     } = action;
+
+    if (removeProject) {
+        const settings = {
+            projectsView: { $auto: {
+                $unset: [projectId],
+            } },
+        };
+        return update(state, settings);
+    }
 
     const settings = {
         projectsView: { $auto: {
@@ -352,6 +370,17 @@ export const modifyProjectUserGroup = (state, action) => {
     return update(state, settings);
 };
 
+export const unsetProject = (state, action) => {
+    const { projectId } = action;
+    const settings = {
+        projectsView: { $auto: {
+            $unset: [projectId],
+        } },
+    };
+    return update(state, settings);
+};
+
+
 const reducers = {
     [SET_PROJECT_DETAILS]: setProjectDetails,
     [SET_PROJECT_DASHBOARD_DETAILS]: setProjectDashboardDetails,
@@ -362,6 +391,7 @@ const reducers = {
     [SET_PROJECT_USERGROUPS]: setProjectUsergroups,
     [ADD_PROJECT_USERGROUP]: addProjectUsergroup,
 
+    [UNSET_PROJECT]: unsetProject,
     [REMOVE_PROJECT_MEMBERSHIP]: removeProjectMembership,
     [REMOVE_PROJECT_USERGROUP]: removeProjectUsergroup,
     [MODIFY_PROJECT_MEMBERSHIP]: modifyProjectMembership,

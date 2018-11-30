@@ -37,6 +37,7 @@ const projectMiniUrlFields = [
     'analysis_framework',
     'category_editor',
     'regions',
+    'member_status',
 ];
 export const urlForProjects = `${wsEndpoint}/projects/member-of/?${p({ fields: projectMiniUrlFields })}`;
 export const urlForProjectCreate = `${wsEndpoint}/projects/`;

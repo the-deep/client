@@ -3,6 +3,7 @@
 $width-min-inputs-container: 320px;
 $width-dashboard: 760px;
 $width-min-dashboard: 480px;
+$width-delete-button: 196px;
 
 .general {
     display: flex;
@@ -12,7 +13,11 @@ $width-min-dashboard: 480px;
     overflow-y: auto;
 
     .form {
+        display: flex;
         flex-basis: calc(calc(100% - #{$width-dashboard}) / 2);
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
 
         .inputs-container {
             min-width: $width-min-inputs-container;
@@ -52,11 +57,33 @@ $width-min-dashboard: 480px;
                 }
             }
         }
+
+        .bottom-container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-end;
+            padding: $spacing-medium;
+            background-color: $color-foreground-alt;
+            border-top: $width-separator-thin solid $color-separator;
+
+            .info {
+                color: $color-primary;
+            }
+
+            .info-text {
+                color: $color-text-disabled;
+                padding: 0 $spacing-medium 0 $spacing-small;
+            }
+
+            .delete-button {
+                width: $width-delete-button;
+            }
+        }
     }
 
     .dashboard {
         display: flex;
-        flex-basis: $width-dashboard;
+        width: $width-dashboard;
         border-right: $width-separator-thin solid $color-separator;
         border-left: $width-separator-thin solid $color-separator;
         min-width: $width-min-dashboard;
