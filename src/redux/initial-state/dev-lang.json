@@ -853,7 +853,7 @@
         "-99467671": "Couldn't find the widget.",
         "-65673584": "Error while trying to log in.",
         "-17483186": "Error 403",
-        "-83729493": "Oops! It looks like you don't have the permissions to view this page. Please contact the project adminstrator to grant you permission.",
+        "-83729493": "Looks like you don’t have the required permissions to view this page! Please contact your project administrator to be granted the needed rights, or if you think this is a bug please notify the DEEP administrators using the Feedback button",
         "-44264923": "403",
         "-48777298": "Not",
         "-50025960": "Default widget",
@@ -884,7 +884,8 @@
         "-38162962": "No widget selected",
         "-25265886": "All required",
         "-72702692": "Invalid range",
-        "-10595927": "No users or usergoups found"
+        "-10595927": "No users or usergoups found",
+        "-66757442": "Looks like you don’t have access to this project or it doesn’t exist! Please contact the project administrator to be added, or if you think this is a bug please notify the DEEP administrators using the Feedback button"
     },
     "links": {
         "browserExtension": {
@@ -1701,7 +1702,8 @@
             "clusterViz": 2999,
             "visualization": 3999,
             "workshop": -72172702,
-            "fourHundredThree": -44264923
+            "fourHundredThree": -44264923,
+            "projectDenied": -44264923
         },
         "project.general": {
             "projectNameLabel": 103,
@@ -2440,6 +2442,10 @@
         },
         "conditional.time": {
             "invalidRangeErrorMessage": -72702692
+        },
+        "projectDenied": {
+            "errorThreeHundredThree": -17483186,
+            "message1": -66757442
         }
     }
 }

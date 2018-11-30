@@ -22,16 +22,16 @@ import {
     setActiveProjectAction,
     setActiveCountryAction,
     setRouteParamsAction,
+    activeProjectRoleSelector,
 } from '#redux';
 import _ts from '#ts';
 
 const ErrorBoundBundle = boundError(AppError)(Bundle);
 
-// TODO: show different error 403 error if no project
 const PageError = ({ noProjectPermission }) => {
     const name = noProjectPermission
-        ? 'fourHundredThree'
-        : 'projectDenied';
+        ? 'projectDenied'
+        : 'fourHundredThree';
 
     return (
         <Fragment>
@@ -42,6 +42,7 @@ const PageError = ({ noProjectPermission }) => {
                 </title>
             </Helmet>
             <ErrorBoundBundle
+                key={name}
                 load={routes[name].loader}
             />
         </Fragment>
@@ -68,7 +69,11 @@ const Page = ({ name, disabled, noProjectPermission, ...otherProps }) => {
                     { _ts('pageTitle', name) }
                 </title>
             </Helmet>
-            <ErrorBoundBundle name={name} {...otherProps} />
+            <ErrorBoundBundle
+                {...otherProps}
+                name={name}
+                key={name}
+            />
         </Fragment>
     );
 };
@@ -96,14 +101,18 @@ const propTypes = {
 
     name: PropTypes.string.isRequired,
     path: PropTypes.string.isRequired,
+
+    projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     activeProjectId: undefined,
     activeCountryId: undefined,
+    projectRole: {},
 };
 
 const mapStateToProps = state => ({
+    projectRole: activeProjectRoleSelector(state),
     activeProjectId: activeProjectIdFromStateSelector(state),
     activeCountryId: activeCountryIdFromStateSelector(state),
 });
@@ -255,6 +264,7 @@ class RouteSynchronizer extends React.PureComponent {
             setupPermissions = {},
         } = projectRole;
 
+        // FIXME: do not depend on selectors using state
         const noProjectPermission = isParamRequired(path, 'projectId') && !setupPermissions.view;
 
         if (!viewsAcl[name]) {

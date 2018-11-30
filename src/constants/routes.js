@@ -296,7 +296,7 @@ export const routes = {
         loader: () => import('../views/ProjectDenied'),
         hideNavbar: false,
         links: allLinks,
-    }, // _ts('pageTitle', 'fourHundredThree');
+    }, // _ts('pageTitle', 'projectDenied');
     fourHundredThree: {
         order: 980,
         type: ROUTE.public,
