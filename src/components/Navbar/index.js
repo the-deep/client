@@ -41,6 +41,7 @@ import NavMenu from './NavMenu';
 import NavDrop from './NavDrop';
 import Community from './Community';
 import Notifica from './Notifica';
+import ZendeskHelpLink from './ZendeskHelpLink';
 import styles from './styles.scss';
 
 const mapStateToProps = state => ({
@@ -284,6 +285,9 @@ export default class Navbar extends React.PureComponent {
                 />
                 <Community className={styles.communityDropdown} />
                 <Notifica className={styles.notificationDropdown} />
+                <ZendeskHelpLink
+                    currentPath={this.currentPath}
+                />
                 <NavDrop
                     className={styles.userMenu}
                     links={this.validDropLinks}
