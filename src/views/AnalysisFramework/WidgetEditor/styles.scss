@@ -47,10 +47,7 @@
 
             .content {
                 position: relative;
-
-                &.disabled {
-                    background-color: $color-background-alt;
-                }
+                transition: 0.2s all ease-in-out;
 
                 .disabler-mask {
                     display: flex;
@@ -59,6 +56,8 @@
                     left: 0;
                     align-items: center;
                     justify-content: center;
+                    transition: 0.2s all ease-in-out;
+                    opacity: 0;
                     z-index: 0;
                     background-color: $color-background-alt;
                     padding: $spacing-small;
@@ -67,6 +66,16 @@
                     text-align: center;
                     color: $color-text-disabled;
                     pointer-events: none;
+                }
+
+                &:hover {
+                    &.disabled {
+                        background-color: $color-background;
+                    }
+
+                    .disabler-mask {
+                        opacity: 1;
+                    }
                 }
             }
 
