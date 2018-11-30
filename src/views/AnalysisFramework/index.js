@@ -13,7 +13,10 @@ import FixedTabs from '#rscv/FixedTabs';
 import Message from '#rscv/Message';
 import BackLink from '#components/BackLink';
 
-import { detachedFaram, requiredCondition } from '#rscg/Faram';
+import {
+    detachedFaram,
+    requiredCondition,
+} from '#rscg/Faram';
 
 import { VIEW } from '#widgets';
 import {

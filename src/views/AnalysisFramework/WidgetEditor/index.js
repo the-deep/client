@@ -118,11 +118,14 @@ export default class WidgetEditor extends React.PureComponent {
     }
 
     renderWidgetHeader = (widget) => {
-        const { title, widgetId, key, properties: { addedFrom } } = widget;
+        const {
+            title,
+            widgetId,
+            key,
+            properties: { addedFrom },
+        } = widget;
         const { widgetType } = this.props;
-
         const { editComponent: Widget } = fetchWidget(widgetType, widgetId);
-
         const hideButtons = shouldShowAltTagComponent(widgetId, widgetType, addedFrom);
 
         const layout = this.layoutSelector(widget);
@@ -177,8 +180,35 @@ export default class WidgetEditor extends React.PureComponent {
     }
 
     renderWidgetContent = (widget) => {
-        const { widgetId, id, properties: { addedFrom } } = widget;
+        const {
+            title,
+            widgetId,
+            id,
+            properties: {
+                addedFrom,
+                listGridLayout: {
+                    width = 0,
+                    height = 0,
+                } = {},
+            },
+        } = widget;
+
         const { widgetType } = this.props;
+
+        let disablerMaskText;
+        let fontSize;
+
+        const isDisabled = shouldShowAltTagComponent(widgetId, widgetType, addedFrom);
+        if (isDisabled) {
+            disablerMaskText = _ts('framework.widgetEditor', 'disablerMastText', { title });
+            fontSize = Math.min(
+                18,
+                Math.max(
+                    9,
+                    Math.round(width * Math.sqrt(height) * 0.006),
+                ),
+            );
+        }
 
         const Widget = fetchWidgetFrameworkComponent(
             widgetId,
@@ -186,8 +216,14 @@ export default class WidgetEditor extends React.PureComponent {
             addedFrom,
         );
 
+        const className = `
+            ${styles.content}
+            ${isDisabled ? styles.disabled : ''}
+        `;
+
+
         return (
-            <div className={styles.content}>
+            <div className={className}>
                 <FaramGroup faramElementName={String(id)}>
                     <FaramGroup faramElementName="data">
                         <Widget
@@ -203,6 +239,16 @@ export default class WidgetEditor extends React.PureComponent {
                         />
                     </FaramGroup>
                 </FaramGroup>
+                { isDisabled && (
+                    <div
+                        className={styles.disablerMask}
+                        style={{
+                            fontSize: `${fontSize}px`,
+                        }}
+                    >
+                        { disablerMaskText }
+                    </div>
+                )}
             </div>
         );
     }

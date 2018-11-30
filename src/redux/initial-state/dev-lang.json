@@ -862,7 +862,8 @@
         "-2414762": "If you would like to proceed, please enter the name of the project below.",
         "-72636032": "Project Delete",
         "-73810799": "Once you delete this project there is no going back. Please be certain.",
-        "-14675920": "Are you sure you want to leave? Any unsaved changes will be lost."
+        "-14675920": "Are you sure you want to leave? Any unsaved changes will be lost.",
+        "-14456695": "{title} Overview"
     },
     "links": {
         "browserExtension": {
@@ -2133,7 +2134,8 @@
             "editTooltip": -16964827,
             "deleteConfirmDetail": 6000,
             "deleteTooltip": -22182314,
-            "infoTooltip": -26255030
+            "infoTooltip": -26255030,
+            "disablerMastText": -14456695
         },
         "editEntry.list.widgetForm": {
             "applyAllButtonTitle": 130,
