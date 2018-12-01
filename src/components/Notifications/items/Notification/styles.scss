@@ -4,8 +4,11 @@ $size-default-icon: 48px;
 
 .notification {
     display: flex;
-    border-bottom: $width-separator-thin solid $color-separator;
     padding: $spacing-small 0;
+
+    &:not(:last-child) {
+        border-bottom: $width-separator-thin solid $color-separator;
+    }
 
     .left {
         flex-basis: $size-default-icon;

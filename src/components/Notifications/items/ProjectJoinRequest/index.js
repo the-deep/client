@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import {
+    RequestCoordinator,
+    RequestClient,
+    requestMethods,
+} from '#request';
 import { reverseRoute } from '#rsu/common';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -19,19 +24,97 @@ import styles from './styles.scss';
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     notification: PropTypes.object,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    projectJoinApproveRequest: PropTypes.object,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    projectJoinRejectRequest: PropTypes.object,
+
     className: PropTypes.string,
 };
 
 const defaultProps = {
     notification: {},
     className: '',
+    projectJoinApproveRequest: {},
+    projectJoinRejectRequest: {},
 };
 
 const REQUEST_PENDING = 'pending';
+const ROLE_DEFAULT = 'normal';
+const ROLE_ADMIN = 'admin';
 
+// TODO: show error message for request failure
+const requests = {
+    projectJoinApproveRequest: {
+        url: ({
+            params: {
+                projectId,
+                requestId,
+            },
+        }) => `/projects/${projectId}/requests/${requestId}/accept/`,
+        method: requestMethods.POST,
+        body: ({ params: { role } }) => ({ role }),
+        isUnique: true,
+    },
+    projectJoinRejectRequest: {
+        url: ({
+            params: {
+                projectId,
+                requestId,
+            },
+        }) => `/projects/${projectId}/requests/${requestId}/reject/`,
+        method: requestMethods.POST,
+        isUnique: true,
+    },
+};
+
+@RequestClient(requests)
 export default class ProjectJoinRequestItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    handleAddButtonClick = () => {
+        const {
+            notification: {
+                data: {
+                    id: requestId,
+                    project: { id: projectId },
+                },
+            },
+            projectJoinApproveRequest,
+        } = this.props;
+
+        projectJoinApproveRequest.do({
+            requestId,
+            projectId,
+            role: ROLE_DEFAULT,
+        });
+    }
+
+    handleAddAsAdminButtonClick = () => {
+        const {
+            notification: {
+                data: {
+                    id: requestId,
+                    project: { id: projectId },
+                },
+            },
+            projectJoinApproveRequest,
+        } = this.props;
+
+        projectJoinApproveRequest.do({
+            requestId,
+            projectId,
+            role: ROLE_ADMIN,
+        });
+    }
+
+    handleRejectButtonClick = () => {
+        const { projectJoinRejectRequest } = this.props;
+        projectJoinRejectRequest.do();
+    }
 
     render() {
         const {
@@ -51,11 +134,19 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                 },
                 timestamp,
             },
+            projectJoinApproveRequest: {
+                pending: pendingProjectJoinAcceptRequest,
+            },
+            projectJoinRejectRequest: {
+                pending: pendingProjectJoinRejectRequest,
+            },
         } = this.props;
 
         if (!projectId) {
             return null;
         }
+
+        const pending = pendingProjectJoinAcceptRequest || pendingProjectJoinAcceptRequest;
 
         const className = `
             ${classNameFromProps}
@@ -108,6 +199,7 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                     status === REQUEST_PENDING && (
                         <React.Fragment>
                             <SuccessButton
+                                disabled={pending}
                                 className={styles.button}
                                 iconName={iconNames.check}
                                 onClick={this.handleAddButtonClick}
@@ -116,6 +208,7 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                                 {_ts('notifications.projectJoinRequest', 'addButtonTitle')}
                             </SuccessButton>
                             <WarningButton
+                                disabled={pending}
                                 className={styles.button}
                                 iconName={iconNames.check}
                                 onClick={this.handleAddAsAdminButtonClick}
@@ -124,6 +217,7 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                                 {_ts('notifications.projectJoinRequest', 'addAsAdminButtonTitle')}
                             </WarningButton>
                             <DangerButton
+                                disabled={pending}
                                 className={styles.button}
                                 iconName={iconNames.close}
                                 onClick={this.handleRejectButtonClick}

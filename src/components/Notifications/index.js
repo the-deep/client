@@ -19,10 +19,12 @@ import ProjectJoinResponseItem from './items/ProjectJoinResponse';
 import styles from './styles.scss';
 
 const propTypes = {
-    notificationsGetRequest: PropTypes.object, // eslint-disable-line react/forbid-props-types
+    className: PropTypes.string,
+    notificationsGetRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
+    className: '',
     notificationsGetRequest: {},
 };
 
@@ -31,6 +33,12 @@ const requests = {
         url: '/notifications/',
         method: requestMethods.GET,
         onMount: true,
+        isUnique: true,
+        onSuccess: ({ props: { onRequestSuccess } }) => {
+            if (onRequestSuccess) {
+                onRequestSuccess();
+            }
+        },
     },
 };
 
@@ -50,17 +58,54 @@ const NotificationItem = ({ notification }) => {
     return null;
 };
 
+NotificationItem.propTypes = {
+    notification: PropTypes.shape({
+        notificationTypes: PropTypes.string,
+    }).isRequired,
+};
+
+
+const NotificationEmpty = () => (
+    <div className={styles.emptyComponent} >
+        {_ts('notifications', 'noNotificationsText')}
+    </div>
+);
+
 const notificationKeySelector = n => n.id;
 const notificationItemRendererParams = (_, d) => ({ notification: d });
 
 const emptyObject = {};
 const emptyList = [];
 
+const requestsToListen = [
+    'projectJoinApproveRequest',
+    'projectJoinRejectRequest',
+    'notificationsGetRequest',
+];
+
 @RequestCoordinator
-@RequestClient(requests)
+@RequestClient(requests, requestsToListen)
 export default class Notifications extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    componentWillReceiveProps(nextProps) {
+        const {
+            projectJoinApproveRequest: newProjectJoinApproveRequest,
+            projectJoinRejectRequest: newProjectJoinRejectRequest,
+            notificationsGetRequest,
+        } = nextProps;
+
+        const {
+            projectJoinApproveRequest: oldProjectJoinApproveRequest,
+            projectJoinRejectRequest: oldProjectJoinRejectRequest,
+        } = this.props;
+
+        if (newProjectJoinApproveRequest.pending !== oldProjectJoinApproveRequest.pending
+            || newProjectJoinRejectRequest.pending !== oldProjectJoinRejectRequest.pending) {
+            notificationsGetRequest.do();
+        }
+    }
 
     render() {
         const {
@@ -82,9 +127,9 @@ export default class Notifications extends React.PureComponent {
             <div className={className} >
                 {notificationsPending && <LoadingAnimation />}
                 <header className={styles.header} >
-                    <h3 className={styles.heading} >
+                    <h4 className={styles.heading} >
                         {_ts('notifications', 'notificationHeaderTitle')}
-                    </h3>
+                    </h4>
                 </header>
                 <ListView
                     className={styles.content}
@@ -92,6 +137,7 @@ export default class Notifications extends React.PureComponent {
                     keySelector={notificationKeySelector}
                     renderer={NotificationItem}
                     rendererParams={notificationItemRendererParams}
+                    emptyComponent={NotificationEmpty}
                 />
             </div>
         );

@@ -3,14 +3,14 @@
 .notifications {
     display: flex;
     flex-direction: column;
-    background-color: $color-foreground;
+    background-color: $color-foreground-alt;
 
     .header {
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        border-bottom: $width-separator-thin solid $color-separator;
-        padding: $spacing-medium;
+        background-color: $color-foreground;
+        padding: $spacing-medium-alt;
 
         .heading {
             flex-grow: 1;

@@ -25,7 +25,6 @@ const requests = {
     notificationCountRequest: {
         url: '/notifications/unseen-count/',
         method: requestMethods.GET,
-        query: () => ({ timestamp: (new Date()).getTime() }),
         onMount: true,
     },
 };
@@ -35,6 +34,21 @@ const requests = {
 export default class Notifica extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    componentDidMount() {
+        this.interval = setInterval(
+            () => {
+                const { notificationCountRequest } = this.props;
+                notificationCountRequest.abort();
+                notificationCountRequest.do();
+            },
+            8000,
+        );
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
 
     handleRequestSuccess = () => {
         const { notificationCountRequest } = this.props;
