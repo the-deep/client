@@ -1,0 +1,23 @@
+@import '~base-scss/base';
+
+.project-join-response-notification {
+    .display-picture {
+        width: 100%;
+        height: 100%;
+    }
+
+    .responder-name {
+        text-transform: none;
+        font-weight: $font-weight-bold;
+    }
+
+    .requestor-name {
+        text-transform: none;
+        font-weight: $font-weight-bold;
+    }
+
+    .project-title {
+        text-transform: none;
+        font-weight: $font-weight-bold;
+    }
+}

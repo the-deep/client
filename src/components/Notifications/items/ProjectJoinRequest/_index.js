@@ -37,6 +37,8 @@ const mapDispatchToProps = dispatch => ({
     setProjectJoinStatus: params => dispatch(setProjectJoinStatusAction(params)),
 });
 
+const emptyObject = {};
+
 @connect(null, mapDispatchToProps)
 export default class ProjectJoinItem extends React.PureComponent {
     static propTypes = propTypes;
@@ -79,11 +81,14 @@ export default class ProjectJoinItem extends React.PureComponent {
         e.preventDefault();
         e.stopPropagation();
 
-        const { data } = this.props;
         const {
-            id,
-            project = {},
-        } = data.details;
+            notification: {
+                data: {
+                    id,
+                    project = emptyObject,
+                } = emptyObject,
+            },
+        } = this.props;
 
         this.startProjectJoinResponseRequest(project.id, id, true, 'normal');
     }
@@ -92,11 +97,14 @@ export default class ProjectJoinItem extends React.PureComponent {
         e.preventDefault();
         e.stopPropagation();
 
-        const { data } = this.props;
         const {
-            id,
-            project = {},
-        } = data.details;
+            notification: {
+                data: {
+                    id,
+                    project = emptyObject,
+                } = emptyObject,
+            },
+        } = this.props;
 
         this.startProjectJoinResponseRequest(project.id, id, true, 'admin');
     }
@@ -104,21 +112,29 @@ export default class ProjectJoinItem extends React.PureComponent {
     handleRequestRejection = ({ event: e }) => {
         e.preventDefault();
         e.stopPropagation();
-        const { data } = this.props;
+
         const {
-            id,
-            project = {},
-        } = data.details;
+            notification: {
+                data: {
+                    id,
+                    project = emptyObject,
+                } = emptyObject,
+            },
+        } = this.props;
 
         this.startProjectJoinResponseRequest(project.id, id, false);
     }
 
     renderPendingDescription = () => {
-        const { data } = this.props;
         const {
-            project = {},
-            requestedBy,
-        } = data.details;
+            notification: {
+                data: {
+                    date,
+                    project = {},
+                    requestedBy,
+                },
+            },
+        } = this.props;
 
         return (
             <Fragment>
@@ -149,7 +165,7 @@ export default class ProjectJoinItem extends React.PureComponent {
                 <div className={styles.date} >
                     <span className={iconNames.calendar} />
                     <FormattedDate
-                        date={data.date}
+                        date={date}
                         mode="dd-MM-yyyy"
                     />
                 </div>
@@ -187,14 +203,18 @@ export default class ProjectJoinItem extends React.PureComponent {
     )
 
     renderRespondedDescription = () => {
-        const { data } = this.props;
         const {
-            project,
-            requestedBy,
-            respondedBy,
-            status,
-            role,
-        } = data.details;
+            notification: {
+                data: {
+                    date,
+                    project,
+                    requestedBy,
+                    respondedBy,
+                    status,
+                    role,
+                } = {},
+            },
+        } = this.props;
 
         let approvalText = 'rejectedText';
         if (status === 'accepted') {
@@ -246,7 +266,7 @@ export default class ProjectJoinItem extends React.PureComponent {
                         {_ts('notifications.projectJoin', 'date')}
                     </span>
                     <FormattedDate
-                        date={data.date}
+                        date={date}
                         mode="dd-MM-yyyy"
                     />
                 </div>
@@ -270,8 +290,14 @@ export default class ProjectJoinItem extends React.PureComponent {
     }
 
     render() {
-        const { data } = this.props;
-        const { requestedBy } = data.details;
+        const {
+            notification: {
+                data: {
+                    requestedBy,
+                } = emptyObject,
+            },
+        } = this.props;
+
         const { approvalLoading } = this.state;
 
         const Description = this.renderDescription;

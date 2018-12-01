@@ -10,7 +10,7 @@ import DropdownMenu from '#rsca/DropdownMenu';
 
 import { iconNames } from '#constants';
 
-import Notifications from '#views/Notifications';
+import Notifications from '#components/Notifications';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -23,7 +23,7 @@ const defaultProps = {
 
 const requests = {
     notificationCountRequest: {
-        url: '/users/me/notification-count/',
+        url: '/notifications/unseen-count/',
         method: requestMethods.GET,
         query: () => ({ timestamp: (new Date()).getTime() }),
         onMount: true,
@@ -36,13 +36,17 @@ export default class Notifica extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    handleRequestSuccess = () => {
+        const { notificationCountRequest } = this.props;
+        notificationCountRequest.do();
+    }
+
     render() {
         const {
             className: classNameFromProps,
             notificationCountRequest: {
                 response: {
-                    // TODO: use new instead of total
-                    total: newNotificationCount = 0,
+                    unseen: unseenNotificationCount = 0,
                 } = {},
             },
         } = this.props;
@@ -59,15 +63,20 @@ export default class Notifica extends React.PureComponent {
 
         return (
             <div className={className}>
-                <div className={styles.count}>
-                    { newNotificationCount }
-                </div>
+                { unseenNotificationCount > 0 && (
+                    <div className={styles.count}>
+                        { unseenNotificationCount }
+                    </div>
+                )}
                 <DropdownMenu
                     className={styles.dropdownMenu}
                     dropdownClassName={styles.notificationDropdown}
                     dropdownIcon={iconClassName}
                 >
-                    <Notifications className={styles.notifications} />
+                    <Notifications
+                        className={styles.notifications}
+                        onRequestSuccess={this.handleRequestSuccess}
+                    />
                 </DropdownMenu>
             </div>
         );

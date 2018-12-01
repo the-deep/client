@@ -1,0 +1,13 @@
+@import '~base-scss/base';
+
+.project-join-request-abort-notification {
+    .requestor-name {
+        text-transform: none;
+        font-weight: $font-weight-bold;
+    }
+
+    .project-title {
+        text-transform: none;
+        font-weight: $font-weight-bold;
+    }
+}

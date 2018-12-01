@@ -31,6 +31,10 @@ export default class NotificationsGetRequest extends Request {
             notifications,
             totalNotifications: response.count,
         });
+
+        if (this.parent.onRequestSuccess) {
+            this.parent.onRequestSuccess();
+        }
     }
 
     init = ({
