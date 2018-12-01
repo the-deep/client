@@ -193,7 +193,7 @@
         "336": "Regions",
         "337": "Select regions",
         "338": "User groups",
-        "339": "Select user groups",
+        "339": "Select User Groups",
         "341": "Search regions",
         "342": "Add region",
         "343": "There are no regions in this project.",
@@ -717,7 +717,7 @@
         "12505": "Add user to the project",
         "12506": "Add usergroup to the project",
         "12507": "No matching user / usergroup found",
-        "12508": "Start search with at least {numberOfCharacters} characters",
+        "12508": "Start typing and results will be returned by their relevance to you",
         "12509": "Role",
         "12510": "Are you sure you want to remove membership of {memberName}({memberEmail}) from this project?",
         "15000": "Quantitative",
@@ -825,8 +825,8 @@
         "-15095273": "Select Gallery Files",
         "-75331863": "Fatal error occured while getting users gallery files",
         "-41121825": "Failed to get user gallery files",
-        "-54185786": "User/Usergroup",
-        "-17852758": "Search User/Usergroup",
+        "-54185786": "Users/User Groups",
+        "-17852758": "Search Users/User Groups",
         "-1045504": "Go back",
         "-72172702": "Workshop",
         "-7863682": "Entries activity - Last 7 days",
@@ -883,7 +883,8 @@
         "-50025960": "Default widget",
         "-38162962": "No widget selected",
         "-25265886": "All required",
-        "-72702692": "Invalid range"
+        "-72702692": "Invalid range",
+        "-10595927": "No users or usergoups found"
     },
     "links": {
         "browserExtension": {
@@ -1763,7 +1764,8 @@
             "linkedGroupTitle": -42425639,
             "linkedGroupPlaceholder": -99213668,
             "searchUserTitle": 1119,
-            "searchUsergroupTitle": 338
+            "searchUsergroupTitle": 338,
+            "noResultsFound": -10595927
         },
         "project": {
             "projectGetFailure": 2500,

@@ -47,6 +47,7 @@ const iconNames = {
     jpg: 'fa fa-file-image-o',
     jpeg: 'fa fa-file-image-o',
     fig: 'fa fa-file-image-o',
+    noSearch: 'fa fa-search-minus',
 
     undo: 'fa fa-undo',
     uploadFa: 'fa fa-upload',

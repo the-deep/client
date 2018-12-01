@@ -15,6 +15,7 @@ import { projectMembershipListSelector } from '#redux';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
+import noSearch from '#resources/img/no-filter.png';
 import SearchListItem from './SearchListItem';
 import styles from './styles.scss';
 
@@ -44,7 +45,7 @@ const defaultProps = {
     searchItems: [],
 };
 
-const MIN_SEARCH_TEXT_CHARACTERS = 2;
+const MIN_SEARCH_TEXT_CHARACTERS = 1;
 
 const EmptySearch = () => {
     const emptyText = _ts('project.users', 'searchEmptyText');
@@ -72,6 +73,26 @@ const SearchTip = () => {
             <div className={iconClassName} />
             <div className={styles.text}>
                 { tipText }
+            </div>
+        </div>
+    );
+};
+
+const SearchValueNotFound = () => {
+    const noResultsFound = _ts(
+        'project.users',
+        'noResultsFound',
+    );
+
+    return (
+        <div className={styles.noSearch}>
+            <img
+                className={styles.image}
+                src={noSearch}
+                alt=""
+            />
+            <div className={styles.text}>
+                { noResultsFound }
             </div>
         </div>
     );
@@ -184,25 +205,28 @@ export default class SearchList extends React.PureComponent {
             searchItems,
         } = this.props;
 
-        if (searchItems.length === 0 || searchInputValue.length < MIN_SEARCH_TEXT_CHARACTERS) {
-            return <SearchTip />;
+        if (searchItems.length !== 0) {
+            return (
+                <ListView
+                    className={styles.list}
+                    keySelector={SearchList.searchItemKeySelector}
+                    data={searchItems}
+                    emptyComponent={EmptySearch}
+                    rendererParams={this.searchListItemRendererParams}
+                    rendererClassName={styles.listItem}
+                    renderer={SearchListItem}
+                    groupKeySelector={SearchList.groupKeySelector}
+                    groupRendererParams={this.groupRendererParams}
+                    groupRendererClassName={styles.listGroup}
+                    groupComparator={this.groupComparator}
+                />
+            );
         }
 
-        return (
-            <ListView
-                className={styles.list}
-                keySelector={SearchList.searchItemKeySelector}
-                data={searchItems}
-                emptyComponent={EmptySearch}
-                rendererParams={this.searchListItemRendererParams}
-                rendererClassName={styles.listItem}
-                renderer={SearchListItem}
-                groupKeySelector={SearchList.groupKeySelector}
-                groupRendererParams={this.groupRendererParams}
-                groupRendererClassName={styles.listGroup}
-                groupComparator={this.groupComparator}
-            />
-        );
+        if (searchInputValue.length < MIN_SEARCH_TEXT_CHARACTERS) {
+            return <SearchTip />;
+        }
+        return <SearchValueNotFound />;
     }
 
     render() {
