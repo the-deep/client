@@ -882,7 +882,8 @@
         "-48777298": "Not",
         "-50025960": "Default widget",
         "-38162962": "No widget selected",
-        "-25265886": "All required"
+        "-25265886": "All required",
+        "-72702692": "Invalid range"
     },
     "links": {
         "browserExtension": {
@@ -2340,7 +2341,6 @@
             "defaultWidgetLabel": -50025960,
             "defaultWidgetPlaceholder": -38162962,
             "cancelConfirmMessage": -14675920,
-            "invertLogicLabel": -48777298,
             "testEveryTitle": -25265886
         },
         "widgets.editor.link": {
@@ -2426,6 +2426,18 @@
             "selectionsGroupLabel": -52135328,
             "conditionalsGroupLabel": -86548021,
             "excerptsGroupLabel": 514
+        },
+        "conditional.scale": {
+            "invalidRangeErrorMessage": -72702692
+        },
+        "conditional.date": {
+            "invalidRangeErrorMessage": -72702692
+        },
+        "conditional.number": {
+            "invalidRangeErrorMessage": -72702692
+        },
+        "conditional.time": {
+            "invalidRangeErrorMessage": -72702692
         }
     }
 }

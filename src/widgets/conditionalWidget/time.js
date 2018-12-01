@@ -1,3 +1,5 @@
+import _ts from '#ts';
+
 const decodeTimeInMinutes = (value, separator = ':') => {
     if (!value) {
         return 0;
@@ -47,22 +49,27 @@ const before = {
 };
 
 const isInBetween = {
-    title: 'In in between',
+    title: 'Is in between',
     attributes: [
         {
             key: 'minValue',
             type: 'time',
-            title: 'After',
+            title: 'Min time',
         },
         {
             key: 'maxValue',
             type: 'time',
-            title: 'Before',
+            title: 'Max time',
         },
     ],
+    validate: ({ minValue, maxValue }) => ({
+        ok: compareTime(minValue, maxValue) <= 0,
+        message: _ts('conditional.time', 'invalidRangeErrorMessage'),
+    }),
     test: ({ value }, { minValue, maxValue }) => (
-        compareTime(value, maxValue) < 0 &&
-        compareTime(value, minValue) > 0
+        minValue && maxValue &&
+        compareTime(value, maxValue) <= 0 &&
+        compareTime(value, minValue) >= 0
     ),
 };
 

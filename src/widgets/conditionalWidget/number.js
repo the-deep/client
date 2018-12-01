@@ -1,3 +1,5 @@
+import _ts from '#ts';
+
 const isLessThan = {
     title: 'Is less than',
     attributes: [{
@@ -34,8 +36,34 @@ const isEqualTo = {
     ),
 };
 
+const isInBetween = {
+    title: 'Is in between',
+    attributes: [
+        {
+            key: 'minValue',
+            type: 'number',
+            title: 'Min',
+        },
+        {
+            key: 'maxValue',
+            type: 'number',
+            title: 'Max',
+        },
+    ],
+    validate: ({ minValue, maxValue }) => ({
+        ok: minValue <= maxValue,
+        message: _ts('conditional.number', 'invalidRangeErrorMessage'),
+    }),
+    test: ({ value }, { minValue, maxValue }) => (
+        value <= maxValue &&
+        value >= minValue
+    ),
+};
+
+
 export default {
     isLessThan,
     isGreaterThan,
     isEqualTo,
+    isInBetween,
 };

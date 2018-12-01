@@ -1,3 +1,4 @@
+import _ts from '#ts';
 import { compareDate } from '#rsu/common';
 
 const isEqualTo = {
@@ -42,17 +43,22 @@ const isInBetween = {
         {
             key: 'minValue',
             type: 'date',
-            title: 'After date',
+            title: 'Min date',
         },
         {
             key: 'maxValue',
             type: 'date',
-            title: 'Before date',
+            title: 'Max date',
         },
     ],
+    validate: ({ minValue, maxValue }) => ({
+        ok: compareDate(minValue, maxValue) <= 0,
+        message: _ts('conditional.date', 'invalidRangeErrorMessage'),
+    }),
     test: ({ value }, { minValue, maxValue }) => (
-        compareDate(value, maxValue) < 0 &&
-        compareDate(value, minValue) > 0
+        minValue && maxValue &&
+        compareDate(value, maxValue) <= 0 &&
+        compareDate(value, minValue) >= 0
     ),
 };
 

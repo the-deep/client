@@ -30,37 +30,37 @@ const defaultProps = {
     geoOptions: {},
 };
 
-const getOptions = memoize((attribute, widgetData) => (
-    Array.isArray(attribute.options)
-        ? [...attribute.options]
-        : attribute.options(widgetData)
-));
-
 const mapStateToProps = state => ({
     geoOptions: afViewGeoOptionsSelector(state),
 });
-
-const getRegions = memoize(geoOptions => (
-    Object.keys(geoOptions).reduce((acc, r) => {
-        if (geoOptions[r] && geoOptions[r][0]) {
-            return (
-                [
-                    {
-                        id: geoOptions[r][0].region,
-                        title: geoOptions[r][0].regionTitle,
-                    },
-                    ...acc,
-                ]
-            );
-        }
-        return acc;
-    }, [])
-));
 
 @connect(mapStateToProps)
 export default class ConditionAttribute extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    getOptions = memoize((attribute, widgetData) => (
+        Array.isArray(attribute.options)
+            ? [...attribute.options]
+            : attribute.options(widgetData)
+    ))
+
+    getRegions = memoize(geoOptions => (
+        Object.keys(geoOptions).reduce((acc, r) => {
+            if (geoOptions[r] && geoOptions[r][0]) {
+                return (
+                    [
+                        {
+                            id: geoOptions[r][0].region,
+                            title: geoOptions[r][0].regionTitle,
+                        },
+                        ...acc,
+                    ]
+                );
+            }
+            return acc;
+        }, [])
+    ))
 
     render() {
         const {
@@ -69,10 +69,10 @@ export default class ConditionAttribute extends React.PureComponent {
             geoOptions,
         } = this.props;
 
-        const regions = getRegions(geoOptions);
+        const regions = this.getRegions(geoOptions);
 
         if (attribute.type === 'select') {
-            const options = getOptions(attribute, widgetData);
+            const options = this.getOptions(attribute, widgetData);
             return (
                 <SelectInput
                     className={styles.input}
@@ -86,7 +86,7 @@ export default class ConditionAttribute extends React.PureComponent {
                 />
             );
         } else if (attribute.type === 'multiselect') {
-            const options = getOptions(attribute, widgetData);
+            const options = this.getOptions(attribute, widgetData);
             return (
                 <FaramGroup
                     key={attribute.key}

@@ -1,3 +1,4 @@
+import _ts from '#ts';
 import testMultiSelect from './testMultiSelect';
 
 const emptyArray = [];
@@ -80,6 +81,14 @@ const isInBetween = {
             labelSelector: d => d.label,
         },
     ],
+    validate: ({ lowerScale, upperScale }, { scaleUnits = [] }) => {
+        const lowerScaleIndex = scaleUnits.findIndex(s => s.key === lowerScale);
+        const upperScaleIndex = scaleUnits.findIndex(s => s.key === upperScale);
+        return {
+            ok: lowerScale && upperScale && lowerScaleIndex <= upperScaleIndex,
+            message: _ts('conditional.scale', 'invalidRangeErrorMessage'),
+        };
+    },
     test: ({ value }, { lowerScale, upperScale }, { scaleUnits = [] }) => {
         const lowerScaleIndex = scaleUnits.findIndex(s => s.key === lowerScale);
         const upperScaleIndex = scaleUnits.findIndex(s => s.key === upperScale);

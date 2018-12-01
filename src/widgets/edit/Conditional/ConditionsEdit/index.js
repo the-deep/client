@@ -22,6 +22,7 @@ import {
 } from '#redux';
 import {
     conditions as conditionsAttributes,
+    conditionsAsMap,
     compatibleWidgetIds,
 } from '#widgets/conditionalWidget';
 
@@ -66,28 +67,29 @@ class ConditionsEditModal extends React.PureComponent {
     static operatorKeySelector = o => o.key;
     static operatorLabelSelector = o => o.label;
 
-    static schema = {
-        fields: {
-            list: {
-                keySelector: ConditionsEditModal.widgetKeySelector,
-                member: {
-                    fields: {
-                        key: [],
-                        widgetId: [],
-                        widgetKey: [],
-                        conditionType: [],
-                        invertLogic: [],
-                        attributes: [],
-                    },
-                },
-            },
-            operator: [],
-        },
-    };
-
     constructor(props) {
         super(props);
         const { conditions } = this.props;
+
+        this.schema = {
+            fields: {
+                list: {
+                    keySelector: ConditionsEditModal.widgetKeySelector,
+                    member: {
+                        fields: {
+                            key: [],
+                            widgetId: [],
+                            widgetKey: [],
+                            conditionType: [],
+                            invertLogic: [],
+                            attributes: [],
+                        },
+                        validation: this.validateCondition,
+                    },
+                },
+                operator: [],
+            },
+        };
 
         this.state = {
             faramValues: conditions,
@@ -100,6 +102,29 @@ class ConditionsEditModal extends React.PureComponent {
     getCompatibleWidget = memoize(widgets => (
         widgets.filter(w => compatibleWidgetIds.indexOf(w.widgetId) >= 0)
     ));
+
+    validateCondition = (obj) => {
+        // First grab the validator for this condition
+        const conditions = conditionsAsMap[obj.widgetId];
+        const condition = conditions && conditions[obj.conditionType];
+        const validator = condition && condition.validate;
+
+        if (!validator) {
+            return [];
+        }
+
+        // Next grab the widget data required for validation
+        const { analysisFramework: { widgets = [] } = {} } = this.props;
+        const widgetData = widgets.find(w => w.key === obj.widgetKey);
+        const { properties: { data = {} } = {} } = widgetData;
+
+        // Finally validate
+        const validation = validator(obj.attributes || {}, data || {});
+        if (validation.ok) {
+            return [];
+        }
+        return [validation.message];
+    }
 
     widgetListRendererParams = (key, widget) => {
         const { title } = widget;
@@ -190,7 +215,7 @@ class ConditionsEditModal extends React.PureComponent {
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
                     onValidationSuccess={this.handleFaramValidationSuccess}
-                    schema={ConditionsEditModal.schema}
+                    schema={this.schema}
                     value={faramValues}
                     error={faramErrors}
                 >
