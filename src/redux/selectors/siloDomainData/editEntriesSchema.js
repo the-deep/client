@@ -1,14 +1,10 @@
 import {
     dateCondition,
     timeCondition,
-    greaterThanOrEqualToCondition,
-    lessThanOrEqualToCondition,
+    inclusiveInBetweenCondition,
 } from '#rscg/Faram';
 
-import {
-    isTruthy,
-    decodeDate,
-} from '#rsu/common';
+import { decodeDate } from '#rsu/common';
 
 const getSchemaForWidget = (widget) => {
     switch (widget.widgetId) {
@@ -52,16 +48,9 @@ const getSchemaForWidget = (widget) => {
                 } = {},
             } = widget;
 
-            const validations = [];
-            if (isTruthy(minValue)) {
-                validations.push(greaterThanOrEqualToCondition(minValue));
-            }
-            if (isTruthy(maxValue)) {
-                validations.push(lessThanOrEqualToCondition(maxValue));
-            }
             return {
                 fields: {
-                    value: validations,
+                    value: [inclusiveInBetweenCondition(minValue, maxValue)],
                 },
             };
         }
