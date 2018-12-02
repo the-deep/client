@@ -37,14 +37,14 @@ test('should set active project', () => {
 });
 
 test('should set active project on new projects', () => {
-    // retain, don't retain
     const state = {
         activeProject: 1,
     };
     const action = {
         type: SET_USER_PROJECTS,
         projects: [
-            { id: 1 }, { id: 3 },
+            { id: 1 },
+            { id: 3 },
         ],
     };
     const after = {
@@ -54,15 +54,15 @@ test('should set active project on new projects', () => {
 });
 
 test('should set active project on new projects', () => {
-    // retain, don't retain
     const state = {
-        activeProject: 1,
+        activeProject: undefined,
     };
 
     const action = {
         type: SET_USER_PROJECTS,
         projects: [
-            { id: 3 }, { id: 2 },
+            { id: 3 },
+            { id: 2 },
         ],
     };
     const after = {
