@@ -36,7 +36,7 @@ const myTransform = createTransform(
 const isBeta = process.env.REACT_APP_DEEP_ENVIRONMENT === 'beta';
 
 const storeConfig = {
-    blacklist: ['notify', 'route', 'app'],
+    blacklist: ['notify', 'route', 'app', 'tabStatus'],
     key: 'deeper',
     version: 2,
     storage: localforage,
@@ -44,11 +44,18 @@ const storeConfig = {
     migrate: createMigrate(migrations, { debug: !isBeta }),
 };
 
+
+// Note: these are not actually reducers but the prefixes in the
+// action types.
+// It might be better to rename this to actionsToSync
 export const reducersToSync = [
     'lang',
     'auth',
     'domainData',
-    'siloBgTasks', // Middleware
+    'tabStatus',
+    // Following refers to action of starting and stoping silo tasks
+    // and used by the middleware.
+    'siloBgTasks',
 ];
 
 export default storeConfig;

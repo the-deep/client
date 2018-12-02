@@ -24,6 +24,7 @@ import {
     setActiveCountryAction,
     setRouteParamsAction,
     activeProjectRoleSelector,
+    setTabStatusAction,
 } from '#redux';
 import _ts from '#ts';
 
@@ -99,6 +100,7 @@ const propTypes = {
     activeProjectId: PropTypes.number,
     activeCountryId: PropTypes.number,
     setRouteParams: PropTypes.func.isRequired,
+    setTabStatus: PropTypes.func.isRequired,
 
     name: PropTypes.string.isRequired,
     path: PropTypes.string,
@@ -123,6 +125,7 @@ const mapDispatchToProps = dispatch => ({
     setActiveProject: params => dispatch(setActiveProjectAction(params)),
     setActiveCountry: params => dispatch(setActiveCountryAction(params)),
     setRouteParams: params => dispatch(setRouteParamsAction(params)),
+    setTabStatus: params => dispatch(setTabStatusAction(params)),
 });
 
 
@@ -134,11 +137,25 @@ class RouteSynchronizer extends React.PureComponent {
 
     constructor(props) {
         super(props);
-
         this.syncState(props);
+    }
 
-        const { match, location } = this.props;
-        this.props.setRouteParams({ match, location });
+    componentDidMount() {
+        const { match, location, setTabStatus } = this.props;
+        this.props.setRouteParams({
+            match,
+            location,
+        });
+
+        // Done at DidMount and not constructor because we want
+        // to make sure that the silo tasks for setting tab status timestamp
+        // has been started at this point.
+        setTabStatus({
+            tabStatus: {
+                url: match.url,
+                path: match.path,
+            },
+        });
     }
 
     componentWillReceiveProps(nextProps) {
@@ -149,6 +166,12 @@ class RouteSynchronizer extends React.PureComponent {
             this.props.setRouteParams({
                 match: nextProps.match,
                 location: nextProps.location,
+            });
+            this.props.setTabStatus({
+                tabStatus: {
+                    url: nextProps.match.url,
+                    path: nextProps.match.path,
+                },
             });
         }
 

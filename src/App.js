@@ -26,6 +26,7 @@ import {
     startSiloBackgroundTasksAction,
     stopSiloBackgroundTasksAction,
 } from '#redux/middlewares/siloBackgroundTasks';
+import { TabStatusSetter } from '#redux/middlewares/tasks/TabStatusManager';
 import {
     setAccessTokenAction,
     logoutAction,
@@ -85,6 +86,9 @@ export default class App extends React.PureComponent {
         // Create rest request to get a new access token from refresh token
         this.refreshRequest = this.createRequestForRefresh();
         this.refreshRequest.start();
+
+        this.tabStatusSetter = new TabStatusSetter();
+        this.tabStatusSetter.start();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -104,9 +108,11 @@ export default class App extends React.PureComponent {
             this.refreshRequest.stop();
         }
 
-        const { /* stopRefresh, */stopSiloTasks } = this.props;
-        // stopRefresh();
+        const { stopSiloTasks } = this.props;
         stopSiloTasks();
+
+        clearInterval(this.pageStatusInterval);
+        this.tabStatusSetter.stop();
     }
 
     createRequestForRefresh = () => {

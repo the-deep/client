@@ -8,12 +8,14 @@ import routeReducer from './route';
 import domainDataReducer from './domainData';
 import langReducer from './lang';
 import appReducer from './app';
+import tabStatusReducer from './tabStatus';
 import siloDomainDataReducer from './siloDomainData';
 
 const reducers = {
     notify: notifyReducer,
     route: routeReducer,
     app: appReducer,
+    tabStatus: tabStatusReducer,
 
     auth: authReducer,
     lang: langReducer,
