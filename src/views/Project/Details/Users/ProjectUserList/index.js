@@ -13,11 +13,14 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import FormattedDate from '#rscv/FormattedDate';
 import { FaramListElement } from '#rscg/FaramElements';
 import NormalTable from '#rscv/Table';
+import noSearch from '#resources/img/no-filter.png';
 
 import {
     compareString,
     compareDate,
 } from '#rsu/common';
+
+import { getTrigramSimilarity } from '#rsu/similarity';
 
 import {
     setProjectMembershipsAction,
@@ -32,6 +35,7 @@ import Actions from './Actions';
 import styles from './styles.scss';
 
 const Table = FaramListElement(NormalTable);
+const emptyObject = {};
 
 const propTypes = {
     className: PropTypes.string,
@@ -50,10 +54,12 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number.isRequired,
     readOnly: PropTypes.bool,
+    searchInputValue: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
+    searchInputValue: '',
     readOnly: false,
 };
 
@@ -164,11 +170,32 @@ export default class ProjectUserList extends React.PureComponent {
         )
     ))
 
+    filterMembers = memoize((allMembers = [], searchValue) => {
+        if (searchValue === '') {
+            return allMembers;
+        }
+
+        return allMembers.filter(
+            m => getTrigramSimilarity((m || emptyObject).memberName, searchValue) > 0.01,
+        );
+    });
+
+    searchValueNotFound = () => (
+        <div className={styles.noSearch}>
+            <img
+                className={styles.image}
+                src={noSearch}
+                alt=""
+            />
+        </div>
+    );
+
     render() {
         const {
             className: classNameFromProps,
             userListRequest,
             memberships = {},
+            searchInputValue,
         } = this.props;
 
         const className = `
@@ -177,6 +204,7 @@ export default class ProjectUserList extends React.PureComponent {
         `;
 
         const { pending: pendingUserList } = userListRequest;
+        const filteredMembers = this.filterMembers(memberships, searchInputValue);
 
         return (
             <div className={className}>
@@ -189,10 +217,11 @@ export default class ProjectUserList extends React.PureComponent {
                     <LoadingAnimation />
                 ) : (
                     <Table
-                        data={memberships}
+                        data={filteredMembers}
                         className={styles.table}
                         headers={this.headers}
                         keySelector={userListKeySelector}
+                        emptyComponent={this.searchValueNotFound}
                     />
                 )}
             </div>

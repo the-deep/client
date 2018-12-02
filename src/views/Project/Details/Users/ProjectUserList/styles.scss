@@ -1,15 +1,22 @@
 @import '~base-scss/base';
 
 .project-user-list {
+    display: flex;
     position: relative;
+    flex-direction: column;
 
     .header {
+        flex-shrink: 0;
+
         .heading {
             padding: $spacing-medium;
         }
     }
 
     .table {
+        flex-grow: 1;
+        overflow-y: auto;
+
         :global {
             .header {
                 background-color: $color-foreground-alt;
@@ -19,6 +26,21 @@
                 border-bottom: $width-separator-thin solid $color-separator;
                 background-color: transparent;
             }
+        }
+    }
+
+    .no-search {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        justify-content: center;
+        border-top: $width-separator-thin solid $color-separator;
+        color: $color-text-disabled;
+
+        .image {
+            opacity: 0.3;
+            width: $width-icon-super-large;
+            height: $width-icon-super-large;
         }
     }
 }

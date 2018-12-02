@@ -90,11 +90,13 @@ export default class Users extends React.PureComponent {
                         className={styles.userList}
                         projectId={projectId}
                         readOnly={readOnly}
+                        searchInputValue={searchInputValue}
                     />
                     <ProjectUsergroupList
                         className={styles.usergroupList}
                         projectId={projectId}
                         readOnly={readOnly}
+                        searchInputValue={searchInputValue}
                     />
                 </div>
             </div>
