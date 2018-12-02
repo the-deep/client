@@ -18,6 +18,7 @@ import SelectInput from '#rsci/SelectInput';
 import SelectInputWithList from '#rsci/SelectInputWithList';
 import RadioInput from '#rsci/RadioInput';
 import ScaleInput from '#rsci/ScaleInput';
+import MultiSegmentInput from '#rsci/MultiSegmentInput';
 import SegmentInput from '#rsci/SegmentInput';
 import TabularSelectInput from '#rsci/TabularSelectInput';
 
@@ -67,6 +68,7 @@ export default class Workshop extends React.PureComponent {
             hiddenValue: [],
             places: [],
             goodPlaces: [],
+            goodPlace2: [],
             badPlaces: [],
             worstPlace: [],
             nicePlace: [],
@@ -324,6 +326,18 @@ export default class Workshop extends React.PureComponent {
                         options={[
                             { key: 'm', label: 'Male' },
                             { key: 'f', label: 'Female' },
+                        ]}
+                    />
+                    <MultiSegmentInput
+                        label="Good Places"
+                        labelSelector={Workshop.labelSelector}
+                        keySelector={Workshop.keySelector}
+                        faramElementName="goodPlaces2"
+                        options={[
+                            { key: 'pokhara', label: 'The Pokhara' },
+                            { key: 'kathmandu', label: 'Dustmandu' },
+                            { key: 'chitwan', label: 'Chitwan' },
+                            { key: 'illam', label: 'Illam' },
                         ]}
                     />
                     <TabularSelectInput

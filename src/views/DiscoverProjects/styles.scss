@@ -16,6 +16,7 @@
 
         .filters {
             display: flex;
+            align-items: flex-end;
             flex-grow: 1;
 
             :global {

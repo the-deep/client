@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import Faram from '#rscg/Faram';
-import SelectInput from '#rsci/SelectInput';
-import MultiSelectInput from '#rsci/MultiSelectInput';
+import SegmentInput from '#rsci/SegmentInput';
+import MultiSegmentInput from '#rsci/MultiSegmentInput';
 import SearchInput from '#rsci/SearchInput';
 import { isObjectEmpty } from '#rsu/common';
 
@@ -169,7 +169,7 @@ export default class FilterProjectsForm extends React.PureComponent {
                     showLabel
                     className="projects-filter"
                 />
-                <SelectInput
+                <SegmentInput
                     faramElementName="involvement"
                     keySelector={FilterProjectsForm.optionKeySelector}
                     labelSelector={FilterProjectsForm.optionLabelSelector}
@@ -180,7 +180,7 @@ export default class FilterProjectsForm extends React.PureComponent {
                     showLabel
                     className="projects-filter"
                 />
-                <MultiSelectInput
+                <MultiSegmentInput
                     faramElementName="status"
                     keySelector={FilterProjectsForm.optionKeySelector}
                     labelSelector={FilterProjectsForm.optionLabelSelector}
