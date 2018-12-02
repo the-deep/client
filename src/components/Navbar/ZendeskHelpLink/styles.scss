@@ -1,64 +1,63 @@
 @import '~base-scss/base';
 
-$button-size: 20px;
-$button-expand-width: 90px;
+$width-button-min: 20px;
+$width-button-max: 320px;
+
+$height-link: $font-size-extra-large;
+
 
 .zen-help {
+    width: $width-button-min;
+    align-items: center;
+    overflow: hidden;
     display: flex;
-    margin-right: $spacing-medium;
-    border-radius: $button-size * 2;
-    cursor: pointer;
-    min-width: $button-size;
-    height: $button-size;
-    color: $color-foreground;
+    border-radius: $height-link / 2;
+    margin-right: $spacing-large;
+    transition: $duration-transition-medium width ease-in-out,
+        $duration-transition-medium $duration-transition-medium justify-content linear;
 
     .help-link {
         display: flex;
         align-items: center;
-        justify-content: center;
-        height: 100%;
-        overflow: hidden;
+        justify-content: flex-end;
 
-        i {
-            padding-left: $spacing-extra-small;
+        .icon {
+            font-size: $height-link;
+            width: $width-button-min;
+            flex-shrink: 0;
             color: $color-accent;
-            font-size: $button-size;
         }
 
         .content {
-            @include transition-medium();
             flex-shrink: 0;
-            width: 0;
         }
-
 
     }
 
     &:hover {
-        background-color: $color-accent;
+        width: $width-button-max;
+        justify-content: flex-end;
 
         .help-link {
-            i {
-                color: inherit;
-            }
+
 
             .content {
                 display: flex;
                 align-items: center;
-                justify-content: center;
-                padding-left: $spacing-medium;
-                width: 150px;
+                justify-content: flex-end;
 
                 .text {
-                    width: 130px;
+                    max-width: $width-button-max - $width-button-min * 2;
                     overflow: hidden;
+                    text-align: right;
                     text-overflow: ellipsis;
-                    white-space: nowrap; 
+                    white-space: nowrap;
                 }
 
                 .admin {
-                    align-items: flex-end;
-                    padding: $spacing-medium;
+                    display: flex;
+                    justify-content: flex-end;
+                    width: $width-button-min;
                 }
             }
         }
