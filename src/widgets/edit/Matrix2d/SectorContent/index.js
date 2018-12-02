@@ -99,10 +99,12 @@ export default class SectorContent extends React.PureComponent {
                             <GeoLink
                                 faramElementName="subsectors"
                                 titleSelector={SectorContent.rowTitleSelector}
+                                lastItemTitle="subcells"
                                 dataModifier={SectorContent.rowsModifier}
                             />
                             <LinkWidgetModalButton
                                 faramElementName="subsectors"
+                                lastItemTitle="subsectors"
                                 widgetKey={this.props.widgetKey}
                                 titleSelector={SectorContent.rowTitleSelector}
                                 dataModifier={SectorContent.rowsModifier}

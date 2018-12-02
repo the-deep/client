@@ -104,11 +104,13 @@ export default class RowContent extends React.PureComponent {
                                 faramElementName="cells"
                                 titleSelector={RowContent.rowTitleSelector}
                                 dataModifier={RowContent.rowsModifier}
+                                lastItemTitle="cells"
                             />
                             <LinkWidgetModalButton
                                 faramElementName="cells"
                                 widgetKey={this.props.widgetKey}
                                 titleSelector={RowContent.rowTitleSelector}
+                                lastItemTitle="cells"
                                 dataModifier={RowContent.rowsModifier}
                             />
                             <FaramList

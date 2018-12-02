@@ -266,8 +266,8 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                 <div className={styles.buttonContainer} >
                                     <GeoLink
                                         faramElementName="rows"
-                                        titleSelector={Matrix1dEditWidget.rowTitleSelector}
                                         dataModifier={Matrix1dEditWidget.rowsModifier}
+                                        titleSelector={Matrix1dEditWidget.rowTitleSelector}
                                         onModalVisibilityChange={this.handleModalVisiblityChange}
                                     />
                                     <LinkWidgetModalButton

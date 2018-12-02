@@ -20,11 +20,13 @@ const propTypes = {
     value: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     dataModifier: PropTypes.func.isRequired,
     titleSelector: PropTypes.func.isRequired,
+    lastItemTitle: PropTypes.string,
     onChange: PropTypes.func.isRequired, // eslint-disable-line
 };
 
 const defaultProps = {
     geoOptions: {},
+    lastItemTitle: 'lastItem',
 };
 
 const getRegions = memoize(geoOptions => (
@@ -68,11 +70,12 @@ export default class GeoLink extends React.PureComponent {
 
     handleDuplicatesConfirmClose = () => {
         const { newValue } = this.state;
+        const { lastItemTitle } = this.state;
 
         this.setState({
             showDuplicateConfirm: false,
         }, () => {
-            this.props.onChange(newValue, { lastItem: newValue[newValue.length - 1] });
+            this.props.onChange(newValue, { [lastItemTitle]: newValue[newValue.length - 1] });
         });
     }
 
@@ -88,6 +91,7 @@ export default class GeoLink extends React.PureComponent {
         }
         const {
             dataModifier,
+            lastItemTitle,
             titleSelector,
             value,
         } = this.props;
@@ -112,7 +116,7 @@ export default class GeoLink extends React.PureComponent {
                 newValue: finalRows,
             });
         } else {
-            this.props.onChange(finalRows, { lastItem: finalRows[finalRows.length - 1] });
+            this.props.onChange(finalRows, { [lastItemTitle]: finalRows[finalRows.length - 1] });
         }
     }
 

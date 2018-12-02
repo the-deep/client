@@ -106,12 +106,14 @@ export default class DimensionContent extends React.PureComponent {
                                 faramElementName="subdimensions"
                                 titleSelector={DimensionContent.rowTitleSelector}
                                 dataModifier={DimensionContent.rowsModifier}
+                                lastItemTitle="subdimensions"
                             />
                             <LinkWidgetModalButton
                                 faramElementName="subdimensions"
                                 widgetKey={this.props.widgetKey}
                                 titleSelector={DimensionContent.rowTitleSelector}
                                 dataModifier={DimensionContent.rowsModifier}
+                                lastItemTitle="subdimensions"
                             />
                             <FaramList
                                 faramElementName="subdimensions"

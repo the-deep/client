@@ -19,13 +19,19 @@ const propTypes = {
     value: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     dataModifier: PropTypes.func.isRequired,
     titleSelector: PropTypes.func.isRequired,
+    lastItemTitle: PropTypes.string,
     onChange: PropTypes.func.isRequired, // eslint-disable-line
     widgetKey: PropTypes.string.isRequired,
+};
+
+const defaultProps = {
+    lastItemTitle: 'lastItem',
 };
 
 @FaramInputElement
 export default class LinkWidgetModalButton extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
@@ -42,13 +48,14 @@ export default class LinkWidgetModalButton extends React.PureComponent {
     }
 
     handleDuplicatesConfirmClose = () => {
+        const { lastItemTitle } = this.props;
         const { newValue } = this.state;
 
         this.setState({
             showModal: false,
             showDuplicateConfirm: false,
         }, () => {
-            this.props.onChange(newValue, { lastItem: newValue[newValue.length - 1] });
+            this.props.onChange(newValue, { [lastItemTitle]: newValue[newValue.length - 1] });
         });
     }
 
@@ -61,6 +68,8 @@ export default class LinkWidgetModalButton extends React.PureComponent {
             dataModifier,
             titleSelector,
             value,
+            onChange,
+            lastItemTitle,
         } = this.props;
 
         const itemsMap = dataModifier(newItems);
@@ -85,7 +94,7 @@ export default class LinkWidgetModalButton extends React.PureComponent {
             this.setState({
                 showModal: false,
             }, () => {
-                this.props.onChange(finalRows, { lastItem: finalRows[finalRows.length - 1] });
+                onChange(finalRows, { [lastItemTitle]: finalRows[finalRows.length - 1] });
             });
         }
     }

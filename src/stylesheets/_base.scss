@@ -39,7 +39,7 @@ $font-weight-heading: 500;
 
         .focus-trap-wrapper {
             .focus-trap {
-                .modal:not(.last-modal) {
+                .modal:not([data-last-modal="true"]) {
                     filter: brightness(50%);
                     pointer-events: none;
                 }
