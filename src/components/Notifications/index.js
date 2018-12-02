@@ -21,11 +21,15 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     notificationsGetRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    projectJoinApproveRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    projectJoinRejectRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     className: '',
     notificationsGetRequest: {},
+    projectJoinApproveRequest: {},
+    projectJoinRejectRequest: {},
 };
 
 const requests = {
@@ -90,6 +94,7 @@ export default class Notifications extends React.PureComponent {
     static defaultProps = defaultProps;
 
     componentWillReceiveProps(nextProps) {
+        // TODO: use request's onPropChange, once the feature gets implemented
         const {
             projectJoinApproveRequest: newProjectJoinApproveRequest,
             projectJoinRejectRequest: newProjectJoinRejectRequest,

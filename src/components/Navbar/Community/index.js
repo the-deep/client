@@ -62,7 +62,9 @@ export default class Community extends React.PureComponent {
                         alt=""
                         title={slackLinkTitle}
                     />
-                    <div className={styles.title}>{slackTitle}</div>
+                    <div className={styles.title}>
+                        {slackTitle}
+                    </div>
                 </a>
                 <a
                     className={styles.joinLink}
@@ -76,7 +78,9 @@ export default class Community extends React.PureComponent {
                         alt=""
                         src={skypeLogo}
                     />
-                    <div className={styles.title}>{skypeTitle}</div>
+                    <div className={styles.title}>
+                        {skypeTitle}
+                    </div>
                 </a>
                 <a
                     className={styles.joinLink}
@@ -90,7 +94,9 @@ export default class Community extends React.PureComponent {
                         alt=""
                         src={zendeskLogo}
                     />
-                    <div className={styles.title}>{zendeskTitle}</div>
+                    <div className={styles.title}>
+                        {zendeskTitle}
+                    </div>
                 </a>
             </DropdownMenu>
         );

@@ -24,9 +24,12 @@
     }
 }
 
+$width-notification-dropdown: 420px;
+$height-notification-dropdown: 520px;
+
 .notification-dropdown {
-    min-width: 420px;
-    height: 520px;
+    width: $width-notification-dropdown;
+    height: $height-notification-dropdown;
 
     .notifications {
         height: 100%;

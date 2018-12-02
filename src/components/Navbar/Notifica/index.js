@@ -14,10 +14,12 @@ import Notifications from '#components/Notifications';
 import styles from './styles.scss';
 
 const propTypes = {
+    notificationCountRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     className: PropTypes.string,
 };
 
 const defaultProps = {
+    notificationCountRequest: {},
     className: '',
 };
 
@@ -35,11 +37,11 @@ export default class Notifica extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    // TODO: use request's shouldPoll once it is usable
     componentDidMount() {
         this.interval = setInterval(
             () => {
                 const { notificationCountRequest } = this.props;
-                notificationCountRequest.abort();
                 notificationCountRequest.do();
             },
             8000,
