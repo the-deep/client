@@ -8,6 +8,7 @@ export * from './selectors/siloDomainData';
 
 // NOTE: named exports from reducers are action-creators and action-types
 export * from './reducers/app';
+export * from './reducers/tabStatus';
 export * from './reducers/lang';
 export * from './reducers/auth';
 export * from './reducers/notify';
