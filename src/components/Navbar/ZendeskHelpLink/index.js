@@ -86,6 +86,11 @@ export default class ZendeskHelpLink extends React.PureComponent {
             currentPageMeta || pagesInfo.default || emptyObject
         );
 
+        const iconClassName = `
+            ${styles.icon}
+            ${iconNames.help}
+        `;
+
         return (
             <div className={styles.zenHelp} >
                 <a
@@ -95,7 +100,7 @@ export default class ZendeskHelpLink extends React.PureComponent {
                     disabled={zendeskLinkRequest.pending}
                     className={styles.helpLink}
                 >
-                    <i className={iconNames.help} />
+                    <i className={iconClassName} />
                     <span className={styles.content} >
                         <span
                             className={styles.text}

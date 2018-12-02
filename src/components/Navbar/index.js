@@ -283,11 +283,11 @@ export default class Navbar extends React.PureComponent {
                     projectId={activeProject}
                     countryId={activeCountry}
                 />
-                <Community className={styles.communityDropdown} />
-                <Notifica className={styles.notificationDropdown} />
                 <ZendeskHelpLink
                     currentPath={this.currentPath}
                 />
+                <Community className={styles.communityDropdown} />
+                <Notifica className={styles.notificationDropdown} />
                 <NavDrop
                     className={styles.userMenu}
                     links={this.validDropLinks}
