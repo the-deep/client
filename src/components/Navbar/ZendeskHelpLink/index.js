@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import {
     RequestCoordinator,
     RequestClient,
+    requestMethods,
 } from '#request';
 import iconNames from '#constants/iconNames';
 import { adminEndpoint } from '#config/rest';
@@ -16,6 +17,8 @@ import {
 import _ts from '#ts';
 
 import Cloak from '../../Cloak';
+
+import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
@@ -43,6 +46,7 @@ const requests = {
     zendeskLinkRequest: {
         // TODO: Define this schema
         schema: 'zendeskLinkGetRequest',
+        method: requestMethods.GET,
         onMount: true,
         url: '/pages/',
         onSuccess: ({ props: { setPagesInfo }, response }) => {
@@ -83,36 +87,46 @@ export default class ZendeskHelpLink extends React.PureComponent {
         );
 
         return (
-            // TODO: Styling
-            <div className={className} >
+            <div className={styles.zenHelp} >
                 <a
                     href={meta.helpUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     disabled={zendeskLinkRequest.pending}
+                    className={styles.helpLink}
                 >
-                    <span className={iconNames.help} />
-                </a>
-                <Cloak
-                    hide={ZendeskHelpLink.shouldHideAdminLink}
-                    render={
-                        <a
-                            href={
-                                currentPageMeta ?
-                                    createEditLink(currentPageMeta.id) : createAddLink(currentPath)
-                            }
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            disabled={zendeskLinkRequest.pending}
+                    <i className={iconNames.help} />
+                    <span className={styles.content} >
+                        <span
+                            className={styles.text}
+                            title={meta.title}
                         >
-                            {
-                                currentPageMeta ?
-                                    _ts('zendeskHelpLink', 'AdminEditLink')
-                                    : _ts('zendeskHelpLink', 'AdminAddLink')
+                            {meta.title}
+                        </span>
+                        <Cloak
+                            hide={ZendeskHelpLink.shouldHideAdminLink}
+                            render={
+                                <a
+                                    href={
+                                        currentPageMeta ?
+                                            createEditLink(currentPageMeta.id) :
+                                            createAddLink(currentPath)
+                                    }
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    disabled={zendeskLinkRequest.pending}
+                                    className={styles.admin}
+                                >
+                                    {
+                                        currentPageMeta ?
+                                            <span className={iconNames.edit} />
+                                            : <span className={iconNames.add} />
+                                    }
+                                </a>
                             }
-                        </a>
-                    }
-                />
+                        />
+                    </span>
+                </a>
             </div>
         );
     }

@@ -1,0 +1,68 @@
+@import '~base-scss/base';
+
+$button-size: 20px;
+$button-expand-width: 90px;
+
+.zen-help {
+    display: flex;
+    margin-right: $spacing-medium;
+    border-radius: $button-size * 2;
+    cursor: pointer;
+    min-width: $button-size;
+    height: $button-size;
+    color: $color-foreground;
+
+    .help-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        overflow: hidden;
+
+        i {
+            padding-left: $spacing-extra-small;
+            color: $color-accent;
+            font-size: $button-size;
+        }
+
+        .content {
+            @include transition-medium();
+            flex-shrink: 0;
+            width: 0;
+        }
+
+
+    }
+
+    &:hover {
+        background-color: $color-accent;
+
+        .help-link {
+            i {
+                color: inherit;
+            }
+
+            .content {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding-left: $spacing-medium;
+                width: 150px;
+
+                .text {
+                    width: 130px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap; 
+                }
+
+                .admin {
+                    align-items: flex-end;
+                    padding: $spacing-medium;
+                }
+            }
+        }
+    }
+
+}
+
