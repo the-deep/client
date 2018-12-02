@@ -11,7 +11,6 @@ export * from './clusterViz';
 export * from './editAry';
 export * from './discoverProjects';
 export * from './leads';
-export * from './notifications';
 export * from './regions';
 export * from './connectors';
 export * from './leadGroups';
