@@ -21,6 +21,8 @@ const defaultProps = {
     className: '',
 };
 
+const emptyObject = {};
+
 const PROJECT_JOIN_ACCEPTED = 'accepted';
 const PROJECT_JOIN_REJECTED = 'rejected';
 
@@ -37,15 +39,15 @@ export default class ProjectJoinResponseItem extends React.PureComponent {
                         displayPicture: responderDisplayPictureId,
                         displayName: responderName,
                         id: responderId,
-                    },
+                    } = emptyObject,
                     requestedBy: {
                         displayName: requestorName,
                         id: requestorId,
-                    } = {},
+                    } = emptyObject,
                     project: {
                         id: projectId,
                         title: projectTitle,
-                    } = {},
+                    } = emptyObject,
                     status,
                 },
                 timestamp,

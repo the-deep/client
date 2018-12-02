@@ -1,11 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import {
-    RequestCoordinator,
     RequestClient,
     requestMethods,
 } from '#request';
+
+import {
+    setNotificationAction,
+} from '#redux';
+
 import { reverseRoute } from '#rsu/common';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -42,6 +47,7 @@ const defaultProps = {
 };
 
 const REQUEST_PENDING = 'pending';
+const REQUEST_ABORTED = 'aborted';
 const ROLE_DEFAULT = 'normal';
 const ROLE_ADMIN = 'admin';
 
@@ -56,7 +62,20 @@ const requests = {
         }) => `/projects/${projectId}/requests/${requestId}/accept/`,
         method: requestMethods.POST,
         body: ({ params: { role } }) => ({ role }),
-        isUnique: true,
+        onSuccess: ({
+            response,
+            props: {
+                updateNotification,
+                notification,
+            },
+        }) => {
+            updateNotification({
+                notification: {
+                    ...notification,
+                    data: response,
+                },
+            });
+        },
     },
     projectJoinRejectRequest: {
         url: ({
@@ -66,10 +85,14 @@ const requests = {
             },
         }) => `/projects/${projectId}/requests/${requestId}/reject/`,
         method: requestMethods.POST,
-        isUnique: true,
     },
 };
 
+const mapDispatchToProps = dispatch => ({
+    updateNotification: params => dispatch(setNotificationAction(params)),
+});
+
+@connect(undefined, mapDispatchToProps)
 @RequestClient(requests)
 export default class ProjectJoinRequestItem extends React.PureComponent {
     static propTypes = propTypes;
@@ -196,7 +219,7 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                 }
                 timestamp={timestamp}
                 actions={
-                    status === REQUEST_PENDING && (
+                    status === REQUEST_PENDING ? (
                         <React.Fragment>
                             <SuccessButton
                                 disabled={pending}
@@ -226,7 +249,7 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                                 {_ts('notifications.projectJoinRequest', 'rejectButtonTitle')}
                             </DangerButton>
                         </React.Fragment>
-                    )
+                    ) : null
                 }
             />
         );

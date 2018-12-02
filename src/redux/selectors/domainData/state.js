@@ -138,10 +138,10 @@ export const connectorSourcesListSelector = createSelector(
 
 export const notificationItemsSelector = createSelector(
     notificationsSelector,
-    notifications => notifications.items,
+    notifications => notifications.items || emptyList,
 );
 
 export const notificationsCountSelector = createSelector(
     notificationsSelector,
-    notifications => notifications.count,
+    notifications => notifications.count || emptyObject,
 );
