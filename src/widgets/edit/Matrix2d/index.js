@@ -10,6 +10,7 @@ import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
 import Faram, { requiredCondition } from '#rscg/Faram';
 import FixedTabs from '#rscv/FixedTabs';
@@ -419,6 +420,13 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     modifier={this.renderTab}
                 >
                     <div className={styles.buttonContainer}>
+                        <h5>
+                            {selectedTab === 'dimensions' ? (
+                                _ts('widgets.editor.matrix2d', 'addDimensionsTitle')
+                            ) : (
+                                _ts('widgets.editor.matrix2d', 'addSectorsTitle')
+                            )}
+                        </h5>
                         <GeoLink
                             faramElementName={selectedTab}
                             titleSelector={Matrix2dEditWidget.titleSelector}
@@ -435,23 +443,23 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                         <FaramList faramElementName={selectedTab}>
                             {
                                 selectedTab === 'dimensions' ? (
-                                    <PrimaryButton
+                                    <AccentButton
                                         faramElementName="add-dimension-btn"
                                         faramAction={this.addDimensionClick}
                                         iconName={iconNames.add}
                                         transparent
                                     >
                                         {_ts('widgets.editor.matrix2d', 'addDimensionButtonTitle')}
-                                    </PrimaryButton>
+                                    </AccentButton>
                                 ) : (
-                                    <PrimaryButton
+                                    <AccentButton
                                         faramElementName="add-sector-btn"
                                         faramAction={this.addSectorClick}
                                         iconName={iconNames.add}
                                         transparent
                                     >
                                         {_ts('widgets.editor.matrix2d', 'addSectorButtonTitle')}
-                                    </PrimaryButton>
+                                    </AccentButton>
                                 )
                             }
                         </FaramList>

@@ -5,7 +5,7 @@ import FaramGroup from '#rscg/FaramGroup';
 import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
 import NonFieldErrors from '#rsci/NonFieldErrors';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
+import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
 import ColorInput from '#rsci/ColorInput';
 import { randomString } from '#rsu/common';
@@ -102,6 +102,9 @@ export default class DimensionContent extends React.PureComponent {
                             {_ts('widgets.editor.matrix2d', 'subdimensionsHeaderTitle')}
                         </h4>
                         <div className={styles.buttonContainer} >
+                            <h5>
+                                {_ts('widgets.editor.matrix2d', 'addSubDimensionsTitle')}
+                            </h5>
                             <GeoLink
                                 faramElementName="subdimensions"
                                 titleSelector={DimensionContent.rowTitleSelector}
@@ -119,14 +122,14 @@ export default class DimensionContent extends React.PureComponent {
                                 faramElementName="subdimensions"
                                 keySelector={DimensionContent.keySelector}
                             >
-                                <PrimaryButton
+                                <AccentButton
                                     faramElementName="add-btn"
                                     faramAction={DimensionContent.addSubdimensionClick}
                                     iconName={iconNames.add}
                                     transparent
                                 >
                                     {_ts('widgets.editor.matrix2d', 'addSubdimensionButtonTitle')}
-                                </PrimaryButton>
+                                </AccentButton>
                             </FaramList>
                         </div>
                     </header>

@@ -1,4 +1,5 @@
 import { mapToList } from '#rsu/common';
+import { widgetTitlesGroupMapForConditional } from '#widgets/widgetMetadata';
 
 import matrix1dConditions from './matrix1d';
 import matrix2dConditions from './matrix2d';
@@ -15,87 +16,11 @@ import geoOptions from './geo';
 
 const emptyObject = {};
 
-export const widgetGroups = {
-    // NOTE: misc is a special kind of widgetGroup (should always be defined)
-    misc: {
-        // NOTE: used as _ts('widgetGroupTitle', 'miscGroupLabel')
-        title: 'miscGroupLabel',
-        order: 4,
-    },
-
-    matrices: {
-        // NOTE: used as _ts('widgetGroupTitle', 'matricesGroupLabel')
-        title: 'matricesGroupLabel',
-        order: 1,
-    },
-    temporals: {
-        // NOTE: used as _ts('widgetGroupTitle', 'temporalsGroupLabel')
-        title: 'temporalsGroupLabel',
-        order: 2,
-    },
-    selections: {
-        // NOTE: used as _ts('widgetGroupTitle', 'selectionsGroupLabel')
-        title: 'selectionsGroupLabel',
-        order: 3,
-    },
-};
-
-export const widgetTitles = {
-    matrix1dWidget: {
-        title: 'matrix1DWidgetLabel',
-        groupId: 'matrices',
-    },
-    matrix2dWidget: {
-        title: 'matrix2DWidgetLabel',
-        groupId: 'matrices',
-    },
-    numberMatrixWidget: {
-        title: 'numberMatrixWidgetLabel',
-        groupId: 'matrices',
-    },
-    dateWidget: {
-        title: 'dateWidgetLabel',
-        groupId: 'temporals',
-    },
-    timeWidget: {
-        title: 'timeWidgetLabel',
-        groupId: 'temporals',
-    },
-    dateRangeWidget: {
-        title: 'dateRangeWidgetLabel',
-        groupId: 'temporals',
-    },
-    numberWidget: {
-        title: 'numberWidgetLabel',
-        groupId: 'misc',
-    },
-    scaleWidget: {
-        title: 'scaleWidgetLabel',
-        groupId: 'misc',
-    },
-    geoWidget: {
-        title: 'geoWidgetLabel',
-        groupId: 'misc',
-    },
-    organigramWidget: {
-        title: 'organigramWidgetLabel',
-        groupId: 'misc',
-    },
-    selectWidget: {
-        title: 'selectWidgetLabel',
-        groupId: 'selections',
-    },
-    multiselectWidget: {
-        title: 'multiselectWidgetLabel',
-        groupId: 'selections',
-    },
-};
-
-export const compatibleWidgetIds = Object.keys(widgetTitles);
+export const compatibleWidgetIds = Object.keys(widgetTitlesGroupMapForConditional);
 
 export const widgetList = mapToList(
-    widgetTitles,
-    (widget, widgetId) => ({
+    widgetTitlesGroupMapForConditional,
+    (widget, widgetId) => (widget.hasConditions && {
         widgetId,
         ...widget,
     }),

@@ -18,10 +18,8 @@ import { randomString } from '#rsu/common';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
-import {
-    widgetList,
-    widgetGroups,
-} from '#widgets/conditionalWidget';
+import { widgetList } from '#widgets/conditionalWidget';
+import { widgetGroups } from '#widgets/widgetMetadata';
 import { widgetListingVisibility } from '#widgets';
 
 import WidgetPreview from './WidgetPreview';

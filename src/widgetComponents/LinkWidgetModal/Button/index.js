@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 
 import { FaramInputElement } from '#rscg/FaramElements';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
+import AccentButton from '#rsca/Button/AccentButton';
 import Confirm from '#rscv/Modal/Confirm';
 import {
     findDuplicates,
@@ -106,7 +106,7 @@ export default class LinkWidgetModalButton extends React.PureComponent {
             nonDuplicateItems,
             showDuplicateConfirm,
         } = this.state;
-        const editConditionsLabel = _ts('widgets.editor.link', 'addFromWidgets');
+        const addFromWidgetsLabel = _ts('widgets.editor.link', 'addFromWidgets');
         const modalClassNames = [];
         if (showDuplicateConfirm) {
             modalClassNames.push(styles.disableModal);
@@ -114,15 +114,15 @@ export default class LinkWidgetModalButton extends React.PureComponent {
 
         return (
             <Fragment>
-                <PrimaryButton
-                    title={editConditionsLabel}
+                <AccentButton
+                    title={addFromWidgetsLabel}
                     tabIndex="-1"
                     transparent
-                    iconName={iconNames.add}
+                    iconName={iconNames.widget}
                     onClick={this.handleClick}
                 >
-                    {editConditionsLabel}
-                </PrimaryButton>
+                    {addFromWidgetsLabel}
+                </AccentButton>
                 {
                     showModal && (
                         <LinkWidgetModal

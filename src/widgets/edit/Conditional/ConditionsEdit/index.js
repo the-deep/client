@@ -24,9 +24,12 @@ import {
     conditions as conditionsAttributes,
     conditionsAsMap,
     compatibleWidgetIds,
-    widgetTitles,
-    widgetGroups,
 } from '#widgets/conditionalWidget';
+
+import {
+    widgetGroups,
+    widgetTitlesGroupMapForConditional as widgetTitles,
+} from '#widgets/widgetMetadata';
 
 import _ts from '#ts';
 
