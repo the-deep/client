@@ -109,6 +109,11 @@ export default class ProjectUserList extends React.PureComponent {
                 order: 1,
                 sortable: true,
                 comparator: getComparator(compareString, 'memberName'),
+                modifier: ({ member, memberName }) => (
+                    member === this.props.activeUser.userId
+                        ? _ts('project.users', 'meTitle', { name: memberName })
+                        : memberName
+                ),
             },
             {
                 key: 'memberEmail',

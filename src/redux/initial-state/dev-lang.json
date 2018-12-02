@@ -879,16 +879,14 @@
         "-57850283": "Others",
         "-52135328": "Dropdowns",
         "-4183681": "Swap values",
-        "-48777298": "Not",
-        "-50025960": "Default widget",
-        "-38162962": "No widget selected",
         "-25265886": "All required",
         "-72702692": "Invalid range",
         "-10595927": "No users or usergoups found",
         "-66757442": "Looks like you don’t have access to this project or it doesn’t exist! Please contact the project administrator to be added, or if you think this is a bug please notify the DEEP administrators using the Feedback button",
         "-48490028": "Looks like you don’t have access to this project or it doesn’t exist!",
         "-69684282": "Please contact your project administrator to be granted the needed rights, or if you think this is a bug please notify the DEEP administrators using the Feedback button",
-        "-84343027": "Please contact the project administrator to be added, or if you think this is a bug please notify the DEEP administrators using the Feedback button"
+        "-84343027": "Please contact the project administrator to be added, or if you think this is a bug please notify the DEEP administrators using the Feedback button",
+        "-24177081": "{name} (me)"
     },
     "links": {
         "browserExtension": {
@@ -1770,7 +1768,8 @@
             "linkedGroupPlaceholder": -99213668,
             "searchUserTitle": 1119,
             "searchUsergroupTitle": 338,
-            "noResultsFound": -10595927
+            "noResultsFound": -10595927,
+            "meTitle": -24177081
         },
         "project": {
             "projectGetFailure": 2500,
