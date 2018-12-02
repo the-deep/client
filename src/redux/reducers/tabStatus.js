@@ -13,10 +13,11 @@ export const REMOVE_TAB_STATUS = 'tabStatus/REMOVE_TAB_STATUS';
 
 // ACTION-CREATOR
 
-export const setTabStatusAction = ({ tabStatus }) => ({
+export const setTabStatusAction = ({ url, path }) => ({
     type: SET_TAB_STATUS,
     tabId: UNIQUE_TAB_ID,
-    tabStatus,
+    url,
+    path,
 });
 
 export const removeTabStatusAction = ({ tabId }) => ({
@@ -27,9 +28,9 @@ export const removeTabStatusAction = ({ tabId }) => ({
 // REDUCER
 
 const setTabStatus = (state, action) => {
-    const { tabId, tabStatus } = action;
+    const { tabId, url, path } = action;
     const settings = {
-        [tabId]: { $set: tabStatus },
+        [tabId]: { $set: { url, path } },
     };
     return update(state, settings);
 };

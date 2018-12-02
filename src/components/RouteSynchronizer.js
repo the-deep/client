@@ -18,8 +18,10 @@ import { routes } from '#constants/routes';
 import viewsAcl from '#constants/viewsAcl';
 
 import {
+    getDefaultTabId,
     activeProjectIdFromStateSelector,
     activeCountryIdFromStateSelector,
+    tabsByCurrentUrlSelector,
     setActiveProjectAction,
     setActiveCountryAction,
     setRouteParamsAction,
@@ -115,10 +117,11 @@ const defaultProps = {
     path: '',
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, props) => ({
     projectRole: activeProjectRoleSelector(state),
     activeProjectId: activeProjectIdFromStateSelector(state),
     activeCountryId: activeCountryIdFromStateSelector(state),
+    tabsByCurrentUrl: tabsByCurrentUrlSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -151,10 +154,8 @@ class RouteSynchronizer extends React.PureComponent {
         // to make sure that the silo tasks for setting tab status timestamp
         // has been started at this point.
         setTabStatus({
-            tabStatus: {
-                url: match.url,
-                path: match.path,
-            },
+            url: match.url,
+            path: match.path,
         });
     }
 
@@ -168,10 +169,17 @@ class RouteSynchronizer extends React.PureComponent {
                 location: nextProps.location,
             });
             this.props.setTabStatus({
-                tabStatus: {
-                    url: nextProps.match.url,
-                    path: nextProps.match.path,
-                },
+                url: nextProps.match.url,
+                path: nextProps.match.path,
+            });
+        } else if (!nextProps.tabsByCurrentUrl.includes(getDefaultTabId())) {
+            // If for some inconsistent timing, current tab status is lost
+            // from redux, reset it.
+            // This can happen when the pages are loading in different tabs
+            // and time tracking is slowed down by few milliseconds.
+            this.props.setTabStatus({
+                url: nextProps.match.url,
+                path: nextProps.match.path,
             });
         }
 
@@ -283,6 +291,7 @@ class RouteSynchronizer extends React.PureComponent {
             match, // eslint-disable-line no-unused-vars
             path,
             projectRole,
+            tabsByCurrentUrl,
             ...otherProps
         } = this.props;
 
@@ -295,6 +304,10 @@ class RouteSynchronizer extends React.PureComponent {
 
         if (!viewsAcl[name]) {
             console.warn('No access control for view', name);
+        }
+
+        if (tabsByCurrentUrl.length > 1) {
+            console.warn('Another tab is opened at this same URL');
         }
 
         return (

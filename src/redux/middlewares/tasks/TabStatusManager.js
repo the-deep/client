@@ -2,7 +2,6 @@ import AbstractTask from '#utils/AbstractTask';
 
 import { removeTabStatusAction, getDefaultTabId } from '../../reducers/tabStatus';
 
-// Refresh statuses every few seconds
 const REFRESH_TIME = 500;
 
 const tabStatusKeySelector = tabId => `tabStatus-${tabId}`;
@@ -62,6 +61,8 @@ export class TabStatusListener extends AbstractTask {
     refreshStatus = () => {
         const tabIds = Object.keys(this.store.getState().tabStatus || {});
         const tabIdsToRemove = refreshTabStatus(tabIds);
+
+        // TODO: Use single dispatch
         tabIdsToRemove.forEach((tabId) => {
             this.store.dispatch(removeTabStatusAction({ tabId }));
         });
