@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SelectInput from '#rsci/SelectInput';
@@ -84,6 +85,7 @@ const propTypes = {
     removeUserMembershipRequest: RequestPropType.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     removeProjectMembership: PropTypes.func.isRequired,
+    activeUserRole: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     row: PropTypes.shape({
         role: PropTypes.string,
     }).isRequired,
@@ -117,11 +119,27 @@ const projectRoleLabelSelector = d => d.title;
 const userGroupKeySelector = userGroup => userGroup.id;
 const userGroupLabelSelector = userGroup => userGroup.title;
 
+const emptyObject = {};
+
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestClient(requests)
 export default class Actions extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    getUserRoleLevel = memoize((projectRoleList, role) => (
+        (
+            projectRoleList.find(
+                projectRole => projectRole.id === role,
+            ) || emptyObject
+        ).level
+    ))
+
+    filterProjectRole = memoize((projectRoleList, level) => (
+        projectRoleList.filter(
+            projectRole => projectRole.level >= level,
+        )
+    ))
 
     handleRoleSelectInputChange = (newRole) => {
         const {
@@ -167,6 +185,7 @@ export default class Actions extends React.PureComponent {
             activeUser: {
                 userId: activeUserId,
             },
+            activeUserRole = emptyObject,
             changeMembershipRequest,
             removeUserMembershipRequest,
             readOnly,
@@ -181,6 +200,9 @@ export default class Actions extends React.PureComponent {
             userGroupOptions,
         } = row;
         const pending = changeMembershipRequest.pending || removeUserMembershipRequest.pending;
+        const isSuperior = this.getUserRoleLevel(projectRoleList, role) < activeUserRole.level;
+        const filteredProjectRoleList = isSuperior ?
+            projectRoleList : this.filterProjectRole(projectRoleList, activeUserRole.level);
 
         return (
             <div className={styles.actions}>
@@ -191,13 +213,13 @@ export default class Actions extends React.PureComponent {
                     placeholder=""
                     hideClearButton
                     value={role}
-                    options={projectRoleList}
+                    options={filteredProjectRoleList}
                     onChange={this.handleRoleSelectInputChange}
                     keySelector={projectRoleKeySelector}
                     labelSelector={projectRoleLabelSelector}
                     showHintAndError={false}
                     readOnly={readOnly}
-                    disabled={!!linkedGroup || activeUserId === memberId || pending}
+                    disabled={isSuperior || !!linkedGroup || activeUserId === memberId || pending}
                 />
                 <SelectInput
                     className={styles.inputElement}

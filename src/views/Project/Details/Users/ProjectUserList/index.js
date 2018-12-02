@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import memoize from 'memoize-one';
 import { connect } from 'react-redux';
 
 import {
@@ -22,6 +23,8 @@ import {
     setProjectMembershipsAction,
     projectUsergroupListSelector,
     projectMembershipListSelector,
+    projectRoleListSelector,
+    activeUserSelector,
 } from '#redux';
 
 import Actions from './Actions';
@@ -38,6 +41,8 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     setProjectMemberships: PropTypes.func.isRequired,
     memberships: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    projectRoleList: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
     // eslint-disable-next-line react/no-unused-prop-types
     usergroups: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -80,6 +85,8 @@ const userListKeySelector = d => d.id;
 const mapStateToProps = state => ({
     memberships: projectMembershipListSelector(state),
     usergroups: projectUsergroupListSelector(state),
+    projectRoleList: projectRoleListSelector(state),
+    activeUser: activeUserSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -131,12 +138,26 @@ export default class ProjectUserList extends React.PureComponent {
                     <Actions
                         readOnly={this.props.readOnly}
                         projectId={this.props.projectId}
+                        activeUserRole={
+                            this.getActiveUserRole(
+                                this.props.projectRoleList,
+                                this.props.memberships,
+                                this.props.activeUser.userId,
+                            )}
                         row={row}
                     />
                 ),
             },
         ];
     }
+
+    getActiveUserRole = memoize((projectRoleList, memberships, memberId) => (
+        projectRoleList.find(
+            p => p.id === memberships.find(
+                m => m.member === memberId,
+            ).role,
+        )
+    ))
 
     render() {
         const {
