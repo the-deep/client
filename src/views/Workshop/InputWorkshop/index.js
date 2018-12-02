@@ -190,184 +190,191 @@ export default class Workshop extends React.PureComponent {
                     readOnly={readOnly}
                 >
                     <NonFieldErrors faramElement />
-                    <SearchInput
-                        faramElementName="search"
-                        label="Search"
-                        placeholder="Anything"
-                    />
-                    <TextInput
-                        faramElementName="username"
-                        label="Username"
-                        placeholder="Haris"
-                        autoFocus
-                    />
-                    <TextInput
-                        faramElementName="password"
-                        label="Password"
-                        placeholder="******"
-                        type="password"
-                    />
-                    <Checkbox
-                        faramElementName="rainbowAffinity"
-                        label="I like rainbows"
-                    />
-                    <TextArea
-                        faramElementName="description"
-                        label="Description"
-                        placeholder="Tell us about yourself"
-                        autoFocus
-                    />
-                    <ColorInput
-                        faramElementName="favoriteColor"
-                        label="Favorite Color"
-                    />
-                    <DateInput
-                        faramElementName="dob"
-                        label="Date of Birth"
-                        title="The date when you were born"
-                        separator="-"
-                    />
-                    <TimeInput
-                        faramElementName="tob"
-                        label="Time of Birth"
-                        title="The time when you were born"
-                        separator=":"
-                    />
-                    <NumberInput
-                        faramElementName="age"
-                        label="Age"
-                        title="Your age"
-                        separator=" "
-                    />
-                    <HiddenInput
-                        faramElementName="hiddenValue"
-                    />
-                    <ListInput
-                        labelSelector={Workshop.labelSelector}
-                        keySelector={Workshop.keySelector}
-                        faramElementName="places"
-                    />
-                    <ListSelection
-                        label="Good Places"
-                        labelSelector={Workshop.labelSelector}
-                        keySelector={Workshop.keySelector}
-                        faramElementName="goodPlaces"
-                        options={[
-                            { key: 'pokhara', label: 'The Pokhara' },
-                            { key: 'kathmandu', label: 'Dustmandu' },
-                            { key: 'chitwan', label: 'Chitwan' },
-                            { key: 'illam', label: 'Illam' },
-                        ]}
-                    />
-                    <SelectInput
-                        label="Worst place"
-                        labelSelector={Workshop.labelSelector}
-                        keySelector={Workshop.keySelector}
-                        faramElementName="worstPlace"
-                        options={[
-                            { key: 'pokhara', label: 'The Pokhara' },
-                            { key: 'kathmandu', label: 'Dustmandu' },
-                            { key: 'chitwan', label: 'Chitwan' },
-                            { key: 'illam', label: 'Illam' },
-                        ]}
-                    />
-                    <SelectInputWithList
-                        label="Worse place"
-                        labelSelector={Workshop.labelSelector}
-                        keySelector={Workshop.keySelector}
-                        faramElementName="worsePlaces"
-                        options={[
-                            { key: 'pokhara', label: 'The Pokhara' },
-                            { key: 'kathmandu', label: 'Dustmandu' },
-                            { key: 'chitwan', label: 'Chitwan' },
-                            { key: 'illam', label: 'Illam' },
-                        ]}
-                    />
-                    <MultiSelectInput
-                        label="Bad Places"
-                        labelSelector={Workshop.labelSelector}
-                        keySelector={Workshop.keySelector}
-                        faramElementName="badPlaces"
-                        options={[
-                            { key: 'pokhara', label: 'The Pokhara' },
-                            { key: 'kathmandu', label: 'Dustmandu' },
-                            { key: 'chitwan', label: 'Chitwan' },
-                            { key: 'illam', label: 'Illam' },
-                        ]}
-                    />
-                    <RadioInput
-                        faramElementName="bestPlace"
-                        name="random-name-for-radio"
-                        options={[
-                            { key: 'pokhara', label: 'The Pokhara' },
-                            { key: 'kathmandu', label: 'Dustmandu' },
-                            { key: 'chitwan', label: 'Chitwan' },
-                            { key: 'illam', label: 'Illam' },
-                        ]}
-                    />
-                    <ScaleInput
-                        faramElementName="pollutionIndex"
-                        colorSelector={elem => elem.color}
-                        labelSelector={Workshop.labelSelector}
-                        keySelector={Workshop.keySelector}
-                        isDefault={elem => !!elem.default}
-                        options={[
-                            { key: 'pokhara', label: '0', color: 'green', default: true },
-                            { key: 'chitwan', label: '1', color: 'orange' },
-                            { key: 'kathmandu', label: '100', color: 'red' },
-                        ]}
-                    />
-                    <SegmentInput
-                        name="random-name-for-segment-2"
-                        faramElementName="gender"
-                        label="Gender"
-                        labelSelector={Workshop.labelSelector}
-                        keySelector={Workshop.keySelector}
-                        options={[
-                            { key: 'm', label: 'Male' },
-                            { key: 'f', label: 'Female' },
-                        ]}
-                    />
-                    <MultiSegmentInput
-                        label="Good Places"
-                        labelSelector={Workshop.labelSelector}
-                        keySelector={Workshop.keySelector}
-                        faramElementName="goodPlaces2"
-                        options={[
-                            { key: 'pokhara', label: 'The Pokhara' },
-                            { key: 'kathmandu', label: 'Dustmandu' },
-                            { key: 'chitwan', label: 'Chitwan' },
-                            { key: 'illam', label: 'Illam' },
-                        ]}
-                    />
-                    <TabularSelectInput
-                        faramElementName="friends"
-                        options={[
-                            { key: 'a', label: 'ram', position: 1 },
-                            { key: 'b', label: 'shyam', position: 4 },
-                            { key: 'c', label: 'hari', position: 3 },
-                            { key: 'd', label: 'gita', position: 2 },
-                        ]}
-                        label="Positions"
-                        labelSelector={Workshop.labelSelector}
-                        keySelector={Workshop.keySelector}
-                        tableHeaders={[
-                            {
-                                key: 'label',
-                                label: 'Label',
-                                order: 1,
-                                sortable: false,
-                            },
-                            {
-                                key: 'position',
-                                label: 'Position',
-                                order: 2,
-                                sortable: true,
-                                comparator: (a, b) => compareNumber(a.position, b.position),
-                            },
-                        ]}
-                    />
-
+                    <div className={styles.firstRow}>
+                        <SearchInput
+                            faramElementName="search"
+                            label="Search"
+                            placeholder="Anything"
+                        />
+                        <TextInput
+                            faramElementName="username"
+                            label="Username"
+                            placeholder="Haris"
+                            autoFocus
+                        />
+                        <TextInput
+                            faramElementName="password"
+                            label="Password"
+                            placeholder="******"
+                            type="password"
+                        />
+                        <TextArea
+                            faramElementName="description"
+                            label="Description"
+                            placeholder="Tell us about yourself"
+                            autoFocus
+                        />
+                        <ColorInput
+                            faramElementName="favoriteColor"
+                            label="Favorite Color"
+                        />
+                    </div>
+                    <div className={styles.firstRow}>
+                        <DateInput
+                            faramElementName="dob"
+                            label="Date of Birth"
+                            title="The date when you were born"
+                            separator="-"
+                        />
+                        <TimeInput
+                            faramElementName="tob"
+                            label="Time of Birth"
+                            title="The time when you were born"
+                            separator=":"
+                        />
+                        <NumberInput
+                            faramElementName="age"
+                            label="Age"
+                            title="Your age"
+                            separator=" "
+                        />
+                        <RadioInput
+                            faramElementName="bestPlace"
+                            name="random-name-for-radio"
+                            options={[
+                                { key: 'pokhara', label: 'The Pokhara' },
+                                { key: 'kathmandu', label: 'Dustmandu' },
+                                { key: 'chitwan', label: 'Chitwan' },
+                                { key: 'illam', label: 'Illam' },
+                            ]}
+                        />
+                        <ScaleInput
+                            faramElementName="pollutionIndex"
+                            colorSelector={elem => elem.color}
+                            labelSelector={Workshop.labelSelector}
+                            keySelector={Workshop.keySelector}
+                            isDefault={elem => !!elem.default}
+                            options={[
+                                { key: 'pokhara', label: '0', color: 'green', default: true },
+                                { key: 'chitwan', label: '1', color: 'orange' },
+                                { key: 'kathmandu', label: '100', color: 'red' },
+                            ]}
+                        />
+                    </div>
+                    <div className={styles.firstRow}>
+                        <HiddenInput
+                            faramElementName="hiddenValue"
+                        />
+                        <ListInput
+                            labelSelector={Workshop.labelSelector}
+                            keySelector={Workshop.keySelector}
+                            faramElementName="places"
+                        />
+                        <Checkbox
+                            faramElementName="rainbowAffinity"
+                            label="I like rainbows"
+                        />
+                        <ListSelection
+                            label="Good Places"
+                            labelSelector={Workshop.labelSelector}
+                            keySelector={Workshop.keySelector}
+                            faramElementName="goodPlaces"
+                            options={[
+                                { key: 'pokhara', label: 'The Pokhara' },
+                                { key: 'kathmandu', label: 'Dustmandu' },
+                                { key: 'chitwan', label: 'Chitwan' },
+                                { key: 'illam', label: 'Illam' },
+                            ]}
+                        />
+                        <SelectInput
+                            label="Worst place"
+                            labelSelector={Workshop.labelSelector}
+                            keySelector={Workshop.keySelector}
+                            faramElementName="worstPlace"
+                            options={[
+                                { key: 'pokhara', label: 'The Pokhara' },
+                                { key: 'kathmandu', label: 'Dustmandu' },
+                                { key: 'chitwan', label: 'Chitwan' },
+                                { key: 'illam', label: 'Illam' },
+                            ]}
+                        />
+                        <SelectInputWithList
+                            label="Worse place"
+                            labelSelector={Workshop.labelSelector}
+                            keySelector={Workshop.keySelector}
+                            faramElementName="worsePlaces"
+                            options={[
+                                { key: 'pokhara', label: 'The Pokhara' },
+                                { key: 'kathmandu', label: 'Dustmandu' },
+                                { key: 'chitwan', label: 'Chitwan' },
+                                { key: 'illam', label: 'Illam' },
+                            ]}
+                        />
+                    </div>
+                    <div className={styles.firstRow}>
+                        <MultiSelectInput
+                            label="Bad Places"
+                            labelSelector={Workshop.labelSelector}
+                            keySelector={Workshop.keySelector}
+                            faramElementName="badPlaces"
+                            options={[
+                                { key: 'pokhara', label: 'The Pokhara' },
+                                { key: 'kathmandu', label: 'Dustmandu' },
+                                { key: 'chitwan', label: 'Chitwan' },
+                                { key: 'illam', label: 'Illam' },
+                            ]}
+                        />
+                        <SegmentInput
+                            name="random-name-for-segment-2"
+                            faramElementName="gender"
+                            label="Gender"
+                            labelSelector={Workshop.labelSelector}
+                            keySelector={Workshop.keySelector}
+                            options={[
+                                { key: 'm', label: 'Male' },
+                                { key: 'f', label: 'Female' },
+                            ]}
+                        />
+                        <MultiSegmentInput
+                            label="Good Places"
+                            labelSelector={Workshop.labelSelector}
+                            keySelector={Workshop.keySelector}
+                            faramElementName="goodPlaces2"
+                            options={[
+                                { key: 'pokhara', label: 'The Pokhara' },
+                                { key: 'kathmandu', label: 'Dustmandu' },
+                                { key: 'chitwan', label: 'Chitwan' },
+                                { key: 'illam', label: 'Illam' },
+                            ]}
+                        />
+                        <TabularSelectInput
+                            faramElementName="friends"
+                            options={[
+                                { key: 'a', label: 'ram', position: 1 },
+                                { key: 'b', label: 'shyam', position: 4 },
+                                { key: 'c', label: 'hari', position: 3 },
+                                { key: 'd', label: 'gita', position: 2 },
+                            ]}
+                            label="Positions"
+                            labelSelector={Workshop.labelSelector}
+                            keySelector={Workshop.keySelector}
+                            tableHeaders={[
+                                {
+                                    key: 'label',
+                                    label: 'Label',
+                                    order: 1,
+                                    sortable: false,
+                                },
+                                {
+                                    key: 'position',
+                                    label: 'Position',
+                                    order: 2,
+                                    sortable: true,
+                                    comparator: (a, b) => compareNumber(a.position, b.position),
+                                },
+                            ]}
+                        />
+                    </div>
                     <PrimaryButton
                         type="submit"
                         pending={pending}

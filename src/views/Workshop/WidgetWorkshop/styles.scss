@@ -15,4 +15,18 @@
             padding: $spacing-small;
         }
     }
+
+    .firstRow {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+
+        > * {
+            flex-basis: 20%;
+            margin: $spacing-large;
+            border: 1px solid $color-accent;
+            padding: $spacing-medium;
+        }
+    }
+
 }

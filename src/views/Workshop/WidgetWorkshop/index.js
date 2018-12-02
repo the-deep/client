@@ -186,45 +186,49 @@ export default class Workshop extends React.PureComponent {
                         Excerpt
                         <ExcerptWidget />
                     </FaramGroup>
-                    <FaramGroup faramElementName="number">
-                        Number
-                        <NumberWidget />
-                    </FaramGroup>
-                    <FaramGroup faramElementName="date">
-                        Date
-                        <DateWidget />
-                    </FaramGroup>
-                    <FaramGroup faramElementName="dateRange">
-                        Date Range
-                        <DateRangeWidget />
-                    </FaramGroup>
-                    <FaramGroup faramElementName="time">
-                        Time
-                        <TimeWidget />
-                    </FaramGroup>
-                    <FaramGroup faramElementName="timeRange">
-                        Time Range
-                        <TimeRangeWidget />
-                    </FaramGroup>
-                    <FaramGroup faramElementName="select">
-                        Select
-                        <SelectWidget
-                            widget={this.state.options.select}
-                        />
-                    </FaramGroup>
-                    <FaramGroup faramElementName="multiselect">
-                        Multi Select
-                        <MultiSelectWidget
-                            widget={this.state.options.select}
-                        />
-                    </FaramGroup>
+                    <div className={styles.firstRow} >
+                        <FaramGroup faramElementName="number">
+                            Number
+                            <NumberWidget />
+                        </FaramGroup>
+                        <FaramGroup faramElementName="date">
+                            Date
+                            <DateWidget />
+                        </FaramGroup>
+                        <FaramGroup faramElementName="dateRange">
+                            Date Range
+                            <DateRangeWidget />
+                        </FaramGroup>
+                        <FaramGroup faramElementName="time">
+                            Time
+                            <TimeWidget />
+                        </FaramGroup>
+                        <FaramGroup faramElementName="timeRange">
+                            Time Range
+                            <TimeRangeWidget />
+                        </FaramGroup>
+                    </div>
+                    <div className={styles.firstRow} >
+                        <FaramGroup faramElementName="select">
+                            Select
+                            <SelectWidget
+                                widget={this.state.options.select}
+                            />
+                        </FaramGroup>
+                        <FaramGroup faramElementName="multiselect">
+                            Multi Select
+                            <MultiSelectWidget
+                                widget={this.state.options.select}
+                            />
+                        </FaramGroup>
 
-                    <FaramGroup faramElementName="scale">
-                        Scale
-                        <ScaleWidget
-                            widget={this.state.options.scale}
-                        />
-                    </FaramGroup>
+                        <FaramGroup faramElementName="scale">
+                            Scale
+                            <ScaleWidget
+                                widget={this.state.options.scale}
+                            />
+                        </FaramGroup>
+                    </div>
                     <PrimaryButton
                         type="submit"
                         pending={pending}
