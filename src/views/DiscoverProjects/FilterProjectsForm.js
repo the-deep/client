@@ -6,7 +6,7 @@ import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import Faram from '#rscg/Faram';
 import SegmentInput from '#rsci/SegmentInput';
-import ListSelection from '#rsci/ListSelection';
+import MultiSegmentInput from '#rsci/MultiSegmentInput';
 import SearchInput from '#rsci/SearchInput';
 import { isObjectEmpty } from '#rsu/common';
 
@@ -180,7 +180,7 @@ export default class FilterProjectsForm extends React.PureComponent {
                     showLabel
                     className="projects-filter"
                 />
-                <ListSelection
+                <MultiSegmentInput
                     faramElementName="status"
                     keySelector={FilterProjectsForm.optionKeySelector}
                     labelSelector={FilterProjectsForm.optionLabelSelector}
@@ -188,7 +188,6 @@ export default class FilterProjectsForm extends React.PureComponent {
                     options={projectOptions.status}
                     placeholder={_ts('discoverProjects.filter', 'placeholderAny')}
                     showHintAndError={false}
-                    segment
                     showLabel
                     className="projects-filter"
                 />

@@ -18,6 +18,7 @@ import SelectInput from '#rsci/SelectInput';
 import SelectInputWithList from '#rsci/SelectInputWithList';
 import RadioInput from '#rsci/RadioInput';
 import ScaleInput from '#rsci/ScaleInput';
+import MultiSegmentInput from '#rsci/MultiSegmentInput';
 import SegmentInput from '#rsci/SegmentInput';
 import TabularSelectInput from '#rsci/TabularSelectInput';
 
@@ -327,11 +328,10 @@ export default class Workshop extends React.PureComponent {
                             { key: 'f', label: 'Female' },
                         ]}
                     />
-                    <ListSelection
+                    <MultiSegmentInput
                         label="Good Places"
                         labelSelector={Workshop.labelSelector}
                         keySelector={Workshop.keySelector}
-                        segment
                         faramElementName="goodPlaces2"
                         options={[
                             { key: 'pokhara', label: 'The Pokhara' },
