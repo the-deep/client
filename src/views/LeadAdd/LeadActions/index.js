@@ -318,6 +318,7 @@ export default class LeadFilter extends React.PureComponent {
                     iconName={iconNames.delete}
                     className={styles.removeButtons}
                     title={_ts('addLeads.actions', 'removeButtonTitle')}
+                    closeOnClick
                 >
                     <button
                         className={styles.dropdownButton}
@@ -356,6 +357,7 @@ export default class LeadFilter extends React.PureComponent {
                     iconName={iconNames.save}
                     className={styles.saveButtons}
                     title={_ts('addLeads.actions', 'saveButtonTitle')}
+                    closeOnClick
                 >
                     <button
                         className={styles.dropdownButton}
