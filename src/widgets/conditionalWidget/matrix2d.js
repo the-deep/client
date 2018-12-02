@@ -19,7 +19,7 @@ const getSubdimensionOptions = ({ dimensions = emptyArray } = {}) => (
     dimensions.reduce((acc, r = emptyObject) => [
         ...(r.subdimensions || emptyArray).map(c => ({
             key: c.id,
-            title: c.title,
+            title: `${r.title} / ${c.title}`,
         })),
         ...acc,
     ], [])
@@ -36,7 +36,7 @@ const getSubsectorOptions = ({ sectors = emptyArray } = {}) => (
     sectors.reduce((acc, r = emptyObject) => [
         ...(r.subsectors || emptyArray).map(c => ({
             key: c.id,
-            title: c.title,
+            title: `${r.title} / ${c.title}`,
         })),
         ...acc,
     ], [])

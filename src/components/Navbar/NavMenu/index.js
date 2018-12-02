@@ -204,6 +204,7 @@ export default class NavMenu extends React.PureComponent {
                     className={styles.overflowMenu}
                     dropdownClassName={styles.navbarOverflowDropdown}
                     hideDropdownIcon
+                    closeOnClick
                 >
                     <List
                         data={overflowMenuLinks}

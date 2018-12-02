@@ -1,16 +1,5 @@
 import _ts from '#ts';
-
-const decodeTimeInMinutes = (value, separator = ':') => {
-    if (!value) {
-        return 0;
-    }
-    const values = value.split(separator);
-    return ((+values[0] * 60) + values[1]);
-};
-
-const compareTime = (a, b) => (
-    decodeTimeInMinutes(a) - decodeTimeInMinutes(b)
-);
+import { compareTime } from '#utils/common';
 
 const isEqualTo = {
     title: 'Is equal to',

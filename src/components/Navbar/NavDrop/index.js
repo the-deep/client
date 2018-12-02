@@ -204,6 +204,7 @@ export default class NavDrop extends React.PureComponent {
                 }
                 title={userName}
                 dropdownClassName={styles.userDropdown}
+                closeOnClick
             >
                 <DropdownGroup>
                     <List
