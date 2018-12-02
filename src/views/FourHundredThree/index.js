@@ -21,7 +21,9 @@ export default class FourHundredThree extends React.PureComponent {
                     {_ts('fourHundredThree', 'errorThreeHundredThree')}
                 </h1>
                 <p className={styles.message}>
-                    {_ts('fourHundredThree', 'message1')}
+                    <strong>{_ts('fourHundredThree', 'message1')}</strong>
+                    <br />
+                    {_ts('fourHundredThree', 'message2')}
                 </p>
                 <BackLink
                     defaultLink={pathNames.homeScreen}

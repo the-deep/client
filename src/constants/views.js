@@ -9,6 +9,7 @@ const views = mapObjectToObject(
         <RouteSynchronizer
             {...props}
             load={route.loader}
+            path={route.path}
             name={name}
         />
     ),

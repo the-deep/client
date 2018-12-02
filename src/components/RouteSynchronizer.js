@@ -2,11 +2,13 @@ import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
 
 import boundError from '#rscg/BoundError';
 import Bundle from '#rscg/Bundle';
 import withTracker from '#rscg/withTracker';
 import {
+    isParamRequired,
     reverseRoute,
 } from '#rsu/common';
 
@@ -21,15 +23,43 @@ import {
     setActiveProjectAction,
     setActiveCountryAction,
     setRouteParamsAction,
+    activeProjectRoleSelector,
 } from '#redux';
 import _ts from '#ts';
 
 const ErrorBoundBundle = boundError(AppError)(Bundle);
 
-const Page = ({ name, disabled, ...otherProps }) => {
+const PageError = ({ noProjectPermission }) => {
+    const name = noProjectPermission
+        ? 'projectDenied'
+        : 'fourHundredThree';
+
+    return (
+        <Fragment>
+            <Helmet>
+                <meta charSet="utf-8" />
+                <title>
+                    { _ts('pageTitle', name) }
+                </title>
+            </Helmet>
+            <ErrorBoundBundle
+                key={name}
+                load={routes[name].loader}
+            />
+        </Fragment>
+    );
+};
+PageError.propTypes = {
+    noProjectPermission: PropTypes.bool,
+};
+PageError.defaultProps = {
+    noProjectPermission: false,
+};
+
+const Page = ({ name, disabled, noProjectPermission, ...otherProps }) => {
     // NOTE: don't show page if it is disabled as well
     if (disabled) {
-        return <PageError />;
+        return <PageError noProjectPermission={noProjectPermission} />;
     }
 
     return (
@@ -40,23 +70,10 @@ const Page = ({ name, disabled, ...otherProps }) => {
                     { _ts('pageTitle', name) }
                 </title>
             </Helmet>
-            <ErrorBoundBundle name={name} {...otherProps} />
-        </Fragment>
-    );
-};
-
-const PageError = () => {
-    const name = 'fourHundredThree';
-    return (
-        <Fragment>
-            <Helmet>
-                <meta charSet="utf-8" />
-                <title>
-                    { _ts('pageTitle', name) }
-                </title>
-            </Helmet>
             <ErrorBoundBundle
-                load={routes[name].loader}
+                {...otherProps}
+                name={name}
+                key={name}
             />
         </Fragment>
     );
@@ -84,14 +101,20 @@ const propTypes = {
     setRouteParams: PropTypes.func.isRequired,
 
     name: PropTypes.string.isRequired,
+    path: PropTypes.string,
+
+    projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     activeProjectId: undefined,
     activeCountryId: undefined,
+    projectRole: {},
+    path: '',
 };
 
 const mapStateToProps = state => ({
+    projectRole: activeProjectRoleSelector(state),
     activeProjectId: activeProjectIdFromStateSelector(state),
     activeCountryId: activeCountryIdFromStateSelector(state),
 });
@@ -129,15 +152,6 @@ class RouteSynchronizer extends React.PureComponent {
             });
         }
 
-        const newUrlParams = this.getNewUrlParams(nextProps);
-        if (newUrlParams) {
-            this.syncUrl(nextProps, newUrlParams);
-        } else {
-            this.syncState(nextProps);
-        }
-    }
-
-    getNewUrlParams = (nextProps) => {
         const {
             activeProjectId: oldProjectId,
             activeCountryId: oldCountryId,
@@ -147,28 +161,38 @@ class RouteSynchronizer extends React.PureComponent {
             activeProjectId: newProjectId,
             activeCountryId: newCountryId,
         } = nextProps;
-        const {
-            projectId,
-            countryId,
-        } = params;
 
-        const changed = (
-            (projectId && oldProjectId !== newProjectId) ||
-            (countryId && oldCountryId !== newCountryId)
+        const newUrlParams = this.getNewUrlParams(
+            oldProjectId,
+            oldCountryId,
+            newProjectId,
+            newCountryId,
         );
 
+        if (newUrlParams) {
+            this.syncUrl(nextProps, { ...params, ...newUrlParams });
+        } else {
+            this.syncState(nextProps);
+        }
+    }
+
+    getNewUrlParams = memoize((oldProjectId, oldCountryId, newProjectId, newCountryId) => {
+        const changed = (
+            (oldProjectId !== newProjectId) ||
+            (oldCountryId !== newCountryId)
+        );
         if (!changed) {
             return undefined;
         }
+
         return {
-            ...params,
             projectId: newProjectId,
             countryId: newCountryId,
         };
-    };
+    });
 
     syncUrl = (nextProps, newUrlParams) => {
-        const { history, match: { path } } = nextProps;
+        const { history, match: { path }, location: { hash } } = nextProps;
         const { location } = this.props;
         const newPath = reverseRoute(path, newUrlParams);
 
@@ -177,7 +201,7 @@ class RouteSynchronizer extends React.PureComponent {
             return;
         }
 
-        if (location.hash === nextProps.location.hash) {
+        if (location.hash === hash) {
             history.push({
                 ...location,
                 pathname: newPath,
@@ -221,11 +245,11 @@ class RouteSynchronizer extends React.PureComponent {
         }
 
         if (newMatchProjectId && oldActiveProjectId !== +newMatchProjectId) {
-            console.warn('Syncing state: projectId');
+            console.warn('Syncing state: projectId', +newMatchProjectId);
             newProps.setActiveProject({ activeProject: +newMatchProjectId });
         }
         if (newMatchCountryId && oldActiveCountryId !== +newMatchCountryId) {
-            console.warn('Syncing state: countryId');
+            console.warn('Syncing state: countryId', +newMatchCountryId);
             newProps.setActiveCountry({ activeCountry: +newMatchCountryId });
         }
     }
@@ -234,8 +258,17 @@ class RouteSynchronizer extends React.PureComponent {
         const {
             name,
             match, // eslint-disable-line no-unused-vars
+            path,
+            projectRole,
             ...otherProps
         } = this.props;
+
+        const {
+            setupPermissions = {},
+        } = projectRole;
+
+        // FIXME: do not depend on selectors using state
+        const noProjectPermission = isParamRequired(path, 'projectId') && !setupPermissions.view;
 
         if (!viewsAcl[name]) {
             console.warn('No access control for view', name);
@@ -247,10 +280,13 @@ class RouteSynchronizer extends React.PureComponent {
                 render={
                     <Page
                         name={name}
+                        noProjectPermission={noProjectPermission}
                         {...otherProps}
                     />
                 }
-                renderOnHide={<PageError />}
+                renderOnHide={
+                    <PageError noProjectPermission={noProjectPermission} />
+                }
             />
         );
     }

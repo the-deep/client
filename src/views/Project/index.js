@@ -2,12 +2,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import Message from '#rscv/Message';
+
 import {
     currentUserAdminProjectsSelector,
     setActiveProjectAction,
     projectIdFromRouteSelector,
 } from '#redux';
 import _ts from '#ts';
+
+import Cloak from '#components/Cloak';
 
 import ProjectList from './ProjectList';
 import Details from './Details';
@@ -44,6 +48,8 @@ export default class ProjectPanel extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static shouldHideDetails = ({ setupPermissions }) => !setupPermissions.view;
+
     render() {
         const { setActiveProject } = this.props;
 
@@ -63,15 +69,25 @@ export default class ProjectPanel extends React.PureComponent {
                 />
                 {
                     projectId ? (
-                        <Details
-                            className={styles.projectDetails}
-                            projectId={projectId}
-                            mainHistory={history}
+                        <Cloak
+                            hide={ProjectPanel.shouldHideDetails}
+                            render={
+                                <Details
+                                    className={styles.projectDetails}
+                                    projectId={projectId}
+                                    mainHistory={history}
+                                />
+                            }
+                            renderOnHide={
+                                <Message large>
+                                    {_ts('project', 'noProjectPermissionText')}
+                                </Message>
+                            }
                         />
                     ) : (
-                        <div className={styles.noProjectText}>
+                        <Message large>
                             {_ts('project', 'noProjectText')}
-                        </div>
+                        </Message>
                     )
                 }
             </div>

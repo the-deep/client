@@ -1,17 +1,86 @@
-import acl from './acl';
+const notLoggedIn = ({ isLoggedIn }) => !isLoggedIn;
+const notProjectMember = ({ isLoggedIn, setupPermissions }) => (
+    !isLoggedIn || !setupPermissions.view
+);
+const notDev = ({ isLoggedIn, isDevMode }) => (
+    !isLoggedIn || !isDevMode
+);
+const notAdmin = ({ isLoggedIn, isAdmin }) => (
+    !isLoggedIn || !isAdmin
+);
+const notDevAndAdmin = ({ isLoggedIn, isDevMode, isAdmin }) => (
+    !isLoggedIn || (!isDevMode && !isAdmin)
+);
 
-const allLinks = {
-    leads: acl.leads,
-    entries: acl.entries,
-    arys: acl.arys,
-    export: acl.export,
-    userProfile: acl.userProfile,
-    projects: acl.projects,
-    countries: acl.countries,
-    connectors: acl.connectors,
-    apiDocs: acl.apiDocs,
-    stringManagement: acl.stringManagement,
-    workshop: acl.workshop,
+const notLeadViewable = ({ isLoggedIn, leadPermissions }) => (
+    !isLoggedIn || !leadPermissions.view
+);
+const notLeadEditable = ({ isLoggedIn, leadPermissions }) => (
+    !isLoggedIn || !(leadPermissions.create || leadPermissions.modify)
+);
+
+const notEntriesViewable = ({ isLoggedIn, hasAnalysisFramework, entryPermissions }) => (
+    !isLoggedIn || !hasAnalysisFramework || !entryPermissions.view
+);
+const notEntriesEditable = ({ isLoggedIn, hasAnalysisFramework, entryPermissions }) => (
+    !isLoggedIn || !hasAnalysisFramework || !(entryPermissions.create || entryPermissions.modify)
+);
+
+const notAssessmentViewable = ({ isLoggedIn, hasAssessmentTemplate, assessmentPermissions }) => (
+    !isLoggedIn || !hasAssessmentTemplate || !assessmentPermissions.view
+);
+
+const notExportCreatable = ({ isLoggedIn, hasAnalysisFramework, exportPermissions }) => (
+    !isLoggedIn || !hasAnalysisFramework || !exportPermissions.create
+);
+
+// NOTE: route related to a project should either have
+// projectPermissions.view or any other permissions
+const acl = {
+    browserExtension: {},
+    login: {},
+    register: {},
+    passwordReset: {},
+
+    discoverProjects: { hide: notLoggedIn },
+    projects: { hide: notLoggedIn },
+    dashboard: { hide: notProjectMember },
+    workshop: { hide: notDevAndAdmin },
+    connectors: { hide: notLoggedIn },
+
+    leadsViz: { hide: notLeadViewable },
+    clusterViz: { hide: notLeadViewable },
+    leads: { hide: notLeadViewable },
+    leadGroups: { hide: notLeadViewable },
+    addLeads: { hide: notLeadEditable },
+
+    entries: { hide: notEntriesViewable },
+    editEntries: { hide: notEntriesEditable },
+
+    arys: { hide: notAssessmentViewable },
+    editAry: { hide: notAssessmentViewable },
+    editLeadGroupAssessment: { hide: notAssessmentViewable },
+
+    export: { hide: notExportCreatable },
+    userExports: { hide: notExportCreatable },
+
+    countries: { hide: notLoggedIn },
+    userProfile: { hide: notLoggedIn },
+    userGroup: { hide: notLoggedIn },
+
+    analysisFramework: { hide: notLoggedIn },
+    categoryEditor: { hide: notLoggedIn },
+    weeklySnapshot: { hide: notLoggedIn },
+    apiDocs: { hide: notDevAndAdmin },
+    stringManagement: { hide: notDevAndAdmin },
+    notifications: { hide: notLoggedIn },
+    homeScreen: { hide: notLoggedIn },
+    adminPanel: { hide: notAdmin },
+    visualization: { hide: notDev },
+
+    projectDenied: {},
+    fourHundredThree: {},
+    fourHundredFour: {},
 };
 
-export default allLinks;
+export default acl;

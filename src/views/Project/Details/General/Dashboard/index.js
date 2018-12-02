@@ -142,7 +142,13 @@ export default class ProjectDashboard extends React.PureComponent {
     }
 
     sourcerParams = (key, user) => {
-        const { projectRequest: { response: { numberOfLeads } } } = this.props;
+        const {
+            projectRequest: {
+                response: {
+                    numberOfLeads,
+                } = emptyObject,
+            } = emptyObject,
+        } = this.props;
 
         return ({
             user,
@@ -151,7 +157,13 @@ export default class ProjectDashboard extends React.PureComponent {
     }
 
     taggerParams = (key, user) => {
-        const { projectRequest: { response: { numberOfEntries } } } = this.props;
+        const {
+            projectRequest: {
+                response: {
+                    numberOfEntries,
+                } = emptyObject,
+            } = emptyObject,
+        } = this.props;
 
         return ({
             user,
@@ -164,8 +176,8 @@ export default class ProjectDashboard extends React.PureComponent {
             projectRequest: {
                 response: {
                     leadsActivity = emptyList,
-                } = {},
-            } = {},
+                } = emptyObject,
+            } = emptyObject,
         } = this.props;
 
         return (
@@ -191,8 +203,8 @@ export default class ProjectDashboard extends React.PureComponent {
             projectRequest: {
                 response: {
                     entriesActivity = emptyList,
-                } = {},
-            } = {},
+                } = emptyObject,
+            } = emptyObject,
         } = this.props;
 
         return (

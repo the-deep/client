@@ -19,12 +19,4 @@ $width-project-bar: 300px;
         flex-grow: 1;
         background-color: $color-foreground-alt;
     }
-
-    .no-project-text {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: $color-text-disabled;
-        font-size: $font-size-extra-large;
-    }
 }

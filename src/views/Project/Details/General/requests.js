@@ -1,5 +1,6 @@
 import { requestMethods } from '#request';
 import notify from '#notify';
+import { getNewActiveProjectId } from '#entities/project';
 import { checkVersion } from '#rsu/common';
 import _ts from '#ts';
 
@@ -84,8 +85,12 @@ const requests = {
             const {
                 projectId,
                 unsetProject,
+                userProjects,
             } = props;
-            unsetProject({ projectId });
+            unsetProject({
+                projectId,
+                newActiveProjectId: getNewActiveProjectId(userProjects, projectId),
+            });
             notify.send({
                 title: _ts('project', 'projectDelete'),
                 type: notify.type.SUCCESS,

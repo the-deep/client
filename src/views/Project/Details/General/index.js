@@ -14,6 +14,8 @@ import ActivityLog from '#components/ActivityLog';
 import Cloak from '#components/Cloak';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 
+import { getNewActiveProjectId } from '#entities/project';
+
 import {
     RequestCoordinator,
     RequestClient,
@@ -28,6 +30,7 @@ import {
     setErrorProjectDetailsAction,
     projectDetailsSelector,
     unsetProjectDetailsAction,
+    currentUserProjectsSelector,
 } from '#redux';
 
 import Faram, {
@@ -54,6 +57,8 @@ const propTypes = {
 
     // Requests Props
     // eslint-disable-next-line react/no-unused-prop-types
+    userProjects: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/no-unused-prop-types
     setProjectDetails: PropTypes.func.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     projectServerData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -74,6 +79,7 @@ const defaultProps = {
 };
 
 const mapStateToProps = state => ({
+    userProjects: currentUserProjectsSelector(state),
     activityLog: projectActivityLogSelector(state),
     projectLocalData: projectLocalDataSelector(state),
     projectServerData: projectServerDataSelector(state),
