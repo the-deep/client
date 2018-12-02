@@ -13,7 +13,6 @@ export const allLinks = {
     connectors: viewsAcl.connectors,
     apiDocs: viewsAcl.apiDocs,
     stringManagement: viewsAcl.stringManagement,
-    notifications: viewsAcl.notifications,
     visualization: viewsAcl.visualization,
     adminPanel: viewsAcl.adminPanel,
 

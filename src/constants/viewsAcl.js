@@ -73,7 +73,6 @@ const acl = {
     weeklySnapshot: { hide: notLoggedIn },
     apiDocs: { hide: notDevAndAdmin },
     stringManagement: { hide: notDevAndAdmin },
-    notifications: { hide: notLoggedIn },
     homeScreen: { hide: notLoggedIn },
     adminPanel: { hide: notAdmin },
     visualization: { hide: notDev },
