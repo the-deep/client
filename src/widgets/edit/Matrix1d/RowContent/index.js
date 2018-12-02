@@ -5,7 +5,7 @@ import FaramGroup from '#rscg/FaramGroup';
 import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
 import NonFieldErrors from '#rsci/NonFieldErrors';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
+import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
 import ColorInput from '#rsci/ColorInput';
 import { randomString } from '#rsu/common';
@@ -100,6 +100,9 @@ export default class RowContent extends React.PureComponent {
                             {_ts('widgets.editor.matrix1d', 'cellsHeaderTitle')}
                         </h4>
                         <div className={styles.buttonContainer} >
+                            <h5>
+                                {_ts('widgets.editor.matrix1d', 'addCellsFromTitle')}
+                            </h5>
                             <GeoLink
                                 faramElementName="cells"
                                 titleSelector={RowContent.rowTitleSelector}
@@ -117,14 +120,14 @@ export default class RowContent extends React.PureComponent {
                                 faramElementName="cells"
                                 keySelector={RowContent.keySelector}
                             >
-                                <PrimaryButton
+                                <AccentButton
                                     faramElementName="add-btn"
                                     faramAction={RowContent.addOptionClick}
-                                    iconName={iconNames.add}
+                                    iconName={iconNames.clipboard}
                                     transparent
                                 >
                                     {_ts('widgets.editor.matrix1d', 'addCellButtonTitle')}
-                                </PrimaryButton>
+                                </AccentButton>
                             </FaramList>
                         </div>
                     </header>

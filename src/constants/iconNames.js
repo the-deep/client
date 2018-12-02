@@ -23,6 +23,7 @@ const iconNames = {
     refresh: 'ion-android-refresh',
     calendar: 'ion-ios-calendar-outline',
     email: 'fa fa-envelope',
+    widget: 'ion-cube',
 
     documentText: 'fa fa-file-o',
 

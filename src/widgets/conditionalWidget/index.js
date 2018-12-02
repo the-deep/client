@@ -1,4 +1,5 @@
 import { mapToList } from '#rsu/common';
+import { widgetTitlesGroupMapForConditional } from '#widgets/widgetMetadata';
 
 import matrix1dConditions from './matrix1d';
 import matrix2dConditions from './matrix2d';
@@ -15,34 +16,15 @@ import geoOptions from './geo';
 
 const emptyObject = {};
 
-// Widgets that can be used in the
-// ConditionalWidget
-const widgetTitles = {
-    matrix1dWidget: 'matrix1DWidgetLabel',
-    matrix2dWidget: 'matrix2DWidgetLabel',
-    numberMatrixWidget: 'numberMatrixWidgetLabel',
-    dateWidget: 'dateWidgetLabel',
-    timeWidget: 'timeWidgetLabel',
-    dateRangeWidget: 'dateRangeWidgetLabel',
-    timeRangeWidget: 'timeRangeWidgetLabel',
-    numberWidget: 'numberWidgetLabel',
-    scaleWidget: 'scaleWidgetLabel',
-    geoWidget: 'geoWidgetLabel',
-    organigramWidget: 'organigramWidgetLabel',
-    selectWidget: 'selectWidgetLabel',
-    multiselectWidget: 'multiselectWidgetLabel',
-};
-
-export const compatibleWidgetIds = Object.keys(widgetTitles);
+export const compatibleWidgetIds = Object.keys(widgetTitlesGroupMapForConditional);
 
 export const widgetList = mapToList(
-    widgetTitles,
-    (title, widgetId) => ({
+    widgetTitlesGroupMapForConditional,
+    (widget, widgetId) => (widget.hasConditions && {
         widgetId,
-        title,
+        ...widget,
     }),
 );
-
 
 // Conditions for all widgets that support
 // conditions.

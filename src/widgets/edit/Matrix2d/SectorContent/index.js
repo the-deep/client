@@ -5,7 +5,7 @@ import FaramGroup from '#rscg/FaramGroup';
 import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
 import NonFieldErrors from '#rsci/NonFieldErrors';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
+import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
 import { randomString } from '#rsu/common';
 
@@ -96,6 +96,9 @@ export default class SectorContent extends React.PureComponent {
                             {_ts('widgets.editor.matrix2d', 'subsectorsHeaderTitle')}
                         </h4>
                         <div className={styles.buttonContainer} >
+                            <h5>
+                                {_ts('widgets.editor.matrix2d', 'addSubSectorTitle')}
+                            </h5>
                             <GeoLink
                                 faramElementName="subsectors"
                                 titleSelector={SectorContent.rowTitleSelector}
@@ -113,14 +116,14 @@ export default class SectorContent extends React.PureComponent {
                                 faramElementName="subsectors"
                                 keySelector={SectorContent.keySelector}
                             >
-                                <PrimaryButton
+                                <AccentButton
                                     faramElementName="add-btn"
                                     faramAction={SectorContent.addSubsectorClick}
                                     iconName={iconNames.add}
                                     transparent
                                 >
                                     {_ts('widgets.editor.matrix2d', 'addSubsectorButtonTitle')}
-                                </PrimaryButton>
+                                </AccentButton>
                             </FaramList>
                         </div>
                     </header>

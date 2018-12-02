@@ -67,6 +67,14 @@ $height-edit-modal: 70vh;
                     .button-container {
                         display: flex;
                         align-items: center;
+
+                        h5 {
+                            padding-right: $spacing-small;
+
+                            &:after {
+                                content: ':';
+                            }
+                        }
                     }
                 }
 

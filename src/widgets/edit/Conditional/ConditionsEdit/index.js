@@ -26,6 +26,11 @@ import {
     compatibleWidgetIds,
 } from '#widgets/conditionalWidget';
 
+import {
+    widgetGroups,
+    widgetTitlesGroupMapForConditional as widgetTitles,
+} from '#widgets/widgetMetadata';
+
 import _ts from '#ts';
 
 import WidgetPreview from '../WidgetPreview';
@@ -63,9 +68,20 @@ class ConditionsEditModal extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static widgetKeySelector = widget => widget.key;
+    static groupKeySelector = widget => widget.groupId;
 
     static operatorKeySelector = o => o.key;
     static operatorLabelSelector = o => o.label;
+
+    static groupRendererParams = (groupKey) => {
+        const { title } = widgetGroups[groupKey];
+        const children = !title ? '' : _ts('widgetGroupTitle', title);
+        return {
+            children,
+        };
+    }
+
+    static groupComparator = (a, b) => widgetGroups[a].order - widgetGroups[b].order;
 
     constructor(props) {
         super(props);
@@ -101,6 +117,10 @@ class ConditionsEditModal extends React.PureComponent {
 
     getCompatibleWidget = memoize(widgets => (
         widgets.filter(w => compatibleWidgetIds.indexOf(w.widgetId) >= 0)
+            .map(w => ({
+                ...w,
+                groupId: widgetTitles[w.widgetId].groupId,
+            }))
     ));
 
     validateCondition = (obj) => {
@@ -239,6 +259,11 @@ class ConditionsEditModal extends React.PureComponent {
                                     renderer={WidgetPreview}
                                     rendererParams={this.widgetListRendererParams}
                                     keySelector={ConditionsEditModal.widgetKeySelector}
+                                    rendererClassName={styles.item}
+                                    groupKeySelector={ConditionsEditModal.groupKeySelector}
+                                    groupRendererParams={ConditionsEditModal.groupRendererParams}
+                                    groupRendererClassName={styles.group}
+                                    groupComparator={ConditionsEditModal.groupComparator}
                                 />
                             </div>
                         </FaramList>

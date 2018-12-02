@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import ListView from '#rscv/List/ListView';
 import { randomString } from '#rsu/common';
 
-import { widgetGroups } from '#widgets';
+import { widgetGroups } from '#widgets/widgetMetadata';
 import { addAfViewWidgetAction } from '#redux';
 import _ts from '#ts';
 

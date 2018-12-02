@@ -10,6 +10,7 @@ import ModalHeader from '#rscv/Modal/Header';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
 import Faram, { requiredCondition } from '#rscg/Faram';
 import {
@@ -264,6 +265,9 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                     {_ts('widgets.editor.matrix1d', 'rowTitle')}
                                 </h4>
                                 <div className={styles.buttonContainer} >
+                                    <h5>
+                                        {_ts('widgets.editor.matrix1d', 'addRowsFromTitle')}
+                                    </h5>
                                     <GeoLink
                                         faramElementName="rows"
                                         dataModifier={Matrix1dEditWidget.rowsModifier}
@@ -281,14 +285,14 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                         faramElementName="rows"
                                         keySelector={Matrix1dEditWidget.keySelector}
                                     >
-                                        <PrimaryButton
+                                        <AccentButton
                                             faramElementName="add-btn"
                                             faramAction={this.addRowClick}
-                                            iconName={iconNames.add}
+                                            iconName={iconNames.clipboard}
                                             transparent
                                         >
                                             {_ts('widgets.editor.matrix1d', 'addRowButtonTitle')}
-                                        </PrimaryButton>
+                                        </AccentButton>
                                     </FaramList>
                                 </div>
                             </header>
