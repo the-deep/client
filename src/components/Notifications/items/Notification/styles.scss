@@ -1,0 +1,61 @@
+@import '~base-scss/base';
+
+$size-default-icon: 48px;
+
+.notification {
+    display: flex;
+    padding: $spacing-small 0;
+
+    &:not(:last-child) {
+        border-bottom: $width-separator-thin solid $color-separator;
+    }
+
+    .left {
+        flex-basis: $size-default-icon;
+        flex-shrink: 0;
+        margin: $spacing-medium;
+        border: $width-separator-thin solid $color-accent;
+        border-radius: 50%;
+        height: $size-default-icon;
+        overflow: hidden;
+
+        >* {
+            width: 100%;
+            height: 100%;
+        }
+
+        .default-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: $font-size-super-large;
+        }
+    }
+
+    .right {
+        flex-grow: 1;
+
+        .message {
+            padding: $spacing-small $spacing-medium;
+        }
+
+        .timestamp {
+            display: flex;
+            padding: 0 $spacing-medium;
+
+            .timestamp-icon {
+                flex-shrink: 0;
+                padding-right: $spacing-small;
+            }
+
+            .date {
+                color: $color-text-label;
+            }
+        }
+
+        .actions {
+            margin-top: $spacing-medium-alt;
+        }
+    }
+}
+

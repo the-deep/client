@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '#rsu/common';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
+import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
 
 import {
@@ -66,12 +66,12 @@ export default class Actions extends React.PureComponent {
                 );
             case 'none':
                 return (
-                    <PrimaryButton
+                    <Button
                         title={_ts('discoverProjects.table', 'joinLabel')}
                         onClick={() => this.props.onProjectJoin(project)}
                     >
                         {_ts('discoverProjects.table', 'joinLabel')}
-                    </PrimaryButton>
+                    </Button>
                 );
             default:
                 return null;

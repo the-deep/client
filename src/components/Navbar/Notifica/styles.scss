@@ -1,0 +1,41 @@
+@import '~base-scss/base';
+
+.notifica {
+    position: relative;
+
+    .count {
+        @include background-color($color-danger);
+        display: flex;
+        position: absolute;
+        top: $spacing-small;
+        right: $spacing-small;
+        align-items: center;
+        justify-content: center;
+        border-radius: ($font-size-extra-small + $spacing-extra-small * 2) / 2;
+        padding: $spacing-extra-small;
+        min-width: $font-size-extra-small + $spacing-extra-small * 2;
+        font-size: $font-size-extra-small;
+        font-weight: $font-weight-bold;
+    }
+
+    .dropdown-menu {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+$width-notification-dropdown: 420px;
+$height-notification-dropdown: 520px;
+
+.notification-dropdown {
+    width: $width-notification-dropdown;
+    height: $height-notification-dropdown;
+
+    .notifications {
+        height: 100%;
+    }
+}
+
+.icon {
+    font-size: $font-size-super-large;
+}

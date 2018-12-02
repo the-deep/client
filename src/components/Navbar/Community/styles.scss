@@ -1,0 +1,31 @@
+@import '~base-scss/base';
+
+.community-dropdown {
+    min-width: 120px;
+
+    .join-link {
+        @include transition-medium();
+        display: flex;
+        align-items: center;
+        padding: $spacing-small;
+
+        .image {
+            margin: $spacing-small $spacing-medium;
+            width: $font-size-medium-alt;
+            height: $font-size-medium-alt;
+        }
+
+        .title {
+            padding: $spacing-small $spacing-medium;
+        }
+
+        &:hover {
+            background-color: $color-background-hover;
+        }
+    }
+}
+
+.icon {
+    color: $color-text-alt;
+    font-size: $font-size-super-large;
+}

@@ -135,7 +135,6 @@ export default class NavDrop extends React.PureComponent {
         projects: iconNames.map,
         countries: iconNames.globe,
         connectors: iconNames.link,
-        notifications: iconNames.notifications,
         visualization: iconNames.pizza,
         workshop: iconNames.settings,
     };

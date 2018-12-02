@@ -82,25 +82,19 @@ $color-text-on-primary: get-text-color($color-primary);
         }
     }
 
-    .join-link {
-        @include transition-medium();
-        display: flex;
-        align-items: center;
-        margin-right: $spacing-medium;
-        filter: grayscale(100%);
+    .community-dropdown {
+        align-self: stretch;
+        flex-shrink: 0;
+    }
 
-        .image {
-            width: $font-size-large;
-            height: $font-size-large;
-        }
-
-        &:hover {
-            filter: grayscale(0%);
-        }
+    .notification-dropdown {
+        align-self: stretch;
+        flex-shrink: 0;
     }
 
     .user-menu {
         align-self: stretch;
         flex-shrink: 0;
+        margin-left: $spacing-medium;
     }
 }
