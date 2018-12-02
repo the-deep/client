@@ -1,4 +1,5 @@
 export * from './selectors/app';
+export * from './selectors/tabStatus';
 export * from './selectors/lang';
 export * from './selectors/auth';
 export * from './selectors/notify';
