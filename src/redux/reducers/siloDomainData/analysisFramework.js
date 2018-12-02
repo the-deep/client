@@ -118,14 +118,70 @@ const afViewAddWidget = (state, action) => {
     return update(state, settings);
 };
 
+const emptyObject = {};
+const emptyArray = [];
+
+const getWidgets = (analysisFrameworkView = {}, analysisFrameworkId) => (
+    ((analysisFrameworkView[analysisFrameworkId] || emptyObject).data || emptyObject).widgets
+    || emptyArray
+);
+
 const afViewRemoveWidget = (state, action) => {
     const { analysisFrameworkId, widgetId } = action;
+    const conditionalWidgets = getWidgets(state.analysisFrameworkView, analysisFrameworkId)
+        .map((widgets, index) => ({
+            ...widgets,
+            originalIndex: index,
+        }))
+        .filter(widgets => widgets.widgetId === 'conditionalWidget');
+    const settingsForConditions = {};
+
+    conditionalWidgets.forEach((conditionalWidget) => {
+        const widgetsOfConditional = (conditionalWidget.properties.data || emptyObject).widgets;
+        if (!widgetsOfConditional) {
+            return;
+        }
+
+        const widgetOfConditionalSettings = {};
+        widgetsOfConditional.forEach((widgetOfConditional, widgetOfConditionalIndex) => {
+            const conditions = ((widgetOfConditional.conditions || emptyObject).list || emptyArray);
+
+            const itemsToRemove = [];
+            conditions.forEach((condition, conditionIndex) => {
+                if (condition.widgetKey === widgetId) {
+                    itemsToRemove.push(conditionIndex);
+                }
+            });
+
+            if (itemsToRemove.length > 0) {
+                widgetOfConditionalSettings[widgetOfConditionalIndex] = {
+                    conditions: {
+                        list: { $removeFromIndex: itemsToRemove },
+                    },
+                };
+            }
+        });
+        if (Object.keys(widgetOfConditionalSettings).length > 0) {
+            settingsForConditions[conditionalWidget.originalIndex] = {
+                properties: {
+                    data: {
+                        widgets: widgetOfConditionalSettings,
+                    },
+                },
+            };
+        }
+    });
 
     const settings = {
         analysisFrameworkView: {
             [analysisFrameworkId]: {
                 data: {
-                    widgets: { $filter: w => getWidgetKey(w) !== widgetId },
+                    widgets: {
+                        $bulk: [
+                            settingsForConditions,
+                            { $filter: w => getWidgetKey(w) !== widgetId },
+                        ],
+                    },
                 },
                 pristine: { $set: false },
             },

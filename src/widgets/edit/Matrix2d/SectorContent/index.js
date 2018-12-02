@@ -12,7 +12,7 @@ import { randomString } from '#rsu/common';
 import _ts from '#ts';
 import { iconNames } from '#constants';
 
-import LinkWidgetModal from '#widgetComponents/LinkWidgetModal';
+import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
 
 import SubsectorRow from './SubsectorRow';
@@ -22,7 +22,6 @@ const propTypes = {
     index: PropTypes.number.isRequired,
     className: PropTypes.string,
     widgetKey: PropTypes.string.isRequired,
-    onNestedModalChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -34,6 +33,7 @@ export default class SectorContent extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static keySelector = elem => elem.id;
+    static rowTitleSelector = d => d.title;
 
     static addSubsectorClick = subsectors => ([
         ...subsectors,
@@ -48,46 +48,15 @@ export default class SectorContent extends React.PureComponent {
         index: i,
     })
 
-    constructor(props) {
-        super(props);
-
-        this.state = { showLinkModal: false };
-    }
-
-    handleAddFromWidgetClick = () => {
-        this.setState({
-            showLinkModal: true,
-        }, () => this.props.onNestedModalChange(true));
-    }
-
-    handleLinkModalClose = () => {
-        this.setState({
-            showLinkModal: false,
-        }, () => this.props.onNestedModalChange(false));
-    }
-
-    addFromWidgetClick = (items, _, listOfNewItems) => {
-        const newListOfItems = listOfNewItems.map(r => ({
-            id: randomString(16),
-            title: r.label,
-            originalWidget: r.originalWidget,
-            originalKey: r.originalKey,
-            tooltip: '',
-        }));
-
-        this.setState({
-            showLinkModal: false,
-        }, () => this.props.onNestedModalChange(false));
-
-        return [
-            ...items,
-            ...newListOfItems,
-        ];
-    };
+    static rowsModifier = rows => rows.map(r => ({
+        id: randomString(16),
+        title: r.label,
+        originalWidget: r.originalWidget,
+        originalKey: r.originalKey,
+        tooltip: '',
+    }));
 
     render() {
-        const { showLinkModal } = this.state;
-
         const {
             index,
             className,
@@ -121,30 +90,29 @@ export default class SectorContent extends React.PureComponent {
                             className={styles.error}
                             faramElement
                         />
-                        <header className={styles.header}>
-                            <h4>
-                                {_ts('widgets.editor.matrix2d', 'subsectorsHeaderTitle')}
-                            </h4>
-                            <div className={styles.buttonContainer} >
-                                <GeoLink
-                                    faramElementName="add-from-geo-btn"
-                                    faramAction={this.addFromWidgetClick}
-                                />
-                                <PrimaryButton
-                                    transparent
-                                    iconName={iconNames.add}
-                                    onClick={this.handleAddFromWidgetClick}
-                                >
-                                    {_ts('widgets.editor.matrix2d', 'addFromWidgets')}
-                                </PrimaryButton>
-                                {showLinkModal &&
-                                    <LinkWidgetModal
-                                        onClose={this.handleLinkModalClose}
-                                        widgetKey={this.props.widgetKey}
-                                        faramElementName="add-from-widget-btn"
-                                        faramAction={this.addFromWidgetClick}
-                                    />
-                                }
+                    </FaramList>
+                    <header className={styles.header}>
+                        <h4>
+                            {_ts('widgets.editor.matrix2d', 'subsectorsHeaderTitle')}
+                        </h4>
+                        <div className={styles.buttonContainer} >
+                            <GeoLink
+                                faramElementName="subsectors"
+                                titleSelector={SectorContent.rowTitleSelector}
+                                lastItemTitle="subcells"
+                                dataModifier={SectorContent.rowsModifier}
+                            />
+                            <LinkWidgetModalButton
+                                faramElementName="subsectors"
+                                lastItemTitle="subsectors"
+                                widgetKey={this.props.widgetKey}
+                                titleSelector={SectorContent.rowTitleSelector}
+                                dataModifier={SectorContent.rowsModifier}
+                            />
+                            <FaramList
+                                faramElementName="subsectors"
+                                keySelector={SectorContent.keySelector}
+                            >
                                 <PrimaryButton
                                     faramElementName="add-btn"
                                     faramAction={SectorContent.addSubsectorClick}
@@ -153,8 +121,13 @@ export default class SectorContent extends React.PureComponent {
                                 >
                                     {_ts('widgets.editor.matrix2d', 'addSubsectorButtonTitle')}
                                 </PrimaryButton>
-                            </div>
-                        </header>
+                            </FaramList>
+                        </div>
+                    </header>
+                    <FaramList
+                        faramElementName="subsectors"
+                        keySelector={SectorContent.keySelector}
+                    >
                         <SortableListView
                             faramElement
                             className={styles.cellList}

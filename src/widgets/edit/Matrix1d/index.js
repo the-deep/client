@@ -12,10 +12,13 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
 import Faram, { requiredCondition } from '#rscg/Faram';
-import { findDuplicates, randomString } from '#rsu/common';
+import {
+    findDuplicates,
+    randomString,
+} from '#rsu/common';
 import { iconNames } from '#constants';
 
-import LinkWidgetModal from '#widgetComponents/LinkWidgetModal';
+import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
 import _ts from '#ts';
 
@@ -42,6 +45,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static keySelector = elem => elem.key;
+    static rowTitleSelector = d => d.title;
 
     static schema = {
         fields: {
@@ -102,6 +106,17 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         },
     };
 
+    static rowsModifier = rows => rows.map(r => ({
+        key: randomString(16),
+        title: r.label,
+        originalWidget: r.originalWidget,
+        originalKey: r.originalKey,
+        color: undefined,
+        tooltip: '',
+        cells: [],
+    }));
+
+
     constructor(props) {
         super(props);
 
@@ -118,8 +133,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             faramErrors: {},
             pristine: true,
             hasError: false,
-            showLinkModal: false,
-            showNestedLinkModal: false,
 
             selectedRowKey: rows[0]
                 ? Matrix1dEditWidget.keySelector(rows[0])
@@ -128,11 +141,17 @@ export default class Matrix1dEditWidget extends React.PureComponent {
     }
 
     handleFaramChange = (faramValues, faramErrors, faramInfo) => {
+        const selectedRowKey = faramInfo.lastItem ? (
+            Matrix1dEditWidget.keySelector(faramInfo.lastItem)
+        ) : (
+            this.state.selectedRowKey
+        );
         this.setState({
             faramValues,
             faramErrors,
             pristine: false,
             hasError: faramInfo.hasError,
+            selectedRowKey,
         });
     };
 
@@ -165,38 +184,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         ];
     }
 
-    addFromWidgetClick = (rows, _, listOfNewRows) => {
-        const newListOfRows = listOfNewRows.map(r => ({
-            key: randomString(16),
-            title: r.label,
-            originalWidget: r.originalWidget,
-            originalKey: r.originalKey,
-            color: undefined,
-            tooltip: '',
-            cells: [],
-        }));
-        this.setState({
-            showLinkModal: false,
-            selectedRowKey: Matrix1dEditWidget.keySelector(newListOfRows[0]),
-        });
-        return [
-            ...rows,
-            ...newListOfRows,
-        ];
-    };
-
-    handleLinkModalClose = () => {
-        this.setState({ showLinkModal: false });
-    }
-
-    handleAddFromWidgetClick = () => {
-        this.setState({ showLinkModal: true });
-    }
-
-    handleNestedModalChange = (showNestedLinkModal) => {
-        this.setState({ showNestedLinkModal });
-    }
-
     rendererParams = (key, elem, i) => ({
         index: i,
         faramElementName: String(i),
@@ -226,8 +213,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             faramErrors,
             pristine,
             hasError,
-            showLinkModal,
-            showNestedLinkModal,
         } = this.state;
 
         const {
@@ -241,9 +226,6 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         );
 
         const modalClassNames = [styles.editModal];
-        if (showLinkModal || showNestedLinkModal) {
-            modalClassNames.push(styles.disabled);
-        }
 
         return (
             <Modal className={modalClassNames.join(' ')}>
@@ -276,30 +258,29 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                 keySelector={Matrix1dEditWidget.keySelector}
                             >
                                 <NonFieldErrors faramElement className={styles.error} />
-                                <header className={styles.header}>
-                                    <h4>
-                                        {_ts('widgets.editor.matrix1d', 'rowTitle')}
-                                    </h4>
-                                    <div className={styles.buttonContainer} >
-                                        <GeoLink
-                                            faramElementName="add-from-geo-btn"
-                                            faramAction={this.addFromWidgetClick}
-                                        />
-                                        <PrimaryButton
-                                            transparent
-                                            iconName={iconNames.add}
-                                            onClick={this.handleAddFromWidgetClick}
-                                        >
-                                            {_ts('widgets.editor.matrix1d', 'addFromWidgets')}
-                                        </PrimaryButton>
-                                        {showLinkModal &&
-                                            <LinkWidgetModal
-                                                onClose={this.handleLinkModalClose}
-                                                widgetKey={this.props.widgetKey}
-                                                faramElementName="add-from-widget-btn"
-                                                faramAction={this.addFromWidgetClick}
-                                            />
-                                        }
+                            </FaramList>
+                            <header className={styles.header}>
+                                <h4>
+                                    {_ts('widgets.editor.matrix1d', 'rowTitle')}
+                                </h4>
+                                <div className={styles.buttonContainer} >
+                                    <GeoLink
+                                        faramElementName="rows"
+                                        dataModifier={Matrix1dEditWidget.rowsModifier}
+                                        titleSelector={Matrix1dEditWidget.rowTitleSelector}
+                                        onModalVisibilityChange={this.handleModalVisiblityChange}
+                                    />
+                                    <LinkWidgetModalButton
+                                        faramElementName="rows"
+                                        widgetKey={this.props.widgetKey}
+                                        titleSelector={Matrix1dEditWidget.rowTitleSelector}
+                                        dataModifier={Matrix1dEditWidget.rowsModifier}
+                                        onModalVisibilityChange={this.handleModalVisiblityChange}
+                                    />
+                                    <FaramList
+                                        faramElementName="rows"
+                                        keySelector={Matrix1dEditWidget.keySelector}
+                                    >
                                         <PrimaryButton
                                             faramElementName="add-btn"
                                             faramAction={this.addRowClick}
@@ -308,8 +289,13 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                         >
                                             {_ts('widgets.editor.matrix1d', 'addRowButtonTitle')}
                                         </PrimaryButton>
-                                    </div>
-                                </header>
+                                    </FaramList>
+                                </div>
+                            </header>
+                            <FaramList
+                                faramElementName="rows"
+                                keySelector={Matrix1dEditWidget.keySelector}
+                            >
                                 <div className={styles.panels}>
                                     <SortableListView
                                         className={styles.leftPanel}

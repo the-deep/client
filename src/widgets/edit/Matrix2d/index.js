@@ -14,13 +14,16 @@ import TextInput from '#rsci/TextInput';
 import Faram, { requiredCondition } from '#rscg/Faram';
 import FixedTabs from '#rscv/FixedTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import { findDuplicates, randomString } from '#rsu/common';
+import {
+    findDuplicates,
+    randomString,
+} from '#rsu/common';
 
 import TabTitle from '#components/TabTitle';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
-import LinkWidgetModal from '#widgetComponents/LinkWidgetModal';
+import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
 
 import SectorTitle from './SectorTitle';
@@ -48,6 +51,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static keySelector = elem => elem.id;
+    static titleSelector = elem => elem.title;
 
     static schema = {
         fields: {
@@ -158,6 +162,25 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         },
     };
 
+    static dimensionDataModifier = row => row.map(r => ({
+        id: randomString(16),
+        title: r.label,
+        originalWidget: r.originalWidget,
+        originalKey: r.originalKey,
+        color: undefined,
+        tooltip: '',
+        subdimensions: [],
+    }));
+
+    static sectorDataModifier = row => row.map(r => ({
+        id: randomString(16),
+        title: r.label,
+        originalWidget: r.originalWidget,
+        originalKey: r.originalKey,
+        tooltip: '',
+        subsectors: [],
+    }));
+
     constructor(props) {
         super(props);
 
@@ -178,8 +201,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             faramErrors: {},
             pristine: true,
             hasError: false,
-            showLinkModal: false,
-            showNestedLinkModal: false,
 
             selectedDimensionKey: dimensions[0]
                 ? Matrix2dEditWidget.keySelector(dimensions[0])
@@ -234,7 +255,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                         index={selectedDimensionIndex}
                                         className={styles.rightPanel}
                                         widgetKey={this.props.widgetKey}
-                                        onNestedModalChange={this.handleNestedModalChange}
                                     />
                                 }
                             </div>
@@ -292,9 +312,25 @@ export default class Matrix2dEditWidget extends React.PureComponent {
     }
 
     handleFaramChange = (faramValues, faramErrors, faramInfo) => {
+        const {
+            selectedTab,
+            selectedDimensionKey,
+            selectedSectorKey,
+        } = this.state;
+
+        const tabName = selectedTab === 'dimensions' ? 'selectedDimensionKey' : 'selectedSectorKey';
+
+        const currentSelectedRowKey = selectedTab === 'dimensions' ? selectedDimensionKey : selectedSectorKey;
+        const selectedRowKey = faramInfo.lastItem ? (
+            Matrix2dEditWidget.keySelector(faramInfo.lastItem)
+        ) : (
+            currentSelectedRowKey
+        );
+
         this.setState({
             faramValues,
             faramErrors,
+            [tabName]: selectedRowKey,
             pristine: false,
             hasError: faramInfo.hasError,
         });
@@ -338,38 +374,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         ];
     }
 
-    addDimensionFromWidgetClick = (rows, _, listOfNewRows) => {
-        const newListOfRows = listOfNewRows.map(r => ({
-            id: randomString(16),
-            title: r.label,
-            originalWidget: r.originalWidget,
-            originalKey: r.originalKey,
-            color: undefined,
-            tooltip: '',
-            subdimensions: [],
-        }));
-        this.setState({
-            showLinkModal: false,
-            selectedDimensionKey: Matrix2dEditWidget.keySelector(newListOfRows[0]),
-        });
-        return [
-            ...rows,
-            ...newListOfRows,
-        ];
-    };
-
-    handleLinkModalClose = () => {
-        this.setState({ showLinkModal: false });
-    }
-
-    handleAddFromWidgetClick = () => {
-        this.setState({ showLinkModal: true });
-    }
-
-    handleNestedModalChange = (showNestedLinkModal) => {
-        this.setState({ showNestedLinkModal });
-    }
-
     addSectorClick = (options) => {
         const newSector = {
             id: randomString(16),
@@ -388,39 +392,16 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         ];
     }
 
-    addSectorFromWidgetClick = (rows, _, listOfNewRows) => {
-        const newListOfRows = listOfNewRows.map(r => ({
-            id: randomString(16),
-            title: r.label,
-            originalWidget: r.originalWidget,
-            originalKey: r.originalKey,
-            tooltip: '',
-            subsectors: [],
-        }));
-        this.setState({
-            showLinkModal: false,
-            selectedSectorKey: Matrix2dEditWidget.keySelector(newListOfRows[0]),
-        });
-        return [
-            ...rows,
-            ...newListOfRows,
-        ];
-    };
-
-
     handleTabSelect = (selectedTab) => {
         this.setState({ selectedTab });
     }
 
     renderTabsWithButton = () => {
-        const {
-            selectedTab,
-            showLinkModal,
-        } = this.state;
+        const { selectedTab } = this.state;
 
-        const addFromWidgetFaramAction = selectedTab === 'dimensions'
-            ? this.addDimensionFromWidgetClick
-            : this.addSectorFromWidgetClick;
+        const dataModifier = selectedTab === 'dimensions'
+            ? Matrix2dEditWidget.dimensionDataModifier
+            : Matrix2dEditWidget.sectorDataModifier;
 
         return (
             <div className={styles.tabsContainer}>
@@ -438,26 +419,20 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     modifier={this.renderTab}
                 >
                     <div className={styles.buttonContainer}>
+                        <GeoLink
+                            faramElementName={selectedTab}
+                            titleSelector={Matrix2dEditWidget.titleSelector}
+                            dataModifier={dataModifier}
+                            onModalVisibilityChange={this.handleModalVisiblityChange}
+                        />
+                        <LinkWidgetModalButton
+                            faramElementName={selectedTab}
+                            widgetKey={this.props.widgetKey}
+                            titleSelector={Matrix2dEditWidget.titleSelector}
+                            dataModifier={dataModifier}
+                            onModalVisibilityChange={this.handleModalVisiblityChange}
+                        />
                         <FaramList faramElementName={selectedTab}>
-                            <GeoLink
-                                faramElementName="add-from-geo-btn"
-                                faramAction={addFromWidgetFaramAction}
-                            />
-                            <PrimaryButton
-                                transparent
-                                iconName={iconNames.add}
-                                onClick={this.handleAddFromWidgetClick}
-                            >
-                                {_ts('widgets.editor.matrix2d', 'addFromWidgets')}
-                            </PrimaryButton>
-                            {showLinkModal &&
-                                <LinkWidgetModal
-                                    onClose={this.handleLinkModalClose}
-                                    widgetKey={this.props.widgetKey}
-                                    faramElementName="add-from-widget-btn"
-                                    faramAction={addFromWidgetFaramAction}
-                                />
-                            }
                             {
                                 selectedTab === 'dimensions' ? (
                                     <PrimaryButton
@@ -549,8 +524,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             pristine,
             hasError,
             selectedTab,
-            showLinkModal,
-            showNestedLinkModal,
         } = this.state;
 
         const {
@@ -558,12 +531,8 @@ export default class Matrix2dEditWidget extends React.PureComponent {
             title,
         } = this.props;
 
-
         const TabsWithButton = this.renderTabsWithButton;
         const modalClassnames = [styles.editModal];
-        if (showLinkModal || showNestedLinkModal) {
-            modalClassnames.push(styles.disabled);
-        }
 
         return (
             <Modal className={modalClassnames.join(' ')}>

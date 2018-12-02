@@ -93,9 +93,4 @@ $height-edit-modal: 70vh;
             }
         }
     }
-
-    &.disabled {
-        filter: brightness(50%);
-        pointer-events: none;
-    }
 }

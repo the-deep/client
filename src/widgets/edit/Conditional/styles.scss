@@ -83,9 +83,4 @@ $height-modal-body: 540px;
             }
         }
     }
-
-    &.disabled-everything {
-        filter: brightness(50%);
-        pointer-events: none;
-    }
 }

@@ -41,6 +41,13 @@ $height-edit-modal: 60vh;
                 :global {
                     .parent-node {
                         padding: $spacing-extra-small $spacing-small;
+
+                        .button {
+                            &.node-title {
+                                color: $color-text-disabled;
+                                font-weight: $font-weight-bold;
+                            }
+                        }
                     }
                 }
             }

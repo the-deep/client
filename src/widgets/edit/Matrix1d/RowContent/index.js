@@ -13,7 +13,7 @@ import { randomString } from '#rsu/common';
 import _ts from '#ts';
 import { iconNames } from '#constants';
 
-import LinkWidgetModal from '#widgetComponents/LinkWidgetModal';
+import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
 
 import InputRow from './InputRow';
@@ -23,7 +23,6 @@ const propTypes = {
     index: PropTypes.number.isRequired,
     className: PropTypes.string,
     widgetKey: PropTypes.string.isRequired,
-    onNestedModalChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -35,6 +34,7 @@ export default class RowContent extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static keySelector = elem => elem.key;
+    static rowTitleSelector = d => d.value;
 
     static addOptionClick = options => ([
         ...options,
@@ -48,49 +48,18 @@ export default class RowContent extends React.PureComponent {
         index: i,
     })
 
-    constructor(props) {
-        super(props);
-
-        this.state = { showLinkModal: false };
-    }
-
-    handleAddFromWidgetClick = () => {
-        this.setState({
-            showLinkModal: true,
-        }, () => this.props.onNestedModalChange(true));
-    }
-
-    handleLinkModalClose = () => {
-        this.setState({
-            showLinkModal: false,
-        }, () => this.props.onNestedModalChange(false));
-    }
-
-    addFromWidgetClick = (items, _, listOfNewItems) => {
-        const newListOfItems = listOfNewItems.map(r => ({
-            key: randomString(16),
-            value: r.label,
-            originalWidget: r.originalWidget,
-            originalKey: r.originalKey,
-        }));
-
-        this.setState({
-            showLinkModal: false,
-        }, () => this.props.onNestedModalChange(false));
-
-        return [
-            ...items,
-            ...newListOfItems,
-        ];
-    };
+    static rowsModifier = rows => rows.map(r => ({
+        key: randomString(16),
+        value: r.label,
+        originalWidget: r.originalWidget,
+        originalKey: r.originalKey,
+    }));
 
     render() {
         const {
             index,
             className,
         } = this.props;
-
-        const { showLinkModal } = this.state;
 
         return (
             <div className={className}>
@@ -125,30 +94,29 @@ export default class RowContent extends React.PureComponent {
                             className={styles.error}
                             faramElement
                         />
-                        <header className={styles.header}>
-                            <h4>
-                                {_ts('widgets.editor.matrix1d', 'cellsHeaderTitle')}
-                            </h4>
-                            <div className={styles.buttonContainer} >
-                                <GeoLink
-                                    faramElementName="add-from-geo-btn"
-                                    faramAction={this.addFromWidgetClick}
-                                />
-                                <PrimaryButton
-                                    transparent
-                                    iconName={iconNames.add}
-                                    onClick={this.handleAddFromWidgetClick}
-                                >
-                                    {_ts('widgets.editor.matrix1d', 'addFromWidgets')}
-                                </PrimaryButton>
-                                {showLinkModal &&
-                                    <LinkWidgetModal
-                                        onClose={this.handleLinkModalClose}
-                                        widgetKey={this.props.widgetKey}
-                                        faramElementName="add-from-widget-btn"
-                                        faramAction={this.addFromWidgetClick}
-                                    />
-                                }
+                    </FaramList>
+                    <header className={styles.header}>
+                        <h4>
+                            {_ts('widgets.editor.matrix1d', 'cellsHeaderTitle')}
+                        </h4>
+                        <div className={styles.buttonContainer} >
+                            <GeoLink
+                                faramElementName="cells"
+                                titleSelector={RowContent.rowTitleSelector}
+                                dataModifier={RowContent.rowsModifier}
+                                lastItemTitle="cells"
+                            />
+                            <LinkWidgetModalButton
+                                faramElementName="cells"
+                                widgetKey={this.props.widgetKey}
+                                titleSelector={RowContent.rowTitleSelector}
+                                lastItemTitle="cells"
+                                dataModifier={RowContent.rowsModifier}
+                            />
+                            <FaramList
+                                faramElementName="cells"
+                                keySelector={RowContent.keySelector}
+                            >
                                 <PrimaryButton
                                     faramElementName="add-btn"
                                     faramAction={RowContent.addOptionClick}
@@ -157,8 +125,13 @@ export default class RowContent extends React.PureComponent {
                                 >
                                     {_ts('widgets.editor.matrix1d', 'addCellButtonTitle')}
                                 </PrimaryButton>
-                            </div>
-                        </header>
+                            </FaramList>
+                        </div>
+                    </header>
+                    <FaramList
+                        faramElementName="cells"
+                        keySelector={RowContent.keySelector}
+                    >
                         <SortableListView
                             faramElement
                             className={styles.cellList}

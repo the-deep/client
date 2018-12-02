@@ -25,6 +25,7 @@ import {
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     widgets: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     onClick: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
@@ -32,6 +33,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
 };
 
 const mapStateToProps = state => ({
@@ -211,6 +213,7 @@ export default class LinkWidgetModal extends React.PureComponent {
             onClose,
             widgets,
             widgetKey,
+            className,
         } = this.props;
 
         const {
@@ -239,8 +242,10 @@ export default class LinkWidgetModal extends React.PureComponent {
         const rootNodeLabel = _ts('widgets.editor.link', 'rootNodeLabel');
         const cancelConfirmMessage = _ts('widgets.editor.link', 'cancelConfirmMessage');
 
+        const areOptionTypesMultiple = this.selectedWidgetOptions.length > 1;
+
         return (
-            <Modal className={styles.modal} >
+            <Modal className={`${styles.modal} ${className}`} >
                 <ModalHeader title={modalTitle} />
                 <ModalBody className={styles.modalBody} >
                     <div className={styles.selectionBar} >
@@ -253,17 +258,20 @@ export default class LinkWidgetModal extends React.PureComponent {
                             onChange={this.handleWidgetChange}
                             value={selectedWidget}
                             showHintAndError={false}
+                            hideClearButton
                         />
-                        <SelectInput
-                            className={styles.selectInput}
-                            label={optionsTypeSelectionLabel}
-                            options={this.selectedWidgetOptions}
-                            keySelector={LinkWidgetModal.optionsKeySelector}
-                            labelSelector={LinkWidgetModal.optionsLabelSelector}
-                            onChange={this.handleWidgetOptionChange}
-                            value={selectedWidgetItem}
-                            showHintAndError={false}
-                        />
+                        {areOptionTypesMultiple &&
+                            <SelectInput
+                                className={styles.selectInput}
+                                label={optionsTypeSelectionLabel}
+                                options={this.selectedWidgetOptions}
+                                keySelector={LinkWidgetModal.optionsKeySelector}
+                                labelSelector={LinkWidgetModal.optionsLabelSelector}
+                                onChange={this.handleWidgetOptionChange}
+                                value={selectedWidgetItem}
+                                showHintAndError={false}
+                            />
+                        }
                     </div>
                     <div className={styles.selectionBox} >
                         <header className={styles.header}>
