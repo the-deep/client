@@ -67,6 +67,7 @@ export default class Workshop extends React.PureComponent {
             hiddenValue: [],
             places: [],
             goodPlaces: [],
+            goodPlace2: [],
             badPlaces: [],
             worstPlace: [],
             nicePlace: [],
@@ -324,6 +325,19 @@ export default class Workshop extends React.PureComponent {
                         options={[
                             { key: 'm', label: 'Male' },
                             { key: 'f', label: 'Female' },
+                        ]}
+                    />
+                    <ListSelection
+                        label="Good Places"
+                        labelSelector={Workshop.labelSelector}
+                        keySelector={Workshop.keySelector}
+                        segment
+                        faramElementName="goodPlaces2"
+                        options={[
+                            { key: 'pokhara', label: 'The Pokhara' },
+                            { key: 'kathmandu', label: 'Dustmandu' },
+                            { key: 'chitwan', label: 'Chitwan' },
+                            { key: 'illam', label: 'Illam' },
                         ]}
                     />
                     <TabularSelectInput
