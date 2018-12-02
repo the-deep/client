@@ -270,14 +270,6 @@ export const routes = {
         links: allLinks,
     }, // _ts('pageTitle', 'stringManagement');
 
-    notifications: {
-        order: 160,
-        type: ROUTE.private,
-        path: '/notifications/',
-        loader: () => import('../views/Notifications'),
-        links: allLinks,
-    }, // _ts('pageTitle', 'notifications');
-
     visualization: {
         order: 170,
         type: ROUTE.private,
