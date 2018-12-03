@@ -2046,7 +2046,9 @@
             "projectJoinResponse": 1934,
             "projectJoinResponseFailure": 1935,
             "noNotificationsText": -70199668,
-            "projectJoinRequestAbortText": 1940
+            "projectJoinRequestAbortText": 1940,
+            "pendingHeaderTitle": 16,
+            "otherHeaderTitle": 1929
         },
         "notifications.projectJoinResponse": {
             "acceptText": 1941,

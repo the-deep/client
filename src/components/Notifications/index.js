@@ -139,6 +139,14 @@ export default class Notifications extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static groupKeySelector = notification => notification.data.status
+
+    static pendingToNumber = a => (a === 'pending' ? 1 : 0);
+
+    static groupComparator = (a, b) => (
+        Notifications.pendingToNumber(b) - Notifications.pendingToNumber(a)
+    )
+
     componentWillReceiveProps(nextProps) {
         // TODO: use request's onPropChange, once the feature gets implemented
         const {
@@ -156,6 +164,14 @@ export default class Notifications extends React.PureComponent {
             || newProjectJoinRejectRequest.pending !== oldProjectJoinRejectRequest.pending) {
             notificationsGetRequest.do();
         }
+    }
+
+    groupRendererParams = (groupKey) => {
+        const pendingTitle = _ts('notifications', 'pendingHeaderTitle');
+        const otherTitle = _ts('notifications', 'otherHeaderTitle');
+        return {
+            children: groupKey === 'pending' ? pendingTitle : otherTitle,
+        };
     }
 
     render() {
@@ -191,6 +207,9 @@ export default class Notifications extends React.PureComponent {
                     keySelector={notificationKeySelector}
                     renderer={NotificationItem}
                     rendererParams={notificationItemRendererParams}
+                    groupKeySelector={Notifications.groupKeySelector}
+                    groupRendererParams={this.groupRendererParams}
+                    groupComparator={Notifications.groupComparator}
                     emptyComponent={NotificationEmpty}
                 />
             </div>
