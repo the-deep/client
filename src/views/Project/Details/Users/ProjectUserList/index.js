@@ -13,7 +13,6 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import FormattedDate from '#rscv/FormattedDate';
 import { FaramListElement } from '#rscg/FaramElements';
 import NormalTable from '#rscv/Table';
-import noSearch from '#resources/img/no-filter.png';
 
 import {
     compareString,
@@ -47,6 +46,8 @@ const propTypes = {
     memberships: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     projectRoleList: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    searchValueNotFound: PropTypes.func.isRequired,
+    noItemsFound: PropTypes.func.isRequired,
 
     // eslint-disable-next-line react/no-unused-prop-types
     usergroups: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -180,22 +181,14 @@ export default class ProjectUserList extends React.PureComponent {
         );
     });
 
-    searchValueNotFound = () => (
-        <div className={styles.noSearch}>
-            <img
-                className={styles.image}
-                src={noSearch}
-                alt=""
-            />
-        </div>
-    );
-
     render() {
         const {
             className: classNameFromProps,
             userListRequest,
+            searchValueNotFound,
             memberships = {},
             searchInputValue,
+            noItemsFound,
         } = this.props;
 
         const className = `
@@ -205,6 +198,7 @@ export default class ProjectUserList extends React.PureComponent {
 
         const { pending: pendingUserList } = userListRequest;
         const filteredMembers = this.filterMembers(memberships, searchInputValue);
+        const emptyComponent = searchInputValue === '' ? noItemsFound : searchValueNotFound;
 
         return (
             <div className={className}>
@@ -221,7 +215,7 @@ export default class ProjectUserList extends React.PureComponent {
                         className={styles.table}
                         headers={this.headers}
                         keySelector={userListKeySelector}
-                        emptyComponent={this.searchValueNotFound}
+                        emptyComponent={emptyComponent}
                     />
                 )}
             </div>
