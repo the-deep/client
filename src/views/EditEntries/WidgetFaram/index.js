@@ -15,6 +15,7 @@ import {
     fetchWidgetTagComponent,
 } from '#widgets';
 
+import WidgetContentWrapper from './WidgetContentWrapper';
 import ErrorWrapper from '../ErrorWrapper';
 import styles from './styles.scss';
 
@@ -144,7 +145,6 @@ export default class WidgetFaram extends React.PureComponent {
             widgetType,
             entry,
         } = this.props;
-
         const {
             id,
             widgetId,
@@ -157,70 +157,68 @@ export default class WidgetFaram extends React.PureComponent {
             dataSeries,
         } = entryAccessor.data(entry) || {};
 
+        let widgetProps = {
+            widgetName: widgetId,
+            widgetType,
+            widget,
+        };
+
+        // Level one widgets can view excerpt information
+        const levelOneWidgets = [
+            'excerptWidget',
+            'geoWidget',
+            'organigramWidget',
+            'conditionalWidget',
+        ];
+        if (levelOneWidgets.includes(widgetId)) {
+            widgetProps = {
+                ...widgetProps,
+                entryType,
+                excerpt,
+                image,
+                dataSeries,
+            };
+        }
+
+        // Level two widgets can edit excerpt information
+        const levelTwoWidgets = ['excerptWidget'];
+        if (levelTwoWidgets.includes(widgetId)) {
+            widgetProps = {
+                ...widgetProps,
+                onExcerptChange: this.handleExcerptChange,
+                onExcerptCreate: this.handleExcerptCreate,
+            };
+        }
+
         const Widget = fetchWidgetTagComponent(
             widgetId,
             widgetType,
             addedFrom,
         );
 
-        let child = null;
-        switch (widgetId) {
-            case 'excerptWidget': {
-                child = (
-                    <Widget
-                        widgetName={widgetId}
-                        widgetType={widgetType}
-                        widget={widget}
-
-                        entryType={entryType}
-                        excerpt={excerpt}
-                        image={image}
-                        dataSeries={dataSeries}
-
-                        onExcerptChange={this.handleExcerptChange}
-                        onExcerptCreate={this.handleExcerptCreate}
-                    />
-                );
-                break;
-            }
-            case 'organigramWidget':
-            case 'conditionalWidget':
-            case 'geoWidget': {
-                child = (
-                    <Widget
-                        widgetName={widgetId}
-                        widgetType={widgetType}
-                        widget={widget}
-
-                        // extra props to show excerpt in modal
-                        entryType={entryType}
-                        excerpt={excerpt}
-                        image={image}
-                        dataSeries={dataSeries}
-                    />
-                );
-                break;
-            }
-            default: {
-                child = (
-                    <Widget
-                        widgetName={widgetId}
-                        widgetType={widgetType}
-                        widget={widget}
-                    />
-                );
-                break;
-            }
-        }
+        // Widgets to allow drag and drop
+        const dropableWidgets = widgetType === VIEW.overview ? [
+            'excerptWidget',
+            'matrix1dWidget',
+            'matrix2dWidget',
+        ] : [
+            'excerptWidget',
+        ];
+        const isDroppable = dropableWidgets.includes(widgetId);
 
         return (
-            <div className={styles.content}>
+            <WidgetContentWrapper
+                className={styles.content}
+                blockDrop={!isDroppable}
+            >
                 <FaramGroup faramElementName={String(id)}>
                     <FaramGroup faramElementName="data">
-                        { child }
+                        <Widget
+                            {...widgetProps}
+                        />
                     </FaramGroup>
                 </FaramGroup>
-            </div>
+            </WidgetContentWrapper>
         );
     }
 

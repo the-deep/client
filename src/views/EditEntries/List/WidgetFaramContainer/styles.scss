@@ -4,7 +4,6 @@ $width-action-buttons: 40px;
 
 .widget-faram-container {
     .header {
-        @include background-color($color-background-header);
         display: flex;
         flex-shrink: 0;
         justify-content: flex-end;
@@ -20,7 +19,6 @@ $width-action-buttons: 40px;
     .widget {
         display: inline-block;
         border-bottom: $width-separator-thin solid $color-separator-alt;
-        background-color: $color-foreground-alt;
         min-width: 100%;
     }
 }
