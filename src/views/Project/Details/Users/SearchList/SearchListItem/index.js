@@ -28,6 +28,8 @@ const propTypes = {
     type: PropTypes.string.isRequired,
     memberId: PropTypes.number.isRequired,
     projectId: PropTypes.number.isRequired,
+    firstName: PropTypes.string,
+    lastName: PropTypes.string,
     username: PropTypes.string,
     // eslint-disable-next-line react/no-unused-prop-types
     onItemRemove: PropTypes.func.isRequired,
@@ -93,6 +95,8 @@ const requests = {
 const defaultProps = {
     className: '',
     username: undefined,
+    firstName: undefined,
+    lastName: undefined,
     usergroupTitle: undefined,
 };
 
@@ -142,6 +146,8 @@ export default class SearchListItem extends React.PureComponent {
         const {
             type,
             username,
+            lastName,
+            firstName,
             usergroupTitle,
             usergroupMembershipRequest,
             userMembershipRequest,
@@ -168,9 +174,13 @@ export default class SearchListItem extends React.PureComponent {
 
             return (
                 <div className={className}>
-                    <div className={iconClassName} />
-                    <div className={styles.title}>
-                        { usergroupTitle }
+                    <div className={styles.top}>
+                        <div className={iconClassName} />
+                        <div className={styles.name}>
+                            <div className={styles.text}>
+                                { usergroupTitle }
+                            </div>
+                        </div>
                     </div>
                     <div className={actionButtonsClassNames.join(' ')}>
                         <PrimaryButton
@@ -195,9 +205,16 @@ export default class SearchListItem extends React.PureComponent {
 
             return (
                 <div className={className}>
-                    <div className={iconClassName} />
-                    <div className={styles.title}>
-                        { username }
+                    <div className={styles.top}>
+                        <div className={iconClassName} />
+                        <div className={styles.name}>
+                            <div className={styles.text}>
+                                {`${firstName} ${lastName}`}
+                            </div>
+                            <div>
+                                { username }
+                            </div>
+                        </div>
                     </div>
                     <div className={actionButtonsClassNames.join(' ')}>
                         <PrimaryButton

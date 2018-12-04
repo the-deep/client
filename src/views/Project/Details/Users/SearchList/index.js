@@ -178,11 +178,15 @@ export default class SearchList extends React.PureComponent {
     searchListItemRendererParams = (key, {
         title: usergroupTitle,
         username,
+        firstName,
+        lastName,
         type,
         id: memberId,
     }) => ({
         usergroupTitle,
         username,
+        firstName,
+        lastName,
         type,
         memberId,
         projectId: this.props.projectId,
@@ -204,6 +208,8 @@ export default class SearchList extends React.PureComponent {
             searchInputValue,
             searchItems,
         } = this.props;
+
+        console.warn(searchItems);
 
         if (searchItems.length !== 0) {
             return (
