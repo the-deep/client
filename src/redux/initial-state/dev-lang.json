@@ -904,7 +904,8 @@
         "-96186123": "Add dimensions from",
         "-63120597": "Add sectors from",
         "-89164469": "Add sub dimensions from",
-        "-11158375": "Add sub sectors from"
+        "-11158375": "Add sub sectors from",
+        "-60104332": "Can't drop here!"
     },
     "links": {
         "browserExtension": {
@@ -1277,7 +1278,8 @@
             "saveButtonTitle": 25,
             "editFrameworkTitle": -59086768,
             "cancelConfirmDetail": -58972891,
-            "noLeadMessage": -3048933
+            "noLeadMessage": -3048933,
+            "noDropMessage": -60104332
         },
         "widgets.tagging.dateRange": {
             "fromLabel": 1009,
@@ -2322,7 +2324,10 @@
             "removeCellButtonTitle": -53055304,
             "cancelConfirmMessage": -14675920,
             "addRowsFromTitle": -39845084,
-            "addCellsFromTitle": -50010134
+            "addCellsFromTitle": -50010134,
+            "duplicatesConfirmTitle": -47600296,
+            "duplicatesConfirmText": -76890842,
+            "duplicateConfirmText": -35530735
         },
         "widgets.editor.matrix2d": {
             "atLeastOneError": 1007,
@@ -2354,7 +2359,9 @@
             "addDimensionsTitle": -96186123,
             "addSectorsTitle": -63120597,
             "addSubDimensionsTitle": -89164469,
-            "addSubSectorTitle": -11158375
+            "addSubSectorTitle": -11158375,
+            "duplicateConfirmText": -35530735,
+            "duplicatesConfirmText": -76890842
         },
         "editEntry.list": {
             "noEntriesText": 543

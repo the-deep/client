@@ -113,6 +113,7 @@ const iconNames = {
     sortDescending: 'fa fa-sort-desc',
 
     swap: 'ion-arrow-swap',
+    minusOutline: 'ion-ios-minus-outline',
 };
 
 export default iconNames;

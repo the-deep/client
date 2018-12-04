@@ -52,6 +52,9 @@ export default class WidgetFaramContainer extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    containerRef = React.createRef();
+    dragEnterCount = 0;
+
     shouldHideEntryDelete = ({ entryPermissions }) => (
         !entryPermissions.delete && !!entryAccessor.serverId(this.props.entry)
     )
@@ -109,7 +112,9 @@ export default class WidgetFaramContainer extends React.PureComponent {
         `;
 
         return (
-            <div className={className}>
+            <div
+                className={className}
+            >
                 <header className={headerClassName}>
                     <Cloak
                         hide={this.shouldHideEntryDelete}
