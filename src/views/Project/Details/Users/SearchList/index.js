@@ -180,6 +180,7 @@ export default class SearchList extends React.PureComponent {
         username,
         firstName,
         lastName,
+        displayPicture,
         type,
         id: memberId,
     }) => ({
@@ -187,6 +188,7 @@ export default class SearchList extends React.PureComponent {
         username,
         firstName,
         lastName,
+        displayPicture,
         type,
         memberId,
         projectId: this.props.projectId,
@@ -209,7 +211,6 @@ export default class SearchList extends React.PureComponent {
             searchItems,
         } = this.props;
 
-        console.warn(searchItems);
 
         if (searchItems.length !== 0) {
             return (

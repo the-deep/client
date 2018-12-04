@@ -8,21 +8,30 @@
     padding: $spacing-medium 0;
     overflow: hidden;
 
-    .icon {
-        flex-shrink: 0;
-        padding: 0 $spacing-medium;
-        font-size: $font-size-extra-large;
+
+    .picture {
+        margin: 0 $spacing-small;
+        width: 30px;
+        height: 30px;
     }
 
     .top {
         display: flex;
         flex-grow: 1;
 
+
+        .icon {
+            flex-shrink: 0;
+            padding: 0 $spacing-medium;
+            font-size: $font-size-extra-large;
+        }
+
         .name {
             display: flex;
             flex-direction: column;
             padding: 0 $spacing-medium 0 0;
             word-break: break-all;
+            flex-grow: 1;
 
             .text {
                 margin: 0 $spacing-extra-small;

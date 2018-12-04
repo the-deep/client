@@ -130,9 +130,16 @@ export default class ProjectUserList extends React.PureComponent {
                 comparator: getComparator(compareString, 'memberEmail'),
             },
             {
+                key: 'memberOrganization',
+                label: _ts('project.users', 'organizationTitle'),
+                order: 3,
+                sortable: true,
+                comparator: getComparator(compareString, 'memberOrganization'),
+            },
+            {
                 key: 'joinedAt',
                 label: _ts('project.users', 'joinedAtTitle'),
-                order: 3,
+                order: 4,
                 sortable: true,
                 comparator: getComparator(compareDate, 'joinedAt'),
                 modifier: ({ joinedAt }) => (
@@ -145,7 +152,7 @@ export default class ProjectUserList extends React.PureComponent {
             {
                 key: 'actions',
                 label: _ts('project.users', 'actionsTitle'),
-                order: 4,
+                order: 5,
                 modifier: row => (
                     <Actions
                         readOnly={this.props.readOnly}
