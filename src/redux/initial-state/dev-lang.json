@@ -554,10 +554,8 @@
         "1938": "Add as admin",
         "1939": "{requestedBy} was added to the {project} as admin by {respondedBy}.",
         "1940": "{requestorName} cancelled join request for the project {projectTitle}.",
-
         "1941": "{responderName} accepted join request of {requestorName} for the project {projectTitle}.",
         "1942": "{responderName} rejected join request of {requestorName} for the project {projectTitle}.",
-
         "2000": "Browser extension",
         "2001": "Your extension has been successfully set up.",
         "2002": "An error occured while setting up the extension. Please make sure you have installed and enabled the extension.",
@@ -849,7 +847,7 @@
         "-69587895": "{field} was changed to {newValue}.",
         "-68605986": "{field} was set to {newValue}.",
         "-63520825": "{fields} were modified.",
-        "-30665346": "Are you sure you want to remove the usergroup {title}?",
+        "-30665346": "Are you sure you want to remove the User Group {title}? All users in this project who are associated with the group will also be removed.  If you would like to keep these users, please unassign them from {title}.",
         "-42425639": "Linked group",
         "-99213668": "Independent member",
         "-557230": "Time Range",
@@ -886,7 +884,7 @@
         "-4183681": "Swap values",
         "-25265886": "All required",
         "-72702692": "Invalid range",
-        "-10595927": "No users or usergoups found",
+        "-10595927": "No Users or User Groups found",
         "-66757442": "Looks like you don’t have access to this project or it doesn’t exist! Please contact the project administrator to be added, or if you think this is a bug please notify the DEEP administrators using the Feedback button",
         "-48490028": "Looks like you don’t have access to this project or it doesn’t exist!",
         "-69684282": "Please contact your project administrator to be granted the needed rights, or if you think this is a bug please notify the DEEP administrators using the Feedback button",
@@ -1793,7 +1791,8 @@
             "searchUserTitle": 1119,
             "searchUsergroupTitle": 338,
             "noResultsFound": -10595927,
-            "meTitle": -24177081
+            "meTitle": -24177081,
+            "organizationTitle": 154
         },
         "project": {
             "projectGetFailure": 2500,
