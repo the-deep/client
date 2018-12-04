@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import memoize from 'memoize-one';
 import { connect } from 'react-redux';
 
 import {
@@ -11,11 +12,13 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import { FaramListElement } from '#rscg/FaramElements';
 import NormalTable from '#rscv/Table';
 import { compareString } from '#rsu/common';
+import { getTrigramSimilarity } from '#rsu/similarity';
 
 import {
     setProjectUsergroupsAction,
     projectUsergroupListSelector,
 } from '#redux';
+import noSearch from '#resources/img/no-filter.png';
 
 import Actions from './Actions';
 
@@ -26,6 +29,7 @@ import styles from './styles.scss';
 // Should be fixed in server as well
 
 const Table = FaramListElement(NormalTable);
+const emptyObject = {};
 
 const propTypes = {
     className: PropTypes.string,
@@ -33,6 +37,8 @@ const propTypes = {
     usergroupListRequest: PropTypes.shape({
         pending: PropTypes.bool.isRequired,
     }).isRequired,
+    searchValueNotFound: PropTypes.func.isRequired,
+    noItemsFound: PropTypes.func.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     setProjectUsergroups: PropTypes.func.isRequired,
     usergroups: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -40,10 +46,12 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number.isRequired,
     readOnly: PropTypes.bool,
+    searchInputValue: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
+    searchInputValue: '',
     readOnly: false,
 };
 
@@ -113,6 +121,16 @@ export default class ProjectUsergroupList extends React.PureComponent {
         ];
     }
 
+    filterGroups = memoize((allMembers = [], searchValue) => {
+        if (searchValue === '') {
+            return allMembers;
+        }
+
+        return allMembers.filter(
+            m => getTrigramSimilarity((m || emptyObject).title, searchValue) >= 0.1,
+        );
+    });
+
     render() {
         const {
             className: classNameFromProps,
@@ -120,12 +138,17 @@ export default class ProjectUsergroupList extends React.PureComponent {
                 pending: pendingUsergroupList,
             },
             usergroups,
+            searchInputValue,
+            searchValueNotFound,
+            noItemsFound,
         } = this.props;
 
         const className = `
             ${classNameFromProps}
             ${styles.projectUsergroupList}
         `;
+        const filteredGroups = this.filterGroups(usergroups, searchInputValue);
+        const emptyComponent = searchInputValue === '' ? noItemsFound : searchValueNotFound;
 
         return (
             <div className={className}>
@@ -138,10 +161,11 @@ export default class ProjectUsergroupList extends React.PureComponent {
                     <LoadingAnimation />
                 ) : (
                     <Table
-                        data={usergroups}
+                        data={filteredGroups}
                         className={styles.table}
                         headers={this.headers}
                         keySelector={usergroupListKeySelector}
+                        emptyComponent={emptyComponent}
                     />
                 )}
             </div>

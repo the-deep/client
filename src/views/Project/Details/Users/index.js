@@ -6,6 +6,8 @@ import { projectIdFromRoute } from '#redux';
 
 import { RequestCoordinator } from '#request';
 import update from '#rsu/immutable-update';
+import noSearch from '#resources/img/no-filter.png';
+import noItemsIcon from '#resources/img/no-search.png';
 
 import SearchList from './SearchList';
 import ProjectUserList from './ProjectUserList';
@@ -27,6 +29,26 @@ const defaultProps = {
 const mapStateToProps = (state, props) => ({
     projectId: projectIdFromRoute(state, props),
 });
+
+const searchValueNotFound = () => (
+    <div className={styles.noSearch}>
+        <img
+            className={styles.image}
+            src={noSearch}
+            alt=""
+        />
+    </div>
+);
+
+const noItems = () => (
+    <div className={styles.noSearch}>
+        <img
+            className={styles.image}
+            src={noItemsIcon}
+            alt=""
+        />
+    </div>
+);
 
 @connect(mapStateToProps)
 @RequestCoordinator
@@ -90,11 +112,17 @@ export default class Users extends React.PureComponent {
                         className={styles.userList}
                         projectId={projectId}
                         readOnly={readOnly}
+                        searchInputValue={searchInputValue}
+                        searchValueNotFound={searchValueNotFound}
+                        noItemsFound={noItems}
                     />
                     <ProjectUsergroupList
                         className={styles.usergroupList}
                         projectId={projectId}
                         readOnly={readOnly}
+                        searchInputValue={searchInputValue}
+                        searchValueNotFound={searchValueNotFound}
+                        noItemsFound={noItems}
                     />
                 </div>
             </div>

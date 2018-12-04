@@ -1,15 +1,22 @@
 @import '~base-scss/base';
 
 .project-user-list {
+    display: flex;
     position: relative;
+    flex-direction: column;
 
     .header {
+        flex-shrink: 0;
+
         .heading {
             padding: $spacing-medium;
         }
     }
 
     .table {
+        flex-grow: 1;
+        overflow-y: auto;
+
         :global {
             .header {
                 background-color: $color-foreground-alt;

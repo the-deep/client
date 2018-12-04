@@ -19,6 +19,8 @@ import {
     compareDate,
 } from '#rsu/common';
 
+import { getTrigramSimilarity } from '#rsu/similarity';
+
 import {
     setProjectMembershipsAction,
     projectUsergroupListSelector,
@@ -32,6 +34,7 @@ import Actions from './Actions';
 import styles from './styles.scss';
 
 const Table = FaramListElement(NormalTable);
+const emptyObject = {};
 
 const propTypes = {
     className: PropTypes.string,
@@ -43,6 +46,8 @@ const propTypes = {
     memberships: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     projectRoleList: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    searchValueNotFound: PropTypes.func.isRequired,
+    noItemsFound: PropTypes.func.isRequired,
 
     // eslint-disable-next-line react/no-unused-prop-types
     usergroups: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -50,10 +55,12 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number.isRequired,
     readOnly: PropTypes.bool,
+    searchInputValue: PropTypes.string,
 };
 
 const defaultProps = {
     className: '',
+    searchInputValue: '',
     readOnly: false,
 };
 
@@ -164,11 +171,24 @@ export default class ProjectUserList extends React.PureComponent {
         )
     ))
 
+    filterMembers = memoize((allMembers = [], searchValue) => {
+        if (searchValue === '') {
+            return allMembers;
+        }
+
+        return allMembers.filter(
+            m => getTrigramSimilarity((m || emptyObject).memberName, searchValue) > 0.01,
+        );
+    });
+
     render() {
         const {
             className: classNameFromProps,
             userListRequest,
+            searchValueNotFound,
             memberships = {},
+            searchInputValue,
+            noItemsFound,
         } = this.props;
 
         const className = `
@@ -177,6 +197,8 @@ export default class ProjectUserList extends React.PureComponent {
         `;
 
         const { pending: pendingUserList } = userListRequest;
+        const filteredMembers = this.filterMembers(memberships, searchInputValue);
+        const emptyComponent = searchInputValue === '' ? noItemsFound : searchValueNotFound;
 
         return (
             <div className={className}>
@@ -189,10 +211,11 @@ export default class ProjectUserList extends React.PureComponent {
                     <LoadingAnimation />
                 ) : (
                     <Table
-                        data={memberships}
+                        data={filteredMembers}
                         className={styles.table}
                         headers={this.headers}
                         keySelector={userListKeySelector}
+                        emptyComponent={emptyComponent}
                     />
                 )}
             </div>
