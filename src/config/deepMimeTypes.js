@@ -6,8 +6,7 @@ export const galleryDocsMimeType = [
     'application/vnd.openxmlformats-officedocument.presentationml.presentation',
     'application/vnd.ms-powerpoint', 'application/vnd.ms-excel',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'text/csv', 'image/png', 'image/jpeg', 'image/fig', 'image/gif',
-    'application/json', 'application/xml', 'application/msword',
+    'text/csv', 'application/json', 'application/xml', 'application/msword',
 ];
 
 export const galleryType = {

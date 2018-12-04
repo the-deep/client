@@ -85,7 +85,6 @@ export default class Entry extends React.PureComponent {
         if (widgetId === 'excerptWidget') {
             child = (
                 <Widget
-                    className={styles.content}
                     widget={widget}
                     widgetName={widgetId}
                     widgetType={VIEW.list}
@@ -99,7 +98,6 @@ export default class Entry extends React.PureComponent {
         } else {
             child = (
                 <Widget
-                    className={styles.content}
                     widget={widget}
                     widgetName={widgetId}
                     widgetType={VIEW.list}
@@ -110,7 +108,9 @@ export default class Entry extends React.PureComponent {
         return (
             <FaramGroup faramElementName={String(id)}>
                 <FaramGroup faramElementName="data">
-                    { child }
+                    <div className={styles.content} >
+                        { child }
+                    </div>
                 </FaramGroup>
             </FaramGroup>
         );

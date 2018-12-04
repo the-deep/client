@@ -3,6 +3,7 @@ import React from 'react';
 
 import ListView from '#rscv/List/ListView';
 import { FaramOutputElement } from '#rscg/FaramElements';
+import { doesObjectHaveNoData } from '#rsu/common';
 
 import Row from './Row';
 import styles from './styles.scss';
@@ -87,7 +88,10 @@ export default class NumberMatrixListView extends React.PureComponent {
     });
 
     render() {
-        const { className } = this.props;
+        const { className, value } = this.props;
+        if (doesObjectHaveNoData(value)) {
+            return null;
+        }
 
         return (
             <ListView

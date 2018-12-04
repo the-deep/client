@@ -199,6 +199,8 @@ export default class WidgetEditor extends React.PureComponent {
         let fontSize;
 
         const isDisabled = shouldShowAltTagComponent(widgetId, widgetType, addedFrom);
+
+        // FIXME: use Message component?
         if (isDisabled) {
             disablerMaskText = _ts('framework.widgetEditor', 'disablerMastText', { title });
             fontSize = Math.min(
