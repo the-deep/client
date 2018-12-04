@@ -138,6 +138,14 @@ export default class Actions extends React.PureComponent {
             role,
         } = row;
 
+        const removeUG = _ts(
+            'project.usergroups',
+            'removeUsergroupConfirmationMessage',
+            {
+                title: row.title,
+            },
+        );
+
         return (
             <div className={styles.actions} >
                 {pending && <LoadingAnimation small />}
@@ -159,13 +167,7 @@ export default class Actions extends React.PureComponent {
                     title={_ts('project.users', 'removeMembershipButtonPlaceholder')}
                     iconName={iconNames.delete}
                     onClick={this.handleRemoveMembershipButtonClick}
-                    confirmationMessage={_ts(
-                        'project.usergroups',
-                        'removeUsergroupConfirmationMessage',
-                        {
-                            title: row.title,
-                        },
-                    )}
+                    confirmationMessage={removeUG}
                     transparent
                     disabled={readOnly || pending}
                 />

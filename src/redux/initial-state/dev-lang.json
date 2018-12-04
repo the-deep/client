@@ -554,10 +554,8 @@
         "1938": "Add as admin",
         "1939": "{requestedBy} was added to the {project} as admin by {respondedBy}.",
         "1940": "{requestorName} cancelled join request for the project {projectTitle}.",
-
         "1941": "{responderName} accepted join request of {requestorName} for the project {projectTitle}.",
         "1942": "{responderName} rejected join request of {requestorName} for the project {projectTitle}.",
-
         "2000": "Browser extension",
         "2001": "Your extension has been successfully set up.",
         "2002": "An error occured while setting up the extension. Please make sure you have installed and enabled the extension.",
@@ -849,7 +847,7 @@
         "-69587895": "{field} was changed to {newValue}.",
         "-68605986": "{field} was set to {newValue}.",
         "-63520825": "{fields} were modified.",
-        "-30665346": "Are you sure you want to remove the usergroup {title}?",
+        "-30665346": "Are you sure you want to remove the User Group {title}? All users in this project who are associated with the group will also be removed.  If you would like to keep these users, please unassign them from {title}.",
         "-42425639": "Linked group",
         "-99213668": "Independent member",
         "-557230": "Time Range",
