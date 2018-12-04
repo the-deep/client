@@ -182,52 +182,79 @@ export default class Workshop extends React.PureComponent {
                     readOnly={readOnly}
                 >
                     <NonFieldErrors faramElement />
-                    <FaramGroup faramElementName="excerpt">
-                        Excerpt
-                        <ExcerptWidget />
-                    </FaramGroup>
                     <div className={styles.firstRow} >
-                        <FaramGroup faramElementName="number">
-                            Number
-                            <NumberWidget />
-                        </FaramGroup>
-                        <FaramGroup faramElementName="date">
-                            Date
-                            <DateWidget />
-                        </FaramGroup>
-                        <FaramGroup faramElementName="dateRange">
-                            Date Range
-                            <DateRangeWidget />
-                        </FaramGroup>
-                        <FaramGroup faramElementName="time">
-                            Time
-                            <TimeWidget />
-                        </FaramGroup>
-                        <FaramGroup faramElementName="timeRange">
-                            Time Range
-                            <TimeRangeWidget />
-                        </FaramGroup>
+                        <div>
+                            <div>Excerpt</div>
+                            <ExcerptWidget
+                                entryType="excerpt"
+                                excerpt="I am the walrus."
+                            />
+                        </div>
+                        <div>
+                            <div>Excerpt</div>
+                            <ExcerptWidget
+                                entryType="image"
+                                image="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/600px-Placeholder_no_text.svg.png"
+                            />
+                        </div>
                     </div>
                     <div className={styles.firstRow} >
-                        <FaramGroup faramElementName="select">
-                            Select
-                            <SelectWidget
-                                widget={this.state.options.select}
-                            />
-                        </FaramGroup>
-                        <FaramGroup faramElementName="multiselect">
-                            Multi Select
-                            <MultiSelectWidget
-                                widget={this.state.options.select}
-                            />
-                        </FaramGroup>
-
-                        <FaramGroup faramElementName="scale">
-                            Scale
-                            <ScaleWidget
-                                widget={this.state.options.scale}
-                            />
-                        </FaramGroup>
+                        <div>
+                            <FaramGroup faramElementName="number">
+                                <div>Number</div>
+                                <NumberWidget />
+                            </FaramGroup>
+                        </div>
+                        <div>
+                            <FaramGroup faramElementName="date">
+                                <div>Date</div>
+                                <DateWidget />
+                            </FaramGroup>
+                        </div>
+                        <div>
+                            <FaramGroup faramElementName="time">
+                                <div>Time</div>
+                                <TimeWidget />
+                            </FaramGroup>
+                        </div>
+                        <div>
+                            <FaramGroup faramElementName="dateRange">
+                                <div>Date Range</div>
+                                <DateRangeWidget />
+                            </FaramGroup>
+                        </div>
+                        <div>
+                            <FaramGroup faramElementName="timeRange">
+                                <div>Time Range</div>
+                                <TimeRangeWidget />
+                            </FaramGroup>
+                        </div>
+                    </div>
+                    <div className={styles.firstRow} >
+                        <div>
+                            <FaramGroup faramElementName="select">
+                                <div>Select</div>
+                                <SelectWidget
+                                    widget={this.state.options.select}
+                                />
+                            </FaramGroup>
+                        </div>
+                        <div>
+                            <FaramGroup faramElementName="multiselect">
+                                <div>Multi Select</div>
+                                <MultiSelectWidget
+                                    widget={this.state.options.select}
+                                />
+                            </FaramGroup>
+                        </div>
+                        <div>
+                            <FaramGroup faramElementName="scale">
+                                <div>Scale</div>
+                                <ScaleWidget
+                                    widget={this.state.options.scale}
+                                />
+                            </FaramGroup>
+                        </div>
                     </div>
                     <PrimaryButton
                         type="submit"
