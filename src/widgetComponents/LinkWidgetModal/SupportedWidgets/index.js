@@ -1,5 +1,7 @@
 import memoize from 'memoize-one';
 
+import { widgetTitlesGroupMapForConditional as widgetTitles } from '#widgets/widgetMetadata';
+
 import selectOptions from './select';
 import scaleOptions from './scale';
 import matrix1dOptions from './matrix1d';
@@ -20,7 +22,10 @@ export const supportedWidgets = {
 export const getSupportedWidgets = memoize((widgets, widgetKey) => (
     widgets.filter(w => (
         supportedWidgets[w.widgetId] !== undefined && w.key !== widgetKey
-    ))
+    )).map(w => ({
+        ...w,
+        groupId: widgetTitles[w.widgetId].groupId,
+    }))
 ));
 
 export const getOptionsForSelectedWidget = memoize((selectedWidgetId, widgets) => {

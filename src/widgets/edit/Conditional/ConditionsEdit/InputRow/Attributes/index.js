@@ -94,7 +94,7 @@ export default class ConditionAttribute extends React.PureComponent {
                 >
                     <div className={styles.multiSelectContainer}>
                         <MultiSelectInput
-                            className={styles.input}
+                            className={styles.multiInput}
                             faramElementName="values"
                             label={attribute.title}
                             options={options}

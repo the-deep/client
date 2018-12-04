@@ -8,10 +8,12 @@ import { TreeSelectionWithSelectors as TreeSelection } from '#rsci/TreeSelection
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
+import ListView from '#rscv/List/ListView';
 import ModalHeader from '#rscv/Modal/Header';
 import { FaramActionElement } from '#rscg/FaramElements';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+import { widgetGroups } from '#widgets/widgetMetadata';
 
 import { afViewAnalysisFrameworkWidgetsSelector } from '#redux';
 
@@ -21,6 +23,8 @@ import {
     getSupportedWidgets,
     getOptionsForSelectedWidget,
 } from './SupportedWidgets';
+
+import LinkItem from './LinkItem';
 
 import styles from './styles.scss';
 
@@ -90,8 +94,15 @@ export default class LinkWidgetModal extends React.PureComponent {
     static optionsKeySelector = w => w.key;
     static optionsLabelSelector = w => w.title;
 
+    static widgetKeySelector = widget => widget.key;
+    static groupKeySelector = widget => widget.groupId;
+
     static getSelectedWidgetOption = (id, options) => (
         options.find(o => LinkWidgetModal.optionsKeySelector(o) === id)
+    );
+
+    static getTitleOfSelectedWidget = (id, options) => (
+        options.find(o => LinkWidgetModal.widgetKeySelector(o) === id).title
     );
 
     static getWidgetData = (id, widgets) => {
@@ -102,17 +113,67 @@ export default class LinkWidgetModal extends React.PureComponent {
         return (widget.properties || emptyObject).data;
     };
 
+    static groupRendererParams = (groupKey) => {
+        const { title } = widgetGroups[groupKey];
+        const children = !title ? '' : _ts('widgetGroupTitle', title);
+        return {
+            children,
+        };
+    }
+
+    static groupComparator = (a, b) => widgetGroups[a].order - widgetGroups[b].order;
+
     constructor(props) {
         super(props);
+        const {
+            widgets,
+            widgetKey,
+        } = this.props;
+
+        this.filteredWidgets = getSupportedWidgets(widgets, widgetKey);
+        const selectedWidget = this.filteredWidgets[0].key;
+
+        const {
+            items,
+            selectedWidgetItem,
+            treeKeySelector,
+            treeLabelSelector,
+            treeNodesSelector,
+        } = this.handleFilteredWidgetsChange(selectedWidget);
+
         this.state = {
-            selectedWidget: '',
-            selectedWidgetItem: '',
             itemValues: emptyObject,
+            items,
+            selectedWidget,
+            selectedWidgetItem,
+            treeKeySelector,
+            treeLabelSelector,
+            treeNodesSelector,
             pristine: true,
         };
     }
 
     handleWidgetChange = (selectedWidget) => {
+        const {
+            items,
+            selectedWidgetItem,
+            treeKeySelector,
+            treeLabelSelector,
+            treeNodesSelector,
+        } = this.handleFilteredWidgetsChange(selectedWidget);
+
+        this.setState({
+            items,
+            itemValues: emptyObject,
+            selectedWidget,
+            selectedWidgetItem,
+            treeKeySelector,
+            treeLabelSelector,
+            treeNodesSelector,
+        });
+    }
+
+    handleFilteredWidgetsChange = (selectedWidget) => {
         this.selectedWidgetOptions = getOptionsForSelectedWidget(
             selectedWidget,
             this.filteredWidgets,
@@ -134,10 +195,8 @@ export default class LinkWidgetModal extends React.PureComponent {
 
         const items = selectedWidgetOption ? (selectedWidgetOption.items(widgetData)) : emptyArray;
 
-        this.setState({
+        return ({
             items,
-            itemValues: emptyObject,
-            selectedWidget,
             selectedWidgetItem,
             treeKeySelector,
             treeLabelSelector,
@@ -208,6 +267,23 @@ export default class LinkWidgetModal extends React.PureComponent {
         }
     }
 
+    widgetListRendererParams = (key, widget) => {
+        const { selectedWidget } = this.state;
+
+        const {
+            title,
+            key: widgetKey,
+        } = widget;
+
+        return ({
+            title,
+            widget,
+            widgetKey,
+            active: selectedWidget === key,
+            onClick: this.handleWidgetChange,
+        });
+    }
+
     render() {
         const {
             onClose,
@@ -233,8 +309,13 @@ export default class LinkWidgetModal extends React.PureComponent {
             this.filteredWidgets,
         );
 
+        const selectedWidgetTitle = LinkWidgetModal.getTitleOfSelectedWidget(
+            selectedWidget,
+            this.filteredWidgets,
+        );
+
         const modalTitle = _ts('widgets.editor.link', 'modalTitle');
-        const widgetSelectionLabel = _ts('widgets.editor.link', 'widgetSelectionLabel');
+        // const widgetSelectionLabel = _ts('widgets.editor.link', 'widgetSelectionLabel');
         const optionsTypeSelectionLabel = _ts('widgets.editor.link', 'optionsTypeSelectionLabel');
         const listOfItemsHeader = _ts('widgets.editor.link', 'listOfItemsHeader');
         const saveButtonLabel = _ts('widgets.editor.link', 'saveButtonLabel');
@@ -248,49 +329,70 @@ export default class LinkWidgetModal extends React.PureComponent {
             <Modal className={`${styles.modal} ${className}`} >
                 <ModalHeader title={modalTitle} />
                 <ModalBody className={styles.modalBody} >
-                    <div className={styles.selectionBar} >
-                        <SelectInput
-                            className={styles.selectInput}
-                            label={widgetSelectionLabel}
-                            options={this.filteredWidgets}
+                    <div className={styles.leftContainer} >
+                        <ListView
+                            className={styles.widgetList}
+                            data={this.filteredWidgets}
+                            renderer={LinkItem}
+                            rendererParams={this.widgetListRendererParams}
                             keySelector={LinkWidgetModal.widgetKeySelector}
-                            labelSelector={LinkWidgetModal.widgetLabelSelector}
-                            onChange={this.handleWidgetChange}
-                            value={selectedWidget}
-                            showHintAndError={false}
-                            hideClearButton
+                            rendererClassName={styles.item}
+                            groupKeySelector={LinkWidgetModal.groupKeySelector}
+                            groupRendererParams={LinkWidgetModal.groupRendererParams}
+                            groupRendererClassName={styles.group}
+                            groupComparator={LinkWidgetModal.groupComparator}
                         />
-                        {areOptionTypesMultiple &&
+                    </div>
+                    <div className={styles.rightContainer}>
+                        <div className={styles.selectionBar} >
+                            <h4>
+                                {selectedWidgetTitle}
+                            </h4>
+                            {/*
                             <SelectInput
                                 className={styles.selectInput}
-                                label={optionsTypeSelectionLabel}
-                                options={this.selectedWidgetOptions}
-                                keySelector={LinkWidgetModal.optionsKeySelector}
-                                labelSelector={LinkWidgetModal.optionsLabelSelector}
-                                onChange={this.handleWidgetOptionChange}
-                                value={selectedWidgetItem}
+                                label={widgetSelectionLabel}
+                                options={this.filteredWidgets}
+                                keySelector={LinkWidgetModal.widgetKeySelector}
+                                labelSelector={LinkWidgetModal.widgetLabelSelector}
+                                onChange={this.handleWidgetChange}
+                                value={selectedWidget}
                                 showHintAndError={false}
+                                hideClearButton
                             />
-                        }
-                    </div>
-                    <div className={styles.selectionBox} >
-                        <header className={styles.header}>
-                            {listOfItemsHeader}
-                        </header>
-                        {items &&
-                            <TreeSelection
-                                className={styles.tree}
-                                data={items}
-                                value={itemValues}
-                                onChange={this.handleItemValuesChange}
-                                labelSelector={treeLabelSelector}
-                                keySelector={treeKeySelector}
-                                nodesSelector={treeNodesSelector}
-                                rootKey="all"
-                                rootTitle={rootNodeLabel}
-                                withRoot
-                            />
-                        }
+                            */}
+                            {areOptionTypesMultiple &&
+                                <SelectInput
+                                    className={styles.selectInput}
+                                    label={optionsTypeSelectionLabel}
+                                    options={this.selectedWidgetOptions}
+                                    keySelector={LinkWidgetModal.optionsKeySelector}
+                                    labelSelector={LinkWidgetModal.optionsLabelSelector}
+                                    onChange={this.handleWidgetOptionChange}
+                                    value={selectedWidgetItem}
+                                    showHintAndError={false}
+                                />
+                            }
+                        </div>
+                        <div className={styles.selectionBox} >
+                            <header className={styles.header}>
+                                {listOfItemsHeader}
+                            </header>
+                            {items &&
+                                <TreeSelection
+                                    className={styles.tree}
+                                    data={items}
+                                    value={itemValues}
+                                    onChange={this.handleItemValuesChange}
+                                    labelSelector={treeLabelSelector}
+                                    keySelector={treeKeySelector}
+                                    nodesSelector={treeNodesSelector}
+                                    rootKey="all"
+                                    rootTitle={rootNodeLabel}
+                                    withRoot
+                                />
+                            }
+                        </div>
                     </div>
                 </ModalBody>
                 <ModalFooter>

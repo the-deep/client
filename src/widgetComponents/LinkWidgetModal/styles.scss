@@ -3,49 +3,85 @@
 $height-edit-modal: 60vh;
 
 .modal {
-    width: $width-modal-medium;
+    width: $width-modal-large;
     height: $height-edit-modal;
 
     .modal-body {
         display: flex;
-        flex-direction: column;
         padding: 0;
 
-        .selection-bar {
-            display: flex;
-            flex-shrink: 0;
-            border-bottom: $width-separator-thin solid $color-separator;
+        .left-container {
+            border-right: $width-separator-thin solid $color-separator;
+            width: 30%;
 
-            .select-input {
-                padding: $spacing-medium $spacing-small;
+            .widget-list {
+                overflow-y: auto;
+
+                .group {
+                    background-color: $color-background-row-alt;
+                    padding: $spacing-small $spacing-medium;
+                    font-size: $font-size-medium-alt;
+
+                    &:not(:first-child) {
+                        margin-top: $spacing-medium;
+                    }
+                }
+
+                .item {
+                    border-top: $width-separator-thin solid $color-separator;
+                }
+
+                .group + .item {
+                    border-top: 0;
+                }
             }
         }
 
-        .selection-box {
+        .right-container {
             display: flex;
             flex-direction: column;
-            flex-grow: 1;
+            width: 70%;
 
-            .header {
+            .selection-bar {
+                display: flex;
+                align-items: center;
                 flex-shrink: 0;
-                padding: $spacing-medium $spacing-small;
-                text-transform: uppercase;
-                font-size: $font-size-medium;
-                font-weight: $font-weight-light;
+                justify-content: space-between;
+                border-bottom: $width-separator-thin solid $color-separator;
+                padding: 0 $spacing-small;
+                height: 48px;
+
+                .select-input {
+                    padding: $spacing-medium $spacing-small;
+                }
             }
 
-            .tree {
+            .selection-box {
+                display: flex;
+                flex-direction: column;
                 flex-grow: 1;
-                overflow-y: auto;
 
-                :global {
-                    .parent-node {
-                        padding: $spacing-extra-small $spacing-small;
+                .header {
+                    flex-shrink: 0;
+                    padding: $spacing-medium $spacing-small;
+                    text-transform: uppercase;
+                    font-size: $font-size-medium;
+                    font-weight: $font-weight-light;
+                }
 
-                        .button {
-                            &.node-title {
-                                color: $color-text-disabled;
-                                font-weight: $font-weight-bold;
+                .tree {
+                    flex-grow: 1;
+                    overflow-y: auto;
+
+                    :global {
+                        .parent-node {
+                            padding: $spacing-extra-small $spacing-small;
+
+                            .button {
+                                &.node-title {
+                                    color: $color-text-disabled;
+                                    font-weight: $font-weight-bold;
+                                }
                             }
                         }
                     }
