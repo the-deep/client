@@ -71,11 +71,10 @@ export default class Users extends React.PureComponent {
 
     handleSearchItemRemove = (itemId, type) => {
         const settings = { $autoArray: {
-            $filter: i => i.id !== itemId && i.type === type,
+            $filter: i => !(i.id === itemId && i.type === type),
         } };
-        this.setState({
-            searchItems: update(this.state.searchItems, settings),
-        });
+        const searchItems = update(this.state.searchItems, settings);
+        this.setState({ searchItems });
     }
 
     render() {

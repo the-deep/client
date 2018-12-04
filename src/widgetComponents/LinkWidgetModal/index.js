@@ -315,7 +315,6 @@ export default class LinkWidgetModal extends React.PureComponent {
         );
 
         const modalTitle = _ts('widgets.editor.link', 'modalTitle');
-        // const widgetSelectionLabel = _ts('widgets.editor.link', 'widgetSelectionLabel');
         const optionsTypeSelectionLabel = _ts('widgets.editor.link', 'optionsTypeSelectionLabel');
         const listOfItemsHeader = _ts('widgets.editor.link', 'listOfItemsHeader');
         const saveButtonLabel = _ts('widgets.editor.link', 'saveButtonLabel');

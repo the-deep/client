@@ -387,6 +387,20 @@ export default class DiscoverProjects extends React.PureComponent {
     }
 
     renderEmpty = () => {
+        const {
+            pendingProjectList,
+            pendingProjectJoin,
+            pendingProjectJoinCancel,
+        } = this.state;
+
+        const pending = (
+            pendingProjectList ||
+            pendingProjectJoin ||
+            pendingProjectJoinCancel
+        );
+        if (pending) {
+            return null;
+        }
         const isFilterEmpty = isObjectEmpty(this.props.filters);
 
         if (!isFilterEmpty) {
@@ -442,6 +456,7 @@ export default class DiscoverProjects extends React.PureComponent {
                 <Header />
                 <div className={styles.tableContainer}>
                     <div className={styles.scrollWrapper}>
+                        { pending && <LoadingAnimation /> }
                         <RawTable
                             data={projectList}
                             headers={headers}
@@ -452,7 +467,6 @@ export default class DiscoverProjects extends React.PureComponent {
                             className={styles.projectsTable}
                             emptyComponent={this.renderEmpty}
                         />
-                        { pending && <LoadingAnimation /> }
                     </div>
                 </div>
                 <Footer />

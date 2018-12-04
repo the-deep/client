@@ -533,7 +533,21 @@ export default class Leads extends React.PureComponent {
     }
 
     renderEmpty = () => {
+        const {
+            pendingProjectList,
+            pendingProjectJoin,
+            pendingProjectJoinCancel,
+        } = this.state;
+
+        const pending = (
+            pendingProjectList ||
+            pendingProjectJoin ||
+            pendingProjectJoinCancel
+        );
         const isFilterEmpty = isObjectEmpty(this.props.filters);
+        if (pending) {
+            return null;
+        }
 
         if (!isFilterEmpty) {
             return (
@@ -601,8 +615,9 @@ export default class Leads extends React.PureComponent {
                             headerModifier={this.headerModifier}
                             headers={this.headers}
                             onHeaderClick={this.handleTableHeaderClick}
-                            keySelector={Leads.leadKeyExtractor}
                             className={styles.leadsTable}
+                            keySelector={Leads.leadKeyExtractor}
+                            emptyComponent={this.renderEmpty}
                         />
                         { loadingLeads && <LoadingAnimation /> }
                     </div>

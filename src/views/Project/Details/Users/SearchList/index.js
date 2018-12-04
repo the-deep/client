@@ -11,7 +11,10 @@ import {
     requestMethods,
 } from '#request';
 import { compareString } from '#rsu/common';
-import { projectMembershipListSelector } from '#redux';
+import {
+    projectMembershipListSelector,
+    projectUsergroupListSelector,
+} from '#redux';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
@@ -26,6 +29,8 @@ const RequestPropType = PropTypes.shape({
 const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     memberships: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/no-unused-prop-types
+    usergroups: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     className: PropTypes.string,
     projectId: PropTypes.number.isRequired,
     searchInputValue: PropTypes.string.isRequired,
@@ -145,6 +150,20 @@ const requests = {
                 }
                 return false;
             },
+            usergroups: ({
+                props: {
+                    usergroups: newUsergroups,
+                    searchInputValue,
+                },
+                prevProps: { usergroups: oldUsergroups },
+            }) => {
+                if (newUsergroups.length < oldUsergroups.length &&
+                    searchInputValue.trim().length >= MIN_SEARCH_TEXT_CHARACTERS
+                ) {
+                    return true;
+                }
+                return false;
+            },
         },
         method: requestMethods.GET,
         query: ({
@@ -164,6 +183,7 @@ const requests = {
 
 const mapStateToProps = state => ({
     memberships: projectMembershipListSelector(state),
+    usergroups: projectUsergroupListSelector(state),
 });
 
 @connect(mapStateToProps)
@@ -211,7 +231,9 @@ export default class SearchList extends React.PureComponent {
             searchItems,
         } = this.props;
 
-
+        if (searchInputValue.length < MIN_SEARCH_TEXT_CHARACTERS) {
+            return <SearchTip />;
+        }
         if (searchItems.length !== 0) {
             return (
                 <ListView
@@ -230,9 +252,6 @@ export default class SearchList extends React.PureComponent {
             );
         }
 
-        if (searchInputValue.length < MIN_SEARCH_TEXT_CHARACTERS) {
-            return <SearchTip />;
-        }
         return <SearchValueNotFound />;
     }
 
