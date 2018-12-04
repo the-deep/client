@@ -219,8 +219,7 @@ export default class GalleryViewer extends React.PureComponent {
                 />
             );
         } else if (!previewError && (
-            galleryMapping[mimeType] === galleryType.HTML ||
-            url.endsWith('csv') || url.endsWith('txt')
+            galleryMapping[mimeType] === galleryType.HTML || url.endsWith('txt')
         )) {
             // NOTE: Error can occur if
             // 1. We cannot show iframe
