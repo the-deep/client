@@ -62,7 +62,14 @@ export default class Header extends React.PureComponent {
             return null;
         }
 
+        // FIXME: this can be outside the class
         const { id } = value;
+        const LoadingOnValid = ({ invalid }) => (!invalid && (
+            <span className={styles.loadingContainer}>
+                <LoadingAnimation />
+            </span>
+        ));
+
         return (
             <TriggerAndPoll
                 compareValue={value}
@@ -73,11 +80,7 @@ export default class Header extends React.PureComponent {
                 isValid={isValidGeo}
                 onDataReceived={this.handleGeoData}
             >
-                {({ invalid }) => (!invalid && (
-                    <span className={styles.loadingContainer}>
-                        <LoadingAnimation />
-                    </span>
-                ))}
+                <LoadingOnValid />
             </TriggerAndPoll>
         );
     }

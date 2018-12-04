@@ -209,6 +209,7 @@ export default class TabularBook extends React.PureComponent {
 
     render() {
         const { bookId } = this.props;
+        const ActualBook = this.renderActual;
 
         return (
             <TriggerAndPoll
@@ -216,7 +217,7 @@ export default class TabularBook extends React.PureComponent {
                 url={`/tabular-books/${bookId}/`}
                 triggerUrl={`/tabular-extraction-trigger/${bookId}/`}
             >
-                {this.renderActual}
+                <ActualBook />
             </TriggerAndPoll>
         );
     }

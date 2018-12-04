@@ -4,7 +4,7 @@ import React from 'react';
 import { RequestClient, requestMethods } from '#request';
 
 const propTypes = {
-    children: PropTypes.func.isRequired,
+    children: PropTypes.element.isRequired,
     onDataReceived: PropTypes.func,
 
     setDefaultRequestParams: PropTypes.func.isRequired,
@@ -26,13 +26,13 @@ const defaultIsValid = r => r.status === 'success';
 const requests = {
     initialRequest: {
         onMount: ({ props }) => !props.pollOnly,
-        onPropsChanged: {
-            compareValue: true,
-            initialUrl: ({ props }) => !props.pollOnly,
-            url: ({ props }) => !props.pollOnly && !props.initialUrl,
-            initialQuery: ({ props }) => !props.pollOnly,
-            query: ({ props }) => !props.pollOnly && !props.initialQuery,
-        },
+        // onPropsChanged: {
+        //     compareValue: true,
+        //     initialUrl: ({ props }) => !props.pollOnly,
+        //     url: ({ props }) => !props.pollOnly && !props.initialUrl,
+        //     initialQuery: ({ props }) => !props.pollOnly,
+        //     query: ({ props }) => !props.pollOnly && !props.initialQuery,
+        // },
 
         method: requestMethods.GET,
         url: ({ props }) => props.initialUrl || props.url,
@@ -189,16 +189,18 @@ export default class TriggerAndPoll extends React.PureComponent {
 
     render() {
         const { data, completed, invalid } = this.state;
-        const { pollRequest, triggerRequest, dataRequest, initialRequest } = this.props;
+        const { children, pollRequest, triggerRequest, dataRequest, initialRequest } = this.props;
 
-        return this.props.children({
-            completed,
-            data,
-            invalid,
-            pollRequest,
-            triggerRequest,
-            dataRequest,
-            initialRequest,
-        });
+        return React.cloneElement(
+            children, {
+                completed,
+                data,
+                invalid,
+                pollRequest,
+                triggerRequest,
+                dataRequest,
+                initialRequest,
+            },
+        );
     }
 }

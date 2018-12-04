@@ -178,6 +178,8 @@ export default class AttributesPage extends React.PureComponent {
             return null;
         }
 
+        const FaramChild = this.renderFaram;
+
         return (
             <TriggerAndPoll
                 pollUrl={createMetaRequestUrl(bookId)}
@@ -185,7 +187,7 @@ export default class AttributesPage extends React.PureComponent {
                 shouldPoll={shouldPollMetaRequest}
                 pollOnly
             >
-                {this.renderFaram}
+                <FaramChild />
             </TriggerAndPoll>
         );
     }

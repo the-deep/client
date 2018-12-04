@@ -885,8 +885,8 @@
         "-11158375": "Add sub sectors from",
         "-60104332": "Can't drop here!",
         "-63188496": "Couldn't read tabular data.",
-        "-47036305": "Default: ,",
-        "-45402687": "Default: 1",
+        "-47036305": ",",
+        "-45402687": "1",
         "-53408079": "Back"
     },
     "links": {
