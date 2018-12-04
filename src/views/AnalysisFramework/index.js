@@ -233,7 +233,7 @@ export default class AnalysisFramework extends React.PureComponent {
         if (pendingFramework || pendingGeoOptions) {
             return (
                 <div className={styles.analysisFramework}>
-                    <LoadingAnimation large />
+                    <LoadingAnimation />
                 </div>
             );
         }

@@ -3,9 +3,7 @@
 .time {
     display: flex;
     align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    padding: $spacing-extra-small $spacing-small;
-    width: 100%;
+    padding: 0 $spacing-small;
     height: 100%;
+    overflow: auto;
 }

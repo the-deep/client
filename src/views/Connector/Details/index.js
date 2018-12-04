@@ -195,7 +195,7 @@ export default class ConnectorDetails extends React.PureComponent {
                 />
                 {
                     connectorDataLoading ? (
-                        <LoadingAnimation large />
+                        <LoadingAnimation />
                     ) : (
                         <Details />
                     )

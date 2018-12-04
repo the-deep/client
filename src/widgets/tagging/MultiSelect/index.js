@@ -40,6 +40,7 @@ export default class MultiSelectWidget extends React.PureComponent {
                 labelSelector={MultiSelectWidget.labelSelector}
                 keySelector={MultiSelectWidget.keySelector}
                 showLabel={false}
+                emptyComponent={null}
             />
         );
     }

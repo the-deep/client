@@ -72,7 +72,7 @@ export default class SelectOutput extends React.PureComponent {
             labelSelector,
         } = this.props;
 
-        const emptyText = '-';
+        const emptyText = '';
         const className = `
             ${classNameFromProps}
             ${styles.selectOutput}

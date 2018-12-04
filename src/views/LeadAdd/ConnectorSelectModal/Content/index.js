@@ -326,7 +326,7 @@ export default class ConnectorContent extends React.PureComponent {
 
         return (
             <div className={classNames} >
-                { connectorLeadsLoading && <LoadingAnimation large /> }
+                { connectorLeadsLoading && <LoadingAnimation /> }
                 <Header />
                 <div className={styles.tableContainer} >
                     <Table

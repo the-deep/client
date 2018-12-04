@@ -109,12 +109,13 @@ export default class Usergroup extends React.PureComponent {
         if (pending) {
             return (
                 <div className={styles.usergroup}>
-                    <LoadingAnimation large />
+                    <LoadingAnimation />
                 </div>
             );
         }
 
         if (!usergroup.id) {
+            // FIXME: use message
             return (
                 <div className={styles.usergroup}>
                     <div className={styles.usergroupAlt}>

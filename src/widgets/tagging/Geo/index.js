@@ -84,6 +84,7 @@ export default class GeoWidget extends React.PureComponent {
                 geoOptionsByRegion={geoOptions}
                 regions={projectDetails.regions}
                 showHeader={false}
+                emptyComponent={null}
                 modalLeftComponent={
                     <div className={styles.excerptContainer}>
                         <h4 className={styles.title} >

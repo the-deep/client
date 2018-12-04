@@ -36,6 +36,7 @@ export default class DateListWidget extends React.PureComponent {
                     faramElementName="value"
                     showLabel={false}
                     mode="dd-MM-yyyy"
+                    emptyComponent={null}
                 />
             </div>
         );

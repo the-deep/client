@@ -452,7 +452,7 @@ export default class DiscoverProjects extends React.PureComponent {
                             className={styles.projectsTable}
                             emptyComponent={this.renderEmpty}
                         />
-                        { pending && <LoadingAnimation large /> }
+                        { pending && <LoadingAnimation /> }
                     </div>
                 </div>
                 <Footer />

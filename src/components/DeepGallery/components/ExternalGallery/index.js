@@ -157,7 +157,6 @@ export default class ExternalGallery extends React.PureComponent {
                 <div className={`${styles.pendingContainer} ${className}`}>
                     <LoadingAnimation
                         message={_ts('components.externalGallery', 'gatheringWebsiteInfoLabel')}
-                        small
                     />
                 </div>
             );

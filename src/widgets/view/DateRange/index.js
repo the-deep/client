@@ -19,7 +19,7 @@ const defaultProps = {
 
 const emptyComponent = () => (
     <div className={styles.empty}>
-        {_ts('widgets.view.dateRange', 'datePlaceholder')}_
+        {_ts('widgets.view.dateRange', 'datePlaceholder')}
     </div>
 );
 

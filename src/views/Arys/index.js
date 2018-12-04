@@ -370,7 +370,7 @@ export default class Arys extends React.PureComponent {
                         className={styles.arysTable}
                         emptyComponent={this.renderEmpty}
                     />
-                    { loadingArys && <LoadingAnimation large /> }
+                    { loadingArys && <LoadingAnimation /> }
                 </div>
                 <Footer />
             </div>

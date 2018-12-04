@@ -91,11 +91,13 @@ export default class OrganigramWidget extends React.PureComponent {
 
         return (
             <OrganigramInput
+                className={styles.organigramInput}
                 faramElementName="value"
                 data={this.data}
                 childSelector={OrganigramWidget.childSelector}
                 labelSelector={OrganigramWidget.labelSelector}
                 idSelector={OrganigramWidget.idSelector}
+                emptyComponent={null}
                 modalLeftComponent={
                     <div className={styles.excerptContainer}>
                         <h4 className={styles.title} >

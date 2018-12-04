@@ -2,7 +2,7 @@
 
 .excerpt {
     position: relative;
-    padding: 0;
+    padding: $spacing-extra-small $spacing-small;
     height: 100%;
     overflow: auto;
 
@@ -38,7 +38,7 @@
         @include transition-medium;
         position: absolute;
         right: $spacing-large;
-        bottom: $spacing-small-alt;
+        bottom: $spacing-extra-large;
         opacity: .2;
         font-size: $font-size-extra-large;
     }

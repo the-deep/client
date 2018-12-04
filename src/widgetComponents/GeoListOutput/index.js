@@ -107,6 +107,7 @@ export default class GeoListOutput extends React.PureComponent {
                 keySelector={GeoListOutput.valueKeySelector}
                 renderer={ListItem}
                 rendererParams={this.rendererParams}
+                emptyComponent={null}
             />
         );
     }

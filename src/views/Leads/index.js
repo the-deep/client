@@ -603,9 +603,8 @@ export default class Leads extends React.PureComponent {
                             onHeaderClick={this.handleTableHeaderClick}
                             keySelector={Leads.leadKeyExtractor}
                             className={styles.leadsTable}
-                            emptyComponent={this.renderEmpty}
                         />
-                        { loadingLeads && <LoadingAnimation large /> }
+                        { loadingLeads && <LoadingAnimation /> }
                     </div>
                 </div>
                 <Footer />

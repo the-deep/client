@@ -321,7 +321,7 @@ export default class EditAry extends React.PureComponent {
                 || assessmentTemplateRequest.pending
                 || geoOptionsRequest.pending
         ) {
-            return <LoadingAnimation large />;
+            return <LoadingAnimation />;
         }
 
         const exitPath = reverseRoute(pathNames.leads, {

@@ -272,7 +272,7 @@ export default class Score extends React.PureComponent {
         return (
             <div className={className}>
                 <FaramGroup faramElementName="score">
-                    {pending && <LoadingAnimation large />}
+                    {pending && <LoadingAnimation />}
                     <div className={styles.summary}>
                         <div className={styles.left}>
                             <List

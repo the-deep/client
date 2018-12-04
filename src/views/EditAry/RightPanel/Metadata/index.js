@@ -74,7 +74,7 @@ export default class Metadata extends React.PureComponent {
         return (
             <div className={styles.metadata}>
                 <FaramGroup faramElementName="metadata">
-                    {pending && <LoadingAnimation large />}
+                    {pending && <LoadingAnimation />}
                     <FaramGroup faramElementName="basicInformation">
                         <div className={styles.basicInformation}>
                             <Header

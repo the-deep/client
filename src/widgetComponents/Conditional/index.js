@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import Message from '#rscv/Message';
 import FaramGroup from '#rscg/FaramGroup';
 import { FaramInputElement } from '#rscg/FaramElements';
 import {
@@ -67,9 +68,9 @@ export default class Conditional extends React.PureComponent {
     getWidgetView = (widget) => {
         if (!widget) {
             return (
-                <div>
+                <Message>
                     {_ts('widgets.tagging.conditional', 'noWidgetFoundText')}
-                </div>
+                </Message>
             );
         }
 
@@ -142,16 +143,14 @@ export default class Conditional extends React.PureComponent {
         const WidgetView = this.getWidgetView(widget);
 
         return (
-            <div>
-                <FaramGroup
-                    value={value}
-                    onChange={onChange}
-                    disabled={disabled}
-                    readOnly={readOnly}
-                >
-                    {WidgetView}
-                </FaramGroup>
-            </div>
+            <FaramGroup
+                value={value}
+                onChange={onChange}
+                disabled={disabled}
+                readOnly={readOnly}
+            >
+                {WidgetView}
+            </FaramGroup>
         );
     }
 }

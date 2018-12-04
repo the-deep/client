@@ -29,6 +29,7 @@ export default class TimeListWidget extends React.PureComponent {
                     faramElementName="value"
                     showLabel={false}
                     mode="hh:mm"
+                    emptyComponent={null}
                 />
             </div>
         );

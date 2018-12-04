@@ -239,7 +239,6 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
                     <LoadingAnimation
                         className={styles.loadingAnimation}
                         message={_ts('components.simplifiedLeadPreview', 'simplifyingLead')}
-                        small
                     />
                 )}
                 <Content />

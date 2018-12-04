@@ -1,5 +1,10 @@
 @import '~base-scss/base';
 
+.organigram-input {
+    height: 100%;
+    overflow: auto;
+}
+
 .excerpt-container {
     display: flex;
     flex-direction: column;

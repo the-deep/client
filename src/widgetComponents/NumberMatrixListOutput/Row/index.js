@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import WidgetEmptyComponent from '#components/WidgetEmptyComponent';
 import ListView from '#rscv/List/ListView';
 
 import styles from './styles.scss';
@@ -30,7 +29,7 @@ export default class NumberMatrixOutputRow extends React.PureComponent {
 
     static rowKeyExtractor = d => d.key;
 
-    columnRendererParams = (key, columnData) => ({
+    static columnRendererParams = (key, columnData) => ({
         columnData,
     });
 
@@ -46,9 +45,8 @@ export default class NumberMatrixOutputRow extends React.PureComponent {
                     className={styles.colsContainer}
                     data={rowData.columns}
                     renderer={Column}
-                    rendererParams={this.columnRendererParams}
+                    rendererParams={NumberMatrixOutputRow.columnRendererParams}
                     keySelector={NumberMatrixOutputRow.rowKeyExtractor}
-                    emptyComponent={WidgetEmptyComponent}
                 />
             </div>
         );

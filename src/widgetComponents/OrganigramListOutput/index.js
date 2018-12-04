@@ -119,6 +119,7 @@ export default class OrganigramListOutput extends React.PureComponent {
                 keySelector={OrganigramListOutput.valueKeySelector}
                 renderer={ListItem}
                 rendererParams={this.rendererParams}
+                emptyComponent={null}
             />
         );
     }
