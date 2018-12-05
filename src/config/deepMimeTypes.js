@@ -1,9 +1,14 @@
 export const galleryImageMimeType = ['image/png', 'image/jpeg', 'image/fig', 'image/gif'];
 
-export const galleryDocsMimeType = ['application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/pdf', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    'application/vnd.ms-powerpoint', 'application/vnd.ms-excel', 'application/xml',
-    'application/msword', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+export const galleryDocsMimeType = [
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/rtf', 'text/plain', 'font/otf', 'application/pdf',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'application/vnd.ms-powerpoint', 'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'text/csv', 'image/png', 'image/jpeg', 'image/fig', 'image/gif',
+    'application/json', 'application/xml', 'application/msword',
+];
 
 export const galleryType = {
     IMAGE: 'image',
