@@ -5,6 +5,7 @@ import Button from '#rsca/Button';
 import SegmentInput from '#rsci/SegmentInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { FgRestBuilder } from '#rsu/rest';
+import Message from '#rscv/Message';
 
 import { iconNames } from '#constants';
 import {
@@ -310,9 +311,9 @@ export default class RegionMap extends React.PureComponent {
 
         if (error) {
             return (
-                <div className={styles.message}>
+                <Message>
                     { error }
-                </div>
+                </Message>
             );
         }
 
@@ -356,9 +357,9 @@ export default class RegionMap extends React.PureComponent {
         }
 
         return (
-            <div className={styles.message}>
+            <Message>
                 {_ts('components.regionMap', 'mapNotAvailable')}
-            </div>
+            </Message>
         );
     }
 

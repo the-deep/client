@@ -219,17 +219,17 @@ export default class GeoInput extends React.PureComponent {
             return (
                 <div className={styles.noListSelection} >
                     {!hideInput &&
-                    <MultiSelectInput
-                        value={value}
-                        onChange={this.handleSelectChange}
-                        options={this.geoOptions}
-                        labelSelector={this.valueLabelSelector}
-                        keySelector={this.valueKeySelector}
-                        showHintAndError={false}
-                        hideSelectAllButton
-                        disabled={disabled}
-                        readOnly={readOnly}
-                    />
+                        <MultiSelectInput
+                            value={value}
+                            onChange={this.handleSelectChange}
+                            options={this.geoOptions}
+                            labelSelector={this.valueLabelSelector}
+                            keySelector={this.valueKeySelector}
+                            showHintAndError={false}
+                            hideSelectAllButton
+                            disabled={disabled}
+                            readOnly={readOnly}
+                        />
                     }
                     <AccentButton
                         className={styles.action}
@@ -243,6 +243,7 @@ export default class GeoInput extends React.PureComponent {
                 </div>
             );
         }
+
         return (
             <SelectInputWithList
                 value={value}

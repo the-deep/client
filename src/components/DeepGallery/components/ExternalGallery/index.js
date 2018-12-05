@@ -3,8 +3,8 @@ import React from 'react';
 
 import { FgRestBuilder } from '#rsu/rest';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import urlRegex from '#rsu/regexForWeburl';
 
-// import { iconNames } from '#constants';
 import {
     createUrlForWebsiteFetch,
     createParamsForGet,
@@ -23,6 +23,8 @@ const defaultProps = {
     className: '',
     url: undefined,
 };
+
+const isUrlValid = url => (url && urlRegex.test(url));
 
 export default class ExternalGallery extends React.PureComponent {
     static propTypes = propTypes;
@@ -64,7 +66,7 @@ export default class ExternalGallery extends React.PureComponent {
     }
 
     startRequest = (url) => {
-        if (!GalleryViewer.isUrlValid(url)) {
+        if (!isUrlValid(url)) {
             this.setState({
                 pending: false,
                 ...this.initialState,

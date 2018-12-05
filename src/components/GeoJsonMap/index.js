@@ -347,6 +347,7 @@ export default class GeoJsonMap extends React.PureComponent {
             className,
             pending,
         } = this.props;
+        const { map } = this.state;
 
         return (
             <div
@@ -354,9 +355,7 @@ export default class GeoJsonMap extends React.PureComponent {
                 ref={(el) => { this.mapContainer = el; }}
                 style={{ position: 'relative' }}
             >
-                {(pending || !this.state.map) && (
-                    <LoadingAnimation />
-                )}
+                {(pending || !map) && <LoadingAnimation />}
             </div>
         );
     }

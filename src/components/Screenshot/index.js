@@ -134,7 +134,7 @@ export default class Screenshot extends React.PureComponent {
             };
             image.src = result.image;
         }).catch(() => {
-            // TODO: Add to strings
+            // FIXME: use strings
             const captureError = 'Failed to capture screenshot.\n ' +
                 'Please make sure you have latest browser extension installed.';
             console.warn(captureError);
@@ -160,14 +160,14 @@ export default class Screenshot extends React.PureComponent {
                     ref={(ref) => { this.svg = ref; }}
                     viewBox={`${offsetX} ${offsetY} ${width} ${height}`}
                 >
-                    {image && (
-                        <image
-                            href={image.src}
-                        />
-                    )}
+                    {image && <image href={image.src} /> }
                     <g ref={(ref) => { this.brushContainer = ref; }} />
                 </svg>
-                <canvas ref={(ref) => { this.canvas = ref; }} width={0} height={0} />
+                <canvas
+                    ref={(ref) => { this.canvas = ref; }}
+                    width={0}
+                    height={0}
+                />
                 <ReactResizeDetector
                     onResize={this.handleResize}
                     handleWidth

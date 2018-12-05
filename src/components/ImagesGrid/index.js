@@ -68,6 +68,7 @@ export default class ImagesGrid extends React.PureComponent {
     renderImage = (key, data) => {
         let source = data;
 
+        // FIXME: this shouldn't be done
         if (source[0] === '/') {
             source = `http://localhost:8000${source}`;
         }

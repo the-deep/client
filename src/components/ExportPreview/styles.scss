@@ -6,14 +6,4 @@
     flex-grow: 1;
     overflow-x: hidden;
     overflow-y: auto;
-
-    .message {
-        display: flex;
-        align-items: center;
-        flex-grow: 1;
-        justify-content: center;
-        color: $color-text-disabled;
-        font-size: $font-size-large;
-        font-weight: $font-weight-medium;
-    }
 }

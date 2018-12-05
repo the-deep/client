@@ -3,6 +3,7 @@ import React from 'react';
 
 import { FgRestBuilder } from '#rsu/rest';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import Message from '#rscv/Message';
 
 import {
     createParamsForGet,
@@ -114,9 +115,9 @@ export default class ExportPreview extends React.PureComponent {
 
         if (error) {
             return (
-                <div className={styles.message}>
+                <Message>
                     { error }
-                </div>
+                </Message>
             );
         }
 
@@ -133,9 +134,9 @@ export default class ExportPreview extends React.PureComponent {
         }
 
         return (
-            <div className={styles.message}>
+            <Message>
                 {_ts('components.exportPreview', 'previewNotAvailableLabel')}
-            </div>
+            </Message>
         );
     }
 
@@ -145,8 +146,7 @@ export default class ExportPreview extends React.PureComponent {
 
         return (
             <div className={`${className} ${styles.exportPreview}`}>
-                { pending && <LoadingAnimation /> }
-                { !pending && this.renderContent() }
+                { pending ? <LoadingAnimation /> : this.renderContent() }
             </div>
         );
     }

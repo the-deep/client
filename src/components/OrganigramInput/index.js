@@ -232,9 +232,11 @@ export default class OrganigramInput extends React.PureComponent {
                 </ModalBody>
                 <ModalFooter>
                     <Button onClick={this.handleCancelClick} >
+                        {/* FIXME: use strings */}
                         Cancel
                     </Button>
                     <PrimaryButton onClick={this.handleApplyClick} >
+                        {/* FIXME: use strings */}
                         Apply
                     </PrimaryButton>
                 </ModalFooter>

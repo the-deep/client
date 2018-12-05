@@ -236,25 +236,39 @@ export default class DgSelect extends React.PureComponent {
     renderGalleryFileType = (row) => {
         const icon = leadTypeIconMap[row.mimeType] || iconNames.documentText;
         const url = row.file;
+
+        const iconChild = <i className={icon} />;
+
         if (!url) {
-            return (
-                <i className={icon} />
-            );
+            return iconChild;
         }
+
         return (
-            <a href={url} target="_blank" rel="noopener noreferrer">
-                <i className={icon} />
+            <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                {iconChild}
             </a>
         );
     }
 
     renderCheckbox = row => (
         <AccentButton
-            title={row.selected ? _ts('components.deepGallerySelect', 'unselect') : _ts('components.deepGallerySelect', 'select')}
+            title={
+                row.selected
+                    ? _ts('components.deepGallerySelect', 'unselect')
+                    : _ts('components.deepGallerySelect', 'select')
+            }
             onClick={() => this.handleFileSelection(row)}
             smallVerticalPadding
             transparent
-            iconName={row.selected ? iconNames.checkbox : iconNames.checkboxOutlineBlank}
+            iconName={
+                row.selected
+                    ? iconNames.checkbox
+                    : iconNames.checkboxOutlineBlank
+            }
         />
     )
 
