@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import NormalFormattedTime from '#rscv/FormattedTime';
 import { FaramOutputElement } from '#rscg/FaramElements';
 
+import styles from './styles.scss';
+
 const FormattedTime = FaramOutputElement(NormalFormattedTime);
 
 const propTypes = {
@@ -19,9 +21,12 @@ export default class TimeListWidget extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        const {
-            className,
-        } = this.props;
+        const { className: classNameFromProps } = this.props;
+
+        const className = `
+            ${classNameFromProps}
+            ${styles.timeOutput}
+        `;
 
         return (
             <div className={className} >
