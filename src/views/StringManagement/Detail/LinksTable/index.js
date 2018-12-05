@@ -10,6 +10,7 @@ import {
 import Table from '#rscv/Table';
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
+import Button from '#rsca/Button';
 import {
     linkCollectionSelector,
 } from '#redux';
@@ -18,6 +19,7 @@ import { iconNames } from '#constants';
 
 import DeleteConfirm from '../DeleteConfirm';
 import EditLinkModal from '../EditLinkModal';
+import EditStringModal from '../EditStringModal';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -48,6 +50,9 @@ export default class LinksTable extends React.PureComponent {
             deleteLinkId: undefined,
             showDeleteLinkConfirmModal: false,
             showEditLinkModal: false,
+
+            editStringId: undefined,
+            showEditStringModal: false,
         };
 
         this.linksTableHeader = [
@@ -87,6 +92,13 @@ export default class LinksTable extends React.PureComponent {
                 order: 5,
                 modifier: data => (
                     <Fragment>
+                        <Button
+                            onClick={() => { this.handleEditStringButtonClick(data.stringId); }}
+                            iconName={iconNames.edit}
+                            transparent
+                            smallVerticalPadding
+                            disabled={this.props.disabled}
+                        />
                         <WarningButton
                             onClick={() => { this.handleEditButtonClick(data.id); }}
                             iconName={iconNames.edit}
@@ -119,6 +131,13 @@ export default class LinksTable extends React.PureComponent {
         });
     }
 
+    handleEditStringButtonClick = (stringId) => {
+        this.setState({
+            editStringId: stringId,
+            showEditStringModal: true,
+        });
+    }
+
     handleDeleteButtonClick = (id) => {
         this.setState({
             deleteLinkId: id,
@@ -134,6 +153,12 @@ export default class LinksTable extends React.PureComponent {
         this.setState({ showEditLinkModal: false });
     }
 
+    handleEditStringClose = () => {
+        this.setState({
+            showEditStringModal: false,
+        });
+    }
+
     render() {
         const { linkCollection } = this.props;
         const {
@@ -141,6 +166,8 @@ export default class LinksTable extends React.PureComponent {
             deleteLinkId,
             showEditLinkModal,
             editLinkId,
+            editStringId,
+            showEditStringModal,
         } = this.state;
 
         return (
@@ -162,6 +189,12 @@ export default class LinksTable extends React.PureComponent {
                     <EditLinkModal
                         editLinkId={editLinkId}
                         onClose={this.handleEditLinkModalClose}
+                    />
+                }
+                { showEditStringModal &&
+                    <EditStringModal
+                        editStringId={editStringId}
+                        onClose={this.handleEditStringClose}
                     />
                 }
             </React.Fragment>
