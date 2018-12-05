@@ -1,9 +1,9 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 
+import FaramGroup from '#rscg/FaramGroup';
 import AccentButton from '#rsca/Button/AccentButton';
 import TimeInput from '#rsci/TimeInput';
-import Label from '#rsci/Label';
 import _ts from '#ts';
 import { iconNames } from '#constants';
 
@@ -22,34 +22,36 @@ export default class TimeRangeWidget extends React.PureComponent {
 
     static handleValueSwap = value => ({
         ...value,
-        toValue: value.fromValue,
-        fromValue: value.toValue,
+        to: value.from,
+        from: value.to,
     })
 
     render() {
         return (
             <div className={styles.timeRange}>
-                <div className={styles.inputs}>
-                    <TimeInput
-                        className={styles.timeInput}
-                        label={_ts('widgets.tagging.timeRange', 'fromLabel')}
-                        faramElementName="fromValue"
-                    />
-                    <TimeInput
-                        className={styles.timeInput}
-                        label={_ts('widgets.tagging.timeRange', 'toLabel')}
-                        faramElementName="toValue"
-                    />
-                </div>
-                <div className={styles.actions}>
-                    <AccentButton
-                        title={_ts('widgets.tagging.timeRange', 'swapButtonTitle')}
-                        iconName={iconNames.swap}
-                        faramElementName="swap-button"
-                        faramAction={TimeRangeWidget.handleValueSwap}
-                        transparent
-                    />
-                </div>
+                <FaramGroup faramElementName="value">
+                    <div className={styles.inputs}>
+                        <TimeInput
+                            className={styles.timeInput}
+                            label={_ts('widgets.tagging.timeRange', 'fromLabel')}
+                            faramElementName="from"
+                        />
+                        <TimeInput
+                            className={styles.timeInput}
+                            label={_ts('widgets.tagging.timeRange', 'toLabel')}
+                            faramElementName="to"
+                        />
+                    </div>
+                    <div className={styles.actions}>
+                        <AccentButton
+                            title={_ts('widgets.tagging.timeRange', 'swapButtonTitle')}
+                            iconName={iconNames.swap}
+                            faramElementName="swap-button"
+                            faramAction={TimeRangeWidget.handleValueSwap}
+                            transparent
+                        />
+                    </div>
+                </FaramGroup>
             </div>
         );
     }

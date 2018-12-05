@@ -1,0 +1,9 @@
+@import '~base-scss/base';
+
+.date {
+    padding: $spacing-extra-small $spacing-small;
+}
+
+.empty {
+    color: $color-text-placeholder;
+}
