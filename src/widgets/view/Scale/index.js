@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import ScaleInput from '#rsci/ScaleInput';
 
+import styles from './styles.scss';
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
@@ -32,9 +33,14 @@ export default class ScaleWidget extends React.PureComponent {
 
     render() {
         const {
-            className,
+            className: classNameFromProps,
             widget,
         } = this.props;
+
+        const className = `
+            ${classNameFromProps}
+            ${styles.scaleOutput}
+        `;
 
         const options = getOptions(widget);
 

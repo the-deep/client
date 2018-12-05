@@ -21,9 +21,7 @@ export default class DateListWidget extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        const {
-            className: classNameFromProps,
-        } = this.props;
+        const { className: classNameFromProps } = this.props;
 
         const className = `
             ${classNameFromProps}

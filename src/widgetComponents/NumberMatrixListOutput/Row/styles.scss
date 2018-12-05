@@ -19,6 +19,10 @@
             display: flex;
             justify-content: space-between;
             padding: $spacing-extra-small $spacing-small;
+
+            &:hover {
+                background: $color-foreground-alt;
+            }
         }
     }
 }

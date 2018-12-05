@@ -3,14 +3,7 @@
 .time-range {
     display: flex;
     align-items: center;
+    padding: $spacing-extra-small $spacing-small;
     height: 100%;
     overflow: auto;
-
-    .time {
-        padding: $spacing-extra-small $spacing-small;
-    }
-
-    .empty {
-        color: $color-text-placeholder;
-    }
 }

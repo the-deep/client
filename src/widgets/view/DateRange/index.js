@@ -1,13 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import NormalFormattedDate from '#rscv/FormattedDate';
-import { FaramOutputElement } from '#rscg/FaramElements';
-import _ts from '#ts';
+import DateRangeOutput from '#widgetComponents/DateRangeOutput';
 
 import styles from './styles.scss';
-
-const FormattedDate = FaramOutputElement(NormalFormattedDate);
 
 const propTypes = {
     className: PropTypes.string,
@@ -17,11 +13,6 @@ const defaultProps = {
     className: '',
 };
 
-const emptyComponent = () => (
-    <div className={styles.empty}>
-        {_ts('widgets.view.dateRange', 'datePlaceholder')}
-    </div>
-);
 
 // eslint-disable-next-line react/prefer-stateless-function
 export default class DateRangeViewWidget extends React.PureComponent {
@@ -29,28 +20,13 @@ export default class DateRangeViewWidget extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        const {
-            className,
-        } = this.props;
+        const { className } = this.props;
 
         return (
-            <div className={`${className} ${styles.dateRange}`}>
-                <FormattedDate
-                    faramElementName="fromValue"
-                    className={styles.date}
-                    mode="dd-MM-yyyy"
-                    emptyComponent={emptyComponent}
-                />
-                <span className={styles.to}>
-                    {_ts('widgets.view.dateRange', 'toLabel')}
-                </span>
-                <FormattedDate
-                    faramElementName="toValue"
-                    className={styles.date}
-                    mode="dd-MM-yyyy"
-                    emptyComponent={emptyComponent}
-                />
-            </div>
+            <DateRangeOutput
+                className={`${className} ${styles.dateRange}`}
+                faramElementName="value"
+            />
         );
     }
 }

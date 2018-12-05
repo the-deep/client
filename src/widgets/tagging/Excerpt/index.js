@@ -39,7 +39,6 @@ const defaultProps = {
 // FIXME: reuse this from entities.editEntries
 const TEXT = 'excerpt';
 const IMAGE = 'image';
-
 const DATA_SERIES = 'dataSeries';
 
 export default class Excerpt extends React.PureComponent {

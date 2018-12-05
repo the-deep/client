@@ -6,6 +6,7 @@ import {
     removeClassName,
 } from '#rsu/common';
 
+import Message from '#rscv/Message';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
@@ -99,12 +100,9 @@ export default class WidgetContentWrapper extends React.PureComponent {
             >
                 { children }
                 { blockDrop &&
-                    <div className={styles.overlay}>
-                        <span className={iconClassName} />
-                        <div className={styles.message}>
-                            { _ts('editEntry', 'noDropMessage') }
-                        </div>
-                    </div>
+                    <Message className={styles.overlay}>
+                        { _ts('editEntry', 'noDropMessage') }
+                    </Message>
                 }
             </div>
         );

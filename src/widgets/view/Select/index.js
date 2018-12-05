@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import SelectOutput from '#widgetComponents/SelectOutput';
 
+import styles from './styles.scss';
+
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     widget: PropTypes.object.isRequired,
@@ -26,9 +28,14 @@ export default class SelectListWidget extends React.PureComponent {
 
     render() {
         const {
-            className,
+            className: classNameFromProps,
             widget,
         } = this.props;
+
+        const className = `
+            ${classNameFromProps}
+            ${styles.selectOutput}
+        `;
 
         const options = getOptions(widget);
 
