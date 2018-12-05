@@ -7,4 +7,9 @@
 .multi-select-container {
     display: flex;
     align-items: flex-end;
+
+    .multi-input {
+        flex-shrink: 0;
+        width: 180px;
+    }
 }
