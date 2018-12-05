@@ -410,13 +410,11 @@ export default class LeadForm extends React.PureComponent {
                     ATTACHMENT_TYPES.indexOf(type) !== -1 && (
                         <Fragment>
                             <div className={styles.fileTitle}>
-                                {
-                                    values.attachment && (
-                                        <InternalGallery
-                                            onlyFileName
-                                            galleryId={values.attachment.id}
-                                        />
-                                    )
+                                { values.attachment &&
+                                    <InternalGallery
+                                        onlyFileName
+                                        galleryId={values.attachment.id}
+                                    />
                                 }
                             </div>
                             <HiddenInput

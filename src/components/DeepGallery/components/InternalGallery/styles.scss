@@ -1,11 +1,15 @@
 @import '~base-scss/base';
 
+.preview-gallery {
+    position: relative;
+}
+
 .gallery-file-name {
     color: $color-accent;
 }
 
-.pending-container {
-    display: flex;
+.preview-nothing {
+    display: inline;
     align-items: center;
     justify-content: center;
 
@@ -16,24 +20,5 @@
     .loading-animation {
         display: inline-block;
         animation: spin 1s linear infinite;
-    }
-
-    &.file-name {
-        display: inline;
-    }
-}
-
-.show-404 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .label {
-        margin-right: $spacing-small;
-        text-align: center;
-    }
-
-    &.file-name {
-        display: inline;
     }
 }
