@@ -123,6 +123,7 @@ export default class Matrix2dListInput extends React.PureComponent {
                 renderer={Row}
                 rendererParams={this.rendererParams}
                 keySelector={Matrix2dListInput.rowKeyExtractor}
+                emptyComponent={null}
             />
         );
     }

@@ -31,6 +31,7 @@ export default class SelectWidget extends React.PureComponent {
         return (
             <div className={styles.select}>
                 <SelectInput
+                    className={styles.input}
                     faramElementName="value"
                     options={options}
                     showLabel={false}

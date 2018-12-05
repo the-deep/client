@@ -26,6 +26,7 @@ const propTypes = {
     hideList: PropTypes.bool,
     hideInput: PropTypes.bool,
     modalLeftComponent: PropTypes.node,
+    emptyComponent: PropTypes.func,
 };
 
 const defaultProps = {
@@ -41,6 +42,7 @@ const defaultProps = {
     value: [],
     regions: [],
     modalLeftComponent: undefined,
+    emptyComponent: undefined,
 };
 
 const emptyArray = [];
@@ -254,6 +256,7 @@ export default class GeoInput extends React.PureComponent {
                 hideSelectAllButton
                 disabled={disabled}
                 readOnly={readOnly}
+                emptyComponent={this.props.emptyComponent}
             />
         );
     }

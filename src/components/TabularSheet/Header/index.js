@@ -71,7 +71,7 @@ export default class Header extends React.PureComponent {
             >
                 {({ invalid }) => (!invalid && (
                     <span className={styles.loadingContainer}>
-                        <LoadingAnimation small />
+                        <LoadingAnimation />
                     </span>
                 ))}
             </TriggerAndPoll>

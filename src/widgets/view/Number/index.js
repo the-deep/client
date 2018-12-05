@@ -26,7 +26,7 @@ export default class NumberListWidget extends React.PureComponent {
         } = this.props;
 
         const separatorText = ' ';
-        const invalidText = '-';
+        const invalidText = '';
 
         const className = `
             ${classNameFromProps}

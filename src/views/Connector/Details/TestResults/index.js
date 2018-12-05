@@ -130,7 +130,7 @@ export default class ConnectorTestResults extends React.PureComponent {
 
         return (
             <div className={`${className} ${styles.testResults}`} >
-                {connectorTestLoading && <LoadingAnimation large /> }
+                {connectorTestLoading && <LoadingAnimation /> }
                 <header className={styles.header} >
                     <h4>
                         {_ts('connector', 'testResultsHeading')}

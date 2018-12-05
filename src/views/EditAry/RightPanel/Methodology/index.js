@@ -172,7 +172,7 @@ export default class Methodology extends React.PureComponent {
         return (
             <div className={styles.methodology}>
                 <FaramGroup faramElementName="methodology">
-                    {pending && <LoadingAnimation large />}
+                    {pending && <LoadingAnimation />}
 
                     <FaramList
                         faramElementName="attributes"

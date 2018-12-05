@@ -34,7 +34,7 @@ export default class CountryKeyFigures extends React.PureComponent {
         return (
             <FaramGroup faramElementName="keyFigures" >
                 <div className={classNames} >
-                    { dataLoading && <LoadingAnimation large /> }
+                    { dataLoading && <LoadingAnimation /> }
                     <div className={styles.sections} >
                         <div className={styles.section}>
                             <h3 className={styles.heading} >

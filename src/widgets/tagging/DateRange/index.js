@@ -30,30 +30,16 @@ export default class DateRangeWidget extends React.PureComponent {
         return (
             <div className={styles.dateRange}>
                 <div className={styles.inputs}>
-                    <div className={styles.to}>
-                        <Label
-                            text={_ts('widgets.tagging.dateRange', 'fromLabel')}
-                            className={styles.label}
-                            show
-                        />
-                        <DateInput
-                            className={styles.dateInput}
-                            faramElementName="fromValue"
-                            showLabel={false}
-                        />
-                    </div>
-                    <div className={styles.from}>
-                        <Label
-                            text={_ts('widgets.tagging.dateRange', 'toLabel')}
-                            className={styles.label}
-                            show
-                        />
-                        <DateInput
-                            className={styles.dateInput}
-                            faramElementName="toValue"
-                            showLabel={false}
-                        />
-                    </div>
+                    <DateInput
+                        className={styles.dateInput}
+                        label={_ts('widgets.tagging.dateRange', 'fromLabel')}
+                        faramElementName="fromValue"
+                    />
+                    <DateInput
+                        className={styles.dateInput}
+                        label={_ts('widgets.tagging.dateRange', 'toLabel')}
+                        faramElementName="toValue"
+                    />
                 </div>
                 <div className={styles.actions}>
                     <AccentButton

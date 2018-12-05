@@ -222,7 +222,7 @@ export default class FrameworkDetail extends React.PureComponent {
         return (
             <div className={className}>
                 { pendingFramework ? (
-                    <LoadingAnimation large />
+                    <LoadingAnimation />
                 ) : (
                     <React.Fragment>
                         <Header />

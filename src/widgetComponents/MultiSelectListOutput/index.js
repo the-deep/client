@@ -86,6 +86,7 @@ export default class MultiSelectListOutput extends React.PureComponent {
                 keySelector={keySelector}
                 renderer={ListItem}
                 rendererParams={this.rendererParams}
+                emptyComponent={null}
             />
         );
     }

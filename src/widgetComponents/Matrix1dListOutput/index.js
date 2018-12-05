@@ -116,6 +116,7 @@ export default class Matrix1dListOutput extends React.PureComponent {
                 keySelector={Matrix1dListOutput.keySelector}
                 renderer={Row}
                 rendererParams={this.rendererParams}
+                emptyComponent={null}
             />
         );
     }

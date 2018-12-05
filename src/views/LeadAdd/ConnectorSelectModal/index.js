@@ -475,7 +475,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
                     }
                 />
                 <ModalBody className={styles.modalBody} >
-                    { dataLoading && <LoadingAnimation large /> }
+                    { dataLoading && <LoadingAnimation /> }
                     <div className={styles.main} >
                         <Sidebar />
                         <Content />

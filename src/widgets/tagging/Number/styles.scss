@@ -1,11 +1,13 @@
 @import '~base-scss/base';
 
-.number-widget {
+.number {
     display: flex;
-    align-items: stretch;
-    flex-direction: column;
-    justify-content: center;
-    padding: $spacing-small;
-    width: 100%;
+    align-items: center;
+    padding: 0 $spacing-small;
     height: 100%;
+    overflow: auto;
+
+    .input {
+        width: 100%;
+    }
 }

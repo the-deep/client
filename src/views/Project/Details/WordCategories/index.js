@@ -165,7 +165,7 @@ export default class ProjectCategoryEditor extends React.PureComponent {
                 />
                 <div className={styles.details}>
                     { pendingWordCategoryList ? (
-                        <LoadingAnimation large />
+                        <LoadingAnimation />
                     ) : (
                         <ActiveWordCategoryDetails
                             activeWordCategoryId={activeWordCategoryId}

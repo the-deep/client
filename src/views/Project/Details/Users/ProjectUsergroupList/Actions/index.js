@@ -148,7 +148,7 @@ export default class Actions extends React.PureComponent {
 
         return (
             <div className={styles.actions} >
-                {pending && <LoadingAnimation small />}
+                {pending && <LoadingAnimation />}
                 <SelectInput
                     label={_ts('project.users', 'roleSelectInputTitle')}
                     placeholder=""

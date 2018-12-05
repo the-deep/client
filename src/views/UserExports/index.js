@@ -153,9 +153,7 @@ export default class UserExports extends React.PureComponent {
                 order: 6,
                 modifier: (row) => {
                     if (row.pending) {
-                        return (
-                            <LoadingAnimation small />
-                        );
+                        return (<LoadingAnimation />);
                     } else if (!row.pending && !row.file) {
                         return (
                             <div className="file-error">

@@ -35,6 +35,7 @@ const propTypes = {
     showLabel: PropTypes.bool,
     hideList: PropTypes.bool,
     modalLeftComponent: PropTypes.node,
+    emptyComponent: PropTypes.func,
 };
 
 const defaultProps = {
@@ -52,6 +53,7 @@ const defaultProps = {
     childSelector: organ => organ.children,
     data: [],
     modalLeftComponent: undefined,
+    emptyComponent: undefined,
 };
 
 const emptyObject = {};
@@ -309,6 +311,7 @@ export default class OrganigramInput extends React.PureComponent {
                 hideSelectAllButton
                 disabled={disabled}
                 readOnly={readOnly}
+                emptyComponent={this.props.emptyComponent}
             />
         );
     }

@@ -384,10 +384,7 @@ export default class CountryDetail extends React.PureComponent {
                     disabled={loading}
                 >
                     { loading &&
-                        <LoadingAnimation
-                            className={styles.loadingAnimation}
-                            large
-                        />
+                        <LoadingAnimation className={styles.loadingAnimation} />
                     }
                     { !activeUser.isSuperuser ? (
                         <div className={styles.detailsNoEdit}>

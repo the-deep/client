@@ -1,6 +1,9 @@
 @import '~base-scss/base';
 
 .scale-widget {
-    padding: $spacing-extra-small $spacing-small;
+    display: flex;
+    align-items: center;
+    padding: 0 $spacing-small;
     height: 100%;
+    overflow: auto;
 }

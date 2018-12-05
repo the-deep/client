@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import WidgetEmptyComponent from '#components/WidgetEmptyComponent';
 import ListView from '#rscv/List/ListView';
 import { FaramOutputElement } from '#rscg/FaramElements';
+import { doesObjectHaveNoData } from '#rsu/common';
 
 import Row from './Row';
 import styles from './styles.scss';
@@ -33,7 +33,7 @@ const getRowsData = (options, value) => {
             const colValue = (value[row.key] || emptyObject)[col.key];
             const obj = {
                 title: col.title,
-                value: colValue || '~',
+                value: colValue,
                 key: col.key,
             };
             return obj;
@@ -88,7 +88,10 @@ export default class NumberMatrixListView extends React.PureComponent {
     });
 
     render() {
-        const { className } = this.props;
+        const { className, value } = this.props;
+        if (doesObjectHaveNoData(value)) {
+            return null;
+        }
 
         return (
             <ListView
@@ -97,7 +100,7 @@ export default class NumberMatrixListView extends React.PureComponent {
                 renderer={Row}
                 rendererParams={this.rowRendererParams}
                 keySelector={NumberMatrixListView.rowKeyExtractor}
-                emptyComponent={WidgetEmptyComponent}
+                emptyComponent={null}
             />
         );
     }
