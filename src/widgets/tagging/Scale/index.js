@@ -43,15 +43,16 @@ export default class ScaleWidget extends React.PureComponent {
         const options = getOptions(widget);
 
         return (
-            <ScaleInput
-                className={styles.scaleWidget}
-                faramElementName="value"
-                options={options}
-                keySelector={ScaleWidget.keySelector}
-                labelSelector={ScaleWidget.labelSelector}
-                colorSelector={ScaleWidget.colorSelector}
-                isDefaultSelector={this.isDefaultSelector}
-            />
+            <div className={styles.scaleWidget}>
+                <ScaleInput
+                    faramElementName="value"
+                    options={options}
+                    keySelector={ScaleWidget.keySelector}
+                    labelSelector={ScaleWidget.labelSelector}
+                    colorSelector={ScaleWidget.colorSelector}
+                    isDefaultSelector={this.isDefaultSelector}
+                />
+            </div>
         );
     }
 }

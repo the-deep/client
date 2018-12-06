@@ -81,13 +81,13 @@ export const globalWidgets = {
         editComponent: DefaultEditWidget,
 
         overview: {
-            minSize: { w: 15, h: 6 },
             tagComponent: ExcerptWidget,
+            minSize: { w: 16, h: 7 },
         },
         list: {
-            minSize: { w: 15, h: 6 },
             altTagComponent: ExcerptWidget,
             viewComponent: ExcerptViewWidget,
+            minSize: { w: 16, h: 7 },
         },
     },
 
@@ -136,56 +136,56 @@ export const globalWidgets = {
         editComponent: DefaultEditWidget,
 
         overview: {
-            minSize: { w: 16, h: 5 },
             tagComponent: DateWidget,
+            minSize: { w: 16, h: 6 },
         },
         list: {
-            minSize: { w: 16, h: 5 },
             tagComponent: DateWidget,
             altTagComponent: DateViewWidget,
             viewComponent: DateViewWidget,
+            minSize: { w: 16, h: 6 },
         },
     },
     timeWidget: {
         editComponent: DefaultEditWidget,
 
         overview: {
-            minSize: { w: 7, h: 5 },
             tagComponent: TimeWidget,
+            minSize: { w: 11, h: 6 },
         },
         list: {
-            minSize: { w: 7, h: 5 },
             tagComponent: TimeWidget,
             altTagComponent: TimeViewWidget,
             viewComponent: TimeViewWidget,
+            minSize: { w: 11, h: 6 },
         },
     },
     timeRangeWidget: {
         editComponent: DefaultEditWidget,
 
         overview: {
-            minSize: { w: 16, h: 5 },
             tagComponent: TimeRangeWidget,
+            minSize: { w: 14, h: 7 },
         },
         list: {
-            minSize: { w: 16, h: 5 },
             tagComponent: TimeRangeWidget,
             altTagComponent: TimeRangeViewWidget,
             viewComponent: TimeRangeViewWidget,
+            minSize: { w: 14, h: 7 },
         },
     },
     dateRangeWidget: {
         editComponent: DefaultEditWidget,
 
         overview: {
-            minSize: { w: 20, h: 6 },
             tagComponent: DateRangeWidget,
+            minSize: { w: 19, h: 7 },
         },
         list: {
-            minSize: { w: 20, h: 6 },
             tagComponent: DateRangeWidget,
             altTagComponent: DateRangeViewWidget,
             viewComponent: DateRangeViewWidget,
+            minSize: { w: 19, h: 7 },
         },
     },
 
@@ -193,30 +193,31 @@ export const globalWidgets = {
         editComponent: NumberEditWidget,
 
         overview: {
-            minSize: { w: 10, h: 4 },
             tagComponent: NumberWidget,
+            minSize: { w: 11, h: 6 },
         },
         list: {
-            minSize: { w: 10, h: 4 },
             tagComponent: NumberWidget,
             altTagComponent: NumberViewWidget,
             viewComponent: NumberViewWidget,
+            minSize: { w: 11, h: 6 },
         },
     },
     scaleWidget: {
         editComponent: ScaleEditWidget,
 
         overview: {
-            minSize: { w: 6, h: 4 },
             tagComponent: ScaleWidget,
+            minSize: { w: 9, h: 5 },
         },
         list: {
-            minSize: { w: 6, h: 4 },
             tagComponent: ScaleWidget,
             altTagComponent: ScaleViewWidget,
             viewComponent: ScaleViewWidget,
+            minSize: { w: 9, h: 5 },
         },
     },
+
     geoWidget: {
         editComponent: DefaultEditWidget,
 
@@ -250,14 +251,14 @@ export const globalWidgets = {
         editComponent: MultiSelectEditWidget,
 
         overview: {
-            minSize: { w: 12, h: 4 },
             tagComponent: SelectWidget,
+            minSize: { w: 11, h: 6 },
         },
         list: {
-            minSize: { w: 12, h: 4 },
             tagComponent: SelectWidget,
             altTagComponent: SelectViewWidget,
             viewComponent: SelectViewWidget,
+            minSize: { w: 11, h: 6 },
         },
     },
     multiselectWidget: {
