@@ -7,6 +7,10 @@ import {
 const emptyList = [];
 const emptyObject = {};
 
+export const pagesInfoSelector = ({ domainData }) => (
+    domainData.pagesInfo || emptyObject
+);
+
 export const userExportsSelector = ({ domainData }) => (
     domainData.userExports || emptyObject
 );

@@ -82,6 +82,10 @@ $color-text-on-primary: get-text-color($color-primary);
         }
     }
 
+    .help-link {
+        margin-right: $spacing-medium;
+    }
+
     .community-dropdown {
         align-self: stretch;
         flex-shrink: 0;

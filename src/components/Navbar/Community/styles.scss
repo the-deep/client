@@ -1,8 +1,10 @@
 @import '~base-scss/base';
 @import '~rs-scss/button-base';
 
+$width-dropdown-min: 120px;
+
 .community-dropdown {
-    min-width: 120px;
+    min-width: $width-dropdown-min;
 
     .button {
         @extend %button-base;
@@ -32,6 +34,5 @@
 }
 
 .icon {
-    color: $color-text-alt;
     font-size: $font-size-super-large;
 }

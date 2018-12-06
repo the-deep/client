@@ -910,7 +910,9 @@
         "-63120597": "Add columns from",
         "-89164469": "Add sub-rows from",
         "-11158375": "Add sub-columns from",
-        "-60104332": "Can't drop here!"
+        "-60104332": "Can't drop here!",
+        "-44064706": "Help",
+        "-72856110": "Add / edit the help link"
     },
     "links": {
         "browserExtension": {
@@ -1200,7 +1202,9 @@
             "skypeTitle": -53100629,
             "slackTitle": -17378901,
             "zendeskLinkTitle": -81583708,
-            "zendeskTitle": -11147231
+            "zendeskTitle": -11147231,
+            "helpTitle": -44064706,
+            "addOrEditHelpLinkTitle": -72856110
         },
         "common": {
             "underConstructionLabel": 253,

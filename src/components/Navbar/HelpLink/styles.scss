@@ -1,0 +1,66 @@
+@import '~base-scss/base';
+
+$font-size-help-icon: $font-size-super-large;
+$width-help-link: $font-size-help-icon + $spacing-small-alt;
+
+$width-link-container-max: 240px;
+
+.help-link-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    transition: $duration-transition-medium width ease-in-out;
+    width: $width-help-link;
+
+    .help-link {
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        text-align: right;
+
+        .icon {
+            flex-shrink: 0;
+            width: $width-help-link;
+            text-align: center;
+            font-size: $font-size-help-icon;
+        }
+
+        .text {
+            display: none;
+            overflow: hidden;
+            text-transform: none;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &:hover {
+            color: $color-accent;
+        }
+    }
+
+    .add-or-edit-help-link {
+        display: none;
+        flex-shrink: 0;
+        padding: $spacing-small-alt;
+        font-size: $font-size-medium;
+
+        &:hover {
+            color: $color-accent;
+        }
+    }
+
+    &:hover {
+        width: $width-link-container-max;
+
+        .help-link {
+            .text {
+                display: initial;
+            }
+        }
+
+        .add-or-edit-help-link {
+            display: initial;
+        }
+    }
+}
+

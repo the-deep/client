@@ -41,6 +41,7 @@ import NavMenu from './NavMenu';
 import NavDrop from './NavDrop';
 import Community from './Community';
 import Notifica from './Notifica';
+import HelpLink from './HelpLink';
 import styles from './styles.scss';
 
 const mapStateToProps = state => ({
@@ -281,6 +282,10 @@ export default class Navbar extends React.PureComponent {
                     className={styles.mainMenu}
                     projectId={activeProject}
                     countryId={activeCountry}
+                />
+                <HelpLink
+                    className={styles.helpLink}
+                    currentPath={this.currentPath}
                 />
                 <Community className={styles.communityDropdown} />
                 <Notifica className={styles.notificationDropdown} />
