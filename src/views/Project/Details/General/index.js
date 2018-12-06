@@ -11,10 +11,6 @@ import DateInput from '#rsci/DateInput';
 import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
 import ActivityLog from '#components/ActivityLog';
-import Cloak from '#components/Cloak';
-import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
-
-import { getNewActiveProjectId } from '#entities/project';
 
 import {
     RequestCoordinator,
@@ -28,9 +24,6 @@ import {
     setProjectDetailsAction,
     changeProjectDetailsAction,
     setErrorProjectDetailsAction,
-    projectDetailsSelector,
-    unsetProjectDetailsAction,
-    currentUserProjectsSelector,
 } from '#redux';
 
 import Faram, {
@@ -38,7 +31,6 @@ import Faram, {
     dateCondition,
 } from '#rscg/Faram';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import requests from './requests';
@@ -47,7 +39,6 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    projectDetail: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     projectLocalData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     activityLog: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     changeProjectDetails: PropTypes.func.isRequired,
@@ -56,8 +47,6 @@ const propTypes = {
     readOnly: PropTypes.bool,
 
     // Requests Props
-    // eslint-disable-next-line react/no-unused-prop-types
-    userProjects: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     // eslint-disable-next-line react/no-unused-prop-types
     setProjectDetails: PropTypes.func.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
@@ -68,8 +57,6 @@ const propTypes = {
     projectGetRequest: PropTypes.object.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     projectPutRequest: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    projectDeleteRequest: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -79,18 +66,15 @@ const defaultProps = {
 };
 
 const mapStateToProps = state => ({
-    userProjects: currentUserProjectsSelector(state),
     activityLog: projectActivityLogSelector(state),
     projectLocalData: projectLocalDataSelector(state),
     projectServerData: projectServerDataSelector(state),
-    projectDetail: projectDetailsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
     setProjectDetails: params => dispatch(setProjectDetailsAction(params)),
     changeProjectDetails: params => dispatch(changeProjectDetailsAction(params)),
     setErrorProjectDetails: params => dispatch(setErrorProjectDetailsAction(params)),
-    unsetProject: params => dispatch(unsetProjectDetailsAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -99,8 +83,6 @@ const mapDispatchToProps = dispatch => ({
 export default class ProjectDetailsGeneral extends PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    static shouldHideProjectDeleteButton = ({ setupPermissions }) => !setupPermissions.delete;
 
     constructor(props) {
         super(props);
@@ -148,12 +130,6 @@ export default class ProjectDetailsGeneral extends PureComponent {
         this.props.projectPutRequest.do({ projectDetails });
     }
 
-    handleProjectDelete = () => {
-        this.props.projectDeleteRequest.do({
-            projectId: this.props.projectId,
-        });
-    }
-
     renderUnsavedChangesPrompt = () => (
         <Prompt
             message={
@@ -180,7 +156,6 @@ export default class ProjectDetailsGeneral extends PureComponent {
             className: classNameFromProps,
             activityLog,
             projectId,
-            projectDetail,
             projectLocalData: {
                 faramValues = {},
                 faramErrors,
@@ -188,13 +163,11 @@ export default class ProjectDetailsGeneral extends PureComponent {
             },
             projectGetRequest,
             projectPutRequest,
-            projectDeleteRequest,
         } = this.props;
 
         const loading = (
             projectGetRequest.pending
             || projectPutRequest.pending
-            || projectDeleteRequest.pending
         );
         const UnsavedChangesPrompt = this.renderUnsavedChangesPrompt;
 
@@ -271,31 +244,6 @@ export default class ProjectDetailsGeneral extends PureComponent {
                             />
                         </div>
                     </div>
-                    <Cloak
-                        hide={ProjectDetailsGeneral.shouldHideProjectDeleteButton}
-                        render={
-                            <div className={styles.bottomContainer}>
-                                <span className={`${styles.info} ${iconNames.info}`} />
-                                <span className={styles.infoText}>
-                                    {_ts('project', 'projectDeleteInfoText')}
-                                </span>
-                                <DangerConfirmButton
-                                    iconName={iconNames.delete}
-                                    onClick={this.handleProjectDelete}
-                                    confirmationTitle="Warning!"
-                                    confirmationMessage={_ts('project', 'deleteConfirmMessage', {
-                                        title: <strong>{projectDetail.title}</strong>,
-                                    })}
-                                    challengeLabel={_ts('project', 'deleteConfirmLabel')}
-                                    challengePlaceholder={_ts('project', 'deleteConfirmPlaceholder')}
-                                    challengeValue={projectDetail.title}
-                                    className={styles.deleteButton}
-                                >
-                                    {_ts('project', 'deleteButtonTitle')}
-                                </DangerConfirmButton>
-                            </div>
-                        }
-                    />
                 </Faram>
                 <Dashboard
                     className={styles.dashboard}

@@ -57,28 +57,6 @@ $width-delete-button: 196px;
                 }
             }
         }
-
-        .bottom-container {
-            display: flex;
-            align-items: flex-start;
-            justify-content: flex-end;
-            padding: $spacing-medium;
-            background-color: $color-foreground-alt;
-            border-top: $width-separator-thin solid $color-separator;
-
-            .info {
-                color: $color-primary;
-            }
-
-            .info-text {
-                color: $color-text-disabled;
-                padding: 0 $spacing-medium 0 $spacing-small;
-            }
-
-            .delete-button {
-                width: $width-delete-button;
-            }
-        }
     }
 
     .dashboard {

@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import Faram from '#rscg/Faram';
-import SegmentInput from '#rsci/SegmentInput';
 import MultiSegmentInput from '#rsci/MultiSegmentInput';
 import SearchInput from '#rsci/SearchInput';
 import { isObjectEmpty } from '#rsu/common';
@@ -66,6 +65,27 @@ export default class FilterProjectsForm extends React.PureComponent {
 
     static optionLabelSelector = (d = {}) => d.value;
     static optionKeySelector = (d = {}) => d.key;
+
+    static statusTooltipSelector = status => ((status || {}).conditions || []).reduce(
+        (a, condition) => {
+            // NOTE: comment is used for static analysis by string management
+            // _ts('discoverProjects.filter.statusCondition', 'no_leads');
+            // _ts('discoverProjects.filter.statusCondition', 'no_entries');
+            const conditionTypeLabel = _ts(
+                'discoverProjects.filter.statusCondition',
+                condition.conditionType,
+                { days: condition.days },
+            );
+            const seperatorLabel = status.andConditions ?
+                _ts('discoverProjects.filter.statusCondition', 'andSeperator') :
+                _ts('discoverProjects.filter.statusCondition', 'orSeperator');
+            if (a) {
+                return `${a} ${seperatorLabel} ${conditionTypeLabel}`;
+            }
+            return conditionTypeLabel;
+        },
+        undefined,
+    )
 
     constructor(props) {
         super(props);
@@ -169,7 +189,7 @@ export default class FilterProjectsForm extends React.PureComponent {
                     showLabel
                     className="projects-filter"
                 />
-                <SegmentInput
+                <MultiSegmentInput
                     faramElementName="involvement"
                     keySelector={FilterProjectsForm.optionKeySelector}
                     labelSelector={FilterProjectsForm.optionLabelSelector}
@@ -186,6 +206,7 @@ export default class FilterProjectsForm extends React.PureComponent {
                     labelSelector={FilterProjectsForm.optionLabelSelector}
                     label={_ts('discoverProjects.filter', 'status')}
                     options={projectOptions.status}
+                    tooltipSelector={FilterProjectsForm.statusTooltipSelector}
                     placeholder={_ts('discoverProjects.filter', 'placeholderAny')}
                     showHintAndError={false}
                     showLabel
