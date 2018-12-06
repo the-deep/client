@@ -4,7 +4,7 @@
     display: flex;
     position: relative;
     flex-basis: 70%;
-    background-color: $color-background-alt;
+    background-color: $color-foreground-alt;
     overflow: auto;
 
     .resizable {
@@ -24,6 +24,10 @@
             flex-direction: column;
             height: 60%;
             min-height: 196px;
+
+            &:empty {
+                display: none;
+            }
 
             .lead-preview {
                 display: flex;
@@ -69,6 +73,18 @@
                 }
             }
         }
+
+        &.text-lead {
+            .top {
+                height: 100%;
+            }
+
+            .bottom {
+                display: none;
+            }
+        }
+
+
     }
 
     &.hidden {
