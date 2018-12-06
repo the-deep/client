@@ -58,6 +58,9 @@ const mapDispatchToProps = dispatch => ({
     ),
 });
 
+const emptyObject = {};
+const emptyList = [];
+
 @connect(mapStateToProps, mapDispatchToProps)
 export default class FilterProjectsForm extends React.PureComponent {
     static propTypes = propTypes;
@@ -66,26 +69,35 @@ export default class FilterProjectsForm extends React.PureComponent {
     static optionLabelSelector = (d = {}) => d.value;
     static optionKeySelector = (d = {}) => d.key;
 
-    static statusTooltipSelector = status => ((status || {}).conditions || []).reduce(
-        (a, condition) => {
-            // NOTE: comment is used for static analysis by string management
-            // _ts('discoverProjects.filter.statusCondition', 'no_leads');
-            // _ts('discoverProjects.filter.statusCondition', 'no_entries');
-            const conditionTypeLabel = _ts(
-                'discoverProjects.filter.statusCondition',
-                condition.conditionType,
-                { days: condition.days },
-            );
-            const seperatorLabel = status.andConditions ?
-                _ts('discoverProjects.filter.statusCondition', 'andSeperator') :
-                _ts('discoverProjects.filter.statusCondition', 'orSeperator');
-            if (a) {
-                return `${a} ${seperatorLabel} ${conditionTypeLabel}`;
-            }
-            return conditionTypeLabel;
-        },
-        undefined,
-    )
+    static statusTooltipSelector = (status) => {
+        const conditions = (status || emptyObject).conditions || emptyList;
+        const isConditionsEmpty = conditions.length === 0;
+
+        if (isConditionsEmpty) {
+            return status.value;
+        }
+
+        return conditions.reduce(
+            (a, condition) => {
+                // NOTE: comment is used for static analysis by string management
+                // _ts('discoverProjects.filter.statusCondition', 'no_leads');
+                // _ts('discoverProjects.filter.statusCondition', 'no_entries');
+                const conditionTypeLabel = _ts(
+                    'discoverProjects.filter.statusCondition',
+                    condition.conditionType,
+                    { days: condition.days },
+                );
+                const seperatorLabel = status.andConditions ?
+                    _ts('discoverProjects.filter.statusCondition', 'andSeperator') :
+                    _ts('discoverProjects.filter.statusCondition', 'orSeperator');
+                if (a) {
+                    return `${a} ${seperatorLabel} ${conditionTypeLabel}`;
+                }
+                return conditionTypeLabel;
+            },
+            undefined,
+        );
+    };
 
     constructor(props) {
         super(props);
