@@ -907,7 +907,10 @@
         "-11158375": "Add sub sectors from",
         "-60104332": "Can't drop here!",
         "-11147231": "Feedback or Bug?",
-        "-81583708": "Submit any feedback or bug you encountered."
+        "-81583708": "Submit any feedback or bug you encountered.",
+        "-83131348": "And",
+        "-75360665": "No leads created since {days} days",
+        "-30036120": "No entries created since {days} days"
     },
     "links": {
         "browserExtension": {
@@ -2496,6 +2499,12 @@
             "errorThreeHundredThree": -17483186,
             "message1": -48490028,
             "message2": -84343027
+        },
+        "discoverProjects.filter.statusCondition": {
+            "orSeperator": 806,
+            "andSeperator": -83131348,
+            "no_leads": -75360665,
+            "no_entries": -30036120
         }
     }
 }

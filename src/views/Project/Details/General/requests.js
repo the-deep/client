@@ -77,44 +77,6 @@ const requests = {
             });
         },
     },
-
-    projectDeleteRequest: {
-        url: ({ props: { projectId } }) => `/projects/${projectId}/`,
-        method: requestMethods.DELETE,
-        onSuccess: ({ props }) => {
-            const {
-                projectId,
-                unsetProject,
-                userProjects,
-            } = props;
-            unsetProject({
-                projectId,
-                newActiveProjectId: getNewActiveProjectId(userProjects, projectId),
-            });
-            notify.send({
-                title: _ts('project', 'projectDelete'),
-                type: notify.type.SUCCESS,
-                message: _ts('project', 'projectDeleteSuccess'),
-                duration: notify.duration.MEDIUM,
-            });
-        },
-        onFailure: () => {
-            notify.send({
-                title: _ts('project', 'projectDelete'),
-                type: notify.type.ERROR,
-                message: _ts('project', 'projectDeleteFailure'),
-                duration: notify.duration.SLOW,
-            });
-        },
-        onFatal: () => {
-            notify.send({
-                title: _ts('project', 'projectDelete'),
-                type: notify.type.ERROR,
-                message: _ts('project', 'projectDeleteFailure'),
-                duration: notify.duration.SLOW,
-            });
-        },
-    },
 };
 
 export default requests;
