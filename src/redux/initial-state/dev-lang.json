@@ -905,7 +905,9 @@
         "-63120597": "Add sectors from",
         "-89164469": "Add sub dimensions from",
         "-11158375": "Add sub sectors from",
-        "-60104332": "Can't drop here!"
+        "-60104332": "Can't drop here!",
+        "-11147231": "Feedback or Bug?",
+        "-81583708": "Submit any feedback or bug you encountered."
     },
     "links": {
         "browserExtension": {
@@ -1194,8 +1196,8 @@
             "slackLinkTitle": -86309773,
             "skypeTitle": -53100629,
             "slackTitle": -17378901,
-            "zendeskLinkTitle": -85406765,
-            "zendeskTitle": -49506348
+            "zendeskLinkTitle": -81583708,
+            "zendeskTitle": -11147231
         },
         "common": {
             "underConstructionLabel": 253,

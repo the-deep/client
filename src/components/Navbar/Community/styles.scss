@@ -1,7 +1,13 @@
 @import '~base-scss/base';
+@import '~rs-scss/button-base';
 
 .community-dropdown {
     min-width: 120px;
+
+    .button {
+        @extend %button-base;
+        text-transform: uppercase;
+    }
 
     .join-link {
         @include transition-medium();
