@@ -27,7 +27,7 @@ const propTypes = {
 
     // Requests Props
     // eslint-disable-next-line react/forbid-prop-types
-    zendeskLinkRequest: PropTypes.object.isRequired,
+    helpLinkRequest: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -43,9 +43,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const requests = {
-    zendeskLinkRequest: {
-        // TODO: Define this schema
-        schema: 'zendeskLinkGetRequest',
+    helpLinkRequest: {
+        schema: 'pageInfo',
         method: requestMethods.GET,
         onMount: true,
         url: '/pages/',
@@ -67,7 +66,7 @@ const createAddLink = currentPath =>
 @connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
 @RequestClient(requests)
-export default class ZendeskHelpLink extends React.PureComponent {
+export default class HelpLink extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -75,9 +74,9 @@ export default class ZendeskHelpLink extends React.PureComponent {
 
     render() {
         const {
-            className,
+            className: classNameFromProps,
             currentPath,
-            zendeskLinkRequest,
+            helpLinkRequest,
             pagesInfo,
         } = this.props;
 
@@ -88,50 +87,58 @@ export default class ZendeskHelpLink extends React.PureComponent {
 
         const iconClassName = `
             ${styles.icon}
-            ${iconNames.help}
+            ${iconNames.helpOutlined}
+        `;
+
+        const className = `
+            ${classNameFromProps}
+            ${styles.helpLinkContainer}
+        `;
+
+        const addOrEditIconClassName = `
+            ${currentPageMeta ? iconNames.edit : iconNames.add}
+            ${styles.addOrEditIcon}
         `;
 
         return (
-            <div className={styles.zenHelp} >
+            <div className={className}>
                 <a
                     href={meta.helpUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    disabled={zendeskLinkRequest.pending}
+                    disabled={helpLinkRequest.pending}
+                    title={meta.title}
                     className={styles.helpLink}
                 >
-                    <i className={iconClassName} />
-                    <span className={styles.content} >
-                        <span
+                    <span className={iconClassName} />
+                    <div className={styles.content} >
+                        <div
                             className={styles.text}
                             title={meta.title}
                         >
-                            {meta.title}
-                        </span>
-                        <Cloak
-                            hide={ZendeskHelpLink.shouldHideAdminLink}
-                            render={
-                                <a
-                                    href={
-                                        currentPageMeta ?
-                                            createEditLink(currentPageMeta.id) :
-                                            createAddLink(currentPath)
-                                    }
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    disabled={zendeskLinkRequest.pending}
-                                    className={styles.admin}
-                                >
-                                    {
-                                        currentPageMeta ?
-                                            <span className={iconNames.edit} />
-                                            : <span className={iconNames.add} />
-                                    }
-                                </a>
-                            }
-                        />
-                    </span>
+                            {meta.title || _ts('components.navbar', 'helpTitle')}
+                        </div>
+                    </div>
                 </a>
+                <Cloak
+                    hide={HelpLink.shouldHideAdminLink}
+                    render={
+                        <a
+                            href={
+                                currentPageMeta ?
+                                    createEditLink(currentPageMeta.id) :
+                                    createAddLink(currentPath)
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            disabled={helpLinkRequest.pending}
+                            className={styles.addOrEditHelpLink}
+                            title={_ts('components.navbar', 'addOrEditHelpLinkTitle')}
+                        >
+                            <span className={addOrEditIconClassName} />
+                        </a>
+                    }
+                />
             </div>
         );
     }

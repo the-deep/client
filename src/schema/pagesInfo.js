@@ -17,5 +17,20 @@ const pageInfoSchema = [];
     };
     pageInfoSchema.push({ name, schema });
 }
+{
+    const name = 'pageInfoRequest';
+    const schema = {
+        doc: {
+            name: 'Page Info Request',
+        },
+        fields: {
+            count: { type: 'uint', required: true },
+            next: { type: 'string' },
+            previous: { type: 'string' },
+            results: { type: 'array.pageInfo', required: true },
+        },
+    };
+    pageInfoSchema.push({ name, schema });
+}
 
 export default pageInfoSchema;
