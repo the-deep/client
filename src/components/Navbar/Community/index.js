@@ -24,6 +24,12 @@ export default class Community extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    handleZeClick = () => {
+        if (window.zE) {
+            window.zE.activate({ hideOnClose: true });
+        }
+    }
+
     render() {
         const {
             className,
@@ -31,7 +37,6 @@ export default class Community extends React.PureComponent {
 
         const slackLink = 'https://goo.gl/13pcuA';
         const skypeLink = 'https://join.skype.com/idYxL8ozLDOD';
-        const zendeskLink = 'https://deephelp.zendesk.com/hc/en-us/categories/360000874911-DEEP-User-Guide';
         const slackLinkTitle = _ts('components.navbar', 'slackLinkTitle');
         const skypeLinkTitle = _ts('components.navbar', 'skypeLinkTitle');
         const zendeskLinkTitle = _ts('components.navbar', 'zendeskLinkTitle');
@@ -49,18 +54,19 @@ export default class Community extends React.PureComponent {
                 className={className}
                 dropdownClassName={styles.communityDropdown}
                 dropdownIcon={iconClassName}
+                closeOnClick
             >
                 <a
                     className={styles.joinLink}
                     href={slackLink}
                     target="_blank"
                     rel="noopener noreferrer"
+                    title={slackLinkTitle}
                 >
                     <img
                         className={styles.image}
                         src={slackLogo}
                         alt=""
-                        title={slackLinkTitle}
                     />
                     <div className={styles.title}>
                         {slackTitle}
@@ -71,10 +77,10 @@ export default class Community extends React.PureComponent {
                     href={skypeLink}
                     target="_blank"
                     rel="noopener noreferrer"
+                    title={skypeLinkTitle}
                 >
                     <img
                         className={styles.image}
-                        title={skypeLinkTitle}
                         alt=""
                         src={skypeLogo}
                     />
@@ -82,22 +88,20 @@ export default class Community extends React.PureComponent {
                         {skypeTitle}
                     </div>
                 </a>
-                <a
-                    className={styles.joinLink}
-                    href={zendeskLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                <button
+                    className={`${styles.joinLink} ${styles.button}`}
+                    onClick={this.handleZeClick}
+                    title={zendeskLinkTitle}
                 >
                     <img
                         className={styles.image}
-                        title={zendeskLinkTitle}
                         alt=""
                         src={zendeskLogo}
                     />
                     <div className={styles.title}>
                         {zendeskTitle}
                     </div>
-                </a>
+                </button>
             </DropdownMenu>
         );
     }

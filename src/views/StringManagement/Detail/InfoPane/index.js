@@ -336,9 +336,11 @@ export default class InfoPane extends React.PureComponent {
 
         if (errorCount + warningCount + infoCount <= 0) {
             return (
-                <Message className={styles.noProblems}>
-                    Everything looks good.
-                </Message>
+                <div className={styles.noProblems}>
+                    <Message>
+                        Everything looks good.
+                    </Message>
+                </div>
             );
         }
 
