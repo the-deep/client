@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import FaramGroup from '#rscg/FaramGroup';
 import GridViewLayout from '#rscv/GridViewLayout';
 import {
     VIEW,
@@ -53,6 +54,7 @@ export default class List extends React.PureComponent {
         const {
             widgetId,
             properties: { addedFrom },
+            id,
         } = widget;
 
         const widgetType = VIEW.list;
@@ -66,16 +68,20 @@ export default class List extends React.PureComponent {
         return (
             // eslint-disable-next-line css-modules/no-undef-class
             <div className={styles.content}>
-                <Widget
-                    widgetName={widgetId}
-                    widgetType={widgetType}
-                    widget={widget}
+                <FaramGroup faramElementName={String(id)}>
+                    <FaramGroup faramElementName="data">
+                        <Widget
+                            widgetName={widgetId}
+                            widgetType={widgetType}
+                            widget={widget}
 
-                    entryType="excerpt"
-                    excerpt=""
-                    image={undefined}
-                    dataSeries={undefined}
-                />
+                            entryType="excerpt"
+                            excerpt=""
+                            image={undefined}
+                            dataSeries={undefined}
+                        />
+                    </FaramGroup>
+                </FaramGroup>
             </div>
         );
     }
