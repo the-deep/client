@@ -476,6 +476,7 @@ export default class LeadFormItem extends React.PureComponent {
             addLeadViewLeadChange, // eslint-disable-line no-unused-vars
             addLeadViewCopyAllBelow, // eslint-disable-line no-unused-vars
             addLeadViewCopyAll, // eslint-disable-line no-unused-vars
+            hidePreview,
             ...otherProps
         } = this.props;
 
@@ -494,11 +495,16 @@ export default class LeadFormItem extends React.PureComponent {
             ${!active ? styles.hidden : ''}
         `;
 
+        const resizableClassName = `
+            ${styles.resizable}
+            ${lead.faramValues.sourceType === 'text' ? styles.textLead : ''}
+        `;
+
         return (
             <div className={className}>
                 { pending && <LoadingAnimation /> }
                 <ResizableV
-                    className={styles.resizable}
+                    className={resizableClassName}
                     topContainerClassName={styles.top}
                     bottomContainerClassName={styles.bottom}
                     disabled={disableResize}
@@ -522,7 +528,7 @@ export default class LeadFormItem extends React.PureComponent {
                         </Fragment>
                     }
                     bottomChild={
-                        active && !this.props.hidePreview
+                        active && hidePreview && lead.faramValues.sourceType !== 'text'
                             ? <LeadPreview
                                 lead={lead}
                                 className={styles.leadPreview}
