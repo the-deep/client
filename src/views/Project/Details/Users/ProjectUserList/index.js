@@ -20,7 +20,6 @@ import {
     compareDate,
 } from '#rsu/common';
 
-import { getTrigramSimilarity } from '#rsu/similarity';
 
 import {
     setProjectMembershipsAction,
@@ -35,7 +34,6 @@ import Actions from './Actions';
 import styles from './styles.scss';
 
 const Table = FaramListElement(NormalTable);
-const emptyObject = {};
 
 const propTypes = {
     className: PropTypes.string,
@@ -181,12 +179,14 @@ export default class ProjectUserList extends React.PureComponent {
     ))
 
     filterMembers = memoize((allMembers = [], searchValue) => {
+        const lowerSearchValue = searchValue.toLowerCase();
         if (searchValue === '') {
             return allMembers;
         }
 
         return allMembers.filter(
-            m => getTrigramSimilarity((m || emptyObject).memberName, searchValue) > 0.01,
+            ({ memberName = '' } = {}) =>
+                memberName.toLowerCase().indexOf(lowerSearchValue) >= 0,
         );
     });
 
