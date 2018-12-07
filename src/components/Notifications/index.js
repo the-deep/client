@@ -139,7 +139,7 @@ export default class Notifications extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static groupKeySelector = notification => notification.data.status
+    static groupKeySelector = notification => notification.data.status === 'pending'
 
     static pendingToNumber = a => (a === 'pending' ? 1 : 0);
 

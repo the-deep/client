@@ -911,7 +911,8 @@
         "-13372884": "Search word categories",
         "-77428696": "There are no word categories.",
         "-33861958": "Add word category",
-        "-47892955": "Can't drop here!"
+        "-47892955": "Can't drop here!",
+        "-71778775": "{responderName} rejected join request of {requestorName} for the project {projectTitle}."
     },
     "links": {
         "browserExtension": {
@@ -2052,17 +2053,13 @@
         },
         "notifications.projectJoinResponse": {
             "acceptText": 1941,
-            "rejectText": 1941
+            "rejectText": 1942
         },
         "notifications.projectJoinRequest": {
             "message": 1930,
             "addButtonTitle": 301,
             "addAsAdminButtonTitle": 1938,
-            "rejectButtonTitle": 1937,
-            "acceptedText": 1932,
-            "acceptedAsAdminText": 1939,
-            "rejectedText": 1933,
-            "date": 704
+            "rejectButtonTitle": 1937
         },
         "components.addProject": {
             "addProjectModalLabel": 180,

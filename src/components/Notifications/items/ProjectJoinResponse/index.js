@@ -74,7 +74,6 @@ export default class ProjectJoinResponseItem extends React.PureComponent {
             { projectId },
         );
 
-
         if (status === PROJECT_JOIN_ACCEPTED) {
             return (
                 <Notification
@@ -119,6 +118,7 @@ export default class ProjectJoinResponseItem extends React.PureComponent {
                 />
             );
         } else if (status === PROJECT_JOIN_REJECTED) {
+            console.warn(status);
             return (
                 <Notification
                     className={className}

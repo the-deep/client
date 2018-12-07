@@ -46,11 +46,6 @@ const defaultProps = {
     projectJoinRejectRequest: {},
 };
 
-const REQUEST_PENDING = 'pending';
-const REQUEST_ABORTED = 'aborted';
-const ROLE_DEFAULT = 'normal';
-const ROLE_ADMIN = 'admin';
-
 // TODO: show error message for request failure
 const requests = {
     projectJoinApproveRequest: {
@@ -112,11 +107,11 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
         projectJoinApproveRequest.do({
             requestId,
             projectId,
-            role: ROLE_DEFAULT,
+            role: 'normal',
         });
     }
 
-    handleAddAsAdminButtonClick = () => {
+    handleRejectButtonClick = () => {
         const {
             notification: {
                 data: {
@@ -124,19 +119,13 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                     project: { id: projectId },
                 },
             },
-            projectJoinApproveRequest,
+            projectJoinRejectRequest,
         } = this.props;
 
-        projectJoinApproveRequest.do({
+        projectJoinRejectRequest.do({
             requestId,
             projectId,
-            role: ROLE_ADMIN,
         });
-    }
-
-    handleRejectButtonClick = () => {
-        const { projectJoinRejectRequest } = this.props;
-        projectJoinRejectRequest.do();
     }
 
     render() {
@@ -169,7 +158,7 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
             return null;
         }
 
-        const pending = pendingProjectJoinAcceptRequest || pendingProjectJoinAcceptRequest;
+        const pending = pendingProjectJoinAcceptRequest || pendingProjectJoinRejectRequest;
 
         const className = `
             ${classNameFromProps}
@@ -219,7 +208,7 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                 }
                 timestamp={timestamp}
                 actions={
-                    status === REQUEST_PENDING ? (
+                    status === 'pending' ? (
                         <React.Fragment>
                             <SuccessButton
                                 disabled={pending}
@@ -230,15 +219,6 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                             >
                                 {_ts('notifications.projectJoinRequest', 'addButtonTitle')}
                             </SuccessButton>
-                            <WarningButton
-                                disabled={pending}
-                                className={styles.button}
-                                iconName={iconNames.check}
-                                onClick={this.handleAddAsAdminButtonClick}
-                                transparent
-                            >
-                                {_ts('notifications.projectJoinRequest', 'addAsAdminButtonTitle')}
-                            </WarningButton>
                             <DangerButton
                                 disabled={pending}
                                 className={styles.button}
