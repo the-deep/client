@@ -1,5 +1,5 @@
 import _ts from '#ts';
-import { compareDate } from '#rsu/common';
+import { isTruthy, compareDate } from '#rsu/common';
 
 const isEqualTo = {
     title: 'Is equal to',
@@ -52,7 +52,7 @@ const isInBetween = {
         },
     ],
     validate: ({ minValue, maxValue }) => ({
-        ok: compareDate(minValue, maxValue) <= 0,
+        ok: !isTruthy(minValue) || !isTruthy(maxValue) || compareDate(minValue, maxValue) <= 0,
         message: _ts('conditional.date', 'invalidRangeErrorMessage'),
     }),
     test: ({ value }, { minValue, maxValue }) => (
