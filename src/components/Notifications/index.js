@@ -139,7 +139,7 @@ export default class Notifications extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static groupKeySelector = notification => notification.data.status === 'pending'
+    static groupKeySelector = notification => (notification.data.status === 'pending' ? 'pending' : 'notPending');
 
     static pendingToNumber = a => (a === 'pending' ? 1 : 0);
 
@@ -169,9 +169,9 @@ export default class Notifications extends React.PureComponent {
     groupRendererParams = (groupKey) => {
         const pendingTitle = _ts('notifications', 'pendingHeaderTitle');
         const otherTitle = _ts('notifications', 'otherHeaderTitle');
-        return {
-            children: groupKey === 'pending' ? pendingTitle : otherTitle,
-        };
+
+        const children = groupKey === 'pending' ? pendingTitle : otherTitle;
+        return { children };
     }
 
     render() {

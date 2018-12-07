@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '#rsu/common';
 import Button from '#rsca/Button';
-import WarningButton from '#rsca/Button/WarningButton';
+import DangerButton from '#rsca/Button/DangerButton';
 
 import {
     iconNames,
@@ -53,8 +53,8 @@ export default class Actions extends React.PureComponent {
                 );
             } case 'pending':
                 return (
-                    <WarningButton
-                        iconName={iconNames.undo}
+                    <DangerButton
+                        iconName={iconNames.close}
                         title={_ts('discoverProjects.table', 'cancelJoinRequest')}
                         transparent
                         onClick={() => this.props.onProjectJoinCancel(project)}
