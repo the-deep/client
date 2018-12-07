@@ -101,6 +101,7 @@ export default class WidgetContentWrapper extends React.PureComponent {
                 { children }
                 { blockDrop &&
                     <Message className={styles.overlay}>
+                        <span className={iconClassName} />
                         { _ts('editEntry', 'noDropMessage') }
                     </Message>
                 }

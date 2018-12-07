@@ -29,13 +29,13 @@ export default class FrameworkWidgetError extends React.PureComponent {
     static shouldHideReport = ({ isDevMode }) => isDevMode;
 
     render() {
-        const errorText = _ts('components.frameworkWidgetError', 'problemText');
-        const reportErrorTitle = _ts('components.frameworkWidgetError', 'reportErrorTitle');
-
         const {
             onClose,
             title,
         } = this.props;
+
+        const errorText = _ts('components.frameworkWidgetError', 'problemText');
+        const reportErrorTitle = _ts('components.frameworkWidgetError', 'reportErrorTitle');
 
         return (
             <Modal>

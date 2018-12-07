@@ -205,9 +205,7 @@ export default class GooglePicker extends React.Component {
                 pending={!ready}
                 transparent
             >
-                {
-                    children || _ts('components.googlePicker', 'openGoogleChooserText')
-                }
+                { children || _ts('components.googlePicker', 'openGoogleChooserText') }
             </Button>
         );
     }

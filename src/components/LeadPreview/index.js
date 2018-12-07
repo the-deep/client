@@ -14,7 +14,7 @@ import styles from './styles.scss';
 const propTypes = {
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     handleScreenshot: PropTypes.func.isRequired,
-    showScreenshot: PropTypes.boolean,
+    showScreenshot: PropTypes.bool,
 };
 
 const defaultProps = {

@@ -7,6 +7,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
+import Message from '#rscv/Message';
 
 import { iconNames } from '#constants';
 import {
@@ -115,12 +116,11 @@ export default class Usergroup extends React.PureComponent {
         }
 
         if (!usergroup.id) {
-            // FIXME: use message
             return (
                 <div className={styles.usergroup}>
-                    <div className={styles.usergroupAlt}>
+                    <Message>
                         {_ts('userGroup', 'userGroupNotFound')}
-                    </div>
+                    </Message>
                 </div>
             );
         }

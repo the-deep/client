@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Message from '#rscv/Message';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 
@@ -10,20 +12,111 @@ import GalleryFileRequest from './requests/GalleryFileRequest';
 
 import styles from './styles.scss';
 
-const propTypes = {
+const PreviewNothing = ({
+    pending, pendingLabel, className, notFound, notFoundMessage, fileUrl, fileName,
+}) => {
+    if (pending) {
+        return (
+            <div className={`${styles.previewNothing} ${className}`}>
+                <span className={styles.label} >
+                    { pendingLabel || _ts('components.internalGallery', 'loadingFileLabel') }
+                </span>
+                <span className={`${iconNames.loading} ${styles.loadingAnimation}`} />
+            </div>
+        );
+    }
+    if (notFound) {
+        return (
+            <div className={`${styles.previewNothing} ${className}`}>
+                {notFoundMessage || _ts('components.internalGallery', 'deepFileNotFound')}
+            </div>
+        );
+    }
+    // show file name only
+    return (
+        <a
+            className={`${styles.galleryFileName} ${className}`}
+            href={fileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            {fileName}
+        </a>
+    );
+};
+PreviewNothing.propTypes = {
     className: PropTypes.string,
-    galleryId: PropTypes.number,
-    onlyFileName: PropTypes.bool,
     pendingLabel: PropTypes.string,
     notFoundMessage: PropTypes.string,
+    notFound: PropTypes.bool,
+    pending: PropTypes.bool,
+    fileUrl: PropTypes.string,
+    fileName: PropTypes.string,
+};
+PreviewNothing.defaultProps = {
+    className: '',
+    pendingLabel: undefined,
+    notFoundMessage: undefined,
+    notFound: false,
+    pending: false,
+    fileUrl: '',
+    fileName: '',
+};
+
+const PreviewGallery = ({
+    pending, className, notFound, notFoundMessage, fileUrl, mimeType, ...otherProps
+}) => {
+    if (pending) {
+        return (
+            <div className={`${className} ${styles.previewGallery}`}>
+                <LoadingAnimation />
+            </div>
+        );
+    }
+    if (notFound) {
+        return (
+            <Message className={`${className} ${styles.previewGallery}`}>
+                {notFoundMessage || _ts('components.internalGallery', 'deepFileNotFound')}
+            </Message>
+        );
+    }
+    // use supported file viewer component
+    return (
+        <GalleryViewer
+            {...otherProps}
+            className={className}
+            url={fileUrl}
+            mimeType={mimeType}
+            canShowIframe
+        />
+    );
+};
+PreviewGallery.propTypes = {
+    className: PropTypes.string,
+    notFoundMessage: PropTypes.string,
+    notFound: PropTypes.bool,
+    pending: PropTypes.bool,
+    fileUrl: PropTypes.string,
+    mimeType: PropTypes.string,
+};
+PreviewGallery.defaultProps = {
+    className: '',
+    notFoundMessage: undefined,
+    notFound: false,
+    pending: false,
+    fileUrl: '',
+    mimeType: undefined,
+};
+
+
+const propTypes = {
+    galleryId: PropTypes.number,
+    onlyFileName: PropTypes.bool,
 };
 
 const defaultProps = {
-    className: '',
     galleryId: undefined,
     onlyFileName: false,
-    pendingLabel: undefined,
-    notFoundMessage: undefined,
 };
 
 export default class InternalGallery extends React.PureComponent {
@@ -71,47 +164,6 @@ export default class InternalGallery extends React.PureComponent {
         this.galleryFileRequest.init(this.props.galleryId).start();
     }
 
-    renderFileName = ({ className, fileName, fileUrl }) => (
-        <a
-            className={`${styles.galleryFileName} ${className}`}
-            href={fileUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-        >
-            {fileName}
-        </a>
-    )
-
-    renderPending = () => {
-        const { className, pendingLabel, onlyFileName } = this.props;
-
-        // FIXME: use LoadingAnimation small here
-        // XXX: what does onlyFileName do?
-        return (
-            <div className={`${styles.pendingContainer} ${onlyFileName ? styles.fileName : ''} ${className}`}>
-                {
-                    onlyFileName &&
-                    <span className={styles.label} >
-                        { pendingLabel || _ts('components.internalGallery', 'loadingFileLabel') }
-                    </span>
-                }
-                <span className={`${iconNames.loading} ${styles.loadingAnimation}`} />
-            </div>
-        );
-    }
-
-    render404 = () => {
-        const { className, onlyFileName, notFoundMessage } = this.props;
-
-        return (
-            <div className={`${styles.show404} ${onlyFileName ? styles.fileName : ''} ${className}`}>
-                <span className={styles.label}>
-                    {notFoundMessage || _ts('components.internalGallery', 'deepFileNotFound')}
-                </span>
-            </div>
-        );
-    }
-
     render() {
         const {
             pending,
@@ -122,33 +174,22 @@ export default class InternalGallery extends React.PureComponent {
         } = this.state;
 
         const {
-            className,
+            galleryId, // eslint-disable-line no-unused-vars
             onlyFileName,
+            ...otherProps
         } = this.props;
 
-        if (pending) {
-            // show pending
-            return this.renderPending();
-        }
+        const Preview = onlyFileName ? PreviewNothing : PreviewGallery;
 
-        if (notFound) {
-            // show 404 message
-            return this.render404();
-        }
-
-        if (onlyFileName) {
-            // show file name only
-            return this.renderFileName({ className, fileName, fileUrl });
-        }
-
-        // use supported file viewer component
         return (
-            <GalleryViewer
-                {...this.props}
-                className={className}
-                url={fileUrl}
+            <Preview
+                {...otherProps}
+                pending={pending}
+                notFound={notFound}
+
+                fileName={fileName}
+                fileUrl={fileUrl}
                 mimeType={mimeType}
-                canShowIframe
             />
         );
     }

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Message from '#rscv/Message';
 import { getRandomFromList } from '#rsu/common';
 import _ts from '#ts';
 
@@ -38,9 +39,9 @@ export default class AppLoading extends React.PureComponent {
 
     render() {
         return (
-            <div className={styles.messageContainer}>
+            <Message className={styles.messageContainer}>
                 { this.randomMessage }
-            </div>
+            </Message>
         );
     }
 }

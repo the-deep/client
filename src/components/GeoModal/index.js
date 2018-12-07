@@ -208,6 +208,7 @@ export default class GeoModal extends React.PureComponent {
                     rightComponent={
                         <div className={styles.selectInputs}>
                             <SelectInput
+                                // FIXME: use strings
                                 label="Region"
                                 options={regions}
                                 keySelector={GeoModal.regionKeySelector}
@@ -217,6 +218,7 @@ export default class GeoModal extends React.PureComponent {
                                 showHintAndError={false}
                             />
                             <MultiSelectInput
+                                // FIXME: use strings
                                 label="Select geo areas"
                                 options={geoOptionsByRegion[selectedRegion]}
                                 labelSelector={GeoModal.geoOptionLongLabelSelector}
@@ -242,6 +244,7 @@ export default class GeoModal extends React.PureComponent {
                     />
                     <div className={styles.right}>
                         {groupedValue.map(v => (
+                            // FIXME: use List
                             <GroupSelectionList
                                 key={v.level}
                                 selection={v}
@@ -251,9 +254,11 @@ export default class GeoModal extends React.PureComponent {
                 </ModalBody>
                 <ModalFooter>
                     <Button onClick={this.handleCancelClick} >
+                        {/* FIXME: use strings */}
                         Cancel
                     </Button>
                     <PrimaryButton onClick={this.handleApplyClick} >
+                        {/* FIXME: use strings */}
                         Apply
                     </PrimaryButton>
                 </ModalFooter>

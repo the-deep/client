@@ -906,13 +906,12 @@
         "-83131348": "And",
         "-75360665": "No leads created since {days} days",
         "-30036120": "No entries created since {days} days",
-        "-96186123": "Add rows from",
-        "-63120597": "Add columns from",
-        "-89164469": "Add sub-rows from",
-        "-11158375": "Add sub-columns from",
-        "-60104332": "Can't drop here!",
         "-44064706": "Help",
-        "-72856110": "Add / edit the help link"
+        "-72856110": "Add / edit the help link",
+        "-13372884": "Search word categories",
+        "-77428696": "There are no word categories.",
+        "-33861958": "Add word category",
+        "-47892955": "Can't drop here!"
     },
     "links": {
         "browserExtension": {
@@ -1288,7 +1287,7 @@
             "editFrameworkTitle": -59086768,
             "cancelConfirmDetail": -58972891,
             "noLeadMessage": -3048933,
-            "noDropMessage": -60104332
+            "noDropMessage": -47892955
         },
         "widgets.tagging.dateRange": {
             "fromLabel": 1009,
@@ -1779,7 +1778,12 @@
             "cloneWordCategoryCloneButtonTitle": 353,
             "cloneWordCategoryCancelButtonTitle": 61,
             "useWordCategoryButtonTitle": 362,
-            "editWordCategoryButtonTitle": 363
+            "editWordCategoryButtonTitle": 363,
+            "searchWordCategoryInputPlaceholder": -13372884,
+            "noWordCategoryText": -77428696,
+            "addWordCategoryModalTitle": -33861958,
+            "wordCategoryTitleInputTitle": 13,
+            "wordCategoryTitleInputPlaceholder": 369
         },
         "project.users": {
             "usersTitle": 1119,
@@ -1956,7 +1960,6 @@
             "userGroupNotFound": 198,
             "userGroupTitle": 201,
             "userGroupActivtyLogTitle": 202,
-            "addProjectButtonLabel": 174,
             "addUserGroupModalLabel": 13,
             "addUserGroupModalPlaceholder": 178,
             "tableHeaderTitle": 13,
@@ -1967,16 +1970,11 @@
             "tableHeaderLastModifiedAt": 164,
             "tableHeaderStatus": 8,
             "tableHeaderMembers": 166,
-            "confirmTextDeleteProject": 193,
-            "deleteProjectLinkTitle": 172,
             "headerProjects": 173,
             "modalCancel": 61,
             "modalSave": 25,
             "viewProjectLinkTitle": 170,
             "usersPullFailure": 1928,
-            "userProjectDelete": 912,
-            "userProjectDeleteSuccess": 913,
-            "userProjectDeleteFailure": 914,
             "userMembershipCreate": 920,
             "userMembershipCreateSuccess": 921,
             "userMembershipDelete": 924,
@@ -2013,8 +2011,6 @@
             "editUsergroupLinkTitle": 168,
             "deleteUsergroupLinkTitle": 169,
             "viewProjectLinkTitle": 170,
-            "editProjectLinkTitle": 171,
-            "deleteProjectLinkTitle": 172,
             "headerProjects": 173,
             "addProjectButtonLabel": 174,
             "headerGroups": 175,
@@ -2022,7 +2018,6 @@
             "addUserGroupModalLabel": 13,
             "addUserGroupModalPlaceholder": 178,
             "confirmTextDeleteUserGroup": 194,
-            "confirmTextDeleteProject": 193,
             "userNotFound": 199,
             "userGroupDelete": 904,
             "userGroupDeleteSuccess": 905,
@@ -2030,10 +2025,6 @@
             "userGroupDeleteFatal": 907,
             "userGroupCreate": 908,
             "userGroupCreateSuccess": 909,
-            "userProjectDelete": 912,
-            "userProjectDeleteSuccess": 913,
-            "userProjectDeleteFailure": 914,
-            "userProjectDeleteFatal": 915,
             "userProfileEdit": 900,
             "userEditSuccess": 901,
             "userEditImageUploadFailure": 7500,
@@ -2333,10 +2324,7 @@
             "removeCellButtonTitle": -53055304,
             "cancelConfirmMessage": -14675920,
             "addRowsFromTitle": -39845084,
-            "addCellsFromTitle": -50010134,
-            "duplicatesConfirmTitle": -47600296,
-            "duplicatesConfirmText": -76890842,
-            "duplicateConfirmText": -35530735
+            "addCellsFromTitle": -50010134
         },
         "widgets.editor.matrix2d": {
             "atLeastOneError": 1007,
@@ -2368,9 +2356,7 @@
             "addDimensionsTitle": -96186123,
             "addSectorsTitle": -63120597,
             "addSubDimensionsTitle": -89164469,
-            "addSubSectorTitle": -11158375,
-            "duplicateConfirmText": -35530735,
-            "duplicatesConfirmText": -76890842
+            "addSubSectorTitle": -11158375
         },
         "editEntry.list": {
             "noEntriesText": 543

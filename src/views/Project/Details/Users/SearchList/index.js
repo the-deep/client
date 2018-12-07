@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import SearchInput from '#rsci/SearchInput';
 import ListView from '#rscv/List/ListView';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import Message from '#rscv/Message';
 
 import {
     RequestClient,
@@ -56,9 +57,9 @@ const EmptySearch = () => {
     const emptyText = _ts('project.users', 'searchEmptyText');
 
     return (
-        <div className={styles.emptyText}>
+        <Message>
             { emptyText }
-        </div>
+        </Message>
     );
 };
 
@@ -74,12 +75,12 @@ const SearchTip = () => {
         ${styles.icon}
     `;
     return (
-        <div className={styles.searchTip}>
-            <div className={iconClassName} />
+        <Message className={styles.searchTip}>
+            <span className={iconClassName} />
             <div className={styles.text}>
                 { tipText }
             </div>
-        </div>
+        </Message>
     );
 };
 
@@ -90,7 +91,7 @@ const SearchValueNotFound = () => {
     );
 
     return (
-        <div className={styles.noSearch}>
+        <Message className={styles.noSearch}>
             <img
                 className={styles.image}
                 src={noSearch}
@@ -99,7 +100,7 @@ const SearchValueNotFound = () => {
             <div className={styles.text}>
                 { noResultsFound }
             </div>
-        </div>
+        </Message>
     );
 };
 

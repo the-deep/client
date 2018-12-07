@@ -42,49 +42,25 @@
             }
         }
 
-        .empty-text {
-            flex-grow: 1;
-            padding: $spacing-medium;
-            text-align: center;
-            color: $color-text-disabled;
-        }
-
         .search-tip {
-            display: flex;
-            align-items: center;
-            margin: auto;
-            padding: $spacing-medium 0;
-            color: $color-text-disabled;
+            flex-direction: column;
 
             .icon {
-                flex-shrink: 0;
-                padding: 0 $spacing-medium;
-                font-size: $font-size-large;
-            }
-
-            .text {
-                flex-grow: 1;
-                padding: 0 $spacing-medium 0 0;
+                font-size: $font-size-super-large;
             }
         }
 
         .no-search {
-            display: flex;
-            align-items: center;
             flex-direction: column;
-            margin: auto;
-            padding: $spacing-medium 0;
-            color: $color-text-disabled;
-
-            .text {
-                flex-grow: 1;
-                margin: $spacing-medium 0;
-            }
 
             .image {
                 opacity: 0.3;
                 width: $width-icon-super-large;
                 height: $width-icon-super-large;
+            }
+
+            .text {
+                margin: $spacing-medium 0;
             }
         }
     }

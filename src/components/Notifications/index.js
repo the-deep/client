@@ -3,6 +3,7 @@ import React from 'react';
 
 import ListView from '#rscv/List/ListView';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import Message from '#rscv/Message';
 
 import {
     RequestCoordinator,
@@ -70,9 +71,9 @@ NotificationItem.propTypes = {
 
 
 const NotificationEmpty = () => (
-    <div className={styles.emptyComponent} >
+    <Message className={styles.emptyComponent} >
         {_ts('notifications', 'noNotificationsText')}
-    </div>
+    </Message>
 );
 
 const notificationKeySelector = n => n.id;

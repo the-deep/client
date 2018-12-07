@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
+import Message from '#rscv/Message';
 import { FgRestBuilder } from '#rsu/rest';
 import {
     requiredCondition,
@@ -415,9 +416,9 @@ export default class LeadFormItem extends React.PureComponent {
                                     showUrl
                                 />
                             ) : (
-                                <div className={`${className} ${styles.previewText}`}>
+                                <Message className={className}>
                                     {_ts('addLeads', 'sourcePreview')}
-                                </div>
+                                </Message>
                             )
                         }
                     </div>
@@ -435,12 +436,11 @@ export default class LeadFormItem extends React.PureComponent {
                                     showTabular
                                     showUrl
                                 />
-                            ) :
-                                <div className={styles.previewText}>
-                                    <h1>
-                                        {_ts('addLeads', 'previewNotAvailable')}
-                                    </h1>
-                                </div>
+                            ) : (
+                                <Message>
+                                    {_ts('addLeads', 'previewNotAvailable')}
+                                </Message>
+                            )
                         }
                     </div>
                 );
@@ -528,11 +528,12 @@ export default class LeadFormItem extends React.PureComponent {
                         </Fragment>
                     }
                     bottomChild={
-                        active && hidePreview && lead.faramValues.sourceType !== 'text'
-                            ? <LeadPreview
+                        active && hidePreview && lead.faramValues.sourceType !== 'text' ? (
+                            <LeadPreview
                                 lead={lead}
                                 className={styles.leadPreview}
-                            /> : null
+                            />
+                        ) : null
                     }
                 />
             </div>

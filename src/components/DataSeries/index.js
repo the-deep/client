@@ -118,7 +118,10 @@ export default class DataSeries extends React.PureComponent {
                         />
                     </div>
                 </header>
-                <PreviewComponent className={styles.preview} value={value} />
+                <PreviewComponent
+                    className={styles.preview}
+                    value={value}
+                />
             </div>
         );
     }

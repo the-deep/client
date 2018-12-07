@@ -118,7 +118,9 @@ export default class RegionAdminLevel extends React.PureComponent {
                             disabled={this.props.readOnly}
                         />
                         <DangerConfirmButton
-                            confirmationMessage={_ts('components.regionAdminLevel', 'removeAdminLevelConfirm', { adminLevel: row.title })}
+                            confirmationMessage={
+                                _ts('components.regionAdminLevel', 'removeAdminLevelConfirm', { adminLevel: row.title })
+                            }
                             onClick={() => this.handleDeleteAdminLevel(row)}
                             smallVerticalPadding
                             transparent
@@ -256,6 +258,8 @@ export default class RegionAdminLevel extends React.PureComponent {
         } = this.props;
         const {
             deletePending,
+            addAdminLevel,
+            editAdminLevel,
         } = this.state;
 
         return (
@@ -272,7 +276,7 @@ export default class RegionAdminLevel extends React.PureComponent {
                     >
                         {_ts('components.regionAdminLevel', 'addAdminLevelButtonLabel')}
                     </PrimaryButton>
-                    { this.state.addAdminLevel &&
+                    { addAdminLevel &&
                         <Modal
                             closeOnEscape
                             onClose={this.handleModalClose}
@@ -304,7 +308,7 @@ export default class RegionAdminLevel extends React.PureComponent {
                         headers={this.adminLevelHeaders}
                         keySelector={this.keySelector}
                     />
-                    { this.state.editAdminLevel &&
+                    { editAdminLevel &&
                         <Modal
                             closeOnEscape
                             onClose={this.handleModalClose}

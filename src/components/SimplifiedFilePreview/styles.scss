@@ -17,14 +17,4 @@
         color: $color-text;
         font-family: inherit;
     }
-
-    .message {
-        display: flex;
-        align-items: center;
-        flex-grow: 1;
-        justify-content: center;
-        color: $color-text-disabled;
-        font-size: $font-size-large;
-        font-weight: $font-weight-medium;
-    }
 }

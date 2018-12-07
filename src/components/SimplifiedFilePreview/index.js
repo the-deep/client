@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Message from '#rscv/Message';
 import { FgRestBuilder } from '#rsu/rest';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
@@ -196,9 +197,9 @@ export default class SimplifiedFilePreview extends React.PureComponent {
 
         if (error) {
             return (
-                <div className={styles.message}>
+                <Message>
                     { error }
-                </div>
+                </Message>
             );
         }
 
@@ -211,9 +212,9 @@ export default class SimplifiedFilePreview extends React.PureComponent {
         }
 
         return (
-            <div className={styles.message}>
+            <Message>
                 {_ts('components.simplifiedFilePreview', 'previewNotAvailable')}
-            </div>
+            </Message>
         );
     }
 
@@ -223,13 +224,7 @@ export default class SimplifiedFilePreview extends React.PureComponent {
 
         return (
             <div className={`${className} ${styles.filePreview}`}>
-                {
-                    pending ? (
-                        <LoadingAnimation />
-                    ) : (
-                        this.renderContent()
-                    )
-                }
+                { pending ? <LoadingAnimation /> : this.renderContent() }
             </div>
         );
     }

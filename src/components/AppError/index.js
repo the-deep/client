@@ -1,6 +1,7 @@
 import React from 'react';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+import Message from '#rscv/Message';
 
 import Cloak from '#components/Cloak';
 import { handleException, handleReport } from '#config/sentry';
@@ -16,7 +17,7 @@ export default class AppError extends React.PureComponent {
         const reportErrorTitle = _ts('components.appError', 'reportErrorTitle');
 
         return (
-            <div className={styles.messageContainer}>
+            <Message className={styles.messageContainer}>
                 { errorText }
                 <Cloak
                     hide={AppError.shouldHideReport}
@@ -29,7 +30,7 @@ export default class AppError extends React.PureComponent {
                         </PrimaryButton>
                     }
                 />
-            </div>
+            </Message>
         );
     }
 }

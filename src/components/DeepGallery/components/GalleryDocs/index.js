@@ -39,10 +39,8 @@ export default class GalleryDocs extends React.PureComponent {
         } = this.props;
 
         if (!docUrl) {
-            return <div />;
+            return null;
         }
-
-        const googleDriveViewerUrl = createUrlForGoogleViewer(docUrl);
 
         const classNames = [
             className,
@@ -50,22 +48,22 @@ export default class GalleryDocs extends React.PureComponent {
             styles.galleryDocs,
         ];
 
+        const useGoogle = mimeType !== 'application/pdf' || !canShowIframe || notHttps;
+        const src = useGoogle
+            ? createUrlForGoogleViewer(docUrl)
+            : docUrl;
+        const sandbox = useGoogle
+            ? 'allow-scripts allow-same-origin allow-popups'
+            : undefined;
+
         return (
             <div className={classNames.join(' ')}>
-                {
-                    mimeType === 'application/pdf' && canShowIframe && !notHttps ?
-                        <iframe
-                            className={`doc ${styles.doc}`}
-                            title={docUrl}
-                            src={docUrl}
-                        />
-                        : <iframe
-                            className={`doc ${styles.doc}`}
-                            title={docUrl}
-                            src={googleDriveViewerUrl}
-                            sandbox="allow-scripts allow-same-origin allow-popups"
-                        />
-                }
+                <iframe
+                    className={`doc ${styles.doc}`}
+                    title={docUrl}
+                    src={src}
+                    sandbox={sandbox}
+                />
             </div>
         );
     }

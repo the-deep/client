@@ -36,6 +36,7 @@ export default class DisplayPicture extends React.PureComponent {
                 />
             );
         }
+
         const classNames = `${className} ${styles.defaultUser}`;
         return (
             <ReactSVG

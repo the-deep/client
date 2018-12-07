@@ -197,7 +197,7 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
 
         if (error) {
             return (
-                <Message className={styles.message}>
+                <Message>
                     { error }
                 </Message>
             );
@@ -221,7 +221,7 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
         }
 
         return (
-            <Message className={styles.message}>
+            <Message>
                 {_ts('components.simplifiedLeadPreview', 'previewNotAvailable')}
             </Message>
         );
@@ -235,12 +235,12 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
 
         return (
             <div className={`${className} ${styles.leadPreview}`}>
-                { pending && (
+                { pending &&
                     <LoadingAnimation
                         className={styles.loadingAnimation}
                         message={_ts('components.simplifiedLeadPreview', 'simplifyingLead')}
                     />
-                )}
+                }
                 <Content />
             </div>
         );
