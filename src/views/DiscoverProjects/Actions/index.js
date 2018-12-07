@@ -43,7 +43,7 @@ export default class Actions extends React.PureComponent {
                 );
                 return (
                     <Link
-                        className={styles.editLink}
+                        className={`${styles.editLink} edit-link`}
                         tabIndex="-1"
                         title={_ts('discoverProjects.table', 'editProjectTooltip')}
                         to={link}
@@ -67,6 +67,7 @@ export default class Actions extends React.PureComponent {
             case 'none':
                 return (
                     <Button
+                        className="join-button"
                         title={_ts('discoverProjects.table', 'joinLabel')}
                         onClick={() => this.props.onProjectJoin(project)}
                     >
@@ -101,7 +102,7 @@ export default class Actions extends React.PureComponent {
         const contantLink = `mailto:${adminEmails.join(',')}?subject=${subject}`;
         return (
             <a
-                className={styles.emailLink}
+                className={`${styles.emailLink} email-link`}
                 tabIndex="-1"
                 title={_ts('discoverProjects.table', 'contactAdminsTitle')}
                 href={contantLink}
