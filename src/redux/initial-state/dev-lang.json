@@ -910,7 +910,8 @@
         "-72856110": "Add / edit the help link",
         "-13372884": "Search word categories",
         "-77428696": "There are no word categories.",
-        "-33861958": "Add word category"
+        "-33861958": "Add word category",
+        "-47892955": "Can't drop here!"
     },
     "links": {
         "browserExtension": {
@@ -1286,7 +1287,7 @@
             "editFrameworkTitle": -59086768,
             "cancelConfirmDetail": -58972891,
             "noLeadMessage": -3048933,
-            "noDropMessage": -60104332
+            "noDropMessage": -47892955
         },
         "widgets.tagging.dateRange": {
             "fromLabel": 1009,
