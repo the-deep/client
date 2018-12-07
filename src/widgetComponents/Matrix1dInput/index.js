@@ -88,6 +88,7 @@ export default class Matrix1dInput extends React.PureComponent {
                 keySelector={Matrix1dInput.rowKeyExtractor}
                 renderer={Row}
                 rendererParams={this.rendererParams}
+                emptyComponent={null}
             />
         );
     }
