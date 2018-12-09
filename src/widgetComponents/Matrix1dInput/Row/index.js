@@ -63,6 +63,7 @@ export default class Matrix1dRow extends React.PureComponent {
                     keySelector={Matrix1dRow.cellKeyExtractor}
                     renderer={Cell}
                     rendererParams={this.rendererParams}
+                    emptyComponent={null}
                 />
             </div>
         );

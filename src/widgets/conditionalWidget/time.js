@@ -1,4 +1,5 @@
 import _ts from '#ts';
+import { isFalsy } from '#rsu/common';
 import { compareTime } from '#utils/common';
 
 const isEqualTo = {
@@ -52,7 +53,7 @@ const isInBetween = {
         },
     ],
     validate: ({ minValue, maxValue }) => ({
-        ok: compareTime(minValue, maxValue) <= 0,
+        ok: isFalsy(minValue) || isFalsy(maxValue) || compareTime(minValue, maxValue) <= 0,
         message: _ts('conditional.time', 'invalidRangeErrorMessage'),
     }),
     test: ({ value }, { minValue, maxValue }) => (

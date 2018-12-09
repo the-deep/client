@@ -1,4 +1,5 @@
 import _ts from '#ts';
+import { isFalsy } from '#rsu/common';
 
 const isLessThan = {
     title: 'Is less than',
@@ -51,7 +52,7 @@ const isInBetween = {
         },
     ],
     validate: ({ minValue, maxValue }) => ({
-        ok: minValue <= maxValue,
+        ok: isFalsy(minValue) || isFalsy(maxValue) || minValue <= maxValue,
         message: _ts('conditional.number', 'invalidRangeErrorMessage'),
     }),
     test: ({ value }, { minValue, maxValue }) => (
