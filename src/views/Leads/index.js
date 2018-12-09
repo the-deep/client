@@ -242,7 +242,7 @@ export default class Leads extends React.PureComponent {
         ];
 
         this.state = {
-            loadingLeads: false,
+            loadingLeads: true,
             redirectTo: undefined,
         };
     }
@@ -533,19 +533,12 @@ export default class Leads extends React.PureComponent {
     }
 
     renderEmpty = () => {
-        const {
-            pendingProjectList,
-            pendingProjectJoin,
-            pendingProjectJoinCancel,
-        } = this.state;
+        const { loadingLeads } = this.state;
 
-        const pending = (
-            pendingProjectList ||
-            pendingProjectJoin ||
-            pendingProjectJoinCancel
-        );
         const isFilterEmpty = isObjectEmpty(this.props.filters);
-        if (pending) {
+        console.warn(loadingLeads);
+
+        if (loadingLeads && isFilterEmpty) {
             return null;
         }
 
