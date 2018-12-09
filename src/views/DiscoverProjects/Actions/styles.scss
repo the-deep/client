@@ -12,10 +12,39 @@
 
 .edit-link {
     @extend %link;
-    color: $color-warning;
 }
 
 .email-link {
     @extend %link;
 }
+
+:global {
+    .body {
+        .row {
+            &:hover {
+                background-color: $color-background-hover;
+
+                .email-link {
+                    color: $color-danger;
+                }
+
+                .edit-link {
+                    color: $color-warning;
+                }
+
+                .join-button {
+                    background-color: $color-primary;
+                    color: $color-foreground;
+
+                    &:hover {
+                        background-color: get-hover-color($color-primary);
+                        color: $color-foreground;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 
