@@ -18,7 +18,6 @@ import { routes } from '#constants/routes';
 import viewsAcl from '#constants/viewsAcl';
 
 import {
-    getDefaultTabId,
     activeProjectIdFromStateSelector,
     activeCountryIdFromStateSelector,
     tabsByCurrentUrlSelector,
@@ -144,8 +143,14 @@ class RouteSynchronizer extends React.PureComponent {
     }
 
     componentDidMount() {
-        const { match, location, setTabStatus } = this.props;
-        this.props.setRouteParams({
+        const {
+            match,
+            location,
+            setTabStatus,
+            setRouteParams,
+        } = this.props;
+
+        setRouteParams({
             match,
             location,
         });
@@ -168,15 +173,6 @@ class RouteSynchronizer extends React.PureComponent {
                 match: nextProps.match,
                 location: nextProps.location,
             });
-            this.props.setTabStatus({
-                url: nextProps.match.url,
-                path: nextProps.match.path,
-            });
-        } else if (!nextProps.tabsByCurrentUrl.includes(getDefaultTabId())) {
-            // If for some inconsistent timing, current tab status is lost
-            // from redux, reset it.
-            // This can happen when the pages are loading in different tabs
-            // and time tracking is slowed down by few milliseconds.
             this.props.setTabStatus({
                 url: nextProps.match.url,
                 path: nextProps.match.path,
@@ -314,11 +310,14 @@ class RouteSynchronizer extends React.PureComponent {
             <Cloak
                 {...viewsAcl[name]}
                 render={
-                    <Page
-                        name={name}
-                        noProjectPermission={noProjectPermission}
-                        {...otherProps}
-                    />
+                    <Fragment>
+                        { tabsByCurrentUrl.length > 1 && <div>I am duplicate</div>}
+                        <Page
+                            name={name}
+                            noProjectPermission={noProjectPermission}
+                            {...otherProps}
+                        />
+                    </Fragment>
                 }
                 renderOnHide={
                     <PageError noProjectPermission={noProjectPermission} />

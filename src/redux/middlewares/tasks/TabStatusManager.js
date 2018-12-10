@@ -2,7 +2,7 @@ import AbstractTask from '#utils/AbstractTask';
 
 import { removeTabStatusAction, getDefaultTabId } from '../../reducers/tabStatus';
 
-const REFRESH_TIME = 500;
+const REFRESH_TIME = 1000;
 
 const tabStatusKeySelector = tabId => `tabStatus-${tabId}`;
 
@@ -13,6 +13,7 @@ export const setTabActive = () => {
 
 export const refreshTabStatus = (tabIds) => {
     const tabIdsToRemove = [];
+
     tabIds.forEach((tabId) => {
         const key = tabStatusKeySelector(tabId);
         const value = localStorage.getItem(key);
@@ -22,7 +23,7 @@ export const refreshTabStatus = (tabIds) => {
         }
 
         const lastActiveTime = +value;
-        if (Date.now() - lastActiveTime > REFRESH_TIME * 2) {
+        if (Date.now() - lastActiveTime > REFRESH_TIME) {
             tabIdsToRemove.push(tabId);
             localStorage.removeItem(key);
         }
@@ -32,7 +33,7 @@ export const refreshTabStatus = (tabIds) => {
 
 export class TabStatusSetter extends AbstractTask {
     start = () => {
-        this.setterInterval = setInterval(this.setActive, REFRESH_TIME);
+        this.setterInterval = setInterval(this.setActive, REFRESH_TIME / 2);
     }
 
     stop = () => {
@@ -61,7 +62,6 @@ export class TabStatusListener extends AbstractTask {
     refreshStatus = () => {
         const tabIds = Object.keys(this.store.getState().tabStatus || {});
         const tabIdsToRemove = refreshTabStatus(tabIds);
-
         // TODO: Use single dispatch
         tabIdsToRemove.forEach((tabId) => {
             this.store.dispatch(removeTabStatusAction({ tabId }));

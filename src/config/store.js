@@ -36,7 +36,7 @@ const myTransform = createTransform(
 const isBeta = process.env.REACT_APP_DEEP_ENVIRONMENT === 'beta';
 
 const storeConfig = {
-    blacklist: ['notify', 'route', 'app', 'tabStatus'],
+    blacklist: ['notify', 'route', 'app'],
     key: 'deeper',
     version: 2,
     storage: localforage,
