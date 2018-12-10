@@ -18,12 +18,14 @@ export const refreshTabStatus = (tabIds) => {
         const key = tabStatusKeySelector(tabId);
         const value = localStorage.getItem(key);
         if (!value) {
+            console.warn('removing', tabId, 'no value so removing');
             tabIdsToRemove.push(tabId);
             return;
         }
 
         const lastActiveTime = +value;
         if (Date.now() - lastActiveTime > REFRESH_TIME) {
+            console.warn('removing', tabId, Date.now() - lastActiveTime, lastActiveTime);
             tabIdsToRemove.push(tabId);
             localStorage.removeItem(key);
         }
@@ -32,8 +34,14 @@ export const refreshTabStatus = (tabIds) => {
 };
 
 export class TabStatusSetter extends AbstractTask {
+    constructor(props) {
+        super(props);
+        this.lastTime = 0;
+    }
+
     start = () => {
-        this.setterInterval = setInterval(this.setActive, REFRESH_TIME / 2);
+        this.setActive();
+        this.setterInterval = setInterval(this.setActive, REFRESH_TIME / 4);
     }
 
     stop = () => {
@@ -41,6 +49,9 @@ export class TabStatusSetter extends AbstractTask {
     }
 
     setActive = () => {
+        const now = Date.now();
+        console.warn('Setting', now - this.lastTime);
+        this.lastTime = now;
         setTabActive();
     }
 }

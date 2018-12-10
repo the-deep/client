@@ -311,7 +311,11 @@ class RouteSynchronizer extends React.PureComponent {
                 {...viewsAcl[name]}
                 render={
                     <Fragment>
-                        { tabsByCurrentUrl.length > 1 && <div>I am duplicate</div>}
+                        { tabsByCurrentUrl.length > 1 &&
+                            <div>
+                                I am duplicate
+                            </div>
+                        }
                         <Page
                             name={name}
                             noProjectPermission={noProjectPermission}
