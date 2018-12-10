@@ -53,9 +53,6 @@ export const reducersToSync = [
     'auth',
     'domainData',
     'tabStatus',
-    // Following refers to action of starting and stoping silo tasks
-    // and used by the middleware.
-    'siloBgTasks',
 ];
 
 export default storeConfig;
