@@ -8,6 +8,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import {
     RequestClient,
     requestMethods,
+    notifyOnFailure,
 } from '#request';
 import {
     removeProjectUserGroupAction,
@@ -45,6 +46,7 @@ const requests = {
         url: ({ params: { usergroupMembership } }) => `/project-usergroups/${usergroupMembership.id}/`,
         method: requestMethods.PATCH,
         body: ({ params: { usergroupMembership } }) => usergroupMembership,
+        onFailure: notifyOnFailure(_ts('project.users', 'usergroupsTitle')),
         onSuccess: ({
             params: { usergroupMembership },
             props: {
@@ -62,6 +64,7 @@ const requests = {
     removeUsergroupMembershipRequest: {
         url: ({ params: { membershipId } }) => `/project-usergroups/${membershipId}/`,
         method: requestMethods.DELETE,
+        onFailure: notifyOnFailure(_ts('project.users', 'usergroupsTitle')),
         onSuccess: ({
             params: { membershipId },
             props: {

@@ -8,6 +8,7 @@ import DisplayPicture from '#components/DisplayPicture';
 import {
     RequestClient,
     requestMethods,
+    notifyOnFailure,
 } from '#request';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -47,6 +48,7 @@ const requests = {
         body: ({
             params: { membership },
         }) => membership,
+        onFailure: notifyOnFailure(_ts('project.users', 'usersTitle')),
         onSuccess: ({
             response,
             params: {
@@ -72,6 +74,7 @@ const requests = {
         url: '/project-usergroups/',
         method: requestMethods.POST,
         body: ({ params: { membership } }) => membership,
+        onFailure: notifyOnFailure(_ts('project.users', 'usergroupsTitle')),
         onSuccess: ({
             response,
             params: {

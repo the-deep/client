@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import {
     RequestClient,
     requestMethods,
+    notifyOnFailure,
 } from '#request';
 import _ts from '#ts';
 
@@ -71,6 +72,7 @@ const requests = {
         url: '/project-memberships/',
         method: requestMethods.GET,
         query: ({ props: { projectId } }) => ({ project: projectId }),
+        onFailure: notifyOnFailure(_ts('project.users', 'usersTitle')),
         onSuccess: ({
             response = {},
             props: {

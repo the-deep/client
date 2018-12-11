@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import notify from '#notify';
 import SelectInput from '#rsci/SelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { getNewActiveProjectId } from '#entities/project';
@@ -11,6 +12,7 @@ import { getNewActiveProjectId } from '#entities/project';
 import {
     RequestClient,
     requestMethods,
+    notifyOnFailure,
 } from '#request';
 import {
     removeProjectMembershipAction,
@@ -29,6 +31,7 @@ const requests = {
         url: ({ params: { membership } }) => `/project-memberships/${membership.id}/`,
         method: requestMethods.PUT,
         body: ({ params: { membership } }) => membership,
+        onFailure: notifyOnFailure(_ts('project.users', 'usersTitle')),
         onSuccess: ({
             response: membership,
             props: {
@@ -46,6 +49,7 @@ const requests = {
     removeUserMembershipRequest: {
         url: ({ params: { membership: { id } } }) => `/project-memberships/${id}/`,
         method: requestMethods.DELETE,
+        onFailure: notifyOnFailure(_ts('project.users', 'usersTitle')),
         onSuccess: ({
             params: { membership },
             props: {
