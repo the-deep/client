@@ -1,15 +1,17 @@
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-
-import update from '#rsu/immutable-update';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {
     createRequestCoordinator,
     createRequestClient,
     RestRequest,
 } from '@togglecorp/react-rest-request';
+
+import update from '#rsu/immutable-update';
+
 import { wsEndpoint } from '#config/rest';
+import schema from '#schema';
+import { alterResponseErrorToFaramError } from '#rest';
 import { tokenSelector } from '#redux';
 
 const mapStateToProps = state => ({
@@ -46,6 +48,30 @@ const CustomRequestCoordinator = createRequestCoordinator({
 
         return `${wsEndpoint}${url}`;
     },
+
+    transformResponse: (body, request) => {
+        const {
+            url,
+            method,
+            schema: schemaName,
+        } = request;
+        if (schemaName === undefined) {
+            // NOTE: usually there is no response body for DELETE
+            if (method !== 'DELETE') {
+                console.error(`Schema is not defined for ${url} ${method}`);
+            }
+        } else {
+            try {
+                schema.validate(body, schemaName);
+            } catch (e) {
+                console.error(url, method, body, e.message);
+                throw (e);
+            }
+        }
+        return body;
+    },
+
+    transformError: error => alterResponseErrorToFaramError(error),
 });
 
 export const RequestCoordinator = compose(
