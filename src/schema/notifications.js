@@ -25,6 +25,7 @@ const notificationsSchema = [];
         },
         fields: {
             unseen: { type: 'uint', required: true },
+            total: { type: 'uint', required: true },
         },
     };
     notificationsSchema.push({ name, schema });

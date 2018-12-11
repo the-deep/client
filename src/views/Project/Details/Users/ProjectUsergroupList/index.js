@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import {
     RequestClient,
     requestMethods,
+    notifyOnFailure,
 } from '#request';
 import _ts from '#ts';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -18,7 +19,6 @@ import {
     setProjectUsergroupsAction,
     projectUsergroupListSelector,
 } from '#redux';
-import noSearch from '#resources/img/no-filter.png';
 
 import Actions from './Actions';
 
@@ -64,6 +64,7 @@ const requests = {
         url: '/project-usergroups/',
         method: requestMethods.GET,
         query: ({ props: { projectId } }) => ({ project: projectId }),
+        onFailure: notifyOnFailure(_ts('project.users', 'usergroupsTitle')),
         onSuccess: ({
             response = {},
             props: {

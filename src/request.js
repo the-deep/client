@@ -13,6 +13,7 @@ import { wsEndpoint } from '#config/rest';
 import schema from '#schema';
 import { alterResponseErrorToFaramError } from '#rest';
 import { tokenSelector } from '#redux';
+import notify from '#notify';
 
 const mapStateToProps = state => ({
     token: tokenSelector(state),
@@ -86,5 +87,22 @@ RequestClient.prop = PropTypes.shape({
     response: PropTypes.object,
     error: PropTypes.object,
 });
+
+export const notifyOnFailure = title => ({
+    error: {
+        errors: {
+            nonFieldErrors = [],
+        } = {},
+    } = {},
+}) => {
+    const message = nonFieldErrors.join(' ');
+
+    notify.send({
+        title,
+        type: notify.type.ERROR,
+        message,
+        duration: notify.duration.MEDIUM,
+    });
+};
 
 export const requestMethods = RestRequest.methods;
