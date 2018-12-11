@@ -55,10 +55,17 @@ const requests = {
             notificationsCount: ({
                 props: {
                     notificationsCount: {
-                        unseen: unseenNotificationsCount,
+                        unseen: newUnseenNotificationCount,
+                        total: newTotalNotificationCount,
                     },
                 },
-            }) => unseenNotificationsCount > 0,
+                prevProps: {
+                    notificationsCount: {
+                        total: oldTotalNotificationCount,
+                    },
+                },
+            }) => newTotalNotificationCount !== oldTotalNotificationCount
+                || newUnseenNotificationCount > 0,
         },
         onSuccess: ({
             props: {
