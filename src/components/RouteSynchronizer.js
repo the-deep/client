@@ -20,11 +20,11 @@ import viewsAcl from '#constants/viewsAcl';
 import {
     activeProjectIdFromStateSelector,
     activeCountryIdFromStateSelector,
-    tabsByCurrentUrlSelector,
     setActiveProjectAction,
     setActiveCountryAction,
     setRouteParamsAction,
     activeProjectRoleSelector,
+    tabsByCurrentUrlSelector,
     setTabStatusAction,
 } from '#redux';
 import _ts from '#ts';
@@ -299,11 +299,7 @@ class RouteSynchronizer extends React.PureComponent {
         const noProjectPermission = isParamRequired(path, 'projectId') && !setupPermissions.view;
 
         if (!viewsAcl[name]) {
-            console.warn('No access control for view', name);
-        }
-
-        if (tabsByCurrentUrl.length > 1) {
-            console.warn('Another tab is opened at this same URL');
+            console.error('No access control for view', name);
         }
 
         return (

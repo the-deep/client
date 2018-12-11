@@ -1,7 +1,7 @@
 import SiloTasksManager from '#utils/SiloTasksManager';
 
 import TokenRefresher from './tasks/TokenRefresher';
-import { TabStatusListener } from './tasks/TabStatusManager';
+import TabStatusManager from './tasks/TabStatusManager';
 import ProjectGet from './tasks/ProjectGet';
 import ProjectRolesGet from './tasks/ProjectRolesGet';
 import PreferencesGet from './tasks/PreferencesGet';
@@ -28,11 +28,11 @@ const siloBackgroundTasks = (store) => {
     const languagesGetter = new LanguagesGet(store);
 
     const tokenRefresher = new TokenRefresher(store);
-    const tabStatusListener = new TabStatusListener(store);
+    const tabStatusManager = new TabStatusManager(store);
 
     const siloBackgroundTaskManager = new SiloTasksManager('background');
     siloBackgroundTaskManager.addTask(tokenRefresher);
-    siloBackgroundTaskManager.addTask(tabStatusListener);
+    siloBackgroundTaskManager.addTask(tabStatusManager);
 
     return next => (action) => {
         switch (action.type) {

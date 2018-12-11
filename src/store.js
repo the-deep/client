@@ -1,6 +1,6 @@
 import { compose, createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-import logger from '#redux/middlewares/logger';
+import createLogger from '#redux/middlewares/logger';
 import siloBackgroundTasks from '#redux/middlewares/siloBackgroundTasks';
 import { sendToken } from '#utils/browserExtension';
 import {
@@ -11,13 +11,13 @@ import {
 import { createActionSyncMiddleware } from '#rsu/redux-sync';
 
 import reducer from '#redux/reducers';
-import { reducersToSync } from '#config/store';
+import { reducersToSync, actionsToSkipLogging, uniqueTabId } from '#config/store';
 
 const prepareStore = () => {
     // Invoke refresh access token every 10m
     const middleware = [
-        logger,
-        createActionSyncMiddleware(reducersToSync),
+        createLogger(actionsToSkipLogging),
+        createActionSyncMiddleware(reducersToSync, uniqueTabId),
         siloBackgroundTasks,
         thunk,
     ];

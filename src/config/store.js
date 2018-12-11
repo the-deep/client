@@ -4,7 +4,9 @@ import {
     createTransform,
 } from 'redux-persist';
 
-import { mapToMap } from '#rsu/common';
+import { mapToMap, randomString } from '#rsu/common';
+
+export const uniqueTabId = randomString(64);
 
 const migrations = {
     // NOTE: clear out domainData and siloDomainData only
@@ -53,6 +55,12 @@ export const reducersToSync = [
     'auth',
     'domainData',
     'tabStatus',
+];
+
+export const actionsToSkipLogging = [
+    // 'tabStatus/SET_TAB_TIME',
+    // 'tabStatus/REMOVE_TAB_STATUS',
+    // 'tabStatus/SET_TAB_STATUS',
 ];
 
 export default storeConfig;

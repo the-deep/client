@@ -1,13 +1,12 @@
 import update from '#rsu/immutable-update';
 import createReducerWithMap from '#utils/createReducerWithMap';
-import { randomString } from '#rsu/common';
+import { uniqueTabId } from '#config/store';
 
-const UNIQUE_TAB_ID = randomString(64);
-export const getDefaultTabId = () => UNIQUE_TAB_ID;
 
 // TYPE
 
 export const SET_TAB_STATUS = 'tabStatus/SET_TAB_STATUS';
+export const SET_TAB_TIME = 'tabStatus/SET_TAB_TIME';
 export const REMOVE_TAB_STATUS = 'tabStatus/REMOVE_TAB_STATUS';
 
 
@@ -15,14 +14,21 @@ export const REMOVE_TAB_STATUS = 'tabStatus/REMOVE_TAB_STATUS';
 
 export const setTabStatusAction = ({ url, path }) => ({
     type: SET_TAB_STATUS,
-    tabId: UNIQUE_TAB_ID,
+    tabId: uniqueTabId,
     url,
     path,
 });
 
-export const removeTabStatusAction = ({ tabId }) => ({
+export const setTabTimeAction = () => ({
+    type: SET_TAB_TIME,
+    tabId: uniqueTabId,
+    retransmit: true,
+});
+
+
+export const removeTabStatusAction = ({ tabIds }) => ({
     type: REMOVE_TAB_STATUS,
-    tabId,
+    tabIds,
 });
 
 // REDUCER
@@ -30,22 +36,46 @@ export const removeTabStatusAction = ({ tabId }) => ({
 const setTabStatus = (state, action) => {
     const { tabId, url, path } = action;
     const settings = {
-        [tabId]: { $set: { url, path } },
+        [tabId]: {
+            $set: {
+                url,
+                path,
+                fresh: true,
+            },
+        },
+    };
+    return update(state, settings);
+};
+
+const setTabTime = (state, { tabId, senderId, resenderId }) => {
+    // NOTE: setTabTime can be called before setTabStatus sometimes
+    const settings = {
+        [resenderId || senderId || tabId]: { $auto: {
+            fresh: { $set: true },
+        } },
     };
     return update(state, settings);
 };
 
 const removeTabStatus = (state, action) => {
-    const { tabId } = action;
+    const { tabIds } = action;
     const settings = {
-        $unset: [tabId],
+        $bulk: tabIds.map(tabId => ({ $unset: [tabId] })),
     };
-    return update(state, settings);
+    const newState = update(state, settings);
+
+    // mark all as unfresh
+    const tabIdsToAlter = Object.keys(newState);
+    const newSettings = {
+        $bulk: tabIdsToAlter.map(tabId => ({ [tabId]: { fresh: { $set: false } } })),
+    };
+    return update(newState, newSettings);
 };
 
 export const tabStatusReducers = {
     [SET_TAB_STATUS]: setTabStatus,
     [REMOVE_TAB_STATUS]: removeTabStatus,
+    [SET_TAB_TIME]: setTabTime,
 };
 
 export default createReducerWithMap(tabStatusReducers, {});

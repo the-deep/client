@@ -2,7 +2,28 @@ import { createSelector } from 'reselect';
 
 const emptyList = [];
 
-export const tabsByUrlSelector = ({ tabStatus }) => (
+/*
+const groupMapByValue = (obj, groupKeySelector, modifier) => Object.keys(obj).reduce(
+    (acc, key) => {
+        const entry = obj[key];
+        const groupKey = groupKeySelector(entry, key);
+        const newValue = modifier(entry);
+        if (!acc[groupKey]) {
+            return {
+                ...acc,
+                [groupKey]: [newValue],
+            };
+        }
+        return {
+            ...acc,
+            [groupKey]: [...acc[groupKey], newValue],
+        };
+    },
+    {},
+);
+*/
+
+const tabsByUrlSelector = ({ tabStatus }) => (
     Object.keys(tabStatus).reduce((acc, tabId) => {
         const tab = tabStatus[tabId];
         const urls = { ...acc };
@@ -15,8 +36,9 @@ export const tabsByUrlSelector = ({ tabStatus }) => (
     }, {})
 );
 
-export const currentUrlSelector = (state, { match }) => match.url;
+const currentUrlSelector = (state, { match }) => match.url;
 
+// eslint-disable-next-line import/prefer-default-export
 export const tabsByCurrentUrlSelector = createSelector(
     tabsByUrlSelector,
     currentUrlSelector,

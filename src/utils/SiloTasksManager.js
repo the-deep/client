@@ -5,7 +5,7 @@ import AbstractTask from './AbstractTask';
 export default class SiloTasksManager {
     constructor(uniqueId) {
         this.locker = undefined;
-        this.lockId = `silo-tasks-${uniqueId}`;
+        this.lockId = `silotasks-${uniqueId}`;
         this.tasks = [
             // List of tasks that need to be run only by one instance
             // of SiloTasksManager
