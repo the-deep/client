@@ -14,7 +14,14 @@
 
         .heading {
             flex-grow: 1;
-            margin: 0;
+        }
+
+        .loading-animation {
+            position: initial;
+            flex-shrink: 0;
+            padding: 0;
+            width: auto;
+            height: auto;
         }
     }
 

@@ -232,5 +232,13 @@ const initialDomainDataState = {
         //     title: 'Abc def',
         // },
     },
+
+    notifications: {
+        count: {
+            total: 1,
+            unseen: 1,
+        },
+        items: [],
+    },
 };
 export default initialDomainDataState;

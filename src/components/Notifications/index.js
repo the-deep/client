@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 import ListView from '#rscv/List/ListView';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -10,6 +11,13 @@ import {
     RequestClient,
     requestMethods,
 } from '#request';
+
+import {
+    setNotificationsAction,
+    updateNotificationAction,
+    notificationItemsSelector,
+    notificationsCountSelector,
+} from '#redux';
 
 import _ts from '#ts';
 
@@ -24,6 +32,7 @@ const propTypes = {
     notificationsGetRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     projectJoinApproveRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     projectJoinRejectRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    notifications: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -31,21 +40,60 @@ const defaultProps = {
     notificationsGetRequest: {},
     projectJoinApproveRequest: {},
     projectJoinRejectRequest: {},
+    notifications: [],
 };
+
+const NOTIFICATION_STATUS_UNSEEN = 'unseen';
+const NOTIFICATION_STATUS_SEEN = 'seen';
 
 const requests = {
     notificationsGetRequest: {
         url: '/notifications/',
         method: requestMethods.GET,
         onMount: true,
-        isUnique: true,
-        onSuccess: ({ props: { onRequestSuccess } }) => {
-            if (onRequestSuccess) {
-                onRequestSuccess();
+        onPropsChanged: {
+            notificationsCount: ({
+                props: {
+                    notificationsCount: {
+                        unseen: unseenNotificationsCount,
+                    },
+                },
+            }) => unseenNotificationsCount > 0,
+        },
+        onSuccess: ({
+            props: {
+                setNotifications,
+                updateNotificationStatus,
+            },
+            response: { results },
+        }) => {
+            setNotifications({ notifications: results });
+            const unseenNotifications = results.filter(
+                d => d.status === NOTIFICATION_STATUS_UNSEEN,
+            );
+
+            if (unseenNotifications.length > 0) {
+                const notificationStatusUpdateBody = unseenNotifications.map(
+                    d => ({
+                        id: d.id,
+                        status: NOTIFICATION_STATUS_SEEN,
+                    }),
+                );
+                updateNotificationStatus(notificationStatusUpdateBody);
             }
         },
     },
 };
+
+const mapStateToProps = state => ({
+    notificationsCount: notificationsCountSelector(state),
+    notifications: notificationItemsSelector(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+    setNotifications: params => dispatch(setNotificationsAction(params)),
+    updateNotification: params => dispatch(updateNotificationAction(params)),
+});
 
 const notificationItems = {
     project_join_request: ProjectJoinRequestItem,
@@ -69,7 +117,6 @@ NotificationItem.propTypes = {
     }).isRequired,
 };
 
-
 const NotificationEmpty = () => (
     <Message className={styles.emptyComponent} >
         {_ts('notifications', 'noNotificationsText')}
@@ -79,20 +126,26 @@ const NotificationEmpty = () => (
 const notificationKeySelector = n => n.id;
 const notificationItemRendererParams = (_, d) => ({ notification: d });
 
-const emptyObject = {};
-const emptyList = [];
-
 const requestsToListen = [
     'projectJoinApproveRequest',
     'projectJoinRejectRequest',
     'notificationsGetRequest',
 ];
 
+@connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
 @RequestClient(requests, requestsToListen)
 export default class Notifications extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static groupKeySelector = notification => (notification.data.status === 'pending' ? 'pending' : 'notPending');
+
+    static pendingToNumber = a => (a === 'pending' ? 1 : 0);
+
+    static groupComparator = (a, b) => (
+        Notifications.pendingToNumber(b) - Notifications.pendingToNumber(a)
+    )
 
     componentWillReceiveProps(nextProps) {
         // TODO: use request's onPropChange, once the feature gets implemented
@@ -113,14 +166,20 @@ export default class Notifications extends React.PureComponent {
         }
     }
 
+    groupRendererParams = (groupKey) => {
+        const pendingTitle = _ts('notifications', 'pendingHeaderTitle');
+        const otherTitle = _ts('notifications', 'otherHeaderTitle');
+
+        const children = groupKey === 'pending' ? pendingTitle : otherTitle;
+        return { children };
+    }
+
     render() {
         const {
             className: classNameFromProps,
+            notifications,
             notificationsGetRequest: {
                 pending: notificationsPending,
-                response: {
-                    results: notifications = emptyList,
-                } = emptyObject,
             },
         } = this.props;
 
@@ -131,11 +190,16 @@ export default class Notifications extends React.PureComponent {
 
         return (
             <div className={className} >
-                {notificationsPending && <LoadingAnimation />}
                 <header className={styles.header} >
-                    <h4 className={styles.heading} >
+                    <h3 className={styles.heading} >
                         {_ts('notifications', 'notificationHeaderTitle')}
-                    </h4>
+                    </h3>
+                    { notificationsPending && (
+                        <LoadingAnimation
+                            small
+                            className={styles.loadingAnimation}
+                        />
+                    )}
                 </header>
                 <ListView
                     className={styles.content}
@@ -143,6 +207,9 @@ export default class Notifications extends React.PureComponent {
                     keySelector={notificationKeySelector}
                     renderer={NotificationItem}
                     rendererParams={notificationItemRendererParams}
+                    groupKeySelector={Notifications.groupKeySelector}
+                    groupRendererParams={this.groupRendererParams}
+                    groupComparator={Notifications.groupComparator}
                     emptyComponent={NotificationEmpty}
                 />
             </div>

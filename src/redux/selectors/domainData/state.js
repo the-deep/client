@@ -83,6 +83,10 @@ export const aryTemplatesSelector = ({ domainData }) => (
     domainData.aryTemplates || emptyObject
 );
 
+export const notificationsSelector = ({ domainData }) => (
+    domainData.notifications || emptyObject
+);
+
 // COMPLEX
 
 export const usersInformationListSelector = createSelector(
@@ -130,4 +134,14 @@ export const connectorSourcesListSelector = createSelector(
     c => Object.values(c).sort(
         (a = {}, b = {}) => compareString(a.title, b.title),
     ),
+);
+
+export const notificationItemsSelector = createSelector(
+    notificationsSelector,
+    notifications => notifications.items || emptyList,
+);
+
+export const notificationsCountSelector = createSelector(
+    notificationsSelector,
+    notifications => notifications.count || emptyObject,
 );

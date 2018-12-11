@@ -12,6 +12,7 @@ export * from './reducers/lang';
 export * from './reducers/auth';
 export * from './reducers/notify';
 export * from './reducers/route';
+
 export * from './reducers/siloDomainData/common';
 export * from './reducers/siloDomainData/discoverProjects';
 export * from './reducers/siloDomainData/leads';
@@ -24,7 +25,6 @@ export * from './reducers/siloDomainData/assessmentRegistry';
 export * from './reducers/siloDomainData/editAry';
 export * from './reducers/siloDomainData/galleryFiles';
 export * from './reducers/siloDomainData/visualization';
-export * from './reducers/siloDomainData/notifications';
 export * from './reducers/siloDomainData/regions';
 export * from './reducers/siloDomainData/connectors';
 export * from './reducers/siloDomainData/stringManagement';
@@ -33,6 +33,7 @@ export * from './reducers/siloDomainData/clusterViz';
 export * from './reducers/siloDomainData/users';
 export * from './reducers/siloDomainData/usergroups';
 export * from './reducers/siloDomainData/projects';
+
 export * from './reducers/domainData/analysisFrameworks';
 export * from './reducers/domainData/leadFilter';
 export * from './reducers/domainData/entryFilter';
@@ -45,3 +46,4 @@ export * from './reducers/domainData/categoryEditors';
 export * from './reducers/domainData/assessmentRegistry';
 export * from './reducers/domainData/pagesInfo';
 export * from './reducers/domainData/connectors';
+export * from './reducers/domainData/notifications';

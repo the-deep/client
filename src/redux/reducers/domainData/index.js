@@ -13,6 +13,7 @@ import userExportsReducers from './userExports';
 import connectorReducers from './connectors';
 import commonReducers from './common';
 import pagesInfo from './pagesInfo';
+import notifications from './notifications';
 
 import initialDomainData from '../../initial-state/domainData';
 
@@ -30,6 +31,7 @@ const reducers = {
     ...commonReducers,
     ...connectorReducers,
     ...pagesInfo,
+    ...notifications,
 };
 
 const reducer = createReducerWithMap(reducers, initialDomainData);

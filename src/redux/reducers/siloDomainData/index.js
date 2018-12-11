@@ -14,7 +14,6 @@ import visualizationReducers from './visualization';
 import editAryReducers from './editAry';
 import regionsReducers from './regions';
 import connectorsReducers from './connectors';
-import notificationsReducers from './notifications';
 import stringManagement from './stringManagement';
 import leadGroupsReducers from './leadGroups';
 import clusterVizReducers from './clusterViz';
@@ -38,7 +37,6 @@ const reducers = {
     ...editAryReducers,
     ...regionsReducers,
     ...connectorsReducers,
-    ...notificationsReducers,
     ...stringManagement,
     ...leadGroupsReducers,
     ...discoverProjectsReducers,
