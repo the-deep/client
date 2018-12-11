@@ -40,7 +40,7 @@ const mapDispatchToProps = dispatch => ({
     setEntries: params => dispatch(setEntriesForEditAryAction(params)),
 });
 
-const emptyObject = {};
+// const emptyObject = {};
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class EntriesListing extends React.PureComponent {
@@ -49,8 +49,9 @@ export default class EntriesListing extends React.PureComponent {
 
     static calcEntryKey = entry => entry.id;
 
-    // TODO: fix this method
+    /*
     static calcEntryWithSector = (entry) => {
+        console.warn(entry);
         const attr = entry.attributes.find(
             a => (a.widgetObj || emptyObject).widgetId === 'matrix2dWidget',
         );
@@ -74,6 +75,7 @@ export default class EntriesListing extends React.PureComponent {
             sectors: selectedSectors.map(s => s.title),
         };
     }
+    */
 
     constructor(props) {
         super(props);
@@ -130,10 +132,14 @@ export default class EntriesListing extends React.PureComponent {
             return entries;
         }
 
+        // TODO: filter entries when sector is selected
+        return entries;
+        /*
         const entriesWithSectors = entries.map(EntriesListing.calcEntryWithSector);
         return entriesWithSectors.filter(
             e => e.sectors.indexOf(activeSector) >= 0,
         );
+        */
     }
 
     renderEntryLabel = (entry) => {
