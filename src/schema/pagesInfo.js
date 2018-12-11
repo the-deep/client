@@ -7,7 +7,6 @@ const pageInfoSchema = [];
             name: 'Page Info',
             description: 'One of the main entities',
         },
-        extends: 'dbentity',
         fields: {
             id: { type: 'uint', required: true },
             title: { type: 'string', required: true },

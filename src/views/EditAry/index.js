@@ -105,7 +105,7 @@ const mapDispatchToProps = dispatch => ({
 
 const requests = {
     assessmentRequest: {
-        schema: 'aryGetRequest',
+        schema: 'aryGetResponse',
         url: ({ props: { activeLeadId, activeLeadGroupId } }) => (
             activeLeadId === undefined
                 ? `/lead-group-assessments/${activeLeadGroupId}`
