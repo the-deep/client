@@ -36,6 +36,7 @@ export default class LeadsRequest {
         const leadRequest = new FgRestBuilder()
             .url(urlForProjectLeads)
             .params(createParamsForGet)
+            .delay(0)
             .preLoad(() => {
                 this.setState({ loadingLeads: true });
             })
