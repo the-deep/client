@@ -7,11 +7,17 @@ import {
 } from 'react-router-dom';
 import { connect } from 'react-redux';
 
+import {
+    addClassName,
+    removeClassName,
+} from '#rsu/common';
+
 import ExclusivelyPublicRoute from '#rscg/ExclusivelyPublicRoute';
 import RouteSynchronizer from '#components/RouteSynchronizer';
 import PrivateRoute from '#rscg/PrivateRoute';
 import Toast from '#rscv/Toast';
 import { mapObjectToObject } from '#utils/common';
+import _ts from '#ts';
 
 import Navbar from '#components/Navbar';
 import {
@@ -24,6 +30,8 @@ import {
     authenticatedSelector,
     lastNotifySelector,
     notifyHideAction,
+    tabsByCurrentUrlSelector,
+    removeSelfTabStatusAction,
 } from '#redux';
 
 const ROUTE = {
@@ -38,14 +46,20 @@ const propTypes = {
     notifyHide: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, props) => ({
     authenticated: authenticatedSelector(state),
     lastNotify: lastNotifySelector(state),
+    tabsByCurrentUrl: tabsByCurrentUrlSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
     notifyHide: params => dispatch(notifyHideAction(params)),
+    removeSelfTabStatus: params => dispatch(removeSelfTabStatusAction(params)),
 });
+
+const Nagbar = ({ children }) => (
+    <div className="nagbar">{ children }</div>
+);
 
 const views = mapObjectToObject(
     routes,
@@ -64,6 +78,10 @@ const views = mapObjectToObject(
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Multiplexer extends React.PureComponent {
     static propTypes = propTypes;
+
+    componentDidMount() {
+        window.onunload = this.props.removeSelfTabStatus;
+    }
 
     handleToastClose = () => {
         const { notifyHide } = this.props;
@@ -120,7 +138,16 @@ export default class Multiplexer extends React.PureComponent {
     }
 
     render() {
-        const { lastNotify } = this.props;
+        const {
+            lastNotify,
+            tabsByCurrentUrl,
+        } = this.props;
+
+        if (tabsByCurrentUrl.length > 1) {
+            addClassName(document.body, 'nagbar-shown');
+        } else {
+            removeClassName(document.body, 'nagbar-shown');
+        }
 
         return (
             <Fragment>
@@ -134,6 +161,11 @@ export default class Multiplexer extends React.PureComponent {
                         { routesOrder.map(this.renderRoute) }
                     </Switch>
                 </div>
+                { tabsByCurrentUrl.length > 1 &&
+                    <Nagbar>
+                        {_ts('nagbar', 'duplicateWarningText')}
+                    </Nagbar>
+                }
             </Fragment>
         );
     }

@@ -48,6 +48,8 @@ $font-weight-heading: 500;
     }
 }
 
+$height-nagbar: 32px;
+
 body {
     margin: 0;
     padding: 0;
@@ -94,6 +96,28 @@ body {
         .no-nav + .deep-main-content {
             padding: 0;
             height: 100vh;
+        }
+
+        .nagbar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: $height-nagbar;
+            font-weight: $font-weight-bold;
+            @include background-color($color-warning);
+        }
+    }
+}
+
+:global {
+    .nagbar-shown {
+        .deep-main-content {
+            height: calc(100vh - #{$height-navbar} - #{$height-nagbar});
+        }
+
+        .no-nav + .deep-main-content {
+            padding: 0;
+            height: calc(100vh - #{$height-nagbar});
         }
     }
 }

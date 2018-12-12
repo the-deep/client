@@ -166,13 +166,19 @@ class RouteSynchronizer extends React.PureComponent {
 
     componentWillReceiveProps(nextProps) {
         if (
-            this.props.match !== nextProps.match ||
-            this.props.location !== nextProps.location
+            JSON.stringify(this.props.match) !== JSON.stringify(nextProps.match)
+            || JSON.stringify(this.props.location) !== JSON.stringify(nextProps.location)
         ) {
             this.props.setRouteParams({
                 match: nextProps.match,
                 location: nextProps.location,
             });
+        }
+
+        if (
+            this.props.match.url !== nextProps.match.url ||
+            this.props.match.path !== nextProps.match.path
+        ) {
             this.props.setTabStatus({
                 url: nextProps.match.url,
                 path: nextProps.match.path,
@@ -307,11 +313,6 @@ class RouteSynchronizer extends React.PureComponent {
                 {...viewsAcl[name]}
                 render={
                     <Fragment>
-                        { tabsByCurrentUrl.length > 1 &&
-                            <div>
-                                {_ts('nagbar', 'duplicateWarningText')}
-                            </div>
-                        }
                         <Page
                             name={name}
                             noProjectPermission={noProjectPermission}
