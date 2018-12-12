@@ -134,8 +134,8 @@ const userSchema = [];
             description: 'Response for GET /combined?apis=users,user-groups',
         },
         fields: {
-            users: { type: 'array.user', required: true },
-            'user-groups': { type: 'array.userGroup', required: true },
+            users: { type: 'usersGetResponse', required: false },
+            'user-groups': { type: 'userGroupsGetResponse', required: true },
         },
     };
     userSchema.push({ name, schema });
