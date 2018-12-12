@@ -126,4 +126,19 @@ const userSchema = [];
     };
     userSchema.push({ name, schema });
 }
+{
+    const name = 'userUserGroupSearchResponse';
+    const schema = {
+        doc: {
+            name: 'User/UserGroup Search response',
+            description: 'Response for GET /combined?apis=users,user-groups',
+        },
+        fields: {
+            users: { type: 'array.user', required: true },
+            'user-groups': { type: 'array.userGroup', required: true },
+        },
+    };
+    userSchema.push({ name, schema });
+}
+
 export default userSchema;

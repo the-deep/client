@@ -106,7 +106,8 @@ const SearchValueNotFound = () => {
 
 const requests = {
     userSearchRequest: {
-        url: '/users-user-groups/',
+        url: '/combined/',
+        schema: 'userUserGroupSearchResponse',
         onMount: ({ props: { searchInputValue } }) => {
             const searchText = searchInputValue.trim();
             // FIXME: anti-pattern
@@ -174,10 +175,17 @@ const requests = {
             },
         }) => ({
             search: searchInputValue.trim(),
-            project: projectId,
+            members_exclude_project: projectId, // To exclude members from current projects
+            apis: 'users,user-groups',
         }),
         onSuccess: ({ props: { onItemsPull }, response = {} }) => {
-            onItemsPull(response.results);
+            const users = response.users.results
+                .map(x => ({ ...x, type: 'user' }));
+
+            const userGroups = response['user-groups'].results
+                .map(x => ({ ...x, type: 'user_group' }));
+
+            onItemsPull([...users, ...userGroups]);
         },
     },
 };
