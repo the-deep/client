@@ -912,7 +912,11 @@
         "-77428696": "There are no word categories.",
         "-33861958": "Add word category",
         "-47892955": "Can't drop here!",
-        "-71778775": "{responderName} rejected join request of {requestorName} for the project {projectTitle}."
+        "-71778775": "{responderName} rejected join request of {requestorName} for the project {projectTitle}.",
+        "-11648576": "Invalid source",
+        "-64009123": "Convert to tabular",
+        "-20173783": "The same page is open in another tab.",
+        "-96507602": "Error while trying to reset password."
     },
     "links": {
         "browserExtension": {
@@ -1129,7 +1133,8 @@
             "errorTitle": -35038655,
             "saveButtonTitle": -49385196,
             "screenshotButtonTitle": -7205609,
-            "viewLinkTooltip": -2224039
+            "viewLinkTooltip": -2224039,
+            "convertTabular": -64009123
         },
         "components.internalGallery": {
             "loadingFileLabel": 1209,
@@ -1301,7 +1306,6 @@
             "summaryTabLabel": 7003,
             "scoreTabLabel": 7004,
             "noAryTemplateForProject": 144,
-            "geoOptionsFatalMessage": 534,
             "simplifiedTabLabel": 424,
             "assistedTabLabel": 517,
             "originalTabLabel": 518,
@@ -1309,7 +1313,6 @@
             "imagesTabLabel": 519,
             "entriesTabLabel": 15,
             "unrecognizedLeadMessage": 140,
-            "saveButtonLabel": 25,
             "saveButtonTitle": 25,
             "cancelButtonTitle": 61
         },
@@ -1640,7 +1643,8 @@
             "skipLabel": 15009,
             "headerRowLabel": 15010,
             "extractLabel": 15006,
-            "nextLabel": 23
+            "nextLabel": 23,
+            "invalid": -11648576
         },
         "register": {
             "checkYourEmailText": 818,
@@ -1665,7 +1669,7 @@
             "emailLabel": 184,
             "emailPlaceholder": 813,
             "retryRecaptcha": 894,
-            "passwordResetError": -84190220
+            "passwordResetError": -96507602
         },
         "login": {
             "welcomeToText": 803,
@@ -1729,7 +1733,6 @@
             "weeklySnapshot": 5569,
             "apiDocs": 5570,
             "userExports": 621,
-            "notifications": 1929,
             "fourHundredFour": 5571,
             "browserExtension": 2000,
             "stringManagement": 5572,
@@ -1784,7 +1787,9 @@
             "noWordCategoryText": -77428696,
             "addWordCategoryModalTitle": -33861958,
             "wordCategoryTitleInputTitle": 13,
-            "wordCategoryTitleInputPlaceholder": 369
+            "wordCategoryTitleInputPlaceholder": 369,
+            "confirmUseWordCategory": 365,
+            "confirmUseWordCategoryText": 373
         },
         "project.users": {
             "usersTitle": 1119,
@@ -1826,7 +1831,6 @@
             "searchProjectPlaceholder": 302,
             "addProjectModalTitle": 303,
             "noProjectText": 304,
-            "forbiddenText": 305,
             "tableHeaderName": 103,
             "modalCancel": 61,
             "modalUpdate": 323,
@@ -1876,8 +1880,13 @@
             "projectDeleteSuccess": 913,
             "projectDeleteFailure": 915,
             "projectDelete": -72636032,
-            "projectDeleteInfoText": -73810799,
-            "noProjectPermissionText": -48490028
+            "noProjectPermissionText": -48490028,
+            "addAfTitleLabel": 379,
+            "addAfTitlePlaceholder": 361,
+            "noAfText": 359,
+            "project": 31,
+            "afGetTitle": 379,
+            "afGetFatal": 991
         },
         "connector": {
             "noConnectorsLabel": 1115,
@@ -2058,7 +2067,6 @@
         "notifications.projectJoinRequest": {
             "message": 1930,
             "addButtonTitle": 301,
-            "addAsAdminButtonTitle": 1938,
             "rejectButtonTitle": 1937
         },
         "components.addProject": {
@@ -2352,10 +2360,10 @@
             "unnamedSubsectorLabel": -13931386,
             "removeSubsectorButtonTooltip": -24172161,
             "cancelConfirmMessage": -14675920,
-            "addDimensionsTitle": -96186123,
-            "addSectorsTitle": -63120597,
-            "addSubDimensionsTitle": -89164469,
-            "addSubSectorTitle": -11158375
+            "addDimensionsTitle": 789,
+            "addSectorsTitle": -43570294,
+            "addSubDimensionsTitle": 788,
+            "addSubSectorTitle": -59828541
         },
         "editEntry.list": {
             "noEntriesText": 543
@@ -2389,7 +2397,6 @@
             "listOfItemsHeader": -29582302,
             "modalTitle": -17297015,
             "optionsTypeSelectionLabel": 21,
-            "widgetSelectionLabel": -31256073,
             "rootNodeLabel": 5552,
             "addFromGeoLabel": -50186668,
             "cancelConfirmMessage": -14675920,
@@ -2405,7 +2412,8 @@
             "title": 15000,
             "deleteMessage": 15001,
             "deleteButtonTooltip": -94736495,
-            "resetSortTitle": 15008
+            "resetSortTitle": 15008,
+            "invalid": -11648576
         },
         "tabular.editField": {
             "title": 15002,
@@ -2494,6 +2502,9 @@
             "andSeperator": -83131348,
             "no_leads": -75360665,
             "no_entries": -30036120
+        },
+        "nagbar": {
+            "duplicateWarningText": -20173783
         }
     }
 }
