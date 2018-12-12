@@ -104,8 +104,7 @@ export default class App extends React.PureComponent {
             this.refreshRequest.stop();
         }
 
-        const { /* stopRefresh, */stopSiloTasks } = this.props;
-        // stopRefresh();
+        const { stopSiloTasks } = this.props;
         stopSiloTasks();
     }
 

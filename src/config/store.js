@@ -4,7 +4,9 @@ import {
     createTransform,
 } from 'redux-persist';
 
-import { mapToMap } from '#rsu/common';
+import { mapToMap, randomString } from '#rsu/common';
+
+export const uniqueTabId = randomString(64);
 
 const migrations = {
     // NOTE: clear out domainData and siloDomainData only
@@ -44,11 +46,21 @@ const storeConfig = {
     migrate: createMigrate(migrations, { debug: !isBeta }),
 };
 
+
+// Note: these are not actually reducers but the prefixes in the
+// action types.
+// It might be better to rename this to actionsToSync
 export const reducersToSync = [
     'lang',
     'auth',
     'domainData',
-    'siloBgTasks', // Middleware
+    'tabStatus',
+];
+
+export const actionsToSkipLogging = [
+    'tabStatus/SET_TAB_TIME',
+    'tabStatus/REMOVE_TAB_STATUS',
+    'tabStatus/SET_TAB_STATUS',
 ];
 
 export default storeConfig;

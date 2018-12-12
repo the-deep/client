@@ -24,6 +24,8 @@ import {
     setActiveCountryAction,
     setRouteParamsAction,
     activeProjectRoleSelector,
+    tabsByCurrentUrlSelector,
+    setTabStatusAction,
 } from '#redux';
 import _ts from '#ts';
 
@@ -99,6 +101,7 @@ const propTypes = {
     activeProjectId: PropTypes.number,
     activeCountryId: PropTypes.number,
     setRouteParams: PropTypes.func.isRequired,
+    setTabStatus: PropTypes.func.isRequired,
 
     name: PropTypes.string.isRequired,
     path: PropTypes.string,
@@ -113,16 +116,18 @@ const defaultProps = {
     path: '',
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, props) => ({
     projectRole: activeProjectRoleSelector(state),
     activeProjectId: activeProjectIdFromStateSelector(state),
     activeCountryId: activeCountryIdFromStateSelector(state),
+    tabsByCurrentUrl: tabsByCurrentUrlSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
     setActiveProject: params => dispatch(setActiveProjectAction(params)),
     setActiveCountry: params => dispatch(setActiveCountryAction(params)),
     setRouteParams: params => dispatch(setRouteParamsAction(params)),
+    setTabStatus: params => dispatch(setTabStatusAction(params)),
 });
 
 
@@ -134,11 +139,29 @@ class RouteSynchronizer extends React.PureComponent {
 
     constructor(props) {
         super(props);
-
         this.syncState(props);
+    }
 
-        const { match, location } = this.props;
-        this.props.setRouteParams({ match, location });
+    componentDidMount() {
+        const {
+            match,
+            location,
+            setTabStatus,
+            setRouteParams,
+        } = this.props;
+
+        setRouteParams({
+            match,
+            location,
+        });
+
+        // Done at DidMount and not constructor because we want
+        // to make sure that the silo tasks for setting tab status timestamp
+        // has been started at this point.
+        setTabStatus({
+            url: match.url,
+            path: match.path,
+        });
     }
 
     componentWillReceiveProps(nextProps) {
@@ -149,6 +172,10 @@ class RouteSynchronizer extends React.PureComponent {
             this.props.setRouteParams({
                 match: nextProps.match,
                 location: nextProps.location,
+            });
+            this.props.setTabStatus({
+                url: nextProps.match.url,
+                path: nextProps.match.path,
             });
         }
 
@@ -260,6 +287,7 @@ class RouteSynchronizer extends React.PureComponent {
             match, // eslint-disable-line no-unused-vars
             path,
             projectRole,
+            tabsByCurrentUrl,
             ...otherProps
         } = this.props;
 
@@ -271,18 +299,25 @@ class RouteSynchronizer extends React.PureComponent {
         const noProjectPermission = isParamRequired(path, 'projectId') && !setupPermissions.view;
 
         if (!viewsAcl[name]) {
-            console.warn('No access control for view', name);
+            console.error('No access control for view', name);
         }
 
         return (
             <Cloak
                 {...viewsAcl[name]}
                 render={
-                    <Page
-                        name={name}
-                        noProjectPermission={noProjectPermission}
-                        {...otherProps}
-                    />
+                    <Fragment>
+                        { tabsByCurrentUrl.length > 1 &&
+                            <div>
+                                {_ts('nagbar', 'duplicateWarningText')}
+                            </div>
+                        }
+                        <Page
+                            name={name}
+                            noProjectPermission={noProjectPermission}
+                            {...otherProps}
+                        />
+                    </Fragment>
                 }
                 renderOnHide={
                     <PageError noProjectPermission={noProjectPermission} />
