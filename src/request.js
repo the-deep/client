@@ -93,12 +93,10 @@ RequestClient.prop = PropTypes.shape({
 
 export const notifyOnFailure = title => ({
     error: {
-        errors: {
-            nonFieldErrors = [],
-        } = {},
+        body,
     } = {},
 }) => {
-    const message = nonFieldErrors.join(' ');
+    const message = body.$internal.join(' ');
 
     notify.send({
         title,
