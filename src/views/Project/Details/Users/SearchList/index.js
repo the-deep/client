@@ -43,12 +43,14 @@ const propTypes = {
     onItemsPull: PropTypes.func.isRequired,
     userSearchRequest: RequestPropType.isRequired,
     readOnly: PropTypes.bool,
+    setDefaultRequestParams: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
     readOnly: false,
     searchItems: [],
+    setDefaultRequestParams: () => {},
 };
 
 const MIN_SEARCH_TEXT_CHARACTERS = 1;
@@ -106,7 +108,8 @@ const SearchValueNotFound = () => {
 
 const requests = {
     userSearchRequest: {
-        url: '/users-user-groups/',
+        url: '/combined/',
+        schema: 'userUserGroupSearchResponse',
         onMount: ({ props: { searchInputValue } }) => {
             const searchText = searchInputValue.trim();
             // FIXME: anti-pattern
@@ -174,10 +177,23 @@ const requests = {
             },
         }) => ({
             search: searchInputValue.trim(),
-            project: projectId,
+            members_exclude_project: projectId, // To exclude members from current projects
+            apis: 'users,user-groups',
         }),
         onSuccess: ({ props: { onItemsPull }, response = {} }) => {
-            onItemsPull(response.results);
+            const users = response.users.results
+                .map(x => ({ ...x, type: 'user' }));
+
+            const userGroups = response['user-groups'].results
+                .map(x => ({ ...x, type: 'user_group' }));
+
+            onItemsPull([...users, ...userGroups]);
+        },
+        onFailure: ({ params, error: { body } }) => {
+            params.setSearchError(body.$internal.join(' '));
+        },
+        onFatal: ({ params, error: { errorMessage } }) => {
+            params.setSearchError(errorMessage);
         },
     },
 };
@@ -195,6 +211,27 @@ export default class SearchList extends React.PureComponent {
 
     static searchItemKeySelector = d => `${d.type}-${d.id}`;
     static groupKeySelector = d => d.type;
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            searchError: undefined,
+        };
+        this.props.setDefaultRequestParams({
+            setSearchError: val => this.setState({ searchError: val }),
+        });
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { searchInputValue: newSearchInputValue } = nextProps;
+        const { searchInputValue } = this.props;
+        // This must be done manually as request is not called when searchInputvalue's
+        // length is 0
+        if (searchInputValue && searchInputValue !== newSearchInputValue && !newSearchInputValue) {
+            this.setState({ searchError: undefined });
+            this.props.userSearchRequest.abort();
+        }
+    }
 
     searchListItemRendererParams = (key, {
         title: usergroupTitle,
@@ -266,6 +303,9 @@ export default class SearchList extends React.PureComponent {
             onSearchInputChange,
             readOnly,
         } = this.props;
+        const {
+            searchError,
+        } = this.state;
 
         const { pending: userSearchPending } = userSearchRequest;
         const UserList = this.renderUserList;
@@ -290,13 +330,19 @@ export default class SearchList extends React.PureComponent {
                         disabled={readOnly}
                     />
                 </header>
-                <div className={styles.listContainer}>
-                    { userSearchPending ? (
-                        <LoadingAnimation />
-                    ) : (
-                        <UserList />
-                    )}
-                </div>
+                { searchError ? (
+                    <Message>
+                        {searchError}
+                    </Message>
+                ) : (
+                    <div className={styles.listContainer}>
+                        { userSearchPending ? (
+                            <LoadingAnimation />
+                        ) : (
+                            <UserList />
+                        )}
+                    </div>
+                )}
             </div>
         );
     }

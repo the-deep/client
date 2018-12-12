@@ -13,7 +13,6 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import { FaramListElement } from '#rscg/FaramElements';
 import NormalTable from '#rscv/Table';
 import { compareString } from '#rsu/common';
-import { getTrigramSimilarity } from '#rsu/similarity';
 
 import {
     setProjectUsergroupsAction,
@@ -29,7 +28,6 @@ import styles from './styles.scss';
 // Should be fixed in server as well
 
 const Table = FaramListElement(NormalTable);
-const emptyObject = {};
 
 const propTypes = {
     className: PropTypes.string,
@@ -123,12 +121,14 @@ export default class ProjectUsergroupList extends React.PureComponent {
     }
 
     filterGroups = memoize((allMembers = [], searchValue) => {
+        const lowerSearchValue = searchValue.toLowerCase();
         if (searchValue === '') {
             return allMembers;
         }
 
         return allMembers.filter(
-            m => getTrigramSimilarity((m || emptyObject).title, searchValue) >= 0.1,
+            ({ title = '' } = {}) =>
+                title.toLowerCase().indexOf(lowerSearchValue) >= 0,
         );
     });
 
