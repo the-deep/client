@@ -537,11 +537,6 @@ export default class ClusterViz extends PureComponent {
                 ref={this.container}
                 className={className}
             >
-                {
-                    !failure &&
-                    loading &&
-                    <LoadingAnimation />
-                }
                 <header className={styles.header}>
                     <BackLink
                         defaultLink={reverseRoute(pathNames.leads, { projectId: activeProject })}
@@ -550,11 +545,12 @@ export default class ClusterViz extends PureComponent {
                         {_ts('clusterViz', 'clusterVizTitle')}
                     </h2>
                 </header>
-                { failure && this.renderErrorMessage() }
                 {
-                    !failure &&
-                    <div className={styles.container}>
-                        <Fragment>
+                    failure ? (
+                        this.renderErrorMessage()
+                    ) : (
+                        <div className={styles.container}>
+                            { loading && <LoadingAnimation /> }
                             { /* eslint-disable-next-line max-len */ }
                             { /* eslint-disable-next-line jsx-a11y/mouse-events-have-key-events */ }
                             <ForceDirectedGraphView
@@ -578,8 +574,8 @@ export default class ClusterViz extends PureComponent {
                                 keySelector={ClusterViz.getTableKey}
                                 modifier={this.renderClusterDetail}
                             />
-                        </Fragment>
-                    </div>
+                        </div>
+                    )
                 }
             </div>
         );

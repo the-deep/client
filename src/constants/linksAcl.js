@@ -16,6 +16,8 @@ export const allLinks = {
     visualization: viewsAcl.visualization,
     adminPanel: viewsAcl.adminPanel,
 
+    leadsViz: viewsAcl.leadsViz,
+
     // TODO: do not disable if there is a 403 error inside
     projectSelect: {
         hide: ({ isLoggedIn }) => !isLoggedIn,

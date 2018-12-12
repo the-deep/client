@@ -18,7 +18,7 @@ import {
 } from '#rsu/common';
 
 import Cloak from '#components/Cloak';
-import { iconNames, pathNames } from '#constants/';
+import { iconNames, pathNames, viewsAcl } from '#constants/';
 import { leadTypeIconMap } from '#entities/lead';
 import {
     activeProjectIdFromStateSelector,
@@ -107,8 +107,6 @@ export default class Leads extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static leadKeyExtractor = lead => String(lead.id)
-
-    static shouldHideLeadCreateButton = ({ leadPermissions }) => !leadPermissions.create;
 
     constructor(props) {
         super(props);
@@ -448,7 +446,7 @@ export default class Leads extends React.PureComponent {
             <header className={styles.header}>
                 <FilterLeadsForm className={styles.filters} />
                 <Cloak
-                    hide={Leads.shouldHideLeadCreateButton}
+                    {...viewsAcl.addLeads}
                     render={
                         <Link
                             to={addLeadLink}
@@ -494,19 +492,18 @@ export default class Leads extends React.PureComponent {
                         {_ts('leads', 'showViz')}
                     </Link>
                     <Cloak
-                        hide={({ isBeta }) => isBeta}
+                        {...viewsAcl.leadsViz}
                         render={
                             <Link
                                 className={styles.link}
                                 to={showClusterVisualizationLink}
-                                replace
                             >
                                 {_ts('leads', 'showCluster')}
                             </Link>
                         }
                     />
                     <Cloak
-                        hide={({ hasAssessmentTemplate }) => !hasAssessmentTemplate}
+                        {...viewsAcl.leadGroups}
                         requireAssessmentTemplate
                         render={
                             <Link
