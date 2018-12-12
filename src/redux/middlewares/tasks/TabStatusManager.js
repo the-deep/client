@@ -19,6 +19,7 @@ export default class TabStatusManager extends AbstractTask {
     }
 
     start = () => {
+        this.clearInactiveTabs();
         this.listenerIntervalAnother = setInterval(this.handleInterval, REFRESH_TIME / PRECISION);
     }
 

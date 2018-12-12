@@ -9,7 +9,7 @@ $width-assignee-column: 96px;
     margin: -$spacing-small-alt;
     border: 0;
     background-color: transparent;
-    height: calc(100vh - #{$height-navbar});
+    height: calc(100% + #{$spacing-small-alt * 2});
 
     .header {
         @include background-color($color-background-header);

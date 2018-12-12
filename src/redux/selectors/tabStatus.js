@@ -43,7 +43,7 @@ const tabsByUrlSelector = ({ tabStatus }) => groupMapByValue(
     (tab, tabKey) => tabKey,
 );
 
-const currentUrlSelector = (state, { match }) => match.url;
+const currentUrlSelector = (state, { location: { pathname } }) => pathname;
 
 // eslint-disable-next-line import/prefer-default-export
 export const tabsByCurrentUrlSelector = createSelector(

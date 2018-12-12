@@ -8,6 +8,7 @@ import { uniqueTabId } from '#config/store';
 export const SET_TAB_STATUS = 'tabStatus/SET_TAB_STATUS';
 export const SET_TAB_TIME = 'tabStatus/SET_TAB_TIME';
 export const REMOVE_TAB_STATUS = 'tabStatus/REMOVE_TAB_STATUS';
+export const REMOVE_SELF_TAB_STATUS = 'tabStatus/REMOVE_SELF_TAB_STATUS';
 
 
 // ACTION-CREATOR
@@ -25,6 +26,10 @@ export const setTabTimeAction = () => ({
     retransmit: true,
 });
 
+export const removeSelfTabStatusAction = () => ({
+    type: REMOVE_SELF_TAB_STATUS,
+    tabId: uniqueTabId,
+});
 
 export const removeTabStatusAction = ({ tabIds }) => ({
     type: REMOVE_TAB_STATUS,
@@ -72,10 +77,19 @@ const removeTabStatus = (state, action) => {
     return update(newState, newSettings);
 };
 
+const removeSelfTabStatus = (state, action) => {
+    const { tabId } = action;
+    const settings = {
+        $unset: [tabId],
+    };
+    return update(state, settings);
+};
+
 export const tabStatusReducers = {
     [SET_TAB_STATUS]: setTabStatus,
     [REMOVE_TAB_STATUS]: removeTabStatus,
     [SET_TAB_TIME]: setTabTime,
+    [REMOVE_SELF_TAB_STATUS]: removeSelfTabStatus,
 };
 
 export default createReducerWithMap(tabStatusReducers, {});
