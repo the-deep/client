@@ -72,7 +72,10 @@ const CustomRequestCoordinator = createRequestCoordinator({
         return body;
     },
 
-    transformError: error => alterResponseErrorToFaramError(error),
+    transformErrors: ({ errors, ...otherProps }) => ({
+        ...otherProps,
+        body: alterResponseErrorToFaramError(errors),
+    }),
 });
 
 export const RequestCoordinator = compose(
