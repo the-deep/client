@@ -137,6 +137,48 @@ const projectSchema = [];
     };
     projectSchema.push({ name, schema });
 }
+{
+    const name = 'sourcers';
+    const schema = {
+        doc: {
+            name: 'sourcers',
+            description: 'Top sourcers',
+        },
+        fields: {
+            id: { type: 'uint', required: true },
+            count: { type: 'uint', required: true },
+            name: { type: 'string', required: true },
+        },
+    };
+    projectSchema.push({ name, schema });
+}
+
+
+{
+    const name = 'projectDashboardGetResponse';
+    const schema = {
+        doc: {
+            name: 'Project Dashboard Get Response',
+            description: 'Response for GET /projects/{id}',
+        },
+        fields: {
+            topSourcers: { type: 'array.sourcers' },
+            topTaggers: { type: 'array.sourcers' },
+            createdBy: { type: 'string' },
+            createdAt: { type: 'string', required: true }, // date
+            regions: { type: 'array.object' },
+            activityLog: { type: 'array.object' },
+            numberOfUsers: { type: 'uint' },
+            numberOfLeads: { type: 'uint' },
+            numberOfEntries: { type: 'uint' },
+            entriesActivity: { type: 'array.timevalue' },
+            leadsActivity: { type: 'array.timevalue' },
+
+        },
+    };
+    projectSchema.push({ name, schema });
+}
+
 
 {
     const name = 'projectPutResponse';
