@@ -189,13 +189,6 @@ export default class ProjectDetails extends React.PureComponent {
                 ),
             },
         };
-
-        this.titles = {
-            general: _ts('project', 'generalDetailsLabel'),
-            regions: _ts('project', 'regionsLabel'),
-            frameworks: _ts('project', 'analysisFrameworkLabel'),
-            categoryEditors: _ts('project', 'categoryEditorLabel'),
-        };
     }
 
     handleProjectDelete = () => {

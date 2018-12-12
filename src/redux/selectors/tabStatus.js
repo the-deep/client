@@ -2,12 +2,15 @@ import { createSelector } from 'reselect';
 
 const emptyList = [];
 
-/*
 const groupMapByValue = (obj, groupKeySelector, modifier) => Object.keys(obj).reduce(
     (acc, key) => {
         const entry = obj[key];
         const groupKey = groupKeySelector(entry, key);
-        const newValue = modifier(entry);
+        const newValue = modifier(entry, key);
+        if (!groupKey) {
+            return acc;
+        }
+
         if (!acc[groupKey]) {
             return {
                 ...acc,
@@ -21,19 +24,23 @@ const groupMapByValue = (obj, groupKeySelector, modifier) => Object.keys(obj).re
     },
     {},
 );
-*/
 
-const tabsByUrlSelector = ({ tabStatus }) => (
-    Object.keys(tabStatus).reduce((acc, tabId) => {
-        const tab = tabStatus[tabId];
-        const urls = { ...acc };
-        if (!urls[tab.url]) {
-            urls[tab.url] = [tabId];
-        } else {
-            urls[tab.url].push(tabId);
+const tabsByUrlSelector = ({ tabStatus }) => groupMapByValue(
+    tabStatus,
+    (tab) => {
+        // NOTE: tab.url is undefined
+        // when tabStatus/SET_TIME is earier than tabStatus/SET_STATUS
+        if (!tab.url) {
+            return undefined;
         }
-        return urls;
-    }, {})
+        // removing everying after has in tab url
+        const indexOfHash = tab.url.indexOf('#');
+        if (indexOfHash !== -1) {
+            return tab.url.substring(0, indexOfHash);
+        }
+        return tab.url;
+    },
+    (tab, tabKey) => tabKey,
 );
 
 const currentUrlSelector = (state, { match }) => match.url;

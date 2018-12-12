@@ -24,11 +24,12 @@ export default class FrameworkListGetRequest extends Request {
         });
     }
 
-    handleFailure = () => {
+    handleFailure = (response) => {
+        const message = response.$internal.join(' ');
         notify.send({
             title: _ts('project', 'afGetTitle'),
             type: notify.type.ERROR,
-            message: _ts('project', 'afGetFailure'),
+            message,
             duration: notify.duration.MEDIUM,
         });
     }

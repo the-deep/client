@@ -309,7 +309,7 @@ class RouteSynchronizer extends React.PureComponent {
                     <Fragment>
                         { tabsByCurrentUrl.length > 1 &&
                             <div>
-                                I am duplicate
+                                {_ts('nagbar', 'duplicateWarningText')}
                             </div>
                         }
                         <Page

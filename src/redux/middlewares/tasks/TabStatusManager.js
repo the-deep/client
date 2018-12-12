@@ -5,9 +5,10 @@ import {
     removeTabStatusAction,
 } from '../../reducers/tabStatus';
 
-const REFRESH_TIME = 2000;
-// NOTE: must be natural number
+const REFRESH_TIME = 1000;
 const PRECISION = 4;
+
+// NOTE: REFRESH_TIME / PRECISION must be natural number
 
 export default class TabStatusManager extends AbstractTask {
     constructor(store) {
