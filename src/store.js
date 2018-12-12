@@ -30,7 +30,10 @@ const prepareStore = () => {
     const overrideCompose = process.env.NODE_ENV === 'development' && reduxExtensionCompose;
     const applicableComposer = !overrideCompose
         ? compose
-        : reduxExtensionCompose({ /* specify extention's options here */ });
+        : reduxExtensionCompose({
+            actionsBlacklist: actionsToSkipLogging,
+        /* specify extention's options here */
+        });
 
     const enhancer = applicableComposer(
         applyMiddleware(...middleware),

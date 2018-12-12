@@ -58,9 +58,9 @@ export const reducersToSync = [
 ];
 
 export const actionsToSkipLogging = [
-    // 'tabStatus/SET_TAB_TIME',
-    // 'tabStatus/REMOVE_TAB_STATUS',
-    // 'tabStatus/SET_TAB_STATUS',
+    'tabStatus/SET_TAB_TIME',
+    'tabStatus/REMOVE_TAB_STATUS',
+    'tabStatus/SET_TAB_STATUS',
 ];
 
 export default storeConfig;
