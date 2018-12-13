@@ -1,6 +1,7 @@
 @import '~base-scss/base';
 
 $spacing-drag-handle: 14px;
+$height-modal-body: 720px;
 
 .sortable-unit {
     border-top: $width-separator-thin solid $color-separator;
@@ -21,14 +22,18 @@ $spacing-drag-handle: 14px;
 
     .modal-body {
         display: flex;
+        flex-grow: 1;
         padding: 0;
-        height: 720px;
+        height: $height-modal-body;
+        max-height: 80vh;
 
         .left-container {
             display: flex;
             flex-basis: 30%;
             flex-direction: column;
+            flex-shrink: 0;
             border-right: $spacing-extra-small solid $color-separator;
+            height: 100%;
 
             .header {
                 display: flex;
@@ -48,6 +53,7 @@ $spacing-drag-handle: 14px;
             }
 
             .widget-list {
+                flex-grow: 1;
                 overflow-y: auto;
 
                 .group {

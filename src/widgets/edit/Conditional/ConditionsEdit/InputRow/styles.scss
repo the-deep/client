@@ -38,13 +38,17 @@
 
     .select-inputs {
         display: flex;
-        align-items: center;
+        align-items: flex-end;
         flex-wrap: wrap;
+
+        .condition-type-select {
+            margin-right: $spacing-small;
+            padding-bottom: $spacing-extra-small;
+        }
 
         .condition-attributes {
             display: flex;
-            flex-grow: 1;
-            padding-left: $spacing-small;
+            padding-bottom: $spacing-extra-small;
         }
     }
 }
