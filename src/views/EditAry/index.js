@@ -262,6 +262,8 @@ export default class EditAry extends React.PureComponent {
             value: {
                 ...value,
                 id: this.props.editAryServerId,
+                lead: this.props.activeLeadId,
+                leadGroup: this.props.activeLeadGroupId,
             },
         });
     };
