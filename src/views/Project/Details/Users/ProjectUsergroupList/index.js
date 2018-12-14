@@ -35,8 +35,8 @@ const propTypes = {
     usergroupListRequest: PropTypes.shape({
         pending: PropTypes.bool.isRequired,
     }).isRequired,
-    searchValueNotFound: PropTypes.func.isRequired,
-    noItemsFound: PropTypes.func.isRequired,
+    searchEmptyComponent: PropTypes.func.isRequired,
+    emptyComponent: PropTypes.func.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     setProjectUsergroups: PropTypes.func.isRequired,
     usergroups: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -140,8 +140,8 @@ export default class ProjectUsergroupList extends React.PureComponent {
             },
             usergroups,
             searchInputValue,
-            searchValueNotFound,
-            noItemsFound,
+            searchEmptyComponent,
+            emptyComponent: emptyComponentFromProps,
         } = this.props;
 
         const className = `
@@ -149,7 +149,7 @@ export default class ProjectUsergroupList extends React.PureComponent {
             ${styles.projectUsergroupList}
         `;
         const filteredGroups = this.filterGroups(usergroups, searchInputValue);
-        const emptyComponent = searchInputValue === '' ? noItemsFound : searchValueNotFound;
+        const emptyComponent = searchInputValue === '' ? emptyComponentFromProps : searchEmptyComponent;
 
         return (
             <div className={className}>
