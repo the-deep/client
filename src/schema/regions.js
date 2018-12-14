@@ -130,7 +130,7 @@ const regionSchema = [];
             description: 'Element for array GeoOptions',
         },
         fields: {
-            adminLevel: { type: 'uint', required: true },
+            adminLevel: { type: 'uint' },
             adminLevelTitle: { type: 'string', required: true },
             key: { type: 'string', required: true },
             label: { type: 'string' },
