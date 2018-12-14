@@ -111,6 +111,7 @@ export default class ConditionsInputRow extends React.PureComponent {
                         <SelectInput
                             hideClearButton
                             keySelector={ConditionsInputRow.conditionTypeKeySelector}
+                            className={styles.conditionTypeSelect}
                             labelSelector={ConditionsInputRow.conditionTypeLabelSelector}
                             options={this.conditionTypes}
                             label={_ts('widgets.editor.conditional', 'conditionTypeLabel')}
