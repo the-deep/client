@@ -4,6 +4,7 @@
     display: flex;
     position: relative;
     flex-direction: column;
+    overflow: auto;
 
     .header {
         flex-shrink: 0;
@@ -13,18 +14,21 @@
         }
     }
 
-    .table {
+    .table-wrapper {
         flex-grow: 1;
-        overflow-y: auto;
+        overflow: auto;
 
-        :global {
-            .header {
-                background-color: $color-foreground-alt;
-            }
+        .table {
+            :global {
+                .header {
+                    z-index: 1;
+                    background-color: $color-foreground-alt;
+                }
 
-            .row {
-                border-bottom: $width-separator-thin solid $color-separator;
-                background-color: transparent;
+                .row {
+                    border-bottom: $width-separator-thin solid $color-separator;
+                    background-color: transparent;
+                }
             }
         }
     }

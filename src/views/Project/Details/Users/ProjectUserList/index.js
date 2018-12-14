@@ -45,8 +45,8 @@ const propTypes = {
     memberships: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     projectRoleList: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     activeUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    searchValueNotFound: PropTypes.func.isRequired,
-    noItemsFound: PropTypes.func.isRequired,
+    searchEmptyComponent: PropTypes.func.isRequired,
+    emptyComponent: PropTypes.func.isRequired,
 
     // eslint-disable-next-line react/no-unused-prop-types
     usergroups: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -194,10 +194,10 @@ export default class ProjectUserList extends React.PureComponent {
         const {
             className: classNameFromProps,
             userListRequest,
-            searchValueNotFound,
+            searchEmptyComponent,
             memberships = {},
             searchInputValue,
-            noItemsFound,
+            emptyComponent: emptyComponentFromProps,
         } = this.props;
 
         const className = `
@@ -207,7 +207,7 @@ export default class ProjectUserList extends React.PureComponent {
 
         const { pending: pendingUserList } = userListRequest;
         const filteredMembers = this.filterMembers(memberships, searchInputValue);
-        const emptyComponent = searchInputValue === '' ? noItemsFound : searchValueNotFound;
+        const emptyComponent = searchInputValue === '' ? emptyComponentFromProps : searchEmptyComponent;
 
         return (
             <div className={className}>
@@ -216,17 +216,19 @@ export default class ProjectUserList extends React.PureComponent {
                         { _ts('project.users', 'usersTitle') }
                     </h4>
                 </header>
-                { pendingUserList ? (
-                    <LoadingAnimation />
-                ) : (
-                    <Table
-                        data={filteredMembers}
-                        className={styles.table}
-                        headers={this.headers}
-                        keySelector={userListKeySelector}
-                        emptyComponent={emptyComponent}
-                    />
-                )}
+                <div className={styles.tableWrapper}>
+                    { pendingUserList ? (
+                        <LoadingAnimation />
+                    ) : (
+                        <Table
+                            data={filteredMembers}
+                            className={styles.table}
+                            headers={this.headers}
+                            keySelector={userListKeySelector}
+                            emptyComponent={emptyComponent}
+                        />
+                    )}
+                </div>
             </div>
         );
     }

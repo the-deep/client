@@ -19,7 +19,7 @@ $width-region-list: 240px;
             flex-shrink: 0;
             flex-wrap: wrap;
             border-bottom: $width-separator-thin solid $color-separator;
-            padding: $spacing-small;
+            padding: $spacing-medium;
 
             .heading {
                 flex-grow: 1;
@@ -31,6 +31,7 @@ $width-region-list: 240px;
 
             .region-search-input {
                 flex-basis: 100%;
+                margin-top: $spacing-small;
             }
         }
 

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { projectIdFromRoute } from '#redux';
+import Message from '#rscv/Message';
 
 import { RequestCoordinator } from '#request';
 import update from '#rsu/immutable-update';
@@ -30,24 +31,24 @@ const mapStateToProps = (state, props) => ({
     projectId: projectIdFromRoute(state, props),
 });
 
-const searchValueNotFound = () => (
-    <div className={styles.noSearch}>
+const SearchEmpty = () => (
+    <Message className={styles.emptySearch}>
         <img
             className={styles.image}
             src={noSearch}
             alt=""
         />
-    </div>
+    </Message>
 );
 
-const noItems = () => (
-    <div className={styles.noSearch}>
+const Empty = () => (
+    <Message className={styles.emptyList}>
         <img
             className={styles.image}
             src={noItemsIcon}
             alt=""
         />
-    </div>
+    </Message>
 );
 
 @connect(mapStateToProps)
@@ -112,16 +113,16 @@ export default class Users extends React.PureComponent {
                         projectId={projectId}
                         readOnly={readOnly}
                         searchInputValue={searchInputValue}
-                        searchValueNotFound={searchValueNotFound}
-                        noItemsFound={noItems}
+                        searchEmptyComponent={SearchEmpty}
+                        emptyComponent={Empty}
                     />
                     <ProjectUsergroupList
                         className={styles.usergroupList}
                         projectId={projectId}
                         readOnly={readOnly}
                         searchInputValue={searchInputValue}
-                        searchValueNotFound={searchValueNotFound}
-                        noItemsFound={noItems}
+                        searchEmptyComponent={SearchEmpty}
+                        emptyComponent={Empty}
                     />
                 </div>
             </div>

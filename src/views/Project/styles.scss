@@ -1,16 +1,19 @@
 @import '~base-scss/base';
 
-$width-project-bar: 300px;
+$width-project-bar: 280px;
 
 .project-panel {
     display: flex;
     height: 100%;
 
+    $page-margin: $spacing-small-alt;
+
     .sidebar {
         @include background-color($color-foreground);
         flex-basis: $width-project-bar;
+        flex-grow: 0;
         flex-shrink: 0;
-        margin: -$spacing-small $spacing-small (-$spacing-small) (-$spacing-small);
+        margin: -$page-margin $page-margin (-$page-margin) (-$page-margin);
         border-right: $width-separator-thin solid $color-separator-alt;
     }
 

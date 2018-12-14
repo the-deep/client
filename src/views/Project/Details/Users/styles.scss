@@ -2,52 +2,53 @@
 
 $width-search-list: 240px;
 
-.no-search {
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
-    justify-content: center;
-    border-top: $width-separator-thin solid $color-separator;
-    color: $color-text-disabled;
-
-    .image {
-        opacity: 0.3;
-        width: $width-icon-super-large;
-        height: $width-icon-super-large;
-    }
-}
-
 .users {
     display: flex;
     position: relative;
     flex-grow: 1;
     background-color: $color-foreground;
+    overflow: auto;
 
     .search-list {
         flex-basis: $width-search-list;
         flex-shrink: 0;
         border-right: $width-separator-thin solid $color-separator;
+
     }
 
     .details {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
+        overflow: auto;
 
         %list-base {
             flex-basis: 50%;
             flex-grow: 0;
             flex-shrink: 0;
-            overflow: auto;
+
+            .empty-search,
+            .empty-list {
+                color: $color-text-disabled;
+
+                .image {
+                    opacity: 0.3;
+                    width: $width-icon-super-large;
+                    height: $width-icon-super-large;
+                }
+            }
+
         }
 
         .user-list {
             @extend %list-base;
+            overflow: auto;
         }
 
         .usergroup-list {
             @extend %list-base;
             border-top: $width-separator-thin solid $color-separator;
+            overflow: auto;
         }
     }
 }
