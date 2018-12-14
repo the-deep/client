@@ -64,4 +64,6 @@ export const actionsToSkipLogging = [
     'tabStatus/REMOVE_SELF_TAB_STATUS',
 ];
 
+export const reduxExtensionEnvs = ['nightly', 'alpha'];
+
 export default storeConfig;

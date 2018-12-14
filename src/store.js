@@ -11,7 +11,12 @@ import {
 import { createActionSyncMiddleware } from '#rsu/redux-sync';
 
 import reducer from '#redux/reducers';
-import { reducersToSync, actionsToSkipLogging, uniqueTabId } from '#config/store';
+import {
+    reducersToSync,
+    actionsToSkipLogging,
+    uniqueTabId,
+    reduxExtensionEnvs,
+} from '#config/store';
 
 const prepareStore = () => {
     // Invoke refresh access token every 10m
@@ -27,7 +32,10 @@ const prepareStore = () => {
     const reduxExtensionCompose = typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
 
     // Override compose if development mode and redux extension is installed
-    const overrideCompose = process.env.NODE_ENV === 'development' && reduxExtensionCompose;
+    const overrideCompose = reduxExtensionCompose && (
+        process.env.NODE_ENV === 'development' ||
+        reduxExtensionEnvs.includes(process.env.REACT_APP_DEEP_ENVIRONMENT)
+    );
     const applicableComposer = !overrideCompose
         ? compose
         : reduxExtensionCompose({
