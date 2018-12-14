@@ -1,27 +1,26 @@
 @import '~base-scss/base';
 
-$width-min-inputs-container: 320px;
-$width-dashboard: 760px;
-$width-min-dashboard: 480px;
-$width-delete-button: 196px;
+$width-inputs-container: 280px;
+$width-activity-log: 240px;
+$width-dashboard-min: 480px;
 
 .general {
     display: flex;
     position: relative;
     flex-grow: 1;
     background-color: $color-foreground-light;
-    overflow-y: auto;
+    overflow: auto;
 
     .form {
         display: flex;
-        flex-basis: calc(calc(100% - #{$width-dashboard}) / 2);
+        flex-basis: $width-inputs-container;
         flex-direction: column;
+        flex-grow: 0;
+        flex-shrink: 0;
         justify-content: space-between;
-        overflow: hidden;
+        overflow: auto;
 
         .inputs-container {
-            min-width: $width-min-inputs-container;
-
             .header {
                 display: flex;
                 flex-shrink: 0;
@@ -61,14 +60,17 @@ $width-delete-button: 196px;
 
     .dashboard {
         display: flex;
-        width: $width-dashboard;
+        flex-basis: $width-dashboard-min;
+        flex-grow: 1;
         border-right: $width-separator-thin solid $color-separator;
         border-left: $width-separator-thin solid $color-separator;
-        min-width: $width-min-dashboard;
+        overflow: auto;
     }
 
     .activity-log {
         display: flex;
-        flex-basis: calc(calc(100% - #{$width-dashboard}) / 2);
+        flex-basis: $width-activity-log;
+        flex-grow: 0;
+        flex-shrink: 0;
     }
 }

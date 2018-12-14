@@ -73,6 +73,7 @@ export default class ProjectPanel extends React.PureComponent {
                             hide={ProjectPanel.shouldHideDetails}
                             render={
                                 <Details
+                                    key={projectId}
                                     className={styles.projectDetails}
                                     projectId={projectId}
                                     mainHistory={history}
