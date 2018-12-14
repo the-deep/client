@@ -17,6 +17,7 @@ export const allLinks = {
     adminPanel: viewsAcl.adminPanel,
 
     leadsViz: viewsAcl.leadsViz,
+    workshop: viewsAcl.workshop,
 
     // TODO: do not disable if there is a 403 error inside
     projectSelect: {

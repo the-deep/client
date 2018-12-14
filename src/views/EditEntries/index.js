@@ -678,7 +678,7 @@ export default class EditEntries extends React.PureComponent {
                         <SuccessButton
                             disabled={isSaveDisabled}
                             onClick={this.handleSave}
-                            pending={pendingEditEntryData}
+                            pending={pendingSaveAll}
                         >
                             { _ts('editEntry', 'saveButtonTitle') }
                         </SuccessButton>
