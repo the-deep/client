@@ -218,17 +218,17 @@ export default class NavDrop extends React.PureComponent {
                         }
                     />
                 </DropdownGroup>
-                <Link
+                <a
+                    className={styles.dropdownItem}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={styles.dropdownItem}
-                    to="https://chrome.google.com/webstore/detail/deep-2-add-lead/kafonkgglonkbldmcigbdojiadfcmcdc"
+                    href="https://chrome.google.com/webstore/detail/deep-2-add-lead/kafonkgglonkbldmcigbdojiadfcmcdc"
                 >
                     <span className={`${styles.icon} ${iconNames.chrome}`} />
                     <span className={styles.label}>
                         { _ts('pageTitle', 'browserExtension') }
                     </span>
-                </Link>
+                </a>
                 <Cloak
                     hide={({ isLoggedIn }) => !isLoggedIn}
                     render={
