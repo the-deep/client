@@ -113,7 +113,7 @@ export default class Leads extends React.PureComponent {
 
         this.headers = [
             {
-                key: 'attachmentMimeType',
+                key: 'attachment_mime_type',
                 label: _ts('leads', 'filterSourceType'),
                 order: 1,
                 sortable: false,
@@ -168,14 +168,16 @@ export default class Leads extends React.PureComponent {
                 label: _ts('leads', 'assignee'),
                 order: 6,
                 sortable: true,
-                modifier: ({ assigneeDetails: person }) => (
-                    <Link
-                        key={person.id}
-                        className={styles.assigneeLink}
-                        to={reverseRoute(pathNames.userProfile, { userId: person.id })}
-                    >
-                        {person.displayName}
-                    </Link>
+                modifier: ({ assignee, assigneeDetails }) => (
+                    assignee ? (
+                        <Link
+                            key={assignee}
+                            className={styles.assigneeLink}
+                            to={reverseRoute(pathNames.userProfile, { userId: assignee })}
+                        >
+                            {assigneeDetails.displayName}
+                        </Link>
+                    ) : null
                 ),
             },
             {
