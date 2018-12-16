@@ -77,7 +77,7 @@ export default class RegionMap extends React.PureComponent {
         }
     }
 
-    create(regionId) {
+    create = (regionId) => {
         this.geoJsonRequests.forEach(request => request.stop());
 
         if (!regionId) {
@@ -194,7 +194,7 @@ export default class RegionMap extends React.PureComponent {
         });
     }
 
-    loadLocations() {
+    loadLocations = () => {
         const { adminLevels, geoJsons } = this.state;
         let locations = [];
         adminLevels.forEach((adminLevel) => {
@@ -215,7 +215,7 @@ export default class RegionMap extends React.PureComponent {
         }
     }
 
-    loadGeoJsons() {
+    loadGeoJsons = () => {
         // FIXME: use coordinator
         const { adminLevels } = this.state;
         adminLevels.forEach((adminLevel) => {
@@ -299,10 +299,10 @@ export default class RegionMap extends React.PureComponent {
         this.create(this.props.regionId);
     }
 
-    renderContent() {
+    renderContent = () => {
         const {
             error,
-            adminLevels,
+            adminLevels = [],
             selectedAdminLevelId,
             geoJsons,
             geoJsonBounds,
@@ -317,59 +317,66 @@ export default class RegionMap extends React.PureComponent {
             );
         }
 
-        if (adminLevels && adminLevels.length > 0 && selectedAdminLevelId) {
-            const adminLevel = adminLevels.find(al => al.id === +selectedAdminLevelId);
-            const segmentButtonData = adminLevels.map(al => ({
-                label: al.title,
-                value: `${al.id}`,
-            }));
-
+        if (adminLevels.length === 0 || !selectedAdminLevelId) {
             return (
-                <div className={styles.mapContainer}>
-                    <Button
-                        className={styles.refreshButton}
-                        onClick={this.handleRefresh}
-                    >
-                        <span className={iconNames.refresh} />
-                    </Button>
-                    <GeoJsonMap
-                        selections={this.props.selections}
-                        className={styles.geoJsonMap}
-                        geoJson={geoJsons[selectedAdminLevelId]}
-                        geoJsonBounds={geoJsonBounds[selectedAdminLevelId]}
-                        onAreaClick={this.handleAreaClick}
-                        thickness={adminLevels.length - adminLevel.level}
-                        pending={adminLevelPending[selectedAdminLevelId]}
-                    />
-                    <div className={styles.bottomBar}>
-                        <SegmentInput
-                            name="admin-levels"
-                            options={segmentButtonData}
-                            value={selectedAdminLevelId}
-                            onChange={this.handleAdminLevelSelection}
-                            keySelector={RegionMap.adminLevelKeySelector}
-                            labelSelector={RegionMap.adminLevelLabelSelector}
-                            showHintAndError={false}
-                        />
-                    </div>
-                </div>
+                <Message>
+                    {_ts('components.regionMap', 'mapNotAvailable')}
+                </Message>
             );
         }
 
+        const adminLevel = adminLevels.find(al => al.id === +selectedAdminLevelId);
+        const segmentButtonData = adminLevels.map(al => ({
+            label: al.title,
+            value: `${al.id}`,
+        }));
+
         return (
-            <Message>
-                {_ts('components.regionMap', 'mapNotAvailable')}
-            </Message>
+            <div className={styles.mapContainer}>
+                <Button
+                    className={styles.refreshButton}
+                    onClick={this.handleRefresh}
+                >
+                    <span className={iconNames.refresh} />
+                </Button>
+                <GeoJsonMap
+                    selections={this.props.selections}
+                    className={styles.geoJsonMap}
+                    geoJson={geoJsons[selectedAdminLevelId]}
+                    geoJsonBounds={geoJsonBounds[selectedAdminLevelId]}
+                    onAreaClick={this.handleAreaClick}
+                    thickness={adminLevels.length - adminLevel.level}
+                    pending={adminLevelPending[selectedAdminLevelId]}
+                />
+                <div className={styles.bottomBar}>
+                    <SegmentInput
+                        name="admin-levels"
+                        options={segmentButtonData}
+                        value={selectedAdminLevelId}
+                        onChange={this.handleAdminLevelSelection}
+                        keySelector={RegionMap.adminLevelKeySelector}
+                        labelSelector={RegionMap.adminLevelLabelSelector}
+                        showHintAndError={false}
+                    />
+                </div>
+            </div>
         );
     }
 
     render() {
-        const { className } = this.props;
+        const { className: classNameFromProps } = this.props;
         const { pending } = this.state;
 
+        const className = `
+            ${classNameFromProps}
+            ${styles.regionMap}
+        `;
+
+        const Content = this.renderContent;
+
         return (
-            <div className={`${className} ${styles.regionMap}`}>
-                { pending ? <LoadingAnimation /> : this.renderContent() }
+            <div className={className}>
+                { pending ? <LoadingAnimation /> : <Content /> }
             </div>
         );
     }

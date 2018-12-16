@@ -2,9 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import {
-    countryDetailSelector,
-} from '#redux';
+import _cs from '#cs';
+import { countryDetailSelector } from '#redux';
 
 import RegionDetail from '#components/RegionDetail';
 import RegionAdminLevel from '#components/RegionAdminLevel';
@@ -31,12 +30,13 @@ export default class CountryGeneral extends React.PureComponent {
 
     render() {
         const {
+            className,
             countryDetail,
             dataLoading,
         } = this.props;
 
         return (
-            <div className={styles.countryGeneral}>
+            <div className={_cs(styles.countryGeneral, className)}>
                 <div className={styles.topContainer}>
                     <RegionMap
                         regionId={countryDetail.id}
