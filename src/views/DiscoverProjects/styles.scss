@@ -13,7 +13,7 @@ $page-margin: $spacing-small-alt;
     .header {
         @include background-color($color-background-header);
         display: flex;
-        align-items: baseline;
+        align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
         padding: $spacing-small;
