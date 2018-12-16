@@ -69,14 +69,16 @@ export default class LeftPanel extends React.PureComponent {
         }
 
         if (leadGroup) {
-            ({ leads } = leadGroup.leads);
+            ({ leads } = leadGroup);
         }
+
+        const firstLead = leads && leads.length > 0 && leads[0];
 
         this.state = {
             images: [],
             currentTab: undefined,
             leads,
-            currentLeadId: (leads[0] || {}).id,
+            currentLeadId: firstLead && firstLead.id,
         };
 
         this.leads = leads;
