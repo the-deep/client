@@ -39,6 +39,7 @@ $width-right-min: 800px;
         @extend %main-content;
         margin: $spacing-small;
         height: calc(100% - #{$height-header});
+        overflow: auto;
 
         &.active {
             display: block;

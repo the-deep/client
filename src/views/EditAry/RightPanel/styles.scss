@@ -6,6 +6,7 @@ $height-tabs: 32px;
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow: auto;
 
     .tabs {
         flex-shrink: 0;
