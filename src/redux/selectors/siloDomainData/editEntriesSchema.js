@@ -24,17 +24,21 @@ const getSchemaForWidget = (widget) => {
         }
         case 'dateRangeWidget': {
             return {
-                validation: ({ fromValue, toValue } = {}) => {
-                    const errors = [];
-                    if (fromValue && toValue && decodeDate(fromValue) > decodeDate(toValue)) {
-                        // FIXME: use strings
-                        errors.push('Invalid date range');
-                    }
-                    return errors;
-                },
                 fields: {
-                    fromValue: [dateCondition],
-                    toValue: [dateCondition],
+                    value: {
+                        fields: {
+                            from: [dateCondition],
+                            to: [dateCondition],
+                        },
+                        validation: ({ from, to } = {}) => {
+                            const errors = [];
+                            if (from && to && decodeDate(from) > decodeDate(to)) {
+                                // FIXME: use strings
+                                errors.push('Invalid date range');
+                            }
+                            return errors;
+                        },
+                    },
                 },
             };
         }
