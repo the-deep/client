@@ -253,6 +253,15 @@ export default class LeadFilter extends React.PureComponent {
         this.props.formCoordinator.start();
     }
 
+    handlePreviewHide = () => {
+        const {
+            setPreview,
+            hidePreview,
+        } = this.props;
+
+        setPreview(!hidePreview);
+    }
+
     render() {
         const {
             addLeadViewCanNext,
@@ -285,7 +294,7 @@ export default class LeadFilter extends React.PureComponent {
             <div className={styles.actionButtons}>
                 <Checkbox
                     value={!this.props.hidePreview}
-                    onChange={() => this.props.setPreview(!this.props.hidePreview)}
+                    onChange={this.handlePreviewHide}
                     label={_ts('addLeads.actions', 'showLeadPreviewLabel')}
                 />
                 <div className={styles.movementButtons}>
