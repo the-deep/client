@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import {
     widgetListingVisibility,
     widgetList,
@@ -13,6 +14,11 @@ import styles from './styles.scss';
 
 const propTypes = {
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    pending: PropTypes.bool,
+};
+
+const defaultProps = {
+    pending: false,
 };
 
 const listWidgets = widgetList.filter(
@@ -21,6 +27,7 @@ const listWidgets = widgetList.filter(
 
 export default class List extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     static layoutSelector = (widget) => {
         const { properties: { overviewGridLayout } = {} } = widget;
@@ -35,10 +42,12 @@ export default class List extends React.PureComponent {
                 id: analysisFrameworkId,
                 widgets,
             } = {},
+            pending,
         } = this.props;
 
         return (
             <div className={styles.list}>
+                { pending && <LoadingAnimation /> }
                 <div className={styles.gridLayoutWrapper}>
                     <WidgetEditor
                         widgets={widgets}

@@ -11,7 +11,17 @@
     }
 
     .content {
+        display: none;
         flex-grow: 1;
+        flex-direction: column;
+
+        &.active {
+            display: flex;
+        }
+
+        .view {
+            flex-grow: 1;
+        }
     }
 
     .delete-button {

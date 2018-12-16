@@ -124,12 +124,15 @@ export default class ProjectDetails extends React.PureComponent {
 
         this.views = {
             general: {
+                mount: true,
+                wrapContainer: true,
+                lazyLoad: true,
                 component: () => (
                     <Cloak
                         makeReadOnly={ProjectDetails.shouldDisableDetails}
                         render={
                             <General
-                                className={styles.content}
+                                className={styles.view}
                                 projectId={this.props.projectId}
                             />
                         }
@@ -137,12 +140,15 @@ export default class ProjectDetails extends React.PureComponent {
                 ),
             },
             users: {
+                mount: true,
+                lazyLoad: true,
+                wrapContainer: true,
                 component: () => (
                     <Cloak
                         makeReadOnly={ProjectDetails.shouldDisableDetails}
                         render={
                             <Users
-                                className={styles.content}
+                                className={styles.view}
                                 projectId={this.props.projectId}
                             />
                         }
@@ -150,12 +156,15 @@ export default class ProjectDetails extends React.PureComponent {
                 ),
             },
             regions: {
+                mount: true,
+                lazyLoad: true,
+                wrapContainer: true,
                 component: () => (
                     <Cloak
                         makeReadOnly={ProjectDetails.shouldDisableDetails}
                         render={
                             <Regions
-                                className={styles.content}
+                                className={styles.view}
                                 projectId={this.props.projectId}
                             />
                         }
@@ -163,12 +172,15 @@ export default class ProjectDetails extends React.PureComponent {
                 ),
             },
             frameworks: {
+                mount: true,
+                lazyLoad: true,
+                wrapContainer: true,
                 component: () => (
                     <Cloak
                         makeReadOnly={ProjectDetails.shouldDisableDetails}
                         render={
                             <Frameworks
-                                className={styles.content}
+                                className={styles.view}
                                 projectId={this.props.projectId}
                             />
                         }
@@ -176,12 +188,15 @@ export default class ProjectDetails extends React.PureComponent {
                 ),
             },
             categoryEditors: {
+                mount: true,
+                lazyLoad: true,
+                wrapContainer: true,
                 component: () => (
                     <Cloak
                         makeReadOnly={ProjectDetails.shouldDisableDetails}
                         render={
                             <WordCategories
-                                className={styles.content}
+                                className={styles.view}
                                 projectId={this.props.projectId}
                             />
                         }
@@ -243,6 +258,8 @@ export default class ProjectDetails extends React.PureComponent {
                 </FixedTabs>
                 <MultiViewContainer
                     useHash
+                    activeClassName={styles.active}
+                    containerClassName={styles.content}
                     views={this.views}
                 />
             </div>

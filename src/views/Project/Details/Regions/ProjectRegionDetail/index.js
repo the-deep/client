@@ -25,6 +25,7 @@ import {
     setRegionDetailsAction,
     setRegionDetailsErrorsAction,
 } from '#redux';
+import _cs from '#cs';
 import _ts from '#ts';
 
 import ProjectPatchRequest from '../../../requests/ProjectPatchRequest';
@@ -291,11 +292,9 @@ export default class ProjectRegionDetail extends React.PureComponent {
 
         const isEditable = regionDetail.public !== undefined && !regionDetail.public;
 
-        const classNames = [styles.content];
-
         if (isEditable) {
             return (
-                <div className={classNames.join(' ')}>
+                <div className={styles.content}>
                     <div className={styles.top}>
                         <RegionMap
                             className={styles.regionMap}
@@ -309,6 +308,7 @@ export default class ProjectRegionDetail extends React.PureComponent {
                         />
                     </div>
                     <RegionAdminLevel
+                        className={styles.regionAdminLevel}
                         countryId={countryId}
                         readOnly={readOnly}
                     />
@@ -316,9 +316,8 @@ export default class ProjectRegionDetail extends React.PureComponent {
             );
         }
 
-        classNames.push(styles.viewOnly);
         return (
-            <div className={classNames.join(' ')}>
+            <div className={_cs(styles.content, styles.viewOnly)}>
                 <RegionMap
                     className={styles.regionMap}
                     regionId={countryId}
@@ -339,6 +338,7 @@ export default class ProjectRegionDetail extends React.PureComponent {
         const Content = this.renderContent;
 
         const {
+            className: classNameFromProps,
             readOnly,
             regionDetail: {
                 faramErrors = {},
@@ -346,13 +346,18 @@ export default class ProjectRegionDetail extends React.PureComponent {
             },
         } = this.props;
 
+        const className = `
+            ${styles.regionDetailsContainer}
+            ${classNameFromProps}
+        `;
+
         const loading = projectPatchPending ||
             regionClonePending ||
             regionDetailPatchPending;
 
         return (
             <Faram
-                className={styles.regionDetailsContainer}
+                className={className}
                 onChange={this.handleFaramChange}
                 onValidationFailure={this.handleValidationFailure}
                 onValidationSuccess={this.handleValidationSuccess}

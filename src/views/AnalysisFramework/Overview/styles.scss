@@ -4,6 +4,7 @@ $height-header: 48px;
 
 .overview {
     display: flex;
+    position: relative;
     height: 100%;
 
     .widget-list {

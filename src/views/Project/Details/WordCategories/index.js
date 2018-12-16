@@ -13,6 +13,7 @@ import {
     setCategoryEditorsAction,
 } from '#redux';
 import _ts from '#ts';
+import _cs from '#cs';
 
 
 import WordCategoryListRequest from './requests/WordCategoryListGetRequest';
@@ -139,6 +140,7 @@ export default class ProjectCategoryEditor extends React.PureComponent {
                 categoryEditor: selectedWordCategoryId,
             },
             readOnly,
+            className,
         } = this.props;
 
         requestForWordCategoryList(projectId, this.wordCategoryListRequest);
@@ -152,7 +154,7 @@ export default class ProjectCategoryEditor extends React.PureComponent {
         const ActiveWordCategoryDetails = this.renderActiveWordCategoryDetails;
 
         return (
-            <div className={styles.wordCategories}>
+            <div className={_cs(className, styles.wordCategories)}>
                 <WordCategoryList
                     projectId={projectId}
                     className={styles.wordCategoryList}

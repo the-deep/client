@@ -19,6 +19,7 @@ import {
 } from '#redux';
 import { iconNames } from '#constants';
 import _ts from '#ts';
+import _cs from '#cs';
 import AddRegion from '#components/AddRegion';
 
 import AddExistingRegion from './AddExistingRegion';
@@ -217,15 +218,14 @@ export default class ProjectRegions extends React.PureComponent {
     }) => {
         if ((projectDetails.regions || emptyList).length > 0) {
             return (
-                <div className={styles.regionDetailsContainer}>
-                    <ProjectRegionDetail
-                        key={selectedRegion}
-                        countryId={selectedRegion}
-                        projectId={projectDetails.id}
-                        onRegionClone={this.handleRegionClone}
-                        readOnly={readOnly}
-                    />
-                </div>
+                <ProjectRegionDetail
+                    className={styles.regionDetailsContainer}
+                    key={selectedRegion}
+                    countryId={selectedRegion}
+                    projectId={projectDetails.id}
+                    onRegionClone={this.handleRegionClone}
+                    readOnly={readOnly}
+                />
             );
         }
 
@@ -347,6 +347,7 @@ export default class ProjectRegions extends React.PureComponent {
         const {
             projectDetails,
             readOnly,
+            className,
         } = this.props;
         const { selectedRegion } = this.state;
 
@@ -355,7 +356,7 @@ export default class ProjectRegions extends React.PureComponent {
         const AddRegionModal = this.renderAddRegionModal;
 
         return (
-            <div className={styles.projectRegions}>
+            <div className={_cs(className, styles.projectRegions)}>
                 <RegionList />
                 <RegionDetails
                     readOnly={readOnly}

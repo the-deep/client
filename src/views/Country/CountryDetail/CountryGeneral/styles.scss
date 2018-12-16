@@ -6,10 +6,13 @@ $region-detail-form-width: 320px;
     display: flex;
     position: relative;
     flex-direction: column;
+    height: 1px; // No idea why this is required
+    overflow: auto;
 
     .top-container {
         display: flex;
-        flex-grow: 1;
+        flex-basis: 60%;
+        flex-shrink: 0;
 
         .region-map {
             flex-grow: 1;

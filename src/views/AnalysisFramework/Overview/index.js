@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import Faram from '#rscg/Faram';
 import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
@@ -23,17 +24,18 @@ const overviewWidgets = widgetList.filter(
 
 const propTypes = {
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    pending: PropTypes.bool.isRequired,
     faramValues: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     faramErrors: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     faramSchema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     onChange: PropTypes.func.isRequired,
+    pending: PropTypes.bool,
 };
 
 const defaultProps = {
     faramValues: {},
     faramErrors: {},
     faramSchema: {},
+    pending: false,
 };
 
 export default class Overview extends React.PureComponent {
@@ -62,6 +64,7 @@ export default class Overview extends React.PureComponent {
 
         return (
             <div className={styles.overview}>
+                { pending && <LoadingAnimation /> }
                 <WidgetList
                     className={styles.widgetList}
                     widgets={overviewWidgets}

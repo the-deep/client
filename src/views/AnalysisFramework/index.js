@@ -136,6 +136,7 @@ export default class AnalysisFramework extends React.PureComponent {
                 component: List,
                 rendererParams: () => ({
                     analysisFramework: this.props.analysisFramework,
+                    pending: this.state.pendingSaveFramework,
                 }),
                 wrapContainer: true,
                 mount: true,
@@ -285,7 +286,7 @@ export default class AnalysisFramework extends React.PureComponent {
                         <DangerConfirmButton
                             confirmationMessage={_ts('framework', 'cancelConfirmDetail')}
                             onClick={this.handleCancel}
-                            disabled={pristine}
+                            disabled={pristine || pendingSaveFramework}
                         >
                             { _ts('framework', 'cancelButtonTitle') }
                         </DangerConfirmButton>

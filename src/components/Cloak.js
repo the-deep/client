@@ -117,8 +117,20 @@ export default class Cloak extends React.Component {
             return anotherChild;
         }
 
-        const disabled = disable && disable(params);
-        const readOnly = makeReadOnly && makeReadOnly(params);
-        return React.cloneElement(child, { disabled, readOnly });
+        // NOTE:
+        // Should only inject props for which prop to be injected is defined
+        const injectionProps = {};
+
+        const shouldBeDisabled = disable && disable(params);
+        if (shouldBeDisabled !== undefined) {
+            injectionProps.disabled = shouldBeDisabled || !!child.props.disabled;
+        }
+
+        const shouldBeReadonly = makeReadOnly && makeReadOnly(params);
+        if (shouldBeReadonly !== undefined) {
+            injectionProps.readOnly = shouldBeReadonly || !!child.props.readOnly;
+        }
+
+        return React.cloneElement(child, injectionProps);
     }
 }

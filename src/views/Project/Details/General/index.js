@@ -10,6 +10,8 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import DateInput from '#rsci/DateInput';
 import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
+import { decodeDate } from '#rsu/common';
+
 import ActivityLog from '#components/ActivityLog';
 
 import {
@@ -24,6 +26,7 @@ import {
     setProjectDetailsAction,
     changeProjectDetailsAction,
     setErrorProjectDetailsAction,
+    routeUrlSelector,
 } from '#redux';
 
 import Faram, {
@@ -45,6 +48,7 @@ const propTypes = {
     setErrorProjectDetails: PropTypes.func.isRequired,
     projectId: PropTypes.number.isRequired,
     readOnly: PropTypes.bool,
+    routeUrl: PropTypes.string.isRequired,
 
     // Requests Props
     // eslint-disable-next-line react/no-unused-prop-types
@@ -69,6 +73,7 @@ const mapStateToProps = state => ({
     activityLog: projectActivityLogSelector(state),
     projectLocalData: projectLocalDataSelector(state),
     projectServerData: projectServerDataSelector(state),
+    routeUrl: routeUrlSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -93,6 +98,14 @@ export default class ProjectDetailsGeneral extends PureComponent {
                 startDate: [dateCondition],
                 endDate: [dateCondition],
                 description: [],
+            },
+            validation: ({ startDate, endDate } = {}) => {
+                const errors = [];
+                if (startDate && endDate && decodeDate(startDate) > decodeDate(endDate)) {
+                    // FIXME: use strings
+                    errors.push('Start date must be before end date');
+                }
+                return errors;
             },
         };
     }
@@ -133,13 +146,15 @@ export default class ProjectDetailsGeneral extends PureComponent {
     renderUnsavedChangesPrompt = () => (
         <Prompt
             message={
-                () => {
-                    const {
-                        projectLocalData: {
-                            pristine,
-                        },
-                    } = this.props;
+                (location) => {
+                    const { routeUrl } = this.props;
+                    if (location.pathname === routeUrl) {
+                        return true;
+                    }
 
+                    const {
+                        projectLocalData: { pristine },
+                    } = this.props;
                     if (pristine) {
                         return true;
                     }

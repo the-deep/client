@@ -89,7 +89,7 @@ const entrySchema = [];
         },
         validator: (self, context) => {
             if (isFalsy(self.excerpt) && isFalsy(self.image) && isFalsy(self.dataSeries)) {
-                throw new RavlError('image or excerpt is required', context);
+                throw new RavlError('image or excerpt or dataSeries is required', context);
             }
         },
     };

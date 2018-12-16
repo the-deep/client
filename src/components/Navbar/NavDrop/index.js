@@ -230,6 +230,7 @@ export default class NavDrop extends React.PureComponent {
                     </span>
                 </a>
                 <Cloak
+                    // FIXME: no inline functions
                     hide={({ isLoggedIn }) => !isLoggedIn}
                     render={
                         <LogoutLink
