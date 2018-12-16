@@ -13,6 +13,7 @@ import {
     setAnalysisFrameworksAction,
 } from '#redux';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import FrameworkDetail from './FrameworkDetail';
 import styles from './styles.scss';
@@ -143,6 +144,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
             },
             projectId,
             readOnly,
+            className,
         } = this.props;
 
         requestForFrameworkList(projectId, this.frameworkListRequest);
@@ -156,7 +158,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
         const ActiveFrameworkDetails = this.renderActiveFrameworkDetails;
 
         return (
-            <div className={styles.projectAnalysisFramework}>
+            <div className={_cs(className, styles.projectAnalysisFramework)}>
                 <FrameworkList
                     className={styles.frameworkList}
                     onClick={this.handleFrameworkClick}

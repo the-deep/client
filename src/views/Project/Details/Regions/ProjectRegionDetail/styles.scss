@@ -1,10 +1,11 @@
 @import '~base-scss/base';
 
 $region-detail-form-width: 320px;
-$height-header: 39px;
 
 .region-details-container {
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
 
     >.header {
         @include background-color($color-background-header);
@@ -13,8 +14,7 @@ $height-header: 39px;
         flex-shrink: 0;
         justify-content: space-between;
         border-bottom: $width-separator-thin solid $color-separator;
-        padding: 0 $spacing-small;
-        height: $height-header;
+        padding: $spacing-small;
 
         .action-buttons {
             display: flex;
@@ -26,30 +26,42 @@ $height-header: 39px;
     }
 
     .content {
-        height: calc(100% - #{$height-header});
+        flex-grow: 1;
+        height: auto;
+        overflow: auto;
 
         &.view-only {
             position: relative;
 
             .region-map {
-                height: 100%;
+                height: auto;
             }
         }
 
         .top {
             display: flex;
-            height: 60%;
+            flex-basis: 60%;
+            flex-grow: 0;
+            flex-shrink: 0;
 
             .region-map {
                 flex-grow: 1;
-                height: 100%;
+                height: auto;
             }
 
             .region-detail-form {
                 @include background-color($color-foreground);
+                flex-basis: $region-detail-form-width;
+                flex-shrink: 0;
                 border-left: $width-separator-thin solid $color-separator;
-                width: $region-detail-form-width;
             }
+        }
+
+        .region-admin-level {
+            overflow: auto;
+            flex-basis: 40%;
+            flex-grow: 1;
+            flex-shrink: 0;
         }
     }
 }

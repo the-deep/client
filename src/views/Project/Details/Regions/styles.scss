@@ -5,11 +5,14 @@ $width-region-list: 240px;
 .project-regions {
     display: flex;
     flex-grow: 1;
+    overflow: auto;
 
     .region-list {
         display: flex;
         flex-basis: $width-region-list;
         flex-direction: column;
+        flex-grow: 0;
+        flex-shrink: 0;
         border-right: $width-separator-thin solid $color-separator-alt;
 
         >.header {
@@ -43,6 +46,9 @@ $width-region-list: 240px;
 
     .region-details-container {
         flex-basis: calc(100% - #{$width-region-list});
+        flex-grow: 0;
+        flex-shrink: 0;
+        overflow: auto;
     }
 
     .no-regions {
