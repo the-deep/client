@@ -480,14 +480,17 @@ export default class LeadFormItem extends React.PureComponent {
             ...otherProps
         } = this.props;
 
-        const type = leadAccessor.getType(lead);
-        const disableResize = type === LEAD_TYPE.text;
-
         const LeadPreview = this.renderLeadPreview;
         const AddLeadGroupModal = this.renderAddLeadGroupModal;
 
-        const { faramValues = {} } = lead;
-        const projectId = faramValues.project;
+        const {
+            faramValues: {
+                project: projectId,
+                sourceType,
+            } = {},
+        } = lead;
+        const type = leadAccessor.getType(lead);
+        const disableResize = type === LEAD_TYPE.text;
         const pending = isFormLoading || this.state.pendingExtraction;
 
         const className = `
@@ -497,7 +500,7 @@ export default class LeadFormItem extends React.PureComponent {
 
         const resizableClassName = `
             ${styles.resizable}
-            ${lead.faramValues.sourceType === 'text' ? styles.textLead : ''}
+            ${sourceType === 'text' ? styles.textLead : ''}
         `;
 
         return (
@@ -528,7 +531,7 @@ export default class LeadFormItem extends React.PureComponent {
                         </Fragment>
                     }
                     bottomChild={
-                        active && hidePreview && lead.faramValues.sourceType !== 'text' ? (
+                        active && !hidePreview && sourceType !== 'text' ? (
                             <LeadPreview
                                 lead={lead}
                                 className={styles.leadPreview}
