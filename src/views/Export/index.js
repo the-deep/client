@@ -445,7 +445,7 @@ export default class Export extends React.PureComponent {
                 />
                 <div className={styles.mainContent}>
                     <section className={styles.filters} >
-                        <div>
+                        <div className={styles.entryFilters}>
                             <h4 className={styles.heading}>
                                 {_ts('export', 'entryAttributesLabel')}
                             </h4>
@@ -462,7 +462,7 @@ export default class Export extends React.PureComponent {
                                 </h4>
                                 <FilterLeadsForm />
                             </div>
-                            <div className={styles.leads}>
+                            <div className={styles.leadsTableContainer}>
                                 { pendingLeads && <LoadingAnimation /> }
                                 <Table
                                     className={styles.leadsTable}
