@@ -45,12 +45,14 @@ export default class GooglePicker extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static isGoogleReady = () => (!!window.gapi)
-    static isGoogleAuthReady = () => !!(window.gapi && window.gapi.auth2)
-    static isGooglePickerReady = () => !!(window.google && window.google.picker)
+    static isGoogleReady = () => !!window.gapi
+    static isGoogleAuthReady = () => !!window.gapi && !!window.gapi.auth2
+    static isGooglePickerReady = () => !!window.google && !!window.google.picker
+
     static isReady = () => (
-        GooglePicker.isGoogleReady() &&
-        GooglePicker.isGoogleAuthReady() && GooglePicker.isGooglePickerReady()
+        GooglePicker.isGoogleReady()
+        && GooglePicker.isGoogleAuthReady()
+        && GooglePicker.isGooglePickerReady()
     )
 
     constructor(props) {
@@ -63,12 +65,9 @@ export default class GooglePicker extends React.Component {
         this.mounted = false;
     }
 
-    componentWillMount() {
-        this.pollForReadyState();
-    }
-
     componentDidMount() {
         this.mounted = true;
+        this.pollForReadyState();
     }
 
     componentWillUnmount() {
@@ -100,19 +99,6 @@ export default class GooglePicker extends React.Component {
             this.props.onAuthenticate(undefined);
         }
     }
-
-    pollForReadyState = () => {
-        if (!GooglePicker.isGoogleReady()) {
-            this.readyCheck = setTimeout(this.pollForReadyState, POLL_TIME);
-        }
-
-        // only call when api is loaded,
-        if (this.props.onApiLoad) {
-            this.props.onApiLoad();
-        }
-        window.gapi.load('auth2', this.onAuthApiLoad);
-        window.gapi.load('picker', this.onPickerApiLoad);
-    };
 
     handleChoose = () => {
         if (!GooglePicker.isReady()) {
@@ -182,6 +168,20 @@ export default class GooglePicker extends React.Component {
 
         return picker;
     }
+
+    pollForReadyState = () => {
+        if (!GooglePicker.isGoogleReady()) {
+            this.readyCheck = setTimeout(this.pollForReadyState, POLL_TIME);
+            return;
+        }
+
+        // only call when api is loaded,
+        if (this.props.onApiLoad) {
+            this.props.onApiLoad();
+        }
+        window.gapi.load('auth2', this.onAuthApiLoad);
+        window.gapi.load('picker', this.onPickerApiLoad);
+    };
 
     render() {
         const {
