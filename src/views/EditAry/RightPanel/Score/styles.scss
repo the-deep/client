@@ -40,6 +40,7 @@ $width-table: 320px;
     >.content {
         display: flex;
         flex-grow: 1;
+        overflow: auto;
 
         .right {
             overflow-y: auto;
