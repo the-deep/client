@@ -24,10 +24,6 @@
             text-transform: capitalize;
             text-decoration: underline;
             color: $color-primary;
-
-            &:after {
-                content: ',';
-            }
         }
 
         .date {

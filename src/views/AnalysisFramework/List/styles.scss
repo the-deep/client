@@ -5,6 +5,7 @@ $height-grid-layout: 50vh;
 
 .list {
     display: flex;
+    position: relative;
     flex-direction: column;
     height: 100%;
 
