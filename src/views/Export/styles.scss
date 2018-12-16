@@ -1,79 +1,93 @@
 @import '~base-scss/base';
 
+$page-margin: $spacing-small-alt;
+
 .export {
-    @extend %main-content;
     display: flex;
     flex-direction: column;
-    margin: -$spacing-small-alt;
+    margin: -$page-margin;
     border: 0;
     background-color: transparent;
-    height: calc(100vh - #{$height-navbar});
+    height: calc(100% + #{$page-margin * 2});
+    overflow: auto;
 
-    .header {
+    >.header {
         @include background-color($color-background-header);
         flex-shrink: 0;
         border-bottom: $width-separator-thin solid $color-separator-alt;
-        padding: $spacing-small;
+        padding: $spacing-small $spacing-medium;
     }
 
     .main-content {
+        @extend %main-content;
         @include background-color($color-foreground-alt);
         display: flex;
         flex-grow: 1;
         margin: $spacing-small-alt;
         border: $width-separator-thin solid $color-separator-alt;
         padding-bottom: $spacing-extra-small;
+        overflow: auto;
 
         .filters {
             display: flex;
             flex-basis: 50%;
             flex-direction: column;
+            overflow: auto;
 
-            :global {
-                .entries-filters {
-                    display: flex;
-                    align-items: flex-end;
-                    flex-shrink: 0;
-                    flex-wrap: wrap;
+            %filter-group {
+                .heading {
                     border-bottom: $width-separator-thin solid $color-separator;
+                    background-color: $color-background-header;
                     padding: $spacing-small;
+                }
+            }
 
-                    .entries-filter,
-                    .select-input {
-                        margin: $spacing-small;
+            .entry-filters {
+                @extend %filter-group;
+                border-bottom: $width-separator-medium solid $color-separator;
 
-                        &.flat-select-input {
-                            margin: 0;
-                        }
-                    }
-
-                    .range-filter {
+                :global {
+                    .entries-filters {
                         display: flex;
-                        justify-content: space-between;
-                        margin: 0;
+                        align-items: flex-end;
+                        flex-shrink: 0;
+                        flex-wrap: wrap;
+                        border-bottom: $width-separator-thin solid $color-separator;
+                        padding: $spacing-small;
 
-                        .single-select-input {
+                        .entries-filter,
+                        .select-input {
+                            margin: $spacing-small;
+
+                            &.flat-select-input {
+                                margin: 0;
+                            }
+                        }
+
+                        .range-filter {
+                            display: flex;
+                            justify-content: space-between;
+                            margin: 0;
+
+                            .single-select-input {
+                                margin: $spacing-small;
+                            }
+                        }
+
+                        >.button {
+                            flex-shrink: 0;
                             margin: $spacing-small;
                         }
-                    }
-
-                    >.button {
-                        flex-shrink: 0;
-                        margin: $spacing-small;
                     }
                 }
             }
 
-            .heading {
-                border-bottom: $width-separator-thin solid $color-separator;
-                background-color: $color-background-header;
-                padding: $spacing-small;
-            }
-
             .lead-filters {
+                @extend %filter-group;
                 display: flex;
                 flex-direction: column;
-                height: 100%;
+                flex-grow: 1;
+                overflow: auto;
 
                 .lead-attributes {
                     :global {
@@ -83,7 +97,6 @@
                             flex-shrink: 0;
                             flex-wrap: wrap;
                             padding: $spacing-small;
-
 
                             .leads-filter {
                                 margin: $spacing-small;
@@ -98,20 +111,26 @@
                     }
                 }
 
-                .leads {
+                .leads-table-container {
                     position: relative;
                     flex-grow: 1;
-                    overflow-y: auto;
+                    overflow: auto;
 
                     .leads-table {
                         :global {
                             .select {
-                                width: 64px;
+                                max-width: 56px;
+                                white-space: nowrap;
+                            }
+
+                            .createdAt {
+                                white-space: nowrap;
                             }
                         }
                     }
                 }
             }
+
         }
 
         .preview {
