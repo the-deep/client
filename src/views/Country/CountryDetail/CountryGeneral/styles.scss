@@ -6,27 +6,26 @@ $region-detail-form-width: 320px;
     display: flex;
     position: relative;
     flex-direction: column;
-    height: calc(100% - 39px);
 
     .top-container {
         display: flex;
-        flex-basis: 60%;
         flex-grow: 1;
 
         .region-map {
             flex-grow: 1;
-            height: 100%;
         }
 
         .region-detail-form {
             @include background-color($color-foreground);
+            flex-basis: $region-detail-form-width;
+            flex-grow: 0;
+            flex-shrink: 0;
             border-left: $width-separator-thin solid $color-separator;
-            width: $region-detail-form-width;
         }
     }
 
     .admin-level-table {
-        flex-shrink: 1;
-        height: 40%;
+        flex-basis: 40%;
+        flex-shrink: 0;
     }
 }

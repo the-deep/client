@@ -6,7 +6,6 @@ $height-header: 42px;
     display: flex;
     position: relative;
     flex-direction: column;
-    height: 100%;
 
     .header {
         @include background-color($color-background-header);
@@ -38,6 +37,11 @@ $height-header: 42px;
         }
     }
 
+    .view {
+        flex-grow: 1;
+        overflow: auto;
+    }
+
     .loading-animation {
         z-index: 111;
         background-color: $color-background-overlay-opaque;
@@ -48,7 +52,6 @@ $height-header: 42px;
         flex-grow: 1;
         border-top: $width-separator-thin solid $color-separator;
         width: 100%;
-        height: calc(100% - #{$height-header});
 
         .region-detail-box {
             bottom: calc(#{$spacing-medium} + 24px);

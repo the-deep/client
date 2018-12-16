@@ -105,46 +105,32 @@ export default class CountryDetail extends React.PureComponent {
 
         this.defaultHash = 'general';
 
+        const rendererParams = () => ({
+            dataLoading: this.state.dataLoading,
+            countryId: this.props.countryId,
+            className: styles.view,
+        });
+
         this.views = {
             general: {
-                component: () => (
-                    <CountryGeneral
-                        dataLoading={this.state.dataLoading}
-                        countryId={this.props.countryId}
-                    />
-                ),
+                component: CountryGeneral,
+                rendererParams,
             },
             keyFigures: {
-                component: () => (
-                    <CountryKeyFigures
-                        dataLoading={this.state.dataLoading}
-                        countryId={this.props.countryId}
-                    />
-                ),
+                component: CountryKeyFigures,
+                rendererParams,
             },
             mediaSources: {
-                component: () => (
-                    <CountryMediaSources
-                        dataLoading={this.state.dataLoading}
-                        countryId={this.props.countryId}
-                    />
-                ),
+                component: CountryMediaSources,
+                rendererParams,
             },
             populationData: {
-                component: () => (
-                    <CountryPopulationData
-                        dataLoading={this.state.dataLoading}
-                        countryId={this.props.countryId}
-                    />
-                ),
+                component: CountryPopulationData,
+                rendererParams,
             },
             seasonalCalendar: {
-                component: () => (
-                    <CountrySeasonalCalendar
-                        dataLoading={this.state.dataLoading}
-                        countryId={this.props.countryId}
-                    />
-                ),
+                component: CountrySeasonalCalendar,
+                rendererParams,
             },
         };
 
