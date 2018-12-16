@@ -62,6 +62,7 @@ export const actionsToSkipLogging = [
     'tabStatus/SET_TAB_STATUS',
     'tabStatus/REMOVE_TAB_STATUS',
     'tabStatus/REMOVE_SELF_TAB_STATUS',
+    'domainData/SET_NOTIFICATIONS_COUNT',
 ];
 
 export const reduxExtensionEnvs = ['nightly', 'alpha'];
