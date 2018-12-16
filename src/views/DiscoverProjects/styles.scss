@@ -1,22 +1,26 @@
 @import '~base-scss/base';
 @import '~rs-scss/input-label';
 
+$page-margin: $spacing-small-alt;
+
 .discover-projects {
-    @extend %main-content;
     display: flex;
     flex-direction: column;
+    margin: -$page-margin;
+    height: calc(100% + #{$page-margin * 2});
+    overflow: auto;
 
     .header {
+        @include background-color($color-background-header);
         display: flex;
         align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
-        background-color: $color-foreground;
         padding: $spacing-small;
 
         .filters {
             display: flex;
-            align-items: flex-end;
+            align-items: baseline;
             flex-grow: 1;
             flex-shrink: 0;
 
@@ -35,12 +39,15 @@
     }
 
     .table-container {
+        @extend %main-content;
         display: flex;
         position: relative;
         flex-direction: column;
         flex-grow: 1;
+        margin: $page-margin;
         background-color: $color-background-row;
-        height: 100%;
+        height: auto;
+        overflow: auto;
 
         .scroll-wrapper {
             flex-grow: 1;
@@ -48,6 +55,8 @@
             overflow: auto;
 
             .projects-table {
+                border: none;
+
                 .header {
                     position: sticky;
                     top: 0;
@@ -58,6 +67,10 @@
                     .number_of_leads,
                     .number_of_entries {
                         text-align: center;
+                    }
+
+                    .actions {
+                        white-space: nowrap;
                     }
                 }
 

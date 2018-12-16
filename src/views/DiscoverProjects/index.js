@@ -18,6 +18,7 @@ import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
 import SparkLines from '#rscz/SparkLines';
 import Numeral from '#rscv/Numeral';
+import BackLink from '#components/BackLink';
 import { formatDate } from '#rsu/date';
 
 import {
@@ -356,11 +357,16 @@ export default class DiscoverProjects extends React.PureComponent {
         this.projectJoinCancelRequest.start();
     }
 
-    renderHeader = () => (
-        <header className={styles.header}>
-            <FilterProjectsForm className={styles.filters} />
-        </header>
-    )
+    renderHeader = () => {
+        const exitPath = reverseRoute(pathNames.homeScreen);
+
+        return (
+            <header className={styles.header}>
+                <BackLink defaultLink={{ pathname: exitPath }} />
+                <FilterProjectsForm className={styles.filters} />
+            </header>
+        );
+    }
 
     renderFooter = () => {
         const {
