@@ -34,7 +34,7 @@ $region-detail-form-width: 320px;
             position: relative;
 
             .region-map {
-                height: auto;
+                height: 100%;
             }
         }
 
@@ -58,10 +58,10 @@ $region-detail-form-width: 320px;
         }
 
         .region-admin-level {
-            overflow: auto;
             flex-basis: 40%;
             flex-grow: 1;
             flex-shrink: 0;
+            overflow: auto;
         }
     }
 }

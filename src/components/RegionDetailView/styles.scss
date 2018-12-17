@@ -3,13 +3,16 @@
 $width-region-detail-view: 280px;
 $height-region-detail-max: 320px;
 
+$position-top: 42px;
+$position-right: $spacing-small-alt;
+
 .region-detail-view {
     @include shadow-small;
     @include background-color($color-foreground);
     display: flex;
     position: absolute;
-    top: $spacing-medium;
-    right: $spacing-medium;
+    top: $position-top;
+    right: $position-right;
     flex-direction: column;
     z-index: $z-index-region-detail-view;
     width: $width-region-detail-view;
