@@ -1719,7 +1719,8 @@
             "useFrameworkButtonTitle": 362,
             "editFrameworkButtonTitle": 363,
             "confirmUseFramework": 365,
-            "confirmUseFrameworkText": 366
+            "confirmUseFrameworkText": 366,
+            "errorFrameworkLoad": 648
         },
         "project.wordCategory": {
             "addWordCategoryButtonLabel": 301,

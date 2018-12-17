@@ -5,7 +5,6 @@ import {
     createUrlForAnalysisFramework,
 } from '#rest';
 
-// TODO: handle errors as well -_-
 export default class FrameworkGet extends Request {
     schemaName = 'analysisFramework';
 
@@ -19,6 +18,14 @@ export default class FrameworkGet extends Request {
 
     handleSuccess = (response) => {
         this.parent.setState({ framework: response });
+    }
+
+    handleFailure = () => {
+        this.parent.setState({ error: true });
+    }
+
+    handleFatal = () => {
+        this.parent.setState({ error: true });
     }
 
     init = (frameworkId) => {

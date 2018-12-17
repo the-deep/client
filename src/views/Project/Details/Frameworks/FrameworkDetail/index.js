@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 
 import { reverseRoute } from '#rsu/common';
+import Message from '#rscv/Message';
 import FixedTabs from '#rscv/FixedTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import AccentButton from '#rsca/Button/AccentButton';
@@ -71,12 +72,14 @@ export default class FrameworkDetail extends React.PureComponent {
 
         this.state = {
             pendingFramework: true,
+            error: false,
             framework: undefined,
             activeView: 'overview',
         };
 
-        const setState = d => this.setState(d);
-        this.frameworkGetRequest = new FrameworkGetRequest({ setState });
+        this.frameworkGetRequest = new FrameworkGetRequest({
+            setState: d => this.setState(d),
+        });
 
         this.tabs = {
             overview: _ts('project.framework', 'entryOverviewTitle'),
@@ -203,7 +206,10 @@ export default class FrameworkDetail extends React.PureComponent {
             className: classNameFromProps,
         } = this.props;
 
-        const { pendingFramework } = this.state;
+        const {
+            pendingFramework,
+            error,
+        } = this.state;
 
         requestFramework(frameworkId, this.frameworkGetRequest);
 
@@ -219,20 +225,34 @@ export default class FrameworkDetail extends React.PureComponent {
             ${styles.frameworkDetails}
         `;
 
+        // FIXME: handle error gracefully
+        // When af cannot be pulled, show show error
+        if (pendingFramework) {
+            return (
+                <div className={className}>
+                    <LoadingAnimation />
+                </div>
+            );
+        }
+
+        if (error) {
+            return (
+                <div className={className}>
+                    <Message>
+                        {_ts('project.framework', 'errorFrameworkLoad')}
+                    </Message>
+                </div>
+            );
+        }
+
         return (
             <div className={className}>
-                { pendingFramework ? (
-                    <LoadingAnimation />
-                ) : (
-                    <React.Fragment>
-                        <Header />
-                        <Preview
-                            activeView={activeView}
-                            className={styles.preview}
-                            framework={framework}
-                        />
-                    </React.Fragment>
-                )}
+                <Header />
+                <Preview
+                    activeView={activeView}
+                    className={styles.preview}
+                    framework={framework}
+                />
             </div>
         );
     }
