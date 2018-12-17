@@ -24,8 +24,8 @@ import {
     setActiveCountryAction,
     setRouteParamsAction,
     activeProjectRoleSelector,
-    tabsByCurrentUrlSelector,
-    setTabStatusAction,
+    // tabsByCurrentUrlSelector,
+    // setTabStatusAction,
 } from '#redux';
 import _ts from '#ts';
 
@@ -101,7 +101,7 @@ const propTypes = {
     activeProjectId: PropTypes.number,
     activeCountryId: PropTypes.number,
     setRouteParams: PropTypes.func.isRequired,
-    setTabStatus: PropTypes.func.isRequired,
+    // setTabStatus: PropTypes.func.isRequired,
 
     name: PropTypes.string.isRequired,
     path: PropTypes.string,
@@ -116,18 +116,18 @@ const defaultProps = {
     path: '',
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = state => ({
     projectRole: activeProjectRoleSelector(state),
     activeProjectId: activeProjectIdFromStateSelector(state),
     activeCountryId: activeCountryIdFromStateSelector(state),
-    tabsByCurrentUrl: tabsByCurrentUrlSelector(state, props),
+    // tabsByCurrentUrl: tabsByCurrentUrlSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
     setActiveProject: params => dispatch(setActiveProjectAction(params)),
     setActiveCountry: params => dispatch(setActiveCountryAction(params)),
     setRouteParams: params => dispatch(setRouteParamsAction(params)),
-    setTabStatus: params => dispatch(setTabStatusAction(params)),
+    // setTabStatus: params => dispatch(setTabStatusAction(params)),
 });
 
 
@@ -146,7 +146,7 @@ class RouteSynchronizer extends React.PureComponent {
         const {
             match,
             location,
-            setTabStatus,
+            // setTabStatus,
             setRouteParams,
         } = this.props;
 
@@ -155,6 +155,7 @@ class RouteSynchronizer extends React.PureComponent {
             location,
         });
 
+        /*
         // Done at DidMount and not constructor because we want
         // to make sure that the silo tasks for setting tab status timestamp
         // has been started at this point.
@@ -162,6 +163,7 @@ class RouteSynchronizer extends React.PureComponent {
             url: match.url,
             path: match.path,
         });
+        */
     }
 
     componentWillReceiveProps(nextProps) {
@@ -175,6 +177,7 @@ class RouteSynchronizer extends React.PureComponent {
             });
         }
 
+        /*
         if (
             this.props.match.url !== nextProps.match.url ||
             this.props.match.path !== nextProps.match.path
@@ -184,6 +187,7 @@ class RouteSynchronizer extends React.PureComponent {
                 path: nextProps.match.path,
             });
         }
+        */
 
         const {
             activeProjectId: oldProjectId,
@@ -293,7 +297,7 @@ class RouteSynchronizer extends React.PureComponent {
             match, // eslint-disable-line no-unused-vars
             path,
             projectRole,
-            tabsByCurrentUrl,
+            // tabsByCurrentUrl,
             ...otherProps
         } = this.props;
 
