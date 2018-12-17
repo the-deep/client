@@ -88,8 +88,10 @@ const assessmentRegistrySchema = [];
             methodology: { type: 'object' },
             summary: { type: 'object' },
             score: { type: 'object' },
-            lead: { type: 'uint', required: true },
+            lead: { type: 'uint' }, // either lead or leadGroup is required
             leadTitle: { type: 'string' },
+            leadGroup: { type: 'uint' }, // either lead or leadGroup is required
+            leadGroupTitle: { type: 'string' },
         },
     };
     assessmentRegistrySchema.push({ name, schema });

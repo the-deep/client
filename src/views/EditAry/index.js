@@ -130,7 +130,7 @@ const requests = {
                 props.setAry({
                     serverId: response.id,
                     leadId: response.lead,
-                    leadGroupId: response.leadGroupId,
+                    leadGroupId: response.leadGroup,
                     versionId: response.versionId,
                     metadata: response.metadata,
                     methodology: response.methodology,
