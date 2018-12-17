@@ -863,7 +863,8 @@
         "-11648576": "Invalid source",
         "-64009123": "Convert to tabular",
         "-20173783": "The same page is open in another tab.",
-        "-96507602": "Error while trying to reset password."
+        "-96507602": "Error while trying to reset password.",
+        "-27376433": "Anyplace"
     },
     "links": {
         "browserExtension": {
@@ -1281,7 +1282,14 @@
             "geoOptionsFatalMessage": 534,
             "emptyEntriesMessage": -86091592,
             "emptyEntriesLinkMessage": -15556514,
-            "emptyEntriesForFilterMessage": -21972443
+            "emptyEntriesForFilterMessage": -21972443,
+            "createdAtPlaceholder": 18,
+            "createdByPlaceholder": 17,
+            "datePlaceholder": 18,
+            "geoPlaceholder": -27376433,
+            "multiselectPlaceholder": 14,
+            "multiselectRangePlaceholder": 14,
+            "timePlaceholder": 18
         },
         "export": {
             "headerExport": 600,

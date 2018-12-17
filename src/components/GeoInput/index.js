@@ -27,6 +27,7 @@ const propTypes = {
     hideInput: PropTypes.bool,
     modalLeftComponent: PropTypes.node,
     emptyComponent: PropTypes.func,
+    placeholder: PropTypes.string,
 };
 
 const defaultProps = {
@@ -43,6 +44,7 @@ const defaultProps = {
     regions: [],
     modalLeftComponent: undefined,
     emptyComponent: undefined,
+    placeholder: undefined,
 };
 
 const emptyArray = [];
@@ -213,6 +215,7 @@ export default class GeoInput extends React.PureComponent {
             hideList,
             label,
             hideInput,
+            placeholder,
         } = this.props;
 
         if (hideList || hideInput) {
@@ -229,6 +232,7 @@ export default class GeoInput extends React.PureComponent {
                             hideSelectAllButton
                             disabled={disabled}
                             readOnly={readOnly}
+                            placeholder={placeholder}
                         />
                     }
                     <AccentButton
