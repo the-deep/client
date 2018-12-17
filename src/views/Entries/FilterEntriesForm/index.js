@@ -241,84 +241,88 @@ export default class FilterEntriesForm extends React.PureComponent {
 
     renderFilter = ({ title, key, properties: filter }) => {
         const { filters } = this.state;
-
         if (!filter || !filter.type) {
             return null;
         }
 
-        if (filter.type === 'multiselect') {
-            return (
-                <MultiSelectInput
-                    key={key}
-                    className={styles.entriesFilter}
-                    options={filter.options || emptyList}
-                    label={title}
-                    showHintAndError={false}
-                    onChange={values => this.handleFilterChange(key, values)}
-                    value={filters[key] || emptyList}
-                    disabled={this.props.pending}
-                />
-            );
-        } else if (filter.type === 'multiselect-range') {
-            return (
-                <RangeFilter
-                    className={`${styles.rangeFilter} ${styles.entriesFilter}`}
-                    key={key}
-                    options={filter.options}
-                    label={title}
-                    showHintAndError={false}
-                    onChange={values => this.handleFilterChange(key, values)}
-                    value={filters[key]}
-                    disabled={this.props.pending}
-                />
-            );
-        } else if (filter.type === 'date') {
-            return (
-                <DateFilter
-                    key={key}
-                    className={styles.entriesFilter}
-                    label={title}
-                    showHintAndError={false}
-                    onChange={values => this.handleFilterChange(key, values)}
-                    value={filters[key]}
-                    disabled={this.props.pending}
-                />
-            );
-        } else if (filter.type === 'time') {
-            return (
-                <TimeFilter
-                    key={key}
-                    className={styles.entriesFilter}
-                    label={title}
-                    showHintAndError={false}
-                    onChange={values => this.handleFilterChange(key, values)}
-                    value={filters[key]}
-                    disabled={this.props.pending}
-                />
-            );
-        } else if (filter.type === 'geo') {
-            return (
-                <GeoInput
-                    key={key}
-                    className={styles.entriesFilter}
-                    disabled={this.props.pending && this.state.geoSelectionEnable}
-                    geoOptionsByRegion={this.props.geoOptions}
-                    label={title}
-                    onChange={values => this.handleFilterChange(key, values)}
-                    regions={this.props.projectDetails.regions}
-                    showHeader={false}
-                    value={filters[key] || emptyList}
-                    hideList
-                />
-            );
-        }
+        const props = {
+            key,
+            className: styles.entriesFilter,
+            label: title,
+            onChange: values => this.handleFilterChange(key, values),
+            value: filters[key],
+            disabled: this.props.pending,
+        };
 
-        return null;
+        switch (filter.type) {
+            case 'geo': {
+                const {
+                    geoOptions,
+                    projectDetails,
+                } = this.props;
+                return (
+                    <GeoInput
+                        {...props}
+                        value={props.value || emptyList}
+                        disabled={props.disabled || !this.state.geoSelectionEnable}
+                        geoOptionsByRegion={geoOptions}
+                        regions={projectDetails.regions}
+                        placeholder={_ts('entries', 'geoPlaceholder')}
+                        showHeader={false}
+                        hideList
+                    />
+                );
+            }
+            case 'multiselect':
+                return (
+                    <MultiSelectInput
+                        {...props}
+                        value={props.value || emptyList}
+                        options={filter.options || emptyList}
+                        showHintAndError={false}
+                        placeholder={_ts('entries', 'multiselectPlaceholder')}
+                    />
+                );
+            case 'multiselect-range':
+                return (
+                    <RangeFilter
+                        {...props}
+                        options={filter.options}
+                        showHintAndError={false}
+                        placeholder={_ts('entries', 'multiselectRangePlaceholder')}
+                    />
+                );
+            case 'date':
+                return (
+                    <DateFilter
+                        {...props}
+                        showHintAndError={false}
+                        placeholder={_ts('entries', 'datePlaceholder')}
+                    />
+                );
+            case 'time':
+                return (
+                    <TimeFilter
+                        {...props}
+                        showHintAndError={false}
+                        placeholder={_ts('entries', 'timePlaceholder')}
+                    />
+                );
+            default:
+                return null;
+        }
     }
 
     render() {
-        const { pending, entryFilterOptions } = this.props;
-        const { pristine, filters } = this.state;
+        const {
+            pending,
+            entryFilterOptions,
+            applyOnChange,
+        } = this.props;
+        const {
+            pristine,
+            filters,
+        } = this.state;
         const isFilterEmpty = isObjectEmpty(filters);
 
         const { createdBy } = entryFilterOptions;
@@ -332,7 +336,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                     placeholder={_ts('entries', 'searchFilterPlaceholder')}
                     showHintAndError={false}
                     value={filters.search}
-                    disabled={this.props.pending}
+                    disabled={pending}
                 />
                 <MultiSelectInput
                     className={styles.entriesFilter}
@@ -343,7 +347,8 @@ export default class FilterEntriesForm extends React.PureComponent {
                     onChange={(value) => { this.handleFilterChange('created_by', value); }}
                     showHintAndError={false}
                     value={filters.created_by || emptyList}
-                    disabled={this.props.pending}
+                    disabled={pending}
+                    placeholder={_ts('entries', 'createdByPlaceholder')}
                 />
                 <DateFilter
                     className={styles.entriesFilter}
@@ -351,13 +356,14 @@ export default class FilterEntriesForm extends React.PureComponent {
                     onChange={(value) => { this.handleFilterChange('created_at', value); }}
                     showHintAndError={false}
                     value={filters.created_at}
-                    disabled={this.props.pending}
+                    disabled={pending}
+                    placeholder={_ts('entries', 'createdAtPlaceholder')}
                 />
                 { this.props.filters.map(this.renderFilter) }
                 {
-                    !this.props.applyOnChange && (
+                    !applyOnChange && (
                         <Button
-                            className={`${styles.button} ${styles.applyFilterButton}`}
+                            className={styles.button}
                             onClick={this.handleApplyFilter}
                             disabled={pending || pristine}
                         >
@@ -366,7 +372,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                     )
                 }
                 <DangerButton
-                    className={`${styles.button} ${styles.resetFilterButton}`}
+                    className={styles.button}
                     onClick={this.handleClearFilter}
                     disabled={pending || isFilterEmpty}
                 >
