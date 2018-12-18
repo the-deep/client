@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import FormattedDate from '#rscv/FormattedDate';
 
-import { reverseRoute } from '#rsu/common';
+import { reverseRoute, isObject } from '#rsu/common';
 import { pathNames } from '#constants';
 import { camelToNormalCase } from '#utils/common';
 import _ts from '#ts';
@@ -16,8 +16,14 @@ const LogItem = ({
     time,
     fields,
 }) => {
-    // If the number of fields is more than one, we show aggregated log item
-    if (Object.keys(fields).length > 1) {
+    const fieldKeys = Object.keys(fields);
+
+    // If the number of fields is zero, we show nothing
+    if (fieldKeys.length === 0) {
+        return null;
+    }
+    // If the number of fields is more than one, show aggregated log item
+    if (fieldKeys.length > 1) {
         return (
             <AggregatedLogItem
                 user={user}
@@ -26,27 +32,24 @@ const LogItem = ({
             />
         );
     }
-    const {
-        name: userName,
-        id: userId,
-    } = user;
 
-    const fieldKey = Object.keys(fields)[0];
-    let oldValue = fields[fieldKey].old;
-    let newValue = fields[fieldKey].new;
+    const fieldKey = fieldKeys[0];
+    const field = fields[fieldKey];
 
-    let logDescription = 'logDescription';
-    if (typeof newValue === 'object') {
-        oldValue = oldValue && oldValue.title;
-        newValue = newValue.title;
-    }
-    if (oldValue === '' || oldValue === undefined) {
-        logDescription = 'logDescriptionNew';
-    }
-    //
+    const oldValue = isObject(field.old)
+        ? field.old.title
+        : field.old;
+
+    const newValue = isObject(field.new)
+        ? field.new.title
+        : field.new;
+
     // This is written for string library to show these there
     // _ts('components.activityLog', 'logDescription')
     // _ts('components.activityLog', 'logDescriptionNew')
+    const logDescription = (oldValue === '' || oldValue === undefined)
+        ? 'logDescriptionNew'
+        : 'logDescription';
 
     const log = _ts(
         'components.activityLog',
@@ -67,8 +70,7 @@ const LogItem = ({
                     {newValue}
                 </span>
             ),
-            /*
-             * TODO: Required for links, write a map for all type of items
+            /* TODO: Required for links, write a map for all type of items
                 oldValue: (
                     <Link
                         className={styles.link}
@@ -87,7 +89,7 @@ const LogItem = ({
                         {newValue.title}
                     </Link>
                 ),
-                */
+            */
         },
     );
 
@@ -97,13 +99,15 @@ const LogItem = ({
                 {log}
             </div>
             <div className={styles.metaData}>
-                <Link
-                    className={styles.user}
-                    target="_blank"
-                    to={reverseRoute(pathNames.userProfile, { userId })}
-                >
-                    {userName}
-                </Link>
+                { user &&
+                    <Link
+                        className={styles.user}
+                        target="_blank"
+                        to={reverseRoute(pathNames.userProfile, { userId: user.id })}
+                    >
+                        {user.name}
+                    </Link>
+                }
                 <span className={styles.date} >
                     <FormattedDate
                         date={time}
