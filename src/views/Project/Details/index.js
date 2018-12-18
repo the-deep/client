@@ -126,7 +126,7 @@ export default class ProjectDetails extends React.PureComponent {
             general: {
                 mount: true,
                 wrapContainer: true,
-                lazyLoad: true,
+                lazyMount: true,
                 component: () => (
                     <Cloak
                         makeReadOnly={ProjectDetails.shouldDisableDetails}
@@ -141,7 +141,7 @@ export default class ProjectDetails extends React.PureComponent {
             },
             users: {
                 mount: true,
-                lazyLoad: true,
+                lazyMount: true,
                 wrapContainer: true,
                 component: () => (
                     <Cloak
@@ -157,7 +157,7 @@ export default class ProjectDetails extends React.PureComponent {
             },
             regions: {
                 mount: true,
-                lazyLoad: true,
+                lazyMount: true,
                 wrapContainer: true,
                 component: () => (
                     <Cloak
@@ -173,7 +173,7 @@ export default class ProjectDetails extends React.PureComponent {
             },
             frameworks: {
                 mount: true,
-                lazyLoad: true,
+                lazyMount: true,
                 wrapContainer: true,
                 component: () => (
                     <Cloak
@@ -189,7 +189,7 @@ export default class ProjectDetails extends React.PureComponent {
             },
             categoryEditors: {
                 mount: true,
-                lazyLoad: true,
+                lazyMount: true,
                 wrapContainer: true,
                 component: () => (
                     <Cloak

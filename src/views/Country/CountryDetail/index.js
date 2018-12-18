@@ -372,15 +372,16 @@ export default class CountryDetail extends React.PureComponent {
                     { loading &&
                         <LoadingAnimation className={styles.loadingAnimation} />
                     }
-                    { !activeUser.isSuperuser ? (
+                    { activeUser.isSuperuser ? (
                         <div className={styles.detailsNoEdit}>
                             <RegionDetailView
-                                className={styles.regionDetailBox}
+                                className={styles.regionDetails}
                                 countryId={countryId}
                             />
-                            <div className={styles.mapContainer}>
-                                <RegionMap regionId={countryId} />
-                            </div>
+                            <RegionMap
+                                className={styles.regionMap}
+                                regionId={countryId}
+                            />
                         </div>
                     ) : (
                         <Fragment>

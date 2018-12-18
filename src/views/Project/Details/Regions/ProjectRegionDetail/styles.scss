@@ -26,15 +26,20 @@ $region-detail-form-width: 320px;
     }
 
     .content {
+        display: flex;
+        flex-direction: column;
         flex-grow: 1;
         height: auto;
         overflow: auto;
 
         &.view-only {
+            display: flex;
             position: relative;
+            flex-direction: column;
+            flex-grow: 1;
 
             .region-map {
-                height: 100%;
+                flex-grow: 1;
             }
         }
 
