@@ -67,6 +67,7 @@ export default class CountryPanel extends React.PureComponent {
             addCountryModal: false,
             displayCountryList,
             searchInputValue: '',
+            pendingCountryList: true,
         };
     }
 
