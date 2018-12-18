@@ -696,6 +696,7 @@
         "15008": "Reset sort",
         "15009": "Skip this sheet",
         "15010": "Header row",
+        "15011": "Number of entries from this lead",
         "-4983139": "Remove lead group",
         "-49385196": "Save screenshot",
         "-42880698": "Discard screenshot",
@@ -1289,7 +1290,8 @@
             "geoPlaceholder": -27376433,
             "multiselectPlaceholder": 14,
             "multiselectRangePlaceholder": 14,
-            "timePlaceholder": 18
+            "timePlaceholder": 18,
+            "numberOfEntriesTooltip": 15011
         },
         "export": {
             "headerExport": 600,
