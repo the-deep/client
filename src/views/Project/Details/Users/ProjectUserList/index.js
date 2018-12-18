@@ -179,14 +179,17 @@ export default class ProjectUserList extends React.PureComponent {
     ))
 
     filterMembers = memoize((allMembers = [], searchValue) => {
-        const lowerSearchValue = searchValue.toLowerCase();
         if (searchValue === '') {
             return allMembers;
         }
 
+        const lowerSearchValue = searchValue.toLowerCase();
+        // FIXME: use function from utils
         return allMembers.filter(
-            ({ memberName = '' } = {}) =>
-                memberName.toLowerCase().indexOf(lowerSearchValue) >= 0,
+            ({ memberName = '', memberEmail = '' } = {}) => (
+                memberName.toLowerCase().indexOf(lowerSearchValue) >= 0 ||
+                memberEmail.toLowerCase().indexOf(lowerSearchValue) >= 0
+            ),
         );
     });
 
