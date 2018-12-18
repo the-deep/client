@@ -88,7 +88,10 @@ export default class LeadGroupedEntries extends React.PureComponent {
                         mode="dd-MM-yyyy"
                     />
                 </h3>
-                <div className={styles.numberOfEntries}>
+                <div
+                    title={_ts('entries', 'numberOfEntriesTooltip')}
+                    className={styles.numberOfEntries}
+                >
                     { entries.length }
                 </div>
                 <Cloak
