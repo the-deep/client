@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { caseInsensitiveSubmatch, compareString } from '#rsu/common';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import SearchInput from '#rsci/SearchInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import ListView from '#rscv/List/ListView';
@@ -116,6 +117,7 @@ export default class CountryPanel extends React.PureComponent {
         }
         const countriesRequest = new CountriesGetRequest({
             setRegions: this.props.setRegions,
+            setState: d => this.setState(d),
         });
         this.countriesRequest = countriesRequest.create();
         this.countriesRequest.start();
@@ -207,8 +209,19 @@ export default class CountryPanel extends React.PureComponent {
     }
 
     render() {
-        const { displayCountryList } = this.state;
+        const {
+            displayCountryList,
+            pendingCountryList,
+        } = this.state;
         const { activeUser } = this.props;
+
+        if (pendingCountryList) {
+            return (
+                <div className={styles.loading}>
+                    <LoadingAnimation />
+                </div>
+            );
+        }
 
         return (
             <div className={styles.countryPanel}>
