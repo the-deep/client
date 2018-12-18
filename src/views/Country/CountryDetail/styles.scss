@@ -48,21 +48,17 @@ $height-header: 42px;
     }
 
     .details-no-edit {
+        display: flex;
         position: relative;
+        flex-direction: column;
         flex-grow: 1;
-        border-top: $width-separator-thin solid $color-separator;
-        width: 100%;
 
-        .region-detail-box {
+        .region-details {
             bottom: calc(#{$spacing-medium} + 24px);
         }
 
-        .map-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
+        .region-map {
+            flex-grow: 1;
         }
     }
 }

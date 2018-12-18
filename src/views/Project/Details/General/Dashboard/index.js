@@ -4,12 +4,14 @@ import { connect } from 'react-redux';
 
 import SelectInput from '#rsci/SelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import List from '#rscv/List';
+import ListView from '#rscv/List/ListView';
 import FormattedDate from '#rscv/FormattedDate';
 import SparkLines from '#rscz/SparkLines';
 import Numeral from '#rscv/Numeral';
 import Message from '#rscv/Message';
 import { formatDate } from '#rsu/date';
+import { pathNames } from '#constants';
+import { reverseRoute } from '#rsu/common';
 
 import {
     projectDashboardSelector,
@@ -17,7 +19,11 @@ import {
 } from '#redux';
 
 import RegionMap from '#components/RegionMap';
-import { RequestCoordinator, RequestClient, requestMethods } from '#request';
+import {
+    RequestCoordinator,
+    RequestClient,
+    requestMethods,
+} from '#request';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -67,18 +73,32 @@ const requests = {
     },
 };
 
-const UserItem = ({ user, total }) => (
-    <div className={styles.user} >
-        <div className={styles.name}>
-            {user.name}
+const UserItem = ({ user, total }) => {
+    const {
+        name,
+        userId,
+    } = user;
+
+    const linkToUser = reverseRoute(pathNames.userProfile, {
+        userId,
+    });
+
+    return (
+        <div className={styles.item} >
+            <div className={styles.title}>
+                <a href={linkToUser}>
+                    {name}
+                </a>
+            </div>
+            <Numeral
+                className={styles.value}
+                value={(user.count / total) * 100}
+                suffix="%"
+                precision={0}
+            />
         </div>
-        <Numeral
-            value={(user.count / total) * 100}
-            suffix="%"
-            precision={0}
-        />
-    </div>
-);
+    );
+};
 
 UserItem.propTypes = {
     user: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -127,12 +147,6 @@ export default class ProjectDashboard extends React.PureComponent {
             selectedRegion: undefined,
         };
     }
-
-    getClassName = () => _cs(
-        this.props.className,
-        'project-dashboard',
-        styles.projectDashboard,
-    )
 
     getProjectRequestResponse = () => (
         (this.props.projectRequest || emptyObject).response || emptyObject
@@ -183,7 +197,7 @@ export default class ProjectDashboard extends React.PureComponent {
 
         return (
             <div className={styles.chart}>
-                <h4>
+                <h4 className={styles.heading}>
                     {_ts('project.general.dashboard', 'leadsActivityTitle')}
                 </h4>
                 <SparkLines
@@ -210,7 +224,7 @@ export default class ProjectDashboard extends React.PureComponent {
 
         return (
             <div className={styles.chart}>
-                <h4>
+                <h4 className={styles.heading}>
                     {_ts('project.general.dashboard', 'entriesActivityTitle')}
                 </h4>
                 <SparkLines
@@ -230,11 +244,12 @@ export default class ProjectDashboard extends React.PureComponent {
         const { projectDashboard: { topSourcers = emptyList } } = this.props;
 
         return (
-            <div className={styles.userTable}>
-                <h4>
+            <div className={styles.sourcersListContainer}>
+                <h4 className={styles.heading}>
                     {_ts('project.general.dashboard', 'topSourcersTitle')}
                 </h4>
-                <List
+                <ListView
+                    className={styles.list}
                     data={topSourcers}
                     renderer={UserItem}
                     rendererParams={this.sourcerParams}
@@ -248,11 +263,12 @@ export default class ProjectDashboard extends React.PureComponent {
         const { projectDashboard: { topTaggers = emptyList } } = this.props;
 
         return (
-            <div className={styles.userTable}>
-                <h4>
+            <div className={styles.taggersListContainer}>
+                <h4 className={styles.heading}>
                     {_ts('project.general.dashboard', 'topTaggersTitle')}
                 </h4>
-                <List
+                <ListView
+                    className={styles.list}
                     data={topTaggers}
                     renderer={UserItem}
                     rendererParams={this.taggerParams}
@@ -262,16 +278,19 @@ export default class ProjectDashboard extends React.PureComponent {
         );
     }
 
-    renderInfo = () => {
+    renderBasicInfo = () => {
         const { projectDashboard: project } = this.props;
+        const linkToUser = reverseRoute(pathNames.userProfile, {
+            userId: project.createdById,
+        });
 
         return (
-            <div className={styles.info}>
+            <div className={styles.basicInfo}>
                 <div className={styles.infoItem}>
                     <div className={styles.label}>
                         {_ts('project.general.dashboard', 'projectStatusTitle')}
                     </div>
-                    <div className={styles.value}>
+                    <div className={styles.stringValue}>
                         {project.status}
                     </div>
                 </div>
@@ -279,8 +298,10 @@ export default class ProjectDashboard extends React.PureComponent {
                     <div className={styles.label}>
                         {_ts('project.general.dashboard', 'createdByTitle')}
                     </div>
-                    <div className={styles.value}>
-                        {project.createdBy}
+                    <div className={styles.stringValue}>
+                        <a href={linkToUser}>
+                            {project.createdBy}
+                        </a>
                     </div>
                 </div>
                 <div className={styles.infoItem}>
@@ -288,7 +309,7 @@ export default class ProjectDashboard extends React.PureComponent {
                         {_ts('project.general.dashboard', 'createdAtTitle')}
                     </div>
                     <FormattedDate
-                        className={styles.value}
+                        className={styles.dateValue}
                         date={project.createdAt}
                         mode="dd-MM-yyyy"
                     />
@@ -297,7 +318,7 @@ export default class ProjectDashboard extends React.PureComponent {
                     <div className={styles.label}>
                         {_ts('project.general.dashboard', 'totalLeadsTitle')}
                     </div>
-                    <div className={styles.value}>
+                    <div className={styles.numericValue}>
                         {project.numberOfLeads}
                     </div>
                 </div>
@@ -305,7 +326,7 @@ export default class ProjectDashboard extends React.PureComponent {
                     <div className={styles.label}>
                         {_ts('project.general.dashboard', 'totalEntriesTitle')}
                     </div>
-                    <div className={styles.value}>
+                    <div className={styles.numericValue}>
                         {project.numberOfEntries}
                     </div>
                 </div>
@@ -313,7 +334,7 @@ export default class ProjectDashboard extends React.PureComponent {
                     <div className={styles.label}>
                         {_ts('project.general.dashboard', 'totalUsersTitle')}
                     </div>
-                    <div className={styles.value}>
+                    <div className={styles.numericValue}>
                         {project.numberOfUsers}
                     </div>
                 </div>
@@ -321,28 +342,35 @@ export default class ProjectDashboard extends React.PureComponent {
         );
     }
 
-    renderMetadata = () => (
-        <div className={_cs(styles.row, styles.metadata)}>
-            {this.renderInfo()}
-            <div className={styles.rightSection}>
-                <div className={styles.topSection}>
-                    {this.renderLeadsActivity()}
-                    {this.renderEntriesActivity()}
-                </div>
-                <div className={styles.bottomSection}>
-                    {this.renderSourcers()}
-                    {this.renderTaggers()}
+    renderMetadata = () => {
+        const BasicInfo = this.renderBasicInfo;
+        return (
+            <div className={styles.metadata}>
+                <BasicInfo />
+                <div className={styles.stats}>
+                    <div className={styles.activityChart}>
+                        {this.renderLeadsActivity()}
+                        {this.renderEntriesActivity()}
+                    </div>
+                    <div className={styles.activityPercentages}>
+                        {this.renderSourcers()}
+                        {this.renderTaggers()}
+                    </div>
                 </div>
             </div>
-        </div>
-    )
+        );
+    }
 
     renderMap = () => {
-        const { projectDashboard: { regions = emptyList } } = this.props;
+        const {
+            projectDashboard: {
+                regions = emptyList,
+            },
+        } = this.props;
 
         if (regions.length === 0) {
             return (
-                <div className={_cs(styles.row, styles.map)}>
+                <div className={styles.mapContainer}>
                     <Message>
                         {_ts('project.general.dashboard', 'noRegionForProject')}
                     </Message>
@@ -353,8 +381,11 @@ export default class ProjectDashboard extends React.PureComponent {
         const selectedRegion = this.state.selectedRegion || regions[0].id;
 
         return (
-            <div className={_cs(styles.row, styles.map)}>
-                <RegionMap regionId={selectedRegion} />
+            <div className={styles.mapContainer}>
+                <RegionMap
+                    className={styles.map}
+                    regionId={selectedRegion}
+                />
                 <SelectInput
                     className={styles.regionSelectInput}
                     options={regions}
@@ -370,20 +401,32 @@ export default class ProjectDashboard extends React.PureComponent {
     }
 
     render() {
-        const className = this.getClassName();
+        const {
+            className: classNameFromProps,
+            projectRequest: {
+                pending: projectRequestPending,
+            },
+        } = this.props;
+
+        const className = _cs(
+            classNameFromProps,
+            styles.projectDashboard,
+            'project-dashboard',
+        );
+
         const Metadata = this.renderMetadata;
         const Map = this.renderMap;
 
-        if (this.props.projectRequest.pending) {
-            return (
-                <LoadingAnimation className={className} />
-            );
-        }
-
         return (
             <div className={className}>
-                <Metadata />
-                <Map />
+                { projectRequestPending ? (
+                    <LoadingAnimation />
+                ) : (
+                    <React.Fragment>
+                        <Metadata />
+                        <Map />
+                    </React.Fragment>
+                )}
             </div>
         );
     }
