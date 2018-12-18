@@ -1,6 +1,12 @@
 @import '~base-scss/base';
 
 $width-sidebar: 240px;
+$page-margin: $spacing-small-alt;
+
+.loading {
+    margin: (-$page-margin);
+    height: calc(100% + #{$page-margin * 2});
+}
 
 .country-panel {
     display: flex;

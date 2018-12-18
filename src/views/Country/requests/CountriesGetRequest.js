@@ -36,6 +36,8 @@ export default class CountriesGetRequest {
         const countriesRequest = new FgRestBuilder()
             .url(urlForRegions)
             .params(createParamsForGet)
+            .preLoad(() => { this.props.setState({ pendingCountryList: true }); })
+            .postLoad(() => { this.props.setState({ pendingCountryList: false }); })
             .success(this.success)
             .failure(this.failure)
             .fatal(this.fatal)
