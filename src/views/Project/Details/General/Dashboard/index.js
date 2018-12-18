@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
 
 import SelectInput from '#rsci/SelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -25,6 +26,7 @@ import {
     requestMethods,
 } from '#request';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import styles from './styles.scss';
 
@@ -50,12 +52,7 @@ const mapDispatchToProps = dispatch => ({
     setProjectDashboardDetails: params => dispatch(setProjectDashboardDetailsAction(params)),
 });
 
-const emptyObject = {};
 const emptyList = [];
-
-// TODO: Move to common utils
-// eslint-disable-next-line no-underscore-dangle
-const _cs = (...names) => names.join(' ');
 
 const requests = {
     projectRequest: {
@@ -148,21 +145,21 @@ export default class ProjectDashboard extends React.PureComponent {
         };
     }
 
-    getProjectRequestResponse = () => (
-        (this.props.projectRequest || emptyObject).response || emptyObject
-    )
-
     handleRegionChange = (selectedRegion) => {
         this.setState({ selectedRegion });
     }
+
+    filterSourcers = memoize(topSourcers => topSourcers.filter(sourcer => sourcer.count > 0));
+
+    filterTaggers = memoize(topTaggers => topTaggers.filter(tagger => tagger.count > 0));
 
     sourcerParams = (key, user) => {
         const {
             projectRequest: {
                 response: {
                     numberOfLeads,
-                } = emptyObject,
-            } = emptyObject,
+                } = {},
+            } = {},
         } = this.props;
 
         return ({
@@ -176,8 +173,8 @@ export default class ProjectDashboard extends React.PureComponent {
             projectRequest: {
                 response: {
                     numberOfEntries,
-                } = emptyObject,
-            } = emptyObject,
+                } = {},
+            } = {},
         } = this.props;
 
         return ({
@@ -191,8 +188,8 @@ export default class ProjectDashboard extends React.PureComponent {
             projectRequest: {
                 response: {
                     leadsActivity = emptyList,
-                } = emptyObject,
-            } = emptyObject,
+                } = {},
+            } = {},
         } = this.props;
 
         return (
@@ -218,8 +215,8 @@ export default class ProjectDashboard extends React.PureComponent {
             projectRequest: {
                 response: {
                     entriesActivity = emptyList,
-                } = emptyObject,
-            } = emptyObject,
+                } = {},
+            } = {},
         } = this.props;
 
         return (
@@ -250,7 +247,7 @@ export default class ProjectDashboard extends React.PureComponent {
                 </h4>
                 <ListView
                     className={styles.list}
-                    data={topSourcers}
+                    data={this.filterSourcers(topSourcers)}
                     renderer={UserItem}
                     rendererParams={this.sourcerParams}
                     keySelector={ProjectDashboard.userKeySelector}
@@ -269,7 +266,7 @@ export default class ProjectDashboard extends React.PureComponent {
                 </h4>
                 <ListView
                     className={styles.list}
-                    data={topTaggers}
+                    data={this.filterTaggers(topTaggers)}
                     renderer={UserItem}
                     rendererParams={this.taggerParams}
                     keySelector={ProjectDashboard.userKeySelector}
