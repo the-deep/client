@@ -535,7 +535,6 @@ export default class Leads extends React.PureComponent {
         const { loadingLeads } = this.state;
 
         const isFilterEmpty = isObjectEmpty(this.props.filters);
-        console.warn(loadingLeads);
 
         if (loadingLeads && isFilterEmpty) {
             return null;

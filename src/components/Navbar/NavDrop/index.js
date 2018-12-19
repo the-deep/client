@@ -12,10 +12,8 @@ import List from '#rscv/List';
 import DropdownMenu from '#rsca/DropdownMenu';
 import DropdownGroup from '#rsca/DropdownMenu/Group';
 
-import { stopSiloBackgroundTasksAction } from '#redux/middlewares/siloBackgroundTasks';
 import { adminEndpoint } from '#config/rest';
 import {
-    logoutAction,
     activeCountryIdFromStateSelector,
     activeProjectIdFromStateSelector,
     activeUserSelector,
@@ -95,17 +93,10 @@ const mapStateToProps = state => ({
     userInformation: currentUserInformationSelector(state),
 });
 
-const mapDispatchToProps = dispatch => ({
-    logout: () => dispatch(logoutAction()),
-    stopSiloTasks: () => dispatch(stopSiloBackgroundTasksAction()),
-});
-
 const propTypes = {
     className: PropTypes.string,
     activeCountryId: PropTypes.number,
     activeProjectId: PropTypes.number,
-    logout: PropTypes.func.isRequired,
-    stopSiloTasks: PropTypes.func.isRequired,
     activeUser: PropTypes.shape({
         userId: PropTypes.number,
     }),
@@ -123,7 +114,7 @@ const defaultProps = {
 };
 
 @withRouter
-@connect(mapStateToProps, mapDispatchToProps)
+@connect(mapStateToProps)
 export default class NavDrop extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -141,10 +132,7 @@ export default class NavDrop extends React.PureComponent {
 
     static getDropItemKey = item => item.key
 
-    handleLogoutButtonClick = () => {
-        this.props.stopSiloTasks();
-        this.props.logout();
-    }
+    static shouldHideLogout = ({ isLoggedIn }) => !isLoggedIn
 
     renderDropItem = (key, item) => {
         const {
@@ -230,11 +218,10 @@ export default class NavDrop extends React.PureComponent {
                     </span>
                 </a>
                 <Cloak
-                    // FIXME: no inline functions
-                    hide={({ isLoggedIn }) => !isLoggedIn}
+                    hide={NavDrop.shouldHideLogout}
                     render={
                         <LogoutLink
-                            onClick={this.handleLogoutButtonClick}
+                            onClick={this.props.onLogout}
                         />
                     }
                 />
