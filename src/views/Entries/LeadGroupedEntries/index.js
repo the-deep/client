@@ -7,6 +7,7 @@ import _ts from '#ts';
 import {
     iconNames,
     pathNames,
+    viewsAcl,
 } from '#constants';
 
 import { reverseRoute } from '#rsu/common';
@@ -95,7 +96,7 @@ export default class LeadGroupedEntries extends React.PureComponent {
                     { entries.length }
                 </div>
                 <Cloak
-                    hide={LeadGroupedEntries.shouldHideEntryEdit}
+                    {...viewsAcl.editEntries}
                     render={
                         <Link
                             className={styles.editEntryLink}

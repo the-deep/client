@@ -18,7 +18,7 @@ import {
 } from '#rsu/common';
 
 import Cloak from '#components/Cloak';
-import { iconNames, pathNames, viewsAcl } from '#constants/';
+import { iconNames, pathNames, viewsAcl } from '#constants';
 import { leadTypeIconMap } from '#entities/lead';
 import {
     activeProjectIdFromStateSelector,

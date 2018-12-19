@@ -497,6 +497,7 @@ export default class ClusterViz extends PureComponent {
             entryToRedirectTo,
         } = this.state;
 
+        // FIXME: bug, shouldn't use cloak here and the condition is not complete
         if (entryToRedirectTo) {
             return (
                 <Cloak

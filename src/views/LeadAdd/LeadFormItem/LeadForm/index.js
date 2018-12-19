@@ -196,6 +196,8 @@ export default class LeadForm extends React.PureComponent {
         return false;
     }
 
+    shouldHideLeadGroupInput = () => !this.props.projectDetails.assessmentTemplate;
+
     renderLeadGroupElement = ({ disabled, isApplyAllDisabled, leadOptions }) => (
         <div className={styles.leadGroupContainer}>
             <ApplyAll
@@ -239,7 +241,6 @@ export default class LeadForm extends React.PureComponent {
 
             isExtractionDisabled,
             onExtractClick,
-            projectDetails,
         } = this.props;
 
         const values = leadAccessor.getFaramValues(lead);
@@ -321,7 +322,7 @@ export default class LeadForm extends React.PureComponent {
                 />
 
                 <Cloak
-                    hide={() => !projectDetails.assessmentTemplate}
+                    hide={this.shouldHideLeadGroupInput}
                     render={
                         <LeadGroupInput
                             isApplyAllDisabled={isApplyAllDisabled}
