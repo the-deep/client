@@ -22,10 +22,10 @@ const defaultProps = {
 };
 
 export default class FrameworkWidgetError extends React.PureComponent {
-    static handleException = handleException;
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static handleException = handleException;
     static shouldHideReport = ({ isDevMode }) => isDevMode;
 
     render() {

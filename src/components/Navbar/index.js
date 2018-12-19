@@ -8,6 +8,7 @@ import {
     matchPath,
 } from 'react-router-dom';
 
+import Confirm from '#rscv/Modal/Confirm';
 import { BgRestBuilder } from '#rsu/rest';
 import {
     isTruthy,
@@ -26,7 +27,9 @@ import {
     activeProjectIdFromStateSelector,
     activeUserSelector,
     currentUserProjectsSelector,
+    logoutAction,
 } from '#redux';
+import { stopSiloBackgroundTasksAction } from '#redux/middlewares/siloBackgroundTasks';
 import _ts from '#ts';
 
 import {
@@ -53,6 +56,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     setActiveProject: params => dispatch(setActiveProjectAction(params)),
+    logout: () => dispatch(logoutAction()),
+    stopSiloTasks: () => dispatch(stopSiloBackgroundTasksAction()),
 });
 
 const propTypes = {
@@ -72,6 +77,8 @@ const propTypes = {
     location: PropTypes.shape({
         pathname: PropTypes.string,
     }).isRequired,
+    logout: PropTypes.func.isRequired,
+    stopSiloTasks: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -122,6 +129,10 @@ export default class Navbar extends React.PureComponent {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            showLogoutConfirm: false,
+        };
 
         this.setLinksForLocation(props.location);
     }
@@ -204,6 +215,18 @@ export default class Navbar extends React.PureComponent {
         }
     }
 
+    handleLogoutClick = () => {
+        this.setState({ showLogoutConfirm: true });
+    }
+
+    handleLogoutModalClose = (confirm) => {
+        if (confirm) {
+            this.props.stopSiloTasks();
+            this.props.logout();
+        }
+        this.setState({ showLogoutConfirm: false });
+    }
+
     render() {
         const {
             className,
@@ -211,6 +234,7 @@ export default class Navbar extends React.PureComponent {
             activeCountry,
             userProjects,
         } = this.props;
+        const { showLogoutConfirm } = this.state;
 
         // Hide navbar
         if (hideNavbar[this.currentPath]) {
@@ -293,7 +317,16 @@ export default class Navbar extends React.PureComponent {
                     className={styles.userMenu}
                     links={this.validDropLinks}
                     adminPanelLink={adminPanelLink}
+                    onLogout={this.handleLogoutClick}
                 />
+                <Confirm
+                    show={showLogoutConfirm}
+                    onClose={this.handleLogoutModalClose}
+                >
+                    <p>
+                        {_ts('components.navbar', 'logoutConfirmationText')}
+                    </p>
+                </Confirm>
             </nav>
         );
     }

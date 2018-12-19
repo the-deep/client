@@ -30,7 +30,6 @@ export const setRavenUser = (user) => {
 };
 
 export const handleException = (error, errorInfo) => {
-    // FIXME: don't handle exception when in development mode
     if (enableRaven && Raven.isSetup()) {
         // NOTE: Only in development error report will be applied twice
         Raven.captureException(error, { extra: errorInfo });

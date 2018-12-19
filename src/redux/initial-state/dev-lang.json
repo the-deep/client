@@ -865,7 +865,9 @@
         "-64009123": "Convert to tabular",
         "-20173783": "The same page is open in another tab.",
         "-96507602": "Error while trying to reset password.",
-        "-27376433": "Anyplace"
+        "-27376433": "Anyplace",
+        "-21403453": "Something went wrong with loading this page.",
+        "-14465545": "Do you want to logout? This will clear out all of your local changes."
     },
     "links": {
         "browserExtension": {
@@ -1049,7 +1051,8 @@
         },
         "components.appError": {
             "problemText": 2010,
-            "reportErrorTitle": 9920
+            "reportErrorTitle": 9920,
+            "noAuthProblemText": -21403453
         },
         "components.frameworkWidgetError": {
             "problemText": 2011,
@@ -1158,7 +1161,8 @@
             "zendeskLinkTitle": -81583708,
             "zendeskTitle": -11147231,
             "helpTitle": -44064706,
-            "addOrEditHelpLinkTitle": -72856110
+            "addOrEditHelpLinkTitle": -72856110,
+            "logoutConfirmationText": -14465545
         },
         "common": {
             "underConstructionLabel": 253,
