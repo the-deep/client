@@ -5,6 +5,6 @@ import {
 
 export const urlForProjectOptions = `${wsEndpoint}/project-options/`;
 
-export const createUrlForProjectList = params => (
-    `${wsEndpoint}/projects/?${p(params)}`
+export const createUrlForProjectStatList = params => (
+    `${wsEndpoint}/projects-stat/?${p(params)}`
 );

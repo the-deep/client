@@ -5,6 +5,7 @@ $width-title-min: 96px;
 
 .project-dashboard {
     display: flex;
+    position: relative;
     flex-direction: column;
     background-color: $color-foreground;
     overflow: auto;
