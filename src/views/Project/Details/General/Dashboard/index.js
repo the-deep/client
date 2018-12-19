@@ -60,7 +60,7 @@ const requests = {
         schema: 'projectDashboardGetResponse',
         onPropsChanged: ['projectId'],
         method: requestMethods.GET,
-        url: ({ props }) => `/projects/${props.projectId}/dashboard/`,
+        url: ({ props }) => `/projects-stat/${props.projectId}/dashboard/`,
         onSuccess: ({ response, props }) => {
             props.setProjectDashboardDetails({
                 project: response,

@@ -1,7 +1,7 @@
 // import schema from '#schema';
 import Request from '#utils/Request';
 import {
-    createUrlForProjectList,
+    createUrlForProjectStatList,
     createParamsForGet,
     // transformResponseErrorToFormError,
 } from '#rest';
@@ -36,7 +36,7 @@ export default class ProjectListRequest extends Request {
         const projectListRequestOffset = (activePage - 1) * projectsPerPage;
         const projectListRequestLimit = projectsPerPage;
 
-        const urlForProjectList = createUrlForProjectList({
+        const urlForProjectList = createUrlForProjectStatList({
             ...sanitizedFilters,
             ordering: activeSort,
             offset: projectListRequestOffset,
