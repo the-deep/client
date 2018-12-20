@@ -867,7 +867,9 @@
         "-96507602": "Error while trying to reset password.",
         "-27376433": "Anyplace",
         "-21403453": "Something went wrong with loading this page.",
-        "-14465545": "Do you want to logout? This will clear out all of your local changes."
+        "-14465545": "Do you want to logout? This will clear out all of your local changes.",
+        "-10995037": "Geo areas",
+        "-67487923": "Region"
     },
     "links": {
         "browserExtension": {
@@ -2467,6 +2469,13 @@
         },
         "nagbar": {
             "duplicateWarningText": -20173783
+        },
+        "components.geo.geoModal": {
+            "adminLevelLabel": 123,
+            "applyButtonLabel": 427,
+            "cancelButtonLabel": 61,
+            "geoAreasLabel": -10995037,
+            "regionLabel": -67487923
         }
     }
 }

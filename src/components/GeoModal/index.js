@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
@@ -11,6 +12,8 @@ import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import ListInput from '#rsci/ListInput';
 import { FaramInputElement } from '#rscg/FaramElements';
+import { listToMap } from '#rsu/common';
+import _ts from '#ts';
 
 import RegionMap from '../RegionMap';
 import styles from './styles.scss';
@@ -18,6 +21,8 @@ import styles from './styles.scss';
 const propTypes = {
     title: PropTypes.string,
     geoOptionsByRegion: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    adminLevelsById: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    adminLevelTitlesById: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     geoOptionsById: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     value: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     regions: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -30,6 +35,8 @@ const propTypes = {
 const defaultProps = {
     title: '',
     geoOptionsByRegion: {},
+    adminLevelsById: {},
+    adminLevelTitlesById: {},
     geoOptionsById: {},
     value: [],
     onChange: undefined,
@@ -66,6 +73,7 @@ export default class GeoModal extends React.PureComponent {
         this.state = {
             ...this.calcValueState(props, selectedRegion),
             selectedRegion,
+            selectedAdminLevel: [],
         };
     }
 
@@ -77,6 +85,25 @@ export default class GeoModal extends React.PureComponent {
             this.setState(this.calcValueState(nextProps, this.state.selectedRegion));
         }
     }
+
+    getOptionsForSelectedAdminLevels = memoize((selectedRegion, selectedAdminLevel) => {
+        const { adminLevelsById, geoOptionsByRegion } = this.props;
+        const selectedRegionAdminLevels = adminLevelsById[selectedRegion];
+        let optionsForSelectedAdminLevels = [];
+        if (selectedAdminLevel.length > 0) {
+            selectedAdminLevel.forEach((adminLevel) => {
+                optionsForSelectedAdminLevels = optionsForSelectedAdminLevels
+                    .concat(...selectedRegionAdminLevels[adminLevel]);
+            });
+        } else {
+            optionsForSelectedAdminLevels = geoOptionsByRegion[selectedRegion];
+        }
+        const optionMap = listToMap(optionsForSelectedAdminLevels, d => d.key);
+        return {
+            optionsForSelectedAdminLevels,
+            optionsForSelectedAdminLevelsMap: optionMap,
+        };
+    });
 
     // calcValueState = (props, selectedRegion)
     calcValueState = ({ value: originalValue, geoOptionsById }, selectedRegion) => {
@@ -130,7 +157,28 @@ export default class GeoModal extends React.PureComponent {
     }
 
     handleRegionChange = (selectedRegion) => {
-        this.setState(this.calcValueState(this.props, selectedRegion));
+        this.setState({
+            ...this.calcValueState(this.props, selectedRegion),
+            selectedAdminLevel: [],
+        });
+    }
+
+    handleFilteredRegionValueChange = (regionValue) => {
+        const {
+            value,
+            selectedRegion,
+            selectedAdminLevel,
+        } = this.state;
+
+        const { optionsForSelectedAdminLevelsMap } = this.getOptionsForSelectedAdminLevels(
+            selectedRegion,
+            selectedAdminLevel,
+        );
+        const filteredValues = value.filter(o => !optionsForSelectedAdminLevelsMap[o]);
+        this.handleRegionValueChange([
+            ...regionValue,
+            ...filteredValues,
+        ]);
     }
 
     handleRegionValueChange = (regionValue) => {
@@ -146,6 +194,10 @@ export default class GeoModal extends React.PureComponent {
             ...regionValue,
         ];
         onChange(newValue);
+    }
+
+    handleAdminLevelChange = (selectedAdminLevel) => {
+        this.setState({ selectedAdminLevel });
     }
 
     handleGroupValueChange = (adminLevel, groupValue) => {
@@ -184,17 +236,28 @@ export default class GeoModal extends React.PureComponent {
             title,
             geoOptionsByRegion,
             modalLeftComponent,
+            adminLevelsById,
+            adminLevelTitlesById,
         } = this.props;
 
         const {
             value,
             selectedRegion,
             groupedValue,
+            selectedAdminLevel,
         } = this.state;
 
         const GroupSelectionList = this.renderGroupSelectionList;
         const mapClassNames = [styles.map];
         const geoModalClassNames = [styles.geoModal];
+        const {
+            optionsForSelectedAdminLevels,
+            optionsForSelectedAdminLevelsMap,
+        } = this.getOptionsForSelectedAdminLevels(
+            selectedRegion,
+            selectedAdminLevel,
+        );
+        const filteredValues = value.filter(o => !!optionsForSelectedAdminLevelsMap[o]);
 
         if (modalLeftComponent) {
             mapClassNames.push(styles.hasLeft);
@@ -203,45 +266,55 @@ export default class GeoModal extends React.PureComponent {
 
         return (
             <Modal className={geoModalClassNames.join(' ')}>
-                <ModalHeader
-                    title={title}
-                    rightComponent={
-                        <div className={styles.selectInputs}>
-                            <SelectInput
-                                // FIXME: use strings
-                                label="Region"
-                                options={regions}
-                                keySelector={GeoModal.regionKeySelector}
-                                labelSelector={GeoModal.regionLabelSelector}
-                                onChange={this.handleRegionChange}
-                                value={selectedRegion}
-                                showHintAndError={false}
-                            />
-                            <MultiSelectInput
-                                // FIXME: use strings
-                                label="Select geo areas"
-                                options={geoOptionsByRegion[selectedRegion]}
-                                labelSelector={GeoModal.geoOptionLongLabelSelector}
-                                keySelector={GeoModal.geoOptionKeySelector}
-                                onChange={this.handleRegionValueChange}
-                                value={value}
-                                showHintAndError={false}
-                            />
-                        </div>
-                    }
-                />
+                <ModalHeader title={title} />
                 <ModalBody className={styles.body}>
                     {modalLeftComponent &&
                         <div className={styles.left}>
                             {modalLeftComponent}
                         </div>
                     }
-                    <RegionMap
-                        className={mapClassNames.join(' ')}
-                        regionId={selectedRegion}
-                        onChange={this.handleRegionValueChange}
-                        selections={value}
-                    />
+                    <div className={styles.mapWrapper}>
+                        <div className={styles.selectInputs}>
+                            <SelectInput
+                                label={_ts('components.geo.geoModal', 'regionLabel')}
+                                options={regions}
+                                className={styles.selectInput}
+                                keySelector={GeoModal.regionKeySelector}
+                                labelSelector={GeoModal.regionLabelSelector}
+                                onChange={this.handleRegionChange}
+                                value={selectedRegion}
+                                showHintAndError={false}
+                            />
+                            <div className={styles.leftInputs} >
+                                <MultiSelectInput
+                                    label={_ts('components.geo.geoModal', 'adminLevelLabel')}
+                                    className={styles.selectInput}
+                                    options={adminLevelTitlesById[selectedRegion]}
+                                    labelSelector={GeoModal.geoOptionLabelSelector}
+                                    keySelector={GeoModal.geoOptionKeySelector}
+                                    onChange={this.handleAdminLevelChange}
+                                    value={selectedAdminLevel}
+                                    showHintAndError={false}
+                                />
+                                <MultiSelectInput
+                                    label={_ts('components.geo.geoModal', 'geoAreasLabel')}
+                                    className={styles.selectInput}
+                                    options={optionsForSelectedAdminLevels}
+                                    labelSelector={GeoModal.geoOptionLongLabelSelector}
+                                    keySelector={GeoModal.geoOptionKeySelector}
+                                    onChange={this.handleFilteredRegionValueChange}
+                                    value={filteredValues}
+                                    showHintAndError={false}
+                                />
+                            </div>
+                        </div>
+                        <RegionMap
+                            className={mapClassNames.join(' ')}
+                            regionId={selectedRegion}
+                            onChange={this.handleRegionValueChange}
+                            selections={value}
+                        />
+                    </div>
                     <div className={styles.right}>
                         {groupedValue.map(v => (
                             // FIXME: use List
@@ -254,12 +327,10 @@ export default class GeoModal extends React.PureComponent {
                 </ModalBody>
                 <ModalFooter>
                     <Button onClick={this.handleCancelClick} >
-                        {/* FIXME: use strings */}
-                        Cancel
+                        {_ts('components.geo.geoModal', 'cancelButtonLabel')}
                     </Button>
                     <PrimaryButton onClick={this.handleApplyClick} >
-                        {/* FIXME: use strings */}
-                        Apply
+                        {_ts('components.geo.geoModal', 'applyButtonLabel')}
                     </PrimaryButton>
                 </ModalFooter>
             </Modal>
