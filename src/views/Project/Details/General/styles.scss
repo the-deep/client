@@ -60,10 +60,10 @@ $width-dashboard-min: 480px;
 
     .dashboard {
         display: flex;
-        flex-basis: $width-dashboard-min;
         flex-grow: 1;
         border-right: $width-separator-thin solid $color-separator;
         border-left: $width-separator-thin solid $color-separator;
+        min-width: $width-dashboard-min;
         overflow: auto;
     }
 

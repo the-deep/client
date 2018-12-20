@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 
@@ -9,6 +9,7 @@ import { reverseRoute } from '#rsu/common';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import SuccessConfirmButton from '#rsca/ConfirmButton/SuccessConfirmButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import Page from '#rscv/Page';
 import FixedTabs from '#rscv/FixedTabs';
 import Message from '#rscv/Message';
 import BackLink from '#components/general/BackLink';
@@ -147,8 +148,6 @@ export default class AnalysisFramework extends React.PureComponent {
             [VIEW.overview]: _ts('framework', 'overviewTabTitle'),
             [VIEW.list]: _ts('framework', 'listTabTitle'),
         };
-
-        this.defaultHash = VIEW.overview;
     }
 
     componentWillMount() {
@@ -251,7 +250,7 @@ export default class AnalysisFramework extends React.PureComponent {
         const frameworkTitle = analysisFramework.title || _ts('framework', 'analysisFramework');
 
         return (
-            <div className={styles.analysisFramework}>
+            <Fragment>
                 <Prompt
                     message={
                         (location) => {
@@ -265,58 +264,67 @@ export default class AnalysisFramework extends React.PureComponent {
                         }
                     }
                 />
-                <header className={styles.header}>
-                    <BackLink
-                        defaultLink={{
-                            pathname: exitPath,
-                            hash: '#/frameworks',
-                        }}
-                    />
-                    <h4 className={styles.heading}>
-                        { frameworkTitle }
-                    </h4>
-                    <FixedTabs
-                        className={styles.tabs}
-                        tabs={this.tabs}
-                        useHash
-                        replaceHistory
-                        defaultHash={this.defaultHash}
-                    />
-                    <div className={styles.actionButtons}>
-                        <DangerConfirmButton
-                            confirmationMessage={_ts('framework', 'cancelConfirmDetail')}
-                            onClick={this.handleCancel}
-                            disabled={pristine || pendingSaveFramework}
-                        >
-                            { _ts('framework', 'cancelButtonTitle') }
-                        </DangerConfirmButton>
-                        {
-                            entriesCount > 0 ? (
-                                <SuccessConfirmButton
-                                    confirmationMessage={_ts('framework', 'successConfirmDetail', { count: entriesCount })}
-                                    onClick={this.handleSave}
+                <Page
+                    className={styles.analysisFramework}
+                    header={
+                        <header className={styles.header}>
+                            <BackLink
+                                defaultLink={{
+                                    pathname: exitPath,
+                                    hash: '#/frameworks',
+                                }}
+                            />
+                            <h4 className={styles.heading}>
+                                { frameworkTitle }
+                            </h4>
+                            <FixedTabs
+                                className={styles.tabs}
+                                tabs={this.tabs}
+                                useHash
+                                replaceHistory
+                            />
+                            <div className={styles.actionButtons}>
+                                <DangerConfirmButton
+                                    confirmationMessage={_ts('framework', 'cancelConfirmDetail')}
+                                    onClick={this.handleCancel}
                                     disabled={pristine || pendingSaveFramework}
                                 >
-                                    { _ts('framework', 'saveButtonTitle') }
-                                </SuccessConfirmButton>
-                            ) : (
-                                <SuccessButton
-                                    onClick={this.handleSave}
-                                    disabled={pristine || pendingSaveFramework}
-                                >
-                                    { _ts('framework', 'saveButtonTitle') }
-                                </SuccessButton>
-                            )
-                        }
-                    </div>
-                </header>
-                <MultiViewContainer
-                    views={this.views}
-                    useHash
-                    containerClassName={styles.content}
-                    activeClassName={styles.active}
+                                    { _ts('framework', 'cancelButtonTitle') }
+                                </DangerConfirmButton>
+                                {
+                                    entriesCount > 0 ? (
+                                        <SuccessConfirmButton
+                                            onClick={this.handleSave}
+                                            disabled={pristine || pendingSaveFramework}
+                                            confirmationMessage={
+                                                _ts('framework', 'successConfirmDetail', { count: entriesCount })
+                                            }
+                                        >
+                                            { _ts('framework', 'saveButtonTitle') }
+                                        </SuccessConfirmButton>
+                                    ) : (
+                                        <SuccessButton
+                                            onClick={this.handleSave}
+                                            disabled={pristine || pendingSaveFramework}
+                                        >
+                                            { _ts('framework', 'saveButtonTitle') }
+                                        </SuccessButton>
+                                    )
+                                }
+                            </div>
+                        </header>
+                    }
+                    mainContentClassName={styles.main}
+                    mainContent={
+                        <MultiViewContainer
+                            views={this.views}
+                            useHash
+                            containerClassName={styles.content}
+                            activeClassName={styles.active}
+                        />
+                    }
                 />
-            </div>
+            </Fragment>
         );
     }
 }

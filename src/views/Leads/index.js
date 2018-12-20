@@ -11,6 +11,7 @@ import AccentButton from '#rsca/Button/AccentButton';
 import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
+import Page from '#rscv/Page';
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
 import {
@@ -617,32 +618,35 @@ export default class Leads extends React.PureComponent {
         const Footer = this.renderFooter;
 
         return (
-            <div className={styles.leads}>
-                <Header />
-                <div className={styles.tableContainer}>
-                    <div className={styles.scrollWrapper}>
-                        <RawTable
-                            data={this.props.leads}
-                            dataModifier={this.leadModifier}
-                            headerModifier={this.headerModifier}
-                            headers={this.headers}
-                            onHeaderClick={this.handleTableHeaderClick}
-                            className={styles.leadsTable}
-                            keySelector={Leads.leadKeyExtractor}
-                            emptyComponent={this.renderEmpty}
-                        />
+            <Page
+                className={styles.leads}
+                header={<Header />}
+                mainContent={
+                    <React.Fragment>
                         { loadingLeads && <LoadingAnimation /> }
-                    </div>
-                </div>
-                <Footer />
-
-                { showLeadPreview &&
-                    <LeadPreview
-                        value={value}
-                        onClose={this.unsetLeadPreview}
-                    />
+                        <div className={styles.tableContainer}>
+                            <RawTable
+                                data={this.props.leads}
+                                dataModifier={this.leadModifier}
+                                headerModifier={this.headerModifier}
+                                headers={this.headers}
+                                onHeaderClick={this.handleTableHeaderClick}
+                                className={styles.leadsTable}
+                                keySelector={Leads.leadKeyExtractor}
+                                emptyComponent={this.renderEmpty}
+                            />
+                        </div>
+                        { showLeadPreview && (
+                            <LeadPreview
+                                value={value}
+                                onClose={this.unsetLeadPreview}
+                            />
+                        )}
+                    </React.Fragment>
                 }
-            </div>
+                mainContentClassName={styles.mainContent}
+                footer={<Footer />}
+            />
         );
     }
 }
