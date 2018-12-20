@@ -3,8 +3,6 @@
 $color-text-on-primary: get-text-color($color-primary);
 
 .four-hundred-four {
-    @extend %main-content;
-    @include background-color($color-foreground-alt);
     display: flex;
     align-items: center;
     flex-direction: column;

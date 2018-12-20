@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { caseInsensitiveSubmatch, compareString } from '#rsu/common';
+import Page from '#rscv/Page';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import SearchInput from '#rsci/SearchInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -212,51 +213,57 @@ export default class CountryPanel extends React.PureComponent {
         }
 
         return (
-            <div className={styles.countryPanel}>
-                <div className={styles.sidebar}>
-                    <header className={styles.header}>
-                        <h3 className={styles.heading}>
-                            {_ts('countries', 'countriesLabel')}
-                        </h3>
-                        {
-                            activeUser.isSuperuser &&
-                            <PrimaryButton
-                                iconName={iconNames.add}
-                                onClick={this.onAddCountry}
-                            >
-                                {_ts('countries', 'addCountryButtonLabel')}
-                            </PrimaryButton>
-                        }
-                        <SearchInput
-                            className={styles.searchInput}
-                            onChange={this.handleSearchInputChange}
-                            placeholder={_ts('countries', 'searchCountryPlaceholer')}
-                            value={this.state.searchInputValue}
-                            showLabel={false}
-                            showHintAndError={false}
-                        />
-                    </header>
-                    { this.state.addCountryModal &&
-                        <Modal
-                            closeOnEscape
-                            onClose={this.handleModalClose}
-                            closeOnBlur
-                        >
-                            <ModalHeader title={_ts('countries', 'addCountryModalHeaderLabel')} />
-                            <ModalBody>
-                                <AddRegion onModalClose={this.handleModalClose} />
-                            </ModalBody>
-                        </Modal>
+            <React.Fragment>
+                <Page
+                    className={styles.countryPanel}
+                    sidebarClassName={styles.sidebar}
+                    sidebar={
+                        <React.Fragment>
+                            <header className={styles.header}>
+                                <h3 className={styles.heading}>
+                                    {_ts('countries', 'countriesLabel')}
+                                </h3>
+                                { activeUser.isSuperuser && (
+                                    <PrimaryButton
+                                        iconName={iconNames.add}
+                                        onClick={this.onAddCountry}
+                                    >
+                                        {_ts('countries', 'addCountryButtonLabel')}
+                                    </PrimaryButton>
+                                ) }
+                                <SearchInput
+                                    className={styles.searchInput}
+                                    onChange={this.handleSearchInputChange}
+                                    placeholder={_ts('countries', 'searchCountryPlaceholer')}
+                                    value={this.state.searchInputValue}
+                                    showLabel={false}
+                                    showHintAndError={false}
+                                />
+                            </header>
+                            <ListView
+                                className={styles.countryList}
+                                modifier={this.renderCountryListItem}
+                                data={displayCountryList}
+                                keySelector={this.calcCountryListItemKey}
+                            />
+                        </React.Fragment>
                     }
-                    <ListView
-                        className={styles.countryList}
-                        modifier={this.renderCountryListItem}
-                        data={displayCountryList}
-                        keySelector={this.calcCountryListItemKey}
-                    />
-                </div>
-                { this.renderCountryDetail() }
-            </div>
+                    mainContentClassName={styles.mainContent}
+                    mainContent={this.renderCountryDetail()}
+                />
+                { this.state.addCountryModal && (
+                    <Modal
+                        closeOnEscape
+                        onClose={this.handleModalClose}
+                        closeOnBlur
+                    >
+                        <ModalHeader title={_ts('countries', 'addCountryModalHeaderLabel')} />
+                        <ModalBody>
+                            <AddRegion onModalClose={this.handleModalClose} />
+                        </ModalBody>
+                    </Modal>
+                ) }
+            </React.Fragment>
         );
     }
 }

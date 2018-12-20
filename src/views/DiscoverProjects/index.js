@@ -9,6 +9,7 @@ import {
     isObjectEmpty,
 } from '#rsu/common';
 
+import Page from '#rscv/Page';
 import Message from '#rscv/Message';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
@@ -361,10 +362,13 @@ export default class DiscoverProjects extends React.PureComponent {
         const exitPath = reverseRoute(pathNames.homeScreen);
 
         return (
-            <header className={styles.header}>
-                <BackLink defaultLink={{ pathname: exitPath }} />
+            <React.Fragment>
+                <BackLink
+                    className={styles.backLink}
+                    defaultLink={{ pathname: exitPath }}
+                />
                 <FilterProjectsForm className={styles.filters} />
-            </header>
+            </React.Fragment>
         );
     }
 
@@ -376,7 +380,7 @@ export default class DiscoverProjects extends React.PureComponent {
         } = this.props;
 
         return (
-            <footer className={styles.footer}>
+            <React.Fragment>
                 <div />
                 <div className={styles.pagerContainer}>
                     <Pager
@@ -388,7 +392,7 @@ export default class DiscoverProjects extends React.PureComponent {
                         onItemsPerPageChange={this.handleProjectsPerPageChange}
                     />
                 </div>
-            </footer>
+            </React.Fragment>
         );
     }
 
@@ -458,25 +462,31 @@ export default class DiscoverProjects extends React.PureComponent {
         const Footer = this.renderFooter;
 
         return (
-            <div className={styles.discoverProjects}>
-                <Header />
-                <div className={styles.tableContainer}>
-                    <div className={styles.scrollWrapper}>
+            <Page
+                className={styles.discoverProjects}
+                headerClassName={styles.header}
+                header={<Header />}
+                mainContentClassName={styles.mainContent}
+                mainContent={
+                    <React.Fragment>
                         { pending && <LoadingAnimation /> }
-                        <RawTable
-                            data={projectList}
-                            headers={headers}
-                            dataModifier={this.dataModifier}
-                            headerModifier={this.headerModifier}
-                            onHeaderClick={this.handleTableHeaderClick}
-                            keySelector={projectKeyExtractor}
-                            className={styles.projectsTable}
-                            emptyComponent={this.renderEmpty}
-                        />
-                    </div>
-                </div>
-                <Footer />
-            </div>
+                        <div className={styles.tableContainer}>
+                            <RawTable
+                                data={projectList}
+                                headers={headers}
+                                dataModifier={this.dataModifier}
+                                headerModifier={this.headerModifier}
+                                onHeaderClick={this.handleTableHeaderClick}
+                                keySelector={projectKeyExtractor}
+                                className={styles.projectsTable}
+                                emptyComponent={this.renderEmpty}
+                            />
+                        </div>
+                    </React.Fragment>
+                }
+                footerClassName={styles.footer}
+                footer={<Footer />}
+            />
         );
     }
 }

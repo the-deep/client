@@ -2,22 +2,23 @@
 
 .title-bar {
     display: flex;
-    background-color: $color-background-header;
+    align-items: center;
 
     .back-button {
         flex-shrink: 0;
-        padding: 0 $spacing-medium;
     }
 
     .heading {
         flex-grow: 1;
         padding: 0 $spacing-medium;
         overflow: hidden;
+        text-transform: capitalize;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
 
     .action-buttons {
-        padding: 0 $spacing-medium;
+        flex-shrink: 0;
+        padding-left: $spacing-medium;
     }
 }

@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
+import Page from '#rscv/Page';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
@@ -246,6 +247,7 @@ export default class Connector extends React.PureComponent {
 
         if (!connectorId) {
             return (
+                // TODO: Use message component
                 <p className={styles.noConnector}>
                     {_ts('connector', 'noConnectorSelectedTitle')}
                 </p>
@@ -268,18 +270,23 @@ export default class Connector extends React.PureComponent {
         const Details = this.renderDetails;
 
         return (
-            <div className={styles.connectors}>
-                <div className={styles.sidebar}>
-                    <Header />
-                    <ListView
-                        className={styles.connectorsList}
-                        data={displayConnectorsList}
-                        keySelector={Connector.connectorKeySelector}
-                        modifier={this.renderConnectorListItem}
-                    />
-                </div>
-                <Details />
-            </div>
+            <Page
+                className={styles.connectors}
+                sidebarClassName={styles.sidebar}
+                sidebar={
+                    <React.Fragment>
+                        <Header />
+                        <ListView
+                            className={styles.connectorsList}
+                            data={displayConnectorsList}
+                            keySelector={Connector.connectorKeySelector}
+                            modifier={this.renderConnectorListItem}
+                        />
+                    </React.Fragment>
+                }
+                mainContentClassName={styles.mainContent}
+                mainContent={<Details />}
+            />
         );
     }
 }

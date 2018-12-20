@@ -22,7 +22,6 @@ $width-icon-mark: 40px;
 }
 
 @mixin documentType($color) {
-
     @include transition-slow;
     display: flex;
     position: absolute;
@@ -190,7 +189,8 @@ $width-icon-mark: 40px;
         padding-top: 0px;
         color: $icon-color-light;
 
-        > button , .action-button {
+        > button,
+        .action-button {
             @extend %actions;
             @include shadow-medium;
             margin-top: $spacing-medium;
@@ -206,13 +206,13 @@ $width-icon-mark: 40px;
     }
 
     &:hover {
-
         .time-from {
             display: none;
             opacity: 0;
         }
 
-        .document-type-pending, .document-type-processed {
+        .document-type-pending,
+        .document-type-processed {
             opacity: 0;
         }
 
@@ -222,7 +222,9 @@ $width-icon-mark: 40px;
             max-height: 10em;
         }
 
-        .actions, .add, .mark {
+        .actions,
+        .add,
+        .mark {
             opacity: 1;
             z-index: 1;
         }

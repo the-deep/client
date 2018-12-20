@@ -124,7 +124,9 @@ export default class ProjectList extends React.PureComponent {
                             </Link>
                         }
                     />
-                    <AddProjectButton setActiveProject={setActiveProject} />
+                    <AddProjectButton
+                        setActiveProject={setActiveProject}
+                    />
                     <SearchInput
                         onChange={this.handleSearchInputChange}
                         placeholder={_ts('project', 'searchProjectPlaceholder')}

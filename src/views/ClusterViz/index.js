@@ -5,6 +5,8 @@ import React, {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
+
+import Page from '#rscv/Page';
 import Message from '#rscv/Message';
 import BoundError from '#rscg/BoundError';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -161,7 +163,7 @@ export default class ClusterViz extends PureComponent {
             },
         ];
 
-        this.container = React.createRef();
+        this.containerRef = React.createRef();
     }
 
     componentWillMount() {
@@ -206,7 +208,7 @@ export default class ClusterViz extends PureComponent {
     }
 
     componentDidUpdate() {
-        const { current: container } = this.container;
+        const { current: container } = this.containerRef;
         if (!container) {
             return;
         }
@@ -514,7 +516,7 @@ export default class ClusterViz extends PureComponent {
 
         const className = `
             ${classNameFromProps}
-            ${styles.cluster}
+            ${styles.clusterVisualization}
         `;
 
         const graphHeaderText = _ts(
@@ -525,27 +527,34 @@ export default class ClusterViz extends PureComponent {
                 noOfLeads: this.noOfLeads,
             },
         );
+
         const loading = createClusterPending || clusterDataPending;
         const failure = createClusterFailure || clusterDataFailure;
+        const backLink = reverseRoute(pathNames.leads, { projectId: activeProject });
+        const ErrorMessage = this.renderErrorMessage;
 
         return (
-            <div
-                ref={this.container}
+            <Page
+                containerRef={this.containerRef}
                 className={className}
-            >
-                <header className={styles.header}>
-                    <BackLink
-                        defaultLink={reverseRoute(pathNames.leads, { projectId: activeProject })}
-                    />
-                    <h2 className={styles.heading}>
-                        {_ts('clusterViz', 'clusterVizTitle')}
-                    </h2>
-                </header>
-                {
+                headerClassName={styles.header}
+                header={
+                    <React.Fragment>
+                        <BackLink
+                            className={styles.backLink}
+                            defaultLink={backLink}
+                        />
+                        <h2 className={styles.heading}>
+                            {_ts('clusterViz', 'clusterVizTitle')}
+                        </h2>
+                    </React.Fragment>
+                }
+                mainContentClassName={styles.mainContent}
+                mainContent={
                     failure ? (
-                        this.renderErrorMessage()
+                        <ErrorMessage />
                     ) : (
-                        <div className={styles.container}>
+                        <div className={styles.clusterContainer}>
                             { loading && <LoadingAnimation /> }
                             { /* eslint-disable-next-line max-len */ }
                             { /* eslint-disable-next-line jsx-a11y/mouse-events-have-key-events */ }
@@ -573,7 +582,7 @@ export default class ClusterViz extends PureComponent {
                         </div>
                     )
                 }
-            </div>
+            />
         );
     }
 }

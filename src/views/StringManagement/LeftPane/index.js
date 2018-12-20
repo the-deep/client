@@ -88,7 +88,7 @@ export default class LeftPane extends React.PureComponent {
         const { linkKeys, linkCollectionName } = this.props;
 
         return (
-            <div className={styles.leftPane}>
+            <React.Fragment>
                 <header className={styles.header}>
                     <h3>
                         Strings
@@ -107,7 +107,7 @@ export default class LeftPane extends React.PureComponent {
                     onClick={this.handleTabLinkClick}
                     modifier={this.renderTabLink}
                 />
-            </div>
+            </React.Fragment>
         );
     }
 }

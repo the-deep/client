@@ -20,7 +20,6 @@ import {
     currentUserProjectsSelector,
 } from '#redux';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import General from './General';
@@ -33,7 +32,6 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     projectId: PropTypes.number,
-    projectDetail: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
     // Requests Props
     // eslint-disable-next-line react/no-unused-prop-types
@@ -50,7 +48,6 @@ const defaultProps = {
 };
 
 const mapStateToProps = state => ({
-    projectDetail: projectDetailsSelector(state),
     userProjects: currentUserProjectsSelector(state),
 });
 
@@ -213,11 +210,11 @@ export default class ProjectDetails extends React.PureComponent {
     }
 
     render() {
-        const { className: classNameFromProps } = this.props;
         const {
-            projectDetail,
+            className: classNameFromProps,
             projectDeleteRequest,
         } = this.props;
+
         const className = `
             ${classNameFromProps}
             ${styles.projectDetails}
@@ -235,27 +232,7 @@ export default class ProjectDetails extends React.PureComponent {
                     replaceHistory
                     useHash
                     tabs={this.routes}
-                >
-                    <Cloak
-                        hide={ProjectDetails.shouldHideProjectDeleteButton}
-                        render={
-                            <DangerConfirmButton
-                                iconName={iconNames.delete}
-                                onClick={this.handleProjectDelete}
-                                confirmationTitle="Warning!"
-                                confirmationMessage={_ts('project', 'deleteConfirmMessage', {
-                                    title: <strong>{projectDetail.title}</strong>,
-                                })}
-                                challengeLabel={_ts('project', 'deleteConfirmLabel')}
-                                challengePlaceholder={_ts('project', 'deleteConfirmPlaceholder')}
-                                challengeValue={projectDetail.title}
-                                className={styles.deleteButton}
-                            >
-                                {_ts('project', 'deleteButtonTitle')}
-                            </DangerConfirmButton>
-                        }
-                    />
-                </ScrollTabs>
+                />
                 <MultiViewContainer
                     useHash
                     activeClassName={styles.active}

@@ -58,7 +58,7 @@ PageError.defaultProps = {
     noProjectPermission: false,
 };
 
-const Page = ({ name, disabled, noProjectPermission, ...otherProps }) => {
+const PageNormal = ({ name, disabled, noProjectPermission, ...otherProps }) => {
     // NOTE: don't show page if it is disabled as well
     if (disabled) {
         return <PageError noProjectPermission={noProjectPermission} />;
@@ -317,7 +317,7 @@ class RouteSynchronizer extends React.PureComponent {
                 {...viewsAcl[name]}
                 render={
                     <Fragment>
-                        <Page
+                        <PageNormal
                             name={name}
                             noProjectPermission={noProjectPermission}
                             {...otherProps}

@@ -3,13 +3,11 @@
 $width-assignee-column: 96px;
 
 .table-container {
-    @extend %main-content;
     @include background-color($color-foreground-alt);
     display: flex;
     position: relative;
     flex-direction: column;
     flex-grow: 1;
-    margin: $spacing-small-alt;
     padding-bottom: $spacing-extra-small;
     overflow: auto;
 
@@ -23,7 +21,6 @@ $width-assignee-column: 96px;
                 position: sticky;
                 top: 0;
             }
-
 
             $mime-column-width: 48px;
 

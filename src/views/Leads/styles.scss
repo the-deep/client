@@ -2,21 +2,11 @@
 @import '~rs-scss/input-label';
 
 .leads {
-    display: flex;
-    flex-direction: column;
-    margin: -$spacing-small-alt;
-    border: 0;
-    background-color: transparent;
-    height: calc(100% + #{$spacing-small-alt * 2});
-
     .header {
-        @include background-color($color-background-header);
         display: flex;
         align-items: center;
-        flex-shrink: 0;
+        flex-wrap: wrap;
         justify-content: space-between;
-        border-bottom: $width-separator-thin solid $color-separator-alt;
-        padding: $spacing-small $spacing-medium;
 
         .add-lead-link {
             @extend %button-like-link;
@@ -25,6 +15,16 @@
             flex-shrink: 0;
             margin: $spacing-small;
             padding: $spacing-small $spacing-medium-alt;
+        }
+
+        :global {
+            .leads-filters {
+                >.button {
+                    align-self: flex-end;
+                    flex-shrink: 0;
+                    margin: $spacing-small;
+                }
+            }
         }
 
         .filters {
@@ -38,56 +38,57 @@
             }
         }
 
-        :global {
-            .leads-filters {
-                >.button {
-                    align-self: flex-end;
-                    flex-shrink: 0;
-                    margin: $spacing-small;
+        .tabs {
+            margin-right: $spacing-extra-large;
+            background-color: transparent;
+
+            :global {
+                .fixed-tab {
+                    border-bottom: none;
+                    font-size: $font-size-extra-large;
+
+                    &.active {
+                        background-color: $color-background-hover-light;
+                        color: $color-accent;
+                    }
                 }
             }
         }
     }
 
-    .active {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        overflow: auto;
-    }
+    .main {
+        padding: 0;
 
-    .fixed-tabs {
-        margin-right: $spacing-extra-large;
-        background-color: transparent;
+        .container {
+            padding: 0;
+        }
 
-        :global {
-            .fixed-tab {
-                border-bottom: none;
-                font-size: $font-size-extra-large;
+        .active {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: auto;
+        }
 
-                &.active {
-                    background-color: $color-background-hover-light;
-                    color: $color-accent;
-                }
+        .empty-message,
+        .empty-filter-message {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+
+            .image {
+                opacity: 0.3;
+                margin: $spacing-large 0;
+                width: $width-icon-extreme-large;
+                height: $width-icon-extreme-large;
             }
         }
     }
 
-    .empty-message, .empty-filter-message {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
 
-        .image {
-            opacity: 0.3;
-            margin: $spacing-large 0;
-            width: $width-icon-extreme-large;
-            height: $width-icon-extreme-large;
-        }
-    }
 
     .footer {
         @include background-color($color-background-alt);

@@ -3,6 +3,7 @@ import React from 'react';
 import ReactSVG from 'react-svg';
 import { connect } from 'react-redux';
 
+import Page from '#rscv/Page';
 import { currentUserActiveProjectSelector } from '#redux';
 import logo from '#resources/img/deep-logo.svg';
 
@@ -28,20 +29,21 @@ export default class Dashboard extends React.PureComponent {
         const { currentUserActiveProject } = this.props;
 
         return (
-            <div className={styles.dashboard}>
-                <p className={styles.header}>
-                    { currentUserActiveProject.title }
-                </p>
-                <div className={styles.content}>
-                    <ReactSVG
-                        svgClassName={styles.deepLogo}
-                        path={logo}
-                    />
-                    <div className={styles.deepText} >
-                        {_ts('dashboard', 'deepLabel')} {_ts('dashboard', envText)}
-                    </div>
-                </div>
-            </div>
+            <Page
+                className={styles.dashboard}
+                mainContentClassName={styles.mainContent}
+                mainContent={
+                    <React.Fragment>
+                        <ReactSVG
+                            svgClassName={styles.deepLogo}
+                            path={logo}
+                        />
+                        <div className={styles.deepText} >
+                            {_ts('dashboard', 'deepLabel')} {_ts('dashboard', envText)}
+                        </div>
+                    </React.Fragment>
+                }
+            />
         );
     }
 }

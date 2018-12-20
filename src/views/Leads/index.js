@@ -6,6 +6,7 @@ import {
     Redirect,
 } from 'react-router-dom';
 
+import Page from '#rscv/Page';
 import Message from '#rscv/Message';
 import AccentButton from '#rsca/Button/AccentButton';
 import Button from '#rsca/Button';
@@ -304,7 +305,6 @@ export default class Leads extends React.PureComponent {
         };
 
         this.lastFilters = {};
-
         this.lastProject = {};
     }
 
@@ -515,9 +515,7 @@ export default class Leads extends React.PureComponent {
                     <AccentModalButton
                         iconName={icon}
                         transparent
-                        modal={
-                            <LeadPreview value={row} />
-                        }
+                        modal={<LeadPreview value={row} />}
                     />
                 ) : (
                     <span className={icon} />
@@ -533,13 +531,13 @@ export default class Leads extends React.PureComponent {
         );
 
         return (
-            <header className={styles.header}>
+            <React.Fragment>
                 <FilterLeadsForm className={styles.filters} />
                 <FixedTabs
                     tabs={Leads.tabs}
                     useHash
                     replaceHistory
-                    className={styles.fixedTabs}
+                    className={styles.tabs}
                     modifier={Leads.tabsModifier}
                     onClick={this.handleTabClick}
                     defaultHash={this.props.view}
@@ -556,7 +554,7 @@ export default class Leads extends React.PureComponent {
                         </Link>
                     }
                 />
-            </header>
+            </React.Fragment>
         );
     }
 
@@ -587,7 +585,7 @@ export default class Leads extends React.PureComponent {
         const { sortDirIcon, sortKey } = this.getSortDetails();
 
         return (
-            <footer className={styles.footer}>
+            <React.Fragment>
                 <div className={styles.linkContainer}>
                     <Cloak
                         {...viewsAcl.leadsViz}
@@ -636,9 +634,7 @@ export default class Leads extends React.PureComponent {
                                 onItemsPerPageChange={this.handleLeadsPerPageChange}
                             />
                         </div>
-                    )
-                    :
-                    (
+                    ) : (
                         <div className={styles.sortingContainer}>
                             <p>{_ts('leadsGrid', 'leadsRange', { leadsCount, totalLeadsCount })}</p>
                             <p>{_ts('leadsGrid', 'sortedByLabel')}:</p>
@@ -661,7 +657,7 @@ export default class Leads extends React.PureComponent {
                         </div>
                     )
                 }
-            </footer>
+            </React.Fragment>
         );
     }
 
@@ -676,29 +672,27 @@ export default class Leads extends React.PureComponent {
 
         if (!isFilterEmpty) {
             return (
-                <Message
-                    className={styles.emptyFilterMessage}
-                >
+                <Message className={styles.emptyFilterMessage}>
                     <img
                         className={styles.image}
                         src={noFilter}
                         alt=""
                     />
-                    <span>{_ts('leads', 'emptyWithFilterMessage')}</span>
+                    <div className={styles.text}>
+                        {_ts('leads', 'emptyWithFilterMessage')}
+                    </div>
                 </Message>
             );
         }
 
         return (
-            <Message
-                className={styles.emptyMessage}
-            >
+            <Message className={styles.emptyMessage}>
                 <img
                     className={styles.image}
                     src={noSearch}
                     alt=""
                 />
-                <span>
+                <div className={styles.text}>
                     {_ts('leads', 'emptyMessage', {
                         addLeadButtonLabel: (
                             <strong>
@@ -706,7 +700,7 @@ export default class Leads extends React.PureComponent {
                             </strong>
                         ),
                     })}
-                </span>
+                </div>
             </Message>
         );
     }
@@ -755,15 +749,22 @@ export default class Leads extends React.PureComponent {
         const Footer = this.renderFooter;
 
         return (
-            <div className={styles.leads}>
-                <Header />
-                <MultiViewContainer
-                    views={this.views}
-                    useHash
-                    activeClassName={styles.active}
-                />
-                <Footer />
-            </div>
+            <Page
+                className={styles.leads}
+                headerClassName={styles.header}
+                header={<Header />}
+                mainContentClassName={styles.main}
+                mainContent={
+                    <MultiViewContainer
+                        views={this.views}
+                        useHash
+                        activeClassName={styles.active}
+                        containerClassName={styles.container}
+                    />
+                }
+                footerClassName={styles.footer}
+                footer={<Footer />}
+            />
         );
     }
 }

@@ -2,20 +2,19 @@
 
 $color-text-on-primary: get-text-color($color-primary);
 $width-message-max: 540px;
+$width-deep-logo: 256px;
+$height-deep-logo: 256px;
 
 .project-denied {
-    @extend %main-content;
-    @include background-color($color-foreground-alt);
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    line-height: 2;
 
     .deep-logo {
         margin-bottom: $spacing-large;
-        width: 256px;
-        height: 256px;
+        width: $width-deep-logo;
+        height: $height-deep-logo;
 
         path {
             fill: $color-text-disabled;
@@ -32,6 +31,7 @@ $width-message-max: 540px;
         margin: $spacing-large 0;
         max-width: $width-message-max;
         text-align: center;
+        line-height: 2;
         font-size: $font-size-large-alt;
     }
 }

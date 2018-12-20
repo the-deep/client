@@ -1,50 +1,40 @@
 @import '~base-scss/base';
 
-.right-pane {
-    @extend %main-content;
-    @include background-color($color-background-alt);
+.header {
+    @include background-color($color-foreground);
     display: flex;
-    position: relative;
-    flex-direction: column;
-    flex-grow: 1;
+    align-items: center;
+    flex-shrink: 0;
+    padding: $spacing-small 0;
 
-    >.header {
-        @include background-color($color-foreground);
+    .inputs {
+        display: flex;
+        flex-grow: 1;
+        padding: 0 $spacing-small;
+    }
+
+    .action-buttons {
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        padding: $spacing-small 0;
+        padding: 0 $spacing-small;
 
-        .inputs {
-            display: flex;
-            flex-grow: 1;
-            padding: 0 $spacing-small;
-        }
-
-        .action-buttons {
-            display: flex;
-            align-items: center;
-            flex-shrink: 0;
-            padding: 0 $spacing-small;
-
-            >* {
-                margin-left: $spacing-small;
-            }
+        >* {
+            margin-left: $spacing-small;
         }
     }
+}
 
-    >.content {
-        display: flex;
-        position: relative;
+.content {
+    display: flex;
+    position: relative;
+    flex-grow: 1;
+    overflow: auto;
+
+    .scroll-wrapper {
         flex-grow: 1;
-
-        .scroll-wrapper {
-            flex-grow: 1;
-            background-color: $color-background-row;
-            overflow-x: auto;
-            overflow-y: scroll;
-
-        }
-
+        background-color: $color-background-row;
+        overflow-x: auto;
+        overflow-y: scroll;
     }
 }

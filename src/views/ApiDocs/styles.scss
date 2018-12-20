@@ -1,7 +1,6 @@
 @import '~base-scss/base';
 
 .api-docs {
-    @extend %main-content;
     overflow-y: auto;
 
     .message {

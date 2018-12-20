@@ -1,10 +1,8 @@
 @import '~base-scss/base';
 
 .visualization {
-    @extend %main-content;
     display: flex;
     flex-direction: column;
-    height: 100%;
 
     .header{
         @include background-color($color-background-header);

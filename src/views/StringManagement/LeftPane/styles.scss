@@ -1,54 +1,42 @@
 @import '~base-scss/base';
 
-$width-left-pane: 240px;
-
-.left-pane {
-    @include background-color($color-foreground-alt);
-    display: flex;
-    position: relative;
-    flex-basis: $width-left-pane;
-    flex-direction: column;
+.header {
+    @include background-color($color-background-header);
     flex-shrink: 0;
-    margin: -$spacing-small $spacing-small (-$spacing-small) (-$spacing-small);
-    border-right: $width-separator-thin solid $color-separator-alt;
+    border-bottom: $width-separator-thin solid $color-separator;
+    padding: $spacing-small;
+}
 
-    .header {
-        @include background-color($color-background-header);
-        flex-shrink: 0;
-        border-bottom: $width-separator-thin solid $color-separator;
-        padding: $spacing-small;
-    }
+.links {
+    flex-grow: 1;
+    overflow: auto;
 
-    .links {
-        flex-grow: 1;
+    .item {
+        display: flex;
+        align-items: center;
+        font-family: $font-family-monospace;
 
-        .item {
-            display: flex;
-            align-items: center;
-            font-family: $font-family-monospace;
+        .title {
+            flex-grow: 1;
+            margin: 0;
+            font-family: inherit;
+        }
 
-            .title {
-                flex-grow: 1;
-                margin: 0;
-                font-family: inherit;
+        .badge {
+            flex-shrink: 0;
+            padding: 0 $spacing-extra-small-alt;
+            font-size: $font-size-small;
+
+            &.error {
+                @include background-color($color-danger);
             }
 
-            .badge {
-                flex-shrink: 0;
-                padding: 0 $spacing-extra-small-alt;
-                font-size: $font-size-small;
+            &.warning {
+                @include background-color($color-warning);
+            }
 
-                &.error {
-                    @include background-color($color-danger);
-                }
-
-                &.warning {
-                    @include background-color($color-warning);
-                }
-
-                &.info {
-                    @include background-color($color-info);
-                }
+            &.info {
+                @include background-color($color-info);
             }
         }
     }

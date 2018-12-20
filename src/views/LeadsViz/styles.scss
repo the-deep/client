@@ -1,26 +1,13 @@
 @import '~base-scss/base';
 
-.chart-container {
-    padding: $spacing-extra-large-alt;
-}
-
-$page-margin: $spacing-small-alt;
-
 .leads-visualization {
-    display: flex;
-    flex-direction: column;
-    margin: (-$page-margin);
-    height: calc(100% + #{$page-margin * 2});
-    overflow: auto;
-
     .header {
-        @include background-color($color-background-header);
         display: flex;
         align-items: center;
-        flex-shrink: 0;
-        justify-content: space-between;
-        border-bottom: $width-separator-thin solid $color-separator-alt;
-        padding: $spacing-small;
+
+        .back-link {
+            flex-shrink: 0;
+        }
 
         .filters {
             display: flex;
@@ -56,11 +43,13 @@ $page-margin: $spacing-small-alt;
         }
     }
 
-    .content {
-        @extend %main-content;
+    .main-content {
         position: relative;
-        margin: $page-margin;
         overflow: auto;
+
+        .chart-container {
+            padding: $spacing-extra-large-alt;
+        }
 
         .no-leads-message {
             flex-direction: column;
@@ -68,81 +57,6 @@ $page-margin: $spacing-small-alt;
             .heading {
                 text-transform: none;
             }
-        }
-    }
-
-
-    .viz-container {
-        @extend %main-content;
-        display: grid;
-        padding: $spacing-small-alt;
-        overflow-y: auto;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: repeat(5, 640px);
-        grid-column-gap: $spacing-small-alt;
-        grid-row-gap: $spacing-small-alt;
-        grid-template-areas: 'geo-referenced-map geo-referenced-map'
-            'sun-burst chord-diagram'
-            'tree-map correlation-matrix'
-            'force-directed-graph radial-dendrogram'
-            'collapsible-tree collapsible-tree';
-
-        .viz {
-            @include background-color($color-foreground-alt);
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-            border: $width-separator-thin solid $color-separator-alt;
-            padding-bottom: $spacing-extra-small;
-        }
-
-        .chart-container {
-            padding: $spacing-extra-large-alt;
-        }
-
-        .tree-map {
-            grid-area: tree-map;
-        }
-
-        .sun-burst {
-            grid-area: sun-burst;
-        }
-
-        .chord-diagram {
-            grid-area: chord-diagram;
-        }
-
-        .correlation-matrix {
-            grid-area: correlation-matrix;
-        }
-
-        .force-directed-graph {
-            grid-area: force-directed-graph;
-        }
-
-        .collapsible-tree {
-            grid-area: collapsible-tree;
-        }
-
-        .radial-dendrogram {
-            grid-area: radial-dendrogram;
-        }
-
-        .geo-referenced-map {
-            grid-area: geo-referenced-map;
-        }
-    }
-
-    .footer {
-        @include background-color($color-foreground);
-        display: flex;
-        flex-shrink: 0;
-        justify-content: space-between;
-        border-top: $width-separator-thin solid $color-separator;
-        padding: $spacing-small $spacing-medium-alt;
-
-        .link {
-            @include button-like-link($color-accent);
         }
     }
 }

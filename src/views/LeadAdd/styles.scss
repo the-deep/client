@@ -1,23 +1,10 @@
 @import '~base-scss/base';
 
-$radius-button-border: 2px;
-
 .add-lead {
-    display: flex;
-    flex-direction: column;
-    margin: -$spacing-small-alt;
-    border: 0;
-    background-color: transparent;
-    height: calc(100vh - #{$height-navbar});
-
-    > .header {
-        @include background-color($color-background-header);
+    .header {
         display: flex;
         align-items: center;
-        flex-shrink: 0;
         justify-content: space-between;
-        border-bottom: $width-separator-thin solid $color-separator;
-        padding: $spacing-small;
 
         .left-container {
             display: flex;
@@ -25,14 +12,8 @@ $radius-button-border: 2px;
         }
     }
 
-    .content {
-        @extend %main-content;
+    .main-content {
         display: flex;
-        flex-basis: 100%;
-        flex-grow: 1;
-        margin: $spacing-small-alt;
-        border: $width-separator-thin solid $color-separator-alt;
-        height: 1px;
 
         .left {
             display: flex;

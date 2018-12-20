@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 
+import Page from '#rscv/Page';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { reverseRoute } from '#rsu/common';
@@ -251,7 +252,65 @@ export default class AnalysisFramework extends React.PureComponent {
         const frameworkTitle = analysisFramework.title || _ts('framework', 'analysisFramework');
 
         return (
-            <div className={styles.analysisFramework}>
+            <React.Fragment>
+                <Page
+                    className={styles.analysisFramework}
+                    headerClassName={styles.header}
+                    header={
+                        <React.Fragment>
+                            <BackLink
+                                defaultLink={{
+                                    pathname: exitPath,
+                                    hash: '#/frameworks',
+                                }}
+                            />
+                            <h4 className={styles.heading}>
+                                { frameworkTitle }
+                            </h4>
+                            <ScrollTabs
+                                className={styles.tabs}
+                                tabs={this.tabs}
+                                useHash
+                                replaceHistory
+                                defaultHash={this.defaultHash}
+                            />
+                            <div className={styles.actionButtons}>
+                                <DangerConfirmButton
+                                    confirmationMessage={_ts('framework', 'cancelConfirmDetail')}
+                                    onClick={this.handleCancel}
+                                    disabled={pristine || pendingSaveFramework}
+                                >
+                                    { _ts('framework', 'cancelButtonTitle') }
+                                </DangerConfirmButton>
+                                { entriesCount > 0 ? (
+                                    <SuccessConfirmButton
+                                        confirmationMessage={_ts('framework', 'successConfirmDetail', { count: entriesCount })}
+                                        onClick={this.handleSave}
+                                        disabled={pristine || pendingSaveFramework}
+                                    >
+                                        { _ts('framework', 'saveButtonTitle') }
+                                    </SuccessConfirmButton>
+                                ) : (
+                                    <SuccessButton
+                                        onClick={this.handleSave}
+                                        disabled={pristine || pendingSaveFramework}
+                                    >
+                                        { _ts('framework', 'saveButtonTitle') }
+                                    </SuccessButton>
+                                ) }
+                            </div>
+                        </React.Fragment>
+                    }
+                    mainContentClassName={styles.main}
+                    mainContent={
+                        <MultiViewContainer
+                            views={this.views}
+                            useHash
+                            containerClassName={styles.content}
+                            activeClassName={styles.active}
+                        />
+                    }
+                />
                 <Prompt
                     message={
                         (location) => {
@@ -265,58 +324,7 @@ export default class AnalysisFramework extends React.PureComponent {
                         }
                     }
                 />
-                <header className={styles.header}>
-                    <BackLink
-                        defaultLink={{
-                            pathname: exitPath,
-                            hash: '#/frameworks',
-                        }}
-                    />
-                    <h4 className={styles.heading}>
-                        { frameworkTitle }
-                    </h4>
-                    <ScrollTabs
-                        className={styles.tabs}
-                        tabs={this.tabs}
-                        useHash
-                        replaceHistory
-                        defaultHash={this.defaultHash}
-                    />
-                    <div className={styles.actionButtons}>
-                        <DangerConfirmButton
-                            confirmationMessage={_ts('framework', 'cancelConfirmDetail')}
-                            onClick={this.handleCancel}
-                            disabled={pristine || pendingSaveFramework}
-                        >
-                            { _ts('framework', 'cancelButtonTitle') }
-                        </DangerConfirmButton>
-                        {
-                            entriesCount > 0 ? (
-                                <SuccessConfirmButton
-                                    confirmationMessage={_ts('framework', 'successConfirmDetail', { count: entriesCount })}
-                                    onClick={this.handleSave}
-                                    disabled={pristine || pendingSaveFramework}
-                                >
-                                    { _ts('framework', 'saveButtonTitle') }
-                                </SuccessConfirmButton>
-                            ) : (
-                                <SuccessButton
-                                    onClick={this.handleSave}
-                                    disabled={pristine || pendingSaveFramework}
-                                >
-                                    { _ts('framework', 'saveButtonTitle') }
-                                </SuccessButton>
-                            )
-                        }
-                    </div>
-                </header>
-                <MultiViewContainer
-                    views={this.views}
-                    useHash
-                    containerClassName={styles.content}
-                    activeClassName={styles.active}
-                />
-            </div>
+            </React.Fragment>
         );
     }
 }

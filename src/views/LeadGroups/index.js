@@ -7,6 +7,7 @@ import {
     reverseRoute,
     isObjectEmpty,
 } from '#rsu/common';
+import Page from '#rscv/Page';
 import FormattedDate from '#rscv/FormattedDate';
 import Message from '#rscv/Message';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -32,6 +33,7 @@ import {
 import { pathNames } from '#constants';
 
 import _ts from '#ts';
+import _cs from '#cs';
 import noSearch from '#resources/img/no-search.png';
 import noFilter from '#resources/img/no-filter.png';
 
@@ -269,20 +271,6 @@ export default class LeadGroups extends React.PureComponent {
         this.props.setLeadGroupsActiveSort({ activeSort });
     }
 
-    renderHeader = () => {
-        const {
-            activeProject,
-        } = this.props;
-        return (
-            <header className={styles.header} >
-                <BackLink
-                    defaultLink={reverseRoute(pathNames.leads, { projectId: activeProject })}
-                />
-                <FilterLeadGroupsForm className={styles.filters} />
-            </header>
-        );
-    }
-
     renderFooter = () => {
         const {
             totalLeadGroupsCount,
@@ -348,10 +336,12 @@ export default class LeadGroups extends React.PureComponent {
         const {
             className,
             leadGroups,
+            totalLeadGroupsCount,
+            activePage,
+            activeProject,
         } = this.props;
 
-        const Header = this.renderHeader;
-        const Footer = this.renderFooter;
+        const backLink = reverseRoute(pathNames.leads, { projectId: activeProject });
 
         const {
             deleteLeadGroupPending,
@@ -361,23 +351,50 @@ export default class LeadGroups extends React.PureComponent {
         const loading = dataLoading || deleteLeadGroupPending;
 
         return (
-            <div className={`${styles.leadGroups} ${className}`} >
-                {loading && <LoadingAnimation />}
-                <Header />
-                <div className={styles.tableContainer}>
-                    <RawTable
-                        data={leadGroups}
-                        dataModifier={this.leadGroupModifier}
-                        headerModifier={this.headerModifier}
-                        headers={this.headers}
-                        onHeaderClick={this.handleTableHeaderClick}
-                        keySelector={this.leadGroupKeyExtractor}
-                        className={styles.leadGroupsTable}
-                        emptyComponent={this.renderEmpty}
-                    />
-                </div>
-                <Footer />
-            </div>
+            <Page
+                className={_cs(styles.leadGroups, className)}
+                headerClassName={styles.header}
+                header={
+                    <React.Fragment>
+                        <BackLink
+                            defaultLink={backLink}
+                            className={styles.backLink}
+                        />
+                        <FilterLeadGroupsForm className={styles.filters} />
+                    </React.Fragment>
+                }
+                mainContentClassName={styles.mainContent}
+                mainContent={
+                    <React.Fragment>
+                        {loading && <LoadingAnimation />}
+                        <div className={styles.tableContainer}>
+                            <RawTable
+                                data={leadGroups}
+                                dataModifier={this.leadGroupModifier}
+                                headerModifier={this.headerModifier}
+                                headers={this.headers}
+                                onHeaderClick={this.handleTableHeaderClick}
+                                keySelector={this.leadGroupKeyExtractor}
+                                className={styles.leadGroupsTable}
+                                emptyComponent={this.renderEmpty}
+                            />
+                        </div>
+                    </React.Fragment>
+                }
+                footerClassName={styles.footer}
+                footer={
+                    <React.Fragment>
+                        <div />
+                        <Pager
+                            activePage={activePage}
+                            itemsCount={totalLeadGroupsCount}
+                            maxItemsPerPage={MAX_LEADGROUPS_PER_REQUEST}
+                            onPageClick={this.handlePageClick}
+                            showItemsPerPageChange={false}
+                        />
+                    </React.Fragment>
+                }
+            />
         );
     }
 }
