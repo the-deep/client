@@ -19,15 +19,13 @@ const notLeadEditable = ({ isLoggedIn, leadPermissions }) => (
     !isLoggedIn || !(leadPermissions.create || leadPermissions.modify)
 );
 
-const notLeadVizViewable = ({ isLoggedIn, leadPermissions, isBeta }) => (
-    !isLoggedIn || !leadPermissions.view || isBeta
-);
-
 const notEntriesViewable = ({ isLoggedIn, hasAnalysisFramework, entryPermissions }) => (
     !isLoggedIn || !hasAnalysisFramework || !entryPermissions.view
 );
 const notEntriesEditable = ({ isLoggedIn, hasAnalysisFramework, entryPermissions }) => (
-    !isLoggedIn || !hasAnalysisFramework || !(entryPermissions.create || entryPermissions.modify)
+    !isLoggedIn || !hasAnalysisFramework || !(
+        entryPermissions.create || entryPermissions.modify || entryPermissions.delete
+    )
 );
 
 const notAssessmentViewable = ({ isLoggedIn, hasAssessmentTemplate, assessmentPermissions }) => (
@@ -53,7 +51,7 @@ const acl = {
     connectors: { hide: notLoggedIn },
 
     leadsViz: { hide: notLeadViewable },
-    clusterViz: { hide: notLeadVizViewable },
+    clusterViz: { hide: notLeadViewable },
     leads: { hide: notLeadViewable },
     leadGroups: { hide: notLeadViewable },
     addLeads: { hide: notLeadEditable },

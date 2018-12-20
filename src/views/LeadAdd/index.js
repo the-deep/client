@@ -116,6 +116,8 @@ export default class LeadAdd extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static shouldHideButtons = ({ leadPermissions }) => !leadPermissions.create;
+
     constructor(props) {
         super(props);
 
@@ -301,7 +303,7 @@ export default class LeadAdd extends React.PureComponent {
                     <div className={styles.left}>
                         <LeadList />
                         <Cloak
-                            hide={({ leadPermissions }) => !leadPermissions.create}
+                            hide={LeadActions.shouldHideButtons}
                             render={
                                 <LeadButtons
                                     uploadCoordinator={this.uploadCoordinator}

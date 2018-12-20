@@ -585,6 +585,15 @@ export default class EditEntries extends React.PureComponent {
         this.editEntryDataRequest.start();
     }
 
+    shouldHideEditLink = () => {
+        const {
+            analysisFramework: {
+                isAdmin,
+            },
+        } = this.props;
+        return !isAdmin;
+    }
+
     render() {
         const {
             lead: {
@@ -593,7 +602,6 @@ export default class EditEntries extends React.PureComponent {
             } = {},
             analysisFramework: {
                 id: analysisFrameworkId,
-                isAdmin: isFrameworkAdmin,
             } = {},
         } = this.props;
 
@@ -656,12 +664,12 @@ export default class EditEntries extends React.PureComponent {
                     />
                     <div className={styles.actionButtons}>
                         <Cloak
-                            hide={() => !isFrameworkAdmin}
+                            hide={EditEntries.shouldHideEditLink}
                             render={
+                                /* viewsAcl not used because it doesn't consider admin of af */
                                 <Link
                                     className={styles.editFrameworkLink}
                                     to={frameworkPath}
-                                    disabled={!analysisFrameworkId}
                                 >
                                     <span className={`${iconNames.edit} ${styles.editIcon}`} />
                                     { _ts('editEntry', 'editFrameworkTitle') }

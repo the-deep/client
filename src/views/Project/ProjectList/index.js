@@ -15,6 +15,7 @@ import Cloak from '#components/Cloak';
 
 import {
     iconNames,
+    viewsAcl,
     pathNames,
 } from '#constants';
 import _ts from '#ts';
@@ -116,7 +117,7 @@ export default class ProjectList extends React.PureComponent {
                         {_ts('project', 'headerProjects')}
                     </h2>
                     <Cloak
-                        hide={({ isBeta }) => isBeta}
+                        {...viewsAcl.discoverProjects}
                         render={
                             <Link
                                 to={reverseRoute(pathNames.discoverProjects, {})}
