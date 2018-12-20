@@ -8,7 +8,10 @@ import MultiSelectInput from '#rsci/MultiSelectInput';
 import Label from '#rsci/Label';
 import { FaramInputElement } from '#rscg/FaramElements';
 import { iconNames } from '#constants';
-import { listToMap } from '#rsu/common';
+import {
+    listToMap,
+    mapToList,
+} from '#rsu/common';
 
 import GeoModal from '../GeoModal';
 import styles from './styles.scss';
@@ -72,6 +75,42 @@ export default class GeoInput extends React.PureComponent {
         return geoOptionsById;
     }
 
+    static calcAdminLevelsById = (geoOptionsByRegion) => {
+        const adminLevelsById = {};
+        const adminLevelTitlesByIdMap = {};
+        Object.keys(geoOptionsByRegion).forEach((region) => {
+            const options = geoOptionsByRegion[region];
+            if (!options) {
+                return;
+            }
+            adminLevelsById[region] = {};
+            adminLevelTitlesByIdMap[region] = {};
+
+            options.forEach((option) => {
+                if (!adminLevelTitlesByIdMap[region][option.adminLevel]) {
+                    adminLevelTitlesByIdMap[region][option.adminLevel] = option.adminLevelTitle;
+                }
+                adminLevelsById[region][option.adminLevel] = [
+                    option,
+                    ...(adminLevelsById[region][option.adminLevel] || []),
+                ];
+            }, {});
+        });
+        const adminLevelTitlesById = {};
+        Object.keys(adminLevelTitlesByIdMap).forEach((region) => {
+            const adminLevels = mapToList(
+                adminLevelTitlesByIdMap[region],
+                (data, key) => ({
+                    key,
+                    title: data,
+                }),
+            );
+            adminLevelTitlesById[region] = adminLevels;
+        });
+
+        return { adminLevelsById, adminLevelTitlesById };
+    }
+
     static getAllGeoOptions = geoOptionsByRegion => (
         Object.values(geoOptionsByRegion).reduce((acc, r) => [...acc, ...r], [])
     )
@@ -86,6 +125,15 @@ export default class GeoInput extends React.PureComponent {
 
         // Calculate state from initial value
         this.geoOptionsById = GeoInput.calcGeoOptionsById(props.geoOptionsByRegion);
+
+        const {
+            adminLevelsById,
+            adminLevelTitlesById,
+        } = GeoInput.calcAdminLevelsById(props.geoOptionsByRegion);
+
+        this.adminLevelsById = adminLevelsById;
+        this.adminLevelTitlesById = adminLevelTitlesById;
+
         this.geoOptions = GeoInput.getAllGeoOptions(props.geoOptionsByRegion);
         this.state = {
             modalValue: props.value,
@@ -96,6 +144,14 @@ export default class GeoInput extends React.PureComponent {
     componentWillReceiveProps(nextProps) {
         if (this.props.geoOptionsByRegion !== nextProps.geoOptionsByRegion) {
             this.geoOptionsById = GeoInput.calcGeoOptionsById(nextProps.geoOptionsByRegion);
+            const {
+                adminLevelsById,
+                adminLevelTitlesById,
+            } = GeoInput.calcAdminLevelsById(nextProps.geoOptionsByRegion);
+
+            this.adminLevelsById = adminLevelsById;
+            this.adminLevelTitlesById = adminLevelTitlesById;
+
             this.geoOptions = GeoInput.getAllGeoOptions(nextProps.geoOptionsByRegion);
         }
 
@@ -179,6 +235,8 @@ export default class GeoInput extends React.PureComponent {
                 regions={regions}
                 geoOptionsByRegion={geoOptionsByRegion}
                 geoOptionsById={this.geoOptionsById}
+                adminLevelsById={this.adminLevelsById}
+                adminLevelTitlesById={this.adminLevelTitlesById}
                 value={modalValue}
                 onChange={this.handleModalValueChange}
                 onApply={this.handleModalApply}

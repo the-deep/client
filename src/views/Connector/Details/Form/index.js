@@ -674,7 +674,9 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                             label={data.title}
                         />
                         { pendingRssFields &&
-                            <LoadingAnimation className={styles.loadingAnimation} />
+                            <div className={styles.loadingAnimationContainer} >
+                                <LoadingAnimation className={styles.loadingAnimation} />
+                            </div>
                         }
                     </div>
                 );
