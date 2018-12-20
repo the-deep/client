@@ -4,6 +4,7 @@ import { FgRestBuilder } from '#rsu/rest';
 import { isObjectEmpty, compareString } from '#rsu/common';
 import List from '#rscv/List';
 import ListView from '#rscv/List/ListView';
+import Page from '#rscv/Page';
 
 import _ts from '#ts';
 import { urlForApiDocs } from '#rest';
@@ -187,21 +188,18 @@ export default class ApiDocs extends React.PureComponent {
             pending,
             docs,
         } = this.state;
-        let content;
-        if (pending) {
-            content = (
-                <p className={styles.message}>
-                    {_ts('api', 'loadingLabel')}
-                </p>
-            );
-        } else {
-            content = this.renderDocs(docs);
-        }
 
         return (
-            <div className={styles.apiDocs}>
-                { content }
-            </div>
+            <Page
+                mainContentClassName={styles.apiDocs}
+                mainContent={pending ? (
+                    <p className={styles.message}>
+                        {_ts('api', 'loadingLabel')}
+                    </p>
+                ) : (
+                    this.renderDocs(docs)
+                )}
+            />
         );
     }
 }

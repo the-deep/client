@@ -1,10 +1,7 @@
 @import '~base-scss/base';
 
 .workshop {
-    @extend %main-content;
-    padding: $spacing-small;
-    overflow-y: auto;
-
+    overflow: auto;
 
     .page {
         background-color: $color-foreground;
@@ -13,12 +10,16 @@
 
     .faram {
         display: flex;
-        align-items: center;
-        flex-direction: column;
-        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        justify-content: space-around;
 
         > * {
+            margin: $spacing-small;
+            background-color: $color-foreground;
             padding: $spacing-small;
+            width: auto;
+            @include shadow-small;
         }
     }
 }

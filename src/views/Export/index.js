@@ -8,6 +8,7 @@ import {
     compareString,
     compareDate,
 } from '#rsu/common';
+import Page from '#rscv/Page';
 import { getFiltersForRequest } from '#entities/lead';
 import update from '#rsu/immutable-update';
 import { FgRestBuilder } from '#rsu/rest';
@@ -431,64 +432,70 @@ export default class Export extends React.PureComponent {
         } = this.props;
 
         return (
-            <div className={styles.export}>
-                <ExportHeader
-                    projectId={projectId}
-                    entriesFilters={entriesFilters}
-                    className={styles.header}
-                    activeExportTypeKey={activeExportTypeKey}
-                    selectedLeads={selectedLeads}
-                    reportStructure={reportStructure}
-                    decoupledEntries={decoupledEntries}
-                    onPreview={this.handlePreview}
-                    pending={pendingLeads || pendingAf}
-                />
-                <div className={styles.mainContent}>
-                    <section className={styles.filters} >
-                        <div className={styles.entryFilters}>
-                            <h4 className={styles.heading}>
-                                {_ts('export', 'entryAttributesLabel')}
-                            </h4>
-                            <FilterEntriesForm
-                                applyOnChange
-                                pending={pendingAf}
-                                filters={(analysisFramework || {}).filters}
-                            />
-                        </div>
-                        <div className={styles.leadFilters}>
-                            <div className={styles.leadAttributes}>
-                                <h4 className={styles.heading}>
-                                    {_ts('export', 'leadAttributesLabel')}
-                                </h4>
-                                <FilterLeadsForm />
-                            </div>
-                            <div className={styles.leadsTableContainer}>
-                                { pendingLeads && <LoadingAnimation /> }
-                                <Table
-                                    className={styles.leadsTable}
-                                    data={leads}
-                                    headers={this.headers}
-                                    defaultSort={this.defaultSort}
-                                    keySelector={Export.leadKeyExtractor}
-                                />
-                            </div>
-                        </div>
-                    </section>
-                    <ExportTypePane
+            <Page
+                className={styles.export}
+                header={
+                    <ExportHeader
+                        projectId={projectId}
+                        entriesFilters={entriesFilters}
+                        className={styles.header}
                         activeExportTypeKey={activeExportTypeKey}
+                        selectedLeads={selectedLeads}
                         reportStructure={reportStructure}
                         decoupledEntries={decoupledEntries}
-                        onExportTypeChange={this.handleExportTypeSelectButtonClick}
-                        onReportStructureChange={this.handleReportStructureChange}
-                        onDecoupledEntriesChange={this.handleDecoupledEntriesChange}
-                        analysisFramework={analysisFramework}
+                        onPreview={this.handlePreview}
+                        pending={pendingLeads || pendingAf}
                     />
-                    <ExportPreview
-                        className={styles.preview}
-                        exportId={previewId}
-                    />
-                </div>
-            </div>
+                }
+                mainContentClassName={styles.mainContent}
+                mainContent={
+                    <React.Fragment>
+                        <section className={styles.filters} >
+                            <div className={styles.entryFilters}>
+                                <h4 className={styles.heading}>
+                                    {_ts('export', 'entryAttributesLabel')}
+                                </h4>
+                                <FilterEntriesForm
+                                    applyOnChange
+                                    pending={pendingAf}
+                                    filters={(analysisFramework || {}).filters}
+                                />
+                            </div>
+                            <div className={styles.leadFilters}>
+                                <div className={styles.leadAttributes}>
+                                    <h4 className={styles.heading}>
+                                        {_ts('export', 'leadAttributesLabel')}
+                                    </h4>
+                                    <FilterLeadsForm />
+                                </div>
+                                <div className={styles.leadsTableContainer}>
+                                    { pendingLeads && <LoadingAnimation /> }
+                                    <Table
+                                        className={styles.leadsTable}
+                                        data={leads}
+                                        headers={this.headers}
+                                        defaultSort={this.defaultSort}
+                                        keySelector={Export.leadKeyExtractor}
+                                    />
+                                </div>
+                            </div>
+                        </section>
+                        <ExportTypePane
+                            activeExportTypeKey={activeExportTypeKey}
+                            reportStructure={reportStructure}
+                            decoupledEntries={decoupledEntries}
+                            onExportTypeChange={this.handleExportTypeSelectButtonClick}
+                            onReportStructureChange={this.handleReportStructureChange}
+                            onDecoupledEntriesChange={this.handleDecoupledEntriesChange}
+                            analysisFramework={analysisFramework}
+                        />
+                        <ExportPreview
+                            className={styles.preview}
+                            exportId={previewId}
+                        />
+                    </React.Fragment>
+                }
+            />
         );
     }
 }

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 
+import Page from '#rscv/Page';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import { reverseRoute, checkVersion } from '#rsu/common';
@@ -368,7 +369,7 @@ export default class EditAry extends React.PureComponent {
         const uploadPending = Object.keys(pendingUploads).some(key => pendingUploads[key]);
 
         return (
-            <div className={styles.editAssessment}>
+            <React.Fragment>
                 <Prompt
                     message={
                         (location) => {
@@ -382,72 +383,79 @@ export default class EditAry extends React.PureComponent {
                         }
                     }
                 />
-                <header className={styles.header}>
-                    <BackLink
-                        defaultLink={exitPath}
-                    />
-                    <h4 className={styles.heading}>
-                        {title}
-                    </h4>
-                    <Cloak
-                        hide={this.shouldHideSaveButton}
-                        render={
-                            <div className={styles.actionButtons}>
-                                <DangerButton
-                                    disabled={
-                                        editAryIsPristine
-                                            || assessmentRequest.pending
-                                            || uploadPending
-                                    }
-                                    onClick={this.handleCancelButtonClick}
-                                >
-                                    { _ts('editAssessment', 'cancelButtonTitle') }
-                                </DangerButton>
-                                <SuccessButton
-                                    pending={arySaveRequest.pending}
-                                    onClick={this.handleSaveButtonClick}
-                                    disabled={
-                                        editAryIsPristine
-                                            || editAryHasErrors
-                                            || assessmentRequest.pending
-                                            || uploadPending
-                                    }
-                                >
-                                    { _ts('editAssessment', 'saveButtonTitle') }
-                                </SuccessButton>
-                            </div>
-                        }
-                    />
-                </header>
-                <div className={styles.content}>
-                    <ResizableH
-                        className={styles.assessments}
-                        leftContainerClassName={styles.left}
-                        rightContainerClassName={styles.right}
-                        leftChild={
-                            <LeftPanel
-                                lead={leadRequest.response}
-                                leadGroup={leadGroupRequest.response}
-                                activeSector={activeSector}
+                <Page
+                    className={styles.editAssessment}
+                    headerClassName={styles.header}
+                    header={
+                        <React.Fragment>
+                            <BackLink
+                                defaultLink={exitPath}
                             />
-                        }
-                        rightChild={
+                            <h4 className={styles.heading}>
+                                {title}
+                            </h4>
                             <Cloak
-                                makeReadOnly={this.shouldHideSaveButton}
+                                hide={this.shouldHideSaveButton}
                                 render={
-                                    <RightPanel
-                                        onActiveSectorChange={this.handleActiveSectorChange}
-                                        onUploadPending={this.handleUploadPending}
-                                        pending={
-                                            arySaveRequest.pending || assessmentRequest.pending
-                                        }
-                                    />
+                                    <div className={styles.actionButtons}>
+                                        <DangerButton
+                                            disabled={
+                                                editAryIsPristine
+                                                    || assessmentRequest.pending
+                                                    || uploadPending
+                                            }
+                                            onClick={this.handleCancelButtonClick}
+                                        >
+                                            { _ts('editAssessment', 'cancelButtonTitle') }
+                                        </DangerButton>
+                                        <SuccessButton
+                                            pending={arySaveRequest.pending}
+                                            onClick={this.handleSaveButtonClick}
+                                            disabled={
+                                                editAryIsPristine
+                                                    || editAryHasErrors
+                                                    || assessmentRequest.pending
+                                                    || uploadPending
+                                            }
+                                        >
+                                            { _ts('editAssessment', 'saveButtonTitle') }
+                                        </SuccessButton>
+                                    </div>
                                 }
                             />
-                        }
-                    />
-                </div>
-            </div>
+                        </React.Fragment>
+                    }
+                    mainContentClassName={styles.mainContent}
+                    mainContent={
+                        <ResizableH
+                            className={styles.assessments}
+                            leftContainerClassName={styles.left}
+                            rightContainerClassName={styles.right}
+                            leftChild={
+                                <LeftPanel
+                                    lead={leadRequest.response}
+                                    leadGroup={leadGroupRequest.response}
+                                    activeSector={activeSector}
+                                />
+                            }
+                            rightChild={
+                                <Cloak
+                                    makeReadOnly={this.shouldHideSaveButton}
+                                    render={
+                                        <RightPanel
+                                            onActiveSectorChange={this.handleActiveSectorChange}
+                                            onUploadPending={this.handleUploadPending}
+                                            pending={
+                                                arySaveRequest.pending || assessmentRequest.pending
+                                            }
+                                        />
+                                    }
+                                />
+                            }
+                        />
+                    }
+                />
+            </React.Fragment>
         );
     }
 }

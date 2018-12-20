@@ -1,12 +1,10 @@
 @import '~base-scss/base';
 
 .home-screen {
-    @extend %main-content;
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    background-color: $color-foreground-alt;
 
     .deep-logo {
         margin: 0 0 $spacing-large;

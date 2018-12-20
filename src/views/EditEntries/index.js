@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link, Prompt } from 'react-router-dom';
 
+import Page from '#rscv/Page';
 import { reverseRoute } from '#rsu/common';
 import update from '#rsu/immutable-update';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
@@ -633,7 +634,7 @@ export default class EditEntries extends React.PureComponent {
         );
 
         return (
-            <div className={styles.editEntries}>
+            <React.Fragment>
                 <Prompt
                     message={
                         (location) => {
@@ -647,66 +648,72 @@ export default class EditEntries extends React.PureComponent {
                         }
                     }
                 />
-                <header className={styles.header}>
-                    <BackLink
-                        defaultLink={exitPath}
-                    />
-                    <h4 className={styles.heading}>
-                        { leadTitle }
-                    </h4>
-                    <FixedTabs
-                        className={styles.tabs}
-                        tabs={this.tabs}
-                        useHash
-                        replaceHistory
-                        defaultHash={this.defaultHash}
-                        disabled={projectMismatch}
-                    />
-                    <div className={styles.actionButtons}>
-                        <Cloak
-                            hide={this.shouldHideEditLink}
-                            render={
-                                /* viewsAcl not used because it doesn't consider admin of af */
-                                <Link
-                                    className={styles.editFrameworkLink}
-                                    to={frameworkPath}
+                <Page
+                    className={styles.editEntries}
+                    headerClassName={styles.header}
+                    header={
+                        <React.Fragment>
+                            <BackLink defaultLink={exitPath} />
+                            <h4 className={styles.heading}>
+                                { leadTitle }
+                            </h4>
+                            <FixedTabs
+                                className={styles.tabs}
+                                tabs={this.tabs}
+                                useHash
+                                replaceHistory
+                                defaultHash={this.defaultHash}
+                                disabled={projectMismatch}
+                            />
+                            <div className={styles.actionButtons}>
+                                <Cloak
+                                    hide={this.shouldHideEditLink}
+                                    render={
+                                        /* viewsAcl not used because it
+                                            doesn't consider admin of af */
+                                        <Link
+                                            className={styles.editFrameworkLink}
+                                            to={frameworkPath}
+                                        >
+                                            <span className={`${iconNames.edit} ${styles.editIcon}`} />
+                                            { _ts('editEntry', 'editFrameworkTitle') }
+                                        </Link>
+                                    }
+                                />
+                                <DangerConfirmButton
+                                    disabled={isSaveDisabled}
+                                    onClick={this.handleCancel}
+                                    confirmationMessage={_ts('editEntry', 'cancelConfirmDetail')}
                                 >
-                                    <span className={`${iconNames.edit} ${styles.editIcon}`} />
-                                    { _ts('editEntry', 'editFrameworkTitle') }
-                                </Link>
-                            }
-                        />
-                        <DangerConfirmButton
-                            disabled={isSaveDisabled}
-                            onClick={this.handleCancel}
-                            confirmationMessage={_ts('editEntry', 'cancelConfirmDetail')}
-                        >
-                            { _ts('editEntry', 'cancelButtonTitle') }
-                        </DangerConfirmButton>
-                        <SuccessButton
-                            disabled={isSaveDisabled}
-                            onClick={this.handleSave}
-                            pending={pendingSaveAll}
-                        >
-                            { _ts('editEntry', 'saveButtonTitle') }
-                        </SuccessButton>
-                    </div>
-                </header>
-                {
-                    !projectMismatch ? (
-                        <MultiViewContainer
-                            views={this.views}
-                            useHash
-                            containerClassName={styles.content}
-                            activeClassName={styles.active}
-                        />
-                    ) : (
-                        <Message>
-                            { _ts('editEntry', 'noLeadMessage')}
-                        </Message>
-                    )
-                }
-            </div>
+                                    { _ts('editEntry', 'cancelButtonTitle') }
+                                </DangerConfirmButton>
+                                <SuccessButton
+                                    disabled={isSaveDisabled}
+                                    onClick={this.handleSave}
+                                    pending={pendingSaveAll}
+                                >
+                                    { _ts('editEntry', 'saveButtonTitle') }
+                                </SuccessButton>
+                            </div>
+                        </React.Fragment>
+                    }
+                    mainContentClassName={styles.mainContent}
+                    mainContent={
+                        !projectMismatch ? (
+                            <MultiViewContainer
+                                views={this.views}
+                                useHash
+                                containerClassName={styles.content}
+                                activeClassName={styles.active}
+                            />
+                        ) : (
+                            <Message>
+                                { _ts('editEntry', 'noLeadMessage')}
+                            </Message>
+                        )
+                    }
+                />
+            </React.Fragment>
         );
     }
 }

@@ -269,7 +269,7 @@ export default class StringManagement extends React.PureComponent {
         const showExport = isDevLangSelected;
 
         return (
-            <div className={styles.rightPane}>
+            <React.Fragment>
                 { (pendingLanguage || pendingLanguagePut) && <LoadingAnimation /> }
                 <Header
                     disabled={disabled}
@@ -285,7 +285,7 @@ export default class StringManagement extends React.PureComponent {
                     </div>
                     <InfoPane disabled={disabled} />
                 </div>
-            </div>
+            </React.Fragment>
         );
     }
 }

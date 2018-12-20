@@ -12,8 +12,9 @@
 
     .content {
         display: none;
-        flex-grow: 1;
         flex-direction: column;
+        flex-grow: 1;
+        overflow: auto;
 
         &.active {
             display: flex;

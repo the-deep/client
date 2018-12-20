@@ -1,23 +1,14 @@
 @import '~base-scss/base';
 
-$height-header: 42px;
-
 $width-left-min: 390px;
 $width-right-min: 800px;
 
 $color-border-bottom-new: rgba(0, 0, 0, .1);
 
 .edit-assessment {
-    margin: -$spacing-small;
-    padding: 0;
-    height: 100%;
-
     .header {
         display: flex;
         align-items: center;
-        border-bottom: $width-separator-thin solid $color-separator-alt;
-        background-color: $color-background-header;
-        height: $height-header;
 
         .heading {
             flex-grow: 1;
@@ -29,7 +20,7 @@ $color-border-bottom-new: rgba(0, 0, 0, .1);
 
         .action-buttons {
             flex-shrink: 0;
-            padding: 0 $spacing-medium;
+            padding-right: $spacing-medium;
 
             >button {
                 margin-left: $spacing-medium;
@@ -37,25 +28,19 @@ $color-border-bottom-new: rgba(0, 0, 0, .1);
         }
     }
 
-    .content {
-        @extend %main-content;
-        margin: $spacing-small;
-        height: calc(100% - #{$height-header});
-        overflow: auto;
-
-        &.active {
-            display: block;
-        }
+    .main-content {
+        display: flex;
+        flex-direction: column;
 
         .assessments {
             display: flex;
-            height: 100%;
+            flex-grow: 1;
+            overflow: auto;
 
             .left {
                 border-right: $width-separator-thin solid $color-separator;
                 width: 30%;
                 min-width: $width-left-min;
-                height: 100%;
             }
 
             .right {
