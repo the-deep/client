@@ -77,26 +77,16 @@ export default class FilterProjectsForm extends React.PureComponent {
             return status.value;
         }
 
-        return conditions.reduce(
-            (a, condition) => {
-                // NOTE: comment is used for static analysis by string management
-                // _ts('discoverProjects.filter.statusCondition', 'no_leads');
-                // _ts('discoverProjects.filter.statusCondition', 'no_entries');
-                const conditionTypeLabel = _ts(
-                    'discoverProjects.filter.statusCondition',
-                    condition.conditionType,
-                    { days: condition.days },
-                );
-                const seperatorLabel = status.andConditions ?
-                    _ts('discoverProjects.filter.statusCondition', 'andSeperator') :
-                    _ts('discoverProjects.filter.statusCondition', 'orSeperator');
-                if (a) {
-                    return `${a} ${seperatorLabel} ${conditionTypeLabel}`;
-                }
-                return conditionTypeLabel;
-            },
-            undefined,
-        );
+        // _ts('discoverProjects.filter.statusCondition', 'no_leads');
+        // _ts('discoverProjects.filter.statusCondition', 'some_leads');
+        // _ts('discoverProjects.filter.statusCondition', 'no_entries');
+        // _ts('discoverProjects.filter.statusCondition', 'some_entries');
+        const value = status.conditions.map(val => _ts('discoverProjects.filter.statusCondition', val.conditionType, { days: val.days }));
+
+        if (status.andConditions) {
+            return _ts('discoverProjects.filter.statusCondition', 'messageForAnd', { value });
+        }
+        return _ts('discoverProjects.filter.statusCondition', 'messageForOr', { value });
     };
 
     constructor(props) {

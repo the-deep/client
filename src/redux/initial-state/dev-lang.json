@@ -853,8 +853,8 @@
         "-11147231": "Feedback or Bug?",
         "-81583708": "Submit any feedback or bug you encountered.",
         "-83131348": "And",
-        "-75360665": "No leads created since {days} days",
-        "-30036120": "No entries created since {days} days",
+        "-75360665": "no lead activity in past {days} days",
+        "-30036120": "no entry activity in past {days} days",
         "-44064706": "Help",
         "-72856110": "Add / edit the help link",
         "-13372884": "Search word categories",
@@ -869,7 +869,11 @@
         "-21403453": "Something went wrong with loading this page.",
         "-14465545": "Do you want to logout? This will clear out all of your local changes.",
         "-10995037": "Geo areas",
-        "-67487923": "Region"
+        "-67487923": "Region",
+        "-61370018": "some lead activity in past {days} days",
+        "-881890": "some entry activity in past {days} days",
+        "-45914563": "Project with {value: and }",
+        "-2861291": "Project with {value: or }"
     },
     "links": {
         "browserExtension": {
@@ -2462,10 +2466,12 @@
             "message2": -84343027
         },
         "discoverProjects.filter.statusCondition": {
-            "orSeperator": 806,
-            "andSeperator": -83131348,
             "no_leads": -75360665,
-            "no_entries": -30036120
+            "no_entries": -30036120,
+            "some_leads": -61370018,
+            "some_entries": -881890,
+            "messageForAnd": -45914563,
+            "messageForOr": -2861291
         },
         "nagbar": {
             "duplicateWarningText": -20173783
