@@ -47,7 +47,9 @@
         }
 
         .tabular-select-inputs {
+            display: flex;
             flex-basis: 60%;
+            flex-direction: column;
             padding: $spacing-small;
         }
     }
@@ -60,12 +62,16 @@
             flex-grow: 1;
         }
 
-        .loading-animation {
-            position: initial;
-            flex-shrink: 0;
-            background-color: transparent;
-            padding-left: $spacing-small;
-            width: auto;
+        .loading-animation-container {
+            position: relative;
+
+            .loading-animation {
+                position: initial;
+                flex-shrink: 0;
+                background-color: transparent;
+                padding-left: $spacing-small;
+                width: auto;
+            }
         }
     }
 }
