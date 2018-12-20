@@ -5,9 +5,23 @@ import { connect } from 'react-redux';
 
 import { currentUserActiveProjectSelector } from '#redux';
 import logo from '#resources/img/deep-logo.svg';
+
 import _ts from '#ts';
 
 import styles from './styles.scss';
+
+const getEnvironmentText = () => {
+    switch (process.env.REACT_APP_DEEP_ENVIRONMENT) {
+        case 'beta':
+            return _ts('dashboard', 'betaLabel');
+        case 'alpha':
+            return _ts('dashboard', 'alphaLabel');
+        case 'nightly':
+            return _ts('dashboard', 'nightlyLabel');
+        default:
+            return _ts('dashboard', 'devLabel');
+    }
+};
 
 const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
@@ -25,21 +39,7 @@ export default class Dashboard extends React.PureComponent {
     render() {
         const { currentUserActiveProject } = this.props;
 
-        let betaLabel;
-        switch (process.env.REACT_APP_DEEP_ENVIRONMENT) {
-            case 'beta':
-                betaLabel = _ts('dashboard', 'betaLabel');
-                break;
-            case 'alpha':
-                betaLabel = _ts('dashboard', 'alphaLabel');
-                break;
-            case 'nightly':
-                betaLabel = _ts('dashboard', 'nightlyLabel');
-                break;
-            default:
-                betaLabel = _ts('dashboard', 'devLabel');
-                break;
-        }
+        const envText = getEnvironmentText();
 
         return (
             <div className={styles.dashboard}>
@@ -52,7 +52,7 @@ export default class Dashboard extends React.PureComponent {
                         path={logo}
                     />
                     <div className={styles.deepText} >
-                        {_ts('dashboard', 'deepLabel')} {betaLabel}
+                        {_ts('dashboard', 'deepLabel')} {envText}
                     </div>
                 </div>
             </div>
