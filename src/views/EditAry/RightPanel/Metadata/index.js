@@ -84,7 +84,7 @@ export default class Metadata extends React.PureComponent {
                 <FaramGroup faramElementName="metadata">
                     {pending && <LoadingAnimation />}
                     <ResizableV
-                        className={styles.metadata}
+                        className={styles.resizable}
                         topContainerClassName={styles.top}
                         bottomContainerClassName={styles.bottom}
                         topChild={

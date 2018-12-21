@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import ResizableV from '#rscv/Resizable/ResizableV';
 import FaramGroup from '#rscg/FaramGroup';
 import FaramList from '#rscg/FaramList';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -179,121 +180,142 @@ export default class Methodology extends React.PureComponent {
                 <FaramGroup faramElementName="methodology">
                     {pending && <LoadingAnimation />}
 
-                    <FaramList
-                        faramElementName="attributes"
-                        keySelector={Methodology.keySelector}
-                    >
-                        <div className={styles.attributesSection}>
-                            <Header
-                                className={styles.header}
-                                title={attributesTitle}
-                            />
-                            <div className={styles.scrollWrap}>
-                                <div className={styles.attributes}>
-                                    <div className={styles.header}>
-                                        <List
-                                            data={attributesTemplateKeys}
-                                            modifier={this.renderAttributeHeader}
-                                        />
-                                        <div className={styles.actionButtons}>
-                                            <PrimaryButton
-                                                faramElementName="add-button"
-                                                faramAction={Methodology.addAttribute}
-                                                iconName={iconNames.add}
+                    <ResizableV
+                        className={styles.resizable}
+                        topContainerClassName={styles.top}
+                        bottomContainerClassName={styles.bottom}
+                        topChild={
+                            <ResizableV
+                                className={styles.top}
+                                topContainerClassName={styles.toptop}
+                                bottomContainerClassName={styles.topbottom}
+                                topChild={
+                                    <FaramList
+                                        faramElementName="attributes"
+                                        keySelector={Methodology.keySelector}
+                                    >
+                                        <div className={styles.attributesSection}>
+                                            <Header
+                                                className={styles.header}
+                                                title={attributesTitle}
+                                            />
+                                            <div className={styles.scrollWrap}>
+                                                <div className={styles.attributes}>
+                                                    <div className={styles.header}>
+                                                        <List
+                                                            data={attributesTemplateKeys}
+                                                            modifier={this.renderAttributeHeader}
+                                                        />
+                                                        <div className={styles.actionButtons}>
+                                                            <PrimaryButton
+                                                                faramElementName="add-button"
+                                                                faramAction={
+                                                                    Methodology.addAttribute}
+                                                                iconName={iconNames.add}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <List
+                                                        faramElement
+                                                        modifier={this.renderAttributeRow}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </FaramList>
+                                }
+                                bottomChild={
+                                    <section className={styles.middleSection}>
+                                        <div className={styles.middleSectionItem}>
+                                            <Header
+                                                className={styles.header}
+                                                title={focusesTitle}
+                                            />
+                                            <ListSelection
+                                                className={styles.focuses}
+                                                faramElementName="focuses"
+                                                options={focuses}
+                                                keySelector={idSelector}
+                                                labelSelector={titleSelector}
                                             />
                                         </div>
-                                    </div>
-                                    <List
-                                        faramElement
-                                        modifier={this.renderAttributeRow}
+                                        <div className={styles.middleSectionItem}>
+                                            <Header
+                                                className={styles.header}
+                                                title={sectorsTitle}
+                                            />
+                                            <ListSelection
+                                                faramElementName="sectors"
+                                                options={sectors}
+                                                className={styles.sectors}
+                                                keySelector={idSelector}
+                                                labelSelector={titleSelector}
+                                            />
+                                        </div>
+                                        <div className={styles.affectedGroups}>
+                                            <Header
+                                                className={styles.header}
+                                                title={affectedGroupsTitle}
+                                            />
+                                            <OrganigramInput
+                                                faramElementName="affectedGroups"
+                                                data={affectedGroups}
+                                                childSelector={Methodology.orgChildSelector}
+                                                labelSelector={Methodology.orgLabelSelector}
+                                                idSelector={Methodology.orgIdSelector}
+                                            />
+                                        </div>
+                                        <div className={styles.locationSelection}>
+                                            <Header
+                                                className={styles.header}
+                                                title={locationsTitle}
+                                            />
+                                            <GeoInput
+                                                faramElementName="locations"
+                                                title={locationsTitle}
+                                                geoOptionsByRegion={geoOptions}
+                                                regions={projectDetails.regions}
+                                            />
+                                        </div>
+                                    </section>
+                                }
+                            />
+                        }
+                        bottomChild={
+                            <div className={styles.methodologyContent}>
+                                <Header
+                                    className={styles.header}
+                                    title={methodologyContentTitle}
+                                />
+                                <div className={styles.content}>
+                                    <FormattedTextArea
+                                        faramElementName="objectives"
+                                        className={styles.input}
+                                        placeholder={objectivesPlaceholder}
+                                        label={objectivesTitle}
+                                    />
+                                    <FormattedTextArea
+                                        faramElementName="dataCollectionTechniques"
+                                        className={styles.input}
+                                        placeholder={dataCollectionTechniquesPlaceholder}
+                                        label={dataCollectionTechniquesTitle}
+                                    />
+                                    <FormattedTextArea
+                                        faramElementName="sampling"
+                                        className={styles.input}
+                                        placeholder={samplingPlaceholder}
+                                        label={samplingTitle}
+                                    />
+                                    <FormattedTextArea
+                                        faramElementName="limitations"
+                                        className={styles.input}
+                                        placeholder={limitationsPlaceholder}
+                                        label={limitationsTitle}
                                     />
                                 </div>
                             </div>
-                        </div>
-                    </FaramList>
-
-                    <section className={styles.middleSection}>
-                        <div className={styles.middleSectionItem}>
-                            <div className={styles.title}>
-                                {focusesTitle}
-                            </div>
-                            <ListSelection
-                                className={styles.focuses}
-                                faramElementName="focuses"
-                                options={focuses}
-                                keySelector={idSelector}
-                                labelSelector={titleSelector}
-                            />
-                        </div>
-                        <div className={styles.middleSectionItem}>
-                            <div className={styles.title}>
-                                {sectorsTitle}
-                            </div>
-                            <ListSelection
-                                faramElementName="sectors"
-                                options={sectors}
-                                className={styles.sectors}
-                                keySelector={idSelector}
-                                labelSelector={titleSelector}
-                            />
-                        </div>
-                        <div className={styles.affectedGroups}>
-                            <div className={styles.title}>
-                                {affectedGroupsTitle}
-                            </div>
-                            <OrganigramInput
-                                faramElementName="affectedGroups"
-                                data={affectedGroups}
-                                childSelector={Methodology.orgChildSelector}
-                                labelSelector={Methodology.orgLabelSelector}
-                                idSelector={Methodology.orgIdSelector}
-                            />
-                        </div>
-                        <div className={styles.locationSelection}>
-                            <div className={styles.title}>
-                                {locationsTitle}
-                            </div>
-                            <GeoInput
-                                faramElementName="locations"
-                                title={locationsTitle}
-                                geoOptionsByRegion={geoOptions}
-                                regions={projectDetails.regions}
-                            />
-                        </div>
-                    </section>
-
-                    <div className={styles.methodologyContent}>
-                        <Header
-                            className={styles.header}
-                            title={methodologyContentTitle}
-                        />
-                        <div className={styles.content}>
-                            <FormattedTextArea
-                                faramElementName="objectives"
-                                className={styles.farea}
-                                placeholder={objectivesPlaceholder}
-                                label={objectivesTitle}
-                            />
-                            <FormattedTextArea
-                                faramElementName="dataCollectionTechniques"
-                                className={styles.farea}
-                                placeholder={dataCollectionTechniquesPlaceholder}
-                                label={dataCollectionTechniquesTitle}
-                            />
-                            <FormattedTextArea
-                                faramElementName="sampling"
-                                className={styles.farea}
-                                placeholder={samplingPlaceholder}
-                                label={samplingTitle}
-                            />
-                            <FormattedTextArea
-                                faramElementName="limitations"
-                                className={styles.farea}
-                                placeholder={limitationsPlaceholder}
-                                label={limitationsTitle}
-                            />
-                        </div>
-                    </div>
+                        }
+                    />
                 </FaramGroup>
             </div>
         );
