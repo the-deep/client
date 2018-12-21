@@ -9,6 +9,20 @@ $height-additional-documents: 256px;
     flex-grow: 1;
     background-color: $color-foreground-alt;
 
+    .top {
+        height: 70%;
+        min-height: 108px;
+        overflow: auto;
+    }
+
+    .bottom {
+        display: flex;
+        flex-direction: column;
+        height: 30%;
+        min-height: 196px;
+        overflow-y: auto;
+    }
+
     %section-basic {
         display: flex;
         flex-direction: column;
@@ -26,6 +40,7 @@ $height-additional-documents: 256px;
     .additional-documents {
         @extend %section-basic;
         flex-shrink: 0;
+        border-top: 2px solid $color-separator;
         height: $height-additional-documents;
 
         .header {

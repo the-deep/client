@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import FaramGroup from '#rscg/FaramGroup';
+import ResizableV from '#rscv/Resizable/ResizableV';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
 
@@ -82,55 +83,64 @@ export default class Metadata extends React.PureComponent {
             <div className={styles.metadata}>
                 <FaramGroup faramElementName="metadata">
                     {pending && <LoadingAnimation />}
-                    <FaramGroup faramElementName="basicInformation">
-                        <div className={styles.basicInformation}>
-                            <Header
-                                title={basicInformationTitle}
-                                className={styles.header}
-                            />
-                            <ListView
-                                className={styles.content}
-                                data={metadataGroupValues}
-                                modifier={this.renderMetadata}
-                            />
-                        </div>
-                    </FaramGroup>
-                    <FaramGroup faramElementName="additionalDocuments">
-                        <div className={styles.additionalDocuments}>
-                            <Header
-                                title={additionalDocumentsTitle}
-                                className={styles.header}
-                            />
-                            <div className={styles.content}>
-                                <Baksa
-                                    label={_ts('editAssessment.metadata', 'executiveSummaryTitle')}
-                                    className={styles.baksa}
-                                    faramElementName="executiveSummary"
-                                    showPageRange
-                                    acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
-                                />
-                                <Baksa
-                                    label={_ts('editAssessment.metadata', 'assessmentDatabaseTitle')}
-                                    className={styles.baksa}
-                                    faramElementName="assessmentData"
-                                    acceptUrl
-                                    acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
-                                />
-                                <Baksa
-                                    label={_ts('editAssessment.metadata', 'questionnaireTitle')}
-                                    className={styles.baksa}
-                                    faramElementName="questionnaire"
-                                    showPageRange
-                                    acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
-                                />
-                                <Baksa
-                                    label={_ts('editAssessment.metadata', 'miscTitle')}
-                                    className={styles.baksa}
-                                    faramElementName="misc"
-                                />
-                            </div>
-                        </div>
-                    </FaramGroup>
+                    <ResizableV
+                        className={styles.metadata}
+                        topContainerClassName={styles.top}
+                        bottomContainerClassName={styles.bottom}
+                        topChild={
+                            <FaramGroup faramElementName="basicInformation">
+                                <div className={styles.basicInformation}>
+                                    <Header
+                                        title={basicInformationTitle}
+                                        className={styles.header}
+                                    />
+                                    <ListView
+                                        className={styles.content}
+                                        data={metadataGroupValues}
+                                        modifier={this.renderMetadata}
+                                    />
+                                </div>
+                            </FaramGroup>
+                        }
+                        bottomChild={
+                            <FaramGroup faramElementName="additionalDocuments">
+                                <div className={styles.additionalDocuments}>
+                                    <Header
+                                        title={additionalDocumentsTitle}
+                                        className={styles.header}
+                                    />
+                                    <div className={styles.content}>
+                                        <Baksa
+                                            label={_ts('editAssessment.metadata', 'executiveSummaryTitle')}
+                                            className={styles.baksa}
+                                            faramElementName="executiveSummary"
+                                            showPageRange
+                                            acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
+                                        />
+                                        <Baksa
+                                            label={_ts('editAssessment.metadata', 'assessmentDatabaseTitle')}
+                                            className={styles.baksa}
+                                            faramElementName="assessmentData"
+                                            acceptUrl
+                                            acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
+                                        />
+                                        <Baksa
+                                            label={_ts('editAssessment.metadata', 'questionnaireTitle')}
+                                            className={styles.baksa}
+                                            faramElementName="questionnaire"
+                                            showPageRange
+                                            acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
+                                        />
+                                        <Baksa
+                                            label={_ts('editAssessment.metadata', 'miscTitle')}
+                                            className={styles.baksa}
+                                            faramElementName="misc"
+                                        />
+                                    </div>
+                                </div>
+                            </FaramGroup>
+                        }
+                    />
                 </FaramGroup>
             </div>
         );
