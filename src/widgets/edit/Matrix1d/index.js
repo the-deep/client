@@ -22,6 +22,7 @@ import { iconNames } from '#constants';
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import RowTitle from './RowTitle';
 import RowContent from './RowContent';
@@ -197,14 +198,16 @@ export default class Matrix1dEditWidget extends React.PureComponent {
     })
 
     renderDragHandle = (key) => {
-        const dragHandleClassNames = [styles.dragHandle];
         const { selectedRowKey } = this.state;
-        if (selectedRowKey === key) {
-            dragHandleClassNames.push(styles.active);
-        }
+
+        const className = _cs(
+            iconNames.hamburger,
+            styles.dragHandle,
+            selectedRowKey === key && styles.active,
+        );
 
         return (
-            <span className={`${iconNames.hamburger} ${dragHandleClassNames.join(' ')}`} />
+            <span className={className} />
         );
     };
 
@@ -226,10 +229,8 @@ export default class Matrix1dEditWidget extends React.PureComponent {
             row => Matrix1dEditWidget.keySelector(row) === this.state.selectedRowKey,
         );
 
-        const modalClassNames = [styles.editModal];
-
         return (
-            <Modal className={modalClassNames.join(' ')}>
+            <Modal className={styles.editModal}>
                 <Faram
                     className={styles.form}
                     onChange={this.handleFaramChange}

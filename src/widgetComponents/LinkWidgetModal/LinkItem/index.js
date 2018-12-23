@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import _cs from '#cs';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -33,20 +35,18 @@ export default class LinkItem extends React.PureComponent {
         const {
             title,
             active,
-            className,
+            className: classNameFromProps,
         } = this.props;
 
-        const classNames = [
+        const className = _cs(
             styles.widgetListItem,
-            className,
-        ];
-        if (active) {
-            classNames.push(styles.active);
-        }
+            classNameFromProps,
+            active && styles.active,
+        );
 
         return (
             <button
-                className={classNames.join(' ')}
+                className={className}
                 onClick={this.handleClick}
             >
                 <div className={styles.title}>

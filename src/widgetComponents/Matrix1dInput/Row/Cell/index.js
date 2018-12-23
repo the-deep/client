@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import _cs from '#cs';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -28,22 +30,6 @@ export default class Matrix1dCell extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = { isBeingDraggedOver: false };
-    }
-
-    getClassName = () => {
-        const classNames = [];
-        classNames.push(styles.matrixCell);
-
-        const { active } = this.props;
-        if (active) {
-            classNames.push(styles.active);
-        }
-        const { isBeingDraggedOver } = this.state;
-        if (isBeingDraggedOver) {
-            classNames.push(styles.isBeingDraggedOver);
-        }
-
-        return classNames.join(' ');
     }
 
     handleDragEnter = () => {
@@ -83,11 +69,20 @@ export default class Matrix1dCell extends React.PureComponent {
             onClick,
             disabled,
             readOnly,
+            active,
         } = this.props;
+
+        const { isBeingDraggedOver } = this.state;
+
+        const className = _cs(
+            styles.matrixCell,
+            active && styles.active,
+            isBeingDraggedOver && styles.isBeingDraggedOver,
+        );
 
         return (
             <button
-                className={this.getClassName()}
+                className={className}
                 onDragEnter={this.handleDragEnter}
                 onDragLeave={this.handleDragExit}
                 onDragOver={this.handleDragOver}

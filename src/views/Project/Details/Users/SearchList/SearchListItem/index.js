@@ -18,6 +18,7 @@ import {
     addProjectUsergroupAction,
 } from '#redux';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import styles from './styles.scss';
 
@@ -163,10 +164,11 @@ export default class SearchListItem extends React.PureComponent {
 
         const USER = 'user';
         const USERGROUP = 'user_group';
-        const actionButtonsClassNames = [styles.actionButtons];
-        if (usergroupMembershipRequest.pending || userMembershipRequest.pending) {
-            actionButtonsClassNames.push(styles.pending);
-        }
+
+        const actionButtonsClassName = _cs(
+            styles.actionButtons,
+            usergroupMembershipRequest.pending || userMembershipRequest.pending || styles.pending,
+        );
 
         if (type === USERGROUP) {
             const className = `
@@ -189,7 +191,7 @@ export default class SearchListItem extends React.PureComponent {
                             </div>
                         </div>
                     </div>
-                    <div className={actionButtonsClassNames.join(' ')}>
+                    <div className={actionButtonsClassName}>
                         <PrimaryButton
                             onClick={this.handleAddUsergroupButtonClick}
                             iconName={iconNames.add}
@@ -221,7 +223,7 @@ export default class SearchListItem extends React.PureComponent {
                             </div>
                         </div>
                     </div>
-                    <div className={actionButtonsClassNames.join(' ')}>
+                    <div className={actionButtonsClassName}>
                         <PrimaryButton
                             onClick={this.handleAddUserButtonClick}
                             iconName={iconNames.add}

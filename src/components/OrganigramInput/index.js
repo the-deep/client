@@ -15,6 +15,7 @@ import { FaramInputElement } from '#rscg/FaramElements';
 import Label from '#rsci/Label';
 
 import _ts from '#ts';
+import _cs from '#cs';
 
 import { iconNames } from '#constants';
 import styles from './styles.scss';
@@ -148,18 +149,6 @@ export default class OrganigramInput extends React.PureComponent {
             this.mountSelectInput = optionsInfo.mountSelectInput;
             this.options = optionsInfo.options;
         }
-    }
-
-    getClassName = () => {
-        const { className } = this.props;
-
-        const classNames = [
-            className,
-            styles.organigramInput,
-            'organigram-input',
-        ];
-
-        return classNames.join(' ');
     }
 
     handleCancelClick = () => {
@@ -322,13 +311,20 @@ export default class OrganigramInput extends React.PureComponent {
         const {
             label,
             showLabel,
+            className: classNameFromProps,
         } = this.props;
 
         const OrgChartModal = this.renderOrgChartModal;
         const Selection = this.renderSelection;
 
+        const className = _cs(
+            classNameFromProps,
+            styles.organigramInput,
+            'organigram-input',
+        );
+
         return (
-            <div className={this.getClassName()}>
+            <div className={className}>
                 {showLabel &&
                     <Label
                         show={showLabel}

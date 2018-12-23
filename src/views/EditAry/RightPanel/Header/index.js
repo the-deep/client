@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import NonFieldErrors from '#rsci/NonFieldErrors';
+import _cs from '#cs';
 
 import styles from './styles.scss';
 
@@ -19,20 +20,16 @@ export default class Header extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getClassName = () => {
-        const { className } = this.props;
-
-        const classNames = [
-            className,
-            styles.header,
-        ];
-
-        return classNames.join(' ');
-    }
-
     render() {
-        const { title } = this.props;
-        const className = this.getClassName();
+        const {
+            title,
+            className: classNameFromProps,
+        } = this.props;
+
+        const className = _cs(
+            classNameFromProps,
+            styles.header,
+        );
 
         return (
             <header className={className}>

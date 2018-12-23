@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 
 import { iconNames } from '#constants';
 import { routeIsFirstPageSelector } from '#redux';
+import _cs from '#cs';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -51,23 +52,24 @@ export default class BackLink extends React.PureComponent {
             isFirstPage,
             defaultLink,
             title = _ts('components.backLink', 'backButtonTooltip'),
-            className,
+            className: classNameFromProps,
             iconName = iconNames.back,
             children,
         } = this.props;
 
-        const classNames = [
-            styles.backLink,
-            className,
-        ];
 
         const onClick = isFirstPage
             ? undefined
             : this.goBack;
 
+        const className = _cs(
+            styles.backLink,
+            classNameFromProps,
+        );
+
         return (
             <Link
-                className={classNames.join(' ')}
+                className={className}
                 title={title}
                 to={defaultLink}
                 onClick={onClick}

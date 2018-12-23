@@ -7,6 +7,8 @@ import {
     isTruthy,
 } from '#rsu/common';
 
+import _cs from '#cs';
+
 import ColumnElement from './ColumnElement';
 import styles from './styles.scss';
 
@@ -29,22 +31,17 @@ export default class NumberMatrixRow extends React.PureComponent {
 
     getSimilarityIndicatorStyle = (key) => {
         const { data, value } = this.props;
-        const indicatorStyle = [styles.tableHeaderRow];
 
         const values = Object.values(value[key] || emptyObject).filter(v => isTruthy(v));
-
         const isSame = unique(values).length === 1;
         const colHeaderLength = (data.columnHeaders || emptyList).length;
 
-        if (isSame && values.length === colHeaderLength) {
-            indicatorStyle.push(styles.similar);
-        } else if (!isSame && values.length === colHeaderLength) {
-            indicatorStyle.push(styles.notSimilar);
-        } else {
-            indicatorStyle.push(styles.partialSimilar);
-        }
-
-        return indicatorStyle.join(' ');
+        return _cs(
+            styles.tableHeaderRow,
+            values.length === colHeaderLength && isSame && styles.similar,
+            values.length === colHeaderLength && !isSame && styles.notSimilar,
+            values.length !== colHeaderLength && styles.partialSimilar,
+        );
     }
 
     columnRendererParams = (columnKey) => {

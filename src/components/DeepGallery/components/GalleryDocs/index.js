@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { createUrlForGoogleViewer } from '#rest/external';
+import _cs from '#cs';
+
 import styles from './styles.scss';
 
 export { galleryDocsMimeType as supportedMimeType } from '#config/deepMimeTypes';
@@ -31,7 +33,7 @@ export default class GalleryDocs extends React.PureComponent {
 
     render() {
         const {
-            className,
+            className: classNameFromProps,
             docUrl,
             mimeType,
             canShowIframe,
@@ -42,12 +44,6 @@ export default class GalleryDocs extends React.PureComponent {
             return null;
         }
 
-        const classNames = [
-            className,
-            'gallery-docs',
-            styles.galleryDocs,
-        ];
-
         const useGoogle = mimeType !== 'application/pdf' || !canShowIframe || notHttps;
         const src = useGoogle
             ? createUrlForGoogleViewer(docUrl)
@@ -56,8 +52,14 @@ export default class GalleryDocs extends React.PureComponent {
             ? 'allow-scripts allow-same-origin allow-popups'
             : undefined;
 
+        const className = _cs(
+            classNameFromProps,
+            'gallery-docs',
+            styles.galleryDocs,
+        );
+
         return (
-            <div className={classNames.join(' ')}>
+            <div className={className}>
                 <iframe
                     className={`doc ${styles.doc}`}
                     title={docUrl}

@@ -99,19 +99,6 @@ export default class CountryPanel extends React.PureComponent {
         });
     };
 
-    getStyleName = (countryId) => {
-        const linkId = this.props.countryId;
-
-        const styleNames = [];
-        styleNames.push('list-item');
-
-        if (linkId === `${countryId}`) {
-            styleNames.push('active');
-        }
-
-        return styleNames.join(' ');
-    }
-
     startRequestForCountries = () => {
         if (this.countriesRequest) {
             this.countriesRequest.stop();

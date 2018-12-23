@@ -34,16 +34,6 @@ export default class ImagesGrid extends React.PureComponent {
         };
     }
 
-    getStyleName = (galleryIndex) => {
-        const styleNames = ['image'];
-        const { selectedIndex } = this.state;
-
-        if (galleryIndex === selectedIndex) {
-            styleNames.push('visible');
-        }
-        return styleNames.join(' ');
-    }
-
     handleImageClick = (source) => {
         this.setState({
             activeImageSource: source,

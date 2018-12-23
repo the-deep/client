@@ -22,6 +22,7 @@ import {
     assessmentSectorsSelector,
 } from '#redux';
 import iconNames from '#constants/iconNames';
+import _cs from '#cs';
 
 import ScaleMatrixInput from './ScaleMatrixInput';
 import ScoreItem from './ScoreItem';
@@ -80,17 +81,6 @@ export default class Score extends React.PureComponent {
     static scaleKeySelector = option => option.value;
     static scaleIsDefaultSelector = option => !!option.default;
 
-    getClassName = () => {
-        const { className } = this.props;
-
-        const classNames = [
-            className,
-            styles.score,
-        ];
-
-        return classNames.join(' ');
-    }
-
     renderQuestions = (k, data) => {
         const {
             title,
@@ -98,10 +88,10 @@ export default class Score extends React.PureComponent {
             id,
         } = data;
 
-        const iconClassName = [
+        const iconClassName = _cs(
             styles.infoIcon,
             iconNames.info,
-        ].join(' ');
+        );
 
         return (
             <tr
@@ -265,9 +255,13 @@ export default class Score extends React.PureComponent {
             minScaleColor,
             maxScaleColor,
             pending,
+            className: classNameFromProps,
         } = this.props;
 
-        const className = this.getClassName();
+        const className = _cs(
+            classNameFromProps,
+            styles.score,
+        );
 
         return (
             <div className={className}>

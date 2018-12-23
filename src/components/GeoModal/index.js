@@ -14,6 +14,7 @@ import ListInput from '#rsci/ListInput';
 import { FaramInputElement } from '#rscg/FaramElements';
 import { listToMap } from '#rsu/common';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import RegionMap from '../RegionMap';
 import styles from './styles.scss';
@@ -236,9 +237,7 @@ export default class GeoModal extends React.PureComponent {
         const {
             regions,
             title,
-            geoOptionsByRegion,
             modalLeftComponent,
-            adminLevelsById,
             adminLevelTitlesById,
         } = this.props;
 
@@ -250,8 +249,6 @@ export default class GeoModal extends React.PureComponent {
         } = this.state;
 
         const GroupSelectionList = this.renderGroupSelectionList;
-        const mapClassNames = [styles.map];
-        const geoModalClassNames = [styles.geoModal];
         const {
             optionsForSelectedAdminLevels,
             optionsForSelectedAdminLevelsMap,
@@ -261,13 +258,18 @@ export default class GeoModal extends React.PureComponent {
         );
         const filteredValues = value.filter(o => !!optionsForSelectedAdminLevelsMap[o]);
 
-        if (modalLeftComponent) {
-            mapClassNames.push(styles.hasLeft);
-            geoModalClassNames.push(styles.hasLeft);
-        }
+        const geoModalClassName = _cs(
+            styles.geoModal,
+            modalLeftComponent && styles.hasLeft,
+        );
+
+        const mapClassName = _cs(
+            styles.map,
+            modalLeftComponent && styles.hasLeft,
+        );
 
         return (
-            <Modal className={geoModalClassNames.join(' ')}>
+            <Modal className={geoModalClassName}>
                 <ModalHeader title={title} />
                 <ModalBody className={styles.body}>
                     {modalLeftComponent &&
@@ -311,7 +313,7 @@ export default class GeoModal extends React.PureComponent {
                             </div>
                         </div>
                         <RegionMap
-                            className={mapClassNames.join(' ')}
+                            className={mapClassName}
                             regionId={selectedRegion}
                             onChange={this.handleRegionValueChange}
                             selections={value}

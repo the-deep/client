@@ -13,6 +13,7 @@ import {
     specificNeedGroupsSelector,
 } from '#redux';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import TabularInputs from '../TabularInputs';
 import styles from './styles.scss';
@@ -76,19 +77,14 @@ export default class CrossSector extends React.PureComponent {
     }
 
     getClassName = (empty = false) => {
-        const { className } = this.props;
-        const classNames = [
-            className,
+        const { className: classNameFromProps } = this.props;
+        return _cs(
+            classNameFromProps,
             'cross-sector',
             styles.crossSector,
-        ];
-
-        if (empty) {
-            classNames.push('empty');
-            classNames.push(styles.empty);
-        }
-
-        return classNames.join(' ');
+            empty && 'empty',
+            empty && styles.empty,
+        );
     }
 
     renderInput = (column, row, subRow) => {

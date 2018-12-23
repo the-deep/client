@@ -12,6 +12,7 @@ import { galleryMapping, galleryType } from '#config/deepMimeTypes';
 import { iconNames } from '#constants';
 import notify from '#notify';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import Screenshot from '../../../Screenshot';
 import GalleryImage from '../GalleryImage';
@@ -111,13 +112,13 @@ const Preview = ({
 };
 
 const Bar = ({ url = '', children }) => {
-    const urlbarClassNames = [
+    const className = _cs(
         styles.urlbar,
         'urlbar',
-    ];
+    );
 
     return (
-        <div className={urlbarClassNames.join(' ')}>
+        <div className={className}>
             <TextInput
                 className={styles.url}
                 value={url}
@@ -243,7 +244,7 @@ export default class GalleryViewer extends React.PureComponent {
 
     render() {
         const {
-            className,
+            className: classNameFromProps,
             url,
             mimeType,
             canShowIframe,
@@ -261,18 +262,20 @@ export default class GalleryViewer extends React.PureComponent {
 
         const showBar = showUrl || showScreenshot;
 
-        const containerStyles = [styles.galleryViewer];
-        if (showBar) {
-            containerStyles.push(styles.urlbarShown);
-        }
+        const className = _cs(
+            styles.galleryViewer,
+            showBar && styles.urlbarShown,
+            classNameFromProps,
+        );
 
-        const docContainerClassNames = [
+
+        const docContainerClassName = _cs(
             styles.docContainer,
             'doc-container',
-        ];
+        );
 
         return (
-            <div className={`${containerStyles.join(' ')} ${className}`}>
+            <div className={className}>
                 { showBar &&
                     <Bar
                         url={url}
@@ -290,7 +293,7 @@ export default class GalleryViewer extends React.PureComponent {
                         }
                     </Bar>
                 }
-                <div className={docContainerClassNames.join(' ')}>
+                <div className={docContainerClassName}>
                     { screenshotMode &&
                         <Screenshot
                             onCapture={this.handleScreenshot}

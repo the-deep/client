@@ -18,6 +18,7 @@ import {
     createParamsForFileUpload,
     transformAndCombineResponseErrors,
 } from '#rest';
+import _cs from '#cs';
 
 import styles from './styles.scss';
 
@@ -126,28 +127,6 @@ export default class Baksa extends React.PureComponent {
         if (this.uploader) {
             this.uploader.stop();
         }
-    }
-
-    getClassName() {
-        const { className, error, disabled } = this.props;
-
-        const classNames = [
-            className,
-            'baksa',
-            styles.baksa,
-        ];
-
-        if (error) {
-            classNames.push('error');
-            classNames.push(styles.error);
-        }
-
-        if (disabled) {
-            classNames.push('disabled');
-            classNames.push(styles.disabled);
-        }
-
-        return classNames.join(' ');
     }
 
     resetValue = () => {
@@ -265,13 +244,13 @@ export default class Baksa extends React.PureComponent {
             return null;
         }
 
-        const classNames = [
+        const className = _cs(
             'label',
             styles.label,
-        ];
+        );
 
         return (
-            <div className={classNames.join(' ')}>
+            <div className={className}>
                 { label }
             </div>
         );
@@ -414,6 +393,7 @@ export default class Baksa extends React.PureComponent {
         );
     }
 
+    // FIXME: should have used HintAndError
     renderHintAndError = () => {
         const {
             showHintAndError,
@@ -428,37 +408,38 @@ export default class Baksa extends React.PureComponent {
             return null;
         }
 
+
         if (error) {
-            const classNames = [
+            const className = _cs(
                 'error',
                 styles.error,
-            ];
+            );
 
             return (
-                <p className={classNames.join(' ')}>
+                <p className={className}>
                     {error}
                 </p>
             );
         }
 
         if (hint) {
-            const classNames = [
+            const className = _cs(
                 'hint',
                 styles.hint,
-            ];
+            );
             return (
-                <p className={classNames.join(' ')}>
+                <p className={className}>
                     {hint}
                 </p>
             );
         }
 
-        const classNames = [
+        const className = _cs(
             'empty',
             styles.empty,
-        ];
+        );
         return (
-            <p className={classNames.join(' ')}>
+            <p className={className}>
                 -
             </p>
         );
@@ -466,7 +447,13 @@ export default class Baksa extends React.PureComponent {
 
 
     render() {
-        const { value, showPageRange } = this.props;
+        const {
+            value,
+            showPageRange,
+            error,
+            disabled,
+            className: classNameFromProps,
+        } = this.props;
         const { pending } = this.state;
 
         const Label = this.renderLabel;
@@ -476,8 +463,18 @@ export default class Baksa extends React.PureComponent {
         const PageRange = this.renderPageRange;
         const HintAndError = this.renderHintAndError;
 
+        const className = _cs(
+            classNameFromProps,
+            'baksa',
+            styles.baksa,
+            error && 'error',
+            error && styles.error,
+            disabled && 'disabled',
+            disabled && styles.disabled,
+        );
+
         return (
-            <div className={this.getClassName()}>
+            <div className={className}>
                 <Label />
                 {pending && <Upload />}
                 {!pending && !value.type && <DropFileInput />}

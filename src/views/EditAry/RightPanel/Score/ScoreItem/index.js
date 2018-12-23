@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import Numeral from '#rscv/Numeral';
 import { FaramOutputElement } from '#rscg/FaramElements';
 import { getColorOnBgColor } from '#rsu/common';
+
+import _cs from '#cs';
 
 import styles from './styles.scss';
 
@@ -76,13 +79,8 @@ export default class ScoreItem extends React.PureComponent {
             maxValue,
             minColor,
             maxColor,
-            className,
+            className: classNameFromProps,
         } = this.props;
-
-        const classNames = [
-            className,
-            styles.scoreItem,
-        ];
 
         const scale = (value - minValue) / (maxValue - minValue);
         const invScale = 1 - scale;
@@ -103,9 +101,14 @@ export default class ScoreItem extends React.PureComponent {
         const backgroundColor = `#${c.r}${c.g}${c.b}`;
         const color = getColorOnBgColor(backgroundColor);
 
+        const className = _cs(
+            classNameFromProps,
+            styles.scoreItem,
+        );
+
         return (
             <div
-                className={classNames.join(' ')}
+                className={className}
                 style={{
                     color,
                     backgroundColor,

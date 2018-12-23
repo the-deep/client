@@ -9,6 +9,7 @@ import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
 import Cloak from '#components/Cloak';
 import { iconNames } from '#constants';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import styles from './styles.scss';
 
@@ -104,21 +105,17 @@ export default class EntriesList extends React.PureComponent {
 
         const status = statuses[currentEntryKey];
 
-        const classNames = [
+        const className = _cs(
             styles.entriesListItem,
-        ];
-        if (isActive) {
-            classNames.push(styles.active);
-        }
-        if (isMarkedAsDeleted) {
-            classNames.push(styles.markedForDelete);
-        }
+            isActive && styles.active,
+            isMarkedAsDeleted && styles.markedForDelete,
+        );
 
-        const pending = status === ENTRY_STATUS.requesting;
+        const pending = (status === ENTRY_STATUS.requesting);
 
         return (
             <div
-                className={classNames.join(' ')}
+                className={className}
                 key={key}
             >
                 <button

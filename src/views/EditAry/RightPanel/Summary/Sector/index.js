@@ -12,6 +12,7 @@ import {
     specificNeedGroupsSelector,
 } from '#redux';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import TabularInputs from '../TabularInputs';
 import styles from './styles.scss';
@@ -71,17 +72,6 @@ export default class Sector extends React.PureComponent {
         ];
     }
 
-    getClassName = () => {
-        const { className } = this.props;
-        const classNames = [
-            className,
-            'sector',
-            styles.sector,
-        ];
-
-        return classNames.join(' ');
-    }
-
     renderInput = (column, row, subRow) => {
         const {
             affectedGroups,
@@ -129,8 +119,13 @@ export default class Sector extends React.PureComponent {
     }
 
     render() {
-        const { sectorId } = this.props;
-        const className = this.getClassName();
+        const { sectorId, className: classNameFromProps } = this.props;
+
+        const className = _cs(
+            classNameFromProps,
+            'sector',
+            styles.sector,
+        );
 
         return (
             <FaramGroup faramElementName={`sector-${sectorId}`}>

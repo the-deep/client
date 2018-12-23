@@ -19,6 +19,7 @@ import {
     pathNames,
 } from '#constants';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import AddProjectButton from './AddProjectButton';
 import styles from './styles.scss';
@@ -59,16 +60,11 @@ export default class ProjectList extends React.PureComponent {
     getStyleName = (projectId) => {
         const { projectId: projectIdFromProps } = this.props;
 
-        const styleNames = [
+        return _cs(
             styles.listItem,
             'project-list-item',
-        ];
-
-        if (projectId === projectIdFromProps) {
-            styleNames.push(styles.active);
-        }
-
-        return styleNames.join(' ');
+            projectId === projectIdFromProps && styles.active,
+        );
     }
 
     handleSearchInputChange = (searchInputValue) => {

@@ -180,9 +180,8 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         const widgetsHeaderInfo = _ts('widgets.editor.conditional', 'supportedWidgetsInfoText');
         const addedWidgetsHeaderInfo = _ts('widgets.editor.conditional', 'addedWidgetsHeaderInfoText');
 
-        const modalClassNames = [styles.modal];
         return (
-            <Modal className={modalClassNames.join(' ')}>
+            <Modal className={styles.modal}>
                 <Faram
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}

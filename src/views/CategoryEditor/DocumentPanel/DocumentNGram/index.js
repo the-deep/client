@@ -9,6 +9,7 @@ import {
 import ListView from '#rscv/List/ListView';
 
 import _ts from '#ts';
+import _cs from '#cs';
 import { categoryEditorNgramsSelector } from '#redux';
 
 import styles from './styles.scss';
@@ -46,12 +47,10 @@ export default class DocumentNGram extends React.PureComponent {
     getNGramSelectStyleName = (i) => {
         const { selectedNGramIndex } = this.state;
 
-        const styleNames = [];
-        styleNames.push(styles.ngramSelect);
-        if (selectedNGramIndex === i) {
-            styleNames.push(styles.active);
-        }
-        return styleNames.join(' ');
+        return _cs(
+            styles.ngramSelect,
+            selectedNGramIndex === i && styles.active,
+        );
     }
 
     handleNGramSelectButtonClick = (i) => {
