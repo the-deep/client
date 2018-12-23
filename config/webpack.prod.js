@@ -8,6 +8,7 @@ const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const ShellRunPlugin = require('./shellrun-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const getEnvVariables = require('./env.js');
 
@@ -15,6 +16,7 @@ const appBase = process.cwd();
 const eslintFile = path.resolve(appBase, '.eslintrc-loader');
 const appSrc = path.resolve(appBase, 'src/');
 const appDist = path.resolve(appBase, 'build/');
+const staticContent = path.resolve(appBase, 'static/');
 const appIndexJs = path.resolve(appBase, 'src/index.js');
 const appIndexHtml = path.resolve(appBase, 'public/index.html');
 const appFavicon = path.resolve(appBase, 'public/favicon.ico');
@@ -135,6 +137,7 @@ module.exports = (env) => {
                 favicon: path.resolve(appFavicon),
                 chunksSortMode: 'none',
             }),
+            new CopyWebpackPlugin([{ from: staticContent, to: appDist }]),
             new MiniCssExtractPlugin({
                 filename: 'css/[name].[hash].css',
                 chunkFilename: 'css/[id].[hash].css',
