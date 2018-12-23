@@ -4,9 +4,13 @@ import { Link } from 'react-router-dom';
 import FormattedDate from '#rscv/FormattedDate';
 
 import { reverseRoute, isObject } from '#rsu/common';
-import { pathNames } from '#constants';
+import {
+    pathNames,
+    iconNames,
+} from '#constants';
 import { camelToNormalCase } from '#utils/common';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import AggregatedLogItem from '../AggregatedLogItem';
 import styles from './styles.scss';
@@ -99,21 +103,26 @@ const LogItem = ({
                 {log}
             </div>
             <div className={styles.metaData}>
-                { user &&
-                    <Link
-                        className={styles.user}
-                        target="_blank"
-                        to={reverseRoute(pathNames.userProfile, { userId: user.id })}
-                    >
-                        {user.name}
-                    </Link>
-                }
-                <span className={styles.date} >
+                { user && (
+                    <div className={styles.user}>
+                        <span className={_cs(iconNames.user, styles.icon)} />
+                        <Link
+                            className={styles.link}
+                            target="_blank"
+                            to={reverseRoute(pathNames.userProfile, { userId: user.id })}
+                        >
+                            {user.name}
+                        </Link>
+                    </div>
+                )}
+                <div className={styles.date} >
+                    <span className={_cs(iconNames.calendar, styles.icon)} />
                     <FormattedDate
+                        className={styles.formattedDate}
                         date={time}
                         mode="dd-MM-yyyy"
                     />
-                </span>
+                </div>
             </div>
         </div>
     );
