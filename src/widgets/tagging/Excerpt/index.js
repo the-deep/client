@@ -1,12 +1,9 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-import TextArea from '#rsci/TextArea';
-import AccentButton from '#rsca/Button/AccentButton';
-import { formatPdfText } from '#rsu/common';
+import FormattedTextArea from '#rsci/FormattedTextArea';
 
 import DataSeries from '#components/DataSeries';
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import DropContainer from './DropContainer';
@@ -48,20 +45,10 @@ export default class Excerpt extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = { isBeingDraggedOver: false };
-
-        const { excerpt } = props;
-        this.disableFormat = !excerpt || excerpt === formatPdfText(excerpt);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const { excerpt } = nextProps;
-        if (this.props.excerpt !== excerpt) {
-            this.disableFormat = !excerpt || excerpt === formatPdfText(excerpt);
-        }
     }
 
     handleDragEnter = () => {
-        if (this.props.disabled) {
+        if (this.props.disabled || this.props.readOnly) {
             return;
         }
 
@@ -101,16 +88,10 @@ export default class Excerpt extends React.PureComponent {
         }
     }
 
-    handleFormatText = () => {
-        const { excerpt } = this.props;
-        const formattedText = formatPdfText(excerpt);
-        this.handleTextChange(formattedText);
-    }
-
     handleDragDrop = (e) => {
         e.preventDefault();
 
-        if (this.props.disabled) {
+        if (this.props.disabled || this.props.readOnly) {
             return;
         }
 
@@ -205,32 +186,16 @@ export default class Excerpt extends React.PureComponent {
             text
         `;
 
-        const buttonTitle = _ts('widgets.tagging.excerpt', 'formatExcerpt');
-
         return (
-            <Fragment>
-                <TextArea
-                    className={className}
-                    showLabel={false}
-                    value={excerpt}
-                    onChange={this.handleTextChange}
-                    disabled={disabled}
-                    readOnly={readOnly}
-                />
-                { entryType &&
-                    <AccentButton
-                        tabIndex="-1"
-                        className={styles.formatButton}
-                        iconName={iconNames.textFormat}
-                        onClick={this.handleFormatText}
-                        title={buttonTitle}
-                        smallVerticalPadding
-                        smallHorizontalPadding
-                        transparent
-                        disabled={disabled || this.disableFormat || readOnly}
-                    />
-                }
-            </Fragment>
+            <FormattedTextArea
+                className={className}
+                showLabel={false}
+                value={excerpt}
+                onChange={this.handleTextChange}
+                disabled={disabled}
+                readOnly={readOnly}
+                showFormatButton={!!entryType}
+            />
         );
     }
 
