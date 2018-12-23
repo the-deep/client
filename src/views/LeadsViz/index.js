@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import _ts from '#ts';
 
@@ -33,6 +33,7 @@ import {
 } from '#redux';
 import { pathNames } from '#constants/';
 import BackLink from '#components/BackLink';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import LeadKeywordCorrelationRequest from './requests/LeadKeywordCorrelationRequest';
 import LeadTopicCorrelationRequest from './requests/LeadTopicCorrelationRequest';
@@ -100,7 +101,7 @@ export default class LeadsViz extends React.PureComponent {
         super(props);
 
         this.state = {
-            noLeadSelected: false,
+            noLeadsFound: false,
             loadingLeads: true,
             hierarchicalDataPending: true,
             chordDataPending: true,
@@ -136,14 +137,13 @@ export default class LeadsViz extends React.PureComponent {
     }
 
     startNlpRequests = (docIds = []) => {
-        if (docIds.length > 0) {
+        const noLeadsFound = docIds.length <= 0;
+        this.setState({ noLeadsFound });
+        if (!noLeadsFound) {
             this.startRequestForLeadTopicModeling(docIds);
             this.startRequestForLeadNer(docIds);
             this.startRequestForLeadTopicCorrelation(docIds);
             this.startRequestForLeadKeywordCorrelationRequest(docIds);
-            this.setState({ noLeadSelected: false });
-        } else {
-            this.setState({ noLeadSelected: true });
         }
     }
 
@@ -257,7 +257,6 @@ export default class LeadsViz extends React.PureComponent {
             geoPointsData,
         } = this.props;
         const {
-            loadingLeads,
             hierarchicalDataPending,
             chordDataPending,
             correlationDataPending,
@@ -266,18 +265,18 @@ export default class LeadsViz extends React.PureComponent {
         } = this.state;
 
         return (
-            <div className={styles.vizContainer}>
+            <Fragment>
                 <GeoReferencedMap
                     className={`${styles.geoReferencedMap} ${styles.viz}`}
                     vizContainerClass={styles.chartContainer}
-                    loading={loadingLeads || geoPointsDataPending}
+                    loading={geoPointsDataPending}
                     geoPoints={geoPointsData.points}
                 />
                 <TreeMapView
                     className={`${styles.treeMap} ${styles.viz}`}
                     data={hierarchicalData}
                     vizContainerClass={styles.chartContainer}
-                    loading={loadingLeads || hierarchicalDataPending}
+                    loading={hierarchicalDataPending}
                     headerText={_ts('leadsViz', 'treeMap')}
                     valueSelector={LeadsViz.sizeValueSelector}
                     labelSelector={LeadsViz.labelValueSelector}
@@ -286,7 +285,7 @@ export default class LeadsViz extends React.PureComponent {
                     className={`${styles.sunBurst} ${styles.viz}`}
                     data={hierarchicalData}
                     vizContainerClass={styles.chartContainer}
-                    loading={loadingLeads || hierarchicalDataPending}
+                    loading={hierarchicalDataPending}
                     headerText={_ts('leadsViz', 'sunburst')}
                     valueSelector={LeadsViz.sizeValueSelector}
                     labelSelector={LeadsViz.labelValueSelector}
@@ -294,7 +293,7 @@ export default class LeadsViz extends React.PureComponent {
                 <ChordDiagramView
                     className={`${styles.chordDiagram} ${styles.viz}`}
                     data={chordData.values}
-                    loading={loadingLeads || chordDataPending}
+                    loading={chordDataPending}
                     headerText={_ts('leadsViz', 'chordDiagram')}
                     vizContainerClass={styles.chartContainer}
                     labelsData={chordData.labels}
@@ -306,13 +305,13 @@ export default class LeadsViz extends React.PureComponent {
                     data={correlationData}
                     colorSchemeType="continuous"
                     headerText={_ts('leadsViz', 'correlationMatrix')}
-                    loading={loadingLeads || correlationDataPending}
+                    loading={correlationDataPending}
                     vizContainerClass={styles.chartContainer}
                 />
                 <ForceDirectedGraphView
                     className={`${styles.forceDirectedGraph} ${styles.viz}`}
                     data={forceDirectedData}
-                    loading={loadingLeads || forceDirectedDataPending}
+                    loading={forceDirectedDataPending}
                     headerText={_ts('leadsViz', 'forcedDirectedGraph')}
                     vizContainerClass={styles.chartContainer}
                     idSelector={d => d.id}
@@ -324,7 +323,7 @@ export default class LeadsViz extends React.PureComponent {
                     className={`${styles.collapsibleTree} ${styles.viz}`}
                     headerText={_ts('leadsViz', 'collapsibleTreeView')}
                     data={hierarchicalData}
-                    loading={loadingLeads || hierarchicalDataPending}
+                    loading={hierarchicalDataPending}
                     vizContainerClass={styles.chartContainer}
                     labelSelector={LeadsViz.labelValueSelector}
                 />
@@ -332,17 +331,31 @@ export default class LeadsViz extends React.PureComponent {
                     className={`${styles.radialDendrogram} ${styles.viz}`}
                     headerText={_ts('leadsViz', 'radialDendogram')}
                     data={hierarchicalData}
-                    loading={loadingLeads || hierarchicalDataPending}
+                    loading={hierarchicalDataPending}
                     vizContainerClass={styles.chartContainer}
                     labelSelector={LeadsViz.labelValueSelector}
                 />
-            </div>
+            </Fragment>
         );
+    }
+
+    renderContent = () => {
+        const {
+            noLeadsFound,
+            loadingLeads,
+        } = this.state;
+
+        if (loadingLeads) {
+            return <LoadingAnimation />;
+        }
+        if (noLeadsFound) {
+            return this.renderNoLeadFound();
+        }
+        return this.renderCharts();
     }
 
     render() {
         const { activeProject } = this.props;
-        const { noLeadSelected } = this.state;
 
         return (
             <div className={styles.leads}>
@@ -352,7 +365,9 @@ export default class LeadsViz extends React.PureComponent {
                     />
                     <FilterLeadsForm className={styles.filters} />
                 </header>
-                { noLeadSelected ? this.renderNoLeadFound() : this.renderCharts() }
+                <div className={styles.vizContainer}>
+                    { this.renderContent() }
+                </div>
             </div>
         );
     }

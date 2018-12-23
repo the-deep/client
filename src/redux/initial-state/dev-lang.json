@@ -852,7 +852,6 @@
         "-50010134": "Add cells from",
         "-11147231": "Feedback or Bug?",
         "-81583708": "Submit any feedback or bug you encountered.",
-        "-83131348": "And",
         "-75360665": "no lead activity in past {days} days",
         "-30036120": "no entry activity in past {days} days",
         "-44064706": "Help",
@@ -873,7 +872,8 @@
         "-61370018": "some lead activity in past {days} days",
         "-881890": "some entry activity in past {days} days",
         "-45914563": "Project with {value: and }",
-        "-2861291": "Project with {value: or }"
+        "-2861291": "Project with {value: or }",
+        "-96311582": "Add user"
     },
     "links": {
         "browserExtension": {
@@ -1766,8 +1766,8 @@
             "emailTitle": 184,
             "actionsTitle": 16,
             "joinedAtTitle": 161,
-            "addUserButtonTooltip": 1220,
-            "addUsergroupButtonTooltip": 1220,
+            "addUserButtonTooltip": -96311582,
+            "addUsergroupButtonTooltip": 176,
             "searchInputPlaceholder": -17852758,
             "searchEmptyText": 12507,
             "searchTipText": 12508,
