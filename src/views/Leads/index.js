@@ -487,14 +487,19 @@ export default class Leads extends React.PureComponent {
         return (
             <footer className={styles.footer}>
                 <div className={styles.linkContainer}>
-                    <Link
-                        className={styles.link}
-                        to={showVisualizationLink}
-                    >
-                        {_ts('leads', 'showViz')}
-                    </Link>
                     <Cloak
                         {...viewsAcl.leadsViz}
+                        render={
+                            <Link
+                                className={styles.link}
+                                to={showVisualizationLink}
+                            >
+                                {_ts('leads', 'showViz')}
+                            </Link>
+                        }
+                    />
+                    <Cloak
+                        {...viewsAcl.clusterViz}
                         render={
                             <Link
                                 className={styles.link}
