@@ -56,8 +56,11 @@ export default class ExportPreview extends React.PureComponent {
     }
 
     create(props) {
-        const { exportId } = props;
+        if (this.previewRequest) {
+            this.previewRequest.stop();
+        }
 
+        const { exportId } = props;
         if (!exportId) {
             this.setState({
                 pending: false,
@@ -65,10 +68,6 @@ export default class ExportPreview extends React.PureComponent {
                 exportObj: undefined,
             });
             return;
-        }
-
-        if (this.previewRequest) {
-            this.previewRequest.stop();
         }
         this.previewRequest = this.createPreviewRequest(exportId);
         this.previewRequest.start();
