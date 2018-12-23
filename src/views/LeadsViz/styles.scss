@@ -1,8 +1,13 @@
 @import '~base-scss/base';
 
+
+.chart-container {
+    padding: $spacing-extra-large-alt;
+}
+
 .leads {
-    @extend %main-content;
     display: flex;
+    position: relative;
     flex-direction: column;
     margin: -$spacing-small-alt;
     border: 0;
@@ -48,6 +53,7 @@
     }
 
     .viz-container {
+        @extend %main-content;
         display: grid;
         padding: $spacing-small-alt;
         overflow-y: auto;
@@ -119,8 +125,4 @@
             @include button-like-link($color-accent);
         }
     }
-}
-
-.chart-container {
-    padding: $spacing-extra-large-alt;
 }

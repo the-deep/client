@@ -38,19 +38,17 @@
         overflow-y: auto;
 
         .errors {
-            flex-basis: 100%;
+            width: 100%;
         }
 
         .normal-inputs {
-            flex-basis: 40%;
             padding: $spacing-small;
+            width: 40%;
         }
 
         .tabular-select-inputs {
-            display: flex;
-            flex-basis: 60%;
-            flex-direction: column;
             padding: $spacing-small;
+            width: 60%;
         }
     }
 
