@@ -1,18 +1,17 @@
 @import '~base-scss/base';
 
-
 .chart-container {
     padding: $spacing-extra-large-alt;
 }
 
-.leads {
+$page-margin: $spacing-small-alt;
+
+.leads-visualization {
     display: flex;
-    position: relative;
     flex-direction: column;
-    margin: -$spacing-small-alt;
-    border: 0;
-    background-color: transparent;
-    height: calc(100vh - #{$height-navbar});
+    margin: (-$page-margin);
+    height: calc(100% + #{$page-margin * 2});
+    overflow: auto;
 
     .header {
         @include background-color($color-background-header);
@@ -41,16 +40,21 @@
         }
     }
 
-    .no-lead-found {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        margin: auto;
+    .content {
+        @extend %main-content;
+        position: relative;
+        margin: $page-margin;
+        overflow: auto;
 
-        p {
-            color: $color-text-disabled;
+        .no-leads-message {
+            flex-direction: column;
+
+            .heading {
+                text-transform: none;
+            }
         }
     }
+
 
     .viz-container {
         @extend %main-content;

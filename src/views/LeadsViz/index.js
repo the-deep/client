@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import {
     reverseRoute,
@@ -18,6 +19,7 @@ import CollapsibleTree from '#rscz/CollapsibleTree';
 import RadialDendrogram from '#rscz/RadialDendrogram';
 import GeoReferencedMap from '#rscz/GeoReferencedMap';
 import BoundError from '#rscg/BoundError';
+import Message from '#rscv/Message';
 import VizError from '#components/VizError';
 
 import {
@@ -238,14 +240,14 @@ export default class LeadsViz extends React.PureComponent {
     }
 
     renderNoLeadFound = () => (
-        <div className={styles.noLeadFound}>
-            <h3>
+        <Message className={styles.noLeadsMessage}>
+            <h3 className={styles.heading}>
                 { _ts('leadsViz', 'noLeadsFoundHeader') }
             </h3>
             <p>
                 { _ts('leadsViz', 'noLeadsFoundDescription') }
             </p>
-        </div>
+        </Message>
     )
 
     renderCharts = () => {
@@ -355,17 +357,20 @@ export default class LeadsViz extends React.PureComponent {
     }
 
     render() {
-        const { activeProject } = this.props;
+        const {
+            activeProject,
+            className,
+        } = this.props;
+
+        const exitPath = reverseRoute(pathNames.leads, { projectId: activeProject.id });
 
         return (
-            <div className={styles.leads}>
+            <div className={_cs(styles.leadsVisualization, className)}>
                 <header className={styles.header}>
-                    <BackLink
-                        defaultLink={reverseRoute(pathNames.leads, { projectId: activeProject.id })}
-                    />
+                    <BackLink defaultLink={exitPath} />
                     <FilterLeadsForm className={styles.filters} />
                 </header>
-                <div className={styles.vizContainer}>
+                <div className={styles.content}>
                     { this.renderContent() }
                 </div>
             </div>
