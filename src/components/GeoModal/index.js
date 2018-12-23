@@ -45,6 +45,8 @@ const defaultProps = {
     modalLeftComponent: undefined,
 };
 
+const emptyObject = {};
+
 @FaramInputElement
 export default class GeoModal extends React.PureComponent {
     static propTypes = propTypes;
@@ -189,7 +191,7 @@ export default class GeoModal extends React.PureComponent {
         const { selectedRegion } = this.state;
         const newValue = [
             ...value.filter(v => (
-                geoOptionsById[v].region !== selectedRegion
+                (geoOptionsById[v] || emptyObject).region !== selectedRegion
             )),
             ...regionValue,
         ];
