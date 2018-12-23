@@ -2,32 +2,57 @@
 
 .notifications {
     display: flex;
+    position: relative;
     flex-direction: column;
-    background-color: $color-foreground-alt;
+    background-color: $color-foreground;
 
-    .header {
-        display: flex;
-        align-items: center;
-        flex-shrink: 0;
-        background-color: $color-foreground;
-        padding: $spacing-medium-alt;
+    .loading-animation {
+        position: absolute;
+        top: $spacing-medium;
+        right: $spacing-medium;
+        width: $font-size-extra-large;
+        height: $font-size-extra-large;
 
-        .heading {
-            flex-grow: 1;
-        }
-
-        .loading-animation {
-            position: initial;
-            flex-shrink: 0;
-            padding: 0;
-            width: auto;
-            height: auto;
+        >div {
+            padding: 0!important;
+            font-size: $font-size-large!important;
         }
     }
+
+    // TODO: Fix the header
+    // .header {
+    //     display: flex;
+    //     align-items: center;
+    //     flex-shrink: 0;
+    //     background-color: $color-foreground;
+    //     padding: $spacing-medium-alt;
+
+    //     .heading {
+    //         flex-grow: 1;
+    //     }
+
+    //     .loading-animation {
+    //         position: relative;
+    //         flex-shrink: 0;
+    //         padding: 0 $spacing-medium;
+    //     }
+    // }
 
     .content {
         flex-grow: 1;
         overflow-y: auto;
+
+        .heading {
+            position: sticky;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            border-bottom: $width-separator-thin solid $color-separator;
+            background-color: $color-foreground;
+            padding: $spacing-medium;
+            color: $color-primary;
+            font-size: $font-size-large;
+        }
     }
 
     :global {

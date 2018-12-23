@@ -197,17 +197,26 @@ export default class Notifications extends React.PureComponent {
 
         return (
             <div className={className} >
+                { notificationsPending && (
+                    <div className={styles.loadingAnimation}>
+                        <LoadingAnimation />
+                    </div>
+                )}
+                {/*
+                TODO: Fix heading
                 <header className={styles.header} >
                     <h3 className={styles.heading} >
                         {_ts('notifications', 'notificationHeaderTitle')}
                     </h3>
                     { notificationsPending && (
-                        <LoadingAnimation
-                            small
-                            className={styles.loadingAnimation}
-                        />
+                        <div className={styles.loadingAnimation}>
+                            <LoadingAnimation
+                                small
+                            />
+                        </div>
                     )}
                 </header>
+                */}
                 <ListView
                     className={styles.content}
                     data={notifications}
@@ -216,6 +225,7 @@ export default class Notifications extends React.PureComponent {
                     rendererParams={notificationItemRendererParams}
                     groupKeySelector={Notifications.groupKeySelector}
                     groupRendererParams={this.groupRendererParams}
+                    groupRendererClassName={styles.heading}
                     groupComparator={Notifications.groupComparator}
                     emptyComponent={NotificationEmpty}
                 />
