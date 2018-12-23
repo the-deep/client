@@ -7,7 +7,10 @@
     padding: $spacing-medium;
 
     .log {
+        color: $color-text-label;
+
         .value {
+            text-transform: capitalize;
             font-weight: $font-weight-bold;
         }
     }
@@ -15,19 +18,38 @@
     .meta-data {
         display: flex;
         align-items: baseline;
-        justify-content: flex-end;
-        padding-top: $spacing-small;
+        justify-content: flex-start;
+        padding-top: $spacing-medium;
         color: $color-text-label;
 
         .user {
-            padding-right: $spacing-extra-small;
-            text-transform: capitalize;
-            text-decoration: underline;
-            color: $color-primary;
+            margin-right: $spacing-large;
+
+            .icon {
+                display: inline-block;
+                margin-right: $spacing-small;
+            }
+
+            .link {
+                display: inline-block;
+                text-transform: capitalize;
+                color: $color-accent;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
         }
 
         .date {
-            font-size: $font-size-small;
+            .icon {
+                display: inline-block;
+                margin-right: $spacing-small;
+            }
+
+            .formatted-date {
+                display: inline-block;
+            }
         }
     }
 }

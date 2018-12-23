@@ -4,19 +4,20 @@ import { Link } from 'react-router-dom';
 import FormattedDate from '#rscv/FormattedDate';
 
 import { reverseRoute } from '#rsu/common';
-import { pathNames } from '#constants';
+import {
+    pathNames,
+    iconNames,
+} from '#constants';
 import { camelToNormalCase } from '#utils/common';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import styles from './styles.scss';
 
 // TODO: Show all the edited fields in detail
 
 const AggregatedLogItem = ({
-    user: {
-        name: userName,
-        id: userId,
-    },
+    user,
     time,
     fields,
 }) => {
@@ -41,15 +42,22 @@ const AggregatedLogItem = ({
                 {log}
             </div>
             <div className={styles.metaData}>
-                <Link
-                    className={styles.user}
-                    target="_blank"
-                    to={reverseRoute(pathNames.userProfile, { userId })}
-                >
-                    {userName}
-                </Link>
+                { user && (
+                    <div className={styles.user}>
+                        <span className={_cs(iconNames.user, styles.icon)} />
+                        <Link
+                            className={styles.link}
+                            target="_blank"
+                            to={reverseRoute(pathNames.userProfile, { userId: user.id })}
+                        >
+                            {user.name}
+                        </Link>
+                    </div>
+                )}
                 <span className={styles.date} >
+                    <span className={_cs(iconNames.calendar, styles.icon)} />
                     <FormattedDate
+                        className={styles.formattedDate}
                         date={time}
                         mode="dd-MM-yyyy"
                     />
