@@ -37,6 +37,8 @@ import {
     validLinks,
     hideNavbar,
 } from '#constants';
+
+import { envText, commitHash } from '#config/env';
 import logo from '#resources/img/deep-logo-simplified.svg';
 
 import Cloak from '../Cloak';
@@ -245,22 +247,6 @@ export default class Navbar extends React.PureComponent {
         const projectSelectInputLink = currentValidLinks.projectSelect;
         const adminPanelLink = currentValidLinks.adminPanel;
 
-        let betaLabel;
-        switch (process.env.REACT_APP_DEEP_ENVIRONMENT) {
-            case 'beta':
-                betaLabel = _ts('components.navbar', 'betaLabel');
-                break;
-            case 'alpha':
-                betaLabel = _ts('components.navbar', 'alphaLabel');
-                break;
-            case 'nightly':
-                betaLabel = _ts('components.navbar', 'nightlyLabel');
-                break;
-            default:
-                betaLabel = _ts('components.navbar', 'devLabel');
-                break;
-        }
-
         return (
             <nav className={`${className} ${styles.navbar}`}>
                 <Link
@@ -277,9 +263,9 @@ export default class Navbar extends React.PureComponent {
                     </div>
                     <span
                         className={styles.betaLabel}
-                        title={process.env.REACT_APP_DEEP_COMMIT_SHA}
+                        title={commitHash}
                     >
-                        {betaLabel}
+                        {envText}
                     </span>
                 </Link>
 

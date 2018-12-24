@@ -26,6 +26,7 @@ import {
     selectedStringsFilteredSelector,
     selectedLinksFilteredSelector,
 } from '#redux';
+import { isProduction } from '#config/env';
 
 import LanguagePut from '../requests/LanguagePut';
 import EditStringModal from './EditStringModal';
@@ -264,8 +265,7 @@ export default class StringManagement extends React.PureComponent {
         const Header = this.renderHeader;
 
         const isDevLangSelected = selectedLanguageName === '$devLang';
-        const disabled = isDevLangSelected &&
-            (process.env.NODE_ENV !== 'development');
+        const disabled = isDevLangSelected && isProduction;
         const showExport = isDevLangSelected;
 
         return (

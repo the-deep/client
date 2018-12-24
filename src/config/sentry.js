@@ -1,6 +1,7 @@
 import Raven from 'raven-js';
+import { isProduction } from './env';
 
-const enableRaven = process.env.NODE_ENV === 'production';
+const enableRaven = isProduction;
 const dns = 'https://9a60f35c6a1c45fe999727c5f6f7229c@sentry.io/1220157';
 const config = {
     environment: process.env.REACT_APP_DEEP_ENVIRONMENT,

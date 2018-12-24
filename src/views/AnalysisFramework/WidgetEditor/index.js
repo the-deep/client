@@ -12,6 +12,7 @@ import {
     updateAfViewWidgetLayoutAction,
     removeAfViewWidgetAction,
 } from '#redux';
+import { isDevelopment } from '#config/env';
 import { iconNames } from '#constants';
 
 import {
@@ -132,7 +133,7 @@ export default class WidgetEditor extends React.PureComponent {
         const widthBlocks = Math.ceil(layout.width / gridSize.width);
         const heightBlocks = Math.ceil(layout.height / gridSize.height);
 
-        const headerTitle = (process.env.NODE_ENV === 'development')
+        const headerTitle = isDevelopment
             ? `${title} [${widthBlocks} ⨯ ${heightBlocks}]`
             : title;
 

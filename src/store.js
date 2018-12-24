@@ -12,6 +12,10 @@ import { createActionSyncMiddleware } from '#rsu/redux-sync';
 
 import reducer from '#redux/reducers';
 import {
+    isDevelopment,
+    isTesting,
+} from '#config/env';
+import {
     reducersToSync,
     actionsToSkipLogging,
     uniqueTabId,
@@ -33,7 +37,7 @@ const prepareStore = () => {
 
     // Override compose if development mode and redux extension is installed
     const overrideCompose = reduxExtensionCompose && (
-        process.env.NODE_ENV === 'development' ||
+        isDevelopment ||
         reduxExtensionEnvs.includes(process.env.REACT_APP_DEEP_ENVIRONMENT)
     );
     const applicableComposer = !overrideCompose
@@ -79,11 +83,10 @@ const injectHeaders = (reduxStore) => {
     });
 };
 
-const isTest = process.env.NODE_ENV === 'test';
-
+// FIXME: injectHeaders will be obsolete
 // NOTE: replace 'undefined' with an initialState in future if needed, this is a temporary fix
-const store = !isTest ? prepareStore() : { getState: () => ({ lang: {} }) };
-if (!isTest) {
+const store = !isTesting ? prepareStore() : { getState: () => ({ lang: {} }) };
+if (!isTesting) {
     injectHeaders(store);
 }
 

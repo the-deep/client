@@ -10,6 +10,8 @@ import {
     activeProjectRoleSelector,
 } from '#redux';
 
+import { isDev, isAlpha, isBeta, isNightly } from '#config/env';
+
 const mapStateToProps = state => ({
     projectRole: activeProjectRoleSelector(state),
     userProjects: currentUserProjectsSelector(state),
@@ -82,10 +84,6 @@ export default class Cloak extends React.Component {
             },
         } = this.props;
 
-        const isDevMode = process.env.NODE_ENV === 'development';
-        const isBeta = process.env.REACT_APP_DEEP_ENVIRONMENT === 'beta';
-        const isAlpha = process.env.REACT_APP_DEEP_ENVIRONMENT === 'alpha';
-        const isNightly = process.env.REACT_APP_DEEP_ENVIRONMENT === 'nightly';
         const isLoggedIn = !!activeUser.userId;
         const isAdmin = activeUser.isSuperuser;
         const isExperimental = activeUser.experimental;
@@ -95,7 +93,7 @@ export default class Cloak extends React.Component {
         const pathKey = routePathKey;
 
         const params = {
-            isDevMode,
+            isDevMode: isDev,
             isBeta,
             isAlpha,
             isNightly,
