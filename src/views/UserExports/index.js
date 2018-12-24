@@ -153,7 +153,11 @@ export default class UserExports extends React.PureComponent {
                 order: 6,
                 modifier: (row) => {
                     if (row.pending) {
-                        return (<LoadingAnimation />);
+                        return (
+                            <div className={styles.loadingAnimation}>
+                                <LoadingAnimation />
+                            </div>
+                        );
                     } else if (!row.pending && !row.file) {
                         return (
                             <div className="file-error">
@@ -357,6 +361,7 @@ export default class UserExports extends React.PureComponent {
                         />
                     </div>
                     <ExportPreview
+                        key={selectedExport}
                         className={styles.preview}
                         exportId={selectedExport}
                     />

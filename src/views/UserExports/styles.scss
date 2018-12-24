@@ -42,6 +42,17 @@ $color-text-on-primary: get-text-color($color-primary);
             background-color: $color-background-row;
             overflow-y: auto;
 
+            .loading-animation {
+                position: relative;
+                height: $font-size-large;
+
+                >div {
+                    background-color: transparent;
+                    padding: 0!important;
+                    font-size: $font-size-large!important;
+                }
+            }
+
 
             :global {
                 .raw-table {
