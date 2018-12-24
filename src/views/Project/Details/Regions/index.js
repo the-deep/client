@@ -32,9 +32,11 @@ const propTypes = {
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setProjectOptions: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
+    className: PropTypes.string,
 };
 
 const defaultProps = {
+    className: '',
     readOnly: false,
 };
 
@@ -76,6 +78,7 @@ export default class ProjectRegions extends React.PureComponent {
         this.state = {
             displayRegionList: projectDetails.regions || emptyList,
             selectedRegion,
+            pendingProjectOptions: true,
             selectedAddRegionOption: 'old',
             searchInputValue: '',
             showAddRegionModal: false,
@@ -297,6 +300,7 @@ export default class ProjectRegions extends React.PureComponent {
         const {
             displayRegionList,
             searchInputValue,
+            pendingProjectOptions,
         } = this.state;
         const {
             readOnly,
@@ -320,7 +324,7 @@ export default class ProjectRegions extends React.PureComponent {
                         iconName={iconNames.add}
                         className={styles.addRegionButton}
                         onClick={this.handleAddRegionButtonClick}
-                        disabled={readOnly}
+                        disabled={readOnly || pendingProjectOptions}
                     >
                         {addRegionButtonLabel}
                     </AccentButton>
@@ -349,6 +353,7 @@ export default class ProjectRegions extends React.PureComponent {
             readOnly,
             className,
         } = this.props;
+
         const { selectedRegion } = this.state;
 
         const RegionDetails = this.renderRegionDetails;

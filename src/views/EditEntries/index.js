@@ -664,7 +664,7 @@ export default class EditEntries extends React.PureComponent {
                     />
                     <div className={styles.actionButtons}>
                         <Cloak
-                            hide={EditEntries.shouldHideEditLink}
+                            hide={this.shouldHideEditLink}
                             render={
                                 /* viewsAcl not used because it doesn't consider admin of af */
                                 <Link
