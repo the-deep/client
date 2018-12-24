@@ -88,7 +88,11 @@ const userDefinedSchemas = [];
     userDefinedSchemas.push({ name, schema });
 }
 
-const dict = new Dict();
+
+const isBeta = process.env.REACT_APP_DEEP_ENVIRONMENT === 'beta';
+const dict = new Dict(
+    isBeta ? { warning: false } : { warning: true },
+);
 
 [
     ...basicTypeSchemas,
