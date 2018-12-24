@@ -873,7 +873,8 @@
         "-881890": "some entry activity in past {days} days",
         "-45914563": "Project with {value: and }",
         "-2861291": "Project with {value: or }",
-        "-96311582": "Add user"
+        "-96311582": "Add user",
+        "-91114337": "Add user group"
     },
     "links": {
         "browserExtension": {
@@ -1767,7 +1768,7 @@
             "actionsTitle": 16,
             "joinedAtTitle": 161,
             "addUserButtonTooltip": -96311582,
-            "addUsergroupButtonTooltip": 176,
+            "addUsergroupButtonTooltip": -91114337,
             "searchInputPlaceholder": -17852758,
             "searchEmptyText": 12507,
             "searchTipText": 12508,
