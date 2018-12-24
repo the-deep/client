@@ -874,7 +874,8 @@
         "-45914563": "Project with {value: and }",
         "-2861291": "Project with {value: or }",
         "-96311582": "Add user",
-        "-91114337": "Add user group"
+        "-91114337": "Add user group",
+        "-61910224": "This action will affect the entries tagged with geo-areas of this region."
     },
     "links": {
         "browserExtension": {
@@ -1803,7 +1804,6 @@
             "tableHeaderName": 103,
             "modalCancel": 61,
             "modalUpdate": 323,
-            "discardButtonLabel": 2007,
             "modalAdd": 301,
             "projectDescriptionLabel": 200,
             "projectDescriptionPlaceholder": 331,
@@ -1813,10 +1813,6 @@
             "createNewRegionText": 344,
             "useExistingRegionText": 345,
             "tableHeaderId": 350,
-            "removeRegionButtonLabel": 351,
-            "cloneEditButtonLabel": 352,
-            "confirmRemoveText": 319,
-            "confirmCloneText": 354,
             "addCeTitlePlaceholder": 369,
             "generalDetailsTitle": 377,
             "usersTitle": 1119,
@@ -2483,6 +2479,15 @@
             "cancelButtonLabel": 61,
             "geoAreasLabel": -10995037,
             "regionLabel": -67487923
+        },
+        "project.regions": {
+            "saveButtonLabel": 25,
+            "cloneEditButtonLabel": 352,
+            "confirmCloneText": 354,
+            "confirmRemoveText": 319,
+            "discardButtonLabel": 2007,
+            "removeRegionButtonLabel": 351,
+            "regionCloneWarning": -61910224
         }
     }
 }

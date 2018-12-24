@@ -60,7 +60,7 @@ const requests = {
     },
 };
 
-const NOTIFICATION_POLL_INTERVAL = 18000;
+const NOTIFICATION_POLL_INTERVAL = 120000;
 
 const mapStateToProps = state => ({
     notificationsCount: notificationsCountSelector(state),

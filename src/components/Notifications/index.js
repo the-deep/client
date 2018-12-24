@@ -125,7 +125,7 @@ NotificationItem.propTypes = {
 };
 
 const NotificationEmpty = () => (
-    <Message className={styles.emptyComponent} >
+    <Message>
         {_ts('notifications', 'noNotificationsText')}
     </Message>
 );
