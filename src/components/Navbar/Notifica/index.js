@@ -36,6 +36,8 @@ const defaultProps = {
 
 const requests = {
     notificationsCountRequest: {
+        logWarning: false,
+        logInfo: false,
         url: '/notifications/count/',
         method: requestMethods.GET,
         onSuccess: ({

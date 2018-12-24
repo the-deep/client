@@ -1063,10 +1063,10 @@
   resolved "https://registry.yarnpkg.com/@togglecorp/ravl/-/ravl-1.1.0.tgz#13b6fd4a58990a5a42da663cf8b4a822a93095d2"
   integrity sha512-wfIQATHxX0FBm09NkxvnG54tZONUJHXVwfbOoiKO44TQLBjLETFduInn0xb191fWRkV9psCiURBSVw/0IL2ScQ==
 
-"@togglecorp/react-rest-request@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@togglecorp/react-rest-request/-/react-rest-request-1.1.2.tgz#409ae935f941ba1780b366f81e270189dc5081d7"
-  integrity sha512-/jvIppF2PwEMZVDw2RKQWpG8ShZUhkxy2pKXeJrNSTK9jW66LK3QrT6i/K2EkyNSG5Ohkl2shdGH03ErhEe0pw==
+"@togglecorp/react-rest-request@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@togglecorp/react-rest-request/-/react-rest-request-1.2.0.tgz#7a26573cf69172c850307f98f305b1bb74e2b607"
+  integrity sha512-ThbfeooKspKIEmDCEbtPkfZDVKUaAdYYhkYi7IW4EjgOTp+1DG7a4QXIqzN0mJjEnTbv6ZJFqwB5C3SIijeNBg==
   dependencies:
     "@babel/plugin-transform-runtime" "^7.1.0"
     "@babel/polyfill" "^7.0.0"
