@@ -325,7 +325,7 @@ export default class EditAdminLevel extends React.PureComponent {
                     {
                         pending && <LoadingAnimation />
                     }
-                    <NonFieldErrors faramElementName="" />
+                    <NonFieldErrors faramElement />
                     <div className={styles.adminLevelDetails} >
                         <TextInput
                             faramElementName="level"

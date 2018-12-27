@@ -1,14 +1,33 @@
 import React from 'react';
+import FaramGroup from '#rscg/FaramGroup';
+import NonFieldErrors from '#rsci/NonFieldErrors';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import DateInput from '#rsci/DateInput';
 import SelectInput from '#rsci/SelectInput';
 import NumberInput from '#rsci/NumberInput';
 import TextInput from '#rsci/TextInput';
 
+const DateRangeInput = ({ label, faramElementName, ...props }) => (
+    <FaramGroup faramElementName={faramElementName}>
+        <DateInput
+            label={`${label} Start Date`}
+            faramElementName="from"
+            {...props}
+        />
+        <DateInput
+            label={`${label} End Date`}
+            faramElementName="to"
+            {...props}
+        />
+        <NonFieldErrors faramElement />
+    </FaramGroup>
+);
+
 const widgets = {
     string: TextInput,
     number: NumberInput,
     date: DateInput,
+    daterange: DateRangeInput,
     multiselect: MultiSelectInput,
     select: SelectInput,
 };
@@ -55,8 +74,6 @@ export const renderWidget = (k, data, sources) => {
             separator: ' ',
         },
     };
-
-    console.warn(sourceType);
 
     const Component = widgets[fieldType];
 
