@@ -874,7 +874,8 @@
         "-45914563": "Project with {value: and }",
         "-2861291": "Project with {value: or }",
         "-96311582": "Add user",
-        "-91114337": "Add user group"
+        "-91114337": "Add user group",
+        "-50532935": "Miscellaneous"
     },
     "links": {
         "browserExtension": {
@@ -1382,7 +1383,8 @@
             "additionalDocumentsTitle": 9021,
             "executiveSummaryTitle": 9022,
             "assessmentDatabaseTitle": 9023,
-            "questionnaireTitle": 9024
+            "questionnaireTitle": 9024,
+            "miscTitle": -50532935
         },
         "editAssessment.methodology": {
             "focusesTitle": 9025,

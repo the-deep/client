@@ -107,18 +107,26 @@ export default class Metadata extends React.PureComponent {
                                     className={styles.baksa}
                                     faramElementName="executiveSummary"
                                     showPageRange
+                                    acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
                                 />
                                 <Baksa
                                     label={_ts('editAssessment.metadata', 'assessmentDatabaseTitle')}
                                     className={styles.baksa}
                                     faramElementName="assessmentData"
                                     acceptUrl
+                                    acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
                                 />
                                 <Baksa
                                     label={_ts('editAssessment.metadata', 'questionnaireTitle')}
                                     className={styles.baksa}
                                     faramElementName="questionnaire"
                                     showPageRange
+                                    acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
+                                />
+                                <Baksa
+                                    label={_ts('editAssessment.metadata', 'miscTitle')}
+                                    className={styles.baksa}
+                                    faramElementName="misc"
                                 />
                             </div>
                         </div>

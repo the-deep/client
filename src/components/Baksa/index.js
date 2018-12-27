@@ -11,6 +11,7 @@ import TextInput from '#rsci/TextInput';
 import iconNames from '#rsk/iconNames';
 import { isTruthy, isFalsy } from '#rsu/common';
 import { UploadBuilder } from '#rsu/upload';
+import urlRegex from '#rsu/regexForWeburl';
 
 import {
     urlForUpload,
@@ -30,6 +31,7 @@ const propTypes = {
     showLabel: PropTypes.bool,
     showPageRange: PropTypes.bool,
     acceptUrl: PropTypes.bool,
+    acceptFileTypes: PropTypes.string,
     urlLabel: PropTypes.string,
 
     disabled: PropTypes.bool,
@@ -47,6 +49,7 @@ const defaultProps = {
     value: {},
     showPageRange: false,
     acceptUrl: false,
+    acceptFileTypes: undefined,
     urlLabel: 'External link',
 
     disabled: false,
@@ -55,6 +58,8 @@ const defaultProps = {
     hint: '',
     showHintAndError: true,
 };
+
+const isUrlValid = url => (url && urlRegex.test(url));
 
 @FaramInputElement
 export default class Baksa extends React.PureComponent {
@@ -269,7 +274,9 @@ export default class Baksa extends React.PureComponent {
             urlLabel,
             disabled,
             readOnly,
+            acceptFileTypes,
         } = this.props;
+        const { url } = this.state;
         const elements = [];
 
         elements.push(
@@ -286,6 +293,7 @@ export default class Baksa extends React.PureComponent {
                     showStatus={false}
                     value=""
                     disabled={disabled || readOnly}
+                    accept={acceptFileTypes}
                     // FIXME: Use strings
                 >
                     Drop a file or click to select
@@ -302,7 +310,7 @@ export default class Baksa extends React.PureComponent {
                     <TextInput
                         className={styles.urlInput}
                         label={urlLabel}
-                        value={this.state.url}
+                        value={url}
                         onChange={this.handleUrlChange}
                         showHintAndError={false}
                         disabled={disabled}
@@ -311,7 +319,7 @@ export default class Baksa extends React.PureComponent {
                     <PrimaryButton
                         className={styles.action}
                         onClick={this.handleUrlAdd}
-                        disabled={disabled || readOnly}
+                        disabled={disabled || readOnly || !(url && isUrlValid(url))}
                         // FIXME: Use strings
                     >
                         Add
