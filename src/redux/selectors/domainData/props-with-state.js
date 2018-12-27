@@ -344,6 +344,13 @@ export const assessmentSectorsSelector = createSelector(
     ),
 );
 
+export const assessmentSourcesSelector = createSelector(
+    aryTemplateSelector,
+    aryTemplate => (
+        aryTemplate.sources || emptyObject
+    ),
+);
+
 export const focusesSelector = createSelector(
     aryTemplateSelector,
     aryTemplate => (

@@ -18,6 +18,7 @@ import { iconNames } from '#constants';
 import {
     aryTemplateMethodologySelector,
     assessmentSectorsSelector,
+    assessmentSourcesSelector,
     focusesSelector,
     affectedGroupsSelector,
 
@@ -39,6 +40,7 @@ const propTypes = {
     geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     sectors: PropTypes.arrayOf(PropTypes.object).isRequired,
+    sources: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     pending: PropTypes.bool.isRequired,
 };
 
@@ -54,6 +56,7 @@ const mapStateToProps = state => ({
     geoOptions: geoOptionsForProjectSelector(state),
     projectDetails: projectDetailsSelector(state),
     sectors: assessmentSectorsSelector(state),
+    sources: assessmentSourcesSelector(state),
 });
 
 const idSelector = d => String(d.id);
@@ -82,6 +85,8 @@ export default class Methodology extends React.PureComponent {
         },
     ])
 
+    renderWidget = (k, data) => renderWidget(k, data, this.props.sources);
+
     renderAttributeHeader = (k, key) => {
         const { aryTemplateMethodology: attributesTemplate } = this.props;
         const methodologyGroup = attributesTemplate[key];
@@ -108,7 +113,7 @@ export default class Methodology extends React.PureComponent {
                 <ListView
                     className={styles.cell}
                     data={methodologyGroup.fields}
-                    modifier={renderWidget}
+                    modifier={this.renderWidget}
                 />
             </FaramGroup>
         );
