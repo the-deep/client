@@ -6,7 +6,10 @@ import FaramGroup from '#rscg/FaramGroup';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
 
-import { aryTemplateMetadataSelector } from '#redux';
+import {
+    aryTemplateMetadataSelector,
+    assessmentSourcesSelector,
+} from '#redux';
 import _ts from '#ts';
 
 // FIXME: do not import Baksa
@@ -20,6 +23,7 @@ import styles from './styles.scss';
 const propTypes = {
     aryTemplateMetadata: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     pending: PropTypes.bool.isRequired,
+    sources: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -28,12 +32,15 @@ const defaultProps = {
 
 const mapStateToProps = state => ({
     aryTemplateMetadata: aryTemplateMetadataSelector(state),
+    sources: assessmentSourcesSelector(state),
 });
 
 @connect(mapStateToProps)
 export default class Metadata extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    renderWidget = (k, data) => renderWidget(k, data, this.props.sources);
 
     renderMetadata = (k, data) => {
         const {
@@ -54,7 +61,7 @@ export default class Metadata extends React.PureComponent {
                 <ListView
                     className={styles.content}
                     data={fieldValues}
-                    modifier={renderWidget}
+                    modifier={this.renderWidget}
                 />
             </div>
         );
@@ -100,18 +107,26 @@ export default class Metadata extends React.PureComponent {
                                     className={styles.baksa}
                                     faramElementName="executiveSummary"
                                     showPageRange
+                                    acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
                                 />
                                 <Baksa
                                     label={_ts('editAssessment.metadata', 'assessmentDatabaseTitle')}
                                     className={styles.baksa}
                                     faramElementName="assessmentData"
                                     acceptUrl
+                                    acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
                                 />
                                 <Baksa
                                     label={_ts('editAssessment.metadata', 'questionnaireTitle')}
                                     className={styles.baksa}
                                     faramElementName="questionnaire"
                                     showPageRange
+                                    acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
+                                />
+                                <Baksa
+                                    label={_ts('editAssessment.metadata', 'miscTitle')}
+                                    className={styles.baksa}
+                                    faramElementName="misc"
                                 />
                             </div>
                         </div>

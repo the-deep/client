@@ -118,7 +118,7 @@ export default class UserGroupEdit extends React.PureComponent {
                 disabled={pending}
             >
                 { pending && <LoadingAnimation /> }
-                <NonFieldErrors faramElementName />
+                <NonFieldErrors faramElement />
                 <TextInput
                     label={_ts('userGroup', 'addUserGroupModalLabel')}
                     faramElementName="title"

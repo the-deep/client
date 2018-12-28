@@ -258,7 +258,10 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                 faramElementName="rows"
                                 keySelector={Matrix1dEditWidget.keySelector}
                             >
-                                <NonFieldErrors faramElement className={styles.error} />
+                                <NonFieldErrors
+                                    faramElement
+                                    className={styles.error}
+                                />
                             </FaramList>
                             <header className={styles.header}>
                                 <h4>

@@ -3,6 +3,7 @@ import { createSelector } from 'reselect';
 import {
     getObjectChildren,
     compareString,
+    decodeDate,
 } from '#rsu/common';
 import { median, sum, bucket } from '#rsu/stats';
 import {
@@ -97,10 +98,29 @@ const createBasicInformationSchema = (aryTemplateMetadata = {}) => {
     const dynamicFields = {};
     Object.keys(aryTemplateMetadata).forEach((key) => {
         aryTemplateMetadata[key].fields.forEach((field) => {
-            if (field.fieldType === 'date') {
-                dynamicFields[field.id] = [requiredCondition, dateCondition];
-            } else {
-                dynamicFields[field.id] = [requiredCondition];
+            switch (field.fieldType) {
+                case 'date':
+                    dynamicFields[field.id] = [requiredCondition, dateCondition];
+                    break;
+                case 'daterange':
+                    dynamicFields[field.id] = {
+                        fields: {
+                            from: [dateCondition],
+                            to: [dateCondition],
+                        },
+                        validation: ({ from, to } = {}) => {
+                            const errors = [];
+                            if (from && to && decodeDate(from) > decodeDate(to)) {
+                                // FIXME: use strings
+                                errors.push(`Invalid ${field.title} Range`);
+                            }
+                            return errors;
+                        },
+                    };
+                    break;
+                default:
+                    dynamicFields[field.id] = [requiredCondition];
+                    break;
             }
         });
     });
@@ -141,10 +161,29 @@ const createMethodologySchema = (aryTemplateMethodology = {}) => {
     Object.keys(aryTemplateMethodology).forEach((key) => {
         const methodologyGroup = aryTemplateMethodology[key];
         methodologyGroup.fields.forEach((field) => {
-            if (field.fieldType === 'date') {
-                dynamicFields[field.id] = [requiredCondition, dateCondition];
-            } else {
-                dynamicFields[field.id] = [requiredCondition];
+            switch (field.fieldType) {
+                case 'date':
+                    dynamicFields[field.id] = [requiredCondition, dateCondition];
+                    break;
+                case 'daterange':
+                    dynamicFields[field.id] = {
+                        fields: {
+                            from: [dateCondition],
+                            to: [dateCondition],
+                        },
+                        validation: ({ from, to } = {}) => {
+                            const errors = [];
+                            if (from && to && decodeDate(from) > decodeDate(to)) {
+                                // FIXME: use strings
+                                errors.push(`Invalid ${field.title} Range`);
+                            }
+                            return errors;
+                        },
+                    };
+                    break;
+                default:
+                    dynamicFields[field.id] = [requiredCondition];
+                    break;
             }
         });
     });
@@ -341,6 +380,13 @@ export const assessmentSectorsSelector = createSelector(
     aryTemplateSelector,
     aryTemplate => (
         aryTemplate.sectors || emptyList
+    ),
+);
+
+export const assessmentSourcesSelector = createSelector(
+    aryTemplateSelector,
+    aryTemplate => (
+        aryTemplate.sources || emptyObject
     ),
 );
 
