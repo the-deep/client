@@ -198,13 +198,25 @@ export default class ProjectRegionDetail extends React.PureComponent {
             regionClonePending,
         } = this.state;
 
-        const cloneAndEditButtonLabel = _ts('project', 'cloneEditButtonLabel');
+        const cloneAndEditButtonLabel = _ts('project.regions', 'cloneEditButtonLabel');
+        const cloneConfirmText = _ts(
+            'project.regions',
+            'confirmCloneText',
+            { title: <b>{faramValues.title}</b> },
+        );
 
         return (
             <PrimaryConfirmButton
                 disabled={dataLoading || regionClonePending || readOnly}
                 onClick={() => this.handleRegionClone(countryId, activeProject)}
-                confirmationMessage={_ts('project', 'confirmCloneText', { title: <b>{faramValues.title}</b> })}
+                confirmationMessage={
+                    <React.Fragment>
+                        {cloneConfirmText}
+                        <p>
+                            {_ts('project.regions', 'regionCloneWarning')}
+                        </p>
+                    </React.Fragment>
+                }
             >
                 {cloneAndEditButtonLabel}
             </PrimaryConfirmButton>
@@ -236,7 +248,7 @@ export default class ProjectRegionDetail extends React.PureComponent {
             projectPatchPending ||
             regionDetailPatchPending;
 
-        const removeRegionButtonLabel = _ts('project', 'removeRegionButtonLabel');
+        const removeRegionButtonLabel = _ts('project.regions', 'removeRegionButtonLabel');
         const CloneAndEditButton = this.renderCloneAndEditButton;
         const isPublic = regionDetail.public;
 
@@ -254,13 +266,13 @@ export default class ProjectRegionDetail extends React.PureComponent {
                                 disabled={!pristine || readOnly}
                                 onClick={this.handleDiscardButtonClick}
                             >
-                                {_ts('project', 'discardButtonLabel')}
+                                {_ts('project.regions', 'discardButtonLabel')}
                             </WarningButton>
                             <SuccessButton
                                 type="submit"
                                 disabled={!pristine || readOnly}
                             >
-                                {_ts('project', 'saveButtonLabel')}
+                                {_ts('project.regions', 'saveButtonLabel')}
                             </SuccessButton>
                         </Fragment>
                     ) }
@@ -268,7 +280,7 @@ export default class ProjectRegionDetail extends React.PureComponent {
                         disabled={pending || readOnly}
                         onClick={() => this.handleRegionRemove(projectDetails, countryId)}
                         confirmationMessage={
-                            _ts('project', 'confirmRemoveText', {
+                            _ts('project.regions', 'confirmRemoveText', {
                                 title: faramValues.title,
                                 projectTitle: projectDetails.title,
                             })

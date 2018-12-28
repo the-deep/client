@@ -6,6 +6,7 @@ import { iconNames } from '#constants';
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     icon: PropTypes.element,
     message: PropTypes.element,
     actions: PropTypes.element,
@@ -13,6 +14,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     icon: undefined,
     message: undefined,
     actions: undefined,

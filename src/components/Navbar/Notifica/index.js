@@ -36,6 +36,8 @@ const defaultProps = {
 
 const requests = {
     notificationsCountRequest: {
+        logWarning: false,
+        logInfo: false,
         url: '/notifications/count/',
         method: requestMethods.GET,
         onSuccess: ({
@@ -58,7 +60,7 @@ const requests = {
     },
 };
 
-const NOTIFICATION_POLL_INTERVAL = 18000;
+const NOTIFICATION_POLL_INTERVAL = 120000;
 
 const mapStateToProps = state => ({
     notificationsCount: notificationsCountSelector(state),

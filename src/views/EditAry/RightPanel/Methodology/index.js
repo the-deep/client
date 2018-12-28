@@ -7,7 +7,7 @@ import FaramList from '#rscg/FaramList';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
 import ListView from '#rscv/List/ListView';
-import TextArea from '#rsci/TextArea';
+import FormattedTextArea from '#rsci/FormattedTextArea';
 import ListSelection from '#rsci/ListSelection';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -268,27 +268,27 @@ export default class Methodology extends React.PureComponent {
                             title={methodologyContentTitle}
                         />
                         <div className={styles.content}>
-                            <TextArea
+                            <FormattedTextArea
                                 faramElementName="objectives"
-                                className={styles.input}
+                                className={styles.farea}
                                 placeholder={objectivesPlaceholder}
                                 label={objectivesTitle}
                             />
-                            <TextArea
+                            <FormattedTextArea
                                 faramElementName="dataCollectionTechniques"
-                                className={styles.input}
+                                className={styles.farea}
                                 placeholder={dataCollectionTechniquesPlaceholder}
                                 label={dataCollectionTechniquesTitle}
                             />
-                            <TextArea
+                            <FormattedTextArea
                                 faramElementName="sampling"
-                                className={styles.input}
+                                className={styles.farea}
                                 placeholder={samplingPlaceholder}
                                 label={samplingTitle}
                             />
-                            <TextArea
+                            <FormattedTextArea
                                 faramElementName="limitations"
-                                className={styles.input}
+                                className={styles.farea}
                                 placeholder={limitationsPlaceholder}
                                 label={limitationsTitle}
                             />

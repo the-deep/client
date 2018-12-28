@@ -1058,15 +1058,15 @@
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
   integrity sha512-shAmDyaQC4H92APFoIaVDHCx5bStIocgvbwQyxPRrbUY20V1EYTbSDchWbuwlMG3V17cprZhA6+78JfB+3DTPw==
 
-"@togglecorp/ravl@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@togglecorp/ravl/-/ravl-1.0.3.tgz#0d4e1a95a5f5424b0ede74737344dd4f60f9901b"
-  integrity sha512-H7tIVp7LSQ7dyqd7zFi8Z6bkLOaYANSCqxN4o0/SoDImlPju/4KrPc7OY/L9o5FCU9zdo2HvIC/CzJLS7syJTQ==
+"@togglecorp/ravl@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@togglecorp/ravl/-/ravl-1.1.0.tgz#13b6fd4a58990a5a42da663cf8b4a822a93095d2"
+  integrity sha512-wfIQATHxX0FBm09NkxvnG54tZONUJHXVwfbOoiKO44TQLBjLETFduInn0xb191fWRkV9psCiURBSVw/0IL2ScQ==
 
-"@togglecorp/react-rest-request@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@togglecorp/react-rest-request/-/react-rest-request-1.1.2.tgz#409ae935f941ba1780b366f81e270189dc5081d7"
-  integrity sha512-/jvIppF2PwEMZVDw2RKQWpG8ShZUhkxy2pKXeJrNSTK9jW66LK3QrT6i/K2EkyNSG5Ohkl2shdGH03ErhEe0pw==
+"@togglecorp/react-rest-request@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@togglecorp/react-rest-request/-/react-rest-request-1.2.0.tgz#7a26573cf69172c850307f98f305b1bb74e2b607"
+  integrity sha512-ThbfeooKspKIEmDCEbtPkfZDVKUaAdYYhkYi7IW4EjgOTp+1DG7a4QXIqzN0mJjEnTbv6ZJFqwB5C3SIijeNBg==
   dependencies:
     "@babel/plugin-transform-runtime" "^7.1.0"
     "@babel/polyfill" "^7.0.0"

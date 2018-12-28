@@ -106,8 +106,8 @@
         "webpack-pwa-manifest": "^3.6.2"
     },
     "dependencies": {
-        "@togglecorp/ravl": "^1.0.3",
-        "@togglecorp/react-rest-request": "^1.1.2",
+        "@togglecorp/ravl": "^1.1.0",
+        "@togglecorp/react-rest-request": "^1.2.0",
         "body-parser": "^1.18.3",
         "d3-area-label": "^1.4.0",
         "d3-array": "^1.2.1",
