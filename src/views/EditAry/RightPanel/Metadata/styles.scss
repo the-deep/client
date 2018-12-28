@@ -5,9 +5,93 @@ $height-additional-documents: 256px;
 .metadata {
     display: flex;
     position: relative;
-    flex-direction: column;
     flex-grow: 1;
     background-color: $color-foreground-alt;
+    overflow: auto;
+
+    .resizable {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        overflow: auto;
+
+        .top {
+            height: 70%;
+            min-height: 108px;
+            overflow: auto;
+
+            .basic-information {
+                @extend %section-basic;
+                flex-grow: 1;
+                border-bottom: $width-separator-thin solid $color-separator;
+                height: 100%;
+
+                .content {
+                    overflow-x: auto;
+
+                    .widget-group {
+                        display: flex;
+                        flex-basis: 20%;
+                        flex-direction: column;
+                        flex-shrink: 0;
+
+                        &:not(:last-child) {
+                            border-right: $width-separator-thin solid $color-separator;
+                        }
+
+                        .heading {
+                            flex-shrink: 0;
+                            border-bottom: $width-separator-thin solid $color-separator;
+                            padding: $spacing-medium;
+                            color: $color-accent;
+                            font-weight: $font-weight-bold;
+                        }
+
+                        .content {
+                            flex-grow: 1;
+                            padding: $spacing-medium;
+                            overflow-y: auto;
+                        }
+
+                        :global {
+                            .widget {
+                                margin: $spacing-small-alt 0;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+        .bottom {
+            display: flex;
+            flex-direction: column;
+            height: 30%;
+            min-height: 40px;
+            overflow-y: auto;
+
+            .additional-documents {
+                @extend %section-basic;
+                flex-shrink: 0;
+                border-top: 2px solid $color-separator;
+                height: $height-additional-documents;
+
+                .header {
+                    flex-shrink: 0;
+                }
+
+                .content {
+                    padding: 0 $spacing-medium;
+
+                    .baksa {
+                        flex-basis: calc(100% / 3);
+                        padding: $spacing-medium;
+                    }
+                }
+            }
+        }
+    }
 
     %section-basic {
         display: flex;
@@ -23,63 +107,5 @@ $height-additional-documents: 256px;
         }
     }
 
-    .additional-documents {
-        @extend %section-basic;
-        flex-shrink: 0;
-        height: $height-additional-documents;
 
-        .header {
-            flex-shrink: 0;
-        }
-
-        .content {
-            padding: 0 $spacing-medium;
-
-            .baksa {
-                flex-basis: calc(100% / 3);
-                padding: $spacing-medium;
-            }
-        }
-    }
-
-    .basic-information {
-        @extend %section-basic;
-        flex-grow: 1;
-        border-bottom: $width-separator-thin solid $color-separator;
-
-        .content {
-            overflow-x: auto;
-
-            .widget-group {
-                display: flex;
-                flex-basis: 20%;
-                flex-direction: column;
-                flex-shrink: 0;
-
-                &:not(:last-child) {
-                    border-right: $width-separator-thin solid $color-separator;
-                }
-
-                .heading {
-                    flex-shrink: 0;
-                    border-bottom: $width-separator-thin solid $color-separator;
-                    padding: $spacing-medium;
-                    color: $color-accent;
-                    font-weight: $font-weight-bold;
-                }
-
-                .content {
-                    flex-grow: 1;
-                    padding: $spacing-medium;
-                    overflow-y: auto;
-                }
-
-                :global {
-                    .widget {
-                        margin: $spacing-small-alt 0;
-                    }
-                }
-            }
-        }
-    }
 }
