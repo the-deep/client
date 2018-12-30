@@ -79,7 +79,7 @@ export default class Baksa extends React.PureComponent {
     static validPageRangeCondition = (value) => {
         const ok = isFalsy(value)
             || isFalsy(value.startPage) || isFalsy(value.endPage)
-            || value.startPage < value.endPage;
+            || value.startPage <= value.endPage;
         return {
             ok,
             message: 'Start page must be less than end page',
@@ -205,14 +205,23 @@ export default class Baksa extends React.PureComponent {
             .params(() => createParamsForFileUpload())
             .postLoad(() => this.setState({ pending: false }))
             .success((response) => {
-                onChange({
+                const { metadata: { pages } = {} } = response;
+                let value = {
                     type: 'file',
                     id: response.id,
                     name: file.name,
                     url: response.file,
                     startPage,
                     endPage,
-                });
+                };
+                if (pages) {
+                    value = {
+                        ...value,
+                        startPage: 1,
+                        endPage: pages,
+                    };
+                }
+                onChange(value);
             })
             .failure((response) => {
                 const message = transformAndCombineResponseErrors(response.errors);
