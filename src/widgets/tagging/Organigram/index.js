@@ -100,11 +100,11 @@ export default class OrganigramWidget extends React.PureComponent {
                 emptyComponent={null}
                 modalLeftComponent={
                     <div className={styles.excerptContainer}>
-                        <h4 className={styles.title} >
+                        <h5 className={styles.title} >
                             {excerptHeaderTitle}
-                        </h4>
+                        </h5>
                         <ExcerptOutput
-                            className={styles.excerptBox}
+                            className={styles.excerpt}
                             type={entryTypes[entryType]}
                             value={excerptValue}
                         />

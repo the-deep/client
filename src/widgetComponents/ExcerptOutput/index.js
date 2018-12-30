@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import DataSeries from '#components/DataSeries';
+import Cloak from '#components/Cloak';
+import Image from '#rscv/Image';
 
 import styles from './styles.scss';
 
@@ -33,6 +35,8 @@ export default class ExcerptOutput extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static shouldHideZoomable = ({ isExperimental }) => !isExperimental;
+
     render() {
         const {
             className: classNameFromProps,
@@ -57,10 +61,23 @@ export default class ExcerptOutput extends React.PureComponent {
             }
             case IMAGE: {
                 children = (
-                    <img
-                        className={styles.image}
-                        alt=""
-                        src={value}
+                    <Cloak
+                        hide={ExcerptOutput.shouldHideZoomable}
+                        render={
+                            <Image
+                                className={styles.image}
+                                alt=""
+                                src={value}
+                                zoomable
+                            />
+                        }
+                        renderOnHide={
+                            <img
+                                className={styles.imageAlt}
+                                alt=""
+                                src={value}
+                            />
+                        }
                     />
                 );
                 break;

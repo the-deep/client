@@ -44,6 +44,7 @@ export default class PreferencesGet extends AbstractTask {
                         username,
 
                         lastActiveProject,
+                        experimental,
 
                         language,
                         fallbackLanguage,
@@ -61,6 +62,7 @@ export default class PreferencesGet extends AbstractTask {
                         email,
                         displayPicture,
                         isSuperuser,
+                        experimental,
                         displayName,
                         username,
                     }));
