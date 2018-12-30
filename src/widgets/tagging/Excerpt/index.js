@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import FormattedTextArea from '#rsci/FormattedTextArea';
 
 import DataSeries from '#components/DataSeries';
+import Cloak from '#components/Cloak';
 import Image from '#rscv/Image';
 import _ts from '#ts';
 
@@ -42,6 +43,8 @@ const DATA_SERIES = 'dataSeries';
 export default class Excerpt extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static shouldHideZoomable = ({ isExperimental }) => !isExperimental;
 
     constructor(props) {
         super(props);
@@ -151,11 +154,23 @@ export default class Excerpt extends React.PureComponent {
         `;
 
         return (
-            <Image
-                className={className}
-                src={image}
-                alt={_ts('widgets.tagging.excerpt', 'imageAltText')}
-                zoomable
+            <Cloak
+                hide={Excerpt.shouldHideZoomable}
+                render={
+                    <Image
+                        className={className}
+                        src={image}
+                        alt={_ts('widgets.tagging.excerpt', 'imageAltText')}
+                        zoomable
+                    />
+                }
+                renderOnHide={
+                    <img
+                        className={`${className} ${styles.imageAlt}`}
+                        src={image}
+                        alt={_ts('widgets.tagging.excerpt', 'imageAltText')}
+                    />
+                }
             />
         );
     }

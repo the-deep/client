@@ -10,6 +10,12 @@
         height: 100%;
     }
 
+    .image-alt {
+        object-fit: contain;
+        object-position: center center;
+        pointer-events: none;
+    }
+
     .text {
         margin: $spacing-extra-small $spacing-small;
         width: calc(100% - #{$spacing-small*2});

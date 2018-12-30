@@ -88,6 +88,7 @@ export default class Cloak extends React.Component {
         const isNightly = process.env.REACT_APP_DEEP_ENVIRONMENT === 'nightly';
         const isLoggedIn = !!activeUser.userId;
         const isAdmin = activeUser.isSuperuser;
+        const isExperimental = activeUser.experimental;
         const hasProjects = userProjects.length > 0;
         const hasAssessmentTemplate = !!currentUserActiveProject.assessmentTemplate;
         const hasAnalysisFramework = !!currentUserActiveProject.analysisFramework;
@@ -101,6 +102,7 @@ export default class Cloak extends React.Component {
             hasProjects,
             isLoggedIn,
             isAdmin,
+            isExperimental,
             hasAssessmentTemplate,
             hasAnalysisFramework,
             pathKey,

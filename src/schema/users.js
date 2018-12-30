@@ -54,6 +54,7 @@ const userSchema = [];
             displayName: { type: 'string', required: true },
             email: { type: 'string', required: true },
             isSuperuser: { type: 'boolean', required: true },
+            experimental: { type: 'boolean', required: true },
             lastActiveProject: { type: 'uint' },
             username: { type: 'string', required: true },
             language: { type: 'string' },
