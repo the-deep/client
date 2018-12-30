@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import FormattedTextArea from '#rsci/FormattedTextArea';
 
 import DataSeries from '#components/DataSeries';
+import Image from '#rscv/Image';
 import _ts from '#ts';
 
 import DropContainer from './DropContainer';
@@ -141,7 +142,7 @@ export default class Excerpt extends React.PureComponent {
         this.setState({ isBeingDraggedOver: false });
     }
 
-    renderImage = () => {
+    renderExcerptImage = () => {
         const { image } = this.props;
 
         const className = `
@@ -150,10 +151,11 @@ export default class Excerpt extends React.PureComponent {
         `;
 
         return (
-            <img
+            <Image
                 className={className}
                 src={image}
                 alt={_ts('widgets.tagging.excerpt', 'imageAltText')}
+                zoomable
             />
         );
     }
@@ -206,7 +208,7 @@ export default class Excerpt extends React.PureComponent {
         } = this.props;
         const { isBeingDraggedOver } = this.state;
 
-        const Image = this.renderImage;
+        const ExcerptImage = this.renderExcerptImage;
         const Text = this.renderText;
         const DataSeriesInternal = this.renderDataSeries;
 
@@ -226,7 +228,7 @@ export default class Excerpt extends React.PureComponent {
             >
                 <DropContainer show={isBeingDraggedOver} />
                 { !isBeingDraggedOver && (
-                    (entryType === IMAGE && <Image />) ||
+                    (entryType === IMAGE && <ExcerptImage />) ||
                     (entryType === TEXT && <Text />) ||
                     (entryType === DATA_SERIES && <DataSeriesInternal />)
                 ) }

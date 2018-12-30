@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import DataSeries from '#components/DataSeries';
+import Image from '#rscv/Image';
 
 import styles from './styles.scss';
 
@@ -57,10 +58,11 @@ export default class ExcerptOutput extends React.PureComponent {
             }
             case IMAGE: {
                 children = (
-                    <img
+                    <Image
                         className={styles.image}
                         alt=""
                         src={value}
+                        zoomable
                     />
                 );
                 break;

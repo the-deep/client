@@ -1,5 +1,7 @@
 @import '~base-scss/base';
 
+$width-excerpt-container-min: 180px;
+
 .organigram-input {
     height: 100%;
     overflow: auto;
@@ -8,19 +10,20 @@
 .excerpt-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    flex-grow: 1;
+    min-width: $width-excerpt-container-min;
 
     .title {
         flex-shrink: 0;
-        padding: $spacing-small;
-        padding-bottom: 0;
+        padding: $spacing-small $spacing-medium;
         text-transform: uppercase;
         color: $color-accent;
         font-weight: $font-weight-bold;
     }
 
-    .excerpt-box {
+    .excerpt {
         flex-grow: 1;
-        overflow-y: auto;
+        padding: $spacing-small $spacing-medium;
+        overflow: auto;
     }
 }
