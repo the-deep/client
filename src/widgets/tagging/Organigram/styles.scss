@@ -1,7 +1,5 @@
 @import '~base-scss/base';
 
-$width-excerpt-container-min: 180px;
-
 .organigram-input {
     height: 100%;
     overflow: auto;
@@ -11,7 +9,7 @@ $width-excerpt-container-min: 180px;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    min-width: $width-excerpt-container-min;
+    overflow: auto;
 
     .title {
         flex-shrink: 0;
@@ -23,7 +21,7 @@ $width-excerpt-container-min: 180px;
 
     .excerpt {
         flex-grow: 1;
-        padding: $spacing-small $spacing-medium;
         overflow: auto;
     }
 }
+

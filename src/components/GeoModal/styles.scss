@@ -1,11 +1,14 @@
 @import '~base-scss/base';
 
-.geo-modal {
-    width: 72vw;
+$height-geo-modal: 86vh;
+$width-geo-modal: 80%;
+$width-left-container-min: 240px;
+$width-right-container-min: 240px;
+$width-right-container-max: 320px;
 
-    &.has-left {
-        width: 84vw;
-    }
+.geo-modal {
+    width: $width-geo-modal;
+    height: $height-geo-modal;
 
     .select-inputs {
         display: flex;
@@ -18,13 +21,17 @@
         height: 60vh;
 
         .left {
-            flex-basis: 15%;
+            display: flex;
+            flex-basis: 24%;
+            flex-direction: column;
+            border-right: $width-separator-thin solid $color-separator;
+            min-width: $width-left-container-min;
         }
 
         .map-wrapper {
             display: flex;
-            flex-basis: 80%;
             flex-direction: column;
+            flex-grow: 1;
             border-right: $width-separator-thin solid $color-separator;
             border-left: $width-separator-thin solid $color-separator;
 
@@ -45,16 +52,14 @@
 
             .map {
                 flex-grow: 1;
-
-                &.has-left {
-                    flex-basis: 70%;
-                }
             }
         }
 
         .right {
-            flex-basis: 15%;
+            flex-basis: 20%;
             flex-grow: 1;
+            min-width: $width-right-container-min;
+            max-width: $width-right-container-max;
             overflow-y: auto;
 
             .selection-group {
