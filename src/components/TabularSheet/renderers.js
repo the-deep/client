@@ -3,6 +3,9 @@ import React from 'react';
 import Numeral from '#rscv/Numeral';
 import FormattedDate from '#rscv/FormattedDate';
 
+import _cs from '#cs';
+import styles from './styles.scss';
+
 
 const cellPropTypes = {
     value: PropTypes.string,
@@ -16,8 +19,8 @@ const cellDefaultProps = {
 };
 
 // eslint-disable-next-line no-unused-vars
-export const StringCell = ({ value, className, options }) => (
-    <div className={className}>
+export const StringCell = ({ value, className, options: { invalid = false } }) => (
+    <div className={_cs(className, invalid ? styles.invalid : '')}>
         { value }
     </div>
 );
@@ -31,10 +34,10 @@ const separators = {
     none: '',
 };
 
-export const NumberCell = ({ value, className, options: { separator = 'none' } }) => (
+export const NumberCell = ({ value, className, options: { separator = 'none', invalid = false } }) => (
     <Numeral
-        className={className}
-        value={parseFloat(value)}
+        className={_cs(className, invalid ? styles.invalid : '')}
+        value={invalid ? value : parseFloat(value)}
         precision={null}
         showSeparator={separator !== 'none'}
         separator={separators[separator]}
@@ -46,9 +49,9 @@ NumberCell.defaultProps = cellDefaultProps;
 
 
 // eslint-disable-next-line no-unused-vars
-export const DateCell = ({ value, className, options }) => (
+export const DateCell = ({ value, className, options: { invalid = false } }) => (
     <FormattedDate
-        className={className}
+        className={_cs(className, invalid ? styles.invalid : '')}
         value={value}
     />
 );

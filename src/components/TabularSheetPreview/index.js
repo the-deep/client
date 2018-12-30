@@ -28,7 +28,8 @@ export default class TabularSheetPreview extends React.PureComponent {
         ...field,
         data: data.map(d => ({
             key: d.key,
-            value: d[field.id],
+            value: d[field.id].value,
+            type: d[field.id].type,
         })),
     })));
 

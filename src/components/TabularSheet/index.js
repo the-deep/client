@@ -115,8 +115,11 @@ export default class TabularSheet extends React.PureComponent {
 
     cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({
         className: _cs(styles[type], styles.cell),
-        value: datum[id],
-        options,
+        value: datum[id].value,
+        options: {
+            ...options,
+            invalid: datum[id].type !== type,
+        },
     })
 
     render() {
