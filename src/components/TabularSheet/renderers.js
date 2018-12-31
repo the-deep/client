@@ -18,7 +18,6 @@ const cellDefaultProps = {
     options: {},
 };
 
-// eslint-disable-next-line no-unused-vars
 export const StringCell = ({ value, className, options: { invalid = false } }) => (
     <div className={_cs(className, invalid ? styles.invalid : '')}>
         { value }
@@ -34,10 +33,10 @@ const separators = {
     none: '',
 };
 
-export const NumberCell = ({ value, className, options: { separator = 'none', invalid = false } }) => (
+export const NumberCell = ({ value, className, options: { separator = 'none' } }) => (
     <Numeral
-        className={_cs(className, invalid ? styles.invalid : '')}
-        value={invalid ? value : parseFloat(value)}
+        className={className}
+        value={parseFloat(value)}
         precision={null}
         showSeparator={separator !== 'none'}
         separator={separators[separator]}
@@ -49,12 +48,19 @@ NumberCell.defaultProps = cellDefaultProps;
 
 
 // eslint-disable-next-line no-unused-vars
-export const DateCell = ({ value, className, options: { invalid = false } }) => (
+export const DateCell = ({ value, className, options }) => (
     <FormattedDate
-        className={_cs(className, invalid ? styles.invalid : '')}
+        className={className}
         value={value}
     />
 );
 
 DateCell.propTypes = cellPropTypes;
 DateCell.defaultProps = cellDefaultProps;
+
+export const InvalidHandledCell = Cell => ({ value, className, options }) => {
+    const { invalid } = options;
+    return invalid
+        ? StringCell({ value, className, options })
+        : Cell({ value, className, options });
+};
