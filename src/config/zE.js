@@ -1,6 +1,6 @@
 // NOTE: User info and lang is set just for auto fill
 // NOTE: so no need to deactivate on development
-const enableZe = () => window.zE; // process.env.NODE_ENV === 'production'
+const enableZe = () => window.zE;
 
 export const setZeUser = (user) => {
     if (enableZe() && user.userId) {

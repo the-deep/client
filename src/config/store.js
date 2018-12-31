@@ -3,9 +3,11 @@ import {
     createMigrate,
     createTransform,
 } from 'redux-persist';
-
 import { mapToMap, randomString } from '#rsu/common';
 
+import { isBeta } from './env';
+
+// FIXME: move to config/env
 export const uniqueTabId = randomString(64);
 
 const migrations = {
@@ -34,8 +36,6 @@ const myTransform = createTransform(
     undefined,
     { whitelist: ['siloDomainData'] },
 );
-
-const isBeta = process.env.REACT_APP_DEEP_ENVIRONMENT === 'beta';
 
 const storeConfig = {
     blacklist: ['notify', 'route', 'app'],
