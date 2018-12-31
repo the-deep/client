@@ -23,7 +23,7 @@ const propTypes = {
     bookId: PropTypes.number,
     onPrev: PropTypes.func,
     defaultFileType: PropTypes.string,
-    saveBookRequest: RequestClient.prop.isRequired,
+    saveBookRequest: PropTypes.object.isRequired,
 };
 
 const defaultProps = {

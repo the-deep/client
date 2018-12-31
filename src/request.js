@@ -2,9 +2,6 @@ import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 
-import { alterResponseErrorToFaramError } from '#rest';
-import update from '#rsu/immutable-update';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {
     createRequestCoordinator,
     createRequestClient,

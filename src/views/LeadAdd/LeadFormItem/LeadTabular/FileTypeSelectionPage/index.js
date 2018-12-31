@@ -21,7 +21,8 @@ const propTypes = {
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     mimeType: PropTypes.string,
 
-    createBookRequest: RequestClient.prop.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    createBookRequest: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
