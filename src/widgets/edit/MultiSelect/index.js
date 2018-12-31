@@ -65,24 +65,25 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                     },
                 },
                 /*
-                member: true,
+                member: {
+                    email: {
+                        fields: {
+                            label: [requiredCondition, emailCondition],
+                            key: [requiredCondition],
+                        },
+                    },
+                    default: {
+                        fields: {
+                            label: [requiredCondition],
+                            key: [requiredCondition],
+                        },
+                    },
+                },
                 identifier: (val) => {
                     if (val.label && val.label.length > 10) {
                         return 'email';
                     }
                     return 'default';
-                },
-                email: {
-                    fields: {
-                        label: [requiredCondition, emailCondition],
-                        key: [requiredCondition],
-                    },
-                },
-                default: {
-                    fields: {
-                        label: [requiredCondition],
-                        key: [requiredCondition],
-                    },
                 },
                 */
             },

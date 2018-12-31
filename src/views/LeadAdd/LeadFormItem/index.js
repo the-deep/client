@@ -220,6 +220,7 @@ export default class LeadFormItem extends React.PureComponent {
     }
 
     handleFormSuccess = (newValues) => {
+        console.warn('success', newValues);
         const {
             lead,
             onFormSubmitSuccess,
@@ -268,6 +269,7 @@ export default class LeadFormItem extends React.PureComponent {
     }
 
     handleFormFailure = (faramErrors) => {
+        console.warn('failure', faramErrors);
         const {
             leadKey: leadId,
             addLeadViewLeadChange,
