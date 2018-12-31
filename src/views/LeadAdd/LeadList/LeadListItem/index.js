@@ -11,6 +11,8 @@ import {
 } from '#entities/lead';
 import { iconNames } from '#constants';
 
+import _cs from '#cs';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -86,12 +88,11 @@ export default class LeadListItem extends React.PureComponent {
     // RENDER
 
     renderIcon = ({ leadState }) => {
-        const classNames = [
+        const className = _cs(
             styles.statusIcon,
             LeadListItem.styleMap[leadState],
             iconNames[LeadListItem.iconMap[leadState]],
-        ];
-        const className = classNames.join(' ');
+        );
 
         return <span className={className} />;
     }
@@ -101,14 +102,11 @@ export default class LeadListItem extends React.PureComponent {
 
         const progress = isTruthy(upload.progress) ? upload.progress : 0;
 
-        const classNames = [styles.progressBar];
-        if (progress >= 100) {
-            classNames.push(styles.completed);
-        }
-        if (hide) {
-            classNames.push(styles.hide);
-        }
-        const className = classNames.join(' ');
+        const className = _cs(
+            styles.progressBar,
+            progress >= 100 && styles.completed,
+            hide && styles.hide,
+        );
 
         const style = { width: `${progress}%` };
 

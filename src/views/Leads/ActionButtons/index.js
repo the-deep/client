@@ -12,6 +12,7 @@ import {
 } from '#constants/';
 import Cloak from '#components/Cloak';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import styles from './styles.scss';
 
@@ -113,11 +114,11 @@ export default class ActionButtons extends React.PureComponent {
             className,
         } = this.props;
 
-        const containerClassName = [
+        const containerClassName = _cs(
             className,
             styles.actionButtons,
             'action-buttons',
-        ].join(' ');
+        );
 
         return (
             <div className={containerClassName}>

@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import _cs from '#cs';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -68,7 +70,7 @@ export default class Highlight extends React.PureComponent {
                 color,
             },
             text,
-            className,
+            className: classNameFromProps,
         } = this.props;
 
         const colors = Highlight.getHighlightColors(color);
@@ -82,11 +84,14 @@ export default class Highlight extends React.PureComponent {
             backgroundColor: colors.label,
         };
 
-        const classNames = [styles.highlight, className];
+        const className = _cs(
+            styles.highlight,
+            classNameFromProps,
+        );
 
         return (
             <span
-                className={classNames.join(' ')}
+                className={className}
                 role="presentation"
                 style={style}
                 onClick={this.handleClick}

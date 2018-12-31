@@ -7,6 +7,7 @@ import List from '#rscv/List';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import wordIcon from '#resources/img/word.svg';
 import excelIcon from '#resources/img/excel.svg';
@@ -130,13 +131,10 @@ export default class ExportTypePane extends React.PureComponent {
     getExportTypeClassName(key) {
         const { activeExportTypeKey } = this.props;
 
-        const classNames = [
+        return _cs(
             styles.exportTypeSelect,
-        ];
-        if (activeExportTypeKey === key) {
-            classNames.push(styles.active);
-        }
-        return classNames.join(' ');
+            activeExportTypeKey === key && styles.active,
+        );
     }
 
     renderExportType = (key, data) => (

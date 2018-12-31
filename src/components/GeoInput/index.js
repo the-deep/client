@@ -12,6 +12,7 @@ import {
     listToMap,
     mapToList,
 } from '#rsu/common';
+import _cs from '#cs';
 
 import GeoModal from '../GeoModal';
 import styles from './styles.scss';
@@ -158,18 +159,6 @@ export default class GeoInput extends React.PureComponent {
         if (this.props.value !== nextProps.value) {
             this.setState({ modalValue: nextProps.value });
         }
-    }
-
-    getClassName = () => {
-        const { className } = this.props;
-
-        const classNames = [
-            className,
-            styles.geoListInput,
-            'geoListInput',
-        ];
-
-        return classNames.join(' ');
     }
 
     handleModalApply = () => {
@@ -328,13 +317,20 @@ export default class GeoInput extends React.PureComponent {
         const {
             label,
             showLabel,
+            className: classNameFromProps,
         } = this.props;
 
         const GeoModalRender = this.renderGeoModal;
         const Selection = this.renderSelection;
 
+        const className = _cs(
+            classNameFromProps,
+            styles.geoListInput,
+            'geoListInput',
+        );
+
         return (
-            <div className={this.getClassName()}>
+            <div className={className}>
                 {showLabel &&
                     <Label
                         show={showLabel}

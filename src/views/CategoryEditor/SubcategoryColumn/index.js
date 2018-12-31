@@ -4,6 +4,7 @@ import React from 'react';
 import AccentButton from '#rsca/Button/AccentButton';
 import ListView from '#rscv/List/ListView';
 
+import _cs from '#cs';
 import _ts from '#ts';
 import { iconNames } from '#constants';
 
@@ -49,17 +50,14 @@ export default class SubcategoryColumn extends React.PureComponent {
             isLastColumn,
         } = this.props;
 
-        const styleNames = [];
-
-        styleNames.push(styles.subCategory);
-
-        if (id === selectedSubcategoryId) {
-            styleNames.push(isLastColumn ? styles.active : styles.selected);
-        }
-
-        return styleNames.join(' ');
+        return _cs(
+            styles.subCategory,
+            id === selectedSubcategoryId && !isLastColumn && styles.selected,
+            id === selectedSubcategoryId && isLastColumn && styles.active,
+        );
     }
 
+    // FIXME: complicated styling here
     addDragStyleName = (e) => {
         const { target } = e;
 
@@ -73,6 +71,7 @@ export default class SubcategoryColumn extends React.PureComponent {
         target.className = classNames.join(' ');
     }
 
+    // FIXME: complicated styling here
     removeDragStyleName = (e) => {
         const { target } = e;
 

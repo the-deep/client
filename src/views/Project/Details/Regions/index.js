@@ -137,15 +137,11 @@ export default class ProjectRegions extends React.PureComponent {
 
     getModalClassName = () => {
         const { selectedAddRegionOption } = this.state;
-        const classNames = [
+
+        return _cs(
             styles.addRegionModal,
-        ];
-
-        if (selectedAddRegionOption === 'old') {
-            classNames.push(styles.existingRegion);
-        }
-
-        return classNames.join(' ');
+            selectedAddRegionOption === 'old' && styles.existingRegion,
+        );
     }
 
 

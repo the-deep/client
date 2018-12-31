@@ -10,6 +10,7 @@ import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
 
 import _ts from '#ts';
+import _cs from '#cs';
 import {
     selectedSubcategorySelector,
     updateSelectedSubcategoryAction,
@@ -97,14 +98,10 @@ export default class SubcategoryPropertyPanel extends React.PureComponent {
     getNGramSelectStyleName = (i) => {
         const { selectedNGramIndex } = this.state;
 
-        const styleNames = [];
-        styleNames.push(styles.ngramSelect);
-
-        if (selectedNGramIndex === i) {
-            styleNames.push(styles.active);
-        }
-
-        return styleNames.join(' ');
+        return _cs(
+            styles.ngramSelect,
+            selectedNGramIndex === i && styles.active,
+        );
     }
 
     handleNGramSelectButtonClick = (i) => {

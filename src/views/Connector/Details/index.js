@@ -13,6 +13,7 @@ import {
     setUserConnectorDetailsAction,
 } from '#redux';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import ConnectorDetailsGetRequest from '../requests/ConnectorDetailsGetRequest';
 
@@ -98,11 +99,10 @@ export default class ConnectorDetails extends React.PureComponent {
 
     getClassName = () => {
         const { className } = this.props;
-        const classNames = [];
-        classNames.push(styles.details);
-        classNames.push(className);
-
-        return classNames.join(' ');
+        return _cs(
+            styles.details,
+            className,
+        );
     }
 
     handleConnectorTestClick = (paramsForTest) => {
@@ -153,15 +153,15 @@ export default class ConnectorDetails extends React.PureComponent {
             );
         }
 
-        const formClassName = [styles.form];
-        if (showTestResults) {
-            formClassName.push(styles.formWithTest);
-        }
+        const className = _cs(
+            styles.form,
+            showTestResults && styles.formWithTest,
+        );
 
         return (
             <Fragment>
                 <DetailsForm
-                    className={formClassName.join(' ')}
+                    className={className}
                     connectorId={connectorId}
                     onTestButtonClick={this.handleConnectorTestClick}
                     onConnectorDelete={this.handleConnectorDelete}

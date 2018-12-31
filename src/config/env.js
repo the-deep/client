@@ -11,10 +11,18 @@ export const isDev = !isBeta && !isAlpha && !isNightly;
 
 export const commitHash = process.env.REACT_APP_DEEP_COMMIT_SHA;
 
+// _ts('components.navbar', 'betaLabel')
+// _ts('components.navbar', 'alphaLabel')
+// _ts('components.navbar', 'nightlyLabel')
+// _ts('components.navbar', 'devLabel')
+// _ts('components.dashboard', 'betaLabel')
+// _ts('components.dashboard', 'alphaLabel')
+// _ts('components.dashboard', 'nightlyLabel')
+// _ts('components.dashboard', 'devLabel')
 export const envText = (
-    (isBeta && _ts('components.navbar', 'betaLabel')) ||
-    (isAlpha && _ts('components.navbar', 'alphaLabel')) ||
-    (isNightly && _ts('components.navbar', 'nightlyLabel')) ||
-    _ts('components.navbar', 'devLabel')
+    (isBeta && 'betaLabel') ||
+    (isAlpha && 'alphaLabel') ||
+    (isNightly && 'nightlyLabel') ||
+    'devLabel'
 );
 

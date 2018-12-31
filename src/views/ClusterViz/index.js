@@ -26,6 +26,7 @@ import Cloak from '#components/Cloak';
 import VizError from '#components/VizError';
 import BackLink from '#components/BackLink';
 
+import _cs from '#cs';
 import _ts from '#ts';
 
 import {
@@ -226,17 +227,10 @@ export default class ClusterViz extends PureComponent {
         this.stopRequestForClusterData();
     }
 
-    getClusterDetailClassName = (isActive) => {
-        const classNames = [
-            styles.clusterDetail,
-        ];
-
-        if (isActive) {
-            classNames.push(styles.activeCluster);
-        }
-
-        return classNames.join(' ');
-    }
+    getClusterDetailClassName = isActive => _cs(
+        styles.clusterDetail,
+        isActive && styles.activeCluster,
+    )
 
     clearState = () => {
         this.setState({

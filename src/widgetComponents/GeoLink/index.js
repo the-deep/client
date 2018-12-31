@@ -12,6 +12,7 @@ import {
 import GeoInput from '#components/GeoInput';
 import { afViewGeoOptionsSelector } from '#redux';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import styles from './styles.scss';
 
@@ -131,15 +132,15 @@ export default class GeoLink extends React.PureComponent {
         const regions = getRegions(geoOptions);
 
         const label = _ts('widgets.editor.link', 'addFromGeoLabel');
-        const modalClassNames = [];
-        if (showDuplicateConfirm) {
-            modalClassNames.push(styles.disableModal);
-        }
+
+        const modalClassName = _cs(
+            showDuplicateConfirm && styles.disableModal,
+        );
 
         return (
             <React.Fragment>
                 <GeoInput
-                    className={modalClassNames.join(' ')}
+                    className={modalClassName}
                     geoOptionsByRegion={geoOptions}
                     label={label}
                     onChange={this.handleGeoChange}

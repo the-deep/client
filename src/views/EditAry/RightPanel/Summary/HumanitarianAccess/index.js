@@ -11,6 +11,7 @@ import {
     affectedLocationsSelector,
 } from '#redux';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import TabularInputs from '../TabularInputs';
 import styles from './styles.scss';
@@ -67,17 +68,6 @@ export default class HumanitarianAccess extends React.PureComponent {
         ];
     }
 
-    getClassName = () => {
-        const { className } = this.props;
-        const classNames = [
-            className,
-            'humanitarian-access',
-            styles.humanitarianAccess,
-        ];
-
-        return classNames.join(' ');
-    }
-
     renderInput = (column, row, subRow) => {
         const {
             priorityIssues,
@@ -113,7 +103,13 @@ export default class HumanitarianAccess extends React.PureComponent {
     }
 
     render() {
-        const className = this.getClassName();
+        const { className: classNameFromProps } = this.props;
+
+        const className = _cs(
+            classNameFromProps,
+            'humanitarian-access',
+            styles.humanitarianAccess,
+        );
 
         return (
             <FaramGroup faramElementName="humanitarianAccess">

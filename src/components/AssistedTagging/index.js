@@ -12,6 +12,7 @@ import { getHexFromString } from '#rsu/common';
 import { FgRestBuilder } from '#rsu/rest';
 
 import { iconNames } from '#constants';
+import _cs from '#cs';
 import notify from '#notify';
 import {
     createParamsForCeClassify,
@@ -115,32 +116,6 @@ export default class AssistedTagging extends React.PureComponent {
         if (this.feedbackRequest) {
             this.feedbackRequest.stop();
         }
-    }
-
-    getClassName = () => {
-        const { className } = this.props;
-        const {
-            showAssistant,
-            showAssistantOptions,
-        } = this.state;
-
-        const classNames = [
-            className,
-            styles.assistedTagging,
-            'assisted-tagging',
-        ];
-
-        if (showAssistant) {
-            classNames.push(styles.assistantShown);
-            classNames.push('assistant-shown');
-        }
-
-        if (showAssistantOptions) {
-            classNames.push(styles.assistantOptionsShown);
-            classNames.push('assistant-option-shown');
-        }
-
-        return classNames.join(' ');
     }
 
     highlightRendererParams = () => ({
@@ -473,6 +448,7 @@ export default class AssistedTagging extends React.PureComponent {
         this.feedbackRequest.start();
     }
 
+    // FIXME: should be static
     calcSectorKey = d => d.label;
 
     renderSectorList = (key, sector) => (
@@ -644,17 +620,30 @@ export default class AssistedTagging extends React.PureComponent {
     }
 
     render() {
-        const { leadId } = this.props;
-        const { highlights } = this.state;
+        const { leadId, className: classNameFromProps } = this.props;
+        const {
+            highlights,
+            showAssistant,
+            showAssistantOptions,
+        } = this.state;
 
         const Assistant = this.renderAssistant;
         const AssistantOptions = this.renderAssistantOptions;
 
-        const className = this.getClassName();
-        const previewClassName = `
-            'preview'
-            ${styles.preview}
-        `;
+        const className = _cs(
+            classNameFromProps,
+            styles.assistedTagging,
+            'assited-tagging',
+            showAssistant && styles.assistantShown,
+            showAssistant && 'assistant-shown',
+            showAssistantOptions && styles.assistantOptionsShown,
+            showAssistantOptions && 'assistant-option-shown',
+        );
+
+        const previewClassName = _cs(
+            'preview',
+            styles.preview,
+        );
 
         return (
             <div

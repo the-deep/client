@@ -38,7 +38,7 @@ export default class Dashboard extends React.PureComponent {
                         path={logo}
                     />
                     <div className={styles.deepText} >
-                        {_ts('dashboard', 'deepLabel')} {envText}
+                        {_ts('dashboard', 'deepLabel')} {_ts('dashboard', envText)}
                     </div>
                 </div>
             </div>

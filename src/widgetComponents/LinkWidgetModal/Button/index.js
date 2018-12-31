@@ -11,6 +11,7 @@ import {
 import { iconNames } from '#constants';
 
 import _ts from '#ts';
+import _cs from '#cs';
 import styles from './styles.scss';
 
 import LinkWidgetModal from '../../LinkWidgetModal';
@@ -107,10 +108,9 @@ export default class LinkWidgetModalButton extends React.PureComponent {
             showDuplicateConfirm,
         } = this.state;
         const addFromWidgetsLabel = _ts('widgets.editor.link', 'addFromWidgets');
-        const modalClassNames = [];
-        if (showDuplicateConfirm) {
-            modalClassNames.push(styles.disableModal);
-        }
+        const modalClassName = _cs(
+            showDuplicateConfirm && styles.disableModal,
+        );
 
         return (
             <Fragment>
@@ -126,7 +126,7 @@ export default class LinkWidgetModalButton extends React.PureComponent {
                 {
                     showModal && (
                         <LinkWidgetModal
-                            className={modalClassNames.join(' ')}
+                            className={modalClassName}
                             onClose={this.handleClose}
                             onClick={this.handleSave}
                             widgetKey={this.props.widgetKey}

@@ -23,6 +23,7 @@ import {
 import TabTitle from '#components/TabTitle';
 import { iconNames } from '#constants';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
@@ -502,26 +503,28 @@ export default class Matrix2dEditWidget extends React.PureComponent {
     })
 
     renderDragHandle = (key) => {
-        const dragHandleClassNames = [styles.dragHandle];
         const { selectedDimensionKey } = this.state;
-        if (selectedDimensionKey === key) {
-            dragHandleClassNames.push(styles.active);
-        }
+        const dragHandleClassName = _cs(
+            styles.dragHandle,
+            selectedDimensionKey === key && styles.active,
+            iconNames.hamburger,
+        );
 
         return (
-            <span className={`${iconNames.hamburger} ${dragHandleClassNames.join(' ')}`} />
+            <span className={dragHandleClassName} />
         );
     };
 
     renderDragHandleSector = (key) => {
-        const dragHandleClassNames = [styles.dragHandle];
         const { selectedSectorKey } = this.state;
-        if (selectedSectorKey === key) {
-            dragHandleClassNames.push(styles.active);
-        }
+        const dragHandleClassName = _cs(
+            styles.dragHandle,
+            selectedSectorKey === key && styles.active,
+            iconNames.hamburger,
+        );
 
         return (
-            <span className={`${iconNames.hamburger} ${dragHandleClassNames.join(' ')}`} />
+            <span className={dragHandleClassName} />
         );
     };
 
@@ -540,10 +543,9 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         } = this.props;
 
         const TabsWithButton = this.renderTabsWithButton;
-        const modalClassnames = [styles.editModal];
 
         return (
-            <Modal className={modalClassnames.join(' ')}>
+            <Modal className={styles.editModal}>
                 <Faram
                     className={styles.form}
                     onChange={this.handleFaramChange}

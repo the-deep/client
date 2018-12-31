@@ -5,6 +5,8 @@ import List from '#rscv/List';
 import { FaramInputElement } from '#rscg/FaramElements';
 import { getColorOnBgColor } from '#rsu/common.js';
 
+import _cs from '#cs';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -86,30 +88,13 @@ export default class ScaleMatrixInput extends React.PureComponent {
         };
     }
 
-    getClassName = () => {
-        const { className } = this.props;
-
-        const classNames = [
-            className,
-            'scale-matrix-input',
-            styles.scaleMatrixInput,
-        ];
-
-        return classNames.join(' ');
-    }
-
     getCellClassName = (id) => {
         const { value } = this.props;
 
-        const classNames = [
+        return _cs(
             styles.cell,
-        ];
-
-        if (value === id) {
-            classNames.push(styles.active);
-        }
-
-        return classNames.join(' ');
+            value === id && styles.active,
+        );
     }
 
     handleCellClick = (id) => {
@@ -194,9 +179,16 @@ export default class ScaleMatrixInput extends React.PureComponent {
     }
 
     render() {
-        const { rows } = this.props;
+        const {
+            rows,
+            className: classNameFromProps,
+        } = this.props;
 
-        const className = this.getClassName();
+        const className = _cs(
+            classNameFromProps,
+            'scale-matrix-input',
+            styles.scaleMatrixInput,
+        );
 
         return (
             <div className={className}>

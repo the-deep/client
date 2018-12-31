@@ -26,6 +26,7 @@ import {
     pathNames,
 } from '#constants';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import ConnectorsGetRequest from './requests/ConnectorsGetRequest';
 import ConnectorSourcesGetRequest from './requests/ConnectorSourcesGetRequest';
@@ -104,13 +105,10 @@ export default class Connector extends React.PureComponent {
 
     getStyleName = (connectorId) => {
         const { connectorId: connectorIdFromUrl } = this.props;
-
-        const styleNames = [];
-        styleNames.push(styles.listItem);
-        if (connectorId === connectorIdFromUrl) {
-            styleNames.push(styles.active);
-        }
-        return styleNames.join(' ');
+        return _cs(
+            styles.listItem,
+            connectorId === connectorIdFromUrl && styles.active,
+        );
     }
 
     startConnectorsRequest = () => {

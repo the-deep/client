@@ -6,6 +6,7 @@ import ListView from '#rscv/List/ListView';
 
 import { generalDetailsForRegionSelector } from '#redux';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import styles from './styles.scss';
 
@@ -77,19 +78,19 @@ export default class RegionDetailView extends React.PureComponent {
     }
 
     render() {
-        const { className } = this.props;
+        const { className: classNameFromProps } = this.props;
 
         const regionDetailsList = Object.keys(this.regionDetailMeta);
 
-        const classNames = [
-            className,
-            styles.regionDetailView,
-        ];
-
         const headingText = _ts('components.regionDetailView', 'regionGeneralInfoLabel');
 
+        const className = _cs(
+            classNameFromProps,
+            styles.regionDetailView,
+        );
+
         return (
-            <div className={classNames.join(' ')}>
+            <div className={className}>
                 <h3 className={styles.heading}>
                     { headingText }
                 </h3>

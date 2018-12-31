@@ -14,6 +14,7 @@ import {
 } from '#redux';
 import _ts from '#ts';
 import SimplifiedFilePreview from '#components/SimplifiedFilePreview';
+import _cs from '#cs';
 
 import DocumentNGram from './DocumentNGram';
 import DocumentSelect from './DocumentSelect';
@@ -89,17 +90,11 @@ export default class DocumentPanel extends React.PureComponent {
     }
 
     getTabClassName = (base, i) => {
-        const classNames = [base];
-
-        const {
-            activeTabIndex,
-        } = this.state;
-
-        if (activeTabIndex === i) {
-            classNames.push(styles.active);
-        }
-
-        return classNames.join(' ');
+        const { activeTabIndex } = this.state;
+        return _cs(
+            base,
+            activeTabIndex === i && styles.active,
+        );
     }
 
     getTabHeaderClassName = i => this.getTabClassName(styles.tabHeader, i)

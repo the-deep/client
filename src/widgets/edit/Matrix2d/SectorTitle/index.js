@@ -6,6 +6,7 @@ import { FaramErrorIndicatorElement } from '#rscg/FaramElements';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import styles from './styles.scss';
 
@@ -63,19 +64,20 @@ export default class SectorTitle extends React.PureComponent {
             hasError,
         } = this.props;
 
-        const sectorTitleClassNames = [styles.sectorTitle];
-        const titleClassNames = [styles.title];
-        if (isSelected) {
-            sectorTitleClassNames.push(styles.active);
-        }
-        if (hasError) {
-            titleClassNames.push(styles.hasError);
-        }
+        const sectorTitleClassName = _cs(
+            styles.sectorTitle,
+            isSelected && styles.active,
+        );
+
+        const titleClassName = _cs(
+            styles.title,
+            hasError && styles.hasError,
+        );
 
         return (
-            <div className={sectorTitleClassNames.join(' ')}>
+            <div className={sectorTitleClassName}>
                 <button
-                    className={titleClassNames.join(' ')}
+                    className={titleClassName}
                     onClick={this.handleClick}
                     type="button"
                 >

@@ -12,6 +12,7 @@ import {
     editArySelectedSectorsSelector,
 } from '#redux';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import CrossSector from './CrossSector';
 import HumanitarianAccess from './HumanitarianAccess';
@@ -51,17 +52,6 @@ export default class Summary extends React.PureComponent {
         this.state = {
             activeTab: 'crossSector',
         };
-    }
-
-    getClassName = () => {
-        const { className } = this.props;
-        const classNames = [
-            className,
-            'summary',
-            styles.summary,
-        ];
-
-        return classNames.join(' ');
     }
 
     handleTabClick = (key) => {
@@ -141,7 +131,13 @@ export default class Summary extends React.PureComponent {
     }
 
     render() {
-        const className = this.getClassName();
+        const { className: classNameFromProps } = this.props;
+        const className = _cs(
+            classNameFromProps,
+            'summary',
+            styles.summary,
+        );
+
         const Tabs = this.renderTabs;
         const View = this.renderView;
 

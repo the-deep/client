@@ -7,6 +7,7 @@ import { FaramErrorIndicatorElement } from '#rscg/FaramElements';
 import { iconNames } from '#constants';
 
 import _ts from '#ts';
+import _cs from '#cs';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -55,19 +56,20 @@ export default class RowTitle extends React.PureComponent {
             hasError,
         } = this.props;
 
-        const rowTitleClassNames = [styles.rowTitle];
-        const titleClassNames = [styles.title];
-        if (isSelected) {
-            rowTitleClassNames.push(styles.active);
-        }
-        if (hasError) {
-            titleClassNames.push(styles.hasError);
-        }
+        const rowTitleClassName = _cs(
+            styles.rowTitle,
+            isSelected && styles.active,
+        );
+
+        const titleClassName = _cs(
+            styles.title,
+            hasError && styles.hasError,
+        );
 
         return (
-            <div className={rowTitleClassNames.join(' ')}>
+            <div className={rowTitleClassName}>
                 <button
-                    className={titleClassNames.join(' ')}
+                    className={titleClassName}
                     onClick={this.handleClick}
                     type="button"
                 >
