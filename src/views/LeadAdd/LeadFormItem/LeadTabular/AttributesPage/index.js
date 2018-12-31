@@ -1,10 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import ModalBody from '#rscv/Modal/Body';
+import ModalFooter from '#rscv/Modal/Footer';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+import DangerButton from '#rsca/Button/DangerButton';
 
 import Faram from '#rscg/Faram';
 import FaramGroup from '#rscg/FaramGroup';
@@ -22,13 +25,15 @@ import styles from './styles.scss';
 const propTypes = {
     bookId: PropTypes.number,
     onPrev: PropTypes.func,
+    onCancel: PropTypes.func,
     defaultFileType: PropTypes.string,
-    saveBookRequest: PropTypes.object.isRequired,
+    saveBookRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     bookId: undefined,
     onPrev: () => {},
+    onCancel: () => {},
     defaultFileType: undefined,
 };
 
@@ -113,8 +118,11 @@ export default class AttributesPage extends React.PureComponent {
             faramValues,
             faramErrors,
         } = this.state;
-        const { defaultFileType } = this.props;
-        const { saveBookRequest } = this.props;
+        const {
+            defaultFileType,
+            saveBookRequest,
+            onCancel,
+        } = this.props;
 
         // TODO: Handle pollRequest.error and saveRequest.error
         const { pending: pollPending, response } = pollRequest;
@@ -147,27 +155,30 @@ export default class AttributesPage extends React.PureComponent {
                 error={faramErrors}
                 disabled={pollPending || savePending}
             >
-                {pollPending && <LoadingAnimation />}
-                <NonFieldErrors faramElement />
-                <FaramGroup faramElementName="options">
-                    {component}
-                </FaramGroup>
-                <div>
+                <ModalBody>
+                    {pollPending && <LoadingAnimation />}
+                    <NonFieldErrors faramElement />
+                    <FaramGroup faramElementName="options">
+                        {component}
+                    </FaramGroup>
+                </ModalBody>
+                <ModalFooter>
                     <Button
-                        className={styles.submitButton}
                         onClick={this.handleBackClick}
                         disabled={pollPending || savePending}
                     >
-                        {_ts('addLeads.tabular', 'backLabel')}
+                        {_ts('addLeads.tabular', 'backButtonTitle')}
                     </Button>
+                    <DangerButton onClick={onCancel}>
+                        {_ts('addLeads.tabular', 'cancelButtonTitle')}
+                    </DangerButton>
                     <PrimaryButton
                         type="submit"
-                        className={styles.submitButton}
                         pending={savePending}
                     >
-                        {_ts('addLeads.tabular', 'extractLabel')}
+                        {_ts('addLeads.tabular', 'extractButtonTitle')}
                     </PrimaryButton>
-                </div>
+                </ModalFooter>
             </Faram>
         );
     }

@@ -568,8 +568,8 @@
         "4018": "Sankey",
         "4019": "Sparklines",
         "4020": "Parallel coordinates",
-        "4022": "GoogleOrgChart",
         "4021": "Cluster Force Layout",
+        "4022": "GoogleOrgChart",
         "5550": "{count} items selected",
         "5551": "Selected",
         "5552": "All",
@@ -700,8 +700,6 @@
         "15009": "Skip this sheet",
         "15010": "Header row",
         "15011": "Number of entries from this lead",
-
-
         "-12279953": "Entry Cleared",
         "-94068330": "All local entries were cleared because associated analysis framework was removed.",
         "-4983139": "Remove lead group",
@@ -891,7 +889,8 @@
         "-63188496": "Couldn't read tabular data.",
         "-47036305": ",",
         "-45402687": "1",
-        "-53408079": "Back"
+        "-53408079": "Back",
+        "-39430073": "Close"
     },
     "links": {
         "browserExtension": {
@@ -1635,7 +1634,11 @@
             "invalid": -63188496,
             "headerRowPlaceholder": -45402687,
             "delimiterPlaceholder": -47036305,
-            "backLabel": -53408079
+            "backLabel": -53408079,
+            "cancelButtonTitle": 61,
+            "backButtonTitle": -53408079,
+            "extractButtonTitle": 15006,
+            "nextButtonTitle": 23
         },
         "register": {
             "checkYourEmailText": 818,
@@ -2292,7 +2295,7 @@
             "numberPlaceholder": 768
         },
         "widgets.tagging.organigram": {
-            "excerptHeaderTitle": 514 
+            "excerptHeaderTitle": 514
         },
         "widgets.view.numberMatrix": {
             "numberPlaceholder": 768
@@ -2401,7 +2404,8 @@
             "deleteMessage": 15001,
             "deleteButtonTooltip": -94736495,
             "resetSortTitle": 15008,
-            "invalid": -63188496
+            "invalid": -63188496,
+            "closeButtonTitle": -39430073
         },
         "tabular.editField": {
             "title": 15002,

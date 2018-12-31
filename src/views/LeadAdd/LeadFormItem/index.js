@@ -1,15 +1,9 @@
-/**
- * @author tnagorra <weathermist@gmail.com>
- */
-
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import Message from '#rscv/Message';
 import Modal from '#rscv/Modal';
-import ModalBody from '#rscv/Modal/Body';
-import ModalHeader from '#rscv/Modal/Header';
 import { FgRestBuilder } from '#rsu/rest';
 import {
     requiredCondition,
@@ -93,6 +87,7 @@ export default class LeadFormItem extends React.PureComponent {
 
         const lead = leadAccessor.getFaramValues(this.props.lead);
         const isUrlValid = LeadFormItem.isUrlValid(lead.url);
+
         this.state = {
             isUrlValid,
             tabularMode: false,
@@ -228,7 +223,6 @@ export default class LeadFormItem extends React.PureComponent {
     }
 
     handleFormSuccess = (newValues) => {
-        console.warn('success', newValues);
         const {
             lead,
             onFormSubmitSuccess,
@@ -268,7 +262,6 @@ export default class LeadFormItem extends React.PureComponent {
     }
 
     handleFormFailure = (faramErrors) => {
-        console.warn('failure', faramErrors);
         const {
             leadKey: leadId,
             addLeadViewLeadChange,
@@ -491,40 +484,36 @@ export default class LeadFormItem extends React.PureComponent {
                                     projectId={projectId}
                                 />
                             }
-                            {
-                                tabularMode &&
+                            { tabularMode &&
                                 <Modal
+                                    className={styles.tabularModal}
                                     onClose={this.unsetTabularMode}
                                     closeOnEscape
                                 >
-                                    <ModalHeader
-                                        title="Tabular"
-                                    />
-                                    <ModalBody>
-                                        {
-                                            !tabularBook ? (
-                                                <LeadTabular
-                                                    className={className}
-                                                    mimeType={tabularMimeType}
-                                                    setTabularBook={this.setTabularBook}
-                                                    onCancel={this.unsetTabularMode}
-                                                    lead={lead}
-                                                />
-                                            ) : (
-                                                <TabularBook
-                                                    className={className}
-                                                    bookId={tabularBook}
-                                                    projectId={projectId}
-                                                    onDelete={this.unsetTabularBook}
-                                                    setSaveTabularFunction={
-                                                        this.setSaveTabularFunction
-                                                    }
-                                                    onEdited={this.handleFieldsChange}
-                                                    showDelete
-                                                />
-                                            )
-                                        }
-                                    </ModalBody>
+                                    {
+                                        tabularBook ? (
+                                            <TabularBook
+                                                className={className}
+                                                bookId={tabularBook}
+                                                projectId={projectId}
+                                                onDelete={this.unsetTabularBook}
+                                                setSaveTabularFunction={
+                                                    this.setSaveTabularFunction
+                                                }
+                                                onEdited={this.handleFieldsChange}
+                                                onCancel={this.unsetTabularMode}
+                                                showDelete
+                                            />
+                                        ) : (
+                                            <LeadTabular
+                                                className={className}
+                                                mimeType={tabularMimeType}
+                                                setTabularBook={this.setTabularBook}
+                                                onCancel={this.unsetTabularMode}
+                                                lead={lead}
+                                            />
+                                        )
+                                    }
                                 </Modal>
                             }
                         </Fragment>

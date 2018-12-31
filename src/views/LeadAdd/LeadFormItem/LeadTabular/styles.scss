@@ -4,32 +4,12 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    border-top: $width-separator-thin solid $color-separator;
-    background-color: $color-foreground-alt;
     overflow-y: auto;
 
-    >.header {
-        display: flex;
-        align-items: center;
-        flex-shrink: 0;
-        padding: $spacing-large 0;
-
-        .back-button {
-            flex-shrink: 0;
-            padding: 0 $spacing-medium;
-        }
-
-        .title {
-            flex-grow: 1;
-            padding: 0 $spacing-medium;
-        }
-    }
-
-    .content {
+    .wizard {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
-        padding: 0 $spacing-medium;
-        overflow-y: auto;
+        overflow: auto;
     }
 }

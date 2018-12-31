@@ -1,6 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import ModalHeader from '#rscv/Modal/Header';
+import ModalBody from '#rscv/Modal/Body';
+import ModalFooter from '#rscv/Modal/Footer';
+
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import FixedTabs from '#rscv/FixedTabs';
@@ -147,15 +151,24 @@ export default class TabularBook extends React.PureComponent {
             sheets,
             activeSheet,
         } = this.state;
-        const { deleteRequest } = this.props;
+        const {
+            deleteRequest,
+            onCancel,
+        } = this.props;
 
-        const className = _cs(this.props.className, styles.tabularBook, 'tabular-book');
+        const className = _cs(
+            this.props.className,
+            styles.tabularBook,
+            'tabular-book',
+        );
 
         if (invalid) {
             return (
-                <Message className={className}>
-                    {_ts('tabular', 'invalid')}
-                </Message>
+                <div className={className}>
+                    <Message>
+                        {_ts('tabular', 'invalid')}
+                    </Message>
+                </div>
             );
         }
 
@@ -170,39 +183,47 @@ export default class TabularBook extends React.PureComponent {
         return (
             <div className={className}>
                 {deleteRequest.pending && <LoadingAnimation />}
-                <header>
-                    <h4>
-                        {_ts('tabular', 'title')}
-                    </h4>
-                    <div>
-                        <Button
-                            iconName={iconNames.sort}
-                            onClick={this.resetSort}
-                            title={_ts('tabular', 'resetSortTitle')}
-                            transparent
-                        />
-                        {this.props.showDelete && (
-                            <DangerConfirmButton
-                                iconName={iconNames.delete}
-                                onClick={this.handleDelete}
-                                confirmationMessage={_ts('tabular', 'deleteMessage')}
-                                title={_ts('tabular', 'deleteButtonTooltip')}
+                <ModalHeader
+                    title={_ts('tabular', 'title')}
+                    rightComponent={
+                        <div>
+                            <Button
+                                iconName={iconNames.sort}
+                                onClick={this.resetSort}
+                                title={_ts('tabular', 'resetSortTitle')}
                                 transparent
                             />
-                        )}
-                    </div>
-                </header>
-                <TabularSheet
-                    className={styles.sheetView}
-                    sheet={sheets[activeSheet]}
-                    onSheetChange={this.handleSheetChange}
+                            {this.props.showDelete && (
+                                <DangerConfirmButton
+                                    iconName={iconNames.delete}
+                                    onClick={this.handleDelete}
+                                    confirmationMessage={_ts('tabular', 'deleteMessage')}
+                                    title={_ts('tabular', 'deleteButtonTooltip')}
+                                    transparent
+                                />
+                            )}
+                        </div>
+                    }
                 />
-                <FixedTabs
-                    className={styles.tabs}
-                    tabs={tabs}
-                    active={activeSheet}
-                    onClick={this.handleActiveSheetChange}
-                />
+                <ModalBody className={styles.body}>
+                    <TabularSheet
+                        className={styles.sheetView}
+                        sheet={sheets[activeSheet]}
+                        onSheetChange={this.handleSheetChange}
+                    />
+                    <FixedTabs
+                        className={styles.tabs}
+                        tabs={tabs}
+                        active={activeSheet}
+                        onClick={this.handleActiveSheetChange}
+                        inverted
+                    />
+                </ModalBody>
+                <ModalFooter>
+                    <Button onClick={onCancel}>
+                        {_ts('tabular', 'closeButtonTitle')}
+                    </Button>
+                </ModalFooter>
             </div>
         );
     }

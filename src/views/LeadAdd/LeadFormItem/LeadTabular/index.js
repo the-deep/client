@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import ModalHeader from '#rscv/Modal/Header';
 import Button from '#rsca/Button';
 import Wizard from '#rscv/Wizard';
 
@@ -62,35 +63,26 @@ export default class LeadTabular extends React.PureComponent {
             onCancel,
             lead,
         } = this.props;
+
         const { bookId, fileType } = this.state;
 
         return (
             <div className={_cs(className, styles.leadTabular)}>
-                <div className={styles.header}>
-                    <Button
-                        className={styles.backButton}
-                        iconName={iconNames.close}
-                        onClick={onCancel}
-                        transparent
+                <ModalHeader title={_ts('addLeads.tabular', 'title')} />
+                <Wizard className={styles.wizard}>
+                    <FileTypeSelectionPage
+                        lead={lead}
+                        mimeType={mimeType}
+                        onComplete={this.handleBookIdChange}
+                        onCancel={onCancel}
                     />
-                    <h4 className={styles.title}>
-                        {_ts('addLeads.tabular', 'title')}
-                    </h4>
-                </div>
-                <div className={styles.content}>
-                    <Wizard>
-                        <FileTypeSelectionPage
-                            lead={lead}
-                            mimeType={mimeType}
-                            onComplete={this.handleBookIdChange}
-                        />
-                        <AttributesPage
-                            bookId={bookId}
-                            onComplete={this.handleComplete}
-                            defaultFileType={fileType}
-                        />
-                    </Wizard>
-                </div>
+                    <AttributesPage
+                        bookId={bookId}
+                        onComplete={this.handleComplete}
+                        defaultFileType={fileType}
+                        onCancel={onCancel}
+                    />
+                </Wizard>
             </div>
         );
     }
