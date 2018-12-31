@@ -265,7 +265,7 @@ export default class Navbar extends React.PureComponent {
                         className={styles.betaLabel}
                         title={commitHash}
                     >
-                        {envText}
+                        {_ts('components.navbar', envText)}
                     </span>
                 </Link>
 
