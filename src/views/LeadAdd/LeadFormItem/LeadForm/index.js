@@ -119,40 +119,48 @@ export default class LeadForm extends React.PureComponent {
         }
     }
 
-    static getSchemaForLead = (type) => {
-        const differentFields = {
-            [LEAD_TYPE.file]: { attachment: [requiredCondition] },
-            [LEAD_TYPE.dropbox]: { attachment: [requiredCondition] },
-            [LEAD_TYPE.drive]: { attachment: [requiredCondition] },
-            [LEAD_TYPE.website]: {
-                url: [requiredCondition, urlCondition],
-                website: [requiredCondition],
-            },
-            [LEAD_TYPE.text]: { text: [requiredCondition] },
-        };
-
-        return {
-            fields: {
-                title: [requiredCondition],
-                source: [requiredCondition],
-                confidentiality: [requiredCondition],
-                assignee: [requiredCondition],
-                publishedOn: [requiredCondition, dateCondition],
-                sourceType: [requiredCondition],
-                project: [requiredCondition],
-                tabularBook: [],
-                leadGroup: [],
-                ...differentFields[type],
-            },
-        };
-    }
-
     constructor(props) {
         super(props);
 
         const { lead } = props;
-        const leadType = leadAccessor.getType(lead);
-        this.schema = LeadForm.getSchemaForLead(leadType);
+
+        const commonFields = {
+            title: [requiredCondition],
+            source: [requiredCondition],
+            confidentiality: [requiredCondition],
+            assignee: [requiredCondition],
+            publishedOn: [requiredCondition, dateCondition],
+            sourceType: [requiredCondition],
+            project: [requiredCondition],
+            tabularBook: [],
+            leadGroup: [],
+        };
+
+        this.schema = {
+            fields: true,
+            identifier: () => leadAccessor.getType(lead),
+            [LEAD_TYPE.file]: {
+                ...commonFields,
+                attachment: [requiredCondition],
+            },
+            [LEAD_TYPE.dropbox]: {
+                ...commonFields,
+                attachment: [requiredCondition],
+            },
+            [LEAD_TYPE.drive]: {
+                ...commonFields,
+                attachment: [requiredCondition],
+            },
+            [LEAD_TYPE.website]: {
+                ...commonFields,
+                url: [requiredCondition, urlCondition],
+                website: [requiredCondition],
+            },
+            [LEAD_TYPE.text]: {
+                ...commonFields,
+                text: [requiredCondition],
+            },
+        };
 
         if (props.setSubmitFunction) {
             props.setSubmitFunction(this.submit);
@@ -214,8 +222,6 @@ export default class LeadForm extends React.PureComponent {
                     labelSelector={LeadForm.labelSelector}
                     options={leadOptions.leadGroup}
                     placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
-                    showHintAndError
-                    showLabel
                 />
             </ApplyAll>
             <Button
@@ -306,18 +312,14 @@ export default class LeadForm extends React.PureComponent {
                             autoFocus
                         />
                 }
-                {/* TODO: change from disabled to readonly */}
                 <SelectInput
                     disabled
-                    formoverrides={['disabled']}
                     faramElementName="project"
                     keySelector={LeadForm.keySelector}
                     label={_ts('addLeads', 'projectLabel')}
                     labelSelector={LeadForm.labelSelector}
                     options={leadOptions.project}
                     placeholder={_ts('addLeads', 'projectPlaceholderLabel')}
-                    showHintAndError
-                    showLabel
                     className={styles.project}
                 />
 
@@ -368,8 +370,6 @@ export default class LeadForm extends React.PureComponent {
                         labelSelector={LeadForm.labelSelector}
                         options={leadOptions.confidentiality}
                         placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
-                        showHintAndError
-                        showLabel
                     />
                 </ApplyAll>
 
@@ -387,8 +387,6 @@ export default class LeadForm extends React.PureComponent {
                         labelSelector={LeadForm.labelSelector}
                         options={leadOptions.assignee}
                         placeholder={_ts('addLeads', 'selectInputPlaceholderLabel')}
-                        showHintAndError
-                        showLabel
                     />
                 </ApplyAll>
 
@@ -418,6 +416,7 @@ export default class LeadForm extends React.PureComponent {
                                     />
                                 }
                             </div>
+                            {/* FIXME: why is hidden input used here? */}
                             <HiddenInput
                                 faramElementName="attachment"
                                 value={values.attachment || ''}

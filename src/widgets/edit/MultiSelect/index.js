@@ -65,6 +65,7 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                     },
                 },
                 /*
+                member: true,
                 identifier: (val) => {
                     if (val.label && val.label.length > 10) {
                         return 'email';

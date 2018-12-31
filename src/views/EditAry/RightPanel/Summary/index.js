@@ -114,19 +114,20 @@ export default class Summary extends React.PureComponent {
                 return (
                     <HumanitarianAccess className={styles.view} />
                 );
-            default:
-                if (activeTab.includes('sector')) {
-                    const startIndex = sectorIdentifier.length + 1;
-                    const sectorId = activeTab.substr(startIndex);
-
-                    return (
-                        <Sector
-                            className={styles.view}
-                            sectorId={sectorId}
-                        />
-                    );
+            default: {
+                if (!activeTab.includes('sector')) {
+                    return null;
                 }
-                return null;
+
+                const startIndex = sectorIdentifier.length + 1;
+                const sectorId = activeTab.substr(startIndex);
+                return (
+                    <Sector
+                        className={styles.view}
+                        sectorId={sectorId}
+                    />
+                );
+            }
         }
     }
 
