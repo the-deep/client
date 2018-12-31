@@ -66,11 +66,8 @@ export const transformAndCombineResponseErrors = (errors) => {
 export const alterResponseErrorToFaramError = (errors) => {
     const {
         nonFieldErrors = [],
-        internalNonFieldErrors,
         ...formFieldErrors
     } = errors;
-
-    console.warn('SERVER ERROR:', internalNonFieldErrors || nonFieldErrors);
 
     return Object.keys(formFieldErrors).reduce(
         (acc, key) => {

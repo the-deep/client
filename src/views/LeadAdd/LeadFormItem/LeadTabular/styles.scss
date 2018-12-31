@@ -1,34 +1,35 @@
 @import '~base-scss/base';
 
 .lead-tabular {
+    display: flex;
+    flex-direction: column;
     flex-grow: 1;
     border-top: $width-separator-thin solid $color-separator;
-    background-color: $color-foreground;
+    background-color: $color-foreground-alt;
+    overflow-y: auto;
 
-    .header {
+    >.header {
         display: flex;
         align-items: center;
-        padding: 0 $spacing-medium;
-        height: $height-navbar;
+        flex-shrink: 0;
+        padding: $spacing-large 0;
+
+        .back-button {
+            flex-shrink: 0;
+            padding: 0 $spacing-medium;
+        }
+
+        .title {
+            flex-grow: 1;
+            padding: 0 $spacing-medium;
+        }
     }
 
-    .body {
-        padding: 0 $spacing-large;
-
-        .form {
-            button {
-                margin-right: $spacing-medium;
-            }
-
-            .sheet-list {
-                .sheet-title {
-                    font-weight: $font-weight-bold;
-                }
-
-                .check-input {
-                    margin: $spacing-small 0;
-                }
-            }
-        }
+    .content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: 0 $spacing-medium;
+        overflow-y: auto;
     }
 }

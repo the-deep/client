@@ -27,8 +27,8 @@ const propTypes = {
     setSaveTabularFunction: PropTypes.func,
     onEdited: PropTypes.func,
 
-    deleteRequest: RequestClient.prop.isRequired,
-    saveRequest: RequestClient.prop.isRequired,
+    deleteRequest: RequestClient.propType.isRequired,
+    saveRequest: RequestClient.propType.isRequired,
 
     showDelete: PropTypes.bool,
     onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
@@ -147,6 +147,7 @@ export default class TabularBook extends React.PureComponent {
             sheets,
             activeSheet,
         } = this.state;
+        const { deleteRequest } = this.props;
 
         const className = _cs(this.props.className, styles.tabularBook, 'tabular-book');
 
@@ -168,6 +169,7 @@ export default class TabularBook extends React.PureComponent {
 
         return (
             <div className={className}>
+                {deleteRequest.pending && <LoadingAnimation />}
                 <header>
                     <h4>
                         {_ts('tabular', 'title')}
@@ -207,6 +209,7 @@ export default class TabularBook extends React.PureComponent {
 
     render() {
         const { bookId } = this.props;
+        const ActualBook = this.renderActual;
 
         return (
             <TriggerAndPoll
@@ -214,7 +217,7 @@ export default class TabularBook extends React.PureComponent {
                 url={`/tabular-books/${bookId}/`}
                 triggerUrl={`/tabular-extraction-trigger/${bookId}/`}
             >
-                {this.renderActual}
+                <ActualBook />
             </TriggerAndPoll>
         );
     }

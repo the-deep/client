@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+
 import {
     createRequestCoordinator,
     createRequestClient,
@@ -72,10 +73,20 @@ const CustomRequestCoordinator = createRequestCoordinator({
         return body;
     },
 
+    /*
+     * FIXME: Use this one
     transformErrors: ({ errors, ...otherProps }) => ({
         ...otherProps,
         body: alterResponseErrorToFaramError(errors),
     }),
+    */
+    transformErrors: (response) => {
+        const faramErrors = alterResponseErrorToFaramError(response.errors);
+        return {
+            response,
+            faramErrors,
+        };
+    },
 });
 
 export const RequestCoordinator = compose(
@@ -84,7 +95,7 @@ export const RequestCoordinator = compose(
 );
 
 export const RequestClient = createRequestClient();
-RequestClient.prop = PropTypes.shape({
+RequestClient.propType = PropTypes.shape({
     do: PropTypes.func,
     pending: PropTypes.bool,
     response: PropTypes.object,

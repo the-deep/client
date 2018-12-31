@@ -697,6 +697,9 @@
         "15009": "Skip this sheet",
         "15010": "Header row",
         "15011": "Number of entries from this lead",
+
+        "-12279953": "Entry Cleared",
+        "-94068330": "All local entries were cleared because associated analysis framework was removed.",
         "-4983139": "Remove lead group",
         "-49385196": "Save screenshot",
         "-42880698": "Discard screenshot",
@@ -860,7 +863,6 @@
         "-77428696": "There are no word categories.",
         "-33861958": "Add word category",
         "-47892955": "Can't drop here!",
-        "-11648576": "Invalid source",
         "-64009123": "Convert to tabular",
         "-20173783": "The same page is open in another tab.",
         "-96507602": "Error while trying to reset password.",
@@ -876,7 +878,16 @@
         "-96311582": "Add user",
         "-91114337": "Add user group",
         "-50532935": "Miscellaneous",
-        "-61910224": "This action will affect the entries tagged with geo-areas of this region."
+        "-61910224": "This action will affect the entries tagged with geo-areas of this region.",
+        "-96186123": "Add dimensions from",
+        "-63120597": "Add sectors from",
+        "-89164469": "Add sub dimensions from",
+        "-11158375": "Add sub sectors from",
+        "-60104332": "Can't drop here!",
+        "-63188496": "Couldn't read tabular data.",
+        "-47036305": ",",
+        "-45402687": "1",
+        "-53408079": "Back"
     },
     "links": {
         "browserExtension": {
@@ -1615,7 +1626,10 @@
             "headerRowLabel": 15010,
             "extractLabel": 15006,
             "nextLabel": 23,
-            "invalid": -11648576
+            "invalid": -63188496,
+            "headerRowPlaceholder": -45402687,
+            "delimiterPlaceholder": -47036305,
+            "backLabel": -53408079
         },
         "register": {
             "checkYourEmailText": 818,
@@ -2380,7 +2394,7 @@
             "deleteMessage": 15001,
             "deleteButtonTooltip": -94736495,
             "resetSortTitle": 15008,
-            "invalid": -11648576
+            "invalid": -63188496
         },
         "tabular.editField": {
             "title": 15002,

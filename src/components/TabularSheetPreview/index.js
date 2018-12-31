@@ -38,6 +38,7 @@ export default class TabularSheetPreview extends React.PureComponent {
         type: field.type,
         options: field.options,
         data: field.data,
+        geodata: field.geodata,
     })
 
     render() {

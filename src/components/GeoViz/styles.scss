@@ -1,0 +1,36 @@
+@import '~base-scss/base';
+
+.geo-viz {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+
+    .region-select-input {
+        position: absolute;
+        top: $spacing-small;
+        left: $spacing-small;
+        z-index: 20;
+        border: $width-separator-thin solid $color-separator-alt;
+        background-color: $color-foreground;
+        padding: $spacing-small;
+    }
+
+    .refresh-button {
+        position: absolute;
+        top: $spacing-small;
+        right: $spacing-small;
+        z-index: 20;
+    }
+
+    .map {
+        width: 100%;
+        height: calc(100% - 28px);
+    }
+
+    .admin-level-select {
+        width: 100%;
+        height: 24px;
+    }
+}

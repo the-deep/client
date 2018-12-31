@@ -174,6 +174,10 @@ export default class RegionMap extends React.PureComponent {
     )
 
     handleAreaClick = (selection) => {
+        if (!this.props.onChange) {
+            return;
+        }
+
         const selections = [...this.props.selections];
         const index = selections.indexOf(selection);
 
@@ -183,9 +187,7 @@ export default class RegionMap extends React.PureComponent {
             selections.splice(index, 1);
         }
 
-        if (this.props.onChange) {
-            this.props.onChange(selections);
-        }
+        this.props.onChange(selections);
     }
 
     handleAdminLevelSelection = (id) => {

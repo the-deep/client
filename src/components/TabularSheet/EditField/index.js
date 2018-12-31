@@ -4,6 +4,7 @@ import React from 'react';
 import Faram, { requiredCondition } from '#rscg/Faram';
 import FaramGroup from '#rscg/FaramGroup';
 import TextInput from '#rsci/TextInput';
+import NumberInput from '#rsci/NumberInput';
 import SegmentInput from '#rsci/SegmentInput';
 
 import Modal from '#rscv/Modal';
@@ -39,12 +40,18 @@ class EditFieldModal extends React.PureComponent {
         { key: 'none', label: 'None' },
     ];
 
+    static geoTypeOptions = [
+        { key: 'name', label: 'Name' },
+        { key: 'code', label: 'Code' },
+    ];
+
     constructor(props) {
         super(props);
 
         const initialValue = update(props.initialValue, {
             options: { $auto: {
                 separator: { $setDefault: 'none' },
+                geoType: { $setDefault: 'name' },
             } },
         });
 
@@ -87,6 +94,27 @@ class EditFieldModal extends React.PureComponent {
                     showLabel
                     showHintAndError
                 />
+            );
+        }
+
+        if (type === 'geo') {
+            return (
+                <React.Fragment>
+                    <SegmentInput
+                        faramElementName="geoType"
+                        label={_ts('tabular.editField', 'geoTypeLabel')}
+                        options={EditFieldModal.geoTypeOptions}
+                        showLabel
+                        showHintAndError
+                    />
+                    <NumberInput
+                        faramElementName="adminLevel"
+                        label={_ts('tabular.editField', 'adminLevelLabel')}
+                        placeholder={_ts('tabular.editField', 'adminLevelPlaceholder')}
+                        showLabel
+                        showHintAndError
+                    />
+                </React.Fragment>
             );
         }
 

@@ -18,8 +18,8 @@ const propTypes = {
     bookId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
 
     setDefaultRequestParams: PropTypes.func.isRequired,
-    extractRequest: RequestClient.prop.isRequired,
-    bookRequest: RequestClient.prop.isRequired,
+    extractRequest: RequestClient.propType.isRequired,
+    bookRequest: RequestClient.propType.isRequired,
 };
 
 const defaultProps = {

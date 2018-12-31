@@ -6,6 +6,7 @@ import Button from '#rsca/Button';
 
 import ListView from '#rscv/List/ListView';
 import SparkLines from '#rscz/SparkLines';
+import GeoViz from '#components/GeoViz';
 
 import { iconNames } from '#constants';
 
@@ -36,11 +37,6 @@ export default class DataSeries extends React.PureComponent {
     static defaultProps = defaultProps;
     static seriesKeySelector = d => d.key;
 
-    static calcNumberSeries = memoize(series => series.map((item, index) => ({
-        key: index,
-        value: parseFloat(item.value),
-    })))
-
     static renderTableItem = ({ value }) => (
         <div
             className={styles.tableItem}
@@ -52,7 +48,18 @@ export default class DataSeries extends React.PureComponent {
 
     static renderTableParams = (key, item) => ({ ...item })
 
-    static previewComponents = {
+    static modes = {
+        string: ['table'],
+        number: ['table', 'line'],
+        datetime: ['table'],
+        geo: ['table', 'geo'],
+    }
+
+    state = {
+        mode: 'table',
+    }
+
+    previewComponents = {
         table: ({ value, className }) => (
             <ListView
                 className={_cs(className, styles.table)}
@@ -65,7 +72,7 @@ export default class DataSeries extends React.PureComponent {
         line: ({ value, className }) => (
             <SparkLines
                 className={_cs(className, styles.chart)}
-                data={DataSeries.calcNumberSeries(value.series)}
+                data={this.calcNumberSeries(value.series)}
                 yValueSelector={d => d.value}
                 xValueSelector={d => d.key}
                 yLabelModifier={y => y}
@@ -74,16 +81,21 @@ export default class DataSeries extends React.PureComponent {
                 fill
             />
         ),
+        geo: ({ value: { geodata }, className }) => (
+            <GeoViz
+                className={className}
+                regions={geodata.regions}
+                value={this.calcGeoValue(geodata)}
+            />
+        ),
     }
 
-    static modes = {
-        string: ['table'],
-        number: ['table', 'line'],
-    }
+    calcNumberSeries = memoize(series => series.map((item, index) => ({
+        key: index,
+        value: parseFloat(item.value),
+    })))
 
-    state = {
-        mode: 'table',
-    }
+    calcGeoValue = memoize(geodata => geodata.data.map(d => String(d.selectedId)))
 
     togglePreview = () => {
         const { mode } = this.state;
@@ -102,7 +114,7 @@ export default class DataSeries extends React.PureComponent {
         } = this.props;
         const { mode } = this.state;
 
-        const PreviewComponent = DataSeries.previewComponents[mode];
+        const PreviewComponent = this.previewComponents[mode];
 
         return (
             <div className={_cs(className, 'data-series', styles.dataSeries)}>

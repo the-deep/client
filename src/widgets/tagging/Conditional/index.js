@@ -8,13 +8,14 @@ const propTypes = {
         properties: PropTypes.object,
     }).isRequired,
     widgetType: PropTypes.string.isRequired,
-    entryType: PropTypes.string.isRequired,
+    entryType: PropTypes.string,
     excerpt: PropTypes.string,
     image: PropTypes.string,
     dataSeries: PropTypes.shape({}),
 };
 
 const defaultProps = {
+    entryType: undefined,
     excerpt: undefined,
     image: undefined,
     dataSeries: undefined,
