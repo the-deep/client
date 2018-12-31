@@ -137,28 +137,29 @@ export default class LeadForm extends React.PureComponent {
         };
 
         this.schema = {
-            fields: true,
             identifier: () => leadAccessor.getType(lead),
-            [LEAD_TYPE.file]: {
-                ...commonFields,
-                attachment: [requiredCondition],
-            },
-            [LEAD_TYPE.dropbox]: {
-                ...commonFields,
-                attachment: [requiredCondition],
-            },
-            [LEAD_TYPE.drive]: {
-                ...commonFields,
-                attachment: [requiredCondition],
-            },
-            [LEAD_TYPE.website]: {
-                ...commonFields,
-                url: [requiredCondition, urlCondition],
-                website: [requiredCondition],
-            },
-            [LEAD_TYPE.text]: {
-                ...commonFields,
-                text: [requiredCondition],
+            fields: {
+                [LEAD_TYPE.file]: {
+                    ...commonFields,
+                    attachment: [requiredCondition],
+                },
+                [LEAD_TYPE.dropbox]: {
+                    ...commonFields,
+                    attachment: [requiredCondition],
+                },
+                [LEAD_TYPE.drive]: {
+                    ...commonFields,
+                    attachment: [requiredCondition],
+                },
+                [LEAD_TYPE.website]: {
+                    ...commonFields,
+                    url: [requiredCondition, urlCondition],
+                    website: [requiredCondition],
+                },
+                [LEAD_TYPE.text]: {
+                    ...commonFields,
+                    text: [requiredCondition],
+                },
             },
         };
 
