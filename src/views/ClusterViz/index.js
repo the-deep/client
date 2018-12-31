@@ -442,22 +442,24 @@ export default class ClusterViz extends PureComponent {
                 {
                     createClusterFailure && (
                         <Fragment>
-                            <Message className={styles.message} >
-                                {_ts('clusterViz', 'createClusterFailure', {
-                                    addLeads: (
-                                        <Link
-                                            className={styles.link}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            to={reverseRoute(pathNames.addLeads, {
-                                                projectId: this.props.activeProject,
-                                            })}
-                                        >
-                                            {_ts('clusterViz', 'addLeadsLinkLabel')}
-                                        </Link>
-                                    ),
-                                })}
-                            </Message>
+                            <div className={styles.message}>
+                                <Message>
+                                    {_ts('clusterViz', 'createClusterFailure', {
+                                        addLeads: (
+                                            <Link
+                                                className={styles.link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                to={reverseRoute(pathNames.addLeads, {
+                                                    projectId: this.props.activeProject,
+                                                })}
+                                            >
+                                                {_ts('clusterViz', 'addLeadsLinkLabel')}
+                                            </Link>
+                                        ),
+                                    })}
+                                </Message>
+                            </div>
                             <OldForceDirectedGraph
                                 className={styles.forcedDirectedGraph}
                                 headerText={_ts('visualization', 'forcedDirectedGraph')}
