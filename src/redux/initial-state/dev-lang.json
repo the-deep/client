@@ -890,7 +890,8 @@
         "-47036305": ",",
         "-45402687": "1",
         "-53408079": "Back",
-        "-39430073": "Close"
+        "-39430073": "Close",
+        "-24457818": "Sectors"
     },
     "links": {
         "browserExtension": {
@@ -1405,7 +1406,7 @@
         },
         "editAssessment.methodology": {
             "focusesTitle": 9025,
-            "sectorsTitle": 9026,
+            "sectorsTitle": -24457818,
             "affectedGroupsTitle": 9027,
             "locationsTitle": 9028,
             "methodologyContentTitle": 9029,

@@ -83,3 +83,11 @@ export const editArySelectedSectorsSelector = createSelector(
         return methodology.sectors || emptyList;
     },
 );
+
+export const editArySelectedFocusesSelector = createSelector(
+    editAryFaramValuesSelector,
+    (faramValues) => {
+        const methodology = faramValues.methodology || emptyObject;
+        return methodology.focuses || emptyList;
+    },
+);
