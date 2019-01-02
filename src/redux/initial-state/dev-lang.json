@@ -686,6 +686,8 @@
         "12508": "Start typing and results will be returned by their relevance to you",
         "12509": "Role",
         "12510": "Are you sure you want to remove membership of {memberName}({memberEmail}) from this project?",
+        "12550": "Word category title",
+        "12551": "Enter title for word category",
         "15000": "Quantitative",
         "15001": "Are you sure you want to delete these table sheets? All changes will be lost.",
         "15002": "Edit table field",
@@ -698,6 +700,7 @@
         "15009": "Skip this sheet",
         "15010": "Header row",
         "15011": "Number of entries from this lead",
+
 
         "-12279953": "Entry Cleared",
         "-94068330": "All local entries were cleared because associated analysis framework was removed.",
@@ -998,6 +1001,8 @@
             "requestSchemaLabel": 7037
         },
         "categoryEditor": {
+            "titleInputTitle": 12550,
+            "titleInputPlaceholder": 12551,
             "saveCeButtonLabel": 25,
             "headerCategoryLabel": 401,
             "selectCategoryPlaceholder": 402,
