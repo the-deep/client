@@ -6,6 +6,7 @@ import {
     Link,
 } from 'react-router-dom';
 
+import Page from '#rscv/Page';
 import Message from '#rscv/Message';
 import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -268,38 +269,12 @@ export default class Arys extends React.PureComponent {
         this.props.setAryPageActiveSort({ activeSort });
     }
 
-    renderHeader = () => (
-        <header className={styles.header}>
-            <FilterArysForm className={styles.filters} />
-        </header>
-    )
-
-    renderFooter = () => {
-        const {
-            totalArysCount,
-            activePage,
-        } = this.props;
-
-        return (
-            <footer className={styles.footer}>
-                <div />
-                <Pager
-                    activePage={activePage}
-                    className={styles.pager}
-                    itemsCount={totalArysCount}
-                    maxItemsPerPage={MAX_ARYS_PER_REQUEST}
-                    onPageClick={this.handlePageClick}
-                    showItemsPerPageChange={false}
-                />
-            </footer>
-        );
-    }
-
     renderEmpty = () => {
         const {
             filters,
             projectId,
         } = this.props;
+
         const isFilterEmpty = isObjectEmpty(filters);
 
         if (!isFilterEmpty) {
@@ -342,7 +317,13 @@ export default class Arys extends React.PureComponent {
             loadingArys,
             redirectTo,
         } = this.state;
-        const { className, arys } = this.props;
+
+        const {
+            className,
+            arys,
+            totalArysCount,
+            activePage,
+        } = this.props;
 
         if (redirectTo) {
             return (
@@ -357,23 +338,41 @@ export default class Arys extends React.PureComponent {
         const Footer = this.renderFooter;
 
         return (
-            <div className={`${className} ${styles.arys}`}>
-                <Header />
-                <div className={styles.tableContainer}>
-                    <RawTable
-                        data={arys}
-                        dataModifier={this.aryModifier}
-                        headerModifier={this.headerModifier}
-                        headers={this.headers}
-                        onHeaderClick={this.handleTableHeaderClick}
-                        keySelector={this.aryKeyExtractor}
-                        className={styles.arysTable}
-                        emptyComponent={this.renderEmpty}
-                    />
-                    { loadingArys && <LoadingAnimation /> }
-                </div>
-                <Footer />
-            </div>
+            <Page
+                className={`${className} ${styles.arys}`}
+                headerClassName={styles.header}
+                header={<FilterArysForm className={styles.filters} />}
+                mainContentClassName={styles.mainContent}
+                mainContent={
+                    <div className={styles.tableContainer}>
+                        <RawTable
+                            data={arys}
+                            dataModifier={this.aryModifier}
+                            headerModifier={this.headerModifier}
+                            headers={this.headers}
+                            onHeaderClick={this.handleTableHeaderClick}
+                            keySelector={this.aryKeyExtractor}
+                            className={styles.arysTable}
+                            emptyComponent={this.renderEmpty}
+                        />
+                        { loadingArys && <LoadingAnimation /> }
+                    </div>
+                }
+                footerClassName={styles.footer}
+                footer={
+                    <React.Fragment>
+                        <div />
+                        <Pager
+                            activePage={activePage}
+                            className={styles.pager}
+                            itemsCount={totalArysCount}
+                            maxItemsPerPage={MAX_ARYS_PER_REQUEST}
+                            onPageClick={this.handlePageClick}
+                            showItemsPerPageChange={false}
+                        />
+                    </React.Fragment>
+                }
+            />
         );
     }
 }

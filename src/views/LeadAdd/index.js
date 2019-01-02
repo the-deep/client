@@ -1,13 +1,9 @@
-/**
- * @author frozenhelium <fren.ankit@gmail.com>
- * @co-author tnagorra <weathermist@gmail.com>
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 
+import Page from '#rscv/Page';
 import {
     isTruthy,
     randomString,
@@ -269,7 +265,7 @@ export default class LeadAdd extends React.PureComponent {
         const { pendingSubmitAll } = this.state;
 
         return (
-            <div className={styles.addLead}>
+            <React.Fragment>
                 <Prompt
                     message={
                         (location) => {
@@ -283,49 +279,60 @@ export default class LeadAdd extends React.PureComponent {
                         }
                     }
                 />
-                <header className={styles.header}>
-                    <div className={styles.leftContainer}>
-                        <BackLink defaultLink={reverseRoute(pathNames.leads, { projectId })} />
-                        <LeadFilter />
-                    </div>
-                    { hasActiveLead &&
-                        <LeadActions
-                            leadFormSubmitters={this.leadFormSubmitters}
-                            formCoordinator={this.formCoordinator}
-                            uploadCoordinator={this.uploadCoordinator}
-                            pendingSubmitAll={pendingSubmitAll}
-                        />
-                    }
-                </header>
-                <div className={styles.content}>
-                    <div className={styles.left}>
-                        <LeadList />
-                        <Cloak
-                            hide={LeadActions.shouldHideButtons}
-                            render={
-                                <LeadButtons
-                                    uploadCoordinator={this.uploadCoordinator}
-                                    driveUploadCoordinator={this.driveUploadCoordinator}
-                                    dropboxUploadCoordinator={this.dropboxUploadCoordinator}
+                <Page
+                    className={styles.addLead}
+                    headerClassName={styles.header}
+                    header={
+                        <React.Fragment>
+                            <div className={styles.leftContainer}>
+                                <BackLink
+                                    defaultLink={reverseRoute(pathNames.leads, { projectId })}
                                 />
-                            }
-                        />
-                    </div>
-                    {
-                        addLeadViewLeads.length === 0 ? (
-                            <Message>
-                                { _ts('addLeads', 'noLeadsText') }
-                            </Message>
-                        ) : (
-                            <List
-                                data={addLeadViewLeads}
-                                modifier={this.renderLeadDetail}
-                                keySelector={leadAccessor.getKey}
-                            />
-                        )
+                                <LeadFilter />
+                            </div>
+                            { hasActiveLead && (
+                                <LeadActions
+                                    leadFormSubmitters={this.leadFormSubmitters}
+                                    formCoordinator={this.formCoordinator}
+                                    uploadCoordinator={this.uploadCoordinator}
+                                    pendingSubmitAll={pendingSubmitAll}
+                                />
+                            ) }
+                        </React.Fragment>
                     }
-                </div>
-            </div>
+                    mainContentClassName={styles.mainContent}
+                    mainContent={
+                        <React.Fragment>
+                            <div className={styles.left}>
+                                <LeadList />
+                                <Cloak
+                                    hide={LeadActions.shouldHideButtons}
+                                    render={
+                                        <LeadButtons
+                                            uploadCoordinator={this.uploadCoordinator}
+                                            driveUploadCoordinator={this.driveUploadCoordinator}
+                                            dropboxUploadCoordinator={this.dropboxUploadCoordinator}
+                                        />
+                                    }
+                                />
+                            </div>
+                            {
+                                addLeadViewLeads.length === 0 ? (
+                                    <Message>
+                                        { _ts('addLeads', 'noLeadsText') }
+                                    </Message>
+                                ) : (
+                                    <List
+                                        data={addLeadViewLeads}
+                                        modifier={this.renderLeadDetail}
+                                        keySelector={leadAccessor.getKey}
+                                    />
+                                )
+                            }
+                        </React.Fragment>
+                    }
+                />
+            </React.Fragment>
         );
     }
 }

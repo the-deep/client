@@ -1,39 +1,22 @@
 @import '~base-scss/base';
 
-$color-text-on-primary: get-text-color($color-primary);
-
 .user-exports {
-    @extend %main-content;
-    display: flex;
-    flex-direction: column;
-    margin: -$spacing-small-alt;
-    border: 0;
-    background-color: transparent;
-    height: calc(100vh - #{$height-navbar});
-
     .header {
-        @include background-color($color-background-header);
         display: flex;
         align-items: center;
-        flex-shrink: 0;
-        border-bottom: $width-separator-thin solid $color-separator;
-        padding: $spacing-small $spacing-medium-alt;
 
-        .export-link {
-            @extend %button-like-link;
-            background-color: $color-primary;
-            color: $color-text-on-primary;
+        .back-link {
+            flex-shrink: 0;
+        }
+
+        .heading {
+            flex-grow: 1;
         }
     }
 
-    .main-container {
-        @include background-color($color-foreground-alt);
+    .main-content {
         display: flex;
         position: relative;
-        flex-grow: 1;
-        margin: $spacing-small-alt;
-        border: $width-separator-thin solid $color-separator-alt;
-        padding-bottom: $spacing-extra-small;
 
         .table-container {
             display: flex;

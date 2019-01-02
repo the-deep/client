@@ -1,101 +1,104 @@
 @import '~base-scss/base';
 
-$header-height: 48px;
-$info-height: 144px;
+$width-left-content: 420px;
+$width-display-picture: 108px;
 
 .user-profile {
-    @extend %main-content;
-    display: grid;
-    grid-template-areas:
-        "header projects"
-        "info projects"
-        "stats projects"
-        "stats groups";
-    grid-template-columns: 3fr 7fr;
-    grid-template-rows: $header-height $info-height 3fr 2fr;
+    overflow: auto;
 
-    >* {
-        background-color: $color-foreground;
-    }
-
-    .header {
+    .main-content {
         display: flex;
-        align-items: center;
-        border-right: $width-separator-thin solid $color-separator;
-        border-bottom: $width-separator-thin solid $color-separator;
-        background-color: $color-background-header;
-        padding: 0 $spacing-medium-alt;
-        grid-area: header;
-    }
+        overflow: auto;
 
-    .info {
-        display: flex;
-        align-items: flex-start;
-        border-right: $width-separator-thin solid $color-separator;
-        border-bottom: $width-separator-thin solid $color-separator;
-        padding: $spacing-large;
-        grid-area: info;
+        .left {
+            display: flex;
+            flex-basis: $width-left-content;
+            flex-direction: column;
+            flex-grow: 0;
+            flex-shrink: 0;
+            border-right: $width-separator-thin solid $color-separator;
 
-        .display-picture {
-            border: $width-separator-medium solid $color-accent;
-            width: $info-height - $spacing-large * 2;
-            height: 100%;
-        }
-
-        .detail {
-            padding: $spacing-medium $spacing-extra-large;
-
-            .name {
+            .info {
                 display: flex;
-                justify-content: space-between;
-                font-size: $font-size-super-large;
+                align-items: flex-start;
+                flex-shrink: 0;
+                border-bottom: $width-separator-thin solid $color-separator;
+                padding: $spacing-large;
 
-                .first {
-                    margin-right: $spacing-small;
-                    color: $color-text;
+                .display-picture {
+                    display: block;
+                    flex-shrink: 0;
+                    margin-right: $spacing-large;
+                    border: $width-separator-medium solid $color-accent;
+                    width: $width-display-picture;
+                    height: $width-display-picture;
                 }
 
-                .last {
-                    color: $color-text;
-                }
+                .detail {
+                    flex-grow: 1;
 
-                button {
-                    margin-left: $spacing-small;
+                    .name-container {
+                        display: flex;
+                        align-items: center;
 
-                    &:hover {
-                        background-color: $color-background-hover;
+                        .name {
+                            display: flex;
+                            flex-grow: 1;
+                            font-size: $font-size-super-large;
+
+                            .first {
+                                margin-right: $spacing-small;
+                            }
+                        }
+
+                        .edit-profile-button {
+                            flex-shrink: 0;
+                        }
                     }
 
+                    .email {
+                        margin-bottom: $spacing-small;
+                        color: $color-text-label;
+                        font-size: $font-size-large;
+                    }
+
+                    .organization {
+                        font-size: $font-size-large;
+                    }
                 }
             }
 
-            .email {
-                margin: 0;
-                color: $color-text-label;
+            .stats {
+                flex-grow: 1;
+                padding: $spacing-medium;
+            }
+        }
+
+        .right {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow: auto;
+
+            .projects {
+                flex-basis: 60%;
+                flex-grow: 0;
+                flex-shrink: 0;
+                border-bottom: $width-separator-thin solid $color-separator;
+                background-color: $color-background-row;
+                overflow: auto;
             }
 
-            .organization {
-                color: $color-text-label;
+            .groups {
+                flex-basis: 40%;
+                flex-grow: 0;
+                flex-shrink: 0;
+                background-color: $color-background-row;
+                overflow: auto;
             }
         }
     }
 
-    .stats {
-        border-right: $width-separator-thin solid $color-separator;
-        padding: $spacing-medium;
-        grid-area: stats;
-    }
-
-    .projects {
-        border-bottom: $width-separator-thin solid $color-separator;
-        background-color: $color-background-row;
-        grid-area: projects;
-    }
-
-    .groups {
-        background-color: $color-background-row;
-        grid-area: groups;
-    }
 }
 
 .user-profile-edit-modal {

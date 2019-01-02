@@ -1,23 +1,10 @@
 @import '~base-scss/base';
 
 .dashboard {
-    @extend %main-content;
-    display: flex;
-    flex-direction: column;
-
-    .header {
-        margin: 0;
-        border-bottom: $width-separator-thin solid $color-separator;
-        background-color: $color-background-header;
-        padding: $spacing-medium $spacing-medium-alt;
-        text-transform: uppercase;
-    }
-
-    .content {
+    .main-content {
         display: flex;
         align-items: center;
         flex-direction: column;
-        flex-grow: 1;
         justify-content: center;
 
         .deep-logo {

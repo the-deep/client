@@ -10,6 +10,7 @@ import {
 import BoundError from '#rscg/BoundError';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
+import Page from '#rscv/Page';
 import ChordDiagram from '#rscz/ChordDiagram';
 import CollapsibleTree from '#rscz/CollapsibleTree';
 import CorrelationMatrix from '#rscz/CorrelationMatrix';
@@ -350,10 +351,10 @@ export default class LeadsViz extends React.PureComponent {
 
         if (loadingLeads) {
             return <LoadingAnimation />;
-        }
-        if (noLeadsFound) {
+        } else if (noLeadsFound) {
             return this.renderNoLeadFound();
         }
+
         return this.renderCharts();
     }
 
@@ -364,17 +365,24 @@ export default class LeadsViz extends React.PureComponent {
         } = this.props;
 
         const exitPath = reverseRoute(pathNames.leads, { projectId: activeProject.id });
+        const MainContent = this.renderContent;
 
         return (
-            <div className={_cs(styles.leadsVisualization, className)}>
-                <header className={styles.header}>
-                    <BackLink defaultLink={exitPath} />
-                    <FilterLeadsForm className={styles.filters} />
-                </header>
-                <div className={styles.content}>
-                    { this.renderContent() }
-                </div>
-            </div>
+            <Page
+                className={_cs(styles.leadsVisualization, className)}
+                headerClassName={styles.header}
+                header={
+                    <React.Fragment>
+                        <BackLink
+                            defaultLink={exitPath}
+                            className={styles.backLink}
+                        />
+                        <FilterLeadsForm className={styles.filters} />
+                    </React.Fragment>
+                }
+                mainContentClassName={styles.mainContent}
+                mainContent={<MainContent />}
+            />
         );
     }
 }

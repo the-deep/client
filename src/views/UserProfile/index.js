@@ -1,15 +1,11 @@
-/**
- * @author frozenhelium <fren.ankit@gmail.com>
- * @co-author tnagorra <weathermist@gmail.com>
- * @co-author pprabesh <prabes.pathak@gmail.com>
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import Page from '#rscv/Page';
 import Message from '#rscv/Message';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+import Button from '#rsca/Button';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
@@ -66,7 +62,7 @@ export default class UserProfile extends React.PureComponent {
         super(props);
 
         this.state = {
-            editProfile: false,
+            showEditProfileModal: false,
             userInformationPending: true,
             userProjectsPending: true,
             userUsergroupsPending: true,
@@ -112,11 +108,45 @@ export default class UserProfile extends React.PureComponent {
 
     // BUTTONS
     handleEditProfileClick = () => {
-        this.setState({ editProfile: true });
+        this.setState({ showEditProfileModal: true });
     }
 
     handleEditProfileClose = () => {
-        this.setState({ editProfile: false });
+        this.setState({ showEditProfileModal: false });
+    }
+
+    renderEditProfileModal = () => {
+        const {
+            userInformation,
+            userId,
+        } = this.props;
+
+        return (
+            <Modal
+                closeOnEscape
+                onClose={this.handleEditProfileClose}
+                className={styles.userProfileEditModal}
+            >
+                <ModalHeader
+                    title={_ts('userProfile', 'editProfileModalHeader')}
+                    rightComponent={
+                        <PrimaryButton
+                            onClick={this.handleEditProfileClose}
+                            transparent
+                        >
+                            <span className={iconNames.close} />
+                        </PrimaryButton>
+                    }
+                />
+                <ModalBody>
+                    <UserEdit
+                        userId={userId}
+                        userInformation={userInformation}
+                        handleModalClose={this.handleEditProfileClose}
+                    />
+                </ModalBody>
+            </Modal>
+        );
     }
 
     render() {
@@ -130,6 +160,7 @@ export default class UserProfile extends React.PureComponent {
             userInformationPending,
             userProjectsPending,
             userUsergroupsPending,
+            showEditProfileModal,
         } = this.state;
 
         const pending = (
@@ -139,96 +170,74 @@ export default class UserProfile extends React.PureComponent {
         );
 
         const isCurrentUser = userId === activeUser.userId;
-
-        if (pending) {
-            return (
-                <div className={styles.userProfile}>
-                    <LoadingAnimation />
-                </div>
-            );
-        }
-
-        if (!userInformation.id) {
-            return (
-                <Message>
-                    {_ts('userProfile', 'userNotFound')}
-                </Message>
-            );
-        }
+        const EditProfileModal = this.renderEditProfileModal;
 
         return (
-            <div className={styles.userProfile}>
-                <header className={styles.header}>
+            <Page
+                className={styles.userProfile}
+                header={
                     <h2>
                         {_ts('userProfile', 'userProfileTitle')}
                     </h2>
-                </header>
-                <div className={styles.info}>
-                    {/* FIXME: add a default image in img */}
-                    <DisplayPicture
-                        className={styles.displayPicture}
-                        galleryId={userInformation.displayPicture}
-                    />
-                    <div className={styles.detail}>
-                        <div className={styles.name}>
-                            <div>
-                                <span className={styles.first}>
-                                    { userInformation.firstName }
-                                </span>
-                                <span className={styles.last}>
-                                    { userInformation.lastName }
-                                </span>
-                            </div>
-                            {
-                                isCurrentUser &&
-                                    <PrimaryButton
-                                        onClick={this.handleEditProfileClick}
-                                        transparent
-                                    >
-                                        <span className={iconNames.edit} />
-                                    </PrimaryButton>
-                            }
-                            { this.state.editProfile &&
-                                <Modal
-                                    closeOnEscape
-                                    onClose={this.handleEditProfileClose}
-                                    className={styles.userProfileEditModal}
-                                >
-                                    <ModalHeader
-                                        title={_ts('userProfile', 'editProfileModalHeader')}
-                                        rightComponent={
-                                            <PrimaryButton
-                                                onClick={this.handleEditProfileClose}
-                                                transparent
-                                            >
-                                                <span className={iconNames.close} />
-                                            </PrimaryButton>
-                                        }
-                                    />
-                                    <ModalBody>
-                                        <UserEdit
-                                            userId={userId}
-                                            userInformation={userInformation}
-                                            handleModalClose={this.handleEditProfileClose}
+                }
+                mainContentClassName={styles.mainContent}
+                mainContent={
+                    <React.Fragment>
+                        { pending && <LoadingAnimation /> }
+                        { !pending && userInformation.id ? (
+                            <React.Fragment>
+                                <div className={styles.left}>
+                                    <div className={styles.info}>
+                                        {/* FIXME: add a default image in img */}
+                                        <DisplayPicture
+                                            className={styles.displayPicture}
+                                            galleryId={userInformation.displayPicture}
                                         />
-                                    </ModalBody>
-                                </Modal>
-                            }
-                        </div>
-                        <p className={styles.email}>
-                            { userInformation.email }
-                        </p>
-                        <p className={styles.organization}>
-                            { userInformation.organization }
-                        </p>
-                    </div>
-                </div>
-                <div className={styles.stats}>
-                    <h2>Stats</h2>
-                </div>
-                <UserProject className={styles.projects} />
-                <UserGroup className={styles.groups} />
-            </div>
+                                        <div className={styles.detail}>
+                                            <div className={styles.nameContainer}>
+                                                <div className={styles.name}>
+                                                    <div className={styles.first}>
+                                                        { userInformation.firstName }
+                                                    </div>
+                                                    <div className={styles.last}>
+                                                        { userInformation.lastName }
+                                                    </div>
+                                                </div>
+                                                { isCurrentUser && (
+                                                    <Button
+                                                        className={styles.editProfileButton}
+                                                        onClick={this.handleEditProfileClick}
+                                                        transparent
+                                                        iconName={iconNames.edit}
+                                                    />
+                                                )}
+                                                { showEditProfileModal && <EditProfileModal /> }
+                                            </div>
+                                            <div className={styles.email}>
+                                                { userInformation.email }
+                                            </div>
+                                            <div className={styles.organization}>
+                                                { userInformation.organization }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className={styles.stats}>
+                                        <h2>Stats</h2>
+                                    </div>
+                                </div>
+                                <div className={styles.right}>
+                                    <UserProject className={styles.projects} />
+                                    <UserGroup className={styles.groups} />
+                                </div>
+                            </React.Fragment>
+                        ) : (
+                            <Message>
+                                {_ts('userProfile', 'userNotFound')}
+                            </Message>
+                        ) }
+                    </React.Fragment>
+                }
+            />
         );
     }
 }

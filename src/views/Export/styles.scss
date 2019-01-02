@@ -1,26 +1,7 @@
 @import '~base-scss/base';
 
-$page-margin: $spacing-small-alt;
-
 .export {
-    display: flex;
-    flex-direction: column;
-    margin: -$page-margin;
-    border: 0;
-    background-color: transparent;
-    height: calc(100% + #{$page-margin * 2});
-    overflow: auto;
-
-    >.header {
-        @include background-color($color-background-header);
-        flex-shrink: 0;
-        border-bottom: $width-separator-thin solid $color-separator-alt;
-        padding: $spacing-small $spacing-medium;
-    }
-
     .main-content {
-        @extend %main-content;
-        @include background-color($color-foreground-alt);
         display: flex;
         flex-grow: 1;
         margin: $spacing-small-alt;

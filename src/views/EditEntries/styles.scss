@@ -1,18 +1,9 @@
 @import '~base-scss/base';
 
-$height-header: 42px;
-
 .edit-entries {
-    margin: -$spacing-small;
-    padding: 0;
-    height: 100%;
-
     .header {
         display: flex;
         align-items: center;
-        border-bottom: $width-separator-thin solid $color-separator-alt;
-        background-color: $color-background-header;
-        height: $height-header;
 
         .heading {
             flex-grow: 1;
@@ -47,14 +38,17 @@ $height-header: 42px;
         }
     }
 
-    .content {
-        @extend %main-content;
-        display: none;
-        margin: $spacing-small;
-        height: calc(100% - #{$height-header});
+    .main-content {
+        display: flex;
+        flex-direction: column;
 
-        &.active {
-            display: block;
+        .content {
+            display: none;
+            flex-grow: 1;
+
+            &.active {
+                display: block;
+            }
         }
     }
 }
