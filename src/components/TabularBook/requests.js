@@ -1,6 +1,13 @@
 import { requestMethods } from '#request';
 
 export default {
+    getBookRequest: {
+        method: requestMethods.GET,
+        url: ({ props }) => `/tabular-books/${props.bookId}/`,
+        onSuccess: ({ response, params }) => params.setBook(response),
+        // onFailure, onFatal
+    },
+
     deleteRequest: {
         method: requestMethods.DELETE,
         url: ({ props }) => `/tabular-books/${props.bookId}/`,

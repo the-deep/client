@@ -88,7 +88,7 @@ export default class TabularSheet extends React.PureComponent {
 
         cellRenderer: renderers[field.type] || renderers.string,
         comparator: (a, b, d) => comparators[field.type](
-            a[field.id], b[field.id], d,
+            a[field.id].value, b[field.id].value, d,
         ),
     })
 
