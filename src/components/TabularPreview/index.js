@@ -3,7 +3,7 @@ import React from 'react';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 
 import SheetPreview from '#components/TabularSheetPreview';
 import { RequestClient } from '#request';
@@ -116,7 +116,7 @@ export default class TabularPreview extends React.PureComponent {
                     className={styles.sheet}
                     sheet={sheets[activeSheet]}
                 />
-                <FixedTabs
+                <ScrollTabs
                     className={styles.tabs}
                     tabs={tabs}
                     active={activeSheet}

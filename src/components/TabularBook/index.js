@@ -7,7 +7,7 @@ import ModalFooter from '#rscv/Modal/Footer';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 
 import Button from '#rsca/Button';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
@@ -211,7 +211,7 @@ export default class TabularBook extends React.PureComponent {
                         sheet={sheets[activeSheet]}
                         onSheetChange={this.handleSheetChange}
                     />
-                    <FixedTabs
+                    <ScrollTabs
                         className={styles.tabs}
                         tabs={tabs}
                         active={activeSheet}
