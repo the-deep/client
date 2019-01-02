@@ -1,12 +1,9 @@
-/**
- * @author tnagorra <weathermist@gmail.com>
- */
-
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import Message from '#rscv/Message';
+import Modal from '#rscv/Modal';
 import { FgRestBuilder } from '#rsu/rest';
 import {
     requiredCondition,
@@ -90,6 +87,7 @@ export default class LeadFormItem extends React.PureComponent {
 
         const lead = leadAccessor.getFaramValues(this.props.lead);
         const isUrlValid = LeadFormItem.isUrlValid(lead.url);
+
         this.state = {
             isUrlValid,
             tabularMode: false,
@@ -139,15 +137,11 @@ export default class LeadFormItem extends React.PureComponent {
     }
 
     setTabularBook = (tabularBook) => {
-        this.setState({
-            tabularMode: false,
-        }, () => {
-            this.handleFieldsChange({ tabularBook });
-        });
+        this.handleFieldsChange({ tabularBook });
     }
 
     unsetTabularMode = () => {
-        this.setState({ tabularMode: false });
+        this.setState({ tabularMode: false, tabularMimeType: undefined });
     }
 
     unsetTabularBook = () => {
@@ -219,8 +213,16 @@ export default class LeadFormItem extends React.PureComponent {
         this.webInfoExtractRequest.start();
     }
 
+    handleFieldsChange = (fields = {}) => {
+        const { lead: { faramValues = {}, faramErrors } = {} } = this.props;
+        const newFaramValues = {
+            ...faramValues,
+            ...fields,
+        };
+        this.handleFormChange(newFaramValues, faramErrors);
+    }
+
     handleFormSuccess = (newValues) => {
-        console.warn('success', newValues);
         const {
             lead,
             onFormSubmitSuccess,
@@ -259,17 +261,7 @@ export default class LeadFormItem extends React.PureComponent {
         });
     }
 
-    handleFieldsChange = (fields = {}) => {
-        const { lead: { faramValues = {}, faramErrors } = {} } = this.props;
-        const newFaramValues = {
-            ...faramValues,
-            ...fields,
-        };
-        this.handleFormChange(newFaramValues, faramErrors);
-    }
-
     handleFormFailure = (faramErrors) => {
-        console.warn('failure', faramErrors);
         const {
             leadKey: leadId,
             addLeadViewLeadChange,
@@ -371,50 +363,19 @@ export default class LeadFormItem extends React.PureComponent {
         const type = leadAccessor.getType(lead);
         const values = leadAccessor.getFaramValues(lead);
 
-        if (values.tabularBook) {
-            return (
-                <TabularBook
-                    className={className}
-                    bookId={values.tabularBook}
-                    projectId={values.project}
-                    onDelete={this.unsetTabularBook}
-                    setSaveTabularFunction={this.setSaveTabularFunction}
-                    onEdited={this.handleFieldsChange}
-                    showDelete
-                />
-            );
-        }
-
-        const {
-            tabularMode,
-            tabularMimeType,
-        } = this.state;
-
-        if (tabularMode) {
-            return (
-                <LeadTabular
-                    className={className}
-                    mimeType={tabularMimeType}
-                    setTabularBook={this.setTabularBook}
-                    onCancel={this.unsetTabularMode}
-                    lead={lead}
-                />
-            );
-        }
-
         switch (type) {
             case LEAD_TYPE.text:
                 return null;
             case LEAD_TYPE.website:
                 return (
-                    <div className={styles.leadPreview} >
+                    <div className={className} >
                         {
                             values.url ? (
                                 <ExternalGallery
-                                    className={`${className} ${styles.galleryFile}`}
+                                    className={styles.galleryFile}
                                     url={values.url}
                                     onTabularClick={this.setTabularMode}
-                                    showTabular
+                                    showTabular={!this.state.tabularMode}
                                     showUrl
                                 />
                             ) : (
@@ -435,7 +396,7 @@ export default class LeadFormItem extends React.PureComponent {
                                     galleryId={values.attachment && values.attachment.id}
                                     notFoundMessage={_ts('addLeads', 'leadFileNotFound')}
                                     onTabularClick={this.setTabularMode}
-                                    showTabular
+                                    showTabular={!this.state.tabularMode}
                                     showUrl
                                 />
                             ) : (
@@ -447,24 +408,6 @@ export default class LeadFormItem extends React.PureComponent {
                     </div>
                 );
         }
-    }
-
-    renderAddLeadGroupModal = () => {
-        const { showAddLeadGroupModal } = this.state;
-
-        if (!showAddLeadGroupModal) {
-            return null;
-        }
-
-        const leadValues = leadAccessor.getFaramValues(this.props.lead);
-
-        return (
-            <AddLeadGroup
-                onModalClose={this.handleAddLeadGroupModalClose}
-                onLeadGroupAdd={this.handleLeadGroupAdd}
-                projectId={leadValues.project}
-            />
-        );
     }
 
     render() {
@@ -481,14 +424,19 @@ export default class LeadFormItem extends React.PureComponent {
             hidePreview,
             ...otherProps
         } = this.props;
+        const {
+            showAddLeadGroupModal,
+            tabularMode,
+            tabularMimeType,
+        } = this.state;
 
         const LeadPreview = this.renderLeadPreview;
-        const AddLeadGroupModal = this.renderAddLeadGroupModal;
 
         const {
             faramValues: {
                 project: projectId,
                 sourceType,
+                tabularBook,
             } = {},
         } = lead;
         const type = leadAccessor.getType(lead);
@@ -529,16 +477,54 @@ export default class LeadFormItem extends React.PureComponent {
                                 onExtractClick={this.handleExtractClick}
                                 {...otherProps}
                             />
-                            <AddLeadGroupModal />
+                            { showAddLeadGroupModal &&
+                                <AddLeadGroup
+                                    onModalClose={this.handleAddLeadGroupModalClose}
+                                    onLeadGroupAdd={this.handleLeadGroupAdd}
+                                    projectId={projectId}
+                                />
+                            }
+                            { tabularMode &&
+                                <Modal
+                                    className={styles.tabularModal}
+                                    onClose={this.unsetTabularMode}
+                                    closeOnEscape
+                                >
+                                    {
+                                        tabularBook ? (
+                                            <TabularBook
+                                                className={className}
+                                                bookId={tabularBook}
+                                                projectId={projectId}
+                                                onDelete={this.unsetTabularBook}
+                                                setSaveTabularFunction={
+                                                    this.setSaveTabularFunction
+                                                }
+                                                onEdited={this.handleFieldsChange}
+                                                onCancel={this.unsetTabularMode}
+                                                showDelete
+                                            />
+                                        ) : (
+                                            <LeadTabular
+                                                className={className}
+                                                mimeType={tabularMimeType}
+                                                setTabularBook={this.setTabularBook}
+                                                onCancel={this.unsetTabularMode}
+                                                lead={lead}
+                                            />
+                                        )
+                                    }
+                                </Modal>
+                            }
                         </Fragment>
                     }
                     bottomChild={
-                        active && !hidePreview && sourceType !== 'text' ? (
+                        active && !hidePreview && sourceType !== 'text' && (
                             <LeadPreview
                                 lead={lead}
                                 className={styles.leadPreview}
                             />
-                        ) : null
+                        )
                     }
                 />
             </div>

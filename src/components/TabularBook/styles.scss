@@ -3,24 +3,24 @@
 .tabular-book {
     display: flex;
     flex-direction: column;
-    border-top: $width-separator-thin solid $color-separator;
+    flex-grow: 1;
+    overflow: auto;
 
-    header {
+    .body {
         display: flex;
-        align-items: center;
-        flex-shrink: 0;
-        justify-content: space-between;
-        padding: 0 $spacing-medium;
-        height: 32px;
-    }
+        flex-direction: column;
+        padding: 0;
+        overflow: auto;
 
-    .sheet-view {
-        flex-grow: 1;
-        min-height: 0;
-    }
+        .sheet-view {
+            flex-grow: 1;
+            margin: $spacing-small;
+            overflow: auto;
+        }
 
-    .tabs {
-        flex-shrink: 0;
-        background-color: $color-foreground-alt;
+        .tabs {
+            flex-shrink: 0;
+            background-color: $color-foreground-alt;
+        }
     }
 }

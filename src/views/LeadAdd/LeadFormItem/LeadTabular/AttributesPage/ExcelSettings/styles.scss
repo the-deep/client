@@ -4,12 +4,9 @@ $width-input-max: 240px;
 
 .sheet-list {
     flex-grow: 1;
-    border-top: $width-separator-thin solid $color-separator;
-    overflow-y: auto;
 
     .sheet-setting {
         border-bottom: $width-separator-thin solid $color-separator;
-        background-color: $color-foreground;
 
         .header {
             display: flex;

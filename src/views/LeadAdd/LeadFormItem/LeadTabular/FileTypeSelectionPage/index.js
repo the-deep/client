@@ -2,9 +2,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import Faram, { requiredCondition } from '#rscg/Faram';
+import ModalFooter from '#rscv/Modal/Footer';
+import ModalBody from '#rscv/Modal/Body';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import SegmentInput from '#rsci/SegmentInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
+import DangerButton from '#rsca/Button/DangerButton';
 
 import { leadPaneTypeMap, LEAD_PANE_TYPE } from '#entities/lead';
 import { RequestClient, requestMethods } from '#request';
@@ -17,6 +20,7 @@ const noOp = () => {};
 const propTypes = {
     onComplete: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     onNext: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
+    onCancel: PropTypes.func,
 
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     mimeType: PropTypes.string,
@@ -28,6 +32,7 @@ const propTypes = {
 const defaultProps = {
     onComplete: noOp,
     onNext: noOp,
+    onCancel: noOp,
     mimeType: '',
 };
 
@@ -114,7 +119,10 @@ export default class FileTypeSelectionPage extends React.PureComponent {
             faramValues,
             faramErrors,
         } = this.state;
-        const { createBookRequest } = this.props;
+        const {
+            createBookRequest,
+            onCancel,
+        } = this.props;
 
         // TODO: Handle error
         const { pending } = createBookRequest;
@@ -130,24 +138,29 @@ export default class FileTypeSelectionPage extends React.PureComponent {
                 error={faramErrors}
                 disabled={pending}
             >
-                <NonFieldErrors faramElement />
-                <SegmentInput
-                    name="file-type-selection"
-                    className={styles.fileTypeSelect}
-                    faramElementName="fileType"
-                    label={_ts('addLeads.tabular', 'fileTypeLabel')}
-                    options={FileTypeSelectionPage.fileTypes}
-                    showLabel
-                    showHintAndError
-                    hideClearButton
-                />
-                <PrimaryButton
-                    type="submit"
-                    className={styles.submitButton}
-                    pending={pending}
-                >
-                    {_ts('addLeads.tabular', 'nextLabel')}
-                </PrimaryButton>
+                <ModalBody>
+                    <NonFieldErrors faramElement />
+                    <SegmentInput
+                        name="file-type-selection"
+                        faramElementName="fileType"
+                        label={_ts('addLeads.tabular', 'fileTypeLabel')}
+                        options={FileTypeSelectionPage.fileTypes}
+                        showLabel
+                        showHintAndError
+                        hideClearButton
+                    />
+                </ModalBody>
+                <ModalFooter>
+                    <DangerButton onClick={onCancel}>
+                        {_ts('addLeads.tabular', 'cancelButtonTitle')}
+                    </DangerButton>
+                    <PrimaryButton
+                        type="submit"
+                        pending={pending}
+                    >
+                        {_ts('addLeads.tabular', 'nextButtonTitle')}
+                    </PrimaryButton>
+                </ModalFooter>
             </Faram>
         );
     }
