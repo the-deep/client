@@ -119,6 +119,9 @@ export default class CategoryEditor extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static categoryKeySelector = d => d.id;
+    static categoryLabelSelector = d => d.title;
+
     constructor(props) {
         super(props);
 
@@ -519,8 +522,8 @@ export default class CategoryEditor extends React.PureComponent {
                                     onChange={this.handleCategorySelectChange}
                                     placeholder={_ts('categoryEditor', 'selectCategoryPlaceholder')}
                                     value={activeCategoryId}
-                                    keySelector={d => d.id}
-                                    labelSelector={d => d.title}
+                                    keySelector={CategoryEditor.categoryKeySelector}
+                                    labelSelector={CategoryEditor.categoryLabelSelector}
                                     hideClearButton
                                     disabled={pending}
                                 />
