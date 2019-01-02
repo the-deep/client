@@ -110,6 +110,7 @@ export default class TabularSheet extends React.PureComponent {
         value: column.value,
         sortOrder: column.sortOrder,
         onSortClick: column.onSortClick,
+        className: styles.header,
     })
 
     cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({

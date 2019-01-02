@@ -3,8 +3,14 @@
 .tabular-sheet {
     background-color: $color-foreground;
 
+    .header {
+        padding: 0;
+    }
+
     .cell {
-        display: block;
         padding: $spacing-small;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }
