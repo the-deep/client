@@ -25,6 +25,9 @@ import {
 
     projectDetailsSelector,
     geoOptionsForProjectSelector,
+
+    isSecondaryDataReviewOption,
+    getDataCollectionTechnique,
 } from '#redux';
 import OrganigramInput from '#components/OrganigramInput/';
 import GeoInput from '#components/GeoInput/';
@@ -86,8 +89,6 @@ export default class Methodology extends React.PureComponent {
         },
     ])
 
-    renderWidget = (k, data) => renderWidget(k, data, this.props.sources);
-
     renderAttributeHeader = (k, key) => {
         const { aryTemplateMethodology: attributesTemplate } = this.props;
         const methodologyGroup = attributesTemplate[key];
@@ -102,9 +103,17 @@ export default class Methodology extends React.PureComponent {
         );
     };
 
-    renderAttribute = (key, index) => {
+    renderAttribute = (key, index, hide, secondaryDataReviewKey) => {
         const { aryTemplateMethodology: attributesTemplate } = this.props;
         const methodologyGroup = attributesTemplate[key];
+
+        const renderCustomWidget = (k, data) => renderWidget(
+            k,
+            data,
+            this.props.sources,
+            hide,
+            secondaryDataReviewKey,
+        );
 
         return (
             <FaramGroup
@@ -114,16 +123,29 @@ export default class Methodology extends React.PureComponent {
                 <ListView
                     className={styles.cell}
                     data={methodologyGroup.fields}
-                    modifier={this.renderWidget}
+                    modifier={renderCustomWidget}
                 />
             </FaramGroup>
         );
     }
 
     renderAttributeRow = (rowKey, attribute, index) => {
+        // FIXME: memoize this
         const { aryTemplateMethodology: attributesTemplate } = this.props;
         const attributesTemplateKeys = Object.keys(attributesTemplate);
-        const renderAttribute = (k, key) => this.renderAttribute(key, index);
+        const dataCollectionTechnique = getDataCollectionTechnique(attributesTemplate);
+        const secondaryDataReview = dataCollectionTechnique.options.find(
+            isSecondaryDataReviewOption,
+        );
+
+        const hide = attribute[dataCollectionTechnique.id] === secondaryDataReview.key;
+
+        const renderAttribute = (k, key) => this.renderAttribute(
+            key,
+            index,
+            hide,
+            secondaryDataReview.key,
+        );
 
         return (
             <div
@@ -210,7 +232,8 @@ export default class Methodology extends React.PureComponent {
                                                             <PrimaryButton
                                                                 faramElementName="add-button"
                                                                 faramAction={
-                                                                    Methodology.addAttribute}
+                                                                    Methodology.addAttribute
+                                                                }
                                                                 iconName={iconNames.add}
                                                             />
                                                         </div>

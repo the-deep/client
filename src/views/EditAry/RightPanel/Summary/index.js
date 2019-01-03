@@ -79,7 +79,7 @@ export default class Summary extends React.PureComponent {
     // FIXME: this should be more dynamic later on
     static shouldShowHumanitarianAccess = memoize((focuses, selectedFocuses) => {
         const humanitarianAccessFocus = focuses.find(
-            focus => focus.title.toLowerCase() === 'humanitarian access',
+            focus => focus.title.toLowerCase().trim() === 'humanitarian access',
         );
         if (!humanitarianAccessFocus) {
             return false;
