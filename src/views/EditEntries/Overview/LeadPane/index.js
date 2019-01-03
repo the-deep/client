@@ -27,12 +27,11 @@ import { entryAccessor } from '#entities/editEntries';
 
 import _ts from '#ts';
 
-import SimplifiedLeadPreview from '#components/SimplifiedLeadPreview';
-import LeadPreview from '#components/LeadPreview';
-import TabularPreview from '#components/TabularPreview';
-import AssistedTagging from '#components/AssistedTagging';
-import ImagesGrid from '#components/ImagesGrid';
-import Highlight from '#components/Highlight';
+import SimplifiedLeadPreview from '#components/leftpanel/SimplifiedLeadPreview';
+import LeadPreview from '#components/leftpanel/LeadPreview';
+import TabularPreview from '#components/leftpanel/TabularPreview';
+import AssistedTagging from '#components/leftpanel/AssistedTagging';
+import ImagesGrid from '#components/viewer/ImagesGrid';
 import brainIcon from '#resources/img/brain.png';
 
 import EntriesList from './EntriesList';
@@ -119,7 +118,6 @@ export default class LeftPane extends React.PureComponent {
                     highlights={this.calculateHighlights()}
                     onLoad={this.handleLoadImages}
 
-                    renderer={Highlight}
                     rendererParams={this.highlightRendererParams}
                 />
             ),
@@ -252,10 +250,11 @@ export default class LeftPane extends React.PureComponent {
         }
 
         // Adding other tabs
-        tabs['entries-listing'] = _ts('editEntry.overview.leftpane', 'entriesTabLabel');
         if (lead.tabularBook) {
             tabs['tabular-preview'] = _ts('editEntry.overview.leftpane', 'quantitativeTabLabel');
         }
+
+        tabs['entries-listing'] = _ts('editEntry.overview.leftpane', 'entriesTabLabel');
 
         // Hiding tabs using conditional
         if (!images || images.length <= 0) {

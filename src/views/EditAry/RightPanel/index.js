@@ -19,7 +19,7 @@ import {
     editAryFaramErrorsSelector,
 } from '#redux';
 import _ts from '#ts';
-import TabTitle from '#components/TabTitle';
+import TabTitle from '#components/general/TabTitle';
 
 import Metadata from './Metadata';
 import Summary from './Summary';

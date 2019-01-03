@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 import { iconNames } from '#constants';
-import DisplayPicture from '#components/DisplayPicture';
+import DisplayPicture from '#components/viewer/DisplayPicture';
 
 import {
     RequestClient,

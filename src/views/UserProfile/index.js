@@ -15,7 +15,7 @@ import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
-import DisplayPicture from '#components/DisplayPicture';
+import DisplayPicture from '#components/viewer/DisplayPicture';
 import {
     userInformationSelector,
     setUserProfileAction,

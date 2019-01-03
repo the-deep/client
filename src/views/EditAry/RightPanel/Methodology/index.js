@@ -29,8 +29,8 @@ import {
     isSecondaryDataReviewOption,
     getDataCollectionTechnique,
 } from '#redux';
-import OrganigramInput from '#components/OrganigramInput/';
-import GeoInput from '#components/GeoInput/';
+import OrganigramInput from '#components/input/OrganigramInput/';
+import GeoInput from '#components/input/GeoInput/';
 
 import Header from '../Header';
 import { renderWidget } from '../widgetUtils';

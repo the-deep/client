@@ -13,8 +13,7 @@ import {
 } from '#redux';
 import _ts from '#ts';
 
-// FIXME: do not import Baksa
-import Baksa from '#components/Baksa';
+import Baksa from '#components/input/Baksa';
 
 import { renderWidget } from '../widgetUtils';
 import Header from '../Header';

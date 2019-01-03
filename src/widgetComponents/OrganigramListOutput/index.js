@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import ListView from '#rscv/List/ListView';
 import { FaramOutputElement } from '#rscg/FaramElements';
 
-import ListItem from '#components/ListItem';
+import ListItem from '#components/general/ListItem';
 
 import styles from './styles.scss';
 

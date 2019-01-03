@@ -19,7 +19,7 @@ import {
     setProjectDashboardDetailsAction,
 } from '#redux';
 
-import RegionMap from '#components/RegionMap';
+import RegionMap from '#components/geo/RegionMap';
 import {
     RequestCoordinator,
     RequestClient,

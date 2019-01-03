@@ -12,7 +12,7 @@ import ModalHeader from '#rscv/Modal/Header';
 
 import Faram, { requiredCondition } from '#rscg/Faram';
 
-import OrganigramCreatorInput from '#components/OrganigramCreatorInput';
+import OrganigramCreatorInput from '#components/input/OrganigramCreatorInput';
 import _ts from '#ts';
 
 import styles from './styles.scss';

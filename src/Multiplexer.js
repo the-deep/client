@@ -13,15 +13,17 @@ import {
     removeClassName,
 } from '#rsu/common';
 */
-
-import ExclusivelyPublicRoute from '#rscg/ExclusivelyPublicRoute';
-import RouteSynchronizer from '#components/RouteSynchronizer';
-import PrivateRoute from '#rscg/PrivateRoute';
-import Toast from '#rscv/Toast';
-import { mapObjectToObject } from '#utils/common';
 // import _ts from '#ts';
 
-import Navbar from '#components/Navbar';
+import ExclusivelyPublicRoute from '#rscg/ExclusivelyPublicRoute';
+import PrivateRoute from '#rscg/PrivateRoute';
+import Toast from '#rscv/Toast';
+
+import RouteSynchronizer from '#components/general/RouteSynchronizer';
+import Navbar from '#components/general/Navbar';
+
+import { mapObjectToObject } from '#utils/common';
+
 import {
     pathNames,
     routesOrder,

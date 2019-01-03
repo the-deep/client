@@ -35,7 +35,7 @@ import {
 } from '#constants';
 import _ts from '#ts';
 
-import ProjectAddForm from '#components/ProjectAddForm';
+import ProjectAddForm from '#components/other/ProjectAddForm';
 
 import styles from './styles.scss';
 

@@ -20,7 +20,7 @@ import {
 import { iconNames } from '#constants';
 import _ts from '#ts';
 import _cs from '#cs';
-import AddRegion from '#components/AddRegion';
+import AddRegion from '#components/other/AddRegion';
 
 import AddExistingRegion from './AddExistingRegion';
 import ProjectRegionDetail from './ProjectRegionDetail';

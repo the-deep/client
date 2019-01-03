@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import ProjectAddForm from '#components/ProjectAddForm';
+import ProjectAddForm from '#components/other/ProjectAddForm';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';

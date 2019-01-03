@@ -26,7 +26,7 @@ import { VIEW } from '#widgets';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';
-import Cloak from '#components/Cloak';
+import Cloak from '#components/general/Cloak';
 
 import WidgetFaram from '../WidgetFaram';
 import LeadPane from './LeadPane';

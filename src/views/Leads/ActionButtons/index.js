@@ -10,7 +10,7 @@ import {
     iconNames,
     pathNames,
 } from '#constants/';
-import Cloak from '#components/Cloak';
+import Cloak from '#components/general/Cloak';
 import _ts from '#ts';
 import _cs from '#cs';
 

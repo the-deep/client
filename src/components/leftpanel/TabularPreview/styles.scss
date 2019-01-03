@@ -1,0 +1,16 @@
+@import '~base-scss/base';
+
+.tabular-preview {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+
+    .sheet {
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+
+    .tabs {
+        flex-shrink: 0;
+    }
+}

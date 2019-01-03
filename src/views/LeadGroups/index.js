@@ -10,7 +10,7 @@ import Pager from '#rscv/Pager';
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
 
-import BackLink from '#components/BackLink';
+import BackLink from '#components/general/BackLink';
 import {
     activeProjectIdFromStateSelector,
 

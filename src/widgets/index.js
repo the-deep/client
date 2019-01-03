@@ -2,8 +2,8 @@ import boundError from '#rscg/BoundError';
 import { mapToMap, mapToList } from '#rsu/common';
 import update from '#rsu/immutable-update';
 
-import FrameworkWidgetError from '#components/FrameworkWidgetError';
-import WidgetError from '#components/WidgetError';
+import FrameworkWidgetError from '#components/error/FrameworkWidgetError';
+import WidgetError from '#components/error/WidgetError';
 import { widgetTitlesGroupMap } from '#widgets/widgetMetadata';
 
 import DefaultEditWidget from './edit/Default';

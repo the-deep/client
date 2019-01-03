@@ -28,7 +28,7 @@ import Organigram from '#rscz/Organigram';
 import GoogleOrgChart from '#rscz/GoogleOrgChart';
 
 import BoundError from '#rscg/BoundError';
-import VizError from '#components/VizError';
+import VizError from '#components/error/VizError';
 
 import barData from './dummydata/barData';
 import chordData from './dummydata/chordData';

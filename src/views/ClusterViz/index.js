@@ -21,10 +21,9 @@ import {
     mapToList,
     groupList,
 } from '#rsu/common';
-import Cloak from '#components/Cloak';
-
-import VizError from '#components/VizError';
-import BackLink from '#components/BackLink';
+import Cloak from '#components/general/Cloak';
+import BackLink from '#components/general/BackLink';
+import VizError from '#components/error/VizError';
 
 import _cs from '#cs';
 import _ts from '#ts';

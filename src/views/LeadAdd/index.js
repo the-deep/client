@@ -17,8 +17,8 @@ import { CoordinatorBuilder } from '#rsu/coordinate';
 import List from '#rscv/List';
 import Message from '#rscv/Message';
 
-import Cloak from '#components/Cloak';
-import BackLink from '#components/BackLink';
+import Cloak from '#components/general/Cloak';
+import BackLink from '#components/general/BackLink';
 
 import { pathNames } from '#constants/';
 import {

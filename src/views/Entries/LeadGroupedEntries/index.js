@@ -11,7 +11,7 @@ import {
 } from '#constants';
 
 import { reverseRoute } from '#rsu/common';
-import Cloak from '#components/Cloak';
+import Cloak from '#components/general/Cloak';
 
 import FormattedDate from '#rscv/FormattedDate';
 import ListView from '#rscv/List/ListView';

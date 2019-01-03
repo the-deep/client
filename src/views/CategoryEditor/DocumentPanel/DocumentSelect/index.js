@@ -13,7 +13,7 @@ import {
     ceIdFromRouteSelector,
     categoryEditorProjectsSelector,
 } from '#redux';
-import DeepGalleryFileSelect from '#components/DeepGalleryFileSelect';
+import DeepGalleryFileSelect from '#components/general/DeepGalleryFileSelect';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 

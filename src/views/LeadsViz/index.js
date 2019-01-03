@@ -1,27 +1,24 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import _ts from '#ts';
-import _cs from '#cs';
 
 import {
     reverseRoute,
     isObjectEmpty,
 } from '#rsu/common';
 
-import wrapViz from '#rscz/VizWrapper';
-import SunBurst from '#rscz/SunBurst';
+import BoundError from '#rscg/BoundError';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import Message from '#rscv/Message';
 import ChordDiagram from '#rscz/ChordDiagram';
-import ZoomableTreeMap from '#rscz/ZoomableTreeMap';
+import CollapsibleTree from '#rscz/CollapsibleTree';
 import CorrelationMatrix from '#rscz/CorrelationMatrix';
 import ForceDirectedGraph from '#rscz/ForceDirectedGraph';
-import CollapsibleTree from '#rscz/CollapsibleTree';
-import RadialDendrogram from '#rscz/RadialDendrogram';
 import GeoReferencedMap from '#rscz/GeoReferencedMap';
-import BoundError from '#rscg/BoundError';
-import Message from '#rscv/Message';
-import VizError from '#components/VizError';
-
+import RadialDendrogram from '#rscz/RadialDendrogram';
+import SunBurst from '#rscz/SunBurst';
+import wrapViz from '#rscz/VizWrapper';
+import ZoomableTreeMap from '#rscz/ZoomableTreeMap';
 import {
     projectDetailsSelector,
     leadPageFilterSelector,
@@ -34,8 +31,12 @@ import {
     geoPointsDataSelector,
 } from '#redux';
 import { pathNames } from '#constants/';
-import BackLink from '#components/BackLink';
-import LoadingAnimation from '#rscv/LoadingAnimation';
+
+import VizError from '#components/error/VizError';
+import BackLink from '#components/general/BackLink';
+
+import _ts from '#ts';
+import _cs from '#cs';
 
 import LeadKeywordCorrelationRequest from './requests/LeadKeywordCorrelationRequest';
 import LeadTopicCorrelationRequest from './requests/LeadTopicCorrelationRequest';

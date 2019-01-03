@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 
 import FaramGroup from '#rscg/FaramGroup';
-import GeoInput from '#components/GeoInput';
+import GeoInput from '#components/input/GeoInput';
 import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import Checkbox from '#rsci/Checkbox';

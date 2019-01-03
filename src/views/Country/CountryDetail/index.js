@@ -21,8 +21,8 @@ import {
     routeUrlSelector,
 } from '#redux';
 import _ts from '#ts';
-import RegionDetailView from '#components/RegionDetailView';
-import RegionMap from '#components/RegionMap';
+import RegionDetailView from '#components/other/RegionDetailView';
+import RegionMap from '#components/geo/RegionMap';
 
 import RegionDeleteRequest from '../requests/RegionDeleteRequest';
 import RegionGetRequest from '../requests/RegionGetRequest';

@@ -11,7 +11,7 @@ import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerButton from '#rsca/Button/DangerButton';
 import { detachedFaram } from '#rscg/Faram';
 
-import Cloak from '#components/Cloak';
+import Cloak from '#components/general/Cloak';
 import {
     RequestCoordinator,
     RequestClient,
@@ -37,7 +37,7 @@ import {
 import { pathNames } from '#constants';
 import notify from '#notify';
 import _ts from '#ts';
-import BackLink from '#components/BackLink';
+import BackLink from '#components/general/BackLink';
 
 import LeftPanel from './LeftPanel';
 import RightPanel from './RightPanel';

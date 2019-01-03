@@ -12,7 +12,7 @@ import MultiSelectInput from '#rsci/MultiSelectInput';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 
-import GeoInput from '#components/GeoInput/';
+import GeoInput from '#components/input/GeoInput/';
 
 import {
     activeProjectIdFromStateSelector,

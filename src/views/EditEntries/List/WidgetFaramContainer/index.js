@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
-import Cloak from '#components/Cloak';
+import Cloak from '#components/general/Cloak';
 
 import { entryAccessor } from '#entities/editEntries';
 import { iconNames } from '#constants';

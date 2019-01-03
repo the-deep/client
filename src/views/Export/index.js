@@ -16,7 +16,7 @@ import Table from '#rscv/Table';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import FormattedDate from '#rscv/FormattedDate';
 
-import ExportPreview from '#components/ExportPreview';
+import ExportPreview from '#components/other/ExportPreview';
 import {
     createUrlForProject,
     createUrlForAnalysisFramework,
