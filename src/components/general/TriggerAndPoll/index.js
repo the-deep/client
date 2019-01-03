@@ -25,6 +25,7 @@ const defaultIsValid = r => r.status === 'success';
 
 const requests = {
     initialRequest: {
+        schemaName: ({ props }) => props.initialSchemaName || props.schemaName,
         onMount: ({ props }) => !props.pollOnly,
         // onPropsChanged: {
         //     compareValue: true,
@@ -69,6 +70,7 @@ const requests = {
     },
 
     pollRequest: {
+        schemaName: ({ props }) => props.pollSchemaName || props.schemaName,
         onMount: ({ props }) => props.pollOnly,
         onPropsChanged: {
             pollUrl: ({ props }) => props.pollOnly,
@@ -107,6 +109,7 @@ const requests = {
     },
 
     triggerRequest: {
+        schemaName: ({ props }) => props.triggerSchemaName,
         method: requestMethods.POST,
         url: ({ props }) => props.triggerUrl,
         body: ({ props }) => props.triggerBody || props.body || {},
@@ -117,6 +120,7 @@ const requests = {
     },
 
     dataRequest: {
+        schemaName: ({ props }) => props.schemaName,
         method: requestMethods.GET,
         url: ({ props }) => props.url,
         query: ({ props }) => props.query,
