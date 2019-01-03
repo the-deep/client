@@ -128,10 +128,6 @@ export default class LeadFormItem extends React.PureComponent {
         this.submitLeadForm = func;
     }
 
-    setSaveTabularFunction = (func) => {
-        this.saveTabular = func;
-    }
-
     setTabularMode = (mimeType) => {
         this.setState({ tabularMode: true, tabularMimeType: mimeType });
     }
@@ -232,19 +228,12 @@ export default class LeadFormItem extends React.PureComponent {
         }
         this.leadSaveRequest = onFormSubmitSuccess(lead, newValues);
 
-        if (!this.saveTabular) {
-            this.leadSaveRequest.start();
-            return;
-        }
+        this.leadSaveRequest.start();
 
         // If we have tabular, first trigger preLoad of lead,
         // save the tabular data and then save actual lead.
         // Triggering preLoad is a hack to set pending state of
         // corresponsing lead before doing actual leadSaveRequest.
-        this.leadSaveRequest.preLoad();
-        this.saveTabular(() => {
-            this.leadSaveRequest.start();
-        });
     }
 
     handleFormChange = (faramValues, faramErrors) => {

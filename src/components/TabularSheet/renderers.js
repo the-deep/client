@@ -3,6 +3,9 @@ import React from 'react';
 import Numeral from '#rscv/Numeral';
 import FormattedDate from '#rscv/FormattedDate';
 
+import _cs from '#cs';
+import styles from './styles.scss';
+
 
 const cellPropTypes = {
     value: PropTypes.string,
@@ -15,9 +18,8 @@ const cellDefaultProps = {
     options: {},
 };
 
-// eslint-disable-next-line no-unused-vars
-export const StringCell = ({ value, className, options }) => (
-    <div className={className}>
+export const StringCell = ({ value, className, options: { invalid = false } }) => (
+    <div className={_cs(className, invalid && styles.invalid)}>
         { value }
     </div>
 );
@@ -55,3 +57,10 @@ export const DateCell = ({ value, className, options }) => (
 
 DateCell.propTypes = cellPropTypes;
 DateCell.defaultProps = cellDefaultProps;
+
+export const handleInvalid = Cell => ({ value, className, options }) => {
+    const { invalid } = options;
+    return invalid
+        ? StringCell({ value, className, options })
+        : Cell({ value, className, options });
+};

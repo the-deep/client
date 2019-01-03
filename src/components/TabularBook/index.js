@@ -24,15 +24,17 @@ import _cs from '#cs';
 import requests from './requests';
 import styles from './styles.scss';
 
+const noOp = () => {};
+
 const propTypes = {
     className: PropTypes.string,
     projectId: PropTypes.number.isRequired,
     bookId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-    setSaveTabularFunction: PropTypes.func,
     onEdited: PropTypes.func,
 
-    deleteRequest: RequestClient.propType.isRequired,
-    saveRequest: RequestClient.propType.isRequired,
+    getBookRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    deleteRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    saveRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
     showDelete: PropTypes.bool,
     onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
@@ -41,7 +43,6 @@ const propTypes = {
 const defaultProps = {
     className: '',
     showDelete: false,
-    setSaveTabularFunction: undefined,
     onEdited: undefined,
 };
 
@@ -57,15 +58,9 @@ export default class TabularBook extends React.PureComponent {
             activeSheet: undefined,
         };
 
-        if (props.setSaveTabularFunction) {
-            props.setSaveTabularFunction(this.save);
-        }
-    }
-
-    componentWillUnmount() {
-        if (this.props.setSaveTabularFunction) {
-            this.props.setSaveTabularFunction(undefined);
-        }
+        this.props.getBookRequest.setDefaultParams({
+            setBook: response => this.setBook(response, noOp),
+        });
     }
 
     setBook = (book, callback) => {
@@ -131,6 +126,9 @@ export default class TabularBook extends React.PureComponent {
         };
 
         this.setState({ sheets: update(sheets, settings) }, () => {
+            this.save(() => {
+                this.props.getBookRequest.do();
+            });
             if (this.props.onEdited) {
                 this.props.onEdited();
             }

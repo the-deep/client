@@ -9,7 +9,12 @@ import { compareString, compareNumber, compareDate } from '#rsu/common';
 import _cs from '#cs';
 
 import Header from './Header';
-import { StringCell, NumberCell, DateCell } from './renderers';
+import {
+    StringCell,
+    NumberCell,
+    DateCell,
+    handleInvalid,
+} from './renderers';
 
 import styles from './styles.scss';
 
@@ -39,9 +44,9 @@ const comparators = {
 
 const renderers = {
     string: StringCell,
-    number: NumberCell,
+    number: handleInvalid(NumberCell),
     geo: StringCell,
-    datetime: DateCell,
+    datetime: handleInvalid(DateCell),
 };
 
 const stringifyId = d => ({
@@ -83,7 +88,7 @@ export default class TabularSheet extends React.PureComponent {
 
         cellRenderer: renderers[field.type] || renderers.string,
         comparator: (a, b, d) => comparators[field.type](
-            a[field.id], b[field.id], d,
+            a[field.id].value, b[field.id].value, d,
         ),
     })
 
@@ -115,8 +120,11 @@ export default class TabularSheet extends React.PureComponent {
 
     cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({
         className: _cs(styles[type], styles.cell),
-        value: datum[id],
-        options,
+        value: datum[id].value,
+        options: {
+            ...options,
+            invalid: type !== 'string' && datum[id].type !== type,
+        },
     })
 
     render() {
