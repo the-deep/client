@@ -119,7 +119,10 @@ export default class Sector extends React.PureComponent {
     }
 
     render() {
-        const { sectorId, className: classNameFromProps } = this.props;
+        const {
+            sectorId,
+            className: classNameFromProps,
+        } = this.props;
 
         const className = _cs(
             classNameFromProps,

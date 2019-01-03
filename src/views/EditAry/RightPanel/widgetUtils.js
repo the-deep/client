@@ -33,7 +33,7 @@ const widgets = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export const renderWidget = (k, data, sources) => {
+export const renderWidget = (k, data, sources, hide, secondaryDataReviewKey) => {
     const {
         fieldType,
         id: key,
@@ -43,6 +43,10 @@ export const renderWidget = (k, data, sources) => {
         tooltip,
         sourceType,
     } = data;
+
+    if (String(key) !== secondaryDataReviewKey && hide) {
+        return null;
+    }
 
     let someOptions;
     switch (sourceType) {

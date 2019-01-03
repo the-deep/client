@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
 
 import FaramGroup from '#rscg/FaramGroup';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -9,7 +10,9 @@ import { listToMap } from '#rsu/common';
 
 import {
     assessmentSectorsSelector,
+    focusesSelector,
     editArySelectedSectorsSelector,
+    editArySelectedFocusesSelector,
 } from '#redux';
 import _ts from '#ts';
 import _cs from '#cs';
@@ -25,7 +28,11 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     selectedSectors: PropTypes.array.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
+    selectedFocuses: PropTypes.array.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
     sectors: PropTypes.array.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    focuses: PropTypes.array.isRequired,
     pending: PropTypes.bool.isRequired,
     onActiveSectorChange: PropTypes.func,
 };
@@ -38,6 +45,8 @@ const defaultProps = {
 const mapStateToProps = state => ({
     selectedSectors: editArySelectedSectorsSelector(state),
     sectors: assessmentSectorsSelector(state),
+    focuses: focusesSelector(state),
+    selectedFocuses: editArySelectedFocusesSelector(state),
 });
 
 const sectorIdentifier = 'sector';
@@ -47,6 +56,57 @@ export default class Summary extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static isTabForSector = key => key.startsWith(sectorIdentifier);
+
+    static getSectorIdForSector = key => key.substr(sectorIdentifier.length + 1);
+
+    static getSelectedSector = memoize((sectors, selectedSectorsList) => {
+        const selectedSectorsMap = listToMap(
+            selectedSectorsList,
+            d => d,
+            () => true,
+        );
+
+        const selectedSectors = listToMap(
+            sectors.filter(d => selectedSectorsMap[d.id]),
+            d => `${sectorIdentifier}-${d.id}`,
+            d => d.title,
+        );
+
+        return selectedSectors;
+    })
+
+    // FIXME: this should be more dynamic later on
+    static shouldShowHumanitarianAccess = memoize((focuses, selectedFocuses) => {
+        const humanitarianAccessFocus = focuses.find(
+            focus => focus.title.toLowerCase().trim() === 'humanitarian access',
+        );
+        if (!humanitarianAccessFocus) {
+            return false;
+        }
+        const index = selectedFocuses.findIndex(
+            focus => String(focus) === String(humanitarianAccessFocus.id),
+        );
+        return index !== -1;
+    })
+
+    static getTabs = memoize((sectorTabs, humanitarianAccessVisibility) => {
+        let tabs = {
+            crossSector: _ts('editAssessment.summary', 'crossSectorTitle'),
+        };
+        if (humanitarianAccessVisibility) {
+            tabs = {
+                ...tabs,
+                humanitarianAccess: _ts('editAssessment.summary', 'humanitarianAccessTitle'),
+            };
+        }
+        tabs = {
+            ...tabs,
+            ...sectorTabs,
+        };
+        return tabs;
+    })
+
     constructor(props) {
         super(props);
         this.state = {
@@ -54,43 +114,47 @@ export default class Summary extends React.PureComponent {
         };
     }
 
-    handleTabClick = (key) => {
-        this.setState({ activeTab: key }, () => {
-            if (!this.props.onActiveSectorChange) {
-                return;
-            }
+    handleActiveSectorChange = (key) => {
+        const {
+            onActiveSectorChange,
+            sectors,
+            selectedSectors,
+        } = this.props;
 
-            let activeSector;
-            if (key.startsWith(sectorIdentifier)) {
-                activeSector = this.selectedSectors[key];
-            }
-            this.props.onActiveSectorChange(activeSector);
-        });
+        if (!onActiveSectorChange) {
+            return;
+        }
+
+        let activeSector;
+        if (Summary.isTabForSector(key)) {
+            const sectorTabs = Summary.getSelectedSector(sectors, selectedSectors);
+            activeSector = sectorTabs[key];
+        }
+        onActiveSectorChange(activeSector);
+    }
+
+    handleTabClick = (key) => {
+        this.setState(
+            { activeTab: key },
+            () => this.handleActiveSectorChange(key),
+        );
     }
 
     renderTabs = () => {
+        const { activeTab } = this.state;
         const {
             sectors,
-            selectedSectors: selectedSectorsList,
+            focuses,
+            selectedSectors,
+            selectedFocuses,
         } = this.props;
 
-        const { activeTab } = this.state;
-
-        const s = sectors.filter(
-            d => selectedSectorsList.indexOf(String(d.id)) !== -1,
+        const sectorTabs = Summary.getSelectedSector(sectors, selectedSectors);
+        const humanitarianAccessVisibility = Summary.shouldShowHumanitarianAccess(
+            focuses,
+            selectedFocuses,
         );
-        const selectedSectors = listToMap(
-            s,
-            d => `${sectorIdentifier}-${d.id}`,
-            d => d.title,
-        );
-        this.selectedSectors = selectedSectors;
-
-        const tabs = {
-            crossSector: _ts('editAssessment.summary', 'crossSectorTitle'),
-            humanitarianAccess: _ts('editAssessment.summary', 'humanitarianAccessTitle'),
-            ...selectedSectors,
-        };
+        const tabs = Summary.getTabs(sectorTabs, humanitarianAccessVisibility);
 
         return (
             <VerticalTabs
@@ -115,12 +179,10 @@ export default class Summary extends React.PureComponent {
                     <HumanitarianAccess className={styles.view} />
                 );
             default: {
-                if (!activeTab.includes('sector')) {
+                if (!Summary.isTabForSector(activeTab)) {
                     return null;
                 }
-
-                const startIndex = sectorIdentifier.length + 1;
-                const sectorId = activeTab.substr(startIndex);
+                const sectorId = Summary.getSectorIdForSector(activeTab);
                 return (
                     <Sector
                         className={styles.view}
@@ -132,7 +194,11 @@ export default class Summary extends React.PureComponent {
     }
 
     render() {
-        const { className: classNameFromProps } = this.props;
+        const {
+            className: classNameFromProps,
+            pending,
+        } = this.props;
+
         const className = _cs(
             classNameFromProps,
             'summary',
@@ -144,7 +210,7 @@ export default class Summary extends React.PureComponent {
 
         return (
             <div className={className}>
-                {this.props.pending && <LoadingAnimation />}
+                {pending && <LoadingAnimation />}
                 <FaramGroup faramElementName="summary">
                     <View />
                 </FaramGroup>

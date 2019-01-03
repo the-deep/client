@@ -129,13 +129,51 @@ const createBasicInformationSchema = (aryTemplateMetadata = {}) => {
     return schema;
 };
 
+export const getDataCollectionTechnique = (aryTemplateMethodology) => {
+    let dataCollectionTechnique;
+    aryTemplateMethodology.some(
+        group => group.fields.some((field) => {
+            if (field.title.toLowerCase().trim() === 'data collection technique') {
+                dataCollectionTechnique = field;
+                return true;
+            }
+            return false;
+        }),
+    );
+    return dataCollectionTechnique;
+};
+
+export const isSecondaryDataReviewOption = option => (
+    option && option.label.toLowerCase().trim() === 'secondary data review'
+);
+
 const createMethodologySchema = (aryTemplateMethodology = {}) => {
+    const dataCollectionTechnique = getDataCollectionTechnique(aryTemplateMethodology);
+
     const schema = { fields: {
         attributes: {
             keySelector: d => d.key,
-            member: { fields: {
-                // NOTE: inject here
-            } },
+            identifier: (value = {}) => {
+                if (!dataCollectionTechnique) {
+                    return 'default';
+                }
+                const key = value[dataCollectionTechnique.id];
+                if (!key) {
+                    return 'default';
+                }
+                const selectedOption = dataCollectionTechnique.options.find(
+                    option => option.key === key,
+                );
+                return isSecondaryDataReviewOption(selectedOption) ? 'secondaryDataReview' : 'default';
+            },
+            member: {
+                secondaryDataReview: {
+                    fields: {/* NOTE: injected here */},
+                },
+                default: {
+                    fields: {/* NOTE: injected here */},
+                },
+            },
             validation: (value) => {
                 const errors = [];
                 if (!value || value.length < 1) {
@@ -187,7 +225,13 @@ const createMethodologySchema = (aryTemplateMethodology = {}) => {
             }
         });
     });
-    schema.fields.attributes.member.fields = dynamicFields;
+    schema.fields.attributes.member.default.fields = dynamicFields;
+    // TODO: write for secondaryDataReview one
+    if (dataCollectionTechnique) {
+        schema.fields.attributes.member.secondaryDataReview.fields = {
+            [dataCollectionTechnique.id]: [requiredCondition],
+        };
+    }
 
     return schema;
 };
