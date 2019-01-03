@@ -7,6 +7,8 @@ import Button from '#rsca/Button';
 import TriggerAndPoll from '#components/general/TriggerAndPoll';
 import { iconNames } from '#constants';
 
+import HealthBar from '#rscz/HealthBar';
+
 import EditField from '../EditField';
 
 import styles from './styles.scss';
@@ -30,6 +32,15 @@ const isValidGeo = ({ type, geodata }) => (
     (geodata && geodata.status === 'success')
 );
 
+const healthColorScheme = [
+    '#41cf76',
+    '#f44336',
+];
+
+const identity = x => x;
+const healthBarValueSelector = identity;
+const healthBarKeySelector = identity;
+
 export default class Header extends React.PureComponent {
     static propTypes = {
         columnKey: PropTypes.string.isRequired,
@@ -37,6 +48,8 @@ export default class Header extends React.PureComponent {
         onSortClick: PropTypes.func.isRequired,
         sortOrder: PropTypes.string,
         onChange: PropTypes.func.isRequired,
+        statusData: PropTypes.arrayOf(PropTypes.number).isRequired,
+        // First value is valid count and the second is invalid count
     };
 
     static defaultProps = {
@@ -89,6 +102,7 @@ export default class Header extends React.PureComponent {
         const {
             sortOrder,
             value,
+            statusData,
         } = this.props;
 
         return (
@@ -108,6 +122,16 @@ export default class Header extends React.PureComponent {
                     iconName={iconNames.edit}
                     value={value}
                     transparent
+                />
+                <HealthBar
+                    data={statusData}
+                    valueSelector={healthBarValueSelector}
+                    labelSelector={undefined}
+                    keySelector={healthBarKeySelector}
+                    className={styles.healthBar}
+                    hideLabel
+                    enlargeOnHover={false}
+                    colorScheme={healthColorScheme}
                 />
             </div>
         );
