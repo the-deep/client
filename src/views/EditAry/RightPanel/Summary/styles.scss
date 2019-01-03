@@ -2,7 +2,7 @@
 
 .summary {
     display: flex;
-    background-color: $color-foreground-alt;
+    background-color: $color-foreground;
     height: 100%;
 
     .view {
@@ -12,7 +12,6 @@
     .tabs {
         flex-basis: 20%;
         flex-shrink: 0;
-        border-left: $width-separator-thin solid $color-separator;
-        padding: $spacing-medium 0;
+        border-right: $width-separator-thin solid $color-separator;
     }
 }

@@ -176,6 +176,7 @@ export default class RightPanel extends React.PureComponent {
                     defaultHash={this.defaultHash}
                     replaceHistory
                     tabs={this.tabs}
+                    itemClassName={styles.tab}
                     modifier={this.renderTab}
                 />
                 <MultiViewContainer

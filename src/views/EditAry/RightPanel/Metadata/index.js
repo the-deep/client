@@ -90,10 +90,11 @@ export default class Metadata extends React.PureComponent {
                         topChild={
                             <FaramGroup faramElementName="basicInformation">
                                 <div className={styles.basicInformation}>
-                                    <Header
+                                    {/* <Header
                                         title={basicInformationTitle}
                                         className={styles.header}
                                     />
+                                    */}
                                     <ListView
                                         className={styles.content}
                                         data={metadataGroupValues}

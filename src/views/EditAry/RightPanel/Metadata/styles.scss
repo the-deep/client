@@ -1,12 +1,12 @@
 @import '~base-scss/base';
 
-$height-additional-documents: 256px;
+$height-additional-documents: 250px;
 
 .metadata {
     display: flex;
     position: relative;
     flex-grow: 1;
-    background-color: $color-foreground-alt;
+    background-color: $color-foreground;
     overflow: auto;
 
     .resizable {
@@ -35,16 +35,12 @@ $height-additional-documents: 256px;
                         flex-direction: column;
                         flex-shrink: 0;
 
-                        &:not(:last-child) {
-                            border-right: $width-separator-thin solid $color-separator;
-                        }
-
                         .heading {
                             flex-shrink: 0;
                             border-bottom: $width-separator-thin solid $color-separator;
-                            padding: $spacing-medium;
+                            padding: $spacing-medium-alt;
+                            text-transform: capitalize;
                             color: $color-accent;
-                            font-weight: $font-weight-bold;
                         }
 
                         .content {
@@ -79,6 +75,14 @@ $height-additional-documents: 256px;
 
                 .header {
                     flex-shrink: 0;
+                    border-bottom: 1px solid $color-separator;
+                    padding: $spacing-small;
+
+                    h3 {
+                        text-transform: capitalize;
+                        color: $color-accent;
+                        font-size: $font-size-medium;
+                    }
                 }
 
                 .content {

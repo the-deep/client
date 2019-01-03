@@ -11,6 +11,10 @@ $height-tabs: 32px;
     .tabs {
         flex-shrink: 0;
         height: $height-tabs;
+
+        .tab {
+            text-transform: capitalize;
+        }
     }
 
     %tab-content {
