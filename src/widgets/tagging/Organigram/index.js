@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import OrganigramInput from '#components/OrganigramInput';
+import OrganigramInput from '#components/input/OrganigramInput';
 import ExcerptOutput from '#widgetComponents/ExcerptOutput';
 import _ts from '#ts';
 

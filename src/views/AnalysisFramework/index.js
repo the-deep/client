@@ -11,7 +11,7 @@ import SuccessConfirmButton from '#rsca/ConfirmButton/SuccessConfirmButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import FixedTabs from '#rscv/FixedTabs';
 import Message from '#rscv/Message';
-import BackLink from '#components/BackLink';
+import BackLink from '#components/general/BackLink';
 
 import {
     detachedFaram,

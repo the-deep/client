@@ -12,8 +12,8 @@ import FileInput from '#rsci/FileInput';
 import { randomString } from '#rsu/common';
 import { formatDate } from '#rsu/date';
 
-import DropboxChooser from '#components/DropboxChooser';
-import GooglePicker from '#components/GooglePicker';
+import DropboxChooser from '#components/importer/DropboxChooser';
+import GooglePicker from '#components/importer/GooglePicker';
 import { dropboxAppKey } from '#config/dropbox';
 import {
     googleDriveClientId,

@@ -9,11 +9,12 @@ import {
     findDuplicates,
     listToMap,
 } from '#rsu/common';
-import GeoInput from '#components/GeoInput';
+
 import { afViewGeoOptionsSelector } from '#redux';
 import _ts from '#ts';
 import _cs from '#cs';
 
+import GeoInput from '#components/input/GeoInput';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -46,8 +47,6 @@ const getRegions = memoize(geoOptions => (
         return (acc);
     }, [])
 ));
-
-const emptyArray = [];
 
 const mapStateToProps = state => ({
     geoOptions: afViewGeoOptionsSelector(state),

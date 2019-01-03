@@ -12,10 +12,10 @@ import {
     LEAD_PANE_TYPE,
     leadPaneTypeMap,
 } from '#entities/lead';
-import SimplifiedLeadPreview from '#components/SimplifiedLeadPreview';
-import LeadPreview from '#components/LeadPreview';
-import AssistedTagging from '#components/AssistedTagging';
-import ImagesGrid from '#components/ImagesGrid';
+import SimplifiedLeadPreview from '#components/leftpanel/SimplifiedLeadPreview';
+import LeadPreview from '#components/leftpanel/LeadPreview';
+import AssistedTagging from '#components/leftpanel/AssistedTagging';
+import ImagesGrid from '#components/viewer/ImagesGrid';
 import _ts from '#ts';
 
 import EntriesListing from './EntriesListing';

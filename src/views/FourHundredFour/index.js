@@ -2,7 +2,7 @@ import React from 'react';
 import ReactSVG from 'react-svg';
 
 import _ts from '#ts';
-import BackLink from '#components/BackLink';
+import BackLink from '#components/general/BackLink';
 import { pathNames } from '#constants';
 import logo from '#resources/img/deep-logo.svg';
 

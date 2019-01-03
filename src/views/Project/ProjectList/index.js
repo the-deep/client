@@ -11,7 +11,7 @@ import {
     reverseRoute,
     caseInsensitiveSubmatch,
 } from '#rsu/common';
-import Cloak from '#components/Cloak';
+import Cloak from '#components/general/Cloak';
 
 import {
     iconNames,

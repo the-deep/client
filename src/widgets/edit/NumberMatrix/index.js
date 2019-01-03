@@ -16,7 +16,7 @@ import FixedTabs from '#rscv/FixedTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { findDuplicates, randomString } from '#rsu/common';
 
-import TabTitle from '#components/TabTitle';
+import TabTitle from '#components/general/TabTitle';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';

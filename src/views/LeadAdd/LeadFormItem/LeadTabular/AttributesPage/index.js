@@ -13,7 +13,7 @@ import Faram from '#rscg/Faram';
 import FaramGroup from '#rscg/FaramGroup';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 
-import TriggerAndPoll from '#components/TriggerAndPoll';
+import TriggerAndPoll from '#components/general/TriggerAndPoll';
 import { RequestClient, requestMethods } from '#request';
 
 import _ts from '#ts';

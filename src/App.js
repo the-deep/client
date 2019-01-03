@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { FgRestBuilder } from '#rsu/rest';
 
-import AppLoading from '#components/AppLoading';
+import AppLoading from '#components/general/AppLoading';
 import {
     initializeGa,
     setGaUserId,

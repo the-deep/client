@@ -17,7 +17,7 @@ import {
     isObjectEmpty,
 } from '#rsu/common';
 
-import Cloak from '#components/Cloak';
+import Cloak from '#components/general/Cloak';
 import { iconNames, pathNames, viewsAcl } from '#constants';
 import { leadTypeIconMap } from '#entities/lead';
 import {

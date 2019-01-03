@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import ListView from '#rscv/List/ListView';
 
-import ListItem from '#components/ListItem';
+import ListItem from '#components/general/ListItem';
 import styles from './styles.scss';
 
 const propTypes = {

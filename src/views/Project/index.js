@@ -11,7 +11,7 @@ import {
 } from '#redux';
 import _ts from '#ts';
 
-import Cloak from '#components/Cloak';
+import Cloak from '#components/general/Cloak';
 
 import ProjectList from './ProjectList';
 import Details from './Details';

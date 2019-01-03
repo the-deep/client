@@ -14,8 +14,8 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { CoordinatorBuilder } from '#rsu/coordinate';
 
-import BackLink from '#components/BackLink';
-import Cloak from '#components/Cloak';
+import BackLink from '#components/general/BackLink';
+import Cloak from '#components/general/Cloak';
 import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
 
 import { RequestCoordinator } from '#request';

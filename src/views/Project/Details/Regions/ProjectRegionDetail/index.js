@@ -11,10 +11,10 @@ import Faram, {
 } from '#rscg/Faram';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
-import RegionAdminLevel from '#components/RegionAdminLevel';
-import RegionDetail from '#components/RegionDetail';
-import RegionDetailView from '#components/RegionDetailView';
-import RegionMap from '#components/RegionMap';
+import RegionAdminLevel from '#components/other/RegionAdminLevel';
+import RegionDetail from '#components/other/RegionDetail';
+import RegionDetailView from '#components/other/RegionDetailView';
+import RegionMap from '#components/geo/RegionMap';
 import {
     activeProjectIdFromStateSelector,
     addNewRegionAction,

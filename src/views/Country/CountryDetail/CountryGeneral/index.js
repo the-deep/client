@@ -5,9 +5,9 @@ import { connect } from 'react-redux';
 import _cs from '#cs';
 import { countryDetailSelector } from '#redux';
 
-import RegionDetail from '#components/RegionDetail';
-import RegionAdminLevel from '#components/RegionAdminLevel';
-import RegionMap from '#components/RegionMap';
+import RegionDetail from '#components/other/RegionDetail';
+import RegionAdminLevel from '#components/other/RegionAdminLevel';
+import RegionMap from '#components/geo/RegionMap';
 
 import styles from './styles.scss';
 

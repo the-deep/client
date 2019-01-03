@@ -13,7 +13,7 @@ import {
     ceIdFromRouteSelector,
 } from '#redux';
 import _ts from '#ts';
-import SimplifiedFilePreview from '#components/SimplifiedFilePreview';
+import SimplifiedFilePreview from '#components/other/SimplifiedFilePreview';
 import _cs from '#cs';
 
 import DocumentNGram from './DocumentNGram';

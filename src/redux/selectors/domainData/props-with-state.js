@@ -10,7 +10,8 @@ import {
     requiredCondition,
     dateCondition,
 } from '#rscg/Faram';
-import Baksa from '#components/Baksa';
+// FIXME: do not import Baksa
+import Baksa from '#components/input/Baksa';
 
 import { activeUserSelector } from '../auth';
 import {

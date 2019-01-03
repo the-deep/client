@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { pathNames } from '#constants';
 
 import SuccessButton from '#rsca/Button/SuccessButton';
-import BackLink from '#components/BackLink';
+import BackLink from '#components/general/BackLink';
 import { reverseRoute } from '#rsu/common';
 import _ts from '#ts';
 

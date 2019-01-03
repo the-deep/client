@@ -20,7 +20,7 @@ import {
 } from '#redux';
 import _ts from '#ts';
 import { iconNames } from '#constants';
-import AddRegion from '#components/AddRegion';
+import AddRegion from '#components/other/AddRegion';
 
 import CountriesGetRequest from './requests/CountriesGetRequest';
 

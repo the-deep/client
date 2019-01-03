@@ -20,7 +20,7 @@ import {
     randomString,
 } from '#rsu/common';
 
-import TabTitle from '#components/TabTitle';
+import TabTitle from '#components/general/TabTitle';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 import _cs from '#cs';

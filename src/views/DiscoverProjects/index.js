@@ -18,7 +18,7 @@ import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
 import SparkLines from '#rscz/SparkLines';
 import Numeral from '#rscv/Numeral';
-import BackLink from '#components/BackLink';
+import BackLink from '#components/general/BackLink';
 import { formatDate } from '#rsu/date';
 
 import {

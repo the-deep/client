@@ -1,0 +1,46 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import Message from '#rscv/Message';
+
+import { handleException, handleReport } from '#config/sentry';
+
+import Cloak from '#components/general/Cloak';
+import styles from './styles.scss';
+
+const propTypes = {
+    errorText: PropTypes.string.isRequired,
+    reportButtonText: PropTypes.string.isRequired,
+};
+
+export default class ErrorMessage extends React.PureComponent {
+    static propTypes = propTypes;
+
+    static handleException = handleException;
+    static shouldHideReport = ({ isDevMode }) => isDevMode;
+
+    render() {
+        const {
+            errorText,
+            reportButtonText,
+        } = this.props;
+
+        return (
+            <Message className={styles.messageContainer}>
+                { errorText }
+                <Cloak
+                    hide={ErrorMessage.shouldHideReport}
+                    render={
+                        <PrimaryButton
+                            onClick={handleReport}
+                            className={styles.button}
+                        >
+                            {reportButtonText}
+                        </PrimaryButton>
+                    }
+                />
+            </Message>
+        );
+    }
+}

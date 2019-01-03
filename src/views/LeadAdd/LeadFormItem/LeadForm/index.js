@@ -21,8 +21,8 @@ import {
     ATTACHMENT_TYPES,
     leadAccessor,
 } from '#entities/lead';
-import { InternalGallery } from '#components/DeepGallery';
-import Cloak from '#components/Cloak';
+import InternalGallery from '#components/viewer/InternalGallery';
+import Cloak from '#components/general/Cloak';
 import {
     activeUserSelector,
     projectDetailsSelector,

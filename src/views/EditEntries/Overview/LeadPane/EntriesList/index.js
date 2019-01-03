@@ -6,7 +6,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import ListView from '#rscv/List/ListView';
 
 import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
-import Cloak from '#components/Cloak';
+import Cloak from '#components/general/Cloak';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 import _cs from '#cs';

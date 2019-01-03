@@ -13,7 +13,7 @@ import Table from '#rscv/Table';
 import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
-import BackLink from '#components/BackLink';
+import BackLink from '#components/general/BackLink';
 import {
     createUrlForExport,
     createParamsForGet,
@@ -36,7 +36,7 @@ import { leadTypeIconMap } from '#entities/lead';
 import schema from '#schema';
 import notify from '#notify';
 import _ts from '#ts';
-import ExportPreview from '#components/ExportPreview';
+import ExportPreview from '#components/other/ExportPreview';
 
 import styles from './styles.scss';
 

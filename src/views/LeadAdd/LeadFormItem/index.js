@@ -14,11 +14,9 @@ import ResizableV from '#rscv/Resizable/ResizableV';
 import update from '#rsu/immutable-update';
 
 import { RequestCoordinator } from '#request';
-import {
-    InternalGallery,
-    ExternalGallery,
-} from '#components/DeepGallery';
-import TabularBook from '#components/TabularBook';
+import InternalGallery from '#components/viewer/InternalGallery';
+import ExternalGallery from '#components/viewer/ExternalGallery';
+import TabularBook from '#components/other/TabularBook';
 
 import {
     addLeadViewLeadChangeAction,

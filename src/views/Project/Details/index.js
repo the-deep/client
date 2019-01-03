@@ -6,7 +6,7 @@ import notify from '#notify';
 import FixedTabs from '#rscv/FixedTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import Cloak from '#components/Cloak';
+import Cloak from '#components/general/Cloak';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import { getNewActiveProjectId } from '#entities/project';
 import {

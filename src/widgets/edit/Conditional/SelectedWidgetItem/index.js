@@ -5,11 +5,11 @@ import DangerButton from '#rsca/Button/DangerButton';
 import FaramGroup from '#rscg/FaramGroup';
 
 import { iconNames } from '#constants';
-import FrameworkEditButton from '#components/FrameworkEditButton';
 import _ts from '#ts';
 
 import { fetchWidget } from '#widgets';
 
+import FrameworkEditButton from './FrameworkEditButton';
 import ConditionsEditButton from '../ConditionsEdit/Button';
 import styles from './styles.scss';
 

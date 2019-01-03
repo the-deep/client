@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 import FormattedTextArea from '#rsci/FormattedTextArea';
 
-import DataSeries from '#components/DataSeries';
-import Cloak from '#components/Cloak';
+import DataSeries from '#components/viz/DataSeries';
+import Cloak from '#components/general/Cloak';
 import Image from '#rscv/Image';
 import _ts from '#ts';
 

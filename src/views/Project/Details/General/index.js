@@ -12,8 +12,6 @@ import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
 import { decodeDate } from '#rsu/common';
 
-import ActivityLog from '#components/ActivityLog';
-
 import {
     RequestCoordinator,
     RequestClient,
@@ -36,8 +34,9 @@ import Faram, {
 
 import _ts from '#ts';
 
-import requests from './requests';
+import ActivityLog from './ActivityLog';
 import Dashboard from './Dashboard';
+import requests from './requests';
 import styles from './styles.scss';
 
 const propTypes = {
