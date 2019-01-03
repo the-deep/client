@@ -19,7 +19,7 @@ const cellDefaultProps = {
 };
 
 export const StringCell = ({ value, className, options: { invalid = false } }) => (
-    <div className={_cs(className, invalid ? styles.invalid : '')}>
+    <div className={_cs(className, invalid && styles.invalid)}>
         { value }
     </div>
 );
@@ -58,7 +58,7 @@ export const DateCell = ({ value, className, options }) => (
 DateCell.propTypes = cellPropTypes;
 DateCell.defaultProps = cellDefaultProps;
 
-export const InvalidHandledCell = Cell => ({ value, className, options }) => {
+export const handleInvalid = Cell => ({ value, className, options }) => {
     const { invalid } = options;
     return invalid
         ? StringCell({ value, className, options })

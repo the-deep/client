@@ -352,36 +352,6 @@ export default class LeadFormItem extends React.PureComponent {
         const type = leadAccessor.getType(lead);
         const values = leadAccessor.getFaramValues(lead);
 
-        if (values.tabularBook) {
-            return (
-                <TabularBook
-                    className={className}
-                    bookId={values.tabularBook}
-                    projectId={values.project}
-                    onDelete={this.unsetTabularBook}
-                    onEdited={this.handleFieldsChange}
-                    showDelete
-                />
-            );
-        }
-
-        const {
-            tabularMode,
-            tabularMimeType,
-        } = this.state;
-
-        if (tabularMode) {
-            return (
-                <LeadTabular
-                    className={className}
-                    mimeType={tabularMimeType}
-                    setTabularBook={this.setTabularBook}
-                    onCancel={this.unsetTabularMode}
-                    lead={lead}
-                />
-            );
-        }
-
         switch (type) {
             case LEAD_TYPE.text:
                 return null;

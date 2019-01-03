@@ -13,7 +13,7 @@ import {
     StringCell,
     NumberCell,
     DateCell,
-    InvalidHandledCell,
+    handleInvalid,
 } from './renderers';
 
 import styles from './styles.scss';
@@ -44,9 +44,9 @@ const comparators = {
 
 const renderers = {
     string: StringCell,
-    number: InvalidHandledCell(NumberCell),
+    number: handleInvalid(NumberCell),
     geo: StringCell,
-    datetime: InvalidHandledCell(DateCell),
+    datetime: handleInvalid(DateCell),
 };
 
 const stringifyId = d => ({
