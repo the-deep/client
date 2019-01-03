@@ -9,13 +9,14 @@ $width-table: 320px;
 .score {
     display: flex;
     flex-direction: column;
-    background-color: $color-foreground-alt;
+    background-color: $color-foreground;
 
     .summary {
-        @include background-color($color-background-header);
         display: flex;
         flex-shrink: 0;
         justify-content: space-around;
+        border-bottom: $width-separator-thin solid $color-separator;
+        background-color: $color-foreground;
         padding: $spacing-medium;
 
         .left {
@@ -50,7 +51,7 @@ $width-table: 320px;
 
                 >.title {
                     padding: $spacing-small;
-                    text-transform: uppercase;
+                    text-transform: capitalize;
                     color: $color-accent;
                     font-weight: $font-weight-bold;
                 }
@@ -89,13 +90,17 @@ $width-table: 320px;
 
                         .pillar-title {
                             @extend %cell;
-                            text-transform: uppercase;
+                            position: sticky;
+                            top: 0;
+                            left: 0;
+                            background-color: $color-foreground;
+                            text-transform: capitalize;
                             color: $color-accent;
                             font-weight: $font-weight-bold;
                         }
                     }
                     .row {
-                        @extend %background-alternating-row;
+                        @include transition-medium();
 
                         .cell {
                             @extend %cell;
@@ -119,6 +124,8 @@ $width-table: 320px;
                         }
 
                         &:hover {
+                            background-color: $color-background-hover;
+
                             .cell {
                                 .content {
                                     .info-icon {

@@ -217,10 +217,10 @@ export default class Methodology extends React.PureComponent {
                                         keySelector={Methodology.keySelector}
                                     >
                                         <div className={styles.attributesSection}>
-                                            <Header
+                                            {/* <Header
                                                 className={styles.header}
                                                 title={attributesTitle}
-                                            />
+                                            /> */}
                                             <div className={styles.scrollWrap}>
                                                 <div className={styles.attributes}>
                                                     <div className={styles.header}>

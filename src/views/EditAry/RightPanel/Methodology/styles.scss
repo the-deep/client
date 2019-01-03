@@ -4,6 +4,20 @@ $width-action-buttons: 48px;
 $height-center: 196px;
 $height-bottom: 240px;
 
+.header {
+    flex-shrink: 0;
+    border-top: $width-separator-thin solid $color-separator;
+    border-bottom: $width-separator-thin solid $color-separator;
+    background-color: $color-foreground;
+    padding: $spacing-small 0;
+
+    h3 {
+        text-transform: capitalize;
+        color: $color-accent;
+        font-size: $font-size-medium;
+    }
+}
+
 .methodology {
     display: flex;
     position: relative;
@@ -38,7 +52,6 @@ $height-bottom: 240px;
                 .attributes-section {
                     display: flex;
                     flex-direction: column;
-                    border-bottom: $width-separator-thin solid $color-separator;
 
                     .header {
                         flex-shrink: 0;
@@ -56,11 +69,8 @@ $height-bottom: 240px;
 
                             %cell {
                                 display: table-cell;
-                                padding: $spacing-small $spacing-medium;
+                                padding: $spacing-small-alt;
 
-                                &:not(:last-child) {
-                                    border-right: $width-separator-thin solid $color-separator;
-                                }
                             }
 
                             %action-buttons {
@@ -82,7 +92,7 @@ $height-bottom: 240px;
                                 .title {
                                     @extend %cell;
                                     @extend %heading;
-                                    text-transform: uppercase;
+                                    text-transform: capitalize;
                                     color: $color-accent;
                                     font-weight: $font-weight-bold;
                                 }
@@ -94,7 +104,6 @@ $height-bottom: 240px;
                             }
 
                             .row {
-                                @extend %background-alternating-row;
                                 display: table-row;
 
                                 .cell {
@@ -128,13 +137,6 @@ $height-bottom: 240px;
                     border-top: $width-separator-thin solid $color-separator;
                     height: 100%;
 
-                    .header {
-                        flex-shrink: 0;
-                        border-top: $width-separator-thin solid $color-separator;
-                        border-bottom: $width-separator-thin solid $color-separator;
-                        background-color: $color-foreground;
-                    }
-
                     %content {
                         display: flex;
                         flex-basis: calc(100% / 4);
@@ -142,10 +144,6 @@ $height-bottom: 240px;
                         flex-grow: 1;
                         overflow: auto;
                         overflow-y: auto;
-
-                        &:not(:last-child) {
-                            border-right: $width-separator-thin solid $color-separator;
-                        }
 
                         :global {
                             .empty {
@@ -156,7 +154,7 @@ $height-bottom: 240px;
                     }
 
                     %header {
-                        font-size: $font-size-large;
+                        font-size: $font-size-medium;
                         font-weight: $font-weight-light;
                     }
 
@@ -181,6 +179,13 @@ $height-bottom: 240px;
                             }
                         }
 
+                    }
+
+                    .location-selection,
+                    .affected-groups {
+                        :global .select-input-with-list {
+                            padding: $spacing-small;
+                        }
                     }
 
                     .middle-section-item,
@@ -213,13 +218,6 @@ $height-bottom: 240px;
                 flex-grow: 1;
                 border-top: $width-separator-thin solid $color-separator;
                 height: 100%;
-
-                .header {
-                    flex-shrink: 0;
-                    border-top: $width-separator-thin solid $color-separator;
-                    border-bottom: $width-separator-thin solid $color-separator;
-                    background-color: $color-foreground;
-                }
 
                 .content {
                     display: flex;

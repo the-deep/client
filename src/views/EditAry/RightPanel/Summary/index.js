@@ -211,10 +211,10 @@ export default class Summary extends React.PureComponent {
         return (
             <div className={className}>
                 {pending && <LoadingAnimation />}
+                <Tabs />
                 <FaramGroup faramElementName="summary">
                     <View />
                 </FaramGroup>
-                <Tabs />
             </div>
         );
     }

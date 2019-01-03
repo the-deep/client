@@ -2,8 +2,7 @@
     padding: $spacing-medium;
 
     %cell {
-        border: $width-separator-thin solid $color-separator;
-        padding: $spacing-small;
+        padding: $spacing-medium-alt;
     }
 
     .table {
@@ -14,7 +13,10 @@
         .head {
             .row {
                 .header {
-                    @extend %cell;
+                    padding: $spacing-medium-alt;
+                    &:not(:first-child){
+                        border-bottom: $width-separator-thin solid $color-separator;
+                    }
                 }
             }
         }
@@ -23,7 +25,7 @@
             .row {
                 .section-title {
                     @extend %cell;
-                    text-transform: uppercase;
+                    text-transform: capitalize;
                     color: $color-accent;
                     font-weight: $font-weight-bold;
                 }
