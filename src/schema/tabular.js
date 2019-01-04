@@ -13,11 +13,11 @@ const tabularSchema = [];
             file: { type: 'uint', required: true },
             fileType: { type: 'string', required: true },
             metaStatus: { type: 'string', required: true },
-            options: { type: 'object', required: true },
-            project: { type: 'uint', required: true },
-            status: { type: 'string', require: true },
-            title: { type: 'string', require: true },
-            sheets: { type: 'array.sheetSchema', require: true },
+            options: { type: 'object' },
+            project: { type: 'uint' },
+            status: { type: 'string', required: true },
+            title: { type: 'string', required: true },
+            sheets: { type: 'array.sheetSchema', required: true },
         },
     };
     tabularSchema.push({ name, schema });
@@ -32,7 +32,7 @@ const tabularSchema = [];
         fields: {
             data: { type: 'array.object', required: true },
             fields: { type: 'array.object', required: true },
-            options: { type: 'object', required: true },
+            options: { type: 'object' },
             title: { type: 'string', required: true },
             id: { type: 'uint', required: true },
         },
