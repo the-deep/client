@@ -25,6 +25,7 @@ export default {
         },
         onFailure: ({ params: { setInvalid } }) => setInvalid(),
         onFatal: ({ params: { setInvalid } }) => setInvalid(),
+        schemaName: 'TabularBookSchema',
     },
 
     extractRequest: {
@@ -48,5 +49,6 @@ export default {
                 setInvalid();
             }
         },
+        schemaName: 'TabularBookSchema',
     },
 };

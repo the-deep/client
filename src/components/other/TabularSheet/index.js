@@ -109,14 +109,19 @@ export default class TabularSheet extends React.PureComponent {
         this.props.onSheetChange(sheet);
     }
 
-    headerRendererParams = ({ column, columnKey }) => ({
-        columnKey,
-        onChange: this.handleColumnChange,
-        value: column.value,
-        sortOrder: column.sortOrder,
-        onSortClick: column.onSortClick,
-        className: styles.header,
-    })
+    headerRendererParams = ({ column, columnKey, data }) => {
+        const validCount = data.filter(x => x[columnKey].type === column.value.type).length;
+
+        return {
+            columnKey,
+            onChange: this.handleColumnChange,
+            value: column.value,
+            sortOrder: column.sortOrder,
+            onSortClick: column.onSortClick,
+            className: styles.header,
+            statusData: [validCount, data.length - validCount],
+        };
+    }
 
     cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({
         className: _cs(styles[type], styles.cell),

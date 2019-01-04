@@ -18,6 +18,7 @@ import langauges from './languages';
 import notifications from './notifications';
 import clusterViz from './clusterViz';
 import pageInfoSchema from './pagesInfo';
+import tabularSchema from './tabular';
 
 const basicTypeSchemas = basicTypes.map(entry => ({ name: entry.doc.name, schema: entry }));
 
@@ -115,6 +116,7 @@ const dict = new Dict(
     ...notifications,
     ...clusterViz,
     ...pageInfoSchema,
+    ...tabularSchema,
 ].forEach(({ name, schema }) => dict.put(name, schema));
 
 export default dict;

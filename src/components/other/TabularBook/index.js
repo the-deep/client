@@ -234,7 +234,10 @@ export default class TabularBook extends React.PureComponent {
             <TriggerAndPoll
                 onDataReceived={this.setBook}
                 url={`/tabular-books/${bookId}/`}
+                // dataSchemaName={tabularSchemaName}
                 triggerUrl={`/tabular-extraction-trigger/${bookId}/`}
+                schemaName="TabularBookSchema"
+                triggerSchemaName={undefined}
             >
                 <ActualBook />
             </TriggerAndPoll>

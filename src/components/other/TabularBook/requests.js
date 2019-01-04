@@ -5,6 +5,7 @@ export default {
         method: requestMethods.GET,
         url: ({ props }) => `/tabular-books/${props.bookId}/`,
         onSuccess: ({ response, params }) => params.setBook(response),
+        schemaName: 'TabularBookSchema',
         // onFailure, onFatal
     },
 
