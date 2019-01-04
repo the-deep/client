@@ -12,11 +12,14 @@ const propTypes = {
         data: PropTypes.array,
         options: PropTypes.object,
     }),
+    onClick: PropTypes.func.isRequired,
+    highlights: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     className: '',
     sheet: {},
+    highlights: {},
 };
 
 export default class TabularSheetPreview extends React.PureComponent {
@@ -40,15 +43,22 @@ export default class TabularSheetPreview extends React.PureComponent {
         options: field.options,
         data: field.data,
         geodata: field.geodata,
+        color: this.props.highlights[field.id].color,
+        leadKey: this.props.highlights[field.id].key,
+        onClick: this.props.onClick,
     })
 
     render() {
+        const {
+            className,
+            sheet,
+        } = this.props;
         return (
             <ListView
-                className={this.props.className}
+                className={className}
                 keySelector={TabularSheetPreview.keySelector}
                 rendererParams={this.renderParams}
-                data={TabularSheetPreview.calcFieldsData(this.props.sheet)}
+                data={TabularSheetPreview.calcFieldsData(sheet)}
                 renderer={Field}
             />
         );

@@ -14,10 +14,15 @@ const propTypes = {
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
     options: PropTypes.shape({}),
     geodata: PropTypes.shape({}),
+    color: PropTypes.string,
+    leadKey: PropTypes.string,
+    onClick: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     className: '',
+    color: undefined,
+    leadKey: undefined,
     geodata: undefined,
     options: undefined,
 };
@@ -80,13 +85,22 @@ export default class Field extends React.PureComponent {
             className,
             title,
             data,
+            color,
+            leadKey,
+            onClick,
         } = this.props;
 
         return (
             <div
                 className={_cs(className, styles.field)}
                 onDragStart={this.handleOnDragStart}
-                draggable
+                draggable={!leadKey}
+                role="button"
+                tabIndex="-1"
+                style={{ backgroundColor: color }}
+                disabled={!!leadKey}
+                onClick={e => leadKey && onClick(e, { key: leadKey })}
+                onKeyDown={e => leadKey && onClick(e, { key: leadKey })}
             >
                 <h5>
                     {title}
