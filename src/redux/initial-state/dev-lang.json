@@ -891,7 +891,11 @@
         "-45402687": "1",
         "-53408079": "Back",
         "-39430073": "Close",
-        "-24457818": "Sectors"
+        "-24457818": "Sectors",
+        "-26663455": "Bar",
+        "-84871998": "Table",
+        "-50602560": "Word cloud",
+        "-5214537": "Vertical bar chart"
     },
     "links": {
         "browserExtension": {
@@ -2516,6 +2520,13 @@
             "discardButtonLabel": 2007,
             "removeRegionButtonLabel": 351,
             "regionCloneWarning": -61910224
+        },
+        "components.viz.dataSeries": {
+            "barChartVizLabel": -26663455,
+            "geoVizLabel": -50186668,
+            "tableVizLabel": -84871998,
+            "vBarChartVizLabel": -5214537,
+            "wordCloudVizLabel": -50602560
         }
     }
 }

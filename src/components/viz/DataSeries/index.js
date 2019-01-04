@@ -4,11 +4,12 @@ import memoize from 'memoize-one';
 
 import ListView from '#rscv/List/ListView';
 import GeoViz from '#components/geo/GeoViz';
-import SegmentInput from '#rsci/SegmentInput';
+import RotatingInput from '#rsci/RotatingInput';
 import BarChart from '#rscz/BarChart';
 import WordCloud from '#rscz/WordCloud';
 
 import _cs from '#cs';
+import _ts from '#ts';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -58,11 +59,11 @@ export default class DataSeries extends React.PureComponent {
     }
 
     static modesLabel = {
-        table: 'Table',
-        barChart: 'Bar Chart',
-        vBarChart: 'Vertical Bar Chart',
-        wordCloud: 'Word Cloud',
-        geo: 'Geo',
+        table: <span>{_ts('components.viz.dataSeries', 'tableVizLabel')}</span>,
+        barChart: <span>{_ts('components.viz.dataSeries', 'barChartVizLabel')}</span>,
+        vBarChart: <span>{_ts('components.viz.dataSeries', 'vBarChartVizLabel')}</span>,
+        wordCloud: <span>{_ts('components.viz.dataSeries', 'wordCloudVizLabel')}</span>,
+        geo: <span>{_ts('components.viz.dataSeries', 'geoVizLabel')}</span>,
     }
 
     state = {
@@ -178,10 +179,9 @@ export default class DataSeries extends React.PureComponent {
                         {value.title}
                     </h5>
                     <div>
-                        <SegmentInput
-                            name="random-name-for-segment-1"
-                            labelSelector={DataSeries.segmentLabelSelector}
-                            keySelector={DataSeries.segmentSelector}
+                        <RotatingInput
+                            rendererSelector={DataSeries.segmentLabelSelector}
+                            keySelector={DataSeries.segmentKeySelector}
                             value={mode}
                             onChange={this.handleSegmentStateChange}
                             options={this.getSegmentOptions(value.type)}
