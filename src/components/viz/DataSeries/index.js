@@ -5,7 +5,8 @@ import memoize from 'memoize-one';
 import ListView from '#rscv/List/ListView';
 import GeoViz from '#components/geo/GeoViz';
 import RotatingInput from '#rsci/RotatingInput';
-import BarChart from '#rscz/BarChart';
+import HorizontalBar from '#rscz/HorizontalBar';
+import VerticalBarChart from '#rscz/VerticalBarChart';
 import WordCloud from '#rscz/WordCloud';
 
 import _cs from '#cs';
@@ -31,14 +32,24 @@ const defaultProps = {
     },
 };
 
+const chartsMargin = {
+    top: 2,
+    right: 2,
+    bottom: 2,
+    left: 2,
+};
+
 export default class DataSeries extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
     static seriesKeySelector = d => d.key;
-    static wordCloudFontSizeSelector = d => d.size;
+    static sizeSelector = d => d.size;
+    static chartsLabelSelector = d => d.text;
+    static horizontalBarTextSelector = () => '';
+    static tooltipSelector = d => `<span>${d.text}</span>`;
 
-    static segmentKeySelector = d => d.key;
-    static segmentLabelSelector = d => d.label;
+    static rotatingInputKeySelector = d => d.key;
+    static rotatingInputLabelSelector = d => d.label;
 
     static renderTableItem = ({ value }) => (
         <div
@@ -52,7 +63,7 @@ export default class DataSeries extends React.PureComponent {
     static renderTableParams = (key, item) => ({ ...item })
 
     static modes = {
-        string: ['table', 'wordCloud'],
+        string: ['table', 'barChart', 'vBarChart', 'wordCloud'],
         number: ['table', 'barChart', 'vBarChart', 'wordCloud'],
         datetime: ['table'],
         geo: ['table', 'geo'],
@@ -90,22 +101,27 @@ export default class DataSeries extends React.PureComponent {
             />
         ),
         barChart: ({ value, className }) => (
-            <BarChart
+            <HorizontalBar
                 className={_cs(className, styles.chart)}
                 data={this.calcNumberCountSeries(value.series)}
-                xKey="text"
-                yKey="size"
-                xTickFormat={() => ''}
-                yTickFormat={() => ''}
-                xGrid={false}
-                yGrid={false}
+                valueSelector={DataSeries.sizeSelector}
+                valueLabelFormat={DataSeries.horizontalBarTextSelector}
+                labelSelector={DataSeries.chartsLabelSelector}
+                tooltipContent={DataSeries.tooltipSelector}
+                margins={chartsMargin}
+                showTooltip
             />
         ),
         vBarChart: ({ value, className }) => (
-            // TODO: use V Bar chart
-            <div>
-                Coming Soon
-            </div>
+            <VerticalBarChart
+                className={_cs(className, styles.chart)}
+                data={this.calcNumberCountSeries(value.series)}
+                valueSelector={DataSeries.sizeSelector}
+                labelSelector={DataSeries.chartsLabelSelector}
+                tooltipContent={DataSeries.tooltipSelector}
+                margins={chartsMargin}
+                showTooltip
+            />
         ),
         geo: ({ value: { geodata }, className }) => (
             <GeoViz
@@ -120,7 +136,7 @@ export default class DataSeries extends React.PureComponent {
                 <WordCloud
                     className={className}
                     data={data}
-                    fontSizeSelector={DataSeries.wordCloudFontSizeSelector}
+                    fontSizeSelector={DataSeries.sizeSelector}
                 />
             );
         },
@@ -180,8 +196,8 @@ export default class DataSeries extends React.PureComponent {
                     </h5>
                     <div>
                         <RotatingInput
-                            rendererSelector={DataSeries.segmentLabelSelector}
-                            keySelector={DataSeries.segmentKeySelector}
+                            rendererSelector={DataSeries.rotatingInputLabelSelector}
+                            keySelector={DataSeries.rotatingInputKeySelector}
                             value={mode}
                             onChange={this.handleSegmentStateChange}
                             options={this.getSegmentOptions(value.type)}
