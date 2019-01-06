@@ -43,8 +43,8 @@ export default class TabularSheetPreview extends React.PureComponent {
         options: field.options,
         data: field.data,
         geodata: field.geodata,
-        color: this.props.highlights[field.id].color,
-        leadKey: this.props.highlights[field.id].key,
+        color: (this.props.highlights[field.id] || {}).color,
+        leadKey: (this.props.highlights[field.id] || {}).key,
         onClick: this.props.onClick,
     })
 

@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 
+import { getRgbFromHex } from '#rsu/common';
+
 import ListView from '#rscv/List/ListView';
 import _cs from '#cs';
 import styles from './styles.scss';
@@ -70,6 +72,17 @@ export default class Field extends React.PureComponent {
         e.dataTransfer.dropEffect = 'copy';
     }
 
+    handleClick = (e) => {
+        const {
+            leadKey,
+            onClick,
+        } = this.props;
+        if (!leadKey) {
+            return;
+        }
+        onClick(e, { key: leadKey });
+    }
+
     renderDataItem = ({ value }) => (
         <div className={styles.dataItem}>
             {value}
@@ -87,8 +100,14 @@ export default class Field extends React.PureComponent {
             data,
             color,
             leadKey,
-            onClick,
         } = this.props;
+
+        let style;
+        if (color) {
+            const { r, g, b } = color ? getRgbFromHex(color) : {};
+            const backgroundColor = `rgba(${r}, ${g}, ${b}, 0.2)`;
+            style = { backgroundColor };
+        }
 
         return (
             <div
@@ -97,10 +116,9 @@ export default class Field extends React.PureComponent {
                 draggable={!leadKey}
                 role="button"
                 tabIndex="-1"
-                style={{ backgroundColor: color }}
-                disabled={!!leadKey}
-                onClick={e => leadKey && onClick(e, { key: leadKey })}
-                onKeyDown={e => leadKey && onClick(e, { key: leadKey })}
+                style={style}
+                onClick={this.handleClick}
+                onKeyDown={this.handleClick}
             >
                 <h5>
                     {title}

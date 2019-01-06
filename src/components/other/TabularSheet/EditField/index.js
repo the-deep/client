@@ -177,8 +177,11 @@ export default class EditFieldButton extends React.PureComponent {
         value: PropTypes.shape({}).isRequired,
     };
 
-    state = {
-        showModal: false,
+    constructor(props) {
+        super(props);
+        this.state = {
+            showModal: false,
+        };
     }
 
     handleEdit = () => {
@@ -195,26 +198,13 @@ export default class EditFieldButton extends React.PureComponent {
         });
     }
 
-    renderModal = () => {
-        if (!this.state.showModal) {
-            return false;
-        }
-
-        return (
-            <EditFieldModal
-                initialValue={this.props.value}
-                onCancel={this.handleCancel}
-                onChange={this.handleChange}
-            />
-        );
-    }
-
     render() {
         const {
             value, // eslint-disable-line no-unused-vars
             onChange, // eslint-disable-line no-unused-vars
             ...otherProps
         } = this.props;
+        const { showModal } = this.state;
 
         return (
             <React.Fragment>
@@ -222,7 +212,14 @@ export default class EditFieldButton extends React.PureComponent {
                     {...otherProps}
                     onClick={this.handleEdit}
                 />
-                {this.renderModal()}
+                {
+                    showModal &&
+                    <EditFieldModal
+                        initialValue={this.props.value}
+                        onCancel={this.handleCancel}
+                        onChange={this.handleChange}
+                    />
+                }
             </React.Fragment>
         );
     }
