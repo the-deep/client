@@ -44,6 +44,7 @@ export default class ExcelSettings extends React.PureComponent {
                     className={styles.sheetHeaderRowInput}
                     faramElementName="headerRow"
                     label={_ts('addLeads.tabular', 'headerRowLabel')}
+                    placeholder={_ts('addLeads.tabular', 'headerRowPlaceholder')}
                     showLabel
                     showHintAndError
                 />

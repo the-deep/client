@@ -155,6 +155,20 @@ export default class AttributesPage extends React.PureComponent {
             );
 
             const schema = {
+                validation: (value = {}) => {
+                    const errors = [];
+                    const {
+                        options: {
+                            sheets: sheetsValue = {},
+                        } = {},
+                    } = value;
+                    const hasAllSkipped = Object.keys(sheetsValue)
+                        .every(key => sheetsValue[key].skip);
+                    if (hasAllSkipped) {
+                        errors.push('All sheets cannot be skipped');
+                    }
+                    return errors;
+                },
                 fields: {
                     options: {
                         fields: {
