@@ -2,15 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 
-import Button from '#rsca/Button';
-
 import ListView from '#rscv/List/ListView';
-import SparkLines from '#rscz/SparkLines';
 import GeoViz from '#components/geo/GeoViz';
-
-import { iconNames } from '#constants';
+import RotatingInput from '#rsci/RotatingInput';
+import BarChart from '#rscz/BarChart';
+import WordCloud from '#rscz/WordCloud';
 
 import _cs from '#cs';
+import _ts from '#ts';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -36,6 +35,10 @@ export default class DataSeries extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
     static seriesKeySelector = d => d.key;
+    static wordCloudFontSizeSelector = d => d.size;
+
+    static segmentKeySelector = d => d.key;
+    static segmentLabelSelector = d => d.label;
 
     static renderTableItem = ({ value }) => (
         <div
@@ -49,15 +52,32 @@ export default class DataSeries extends React.PureComponent {
     static renderTableParams = (key, item) => ({ ...item })
 
     static modes = {
-        string: ['table'],
-        number: ['table', 'line'],
+        string: ['table', 'wordCloud'],
+        number: ['table', 'barChart', 'vBarChart', 'wordCloud'],
         datetime: ['table'],
         geo: ['table', 'geo'],
+    }
+
+    static modesLabel = {
+        table: <span>{_ts('components.viz.dataSeries', 'tableVizLabel')}</span>,
+        barChart: <span>{_ts('components.viz.dataSeries', 'barChartVizLabel')}</span>,
+        vBarChart: <span>{_ts('components.viz.dataSeries', 'vBarChartVizLabel')}</span>,
+        wordCloud: <span>{_ts('components.viz.dataSeries', 'wordCloudVizLabel')}</span>,
+        geo: <span>{_ts('components.viz.dataSeries', 'geoVizLabel')}</span>,
     }
 
     state = {
         mode: 'table',
     }
+
+    getSegmentOptions = memoize(type => (
+        DataSeries.modes[type].map(
+            mode => ({
+                key: mode,
+                label: DataSeries.modesLabel[mode],
+            }),
+        )
+    ))
 
     previewComponents = {
         table: ({ value, className }) => (
@@ -69,17 +89,23 @@ export default class DataSeries extends React.PureComponent {
                 data={value.series}
             />
         ),
-        line: ({ value, className }) => (
-            <SparkLines
+        barChart: ({ value, className }) => (
+            <BarChart
                 className={_cs(className, styles.chart)}
-                data={this.calcNumberSeries(value.series)}
-                yValueSelector={d => d.value}
-                xValueSelector={d => d.key}
-                yLabelModifier={y => y}
-                xLabelModifier={x => `At position ${x}`}
-                showTooltip={false}
-                fill
+                data={this.calcNumberCountSeries(value.series)}
+                xKey="text"
+                yKey="size"
+                xTickFormat={() => ''}
+                yTickFormat={() => ''}
+                xGrid={false}
+                yGrid={false}
             />
+        ),
+        vBarChart: ({ value, className }) => (
+            // TODO: use V Bar chart
+            <div>
+                Coming Soon
+            </div>
         ),
         geo: ({ value: { geodata }, className }) => (
             <GeoViz
@@ -88,7 +114,43 @@ export default class DataSeries extends React.PureComponent {
                 value={this.calcGeoValue(geodata)}
             />
         ),
+        wordCloud: ({ value, className }) => {
+            const data = this.calcWordCountSeries(value.series);
+            return (
+                <WordCloud
+                    className={className}
+                    data={data}
+                    fontSizeSelector={DataSeries.wordCloudFontSizeSelector}
+                />
+            );
+        },
     }
+
+    calcWordCountSeries = memoize((series) => {
+        const tags = series.reduce(
+            (acc, { value }) => {
+                acc[value] = (acc[value] || 0) + 1;
+                return acc;
+            }, {},
+        );
+        return Object.keys(tags).map(word => ({
+            text: word,
+            size: tags[word] * 6,
+        }));
+    })
+
+    calcNumberCountSeries = memoize((series) => {
+        const tags = series.reduce(
+            (acc, { value }) => {
+                acc[value] = (acc[value] || 0) + 1;
+                return acc;
+            }, {},
+        );
+        return Object.keys(tags).map(word => ({
+            text: word,
+            size: tags[word],
+        }));
+    })
 
     calcNumberSeries = memoize(series => series.map((item, index) => ({
         key: index,
@@ -97,14 +159,8 @@ export default class DataSeries extends React.PureComponent {
 
     calcGeoValue = memoize(geodata => geodata.data.map(d => String(d.selectedId)))
 
-    togglePreview = () => {
-        const { mode } = this.state;
-        const candidates = DataSeries.modes[this.props.value.type];
-        const index = candidates.indexOf(mode);
-        const newIndex = (index + 1) % candidates.length;
-        this.setState({
-            mode: candidates[newIndex],
-        });
+    handleSegmentStateChange = (mode) => {
+        this.setState({ mode });
     }
 
     render() {
@@ -123,10 +179,12 @@ export default class DataSeries extends React.PureComponent {
                         {value.title}
                     </h5>
                     <div>
-                        <Button
-                            onClick={this.togglePreview}
-                            iconName={iconNames.swap}
-                            transparent
+                        <RotatingInput
+                            rendererSelector={DataSeries.segmentLabelSelector}
+                            keySelector={DataSeries.segmentKeySelector}
+                            value={mode}
+                            onChange={this.handleSegmentStateChange}
+                            options={this.getSegmentOptions(value.type)}
                         />
                     </div>
                 </header>
