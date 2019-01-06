@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import { getRgbFromHex } from '#rsu/common';
+
 import _cs from '#cs';
 
 import styles from './styles.scss';
@@ -24,9 +26,7 @@ export default class Highlight extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static getHighlightColors = (color) => {
-        const r = parseInt(color.substr(1, 2), 16);
-        const g = parseInt(color.substr(3, 2), 16);
-        const b = parseInt(color.substr(5, 2), 16);
+        const { r, g, b } = getRgbFromHex(color);
 
         const backgroundColor = `rgba(${r}, ${g}, ${b}, 0.2)`;
         const borderColor = color;

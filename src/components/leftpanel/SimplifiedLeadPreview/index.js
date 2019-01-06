@@ -20,17 +20,17 @@ const propTypes = {
     className: PropTypes.string,
     leadId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     highlights: PropTypes.arrayOf(PropTypes.object),
-    renderer: PropTypes.func,
-    rendererParams: PropTypes.func,
+    onClick: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
     leadId: undefined,
     highlights: [],
-    renderer: undefined,
-    rendererParams: undefined,
+    onClick: undefined,
 };
+
+const emptyArray = [];
 
 export default class SimplifiedLeadPreview extends React.PureComponent {
     static propTypes = propTypes;
@@ -44,22 +44,16 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
             error: undefined,
             extractedText: null,
             // extractedImages: [],
-            highlights: [],
         };
     }
 
     componentDidMount() {
-        this.calculateHighlights(this.props);
         this.create(this.props);
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.leadId !== nextProps.leadId) {
             this.create(nextProps);
-        }
-
-        if (this.props.highlights !== nextProps.highlights) {
-            this.calculateHighlights(nextProps);
         }
     }
 
@@ -134,8 +128,6 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
                         error: undefined,
                         extractedText: response.text,
                         // extractedImages: response.images,
-                    }, () => {
-                        this.calculateHighlights(this.props);
                     });
                     if (onLoad) {
                         onLoad(response);
@@ -157,43 +149,41 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
             .build()
     )
 
-    calculateHighlights({ highlights }) {
-        const { extractedText } = this.state;
+    calculateHighlights = (highlights, extractedText) => {
         if (!extractedText || !highlights) {
-            this.setState({ highlights: [] });
-            return;
+            return emptyArray;
         }
 
-        this.setState({
-            highlights: highlights.map((item) => {
-                const start = item.text ? extractedText.indexOf(item.text) : item.start;
-                const end = item.text ? item.text.length + start : item.end;
+        const newHighlights = highlights
+            .filter(item => item.text)
+            .map((item) => {
+                const { text, key } = item;
+                const start = extractedText.indexOf(text);
+                const end = start + text.length;
                 return {
+                    key,
                     start,
                     end,
                     item,
-                    key: item.key,
                 };
-            }),
-        });
+            })
+            .filter(h => h.start >= 0)
+            .sort((a, b) => a.start - b.start);
+        return newHighlights;
     }
+
+    rendererParams = () => ({
+        onClick: this.props.onClick,
+    })
 
     renderContent = () => {
         const {
-            rendererParams,
-            renderer,
-        } = this.props;
-
-        const {
             error,
             extractedText,
-            highlights,
-            pending,
         } = this.state;
-
-        if (pending) {
-            return null;
-        }
+        const {
+            highlights,
+        } = this.props;
 
         if (error) {
             return (
@@ -201,22 +191,24 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
                     { error }
                 </Message>
             );
-        } else if (extractedText) {
+        }
+        if (!extractedText) {
             return (
-                <HighlightedText
-                    className={styles.highlightedText}
-                    text={extractedText}
-                    highlights={highlights}
-                    renderer={renderer}
-                    rendererParams={rendererParams}
-                />
+                <Message>
+                    {_ts('components.simplifiedLeadPreview', 'previewNotAvailable')}
+                </Message>
             );
         }
 
+        // TODO: memoize this
+        const sortedHighlights = this.calculateHighlights(highlights, extractedText);
         return (
-            <Message>
-                {_ts('components.simplifiedLeadPreview', 'previewNotAvailable')}
-            </Message>
+            <HighlightedText
+                className={styles.highlightedText}
+                text={extractedText}
+                highlights={sortedHighlights}
+                rendererParams={this.rendererParams}
+            />
         );
     }
 
@@ -228,13 +220,14 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
 
         return (
             <div className={`${className} ${styles.leadPreview}`}>
-                { pending &&
+                { pending ? (
                     <LoadingAnimation
                         className={styles.loadingAnimation}
                         message={_ts('components.simplifiedLeadPreview', 'simplifyingLead')}
                     />
-                }
-                <Content />
+                ) : (
+                    <Content />
+                )}
             </div>
         );
     }

@@ -5,6 +5,8 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 
+import { listToMap } from '#rsu/common';
+
 import { RequestClient } from '#request';
 import _ts from '#ts';
 import _cs from '#cs';
@@ -16,7 +18,9 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     bookId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
+    highlights: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 
+    onClick: PropTypes.func.isRequired,
     setDefaultRequestParams: PropTypes.func.isRequired,
     extractRequest: RequestClient.propType.isRequired,
     bookRequest: RequestClient.propType.isRequired,
@@ -24,6 +28,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+    highlights: [],
 };
 
 @RequestClient(requests)
@@ -91,8 +96,23 @@ export default class TabularPreview extends React.PureComponent {
             invalid,
             completed,
         } = this.state;
+        const {
+            className: classNameFromProps,
+            highlights: highlightsFromProps,
+            onClick,
+        } = this.props;
 
-        const className = _cs(this.props.className, styles.tabularPreview, 'tabular-preview');
+        const className = _cs(
+            classNameFromProps,
+            styles.tabularPreview,
+            'tabular-preview',
+        );
+
+        const highlights = listToMap(
+            highlightsFromProps.filter(highlight => highlight.dataSeriesFieldId),
+            highlight => highlight.dataSeriesFieldId,
+            highlight => highlight,
+        );
 
         if (invalid) {
             return (
@@ -115,6 +135,8 @@ export default class TabularPreview extends React.PureComponent {
                 <SheetPreview
                     className={styles.sheet}
                     sheet={sheets[activeSheet]}
+                    highlights={highlights}
+                    onClick={onClick}
                 />
                 <ScrollTabs
                     className={styles.tabs}

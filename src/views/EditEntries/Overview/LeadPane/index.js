@@ -108,6 +108,76 @@ export default class LeftPane extends React.PureComponent {
         this.views = this.calculateTabComponents();
     }
 
+    getCurrentTab = (currentTab, tabs) => {
+        if (currentTab) {
+            return currentTab;
+        }
+        // If there is no currentTab, get first visible tab
+        const tabKeys = Object.keys(tabs).filter(a => !!tabs[a]);
+        return tabKeys.length > 0 ? Object.keys(tabs)[0] : undefined;
+    }
+
+    getTabsForLead = (lead, images, entryPermissions = {}) => {
+        const leadPaneType = LeftPane.getPaneType(lead);
+        let tabs = {};
+        switch (leadPaneType) {
+            case LEAD_PANE_TYPE.csv:
+                break;
+            case LEAD_PANE_TYPE.spreadsheet:
+                tabs = {
+                    ...tabs,
+                    'original-preview': _ts('editEntry.overview.leftpane', 'tabularTabLabel'),
+                    'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
+                };
+                break;
+            case LEAD_PANE_TYPE.image:
+                tabs = {
+                    ...tabs,
+                    'original-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
+                    'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
+                };
+                break;
+            case LEAD_PANE_TYPE.text:
+                tabs = {
+                    ...tabs,
+                    'simplified-preview': _ts('editEntry.overview.leftpane', 'simplifiedTabLabel'),
+                    'assisted-tagging': _ts('editEntry.overview.leftpane', 'assistedTabLabel'),
+                    'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
+                };
+                break;
+            case LEAD_PANE_TYPE.word:
+            case LEAD_PANE_TYPE.pdf:
+            case LEAD_PANE_TYPE.presentation:
+            case LEAD_PANE_TYPE.website:
+                tabs = {
+                    ...tabs,
+                    'simplified-preview': _ts('editEntry.overview.leftpane', 'simplifiedTabLabel'),
+                    'assisted-tagging': _ts('editEntry.overview.leftpane', 'assistedTabLabel'),
+                    'original-preview': _ts('editEntry.overview.leftpane', 'originalTabLabel'),
+                    'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
+                };
+                break;
+            default:
+                return undefined;
+        }
+
+        // Adding other tabs
+        if (lead.tabularBook) {
+            tabs['tabular-preview'] = _ts('editEntry.overview.leftpane', 'quantitativeTabLabel');
+        }
+
+        tabs['entries-listing'] = _ts('editEntry.overview.leftpane', 'entriesTabLabel');
+
+        // Hiding tabs using conditional
+        if (!images || images.length <= 0) {
+            tabs['images-preview'] = undefined;
+        }
+        if (!entryPermissions.create) {
+            tabs['assisted-tagging'] = undefined;
+        }
+        return tabs;
+    }
+
     calculateTabComponents = () => ({
         'simplified-preview': {
             component: () => (
@@ -115,10 +185,9 @@ export default class LeftPane extends React.PureComponent {
                     className={styles.simplifiedPreview}
                     leadId={this.props.lead.id}
                     // FIXME: use memoize here
-                    highlights={this.calculateHighlights()}
-                    onLoad={this.handleLoadImages}
-
-                    rendererParams={this.highlightRendererParams}
+                    highlights={this.calculateHighlightsForText()}
+                    onLoad={this.handleLoad}
+                    onClick={this.handleHighlightClick}
                 />
             ),
             mount: true,
@@ -129,6 +198,8 @@ export default class LeftPane extends React.PureComponent {
                 <TabularPreview
                     className={styles.tabularPreview}
                     bookId={this.props.lead.tabularBook}
+                    highlights={this.calculateHighlightsForTabular()}
+                    onClick={this.handleHighlightClick}
                 />
             ),
             mount: true,
@@ -199,73 +270,6 @@ export default class LeftPane extends React.PureComponent {
         },
     })
 
-    calculateTabsForLead = (lead, images) => {
-        const leadPaneType = LeftPane.getPaneType(lead);
-        let tabs = {};
-        const {
-            projectRole: {
-                entryPermissions = {},
-            },
-        } = this.props;
-
-        switch (leadPaneType) {
-            case LEAD_PANE_TYPE.csv:
-                break;
-            case LEAD_PANE_TYPE.spreadsheet:
-                tabs = {
-                    ...tabs,
-                    'original-preview': _ts('editEntry.overview.leftpane', 'tabularTabLabel'),
-                    'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
-                };
-                break;
-            case LEAD_PANE_TYPE.image:
-                tabs = {
-                    ...tabs,
-                    'original-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
-                    'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
-                };
-                break;
-            case LEAD_PANE_TYPE.text:
-                tabs = {
-                    ...tabs,
-                    'simplified-preview': _ts('editEntry.overview.leftpane', 'simplifiedTabLabel'),
-                    'assisted-tagging': _ts('editEntry.overview.leftpane', 'assistedTabLabel'),
-                    'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
-                };
-                break;
-            case LEAD_PANE_TYPE.word:
-            case LEAD_PANE_TYPE.pdf:
-            case LEAD_PANE_TYPE.presentation:
-            case LEAD_PANE_TYPE.website:
-                tabs = {
-                    ...tabs,
-                    'simplified-preview': _ts('editEntry.overview.leftpane', 'simplifiedTabLabel'),
-                    'assisted-tagging': _ts('editEntry.overview.leftpane', 'assistedTabLabel'),
-                    'original-preview': _ts('editEntry.overview.leftpane', 'originalTabLabel'),
-                    'images-preview': _ts('editEntry.overview.leftpane', 'imagesTabLabel'),
-                };
-                break;
-            default:
-                return undefined;
-        }
-
-        // Adding other tabs
-        if (lead.tabularBook) {
-            tabs['tabular-preview'] = _ts('editEntry.overview.leftpane', 'quantitativeTabLabel');
-        }
-
-        tabs['entries-listing'] = _ts('editEntry.overview.leftpane', 'entriesTabLabel');
-
-        // Hiding tabs using conditional
-        if (!images || images.length <= 0) {
-            tabs['images-preview'] = undefined;
-        }
-        if (!entryPermissions.create) {
-            tabs['assisted-tagging'] = undefined;
-        }
-        return tabs;
-    }
-
     handleTabClick = (key) => {
         if (key === this.state.currentTab) {
             return;
@@ -275,27 +279,34 @@ export default class LeftPane extends React.PureComponent {
 
     // Simplified Lead Preview
 
-    highlightRendererParams = () => ({
-        onClick: this.handleHighlightClick,
-    })
-
-    calculateHighlights = () => this.props.filteredEntries
+    // TODO: memoize this
+    calculateHighlightsForText = () => this.props.filteredEntries
         .filter(e => entryAccessor.entryType(e) === 'excerpt')
         .map(entry => ({
             key: entryAccessor.key(entry),
+            // text is used by simplified lead preview
             text: entryAccessor.excerpt(entry),
             color: entryAccessor.color(entry) || '#c0c0c0',
         }));
 
+    // TODO: memoize this
+    calculateHighlightsForTabular = () => this.props.filteredEntries
+        .filter(e => entryAccessor.entryType(e) === 'dataSeries')
+        .map(entry => ({
+            key: entryAccessor.key(entry),
+            // dataSeries fieldId is used by simplified lead preview
+            dataSeriesFieldId: (entryAccessor.dataSeries(entry) || {}).fieldId,
+            color: entryAccessor.color(entry) || '#c0c0c0',
+        }));
+
     handleHighlightClick = (e, { key }) => {
-        // console.warn('this should handle highlight click', text, key);
         this.props.setSelectedEntryKey({
             leadId: this.props.lead.id,
             key,
         });
     }
 
-    handleLoadImages = (response) => {
+    handleLoad = (response) => {
         if (response.images) {
             this.setState({ images: response.images });
         }
@@ -320,12 +331,17 @@ export default class LeftPane extends React.PureComponent {
     }
 
     render() {
-        const { lead } = this.props;
-        const { images } = this.state;
-        let { currentTab } = this.state;
+        const {
+            projectRole: { entryPermissions },
+            lead,
+        } = this.props;
+        const {
+            images,
+            currentTab,
+        } = this.state;
 
-        // FIXME: move this to componentWillUpdate
-        const tabs = this.calculateTabsForLead(lead, images);
+        // FIXME: memoize this
+        const tabs = this.getTabsForLead(lead, images, entryPermissions);
 
         // If there is no tabs, the lead must have unrecognized type
         if (!tabs) {
@@ -336,21 +352,17 @@ export default class LeftPane extends React.PureComponent {
             );
         }
 
-        // If there is no currentTab, get first visible tab
-        if (!currentTab) {
-            const tabKeys = Object.keys(tabs).filter(a => !!tabs[a]);
-            currentTab = tabKeys.length > 0 ? Object.keys(tabs)[0] : undefined;
-        }
+        const tabKey = this.getCurrentTab(currentTab, tabs);
 
         return (
             <Fragment>
                 <FixedTabs
                     className={styles.tabs}
-                    active={currentTab}
+                    active={tabKey}
                     tabs={tabs}
                     onClick={this.handleTabClick}
                 >
-                    {currentTab === 'assisted-tagging' &&
+                    {tabKey === 'assisted-tagging' &&
                         <img
                             className={styles.brainIcon}
                             src={brainIcon}
@@ -360,7 +372,7 @@ export default class LeftPane extends React.PureComponent {
                     }
                 </FixedTabs>
                 <MultiViewContainer
-                    active={currentTab}
+                    active={tabKey}
                     views={this.views}
                 />
             </Fragment>

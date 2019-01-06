@@ -28,28 +28,36 @@ export default class HighlightedText extends React.PureComponent {
 
     static createNestedSplits = (splits = []) => {
         const parents = [];
+        const skip = {};
         for (let i = 0; i < splits.length; i += 1) {
             const parent = splits[i];
-            if (parent.added) {
-                continue; // eslint-disable-line
-            }
-            parent.children = [];
-            parent.added = true;
 
+            if (skip[i]) {
+                continue; // eslint-disable-line no-continue
+            }
+
+            const children = [];
             for (let j = i + 1; j < splits.length; j += 1) {
                 const child = splits[j];
                 if (
                     child.start < parent.end &&
                     child.end < parent.end
                 ) {
-                    child.start -= parent.start;
-                    child.end -= parent.start;
-                    parent.children.push(child);
+                    skip[j] = true;
+                    const newChild = {
+                        ...child,
+                        start: child.start - parent.start,
+                        end: child.end - parent.start,
+                    };
+                    children.push(newChild);
                 }
             }
 
-            parent.children = HighlightedText.createNestedSplits(parent.children);
-            parents.push(parent);
+            const newParent = {
+                ...parent,
+                children: HighlightedText.createNestedSplits(children),
+            };
+            parents.push(newParent);
         }
 
         return parents;
@@ -125,12 +133,8 @@ export default class HighlightedText extends React.PureComponent {
             text,
         } = this.props;
 
-        const highlightsCopy = highlights
-            .filter(h => h.start >= 0)
-            .map(h => ({ ...h }))
-            .sort((h1, h2) => h1.start - h2.start);
-
-        const nestedSplits = HighlightedText.createNestedSplits(highlightsCopy);
+        // TODO: memoize this
+        const nestedSplits = HighlightedText.createNestedSplits(highlights);
 
         return (
             <p className={className}>
