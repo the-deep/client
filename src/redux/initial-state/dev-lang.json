@@ -895,7 +895,8 @@
         "-26663455": "Bar",
         "-84871998": "Table",
         "-50602560": "Word cloud",
-        "-5214537": "Vertical bar chart"
+        "-5214537": "Vertical bar chart",
+        "-39031808": "There is no header in this sheet."
     },
     "links": {
         "browserExtension": {
@@ -1643,7 +1644,8 @@
             "cancelButtonTitle": 61,
             "backButtonTitle": -53408079,
             "extractButtonTitle": 15006,
-            "nextButtonTitle": 23
+            "nextButtonTitle": 23,
+            "noHeaderLabel": -39031808
         },
         "register": {
             "checkYourEmailText": 818,

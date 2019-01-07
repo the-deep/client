@@ -9,7 +9,10 @@ import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 
-import Faram, { requiredCondition } from '#rscg/Faram';
+import Faram, {
+    requiredCondition,
+    greaterThanCondition,
+} from '#rscg/Faram';
 import FaramGroup from '#rscg/FaramGroup';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 
@@ -118,6 +121,7 @@ export default class AttributesPage extends React.PureComponent {
                     options: {
                         fields: {
                             delimiter: [requiredCondition],
+                            noHeaders: [],
                         },
                     },
                 },
@@ -148,7 +152,8 @@ export default class AttributesPage extends React.PureComponent {
                         },
                         default: {
                             skip: [],
-                            headerRow: [requiredCondition],
+                            headerRow: [requiredCondition, greaterThanCondition(0)],
+                            noHeaders: [],
                         },
                     },
                 }),
