@@ -14,13 +14,12 @@ import ModalFooter from '#rscv/Modal/Footer';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import AccentButton from '#rsca/Button/AccentButton';
 
 import update from '#rsu/immutable-update';
 import _ts from '#ts';
 
 
-class EditFieldModal extends React.PureComponent {
+export default class EditFieldModal extends React.PureComponent {
     static propTypes = {
         initialValue: PropTypes.shape({}).isRequired,
         onChange: PropTypes.func.isRequired,
@@ -166,61 +165,6 @@ class EditFieldModal extends React.PureComponent {
                     </ModalFooter>
                 </Faram>
             </Modal>
-        );
-    }
-}
-
-// eslint-disable-next-line react/no-multi-comp
-export default class EditFieldButton extends React.PureComponent {
-    static propTypes = {
-        onChange: PropTypes.func.isRequired,
-        value: PropTypes.shape({}).isRequired,
-    };
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            showModal: false,
-        };
-    }
-
-    handleEdit = () => {
-        this.setState({ showModal: true });
-    }
-
-    handleCancel = () => {
-        this.setState({ showModal: false });
-    }
-
-    handleChange = (values) => {
-        this.setState({ showModal: false }, () => {
-            this.props.onChange(values);
-        });
-    }
-
-    render() {
-        const {
-            value, // eslint-disable-line no-unused-vars
-            onChange, // eslint-disable-line no-unused-vars
-            ...otherProps
-        } = this.props;
-        const { showModal } = this.state;
-
-        return (
-            <React.Fragment>
-                <AccentButton
-                    {...otherProps}
-                    onClick={this.handleEdit}
-                />
-                {
-                    showModal &&
-                    <EditFieldModal
-                        initialValue={this.props.value}
-                        onCancel={this.handleCancel}
-                        onChange={this.handleChange}
-                    />
-                }
-            </React.Fragment>
         );
     }
 }

@@ -9,7 +9,7 @@ import { iconNames } from '#constants';
 
 import HealthBar from '#rscz/HealthBar';
 
-import EditField from '../EditField';
+import EditField from './EditField';
 import styles from './styles.scss';
 
 

@@ -14,7 +14,6 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import update from '#rsu/immutable-update';
 import { mapToList } from '#rsu/common';
 
-import TabularSheet from '#components/other/TabularSheet';
 import TriggerAndPoll from '#components/general/TriggerAndPoll';
 
 import { iconNames } from '#constants';
@@ -22,6 +21,8 @@ import { RequestClient } from '#request';
 import _ts from '#ts';
 import _cs from '#cs';
 
+import TabularSheet from './TabularSheet';
+import EditField from './EditField';
 import requests from './requests';
 import styles from './styles.scss';
 
@@ -130,6 +131,10 @@ export default class TabularBook extends React.PureComponent {
         this.props.deleteRequest.do();
     }
 
+    handleDetailsChange = (newValues) => {
+        console.warn(newValues);
+    }
+
     renderActual = ({ invalid, completed }) => {
         const {
             tabs,
@@ -173,6 +178,13 @@ export default class TabularBook extends React.PureComponent {
                                     pending={deleteRequest.pending}
                                 />
                             )}
+                            <EditField
+                                className={styles.edit}
+                                onChange={this.handleDetailsChange}
+                                iconName={iconNames.edit}
+                                value={this.state.sheets}
+                                transparent
+                            />
                         </div>
                     }
                 />
