@@ -9,18 +9,20 @@ import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 
-import Faram from '#rscg/Faram';
+import Faram, { requiredCondition } from '#rscg/Faram';
 import FaramGroup from '#rscg/FaramGroup';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 
-import TriggerAndPoll from '#components/general/TriggerAndPoll';
+import { listToMap } from '#rsu/common';
+
 import { RequestClient, requestMethods } from '#request';
 
 import _ts from '#ts';
 
-import CsvSettings, { csvSchema } from './CsvSettings';
-import ExcelSettings, { xlsxSchema } from './ExcelSettings';
+import CsvSettings from './CsvSettings';
+import ExcelSettings from './ExcelSettings';
 import styles from './styles.scss';
+
 
 const propTypes = {
     bookId: PropTypes.number,
@@ -37,27 +39,33 @@ const defaultProps = {
     defaultFileType: undefined,
 };
 
-const createMetaRequestUrl = bookId => `/tabular-books/${bookId}/`;
-const metaRequestQuery = { fields: 'file_type,meta_status,meta' };
-const shouldPollMetaRequest = r => (
-    r.metaStatus === 'pending' ||
-    r.metaStatus === 'initial'
-);
-
-const schemaPerFileType = {
-    csv: {
-        fields: {
-            options: csvSchema,
-        },
-    },
-    xlsx: {
-        fields: {
-            options: xlsxSchema,
-        },
-    },
-};
-
 const requests = {
+    createMetadataRequest: {
+        onMount: true,
+        url: ({ props: { bookId } }) => `/tabular-books/${bookId}/`,
+        query: { fields: 'file_type,meta_status,meta' },
+        shouldPoll: response => (
+            response.metaStatus === 'pending' ||
+            response.metaStatus === 'initial'
+        ),
+        onSuccess: ({ params, response }) => {
+            const { meta, fileType } = response;
+            params.initFaram({
+                meta,
+                fileType,
+            });
+        },
+        onFailure: ({ params: { handleFaramError } }) => {
+            handleFaramError({
+                $internal: ['SERVER ERROR'],
+            });
+        },
+        onFatal: ({ params: { handleFaramError } }) => {
+            handleFaramError({
+                $internal: ['SERVER ERROR'],
+            });
+        },
+    },
     saveBookRequest: {
         method: requestMethods.PATCH,
         url: ({ params: { bookId } }) => `/tabular-books/${bookId}/`,
@@ -84,9 +92,112 @@ export default class AttributesPage extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
+            fileType: 'undefined',
+            meta: undefined,
+            schema: {},
             faramValues: {},
             faramErrors: {},
         };
+
+        this.props.createMetadataRequest.setDefaultParams({
+            initFaram: this.initFaram,
+            handleFaramError: this.handleFaramValidationFailure,
+        });
+    }
+
+    initFaram = ({ fileType, meta = {} }) => {
+        const params = {
+            fileType: fileType || this.props.defaultFileType,
+            meta,
+            faramErrors: {},
+        };
+
+        if (fileType === 'csv') {
+            const schema = {
+                fields: {
+                    options: {
+                        fields: {
+                            delimiter: [requiredCondition],
+                        },
+                    },
+                },
+            };
+
+            const faramValues = {
+                options: {
+                    delimiter: ',',
+                },
+            };
+
+            this.setState({
+                ...params,
+                schema,
+                faramValues,
+            });
+        } else if (fileType === 'xlsx') {
+            const { sheets = [] } = meta;
+
+            const xlsxSchema = listToMap(
+                sheets,
+                sheet => sheet.key,
+                () => ({
+                    identifier: (val = {}) => (val.skip ? 'skipped' : 'default'),
+                    fields: {
+                        skipped: {
+                            skip: [],
+                        },
+                        default: {
+                            skip: [],
+                            headerRow: [requiredCondition],
+                        },
+                    },
+                }),
+            );
+
+            const schema = {
+                validation: (value = {}) => {
+                    const errors = [];
+                    const {
+                        options: {
+                            sheets: sheetsValue = {},
+                        } = {},
+                    } = value;
+                    const hasAllSkipped = Object.keys(sheetsValue)
+                        .every(key => sheetsValue[key].skip);
+                    if (hasAllSkipped) {
+                        errors.push('All sheets cannot be skipped');
+                    }
+                    return errors;
+                },
+                fields: {
+                    options: {
+                        fields: {
+                            sheets: {
+                                fields: xlsxSchema,
+                            },
+                        },
+                    },
+                },
+            };
+
+            const faramValues = {
+                options: {
+                    sheets: listToMap(
+                        sheets,
+                        sheet => sheet.key,
+                        () => ({
+                            headerRow: 1,
+                        }),
+                    ),
+                },
+            };
+
+            this.setState({
+                ...params,
+                schema,
+                faramValues,
+            });
+        }
     }
 
     handleBackClick = () => {
@@ -113,44 +224,44 @@ export default class AttributesPage extends React.PureComponent {
         });
     }
 
-    renderFaram = ({ pollRequest }) => {
+    render() {
         const {
+            fileType,
+            meta,
+            schema,
             faramValues,
             faramErrors,
         } = this.state;
         const {
-            defaultFileType,
             saveBookRequest,
+            createMetadataRequest,
             onCancel,
+            bookId,
         } = this.props;
 
+        if (!bookId) {
+            return null;
+        }
+
         // TODO: Handle pollRequest.error and saveRequest.error
-        const { pending: pollPending, response } = pollRequest;
+        const { pending: pollPending } = createMetadataRequest;
         const { pending: savePending } = saveBookRequest;
 
-        // Default component should be null but FaramGroup doesn't
+        // NOTE: Default component should be null but FaramGroup doesn't
         // support null child yet.
-        let component = <div />;
-        let currentFileType = defaultFileType;
-
-        if (response) {
-            const { meta, fileType } = response;
-            currentFileType = fileType;
-
-            if (fileType === 'csv') {
-                component = <CsvSettings />;
-            } else if (fileType === 'xlsx') {
-                component = <ExcelSettings meta={meta} />;
-            }
-        }
+        const component = (
+            (fileType === 'csv' && <CsvSettings />) ||
+            (fileType === 'xlsx' && <ExcelSettings meta={meta} />)
+        );
 
         return (
             <Faram
+                key={fileType}
                 className={styles.form}
                 onChange={this.handleFaramChange}
                 onValidationFailure={this.handleFaramValidationFailure}
                 onValidationSuccess={this.handleFaramValidationSuccess}
-                schema={schemaPerFileType[currentFileType]}
+                schema={schema}
                 value={faramValues}
                 error={faramErrors}
                 disabled={pollPending || savePending}
@@ -158,15 +269,14 @@ export default class AttributesPage extends React.PureComponent {
                 <ModalBody>
                     {pollPending && <LoadingAnimation />}
                     <NonFieldErrors faramElement />
-                    <FaramGroup faramElementName="options">
-                        {component}
-                    </FaramGroup>
+                    { component &&
+                        <FaramGroup faramElementName="options">
+                            {component}
+                        </FaramGroup>
+                    }
                 </ModalBody>
                 <ModalFooter>
-                    <Button
-                        onClick={this.handleBackClick}
-                        disabled={pollPending || savePending}
-                    >
+                    <Button onClick={this.handleBackClick}>
                         {_ts('addLeads.tabular', 'backButtonTitle')}
                     </Button>
                     <DangerButton onClick={onCancel}>
@@ -180,26 +290,6 @@ export default class AttributesPage extends React.PureComponent {
                     </PrimaryButton>
                 </ModalFooter>
             </Faram>
-        );
-    }
-
-    render() {
-        const { bookId } = this.props;
-        if (!bookId) {
-            return null;
-        }
-
-        const FaramChild = this.renderFaram;
-
-        return (
-            <TriggerAndPoll
-                pollUrl={createMetaRequestUrl(bookId)}
-                query={metaRequestQuery}
-                shouldPoll={shouldPollMetaRequest}
-                pollOnly
-            >
-                <FaramChild />
-            </TriggerAndPoll>
         );
     }
 }

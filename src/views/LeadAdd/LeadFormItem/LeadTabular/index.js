@@ -2,10 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import ModalHeader from '#rscv/Modal/Header';
-import Button from '#rsca/Button';
 import Wizard from '#rscv/Wizard';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 import _cs from '#cs';
 
@@ -19,12 +17,6 @@ const propTypes = {
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setTabularBook: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     onCancel: PropTypes.func.isRequired,
-
-    // saveBookRequest: RequestClient.propType.isRequired,
-    // metaRequest: RequestClient.propType.isRequired,
-    // lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    // saveBookRequest: RequestClient.prop.isRequired,
-    // metaRequest: RequestClient.prop.isRequired,
 };
 
 const defaultProps = {

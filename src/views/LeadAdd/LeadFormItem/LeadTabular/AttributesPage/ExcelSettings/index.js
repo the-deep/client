@@ -11,8 +11,6 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
-export const xlsxSchema = [];
-
 export default class ExcelSettings extends React.PureComponent {
     static sheetKeySelector = d => d.key;
 

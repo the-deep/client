@@ -17,6 +17,7 @@ $radius-button-border: 2px;
     }
 
     %button-basic {
+        align-self: stretch;
         flex-shrink: 0;
         margin-left: $spacing-extra-small-alt;
         border-radius: $radius-button-border;

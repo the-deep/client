@@ -57,10 +57,7 @@ const requests = {
 
 const calcFileType = (mimeType) => {
     const leadType = leadPaneTypeMap[mimeType];
-    if (leadType === LEAD_PANE_TYPE.spreadsheet) {
-        return 'xlsx';
-    }
-    return 'csv';
+    return leadType === LEAD_PANE_TYPE.spreadsheet ? 'xlsx' : 'csv';
 };
 
 @RequestClient(requests)
@@ -96,7 +93,6 @@ export default class FileTypeSelectionPage extends React.PureComponent {
     }
 
     handleFaramValidationFailure = (faramErrors) => {
-        console.warn(faramErrors);
         this.setState({ faramErrors });
     }
 
@@ -124,7 +120,6 @@ export default class FileTypeSelectionPage extends React.PureComponent {
             onCancel,
         } = this.props;
 
-        // TODO: Handle error
         const { pending } = createBookRequest;
 
         return (
