@@ -10,9 +10,14 @@ import { iconNames } from '#constants';
 import HealthBar from '#rscz/HealthBar';
 
 import EditField from '../EditField';
-
 import styles from './styles.scss';
 
+
+const LoadingOnValid = ({ invalid }) => (!invalid && (
+    <span className={styles.loadingContainer}>
+        <LoadingAnimation />
+    </span>
+));
 
 const getSortIcon = sortOrder => ({
     asc: iconNames.sortAscending,
@@ -75,13 +80,7 @@ export default class Header extends React.PureComponent {
             return null;
         }
 
-        // FIXME: this can be outside the class
         const { id } = value;
-        const LoadingOnValid = ({ invalid }) => (!invalid && (
-            <span className={styles.loadingContainer}>
-                <LoadingAnimation />
-            </span>
-        ));
 
         return (
             <TriggerAndPoll
