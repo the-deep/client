@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
@@ -38,6 +38,7 @@ const propTypes = {
 
     showDelete: PropTypes.bool,
     onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    onCancel: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
 };
 
 const defaultProps = {
@@ -151,7 +152,10 @@ export default class TabularBook extends React.PureComponent {
         } = this.state;
         const {
             deleteRequest,
+            saveRequest,
+            getBookRequest,
             onCancel,
+            showDelete,
         } = this.props;
 
         const className = _cs(
@@ -160,27 +164,8 @@ export default class TabularBook extends React.PureComponent {
             'tabular-book',
         );
 
-        if (invalid) {
-            return (
-                <div className={className}>
-                    <Message>
-                        {_ts('tabular', 'invalid')}
-                    </Message>
-                </div>
-            );
-        }
-
-        if (!completed) {
-            return (
-                <div className={className}>
-                    <LoadingAnimation />
-                </div>
-            );
-        }
-
         return (
             <div className={className}>
-                {deleteRequest.pending && <LoadingAnimation />}
                 <ModalHeader
                     title={_ts('tabular', 'title')}
                     rightComponent={
@@ -190,32 +175,50 @@ export default class TabularBook extends React.PureComponent {
                                 onClick={this.resetSort}
                                 title={_ts('tabular', 'resetSortTitle')}
                                 transparent
+                                disabled={deleteRequest.pending || !completed || invalid}
                             />
-                            {this.props.showDelete && (
+                            {showDelete && (
                                 <DangerConfirmButton
                                     iconName={iconNames.delete}
                                     onClick={this.handleDelete}
                                     confirmationMessage={_ts('tabular', 'deleteMessage')}
                                     title={_ts('tabular', 'deleteButtonTooltip')}
                                     transparent
+                                    disabled={deleteRequest.pending || !completed || invalid}
+                                    pending={deleteRequest.pending}
                                 />
                             )}
                         </div>
                     }
                 />
                 <ModalBody className={styles.body}>
-                    <TabularSheet
-                        className={styles.sheetView}
-                        sheet={sheets[activeSheet]}
-                        onSheetChange={this.handleSheetChange}
-                    />
-                    <ScrollTabs
-                        className={styles.tabs}
-                        tabs={tabs}
-                        active={activeSheet}
-                        onClick={this.handleActiveSheetChange}
-                        inverted
-                    />
+                    { invalid &&
+                        <div className={className}>
+                            <Message>
+                                {_ts('tabular', 'invalid')}
+                            </Message>
+                        </div>
+                    }
+                    { completed && !getBookRequest.pending && !saveRequest.pending ? (
+                        <Fragment>
+                            <TabularSheet
+                                className={styles.sheetView}
+                                sheet={sheets[activeSheet]}
+                                onSheetChange={this.handleSheetChange}
+                            />
+                            <ScrollTabs
+                                className={styles.tabs}
+                                tabs={tabs}
+                                active={activeSheet}
+                                onClick={this.handleActiveSheetChange}
+                                inverted
+                            />
+                        </Fragment>
+                    ) : (
+                        <div className={className}>
+                            <LoadingAnimation />
+                        </div>
+                    )}
                 </ModalBody>
                 <ModalFooter>
                     <Button onClick={onCancel}>

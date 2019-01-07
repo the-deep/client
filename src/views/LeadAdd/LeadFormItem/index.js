@@ -225,13 +225,7 @@ export default class LeadFormItem extends React.PureComponent {
             this.leadSaveRequest.stop();
         }
         this.leadSaveRequest = onFormSubmitSuccess(lead, newValues);
-
         this.leadSaveRequest.start();
-
-        // If we have tabular, first trigger preLoad of lead,
-        // save the tabular data and then save actual lead.
-        // Triggering preLoad is a hack to set pending state of
-        // corresponsing lead before doing actual leadSaveRequest.
     }
 
     handleFormChange = (faramValues, faramErrors) => {
