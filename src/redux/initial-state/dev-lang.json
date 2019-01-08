@@ -1574,7 +1574,8 @@
             "leadSaveFailure": 974,
             "connectorSourcesGetFailure": 1110,
             "connectorSourcesTitle": 1109,
-            "connectorTitle": 1100
+            "connectorTitle": 1100,
+            "tabularButtonTitle": 142
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,

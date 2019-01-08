@@ -148,7 +148,8 @@ const leadReference = {
     },
 };
 
-export const createLead = ({ id, serverId, faramValues = {}, pristine = false }) => {
+export const createLead = (lead) => {
+    const { id, serverId, faramValues = {}, pristine = false } = lead;
     const settings = {
         id: { $set: id },
         serverId: { $set: serverId },

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import Message from '#rscv/Message';
@@ -91,6 +91,7 @@ export default class LeadFormItem extends React.PureComponent {
             tabularMode: false,
             pendingExtraction: false,
             showAddLeadGroupModal: false,
+            isTabularCapable: true,
         };
 
         if (props.setSubmitter) {
@@ -126,19 +127,25 @@ export default class LeadFormItem extends React.PureComponent {
         this.submitLeadForm = func;
     }
 
-    setTabularMode = (mimeType) => {
-        this.setState({ tabularMode: true, tabularMimeType: mimeType });
-    }
-
-    setTabularBook = (tabularBook) => {
+    handleTabularBookSet = (tabularBook) => {
         this.handleFieldsChange({ tabularBook });
     }
 
-    unsetTabularMode = () => {
-        this.setState({ tabularMode: false, tabularMimeType: undefined });
+    handleTabularModalClose = () => {
+        this.setState({
+            showTabularModal: false,
+            tabularMimeType: undefined,
+        });
     }
 
-    unsetTabularBook = () => {
+    handleTabularButtonClick = (mimeType) => {
+        this.setState({
+            showTabularModal: true,
+            tabularMimeType: mimeType,
+        });
+    }
+
+    handleTabularBookDelete = () => {
         this.handleFieldsChange({ tabularBook: undefined });
     }
 
@@ -162,30 +169,23 @@ export default class LeadFormItem extends React.PureComponent {
                 const values = { ...leadValues };
                 const formFieldErrors = { ...leadFieldErrors };
 
-                // if (webInfo.project) {
-                //     values.project = [webInfo.project];
-                //     formFieldErrors.project = undefined;
-                // }
-                if (webInfo.date) {
-                    values.publishedOn = webInfo.date;
-                    formFieldErrors.publishedOn = undefined;
-                }
-                if (webInfo.source) {
-                    values.source = webInfo.source;
-                    formFieldErrors.source = undefined;
-                }
-                if (webInfo.website) {
-                    values.website = webInfo.website;
-                    formFieldErrors.website = undefined;
-                }
-                if (webInfo.title) {
-                    values.title = webInfo.title;
-                    formFieldErrors.title = undefined;
-                }
-                if (webInfo.url) {
-                    values.url = webInfo.url;
-                    formFieldErrors.url = undefined;
-                }
+                const webInfoToValueMap = {
+                    date: 'publishedOn',
+                    source: 'source',
+                    website: 'website',
+                    title: 'title',
+                    url: 'url',
+                };
+
+                const webInfoKeys = Object.keys(webInfoToValueMap);
+                webInfoKeys.forEach((key) => {
+                    if (webInfo[key]) {
+                        const valueKey = webInfoToValueMap[key];
+                        values[valueKey] = webInfo[key];
+                        formFieldErrors[valueKey] = undefined;
+                    }
+                });
+
 
                 this.props.addLeadViewLeadChange({
                     leadId: this.props.leadKey,
@@ -202,6 +202,7 @@ export default class LeadFormItem extends React.PureComponent {
         if (this.webInfoExtractRequest) {
             this.webInfoExtractRequest.stop();
         }
+
         const lead = leadAccessor.getFaramValues(this.props.lead);
         this.webInfoExtractRequest = this.createWebInfoExtractRequest(lead.url);
         this.webInfoExtractRequest.start();
@@ -350,42 +351,34 @@ export default class LeadFormItem extends React.PureComponent {
             case LEAD_TYPE.website:
                 return (
                     <div className={className} >
-                        {
-                            values.url ? (
-                                <ExternalGallery
-                                    className={styles.galleryFile}
-                                    url={values.url}
-                                    onTabularClick={this.setTabularMode}
-                                    showTabular={!this.state.tabularMode}
-                                    showUrl
-                                />
-                            ) : (
-                                <Message className={className}>
-                                    {_ts('addLeads', 'sourcePreview')}
-                                </Message>
-                            )
-                        }
+                        { values.url ? (
+                            <ExternalGallery
+                                className={styles.galleryFile}
+                                url={values.url}
+                                showUrl
+                            />
+                        ) : (
+                            <Message className={className}>
+                                {_ts('addLeads', 'sourcePreview')}
+                            </Message>
+                        ) }
                     </div>
                 );
             default:
                 return (
                     <div className={className} >
-                        {
-                            values.attachment ? (
-                                <InternalGallery
-                                    className={styles.galleryFile}
-                                    galleryId={values.attachment && values.attachment.id}
-                                    notFoundMessage={_ts('addLeads', 'leadFileNotFound')}
-                                    onTabularClick={this.setTabularMode}
-                                    showTabular={!this.state.tabularMode}
-                                    showUrl
-                                />
-                            ) : (
-                                <Message>
-                                    {_ts('addLeads', 'previewNotAvailable')}
-                                </Message>
-                            )
-                        }
+                        { values.attachment ? (
+                            <InternalGallery
+                                className={styles.galleryFile}
+                                galleryId={values.attachment && values.attachment.id}
+                                notFoundMessage={_ts('addLeads', 'leadFileNotFound')}
+                                showUrl
+                            />
+                        ) : (
+                            <Message>
+                                {_ts('addLeads', 'previewNotAvailable')}
+                            </Message>
+                        ) }
                     </div>
                 );
         }
@@ -405,10 +398,15 @@ export default class LeadFormItem extends React.PureComponent {
             hidePreview,
             ...otherProps
         } = this.props;
+
         const {
             showAddLeadGroupModal,
             tabularMode,
             tabularMimeType,
+            showTabularModal,
+            isTabularCapable,
+            isUrlValid,
+            pendingExtraction,
         } = this.state;
 
         const LeadPreview = this.renderLeadPreview;
@@ -420,9 +418,10 @@ export default class LeadFormItem extends React.PureComponent {
                 tabularBook,
             } = {},
         } = lead;
+
         const type = leadAccessor.getType(lead);
         const disableResize = type === LEAD_TYPE.text;
-        const pending = isFormLoading || this.state.pendingExtraction;
+        const pending = isFormLoading || pendingExtraction;
 
         const className = `
             ${styles.right}
@@ -434,73 +433,73 @@ export default class LeadFormItem extends React.PureComponent {
             ${sourceType === 'text' ? styles.textLead : ''}
         `;
 
+        const showLeadPreview = active && !hidePreview && sourceType !== 'text';
+
         return (
             <div className={className}>
                 { pending && <LoadingAnimation /> }
+                { showAddLeadGroupModal && (
+                    <AddLeadGroup
+                        onModalClose={this.handleAddLeadGroupModalClose}
+                        onLeadGroupAdd={this.handleLeadGroupAdd}
+                        projectId={projectId}
+                    />
+                ) }
+                { showTabularModal && (
+                    <Modal
+                        className={styles.tabularModal}
+                        onClose={this.handleTabularModalClose}
+                        closeOnEscape
+                    >
+                        {
+                            tabularBook ? (
+                                <TabularBook
+                                    className={className}
+                                    bookId={tabularBook}
+                                    projectId={projectId}
+                                    onDelete={this.handleTabularBookDelete}
+                                    setSaveTabularFunction={this.setSaveTabularFunction}
+                                    onEdited={this.handleFieldsChange}
+                                    onCancel={this.handleTabularModalClose}
+                                    showDelete
+                                />
+                            ) : (
+                                <LeadTabular
+                                    className={className}
+                                    mimeType={tabularMimeType}
+                                    setTabularBook={this.handleTabularBookSet}
+                                    onCancel={this.handleTabularModalClose}
+                                    lead={lead}
+                                />
+                            )
+                        }
+                    </Modal>
+                ) }
                 <ResizableV
                     className={resizableClassName}
                     topContainerClassName={styles.top}
                     bottomContainerClassName={styles.bottom}
                     disabled={disableResize}
                     topChild={
-                        <Fragment>
-                            <LeadForm
-                                setSubmitFunction={this.setSubmitLeadFormFunction}
-                                lead={lead}
-                                projectId={projectId}
-                                onChange={this.handleFormChange}
-                                onFailure={this.handleFormFailure}
-                                onSuccess={this.handleFormSuccess}
-                                onApplyAllClick={this.handleApplyAllClick}
-                                onApplyAllBelowClick={this.handleApplyAllBelowClick}
-                                onAddLeadGroupClick={this.handleAddLeadGroupClick}
-                                isExtractionDisabled={!this.state.isUrlValid}
-                                onExtractClick={this.handleExtractClick}
-                                {...otherProps}
-                            />
-                            { showAddLeadGroupModal &&
-                                <AddLeadGroup
-                                    onModalClose={this.handleAddLeadGroupModalClose}
-                                    onLeadGroupAdd={this.handleLeadGroupAdd}
-                                    projectId={projectId}
-                                />
-                            }
-                            { tabularMode &&
-                                <Modal
-                                    className={styles.tabularModal}
-                                    onClose={this.unsetTabularMode}
-                                    closeOnEscape
-                                >
-                                    {
-                                        tabularBook ? (
-                                            <TabularBook
-                                                className={className}
-                                                bookId={tabularBook}
-                                                projectId={projectId}
-                                                onDelete={this.unsetTabularBook}
-                                                setSaveTabularFunction={
-                                                    this.setSaveTabularFunction
-                                                }
-                                                onEdited={this.handleFieldsChange}
-                                                onCancel={this.unsetTabularMode}
-                                                showDelete
-                                            />
-                                        ) : (
-                                            <LeadTabular
-                                                className={className}
-                                                mimeType={tabularMimeType}
-                                                setTabularBook={this.setTabularBook}
-                                                onCancel={this.unsetTabularMode}
-                                                lead={lead}
-                                            />
-                                        )
-                                    }
-                                </Modal>
-                            }
-                        </Fragment>
+                        <LeadForm
+                            setSubmitFunction={this.setSubmitLeadFormFunction}
+                            lead={lead}
+                            projectId={projectId}
+                            onChange={this.handleFormChange}
+                            onFailure={this.handleFormFailure}
+                            onSuccess={this.handleFormSuccess}
+                            onApplyAllClick={this.handleApplyAllClick}
+                            onApplyAllBelowClick={this.handleApplyAllBelowClick}
+                            onAddLeadGroupClick={this.handleAddLeadGroupClick}
+                            isExtractionDisabled={!isUrlValid}
+                            onExtractClick={this.handleExtractClick}
+                            isTabularCapable={isTabularCapable}
+                            onTabularButtonClick={this.handleTabularButtonClick}
+                            {...otherProps}
+                        />
                     }
                     bottomChild={
-                        active && !hidePreview && sourceType !== 'text' && (
+                        showLeadPreview && (
                             <LeadPreview
                                 lead={lead}
                                 className={styles.leadPreview}
