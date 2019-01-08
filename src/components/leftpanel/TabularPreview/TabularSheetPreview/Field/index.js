@@ -3,8 +3,8 @@ import React from 'react';
 import memoize from 'memoize-one';
 
 import { getRgbFromHex } from '#rsu/common';
+import HealthBar from '#rscz/HealthBar';
 
-import ListView from '#rscv/List/ListView';
 import _cs from '#cs';
 import styles from './styles.scss';
 
@@ -29,24 +29,22 @@ const defaultProps = {
     options: undefined,
 };
 
+const healthColorScheme = [
+    '#41cf76',
+    '#f44336',
+];
+const identity = x => x;
+
 export default class Field extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
     static dataKeySelector = d => d.key;
 
-    static calcSummarizedData = memoize((data) => {
-        if (data.length <= 5) {
-            return data;
-        }
-        const summary = data.slice(0, 5);
-        return [
-            ...summary,
-            {
-                key: 'ellipsis',
-                value: '...',
-            },
-        ];
-    })
+    getHealthStatusData = memoize((data, type) => {
+        const validCount = data.filter(x => x.type === type).length;
+        return [validCount, data.length - validCount];
+    });
+
 
     handleOnDragStart = (e) => {
         const {
@@ -83,16 +81,6 @@ export default class Field extends React.PureComponent {
         onClick(e, { key: leadKey });
     }
 
-    renderDataItem = ({ value }) => (
-        <div className={styles.dataItem}>
-            {value}
-        </div>
-    )
-
-    renderDataParams = (key, dataItem) => ({
-        ...dataItem,
-    })
-
     render() {
         const {
             className,
@@ -100,11 +88,14 @@ export default class Field extends React.PureComponent {
             data,
             color,
             leadKey,
+            type,
         } = this.props;
+
+        const healthStatusData = this.getHealthStatusData(data, type);
 
         let style;
         if (color) {
-            const { r, g, b } = color ? getRgbFromHex(color) : {};
+            const { r, g, b } = getRgbFromHex(color);
             const backgroundColor = `rgba(${r}, ${g}, ${b}, 0.2)`;
             style = { backgroundColor };
         }
@@ -123,12 +114,14 @@ export default class Field extends React.PureComponent {
                 <h5>
                     {title}
                 </h5>
-                <ListView
-                    className={styles.dataItems}
-                    keySelector={Field.dataKeySelector}
-                    rendererParams={this.renderDataParams}
-                    data={Field.calcSummarizedData(data)}
-                    renderer={this.renderDataItem}
+                <HealthBar
+                    data={healthStatusData}
+                    valueSelector={identity}
+                    keySelector={identity}
+                    hideLabel
+                    className={styles.healthBar}
+                    enlargeOnHover={false}
+                    colorScheme={healthColorScheme}
                 />
             </div>
         );

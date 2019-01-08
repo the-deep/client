@@ -11,13 +11,8 @@
         background-color: $color-background-hover;
     }
 
-    .data-items {
-        display: flex;
-        flex-direction: row;
+    .health-bar {
         margin-top: $spacing-small;
-
-        .data-item {
-            margin-right: $spacing-medium;
-        }
+        height: 6px;
     }
 }
