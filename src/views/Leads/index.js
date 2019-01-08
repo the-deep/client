@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 
 import Message from '#rscv/Message';
+import AccentButton from '#rsca/Button/AccentButton';
 import FormattedDate from '#rscv/FormattedDate';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
@@ -47,6 +48,7 @@ import noSearch from '#resources/img/no-search.png';
 import noFilter from '#resources/img/no-filter.png';
 
 import ActionButtons from './ActionButtons';
+import LeadPreview from './LeadPreview';
 import FilterLeadsForm from './FilterLeadsForm';
 
 import DeleteLeadRequest from './requests/DeleteLeadRequest';
@@ -244,6 +246,7 @@ export default class Leads extends React.PureComponent {
         this.state = {
             loadingLeads: true,
             redirectTo: undefined,
+            showLeadPreview: false,
         };
     }
 
@@ -314,6 +317,14 @@ export default class Leads extends React.PureComponent {
     }
 
     // UI
+
+    setLeadPreview = (row) => {
+        this.setState({ showLeadPreview: true, value: row });
+    }
+
+    unsetLeadPreview = () => {
+        this.setState({ showLeadPreview: false, value: undefined });
+    }
 
     handleSearchSimilarLead = (row) => {
         this.props.setLeadPageFilter({
@@ -429,11 +440,14 @@ export default class Leads extends React.PureComponent {
                 </div>
             );
         }
+
         return (
             <div className={styles.iconWrapper}>
-                <a href={url} target="_blank" rel="noopener noreferrer">
-                    <i className={icon} />
-                </a>
+                <AccentButton
+                    iconName={icon}
+                    onClick={() => this.setLeadPreview(row)}
+                    transparent
+                />
             </div>
         );
     }
@@ -586,6 +600,8 @@ export default class Leads extends React.PureComponent {
         const {
             loadingLeads,
             redirectTo,
+            showLeadPreview,
+            value,
         } = this.state;
 
         if (redirectTo) {
@@ -619,6 +635,13 @@ export default class Leads extends React.PureComponent {
                     </div>
                 </div>
                 <Footer />
+
+                { showLeadPreview &&
+                    <LeadPreview
+                        value={value}
+                        onClose={this.unsetLeadPreview}
+                    />
+                }
             </div>
         );
     }

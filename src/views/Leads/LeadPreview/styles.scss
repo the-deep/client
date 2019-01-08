@@ -1,0 +1,48 @@
+@import '~base-scss/base';
+
+.gallery-file {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    :global {
+        .urlbar {
+            flex-shrink: 0;
+        }
+
+        .doc-container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+
+            .gallery-docs {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+            }
+
+            iframe {
+                flex-grow: 1;
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+}
+
+.lead-preview {
+    width: 60%;
+    height: 80%;
+
+    .modal-header {
+        :global .heading {
+            text-transform: capitalize;
+        }
+    }
+
+    .body {
+        padding: 0;
+        width: 100%;
+        height: 100%;
+    }
+}

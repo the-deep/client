@@ -900,7 +900,8 @@
         "-39031808": "There is no header in this sheet.",
         "-78760514": "Tabular book",
         "-14762237": "No regions were selected.",
-        "-78572254": "Invalid region"
+        "-78572254": "Invalid region",
+        "-77224022": "Preview"
     },
     "links": {
         "browserExtension": {
@@ -1495,7 +1496,8 @@
             "leadsPendingSuccess": -74575009,
             "leadsProcessedSuccess": -35157722,
             "emptyWithFilterMessage": -59957290,
-            "emptyMessage": -52516388
+            "emptyMessage": -52516388,
+            "Preview": -77224022
         },
         "leadsViz": {
             "chordDiagram": 4007,
