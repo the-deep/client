@@ -17,11 +17,11 @@ const notificationsSchema = [];
 }
 
 {
-    const name = 'unseenCountResponse';
+    const name = 'notificationsCountResponse';
     const schema = {
         doc: {
-            name: 'Notification Coutn Get Request',
-            description: 'Response for /notifications/unseen-count/',
+            name: 'Notification Count Get Request',
+            description: 'Response for /notifications/count/',
         },
         fields: {
             unseen: { type: 'uint', required: true },

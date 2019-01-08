@@ -44,7 +44,7 @@ const mapDispatchToProps = dispatch => ({
 
 const requests = {
     helpLinkRequest: {
-        schema: 'pageInfoRequest',
+        schemaName: 'pageInfoRequest',
         method: requestMethods.GET,
         onMount: true,
         url: '/pages/',
