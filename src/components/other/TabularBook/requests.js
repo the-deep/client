@@ -1,4 +1,7 @@
 import { requestMethods } from '#request';
+import _ts from '#ts';
+
+import notify from '#notify';
 
 export default {
     getBookRequest: {
@@ -13,6 +16,26 @@ export default {
         method: requestMethods.DELETE,
         url: ({ props }) => `/tabular-books/${props.bookId}/`,
         onSuccess: ({ props }) => props.onDelete(),
+        onFailure: ({ error = {} }) => {
+            const { nonFieldErrors } = error;
+            const displayError = nonFieldErrors
+                ? nonFieldErrors.join(' ')
+                : _ts('tabular', 'deleteFailed');
+            notify.send({
+                type: notify.type.ERROR,
+                title: 'Tabular Book',
+                message: displayError,
+                duration: notify.duration.SLOW,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                type: notify.type.ERROR,
+                title: 'Tabular Book',
+                message: _ts('tabular', 'deleteFailed'),
+                duration: notify.duration.SLOW,
+            });
+        },
     },
 
     saveRequest: {
@@ -23,5 +46,6 @@ export default {
         onSuccess: ({ response, params: { callback } }) => {
             callback(response);
         },
+        // TODO: onFailure, onFatal
     },
 };
