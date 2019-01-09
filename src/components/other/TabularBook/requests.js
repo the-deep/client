@@ -41,10 +41,9 @@ export default {
     saveRequest: {
         method: requestMethods.PATCH,
         url: ({ props }) => `/tabular-books/${props.bookId}/`,
-        query: { fields: 'id,sheets,options,fields,project' },
         body: ({ params: { body } }) => body,
-        onSuccess: ({ response, params: { callback } }) => {
-            callback(response);
+        onSuccess: ({ response, params }) => {
+            params.setBook(response);
         },
         // TODO: onFailure, onFatal
     },
