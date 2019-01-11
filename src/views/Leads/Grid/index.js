@@ -78,27 +78,14 @@ export default class LeadGrid extends React.Component {
     componentDidMount() {
         // Rest grid when loading first time
         this.props.setLeadPageActivePage({ activePage: 1 });
-        document.addEventListener('keydown', this.handleKeyPressed);
     }
 
     shouldComponentUpdate() {
         return this.props.view === 'grid';
     }
 
-    componentWillUnmount() {
-        document.removeEventListener('keydown', this.handleKeyPressed);
-    }
-
     onReference = (ref) => {
-        this.masonryRef = ref;
-    }
-
-    handleKeyPressed = (event) => {
-        if (event.keyCode === LEFT_KEY) {
-            this.handleLeftClick();
-        } else if (event.keyCode === RIGHT_KEY) {
-            this.handleRightClick();
-        }
+        this.masonryRef = ref || {};
     }
 
     handleLeadClick = (leadIndex) => {
@@ -152,7 +139,6 @@ export default class LeadGrid extends React.Component {
                             columnWidth={this.columnWidth}
                             columnGutter={this.columnGutter}
                             isItemsChanged={LeadGrid.isItemsChanged}
-                            checkActive={this.checkActive}
                             isLoading={loading}
                             onInfiniteLoad={onEndReached}
                             state={this.itemState}
