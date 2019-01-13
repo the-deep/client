@@ -101,6 +101,7 @@ export default class Sector extends React.PureComponent {
                     keySelector={Sector.nodeIdSelector}
                     labelSelector={Sector.nodeLabelSelector}
                     childrenSelector={Sector.nodeChildrenSelector}
+                    placeholder=""
                 />
             );
         } else if (row === 3) {
@@ -111,6 +112,7 @@ export default class Sector extends React.PureComponent {
                     options={specificNeedGroups}
                     labelSelector={Sector.nodeLabelSelector}
                     keySelector={Sector.nodeIdSelector}
+                    placeholder=""
                 />
             );
         }

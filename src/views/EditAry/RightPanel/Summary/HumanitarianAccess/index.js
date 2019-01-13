@@ -85,6 +85,7 @@ export default class HumanitarianAccess extends React.PureComponent {
                     keySelector={HumanitarianAccess.nodeIdSelector}
                     labelSelector={HumanitarianAccess.nodeLabelSelector}
                     childrenSelector={HumanitarianAccess.nodeChildrenSelector}
+                    placeholder=""
                 />
             );
         } else if (row === 1) {
@@ -95,6 +96,7 @@ export default class HumanitarianAccess extends React.PureComponent {
                     options={affectedLocations}
                     labelSelector={HumanitarianAccess.nodeLabelSelector}
                     keySelector={HumanitarianAccess.nodeIdSelector}
+                    placeholder=""
                 />
             );
         }

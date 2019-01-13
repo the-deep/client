@@ -5,6 +5,8 @@ $height-header: 42px;
 $width-left-min: 390px;
 $width-right-min: 800px;
 
+$color-border-bottom-new: rgba(0, 0, 0, .1);
+
 .edit-assessment {
     margin: -$spacing-small;
     padding: 0;
@@ -64,6 +66,59 @@ $width-right-min: 800px;
             }
         }
 
+    }
+
+    :global {
+        .text-area {
+            .input {
+                margin: $spacing-extra-small 0;
+                background-color: $color-background-input;
+                padding: 0;
+            }
+        }
+
+        .date-input,
+        .multi-select-input,
+        .select-input {
+            .input-and-actions {
+                border-bottom-width: $width-separator-thin;
+                border-bottom-color: $color-border-bottom-new;
+
+            }
+
+            &:not(.input-in-focus):not(.disabled) {
+                .input-and-actions {
+                    &:hover {
+                        border-bottom-color: $color-separator-hover;
+                    }
+                }
+            }
+        }
+
+        .number-input,
+        .text-input,
+        .text-area {
+            .input {
+                border-bottom-width: $width-separator-thin;
+            }
+
+            .input:not(:disabled) {
+                border-bottom-color: $color-border-bottom-new;
+
+                &:hover {
+                    border-bottom-color: $color-separator-hover;
+                }
+
+                &:focus {
+                    border-bottom-color: $color-accent;
+                }
+            }
+        }
+
+        .drop-zone {
+            border-width: $width-separator-thin;
+            border-color: $color-border-bottom-new;
+        }
     }
 }
 

@@ -37,7 +37,6 @@ $height-additional-documents: 250px;
 
                         .heading {
                             flex-shrink: 0;
-                            border-bottom: $width-separator-thin solid $color-separator;
                             padding: $spacing-medium-alt;
                             text-transform: capitalize;
                             color: $color-accent;
@@ -75,7 +74,6 @@ $height-additional-documents: 250px;
 
                 .header {
                     flex-shrink: 0;
-                    border-bottom: 1px solid $color-separator;
                     padding: $spacing-small;
 
                     h3 {
