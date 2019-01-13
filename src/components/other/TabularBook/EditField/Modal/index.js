@@ -7,6 +7,7 @@ import Faram, { requiredCondition } from '#rscg/Faram';
 import Modal from '#rscv/Modal';
 import ScrollTabs from '#rscv/ScrollTabs';
 import ModalHeader from '#rscv/Modal/Header';
+import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 
 import DangerButton from '#rsca/Button/DangerButton';
@@ -16,6 +17,7 @@ import { mapToMap } from '#rsu/common';
 import _ts from '#ts';
 
 import SheetSettings from './SheetSettings';
+import styles from './styles.scss';
 
 const propTypes = {
     initialValue: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -41,7 +43,6 @@ export default class EditFieldModal extends React.PureComponent {
 
 
         this.schema = this.calcSchema(initialValue);
-        console.warn(this.schema);
     }
 
     calcSchema = (faramValues) => {
@@ -112,7 +113,7 @@ export default class EditFieldModal extends React.PureComponent {
         const sheetTitles = this.calcSheetTitles(faramValues);
 
         return (
-            <Modal>
+            <Modal className={styles.editFieldModal}>
                 <ModalHeader title={_ts('tabular.editField', 'title')} />
                 <Faram
                     onChange={this.handleFaramChange}
@@ -122,17 +123,21 @@ export default class EditFieldModal extends React.PureComponent {
                     value={faramValues}
                     error={faramErrors}
                 >
-                    <ScrollTabs
-                        tabs={sheetTitles}
-                        active={activeSheet}
-                        onClick={this.handleSheetChange}
-                    />
-                    {activeSheet &&
-                        <SheetSettings
-                            sheetId={activeSheet}
-                            details={faramValues[activeSheet]}
+                    <ModalBody className={styles.editFieldModalBody}>
+                        <ScrollTabs
+                            className={styles.tabs}
+                            tabs={sheetTitles}
+                            active={activeSheet}
+                            onClick={this.handleSheetChange}
                         />
-                    }
+                        {activeSheet &&
+                            <SheetSettings
+                                className={styles.sheet}
+                                sheetId={activeSheet}
+                                details={faramValues[activeSheet]}
+                            />
+                        }
+                    </ModalBody>
                     <ModalFooter>
                         <DangerButton onClick={this.props.onCancel}>
                             {_ts('tabular.editField', 'cancelLabel')}

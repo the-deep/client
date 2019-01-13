@@ -1,0 +1,7 @@
+@import '~base-scss/base';
+
+.header-settings {
+    display: flex;
+    flex-direction: column;
+    padding: $spacing-medium;
+}

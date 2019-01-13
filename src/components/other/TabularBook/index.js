@@ -179,7 +179,6 @@ export default class TabularBook extends React.PureComponent {
                                 />
                             )}
                             <EditField
-                                className={styles.edit}
                                 onChange={this.handleDetailsChange}
                                 iconName={iconNames.edit}
                                 value={this.state.sheets}

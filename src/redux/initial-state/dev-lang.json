@@ -897,11 +897,16 @@
         "-84871998": "Table",
         "-50602560": "Word cloud",
         "-5214537": "Vertical bar chart",
+<<<<<<< HEAD
         "-39031808": "There is no header in this sheet.",
         "-78760514": "Tabular book",
         "-14762237": "No regions were selected.",
         "-78572254": "Invalid region",
         "-77224022": "Preview"
+=======
+        "-84081563": "Hide",
+        "-61786851": "Headers"
+>>>>>>> Fix styling in tabular book edit modal
     },
     "links": {
         "browserExtension": {
@@ -2545,6 +2550,12 @@
         "geoViz": {
             "noRegionSelectedMessage": -14762237,
             "invalidRegion": -78572254
+        },
+        "tabular.editModal": {
+            "sheetHideLabel": -84081563,
+            "sheetTitleLabel": 13,
+            "headersTitle": -61786851,
+            "headerHideLabel": -84081563
         }
     }
 }

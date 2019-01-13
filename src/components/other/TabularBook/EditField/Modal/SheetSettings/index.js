@@ -10,29 +10,44 @@ import SegmentInput from '#rsci/SegmentInput';
 import VerticalTabs from '#rscv/VerticalTabs';
 
 import { listToMap } from '#rsu/common';
+import _cs from '#cs';
+import _ts from '#ts';
 
-import HeaderSettings from '../HeaderSettings';
+import HeaderSettings from './HeaderSettings';
 import styles from './styles.scss';
 
-const hiddenOptions = [
-    {
-        key: true,
-        label: 'True',
-    },
-    {
-        key: false,
-        label: 'False',
-    },
-];
+const propTypes = {
+    className: PropTypes.string,
+    sheetId: PropTypes.number.isRequired,
+    details: PropTypes.shape({
+        fields: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    }),
+};
+
+const defaultProps = {
+    className: '',
+    details: {},
+};
 
 const emptyObject = {};
 
 export default class SheetSettings extends React.PureComponent {
-    static propTypes = {};
-    static defaultProps = {};
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     static hiddenOptionsKeySelector = d => d.key;
     static fieldKeySelector = d => d.id;
+
+    static hiddenOptions = [
+        {
+            key: true,
+            label: 'True',
+        },
+        {
+            key: false,
+            label: 'False',
+        },
+    ];
 
     constructor(props) {
         super(props);
@@ -83,9 +98,9 @@ export default class SheetSettings extends React.PureComponent {
 
     handleHeaderChange = activeHeader => this.setState({ activeHeader });
 
-
     render() {
         const {
+            className,
             sheetId,
             details: {
                 fields,
@@ -101,34 +116,50 @@ export default class SheetSettings extends React.PureComponent {
             headerDetails,
         } = this.getHeaderDetails(fields, activeHeader);
 
+        const sheetTitleLabel = _ts('tabular.editModal', 'sheetTitleLabel');
+        const sheetHideLabel = _ts('tabular.editModal', 'sheetHideLabel');
+        const headersTitle = _ts('tabular.editModal', 'headersTitle');
+
         return (
             <FaramGroup faramElementName={sheetId}>
-                <TextInput
-                    faramElementName="title"
-                />
-                <SegmentInput
-                    faramElementName="hidden"
-                    options={hiddenOptions}
-                    label="Hide"
-                    keySelector={SheetSettings.hiddenOptionsKeySelector}
-                />
-                <div className={styles.headerSettingsContainer}>
-                    <VerticalTabs
-                        tabs={tabs}
-                        active={activeHeader}
-                        onClick={this.handleHeaderChange}
-                    />
-                    <FaramList
-                        faramElementName="fields"
-                        keySelector={SheetSettings.fieldKeySelector}
-                    >
-                        {activeHeader &&
-                            <HeaderSettings
-                                headerIndex={headerIndex}
-                                headerDetails={headerDetails || emptyObject}
+                <div className={_cs(styles.sheet, className)}>
+                    <div className={styles.topContainer}>
+                        <TextInput
+                            className={styles.input}
+                            faramElementName="title"
+                            label={sheetTitleLabel}
+                        />
+                        <SegmentInput
+                            faramElementName="hidden"
+                            options={SheetSettings.hiddenOptions}
+                            label={sheetHideLabel}
+                            keySelector={SheetSettings.hiddenOptionsKeySelector}
+                        />
+                    </div>
+                    <div className={styles.headerSettingsContainer}>
+                        <div className={styles.leftContainer}>
+                            <h3 className={styles.headersTitle}>
+                                {headersTitle}
+                            </h3>
+                            <VerticalTabs
+                                className={styles.headerTitles}
+                                tabs={tabs}
+                                active={activeHeader}
+                                onClick={this.handleHeaderChange}
                             />
-                        }
-                    </FaramList>
+                        </div>
+                        <FaramList
+                            faramElementName="fields"
+                            keySelector={SheetSettings.fieldKeySelector}
+                        >
+                            {activeHeader &&
+                                <HeaderSettings
+                                    headerIndex={headerIndex}
+                                    headerDetails={headerDetails || emptyObject}
+                                />
+                            }
+                        </FaramList>
+                    </div>
                 </div>
             </FaramGroup>
         );
