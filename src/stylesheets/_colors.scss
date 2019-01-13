@@ -110,6 +110,8 @@ $color-text-active-tab: $color-primary;
 $color-negative: $color-danger;
 $color-positive: $color-success;
 
+$color-background-input: #f9f9f9;
+
 $color-separator-on-light: rgba(0, 0, 0, .1);
 $color-separator-on-dark: rgba(255, 255, 255, .08);
 $color-separator: get-color($color-separator-on-light, $color-separator-on-dark);

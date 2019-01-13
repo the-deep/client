@@ -6,8 +6,6 @@ $height-bottom: 240px;
 
 .header {
     flex-shrink: 0;
-    border-top: $width-separator-thin solid $color-separator;
-    border-bottom: $width-separator-thin solid $color-separator;
     background-color: $color-foreground;
     padding: $spacing-small 0;
 
@@ -44,18 +42,16 @@ $height-bottom: 240px;
                 min-height: 20%;
                 overflow: auto;
 
-                .header {
+                >.header {
                     flex-shrink: 0;
-                    border-bottom: $width-separator-thin solid $color-separator;
                 }
 
                 .attributes-section {
                     display: flex;
                     flex-direction: column;
 
-                    .header {
+                    >.header {
                         flex-shrink: 0;
-                        border-bottom: $width-separator-thin solid $color-separator;
                     }
 
                     .scroll-wrap {
@@ -85,7 +81,6 @@ $height-bottom: 240px;
                                     position: sticky;
                                     top: 0;
                                     z-index: 1;
-                                    border-bottom: $width-separator-thin solid $color-separator-alt;
                                     background-color: $color-foreground;
                                 }
 

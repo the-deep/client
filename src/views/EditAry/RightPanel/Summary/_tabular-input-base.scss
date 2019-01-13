@@ -13,10 +13,9 @@
         .head {
             .row {
                 .header {
+                    border-bottom: $width-separator-thin solid $color-separator;
                     padding: $spacing-medium-alt;
-                    &:not(:first-child){
-                        border-bottom: $width-separator-thin solid $color-separator;
-                    }
+                    text-align: left;
                 }
             }
         }

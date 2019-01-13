@@ -105,6 +105,7 @@ export default class CrossSector extends React.PureComponent {
                     keySelector={CrossSector.nodeIdSelector}
                     labelSelector={CrossSector.nodeLabelSelector}
                     childrenSelector={CrossSector.nodeChildrenSelector}
+                    placeholder=""
                 />
             );
         } else if (row === 1) {
@@ -116,6 +117,7 @@ export default class CrossSector extends React.PureComponent {
                     keySelector={CrossSector.nodeIdSelector}
                     labelSelector={CrossSector.nodeLabelSelector}
                     childrenSelector={CrossSector.nodeChildrenSelector}
+                    placeholder=""
                 />
             );
         } else if (row === 2) {
@@ -126,6 +128,7 @@ export default class CrossSector extends React.PureComponent {
                     options={specificNeedGroups}
                     labelSelector={CrossSector.nodeLabelSelector}
                     keySelector={CrossSector.nodeIdSelector}
+                    placeholder=""
                 />
             );
         }
