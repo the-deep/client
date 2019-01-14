@@ -48,7 +48,7 @@ const requests = {
             setNotificationsCount({ count });
             startRequestDelayed();
         },
-        schema: 'unseenCountResponse',
+        schemaName: 'notificationsCountResponse',
     },
     notificationsStatusUpdateRequest: {
         url: '/notifications/status/',
