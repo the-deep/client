@@ -23,7 +23,7 @@ export default {
                 : _ts('tabular', 'deleteFailed');
             notify.send({
                 type: notify.type.ERROR,
-                title: 'Tabular Book',
+                title: _ts('tabular', 'tabularBookTitle'),
                 message: displayError,
                 duration: notify.duration.SLOW,
             });
@@ -31,7 +31,7 @@ export default {
         onFatal: () => {
             notify.send({
                 type: notify.type.ERROR,
-                title: 'Tabular Book',
+                title: _ts('tabular', 'tabularBookTitle'),
                 message: _ts('tabular', 'deleteFailed'),
                 duration: notify.duration.SLOW,
             });

@@ -887,7 +887,7 @@
         "-11158375": "Add sub sectors from",
         "-60104332": "Can't drop here!",
         "-63188496": "Couldn't read tabular data.",
-        "-63188497":   "Couldn't delete tabular data.",
+        "-63188497": "Couldn't delete tabular data.",
         "-47036305": ",",
         "-45402687": "1",
         "-53408079": "Back",
@@ -897,7 +897,10 @@
         "-84871998": "Table",
         "-50602560": "Word cloud",
         "-5214537": "Vertical bar chart",
-        "-39031808": "There is no header in this sheet."
+        "-39031808": "There is no header in this sheet.",
+        "-78760514": "Tabular book",
+        "-14762237": "No regions were selected.",
+        "-78572254": "Invalid region"
     },
     "links": {
         "browserExtension": {
@@ -1033,7 +1036,6 @@
             "titleLabel": 13,
             "confirmTextDeleteCategory": 428,
             "confirmTextDeleteSubCategory": 429,
-            "exitButtonLabel": 778,
             "addSubcategory": 139,
             "ceUpdate": 984,
             "ceUpdateOverridden": 982,
@@ -1636,13 +1638,8 @@
             "fileTypeLabel": 15005,
             "skipLabel": 15009,
             "headerRowLabel": 15010,
-            "extractLabel": 15006,
-            "nextLabel": 23,
             "invalid": -63188496,
-            "deleteFailed": -63188497,
             "headerRowPlaceholder": -45402687,
-            "delimiterPlaceholder": -47036305,
-            "backLabel": -53408079,
             "cancelButtonTitle": 61,
             "backButtonTitle": -53408079,
             "extractButtonTitle": 15006,
@@ -2247,7 +2244,6 @@
         },
         "widgets.tagging.excerpt": {
             "dropHereText": -81226372,
-            "formatExcerpt": 515,
             "imageAltText": -78904030
         },
         "widgets.editor.number": {
@@ -2415,7 +2411,8 @@
             "resetSortTitle": 15008,
             "invalid": -63188496,
             "deleteFailed": -63188497,
-            "closeButtonTitle": -39430073
+            "closeButtonTitle": -39430073,
+            "tabularBookTitle": -78760514
         },
         "tabular.editField": {
             "title": 15002,
@@ -2423,7 +2420,10 @@
             "titleLabel": 13,
             "typeLabel": 21,
             "cancelLabel": 61,
-            "submitLabel": 826
+            "submitLabel": 826,
+            "adminLevelLabel": 89,
+            "adminLevelPlaceholder": 9011,
+            "geoTypeLabel": -50186668
         },
         "project.general.dashboard": {
             "createdAtTitle": 163,
@@ -2532,6 +2532,16 @@
             "tableVizLabel": -84871998,
             "vBarChartVizLabel": -5214537,
             "wordCloudVizLabel": -50602560
+        },
+        "components.dashboard": {
+            "alphaLabel": 1238,
+            "betaLabel": 1237,
+            "devLabel": 1240,
+            "nightlyLabel": 1239
+        },
+        "geoViz": {
+            "noRegionSelectedMessage": -14762237,
+            "invalidRegion": -78572254
         }
     }
 }
