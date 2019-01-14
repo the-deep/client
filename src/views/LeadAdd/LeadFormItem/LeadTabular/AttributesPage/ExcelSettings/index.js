@@ -40,6 +40,11 @@ export default class ExcelSettings extends React.PureComponent {
                         label={_ts('addLeads.tabular', 'skipLabel')}
                     />
                 </header>
+                <Checkbox
+                    className={styles.checkInput}
+                    faramElementName="noHeaders"
+                    label={_ts('addLeads.tabular', 'noHeaderLabel')}
+                />
                 <NumberInput
                     className={styles.sheetHeaderRowInput}
                     faramElementName="headerRow"
