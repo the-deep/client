@@ -112,11 +112,13 @@ PreviewGallery.defaultProps = {
 const propTypes = {
     galleryId: PropTypes.number,
     onlyFileName: PropTypes.bool,
+    onMimeTypeGet: PropTypes.func,
 };
 
 const defaultProps = {
     galleryId: undefined,
     onlyFileName: false,
+    onMimeTypeGet: undefined,
 };
 
 export default class InternalGallery extends React.PureComponent {
@@ -135,6 +137,12 @@ export default class InternalGallery extends React.PureComponent {
 
         this.galleryFileRequest = new GalleryFileRequest({
             setState: params => this.setState(params),
+            notifyMimeType: (mimeType) => {
+                const { onMimeTypeGet } = this.props;
+                if (onMimeTypeGet) {
+                    onMimeTypeGet(mimeType);
+                }
+            },
         });
     }
 

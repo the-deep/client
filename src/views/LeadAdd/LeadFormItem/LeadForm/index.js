@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
 
 import Button from '#rsca/Button';
 import DateInput from '#rsci/DateInput';
@@ -19,6 +20,7 @@ import { formatDate } from '#rsu/date';
 import {
     LEAD_TYPE,
     ATTACHMENT_TYPES,
+    mimeType as MIME_TYPES,
     leadAccessor,
 } from '#entities/lead';
 import InternalGallery from '#components/viewer/InternalGallery';
@@ -64,12 +66,21 @@ const propTypes = {
     onExtractClick: PropTypes.func.isRequired,
 
     setSubmitFunction: PropTypes.func,
+    onTabularButtonClick: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
     setSubmitFunction: undefined,
+    onTabularButtonClick: undefined,
 };
+
+const tabularCompatibleMimeTypes = [
+    'xls',
+    'xlxs',
+    'xlxs2',
+    'csv',
+];
 
 const mapStateToProps = (state, props) => ({
     activeUser: activeUserSelector(state),
@@ -163,6 +174,10 @@ export default class LeadForm extends React.PureComponent {
             },
         };
 
+        this.state = {
+            attachmentMimeType: undefined,
+        };
+
         if (props.setSubmitFunction) {
             props.setSubmitFunction(this.submit);
         }
@@ -191,11 +206,34 @@ export default class LeadForm extends React.PureComponent {
         this.submitForm = func;
     }
 
+    isTabularCompatible = memoize((mimeType) => {
+        if (!mimeType) {
+            return false;
+        }
+
+        return tabularCompatibleMimeTypes.some(m => MIME_TYPES[m] === mimeType);
+    });
+
+
     handleApplyAllClick = attrName => this.props.onApplyAllClick(attrName);
 
     handleApplyAllBelowClick = attrName => this.props.onApplyAllBelowClick(attrName);
 
     handleAddLeadGroupClick = () => this.props.onAddLeadGroupClick();
+
+    handleTabularButtonClick = () => {
+        const { onTabularButtonClick } = this.props;
+        const { attachmentMimeType } = this.state;
+        if (onTabularButtonClick) {
+            onTabularButtonClick(attachmentMimeType);
+        }
+    }
+
+    handleAttachmentMimeTypeGet = (mimeType) => {
+        this.setState({
+            attachmentMimeType: mimeType,
+        });
+    }
 
     submit = () => {
         if (this.submitForm && !this.props.isSaveDisabled) {
@@ -250,6 +288,8 @@ export default class LeadForm extends React.PureComponent {
             onExtractClick,
         } = this.props;
 
+        const { attachmentMimeType } = this.state;
+
         const values = leadAccessor.getFaramValues(lead);
         const type = leadAccessor.getType(lead);
         const errors = leadAccessor.getFaramErrors(lead);
@@ -278,8 +318,8 @@ export default class LeadForm extends React.PureComponent {
                     <NonFieldErrors faramElement />
                 </header>
                 <HiddenInput faramElementName="sourceType" />
-                {
-                    type === LEAD_TYPE.website && [
+                { type === LEAD_TYPE.website && (
+                    <React.Fragment>
                         <ExtractThis
                             key="url"
                             className={styles.url}
@@ -292,27 +332,26 @@ export default class LeadForm extends React.PureComponent {
                                 placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
                                 autoFocus
                             />
-                        </ExtractThis>,
+                        </ExtractThis>
                         <TextInput
                             faramElementName="website"
                             key="website"
                             label={_ts('addLeads', 'websiteLabel')}
                             placeholder={_ts('addLeads', 'urlPlaceholderLabel')}
                             className={styles.website}
-                        />,
-                    ]
-                }
-                {
-                    type === LEAD_TYPE.text &&
-                        <TextArea
-                            faramElementName="text"
-                            label={_ts('addLeads', 'textLabel')}
-                            placeholder={_ts('addLeads', 'textareaPlaceholderLabel')}
-                            rows="3"
-                            className={styles.text}
-                            autoFocus
                         />
-                }
+                    </React.Fragment>
+                ) }
+                { type === LEAD_TYPE.text && (
+                    <TextArea
+                        faramElementName="text"
+                        label={_ts('addLeads', 'textLabel')}
+                        placeholder={_ts('addLeads', 'textareaPlaceholderLabel')}
+                        rows="3"
+                        className={styles.text}
+                        autoFocus
+                    />
+                ) }
                 <SelectInput
                     disabled
                     faramElementName="project"
@@ -332,9 +371,7 @@ export default class LeadForm extends React.PureComponent {
                             leadOptions={leadOptions}
                         />
                     }
-                    renderOnHide={
-                        <div className={styles.leadGroupContainer} />
-                    }
+                    renderOnHide={<div className={styles.leadGroupContainer} />}
                 />
 
                 <TextInput
@@ -343,6 +380,7 @@ export default class LeadForm extends React.PureComponent {
                     label={_ts('addLeads', 'titleLabel')}
                     placeholder={_ts('addLeads', 'titlePlaceHolderLabel')}
                 />
+
                 <ApplyAll
                     className={styles.source}
                     disabled={isApplyAllDisabled}
@@ -414,6 +452,7 @@ export default class LeadForm extends React.PureComponent {
                                     <InternalGallery
                                         onlyFileName
                                         galleryId={values.attachment.id}
+                                        onMimeTypeGet={this.handleAttachmentMimeTypeGet}
                                     />
                                 }
                             </div>
@@ -425,6 +464,14 @@ export default class LeadForm extends React.PureComponent {
                         </Fragment>
                     )
                 }
+                { this.isTabularCompatible(attachmentMimeType) && (
+                    <Button
+                        className={styles.tabularButton}
+                        onClick={this.handleTabularButtonClick}
+                    >
+                        {_ts('addLeads', 'tabularButtonTitle')}
+                    </Button>
+                ) }
             </Faram>
         );
     }
