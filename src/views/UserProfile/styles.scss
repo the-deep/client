@@ -6,6 +6,10 @@ $width-display-picture: 108px;
 .user-profile {
     overflow: auto;
 
+    .heading {
+        padding: $spacing-small 0;
+    }
+
     .main-content {
         display: flex;
         overflow: auto;

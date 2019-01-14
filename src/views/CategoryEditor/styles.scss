@@ -5,21 +5,7 @@ $width-title-input: 240px;
 $height-header: 42px;
 
 .category-editor {
-    margin: -$spacing-small;
-    padding: 0;
-    height: 100%;
-
-    .title-bar {
-        display: flex;
-        align-items: center;
-        flex-shrink: 0;
-        border-bottom: $width-separator-thin solid $color-separator-alt;
-        background-color: $color-background-header;
-        height: $height-header;
-    }
-
     .main-content {
-        @extend %main-content;
         display: flex;
         margin: $spacing-small;
         height: calc(100% - #{$height-header});

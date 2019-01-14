@@ -4,6 +4,7 @@ import ReactSVG from 'react-svg';
 import { connect } from 'react-redux';
 import { Redirect, Link } from 'react-router-dom';
 
+import Page from '#rscv/Page';
 import { reverseRoute } from '#rsu/common';
 
 import {
@@ -74,36 +75,41 @@ export default class HomeScreen extends React.PureComponent {
         );
 
         return (
-            <div className={styles.homeScreen}>
-                <ReactSVG
-                    svgClassName={styles.deepLogo}
-                    path={logo}
-                />
-                <div className={styles.container}>
-                    <span className={styles.welcomeMessage}>
-                        {_ts('homescreen', 'welcomeText')} <strong>{_ts('homescreen', 'deepLabel')}</strong>
-                        <br />
-                    </span>
-                    {_ts('homescreen', 'message1')}
-                    <br />
-                    {_ts('homescreen', 'message2')}
-                    <br />
-                </div>
-                <div className={styles.links}>
-                    <Link
-                        className={styles.profileLink}
-                        to={linkToProfile}
-                    >
-                        {_ts('homescreen', 'goToProfile')}
-                    </Link>
-                    <Link
-                        className={styles.discoverProjectsLink}
-                        to={linkToDiscoverProjects}
-                    >
-                        {_ts('homescreen', 'goToDiscoverProjects')}
-                    </Link>
-                </div>
-            </div>
+            <Page
+                mainContentClassName={styles.homeScreen}
+                mainContent={
+                    <React.Fragment>
+                        <ReactSVG
+                            svgClassName={styles.deepLogo}
+                            path={logo}
+                        />
+                        <div className={styles.container}>
+                            <span className={styles.welcomeMessage}>
+                                {_ts('homescreen', 'welcomeText')} <strong>{_ts('homescreen', 'deepLabel')}</strong>
+                                <br />
+                            </span>
+                            {_ts('homescreen', 'message1')}
+                            <br />
+                            {_ts('homescreen', 'message2')}
+                            <br />
+                        </div>
+                        <div className={styles.links}>
+                            <Link
+                                className={styles.profileLink}
+                                to={linkToProfile}
+                            >
+                                {_ts('homescreen', 'goToProfile')}
+                            </Link>
+                            <Link
+                                className={styles.discoverProjectsLink}
+                                to={linkToDiscoverProjects}
+                            >
+                                {_ts('homescreen', 'goToDiscoverProjects')}
+                            </Link>
+                        </div>
+                    </React.Fragment>
+                }
+            />
         );
     }
 }

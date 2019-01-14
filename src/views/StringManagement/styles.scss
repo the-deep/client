@@ -1,8 +1,20 @@
 @import '~base-scss/base';
 
 .string-panel {
-    display: flex;
-    height: 100%;
+    overflow: auto;
+
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+    }
+
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+    }
 }
+
 
 

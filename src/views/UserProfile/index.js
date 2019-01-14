@@ -176,7 +176,7 @@ export default class UserProfile extends React.PureComponent {
             <Page
                 className={styles.userProfile}
                 header={
-                    <h2>
+                    <h2 className={styles.heading}>
                         {_ts('userProfile', 'userProfileTitle')}
                     </h2>
                 }
