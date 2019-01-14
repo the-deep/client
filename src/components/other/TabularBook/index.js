@@ -12,6 +12,7 @@ import ScrollTabs from '#rscv/ScrollTabs';
 import Button from '#rsca/Button';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import update from '#rsu/immutable-update';
+import { mapToList } from '#rsu/common';
 
 import TabularSheet from '#components/other/TabularSheet';
 import TriggerAndPoll from '#components/general/TriggerAndPoll';
@@ -32,7 +33,6 @@ const propTypes = {
     bookId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
     onEdited: PropTypes.func,
 
-    getBookRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     deleteRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     saveRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
@@ -58,10 +58,6 @@ export default class TabularBook extends React.PureComponent {
             tabs: {},
             activeSheet: undefined,
         };
-
-        this.props.getBookRequest.setDefaultParams({
-            setBook: response => this.setBook(response, noOp),
-        });
     }
 
     setBook = (book, callback) => {
@@ -80,26 +76,18 @@ export default class TabularBook extends React.PureComponent {
         }, callback);
     }
 
-    save = (callback) => {
+    save = () => {
         const { sheets } = this.state;
         this.props.saveRequest.do({
-            callback: (response) => {
-                const newSheets = { ...this.state.sheets };
-                response.sheets.forEach((sheet) => {
-                    newSheets[sheet.id] = {
-                        ...newSheets[sheet.id],
-                        fields: sheet.fields,
-                    };
-                });
-
-                this.setState({ sheets: newSheets }, () => {
-                    callback();
-                });
-            },
             body: {
-                sheets: Object.keys(sheets).map(k => sheets[k]),
                 project: this.props.projectId,
+                sheets: mapToList(
+                    sheets,
+                    // eslint-disable-next-line no-unused-vars
+                    ({ data, ...otherAttributes }) => otherAttributes,
+                ),
             },
+            setBook: response => this.setBook(response, noOp),
         });
     }
 
@@ -127,9 +115,7 @@ export default class TabularBook extends React.PureComponent {
         };
 
         this.setState({ sheets: update(sheets, settings) }, () => {
-            this.save(() => {
-                this.props.getBookRequest.do();
-            });
+            this.save();
             if (this.props.onEdited) {
                 this.props.onEdited();
             }
@@ -153,7 +139,6 @@ export default class TabularBook extends React.PureComponent {
         const {
             deleteRequest,
             saveRequest,
-            getBookRequest,
             onCancel,
             showDelete,
         } = this.props;
@@ -199,7 +184,7 @@ export default class TabularBook extends React.PureComponent {
                             </Message>
                         </div>
                     }
-                    { completed && !getBookRequest.pending && !saveRequest.pending ? (
+                    { completed && !saveRequest.pending ? (
                         <Fragment>
                             <TabularSheet
                                 className={styles.sheetView}
