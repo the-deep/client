@@ -141,6 +141,7 @@ export default class TabularBook extends React.PureComponent {
             sheets,
             activeSheet,
         } = this.state;
+
         const {
             deleteRequest,
             saveRequest,

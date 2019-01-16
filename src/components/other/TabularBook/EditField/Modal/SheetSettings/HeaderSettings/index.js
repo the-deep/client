@@ -108,12 +108,6 @@ export default class HeaderSettings extends React.PureComponent {
                         label={headerHideLabel}
                         keySelector={HeaderSettings.hiddenOptionsKeySelector}
                     />
-                    <TextInput
-                        faramElementName="hidden"
-                        label={_ts('tabular.editField', 'titleLabel')}
-                        showLabel
-                        showHintAndError
-                    />
                     <SegmentInput
                         faramElementName="type"
                         label={_ts('tabular.editField', 'typeLabel')}

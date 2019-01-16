@@ -32,7 +32,10 @@ export default class EditFieldModal extends React.PureComponent {
 
     constructor(props) {
         super(props);
-        const { initialValue } = props;
+        const {
+            initialValue,
+        } = props;
+
         const activeSheet = Object.keys(initialValue)[0];
 
         this.state = {
@@ -96,7 +99,6 @@ export default class EditFieldModal extends React.PureComponent {
 
     handleFaramValidationSuccess = (value) => {
         console.warn(value);
-        // this.props.onChange(value);
     }
 
     handleSheetChange = (activeSheet) => {

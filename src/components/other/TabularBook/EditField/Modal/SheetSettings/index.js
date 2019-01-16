@@ -18,7 +18,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    sheetId: PropTypes.number.isRequired,
+    sheetId: PropTypes.string.isRequired,
     details: PropTypes.shape({
         fields: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     }),

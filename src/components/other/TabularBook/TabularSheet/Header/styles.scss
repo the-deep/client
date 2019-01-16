@@ -9,13 +9,6 @@
         word-break: break-all;
     }
 
-    .edit {
-        display: none;
-        position: absolute;
-        top: 0;
-        right: 0;
-    }
-
     .health-bar {
         height: 6px;
     }
@@ -23,11 +16,5 @@
     .loading-container {
         position: relative;
         margin-left: $spacing-small;
-    }
-
-    &:hover {
-        .edit {
-            display: initial;
-        }
     }
 }

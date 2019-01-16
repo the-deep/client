@@ -9,11 +9,17 @@ const propTypes = {
     value: PropTypes.shape({}).isRequired,
 };
 
+const defaultProps = {
+    value: {},
+};
+
 export default class EditFieldButton extends React.PureComponent {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
+
         this.state = {
             showModal: false,
         };

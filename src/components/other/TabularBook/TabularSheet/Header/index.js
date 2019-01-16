@@ -9,7 +9,6 @@ import { iconNames } from '#constants';
 
 import HealthBar from '#rscz/HealthBar';
 
-import EditField from './EditField';
 import styles from './styles.scss';
 
 
@@ -65,10 +64,6 @@ export default class Header extends React.PureComponent {
         this.props.onSortClick(this.props.columnKey);
     }
 
-    handleChange = (value) => {
-        this.props.onChange(this.props.columnKey, value);
-    }
-
     handleGeoData = (value) => {
         this.props.onChange(this.props.columnKey, value);
     }
@@ -115,13 +110,6 @@ export default class Header extends React.PureComponent {
                     {value.title}
                 </Button>
                 {this.renderGeoPending()}
-                <EditField
-                    className={styles.edit}
-                    onChange={this.handleChange}
-                    iconName={iconNames.edit}
-                    value={value}
-                    transparent
-                />
                 <HealthBar
                     data={statusData}
                     valueSelector={healthBarValueSelector}
