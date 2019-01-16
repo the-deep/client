@@ -9,6 +9,7 @@ import { iconNames } from '#constants';
 
 import HealthBar from '#rscz/HealthBar';
 
+import _cs from '#cs';
 import styles from './styles.scss';
 
 
@@ -68,30 +69,6 @@ export default class Header extends React.PureComponent {
         this.props.onChange(this.props.columnKey, value);
     }
 
-    renderGeoPending = () => {
-        const { value } = this.props;
-
-        if (!shouldExtractGeo(value)) {
-            return null;
-        }
-
-        const { id } = value;
-
-        return (
-            <TriggerAndPoll
-                compareValue={value}
-                url={`/tabular-fields/${id}/`}
-                triggerUrl={`/tabular-geo-extraction-trigger/${id}/`}
-                shouldTrigger={shouldExtractGeo}
-                shouldPoll={shouldPollGeo}
-                isValid={isValidGeo}
-                onDataReceived={this.handleGeoData}
-            >
-                <LoadingOnValid />
-            </TriggerAndPoll>
-        );
-    }
-
     render() {
         const {
             sortOrder,
@@ -99,6 +76,14 @@ export default class Header extends React.PureComponent {
             statusData,
         } = this.props;
 
+        const iconNameMapping = {
+            string: iconNames.text,
+            number: iconNames.calculator,
+            geo: iconNames.globe,
+            datetime: iconNames.calendar,
+        };
+        const icon = iconNameMapping[value.type];
+        console.warn(value);
         return (
             <div className={styles.header}>
                 <Button
@@ -107,9 +92,23 @@ export default class Header extends React.PureComponent {
                     iconName={getSortIcon(sortOrder)}
                     transparent
                 >
+                    { icon && <span className={_cs(icon, styles.icon)} /> }
                     {value.title}
                 </Button>
-                {this.renderGeoPending()}
+                {
+                    shouldExtractGeo(value) &&
+                    <TriggerAndPoll
+                        compareValue={value}
+                        url={`/tabular-fields/${value.id}/`}
+                        triggerUrl={`/tabular-geo-extraction-trigger/${value.id}/`}
+                        shouldTrigger={shouldExtractGeo}
+                        shouldPoll={shouldPollGeo}
+                        isValid={isValidGeo}
+                        onDataReceived={this.handleGeoData}
+                    >
+                        <LoadingOnValid />
+                    </TriggerAndPoll>
+                }
                 <HealthBar
                     data={statusData}
                     valueSelector={healthBarValueSelector}
