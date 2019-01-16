@@ -7,10 +7,15 @@
     .title {
         padding: $spacing-small;
         word-break: break-all;
+    }
 
-        .icon {
-            padding-right: $spacing-small;
-        }
+    .icon {
+        padding-left: $spacing-small;
+        color: $color-accent;
+    }
+
+    .search-box {
+        padding: $spacing-small;
     }
 
     .health-bar {

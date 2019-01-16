@@ -21,7 +21,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     initialValue: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    // onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
 };
 
@@ -51,6 +51,7 @@ export default class EditFieldModal extends React.PureComponent {
     calcSchema = (faramValues) => {
         const fields = {};
 
+        // TODO: use conditional schema here
         Object.keys(faramValues).forEach((key) => {
             fields[key] = {
                 fields: {
@@ -98,7 +99,7 @@ export default class EditFieldModal extends React.PureComponent {
     }
 
     handleFaramValidationSuccess = (value) => {
-        console.warn(value);
+        this.props.onChange(value);
     }
 
     handleSheetChange = (activeSheet) => {
@@ -132,7 +133,7 @@ export default class EditFieldModal extends React.PureComponent {
                             active={activeSheet}
                             onClick={this.handleSheetChange}
                         />
-                        {activeSheet &&
+                        { activeSheet &&
                             <SheetSettings
                                 className={styles.sheet}
                                 sheetId={activeSheet}

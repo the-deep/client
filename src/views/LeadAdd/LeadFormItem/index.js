@@ -88,7 +88,7 @@ export default class LeadFormItem extends React.PureComponent {
 
         this.state = {
             isUrlValid,
-            tabularMode: false,
+            showTabularModal: false,
             pendingExtraction: false,
             showAddLeadGroupModal: false,
             isTabularCapable: true,
@@ -401,9 +401,8 @@ export default class LeadFormItem extends React.PureComponent {
 
         const {
             showAddLeadGroupModal,
-            tabularMode,
-            tabularMimeType,
             showTabularModal,
+            tabularMimeType,
             isTabularCapable,
             isUrlValid,
             pendingExtraction,
@@ -449,7 +448,6 @@ export default class LeadFormItem extends React.PureComponent {
                     <Modal
                         className={styles.tabularModal}
                         onClose={this.handleTabularModalClose}
-                        closeOnEscape
                     >
                         {
                             tabularBook ? (
@@ -458,8 +456,6 @@ export default class LeadFormItem extends React.PureComponent {
                                     bookId={tabularBook}
                                     projectId={projectId}
                                     onDelete={this.handleTabularBookDelete}
-                                    setSaveTabularFunction={this.setSaveTabularFunction}
-                                    onEdited={this.handleFieldsChange}
                                     onCancel={this.handleTabularModalClose}
                                 />
                             ) : (

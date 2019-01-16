@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Button from '#rsca/Button';
 
@@ -82,7 +83,7 @@ export default class Header extends React.PureComponent {
             datetime: iconNames.calendar,
         };
         const icon = iconNameMapping[value.type];
-        console.warn(value);
+
         return (
             <div className={styles.header}>
                 <Button
@@ -91,9 +92,9 @@ export default class Header extends React.PureComponent {
                     iconName={getSortIcon(sortOrder)}
                     transparent
                 >
-                    { icon && <span className={_cs(icon, styles.icon)} /> }
                     {value.title}
                 </Button>
+                { icon && <span className={_cs(icon, styles.icon)} /> }
                 {
                     shouldExtractGeo(value) &&
                     <TriggerAndPoll
@@ -108,6 +109,13 @@ export default class Header extends React.PureComponent {
                         <LoadingOnValid />
                     </TriggerAndPoll>
                 }
+                {/* TODO: render search components according to data type */}
+                <TextInput
+                    className={styles.searchBox}
+                    placeholder="Search"
+                    showLabel={false}
+                    showHintAndError={false}
+                />
                 <HealthBar
                     data={statusData}
                     valueSelector={healthBarValueSelector}

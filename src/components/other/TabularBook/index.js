@@ -14,6 +14,8 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import update from '#rsu/immutable-update';
 import { mapToList } from '#rsu/common';
 
+import { listToMap } from '#rsu/common';
+
 import TriggerAndPoll from '#components/general/TriggerAndPoll';
 
 import { iconNames } from '#constants';
@@ -30,18 +32,15 @@ const propTypes = {
     className: PropTypes.string,
     projectId: PropTypes.number.isRequired,
     bookId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-    onEdited: PropTypes.func,
+    onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    onCancel: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
 
     deleteRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     saveRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-
-    onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
-    onCancel: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
 };
 
 const defaultProps = {
     className: '',
-    onEdited: undefined,
 };
 
 const requests = {
@@ -76,15 +75,12 @@ const requests = {
         schemaName: 'TabularBookSchema',
         method: requestMethods.PATCH,
         url: ({ props }) => `/tabular-books/${props.bookId}/`,
-        query: { fields: 'id,sheets,options,fields,project' },
         body: ({ params: { body } }) => body,
-        onSuccess: ({ response, params: { callback } }) => {
-            callback(response);
+        onSuccess: ({ response, params: { setBook } }) => {
+            setBook(response);
         },
     },
 };
-
-const noOp = () => {};
 
 @RequestClient(requests)
 export default class TabularBook extends React.PureComponent {
@@ -100,40 +96,36 @@ export default class TabularBook extends React.PureComponent {
         };
     }
 
-    setBook = (book, callback) => {
-        const tabs = {};
-        const sheets = {};
+    setBook = (response, onComplete) => {
+        const sheets = listToMap(
+            response.sheets,
+            sheet => sheet.id,
+            sheet => sheet,
+        );
 
-        book.sheets.forEach((sheet) => {
-            tabs[sheet.id] = sheet.title;
-            sheets[sheet.id] = sheet;
-        });
+        const tabs = listToMap(
+            response.sheets,
+            sheet => sheet.id,
+            sheet => sheet.title,
+        );
 
-        this.setState({
-            tabs,
-            sheets,
-            activeSheet: Object.keys(tabs)[0],
-        }, callback);
-    }
-
-    save = () => {
-        const { sheets } = this.state;
-        // TODO: may use setBook instead of a callback
-        // TODO: save some things locally, and merge those here
-        this.props.saveRequest.do({
-            body: {
-                project: this.props.projectId,
-                sheets: mapToList(
-                    sheets,
-                    // eslint-disable-next-line no-unused-vars
-                    ({ data, ...otherAttributes }) => otherAttributes,
-                ),
+        this.setState(
+            {
+                tabs,
+                sheets,
+                // NOTE: there must be atleast on sheet
+                activeSheet: Object.keys(tabs)[0],
             },
-            setBook: response => this.setBook(response, noOp),
-        });
+            () => {
+                if (onComplete) {
+                    onComplete();
+                }
+            },
+        );
     }
 
     resetSort = () => {
+        // FIXME: move this to redux
         const { sheets, activeSheet } = this.state;
         const settings = {
             [activeSheet]: { $auto: {
@@ -143,28 +135,16 @@ export default class TabularBook extends React.PureComponent {
             } },
         };
 
-        // TODO: no need to call edited
-        this.setState({ sheets: update(sheets, settings) }, () => {
-            if (this.props.onEdited) {
-                this.props.onEdited();
-            }
-        });
+        this.setState({ sheets: update(sheets, settings) });
     }
 
     handleSheetChange = (newSheet) => {
+        // FIXME: move this to redux
         const { sheets } = this.state;
         const settings = {
             [newSheet.id]: { $set: newSheet },
         };
-
-        // TODO: dont' call save here, no need to call edited as well
-        // TODO: no need to call edited
-        this.setState({ sheets: update(sheets, settings) }, () => {
-            this.save();
-            if (this.props.onEdited) {
-                this.props.onEdited();
-            }
-        });
+        this.setState({ sheets: update(sheets, settings) });
     }
 
     handleActiveSheetChange = (activeSheet) => {
@@ -176,8 +156,14 @@ export default class TabularBook extends React.PureComponent {
     }
 
     handleDetailsChange = (newValues) => {
-        // TODO: save this thing
-        console.warn(newValues);
+        // FIXME: check if data is also sent (shouldn't do that)
+        this.props.saveRequest.do({
+            body: {
+                project: this.props.projectId,
+                sheets: Object.keys(newValues).map(k => newValues[k]),
+            },
+            setBook: this.setBook,
+        });
     }
 
     renderBody = ({ invalid, completed }) => {
@@ -198,6 +184,7 @@ export default class TabularBook extends React.PureComponent {
                 </div>
             );
         }
+
         if (!completed || saveRequest.pending) {
             return (
                 <div>

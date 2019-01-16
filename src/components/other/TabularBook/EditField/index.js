@@ -34,9 +34,10 @@ export default class EditFieldButton extends React.PureComponent {
     }
 
     handleChange = (values) => {
-        this.setState({ showModal: false }, () => {
-            this.props.onChange(values);
-        });
+        this.setState(
+            { showModal: false },
+            () => { this.props.onChange(values); },
+        );
     }
 
     render() {

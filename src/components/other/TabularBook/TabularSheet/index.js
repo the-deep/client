@@ -55,11 +55,6 @@ const renderers = {
     datetime: handleInvalid(DateCell),
 };
 
-const stringifyId = d => ({
-    ...d,
-    id: String(d.id),
-});
-
 export default class TabularSheet extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -85,38 +80,48 @@ export default class TabularSheet extends React.PureComponent {
     });
 
     calcSheetColumns = memoize((fields = []) => (
-        fields.map(stringifyId).map(this.createColumn)
+        fields
+            .map(field => ({
+                ...field,
+                id: String(field.id),
+            }))
+            .map(field => ({
+                key: field.id,
+                value: field,
+
+                headerRendererParams: this.headerRendererParams,
+                headerRenderer: Header,
+                cellRendererParams: this.cellRendererParams,
+
+                cellRenderer: renderers[field.type] || renderers.string,
+                comparator: (a, b, d) => comparators[field.type](
+                    a[field.id].value, b[field.id].value, d,
+                ),
+            }))
     ))
 
-    createColumn = field => ({
-        key: field.id,
-        value: field,
-
-        headerRendererParams: this.headerRendererParams,
-        headerRenderer: Header,
-        cellRendererParams: this.cellRendererParams,
-
-        cellRenderer: renderers[field.type] || renderers.string,
-        comparator: (a, b, d) => comparators[field.type](
-            a[field.id].value, b[field.id].value, d,
-        ),
-    })
-
     handleColumnChange = (key, value) => {
-        const sheet = { ...this.props.sheet };
+        // FIXME: use immutable-helpers
+        const { sheet } = this.props;
+        const newSheet = {
+            ...sheet,
+            fields: [...sheet.fields],
+        };
 
-        const fields = [...sheet.fields];
-        const index = fields.findIndex(c => String(c.id) === key);
-        fields[index] = { ...fields[index], ...value };
+        const index = newSheet.fields.findIndex(c => String(c.id) === key);
+        newSheet.fields[index] = {
+            ...sheet.fields[index],
+            ...value,
+        };
 
-        sheet.fields = fields;
         this.props.onSheetChange(sheet);
     }
 
     handleSettingsChange = (settings) => {
-        const sheet = { ...this.props.sheet };
-        sheet.options = settings;
-        this.props.onSheetChange(sheet);
+        this.props.onSheetChange({
+            ...this.props.sheet,
+            options: settings,
+        });
     }
 
     handleSearch = (datum, searchTerm) => {
@@ -124,7 +129,6 @@ export default class TabularSheet extends React.PureComponent {
         const sheetColumns = this.calcSheetColumns(sheet.fields);
         return sheetColumns.every((sheetColumn) => {
             const columnKey = sheetColumn.key;
-            // console.warn(sheetColumn);
             const searchTermForColumn = searchTerm[columnKey];
             const datumForColumn = datum[columnKey];
             if (searchTermForColumn === undefined || searchTermForColumn === null) {
@@ -145,6 +149,7 @@ export default class TabularSheet extends React.PureComponent {
             sortOrder: column.sortOrder,
             onSortClick: column.onSortClick,
             className: styles.header,
+            // FIXME: shouldn't create objects on the fly
             statusData: [validCount, data.length - validCount],
         };
     }
@@ -152,10 +157,8 @@ export default class TabularSheet extends React.PureComponent {
     cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({
         className: _cs(styles[type], styles.cell),
         value: datum[id].value,
-        options: {
-            ...options,
-            invalid: type !== 'string' && datum[id].type !== type,
-        },
+        options,
+        invalid: type !== 'string' && datum[id].type !== type,
     })
 
     render() {
