@@ -234,7 +234,8 @@ export default class LeadButtons extends React.PureComponent {
         this.setState({ dropboxDisabled: false });
     }
 
-    handleLeadAddFromDisk = (files, { invalidFiles }) => {
+    handleLeadAddFromDisk = (files, options) => {
+        const { invalidFiles } = options;
         if (invalidFiles > 0) {
             notify.send({
                 title: _ts('addLeads.sourceButtons', 'fileSelection'),

@@ -42,9 +42,8 @@ const healthColorScheme = [
     '#f44336',
 ];
 
-const identity = x => x;
-const healthBarValueSelector = identity;
-const healthBarKeySelector = identity;
+const healthBarValueSelector = x => x;
+const healthBarKeySelector = (x, i) => `${x}-${i}`;
 
 export default class Header extends React.PureComponent {
     static propTypes = {

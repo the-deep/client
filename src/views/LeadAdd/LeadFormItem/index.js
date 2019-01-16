@@ -461,7 +461,6 @@ export default class LeadFormItem extends React.PureComponent {
                                     setSaveTabularFunction={this.setSaveTabularFunction}
                                     onEdited={this.handleFieldsChange}
                                     onCancel={this.handleTabularModalClose}
-                                    showDelete
                                 />
                             ) : (
                                 <LeadTabular

@@ -2,10 +2,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 
+import Searchable from '#rscv/Taebul/Searchable';
 import Sortable from '#rscv/Taebul/Sortable';
 import ColumnWidth from '#rscv/Taebul/ColumnWidth';
 import NormalTaebul from '#rscv/Taebul';
-import { compareString, compareNumber, compareDate } from '#rsu/common';
+import {
+    compareString,
+    compareNumber,
+    compareDate,
+    caseInsensitiveSubmatch,
+} from '#rsu/common';
 import _cs from '#cs';
 
 import Header from './Header';
@@ -18,7 +24,7 @@ import {
 
 import styles from './styles.scss';
 
-const Taebul = Sortable(ColumnWidth(NormalTaebul));
+const Taebul = Searchable(Sortable(ColumnWidth(NormalTaebul)));
 
 const propTypes = {
     className: PropTypes.string,
@@ -44,8 +50,8 @@ const comparators = {
 
 const renderers = {
     string: StringCell,
-    number: handleInvalid(NumberCell),
     geo: StringCell,
+    number: handleInvalid(NumberCell),
     datetime: handleInvalid(DateCell),
 };
 
@@ -60,14 +66,18 @@ export default class TabularSheet extends React.PureComponent {
     static keySelector = datum => datum.key;
 
     calcSheetSettings = memoize((columns, options = {}) => {
-        const settings = { ...options };
-        if (!settings.columnWidths) {
-            settings.columnWidths = {};
-        }
+        const settings = {
+            ...options,
+            columnWidths: { ...options.columnWidths },
+            searchTerm: { ...options.searchTerm },
+        };
 
         columns.forEach((column) => {
-            if (!settings.columnWidths[column.key]) {
+            if (settings.columnWidths[column.key] === undefined) {
                 settings.columnWidths[column.key] = 200;
+            }
+            if (settings.searchTerm[column.key] === undefined) {
+                settings.searchTerm[column.key] = '';
             }
         });
 
@@ -109,6 +119,22 @@ export default class TabularSheet extends React.PureComponent {
         this.props.onSheetChange(sheet);
     }
 
+    handleSearch = (datum, searchTerm) => {
+        const { sheet } = this.props;
+        const sheetColumns = this.calcSheetColumns(sheet.fields);
+        return sheetColumns.every((sheetColumn) => {
+            const columnKey = sheetColumn.key;
+            // console.warn(sheetColumn);
+            const searchTermForColumn = searchTerm[columnKey];
+            const datumForColumn = datum[columnKey];
+            if (searchTermForColumn === undefined || searchTermForColumn === null) {
+                return true;
+            }
+            // NOTE: check for datum.type
+            return caseInsensitiveSubmatch(datumForColumn.value, searchTermForColumn);
+        });
+    };
+
     headerRendererParams = ({ column, columnKey, data }) => {
         const validCount = data.filter(x => x[columnKey].type === column.value.type).length;
 
@@ -145,6 +171,7 @@ export default class TabularSheet extends React.PureComponent {
                 keySelector={TabularSheet.keySelector}
                 columns={sheetColumns}
                 onChange={this.handleSettingsChange}
+                searchFunction={this.handleSearch}
             />
         );
     }

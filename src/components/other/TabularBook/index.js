@@ -17,16 +17,14 @@ import { mapToList } from '#rsu/common';
 import TriggerAndPoll from '#components/general/TriggerAndPoll';
 
 import { iconNames } from '#constants';
-import { RequestClient } from '#request';
+import { RequestClient, requestMethods } from '#request';
+import notify from '#notify';
 import _ts from '#ts';
 import _cs from '#cs';
 
 import TabularSheet from './TabularSheet';
 import EditField from './EditField';
-import requests from './requests';
 import styles from './styles.scss';
-
-const noOp = () => {};
 
 const propTypes = {
     className: PropTypes.string,
@@ -37,16 +35,56 @@ const propTypes = {
     deleteRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     saveRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
-    showDelete: PropTypes.bool,
     onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     onCancel: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
 };
 
 const defaultProps = {
     className: '',
-    showDelete: false,
     onEdited: undefined,
 };
+
+const requests = {
+    deleteRequest: {
+        method: requestMethods.DELETE,
+        url: ({ props }) => `/tabular-books/${props.bookId}/`,
+        onSuccess: ({ props }) => props.onDelete(),
+        onFailure: ({ error = {} }) => {
+            const { nonFieldErrors } = error;
+            const displayError = nonFieldErrors
+                ? nonFieldErrors.join(' ')
+                : _ts('tabular', 'deleteFailed');
+            notify.send({
+                type: notify.type.ERROR,
+                title: _ts('tabular', 'tabularBookTitle'),
+                message: displayError,
+                duration: notify.duration.SLOW,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                type: notify.type.ERROR,
+                title: _ts('tabular', 'tabularBookTitle'),
+                message: _ts('tabular', 'deleteFailed'),
+                duration: notify.duration.SLOW,
+            });
+        },
+        schemaName: 'TabularBookSchema',
+    },
+
+    saveRequest: {
+        schemaName: 'TabularBookSchema',
+        method: requestMethods.PATCH,
+        url: ({ props }) => `/tabular-books/${props.bookId}/`,
+        query: { fields: 'id,sheets,options,fields,project' },
+        body: ({ params: { body } }) => body,
+        onSuccess: ({ response, params: { callback } }) => {
+            callback(response);
+        },
+    },
+};
+
+const noOp = () => {};
 
 @RequestClient(requests)
 export default class TabularBook extends React.PureComponent {
@@ -58,6 +96,7 @@ export default class TabularBook extends React.PureComponent {
         this.state = {
             tabs: {},
             activeSheet: undefined,
+            sheets: undefined,
         };
     }
 
@@ -79,6 +118,8 @@ export default class TabularBook extends React.PureComponent {
 
     save = () => {
         const { sheets } = this.state;
+        // TODO: may use setBook instead of a callback
+        // TODO: save some things locally, and merge those here
         this.props.saveRequest.do({
             body: {
                 project: this.props.projectId,
@@ -102,6 +143,7 @@ export default class TabularBook extends React.PureComponent {
             } },
         };
 
+        // TODO: no need to call edited
         this.setState({ sheets: update(sheets, settings) }, () => {
             if (this.props.onEdited) {
                 this.props.onEdited();
@@ -115,6 +157,8 @@ export default class TabularBook extends React.PureComponent {
             [newSheet.id]: { $set: newSheet },
         };
 
+        // TODO: dont' call save here, no need to call edited as well
+        // TODO: no need to call edited
         this.setState({ sheets: update(sheets, settings) }, () => {
             this.save();
             if (this.props.onEdited) {
@@ -132,21 +176,64 @@ export default class TabularBook extends React.PureComponent {
     }
 
     handleDetailsChange = (newValues) => {
+        // TODO: save this thing
         console.warn(newValues);
     }
 
-    renderActual = ({ invalid, completed }) => {
+    renderBody = ({ invalid, completed }) => {
         const {
             tabs,
             sheets,
             activeSheet,
         } = this.state;
 
+        const { saveRequest } = this.props;
+
+        if (invalid) {
+            return (
+                <div>
+                    <Message>
+                        {_ts('tabular', 'invalid')}
+                    </Message>
+                </div>
+            );
+        }
+        if (!completed || saveRequest.pending) {
+            return (
+                <div>
+                    <LoadingAnimation />
+                </div>
+            );
+        }
+
+        const sheet = sheets[activeSheet];
+
+        return (
+            <Fragment>
+                <TabularSheet
+                    // dismount on different activeSheet
+                    key={activeSheet}
+                    className={styles.sheetView}
+                    sheet={sheet}
+                    onSheetChange={this.handleSheetChange}
+                />
+                <ScrollTabs
+                    className={styles.tabs}
+                    tabs={tabs}
+                    active={activeSheet}
+                    onClick={this.handleActiveSheetChange}
+                    inverted
+                />
+            </Fragment>
+        );
+    }
+
+    renderActual = ({ invalid, completed }) => {
+        const { sheets } = this.state;
+
         const {
             deleteRequest,
-            saveRequest,
             onCancel,
-            showDelete,
         } = this.props;
 
         const className = _cs(
@@ -154,6 +241,8 @@ export default class TabularBook extends React.PureComponent {
             styles.tabularBook,
             'tabular-book',
         );
+
+        const Body = this.renderBody;
 
         return (
             <div className={className}>
@@ -168,54 +257,29 @@ export default class TabularBook extends React.PureComponent {
                                 transparent
                                 disabled={deleteRequest.pending || !completed || invalid}
                             />
-                            {showDelete && (
-                                <DangerConfirmButton
-                                    iconName={iconNames.delete}
-                                    onClick={this.handleDelete}
-                                    confirmationMessage={_ts('tabular', 'deleteMessage')}
-                                    title={_ts('tabular', 'deleteButtonTooltip')}
-                                    transparent
-                                    disabled={deleteRequest.pending || !completed || invalid}
-                                    pending={deleteRequest.pending}
-                                />
-                            )}
+                            <DangerConfirmButton
+                                iconName={iconNames.delete}
+                                onClick={this.handleDelete}
+                                confirmationMessage={_ts('tabular', 'deleteMessage')}
+                                title={_ts('tabular', 'deleteButtonTooltip')}
+                                transparent
+                                disabled={!completed || invalid}
+                                pending={deleteRequest.pending}
+                            />
                             <EditField
                                 onChange={this.handleDetailsChange}
                                 iconName={iconNames.edit}
-                                value={this.state.sheets}
+                                value={sheets}
                                 transparent
                             />
                         </div>
                     }
                 />
                 <ModalBody className={styles.body}>
-                    { invalid &&
-                        <div className={className}>
-                            <Message>
-                                {_ts('tabular', 'invalid')}
-                            </Message>
-                        </div>
-                    }
-                    { completed && !saveRequest.pending ? (
-                        <Fragment>
-                            <TabularSheet
-                                className={styles.sheetView}
-                                sheet={sheets[activeSheet]}
-                                onSheetChange={this.handleSheetChange}
-                            />
-                            <ScrollTabs
-                                className={styles.tabs}
-                                tabs={tabs}
-                                active={activeSheet}
-                                onClick={this.handleActiveSheetChange}
-                                inverted
-                            />
-                        </Fragment>
-                    ) : (
-                        <div className={className}>
-                            <LoadingAnimation />
-                        </div>
-                    )}
+                    <Body
+                        completed={completed}
+                        invalid={invalid}
+                    />
                 </ModalBody>
                 <ModalFooter>
                     <Button onClick={onCancel}>
@@ -234,7 +298,6 @@ export default class TabularBook extends React.PureComponent {
             <TriggerAndPoll
                 onDataReceived={this.setBook}
                 url={`/tabular-books/${bookId}/`}
-                // dataSchemaName={tabularSchemaName}
                 triggerUrl={`/tabular-extraction-trigger/${bookId}/`}
                 schemaName="TabularBookSchema"
                 triggerSchemaName={undefined}
