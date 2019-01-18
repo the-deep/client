@@ -12,7 +12,7 @@ const tabularSchema = [];
 
             file: { type: 'uint', required: true },
             fileType: { type: 'string', required: true },
-            metaStatus: { type: 'string', required: true },
+            metaStatus: { type: 'string' },
             options: { type: 'object' },
             project: { type: 'uint' },
             status: { type: 'string', required: true },
