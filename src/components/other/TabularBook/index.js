@@ -12,10 +12,9 @@ import ScrollTabs from '#rscv/ScrollTabs';
 import Button from '#rsca/Button';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import update from '#rsu/immutable-update';
-import { mapToList } from '#rsu/common';
-
 import { listToMap } from '#rsu/common';
 
+import Cloak from '#components/general/Cloak';
 import TriggerAndPoll from '#components/general/TriggerAndPoll';
 
 import { iconNames } from '#constants';
@@ -25,7 +24,7 @@ import _ts from '#ts';
 import _cs from '#cs';
 
 import TabularSheet from './TabularSheet';
-import EditField from './EditField';
+import EditFieldButton from './EditField';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -87,6 +86,10 @@ export default class TabularBook extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static shouldHideButtons = ({ leadPermissions }) => (
+        !leadPermissions.create || !leadPermissions.modify
+    );
+
     constructor(props) {
         super(props);
         this.state = {
@@ -97,6 +100,7 @@ export default class TabularBook extends React.PureComponent {
     }
 
     setBook = (response, onComplete) => {
+        const filteredSheets = response.sheets.filter(sheet => !sheet.hidden);
         const sheets = listToMap(
             response.sheets,
             sheet => sheet.id,
@@ -104,7 +108,7 @@ export default class TabularBook extends React.PureComponent {
         );
 
         const tabs = listToMap(
-            response.sheets,
+            filteredSheets,
             sheet => sheet.id,
             sheet => sheet.title,
         );
@@ -157,6 +161,7 @@ export default class TabularBook extends React.PureComponent {
 
     handleDetailsChange = (newValues) => {
         // FIXME: check if data is also sent (shouldn't do that)
+        // TODO: also clear out local filters and sorting
         this.props.saveRequest.do({
             body: {
                 project: this.props.projectId,
@@ -173,8 +178,6 @@ export default class TabularBook extends React.PureComponent {
             activeSheet,
         } = this.state;
 
-        const { saveRequest } = this.props;
-
         if (invalid) {
             return (
                 <div>
@@ -185,7 +188,7 @@ export default class TabularBook extends React.PureComponent {
             );
         }
 
-        if (!completed || saveRequest.pending) {
+        if (!completed) {
             return (
                 <div>
                     <LoadingAnimation />
@@ -219,7 +222,12 @@ export default class TabularBook extends React.PureComponent {
         const { sheets } = this.state;
 
         const {
-            deleteRequest,
+            deleteRequest: {
+                pending: deletePending,
+            },
+            saveRequest: {
+                pending: savePending,
+            },
             onCancel,
         } = this.props;
 
@@ -241,23 +249,29 @@ export default class TabularBook extends React.PureComponent {
                                 iconName={iconNames.sort}
                                 onClick={this.resetSort}
                                 title={_ts('tabular', 'resetSortTitle')}
-                                transparent
-                                disabled={deleteRequest.pending || !completed || invalid}
+                                disabled={savePending || deletePending || !completed || invalid}
                             />
-                            <DangerConfirmButton
-                                iconName={iconNames.delete}
-                                onClick={this.handleDelete}
-                                confirmationMessage={_ts('tabular', 'deleteMessage')}
-                                title={_ts('tabular', 'deleteButtonTooltip')}
-                                transparent
-                                disabled={!completed || invalid}
-                                pending={deleteRequest.pending}
-                            />
-                            <EditField
-                                onChange={this.handleDetailsChange}
-                                iconName={iconNames.edit}
-                                value={sheets}
-                                transparent
+                            <Cloak
+                                hide={TabularBook.shouldHideButtons}
+                                render={
+                                    <Fragment>
+                                        <EditFieldButton
+                                            onChange={this.handleDetailsChange}
+                                            iconName={iconNames.edit}
+                                            disabled={deletePending || !completed || invalid}
+                                            value={sheets}
+                                            pending={savePending}
+                                        />
+                                        <DangerConfirmButton
+                                            iconName={iconNames.delete}
+                                            onClick={this.handleDelete}
+                                            confirmationMessage={_ts('tabular', 'deleteMessage')}
+                                            title={_ts('tabular', 'deleteButtonTooltip')}
+                                            disabled={savePending || !completed || invalid}
+                                            pending={deletePending}
+                                        />
+                                    </Fragment>
+                                }
                             />
                         </div>
                     }

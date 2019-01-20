@@ -50,15 +50,21 @@ export default class Header extends React.PureComponent {
     static propTypes = {
         columnKey: PropTypes.string.isRequired,
         value: PropTypes.shape({}).isRequired,
+        filterValue: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
         onSortClick: PropTypes.func.isRequired,
+        onFilterChange: PropTypes.func.isRequired,
         sortOrder: PropTypes.string,
         onChange: PropTypes.func.isRequired,
         statusData: PropTypes.arrayOf(PropTypes.number).isRequired,
+        disabled: PropTypes.bool,
+        filterComponent: PropTypes.func.isRequired,
         // First value is valid count and the second is invalid count
     };
 
     static defaultProps = {
         sortOrder: undefined,
+        disabled: false,
+        filterValue: undefined,
     };
 
     handleSortClick = () => {
@@ -69,11 +75,19 @@ export default class Header extends React.PureComponent {
         this.props.onChange(this.props.columnKey, value);
     }
 
+    handleFilterChange = (value) => {
+        const { columnKey } = this.props;
+        this.props.onFilterChange(columnKey, value);
+    }
+
     render() {
         const {
             sortOrder,
             value,
             statusData,
+            filterValue,
+            disabled,
+            filterComponent: Filter,
         } = this.props;
 
         const iconNameMapping = {
@@ -91,6 +105,7 @@ export default class Header extends React.PureComponent {
                     onClick={this.handleSortClick}
                     iconName={getSortIcon(sortOrder)}
                     transparent
+                    disabled={disabled}
                 >
                     {value.title}
                 </Button>
@@ -109,12 +124,11 @@ export default class Header extends React.PureComponent {
                         <LoadingOnValid />
                     </TriggerAndPoll>
                 }
-                {/* TODO: render search components according to data type */}
-                <TextInput
+                <Filter
                     className={styles.searchBox}
-                    placeholder="Search"
-                    showLabel={false}
-                    showHintAndError={false}
+                    disabled={disabled}
+                    value={filterValue}
+                    onChange={this.handleFilterChange}
                 />
                 <HealthBar
                     data={statusData}

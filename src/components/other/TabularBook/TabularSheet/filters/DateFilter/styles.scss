@@ -1,0 +1,9 @@
+@import '~base-scss/base';
+
+.date-filter {
+    display: flex;
+
+    .to-input {
+        margin-left: $spacing-small;
+    }
+}

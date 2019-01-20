@@ -11,16 +11,19 @@ import {
     compareNumber,
     compareDate,
     caseInsensitiveSubmatch,
+    isNotDefined,
 } from '#rsu/common';
+import update from '#rsu/immutable-update';
 import _cs from '#cs';
 
 import Header from './Header';
-import {
-    StringCell,
-    NumberCell,
-    DateCell,
-    handleInvalid,
-} from './renderers';
+import { handleInvalidCell } from './renderers';
+import StringCell from './renderers/StringCell';
+import NumberCell from './renderers/NumberCell';
+import DateCell from './renderers/DateCell';
+import StringFilter from './filters/StringFilter';
+import NumberFilter from './filters/NumberFilter';
+import DateFilter from './filters/DateFilter';
 
 import styles from './styles.scss';
 
@@ -51,42 +54,30 @@ const comparators = {
 const renderers = {
     string: StringCell,
     geo: StringCell,
-    number: handleInvalid(NumberCell),
-    datetime: handleInvalid(DateCell),
+    number: handleInvalidCell(NumberCell),
+    datetime: handleInvalidCell(DateCell),
 };
+
+const filterRenderers = {
+    string: StringFilter,
+    geo: StringFilter,
+    number: NumberFilter,
+    datetime: DateFilter,
+};
+
+const emptyObject = {};
 
 export default class TabularSheet extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
     static keySelector = datum => datum.key;
 
-    calcSheetSettings = memoize((columns, options = {}) => {
-        const settings = {
-            ...options,
-            columnWidths: { ...options.columnWidths },
-            searchTerm: { ...options.searchTerm },
-        };
-
-        columns.forEach((column) => {
-            if (settings.columnWidths[column.key] === undefined) {
-                settings.columnWidths[column.key] = 200;
-            }
-            if (settings.searchTerm[column.key] === undefined) {
-                settings.searchTerm[column.key] = '';
-            }
-        });
-
-        return settings;
-    });
-
-    calcSheetColumns = memoize((fields = []) => (
+    // NOTE: seachTerm is inside this.headerRendererParams
+    calcSheetColumns = memoize((fields, searchTerm) => (
         fields
+            .filter(field => !field.hidden)
             .map(field => ({
-                ...field,
-                id: String(field.id),
-            }))
-            .map(field => ({
-                key: field.id,
+                key: String(field.id),
                 value: field,
 
                 headerRendererParams: this.headerRendererParams,
@@ -98,59 +89,31 @@ export default class TabularSheet extends React.PureComponent {
                     a[field.id].value, b[field.id].value, d,
                 ),
             }))
-    ))
+    ));
 
-    handleColumnChange = (key, value) => {
-        // FIXME: use immutable-helpers
-        const { sheet } = this.props;
-        const newSheet = {
-            ...sheet,
-            fields: [...sheet.fields],
-        };
-
-        const index = newSheet.fields.findIndex(c => String(c.id) === key);
-        newSheet.fields[index] = {
-            ...sheet.fields[index],
-            ...value,
-        };
-
-        this.props.onSheetChange(sheet);
-    }
-
-    handleSettingsChange = (settings) => {
-        this.props.onSheetChange({
-            ...this.props.sheet,
-            options: settings,
-        });
-    }
-
-    handleSearch = (datum, searchTerm) => {
-        const { sheet } = this.props;
-        const sheetColumns = this.calcSheetColumns(sheet.fields);
-        return sheetColumns.every((sheetColumn) => {
-            const columnKey = sheetColumn.key;
-            const searchTermForColumn = searchTerm[columnKey];
-            const datumForColumn = datum[columnKey];
-            if (searchTermForColumn === undefined || searchTermForColumn === null) {
-                return true;
-            }
-            // NOTE: check for datum.type
-            return caseInsensitiveSubmatch(datumForColumn.value, searchTermForColumn);
-        });
-    };
-
-    headerRendererParams = ({ column, columnKey, data }) => {
+    headerRendererParams = ({ column, columnKey, data = [] }) => {
         const validCount = data.filter(x => x[columnKey].type === column.value.type).length;
+
+        const {
+            sheet: {
+                options: {
+                    searchTerm = {},
+                } = {},
+            },
+        } = this.props;
 
         return {
             columnKey,
-            onChange: this.handleColumnChange,
+            onChange: this.handleFieldValueChange,
+            onFilterChange: this.handleFilterChange,
             value: column.value,
             sortOrder: column.sortOrder,
             onSortClick: column.onSortClick,
             className: styles.header,
             // FIXME: shouldn't create objects on the fly
             statusData: [validCount, data.length - validCount],
+            filterValue: searchTerm[columnKey],
+            filterComponent: filterRenderers[column.value.type] || filterRenderers.string,
         };
     }
 
@@ -161,18 +124,79 @@ export default class TabularSheet extends React.PureComponent {
         invalid: type !== 'string' && datum[id].type !== type,
     })
 
+    handleFieldValueChange = (key, value) => {
+        const { sheet } = this.props;
+        const index = sheet.fields.findIndex(c => String(c.id) === key);
+        const settings = {
+            fields: {
+                [index]: { $merge: value },
+            },
+        };
+        const newSheet = update(sheet, settings);
+        this.props.onSheetChange(newSheet);
+    }
+
+    handleFilterChange = (key, value) => {
+        const { sheet } = this.props;
+        const settings = {
+            options: { $auto: {
+                searchTerm: { $auto: {
+                    [key]: { $set: value },
+                } },
+            } },
+        };
+        const newSheet = update(sheet, settings);
+        this.props.onSheetChange(newSheet);
+    }
+
+    handleSettingsChange = (settings) => {
+        this.props.onSheetChange({
+            ...this.props.sheet,
+            options: settings,
+        });
+    }
+
+    handleSearch = (datum, searchTerm = emptyObject) => {
+        const { sheet } = this.props;
+        const { fields, options: { searchTerm: oldSearchTerm } = {} } = sheet;
+        const columns = this.calcSheetColumns(fields, oldSearchTerm);
+
+        return columns.every((sheetColumn) => {
+            const columnKey = sheetColumn.key;
+            const searchTermForColumn = searchTerm[columnKey];
+            const datumForColumn = datum[columnKey];
+            if (searchTermForColumn === undefined) {
+                return true;
+            }
+
+            const { type } = sheetColumn.value;
+            // TODO: cast to number
+            // TODO: skip what is not a number
+            if (type === 'number') {
+                return (
+                    (isNotDefined(searchTermForColumn.from)
+                        || datumForColumn.value >= searchTermForColumn.from) &&
+                    (isNotDefined(searchTermForColumn.to)
+                        || datumForColumn.value <= searchTermForColumn.to)
+                );
+            }
+            // TODO: comparision for date
+            return caseInsensitiveSubmatch(datumForColumn.value, searchTermForColumn);
+        });
+    };
+
     render() {
         const { className, sheet } = this.props;
-        const sheetColumns = this.calcSheetColumns(sheet.fields);
-        const sheetSettings = this.calcSheetSettings(sheetColumns, sheet.options);
+        const { fields, options: { searchTerm } = {} } = sheet;
+        const columns = this.calcSheetColumns(fields, searchTerm);
 
         return (
             <Taebul
                 className={_cs(className, styles.tabularSheet, 'tabular-sheet')}
                 data={sheet.data}
-                settings={sheetSettings}
+                settings={sheet.options}
                 keySelector={TabularSheet.keySelector}
-                columns={sheetColumns}
+                columns={columns}
                 onChange={this.handleSettingsChange}
                 searchFunction={this.handleSearch}
             />
