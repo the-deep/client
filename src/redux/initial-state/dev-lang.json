@@ -903,7 +903,8 @@
         "-78572254": "Invalid region",
         "-77224022": "Preview",
         "-84081563": "Hide",
-        "-61786851": "Headers"
+        "-61786851": "Headers",
+        "-4174557": "Open Tabular"
     },
     "links": {
         "browserExtension": {
@@ -1577,7 +1578,7 @@
             "connectorSourcesGetFailure": 1110,
             "connectorSourcesTitle": 1109,
             "connectorTitle": 1100,
-            "tabularButtonTitle": 142
+            "tabularButtonTitle": -4174557
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,

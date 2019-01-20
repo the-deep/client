@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 
 import Button from '#rsca/Button';
+import AccentButton from '#rsca/Button/AccentButton';
 import DateInput from '#rsci/DateInput';
 import Faram, {
     requiredCondition,
@@ -447,6 +448,19 @@ export default class LeadForm extends React.PureComponent {
                     // one of drive, dropbox, or file
                     ATTACHMENT_TYPES.indexOf(type) !== -1 && (
                         <Fragment>
+                            { this.isTabularCompatible(attachmentMimeType) && (
+                                <AccentButton
+                                    className={styles.tabularButton}
+                                    onClick={this.handleTabularButtonClick}
+                                >
+                                    {_ts('addLeads', 'tabularButtonTitle')}
+                                </AccentButton>
+                            ) }
+                            {/* FIXME: why is hidden input used here? */}
+                            <HiddenInput
+                                faramElementName="attachment"
+                                value={values.attachment || ''}
+                            />
                             <div className={styles.fileTitle}>
                                 { values.attachment &&
                                     <InternalGallery
@@ -456,22 +470,9 @@ export default class LeadForm extends React.PureComponent {
                                     />
                                 }
                             </div>
-                            {/* FIXME: why is hidden input used here? */}
-                            <HiddenInput
-                                faramElementName="attachment"
-                                value={values.attachment || ''}
-                            />
                         </Fragment>
                     )
                 }
-                { this.isTabularCompatible(attachmentMimeType) && (
-                    <Button
-                        className={styles.tabularButton}
-                        onClick={this.handleTabularButtonClick}
-                    >
-                        {_ts('addLeads', 'tabularButtonTitle')}
-                    </Button>
-                ) }
             </Faram>
         );
     }
