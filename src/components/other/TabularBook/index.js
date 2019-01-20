@@ -104,7 +104,7 @@ export default class TabularBook extends React.PureComponent {
         const sheets = listToMap(
             response.sheets,
             sheet => sheet.id,
-            sheet => sheet,
+            sheet => ({ ...sheet, options: { ...sheet.options, defaultColumnWidth: 100 } }),
         );
 
         const tabs = listToMap(
