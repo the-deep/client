@@ -907,7 +907,8 @@
         "-4174557": "Open Tabular",
         "-73878868": "There are no sheets to show.",
         "-5279830": "Sheet Title",
-        "-28248947": "Column Title"
+        "-28248947": "Column Title",
+        "-18101242": "Date Format"
     },
     "links": {
         "browserExtension": {
@@ -2437,7 +2438,8 @@
             "submitLabel": 826,
             "adminLevelLabel": 89,
             "adminLevelPlaceholder": 9011,
-            "geoTypeLabel": -50186668
+            "geoTypeLabel": -50186668,
+            "dateTypeLabel": -18101242
         },
         "project.general.dashboard": {
             "createdAtTitle": 163,

@@ -14,6 +14,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import { mapToMap } from '#rsu/common';
+import { DATA_TYPE } from '#entities/tabular';
 import _ts from '#ts';
 
 import SheetSettings from './SheetSettings';
@@ -28,54 +29,93 @@ const propTypes = {
 
 export default class EditFieldModal extends React.PureComponent {
     static propTypes = propTypes;
+
     static fieldKeySelector = d => d.id;
 
     constructor(props) {
         super(props);
-        const {
-            initialValue,
-        } = props;
+        const { initialValue } = props;
 
-        const activeSheet = Object.keys(initialValue)[0];
+        const keys = Object.keys(initialValue);
+        const activeSheet = keys[0];
 
         this.state = {
+            activeSheet,
             faramValues: initialValue,
             faramErrors: {},
-            activeSheet,
+            pristine: true,
+            hasError: false,
         };
 
-
-        this.schema = this.calcSchema(initialValue);
+        this.schema = this.calcSchema(keys);
     }
 
-    calcSchema = (faramValues) => {
-        const fields = {};
-
-        // FIXME: use conditional schema here
-        Object.keys(faramValues).forEach((key) => {
-            fields[key] = {
-                fields: {
-                    fields: {
-                        keySelector: EditFieldModal.fieldKeySelector,
-                        member: {
-                            fields: {
-                                hidden: [],
-                                id: [requiredCondition],
-                                options: [],
-                                ordering: [requiredCondition],
-                                title: [requiredCondition],
-                                type: [requiredCondition],
+    calcSchema = (sheetKeys = []) => {
+        const commonFields = {
+            id: [requiredCondition],
+            title: [requiredCondition],
+            type: [requiredCondition],
+            ordering: [requiredCondition],
+            hidden: [requiredCondition],
+        };
+        return {
+            fields: sheetKeys.reduce(
+                (acc, sheetKey) => ({
+                    ...acc,
+                    [sheetKey]: {
+                        fields: {
+                            id: [requiredCondition],
+                            title: [requiredCondition],
+                            hidden: [],
+                            fields: { // the name of the actual field is "fields"
+                                identifier: (value = {}) => value.type,
+                                keySelector: EditFieldModal.fieldKeySelector,
+                                member: {
+                                    default: {
+                                        fields: commonFields,
+                                    },
+                                    [DATA_TYPE.string]: {
+                                        fields: commonFields,
+                                    },
+                                    [DATA_TYPE.number]: {
+                                        fields: {
+                                            ...commonFields,
+                                            options: {
+                                                fields: {
+                                                    separator: [requiredCondition],
+                                                },
+                                            },
+                                        },
+                                    },
+                                    [DATA_TYPE.geo]: {
+                                        fields: {
+                                            ...commonFields,
+                                            options: {
+                                                fields: {
+                                                    geoType: [requiredCondition],
+                                                    adminLevel: [requiredCondition],
+                                                },
+                                            },
+                                        },
+                                    },
+                                    [DATA_TYPE.datetime]: {
+                                        fields: {
+                                            ...commonFields,
+                                            options: {
+                                                fields: {
+                                                    dateFormat: [requiredCondition],
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
                             },
                         },
                     },
-                    hidden: [],
-                    title: [requiredCondition],
-                    id: [requiredCondition],
-                },
-            };
-        });
-
-        return ({ fields });
+                }),
+                {},
+            ),
+        };
     }
 
     calcSheetTitles = memoize((sheetsMap) => {
@@ -87,15 +127,17 @@ export default class EditFieldModal extends React.PureComponent {
         return sheets;
     });
 
-    handleFaramChange = (faramValues, faramErrors) => {
+    handleFaramChange = (faramValues, faramErrors, faramInfo) => {
         this.setState({
             faramValues,
             faramErrors,
+            pristine: false,
+            hasError: faramInfo.hasError,
         });
     }
 
     handleFaramValidationFailure = (faramErrors) => {
-        this.setState({ faramErrors });
+        this.setState({ faramErrors, hasError: true });
     }
 
     handleFaramValidationSuccess = (value) => {
@@ -111,9 +153,13 @@ export default class EditFieldModal extends React.PureComponent {
             faramValues,
             faramErrors,
             activeSheet,
+            pristine,
+            hasError,
         } = this.state;
 
         const sheetTitles = this.calcSheetTitles(faramValues);
+
+        // TODO: use errorIndicator for tabs (sheets) and vertical tabs (columns)
 
         return (
             <Modal className={styles.editFieldModal}>
@@ -145,7 +191,10 @@ export default class EditFieldModal extends React.PureComponent {
                         <DangerButton onClick={this.props.onCancel}>
                             {_ts('tabular.editModal.editField', 'cancelLabel')}
                         </DangerButton>
-                        <PrimaryButton type="submit">
+                        <PrimaryButton
+                            type="submit"
+                            disabled={pristine || hasError}
+                        >
                             {_ts('tabular.editModal.editField', 'submitLabel')}
                         </PrimaryButton>
                     </ModalFooter>
