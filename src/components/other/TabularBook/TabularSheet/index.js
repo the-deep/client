@@ -11,10 +11,13 @@ import {
     compareNumber,
     compareDate,
     caseInsensitiveSubmatch,
+    isDefined,
     isNotDefined,
 } from '#rsu/common';
 import update from '#rsu/immutable-update';
 import _cs from '#cs';
+
+import { DATA_TYPE } from './utils';
 
 import Header from './Header';
 import { handleInvalidCell } from './renderers';
@@ -45,24 +48,24 @@ const defaultProps = {
 };
 
 const comparators = {
-    string: compareString,
-    number: compareNumber,
-    geo: compareString,
-    datetime: compareDate,
+    [DATA_TYPE.string]: compareString,
+    [DATA_TYPE.number]: compareNumber,
+    [DATA_TYPE.geo]: compareString,
+    [DATA_TYPE.datetime]: compareDate,
 };
 
 const renderers = {
-    string: StringCell,
-    geo: StringCell,
-    number: handleInvalidCell(NumberCell),
-    datetime: handleInvalidCell(DateCell),
+    [DATA_TYPE.string]: StringCell,
+    [DATA_TYPE.geo]: StringCell,
+    [DATA_TYPE.number]: handleInvalidCell(NumberCell),
+    [DATA_TYPE.datetime]: handleInvalidCell(DateCell),
 };
 
 const filterRenderers = {
-    string: StringFilter,
-    geo: StringFilter,
-    number: NumberFilter,
-    datetime: DateFilter,
+    [DATA_TYPE.string]: StringFilter,
+    [DATA_TYPE.geo]: StringFilter,
+    [DATA_TYPE.number]: NumberFilter,
+    [DATA_TYPE.datetime]: DateFilter,
 };
 
 const emptyObject = {};
@@ -72,7 +75,7 @@ export default class TabularSheet extends React.PureComponent {
     static defaultProps = defaultProps;
     static keySelector = datum => datum.key;
 
-    // NOTE: seachTerm is inside this.headerRendererParams
+    // NOTE: seachTerm is used inside this.headerRendererParams
     calcSheetColumns = memoize((fields, searchTerm) => (
         fields
             .filter(field => !field.hidden)
@@ -84,7 +87,7 @@ export default class TabularSheet extends React.PureComponent {
                 headerRenderer: Header,
                 cellRendererParams: this.cellRendererParams,
 
-                cellRenderer: renderers[field.type] || renderers.string,
+                cellRenderer: renderers[field.type] || renderers[DATA_TYPE.string],
                 comparator: (a, b, d) => comparators[field.type](
                     a[field.id].value, b[field.id].value, d,
                 ),
@@ -113,7 +116,9 @@ export default class TabularSheet extends React.PureComponent {
             // FIXME: shouldn't create objects on the fly
             statusData: [validCount, data.length - validCount],
             filterValue: searchTerm[columnKey],
-            filterComponent: filterRenderers[column.value.type] || filterRenderers.string,
+            filterComponent: (
+                filterRenderers[column.value.type] || filterRenderers[DATA_TYPE.string]
+            ),
         };
     }
 
@@ -121,7 +126,7 @@ export default class TabularSheet extends React.PureComponent {
         className: _cs(styles[type], styles.cell),
         value: datum[id].value,
         options,
-        invalid: type !== 'string' && datum[id].type !== type,
+        invalid: type !== DATA_TYPE.string && datum[id].type !== type,
     })
 
     handleFieldValueChange = (key, value) => {
@@ -162,26 +167,42 @@ export default class TabularSheet extends React.PureComponent {
         const columns = this.calcSheetColumns(fields, oldSearchTerm);
 
         return columns.every((sheetColumn) => {
-            const columnKey = sheetColumn.key;
+            const {
+                key: columnKey,
+                value: {
+                    type,
+                },
+            } = sheetColumn;
+
+            const { value, type: valueType } = datum[columnKey];
+
             const searchTermForColumn = searchTerm[columnKey];
-            const datumForColumn = datum[columnKey];
             if (searchTermForColumn === undefined) {
                 return true;
             }
 
-            const { type } = sheetColumn.value;
-            // TODO: cast to number
-            // TODO: skip what is not a number
-            if (type === 'number') {
+            // NOTE: string column type accepts all data types
+            if (type !== DATA_TYPE.string && type !== valueType) {
+                return false;
+            }
+
+            if (type === DATA_TYPE.number) {
+                const { from, to } = searchTermForColumn;
                 return (
-                    (isNotDefined(searchTermForColumn.from)
-                        || datumForColumn.value >= searchTermForColumn.from) &&
-                    (isNotDefined(searchTermForColumn.to)
-                        || datumForColumn.value <= searchTermForColumn.to)
+                    ((isNotDefined(from) && isNotDefined(to)) || isDefined(value)) &&
+                    (isNotDefined(from) || Number(value) >= Number(from)) &&
+                    (isNotDefined(to) || Number(value) <= Number(to))
+                );
+            } else if (type === DATA_TYPE.datetime) {
+                const { from, to } = searchTermForColumn;
+                return (
+                    ((isNotDefined(from) && isNotDefined(to)) || isDefined(value)) &&
+                    (isNotDefined(from) || new Date(value) >= new Date(from)) &&
+                    (isNotDefined(to) || new Date(value) <= new Date(to))
                 );
             }
-            // TODO: comparision for date
-            return caseInsensitiveSubmatch(datumForColumn.value, searchTermForColumn);
+
+            return caseInsensitiveSubmatch(value, searchTermForColumn);
         });
     };
 

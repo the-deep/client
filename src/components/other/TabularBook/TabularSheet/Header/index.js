@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Button from '#rsca/Button';
 
@@ -11,6 +10,8 @@ import { iconNames } from '#constants';
 import HealthBar from '#rscz/HealthBar';
 
 import _cs from '#cs';
+
+import { DATA_TYPE } from '../utils';
 import styles from './styles.scss';
 
 
@@ -26,15 +27,15 @@ const getSortIcon = sortOrder => ({
 })[sortOrder] || iconNames.sort;
 
 const shouldExtractGeo = ({ type, geodata }) => (
-    type === 'geo' &&
+    type === DATA_TYPE.geo &&
     (!geodata || geodata.status !== 'success')
 );
 const shouldPollGeo = ({ type, geodata }) => (
-    type === 'geo' &&
+    type === DATA_TYPE.geo &&
     (!geodata || geodata.status === 'pending')
 );
 const isValidGeo = ({ type, geodata }) => (
-    type === 'geo' &&
+    type === DATA_TYPE.geo &&
     (geodata && geodata.status === 'success')
 );
 
@@ -91,10 +92,10 @@ export default class Header extends React.PureComponent {
         } = this.props;
 
         const iconNameMapping = {
-            string: iconNames.text,
-            number: iconNames.calculator,
-            geo: iconNames.globe,
-            datetime: iconNames.calendar,
+            [DATA_TYPE.string]: iconNames.text,
+            [DATA_TYPE.number]: iconNames.calculator,
+            [DATA_TYPE.geo]: iconNames.globe,
+            [DATA_TYPE.datetime]: iconNames.calendar,
         };
         const icon = iconNameMapping[value.type];
 

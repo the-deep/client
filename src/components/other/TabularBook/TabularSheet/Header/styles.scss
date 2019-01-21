@@ -10,12 +10,13 @@
     }
 
     .icon {
-        padding-left: $spacing-small;
-        color: $color-accent;
+        margin-left: $spacing-extra-small;
+        color: $color-text-label;
     }
 
     .search-box {
-        padding: $spacing-small;
+        margin: $spacing-small;
+        margin-top: 0;
     }
 
     .health-bar {

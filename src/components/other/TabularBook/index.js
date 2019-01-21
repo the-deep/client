@@ -10,9 +10,10 @@ import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 
 import Button from '#rsca/Button';
+import WarningButton from '#rsca/Button/WarningButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import update from '#rsu/immutable-update';
-import { listToMap } from '#rsu/common';
+import { listToMap, isNotDefined } from '#rsu/common';
 
 import Cloak from '#components/general/Cloak';
 import TriggerAndPoll from '#components/general/TriggerAndPoll';
@@ -104,7 +105,7 @@ export default class TabularBook extends React.PureComponent {
         const sheets = listToMap(
             response.sheets,
             sheet => sheet.id,
-            sheet => ({ ...sheet, options: { ...sheet.options, defaultColumnWidth: 100 } }),
+            sheet => ({ ...sheet, options: { ...sheet.options, defaultColumnWidth: 250 } }),
         );
 
         const tabs = listToMap(
@@ -171,7 +172,7 @@ export default class TabularBook extends React.PureComponent {
         });
     }
 
-    renderBody = ({ invalid, completed }) => {
+    renderBody = ({ invalid, completed, disabled }) => {
         const {
             tabs,
             sheets,
@@ -180,26 +181,33 @@ export default class TabularBook extends React.PureComponent {
 
         if (invalid) {
             return (
-                <div>
-                    <Message>
-                        {_ts('tabular', 'invalid')}
-                    </Message>
-                </div>
+                <Message>
+                    {_ts('tabular', 'invalid')}
+                </Message>
             );
         }
 
         if (!completed) {
             return (
-                <div>
-                    <LoadingAnimation />
-                </div>
+                <LoadingAnimation />
             );
         }
 
         const sheet = sheets[activeSheet];
 
+        if (isNotDefined(sheet)) {
+            return (
+                <div className={styles.error}>
+                    <Message>
+                        There are no sheets to show.
+                    </Message>
+                </div>
+            );
+        }
+
         return (
             <Fragment>
+                { disabled && <LoadingAnimation /> }
                 <TabularSheet
                     // dismount on different activeSheet
                     key={activeSheet}
@@ -239,18 +247,21 @@ export default class TabularBook extends React.PureComponent {
 
         const Body = this.renderBody;
 
+        const disabled = savePending || deletePending || !completed || invalid;
+
         return (
             <div className={className}>
                 <ModalHeader
                     title={_ts('tabular', 'title')}
                     rightComponent={
-                        <div>
+                        <div className={styles.headerContainer}>
                             <Button
                                 iconName={iconNames.sort}
                                 onClick={this.resetSort}
-                                title={_ts('tabular', 'resetSortTitle')}
-                                disabled={savePending || deletePending || !completed || invalid}
-                            />
+                                disabled={disabled}
+                            >
+                                {_ts('tabular', 'resetSortTitle')}
+                            </Button>
                             <Cloak
                                 hide={TabularBook.shouldHideButtons}
                                 render={
@@ -258,18 +269,20 @@ export default class TabularBook extends React.PureComponent {
                                         <EditFieldButton
                                             onChange={this.handleDetailsChange}
                                             iconName={iconNames.edit}
-                                            disabled={deletePending || !completed || invalid}
+                                            disabled={disabled}
                                             value={sheets}
-                                            pending={savePending}
-                                        />
+                                        >
+                                            Edit
+                                        </EditFieldButton>
                                         <DangerConfirmButton
                                             iconName={iconNames.delete}
                                             onClick={this.handleDelete}
                                             confirmationMessage={_ts('tabular', 'deleteMessage')}
                                             title={_ts('tabular', 'deleteButtonTooltip')}
-                                            disabled={savePending || !completed || invalid}
-                                            pending={deletePending}
-                                        />
+                                            disabled={disabled}
+                                        >
+                                            Delete
+                                        </DangerConfirmButton>
                                     </Fragment>
                                 }
                             />
@@ -280,12 +293,13 @@ export default class TabularBook extends React.PureComponent {
                     <Body
                         completed={completed}
                         invalid={invalid}
+                        disabled={disabled}
                     />
                 </ModalBody>
                 <ModalFooter>
-                    <Button onClick={onCancel}>
+                    <WarningButton onClick={onCancel}>
                         {_ts('tabular', 'closeButtonTitle')}
-                    </Button>
+                    </WarningButton>
                 </ModalFooter>
             </div>
         );
