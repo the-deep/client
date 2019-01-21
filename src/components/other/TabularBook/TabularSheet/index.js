@@ -17,7 +17,7 @@ import {
 import update from '#rsu/immutable-update';
 import _cs from '#cs';
 
-import { DATA_TYPE } from './utils';
+import { DATA_TYPE } from '#entities/tabular';
 
 import Header from './Header';
 import { handleInvalidCell } from './renderers';
@@ -190,8 +190,8 @@ export default class TabularSheet extends React.PureComponent {
                 const { from, to } = searchTermForColumn;
                 return (
                     ((isNotDefined(from) && isNotDefined(to)) || isDefined(value)) &&
-                    (isNotDefined(from) || Number(value) >= Number(from)) &&
-                    (isNotDefined(to) || Number(value) <= Number(to))
+                    (isNotDefined(from) || parseFloat(value) >= parseFloat(from)) &&
+                    (isNotDefined(to) || parseFloat(value) <= parseFloat(to))
                 );
             } else if (type === DATA_TYPE.datetime) {
                 const { from, to } = searchTermForColumn;

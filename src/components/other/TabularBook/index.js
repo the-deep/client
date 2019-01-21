@@ -161,8 +161,6 @@ export default class TabularBook extends React.PureComponent {
     }
 
     handleDetailsChange = (newValues) => {
-        // FIXME: check if data is also sent (shouldn't do that)
-        // TODO: also clear out local filters and sorting
         this.props.saveRequest.do({
             body: {
                 project: this.props.projectId,
@@ -197,11 +195,9 @@ export default class TabularBook extends React.PureComponent {
 
         if (isNotDefined(sheet)) {
             return (
-                <div className={styles.error}>
-                    <Message>
-                        There are no sheets to show.
-                    </Message>
-                </div>
+                <Message>
+                    {_ts('tabular', 'noSheets')}
+                </Message>
             );
         }
 
@@ -260,7 +256,7 @@ export default class TabularBook extends React.PureComponent {
                                 onClick={this.resetSort}
                                 disabled={disabled}
                             >
-                                {_ts('tabular', 'resetSortTitle')}
+                                {_ts('tabular', 'resetSortLabel')}
                             </Button>
                             <Cloak
                                 hide={TabularBook.shouldHideButtons}
@@ -272,16 +268,15 @@ export default class TabularBook extends React.PureComponent {
                                             disabled={disabled}
                                             value={sheets}
                                         >
-                                            Edit
+                                            {_ts('tabular', 'editButtonLabel')}
                                         </EditFieldButton>
                                         <DangerConfirmButton
                                             iconName={iconNames.delete}
                                             onClick={this.handleDelete}
                                             confirmationMessage={_ts('tabular', 'deleteMessage')}
-                                            title={_ts('tabular', 'deleteButtonTooltip')}
                                             disabled={disabled}
                                         >
-                                            Delete
+                                            {_ts('tabular', 'deleteButtonLabel')}
                                         </DangerConfirmButton>
                                     </Fragment>
                                 }
@@ -298,7 +293,7 @@ export default class TabularBook extends React.PureComponent {
                 </ModalBody>
                 <ModalFooter>
                     <WarningButton onClick={onCancel}>
-                        {_ts('tabular', 'closeButtonTitle')}
+                        {_ts('tabular', 'closeButtonLabel')}
                     </WarningButton>
                 </ModalFooter>
             </div>

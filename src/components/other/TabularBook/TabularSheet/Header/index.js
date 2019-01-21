@@ -11,7 +11,7 @@ import HealthBar from '#rscz/HealthBar';
 
 import _cs from '#cs';
 
-import { DATA_TYPE } from '../utils';
+import { DATA_TYPE } from '#entities/tabular';
 import styles from './styles.scss';
 
 

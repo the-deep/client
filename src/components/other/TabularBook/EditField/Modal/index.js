@@ -51,7 +51,7 @@ export default class EditFieldModal extends React.PureComponent {
     calcSchema = (faramValues) => {
         const fields = {};
 
-        // TODO: use conditional schema here
+        // FIXME: use conditional schema here
         Object.keys(faramValues).forEach((key) => {
             fields[key] = {
                 fields: {
@@ -117,7 +117,7 @@ export default class EditFieldModal extends React.PureComponent {
 
         return (
             <Modal className={styles.editFieldModal}>
-                <ModalHeader title={_ts('tabular.editField', 'title')} />
+                <ModalHeader title={_ts('tabular.editModal.editField', 'title')} />
                 <Faram
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
@@ -143,10 +143,10 @@ export default class EditFieldModal extends React.PureComponent {
                     </ModalBody>
                     <ModalFooter>
                         <DangerButton onClick={this.props.onCancel}>
-                            {_ts('tabular.editField', 'cancelLabel')}
+                            {_ts('tabular.editModal.editField', 'cancelLabel')}
                         </DangerButton>
                         <PrimaryButton type="submit">
-                            {_ts('tabular.editField', 'submitLabel')}
+                            {_ts('tabular.editModal.editField', 'submitLabel')}
                         </PrimaryButton>
                     </ModalFooter>
                 </Faram>

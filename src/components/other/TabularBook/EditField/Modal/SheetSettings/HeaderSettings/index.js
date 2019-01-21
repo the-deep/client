@@ -6,6 +6,7 @@ import TextInput from '#rsci/TextInput';
 import NumberInput from '#rsci/NumberInput';
 import SegmentInput from '#rsci/SegmentInput';
 
+import { DATA_TYPE } from '#entities/tabular';
 import _ts from '#ts';
 import styles from './styles.scss';
 
@@ -20,10 +21,10 @@ export default class HeaderSettings extends React.PureComponent {
     static hiddenOptionsKeySelector = d => d.key;
 
     static fieldTypes = [
-        { key: 'string', label: 'String' },
-        { key: 'number', label: 'Number' },
-        { key: 'datetime', label: 'Date' },
-        { key: 'geo', label: 'Geo' },
+        { key: DATA_TYPE.string, label: 'String' },
+        { key: DATA_TYPE.number, label: 'Number' },
+        { key: DATA_TYPE.datetime, label: 'Date' },
+        { key: DATA_TYPE.geo, label: 'Geo' },
     ];
 
     static separatorOptions = [
@@ -38,22 +39,16 @@ export default class HeaderSettings extends React.PureComponent {
     ];
 
     static hiddenOptions = [
-        {
-            key: true,
-            label: 'True',
-        },
-        {
-            key: false,
-            label: 'False',
-        },
+        { key: true, label: 'True' },
+        { key: false, label: 'False' },
     ];
 
     renderSettingsForType = (type) => {
-        if (type === 'number') {
+        if (type === DATA_TYPE.number) {
             return (
                 <SegmentInput
                     faramElementName="separator"
-                    label={_ts('tabular.editField', 'separatorLabel')}
+                    label={_ts('tabular.editModal.editField', 'separatorLabel')}
                     options={HeaderSettings.separatorOptions}
                     showLabel
                     showHintAndError
@@ -61,20 +56,20 @@ export default class HeaderSettings extends React.PureComponent {
             );
         }
 
-        if (type === 'geo') {
+        if (type === DATA_TYPE.geo) {
             return (
                 <React.Fragment>
                     <SegmentInput
                         faramElementName="geoType"
-                        label={_ts('tabular.editField', 'geoTypeLabel')}
+                        label={_ts('tabular.editModal.editField', 'geoTypeLabel')}
                         options={HeaderSettings.geoTypeOptions}
                         showLabel
                         showHintAndError
                     />
                     <NumberInput
                         faramElementName="adminLevel"
-                        label={_ts('tabular.editField', 'adminLevelLabel')}
-                        placeholder={_ts('tabular.editField', 'adminLevelPlaceholder')}
+                        label={_ts('tabular.editModal.editField', 'adminLevelLabel')}
+                        placeholder={_ts('tabular.editModal.editField', 'adminLevelPlaceholder')}
                         showLabel
                         showHintAndError
                     />
@@ -98,7 +93,7 @@ export default class HeaderSettings extends React.PureComponent {
                 <div className={styles.headerSettings}>
                     <TextInput
                         faramElementName="title"
-                        label={_ts('tabular.editField', 'titleLabel')}
+                        label={_ts('tabular.editModal.editField', 'titleLabel')}
                         showLabel
                         showHintAndError
                     />
@@ -110,7 +105,7 @@ export default class HeaderSettings extends React.PureComponent {
                     />
                     <SegmentInput
                         faramElementName="type"
-                        label={_ts('tabular.editField', 'typeLabel')}
+                        label={_ts('tabular.editModal.editField', 'typeLabel')}
                         options={HeaderSettings.fieldTypes}
                         showLabel
                         showHintAndError

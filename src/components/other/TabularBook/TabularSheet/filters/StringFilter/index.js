@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import TextInput from '#rsci/TextInput';
+import _ts from '#ts';
 
 export default class StringFilter extends React.PureComponent {
     static propTypes = {
@@ -30,7 +31,7 @@ export default class StringFilter extends React.PureComponent {
         return (
             <TextInput
                 className={className}
-                placeholder="Search"
+                placeholder={_ts('tabular.sheets.string', 'searchPlaceholder')}
                 disabled={disabled}
                 value={value}
                 onChange={this.handleFilterChange}
