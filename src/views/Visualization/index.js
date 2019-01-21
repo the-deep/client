@@ -380,8 +380,8 @@ export default class Visualization extends React.PureComponent {
                 </header>
                 <div className={styles.content}>
                     <VerticalTabs
-                        className={styles.tabs}
                         tabs={this.tabs}
+                        className={styles.tabs}
                         useHash
                     />
                     <MultiViewContainer

@@ -29,9 +29,6 @@ const propTypes = {
     showScreenshot: PropTypes.bool,
     onScreenshotCapture: PropTypes.func,
 
-    showTabular: PropTypes.bool,
-    onTabularClick: PropTypes.func,
-
     invalidUrlMessage: PropTypes.string,
     cannotPreviewUrlMessage: PropTypes.string,
 };
@@ -44,8 +41,6 @@ const defaultProps = {
     showUrl: false,
     showScreenshot: false,
     onScreenshotCapture: undefined,
-    showTabular: false,
-    onTabularClick: undefined,
 
     invalidUrlMessage: undefined,
     cannotPreviewUrlMessage: undefined,
@@ -162,15 +157,6 @@ export default class GalleryViewer extends React.PureComponent {
         };
     }
 
-    // FIXME: remove this
-    handleTabularClick = () => {
-        const {
-            onTabularClick,
-            mimeType,
-        } = this.props;
-        onTabularClick(mimeType);
-    }
-
     handleScreenshot = (image) => {
         this.setState({ currentScreenshot: image });
     }
@@ -250,7 +236,6 @@ export default class GalleryViewer extends React.PureComponent {
             canShowIframe,
             showUrl,
             showScreenshot,
-            showTabular,
             invalidUrlMessage,
             cannotPreviewUrlMessage,
         } = this.props;
@@ -280,17 +265,8 @@ export default class GalleryViewer extends React.PureComponent {
                     <Bar
                         url={url}
                         showScreenshot={showScreenshot}
-                        showTabular={showTabular}
                     >
                         { showScreenshot && this.renderScreenshotButton() }
-                        { showTabular &&
-                            <AccentButton
-                                iconName={iconNames.tabular}
-                                onClick={this.handleTabularClick}
-                                title={_ts('components.galleryViewer', 'convertTabular')}
-                                transparent
-                            />
-                        }
                     </Bar>
                 }
                 <div className={docContainerClassName}>

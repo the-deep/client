@@ -9,7 +9,9 @@ import { iconNames } from '#constants';
 
 import HealthBar from '#rscz/HealthBar';
 
-import EditField from '../EditField';
+import _cs from '#cs';
+
+import { DATA_TYPE } from '#entities/tabular';
 import styles from './styles.scss';
 
 
@@ -25,15 +27,15 @@ const getSortIcon = sortOrder => ({
 })[sortOrder] || iconNames.sort;
 
 const shouldExtractGeo = ({ type, geodata }) => (
-    type === 'geo' &&
+    type === DATA_TYPE.geo &&
     (!geodata || geodata.status !== 'success')
 );
 const shouldPollGeo = ({ type, geodata }) => (
-    type === 'geo' &&
+    type === DATA_TYPE.geo &&
     (!geodata || geodata.status === 'pending')
 );
 const isValidGeo = ({ type, geodata }) => (
-    type === 'geo' &&
+    type === DATA_TYPE.geo &&
     (geodata && geodata.status === 'success')
 );
 
@@ -42,59 +44,41 @@ const healthColorScheme = [
     '#f44336',
 ];
 
-const identity = x => x;
-const healthBarValueSelector = identity;
-const healthBarKeySelector = identity;
+const healthBarValueSelector = x => x;
+const healthBarKeySelector = (x, i) => `${x}-${i}`;
 
 export default class Header extends React.PureComponent {
     static propTypes = {
         columnKey: PropTypes.string.isRequired,
         value: PropTypes.shape({}).isRequired,
+        filterValue: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
         onSortClick: PropTypes.func.isRequired,
+        onFilterChange: PropTypes.func.isRequired,
         sortOrder: PropTypes.string,
         onChange: PropTypes.func.isRequired,
         statusData: PropTypes.arrayOf(PropTypes.number).isRequired,
+        disabled: PropTypes.bool,
+        filterComponent: PropTypes.func.isRequired,
         // First value is valid count and the second is invalid count
     };
 
     static defaultProps = {
         sortOrder: undefined,
+        disabled: false,
+        filterValue: undefined,
     };
 
     handleSortClick = () => {
         this.props.onSortClick(this.props.columnKey);
     }
 
-    handleChange = (value) => {
-        this.props.onChange(this.props.columnKey, value);
-    }
-
     handleGeoData = (value) => {
         this.props.onChange(this.props.columnKey, value);
     }
 
-    renderGeoPending = () => {
-        const { value } = this.props;
-
-        if (!shouldExtractGeo(value)) {
-            return null;
-        }
-
-        const { id } = value;
-
-        return (
-            <TriggerAndPoll
-                compareValue={value}
-                url={`/tabular-fields/${id}/`}
-                triggerUrl={`/tabular-geo-extraction-trigger/${id}/`}
-                shouldTrigger={shouldExtractGeo}
-                shouldPoll={shouldPollGeo}
-                isValid={isValidGeo}
-                onDataReceived={this.handleGeoData}
-            >
-                <LoadingOnValid />
-            </TriggerAndPoll>
-        );
+    handleFilterChange = (value) => {
+        const { columnKey } = this.props;
+        this.props.onFilterChange(columnKey, value);
     }
 
     render() {
@@ -102,7 +86,18 @@ export default class Header extends React.PureComponent {
             sortOrder,
             value,
             statusData,
+            filterValue,
+            disabled,
+            filterComponent: Filter,
         } = this.props;
+
+        const iconNameMapping = {
+            [DATA_TYPE.string]: iconNames.text,
+            [DATA_TYPE.number]: iconNames.calculator,
+            [DATA_TYPE.geo]: iconNames.globe,
+            [DATA_TYPE.datetime]: iconNames.calendar,
+        };
+        const icon = iconNameMapping[value.type];
 
         return (
             <div className={styles.header}>
@@ -111,16 +106,30 @@ export default class Header extends React.PureComponent {
                     onClick={this.handleSortClick}
                     iconName={getSortIcon(sortOrder)}
                     transparent
+                    disabled={disabled}
                 >
                     {value.title}
                 </Button>
-                {this.renderGeoPending()}
-                <EditField
-                    className={styles.edit}
-                    onChange={this.handleChange}
-                    iconName={iconNames.edit}
-                    value={value}
-                    transparent
+                { icon && <span className={_cs(icon, styles.icon)} /> }
+                {
+                    shouldExtractGeo(value) &&
+                    <TriggerAndPoll
+                        compareValue={value}
+                        url={`/tabular-fields/${value.id}/`}
+                        triggerUrl={`/tabular-geo-extraction-trigger/${value.id}/`}
+                        shouldTrigger={shouldExtractGeo}
+                        shouldPoll={shouldPollGeo}
+                        isValid={isValidGeo}
+                        onDataReceived={this.handleGeoData}
+                    >
+                        <LoadingOnValid />
+                    </TriggerAndPoll>
+                }
+                <Filter
+                    className={styles.searchBox}
+                    disabled={disabled}
+                    value={filterValue}
+                    onChange={this.handleFilterChange}
                 />
                 <HealthBar
                     data={statusData}

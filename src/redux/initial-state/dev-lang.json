@@ -901,7 +901,13 @@
         "-78760514": "Tabular book",
         "-14762237": "No regions were selected.",
         "-78572254": "Invalid region",
-        "-77224022": "Preview"
+        "-77224022": "Preview",
+        "-84081563": "Hide",
+        "-61786851": "Headers",
+        "-4174557": "Open Tabular",
+        "-73878868": "There are no sheets to show.",
+        "-5279830": "Sheet Title",
+        "-28248947": "Column Title"
     },
     "links": {
         "browserExtension": {
@@ -1575,7 +1581,7 @@
             "connectorSourcesGetFailure": 1110,
             "connectorSourcesTitle": 1109,
             "connectorTitle": 1100,
-            "tabularButtonTitle": 142
+            "tabularButtonTitle": -4174557
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,
@@ -2415,12 +2421,17 @@
             "invalid": -63188496,
             "deleteFailed": -63188497,
             "closeButtonTitle": -39430073,
-            "tabularBookTitle": -78760514
+            "tabularBookTitle": -78760514,
+            "closeButtonLabel": -39430073,
+            "deleteButtonLabel": -94736495,
+            "editButtonLabel": 363,
+            "noSheets": -73878868,
+            "resetSortLabel": 15008
         },
-        "tabular.editField": {
+        "tabular.editModal.editField": {
             "title": 15002,
             "separatorLabel": 15003,
-            "titleLabel": 13,
+            "titleLabel": -28248947,
             "typeLabel": 21,
             "cancelLabel": 61,
             "submitLabel": 826,
@@ -2545,6 +2556,23 @@
         "geoViz": {
             "noRegionSelectedMessage": -14762237,
             "invalidRegion": -78572254
+        },
+        "tabular.editModal": {
+            "sheetHideLabel": -84081563,
+            "sheetTitleLabel": -5279830,
+            "headersTitle": -61786851,
+            "headerHideLabel": -84081563
+        },
+        "tabular.sheets.date": {
+            "fromPlaceholder": 1009,
+            "toPlaceholder": 1000
+        },
+        "tabular.sheets.number": {
+            "fromPlaceholder": 1009,
+            "toPlaceholder": 1000
+        },
+        "tabular.sheets.string": {
+            "searchPlaceholder": 9
         }
     }
 }

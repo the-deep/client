@@ -57,12 +57,12 @@
     }
 
     .file-title {
-        flex-basis: 100%;
+        flex-grow: 1;
         margin: $spacing-small 0;
         color: $color-text;
     }
 
     .tabular-button {
-        margin-top: $spacing-medium;
+        margin-right: $spacing-medium;
     }
 }

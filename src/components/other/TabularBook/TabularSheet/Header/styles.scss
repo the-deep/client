@@ -9,11 +9,14 @@
         word-break: break-all;
     }
 
-    .edit {
-        display: none;
-        position: absolute;
-        top: 0;
-        right: 0;
+    .icon {
+        margin-left: $spacing-extra-small;
+        color: $color-text-label;
+    }
+
+    .search-box {
+        margin: $spacing-small;
+        margin-top: 0;
     }
 
     .health-bar {
@@ -23,11 +26,5 @@
     .loading-container {
         position: relative;
         margin-left: $spacing-small;
-    }
-
-    &:hover {
-        .edit {
-            display: initial;
-        }
     }
 }

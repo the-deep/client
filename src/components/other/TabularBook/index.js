@@ -10,41 +10,76 @@ import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 
 import Button from '#rsca/Button';
+import WarningButton from '#rsca/Button/WarningButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import update from '#rsu/immutable-update';
-import { mapToList } from '#rsu/common';
+import { listToMap, isNotDefined } from '#rsu/common';
 
-import TabularSheet from '#components/other/TabularSheet';
+import Cloak from '#components/general/Cloak';
 import TriggerAndPoll from '#components/general/TriggerAndPoll';
 
 import { iconNames } from '#constants';
-import { RequestClient } from '#request';
+import { RequestClient, requestMethods } from '#request';
+import notify from '#notify';
 import _ts from '#ts';
 import _cs from '#cs';
 
-import requests from './requests';
+import TabularSheet from './TabularSheet';
+import EditFieldButton from './EditField';
 import styles from './styles.scss';
-
-const noOp = () => {};
 
 const propTypes = {
     className: PropTypes.string,
     projectId: PropTypes.number.isRequired,
     bookId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-    onEdited: PropTypes.func,
+    onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    onCancel: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
 
     deleteRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     saveRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-
-    showDelete: PropTypes.bool,
-    onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
-    onCancel: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
 };
 
 const defaultProps = {
     className: '',
-    showDelete: false,
-    onEdited: undefined,
+};
+
+const requests = {
+    deleteRequest: {
+        method: requestMethods.DELETE,
+        url: ({ props }) => `/tabular-books/${props.bookId}/`,
+        onSuccess: ({ props }) => props.onDelete(),
+        onFailure: ({ error = {} }) => {
+            const { nonFieldErrors } = error;
+            const displayError = nonFieldErrors
+                ? nonFieldErrors.join(' ')
+                : _ts('tabular', 'deleteFailed');
+            notify.send({
+                type: notify.type.ERROR,
+                title: _ts('tabular', 'tabularBookTitle'),
+                message: displayError,
+                duration: notify.duration.SLOW,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                type: notify.type.ERROR,
+                title: _ts('tabular', 'tabularBookTitle'),
+                message: _ts('tabular', 'deleteFailed'),
+                duration: notify.duration.SLOW,
+            });
+        },
+        schemaName: 'TabularBookSchema',
+    },
+
+    saveRequest: {
+        schemaName: 'TabularBookSchema',
+        method: requestMethods.PATCH,
+        url: ({ props }) => `/tabular-books/${props.bookId}/`,
+        body: ({ params: { body } }) => body,
+        onSuccess: ({ response, params: { setBook } }) => {
+            setBook(response);
+        },
+    },
 };
 
 @RequestClient(requests)
@@ -52,46 +87,50 @@ export default class TabularBook extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static shouldHideButtons = ({ leadPermissions }) => (
+        !leadPermissions.create || !leadPermissions.modify
+    );
+
     constructor(props) {
         super(props);
         this.state = {
             tabs: {},
             activeSheet: undefined,
+            sheets: undefined,
         };
     }
 
-    setBook = (book, callback) => {
-        const tabs = {};
-        const sheets = {};
+    setBook = (response, onComplete) => {
+        const filteredSheets = response.sheets.filter(sheet => !sheet.hidden);
+        const sheets = listToMap(
+            response.sheets,
+            sheet => sheet.id,
+            sheet => ({ ...sheet, options: { ...sheet.options, defaultColumnWidth: 250 } }),
+        );
 
-        book.sheets.forEach((sheet) => {
-            tabs[sheet.id] = sheet.title;
-            sheets[sheet.id] = sheet;
-        });
+        const tabs = listToMap(
+            filteredSheets,
+            sheet => sheet.id,
+            sheet => sheet.title,
+        );
 
-        this.setState({
-            tabs,
-            sheets,
-            activeSheet: Object.keys(tabs)[0],
-        }, callback);
-    }
-
-    save = () => {
-        const { sheets } = this.state;
-        this.props.saveRequest.do({
-            body: {
-                project: this.props.projectId,
-                sheets: mapToList(
-                    sheets,
-                    // eslint-disable-next-line no-unused-vars
-                    ({ data, ...otherAttributes }) => otherAttributes,
-                ),
+        this.setState(
+            {
+                tabs,
+                sheets,
+                // NOTE: there must be atleast on sheet
+                activeSheet: Object.keys(tabs)[0],
             },
-            setBook: response => this.setBook(response, noOp),
-        });
+            () => {
+                if (onComplete) {
+                    onComplete();
+                }
+            },
+        );
     }
 
     resetSort = () => {
+        // FIXME: move this to redux
         const { sheets, activeSheet } = this.state;
         const settings = {
             [activeSheet]: { $auto: {
@@ -101,25 +140,16 @@ export default class TabularBook extends React.PureComponent {
             } },
         };
 
-        this.setState({ sheets: update(sheets, settings) }, () => {
-            if (this.props.onEdited) {
-                this.props.onEdited();
-            }
-        });
+        this.setState({ sheets: update(sheets, settings) });
     }
 
     handleSheetChange = (newSheet) => {
+        // FIXME: move this to redux
         const { sheets } = this.state;
         const settings = {
             [newSheet.id]: { $set: newSheet },
         };
-
-        this.setState({ sheets: update(sheets, settings) }, () => {
-            this.save();
-            if (this.props.onEdited) {
-                this.props.onEdited();
-            }
-        });
+        this.setState({ sheets: update(sheets, settings) });
     }
 
     handleActiveSheetChange = (activeSheet) => {
@@ -130,17 +160,79 @@ export default class TabularBook extends React.PureComponent {
         this.props.deleteRequest.do();
     }
 
-    renderActual = ({ invalid, completed }) => {
+    handleDetailsChange = (newValues) => {
+        this.props.saveRequest.do({
+            body: {
+                project: this.props.projectId,
+                sheets: Object.keys(newValues).map(k => newValues[k]),
+            },
+            setBook: this.setBook,
+        });
+    }
+
+    renderBody = ({ invalid, completed, disabled }) => {
         const {
             tabs,
             sheets,
             activeSheet,
         } = this.state;
+
+        if (invalid) {
+            return (
+                <Message>
+                    {_ts('tabular', 'invalid')}
+                </Message>
+            );
+        }
+
+        if (!completed) {
+            return (
+                <LoadingAnimation />
+            );
+        }
+
+        const sheet = sheets[activeSheet];
+
+        if (isNotDefined(sheet)) {
+            return (
+                <Message>
+                    {_ts('tabular', 'noSheets')}
+                </Message>
+            );
+        }
+
+        return (
+            <Fragment>
+                { disabled && <LoadingAnimation /> }
+                <TabularSheet
+                    // dismount on different activeSheet
+                    key={activeSheet}
+                    className={styles.sheetView}
+                    sheet={sheet}
+                    onSheetChange={this.handleSheetChange}
+                />
+                <ScrollTabs
+                    className={styles.tabs}
+                    tabs={tabs}
+                    active={activeSheet}
+                    onClick={this.handleActiveSheetChange}
+                    inverted
+                />
+            </Fragment>
+        );
+    }
+
+    renderActual = ({ invalid, completed }) => {
+        const { sheets } = this.state;
+
         const {
-            deleteRequest,
-            saveRequest,
+            deleteRequest: {
+                pending: deletePending,
+            },
+            saveRequest: {
+                pending: savePending,
+            },
             onCancel,
-            showDelete,
         } = this.props;
 
         const className = _cs(
@@ -149,66 +241,60 @@ export default class TabularBook extends React.PureComponent {
             'tabular-book',
         );
 
+        const Body = this.renderBody;
+
+        const disabled = savePending || deletePending || !completed || invalid;
+
         return (
             <div className={className}>
                 <ModalHeader
                     title={_ts('tabular', 'title')}
                     rightComponent={
-                        <div>
+                        <div className={styles.headerContainer}>
                             <Button
                                 iconName={iconNames.sort}
                                 onClick={this.resetSort}
-                                title={_ts('tabular', 'resetSortTitle')}
-                                transparent
-                                disabled={deleteRequest.pending || !completed || invalid}
+                                disabled={disabled}
+                            >
+                                {_ts('tabular', 'resetSortLabel')}
+                            </Button>
+                            <Cloak
+                                hide={TabularBook.shouldHideButtons}
+                                render={
+                                    <Fragment>
+                                        <EditFieldButton
+                                            onChange={this.handleDetailsChange}
+                                            iconName={iconNames.edit}
+                                            disabled={disabled}
+                                            value={sheets}
+                                        >
+                                            {_ts('tabular', 'editButtonLabel')}
+                                        </EditFieldButton>
+                                        <DangerConfirmButton
+                                            iconName={iconNames.delete}
+                                            onClick={this.handleDelete}
+                                            confirmationMessage={_ts('tabular', 'deleteMessage')}
+                                            disabled={disabled}
+                                        >
+                                            {_ts('tabular', 'deleteButtonLabel')}
+                                        </DangerConfirmButton>
+                                    </Fragment>
+                                }
                             />
-                            {showDelete && (
-                                <DangerConfirmButton
-                                    iconName={iconNames.delete}
-                                    onClick={this.handleDelete}
-                                    confirmationMessage={_ts('tabular', 'deleteMessage')}
-                                    title={_ts('tabular', 'deleteButtonTooltip')}
-                                    transparent
-                                    disabled={deleteRequest.pending || !completed || invalid}
-                                    pending={deleteRequest.pending}
-                                />
-                            )}
                         </div>
                     }
                 />
                 <ModalBody className={styles.body}>
-                    { invalid &&
-                        <div className={className}>
-                            <Message>
-                                {_ts('tabular', 'invalid')}
-                            </Message>
-                        </div>
-                    }
-                    { completed && !saveRequest.pending ? (
-                        <Fragment>
-                            <TabularSheet
-                                className={styles.sheetView}
-                                sheet={sheets[activeSheet]}
-                                onSheetChange={this.handleSheetChange}
-                            />
-                            <ScrollTabs
-                                className={styles.tabs}
-                                tabs={tabs}
-                                active={activeSheet}
-                                onClick={this.handleActiveSheetChange}
-                                inverted
-                            />
-                        </Fragment>
-                    ) : (
-                        <div className={className}>
-                            <LoadingAnimation />
-                        </div>
-                    )}
+                    <Body
+                        completed={completed}
+                        invalid={invalid}
+                        disabled={disabled}
+                    />
                 </ModalBody>
                 <ModalFooter>
-                    <Button onClick={onCancel}>
-                        {_ts('tabular', 'closeButtonTitle')}
-                    </Button>
+                    <WarningButton onClick={onCancel}>
+                        {_ts('tabular', 'closeButtonLabel')}
+                    </WarningButton>
                 </ModalFooter>
             </div>
         );
@@ -222,7 +308,6 @@ export default class TabularBook extends React.PureComponent {
             <TriggerAndPoll
                 onDataReceived={this.setBook}
                 url={`/tabular-books/${bookId}/`}
-                // dataSchemaName={tabularSchemaName}
                 triggerUrl={`/tabular-extraction-trigger/${bookId}/`}
                 schemaName="TabularBookSchema"
                 triggerSchemaName={undefined}

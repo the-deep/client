@@ -6,6 +6,12 @@
     flex-grow: 1;
     overflow: auto;
 
+    .header-container {
+        >button {
+            margin-left: $spacing-small;
+        }
+    }
+
     .body {
         display: flex;
         position: relative;

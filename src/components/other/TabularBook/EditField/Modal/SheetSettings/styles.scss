@@ -1,0 +1,42 @@
+@import '~base-scss/base';
+
+.sheet {
+    display: flex;
+    flex-direction: column;
+
+    .top-container {
+        display: flex;
+        flex-shrink: 0;
+        border-bottom: $width-separator-thin solid $color-separator;
+        padding: $spacing-small;
+
+        .input {
+            padding-right: $spacing-small;
+        }
+    }
+
+    .header-settings-container {
+        display: flex;
+        flex-grow: 1;
+
+        .left-container {
+            display: flex;
+            flex-basis: 30%;
+            flex-direction: column;
+            flex-shrink: 0;
+            border-right: $width-separator-thin solid $color-separator;
+
+            .headers-title {
+                border-bottom: $width-separator-thin solid $color-separator;
+                padding: $spacing-small;
+                text-transform: capitalize;
+                color: $color-accent;
+            }
+
+            .header-titles {
+                flex-grow: 1;
+                overflow-y: auto;
+            }
+        }
+    }
+}
