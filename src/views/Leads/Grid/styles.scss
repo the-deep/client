@@ -1,6 +1,7 @@
 @import '~base-scss/base';
 
 .lead-grids {
+    position: relative;
     margin: $spacing-small-alt;
     background-color: $color-background-row;
     height: 100%;
