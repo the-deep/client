@@ -18,7 +18,6 @@ const propTypes = {
     loading: PropTypes.bool,
     onEndReached: PropTypes.func.isRequired,
     leads: PropTypes.arrayOf(PropTypes.object),
-    view: PropTypes.string.isRequired,
     activeProject: PropTypes.number.isRequired,
     onSearchSimilarLead: PropTypes.func.isRequired,
     onRemoveLead: PropTypes.func.isRequired,
@@ -33,12 +32,12 @@ const defaultProps = {
     leads: [],
 };
 
-const LEFT_KEY = 37;
-const RIGHT_KEY = 39;
-
 const mapStateToProps = state => ({
     leads: leadsForProjectGridViewSelector(state),
 });
+
+const columnWidth = 300;
+const columnGutter = 40;
 
 @connect(mapStateToProps)
 export default class LeadGrid extends React.Component {
@@ -64,28 +63,17 @@ export default class LeadGrid extends React.Component {
             activeLeadIndex: 0,
         };
 
-        this.columnWidth = 300;
-        this.columnGutter = 40;
-
         this.itemState = {
-            width: this.columnWidth,
+            width: columnWidth,
             minHeight: 295,
         };
 
-        this.masonryRef = {};
+        this.masonryRef = React.createRef();
     }
 
     componentDidMount() {
         // Rest grid when loading first time
         this.props.setLeadPageActivePage({ activePage: 1 });
-    }
-
-    shouldComponentUpdate() {
-        return this.props.view === 'grid';
-    }
-
-    onReference = (ref) => {
-        this.masonryRef = ref || {};
     }
 
     handleLeadClick = (leadIndex) => {
@@ -121,12 +109,12 @@ export default class LeadGrid extends React.Component {
 
         const previewLead = leads[this.state.activeLeadIndex];
 
-        return (
-            leads.length ? (
+        if (leads.length > 0) {
+            return (
                 <React.Fragment>
                     <div className={styles.leadGrids}>
                         <Masonry
-                            ref={this.onReference}
+                            ref={this.masonryRef}
                             items={leads}
                             renderItem={this.renderItem}
                             getItemHeight={LeadItem.getItemHeight}
@@ -135,9 +123,9 @@ export default class LeadGrid extends React.Component {
                             loadingElement={
                                 <LoadingAnimation large />
                             }
-                            scrollAnchor={this.masonryRef.node}
-                            columnWidth={this.columnWidth}
-                            columnGutter={this.columnGutter}
+                            scrollAnchor={this.masonryRef}
+                            columnWidth={columnWidth}
+                            columnGutter={columnGutter}
                             isItemsChanged={LeadGrid.isItemsChanged}
                             isLoading={loading}
                             onInfiniteLoad={onEndReached}
@@ -167,7 +155,8 @@ export default class LeadGrid extends React.Component {
                         </Modal>
                     }
                 </React.Fragment>
-            ) : <EmptyComponent />
-        );
+            );
+        }
+        return <EmptyComponent />;
     }
 }

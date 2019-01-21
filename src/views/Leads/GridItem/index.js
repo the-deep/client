@@ -87,7 +87,7 @@ export default class GridItem extends React.PureComponent {
         };
     }
 
-    get mimeIcon() {
+    getMimeIcon() {
         const { lead } = this.props;
         let icon = iconNames.documentText;
         if (lead.attachment) {
@@ -217,6 +217,7 @@ export default class GridItem extends React.PureComponent {
         const Actions = this.renderActions;
         const isProcessed = lead.status === 'processed';
         const thumbnail = this.getThumbnail();
+        const mimeIcon = this.getMimeIcon();
 
         return (
             <div
@@ -238,7 +239,7 @@ export default class GridItem extends React.PureComponent {
                     [styles.documentTypeProcessed]: isProcessed,
                 })}
                 >
-                    <i className={this.mimeIcon} />
+                    <i className={mimeIcon} />
                 </div>
 
                 <Actions />

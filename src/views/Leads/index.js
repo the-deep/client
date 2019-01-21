@@ -121,6 +121,11 @@ const mapDispatchToProps = dispatch => ({
 const TABLE_VIEW = 'table';
 const GRID_VIEW = 'grid';
 
+const tabsIcons = {
+    [TABLE_VIEW]: iconNames.list,
+    [GRID_VIEW]: iconNames.grid,
+};
+
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Leads extends React.PureComponent {
     static propTypes = propTypes;
@@ -129,6 +134,15 @@ export default class Leads extends React.PureComponent {
     static leadKeyExtractor = lead => String(lead.id)
     static sortKeySelector = s => s.key
     static sortLabelSelector = s => s.label
+
+    static tabsModifier = key => (
+        <i className={tabsIcons[key]} />
+    );
+
+    static tabs = {
+        [TABLE_VIEW]: TABLE_VIEW,
+        [GRID_VIEW]: GRID_VIEW,
+    };
 
     constructor(props) {
         super(props);
@@ -287,21 +301,9 @@ export default class Leads extends React.PureComponent {
             },
         };
 
-        this.tabs = {
-            [TABLE_VIEW]: TABLE_VIEW,
-            [GRID_VIEW]: GRID_VIEW,
-        };
-
-        const tabsIcons = {
-            [TABLE_VIEW]: iconNames.list,
-            [GRID_VIEW]: iconNames.grid,
-        };
-
         this.lastFilters = {};
 
         this.lastProject = {};
-
-        this.tabsModifier = key => <i className={tabsIcons[key]} />;
     }
 
     componentWillMount() {
@@ -539,11 +541,11 @@ export default class Leads extends React.PureComponent {
             <header className={styles.header}>
                 <FilterLeadsForm className={styles.filters} />
                 <FixedTabs
-                    tabs={this.tabs}
+                    tabs={Leads.tabs}
                     useHash
                     replaceHistory
                     className={styles.fixedTabs}
-                    modifier={this.tabsModifier}
+                    modifier={Leads.tabsModifier}
                     onClick={this.handleTabClick}
                     defaultHash={this.props.view}
                 />
@@ -726,7 +728,6 @@ export default class Leads extends React.PureComponent {
 
     renderGridView = () => (
         <Grid
-            view={this.props.view}
             loading={this.state.loadingLeads}
             onEndReached={this.onGridEndReached}
             setLeadPageActivePage={this.props.setLeadPageActivePage}

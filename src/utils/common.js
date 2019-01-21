@@ -46,24 +46,36 @@ export const timeFrom = (date) => {
 
     const seconds = Math.floor((new Date() - cDate) / 1000);
 
-    const intervals = {
-        year: 31536000,
-        month: 2592000,
-        day: 86400,
-        hour: 3600,
-        minute: 60,
-    };
+    const intervals = [
+        {
+            span: 'year',
+            duration: 31536000,
+        },
+        {
+            span: 'month',
+            duration: 2592000,
+        },
+        {
+            span: 'day',
+            duration: 86400,
+        },
+        {
+            span: 'hour',
+            duration: 3600,
+        },
+        {
+            span: 'minute',
+            duration: 60,
+        },
+    ];
 
-    let span = 'just now';
-
-    for (const key in intervals) { //eslint-disable-line
-        const interval = Math.floor(seconds / intervals[key]);
-
-        if (interval >= 1) {
-            span = `${interval} ${key}${interval > 1 ? 's' : ''} ago`;
-            break;
+    for (let i = 0, len = intervals.length; i < len; i += 1) {
+        const interval = intervals[i];
+        const fromNow = Math.floor(seconds / interval.duration);
+        if (fromNow > 0) {
+            return `${fromNow} ${interval.span}${fromNow > 1 ? 's' : ''} ago`;
         }
     }
 
-    return span;
+    return 'just now';
 };
