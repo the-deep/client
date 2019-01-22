@@ -35,6 +35,7 @@ export default class Matrix1dRow extends React.PureComponent {
 
     rendererParams = (key, data) => ({
         children: data.value,
+        tooltip: data.tooltip,
         onClick: () => this.props.onCellClick(key),
         onDrop: droppedData => this.props.onCellDrop(key, droppedData),
         active: this.props.selectedCells[key],

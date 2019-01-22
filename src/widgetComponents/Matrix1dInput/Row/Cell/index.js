@@ -12,9 +12,11 @@ const propTypes = {
     onDrop: PropTypes.func,
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
+    tooltip: PropTypes.string,
 };
 
 const defaultProps = {
+    tooltip: '',
     children: undefined,
     active: false,
     onClick: undefined,
@@ -70,6 +72,7 @@ export default class Matrix1dCell extends React.PureComponent {
             disabled,
             readOnly,
             active,
+            tooltip,
         } = this.props;
 
         const { isBeingDraggedOver } = this.state;
@@ -90,6 +93,7 @@ export default class Matrix1dCell extends React.PureComponent {
                 onClick={onClick}
                 type="button"
                 tabIndex="-1"
+                title={tooltip}
                 disabled={disabled || readOnly}
             >
                 { children }
