@@ -5,15 +5,41 @@ import FaramGroup from '#rscg/FaramGroup';
 import TextInput from '#rsci/TextInput';
 import NumberInput from '#rsci/NumberInput';
 import SegmentInput from '#rsci/SegmentInput';
+import SelectInput from '#rsci/SelectInput';
 
 import { DATA_TYPE } from '#entities/tabular';
 import _ts from '#ts';
 import styles from './styles.scss';
 
+const DATE_FORMATS = [
+    { format: '%m-%d-%Y', label: 'mm-dd-yyyy' },
+    { format: '%m/%d/%Y', label: 'mm/dd/yyyy' },
+    { format: '%m.%d.%Y', label: 'mm.dd.yyyy' },
+    { format: '%m %d %Y', label: 'mm dd yyyy' },
+    { format: '%Y-%m-%d', label: 'yyyy-mm-dd' },
+    { format: '%Y/%m/%d', label: 'yyyy/mm/dd' },
+    { format: '%Y.%m.%d', label: 'yyyy.mm.dd' },
+    { format: '%Y %m %d', label: 'yyyy mm dd' },
+    { format: '%d %b %Y', label: 'dd mmm yyyy' },
+    { format: '%d-%b-%Y', label: 'dd-mmm-yyyy' },
+    { format: '%d/%b/%Y', label: 'dd/mmm/yyyy' },
+    { format: '%d.%b.%Y', label: 'dd.mmm.yyyy' },
+    { format: '%Y %b %d', label: 'yyyy mmm dd' },
+    { format: '%Y %B %d', label: 'yyyy mmmm dd' },
+    { format: '%d %B %Y', label: 'dd mmmm yyyy' },
+    { format: '%d-%m-%Y', label: 'dd-mm-yyyy' },
+    { format: '%d/%m/%Y', label: 'dd/mm/yyyy' },
+    { format: '%d.%m.%Y', label: 'dd.mm.yyyy' },
+    { format: '%d %m %Y', label: 'dd mm yyyy' },
+];
+
 const propTypes = {
     headerIndex: PropTypes.number.isRequired,
     headerDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
+
+const getFormatValue = x => x.format;
+const getLabelValue = x => x.label;
 
 export default class HeaderSettings extends React.PureComponent {
     static propTypes = propTypes;
@@ -50,8 +76,6 @@ export default class HeaderSettings extends React.PureComponent {
                     faramElementName="separator"
                     label={_ts('tabular.editModal.editField', 'separatorLabel')}
                     options={HeaderSettings.separatorOptions}
-                    showLabel
-                    showHintAndError
                 />
             );
         }
@@ -63,17 +87,26 @@ export default class HeaderSettings extends React.PureComponent {
                         faramElementName="geoType"
                         label={_ts('tabular.editModal.editField', 'geoTypeLabel')}
                         options={HeaderSettings.geoTypeOptions}
-                        showLabel
-                        showHintAndError
                     />
                     <NumberInput
                         faramElementName="adminLevel"
                         label={_ts('tabular.editModal.editField', 'adminLevelLabel')}
                         placeholder={_ts('tabular.editModal.editField', 'adminLevelPlaceholder')}
-                        showLabel
-                        showHintAndError
                     />
                 </React.Fragment>
+            );
+        }
+
+        if (type === DATA_TYPE.datetime) {
+            return (
+                <SelectInput
+                    faramElementName="dateFormat"
+                    label={_ts('tabular.editModal.editField', 'dateTypeLabel')}
+                    options={DATE_FORMATS}
+                    keySelector={getFormatValue}
+                    labelSelector={getLabelValue}
+                    hideClearButton
+                />
             );
         }
 
@@ -94,8 +127,6 @@ export default class HeaderSettings extends React.PureComponent {
                     <TextInput
                         faramElementName="title"
                         label={_ts('tabular.editModal.editField', 'titleLabel')}
-                        showLabel
-                        showHintAndError
                     />
                     <SegmentInput
                         faramElementName="hidden"
@@ -107,8 +138,6 @@ export default class HeaderSettings extends React.PureComponent {
                         faramElementName="type"
                         label={_ts('tabular.editModal.editField', 'typeLabel')}
                         options={HeaderSettings.fieldTypes}
-                        showLabel
-                        showHintAndError
                     />
                     <FaramGroup faramElementName="options">
                         {this.renderSettingsForType(headerDetails.type)}
