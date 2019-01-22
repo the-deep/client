@@ -8,6 +8,10 @@
 
     .input {
         flex-grow: 1;
+
+        &:first-child {
+            margin-right: $spacing-small;
+        }
     }
 
     .delete-button {

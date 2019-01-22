@@ -254,7 +254,8 @@ export default class ProjectDetailsGeneral extends PureComponent {
                                 faramElementName="description"
                                 placeholder={_ts('project.general', 'projectDescriptionPlaceholder')}
                                 className={styles.description}
-                                rows={3}
+                                rows={7}
+                                resize="vertical"
                             />
                         </div>
                     </div>

@@ -82,15 +82,15 @@ export default class Overview extends React.PureComponent {
                     >
                         <TextInput
                             className={styles.nameInput}
-                            label={_ts('project', 'addAfTitleLabel')}
+                            label={_ts('widgets.editor', 'addAfTitleLabel')}
                             faramElementName="title"
-                            placeholder={_ts('project', 'addAfTitlePlaceholder')}
+                            placeholder={_ts('widgets.editor', 'addAfTitlePlaceholder')}
                         />
                         <TextArea
                             className={styles.descriptionInput}
-                            label={_ts('project', 'projectDescriptionLabel')}
+                            label={_ts('widgets.editor', 'afDescriptionLabel')}
                             faramElementName="description"
-                            placeholder={_ts('project', 'projectDescriptionPlaceholder')}
+                            placeholder={_ts('widgets.editor', 'afDescriptionPlaceholder')}
                             rows={1}
                         />
                     </Faram>

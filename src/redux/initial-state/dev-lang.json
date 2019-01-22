@@ -914,7 +914,8 @@
         "-94673241": "End page",
         "-62030461": "Start page",
         "-93329065": "Drop file(s) here to upload",
-        "-16421564": "Uploading file(s)"
+        "-16421564": "Uploading file(s)",
+        "-25703789": "Cell tooltip {index}"
     },
     "links": {
         "browserExtension": {
@@ -2343,7 +2344,8 @@
             "removeCellButtonTitle": -53055304,
             "cancelConfirmMessage": -14675920,
             "addRowsFromTitle": -39845084,
-            "addCellsFromTitle": -50010134
+            "addCellsFromTitle": -50010134,
+            "unnamedCellTooltip": 733
         },
         "widgets.editor.matrix2d": {
             "atLeastOneError": 1007,
@@ -2590,6 +2592,12 @@
             "removeButtonLabel": 419,
             "dropFilesHereLabel": -93329065,
             "uploadingFilesLabel": -16421564
+        },
+        "widgets.editor": {
+            "addAfTitleLabel": 13,
+            "addAfTitlePlaceholder": 361,
+            "afDescriptionLabel": 200,
+            "afDescriptionPlaceholder": 12501
         }
     }
 }
