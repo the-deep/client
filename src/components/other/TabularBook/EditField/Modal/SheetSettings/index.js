@@ -10,6 +10,8 @@ import SegmentInput from '#rsci/SegmentInput';
 import VerticalTabs from '#rscv/VerticalTabs';
 
 import { listToMap } from '#rsu/common';
+import TabTitle from '#components/general/TabTitle';
+
 import _cs from '#cs';
 import _ts from '#ts';
 
@@ -98,6 +100,24 @@ export default class SheetSettings extends React.PureComponent {
 
     handleHeaderChange = activeHeader => this.setState({ activeHeader });
 
+    renderTab = (tabKey, _, index) => {
+        const {
+            details: {
+                fields,
+            },
+        } = this.props;
+
+        const tabs = this.calcTabs(fields);
+        const title = tabs[tabKey];
+
+        return (
+            <TabTitle
+                title={title}
+                faramElementName={index}
+            />
+        );
+    }
+
     render() {
         const {
             className,
@@ -141,12 +161,18 @@ export default class SheetSettings extends React.PureComponent {
                             <h3 className={styles.headersTitle}>
                                 {headersTitle}
                             </h3>
-                            <VerticalTabs
-                                className={styles.headerTitles}
-                                tabs={tabs}
-                                active={activeHeader}
-                                onClick={this.handleHeaderChange}
-                            />
+                            <FaramList
+                                faramElementName="fields"
+                                keySelector={SheetSettings.fieldKeySelector}
+                            >
+                                <VerticalTabs
+                                    className={styles.headerTitles}
+                                    tabs={tabs}
+                                    active={activeHeader}
+                                    modifier={this.renderTab}
+                                    onClick={this.handleHeaderChange}
+                                />
+                            </FaramList>
                         </div>
                         <FaramList
                             faramElementName="fields"

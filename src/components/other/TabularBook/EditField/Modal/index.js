@@ -15,6 +15,8 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 
 import { mapToMap } from '#rsu/common';
 import { DATA_TYPE } from '#entities/tabular';
+
+import TabTitle from '#components/general/TabTitle';
 import _ts from '#ts';
 
 import SheetSettings from './SheetSettings';
@@ -148,6 +150,19 @@ export default class EditFieldModal extends React.PureComponent {
         this.setState({ activeSheet });
     }
 
+    renderTab = (tabKey) => {
+        const { faramValues } = this.state;
+        const sheetTitles = this.calcSheetTitles(faramValues);
+        const title = sheetTitles[tabKey];
+
+        return (
+            <TabTitle
+                title={title}
+                faramElementName={tabKey}
+            />
+        );
+    }
+
     render() {
         const {
             faramValues,
@@ -177,6 +192,7 @@ export default class EditFieldModal extends React.PureComponent {
                             className={styles.tabs}
                             tabs={sheetTitles}
                             active={activeSheet}
+                            modifier={this.renderTab}
                             onClick={this.handleSheetChange}
                         />
                         { activeSheet &&
