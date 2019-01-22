@@ -26,6 +26,13 @@ const InputRow = ({ index }) => (
                 label={_ts('widgets.editor.matrix1d', 'unnamedCellTitle', { index: index + 1 })}
                 selectOnFocus
             />
+            <TextInput
+                className={styles.input}
+                faramElementName="tooltip"
+                autoFocus
+                label={_ts('widgets.editor.matrix1d', 'unnamedCellTooltip')}
+                selectOnFocus
+            />
         </FaramGroup>
         <DangerButton
             faramAction={deleteClick}

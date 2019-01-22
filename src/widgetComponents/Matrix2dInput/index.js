@@ -9,13 +9,23 @@ import DimensionRow from './DimensionRow';
 import styles from './styles.scss';
 
 
-const SectorTitle = ({ title }) => (
-    <th>
+const SectorTitle = ({
+    title,
+    tooltip,
+}) => (
+    <th
+        title={tooltip}
+    >
         {title}
     </th>
 );
 SectorTitle.propTypes = {
     title: PropTypes.string.isRequired,
+    tooltip: PropTypes.string,
+};
+
+SectorTitle.defaultProps = {
+    tooltip: '',
 };
 
 const propTypes = {
@@ -87,6 +97,7 @@ export default class Matrix2dInput extends React.PureComponent {
 
     titleRendererParams = (key, sector) => ({
         title: sector.title,
+        tooltip: sector.tooltip,
     })
 
     rendererParams = (key, dimension) => {
