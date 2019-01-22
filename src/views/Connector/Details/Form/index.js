@@ -378,7 +378,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
 
         const finalOptions = members.map(m => ({
             ...m,
-            sortKey: `${m.displayName}-${m.id}`,
+            sortKey: `${m.displayName}-${m.user}`,
         }));
 
         users.forEach((u) => {
@@ -409,7 +409,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
 
         const finalOptions = connectorProjects.map(m => ({
             ...m,
-            sortKey: `${m.title}-${m.id}`,
+            sortKey: `${m.title}-${m.project}`,
         }));
 
         allProjects.forEach((a) => {
