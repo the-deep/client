@@ -54,6 +54,21 @@ export default class AssistedTagging extends React.PureComponent {
     static sourceKeySelector = d => d.value;
     static sourceLabelSelector = d => d.label;
 
+    static calcSectorKey = d => d.label;
+
+    static highlightsTransformer = highlights => (
+        highlights.map(({ key, start, end, ...otherProps }) => ({
+            key,
+            start,
+            end,
+            item: {
+                key,
+                ...otherProps,
+            },
+        }))
+    )
+
+
     constructor(props) {
         super(props);
 
@@ -447,9 +462,6 @@ export default class AssistedTagging extends React.PureComponent {
         this.feedbackRequest.start();
     }
 
-    // FIXME: should be static
-    calcSectorKey = d => d.label;
-
     renderSectorList = (key, sector) => (
         <div
             key={sector.label}
@@ -529,7 +541,7 @@ export default class AssistedTagging extends React.PureComponent {
                             className={styles.sectors}
                             modifier={this.renderSectorList}
                             data={activeHighlightDetails.sectors}
-                            keySelector={this.calcSectorKey}
+                            keySelector={AssistedTagging.calcSectorKey}
                         />
                     )}
                     {onEntryAdd && (
@@ -655,6 +667,7 @@ export default class AssistedTagging extends React.PureComponent {
                     highlights={highlights}
                     onLoad={this.handleLeadPreviewLoad}
                     rendererParams={this.highlightRendererParams}
+                    highlightsTransformer={AssistedTagging.highlightsTransformer}
                 />
                 <AssistantOptions />
                 <Assistant />

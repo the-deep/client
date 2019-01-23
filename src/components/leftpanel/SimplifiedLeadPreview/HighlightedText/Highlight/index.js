@@ -68,6 +68,7 @@ export default class Highlight extends React.PureComponent {
             highlight: {
                 label,
                 color,
+                details,
             },
             text,
             className: classNameFromProps,
@@ -97,6 +98,7 @@ export default class Highlight extends React.PureComponent {
                 onClick={this.handleClick}
                 onDragStart={this.handleDrag}
                 draggable
+                title={details}
             >
                 <span className={styles.text}>
                     {text}
