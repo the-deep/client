@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 
 import { FgRestBuilder } from '#rsu/rest';
 import { isFalsy } from '#rsu/common';
@@ -16,10 +17,32 @@ import _ts from '#ts';
 import HighlightedText from './HighlightedText';
 import styles from './styles.scss';
 
+const emptyArray = [];
+
+const highlightsTransformerForText = (highlights, extractedText) => {
+    const newHighlights = highlights
+        .filter(item => item.text)
+        .map((item) => {
+            const { text, key } = item;
+            const start = extractedText.indexOf(text);
+            const end = start + text.length;
+            return {
+                key,
+                start,
+                end,
+                item,
+            };
+        })
+        .filter(h => h.start >= 0)
+        .sort((a, b) => a.start - b.start);
+    return newHighlights;
+};
+
 const propTypes = {
     className: PropTypes.string,
     leadId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     highlights: PropTypes.arrayOf(PropTypes.object),
+    highlightsTransformer: PropTypes.func,
     onClick: PropTypes.func,
 };
 
@@ -28,9 +51,8 @@ const defaultProps = {
     leadId: undefined,
     highlights: [],
     onClick: undefined,
+    highlightsTransformer: highlightsTransformerForText,
 };
-
-const emptyArray = [];
 
 export default class SimplifiedLeadPreview extends React.PureComponent {
     static propTypes = propTypes;
@@ -149,28 +171,12 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
             .build()
     )
 
-    calculateHighlights = (highlights, extractedText) => {
-        if (!extractedText || !highlights) {
+    calculateHighlights = memoize((transformer, highlights, extractedText) => {
+        if (!highlights || !extractedText) {
             return emptyArray;
         }
-
-        const newHighlights = highlights
-            .filter(item => item.text)
-            .map((item) => {
-                const { text, key } = item;
-                const start = extractedText.indexOf(text);
-                const end = start + text.length;
-                return {
-                    key,
-                    start,
-                    end,
-                    item,
-                };
-            })
-            .filter(h => h.start >= 0)
-            .sort((a, b) => a.start - b.start);
-        return newHighlights;
-    }
+        return transformer(highlights, extractedText);
+    })
 
     rendererParams = () => ({
         onClick: this.props.onClick,
@@ -183,6 +189,7 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
         } = this.state;
         const {
             highlights,
+            highlightsTransformer,
         } = this.props;
 
         if (error) {
@@ -200,8 +207,12 @@ export default class SimplifiedLeadPreview extends React.PureComponent {
             );
         }
 
-        // TODO: memoize this
-        const sortedHighlights = this.calculateHighlights(highlights, extractedText);
+        const sortedHighlights = this.calculateHighlights(
+            highlightsTransformer,
+            highlights,
+            extractedText,
+        );
+
         return (
             <HighlightedText
                 className={styles.highlightedText}
