@@ -48,6 +48,8 @@ const defaultProps = {
     sheet: {},
 };
 
+// FIXME: don't use compareNumber as it is not exactly basic number type
+// Try generating actual values which can be used for sorting
 const comparators = {
     [DATA_TYPE.string]: compareString,
     [DATA_TYPE.number]: compareNumber,
