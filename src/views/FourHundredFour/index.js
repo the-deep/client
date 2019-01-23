@@ -3,6 +3,7 @@ import ReactSVG from 'react-svg';
 
 import _ts from '#ts';
 import Page from '#rscv/Page';
+
 import BackLink from '#components/general/BackLink';
 import { pathNames } from '#constants';
 import logo from '#resources/img/deep-logo.svg';
