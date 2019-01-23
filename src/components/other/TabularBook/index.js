@@ -68,7 +68,6 @@ const requests = {
                 duration: notify.duration.SLOW,
             });
         },
-        schemaName: 'TabularBookSchema',
     },
 
     saveRequest: {
@@ -309,8 +308,7 @@ export default class TabularBook extends React.PureComponent {
                 onDataReceived={this.setBook}
                 url={`/tabular-books/${bookId}/`}
                 triggerUrl={`/tabular-extraction-trigger/${bookId}/`}
-                schemaName="TabularBookSchema"
-                triggerSchemaName={undefined}
+                // schemaName="TabularBookSchema"
             >
                 <ActualBook />
             </TriggerAndPoll>

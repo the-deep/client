@@ -3,6 +3,7 @@ import React from 'react';
 import memoize from 'memoize-one';
 
 import Searchable from '#rscv/Taebul/Searchable';
+// import Selectable from '#rscv/Taebul/Selectable';
 import Sortable from '#rscv/Taebul/Sortable';
 import ColumnWidth from '#rscv/Taebul/ColumnWidth';
 import NormalTaebul from '#rscv/Taebul';

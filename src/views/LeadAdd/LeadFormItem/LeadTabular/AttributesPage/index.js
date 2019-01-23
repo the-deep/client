@@ -47,10 +47,12 @@ const requests = {
         onMount: true,
         url: ({ props: { bookId } }) => `/tabular-books/${bookId}/`,
         query: { fields: 'file_type,meta_status,meta' },
-        shouldPoll: response => (
-            response.metaStatus === 'pending' ||
-            response.metaStatus === 'initial'
-        ),
+        options: {
+            shouldPoll: response => (
+                response.metaStatus === 'pending' ||
+                response.metaStatus === 'initial'
+            ),
+        },
         onSuccess: ({ params, response }) => {
             const { meta, fileType } = response;
             params.initFaram({

@@ -1120,10 +1120,10 @@
   resolved "https://registry.yarnpkg.com/@togglecorp/ravl/-/ravl-1.1.0.tgz#13b6fd4a58990a5a42da663cf8b4a822a93095d2"
   integrity sha512-wfIQATHxX0FBm09NkxvnG54tZONUJHXVwfbOoiKO44TQLBjLETFduInn0xb191fWRkV9psCiURBSVw/0IL2ScQ==
 
-"@togglecorp/react-rest-request@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@togglecorp/react-rest-request/-/react-rest-request-1.3.0.tgz#f4aefc2ccb9c8b0b44e17059284b50be72b07832"
-  integrity sha512-Z6/rJHOH9zhAPUBi2xJ8anBWSpMXelR5FoR1hkMQRd75tHZyawnBXXx/mk1vIDG8lwFfj2aXgD1TGf05zC/7qA==
+"@togglecorp/react-rest-request@^1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@togglecorp/react-rest-request/-/react-rest-request-1.3.1.tgz#fa6fcef421f49a732190b164d0580c2d392226ae"
+  integrity sha512-9886EcWh2tN5pHkAWv4c2MCqCyCJjosjyeySuHmBRDduBKNSGKe/Tw0uxETmvr/j/FaJh4vc/+2n0F1+YKPliQ==
   dependencies:
     "@babel/plugin-transform-runtime" "^7.1.0"
     "@babel/polyfill" "^7.0.0"
@@ -5546,6 +5546,11 @@ immediate@~3.0.5:
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/immediate/-/immediate-3.0.6.tgz#9db1dbd0faf8de6fbe0f5dd5e56bb606280de69b"
   integrity sha1-nbHb0Pr43m++D13V5Wu2BigN5ps=
+
+immer@^1.11.0:
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-1.11.0.tgz#7fe413261b59727c3ad02e22e8ecfdd2d0ab60b9"
+  integrity sha512-km4oPFNJgumn4+PKZ+B6ZCkIeiLx8HvryOmxQHfN8ATPV9jLzweAK0JH9T8mplDLyrUi1xlGLYlAO7wDYpTV9w==
 
 immutability-helper@^2.7.0:
   version "2.7.0"
