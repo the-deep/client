@@ -160,7 +160,7 @@ export default class LeadFormItem extends React.PureComponent {
                 this.setState({ pendingExtraction: false });
             })
             .success((response) => {
-                // FIXME: use ravl
+                // FIXME: use schema validation
                 const webInfo = response;
 
                 const leadValues = leadAccessor.getFaramValues(this.props.lead);

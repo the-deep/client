@@ -13,9 +13,6 @@ before_install:
     - git --git-dir=src/vendor/react-store/.git --no-pager show --pretty=fuller --quiet
     - cp src/vendor/react-store/stylesheets/_user-imports-sample.scss src/vendor/react-store/stylesheets/_user-imports.scss
 
-    - git clone https://github.com/toggle-corp/ravl.git src/vendor/ravl
-    - git --git-dir=src/vendor/ravl/.git --no-pager show --pretty=fuller --quiet
-
     - docker pull thedeep/deep-client:latest
     - docker build --cache-from thedeep/deep-client:latest --tag thedeep/deep-client:latest .
 

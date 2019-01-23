@@ -8,7 +8,6 @@ const config = {
     release: process.env.REACT_APP_DEEP_COMMIT_SHA,
     tags: {
         react_store_release: process.env.REACT_APP_DEEP_REACT_STORE_COMMIT_SHA,
-        ravl_release: process.env.REACT_APP_DEEP_RAVL_COMMIT_SHA,
     },
 };
 
