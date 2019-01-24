@@ -8,7 +8,7 @@ import SegmentInput from '#rsci/SegmentInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import FloatingContainer from '#rscv/FloatingContainer';
 import ListView from '#rscv/List/ListView';
-import { getHexFromString } from '#rsu/common';
+import { getHexFromString, listToMap } from '#rsu/common';
 import { FgRestBuilder } from '#rsu/rest';
 
 import { iconNames } from '#constants';
@@ -304,13 +304,6 @@ export default class AssistedTagging extends React.PureComponent {
     extractNlpClassifications = (data) => {
         const { classification } = data;
 
-        // FIXME: filter out sector options with zero matching classifications
-        const nlpSectorOptions = classification.map(c => ({
-            key: c[0],
-            label: c[0],
-        }));
-        const nlpSelectedSectors = nlpSectorOptions.map(o => o.key);
-
         const nlpClassifications = data.excerpts_classification
             .map(excerpt => ({
                 start: excerpt.start_pos,
@@ -324,6 +317,19 @@ export default class AssistedTagging extends React.PureComponent {
             })).filter(c => (
                 c.sectors.length > 0 && c.sectors[0].confidence_value > NLP_THRESHOLD
             ));
+
+        // Mapping of sectors that are identified
+        const identifiedOptions = listToMap(
+            nlpClassifications,
+            item => item.sectors[0].label,
+            () => true,
+        );
+
+        const nlpSectorOptions = classification.map(c => ({
+            key: c[0],
+            label: c[0],
+        })).filter(item => identifiedOptions[item.key]);
+        const nlpSelectedSectors = nlpSectorOptions.map(o => o.key);
 
         // NOTE: for memory
         this.nlpClassifications = nlpClassifications;
