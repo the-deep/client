@@ -1,7 +1,47 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 
 import Highlight from './Highlight';
+
+
+const createNestedSplits = (splits = []) => {
+    const parents = [];
+    const skip = {};
+    for (let i = 0; i < splits.length; i += 1) {
+        const parent = splits[i];
+
+        if (skip[i]) {
+            continue; // eslint-disable-line no-continue
+        }
+
+        const children = [];
+        for (let j = i + 1; j < splits.length; j += 1) {
+            const child = splits[j];
+            if (
+                child.start < parent.end &&
+                child.end < parent.end
+            ) {
+                skip[j] = true;
+                const newChild = {
+                    ...child,
+                    start: child.start - parent.start,
+                    end: child.end - parent.start,
+                };
+                children.push(newChild);
+            }
+        }
+
+        const newParent = {
+            ...parent,
+            children: createNestedSplits(children),
+        };
+        parents.push(newParent);
+    }
+
+    return parents;
+};
+
 
 const propTypes = {
     className: PropTypes.string,
@@ -26,42 +66,7 @@ export default class HighlightedText extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static createNestedSplits = (splits = []) => {
-        const parents = [];
-        const skip = {};
-        for (let i = 0; i < splits.length; i += 1) {
-            const parent = splits[i];
-
-            if (skip[i]) {
-                continue; // eslint-disable-line no-continue
-            }
-
-            const children = [];
-            for (let j = i + 1; j < splits.length; j += 1) {
-                const child = splits[j];
-                if (
-                    child.start < parent.end &&
-                    child.end < parent.end
-                ) {
-                    skip[j] = true;
-                    const newChild = {
-                        ...child,
-                        start: child.start - parent.start,
-                        end: child.end - parent.start,
-                    };
-                    children.push(newChild);
-                }
-            }
-
-            const newParent = {
-                ...parent,
-                children: HighlightedText.createNestedSplits(children),
-            };
-            parents.push(newParent);
-        }
-
-        return parents;
-    }
+    createNestedSplitsMemoized = memoize(createNestedSplits);
 
     renderSplits = (text, splits, level = 1) => {
         const result = [];
@@ -133,8 +138,7 @@ export default class HighlightedText extends React.PureComponent {
             text,
         } = this.props;
 
-        // TODO: memoize this
-        const nestedSplits = HighlightedText.createNestedSplits(highlights);
+        const nestedSplits = this.createNestedSplitsMemoized(highlights);
 
         return (
             <p className={className}>
