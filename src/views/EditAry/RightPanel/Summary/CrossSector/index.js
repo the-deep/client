@@ -139,8 +139,6 @@ export default class CrossSector extends React.PureComponent {
     render() {
         const { selectedSectors } = this.props;
 
-        console.warn(selectedSectors);
-
         if (selectedSectors.length < 3) {
             const className = this.getClassName(true);
             const emptyText = _ts('editAssessment.summary', 'crossSectorEmptyText');
