@@ -461,6 +461,13 @@ export const specificNeedGroupsSelector = createSelector(
     ),
 );
 
+export const underlyingFactorsSelector = createSelector(
+    aryTemplateSelector,
+    aryTemplate => (
+        aryTemplate.underlyingFactors || emptyList
+    ),
+);
+
 export const priorityIssuesSelector = createSelector(
     aryTemplateSelector,
     aryTemplate => (
