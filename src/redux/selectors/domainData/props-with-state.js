@@ -48,6 +48,44 @@ const emptyObject = {};
 
 // helpers
 
+const createFieldSchema = (field, shouldBeOptional) => {
+    const {
+        isRequired: isRequiredFromField,
+        fieldType,
+        title,
+    } = field;
+    const isRequired = isRequiredFromField && !shouldBeOptional;
+    switch (fieldType) {
+        case 'date':
+            return isRequired
+                ? [requiredCondition, dateCondition]
+                : [dateCondition];
+        case 'daterange':
+            return {
+                fields: {
+                    from: [dateCondition],
+                    to: [dateCondition],
+                },
+                validation: ({ from, to } = {}) => {
+                    const errors = [];
+                    if (!from && !to && isRequired) {
+                        // FIXME: use strings
+                        errors.push(`Either ${title} Start Date or ${title} End Date is required.`);
+                    }
+                    if (from && to && decodeDate(from) > decodeDate(to)) {
+                        // FIXME: use strings
+                        errors.push(`Invalid ${title} Range`);
+                    }
+                    return errors;
+                },
+            };
+        default:
+            return isRequired
+                ? [requiredCondition]
+                : [];
+    }
+};
+
 const createScoreSchema = (scorePillars = [], scoreMatrixPillars = []) => {
     const scoreSchema = {
         fields: {
@@ -99,30 +137,7 @@ const createBasicInformationSchema = (aryTemplateMetadata = {}) => {
     const dynamicFields = {};
     Object.keys(aryTemplateMetadata).forEach((key) => {
         aryTemplateMetadata[key].fields.forEach((field) => {
-            switch (field.fieldType) {
-                case 'date':
-                    dynamicFields[field.id] = [requiredCondition, dateCondition];
-                    break;
-                case 'daterange':
-                    dynamicFields[field.id] = {
-                        fields: {
-                            from: [dateCondition],
-                            to: [dateCondition],
-                        },
-                        validation: ({ from, to } = {}) => {
-                            const errors = [];
-                            if (from && to && decodeDate(from) > decodeDate(to)) {
-                                // FIXME: use strings
-                                errors.push(`Invalid ${field.title} Range`);
-                            }
-                            return errors;
-                        },
-                    };
-                    break;
-                default:
-                    dynamicFields[field.id] = [requiredCondition];
-                    break;
-            }
+            dynamicFields[field.id] = createFieldSchema(field);
         });
     });
 
@@ -130,6 +145,7 @@ const createBasicInformationSchema = (aryTemplateMetadata = {}) => {
     return schema;
 };
 
+// NOTE:
 export const getDataCollectionTechnique = (aryTemplateMethodology) => {
     let dataCollectionTechnique;
     aryTemplateMethodology.some(
@@ -144,6 +160,7 @@ export const getDataCollectionTechnique = (aryTemplateMethodology) => {
     return dataCollectionTechnique;
 };
 
+// NOTE:
 export const isSecondaryDataReviewOption = option => (
     option && option.label.toLowerCase().trim() === 'secondary data review'
 );
@@ -179,7 +196,7 @@ const createMethodologySchema = (aryTemplateMethodology = {}) => {
                 const errors = [];
                 if (!value || value.length < 1) {
                     // FIXME: Use strings
-                    errors.push('There should be at least one value');
+                    errors.push('There should be at least one Collection Technique');
                 }
                 return errors;
             },
@@ -200,39 +217,20 @@ const createMethodologySchema = (aryTemplateMethodology = {}) => {
     Object.keys(aryTemplateMethodology).forEach((key) => {
         const methodologyGroup = aryTemplateMethodology[key];
         methodologyGroup.fields.forEach((field) => {
-            switch (field.fieldType) {
-                case 'date':
-                    dynamicFields[field.id] = [requiredCondition, dateCondition];
-                    break;
-                case 'daterange':
-                    dynamicFields[field.id] = {
-                        fields: {
-                            from: [dateCondition],
-                            to: [dateCondition],
-                        },
-                        validation: ({ from, to } = {}) => {
-                            const errors = [];
-                            if (from && to && decodeDate(from) > decodeDate(to)) {
-                                // FIXME: use strings
-                                errors.push(`Invalid ${field.title} Range`);
-                            }
-                            return errors;
-                        },
-                    };
-                    break;
-                default:
-                    dynamicFields[field.id] = [requiredCondition];
-                    break;
-            }
+            dynamicFields[field.id] = createFieldSchema(field);
         });
     });
     schema.fields.attributes.member.default.fields = dynamicFields;
-    // TODO: write for secondaryDataReview one
-    if (dataCollectionTechnique) {
-        schema.fields.attributes.member.secondaryDataReview.fields = {
-            [dataCollectionTechnique.id]: [requiredCondition],
-        };
-    }
+
+    const anotherDynamicFields = {};
+    Object.keys(aryTemplateMethodology).forEach((key) => {
+        const methodologyGroup = aryTemplateMethodology[key];
+        methodologyGroup.fields.forEach((field) => {
+            const shouldBeOptional = dataCollectionTechnique.id !== anotherDynamicFields.id;
+            anotherDynamicFields[field.id] = createFieldSchema(field, shouldBeOptional);
+        });
+    });
+    schema.fields.attributes.member.secondaryDataReview.fields = anotherDynamicFields;
 
     return schema;
 };
