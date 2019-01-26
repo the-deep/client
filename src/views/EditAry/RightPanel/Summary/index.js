@@ -123,7 +123,6 @@ export default class Summary extends React.PureComponent {
             ...tabs,
             ...sectorTabs,
         };
-        console.warn(tabs);
         return tabs;
     })
 
@@ -179,7 +178,6 @@ export default class Summary extends React.PureComponent {
             selectedFocuses,
         );
 
-        console.warn(humanitarianAccessVisibility, crossSectorVisibility);
         const tabs = Summary.getTabs(
             sectorTabs,
             humanitarianAccessVisibility,
