@@ -10,6 +10,7 @@ import HiearchicalSelectInput from '#rsci/HierarchicalSelectInput';
 import {
     affectedGroupsSelector,
     specificNeedGroupsSelector,
+    underlyingFactorsSelector,
 } from '#redux';
 import _ts from '#ts';
 import _cs from '#cs';
@@ -31,6 +32,7 @@ const defaultProps = {
 const mapStateToProps = state => ({
     affectedGroups: affectedGroupsSelector(state),
     specificNeedGroups: specificNeedGroupsSelector(state),
+    underlyingFactors: underlyingFactorsSelector(state),
 });
 
 @connect(mapStateToProps)
@@ -76,6 +78,7 @@ export default class Sector extends React.PureComponent {
         const {
             affectedGroups,
             specificNeedGroups,
+            underlyingFactors,
         } = this.props;
 
         if (row === 0) {
@@ -87,9 +90,14 @@ export default class Sector extends React.PureComponent {
             );
         } else if (row === 1) {
             return (
-                <TextInput
+                <HiearchicalSelectInput
                     faramElementName={`underlyingFactors-${subRow}-${this.columnKeys[column]}`}
                     showHintAndError={false}
+                    options={underlyingFactors}
+                    labelSelector={Sector.nodeLabelSelector}
+                    keySelector={Sector.nodeIdSelector}
+                    childrenSelector={Sector.nodeChildrenSelector}
+                    placeholder=""
                 />
             );
         } else if (row === 2) {
