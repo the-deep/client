@@ -90,10 +90,29 @@ export default class Summary extends React.PureComponent {
         return index !== -1;
     })
 
-    static getTabs = memoize((sectorTabs, humanitarianAccessVisibility) => {
-        let tabs = {
-            crossSector: _ts('editAssessment.summary', 'crossSectorTitle'),
-        };
+    // FIXME: this should be more dynamic later on
+    static shouldShowCrossSector = memoize((focuses, selectedFocuses) => {
+        const crossSectorFocus = focuses.find(
+            focus => focus.title.toLowerCase().trim() === 'cross sector',
+        );
+        if (!crossSectorFocus) {
+            return false;
+        }
+        const index = selectedFocuses.findIndex(
+            focus => String(focus) === String(crossSectorFocus.id),
+        );
+        return index !== -1;
+    })
+
+    static getTabs = memoize((sectorTabs, humanitarianAccessVisibility, crossSectorVisibility) => {
+        let tabs = {};
+
+        if (crossSectorVisibility) {
+            tabs = {
+                ...tabs,
+                crossSector: _ts('editAssessment.summary', 'crossSectorTitle'),
+            };
+        }
         if (humanitarianAccessVisibility) {
             tabs = {
                 ...tabs,
@@ -110,7 +129,7 @@ export default class Summary extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            activeTab: 'crossSector',
+            activeTab: undefined,
         };
     }
 
@@ -154,7 +173,16 @@ export default class Summary extends React.PureComponent {
             focuses,
             selectedFocuses,
         );
-        const tabs = Summary.getTabs(sectorTabs, humanitarianAccessVisibility);
+        const crossSectorVisibility = Summary.shouldShowCrossSector(
+            focuses,
+            selectedFocuses,
+        );
+
+        const tabs = Summary.getTabs(
+            sectorTabs,
+            humanitarianAccessVisibility,
+            crossSectorVisibility,
+        );
 
         return (
             <VerticalTabs
@@ -167,7 +195,12 @@ export default class Summary extends React.PureComponent {
     }
 
     renderView = () => {
+        // FIXME: use multiview container here
         const { activeTab } = this.state;
+
+        if (!activeTab) {
+            return null;
+        }
 
         switch (activeTab) {
             case 'crossSector':
