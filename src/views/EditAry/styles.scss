@@ -93,6 +93,12 @@ $color-border-bottom-new: rgba(0, 0, 0, .1);
                     }
                 }
             }
+
+            &.error {
+                .label {
+                    color: $color-danger;
+                }
+            }
         }
 
         .number-input,
@@ -111,6 +117,12 @@ $color-border-bottom-new: rgba(0, 0, 0, .1);
 
                 &:focus {
                     border-bottom-color: $color-accent;
+                }
+            }
+            
+            &.error {
+                .input:not(:disabled) {
+                    border-bottom-color: $color-danger;
                 }
             }
         }
