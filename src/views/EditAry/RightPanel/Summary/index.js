@@ -53,6 +53,7 @@ const mapStateToProps = state => ({
 // FIXME: use ErrorIndicator for vertical tabs
 
 const sectorIdentifier = 'sector';
+const emptyObject = {};
 
 @connect(mapStateToProps)
 export default class Summary extends React.PureComponent {
@@ -60,7 +61,6 @@ export default class Summary extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static isTabForSector = key => key.startsWith(sectorIdentifier);
-
     static getSectorIdForSector = key => key.substr(sectorIdentifier.length + 1);
 
     static getSelectedSector = memoize((sectors, selectedSectorsList) => {
@@ -107,7 +107,16 @@ export default class Summary extends React.PureComponent {
         return index !== -1;
     })
 
-    static getTabs = memoize((sectorTabs, humanitarianAccessVisibility, crossSectorVisibility) => {
+    constructor(props) {
+        super(props);
+        this.state = {
+            activeTab: undefined,
+        };
+
+        this.tabs = emptyObject;
+    }
+
+    getTabs = memoize((sectorTabs, humanitarianAccessVisibility, crossSectorVisibility) => {
         let tabs = {};
 
         if (crossSectorVisibility) {
@@ -129,12 +138,18 @@ export default class Summary extends React.PureComponent {
         return tabs;
     })
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            activeTab: undefined,
-        };
-    }
+    getActiveTab = memoize((activeTabFromState, tabs) => {
+        if (activeTabFromState) {
+            return activeTabFromState;
+        }
+
+        const tabKeys = Object.keys(tabs);
+        if (tabKeys.length > 0) {
+            return tabKeys[0];
+        }
+
+        return undefined;
+    })
 
     handleActiveSectorChange = (key) => {
         const {
@@ -188,7 +203,7 @@ export default class Summary extends React.PureComponent {
             selectedFocuses,
         );
 
-        const tabs = Summary.getTabs(
+        this.tabs = this.getTabs(
             sectorTabs,
             humanitarianAccessVisibility,
             crossSectorVisibility,
@@ -197,9 +212,9 @@ export default class Summary extends React.PureComponent {
         return (
             <VerticalTabs
                 className={styles.tabs}
-                tabs={tabs}
+                tabs={this.tabs}
                 onClick={this.handleTabClick}
-                active={activeTab}
+                active={this.getActiveTab(activeTab, this.tabs)}
                 modifier={this.renderTab}
             />
         );
@@ -207,7 +222,8 @@ export default class Summary extends React.PureComponent {
 
     renderView = () => {
         // FIXME: use multiview container here
-        const { activeTab } = this.state;
+        const { activeTab: activeTabFromState } = this.state;
+        const activeTab = this.getActiveTab(activeTabFromState, this.tabs);
 
         if (!activeTab) {
             return null;

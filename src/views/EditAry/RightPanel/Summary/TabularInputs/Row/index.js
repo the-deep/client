@@ -31,23 +31,30 @@ export default class Row extends React.PureComponent {
             classNames: {
                 row,
                 sectionTitle,
+                sectionTitleCell,
+                sectionNonFieldErrors,
+                sectionTitleWrapper,
             },
             rowTitle,
             rowKey,
         } = this.props;
 
         return (
-            <FaramGroup
-                faramElementName={rowKey}
-            >
+            <FaramGroup faramElementName={rowKey}>
                 <tr className={row}>
                     <td
-                        className={sectionTitle}
+                        className={sectionTitleCell}
                         colSpan="4"
                     >
-                        {rowTitle}
-                        {/* TODO: fix styling */}
-                        <NonFieldErrors faramElement />
+                        <div className={sectionTitleWrapper}>
+                            <div className={sectionTitle}>
+                                {rowTitle}
+                            </div>
+                            <NonFieldErrors
+                                className={sectionNonFieldErrors}
+                                faramElement
+                            />
+                        </div>
                     </td>
                 </tr>
                 <List
