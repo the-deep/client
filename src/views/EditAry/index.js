@@ -43,6 +43,8 @@ import LeftPanel from './LeftPanel';
 import RightPanel from './RightPanel';
 import styles from './styles.scss';
 
+const emptyObject = {};
+
 const propTypes = {
     routeUrl: PropTypes.string.isRequired,
     projectId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
@@ -202,6 +204,7 @@ const requests = {
         onSuccess: ({ props, response }) => {
             props.setAry({
                 leadId: response.lead,
+                leadGroupId: response.leadGroup,
                 serverId: response.id,
                 versionId: response.versionId,
                 metadata: response.metadata,
@@ -252,9 +255,23 @@ export default class EditAry extends React.PureComponent {
     }
 
     handleCancelButtonClick = () => {
-        this.props.assessmentRequest.do({
-            override: true,
-        });
+        const {
+            setAry,
+            editAryServerId,
+            activeLeadId,
+            activeLeadGroupId,
+        } = this.props;
+
+        if (editAryServerId) {
+            this.props.assessmentRequest.do({
+                override: true,
+            });
+        } else {
+            setAry({
+                leadId: activeLeadId,
+                leadGroupId: activeLeadGroupId,
+            });
+        }
     }
 
     handleFaramValidationSuccess = (value) => {
