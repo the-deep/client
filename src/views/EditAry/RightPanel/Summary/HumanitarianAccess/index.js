@@ -139,6 +139,9 @@ export default class HumanitarianAccess extends React.PureComponent {
                         header: styles.header,
                         cell: styles.cell,
                         sectionTitle: styles.sectionTitle,
+                        sectionTitleCell: styles.sectionTitleCell,
+                        sectionNonFieldErrors: styles.sectionNonFieldErrors,
+                        sectionTitleWrapper: styles.sectionTitleWrapper,
                     }}
                     inputModifier={this.renderInput}
                 />
