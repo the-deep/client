@@ -728,6 +728,7 @@ export default class Leads extends React.PureComponent {
 
     renderGridView = () => (
         <Grid
+            view={this.props.view}
             loading={this.state.loadingLeads}
             onEndReached={this.onGridEndReached}
             setLeadPageActivePage={this.props.setLeadPageActivePage}

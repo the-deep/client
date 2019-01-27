@@ -15,7 +15,7 @@ const leadPageForProjectSelector = createSelector(
 );
 
 export const leadPageViewSelector = createSelector(
-    leadPageForProjectSelector,
+    leadPageSelector,
     leadPage => leadPage.view || 'table',
 );
 

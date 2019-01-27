@@ -68,15 +68,7 @@ export const removeLeadAction = ({ lead }) => ({
     lead,
 });
 
-const getView = (state) => {
-    const { activeProject } = state;
-    if (activeProject && state.leadPage[activeProject]) {
-        const { view = 'table' } = state.leadPage[activeProject];
-        return view;
-    }
-
-    return 'table';
-};
+const getView = state => state.leadPage.view || 'table';
 
 // REDUCER
 
@@ -152,12 +144,9 @@ const leadViewSetActiveSort = (state, action) => {
 
 const leadViewSetView = (state, action) => {
     const { view } = action;
-    const { activeProject } = state;
     const settings = {
         leadPage: {
-            [activeProject]: { $auto: {
-                view: { $set: view },
-            } },
+            view: { $set: view },
         },
     };
     return update(state, settings);

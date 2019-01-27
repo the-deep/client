@@ -18,6 +18,7 @@ const propTypes = {
     loading: PropTypes.bool,
     onEndReached: PropTypes.func.isRequired,
     leads: PropTypes.arrayOf(PropTypes.object),
+    view: PropTypes.string.isRequired,
     activeProject: PropTypes.number.isRequired,
     onSearchSimilarLead: PropTypes.func.isRequired,
     onRemoveLead: PropTypes.func.isRequired,
@@ -46,8 +47,6 @@ export default class LeadGrid extends React.Component {
 
     // simple comparision using id and their position to
     // check if we should recompute the layout
-    // we can add thumbnail url check too if the leads data
-    // is updated in realtime using websockets
     static isItemsChanged = (a, b) => {
         const aKeys = a.map(r => r.id);
         const bKeys = b.map(r => r.id);
@@ -74,6 +73,13 @@ export default class LeadGrid extends React.Component {
     componentDidMount() {
         // Rest grid when loading first time
         this.props.setLeadPageActivePage({ activePage: 1 });
+    }
+
+    // The lead data for grid may change when the user is in
+    // table tab and changes the project, which will lead to
+    // unnecessary recompute in Masonry while it is not displayed
+    shouldComponentUpdate() {
+        return this.props.view === 'grid';
     }
 
     handleLeadClick = (leadIndex) => {

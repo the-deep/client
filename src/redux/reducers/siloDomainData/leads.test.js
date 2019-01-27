@@ -230,9 +230,7 @@ test('should set view', () => {
     const state = {
         activeProject: 2,
         leadPage: {
-            2: {
-                view: 'table',
-            },
+            view: 'table',
         },
     };
     const action = setLeadPageViewAction({
@@ -241,9 +239,7 @@ test('should set view', () => {
     const after = {
         activeProject: 2,
         leadPage: {
-            2: {
-                view: 'grid',
-            },
+            view: 'grid',
         },
     };
 
@@ -262,9 +258,7 @@ test('should set view for first time', () => {
     const after = {
         activeProject: 2,
         leadPage: {
-            2: {
-                view: 'table',
-            },
+            view: 'table',
         },
     };
 
