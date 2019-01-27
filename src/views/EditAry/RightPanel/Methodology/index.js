@@ -183,7 +183,6 @@ export default class Methodology extends React.PureComponent {
         const affectedGroupsTitle = _ts('editAssessment.methodology', 'affectedGroupsTitle');
         const locationsTitle = _ts('editAssessment.methodology', 'locationsTitle');
         const methodologyContentTitle = _ts('editAssessment.methodology', 'methodologyContentTitle');
-        const attributesTitle = _ts('editAssessment.methodology', 'attributesTitle');
 
         const objectivesTitle = _ts('editAssessment.methodology', 'objectivesTitle');
         const dataCollectionTechniquesTitle = _ts('editAssessment.methodology', 'dataCollectionTechniquesTitle');
@@ -217,10 +216,7 @@ export default class Methodology extends React.PureComponent {
                                         keySelector={Methodology.keySelector}
                                     >
                                         <div className={styles.attributesSection}>
-                                            {/* <Header
-                                                className={styles.header}
-                                                title={attributesTitle}
-                                            /> */}
+                                            <Header className={styles.header} />
                                             <div className={styles.scrollWrap}>
                                                 <div className={styles.attributes}>
                                                     <div className={styles.header}>
