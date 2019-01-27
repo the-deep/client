@@ -44,54 +44,73 @@ export default class Sector extends React.PureComponent {
     static nodeLabelSelector = d => d.title;
     static nodeChildrenSelector = d => d.children;
 
-    constructor(props) {
-        super(props);
+    static rowFieldTitles = [
+        {
+            key: 'outcomes',
+            title: _ts('editAssessment.summary', 'outcomes'),
+        },
+        {
+            key: 'underlyingFactors',
+            title: _ts('editAssessment.summary', 'underlyingFactors'),
+        },
+        {
+            key: 'affectedGroups',
+            title: _ts('editAssessment.summary', 'affectedGroups'),
+        },
+        {
+            key: 'specificNeedGroups',
+            title: _ts('editAssessment.summary', 'specificNeedGroups'),
+        },
+    ];
 
-        this.rowFieldTitles = [
-            _ts('editAssessment.summary', 'outcomes'),
-            _ts('editAssessment.summary', 'underlyingFactors'),
-            _ts('editAssessment.summary', 'affectedGroups'),
-            _ts('editAssessment.summary', 'specificNeedGroups'),
-        ];
+    static rowSubFieldTitles = [
+        {
+            key: 'rank1',
+            title: _ts('editAssessment.summary', 'rank1Title'),
+        },
+        {
+            key: 'rank2',
+            title: _ts('editAssessment.summary', 'rank2Title'),
+        },
+        {
+            key: 'rank3',
+            title: _ts('editAssessment.summary', 'rank3Title'),
+        },
+    ];
 
-        this.columnFieldTitles = [
-            ' ',
-            _ts('editAssessment.summary', 'moderateAssistancePopulation'),
-            _ts('editAssessment.summary', 'severeAssistancePopulation'),
-            _ts('editAssessment.summary', 'assistancePopulation'),
-        ];
+    static columnFieldTitles = [
+        {
+            key: 'moderateAssistancePopulation',
+            title: _ts('editAssessment.summary', 'moderateAssistancePopulation'),
+        },
+        {
+            key: 'severeAssistancePopulation',
+            title: _ts('editAssessment.summary', 'severeAssistancePopulation'),
+        },
+        {
+            key: 'assistancePopulation',
+            title: _ts('editAssessment.summary', 'assistancePopulation'),
+        },
+    ];
 
-        this.rowSubFieldTitles = [
-            _ts('editAssessment.summary', 'rank1Title'),
-            _ts('editAssessment.summary', 'rank2Title'),
-            _ts('editAssessment.summary', 'rank3Title'),
-        ];
-
-        this.columnKeys = [
-            'moderateAssistancePopulation',
-            'severeAssistancePopulation',
-            'assistancePopulation',
-        ];
-    }
-
-    renderInput = (column, row, subRow) => {
+    renderInput = (rowKey, subRowKey, columnKey) => {
         const {
             affectedGroups,
             specificNeedGroups,
             underlyingFactors,
         } = this.props;
 
-        if (row === 0) {
+        if (rowKey === 'outcomes') {
             return (
                 <TextInput
-                    faramElementName={`outcomes-${subRow}-${this.columnKeys[column]}`}
+                    faramElementName={columnKey}
                     showHintAndError={false}
                 />
             );
-        } else if (row === 1) {
+        } else if (rowKey === 'underlyingFactors') {
             return (
                 <HiearchicalSelectInput
-                    faramElementName={`underlyingFactors-${subRow}-${this.columnKeys[column]}`}
+                    faramElementName={columnKey}
                     showHintAndError={false}
                     options={underlyingFactors}
                     labelSelector={Sector.nodeLabelSelector}
@@ -100,10 +119,10 @@ export default class Sector extends React.PureComponent {
                     placeholder=""
                 />
             );
-        } else if (row === 2) {
+        } else if (rowKey === 'affectedGroups') {
             return (
                 <HiearchicalSelectInput
-                    faramElementName={`affectedGroup-${subRow}-${this.columnKeys[column]}`}
+                    faramElementName={columnKey}
                     showHintAndError={false}
                     options={affectedGroups}
                     keySelector={Sector.nodeIdSelector}
@@ -112,10 +131,10 @@ export default class Sector extends React.PureComponent {
                     placeholder=""
                 />
             );
-        } else if (row === 3) {
+        } else if (rowKey === 'specificNeedGroups') {
             return (
                 <SelectInput
-                    faramElementName={`specificNeedGroup-${subRow}-${this.columnKeys[column]}`}
+                    faramElementName={columnKey}
                     showHintAndError={false}
                     options={specificNeedGroups}
                     labelSelector={Sector.nodeLabelSelector}
@@ -143,9 +162,9 @@ export default class Sector extends React.PureComponent {
         return (
             <FaramGroup faramElementName={`sector-${sectorId}`}>
                 <TabularInputs
-                    rowFieldTitles={this.rowFieldTitles}
-                    columnFieldTitles={this.columnFieldTitles}
-                    rowSubFieldTitles={this.rowSubFieldTitles}
+                    rowFieldTitles={Sector.rowFieldTitles}
+                    columnFieldTitles={Sector.columnFieldTitles}
+                    rowSubFieldTitles={Sector.rowSubFieldTitles}
                     classNames={{
                         wrapper: className,
                         table: styles.table,

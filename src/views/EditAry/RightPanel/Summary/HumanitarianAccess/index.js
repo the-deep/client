@@ -40,46 +40,57 @@ export default class HumanitarianAccess extends React.PureComponent {
     static nodeLabelSelector = d => d.title;
     static nodeChildrenSelector = d => d.children;
 
-    constructor(props) {
-        super(props);
+    static rowFieldTitles = [
+        {
+            key: 'priorityIssue',
+            title: _ts('editAssessment.summary', 'priorityIssue'),
+        },
+        {
+            key: 'affectedLocation',
+            title: _ts('editAssessment.summary', 'affectedLocation'),
+        },
+    ];
 
-        this.rowFieldTitles = [
-            _ts('editAssessment.summary', 'priorityIssue'),
-            _ts('editAssessment.summary', 'affectedLocation'),
-        ];
+    static rowSubFieldTitles = [
+        {
+            key: 'rank1',
+            title: _ts('editAssessment.summary', 'rank1Title'),
+        },
+        {
+            key: 'rank2',
+            title: _ts('editAssessment.summary', 'rank2Title'),
+        },
+        {
+            key: 'rank3',
+            title: _ts('editAssessment.summary', 'rank3Title'),
+        },
+    ];
 
-        this.columnFieldTitles = [
-            '',
-            _ts('editAssessment.summary', 'limitedAccessPopulation'),
-            _ts('editAssessment.summary', 'restrictedAccessPopulation'),
-            _ts('editAssessment.summary', 'humanitarianAccessPopulation'),
-        ];
+    static columnFieldTitles = [
+        {
+            key: 'limitedAccessPopulation',
+            title: _ts('editAssessment.summary', 'limitedAccessPopulation'),
+        },
+        {
+            key: 'restrictedAccessPopulation',
+            title: _ts('editAssessment.summary', 'restrictedAccessPopulation'),
+        },
+        {
+            key: 'humanitarianAccessPopulation',
+            title: _ts('editAssessment.summary', 'humanitarianAccessPopulation'),
+        },
+    ];
 
-        this.rowSubFieldTitles = [
-            _ts('editAssessment.summary', 'rank1Title'),
-            _ts('editAssessment.summary', 'rank2Title'),
-            _ts('editAssessment.summary', 'rank3Title'),
-        ];
-
-        this.columnKeys = [
-            'limitedAccessPopulation',
-            'restrictedAccessPopulation',
-            'humanitarianAccessPopulation',
-        ];
-    }
-
-    renderInput = (column, row, subRow) => {
+    renderInput = (rowKey, subRowKey, columnKey) => {
         const {
             priorityIssues,
             affectedLocations,
         } = this.props;
 
-        const columnKey = this.columnKeys[column];
-
-        if (row === 0) {
+        if (rowKey === 'priorityIssue') {
             return (
                 <HiearchicalSelectInput
-                    faramElementName={`priorityIssue-${subRow}-${columnKey}`}
+                    faramElementName={columnKey}
                     showHintAndError={false}
                     options={priorityIssues}
                     keySelector={HumanitarianAccess.nodeIdSelector}
@@ -88,10 +99,10 @@ export default class HumanitarianAccess extends React.PureComponent {
                     placeholder=""
                 />
             );
-        } else if (row === 1) {
+        } else if (rowKey === 'affectedLocation') {
             return (
                 <SelectInput
-                    faramElementName={`affectedLocation-${subRow}-${columnKey}`}
+                    faramElementName={columnKey}
                     showHintAndError={false}
                     options={affectedLocations}
                     labelSelector={HumanitarianAccess.nodeLabelSelector}
@@ -116,9 +127,9 @@ export default class HumanitarianAccess extends React.PureComponent {
         return (
             <FaramGroup faramElementName="humanitarianAccess">
                 <TabularInputs
-                    rowFieldTitles={this.rowFieldTitles}
-                    columnFieldTitles={this.columnFieldTitles}
-                    rowSubFieldTitles={this.rowSubFieldTitles}
+                    rowFieldTitles={HumanitarianAccess.rowFieldTitles}
+                    columnFieldTitles={HumanitarianAccess.columnFieldTitles}
+                    rowSubFieldTitles={HumanitarianAccess.rowSubFieldTitles}
                     classNames={{
                         wrapper: className,
                         table: styles.table,

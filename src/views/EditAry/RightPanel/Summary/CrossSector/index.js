@@ -47,34 +47,50 @@ export default class CrossSector extends React.PureComponent {
     static nodeLabelSelector = d => d.title;
     static nodeChildrenSelector = d => d.children;
 
-    constructor(props) {
-        super(props);
+    static rowFieldTitles = [
+        {
+            key: 'prioritySectors',
+            title: _ts('editAssessment.summary', 'prioritySectors'),
+        },
+        {
+            key: 'affectedGroups',
+            title: _ts('editAssessment.summary', 'affectedGroups'),
+        },
+        {
+            key: 'specificNeedGroups',
+            title: _ts('editAssessment.summary', 'specificNeedGroups'),
+        },
+    ];
 
-        this.rowFieldTitles = [
-            _ts('editAssessment.summary', 'prioritySectors'),
-            _ts('editAssessment.summary', 'affectedGroups'),
-            _ts('editAssessment.summary', 'specificNeedGroups'),
-        ];
+    static rowSubFieldTitles = [
+        {
+            key: 'rank1',
+            title: _ts('editAssessment.summary', 'rank1Title'),
+        },
+        {
+            key: 'rank2',
+            title: _ts('editAssessment.summary', 'rank2Title'),
+        },
+        {
+            key: 'rank3',
+            title: _ts('editAssessment.summary', 'rank3Title'),
+        },
+    ];
 
-        this.columnFieldTitles = [
-            ' ',
-            _ts('editAssessment.summary', 'moderateAssistancePopulation'),
-            _ts('editAssessment.summary', 'severeAssistancePopulation'),
-            _ts('editAssessment.summary', 'assistancePopulation'),
-        ];
-
-        this.rowSubFieldTitles = [
-            _ts('editAssessment.summary', 'rank1Title'),
-            _ts('editAssessment.summary', 'rank2Title'),
-            _ts('editAssessment.summary', 'rank3Title'),
-        ];
-
-        this.columnKeys = [
-            'moderateAssistancePopulation',
-            'severeAssistancePopulation',
-            'assistancePopulation',
-        ];
-    }
+    static columnFieldTitles = [
+        {
+            key: 'moderateAssistancePopulation',
+            title: _ts('editAssessment.summary', 'moderateAssistancePopulation'),
+        },
+        {
+            key: 'severeAssistancePopulation',
+            title: _ts('editAssessment.summary', 'severeAssistancePopulation'),
+        },
+        {
+            key: 'assistancePopulation',
+            title: _ts('editAssessment.summary', 'assistancePopulation'),
+        },
+    ];
 
     getClassName = (empty = false) => {
         const { className: classNameFromProps } = this.props;
@@ -87,19 +103,17 @@ export default class CrossSector extends React.PureComponent {
         );
     }
 
-    renderInput = (column, row, subRow) => {
+    renderInput = (rowKey, subRowKey, columnKey) => {
         const {
             prioritySectors,
             affectedGroups,
             specificNeedGroups,
         } = this.props;
 
-        const columnKey = this.columnKeys[column];
-
-        if (row === 0) {
+        if (rowKey === 'prioritySectors') {
             return (
                 <HiearchicalSelectInput
-                    faramElementName={`prioritySector-${subRow}-${columnKey}`}
+                    faramElementName={columnKey}
                     showHintAndError={false}
                     options={prioritySectors}
                     keySelector={CrossSector.nodeIdSelector}
@@ -108,10 +122,10 @@ export default class CrossSector extends React.PureComponent {
                     placeholder=""
                 />
             );
-        } else if (row === 1) {
+        } else if (rowKey === 'affectedGroups') {
             return (
                 <HiearchicalSelectInput
-                    faramElementName={`affectedGroup-${subRow}-${columnKey}`}
+                    faramElementName={columnKey}
                     showHintAndError={false}
                     options={affectedGroups}
                     keySelector={CrossSector.nodeIdSelector}
@@ -120,10 +134,10 @@ export default class CrossSector extends React.PureComponent {
                     placeholder=""
                 />
             );
-        } else if (row === 2) {
+        } else if (rowKey === 'specificNeedGroups') {
             return (
                 <SelectInput
-                    faramElementName={`specificNeedGroup-${subRow}-${columnKey}`}
+                    faramElementName={columnKey}
                     showHintAndError={false}
                     options={specificNeedGroups}
                     labelSelector={CrossSector.nodeLabelSelector}
@@ -155,9 +169,9 @@ export default class CrossSector extends React.PureComponent {
         return (
             <FaramGroup faramElementName="crossSector">
                 <TabularInputs
-                    rowFieldTitles={this.rowFieldTitles}
-                    columnFieldTitles={this.columnFieldTitles}
-                    rowSubFieldTitles={this.rowSubFieldTitles}
+                    rowFieldTitles={CrossSector.rowFieldTitles}
+                    columnFieldTitles={CrossSector.columnFieldTitles}
+                    rowSubFieldTitles={CrossSector.rowSubFieldTitles}
                     classNames={{
                         wrapper: className,
                         table: styles.table,
