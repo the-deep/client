@@ -7,6 +7,7 @@ import FaramGroup from '#rscg/FaramGroup';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import VerticalTabs from '#rscv/VerticalTabs/';
 import { listToMap } from '#rsu/common';
+import TabTitle from '#components/general/TabTitle';
 
 import {
     assessmentSectorsSelector,
@@ -48,6 +49,8 @@ const mapStateToProps = state => ({
     focuses: focusesSelector(state),
     selectedFocuses: editArySelectedFocusesSelector(state),
 });
+
+// FIXME: use ErrorIndicator for vertical tabs
 
 const sectorIdentifier = 'sector';
 
@@ -159,6 +162,13 @@ export default class Summary extends React.PureComponent {
         );
     }
 
+    renderTab = (tabKey, title) => (
+        <TabTitle
+            title={title}
+            faramElementName={tabKey}
+        />
+    );
+
     renderTabs = () => {
         const { activeTab } = this.state;
         const {
@@ -190,6 +200,7 @@ export default class Summary extends React.PureComponent {
                 tabs={tabs}
                 onClick={this.handleTabClick}
                 active={activeTab}
+                modifier={this.renderTab}
             />
         );
     }
@@ -244,8 +255,8 @@ export default class Summary extends React.PureComponent {
         return (
             <div className={className}>
                 {pending && <LoadingAnimation />}
-                <Tabs />
                 <FaramGroup faramElementName="summary">
+                    <Tabs />
                     <View />
                 </FaramGroup>
             </div>
