@@ -12,6 +12,7 @@ import {
 
     assessmentSchemaSelector,
     assessmentComputeSchemaSelector,
+    editAryIsPristineSelector,
 
     changeAryForEditAryAction,
 
@@ -38,6 +39,7 @@ const propTypes = {
     onActiveSectorChange: PropTypes.func,
     pending: PropTypes.bool,
     readOnly: PropTypes.bool,
+    editAryIsPristine: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -56,6 +58,7 @@ const defaultProps = {
 const mapStateToProps = state => ({
     activeLeadId: leadIdFromRouteSelector(state),
     activeLeadGroupId: leadGroupIdFromRouteSelector(state),
+    editAryIsPristine: editAryIsPristineSelector(state),
 
     editAryFaramValues: editAryFaramValuesSelector(state),
     editAryFaramErrors: editAryFaramErrorsSelector(state),
@@ -120,18 +123,25 @@ export default class RightPanel extends React.PureComponent {
     }
 
     handleFaramChange = (faramValues, faramErrors, faramInfo) => {
-        const isPristine = faramInfo.isComputed;
+        const {
+            editAryIsPristine,
+            activeLeadId,
+            changeAry,
+            activeLeadGroupId,
+        } = this.props;
 
-        if (this.props.activeLeadId) {
-            this.props.changeAry({
-                leadId: this.props.activeLeadId,
+        const isPristine = faramInfo.isComputed && editAryIsPristine;
+
+        if (activeLeadId) {
+            changeAry({
+                leadId: activeLeadId,
                 faramValues,
                 faramErrors,
                 isPristine,
             });
         } else {
-            this.props.changeAry({
-                leadGroupId: this.props.activeLeadGroupId,
+            changeAry({
+                leadGroupId: activeLeadGroupId,
                 faramValues,
                 faramErrors,
                 isPristine,
