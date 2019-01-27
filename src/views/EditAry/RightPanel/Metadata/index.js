@@ -73,7 +73,7 @@ export default class Metadata extends React.PureComponent {
             pending,
         } = this.props;
 
-        const basicInformationTitle = _ts('editAssessment.metadata', 'basicInformationTitle');
+        // const basicInformationTitle = _ts('editAssessment.metadata', 'basicInformationTitle');
         const additionalDocumentsTitle = _ts('editAssessment.metadata', 'additionalDocumentsTitle');
 
         const metadataGroupValues = Object.values(metadataGroups);
@@ -89,11 +89,7 @@ export default class Metadata extends React.PureComponent {
                         topChild={
                             <FaramGroup faramElementName="basicInformation">
                                 <div className={styles.basicInformation}>
-                                    {/* <Header
-                                        title={basicInformationTitle}
-                                        className={styles.header}
-                                    />
-                                    */}
+                                    <Header className={styles.header} />
                                     <ListView
                                         className={styles.content}
                                         data={metadataGroupValues}
