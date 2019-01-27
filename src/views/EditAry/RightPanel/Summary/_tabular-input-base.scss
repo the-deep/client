@@ -22,11 +22,32 @@
 
         .body {
             .row {
-                .section-title {
+                .section-title-cell {
                     @extend %cell;
-                    text-transform: capitalize;
-                    color: $color-accent;
-                    font-weight: $font-weight-bold;
+
+                    .section-title-wrapper {
+                        display: flex;
+
+                        .section-title {
+                            flex-shrink: 0;
+                            text-transform: capitalize;
+                            color: $color-accent;
+                            font-weight: $font-weight-bold;
+                        }
+
+                        .section-non-field-errors {
+                            align-items: center;
+                            flex-grow: 1;
+                            justify-content: flex-start;
+                            padding: 0;
+                            text-align: initial;
+                            font-size: $font-size-small;
+
+                            >div {
+                                padding: 0 $spacing-medium;
+                            }
+                        }
+                    }
                 }
 
                 .cell {
