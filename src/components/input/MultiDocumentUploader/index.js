@@ -21,6 +21,7 @@ import {
     createParamsForFileUpload,
 } from '#rest';
 import _cs from '#cs';
+import _ts from '#ts';
 
 import SelectionItem from './SelectionItem';
 import styles from './styles.scss';
@@ -98,9 +99,9 @@ export default class MultiDocumentUploader extends React.PureComponent {
                     () => this.props.onPending(true),
                 );
             })
-            .postSession((totalErrors) => {
+            .postSession(() => {
                 // FIXME: handle errors properly
-                console.warn('Total errors:', totalErrors);
+                // console.warn('Total errors:', totalErrors);
                 this.setState(
                     { pending: false },
                     () => this.props.onPending(false),
@@ -304,7 +305,7 @@ export default class MultiDocumentUploader extends React.PureComponent {
                         <div className={styles.urlContainer}>
                             <TextInput
                                 className={styles.urlInput}
-                                placeholder="External Link"
+                                placeholder={_ts('components.multiDocumentUploader', 'externalLinkLabel')}
                                 value={urlValue}
                                 onChange={this.handleUrlChange}
                                 showLabel={false}
@@ -333,7 +334,7 @@ export default class MultiDocumentUploader extends React.PureComponent {
                             value=""
                         >
                             <span
-                                title="Upload file(s)"
+                                title={_ts('components.multiDocumentUploader', 'uploadFilesLabel')}
                                 className={iconNames.upload}
                             />
                         </FileInput>
@@ -345,7 +346,7 @@ export default class MultiDocumentUploader extends React.PureComponent {
                             <LoadingAnimation className={styles.loadingAnimation} />
                         </div>
                         <div className={styles.pendingMessage}>
-                            Uploading file(s)
+                            {_ts('components.multiDocumentUploader', 'uploadingFilesLabel')}
                         </div>
                     </div>
                 )}
@@ -356,7 +357,7 @@ export default class MultiDocumentUploader extends React.PureComponent {
                             onDrop={this.handleFileAdd}
                             disabled={disabled || readOnly}
                         >
-                            Drop file(s) here to upload
+                            {_ts('components.multiDocumentUploader', 'dropFilesHereLabel')}
                         </DropZone>
                     )}
                     <ListView
