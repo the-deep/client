@@ -2,6 +2,20 @@
 
 $height-additional-documents: 250px;
 
+%section-basic {
+    display: flex;
+    flex-direction: column;
+
+    >.header {
+        flex-shrink: 0;
+    }
+
+    >.content {
+        display: flex;
+        flex-grow: 1;
+    }
+}
+
 .metadata {
     display: flex;
     position: relative;
@@ -26,7 +40,7 @@ $height-additional-documents: 250px;
                 border-bottom: $width-separator-thin solid $color-separator;
                 height: 100%;
 
-                .content {
+                >.content {
                     overflow-x: auto;
 
                     .widget-group {
@@ -42,7 +56,7 @@ $height-additional-documents: 250px;
                             color: $color-accent;
                         }
 
-                        .content {
+                        >.content {
                             flex-grow: 1;
                             padding: $spacing-medium;
                             overflow-y: auto;
@@ -69,8 +83,8 @@ $height-additional-documents: 250px;
             .additional-documents {
                 @extend %section-basic;
                 flex-shrink: 0;
-                border-top: 2px solid $color-separator;
-                height: $height-additional-documents;
+                border-top: $width-separator-medium solid $color-separator;
+                height: 100%;
 
                 .header {
                     flex-shrink: 0;
@@ -83,31 +97,21 @@ $height-additional-documents: 250px;
                     }
                 }
 
-                .content {
+                >.content {
+                    display: flex;
+                    flex-grow: 1;
                     padding: 0 $spacing-medium;
+                    overflow: auto;
 
                     .baksa {
-                        flex-basis: calc(100% / 3);
+                        flex-grow: 0;
+                        flex-shrink: 0;
                         padding: $spacing-medium;
+                        width: 25%;
                     }
                 }
             }
         }
     }
-
-    %section-basic {
-        display: flex;
-        flex-direction: column;
-
-        >.header {
-            flex-shrink: 0;
-        }
-
-        >.content {
-            display: flex;
-            flex-grow: 1;
-        }
-    }
-
 
 }

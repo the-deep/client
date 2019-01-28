@@ -2,8 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import produce from 'immer';
 
-import PrimaryButton from '#rsca/Button/PrimaryButton';
+import Button from '#rsca/Button';
 import { FaramInputElement } from '#rscg/FaramElements';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import DropZone from '#rsci/DropZone';
 import FileInput from '#rsci/FileInput';
 import HintAndError from '#rsci/HintAndError';
@@ -13,6 +14,8 @@ import { randomString } from '#rsu/common';
 import { CoordinatorBuilder } from '#rsu/coordinate';
 import urlRegex from '#rsu/regexForWeburl';
 import { UploadBuilder } from '#rsu/upload';
+import Label from '#rsci/Label';
+import { iconNames } from '#constants';
 import {
     urlForUpload,
     createParamsForFileUpload,
@@ -79,9 +82,12 @@ export default class MultiDocumentUploader extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        this.dragEnterCount = 0;
+
         this.state = {
             pending: false,
             urlValue: undefined,
+            isBeingDraggedOver: false,
         };
 
         this.uploadCoordinator = new CoordinatorBuilder()
@@ -93,6 +99,7 @@ export default class MultiDocumentUploader extends React.PureComponent {
                 );
             })
             .postSession((totalErrors) => {
+                // FIXME: handle errors properly
                 console.warn('Total errors:', totalErrors);
                 this.setState(
                     { pending: false },
@@ -104,6 +111,22 @@ export default class MultiDocumentUploader extends React.PureComponent {
 
     componentWillUnmount() {
         this.uploadCoordinator.stop();
+    }
+
+    handleDragEnter = () => {
+        if (this.dragEnterCount === 0) {
+            this.setState({ isBeingDraggedOver: true });
+        }
+
+        this.dragEnterCount += 1;
+    }
+
+    handleDragLeave = () => {
+        this.dragEnterCount -= 1;
+
+        if (this.dragEnterCount === 0) {
+            this.setState({ isBeingDraggedOver: false });
+        }
     }
 
     handleUrlChange = (value) => {
@@ -125,6 +148,9 @@ export default class MultiDocumentUploader extends React.PureComponent {
     }
 
     handleFileAdd = (files) => {
+        this.dragEnterCount = 0;
+        this.setState({ isBeingDraggedOver: false });
+
         files.forEach((file) => {
             const key = randomString();
             const uploader = new UploadBuilder()
@@ -152,6 +178,13 @@ export default class MultiDocumentUploader extends React.PureComponent {
                             endPage: pages,
                         },
                     ]);
+                    this.uploadCoordinator.notifyComplete(key);
+                })
+                .fatal(() => {
+                    this.uploadCoordinator.notifyComplete(key, true);
+                })
+                .failure(() => {
+                    this.uploadCoordinator.notifyComplete(key, true);
                 })
                 .build();
             this.uploadCoordinator.add(key, uploader);
@@ -167,7 +200,7 @@ export default class MultiDocumentUploader extends React.PureComponent {
             );
             safeValue.splice(index, 1);
         });
-        return newValue;
+        this.props.onChange(newValue);
     }
 
     handleStartPageChange = (key, startPageValue) => {
@@ -179,7 +212,7 @@ export default class MultiDocumentUploader extends React.PureComponent {
             // eslint-disable-next-line no-param-reassign
             safeValue[index].startPage = startPageValue;
         });
-        return newValue;
+        this.props.onChange(newValue);
     }
 
     handleEndPageChange = (key, endPageValue) => {
@@ -191,7 +224,7 @@ export default class MultiDocumentUploader extends React.PureComponent {
             // eslint-disable-next-line no-param-reassign
             safeValue[index].endPage = endPageValue;
         });
-        return newValue;
+        this.props.onChange(newValue);
     }
 
     rendererParamsForSelection = (key, item) => ({
@@ -209,11 +242,13 @@ export default class MultiDocumentUploader extends React.PureComponent {
         onRemoveClick: this.handleRemoveClick,
         onStartPageChange: this.handleStartPageChange,
         onEndPageChange: this.handleEndPageChange,
+
+        className: styles.selectionItem,
     });
 
     render() {
         const {
-            className,
+            className: classNameFromProps,
             showLabel,
             label,
 
@@ -232,68 +267,103 @@ export default class MultiDocumentUploader extends React.PureComponent {
         const {
             urlValue,
             pending,
+            isBeingDraggedOver,
         } = this.state;
+
+        const className = _cs(
+            classNameFromProps,
+            styles.multiDocumentUploader,
+            'multi-document-uploader',
+        );
+
+        const isValueEmpty = value.length === 0;
+        const showDropZone = showFileInput
+            && (isValueEmpty || isBeingDraggedOver)
+            && !pending;
 
         // TODO: transfer error accordingly
 
         return (
-            <div className={className}>
-                { showLabel &&
-                    <div className={_cs(styles.label, 'labe')}>
-                        {label}
-                    </div>
-                }
-                { showUrlInput &&
-                    <div className={styles.urlBox}>
-                        <TextInput
-                            className={styles.urlInput}
-                            hint="External Link"
-                            value={urlValue}
-                            onChange={this.handleUrlChange}
-                            showHintAndError={false}
-                            disabled={disabled}
-                            readOnly={readOnly}
-                        />
-                        <PrimaryButton
-                            className={styles.action}
-                            onClick={this.handleUrlAdd}
-                            disabled={
-                                disabled || readOnly || !(
+            <div
+                className={className}
+                onDragEnter={this.handleDragEnter}
+                onDragLeave={this.handleDragLeave}
+            >
+                <Label
+                    className={_cs(styles.label, 'label')}
+                    show={showLabel}
+                    text={label}
+                />
+                <div className={styles.top}>
+                    { showUrlInput && (
+                        <div className={styles.urlContainer}>
+                            <TextInput
+                                className={styles.urlInput}
+                                placeholder="External Link"
+                                value={urlValue}
+                                onChange={this.handleUrlChange}
+                                showLabel={false}
+                                showHintAndError={false}
+                                disabled={disabled}
+                                readOnly={readOnly}
+                            />
+                            <Button
+                                className={styles.addButton}
+                                onClick={this.handleUrlAdd}
+                                iconName={iconNames.add}
+                                disabled={disabled || readOnly || !(
                                     urlValue && isUrlValid(urlValue)
-                                )
-                            }
-                        >
-                            Add
-                        </PrimaryButton>
-                    </div>
-                }
-                { showFileInput &&
-                    <DropZone
-                        className={styles.dropZone}
-                        onDrop={this.handleFileAdd}
-                        disabled={disabled || readOnly}
-                    >
+                                )}
+                            />
+                        </div>
+                    )}
+                    { showFileInput && (
                         <FileInput
                             className={styles.fileInput}
                             onChange={this.handleFileAdd}
                             showStatus={false}
                             disabled={disabled || readOnly}
                             accept={acceptFileTypes}
+                            multiple
                             value=""
                         >
-                            {/* NOTE: Empty value prop cancels the selection automatically */}
-                            Drop a file or click to select
+                            <span
+                                title="Upload file(s)"
+                                className={iconNames.upload}
+                            />
                         </FileInput>
-                    </DropZone>
-                }
-                { pending && 'Uploading file ...' }
-                <ListView
-                    data={value}
-                    keySelector={MultiDocumentUploader.keySelectorForSelection}
-                    rendererParams={this.rendererParamsForSelection}
-                    renderer={SelectionItem}
-                />
+                    )}
+                </div>
+                { pending && (
+                    <div className={styles.pendingMessage}>
+                        <div className={styles.loadingAnimationWrapper}>
+                            <LoadingAnimation className={styles.loadingAnimation} />
+                        </div>
+                        <div className={styles.pendingMessage}>
+                            Uploading file(s)
+                        </div>
+                    </div>
+                )}
+                <div className={styles.content}>
+                    { showDropZone && (
+                        <DropZone
+                            className={styles.dropZone}
+                            onDrop={this.handleFileAdd}
+                            disabled={disabled || readOnly}
+                        >
+                            Drop file(s) here to upload
+                        </DropZone>
+                    )}
+                    <ListView
+                        className={styles.selectionItems}
+                        data={value}
+                        keySelector={MultiDocumentUploader.keySelector}
+                        rendererParams={this.rendererParamsForSelection}
+                        renderer={SelectionItem}
+                    />
+                </div>
                 <HintAndError
+                    className={styles.hintAndError}
                     show={showHintAndError}
                     error={error}
                     hint={hint}
