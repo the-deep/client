@@ -139,6 +139,7 @@
         "fs": "^0.0.1-security",
         "google-charts": "^1.5.0",
         "hoist-non-react-statics": "^2.5.0",
+        "immer": "^1.12.1",
         "immutability-helper": "^2.7.0",
         "jwt-decode": "^2.2.0",
         "localforage": "^1.7.1",
