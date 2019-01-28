@@ -184,7 +184,7 @@ export default class AssistedTagging extends React.PureComponent {
         });
     }
 
-    handleHighlightClick = (e, activeHighlightDetails) => {
+    handleHighlightClick = (e, { text, highlight }) => {
         if (this.primaryContainer) {
             this.primaryContainerRect = this.primaryContainer.getBoundingClientRect();
         }
@@ -192,7 +192,10 @@ export default class AssistedTagging extends React.PureComponent {
         this.setState({
             showAssistant: true,
             activeHighlightRef: e.target,
-            activeHighlightDetails,
+            activeHighlightDetails: {
+                ...highlight,
+                text,
+            },
         });
     }
 
@@ -401,13 +404,10 @@ export default class AssistedTagging extends React.PureComponent {
             key: `${start}`, // Assuming start position of each classification is unique
             start,
             end,
-            item: {
-                ...otherProps,
-                key: `${start}`,
-                label,
-                color: getHexFromString(label),
-                source: _ts('components.assistedTagging', 'sourceNLP'),
-            },
+            label,
+            color: getHexFromString(label),
+            source: _ts('components.assistedTagging', 'sourceNLP'),
+            ...otherProps,
         }));
 
         return highlights;
@@ -429,13 +429,10 @@ export default class AssistedTagging extends React.PureComponent {
             key: `${keyword.start}`, // Assuming start position of each classification is unique
             start: keyword.start,
             end: keyword.length + keyword.start,
-            item: {
-                key: `${keyword.start}`,
-                label: keyword.entity,
-                color: getHexFromString(keyword.entity),
-                source: _ts('components.assistedTagging', 'sourceNER'),
-                details: keyword.entity,
-            },
+            label: keyword.entity,
+            color: getHexFromString(keyword.entity),
+            source: _ts('components.assistedTagging', 'sourceNER'),
+            details: keyword.entity,
         }));
 
         return highlights;
@@ -457,13 +454,10 @@ export default class AssistedTagging extends React.PureComponent {
             key: `${keyword.start}`, // Assuming start position of each classification is unique
             start: keyword.start,
             end: keyword.start + keyword.length,
-            item: {
-                key: `${keyword.start}`, // Assuming start position of each classification is unique
-                label: keyword.subcategory,
-                color: getHexFromString(keyword.subcategory),
-                source: _ts('components.assistedTagging', 'sourceCE'),
-                details: keyword.subcategory,
-            },
+            label: keyword.subcategory,
+            color: getHexFromString(keyword.subcategory),
+            source: _ts('components.assistedTagging', 'sourceCE'),
+            details: keyword.subcategory,
         }));
         return highlights;
     }
