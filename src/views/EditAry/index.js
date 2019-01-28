@@ -237,6 +237,7 @@ export default class EditAry extends React.PureComponent {
         this.state = {
             noTemplate: false,
             activeSector: undefined,
+            pendingUploads: {},
         };
 
         this.props.setDefaultRequestParams({
@@ -249,6 +250,16 @@ export default class EditAry extends React.PureComponent {
             ? !assessmentPermissions.modify
             : !assessmentPermissions.create
     )
+
+    handleUploadPending = (key, value) => {
+        this.setState(state => ({
+            ...state,
+            pendingUploads: {
+                ...state.pendingUploads,
+                [key]: value,
+            },
+        }));
+    }
 
     handleActiveSectorChange = (activeSector) => {
         this.setState({ activeSector });
@@ -326,6 +337,7 @@ export default class EditAry extends React.PureComponent {
         const {
             noTemplate,
             activeSector,
+            pendingUploads,
         } = this.state;
 
         if (noTemplate) {
@@ -352,6 +364,8 @@ export default class EditAry extends React.PureComponent {
             : (leadGroupRequest.response.leads || []).map(lead => lead.title).join(',');
 
         const shouldHidePrompt = editAryIsPristine;
+
+        const uploadPending = Object.keys(pendingUploads).some(key => pendingUploads[key]);
 
         return (
             <div className={styles.editAssessment}>
@@ -380,7 +394,11 @@ export default class EditAry extends React.PureComponent {
                         render={
                             <div className={styles.actionButtons}>
                                 <DangerButton
-                                    disabled={editAryIsPristine || assessmentRequest.pending}
+                                    disabled={
+                                        editAryIsPristine
+                                            || assessmentRequest.pending
+                                            || uploadPending
+                                    }
                                     onClick={this.handleCancelButtonClick}
                                 >
                                     { _ts('editAssessment', 'cancelButtonTitle') }
@@ -392,6 +410,7 @@ export default class EditAry extends React.PureComponent {
                                         editAryIsPristine
                                             || editAryHasErrors
                                             || assessmentRequest.pending
+                                            || uploadPending
                                     }
                                 >
                                     { _ts('editAssessment', 'saveButtonTitle') }
@@ -418,6 +437,7 @@ export default class EditAry extends React.PureComponent {
                                 render={
                                     <RightPanel
                                         onActiveSectorChange={this.handleActiveSectorChange}
+                                        onUploadPending={this.handleUploadPending}
                                         pending={
                                             arySaveRequest.pending || assessmentRequest.pending
                                         }

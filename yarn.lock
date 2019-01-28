@@ -5547,10 +5547,10 @@ immediate@~3.0.5:
   resolved "https://registry.yarnpkg.com/immediate/-/immediate-3.0.6.tgz#9db1dbd0faf8de6fbe0f5dd5e56bb606280de69b"
   integrity sha1-nbHb0Pr43m++D13V5Wu2BigN5ps=
 
-immer@^1.11.0:
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/immer/-/immer-1.11.0.tgz#7fe413261b59727c3ad02e22e8ecfdd2d0ab60b9"
-  integrity sha512-km4oPFNJgumn4+PKZ+B6ZCkIeiLx8HvryOmxQHfN8ATPV9jLzweAK0JH9T8mplDLyrUi1xlGLYlAO7wDYpTV9w==
+immer@^1.12.1:
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-1.12.1.tgz#40c6e5b292c00560836c2993bda3a24379d466f5"
+  integrity sha512-3fmKM6ovaqDt0CdC9daXpNi5x/YCYS3i4cwLdTVkhJdk5jrDXoPs7lCm3IqM3yhfSnz4tjjxbRG2CziQ7m8ztg==
 
 immutability-helper@^2.7.0:
   version "2.7.0"

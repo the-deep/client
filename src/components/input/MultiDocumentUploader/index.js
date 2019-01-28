@@ -58,8 +58,8 @@ const defaultProps = {
 
     showLabel: true,
     showHintAndError: true,
-    showPageRange: true,
-    showUrlInput: true,
+    showPageRange: false,
+    showUrlInput: false,
     showFileInput: true,
 
     acceptFileTypes: undefined,
