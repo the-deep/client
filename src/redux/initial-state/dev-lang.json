@@ -895,7 +895,20 @@
         "-26663455": "Bar",
         "-84871998": "Table",
         "-50602560": "Word cloud",
-        "-5214537": "Vertical bar chart"
+        "-5214537": "Vertical bar chart",
+        "-39031808": "There is no header in this sheet.",
+        "-78760514": "Tabular book",
+        "-14762237": "No regions were selected.",
+        "-78572254": "Invalid region",
+        "-77224022": "Preview",
+        "-84081563": "Hide",
+        "-61786851": "Headers",
+        "-4174557": "Open Tabular",
+        "-73878868": "There are no sheets to show.",
+        "-5279830": "Sheet Title",
+        "-28248947": "Column Title",
+        "-18101242": "Date Format",
+        "-25703789": "Cell tooltip {index}"
     },
     "links": {
         "browserExtension": {
@@ -2327,7 +2340,8 @@
             "removeCellButtonTitle": -53055304,
             "cancelConfirmMessage": -14675920,
             "addRowsFromTitle": -39845084,
-            "addCellsFromTitle": -50010134
+            "addCellsFromTitle": -50010134,
+            "unnamedCellTooltip": 733
         },
         "widgets.editor.matrix2d": {
             "atLeastOneError": 1007,
@@ -2527,6 +2541,39 @@
             "tableVizLabel": -84871998,
             "vBarChartVizLabel": -5214537,
             "wordCloudVizLabel": -50602560
+        },
+        "components.dashboard": {
+            "alphaLabel": 1238,
+            "betaLabel": 1237,
+            "devLabel": 1240,
+            "nightlyLabel": 1239
+        },
+        "geoViz": {
+            "noRegionSelectedMessage": -14762237,
+            "invalidRegion": -78572254
+        },
+        "tabular.editModal": {
+            "sheetHideLabel": -84081563,
+            "sheetTitleLabel": -5279830,
+            "headersTitle": -61786851,
+            "headerHideLabel": -84081563
+        },
+        "tabular.sheets.date": {
+            "fromPlaceholder": 1009,
+            "toPlaceholder": 1000
+        },
+        "tabular.sheets.number": {
+            "fromPlaceholder": 1009,
+            "toPlaceholder": 1000
+        },
+        "tabular.sheets.string": {
+            "searchPlaceholder": 9
+        },
+        "widgets.editor": {
+            "addAfTitleLabel": 13,
+            "addAfTitlePlaceholder": 361,
+            "afDescriptionLabel": 200,
+            "afDescriptionPlaceholder": 12501
         }
     }
 }
