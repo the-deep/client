@@ -1,0 +1,35 @@
+@import '~base-scss/base';
+
+.selection-item {
+    .top {
+        display: flex;
+        align-items: center;
+
+        .document-link {
+            flex-grow: 1;
+            padding: 0 $spacing-small;
+            overflow: hidden;
+            text-transform: none;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            &:hover {
+                color: $color-accent;
+            }
+        }
+
+        .remove-button {
+            flex-shrink: 0;
+            margin-left: $spacing-small;
+        }
+    }
+
+    .page-range {
+        display: flex;
+        padding: $spacing-small;
+
+        .start-page-input {
+            margin-right: $spacing-small;
+        }
+    }
+}

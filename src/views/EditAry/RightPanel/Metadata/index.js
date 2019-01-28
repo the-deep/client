@@ -14,6 +14,7 @@ import {
 import _ts from '#ts';
 
 import Baksa from '#components/input/Baksa';
+import MultiDocumentUploader from '#components/input/MultiDocumentUploader';
 
 import { renderWidget } from '../widgetUtils';
 import Header from '../Header';
@@ -39,6 +40,10 @@ const mapStateToProps = state => ({
 export default class Metadata extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    handleExecutiveSummaryPending = () => {
+        // console.warn('upload pending');
+    }
 
     renderWidget = (k, data) => renderWidget(k, data, this.props.sources);
 
@@ -106,10 +111,11 @@ export default class Metadata extends React.PureComponent {
                                         className={styles.header}
                                     />
                                     <div className={styles.content}>
-                                        <Baksa
+                                        <MultiDocumentUploader
                                             label={_ts('editAssessment.metadata', 'executiveSummaryTitle')}
                                             className={styles.baksa}
                                             faramElementName="executiveSummary"
+                                            onPending={this.handleExecutiveSummaryPending}
                                             showPageRange
                                             acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
                                         />
