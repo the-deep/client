@@ -908,7 +908,13 @@
         "-5279830": "Sheet Title",
         "-28248947": "Column Title",
         "-18101242": "Date Format",
-        "-25703789": "Cell tooltip {index}"
+        "-25703789": "Cell tooltip {index}",
+        "-54799911": "External Link",
+        "-19937712": "Upload file(s)",
+        "-94673241": "End page",
+        "-62030461": "Start page",
+        "-93329065": "Drop file(s) here to upload",
+        "-16421564": "Uploading file(s)"
     },
     "links": {
         "browserExtension": {
@@ -2574,6 +2580,15 @@
             "addAfTitlePlaceholder": 361,
             "afDescriptionLabel": 200,
             "afDescriptionPlaceholder": 12501
+        },
+        "components.multiDocumentUploader": {
+            "externalLinkLabel": -54799911,
+            "uploadFilesLabel": -19937712,
+            "endPageLabel": -94673241,
+            "startPageLabel": -62030461,
+            "removeButtonLabel": 419,
+            "dropFilesHereLabel": -93329065,
+            "uploadingFilesLabel": -16421564
         }
     }
 }

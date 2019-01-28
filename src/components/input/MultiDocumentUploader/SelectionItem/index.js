@@ -1,14 +1,40 @@
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import NumberInput from '#rsci/NumberInput';
 import iconNames from '#rsk/iconNames';
 import _cs from '#cs';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
+const propTypes = {
+    className: PropTypes.string,
+    selectionKey: PropTypes.string.isRequired,
+    onRemoveClick: PropTypes.func.isRequired,
+    onStartPageChange: PropTypes.func.isRequired,
+    onEndPageChange: PropTypes.func.isRequired,
+    disabled: PropTypes.bool,
+    readOnly: PropTypes.bool,
+    url: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    showPageRange: PropTypes.bool.isRequired,
+    startPage: PropTypes.number.isRequired,
+    endPage: PropTypes.number,
+};
+
+const defaultProps = {
+    className: '',
+    disabled: false,
+    readOnly: false,
+    endPage: undefined,
+};
+
 export default class Selection extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
     handleRemoveClick = () => {
         const {
             selectionKey,
@@ -68,7 +94,7 @@ export default class Selection extends React.PureComponent {
                         iconName={iconNames.close}
                         onClick={this.handleRemoveClick}
                         disabled={disabled || readOnly}
-                        title="Remove"
+                        title={_ts('components.multiDocumentUploader', 'removeButtonLabel')}
                         transparent
                     />
                 </div>
@@ -80,16 +106,15 @@ export default class Selection extends React.PureComponent {
                             onChange={this.handleStartPageChange}
                             disabled={disabled}
                             readOnly={readOnly}
-                            label="Start Page"
+                            label={_ts('components.multiDocumentUploader', 'startPageLabel')}
                             separator=" "
                         />
                         <NumberInput
-                            className={styles.endPageInput}
                             value={endPage}
                             onChange={this.handleEndPageChange}
                             disabled={disabled}
                             readOnly={readOnly}
-                            label="End Page"
+                            label={_ts('components.multiDocumentUploader', 'endPageLabel')}
                             separator=" "
                         />
                     </div>
