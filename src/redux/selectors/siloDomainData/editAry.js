@@ -13,8 +13,6 @@ import {
     requiredCondition,
     dateCondition,
 } from '#rscg/Faram';
-// FIXME: do not import Baksa
-import Baksa from '#components/input/Baksa';
 
 import {
     leadIdFromRouteSelector,
@@ -177,27 +175,35 @@ const createScoreSchema = (scorePillars = [], scoreMatrixPillars = []) => {
 };
 
 const createAdditionalDocumentsSchema = () => {
+    /*
     const {
         bothPageRequiredCondition,
         validPageRangeCondition,
         validPageNumbersCondition,
         pendingCondition,
     } = Baksa;
+    */
 
     const schema = { fields: {
         executiveSummary: [
+            /*
             bothPageRequiredCondition,
             validPageRangeCondition,
             validPageNumbersCondition,
             pendingCondition,
+            */
         ],
-        assessmentData: [pendingCondition],
-        questionnaire: [
+        assessmentData: [
+        /*
+        pendingCondition
+        */],
+        questionnaire: [/*
             bothPageRequiredCondition,
             validPageRangeCondition,
             validPageNumbersCondition,
             pendingCondition,
-        ],
+        */],
+        misc: [],
     } };
     return schema;
 };

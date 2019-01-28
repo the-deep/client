@@ -94,6 +94,7 @@ export default class RightPanel extends React.PureComponent {
                     <Metadata
                         className={styles.metadata}
                         pending={this.props.pending}
+                        onUploadPending={this.props.onUploadPending}
                     />
                 ),
             },
