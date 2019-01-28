@@ -294,7 +294,12 @@ export default class MultiDocumentUploader extends React.PureComponent {
                     show={showLabel}
                     text={label}
                 />
-                <div className={styles.top}>
+                <div
+                    className={_cs(
+                        styles.top,
+                        showUrlInput ? styles.withUrlInput : '',
+                    )}
+                >
                     { showUrlInput && (
                         <div className={styles.urlContainer}>
                             <TextInput
