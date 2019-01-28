@@ -14,7 +14,7 @@ import {
 } from '#rest';
 import _ts from '#ts';
 
-import HighlightedText from './HighlightedText';
+import HighlightedText from '#rscv/HighlightedText';
 import styles from './styles.scss';
 
 const emptyArray = [];
@@ -23,14 +23,15 @@ const highlightsTransformerForText = (highlights, extractedText) => {
     const newHighlights = highlights
         .filter(item => item.text)
         .map((item) => {
-            const { text, key } = item;
+            const { text, key, color } = item;
             const start = extractedText.indexOf(text);
             const end = start + text.length;
             return {
                 key,
                 start,
                 end,
-                item,
+                text,
+                color,
             };
         })
         .filter(h => h.start >= 0)
