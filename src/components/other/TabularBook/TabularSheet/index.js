@@ -3,6 +3,7 @@ import React from 'react';
 import memoize from 'memoize-one';
 
 import Searchable from '#rscv/Taebul/Searchable';
+// import Selectable from '#rscv/Taebul/Selectable';
 import Sortable from '#rscv/Taebul/Sortable';
 import ColumnWidth from '#rscv/Taebul/ColumnWidth';
 import NormalTaebul from '#rscv/Taebul';
@@ -47,6 +48,8 @@ const defaultProps = {
     sheet: {},
 };
 
+// FIXME: don't use compareNumber as it is not exactly basic number type
+// Try generating actual values which can be used for sorting
 const comparators = {
     [DATA_TYPE.string]: compareString,
     [DATA_TYPE.number]: compareNumber,
@@ -88,8 +91,10 @@ export default class TabularSheet extends React.PureComponent {
                 cellRendererParams: this.cellRendererParams,
 
                 cellRenderer: renderers[field.type] || renderers[DATA_TYPE.string],
-                comparator: (a, b, d) => comparators[field.type](
-                    a[field.id].value, b[field.id].value, d,
+                comparator: (a, b, d = 1) => comparators[field.type](
+                    a[field.id].type !== field.type ? undefined : a[field.id].value,
+                    b[field.id].type !== field.type ? undefined : b[field.id].value,
+                    d,
                 ),
             }))
     ));
