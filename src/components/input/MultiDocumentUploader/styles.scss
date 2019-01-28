@@ -1,0 +1,121 @@
+@import '~base-scss/base';
+
+.multi-document-uploader {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    .label {
+        flex-shrink: 0;
+    }
+
+    .top {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+
+        .file-input {
+            padding: 0;
+
+            label {
+                padding: 0;
+                text-transform: none;
+                font-size: $font-size-large;
+            }
+        }
+
+        &.with-url-input {
+            justify-content: space-between;
+
+            .url-container {
+                display: flex;
+                padding: $spacing-small 0;
+
+                .url-input {
+                    flex-grow: 1;
+                }
+
+                .add-button {
+                    position: relative;
+                    flex-shrink: 0;
+                    margin-left: $spacing-small;
+                }
+            }
+
+            .file-input {
+                @include button-like-link($color-primary);
+                margin-left: $spacing-medium;
+                padding: $spacing-extra-small $spacing-small;
+                width: auto;
+                text-transform: none;
+
+            }
+        }
+
+        &:not(.with-url-input) {
+            justify-content: flex-end;
+            margin-top: -$spacing-large;
+
+            .file-input {
+                width: auto;
+                padding: $spacing-extra-small;
+
+                label {
+                    color: $color-primary;
+                }
+            }
+        }
+    }
+
+    .pending-message {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+
+        .loading-animation-wrapper {
+            position: relative;
+            width: $font-size-medium;
+            height: $font-size-medium;
+
+            .loading-animation {
+                padding: 0 !important;
+                font-size: $font-size-medium !important;
+            }
+        }
+
+        .pending-message {
+            padding: 0 $spacing-small;
+        }
+    }
+
+    .content {
+        display: flex;
+        position: relative;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow: auto;
+
+        .drop-zone {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: $color-foreground;
+            width: 100%;
+            height: 100%;
+        }
+
+        .selection-items {
+            flex-grow: 1;
+            overflow: auto;
+
+            .selection-item {
+                margin-bottom: $spacing-small;
+                background-color: $color-background-input;
+            }
+        }
+    }
+
+    .hint-and-error {
+        flex-shrink: 0;
+    }
+}

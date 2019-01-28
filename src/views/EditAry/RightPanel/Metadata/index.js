@@ -14,6 +14,7 @@ import {
 import _ts from '#ts';
 
 import Baksa from '#components/input/Baksa';
+import MultiDocumentUploader from '#components/input/MultiDocumentUploader';
 
 import { renderWidget } from '../widgetUtils';
 import Header from '../Header';
@@ -39,6 +40,22 @@ const mapStateToProps = state => ({
 export default class Metadata extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    handleExecutiveSummaryPending = (value) => {
+        this.props.onUploadPending('executiveSummary', value);
+    }
+
+    handleQuestionnairePending = (value) => {
+        this.props.onUploadPending('questionnaire', value);
+    }
+
+    handleMiscPending = (value) => {
+        this.props.onUploadPending('misc', value);
+    }
+
+    handleAssessmentDataPending = (value) => {
+        this.props.onUploadPending('assessmentData', value);
+    }
 
     renderWidget = (k, data) => renderWidget(k, data, this.props.sources);
 
@@ -106,31 +123,35 @@ export default class Metadata extends React.PureComponent {
                                         className={styles.header}
                                     />
                                     <div className={styles.content}>
-                                        <Baksa
+                                        <MultiDocumentUploader
                                             label={_ts('editAssessment.metadata', 'executiveSummaryTitle')}
                                             className={styles.baksa}
                                             faramElementName="executiveSummary"
                                             showPageRange
                                             acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
+                                            onPending={this.handleExecutiveSummaryPending}
                                         />
-                                        <Baksa
+                                        <MultiDocumentUploader
                                             label={_ts('editAssessment.metadata', 'assessmentDatabaseTitle')}
                                             className={styles.baksa}
                                             faramElementName="assessmentData"
-                                            acceptUrl
+                                            showUrlInput
                                             acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
+                                            onPending={this.handleAssessmentDataPending}
                                         />
-                                        <Baksa
+                                        <MultiDocumentUploader
                                             label={_ts('editAssessment.metadata', 'questionnaireTitle')}
                                             className={styles.baksa}
                                             faramElementName="questionnaire"
                                             showPageRange
                                             acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
+                                            onPending={this.handleQuestionnairePending}
                                         />
-                                        <Baksa
+                                        <MultiDocumentUploader
                                             label={_ts('editAssessment.metadata', 'miscTitle')}
                                             className={styles.baksa}
                                             faramElementName="misc"
+                                            onPending={this.handleMiscPending}
                                         />
                                     </div>
                                 </div>
