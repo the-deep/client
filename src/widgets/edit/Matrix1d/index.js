@@ -99,6 +99,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                 fields: {
                                     key: [requiredCondition],
                                     value: [requiredCondition],
+                                    tooltip: [],
                                 },
                             },
                         },
