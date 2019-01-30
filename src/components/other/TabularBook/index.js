@@ -13,7 +13,14 @@ import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import update from '#rsu/immutable-update';
-import { listToMap, isNotDefined } from '#rsu/common';
+import {
+    listToMap,
+    isNotDefined,
+    mapToMap,
+    mapToList,
+    randomString,
+} from '#rsu/common';
+import { zipWith } from '#rsu/functional';
 
 import Cloak from '#components/general/Cloak';
 import TriggerAndPoll from '#components/general/TriggerAndPoll';
@@ -81,6 +88,23 @@ const requests = {
     },
 };
 
+const transformSheet = (sheet) => {
+    const { data: { columns }, ...other } = sheet;
+
+    const getObjFromZippedRows = (...zippedRow) => mapToMap(
+        columns,
+        k => k,
+        (k, v, i) => zippedRow[i],
+    );
+
+    const rows = zipWith(getObjFromZippedRows, ...mapToList(columns));
+
+    return {
+        rows: [...rows].map(obj => ({ key: randomString(), ...obj })),
+        ...other,
+    };
+};
+
 @RequestClient(requests)
 export default class TabularBook extends React.PureComponent {
     static propTypes = propTypes;
@@ -104,7 +128,13 @@ export default class TabularBook extends React.PureComponent {
         const sheets = listToMap(
             response.sheets,
             sheet => sheet.id,
-            sheet => ({ ...sheet, options: { ...sheet.options, defaultColumnWidth: 250 } }),
+            sheet => ({
+                ...transformSheet(sheet),
+                options: {
+                    ...sheet.options,
+                    defaultColumnWidth: 250,
+                },
+            }),
         );
 
         const tabs = listToMap(

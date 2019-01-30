@@ -42,6 +42,7 @@ const isValidGeo = ({ type, geodata }) => (
 const healthColorScheme = [
     '#41cf76',
     '#f44336',
+    '#aaaaa',
 ];
 
 const healthBarValueSelector = x => x;

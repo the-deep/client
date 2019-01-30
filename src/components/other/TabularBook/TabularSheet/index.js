@@ -37,7 +37,7 @@ const propTypes = {
     className: PropTypes.string,
     sheet: PropTypes.shape({
         fields: PropTypes.array,
-        data: PropTypes.array,
+        rows: PropTypes.array,
         options: PropTypes.object,
     }),
     onSheetChange: PropTypes.func.isRequired,
@@ -92,15 +92,20 @@ export default class TabularSheet extends React.PureComponent {
 
                 cellRenderer: renderers[field.type] || renderers[DATA_TYPE.string],
                 comparator: (a, b, d = 1) => comparators[field.type](
-                    a[field.id].type !== field.type ? undefined : a[field.id].value,
-                    b[field.id].type !== field.type ? undefined : b[field.id].value,
+                    a[field.id].invalid || a[field.id].empty ? undefined : a[field.id].value,
+                    b[field.id].invalid || b[field.id].empty ? undefined : b[field.id].value,
                     d,
                 ),
             }))
     ));
 
     headerRendererParams = ({ column, columnKey, data = [] }) => {
-        const validCount = data.filter(x => x[columnKey].type === column.value.type).length;
+        const [invalidCount, emptyCount] = data.reduce(
+            ([inv, emp], x) =>
+                (x[columnKey].invalid ? [inv + 1, emp] : [inv, emp + x[columnKey].empty ? 1 : 0]),
+            [0, 0],
+        );
+        const validCount = data.length - invalidCount - emptyObject;
 
         const {
             sheet: {
@@ -119,7 +124,7 @@ export default class TabularSheet extends React.PureComponent {
             onSortClick: column.onSortClick,
             className: styles.header,
             // FIXME: shouldn't create objects on the fly
-            statusData: [validCount, data.length - validCount],
+            statusData: [validCount, invalidCount, emptyCount],
             filterValue: searchTerm[columnKey],
             filterComponent: (
                 filterRenderers[column.value.type] || filterRenderers[DATA_TYPE.string]
@@ -131,7 +136,8 @@ export default class TabularSheet extends React.PureComponent {
         className: _cs(styles[type], styles.cell),
         value: datum[id].value,
         options,
-        invalid: type !== DATA_TYPE.string && datum[id].type !== type,
+        invalid: datum[id].invalid,
+        empty: datum[id].empty,
     })
 
     handleFieldValueChange = (key, value) => {
@@ -219,7 +225,7 @@ export default class TabularSheet extends React.PureComponent {
         return (
             <Taebul
                 className={_cs(className, styles.tabularSheet, 'tabular-sheet')}
-                data={sheet.data}
+                data={sheet.rows}
                 settings={sheet.options}
                 keySelector={TabularSheet.keySelector}
                 columns={columns}
