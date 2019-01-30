@@ -66,7 +66,20 @@ const transformSheet = (sheet) => {
             const emptyCount = value.filter(x => x.empty).length;
             const totalCount = value.length;
             return {
-                healthBar: [totalCount - emptyCount - invalidCount, invalidCount, emptyCount],
+                healthBar: [
+                    {
+                        key: 'valid',
+                        value: totalCount - emptyCount - invalidCount,
+                    },
+                    {
+                        key: 'invalid',
+                        value: invalidCount,
+                    },
+                    {
+                        key: 'empty',
+                        value: emptyCount,
+                    },
+                ],
             };
         },
     );

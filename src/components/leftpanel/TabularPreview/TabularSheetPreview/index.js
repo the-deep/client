@@ -8,7 +8,7 @@ const propTypes = {
     className: PropTypes.string,
     sheet: PropTypes.shape({
         fields: PropTypes.array,
-        data: PropTypes.array,
+        data: PropTypes.object,
         options: PropTypes.object,
     }),
     onClick: PropTypes.func.isRequired,
