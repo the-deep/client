@@ -915,7 +915,9 @@
         "-62030461": "Start page",
         "-93329065": "Drop file(s) here to upload",
         "-16421564": "Uploading file(s)",
-        "-25703789": "Cell tooltip {index}"
+        "-25703789": "Cell tooltip {index}",
+        "-50910995": "Looks like your project doesn't have any lead groups.",
+        "-27964979": "Looks like there are no lead groups that match your filtering criteria. Try changing what you're looking for and search again."
     },
     "links": {
         "browserExtension": {
@@ -2598,6 +2600,10 @@
             "addAfTitlePlaceholder": 361,
             "afDescriptionLabel": 200,
             "afDescriptionPlaceholder": 12501
+        },
+        "leadgroups": {
+            "emptyMessage": -50910995,
+            "emptyWithFilterMessage": -27964979
         }
     }
 }
