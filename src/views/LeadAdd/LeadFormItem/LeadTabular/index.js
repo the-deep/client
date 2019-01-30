@@ -7,6 +7,8 @@ import Wizard from '#rscv/Wizard';
 import _ts from '#ts';
 import _cs from '#cs';
 
+import { RequestCoordinator } from '#request';
+
 import FileTypeSelectionPage from './FileTypeSelectionPage';
 import AttributesPage from './AttributesPage';
 import styles from './styles.scss';
@@ -25,8 +27,7 @@ const defaultProps = {
 };
 
 
-// TODO: It might be better to delete the temporary book
-// from server when cancelled.
+@RequestCoordinator
 export default class LeadTabular extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
