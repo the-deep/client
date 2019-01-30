@@ -893,10 +893,9 @@
         "-53408079": "Back",
         "-39430073": "Close",
         "-24457818": "Sectors",
-        "-26663455": "Bar",
-        "-84871998": "Table",
+        "-26663455": "Horizontal bar",
         "-50602560": "Word cloud",
-        "-5214537": "Vertical bar chart",
+        "-5214537": "Vertical bar",
         "-39031808": "There is no header in this sheet.",
         "-78760514": "Tabular book",
         "-14762237": "No regions were selected.",
@@ -2553,11 +2552,10 @@
             "regionCloneWarning": -61910224
         },
         "components.viz.dataSeries": {
-            "barChartVizLabel": -26663455,
-            "geoVizLabel": -50186668,
-            "tableVizLabel": -84871998,
-            "vBarChartVizLabel": -5214537,
-            "wordCloudVizLabel": -50602560
+            "verticalBarChartLabel": -5214537,
+            "horizontalBarChartLabel": -26663455,
+            "geoLabel": -50186668,
+            "wordCloudLabel": -50602560
         },
         "components.dashboard": {
             "alphaLabel": 1238,

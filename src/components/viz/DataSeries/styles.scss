@@ -3,12 +3,12 @@
 .data-series {
     display: flex;
     flex-direction: column;
+    overflow: auto;
 
     .header {
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        border: 1px solid red;
 
         .heading {
             flex-grow: 1;
@@ -24,9 +24,19 @@
         }
     }
 
-    .preview {
+    .content {
+        display: flex;
+        flex-direction: column;
         flex-grow: 1;
         overflow: auto;
+
+        .vertical-bar-chart,
+        .horizontal-bar-chart,
+        .geo-visualization,
+        .word-cloud {
+            flex-grow: 1;
+            overflow: auto;
+        }
     }
 
     .chart {
@@ -39,22 +49,6 @@
             .line {
                 stroke: $color-accent;
             }
-        }
-    }
-
-    .table {
-        display: grid;
-        border: $width-separator-thin solid $color-separator;
-        overflow: auto;
-        grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
-        grid-auto-rows: max-content;
-
-        .table-item {
-            border: $width-separator-thin solid $color-separator;
-            padding: $spacing-extra-small $spacing-small;
-            overflow:hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
     }
 }

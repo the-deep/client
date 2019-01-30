@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 
-import ListView from '#rscv/List/ListView';
+import MultiViewContainer from '#rscv/MultiViewContainer';
 import GeoViz from '#components/geo/GeoViz';
 import RotatingInput from '#rsci/RotatingInput';
 import HorizontalBar from '#rscz/HorizontalBar';
@@ -32,142 +32,165 @@ const defaultProps = {
     },
 };
 
-const chartsMargin = {
+const chartMargins = {
     top: 2,
     right: 2,
     bottom: 2,
     left: 2,
 };
 
+const seriesKeySelector = d => d.key;
+const sizeSelector = d => d.size;
+const chartsLabelSelector = d => d.text;
+const horizontalBarTextSelector = () => '';
+const tooltipSelector = d => `<span>${d.text}</span>`;
+const rotatingInputKeySelector = d => d.key;
+const rotatingInputLabelSelector = d => d.label;
+
+const GRAPH = {
+    horizontalBarChart: 'horizontal-bar-chart',
+    verticalBarChart: 'vertical-bar-chart',
+    wordCloud: 'world-cloud',
+    geo: 'geo',
+};
+
+const GRAPH_MODES = {
+    string: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart, GRAPH.wordCloud],
+    number: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart, GRAPH.wordCloud],
+    datetime: [GRAPH.horizontalBarChart],
+    geo: [GRAPH.geo],
+};
+
+
+const GRAPH_LABELS = {
+    [GRAPH.horizontalBarChart]: <span>{_ts('components.viz.dataSeries', 'horizontalBarChartLabel')}</span>,
+    [GRAPH.verticalBarChart]: <span>{_ts('components.viz.dataSeries', 'verticalBarChartLabel')}</span>,
+    [GRAPH.wordCloud]: <span>{_ts('components.viz.dataSeries', 'wordCloudLabel')}</span>,
+    [GRAPH.geo]: <span>{_ts('components.viz.dataSeries', 'geoLabel')}</span>,
+};
+
+
 export default class DataSeries extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-    static seriesKeySelector = d => d.key;
-    static sizeSelector = d => d.size;
-    static chartsLabelSelector = d => d.text;
-    static horizontalBarTextSelector = () => '';
-    static tooltipSelector = d => `<span>${d.text}</span>`;
 
-    static rotatingInputKeySelector = d => d.key;
-    static rotatingInputLabelSelector = d => d.label;
+    constructor(props) {
+        super(props);
 
-    static renderTableItem = ({ value }) => (
-        <div
-            className={styles.tableItem}
-            title={value}
-        >
-            {value}
-        </div>
-    )
+        const commonRendererParams = {
+            valueSelector: sizeSelector,
+            showTooltip: true,
+            margins: chartMargins,
+            tooltipSelector,
+            labelSelector: chartsLabelSelector,
+        };
 
-    static renderTableParams = (key, item) => ({ ...item })
+        this.views = {
+            [GRAPH.horizontalBarChart]: {
+                component: HorizontalBar,
+                rendererParams: () => {
+                    const { value: { data } } = this.props;
+                    return {
+                        className: styles.horizontalBarChart,
+                        data: this.getNumberCountSeries(data),
+                        valueLabelFormat: horizontalBarTextSelector,
+                        ...commonRendererParams,
+                    };
+                },
+            },
+            [GRAPH.verticalBarChart]: {
+                component: VerticalBarChart,
+                rendererParams: () => {
+                    const { value: { data } } = this.props;
 
-    static modes = {
-        string: ['table', 'barChart', 'vBarChart', 'wordCloud'],
-        number: ['table', 'barChart', 'vBarChart', 'wordCloud'],
-        datetime: ['table'],
-        geo: ['table', 'geo'],
-    }
+                    return {
+                        className: styles.verticalBarChart,
+                        data: this.getNumberCountSeries(data),
+                        ...commonRendererParams,
+                    };
+                },
+            },
+            [GRAPH.geo]: {
+                component: GeoViz,
+                rendererParams: () => {
+                    const { value: { geodata } } = this.props;
+                    const { regions } = geodata;
 
-    static modesLabel = {
-        table: <span>{_ts('components.viz.dataSeries', 'tableVizLabel')}</span>,
-        barChart: <span>{_ts('components.viz.dataSeries', 'barChartVizLabel')}</span>,
-        vBarChart: <span>{_ts('components.viz.dataSeries', 'vBarChartVizLabel')}</span>,
-        wordCloud: <span>{_ts('components.viz.dataSeries', 'wordCloudVizLabel')}</span>,
-        geo: <span>{_ts('components.viz.dataSeries', 'geoVizLabel')}</span>,
-    }
+                    return {
+                        className: styles.geoVisualization,
+                        regions,
+                        value: this.getGeoValue(geodata),
+                    };
+                },
+            },
+            [GRAPH.wordCloud]: {
+                component: WordCloud,
+                rendererParams: () => {
+                    const { value: { data } } = this.props;
 
-    state = {
-        mode: 'table',
+                    return {
+                        className: styles.wordCloud,
+                        data: this.getWordCountSeries(data),
+                        fontSizeSelector: sizeSelector,
+                    };
+                },
+            },
+        };
+
+        this.state = {
+            activeView: GRAPH.horizontalBarChart,
+        };
     }
 
     getSegmentOptions = memoize(type => (
-        DataSeries.modes[type].map(
+        GRAPH_MODES[type].map(
             mode => ({
                 key: mode,
-                label: DataSeries.modesLabel[mode],
+                label: GRAPH_LABELS[mode],
             }),
         )
     ))
 
-    previewComponents = {
-        barChart: ({ value, className }) => (
-            <HorizontalBar
-                className={_cs(className, styles.chart)}
-                data={this.calcNumberCountSeries(value.series)}
-                valueSelector={DataSeries.sizeSelector}
-                valueLabelFormat={DataSeries.horizontalBarTextSelector}
-                labelSelector={DataSeries.chartsLabelSelector}
-                tooltipContent={DataSeries.tooltipSelector}
-                margins={chartsMargin}
-                showTooltip
-            />
-        ),
-        vBarChart: ({ value, className }) => (
-            <VerticalBarChart
-                className={_cs(className, styles.chart)}
-                data={this.calcNumberCountSeries(value.series)}
-                valueSelector={DataSeries.sizeSelector}
-                labelSelector={DataSeries.chartsLabelSelector}
-                tooltipContent={DataSeries.tooltipSelector}
-                margins={chartsMargin}
-                showTooltip
-            />
-        ),
-        geo: ({ value: { geodata }, className }) => (
-            <GeoViz
-                className={className}
-                regions={geodata.regions}
-                value={this.calcGeoValue(geodata)}
-            />
-        ),
-        wordCloud: ({ value, className }) => {
-            const data = this.calcWordCountSeries(value.series);
-            return (
-                <WordCloud
-                    className={className}
-                    data={data}
-                    fontSizeSelector={DataSeries.sizeSelector}
-                />
-            );
-        },
-    }
-
-    calcWordCountSeries = memoize((series) => {
+    getWordCountSeries = memoize((series) => {
         const tags = series.reduce(
             (acc, { value }) => {
                 acc[value] = (acc[value] || 0) + 1;
                 return acc;
             }, {},
         );
+
         return Object.keys(tags).map(word => ({
             text: word,
             size: tags[word] * 6,
         }));
     })
 
-    calcNumberCountSeries = memoize((series) => {
-        const tags = series.reduce(
+    getNumberCountSeries = memoize((series) => {
+        const sanitizedSeries = series
+            .filter(datum => !datum.empty && !datum.invalid);
+        const tags = sanitizedSeries.reduce(
             (acc, { value }) => {
                 acc[value] = (acc[value] || 0) + 1;
                 return acc;
             }, {},
         );
-        return Object.keys(tags).map(word => ({
-            text: word,
-            size: tags[word],
-        }));
+        return Object.keys(tags)
+            .map(word => ({
+                text: word,
+                size: tags[word],
+            }))
+            .sort((a, b) => a.size - b.size);
     })
 
-    calcNumberSeries = memoize(series => series.map((item, index) => ({
+    getNumberSeries = memoize(series => series.map((item, index) => ({
         key: index,
         value: parseFloat(item.value),
     })))
 
-    calcGeoValue = memoize(geodata => geodata.data.map(d => String(d.selectedId)))
+    getGeoValue = memoize(geodata => geodata.data.map(d => String(d.selectedId)))
 
-    handleSegmentStateChange = (mode) => {
-        this.setState({ mode });
+    handleSegmentStateChange = (value) => {
+        this.setState({ activeView: value });
     }
 
     render() {
@@ -175,9 +198,8 @@ export default class DataSeries extends React.PureComponent {
             className,
             value,
         } = this.props;
-        const { mode } = this.state;
 
-        const PreviewComponent = this.previewComponents[mode];
+        const { activeView } = this.state;
 
         return (
             <div className={_cs(className, 'data-series', styles.dataSeries)}>
@@ -187,9 +209,9 @@ export default class DataSeries extends React.PureComponent {
                     </h5>
                     <div className={styles.actions}>
                         <RotatingInput
-                            rendererSelector={DataSeries.rotatingInputLabelSelector}
-                            keySelector={DataSeries.rotatingInputKeySelector}
-                            value={mode}
+                            rendererSelector={rotatingInputLabelSelector}
+                            keySelector={rotatingInputKeySelector}
+                            value={activeView}
                             onChange={this.handleSegmentStateChange}
                             options={this.getSegmentOptions(value.type)}
                             showLabel={false}
@@ -197,10 +219,12 @@ export default class DataSeries extends React.PureComponent {
                         />
                     </div>
                 </header>
-                <PreviewComponent
-                    className={styles.preview}
-                    value={value}
-                />
+                <div className={styles.content}>
+                    <MultiViewContainer
+                        views={this.views}
+                        active={activeView}
+                    />
+                </div>
             </div>
         );
     }
