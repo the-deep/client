@@ -27,6 +27,7 @@ export default class TabularSheetPreview extends React.PureComponent {
     static defaultProps = defaultProps;
     static keySelector = d => d.id;
 
+    /*
     static calcFieldsData = memoize(({ fields, data = [] }) => fields.map(field => ({
         ...field,
         data: data.map(d => ({
@@ -35,16 +36,18 @@ export default class TabularSheetPreview extends React.PureComponent {
             type: d[field.id].type,
         })),
     })));
+    */
 
-    renderParams = (key, field) => ({
-        fieldId: field.id,
-        title: field.title,
-        type: field.type,
-        options: field.options,
-        data: field.data,
-        geodata: field.geodata,
-        color: (this.props.highlights[field.id] || {}).color,
-        leadKey: (this.props.highlights[field.id] || {}).key,
+    renderParams = (key, { id, title, type, options }) => ({
+        fieldId: id,
+        title,
+        type,
+        options,
+        // data: field.data,
+        // geodata: field.geodata,
+        // data: this.props.sheet.data.columns,
+        color: (this.props.highlights[id] || {}).color,
+        leadKey: (this.props.highlights[id] || {}).key,
         onClick: this.props.onClick,
     })
 
@@ -53,12 +56,13 @@ export default class TabularSheetPreview extends React.PureComponent {
             className,
             sheet,
         } = this.props;
+
         return (
             <ListView
                 className={className}
                 keySelector={TabularSheetPreview.keySelector}
                 rendererParams={this.renderParams}
-                data={TabularSheetPreview.calcFieldsData(sheet)}
+                data={sheet.fields}
                 renderer={Field}
             />
         );

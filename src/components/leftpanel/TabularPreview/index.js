@@ -113,12 +113,6 @@ export default class TabularPreview extends React.PureComponent {
             'tabular-preview',
         );
 
-        const highlights = listToMap(
-            highlightsFromProps.filter(highlight => highlight.dataSeriesFieldId),
-            highlight => highlight.dataSeriesFieldId,
-            highlight => highlight,
-        );
-
         if (invalid) {
             return (
                 <Message className={className}>
@@ -134,6 +128,13 @@ export default class TabularPreview extends React.PureComponent {
                 </div>
             );
         }
+
+        // FIXME: memoize this
+        const highlights = listToMap(
+            highlightsFromProps.filter(highlight => !!highlight.dataSeriesFieldId),
+            highlight => highlight.dataSeriesFieldId,
+            highlight => highlight,
+        );
 
         return (
             <div className={className}>
