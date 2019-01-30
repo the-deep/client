@@ -3,22 +3,30 @@
 .data-series {
     display: flex;
     flex-direction: column;
-    padding: $spacing-small $spacing-medium;
 
-    header {
+    .header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        height: 24px;
+        flex-shrink: 0;
+        border: 1px solid red;
 
-        h5 {
+        .heading {
+            flex-grow: 1;
+            padding: 0 $spacing-small;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             color: $color-text;
-            font-weight: $font-weight-bold;
+        }
+
+        .actions {
+            flex-shrink: 0;
         }
     }
 
     .preview {
-        height: calc(100% - 32px);
+        flex-grow: 1;
+        overflow: auto;
     }
 
     .chart {

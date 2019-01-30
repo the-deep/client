@@ -91,15 +91,6 @@ export default class DataSeries extends React.PureComponent {
     ))
 
     previewComponents = {
-        table: ({ value, className }) => (
-            <ListView
-                className={_cs(className, styles.table)}
-                keySelector={DataSeries.seriesKeySelector}
-                rendererParams={DataSeries.renderTableParams}
-                renderer={DataSeries.renderTableItem}
-                data={value.series}
-            />
-        ),
         barChart: ({ value, className }) => (
             <HorizontalBar
                 className={_cs(className, styles.chart)}
@@ -190,17 +181,19 @@ export default class DataSeries extends React.PureComponent {
 
         return (
             <div className={_cs(className, 'data-series', styles.dataSeries)}>
-                <header>
-                    <h5>
+                <header className={styles.header}>
+                    <h5 className={styles.heading}>
                         {value.title}
                     </h5>
-                    <div>
+                    <div className={styles.actions}>
                         <RotatingInput
                             rendererSelector={DataSeries.rotatingInputLabelSelector}
                             keySelector={DataSeries.rotatingInputKeySelector}
                             value={mode}
                             onChange={this.handleSegmentStateChange}
                             options={this.getSegmentOptions(value.type)}
+                            showLabel={false}
+                            showHintAndError={false}
                         />
                     </div>
                 </header>
