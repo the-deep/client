@@ -26,7 +26,7 @@ import Cloak from '#components/general/Cloak';
 import TriggerAndPoll from '#components/general/TriggerAndPoll';
 
 import { iconNames } from '#constants';
-import { RequestClient, requestMethods } from '#request';
+import { RequestCoordinator, RequestClient, requestMethods } from '#request';
 import notify from '#notify';
 import _ts from '#ts';
 import _cs from '#cs';
@@ -105,6 +105,7 @@ const transformSheet = (sheet) => {
     };
 };
 
+@RequestCoordinator
 @RequestClient(requests)
 export default class TabularBook extends React.PureComponent {
     static propTypes = propTypes;
