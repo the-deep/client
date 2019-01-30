@@ -50,6 +50,47 @@ const defaultProps = {
     className: '',
 };
 
+
+const transformSheet = (sheet) => {
+    const {
+        data: { columns },
+        options,
+        ...other
+    } = sheet;
+
+    const fieldsStats = mapToMap(
+        columns,
+        k => k,
+        (value) => {
+            const invalidCount = value.filter(x => x.invalid).length;
+            const emptyCount = value.filter(x => x.empty).length;
+            const totalCount = value.length;
+            return {
+                healthBar: [totalCount - emptyCount - invalidCount, invalidCount, emptyCount],
+            };
+        },
+    );
+
+    const getObjFromZippedRows = (...zippedRow) => mapToMap(
+        columns,
+        k => k,
+        (k, v, i) => zippedRow[i],
+    );
+
+    const rows = zipWith(getObjFromZippedRows, ...mapToList(columns));
+
+    const newSheet = {
+        rows: [...rows].map(obj => ({ key: randomString(), ...obj })),
+        fieldsStats,
+        options: {
+            ...options,
+            defaultColumnWidth: 250,
+        },
+        ...other,
+    };
+    return newSheet;
+};
+
 const requests = {
     deleteRequest: {
         method: requestMethods.DELETE,
@@ -88,23 +129,6 @@ const requests = {
     },
 };
 
-const transformSheet = (sheet) => {
-    const { data: { columns }, ...other } = sheet;
-
-    const getObjFromZippedRows = (...zippedRow) => mapToMap(
-        columns,
-        k => k,
-        (k, v, i) => zippedRow[i],
-    );
-
-    const rows = zipWith(getObjFromZippedRows, ...mapToList(columns));
-
-    return {
-        rows: [...rows].map(obj => ({ key: randomString(), ...obj })),
-        ...other,
-    };
-};
-
 @RequestCoordinator
 @RequestClient(requests)
 export default class TabularBook extends React.PureComponent {
@@ -126,16 +150,11 @@ export default class TabularBook extends React.PureComponent {
 
     setBook = (response, onComplete) => {
         const filteredSheets = response.sheets.filter(sheet => !sheet.hidden);
+
         const sheets = listToMap(
             response.sheets,
             sheet => sheet.id,
-            sheet => ({
-                ...transformSheet(sheet),
-                options: {
-                    ...sheet.options,
-                    defaultColumnWidth: 250,
-                },
-            }),
+            transformSheet,
         );
 
         const tabs = listToMap(

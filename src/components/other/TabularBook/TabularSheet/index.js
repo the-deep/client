@@ -78,7 +78,7 @@ export default class TabularSheet extends React.PureComponent {
     static defaultProps = defaultProps;
     static keySelector = datum => datum.key;
 
-    // NOTE: seachTerm is used inside this.headerRendererParams
+    // NOTE: searchTerm is used inside this.headerRendererParams
     calcSheetColumns = memoize((fields, searchTerm) => (
         fields
             .filter(field => !field.hidden)
@@ -99,19 +99,17 @@ export default class TabularSheet extends React.PureComponent {
             }))
     ));
 
-    headerRendererParams = ({ column, columnKey, data = [] }) => {
-        const [invalidCount, emptyCount] = data.reduce(
-            ([inv, emp], x) =>
-                (x[columnKey].invalid ? [inv + 1, emp] : [inv, emp + x[columnKey].empty ? 1 : 0]),
-            [0, 0],
-        );
-        const validCount = data.length - invalidCount - emptyObject;
-
+    headerRendererParams = ({ column, columnKey }) => {
         const {
             sheet: {
                 options: {
                     searchTerm = {},
                 } = {},
+                fieldsStats: {
+                    [columnKey]: {
+                        healthBar,
+                    },
+                },
             },
         } = this.props;
 
@@ -123,8 +121,7 @@ export default class TabularSheet extends React.PureComponent {
             sortOrder: column.sortOrder,
             onSortClick: column.onSortClick,
             className: styles.header,
-            // FIXME: shouldn't create objects on the fly
-            statusData: [validCount, invalidCount, emptyCount],
+            statusData: healthBar,
             filterValue: searchTerm[columnKey],
             filterComponent: (
                 filterRenderers[column.value.type] || filterRenderers[DATA_TYPE.string]
@@ -135,9 +132,9 @@ export default class TabularSheet extends React.PureComponent {
     cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({
         className: _cs(styles[type], styles.cell),
         value: datum[id].value,
-        options,
         invalid: datum[id].invalid,
         empty: datum[id].empty,
+        options,
     })
 
     handleFieldValueChange = (key, value) => {
@@ -185,7 +182,7 @@ export default class TabularSheet extends React.PureComponent {
                 },
             } = sheetColumn;
 
-            const { value, type: valueType } = datum[columnKey];
+            const { value, empty, invalid } = datum[columnKey];
 
             const searchTermForColumn = searchTerm[columnKey];
             if (searchTermForColumn === undefined) {
@@ -193,7 +190,7 @@ export default class TabularSheet extends React.PureComponent {
             }
 
             // NOTE: string column type accepts all data types
-            if (type !== DATA_TYPE.string && type !== valueType) {
+            if (empty || invalid) {
                 return false;
             }
 

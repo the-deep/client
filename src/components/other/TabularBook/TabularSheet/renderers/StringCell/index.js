@@ -9,18 +9,20 @@ export default class StringCell extends React.PureComponent {
         value: PropTypes.string,
         className: PropTypes.string,
         invalid: PropTypes.bool,
+        empty: PropTypes.bool,
     };
 
     static defaultProps = {
         value: '',
         className: '',
         invalid: false,
+        empty: false,
     };
 
     render() {
-        const { value, className, invalid } = this.props;
+        const { value, className, invalid, empty } = this.props;
         return (
-            <div className={_cs(className, invalid && styles.invalid)}>
+            <div className={_cs(className, invalid && styles.invalid, empty && styles.empty)}>
                 { value }
             </div>
         );

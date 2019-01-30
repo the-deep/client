@@ -152,7 +152,9 @@ export default class DataSeries extends React.PureComponent {
     ))
 
     getWordCountSeries = memoize((series) => {
-        const tags = series.reduce(
+        const sanitizedSeries = series
+            .filter(datum => !datum.empty && !datum.invalid);
+        const tags = sanitizedSeries.reduce(
             (acc, { value }) => {
                 acc[value] = (acc[value] || 0) + 1;
                 return acc;

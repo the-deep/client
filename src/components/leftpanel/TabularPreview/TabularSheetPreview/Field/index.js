@@ -44,7 +44,7 @@ export default class Field extends React.PureComponent {
         const invalidCount = data.filter(x => x.invalid).length;
         const emptyCount = data.filter(x => x.empty).length;
         const totalCount = data.length;
-        return [totalCount, invalidCount, emptyCount];
+        return [totalCount - emptyCount - invalidCount, invalidCount, emptyCount];
     });
 
 
