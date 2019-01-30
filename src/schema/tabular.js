@@ -3,38 +3,78 @@ const tabularSchema = [];
 {
     const name = 'TabularBookSchema';
     const schema = {
-        doc: {
-            name: 'Tabular Book',
-            description: 'Tabular book schema',
-        },
+        doc: { name: 'TabularBook' },
         extends: 'dbentity',
         fields: {
-
             file: { type: 'uint', required: true },
             fileType: { type: 'string', required: true },
             metaStatus: { type: 'string' },
-            options: { type: 'object' },
-            project: { type: 'uint' },
             status: { type: 'string', required: true },
+            // Make this required later
+            project: { type: 'uint' },
             title: { type: 'string', required: true },
-            sheets: { type: 'array.sheetSchema', required: true },
+
+            // FIXME: write schema for options
+            options: { type: 'object' },
+            meta: { type: 'object' },
+
+            sheets: { arrayType: 'TabularSheetSchema', required: true },
         },
     };
     tabularSchema.push({ name, schema });
 }
 {
-    const name = 'sheetSchema';
+    const name = 'TabularSheetSchema';
     const schema = {
-        doc: {
-            name: 'Tabular Sheet',
-            description: 'Tabular sheet schema',
-        },
+        doc: { name: 'TabularSheet' },
         fields: {
-            data: { type: 'array.object', required: true },
-            fields: { type: 'array.object', required: true },
-            options: { type: 'object' },
+            data: {
+                required: true,
+                type: {
+                    doc: { name: 'Data' },
+                    fields: {
+                        columns: {
+                            required: true,
+                            type: {
+                                doc: { name: 'CellMap' },
+                                fields: {
+                                    '*': {
+                                        required: true,
+                                        arrayType: {
+                                            doc: { name: 'Cell' },
+                                            fields: {
+                                                value: { type: 'unknown' },
+                                                processedValue: { type: 'unknown' },
+                                                invalid: { type: 'boolean' },
+                                                empty: { type: 'boolean' },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            fields: {
+                required: true,
+                arrayType: {
+                    doc: { name: 'Fields' },
+                    fields: {
+                        hidden: { type: 'boolean' },
+                        id: { type: 'uint', required: true },
+                        options: { type: 'object', required: true },
+                        ordering: { type: 'uint', required: true },
+                        title: { type: 'string', required: true },
+                        type: { type: 'string', required: true },
+                    },
+                },
+            },
             title: { type: 'string', required: true },
             id: { type: 'uint', required: true },
+            // FIXME: write schema for options
+            options: { type: 'object' },
+            hidden: { type: 'boolean' },
         },
     };
     tabularSchema.push({ name, schema });

@@ -13,7 +13,6 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import ResizableV from '#rscv/Resizable/ResizableV';
 import update from '#rsu/immutable-update';
 
-import { RequestCoordinator } from '#request';
 import InternalGallery from '#components/viewer/InternalGallery';
 import ExternalGallery from '#components/viewer/ExternalGallery';
 import TabularBook from '#components/other/TabularBook';
@@ -72,7 +71,6 @@ const mapDispatchToProps = dispatch => ({
     addLeadViewCopyAll: params => dispatch(addLeadViewCopyAllAction(params)),
 });
 
-@RequestCoordinator
 @connect(mapStateToProps, mapDispatchToProps)
 export default class LeadFormItem extends React.PureComponent {
     static propTypes = propTypes;

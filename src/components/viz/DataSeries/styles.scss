@@ -3,22 +3,40 @@
 .data-series {
     display: flex;
     flex-direction: column;
-    padding: $spacing-small $spacing-medium;
+    overflow: auto;
 
-    header {
+    .header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        height: 24px;
+        flex-shrink: 0;
 
-        h5 {
+        .heading {
+            flex-grow: 1;
+            padding: 0 $spacing-small;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             color: $color-text;
-            font-weight: $font-weight-bold;
+        }
+
+        .actions {
+            flex-shrink: 0;
         }
     }
 
-    .preview {
-        height: calc(100% - 32px);
+    .content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow: auto;
+
+        .vertical-bar-chart,
+        .horizontal-bar-chart,
+        .geo-visualization,
+        .word-cloud {
+            flex-grow: 1;
+            overflow: auto;
+        }
     }
 
     .chart {
@@ -31,22 +49,6 @@
             .line {
                 stroke: $color-accent;
             }
-        }
-    }
-
-    .table {
-        display: grid;
-        border: $width-separator-thin solid $color-separator;
-        overflow: auto;
-        grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
-        grid-auto-rows: max-content;
-
-        .table-item {
-            border: $width-separator-thin solid $color-separator;
-            padding: $spacing-extra-small $spacing-small;
-            overflow:hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
     }
 }

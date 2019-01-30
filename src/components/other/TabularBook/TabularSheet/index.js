@@ -37,7 +37,7 @@ const propTypes = {
     className: PropTypes.string,
     sheet: PropTypes.shape({
         fields: PropTypes.array,
-        data: PropTypes.array,
+        rows: PropTypes.array,
         options: PropTypes.object,
     }),
     onSheetChange: PropTypes.func.isRequired,
@@ -78,7 +78,7 @@ export default class TabularSheet extends React.PureComponent {
     static defaultProps = defaultProps;
     static keySelector = datum => datum.key;
 
-    // NOTE: seachTerm is used inside this.headerRendererParams
+    // NOTE: searchTerm is used inside this.headerRendererParams
     calcSheetColumns = memoize((fields, searchTerm) => (
         fields
             .filter(field => !field.hidden)
@@ -92,21 +92,24 @@ export default class TabularSheet extends React.PureComponent {
 
                 cellRenderer: renderers[field.type] || renderers[DATA_TYPE.string],
                 comparator: (a, b, d = 1) => comparators[field.type](
-                    a[field.id].type !== field.type ? undefined : a[field.id].value,
-                    b[field.id].type !== field.type ? undefined : b[field.id].value,
+                    a[field.id].invalid || a[field.id].empty ? undefined : a[field.id].value,
+                    b[field.id].invalid || b[field.id].empty ? undefined : b[field.id].value,
                     d,
                 ),
             }))
     ));
 
-    headerRendererParams = ({ column, columnKey, data = [] }) => {
-        const validCount = data.filter(x => x[columnKey].type === column.value.type).length;
-
+    headerRendererParams = ({ column, columnKey }) => {
         const {
             sheet: {
                 options: {
                     searchTerm = {},
                 } = {},
+                fieldsStats: {
+                    [columnKey]: {
+                        healthBar,
+                    },
+                },
             },
         } = this.props;
 
@@ -118,8 +121,7 @@ export default class TabularSheet extends React.PureComponent {
             sortOrder: column.sortOrder,
             onSortClick: column.onSortClick,
             className: styles.header,
-            // FIXME: shouldn't create objects on the fly
-            statusData: [validCount, data.length - validCount],
+            statusData: healthBar,
             filterValue: searchTerm[columnKey],
             filterComponent: (
                 filterRenderers[column.value.type] || filterRenderers[DATA_TYPE.string]
@@ -130,8 +132,9 @@ export default class TabularSheet extends React.PureComponent {
     cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({
         className: _cs(styles[type], styles.cell),
         value: datum[id].value,
+        invalid: datum[id].invalid,
+        empty: datum[id].empty,
         options,
-        invalid: type !== DATA_TYPE.string && datum[id].type !== type,
     })
 
     handleFieldValueChange = (key, value) => {
@@ -179,7 +182,7 @@ export default class TabularSheet extends React.PureComponent {
                 },
             } = sheetColumn;
 
-            const { value, type: valueType } = datum[columnKey];
+            const { value, empty, invalid } = datum[columnKey];
 
             const searchTermForColumn = searchTerm[columnKey];
             if (searchTermForColumn === undefined) {
@@ -187,7 +190,7 @@ export default class TabularSheet extends React.PureComponent {
             }
 
             // NOTE: string column type accepts all data types
-            if (type !== DATA_TYPE.string && type !== valueType) {
+            if (empty || invalid) {
                 return false;
             }
 
@@ -219,7 +222,7 @@ export default class TabularSheet extends React.PureComponent {
         return (
             <Taebul
                 className={_cs(className, styles.tabularSheet, 'tabular-sheet')}
-                data={sheet.data}
+                data={sheet.rows}
                 settings={sheet.options}
                 keySelector={TabularSheet.keySelector}
                 columns={columns}

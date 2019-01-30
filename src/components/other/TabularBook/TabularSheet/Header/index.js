@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import LoadingAnimation from '#rscv/LoadingAnimation';
+// import LoadingAnimation from '#rscv/LoadingAnimation';
 import Button from '#rsca/Button';
 
-import TriggerAndPoll from '#components/general/TriggerAndPoll';
+// import TriggerAndPoll from '#components/general/TriggerAndPoll';
 import { iconNames } from '#constants';
 
 import HealthBar from '#rscz/HealthBar';
@@ -15,17 +15,20 @@ import { DATA_TYPE } from '#entities/tabular';
 import styles from './styles.scss';
 
 
+/*
 const LoadingOnValid = ({ invalid }) => (!invalid && (
     <span className={styles.loadingContainer}>
         <LoadingAnimation />
     </span>
 ));
+*/
 
 const getSortIcon = sortOrder => ({
     asc: iconNames.sortAscending,
     dsc: iconNames.sortDescending,
 })[sortOrder] || iconNames.sort;
 
+/*
 const shouldExtractGeo = ({ type, geodata }) => (
     type === DATA_TYPE.geo &&
     (!geodata || geodata.status !== 'success')
@@ -38,10 +41,12 @@ const isValidGeo = ({ type, geodata }) => (
     type === DATA_TYPE.geo &&
     (geodata && geodata.status === 'success')
 );
+*/
 
 const healthColorScheme = [
     '#41cf76',
     '#f44336',
+    '#dddddd',
 ];
 
 const healthBarValueSelector = x => x;
@@ -111,7 +116,7 @@ export default class Header extends React.PureComponent {
                     {value.title}
                 </Button>
                 { icon && <span className={_cs(icon, styles.icon)} /> }
-                {
+                {/*
                     shouldExtractGeo(value) &&
                     <TriggerAndPoll
                         compareValue={value}
@@ -124,7 +129,7 @@ export default class Header extends React.PureComponent {
                     >
                         <LoadingOnValid />
                     </TriggerAndPoll>
-                }
+                */}
                 <Filter
                     className={styles.searchBox}
                     disabled={disabled}

@@ -236,10 +236,17 @@ export default class LeftPanel extends React.PureComponent {
             default:
                 return undefined;
         }
-        if (!images || images.length <= 0) {
-            tabs['images-preview'] = undefined;
+        // Adding other tabs
+        if (lead.tabularBook) {
+            tabs['tabular-preview'] = _ts('editEntry.overview.leftpane', 'quantitativeTabLabel');
+            delete tabs['original-preview'];
         }
+        if (!images || images.length <= 0) {
+            delete tabs['images-preview'];
+        }
+
         tabs['entries-listing'] = _ts('editAssessment', 'entriesTabLabel');
+
         return tabs;
     }
 

@@ -13,9 +13,8 @@ const propTypes = {
     fieldId: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
-    data: PropTypes.arrayOf(PropTypes.object).isRequired,
+    column: PropTypes.arrayOf(PropTypes.object).isRequired,
     options: PropTypes.shape({}),
-    geodata: PropTypes.shape({}),
     color: PropTypes.string,
     leadKey: PropTypes.string,
     onClick: PropTypes.func.isRequired,
@@ -25,24 +24,27 @@ const defaultProps = {
     className: '',
     color: undefined,
     leadKey: undefined,
-    geodata: undefined,
     options: undefined,
 };
 
 const healthColorScheme = [
     '#41cf76',
     '#f44336',
+    '#dddddd',
 ];
 const identity = x => x;
 
 export default class Field extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
     static dataKeySelector = d => d.key;
 
-    getHealthStatusData = memoize((data, type) => {
-        const validCount = data.filter(x => x.type === type).length;
-        return [validCount, data.length - validCount];
+    getHealthStatusData = memoize((data) => {
+        const invalidCount = data.filter(x => x.invalid).length;
+        const emptyCount = data.filter(x => x.empty).length;
+        const totalCount = data.length;
+        return [totalCount - emptyCount - invalidCount, invalidCount, emptyCount];
     });
 
 
@@ -50,9 +52,8 @@ export default class Field extends React.PureComponent {
         const {
             title,
             type,
-            data: series,
+            column,
             options,
-            geodata,
             fieldId,
         } = this.props;
         const data = JSON.stringify({
@@ -61,9 +62,8 @@ export default class Field extends React.PureComponent {
                 fieldId,
                 title,
                 type,
-                series,
+                data: column,
                 options,
-                geodata,
             },
         });
         e.dataTransfer.setData('text/plain', data);
@@ -85,13 +85,12 @@ export default class Field extends React.PureComponent {
         const {
             className,
             title,
-            data,
+            column,
             color,
             leadKey,
-            type,
         } = this.props;
 
-        const healthStatusData = this.getHealthStatusData(data, type);
+        const healthStatusData = this.getHealthStatusData(column);
 
         let style;
         if (color) {
@@ -115,13 +114,13 @@ export default class Field extends React.PureComponent {
                     {title}
                 </h5>
                 <HealthBar
+                    className={styles.healthBar}
                     data={healthStatusData}
                     valueSelector={identity}
                     keySelector={identity}
-                    hideLabel
-                    className={styles.healthBar}
-                    enlargeOnHover={false}
                     colorScheme={healthColorScheme}
+                    enlargeOnHover={false}
+                    hideLabel
                 />
             </div>
         );

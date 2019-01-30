@@ -161,20 +161,21 @@ export default class LeftPane extends React.PureComponent {
                 return undefined;
         }
 
-        // Adding other tabs
+        // Dont' show tabular if it is not extracted
         if (lead.tabularBook) {
             tabs['tabular-preview'] = _ts('editEntry.overview.leftpane', 'quantitativeTabLabel');
+            delete tabs['original-preview'];
+        }
+        // Don't show images if there are no images
+        if (!images || images.length <= 0) {
+            delete tabs['images-preview'];
+        }
+        // Don't show assisted if no creation permission
+        if (!entryPermissions.create) {
+            delete tabs['assisted-tagging'];
         }
 
         tabs['entries-listing'] = _ts('editEntry.overview.leftpane', 'entriesTabLabel');
-
-        // Hiding tabs using conditional
-        if (!images || images.length <= 0) {
-            tabs['images-preview'] = undefined;
-        }
-        if (!entryPermissions.create) {
-            tabs['assisted-tagging'] = undefined;
-        }
         return tabs;
     }
 
@@ -203,7 +204,7 @@ export default class LeftPane extends React.PureComponent {
                 />
             ),
             mount: true,
-            lazyMount: true,
+            // lazyMount: true,
             wrapContainer: true,
         },
         'assisted-tagging': {

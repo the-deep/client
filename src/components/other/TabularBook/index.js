@@ -13,13 +13,20 @@ import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import update from '#rsu/immutable-update';
-import { listToMap, isNotDefined } from '#rsu/common';
+import {
+    listToMap,
+    isNotDefined,
+    mapToMap,
+    mapToList,
+    randomString,
+} from '#rsu/common';
+import { zipWith } from '#rsu/functional';
 
 import Cloak from '#components/general/Cloak';
 import TriggerAndPoll from '#components/general/TriggerAndPoll';
 
 import { iconNames } from '#constants';
-import { RequestClient, requestMethods } from '#request';
+import { RequestCoordinator, RequestClient, requestMethods } from '#request';
 import notify from '#notify';
 import _ts from '#ts';
 import _cs from '#cs';
@@ -41,6 +48,47 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
+};
+
+
+const transformSheet = (sheet) => {
+    const {
+        data: { columns },
+        options,
+        ...other
+    } = sheet;
+
+    const fieldsStats = mapToMap(
+        columns,
+        k => k,
+        (value) => {
+            const invalidCount = value.filter(x => x.invalid).length;
+            const emptyCount = value.filter(x => x.empty).length;
+            const totalCount = value.length;
+            return {
+                healthBar: [totalCount - emptyCount - invalidCount, invalidCount, emptyCount],
+            };
+        },
+    );
+
+    const getObjFromZippedRows = (...zippedRow) => mapToMap(
+        columns,
+        k => k,
+        (k, v, i) => zippedRow[i],
+    );
+
+    const rows = zipWith(getObjFromZippedRows, ...mapToList(columns));
+
+    const newSheet = {
+        rows: [...rows].map(obj => ({ key: randomString(), ...obj })),
+        fieldsStats,
+        options: {
+            ...options,
+            defaultColumnWidth: 250,
+        },
+        ...other,
+    };
+    return newSheet;
 };
 
 const requests = {
@@ -81,6 +129,7 @@ const requests = {
     },
 };
 
+@RequestCoordinator
 @RequestClient(requests)
 export default class TabularBook extends React.PureComponent {
     static propTypes = propTypes;
@@ -101,10 +150,11 @@ export default class TabularBook extends React.PureComponent {
 
     setBook = (response, onComplete) => {
         const filteredSheets = response.sheets.filter(sheet => !sheet.hidden);
+
         const sheets = listToMap(
             response.sheets,
             sheet => sheet.id,
-            sheet => ({ ...sheet, options: { ...sheet.options, defaultColumnWidth: 250 } }),
+            transformSheet,
         );
 
         const tabs = listToMap(

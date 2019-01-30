@@ -215,6 +215,7 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                                 iconName={iconNames.check}
                                 onClick={this.handleAddButtonClick}
                                 transparent
+                                pending={pendingProjectJoinAcceptRequest}
                             >
                                 {_ts('notifications.projectJoinRequest', 'addButtonTitle')}
                             </SuccessButton>
@@ -224,6 +225,7 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                                 iconName={iconNames.close}
                                 onClick={this.handleRejectButtonClick}
                                 transparent
+                                pending={pendingProjectJoinRejectRequest}
                             >
                                 {_ts('notifications.projectJoinRequest', 'rejectButtonTitle')}
                             </DangerButton>
