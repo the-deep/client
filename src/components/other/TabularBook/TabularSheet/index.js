@@ -12,8 +12,8 @@ import {
     compareNumber,
     compareDate,
     caseInsensitiveSubmatch,
-    isDefined,
-    isNotDefined,
+    isFalsyString,
+    isTruthyString,
 } from '#rsu/common';
 import update from '#rsu/immutable-update';
 import _cs from '#cs';
@@ -189,27 +189,31 @@ export default class TabularSheet extends React.PureComponent {
                 return true;
             }
 
-            // NOTE: string column type accepts all data types
-            if (empty || invalid) {
-                return false;
-            }
-
             if (type === DATA_TYPE.number) {
                 const { from, to } = searchTermForColumn;
+                if (empty || invalid) {
+                    return isFalsyString(from) && isFalsyString(to);
+                }
                 return (
-                    ((isNotDefined(from) && isNotDefined(to)) || isDefined(value)) &&
-                    (isNotDefined(from) || parseFloat(value) >= parseFloat(from)) &&
-                    (isNotDefined(to) || parseFloat(value) <= parseFloat(to))
+                    ((isFalsyString(from) && isFalsyString(to)) || isTruthyString(value)) &&
+                    (isFalsyString(from) || parseFloat(value) >= parseFloat(from)) &&
+                    (isFalsyString(to) || parseFloat(value) <= parseFloat(to))
                 );
             } else if (type === DATA_TYPE.datetime) {
                 const { from, to } = searchTermForColumn;
+                if (empty || invalid) {
+                    return isFalsyString(from) && isFalsyString(to);
+                }
                 return (
-                    ((isNotDefined(from) && isNotDefined(to)) || isDefined(value)) &&
-                    (isNotDefined(from) || new Date(value) >= new Date(from)) &&
-                    (isNotDefined(to) || new Date(value) <= new Date(to))
+                    ((isFalsyString(from) && isFalsyString(to)) || isTruthyString(value)) &&
+                    (isFalsyString(from) || new Date(value) >= new Date(from)) &&
+                    (isFalsyString(to) || new Date(value) <= new Date(to))
                 );
             }
-
+            // NOTE: we can do normal string search for other types
+            if (empty) {
+                return isFalsyString(searchTermForColumn);
+            }
             return caseInsensitiveSubmatch(value, searchTermForColumn);
         });
     };
