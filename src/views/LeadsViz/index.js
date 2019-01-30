@@ -30,6 +30,8 @@ import {
     forceDirectedDataSelector,
     geoPointsDataSelector,
 } from '#redux';
+import noSearch from '#resources/img/no-search.png';
+import noFilter from '#resources/img/no-filter.png';
 import { pathNames } from '#constants/';
 
 import VizError from '#components/error/VizError';
@@ -49,6 +51,7 @@ import styles from './styles.scss';
 
 // FIXME: looks like activeProject is not needed here, projectId would do
 const propTypes = {
+    className: PropTypes.string,
     activeProject: PropTypes.shape({
         id: PropTypes.number,
         title: PropTypes.string,
@@ -64,6 +67,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
 };
 
 const mapStateToProps = state => ({
@@ -240,16 +244,51 @@ export default class LeadsViz extends React.PureComponent {
         this.leadKeywordCorrelationRequest.start();
     }
 
-    renderNoLeadFound = () => (
-        <Message className={styles.noLeadsMessage}>
-            <h3 className={styles.heading}>
-                { _ts('leadsViz', 'noLeadsFoundHeader') }
-            </h3>
-            <p>
-                { _ts('leadsViz', 'noLeadsFoundDescription') }
-            </p>
-        </Message>
-    )
+    renderNoLeadFound = () => {
+        const { loadingLeads } = this.state;
+
+        const isFilterEmpty = isObjectEmpty(this.props.filters);
+
+        if (loadingLeads && isFilterEmpty) {
+            return null;
+        }
+
+        if (!isFilterEmpty) {
+            return (
+                <Message
+                    className={styles.emptyFilterMessage}
+                >
+                    <img
+                        className={styles.image}
+                        src={noFilter}
+                        alt=""
+                    />
+                    <span>{_ts('leads', 'emptyWithFilterMessage')}</span>
+                </Message>
+            );
+        }
+
+        return (
+            <Message
+                className={styles.emptyMessage}
+            >
+                <img
+                    className={styles.image}
+                    src={noSearch}
+                    alt=""
+                />
+                <span>
+                    {_ts('leads', 'emptyMessage', {
+                        addLeadButtonLabel: (
+                            <strong>
+                                {_ts('leads', 'addSourcesButtonLabel')}
+                            </strong>
+                        ),
+                    })}
+                </span>
+            </Message>
+        );
+    }
 
     renderCharts = () => {
         const {

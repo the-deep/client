@@ -17,6 +17,7 @@ import {
     addProjectMembershipAction,
     addProjectUsergroupAction,
 } from '#redux';
+import { capitalize } from '#rsu/common';
 import _ts from '#ts';
 import _cs from '#cs';
 
@@ -195,7 +196,7 @@ export default class SearchListItem extends React.PureComponent {
                         <PrimaryButton
                             onClick={this.handleAddUsergroupButtonClick}
                             iconName={iconNames.add}
-                            title={_ts('project.users', 'addUsergroupButtonTooltip')}
+                            title={capitalize(_ts('project.users', 'addUsergroupButtonTooltip'))}
                             pending={usergroupMembershipRequest.pending}
                         />
                     </div>
@@ -227,7 +228,7 @@ export default class SearchListItem extends React.PureComponent {
                         <PrimaryButton
                             onClick={this.handleAddUserButtonClick}
                             iconName={iconNames.add}
-                            title={_ts('project.users', 'addUserButtonTooltip')}
+                            title={capitalize(_ts('project.users', 'addUserButtonTooltip'))}
                             pending={userMembershipRequest.pending}
                         />
                     </div>

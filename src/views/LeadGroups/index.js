@@ -3,8 +3,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { reverseRoute } from '#rsu/common';
+import {
+    reverseRoute,
+    isObjectEmpty,
+} from '#rsu/common';
 import FormattedDate from '#rscv/FormattedDate';
+import Message from '#rscv/Message';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
 import RawTable from '#rscv/RawTable';
@@ -28,6 +32,8 @@ import {
 import { pathNames } from '#constants';
 
 import _ts from '#ts';
+import noSearch from '#resources/img/no-search.png';
+import noFilter from '#resources/img/no-filter.png';
 
 import LeadGroupsGetRequest from './requests/LeadGroupsGetRequest';
 import LeadGroupDeleteRequest from './requests/LeadGroupDeleteRequest';
@@ -298,6 +304,46 @@ export default class LeadGroups extends React.PureComponent {
         );
     }
 
+    renderEmpty = () => {
+        const { loadingLeads } = this.state;
+
+        const isFilterEmpty = isObjectEmpty(this.props.filters);
+
+        if (loadingLeads && isFilterEmpty) {
+            return null;
+        }
+
+        if (!isFilterEmpty) {
+            return (
+                <Message
+                    className={styles.emptyFilterMessage}
+                >
+                    <img
+                        className={styles.image}
+                        src={noFilter}
+                        alt=""
+                    />
+                    <span>{_ts('leadgroups', 'emptyWithFilterMessage')}</span>
+                </Message>
+            );
+        }
+
+        return (
+            <Message
+                className={styles.emptyMessage}
+            >
+                <img
+                    className={styles.image}
+                    src={noSearch}
+                    alt=""
+                />
+                <span>
+                    {_ts('leadgroups', 'emptyMessage')}
+                </span>
+            </Message>
+        );
+    }
+
     render() {
         const {
             className,
@@ -327,6 +373,7 @@ export default class LeadGroups extends React.PureComponent {
                         onHeaderClick={this.handleTableHeaderClick}
                         keySelector={this.leadGroupKeyExtractor}
                         className={styles.leadGroupsTable}
+                        emptyComponent={this.renderEmpty}
                     />
                 </div>
                 <Footer />
