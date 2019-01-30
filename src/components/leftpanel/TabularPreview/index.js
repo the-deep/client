@@ -69,11 +69,11 @@ export default class TabularPreview extends React.PureComponent {
         );
 
         this.setState({
+            invalid: false,
+            completed: true,
             tabs,
             sheets,
             activeSheet: Object.keys(tabs)[0],
-            invalid: false,
-            completed: true,
         });
     }
 
