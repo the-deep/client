@@ -113,7 +113,7 @@ export default class DataSeries extends React.PureComponent {
             [GRAPH.geo]: {
                 component: GeoViz,
                 rendererParams: () => {
-                    const { value: { geodata } } = this.props;
+                    const { value: { geodata = {} } } = this.props;
                     const { regions } = geodata;
 
                     return {

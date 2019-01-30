@@ -32,7 +32,9 @@ const healthColorScheme = [
     '#f44336',
     '#dddddd',
 ];
-const identity = x => x;
+
+const valueSelector = x => x.value;
+const keySelector = x => x.key;
 
 export default class Field extends React.PureComponent {
     static propTypes = propTypes;
@@ -44,7 +46,21 @@ export default class Field extends React.PureComponent {
         const invalidCount = data.filter(x => x.invalid).length;
         const emptyCount = data.filter(x => x.empty).length;
         const totalCount = data.length;
-        return [totalCount - emptyCount - invalidCount, invalidCount, emptyCount];
+
+        return [
+            {
+                key: 'valid',
+                value: totalCount - emptyCount - invalidCount,
+            },
+            {
+                key: 'invalid',
+                value: invalidCount,
+            },
+            {
+                key: 'empty',
+                value: emptyCount,
+            },
+        ];
     });
 
 
@@ -116,8 +132,8 @@ export default class Field extends React.PureComponent {
                 <HealthBar
                     className={styles.healthBar}
                     data={healthStatusData}
-                    valueSelector={identity}
-                    keySelector={identity}
+                    valueSelector={valueSelector}
+                    keySelector={keySelector}
                     colorScheme={healthColorScheme}
                     enlargeOnHover={false}
                     hideLabel

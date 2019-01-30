@@ -49,8 +49,8 @@ const healthColorScheme = [
     '#dddddd',
 ];
 
-const healthBarValueSelector = x => x;
-const healthBarKeySelector = (x, i) => `${x}-${i}`;
+const healthBarValueSelector = x => x.value;
+const healthBarKeySelector = x => x.key;
 
 export default class Header extends React.PureComponent {
     static propTypes = {
@@ -139,7 +139,6 @@ export default class Header extends React.PureComponent {
                 <HealthBar
                     data={statusData}
                     valueSelector={healthBarValueSelector}
-                    labelSelector={undefined}
                     keySelector={healthBarKeySelector}
                     className={styles.healthBar}
                     hideLabel
