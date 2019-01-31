@@ -142,6 +142,47 @@ const requests = {
     },
 };
 
+/*
+1. Load everything
+    LOAD EVERYTHING
+    http://localhost:8000/api/v1/tabular-books/<id>
+
+1. Hide field
+    PATCH http://localhost:8000/api/v1/tabular-fields/<id>
+    { hidden: true }
+    NO DATA REQUIRED
+
+*2. Modify field: name, type, options
+    PATCH http://localhost:8000/api/v1/tabular-fields/<id>
+    { name, type, options }
+    FIELD, COLUMN DATA
+
+3. Undo hide fields:
+    PATCH http://localhost:8000/api/v1/tabular-sheets/<id>
+    { fields: [ { id: 12, hidden: true } ] }
+    NO DATA NEEDED
+
+1. Hide sheet
+    PATCH http://localhost:8000/api/v1/tabular-sheets/<id>
+    { hidden: true }
+    NO DATA REQUIRED
+
+2. Modify sheet
+    PATCH http://localhost:8000/api/v1/tabular-sheets/<id>
+    { name }
+    SHEET INFO
+
+3. Undo hide sheets
+    PATCH http://localhost:8000/api/v1/tabular-books/<id>
+    { sheets: [ { id: 12, hidden: true } ] }
+    NO DATA NEEDED
+
+1. Save options (in bg)
+    PATCH http://localhost:8000/api/v1/tabular-sheets/<id>
+    { sorting, searching, sizing }
+    NO DATA NEEDED
+*/
+
 @RequestCoordinator
 @RequestClient(requests)
 export default class TabularBook extends React.PureComponent {
@@ -158,6 +199,16 @@ export default class TabularBook extends React.PureComponent {
             tabs: {},
             activeSheet: undefined,
             sheets: undefined,
+
+            /*
+            columnEditPending: {},
+            columnDeletePending: {},
+            columnRetrievingPending: {},
+            sheetEditPending: {},
+            sheetDeletePending: {},
+            sheetRetrievingPending: false,
+            sheetOptionsEditPending: false,
+            */
         };
     }
 
@@ -284,7 +335,7 @@ export default class TabularBook extends React.PureComponent {
         );
     }
 
-    renderActual = ({ invalid, completed }) => {
+    renderTabularBook = ({ invalid, completed }) => {
         const { sheets } = this.state;
 
         const {
@@ -364,7 +415,7 @@ export default class TabularBook extends React.PureComponent {
 
     render() {
         const { bookId } = this.props;
-        const ActualBook = this.renderActual;
+        const ActualTabularBook = this.renderTabularBook;
 
         return (
             <TriggerAndPoll
@@ -373,7 +424,7 @@ export default class TabularBook extends React.PureComponent {
                 triggerUrl={`/tabular-extraction-trigger/${bookId}/`}
                 // schemaName="TabularBookSchema"
             >
-                <ActualBook />
+                <ActualTabularBook />
             </TriggerAndPoll>
         );
     }
