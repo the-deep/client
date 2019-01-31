@@ -4,6 +4,7 @@ import React from 'react';
 // import LoadingAnimation from '#rscv/LoadingAnimation';
 import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
+import modalize from '#rscg/Modalize';
 
 // import TriggerAndPoll from '#components/general/TriggerAndPoll';
 import { iconNames } from '#constants';
@@ -23,6 +24,8 @@ const LoadingOnValid = ({ invalid }) => (!invalid && (
     </span>
 ));
 */
+
+const WarningModalButton = modalize(WarningButton);
 
 const getSortIcon = sortOrder => ({
     asc: iconNames.sortAscending,
@@ -118,11 +121,11 @@ export default class Header extends React.PureComponent {
                     {value.title}
                 </Button>
                 { icon && <span className={_cs(icon, styles.icon)} /> }
-                <WarningButton
-                    className={styles.editButton}
+                <WarningModalButton
                     iconName={iconNames.edit}
                     transparent
                     title="Edit"
+                    modal={<div>I am modal</div>}
                 />
                 {/*
                     shouldExtractGeo(value) &&

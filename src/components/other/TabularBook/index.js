@@ -4,6 +4,7 @@ import React, { Fragment } from 'react';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
+import modalize from '#rscg/Modalize';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
@@ -35,6 +36,8 @@ import _cs from '#cs';
 import TabularSheet from './TabularSheet';
 import EditFieldButton from './EditField';
 import styles from './styles.scss';
+
+const WarningModalButton = modalize(WarningButton);
 
 const propTypes = {
     className: PropTypes.string,
@@ -275,10 +278,11 @@ export default class TabularBook extends React.PureComponent {
             <span>
                 {data}
             </span>
-            <WarningButton
+            <WarningModalButton
                 iconName={iconNames.edit}
                 transparent
                 title="Edit"
+                modal={<div>I am modal</div>}
             />
         </div>
     )
