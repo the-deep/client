@@ -3,11 +3,16 @@ import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 
 import MultiViewContainer from '#rscv/MultiViewContainer';
+import Modal from '#rscv/Modal';
+import ModalHeader from '#rscv/Modal/Header';
+import ModalBody from '#rscv/Modal/Body';
+import Button from '#rsca/Button';
 import GeoViz from '#components/geo/GeoViz';
 import RotatingInput from '#rsci/RotatingInput';
 import HorizontalBar from '#rscz/HorizontalBar';
 import VerticalBarChart from '#rscz/VerticalBarChart';
 import WordCloud from '#rscz/WordCloud';
+import { iconNames } from '#constants';
 
 import _cs from '#cs';
 import _ts from '#ts';
@@ -139,6 +144,7 @@ export default class DataSeries extends React.PureComponent {
 
         this.state = {
             activeView: GRAPH.horizontalBarChart,
+            isExpandedView: false,
         };
     }
 
@@ -191,6 +197,14 @@ export default class DataSeries extends React.PureComponent {
 
     getGeoValue = memoize(geodata => geodata.data.map(d => String(d.selectedId)))
 
+    handleExpandButtonClick = () => {
+        this.setState({ isExpandedView: true });
+    }
+
+    handleCloseExpandedViewButtonClick = () => {
+        this.setState({ isExpandedView: false });
+    }
+
     handleSegmentStateChange = (value) => {
         this.setState({ activeView: value });
     }
@@ -201,7 +215,10 @@ export default class DataSeries extends React.PureComponent {
             value,
         } = this.props;
 
-        const { activeView } = this.state;
+        const {
+            activeView,
+            isExpandedView,
+        } = this.state;
 
         return (
             <div className={_cs(className, 'data-series', styles.dataSeries)}>
@@ -219,6 +236,12 @@ export default class DataSeries extends React.PureComponent {
                             showLabel={false}
                             showHintAndError={false}
                         />
+                        <Button
+                            iconName={iconNames.expand}
+                            onClick={this.handleExpandButtonClick}
+                            className={styles.expandButton}
+                            transparent
+                        />
                     </div>
                 </header>
                 <div className={styles.content}>
@@ -227,6 +250,38 @@ export default class DataSeries extends React.PureComponent {
                         active={activeView}
                     />
                 </div>
+                { isExpandedView && (
+                    <Modal className={styles.expandedView}>
+                        <ModalHeader
+                            title={value.title}
+                            rightComponent={
+                                <div className={styles.actionButtons}>
+                                    <RotatingInput
+                                        rendererSelector={rotatingInputLabelSelector}
+                                        keySelector={rotatingInputKeySelector}
+                                        value={activeView}
+                                        onChange={this.handleSegmentStateChange}
+                                        options={this.getSegmentOptions(value.type)}
+                                        showLabel={false}
+                                        showHintAndError={false}
+                                    />
+                                    <Button
+                                        iconName={iconNames.close}
+                                        onClick={this.handleCloseExpandedViewButtonClick}
+                                        className={styles.closeExpandedViewButton}
+                                        transparent
+                                    />
+                                </div>
+                            }
+                        />
+                        <ModalBody className={styles.body}>
+                            <MultiViewContainer
+                                views={this.views}
+                                active={activeView}
+                            />
+                        </ModalBody>
+                    </Modal>
+                )}
             </div>
         );
     }

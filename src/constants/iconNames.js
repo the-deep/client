@@ -117,6 +117,8 @@ const iconNames = {
 
     swap: 'ion-arrow-swap',
     minusOutline: 'ion-ios-minus-outline',
+
+    expand: 'ion-arrow-expand',
 };
 
 export default iconNames;

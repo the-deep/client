@@ -1,5 +1,8 @@
 @import '~base-scss/base';
 
+$height-expanded-view-chart: 80vh;
+$width-expanded-view: 90vw;
+
 .data-series {
     display: flex;
     flex-direction: column;
@@ -20,6 +23,7 @@
         }
 
         .actions {
+            display: flex;
             flex-shrink: 0;
         }
     }
@@ -38,17 +42,21 @@
             overflow: auto;
         }
     }
+}
 
-    .chart {
-        :global {
-            .fill {
-                opacity: 0.3;
-                fill: $color-accent;
-                stroke: $color-accent;
-            }
-            .line {
-                stroke: $color-accent;
-            }
+.expanded-view {
+    width: $width-expanded-view;
+
+    .action-buttons {
+        display: flex;
+    }
+
+    .body {
+        .horizontal-bar-chart,
+        .vertical-bar-chart,
+        .word-cloud,
+        .geo {
+            height: $height-expanded-view-chart;
         }
     }
 }
