@@ -8,7 +8,7 @@ import update from '#rsu/immutable-update';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import { detachedFaram } from '#rscg/Faram';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 import Message from '#rscv/Message';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
@@ -654,7 +654,7 @@ export default class EditEntries extends React.PureComponent {
                     <h4 className={styles.heading}>
                         { leadTitle }
                     </h4>
-                    <FixedTabs
+                    <ScrollTabs
                         className={styles.tabs}
                         tabs={this.tabs}
                         useHash

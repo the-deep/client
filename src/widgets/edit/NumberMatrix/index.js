@@ -12,7 +12,7 @@ import ModalFooter from '#rscv/Modal/Footer';
 import SortableListView from '#rscv/SortableListView';
 import Faram, { requiredCondition } from '#rscg/Faram';
 import FaramList from '#rscg/FaramList';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { findDuplicates, randomString } from '#rsu/common';
 
@@ -215,7 +215,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                         className={styles.nonFieldErrors}
                     />
                 </FaramList>
-                <FixedTabs
+                <ScrollTabs
                     className={styles.tabs}
                     tabs={this.tabs}
                     active={selectedTab}
@@ -233,7 +233,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                             {buttonLabel}
                         </PrimaryButton>
                     </FaramList>
-                </FixedTabs>
+                </ScrollTabs>
             </div>
         );
     }

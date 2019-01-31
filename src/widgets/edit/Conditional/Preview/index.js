@@ -3,7 +3,7 @@ import React from 'react';
 import memoize from 'memoize-one';
 
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 
 import { fetchWidgetTagComponent } from '#widgets';
 
@@ -116,7 +116,7 @@ export default class ConditionalFrameworkPreview extends React.PureComponent {
 
         return (
             <div>
-                <FixedTabs
+                <ScrollTabs
                     tabs={tabs}
                     active={currentWidget}
                     onClick={this.handleTabSelect}

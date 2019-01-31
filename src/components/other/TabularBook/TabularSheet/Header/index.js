@@ -3,6 +3,7 @@ import React from 'react';
 
 // import LoadingAnimation from '#rscv/LoadingAnimation';
 import Button from '#rsca/Button';
+import WarningButton from '#rsca/Button/WarningButton';
 
 // import TriggerAndPoll from '#components/general/TriggerAndPoll';
 import { iconNames } from '#constants';
@@ -61,7 +62,8 @@ export default class Header extends React.PureComponent {
         onFilterChange: PropTypes.func.isRequired,
         sortOrder: PropTypes.string,
         onChange: PropTypes.func.isRequired,
-        statusData: PropTypes.arrayOf(PropTypes.number).isRequired,
+        // eslint-disable-next-line react/forbid-prop-types
+        statusData: PropTypes.array.isRequired,
         disabled: PropTypes.bool,
         filterComponent: PropTypes.func.isRequired,
         // First value is valid count and the second is invalid count
@@ -116,6 +118,12 @@ export default class Header extends React.PureComponent {
                     {value.title}
                 </Button>
                 { icon && <span className={_cs(icon, styles.icon)} /> }
+                <WarningButton
+                    className={styles.editButton}
+                    iconName={iconNames.edit}
+                    transparent
+                    title="Edit"
+                />
                 {/*
                     shouldExtractGeo(value) &&
                     <TriggerAndPoll

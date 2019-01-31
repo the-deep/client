@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 
+import Button from '#rsca/Button';
 import Searchable from '#rscv/Taebul/Searchable';
-// import Selectable from '#rscv/Taebul/Selectable';
 import Sortable from '#rscv/Taebul/Sortable';
 import ColumnWidth from '#rscv/Taebul/ColumnWidth';
 import NormalTaebul from '#rscv/Taebul';
@@ -17,7 +17,9 @@ import {
 } from '#rsu/common';
 import update from '#rsu/immutable-update';
 import _cs from '#cs';
+import _ts from '#ts';
 
+import { iconNames } from '#constants';
 import { DATA_TYPE } from '#entities/tabular';
 
 import Header from './Header';
@@ -169,6 +171,17 @@ export default class TabularSheet extends React.PureComponent {
         });
     }
 
+    handleResetSort = () => {
+        const { sheet } = this.props;
+        const settings = {
+            options: { $auto: {
+                sortOrder: { $set: undefined },
+            } },
+        };
+        const newSheet = update(sheet, settings);
+        this.props.onSheetChange(newSheet);
+    }
+
     handleSearch = (datum, searchTerm = emptyObject) => {
         const { sheet } = this.props;
         const { fields, options: { searchTerm: oldSearchTerm } = {} } = sheet;
@@ -224,15 +237,28 @@ export default class TabularSheet extends React.PureComponent {
         const columns = this.calcSheetColumns(fields, searchTerm);
 
         return (
-            <Taebul
-                className={_cs(className, styles.tabularSheet, 'tabular-sheet')}
-                data={sheet.rows}
-                settings={sheet.options}
-                keySelector={TabularSheet.keySelector}
-                columns={columns}
-                onChange={this.handleSettingsChange}
-                searchFunction={this.handleSearch}
-            />
+            <div className={_cs(className, styles.tabularSheet, 'tabular-sheet')}>
+                <div className={styles.optionsBar}>
+                    <Button
+                        iconName={iconNames.more}
+                        title="Other Columns"
+                    />
+                    <Button
+                        iconName={iconNames.sort}
+                        onClick={this.handleResetSort}
+                        title={_ts('tabular', 'resetSortLabel')}
+                    />
+                </div>
+                <Taebul
+                    className={styles.table}
+                    data={sheet.rows}
+                    settings={sheet.options}
+                    keySelector={TabularSheet.keySelector}
+                    columns={columns}
+                    onChange={this.handleSettingsChange}
+                    searchFunction={this.handleSearch}
+                />
+            </div>
         );
     }
 }

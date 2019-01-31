@@ -10,8 +10,16 @@
     }
 
     .icon {
-        margin-left: $spacing-extra-small;
+        margin: 0 $spacing-extra-small;
         color: $color-text-label;
+    }
+
+    .edit-button {
+        // margin-left: $spacing-extra-small;
+    }
+
+    .delete-button {
+        // margin-left: $spacing-extra-small;
     }
 
     .search-box {

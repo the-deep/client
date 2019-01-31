@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 import Faram from '#rscg/Faram';
 
 import {
@@ -181,7 +181,7 @@ export default class RightPanel extends React.PureComponent {
                 disabled={pending}
                 readOnly={readOnly}
             >
-                <FixedTabs
+                <ScrollTabs
                     className={styles.tabs}
                     useHash
                     defaultHash={this.defaultHash}

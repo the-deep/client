@@ -3,7 +3,7 @@ import React, { Fragment } from 'react';
 
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import Message from '#rscv/Message';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 import SelectInput from '#rsci/SelectInput';
 import Label from '#rsci/Label';
 
@@ -329,7 +329,7 @@ export default class LeftPanel extends React.PureComponent {
                             onChange={handleLeadSelectChange}
                         />
                     </div>
-                    <FixedTabs
+                    <ScrollTabs
                         className={styles.tabs}
                         active={currentTab}
                         tabs={tabs}

@@ -13,7 +13,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
 import Faram, { requiredCondition } from '#rscg/Faram';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import {
     findDuplicates,
@@ -413,7 +413,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                         className={styles.error}
                     />
                 </FaramList>
-                <FixedTabs
+                <ScrollTabs
                     className={styles.tabs}
                     tabs={this.tabs}
                     active={selectedTab}
@@ -465,7 +465,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                             }
                         </FaramList>
                     </div>
-                </FixedTabs>
+                </ScrollTabs>
             </div>
         );
     }

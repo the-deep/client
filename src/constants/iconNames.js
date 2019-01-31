@@ -64,6 +64,7 @@ const iconNames = {
     world: 'ion-ios-world',
     map: 'ion-android-map',
     googleDrive: 'ion-social-googleplus-outline',
+    more: 'ion-more',
     hamburger: 'ion-android-menu',
     help: 'ion-help-circled',
     helpOutlined: 'ion-ios-help-outline',

@@ -9,7 +9,7 @@ import { reverseRoute } from '#rsu/common';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import SuccessConfirmButton from '#rsca/ConfirmButton/SuccessConfirmButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 import Message from '#rscv/Message';
 import BackLink from '#components/general/BackLink';
 
@@ -275,7 +275,7 @@ export default class AnalysisFramework extends React.PureComponent {
                     <h4 className={styles.heading}>
                         { frameworkTitle }
                     </h4>
-                    <FixedTabs
+                    <ScrollTabs
                         className={styles.tabs}
                         tabs={this.tabs}
                         useHash

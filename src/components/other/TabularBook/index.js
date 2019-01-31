@@ -11,6 +11,7 @@ import ScrollTabs from '#rscv/ScrollTabs';
 
 import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
+import DangerButton from '#rsca/Button/DangerButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import update from '#rsu/immutable-update';
 import {
@@ -242,20 +243,6 @@ export default class TabularBook extends React.PureComponent {
         );
     }
 
-    resetSort = () => {
-        // FIXME: move this to redux
-        const { sheets, activeSheet } = this.state;
-        const settings = {
-            [activeSheet]: { $auto: {
-                options: { $auto: {
-                    sortOrder: { $set: undefined },
-                } },
-            } },
-        };
-
-        this.setState({ sheets: update(sheets, settings) });
-    }
-
     handleSheetChange = (newSheet) => {
         // FIXME: move this to redux
         const { sheets } = this.state;
@@ -282,6 +269,19 @@ export default class TabularBook extends React.PureComponent {
             setBook: this.setBook,
         });
     }
+
+    tabsModifer = (key, data) => (
+        <div>
+            <span>
+                {data}
+            </span>
+            <WarningButton
+                iconName={iconNames.edit}
+                transparent
+                title="Edit"
+            />
+        </div>
+    )
 
     renderBody = ({ invalid, completed, disabled }) => {
         const {
@@ -329,8 +329,15 @@ export default class TabularBook extends React.PureComponent {
                     tabs={tabs}
                     active={activeSheet}
                     onClick={this.handleActiveSheetChange}
+                    modifier={this.tabsModifer}
                     inverted
-                />
+                    showBeforeTabs
+                >
+                    <Button
+                        iconName={iconNames.more}
+                        title="Other Columns"
+                    />
+                </ScrollTabs>
             </Fragment>
         );
     }
@@ -363,38 +370,29 @@ export default class TabularBook extends React.PureComponent {
                 <ModalHeader
                     title={_ts('tabular', 'title')}
                     rightComponent={
-                        <div className={styles.headerContainer}>
-                            <Button
-                                iconName={iconNames.sort}
-                                onClick={this.resetSort}
-                                disabled={disabled}
-                            >
-                                {_ts('tabular', 'resetSortLabel')}
-                            </Button>
-                            <Cloak
-                                hide={TabularBook.shouldHideButtons}
-                                render={
-                                    <Fragment>
-                                        <EditFieldButton
-                                            onChange={this.handleDetailsChange}
-                                            iconName={iconNames.edit}
-                                            disabled={disabled}
-                                            value={sheets}
-                                        >
-                                            {_ts('tabular', 'editButtonLabel')}
-                                        </EditFieldButton>
-                                        <DangerConfirmButton
-                                            iconName={iconNames.delete}
-                                            onClick={this.handleDelete}
-                                            confirmationMessage={_ts('tabular', 'deleteMessage')}
-                                            disabled={disabled}
-                                        >
-                                            {_ts('tabular', 'deleteButtonLabel')}
-                                        </DangerConfirmButton>
-                                    </Fragment>
-                                }
-                            />
-                        </div>
+                        <Cloak
+                            hide={TabularBook.shouldHideButtons}
+                            render={
+                                <div className={styles.headerContainer}>
+                                    <EditFieldButton
+                                        onChange={this.handleDetailsChange}
+                                        iconName={iconNames.edit}
+                                        disabled={disabled}
+                                        value={sheets}
+                                    >
+                                        {_ts('tabular', 'editButtonLabel')}
+                                    </EditFieldButton>
+                                    <DangerConfirmButton
+                                        iconName={iconNames.delete}
+                                        onClick={this.handleDelete}
+                                        confirmationMessage={_ts('tabular', 'deleteMessage')}
+                                        disabled={disabled}
+                                    >
+                                        {_ts('tabular', 'deleteButtonLabel')}
+                                    </DangerConfirmButton>
+                                </div>
+                            }
+                        />
                     }
                 />
                 <ModalBody className={styles.body}>
