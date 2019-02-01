@@ -241,7 +241,7 @@ export default class TabularSheet extends React.PureComponent {
                 <div className={styles.optionsBar}>
                     <Button
                         iconName={iconNames.more}
-                        title="Other Columns"
+                        title="Other Sheets"
                     />
                     <Button
                         iconName={iconNames.sort}

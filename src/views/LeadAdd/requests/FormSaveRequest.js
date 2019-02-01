@@ -76,6 +76,7 @@ export default class FormSaveRequest {
             });
             this.formCoordinator.notifyComplete(leadId);
         } catch (err) {
+            console.warn(err);
             this.formCoordinator.notifyComplete(leadId, true);
         }
     }
