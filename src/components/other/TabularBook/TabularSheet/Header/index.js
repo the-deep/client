@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 // import LoadingAnimation from '#rscv/LoadingAnimation';
+import Modal from '#rscv/Modal';
 import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
 import modalize from '#rscg/Modalize';
@@ -26,6 +27,16 @@ const LoadingOnValid = ({ invalid }) => (!invalid && (
 */
 
 const WarningModalButton = modalize(WarningButton);
+
+const ColumnEditModal = ({ closeModal }) => (
+    <Modal
+        onClose={closeModal}
+        closeOnEscape
+    >
+        Edit my column
+    </Modal>
+);
+
 
 const getSortIcon = sortOrder => ({
     asc: iconNames.sortAscending,
@@ -125,7 +136,9 @@ export default class Header extends React.PureComponent {
                     iconName={iconNames.edit}
                     transparent
                     title="Edit"
-                    modal={<div>I am modal</div>}
+                    modal={
+                        <ColumnEditModal />
+                    }
                 />
                 {/*
                     shouldExtractGeo(value) &&

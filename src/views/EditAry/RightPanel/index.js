@@ -150,15 +150,10 @@ export default class RightPanel extends React.PureComponent {
         }
     }
 
-    renderTab = (tabKey) => {
-        const title = this.tabs[tabKey];
-        return (
-            <TabTitle
-                title={title}
-                faramElementName={tabKey}
-            />
-        );
-    }
+    tabRendererParams = (tabKey, data) => ({
+        faramElementName: tabKey,
+        title: data,
+    });
 
     render() {
         const {
@@ -188,7 +183,8 @@ export default class RightPanel extends React.PureComponent {
                     replaceHistory
                     tabs={this.tabs}
                     itemClassName={styles.tab}
-                    modifier={this.renderTab}
+                    renderer={TabTitle}
+                    rendererParams={this.tabRendererParams}
                 />
                 <MultiViewContainer
                     useHash

@@ -198,6 +198,11 @@ export default class NumberMatrixOverview extends React.PureComponent {
         this.setState({ selectedTab });
     }
 
+    tabRendererParams = (tabKey, data) => ({
+        faramElementName: tabKey,
+        title: data,
+    });
+
     renderTabsWithButton = () => {
         const { selectedTab } = this.state;
 
@@ -220,7 +225,8 @@ export default class NumberMatrixOverview extends React.PureComponent {
                     tabs={this.tabs}
                     active={selectedTab}
                     onClick={this.handleTabSelect}
-                    modifier={this.renderTab}
+                    renderer={TabTitle}
+                    rendererParams={this.tabRendererParams}
                 >
                     <FaramList faramElementName={selectedTab}>
                         <PrimaryButton
@@ -235,17 +241,6 @@ export default class NumberMatrixOverview extends React.PureComponent {
                     </FaramList>
                 </ScrollTabs>
             </div>
-        );
-    }
-
-    renderTab = (tabKey) => {
-        const title = this.tabs[tabKey];
-
-        return (
-            <TabTitle
-                title={title}
-                faramElementName={tabKey}
-            />
         );
     }
 

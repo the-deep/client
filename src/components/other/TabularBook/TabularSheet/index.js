@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 
+import Modal from '#rscv/Modal';
+import modalize from '#rscg/Modalize';
 import Button from '#rsca/Button';
 import Searchable from '#rscv/Taebul/Searchable';
 import Sortable from '#rscv/Taebul/Sortable';
@@ -33,7 +35,18 @@ import DateFilter from './filters/DateFilter';
 
 import styles from './styles.scss';
 
+const ModalButton = modalize(Button);
+
 const Taebul = Searchable(Sortable(ColumnWidth(NormalTaebul)));
+
+const ColumnRetrieveModal = ({ closeModal }) => (
+    <Modal
+        onClose={closeModal}
+        closeOnEscape
+    >
+        Get my columns back
+    </Modal>
+);
 
 const propTypes = {
     className: PropTypes.string,
@@ -239,9 +252,12 @@ export default class TabularSheet extends React.PureComponent {
         return (
             <div className={_cs(className, styles.tabularSheet, 'tabular-sheet')}>
                 <div className={styles.optionsBar}>
-                    <Button
+                    <ModalButton
                         iconName={iconNames.more}
                         title="Other Sheets"
+                        modal={
+                            <ColumnRetrieveModal />
+                        }
                     />
                     <Button
                         iconName={iconNames.sort}

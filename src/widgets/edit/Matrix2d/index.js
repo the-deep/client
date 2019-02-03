@@ -394,6 +394,11 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         ];
     }
 
+    tabRendererParams = (tabKey, data) => ({
+        faramElementName: tabKey,
+        title: data,
+    });
+
     handleTabSelect = (selectedTab) => {
         this.setState({ selectedTab });
     }
@@ -418,7 +423,8 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                     tabs={this.tabs}
                     active={selectedTab}
                     onClick={this.handleTabSelect}
-                    modifier={this.renderTab}
+                    renderer={TabTitle}
+                    rendererParams={this.tabRendererParams}
                 >
                     <div className={styles.buttonContainer}>
                         <h5>
@@ -470,16 +476,6 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         );
     }
 
-    renderTab = (tabKey) => {
-        const title = this.tabs[tabKey];
-
-        return (
-            <TabTitle
-                title={title}
-                faramElementName={tabKey}
-            />
-        );
-    }
     rendererParams = (key, elem, i) => ({
         index: i,
         faramElementName: String(i),

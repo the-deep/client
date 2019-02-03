@@ -15,11 +15,13 @@ import styles from './styles.scss';
 const propTypes = {
     hasError: PropTypes.bool,
     title: PropTypes.string,
+    onClick: PropTypes.func,
 };
 
 const defaultProps = {
     hasError: false,
     title: '',
+    onClick: undefined,
 };
 
 @FaramErrorIndicatorElement
@@ -28,19 +30,29 @@ export default class Tab extends React.PureComponent {
     static defaultProps = defaultProps;
 
     render() {
-        const { title, hasError } = this.props;
+        const {
+            title,
+            hasError,
+            onClick,
+            className: classNameFromProps,
+        } = this.props;
 
         const className = _cs(
-            styles.tabTitle,
+            styles.button,
             'tab-title',
             hasError && styles.error,
             hasError && 'error',
         );
 
         return (
-            <span className={className}>
-                { title }
-            </span>
+            <div className={classNameFromProps}>
+                <button
+                    className={className}
+                    onClick={onClick}
+                >
+                    { title }
+                </button>
+            </div>
         );
     }
 }

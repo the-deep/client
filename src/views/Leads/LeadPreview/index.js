@@ -27,7 +27,7 @@ export default class LeadPreview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    handleLeadPreview = (row) => {
+    renderLeadPreview = (row) => {
         if (row.url) {
             return (
                 <ExternalGallery
@@ -81,7 +81,7 @@ export default class LeadPreview extends React.PureComponent {
                 <ModalBody
                     className={styles.body}
                 >
-                    {this.handleLeadPreview(value)}
+                    {this.renderLeadPreview(value)}
                 </ModalBody>
             </Modal>
         );
