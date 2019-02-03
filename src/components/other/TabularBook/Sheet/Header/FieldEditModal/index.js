@@ -82,8 +82,6 @@ export default class FieldEditModal extends React.PureComponent {
 
         const { value } = this.props;
 
-        console.warn(value);
-
         this.state = {
             value,
             error: {},
@@ -137,7 +135,6 @@ export default class FieldEditModal extends React.PureComponent {
     }
 
     handleFaramChange = (faramValues, faramErrors, faramInfo) => {
-        console.warn('change', faramValues, faramErrors, faramInfo);
         this.setState({
             value: faramValues,
             error: faramErrors,
@@ -147,12 +144,10 @@ export default class FieldEditModal extends React.PureComponent {
     };
 
     handleFaramValidationFailure = (faramErrors) => {
-        console.warn('failure', faramErrors);
         this.setState({ error: faramErrors });
     };
 
     handleFaramValidationSuccess = (value) => {
-        console.warn('success', value);
         const {
             onFieldEdit,
             fieldId,

@@ -37,30 +37,30 @@ export default class Header extends React.PureComponent {
         onSortClick: PropTypes.func.isRequired,
         onFilterChange: PropTypes.func.isRequired,
         sortOrder: PropTypes.string,
-        onChange: PropTypes.func.isRequired,
         // eslint-disable-next-line react/forbid-prop-types
         statusData: PropTypes.array.isRequired,
         disabled: PropTypes.bool,
+        disabledDelete: PropTypes.bool,
         filterComponent: PropTypes.func.isRequired,
         onFieldDelete: PropTypes.func.isRequired,
+        onFieldEdit: PropTypes.func.isRequired,
         isFieldDeletePending: PropTypes.bool,
+        isFieldEditPending: PropTypes.bool,
     };
 
     static defaultProps = {
         sortOrder: undefined,
         disabled: false,
+        disabledDelete: false,
         isFieldDeletePending: false,
+        isFieldEditPending: false,
         filterValue: undefined,
     };
 
     handleSortClick = () => {
         const { fieldId, onSortClick } = this.props;
-        onSortClick(fieldId);
-    }
-
-    handleGeoData = (value) => {
-        const { fieldId, onChange } = this.props;
-        onChange(fieldId, value);
+        // NOTE: fieldId must be string for Taebul
+        onSortClick(String(fieldId));
     }
 
     handleFilterChange = (value) => {
@@ -77,7 +77,11 @@ export default class Header extends React.PureComponent {
             filterComponent: Filter,
             fieldId,
             disabled,
+            disabledDelete,
             isFieldDeletePending,
+            isFieldEditPending,
+            onFieldDelete,
+            onFieldEdit,
         } = this.props;
 
         const iconNameMapping = {
@@ -105,13 +109,15 @@ export default class Header extends React.PureComponent {
                     transparent
                     title="Edit"
                     disabled={disabled}
-                    pending={isFieldDeletePending}
+                    pending={isFieldDeletePending || isFieldEditPending}
                     modal={
                         <FieldEditModal
                             disabled={disabled}
+                            disabledDelete={disabledDelete}
                             fieldId={fieldId}
                             value={value}
-                            onFieldDelete={this.props.onFieldDelete}
+                            onFieldDelete={onFieldDelete}
+                            onFieldEdit={onFieldEdit}
                         />
                     }
                 />

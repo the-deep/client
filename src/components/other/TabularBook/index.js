@@ -39,6 +39,8 @@ import {
     createParamsForFieldDelete,
     createUrlForFieldRetrieve,
     createParamsForFieldRetrieve,
+    createUrlForFieldEdit,
+    createParamsForFieldEdit,
 } from '#rest';
 import { iconNames } from '#constants';
 import { RequestCoordinator, RequestClient, requestMethods } from '#request';
@@ -98,10 +100,10 @@ const transformSheet = (sheet) => {
         (k, v, i) => zippedRow[i],
     );
 
-    const rows = zipWith(getObjFromZippedRows, ...mapToList(newColumns));
+    const rows = [...zipWith(getObjFromZippedRows, ...mapToList(newColumns))];
 
     const newSheet = {
-        rows: [...rows],
+        rows,
         fieldsStats,
         options: {
             ...options,
@@ -210,9 +212,9 @@ export default class TabularBook extends React.PureComponent {
 
             fieldRetrievePending: {},
             fieldDeletePending: {},
+            fieldEditPending: {},
 
             /*
-            fieldEditPending: {},
             sheetOptionsEditPending: false,
             */
         };
@@ -389,6 +391,50 @@ export default class TabularBook extends React.PureComponent {
         fieldDeleteRequest.start();
     }
 
+    handleFieldEdit = (sheetId, fieldId, value) => {
+        // FIXME: clear out filters from value
+        const fieldDeleteRequest = new FgRestBuilder()
+            .url(createUrlForFieldEdit(fieldId))
+            .params(() => createParamsForFieldEdit(value))
+            .preLoad(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.fieldEditPending[fieldId] = true;
+                    }),
+                );
+            })
+            .success((response) => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        const sheetIndex = safeState.originalSheets.findIndex(
+                            s => s.id === sheetId,
+                        );
+                        const fieldIndex = safeState.originalSheets[sheetIndex].fields.findIndex(
+                            f => f.id === fieldId,
+                        );
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.originalSheets[sheetIndex].data.columns[fieldId] = (
+                            response.fieldData
+                        );
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.originalSheets[sheetIndex].fields[fieldIndex] = response.field;
+                        // FIXME: clear out options
+                    }),
+                );
+            })
+            .postLoad(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        // eslint-disable-next-line no-param-reassign
+                        delete safeState.fieldEditPending[fieldId];
+                    }),
+                );
+            })
+            .build();
+        fieldDeleteRequest.start();
+    }
+
     handleFieldRetrieve = (sheetId, fieldIds) => {
         const fieldIdMap = listToMap(
             fieldIds,
@@ -467,6 +513,7 @@ export default class TabularBook extends React.PureComponent {
         title, className, sheetId, onClick, deletePending, editPending, originalSheets,
     }) => {
         const { tabs, sheets } = transformSheets(originalSheets);
+        // FIXME: memoizel this
         const tabKeys = Object.keys(tabs);
 
         const sheet = sheets[sheetId];
@@ -525,6 +572,7 @@ export default class TabularBook extends React.PureComponent {
             sheetDeletePending,
             fieldRetrievePending,
             fieldDeletePending,
+            fieldEditPending,
         } = this.state;
 
         const {
@@ -563,11 +611,11 @@ export default class TabularBook extends React.PureComponent {
                             onSheetOptionsChange={this.handleSheetOptionsChange}
                             disabled={disabledSheet}
                             onFieldRetrieve={this.handleFieldRetrieve}
-                            onFieldDelete={this.handleFieldDelete}
                             isFieldRetrievePending={isFieldRetrievePending}
+                            onFieldDelete={this.handleFieldDelete}
                             fieldDeletePending={fieldDeletePending}
-                            // TODO:
-                            // onColumnEdit
+                            fieldEditPending={fieldEditPending}
+                            onFieldEdit={this.handleFieldEdit}
                         />
                     )
                 }
@@ -676,11 +724,6 @@ export default class TabularBook extends React.PureComponent {
 
 
 /*
-*2. Modify field: name, type, options
-    PATCH http://localhost:8000/api/v1/tabular-fields/<id>
-    { name, type, options }
-    FIELD, COLUMN DATA
-
 1. Save options (in bg)
     PATCH http://localhost:8000/api/v1/tabular-sheets/<id>
     { sorting, searching, sizing }

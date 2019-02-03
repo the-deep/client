@@ -52,10 +52,13 @@ const propTypes = {
     onSheetOptionsChange: PropTypes.func.isRequired,
     onFieldRetrieve: PropTypes.func.isRequired,
     onFieldDelete: PropTypes.func.isRequired,
+    onFieldEdit: PropTypes.func.isRequired,
     disabled: PropTypes.bool,
     isFieldRetrievePending: PropTypes.bool,
     // eslint-disable-next-line react/forbid-prop-types
     fieldDeletePending: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    fieldEditPending: PropTypes.object.isRequired,
     // onSheetChange: PropTypes.func.isRequired,
 };
 
@@ -101,9 +104,23 @@ export default class Sheet extends React.PureComponent {
 
     getFilterCriteria = (datum, searchTerm = emptyObject) => {
         const { sheet } = this.props;
-        const { fields, options: { searchTerm: oldSearchTerm } = {} } = sheet;
+        const {
+            fields,
+            options: {
+                searchTerm: oldSearchTerm,
+                fieldStats,
+            } = {},
+            fieldDeletePending,
+            fieldEditPending,
+        } = sheet;
 
-        const columns = this.getSheetColumns(fields, oldSearchTerm);
+        const columns = this.getSheetColumns(
+            fields,
+            oldSearchTerm,
+            fieldStats,
+            fieldDeletePending,
+            fieldEditPending,
+        );
         return columns.every((sheetColumn) => {
             const {
                 key: columnKey,
@@ -149,8 +166,10 @@ export default class Sheet extends React.PureComponent {
     };
 
     // NOTE: searchTerm, healthBar is used inside this.headerRendererParams
-    // eslint-disable-next-line no-unused-vars
-    getSheetColumns = memoize((fields, searchTerm, fieldStats, fieldDeletePending) => (
+    getSheetColumns = memoize((
+        // eslint-disable-next-line no-unused-vars
+        fields, searchTerm, fieldStats, fieldDeletePending, fieldEditPending,
+    ) => (
         fields
             .filter(field => !field.hidden)
             .map(field => ({
@@ -198,13 +217,16 @@ export default class Sheet extends React.PureComponent {
 
 
         const isFieldDeletePending = this.props.fieldDeletePending[fieldId];
+        const isFieldEditPending = this.props.fieldEditPending[fieldId];
+        // FIXME: memoize this
+        const fieldsCount = this.props.sheet.fields.filter(field => !field.hidden).length;
 
         return {
             fieldId,
 
-            disabled: this.props.disabled || isFieldDeletePending,
+            disabled: this.props.disabled || isFieldDeletePending || isFieldEditPending,
+            disabledDelete: fieldsCount <= 1,
 
-            onChange: this.handleFieldValueChange,
             onFilterChange: this.handleFilterChange,
 
             value: column.value,
@@ -217,20 +239,10 @@ export default class Sheet extends React.PureComponent {
                 filterRenderers[column.value.type] || filterRenderers[DATA_TYPE.string]
             ),
             onFieldDelete: this.handleFieldDelete,
+            onFieldEdit: this.handleFieldEdit,
             isFieldDeletePending,
+            isFieldEditPending,
         };
-    }
-
-    handleFieldValueChange = (key, value) => {
-        const { sheet } = this.props;
-        const index = sheet.fields.findIndex(c => String(c.id) === key);
-        const settings = {
-            fields: {
-                [index]: { $merge: value },
-            },
-        };
-        const newSheet = update(sheet, settings);
-        console.warn('TODO: Should change sheet', newSheet);
     }
 
     handleFilterChange = (key, value) => {
@@ -275,6 +287,14 @@ export default class Sheet extends React.PureComponent {
         onFieldRetrieve(sheetId, selectedFields);
     }
 
+    handleFieldEdit = (fieldId, value) => {
+        const {
+            onFieldEdit,
+            sheetId,
+        } = this.props;
+        onFieldEdit(sheetId, fieldId, value);
+    }
+
     handleFieldDelete = (fieldId) => {
         const {
             onFieldDelete,
@@ -294,17 +314,26 @@ export default class Sheet extends React.PureComponent {
     render() {
         const {
             className,
-            sheet,
+            sheet: {
+                rows,
+                options = emptyObject,
+                fields,
+                fieldsStats,
+            },
             disabled,
             isFieldRetrievePending,
             fieldDeletePending,
+            fieldEditPending,
         } = this.props;
-        const {
+        const { searchTerm } = options;
+
+        const columns = this.getSheetColumns(
             fields,
-            options: { searchTerm } = {},
+            searchTerm,
             fieldsStats,
-        } = sheet;
-        const columns = this.getSheetColumns(fields, searchTerm, fieldsStats, fieldDeletePending);
+            fieldDeletePending,
+            fieldEditPending,
+        );
 
         const fieldList = getDeletedFields(fields);
 
@@ -333,8 +362,8 @@ export default class Sheet extends React.PureComponent {
                 </div>
                 <Taebul
                     className={styles.table}
-                    data={sheet.rows}
-                    settings={sheet.options}
+                    data={rows}
+                    settings={options}
                     keySelector={Sheet.keySelector}
                     columns={columns}
                     onChange={this.handleSettingsChange}

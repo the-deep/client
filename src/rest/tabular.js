@@ -1,6 +1,7 @@
 import {
     wsEndpoint,
     PATCH,
+    PUT,
     commonHeaderForPost,
 } from '#config/rest';
 
@@ -55,4 +56,13 @@ export const createParamsForFieldRetrieve = fields => ({
     body: JSON.stringify({
         fields,
     }),
+});
+
+export const createUrlForFieldEdit = fieldId => (
+    `${wsEndpoint}/tabular-field-update/${fieldId}/`
+);
+export const createParamsForFieldEdit = value => ({
+    method: PUT,
+    headers: commonHeaderForPost,
+    body: JSON.stringify(value),
 });
