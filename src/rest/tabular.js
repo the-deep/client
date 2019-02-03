@@ -35,6 +35,17 @@ export const createParamsForSheetRetrieve = sheets => ({
     }),
 });
 
+export const createUrlForFieldDelete = fieldId => (
+    `${wsEndpoint}/tabular-fields/${fieldId}/`
+);
+export const createParamsForFieldDelete = () => ({
+    method: PATCH,
+    headers: commonHeaderForPost,
+    body: JSON.stringify({
+        hidden: true,
+    }),
+});
+
 export const createUrlForFieldRetrieve = sheetId => (
     `${wsEndpoint}/tabular-sheets/${sheetId}/`
 );

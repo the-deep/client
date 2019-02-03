@@ -14,14 +14,6 @@
         color: $color-text-label;
     }
 
-    .edit-button {
-        // margin-left: $spacing-extra-small;
-    }
-
-    .delete-button {
-        // margin-left: $spacing-extra-small;
-    }
-
     .search-box {
         margin: $spacing-small;
         margin-top: 0;
@@ -29,10 +21,5 @@
 
     .health-bar {
         height: 6px;
-    }
-
-    .loading-container {
-        position: relative;
-        margin-left: $spacing-small;
     }
 }

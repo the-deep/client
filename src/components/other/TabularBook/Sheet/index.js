@@ -23,7 +23,7 @@ import _ts from '#ts';
 import { iconNames } from '#constants';
 import { DATA_TYPE } from '#entities/tabular';
 
-import ColumnRetrieveModal from './ColumnRetrieveModal';
+import FieldRetrieveModal from './FieldRetrieveModal';
 import Header from './Header';
 
 import { handleInvalidCell } from './renderers';
@@ -51,9 +51,11 @@ const propTypes = {
     sheetId: PropTypes.number.isRequired,
     onSheetOptionsChange: PropTypes.func.isRequired,
     onFieldRetrieve: PropTypes.func.isRequired,
+    onFieldDelete: PropTypes.func.isRequired,
     disabled: PropTypes.bool,
+    isFieldRetrievePending: PropTypes.bool,
     // eslint-disable-next-line react/forbid-prop-types
-    fieldRetrievingPending: PropTypes.bool,
+    fieldDeletePending: PropTypes.object.isRequired,
     // onSheetChange: PropTypes.func.isRequired,
 };
 
@@ -61,7 +63,7 @@ const defaultProps = {
     className: '',
     sheet: {},
     disabled: false,
-    fieldRetrievingPending: false,
+    isFieldRetrievePending: false,
 };
 
 // FIXME: don't use compareNumber as it is not exactly basic number type
@@ -146,9 +148,9 @@ export default class Sheet extends React.PureComponent {
         });
     };
 
-    // NOTE: searchTerm is used inside this.headerRendererParams
+    // NOTE: searchTerm, healthBar is used inside this.headerRendererParams
     // eslint-disable-next-line no-unused-vars
-    getSheetColumns = memoize((fields, searchTerm) => (
+    getSheetColumns = memoize((fields, searchTerm, fieldStats, fieldDeletePending) => (
         fields
             .filter(field => !field.hidden)
             .map(field => ({
@@ -178,23 +180,29 @@ export default class Sheet extends React.PureComponent {
     })
 
     headerRendererParams = ({ column, columnKey }) => {
+        // NOTE: columnKey was taken from rendererParams, so it is a strina
+        const fieldId = Number(columnKey);
+
         const {
             sheet: {
                 options: {
                     searchTerm = {},
                 } = {},
                 fieldsStats: {
-                    [columnKey]: {
+                    [fieldId]: {
                         healthBar,
                     },
                 },
             },
         } = this.props;
 
-        return {
-            columnKey,
 
-            disabled: this.props.disabled,
+        const isFieldDeletePending = this.props.fieldDeletePending[fieldId];
+
+        return {
+            fieldId,
+
+            disabled: this.props.disabled || isFieldDeletePending,
 
             onChange: this.handleFieldValueChange,
             onFilterChange: this.handleFilterChange,
@@ -204,10 +212,12 @@ export default class Sheet extends React.PureComponent {
             onSortClick: column.onSortClick,
             className: styles.header,
             statusData: healthBar,
-            filterValue: searchTerm[columnKey],
+            filterValue: searchTerm[fieldId],
             filterComponent: (
                 filterRenderers[column.value.type] || filterRenderers[DATA_TYPE.string]
             ),
+            onFieldDelete: this.handleFieldDelete,
+            isFieldDeletePending,
         };
     }
 
@@ -265,6 +275,14 @@ export default class Sheet extends React.PureComponent {
         onFieldRetrieve(sheetId, selectedFields);
     }
 
+    handleFieldDelete = (fieldId) => {
+        const {
+            onFieldDelete,
+            sheetId,
+        } = this.props;
+        onFieldDelete(sheetId, fieldId);
+    }
+
     handleSettingsChange = (options) => {
         const {
             sheetId,
@@ -274,9 +292,19 @@ export default class Sheet extends React.PureComponent {
     }
 
     render() {
-        const { className, sheet, disabled, fieldRetrievingPending } = this.props;
-        const { fields, options: { searchTerm } = {} } = sheet;
-        const columns = this.getSheetColumns(fields, searchTerm);
+        const {
+            className,
+            sheet,
+            disabled,
+            isFieldRetrievePending,
+            fieldDeletePending,
+        } = this.props;
+        const {
+            fields,
+            options: { searchTerm } = {},
+            fieldsStats,
+        } = sheet;
+        const columns = this.getSheetColumns(fields, searchTerm, fieldsStats, fieldDeletePending);
 
         const fieldList = getDeletedFields(fields);
 
@@ -287,9 +315,9 @@ export default class Sheet extends React.PureComponent {
                         iconName={iconNames.more}
                         title="Other Sheets"
                         disabled={disabled || fieldList.length <= 0}
-                        pending={fieldRetrievingPending}
+                        pending={isFieldRetrievePending}
                         modal={
-                            <ColumnRetrieveModal
+                            <FieldRetrieveModal
                                 disabled={disabled}
                                 fields={fieldList}
                                 onFieldRetrieve={this.handleFieldRetrieve}
