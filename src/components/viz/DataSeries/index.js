@@ -63,8 +63,8 @@ const GRAPH = {
 
 const GRAPH_MODES = {
     string: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart, GRAPH.wordCloud],
-    number: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart, GRAPH.wordCloud],
-    datetime: [GRAPH.horizontalBarChart],
+    number: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart],
+    datetime: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart],
     geo: [GRAPH.geo],
 };
 
@@ -145,7 +145,6 @@ export default class DataSeries extends React.PureComponent {
 
         this.state = {
             activeView: GRAPH.verticalBarChart,
-            isExpandedView: true,
         };
     }
 
@@ -250,6 +249,8 @@ export default class DataSeries extends React.PureComponent {
         const { activeView } = this.state;
         const ExpandedModal = this.renderExpandedModal;
 
+        const options = this.getSegmentOptions(value.type);
+
         return (
             <div className={_cs(className, 'data-series', styles.dataSeries)}>
                 <header className={styles.header}>
@@ -257,15 +258,17 @@ export default class DataSeries extends React.PureComponent {
                         {value.title}
                     </h5>
                     <div className={styles.actions}>
-                        <RotatingInput
-                            rendererSelector={rotatingInputLabelSelector}
-                            keySelector={rotatingInputKeySelector}
-                            value={activeView}
-                            onChange={this.handleSegmentStateChange}
-                            options={this.getSegmentOptions(value.type)}
-                            showLabel={false}
-                            showHintAndError={false}
-                        />
+                        { options && options.length > 1 &&
+                            <RotatingInput
+                                rendererSelector={rotatingInputLabelSelector}
+                                keySelector={rotatingInputKeySelector}
+                                value={activeView}
+                                onChange={this.handleSegmentStateChange}
+                                options={options}
+                                showLabel={false}
+                                showHintAndError={false}
+                            />
+                        }
                         <ModalButton
                             iconName={iconNames.expand}
                             className={styles.expandButton}
