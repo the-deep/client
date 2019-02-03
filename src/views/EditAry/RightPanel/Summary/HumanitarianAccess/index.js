@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import FaramGroup from '#rscg/FaramGroup';
 import SelectInput from '#rsci/SelectInput';
 import HiearchicalSelectInput from '#rsci/HierarchicalSelectInput';
+import TextInput from '#rsci/TextInput';
 
 import {
     priorityIssuesSelector,
@@ -101,13 +102,9 @@ export default class HumanitarianAccess extends React.PureComponent {
             );
         } else if (rowKey === 'affectedLocation') {
             return (
-                <SelectInput
+                <TextInput
                     faramElementName={columnKey}
                     showHintAndError={false}
-                    options={affectedLocations}
-                    labelSelector={HumanitarianAccess.nodeLabelSelector}
-                    keySelector={HumanitarianAccess.nodeIdSelector}
-                    placeholder=""
                 />
             );
         }
