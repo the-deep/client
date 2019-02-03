@@ -136,6 +136,7 @@ export default class Header extends React.PureComponent {
                     iconName={iconNames.edit}
                     transparent
                     title="Edit"
+                    disabled={disabled}
                     modal={
                         <ColumnEditModal />
                     }

@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 
-import Modal from '#rscv/Modal';
 import modalize from '#rscg/Modalize';
 import Button from '#rsca/Button';
 import Searchable from '#rscv/Taebul/Searchable';
@@ -24,11 +23,14 @@ import _ts from '#ts';
 import { iconNames } from '#constants';
 import { DATA_TYPE } from '#entities/tabular';
 
+import ColumnRetrieveModal from './ColumnRetrieveModal';
 import Header from './Header';
+
 import { handleInvalidCell } from './renderers';
 import StringCell from './renderers/StringCell';
 import NumberCell from './renderers/NumberCell';
 import DateCell from './renderers/DateCell';
+
 import StringFilter from './filters/StringFilter';
 import NumberFilter from './filters/NumberFilter';
 import DateFilter from './filters/DateFilter';
@@ -39,15 +41,6 @@ const ModalButton = modalize(Button);
 
 const Taebul = Searchable(Sortable(ColumnWidth(NormalTaebul)));
 
-const ColumnRetrieveModal = ({ closeModal }) => (
-    <Modal
-        onClose={closeModal}
-        closeOnEscape
-    >
-        Get my columns back
-    </Modal>
-);
-
 const propTypes = {
     className: PropTypes.string,
     sheet: PropTypes.shape({
@@ -55,12 +48,20 @@ const propTypes = {
         rows: PropTypes.array,
         options: PropTypes.object,
     }),
-    onSheetChange: PropTypes.func.isRequired,
+    sheetId: PropTypes.number.isRequired,
+    onSheetOptionsChange: PropTypes.func.isRequired,
+    onFieldRetrieve: PropTypes.func.isRequired,
+    disabled: PropTypes.bool,
+    // eslint-disable-next-line react/forbid-prop-types
+    fieldRetrievingPending: PropTypes.bool,
+    // onSheetChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     className: '',
     sheet: {},
+    disabled: false,
+    fieldRetrievingPending: false,
 };
 
 // FIXME: don't use compareNumber as it is not exactly basic number type
@@ -88,118 +89,19 @@ const filterRenderers = {
 
 const emptyObject = {};
 
-export default class TabularSheet extends React.PureComponent {
+// FIXME: memoize this
+const getDeletedFields = fields => fields.filter(f => f.hidden);
+
+export default class Sheet extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
     static keySelector = datum => datum.key;
 
-    // NOTE: searchTerm is used inside this.headerRendererParams
-    calcSheetColumns = memoize((fields, searchTerm) => (
-        fields
-            .filter(field => !field.hidden)
-            .map(field => ({
-                key: String(field.id),
-                value: field,
-
-                headerRendererParams: this.headerRendererParams,
-                headerRenderer: Header,
-                cellRendererParams: this.cellRendererParams,
-
-                cellRenderer: renderers[field.type] || renderers[DATA_TYPE.string],
-                comparator: (a, b, d = 1) => comparators[field.type](
-                    a[field.id].invalid || a[field.id].empty ? undefined : a[field.id].value,
-                    b[field.id].invalid || b[field.id].empty ? undefined : b[field.id].value,
-                    d,
-                ),
-            }))
-    ));
-
-    headerRendererParams = ({ column, columnKey }) => {
-        const {
-            sheet: {
-                options: {
-                    searchTerm = {},
-                } = {},
-                fieldsStats: {
-                    [columnKey]: {
-                        healthBar,
-                    },
-                },
-            },
-        } = this.props;
-
-        return {
-            columnKey,
-            onChange: this.handleFieldValueChange,
-            onFilterChange: this.handleFilterChange,
-            value: column.value,
-            sortOrder: column.sortOrder,
-            onSortClick: column.onSortClick,
-            className: styles.header,
-            statusData: healthBar,
-            filterValue: searchTerm[columnKey],
-            filterComponent: (
-                filterRenderers[column.value.type] || filterRenderers[DATA_TYPE.string]
-            ),
-        };
-    }
-
-    cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({
-        className: _cs(styles[type], styles.cell),
-        value: datum[id].value,
-        invalid: datum[id].invalid,
-        empty: datum[id].empty,
-        options,
-    })
-
-    handleFieldValueChange = (key, value) => {
-        const { sheet } = this.props;
-        const index = sheet.fields.findIndex(c => String(c.id) === key);
-        const settings = {
-            fields: {
-                [index]: { $merge: value },
-            },
-        };
-        const newSheet = update(sheet, settings);
-        this.props.onSheetChange(newSheet);
-    }
-
-    handleFilterChange = (key, value) => {
-        const { sheet } = this.props;
-        const settings = {
-            options: { $auto: {
-                searchTerm: { $auto: {
-                    [key]: { $set: value },
-                } },
-            } },
-        };
-        const newSheet = update(sheet, settings);
-        this.props.onSheetChange(newSheet);
-    }
-
-    handleSettingsChange = (settings) => {
-        this.props.onSheetChange({
-            ...this.props.sheet,
-            options: settings,
-        });
-    }
-
-    handleResetSort = () => {
-        const { sheet } = this.props;
-        const settings = {
-            options: { $auto: {
-                sortOrder: { $set: undefined },
-            } },
-        };
-        const newSheet = update(sheet, settings);
-        this.props.onSheetChange(newSheet);
-    }
-
-    handleSearch = (datum, searchTerm = emptyObject) => {
+    getFilterCriteria = (datum, searchTerm = emptyObject) => {
         const { sheet } = this.props;
         const { fields, options: { searchTerm: oldSearchTerm } = {} } = sheet;
-        const columns = this.calcSheetColumns(fields, oldSearchTerm);
 
+        const columns = this.getSheetColumns(fields, oldSearchTerm);
         return columns.every((sheetColumn) => {
             const {
                 key: columnKey,
@@ -244,10 +146,139 @@ export default class TabularSheet extends React.PureComponent {
         });
     };
 
+    // NOTE: searchTerm is used inside this.headerRendererParams
+    // eslint-disable-next-line no-unused-vars
+    getSheetColumns = memoize((fields, searchTerm) => (
+        fields
+            .filter(field => !field.hidden)
+            .map(field => ({
+                key: String(field.id),
+                value: field,
+
+                headerRendererParams: this.headerRendererParams,
+                cellRendererParams: this.cellRendererParams,
+
+                headerRenderer: Header,
+                cellRenderer: renderers[field.type] || renderers[DATA_TYPE.string],
+
+                comparator: (a, b, d = 1) => comparators[field.type](
+                    a[field.id].invalid || a[field.id].empty ? undefined : a[field.id].value,
+                    b[field.id].invalid || b[field.id].empty ? undefined : b[field.id].value,
+                    d,
+                ),
+            }))
+    ));
+
+    cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({
+        className: _cs(styles[type], styles.cell),
+        value: datum[id].value,
+        invalid: datum[id].invalid,
+        empty: datum[id].empty,
+        options,
+    })
+
+    headerRendererParams = ({ column, columnKey }) => {
+        const {
+            sheet: {
+                options: {
+                    searchTerm = {},
+                } = {},
+                fieldsStats: {
+                    [columnKey]: {
+                        healthBar,
+                    },
+                },
+            },
+        } = this.props;
+
+        return {
+            columnKey,
+
+            disabled: this.props.disabled,
+
+            onChange: this.handleFieldValueChange,
+            onFilterChange: this.handleFilterChange,
+
+            value: column.value,
+            sortOrder: column.sortOrder,
+            onSortClick: column.onSortClick,
+            className: styles.header,
+            statusData: healthBar,
+            filterValue: searchTerm[columnKey],
+            filterComponent: (
+                filterRenderers[column.value.type] || filterRenderers[DATA_TYPE.string]
+            ),
+        };
+    }
+
+    handleFieldValueChange = (key, value) => {
+        const { sheet } = this.props;
+        const index = sheet.fields.findIndex(c => String(c.id) === key);
+        const settings = {
+            fields: {
+                [index]: { $merge: value },
+            },
+        };
+        const newSheet = update(sheet, settings);
+        console.warn('TODO: Should change sheet', newSheet);
+    }
+
+    handleFilterChange = (key, value) => {
+        const {
+            sheet: {
+                options: oldOptions = {},
+            },
+            sheetId,
+            onSheetOptionsChange,
+        } = this.props;
+
+        const settings = {
+            searchTerm: { $auto: {
+                [key]: { $set: value },
+            } },
+        };
+        const newOptions = update(oldOptions, settings);
+        onSheetOptionsChange(sheetId, newOptions);
+    }
+
+    handleResetSort = () => {
+        const {
+            sheet: {
+                options: oldOptions = {},
+            },
+            sheetId,
+            onSheetOptionsChange,
+        } = this.props;
+
+        const settings = {
+            sortOrder: { $set: undefined },
+        };
+        const newOptions = update(oldOptions, settings);
+        onSheetOptionsChange(sheetId, newOptions);
+    }
+
+    handleFieldRetrieve = (selectedFields) => {
+        const {
+            onFieldRetrieve,
+            sheetId,
+        } = this.props;
+        onFieldRetrieve(sheetId, selectedFields);
+    }
+
+    handleSettingsChange = (options) => {
+        const {
+            sheetId,
+            onSheetOptionsChange,
+        } = this.props;
+        onSheetOptionsChange(sheetId, options);
+    }
+
     render() {
-        const { className, sheet } = this.props;
+        const { className, sheet, disabled, fieldRetrievingPending } = this.props;
         const { fields, options: { searchTerm } = {} } = sheet;
-        const columns = this.calcSheetColumns(fields, searchTerm);
+        const columns = this.getSheetColumns(fields, searchTerm);
+
+        const fieldList = getDeletedFields(fields);
 
         return (
             <div className={_cs(className, styles.tabularSheet, 'tabular-sheet')}>
@@ -255,13 +286,20 @@ export default class TabularSheet extends React.PureComponent {
                     <ModalButton
                         iconName={iconNames.more}
                         title="Other Sheets"
+                        disabled={disabled || fieldList.length <= 0}
+                        pending={fieldRetrievingPending}
                         modal={
-                            <ColumnRetrieveModal />
+                            <ColumnRetrieveModal
+                                disabled={disabled}
+                                fields={fieldList}
+                                onFieldRetrieve={this.handleFieldRetrieve}
+                            />
                         }
                     />
                     <Button
                         iconName={iconNames.sort}
                         onClick={this.handleResetSort}
+                        disabled={disabled}
                         title={_ts('tabular', 'resetSortLabel')}
                     />
                 </div>
@@ -269,10 +307,10 @@ export default class TabularSheet extends React.PureComponent {
                     className={styles.table}
                     data={sheet.rows}
                     settings={sheet.options}
-                    keySelector={TabularSheet.keySelector}
+                    keySelector={Sheet.keySelector}
                     columns={columns}
                     onChange={this.handleSettingsChange}
-                    searchFunction={this.handleSearch}
+                    searchFunction={this.getFilterCriteria}
                 />
             </div>
         );

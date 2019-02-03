@@ -34,3 +34,14 @@ export const createParamsForSheetRetrieve = sheets => ({
         sheets,
     }),
 });
+
+export const createUrlForFieldRetrieve = sheetId => (
+    `${wsEndpoint}/tabular-sheets/${sheetId}/`
+);
+export const createParamsForFieldRetrieve = fields => ({
+    method: PATCH,
+    headers: commonHeaderForPost,
+    body: JSON.stringify({
+        fields,
+    }),
+});

@@ -3,23 +3,16 @@ import React, { Fragment } from 'react';
 import produce from 'immer';
 
 import Button from '#rsca/Button';
-import DangerButton from '#rsca/Button/DangerButton';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import modalize from '#rscg/Modalize';
-import ListSelection from '#rsci/ListSelection';
-import NonFieldErrors from '#rsci/NonFieldErrors';
-import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
-import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 import ScrollTabs from '#rscv/ScrollTabs';
 
-import Faram, { requiredCondition } from '#rscg/Faram';
 import { FgRestBuilder } from '#rsu/rest';
 import {
     listToMap,
@@ -31,7 +24,6 @@ import {
     getNaturalNumbers,
     zipWith,
 } from '#rsu/functional';
-import update from '#rsu/immutable-update';
 
 import Cloak from '#components/general/Cloak';
 import TriggerAndPoll from '#components/general/TriggerAndPoll';
@@ -43,6 +35,8 @@ import {
     createParamsForSheetDelete,
     createUrlForSheetRetrieve,
     createParamsForSheetRetrieve,
+    createUrlForFieldRetrieve,
+    createParamsForFieldRetrieve,
 } from '#rest';
 import { iconNames } from '#constants';
 import { RequestCoordinator, RequestClient, requestMethods } from '#request';
@@ -50,28 +44,13 @@ import notify from '#notify';
 import _ts from '#ts';
 import _cs from '#cs';
 
-import TabularSheet from './TabularSheet';
-// import EditFieldButton from './EditField';
+import Sheet from './Sheet';
+import SheetEditModal from './SheetEditModal';
+import SheetRetrieveModal from './SheetRetrieveModal';
 import styles from './styles.scss';
 
 const WarningModalButton = modalize(WarningButton);
 const ModalButton = modalize(Button);
-
-const propTypes = {
-    className: PropTypes.string,
-    bookId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-    onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
-    onCancel: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
-
-    deleteRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    // projectId: PropTypes.number.isRequired,
-    // saveRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-};
-
-const defaultProps = {
-    className: '',
-};
-
 
 const transformSheet = (sheet) => {
     const {
@@ -131,6 +110,7 @@ const transformSheet = (sheet) => {
     return newSheet;
 };
 
+// FIXME: memoize this
 const transformSheets = (originalSheets) => {
     const sheets = listToMap(
         originalSheets,
@@ -145,12 +125,25 @@ const transformSheets = (originalSheets) => {
         sheet => sheet.title,
     );
 
+    // NOTE: at least one sheet should be available
+    const firstKey = Object.keys(tabs)[0];
+
     return {
         sheets,
         tabs,
-        firstTab: Object.keys(tabs)[0],
+        firstTab: (firstKey !== undefined) && Number(firstKey),
     };
 };
+
+// FIXME: memoize this
+const getDeletedSheets = sheets => mapToList(
+    sheets,
+    s => ({
+        title: s.title,
+        id: s.id,
+        hidden: s.hidden,
+    }),
+).filter(s => s.hidden);
 
 const requests = {
     deleteRequest: {
@@ -178,179 +171,21 @@ const requests = {
             });
         },
     },
-
-    /*
-    saveRequest: {
-        schemaName: 'TabularBookSchema',
-        method: requestMethods.PATCH,
-        url: ({ props }) => `/tabular-books/${props.bookId}/`,
-        body: ({ params: { body } }) => body,
-        onSuccess: ({ response, params: { setBook } }) => {
-            setBook(response);
-        },
-    },
-    */
 };
 
-class SheetEditModal extends React.PureComponent {
-    constructor(props) {
-        super(props);
+const propTypes = {
+    className: PropTypes.string,
+    bookId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
+    onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    onCancel: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
 
-        const { title } = this.props;
+    deleteRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+};
 
-        this.state = {
-            value: { title },
-            error: {},
-            hasError: false,
-            pristine: true,
-        };
+const defaultProps = {
+    className: '',
+};
 
-        this.schema = {
-            fields: {
-                title: [requiredCondition],
-            },
-        };
-    }
-
-    handleFaramChange = (faramValues, faramErrors, faramInfo) => {
-        this.setState({
-            value: faramValues,
-            error: faramErrors,
-            pristine: false,
-            hasError: faramInfo.hasError,
-        });
-    };
-
-    handleFaramValidationFailure = (faramErrors) => {
-        this.setState({ error: faramErrors });
-    };
-
-    handleFaramValidationSuccess = (value) => {
-        const {
-            onSheetEdit,
-            sheetId,
-            closeModal,
-        } = this.props;
-
-        onSheetEdit(sheetId, value);
-        closeModal();
-    };
-
-    handleDeleteClick = () => {
-        const {
-            onSheetDelete,
-            sheetId,
-            closeModal,
-        } = this.props;
-
-        onSheetDelete(sheetId);
-        closeModal();
-    }
-
-    render() {
-        const { closeModal, disabled, disabledDelete } = this.props;
-        const { value, error, hasError, pristine } = this.state;
-        return (
-            <Modal
-                onClose={closeModal}
-                closeOnEscape
-            >
-                <ModalBody>
-                    <Faram
-                        onChange={this.handleFaramChange}
-                        onValidationFailure={this.handleFaramValidationFailure}
-                        onValidationSuccess={this.handleFaramValidationSuccess}
-
-                        schema={this.schema}
-                        value={value}
-                        error={error}
-                        disabled={disabled}
-                    >
-                        <NonFieldErrors faramElement />
-                        <TextInput
-                            faramElementName="title"
-                            label="Title"
-                            autoFocus
-                        />
-                        <DangerButton
-                            disabled={disabled || disabledDelete}
-                            onClick={this.handleDeleteClick}
-                        >
-                            Delete Sheet
-                        </DangerButton>
-                        <PrimaryButton
-                            type="submit"
-                            disabled={disabled || hasError || pristine}
-                        >
-                            Save
-                        </PrimaryButton>
-                    </Faram>
-                </ModalBody>
-            </Modal>
-        );
-    }
-}
-
-// eslint-disable-next-line react/no-multi-comp
-class SheetRetrieveModal extends React.PureComponent {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            selectedSheets: [],
-        };
-    }
-
-    handleSelection = (value) => {
-        this.setState({ selectedSheets: value });
-    }
-
-    handleRetrieveClick = () => {
-        const {
-            onSheetRetrieve,
-            closeModal,
-        } = this.props;
-        const { selectedSheets } = this.state;
-
-        onSheetRetrieve(selectedSheets);
-        closeModal();
-    }
-
-    render() {
-        const { closeModal, sheets, disabled } = this.props;
-        const { selectedSheets } = this.state;
-        return (
-            <Modal
-                onClose={closeModal}
-                closeOnEscape
-            >
-                <ModalBody>
-                    <ListSelection
-                        label="Sheets to retrieve"
-                        disabled={disabled}
-                        labelSelector={SheetRetrieveModal.labelSelector}
-                        keySelector={SheetRetrieveModal.keySelector}
-                        options={sheets}
-                        value={this.state.selectedSheets}
-                        onChange={this.handleSelection}
-
-                    />
-                    <PrimaryButton
-                        disabled={disabled || selectedSheets.length <= 0}
-                        onClick={this.handleRetrieveClick}
-                    >
-                        Retrieve
-                    </PrimaryButton>
-                </ModalBody>
-            </Modal>
-        );
-    }
-}
-
-SheetRetrieveModal.labelSelector = s => s.title;
-SheetRetrieveModal.keySelector = s => s.id;
-
-// eslint-disable-next-line react/no-multi-comp
 @RequestCoordinator
 @RequestClient(requests)
 export default class TabularBook extends React.PureComponent {
@@ -370,16 +205,22 @@ export default class TabularBook extends React.PureComponent {
             sheetDeletePending: {},
             sheetEditPending: {},
 
+            fieldRetrievingPending: {},
+
             /*
-            columnDeletePending: {},
-            columnEditPending: {},
-            columnRetrievingPending: {},
+            fieldDeletePending: {},
+            fieldEditPending: {},
             sheetOptionsEditPending: false,
             */
         };
     }
 
-    setBook = (response, onComplete) => {
+    handleActiveSheetChange = (activeSheet) => {
+        // NOTE: at least one sheet should be available
+        this.setState({ activeSheet: Number(activeSheet) });
+    }
+
+    handleBookGet = (response, onComplete) => {
         this.setState(
             { originalSheets: response.sheets },
             () => {
@@ -390,7 +231,7 @@ export default class TabularBook extends React.PureComponent {
         );
     }
 
-    handleDelete = () => {
+    handleBookDelete = () => {
         this.props.deleteRequest.do();
     }
 
@@ -507,34 +348,80 @@ export default class TabularBook extends React.PureComponent {
         sheetRetrieveRequest.start();
     }
 
-    handleSheetChange = (newSheet) => {
-        // TODO:
-        console.warn('sheet should change', newSheet);
-        /*
-        // FIXME: move this to redux
-        const { sheets } = this.state;
-        const settings = {
-            [newSheet.id]: { $set: newSheet },
-        };
-        this.setState({ sheets: update(sheets, settings) });
-        */
-    }
+    handleFieldRetrieve = (sheetId, fieldIds) => {
+        const fieldIdMap = listToMap(
+            fieldIds,
+            id => id,
+            () => true,
+        );
 
-    handleActiveSheetChange = (activeSheet) => {
-        this.setState({ activeSheet });
-    }
+        const { originalSheets } = this.state;
 
-    /*
-    handleDetailsChange = (newValues) => {
-        this.props.saveRequest.do({
-            body: {
-                project: this.props.projectId,
-                sheets: Object.keys(newValues).map(k => newValues[k]),
-            },
-            setBook: this.setBook,
+        const sheetIndex = originalSheets.findIndex(s => s.id === sheetId);
+        const sheet = originalSheets[sheetIndex];
+
+        const modification = sheet.fields.map((field) => {
+            const { id } = field;
+            return fieldIdMap[id] ? { id, hidden: false } : { id };
         });
+
+        const fieldRetrieveRequest = new FgRestBuilder()
+            .url(createUrlForFieldRetrieve(sheetId))
+            .params(() => createParamsForFieldRetrieve(modification))
+            .preLoad(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.fieldRetrievingPending[sheetId] = true;
+                    }),
+                );
+            })
+            .success(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        fieldIds.forEach((fieldId) => {
+                            const fieldIndex = safeState.originalSheets[sheetIndex].fields
+                                .findIndex(f => f.id === fieldId);
+                            // eslint-disable-next-line no-param-reassign
+                            safeState.originalSheets[sheetIndex].fields[fieldIndex].hidden = false;
+                        });
+                    }),
+                );
+            })
+            .postLoad(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.fieldRetrievingPending[sheetId] = false;
+                    }),
+                );
+            })
+            .build();
+        fieldRetrieveRequest.start();
     }
-    */
+
+
+    handleSheetOptionsChange = (sheetId, options) => {
+        this.setState(
+            state => produce(state, (safeState) => {
+                const sheetIndex = safeState.originalSheets.findIndex(
+                    s => s.id === sheetId,
+                );
+                // eslint-disable-next-line no-param-reassign
+                safeState.originalSheets[sheetIndex].options = options;
+            }),
+        );
+        // TODO: save this to server in background
+    }
+
+    tabsRendererParams = (key, data) => ({
+        title: data,
+        // NOTE: sheetId was taken from key, so it is a string
+        sheetId: Number(key),
+        deletePending: this.state.sheetDeletePending[key],
+        editPending: this.state.sheetEditPending[key],
+        originalSheets: this.state.originalSheets,
+    })
 
     tabsRenderer = ({
         title, className, sheetId, onClick, deletePending, editPending, originalSheets,
@@ -543,6 +430,9 @@ export default class TabularBook extends React.PureComponent {
         const tabKeys = Object.keys(tabs);
 
         const sheet = sheets[sheetId];
+
+        const disabledSheetEditModal = deletePending || editPending;
+        const disabledSheetEditModalDelete = tabKeys.length <= 1;
 
         return (
             <div className={_cs(className, styles.tab)}>
@@ -557,30 +447,21 @@ export default class TabularBook extends React.PureComponent {
                     iconName={iconNames.edit}
                     transparent
                     title="Edit"
-                    pending={deletePending || editPending}
+                    pending={disabledSheetEditModal}
                     modal={
                         <SheetEditModal
                             sheetId={sheetId}
                             title={sheet.title}
                             onSheetDelete={this.handleSheetDelete}
                             onSheetEdit={this.handleSheetEdit}
-                            disabled={deletePending || editPending}
-                            disabledDelete={tabKeys.length <= 1}
+                            disabled={disabledSheetEditModal}
+                            disabledDelete={disabledSheetEditModalDelete}
                         />
                     }
                 />
             </div>
         );
     }
-
-    tabsRendererParams = (key, data) => ({
-        title: data,
-        // NOTE: sheetId was taken from key, so it is a string
-        sheetId: Number(key),
-        deletePending: this.state.sheetDeletePending[key],
-        editPending: this.state.sheetEditPending[key],
-        originalSheets: this.state.originalSheets,
-    })
 
     renderBody = ({ invalid, completed, disabled }) => {
         if (invalid) {
@@ -601,6 +482,7 @@ export default class TabularBook extends React.PureComponent {
             originalSheets,
             activeSheet,
             sheetRetrievingPending,
+            sheetDeletePending,
         } = this.state;
 
         const {
@@ -609,20 +491,17 @@ export default class TabularBook extends React.PureComponent {
             firstTab,
         } = transformSheets(originalSheets);
 
-        const sheetList = mapToList(
-            sheets,
-            s => ({
-                title: s.title,
-                id: s.id,
-                hidden: s.hidden,
-            }),
-        ).filter(s => s.hidden);
+        const sheetList = getDeletedSheets(sheets);
 
         const activeSheetKey = (!activeSheet || !sheets[activeSheet] || sheets[activeSheet].hidden)
             ? firstTab
             : activeSheet;
 
+        const disabledSheetRetrieveModal = sheetRetrievingPending;
+
         const sheet = sheets[activeSheetKey];
+        const disabledSheet = sheetDeletePending[activeSheetKey];
+        const fieldRetrievingPending = this.state.fieldRetrievingPending[activeSheetKey];
 
         return (
             <Fragment>
@@ -633,12 +512,20 @@ export default class TabularBook extends React.PureComponent {
                             {_ts('tabular', 'noSheets')}
                         </Message>
                     ) : (
-                        <TabularSheet
-                            // dismount on different activeSheet
+                        <Sheet
+                            // NOTE: dismount on different activeSheet
                             key={activeSheetKey}
                             className={styles.sheetView}
                             sheet={sheet}
-                            onSheetChange={this.handleSheetChange}
+                            sheetId={activeSheetKey}
+                            onSheetOptionsChange={this.handleSheetOptionsChange}
+                            disabled={disabledSheet}
+                            onFieldRetrieve={this.handleFieldRetrieve}
+                            fieldRetrievingPending={fieldRetrievingPending}
+                            // TODO:
+                            // onColumnDelete
+                            // onColumnRetrieve
+                            // onColumnEdit
                         />
                     )
                 }
@@ -657,14 +544,13 @@ export default class TabularBook extends React.PureComponent {
                             iconName={iconNames.more}
                             title="Other Columns"
                             disabled={sheetList.length <= 0}
-                            pending={sheetRetrievingPending}
-                            // pending
+                            pending={disabledSheetRetrieveModal}
                             modal={
                                 <SheetRetrieveModal
                                     sheets={sheetList}
                                     onSheetRetrieve={this.handleSheetRetrieve}
-                                    disabled={sheetRetrievingPending}
-                                    // disabled
+                                    disabled={disabledSheetRetrieveModal}
+                                    fieldRetrievingPending={this.state.fieldRetrievingPending}
                                 />
                             }
                         />
@@ -679,11 +565,6 @@ export default class TabularBook extends React.PureComponent {
             deleteRequest: {
                 pending: deletePending,
             },
-            /*
-            saveRequest: {
-                pending: savePending,
-            },
-            */
             onCancel,
         } = this.props;
 
@@ -695,7 +576,6 @@ export default class TabularBook extends React.PureComponent {
 
         const Body = this.renderBody;
 
-        // const disabled = savePending || deletePending || !completed || invalid;
         const disabled = deletePending || !completed || invalid;
 
         return (
@@ -707,19 +587,9 @@ export default class TabularBook extends React.PureComponent {
                             hide={TabularBook.shouldHideButtons}
                             render={
                                 <div className={styles.headerContainer}>
-                                    {/*
-                                    <EditFieldButton
-                                        onChange={this.handleDetailsChange}
-                                        iconName={iconNames.edit}
-                                        disabled={disabled}
-                                        value={sheets}
-                                    >
-                                        {_ts('tabular', 'editButtonLabel')}
-                                    </EditFieldButton>
-                                    */}
                                     <DangerConfirmButton
                                         iconName={iconNames.delete}
-                                        onClick={this.handleDelete}
+                                        onClick={this.handleBookDelete}
                                         confirmationMessage={_ts('tabular', 'deleteMessage')}
                                         disabled={disabled}
                                     >
@@ -752,7 +622,7 @@ export default class TabularBook extends React.PureComponent {
 
         return (
             <TriggerAndPoll
-                onDataReceived={this.setBook}
+                onDataReceived={this.handleBookGet}
                 url={`/tabular-books/${bookId}/`}
                 triggerUrl={`/tabular-extraction-trigger/${bookId}/`}
                 // schemaName="TabularBookSchema"
@@ -782,24 +652,6 @@ export default class TabularBook extends React.PureComponent {
 3. Undo hide fields:
     PATCH http://localhost:8000/api/v1/tabular-sheets/<id>
     { fields: [ { id: 12, hidden: true } ] }
-    NO DATA NEEDED
-
-DONE
-1. Hide sheet
-    PATCH http://localhost:8000/api/v1/tabular-sheets/<id>
-    { hidden: true }
-    NO DATA REQUIRED
-
-DONE
-2. Modify sheet
-    PATCH http://localhost:8000/api/v1/tabular-sheets/<id>
-    { name }
-    SHEET INFO
-
-DONE
-3. Undo hide sheets
-    PATCH http://localhost:8000/api/v1/tabular-books/<id>
-    { sheets: [ { id: 12, hidden: true } ] }
     NO DATA NEEDED
 
 1. Save options (in bg)
