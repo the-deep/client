@@ -901,7 +901,8 @@
         "-206854": "Saving...",
         "-6746951": "Fields to show",
         "-70697056": "Sheets to show",
-        "-43793403": "Show other columns"
+        "-43793403": "Show other columns",
+        "-54095239": "Remove column"
     },
     "links": {
         "browserExtension": {
@@ -2554,12 +2555,13 @@
         "tabular.fieldEditModal": {
             "adminLevelTitle": 89,
             "dateFormatTitle": -18101242,
-            "deleteFieldButtonLabel": -94736495,
+            "deleteFieldButtonLabel": -54095239,
             "fieldNameTitle": 13,
             "fieldTypeTitle": 21,
             "geoTypeTitle": -50186668,
             "saveFieldButtonLabel": 25,
-            "separatorTitle": 15003
+            "separatorTitle": 15003,
+            "cancelFieldButtonLabel": 61
         },
         "tabular.fieldRetrieveModal": {
             "fieldsLabel": -6746951,

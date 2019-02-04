@@ -1,0 +1,26 @@
+@import '~base-scss/base';
+
+.container {
+    padding: $spacing-medium;
+
+    .top {
+        display: flex;
+
+        .non-field-errors {
+            flex-grow: 1;
+        }
+
+        .remove-column-button {
+            flex-shrink: 0;
+        }
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+
+        >button {
+            margin-left: $spacing-small;
+        }
+    }
+}
