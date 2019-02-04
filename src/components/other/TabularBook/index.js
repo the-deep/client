@@ -35,6 +35,8 @@ import {
     createParamsForSheetDelete,
     createUrlForSheetRetrieve,
     createParamsForSheetRetrieve,
+    createUrlForSheetOptionsSave,
+    createParamsForSheetOptionsSave,
     createUrlForFieldDelete,
     createParamsForFieldDelete,
     createUrlForFieldRetrieve,
@@ -337,6 +339,41 @@ export default class TabularBook extends React.PureComponent {
         this.coordinator.start();
     }
 
+    handleSheetOptionsSave = () => {
+        const { bookId } = this.props;
+
+        const requestId = `sheet-save-${bookId}`;
+        this.coordinator.remove(requestId);
+
+        const { originalSheets } = this.state;
+        const modification = originalSheets.map((sheet) => {
+            const { id, options } = sheet;
+            return { id, options };
+        });
+
+        const request = new FgRestBuilder()
+            .url(createUrlForSheetOptionsSave(bookId))
+            .params(() => createParamsForSheetOptionsSave(modification))
+            /*
+            .preLoad(() => {
+                this.setState({ isSheetOptionsSavePending: true });
+            })
+            */
+            .postLoad(() => {
+                /*
+                this.setState(
+                    { isSheetOptionsSavePending: false },
+                    () => this.coordinator.notifyComplete(requestId),
+                );
+                */
+                this.coordinator.notifyComplete(requestId);
+            })
+            .build();
+
+        this.coordinator.add(requestId, request);
+        this.coordinator.start();
+    }
+
     handleSheetRetrieve = (sheetIds) => {
         const { bookId } = this.props;
 
@@ -541,6 +578,9 @@ export default class TabularBook extends React.PureComponent {
                 safeState.originalSheets[sheetIndex].options = options;
             }),
         );
+
+        clearTimeout(this.backgroundSaveTimeout);
+        this.backgroundSaveTimeout = setTimeout(this.handleSheetOptionsSave, 2000);
     }
 
     tabsRendererParams = (key, data) => ({
@@ -770,12 +810,3 @@ export default class TabularBook extends React.PureComponent {
         );
     }
 }
-
-
-/*
-1. Save options (in bg)
-    PATCH http://localhost:8000/api/v1/tabular-sheets/<id>
-    { sorting, searching, sizing }
-    NO DATA NEEDED
-*/
-

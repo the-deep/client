@@ -36,6 +36,18 @@ export const createParamsForSheetRetrieve = sheets => ({
     }),
 });
 
+export const createUrlForSheetOptionsSave = bookId => (
+    `${wsEndpoint}/tabular-books/${bookId}/`
+);
+export const createParamsForSheetOptionsSave = sheets => ({
+    method: PATCH,
+    headers: commonHeaderForPost,
+    body: JSON.stringify({
+        sheets,
+    }),
+});
+
+
 export const createUrlForFieldDelete = fieldId => (
     `${wsEndpoint}/tabular-fields/${fieldId}/`
 );
