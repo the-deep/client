@@ -6,6 +6,8 @@ import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ListSelection from '#rsci/ListSelection';
 
+import _ts from '#ts';
+
 export default class SheetRetrieveModal extends React.PureComponent {
     static propTypes = {
         closeModal: PropTypes.func,
@@ -48,7 +50,11 @@ export default class SheetRetrieveModal extends React.PureComponent {
     }
 
     render() {
-        const { closeModal, sheets, disabled } = this.props;
+        const {
+            closeModal,
+            sheets,
+            disabled,
+        } = this.props;
         const { selectedSheets } = this.state;
         return (
             <Modal
@@ -57,20 +63,19 @@ export default class SheetRetrieveModal extends React.PureComponent {
             >
                 <ModalBody>
                     <ListSelection
-                        label="Sheets to retrieve"
+                        label={_ts('tabular.sheetRetrieveModal', 'sheetsLabel')} // Sheets to retrieve
                         disabled={disabled}
                         labelSelector={SheetRetrieveModal.labelSelector}
                         keySelector={SheetRetrieveModal.keySelector}
                         options={sheets}
-                        value={this.state.selectedSheets}
+                        value={selectedSheets}
                         onChange={this.handleSelection}
-
                     />
                     <PrimaryButton
                         disabled={disabled || selectedSheets.length <= 0}
                         onClick={this.handleRetrieveClick}
                     >
-                        Retrieve
+                        {_ts('tabular.sheetRetrieveModal', 'retrieveSheetButtonLabel') /* Retrieve */ }
                     </PrimaryButton>
                 </ModalBody>
             </Modal>

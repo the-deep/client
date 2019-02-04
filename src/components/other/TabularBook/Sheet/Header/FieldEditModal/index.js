@@ -14,6 +14,7 @@ import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 
 import { DATA_TYPE } from '#entities/tabular';
+import _ts from '#ts';
 
 const DATE_FORMATS = [
     { format: '%m-%d-%Y', label: 'mm-dd-yyyy' },
@@ -174,7 +175,7 @@ export default class FieldEditModal extends React.PureComponent {
             return (
                 <SegmentInput
                     faramElementName="separator"
-                    label="Separator"
+                    label={_ts('tabular.fieldEditModal', 'separatorTitle')} // Separator
                     options={separatorOptions}
                 />
             );
@@ -185,12 +186,12 @@ export default class FieldEditModal extends React.PureComponent {
                 <React.Fragment>
                     <SegmentInput
                         faramElementName="geoType"
-                        label="Geo Type"
+                        label={_ts('tabular.fieldEditModal', 'geoTypeTitle')} // Geo Type
                         options={geoTypeOptions}
                     />
                     <NumberInput
                         faramElementName="adminLevel"
-                        label="Admin Level"
+                        label={_ts('tabular.fieldEditModal', 'adminLevelTitle')} // Admin Level
                     />
                 </React.Fragment>
             );
@@ -200,7 +201,7 @@ export default class FieldEditModal extends React.PureComponent {
             return (
                 <SelectInput
                     faramElementName="dateFormat"
-                    label="Date Type"
+                    label={_ts('tabular.fieldEditModal', 'dateFormatTitle')} // Date Format
                     options={DATE_FORMATS}
                     keySelector={FieldEditModal.getFormatValue}
                     labelSelector={FieldEditModal.getLabelValue}
@@ -241,12 +242,12 @@ export default class FieldEditModal extends React.PureComponent {
                         <NonFieldErrors faramElement />
                         <TextInput
                             faramElementName="title"
-                            label="Title"
+                            label={_ts('tabular.fieldEditModal', 'fieldNameTitle')} // Title
                             autoFocus
                         />
                         <SegmentInput
                             faramElementName="type"
-                            label="Type"
+                            label={_ts('tabular.fieldEditModal', 'fieldTypeTitle')} // Type
                             options={fieldTypes}
                         />
 
@@ -258,13 +259,13 @@ export default class FieldEditModal extends React.PureComponent {
                             disabled={disabled || disabledDelete}
                             onClick={this.handleDeleteClick}
                         >
-                            Delete Field
+                            {_ts('tabular.fieldEditModal', 'deleteFieldButtonLabel') /* Delete Field */ }
                         </DangerButton>
                         <PrimaryButton
                             type="submit"
                             disabled={disabled || hasError || pristine}
                         >
-                            Save
+                            {_ts('tabular.fieldEditModal', 'saveFieldButtonLabel') /* Save Field */ }
                         </PrimaryButton>
                     </Faram>
                 </ModalBody>

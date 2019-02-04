@@ -568,7 +568,6 @@ export default class TabularBook extends React.PureComponent {
     }
 
     handleSheetOptionsChange = (sheetId, options) => {
-        // TODO: save this to server in background
         this.setState(
             state => produce(state, (safeState) => {
                 const sheetIndex = safeState.originalSheets.findIndex(
@@ -616,7 +615,7 @@ export default class TabularBook extends React.PureComponent {
                     className={styles.editButton}
                     iconName={iconNames.edit}
                     transparent
-                    title="Edit"
+                    title={_ts('tabular', 'sheetEditButtonTooltip')} // Edit
                     pending={disabledSheetEditModal}
                     modal={
                         <SheetEditModal
@@ -715,7 +714,7 @@ export default class TabularBook extends React.PureComponent {
                     >
                         <ModalButton
                             iconName={iconNames.more}
-                            title="Other Columns"
+                            title={_ts('tabular', 'sheetShowButtonTooltip')} // Other Sheets
                             disabled={sheetList.length <= 0}
                             pending={disabledSheetRetrieveModal}
                             modal={
@@ -762,7 +761,10 @@ export default class TabularBook extends React.PureComponent {
                                 <div className={styles.headerContainer}>
                                     { isSomePending &&
                                         <div className={styles.pendingMessage}>
-                                            Saving...
+                                            {
+                                                // Saving...
+                                                _ts('tabular', 'tabularSavingMessage')
+                                            }
                                         </div>
                                     }
                                     <DangerConfirmButton

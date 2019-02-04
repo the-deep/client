@@ -9,6 +9,7 @@ import HealthBar from '#rscz/HealthBar';
 import { iconNames } from '#constants';
 import { DATA_TYPE } from '#entities/tabular';
 import _cs from '#cs';
+import _ts from '#ts';
 
 import FieldEditModal from './FieldEditModal';
 import styles from './styles.scss';
@@ -107,7 +108,7 @@ export default class Header extends React.PureComponent {
                 <WarningModalButton
                     iconName={iconNames.edit}
                     transparent
-                    title="Edit"
+                    title={_ts('tabular.header', 'columnEditButtonTooltip')} // Edit
                     disabled={disabled}
                     pending={isFieldDeletePending || isFieldEditPending}
                     modal={

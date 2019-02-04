@@ -9,6 +9,8 @@ import TextInput from '#rsci/TextInput';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 
+import _ts from '#ts';
+
 export default class SheetEditModal extends React.PureComponent {
     static propTypes = {
         title: PropTypes.string,
@@ -103,20 +105,20 @@ export default class SheetEditModal extends React.PureComponent {
                         <NonFieldErrors faramElement />
                         <TextInput
                             faramElementName="title"
-                            label="Title"
+                            label={_ts('tabular.sheetEditModal', 'sheetNameTitle')} // Title
                             autoFocus
                         />
                         <DangerButton
                             disabled={disabled || disabledDelete}
                             onClick={this.handleDeleteClick}
                         >
-                            Delete Sheet
+                            {_ts('tabular.sheetEditModal', 'deleteSheetButtonLabel') /* Delete Sheet */ }
                         </DangerButton>
                         <PrimaryButton
                             type="submit"
                             disabled={disabled || hasError || pristine}
                         >
-                            Save
+                            {_ts('tabular.sheetEditModal', 'saveSheetButtonLabel') /* Save Sheet */ }
                         </PrimaryButton>
                     </Faram>
                 </ModalBody>

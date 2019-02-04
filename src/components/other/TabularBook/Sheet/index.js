@@ -353,7 +353,7 @@ export default class Sheet extends React.PureComponent {
                 <div className={styles.optionsBar}>
                     <ModalButton
                         iconName={iconNames.more}
-                        title="Other Sheets"
+                        title={_ts('tabular.sheets', 'columnShowButtonTooltip')} // Other Columns
                         disabled={disabled || fieldList.length <= 0}
                         pending={isFieldRetrievePending}
                         modal={
@@ -368,7 +368,7 @@ export default class Sheet extends React.PureComponent {
                         iconName={iconNames.sort}
                         onClick={this.handleResetSort}
                         disabled={disabled}
-                        title={_ts('tabular', 'resetSortLabel')}
+                        title={_ts('tabular.sheets', 'resetSortTooltip')} // Reset sort
                     />
                 </div>
                 <Taebul

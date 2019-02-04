@@ -48,7 +48,7 @@ export default class DateFilter extends React.PureComponent {
         return (
             <div className={className} >
                 <DateInput
-                    placeholder={_ts('tabular.sheets.date', 'fromPlaceholder')}
+                    placeholder={_ts('tabular.filter.date', 'fromPlaceholder')}
                     disabled={disabled}
                     value={value.dateFrom}
                     onChange={this.handleFromFilterChange}
@@ -56,7 +56,7 @@ export default class DateFilter extends React.PureComponent {
                     showHintAndError={false}
                 />
                 <DateInput
-                    placeholder={_ts('tabular.sheets.date', 'toPlaceholder')}
+                    placeholder={_ts('tabular.filter.date', 'toPlaceholder')}
                     disabled={disabled}
                     value={value.dateTo}
                     onChange={this.handleToFilterChange}

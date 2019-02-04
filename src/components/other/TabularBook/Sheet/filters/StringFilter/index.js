@@ -36,7 +36,7 @@ export default class StringFilter extends React.PureComponent {
         return (
             <TextInput
                 className={className}
-                placeholder={_ts('tabular.sheets.string', 'searchPlaceholder')}
+                placeholder={_ts('tabular.filter.string', 'searchPlaceholder')}
                 disabled={disabled}
                 value={value.text}
                 onChange={this.handleFilterChange}

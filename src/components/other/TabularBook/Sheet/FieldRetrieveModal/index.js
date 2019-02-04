@@ -6,6 +6,8 @@ import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ListSelection from '#rsci/ListSelection';
 
+import _ts from '#ts';
+
 export default class FieldRetrieveModal extends React.PureComponent {
     static propTypes = {
         closeModal: PropTypes.func,
@@ -57,7 +59,7 @@ export default class FieldRetrieveModal extends React.PureComponent {
             >
                 <ModalBody>
                     <ListSelection
-                        label="Fields to retrieve"
+                        label={_ts('tabular.fieldRetrieveModal', 'fieldsLabel')} // Fields to retrieve
                         disabled={disabled}
                         labelSelector={FieldRetrieveModal.labelSelector}
                         keySelector={FieldRetrieveModal.keySelector}
@@ -70,7 +72,7 @@ export default class FieldRetrieveModal extends React.PureComponent {
                         disabled={disabled || selectedFields.length <= 0}
                         onClick={this.handleRetrieveClick}
                     >
-                        Retrieve
+                        {_ts('tabular.fieldRetrieveModal', 'retrieveFieldButtonLabel') /* Retrieve */ }
                     </PrimaryButton>
                 </ModalBody>
             </Modal>

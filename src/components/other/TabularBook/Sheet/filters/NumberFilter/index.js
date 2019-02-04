@@ -53,7 +53,7 @@ export default class NumberFilter extends React.PureComponent {
         return (
             <div className={_cs(className, styles.numberFilter)} >
                 <NumberInput
-                    placeholder={_ts('tabular.sheets.number', 'fromPlaceholder')}
+                    placeholder={_ts('tabular.filter.number', 'fromPlaceholder')}
                     disabled={disabled}
                     value={value.numberFrom}
                     onChange={this.handleFromFilterChange}
@@ -63,7 +63,7 @@ export default class NumberFilter extends React.PureComponent {
                 />
                 <NumberInput
                     className={styles.toInput}
-                    placeholder={_ts('tabular.sheets.number', 'toPlaceholder')}
+                    placeholder={_ts('tabular.filter.number', 'toPlaceholder')}
                     disabled={disabled}
                     value={value.numberTo}
                     onChange={this.handleToFilterChange}
