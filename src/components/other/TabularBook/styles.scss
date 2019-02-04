@@ -8,8 +8,12 @@
     overflow: auto;
 
     .header-container {
-        >button {
-            margin-left: $spacing-small;
+        display: flex;
+        align-items: center;
+
+        .pending-message {
+            margin-right: $spacing-medium;
+            color: $color-text-label;
         }
     }
 

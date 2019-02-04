@@ -699,6 +699,7 @@ export default class TabularBook extends React.PureComponent {
             },
             onCancel,
         } = this.props;
+        const { isSomePending } = this.state;
 
         const className = _cs(
             this.props.className,
@@ -719,11 +720,16 @@ export default class TabularBook extends React.PureComponent {
                             hide={TabularBook.shouldHideButtons}
                             render={
                                 <div className={styles.headerContainer}>
+                                    { isSomePending &&
+                                        <div className={styles.pendingMessage}>
+                                            Saving...
+                                        </div>
+                                    }
                                     <DangerConfirmButton
                                         iconName={iconNames.delete}
                                         onClick={this.handleBookDelete}
                                         confirmationMessage={_ts('tabular', 'deleteMessage')}
-                                        disabled={disabled}
+                                        disabled={disabled || isSomePending}
                                     >
                                         {_ts('tabular', 'deleteButtonLabel')}
                                     </DangerConfirmButton>
