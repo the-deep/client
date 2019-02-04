@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import notify from '#notify';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import Cloak from '#components/general/Cloak';
@@ -229,7 +229,7 @@ export default class ProjectDetails extends React.PureComponent {
 
         return (
             <div className={className}>
-                <FixedTabs
+                <ScrollTabs
                     className={styles.tabs}
                     defaultHash={this.defaultHash}
                     replaceHistory
@@ -255,7 +255,7 @@ export default class ProjectDetails extends React.PureComponent {
                             </DangerConfirmButton>
                         }
                     />
-                </FixedTabs>
+                </ScrollTabs>
                 <MultiViewContainer
                     useHash
                     activeClassName={styles.active}

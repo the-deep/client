@@ -1,47 +1,25 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-// import LoadingAnimation from '#rscv/LoadingAnimation';
 import Button from '#rsca/Button';
-
-// import TriggerAndPoll from '#components/general/TriggerAndPoll';
-import { iconNames } from '#constants';
-
+import WarningButton from '#rsca/Button/WarningButton';
+import modalize from '#rscg/Modalize';
 import HealthBar from '#rscz/HealthBar';
 
-import _cs from '#cs';
-
+import { iconNames } from '#constants';
 import { DATA_TYPE } from '#entities/tabular';
+import _cs from '#cs';
+import _ts from '#ts';
+
+import FieldEditModal from './FieldEditModal';
 import styles from './styles.scss';
 
-
-/*
-const LoadingOnValid = ({ invalid }) => (!invalid && (
-    <span className={styles.loadingContainer}>
-        <LoadingAnimation />
-    </span>
-));
-*/
+const WarningModalButton = modalize(WarningButton);
 
 const getSortIcon = sortOrder => ({
     asc: iconNames.sortAscending,
     dsc: iconNames.sortDescending,
 })[sortOrder] || iconNames.sort;
-
-/*
-const shouldExtractGeo = ({ type, geodata }) => (
-    type === DATA_TYPE.geo &&
-    (!geodata || geodata.status !== 'success')
-);
-const shouldPollGeo = ({ type, geodata }) => (
-    type === DATA_TYPE.geo &&
-    (!geodata || geodata.status === 'pending')
-);
-const isValidGeo = ({ type, geodata }) => (
-    type === DATA_TYPE.geo &&
-    (geodata && geodata.status === 'success')
-);
-*/
 
 const healthColorScheme = [
     '#41cf76',
@@ -54,36 +32,41 @@ const healthBarKeySelector = x => x.key;
 
 export default class Header extends React.PureComponent {
     static propTypes = {
-        columnKey: PropTypes.string.isRequired,
+        fieldId: PropTypes.number.isRequired,
         value: PropTypes.shape({}).isRequired,
         filterValue: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
         onSortClick: PropTypes.func.isRequired,
         onFilterChange: PropTypes.func.isRequired,
         sortOrder: PropTypes.string,
-        onChange: PropTypes.func.isRequired,
-        statusData: PropTypes.arrayOf(PropTypes.number).isRequired,
+        // eslint-disable-next-line react/forbid-prop-types
+        statusData: PropTypes.array.isRequired,
         disabled: PropTypes.bool,
+        disabledDelete: PropTypes.bool,
         filterComponent: PropTypes.func.isRequired,
-        // First value is valid count and the second is invalid count
+        onFieldDelete: PropTypes.func.isRequired,
+        onFieldEdit: PropTypes.func.isRequired,
+        isFieldDeletePending: PropTypes.bool,
+        isFieldEditPending: PropTypes.bool,
     };
 
     static defaultProps = {
         sortOrder: undefined,
         disabled: false,
+        disabledDelete: false,
+        isFieldDeletePending: false,
+        isFieldEditPending: false,
         filterValue: undefined,
     };
 
     handleSortClick = () => {
-        this.props.onSortClick(this.props.columnKey);
-    }
-
-    handleGeoData = (value) => {
-        this.props.onChange(this.props.columnKey, value);
+        const { fieldId, onSortClick } = this.props;
+        // NOTE: fieldId must be string for Taebul
+        onSortClick(String(fieldId));
     }
 
     handleFilterChange = (value) => {
-        const { columnKey } = this.props;
-        this.props.onFilterChange(columnKey, value);
+        const { fieldId, onFilterChange } = this.props;
+        onFilterChange(fieldId, value);
     }
 
     render() {
@@ -92,8 +75,14 @@ export default class Header extends React.PureComponent {
             value,
             statusData,
             filterValue,
-            disabled,
             filterComponent: Filter,
+            fieldId,
+            disabled,
+            disabledDelete,
+            isFieldDeletePending,
+            isFieldEditPending,
+            onFieldDelete,
+            onFieldEdit,
         } = this.props;
 
         const iconNameMapping = {
@@ -116,20 +105,23 @@ export default class Header extends React.PureComponent {
                     {value.title}
                 </Button>
                 { icon && <span className={_cs(icon, styles.icon)} /> }
-                {/*
-                    shouldExtractGeo(value) &&
-                    <TriggerAndPoll
-                        compareValue={value}
-                        url={`/tabular-fields/${value.id}/`}
-                        triggerUrl={`/tabular-geo-extraction-trigger/${value.id}/`}
-                        shouldTrigger={shouldExtractGeo}
-                        shouldPoll={shouldPollGeo}
-                        isValid={isValidGeo}
-                        onDataReceived={this.handleGeoData}
-                    >
-                        <LoadingOnValid />
-                    </TriggerAndPoll>
-                */}
+                <WarningModalButton
+                    iconName={iconNames.edit}
+                    transparent
+                    title={_ts('tabular.header', 'columnEditButtonTooltip')} // Edit
+                    disabled={disabled}
+                    pending={isFieldDeletePending || isFieldEditPending}
+                    modal={
+                        <FieldEditModal
+                            disabled={disabled}
+                            disabledDelete={disabledDelete}
+                            fieldId={fieldId}
+                            value={value}
+                            onFieldDelete={onFieldDelete}
+                            onFieldEdit={onFieldEdit}
+                        />
+                    }
+                />
                 <Filter
                     className={styles.searchBox}
                     disabled={disabled}

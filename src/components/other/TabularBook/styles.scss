@@ -1,4 +1,5 @@
 @import '~base-scss/base';
+@import '~rs-scss/button-base';
 
 .tabular-book {
     display: flex;
@@ -7,8 +8,12 @@
     overflow: auto;
 
     .header-container {
-        >button {
-            margin-left: $spacing-small;
+        display: flex;
+        align-items: center;
+
+        .pending-message {
+            margin-right: $spacing-medium;
+            color: $color-text-label;
         }
     }
 
@@ -26,7 +31,14 @@
 
         .tabs {
             flex-shrink: 0;
-            background-color: $color-foreground-alt;
+
+            .tab {
+                .tab-button {
+                    @extend %button-base;
+                    padding: $spacing-small-alt $spacing-medium;
+                    text-transform: uppercase;
+                }
+            }
         }
     }
 }

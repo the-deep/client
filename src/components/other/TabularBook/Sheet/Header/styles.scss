@@ -10,7 +10,7 @@
     }
 
     .icon {
-        margin-left: $spacing-extra-small;
+        margin: 0 $spacing-extra-small;
         color: $color-text-label;
     }
 
@@ -21,10 +21,5 @@
 
     .health-bar {
         height: 6px;
-    }
-
-    .loading-container {
-        position: relative;
-        margin-left: $spacing-small;
     }
 }

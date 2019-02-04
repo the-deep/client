@@ -5,7 +5,7 @@ import { Prompt } from 'react-router-dom';
 
 import Faram, { requiredCondition } from '#rscg/Faram';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import WarningButton from '#rsca/Button/WarningButton';
@@ -311,7 +311,7 @@ export default class CountryDetail extends React.PureComponent {
                         }
                     </div>
                 </div>
-                <FixedTabs
+                <ScrollTabs
                     useHash
                     className={styles.bottomContainer}
                     replaceHistory

@@ -1,6 +1,11 @@
 @import '~base-scss/base';
+@import '~rs-scss/button-base';
 
-.tab-title {
+.button {
+    @extend %button-base;
+    padding: $spacing-small-alt $spacing-medium;
+    text-transform: uppercase;
+
     &.error {
         color: $color-danger;
     }

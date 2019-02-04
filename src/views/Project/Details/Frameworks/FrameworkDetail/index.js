@@ -6,7 +6,7 @@ import memoize from 'memoize-one';
 
 import { reverseRoute } from '#rsu/common';
 import Message from '#rscv/Message';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import AccentButton from '#rsca/Button/AccentButton';
 import modalize from '#rscg/Modalize';
@@ -154,7 +154,7 @@ export default class FrameworkDetail extends React.PureComponent {
                     >
                         {frameworkTitle}
                     </h2>
-                    <FixedTabs
+                    <ScrollTabs
                         className={styles.tabs}
                         tabs={this.tabs}
                         onClick={this.handleTabClick}

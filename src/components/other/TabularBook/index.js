@@ -1,55 +1,62 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
-
-import ModalHeader from '#rscv/Modal/Header';
-import ModalBody from '#rscv/Modal/Body';
-import ModalFooter from '#rscv/Modal/Footer';
-
-import LoadingAnimation from '#rscv/LoadingAnimation';
-import Message from '#rscv/Message';
-import ScrollTabs from '#rscv/ScrollTabs';
+import produce from 'immer';
 
 import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
-import update from '#rsu/immutable-update';
+import modalize from '#rscg/Modalize';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import Message from '#rscv/Message';
+import ModalBody from '#rscv/Modal/Body';
+import ModalFooter from '#rscv/Modal/Footer';
+import ModalHeader from '#rscv/Modal/Header';
+import ScrollTabs from '#rscv/ScrollTabs';
+import { CoordinatorBuilder } from '#rsu/coordinate';
+import { FgRestBuilder } from '#rsu/rest';
 import {
     listToMap,
     isNotDefined,
     mapToMap,
     mapToList,
-    randomString,
 } from '#rsu/common';
-import { zipWith } from '#rsu/functional';
+import {
+    getNaturalNumbers,
+    zipWith,
+} from '#rsu/functional';
 
 import Cloak from '#components/general/Cloak';
 import TriggerAndPoll from '#components/general/TriggerAndPoll';
 
+import {
+    createUrlForSheetEdit,
+    createParamsForSheetEdit,
+    createUrlForSheetDelete,
+    createParamsForSheetDelete,
+    createUrlForSheetRetrieve,
+    createParamsForSheetRetrieve,
+    createUrlForSheetOptionsSave,
+    createParamsForSheetOptionsSave,
+    createUrlForFieldDelete,
+    createParamsForFieldDelete,
+    createUrlForFieldRetrieve,
+    createParamsForFieldRetrieve,
+    createUrlForFieldEdit,
+    createParamsForFieldEdit,
+} from '#rest';
 import { iconNames } from '#constants';
 import { RequestCoordinator, RequestClient, requestMethods } from '#request';
 import notify from '#notify';
 import _ts from '#ts';
 import _cs from '#cs';
 
-import TabularSheet from './TabularSheet';
-import EditFieldButton from './EditField';
+import Sheet from './Sheet';
+import SheetEditModal from './SheetEditModal';
+import SheetRetrieveModal from './SheetRetrieveModal';
 import styles from './styles.scss';
 
-const propTypes = {
-    className: PropTypes.string,
-    projectId: PropTypes.number.isRequired,
-    bookId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-    onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
-    onCancel: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
-
-    deleteRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    saveRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-};
-
-const defaultProps = {
-    className: '',
-};
-
+const WarningModalButton = modalize(WarningButton);
+const ModalButton = modalize(Button);
 
 const transformSheet = (sheet) => {
     const {
@@ -84,16 +91,21 @@ const transformSheet = (sheet) => {
         },
     );
 
+    const newColumns = {
+        ...columns,
+        key: getNaturalNumbers(), // gives a list of natural numbers
+    };
+
     const getObjFromZippedRows = (...zippedRow) => mapToMap(
-        columns,
+        newColumns,
         k => k,
         (k, v, i) => zippedRow[i],
     );
 
-    const rows = zipWith(getObjFromZippedRows, ...mapToList(columns));
+    const rows = [...zipWith(getObjFromZippedRows, ...mapToList(newColumns))];
 
     const newSheet = {
-        rows: [...rows].map(obj => ({ key: randomString(), ...obj })),
+        rows,
         fieldsStats,
         options: {
             ...options,
@@ -103,6 +115,42 @@ const transformSheet = (sheet) => {
     };
     return newSheet;
 };
+
+// TODO: memoize this
+const transformSheets = (originalSheets) => {
+    const sheets = listToMap(
+        originalSheets,
+        sheet => sheet.id,
+        transformSheet,
+    );
+
+    const filteredSheets = originalSheets.filter(sheet => !sheet.hidden);
+    const tabs = listToMap(
+        filteredSheets,
+        sheet => sheet.id,
+        sheet => sheet.title,
+    );
+
+    // NOTE: at least one sheet should be available
+    const firstKey = Object.keys(tabs)[0];
+
+    return {
+        sheets,
+        tabs,
+        // NOTE: activeSheet was taken from Object.keys, so it is a strina
+        firstTab: (firstKey !== undefined) && Number(firstKey),
+    };
+};
+
+// TODO: memoize this
+const getDeletedSheets = sheets => mapToList(
+    sheets,
+    s => ({
+        title: s.title,
+        id: s.id,
+        hidden: s.hidden,
+    }),
+).filter(s => s.hidden);
 
 const requests = {
     deleteRequest: {
@@ -130,16 +178,19 @@ const requests = {
             });
         },
     },
+};
 
-    saveRequest: {
-        schemaName: 'TabularBookSchema',
-        method: requestMethods.PATCH,
-        url: ({ props }) => `/tabular-books/${props.bookId}/`,
-        body: ({ params: { body } }) => body,
-        onSuccess: ({ response, params: { setBook } }) => {
-            setBook(response);
-        },
-    },
+const propTypes = {
+    className: PropTypes.string,
+    bookId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
+    onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+    onCancel: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
+
+    deleteRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+};
+
+const defaultProps = {
+    className: '',
 };
 
 @RequestCoordinator
@@ -155,34 +206,44 @@ export default class TabularBook extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            tabs: {},
-            activeSheet: undefined,
-            sheets: undefined,
+            originalSheets: undefined,
+
+            isSomePending: false,
+
+            isSheetRetrievePending: false,
+            // isSheetOptionsSavePending: false,
+
+            sheetDeletePending: {},
+            sheetEditPending: {},
+
+            fieldRetrievePending: {},
+            fieldDeletePending: {},
+            fieldEditPending: {},
         };
+
+        this.coordinator = new CoordinatorBuilder()
+            .maxActiveActors(6)
+            .preSession(() => {
+                this.setState({ isSomePending: true });
+            })
+            .postSession(() => {
+                this.setState({ isSomePending: false });
+            })
+            .build();
     }
 
-    setBook = (response, onComplete) => {
-        const filteredSheets = response.sheets.filter(sheet => !sheet.hidden);
+    componentWillUnmount() {
+        this.coordinator.stop();
+    }
 
-        const sheets = listToMap(
-            response.sheets,
-            sheet => sheet.id,
-            transformSheet,
-        );
+    handleActiveSheetChange = (activeSheet) => {
+        // NOTE: activeSheet was taken from ScrollTabs, so it is a strina
+        this.setState({ activeSheet: Number(activeSheet) });
+    }
 
-        const tabs = listToMap(
-            filteredSheets,
-            sheet => sheet.id,
-            sheet => sheet.title,
-        );
-
+    handleBookGet = (response, onComplete) => {
         this.setState(
-            {
-                tabs,
-                sheets,
-                // NOTE: there must be atleast on sheet
-                activeSheet: Object.keys(tabs)[0],
-            },
+            { originalSheets: response.sheets },
             () => {
                 if (onComplete) {
                     onComplete();
@@ -191,54 +252,387 @@ export default class TabularBook extends React.PureComponent {
         );
     }
 
-    resetSort = () => {
-        // FIXME: move this to redux
-        const { sheets, activeSheet } = this.state;
-        const settings = {
-            [activeSheet]: { $auto: {
-                options: { $auto: {
-                    sortOrder: { $set: undefined },
-                } },
-            } },
-        };
-
-        this.setState({ sheets: update(sheets, settings) });
-    }
-
-    handleSheetChange = (newSheet) => {
-        // FIXME: move this to redux
-        const { sheets } = this.state;
-        const settings = {
-            [newSheet.id]: { $set: newSheet },
-        };
-        this.setState({ sheets: update(sheets, settings) });
-    }
-
-    handleActiveSheetChange = (activeSheet) => {
-        this.setState({ activeSheet });
-    }
-
-    handleDelete = () => {
+    handleBookDelete = () => {
         this.props.deleteRequest.do();
     }
 
-    handleDetailsChange = (newValues) => {
-        this.props.saveRequest.do({
-            body: {
-                project: this.props.projectId,
-                sheets: Object.keys(newValues).map(k => newValues[k]),
-            },
-            setBook: this.setBook,
+    handleSheetDelete = (sheetId) => {
+        const requestId = `sheet-delete-${sheetId}`;
+
+        const request = new FgRestBuilder()
+            .url(createUrlForSheetDelete(sheetId))
+            .params(createParamsForSheetDelete)
+            .preLoad(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.sheetDeletePending[sheetId] = true;
+                    }),
+                );
+            })
+            .success(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        const sheetIndex = safeState.originalSheets.findIndex(
+                            s => s.id === sheetId,
+                        );
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.originalSheets[sheetIndex].hidden = true;
+                    }),
+                );
+            })
+            .postLoad(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        // eslint-disable-next-line no-param-reassign
+                        delete safeState.sheetDeletePending[sheetId];
+                    }),
+                    () => this.coordinator.notifyComplete(requestId),
+                );
+            })
+            .build();
+
+        this.coordinator.add(requestId, request);
+        this.coordinator.start();
+    }
+
+    handleSheetEdit = (sheetId, value) => {
+        const requestId = `sheet-edit-${sheetId}`;
+
+        const request = new FgRestBuilder()
+            .url(createUrlForSheetEdit(sheetId))
+            .params(() => createParamsForSheetEdit(value))
+            .preLoad(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.sheetEditPending[sheetId] = true;
+                    }),
+                );
+            })
+            .success(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        const sheetIndex = safeState.originalSheets.findIndex(
+                            s => s.id === sheetId,
+                        );
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.originalSheets[sheetIndex] = {
+                            ...safeState.originalSheets[sheetIndex],
+                            ...value,
+                        };
+                    }),
+                );
+            })
+            .postLoad(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        // eslint-disable-next-line no-param-reassign
+                        delete safeState.sheetEditPending[sheetId];
+                    }),
+                    () => this.coordinator.notifyComplete(requestId),
+                );
+            })
+            .build();
+
+        this.coordinator.add(requestId, request);
+        this.coordinator.start();
+    }
+
+    handleSheetOptionsSave = () => {
+        const { bookId } = this.props;
+
+        const requestId = `sheet-save-${bookId}`;
+        this.coordinator.remove(requestId);
+
+        const { originalSheets } = this.state;
+        const modification = originalSheets.map((sheet) => {
+            const { id, options } = sheet;
+            return { id, options };
         });
+
+        const request = new FgRestBuilder()
+            .url(createUrlForSheetOptionsSave(bookId))
+            .params(() => createParamsForSheetOptionsSave(modification))
+            /*
+            .preLoad(() => {
+                this.setState({ isSheetOptionsSavePending: true });
+            })
+            */
+            .postLoad(() => {
+                /*
+                this.setState(
+                    { isSheetOptionsSavePending: false },
+                    () => this.coordinator.notifyComplete(requestId),
+                );
+                */
+                this.coordinator.notifyComplete(requestId);
+            })
+            .build();
+
+        this.coordinator.add(requestId, request);
+        this.coordinator.start();
+    }
+
+    handleSheetRetrieve = (sheetIds) => {
+        const { bookId } = this.props;
+
+        const requestId = `sheet-retrieve-for-${bookId}`;
+
+        const sheetIdMap = listToMap(
+            sheetIds,
+            id => id,
+            () => true,
+        );
+
+        const { originalSheets } = this.state;
+        const modification = originalSheets.map((sheet) => {
+            const { id } = sheet;
+            return sheetIdMap[id] ? { id, hidden: false } : { id };
+        });
+
+        const request = new FgRestBuilder()
+            .url(createUrlForSheetRetrieve(bookId))
+            .params(() => createParamsForSheetRetrieve(modification))
+            .preLoad(() => {
+                this.setState({ isSheetRetrievePending: true });
+            })
+            .success(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        sheetIds.forEach((sheetId) => {
+                            const sheetIndex = safeState.originalSheets.findIndex(
+                                s => s.id === sheetId,
+                            );
+                            // eslint-disable-next-line no-param-reassign
+                            safeState.originalSheets[sheetIndex].hidden = false;
+                        });
+                    }),
+                );
+            })
+            .postLoad(() => {
+                this.setState(
+                    { isSheetRetrievePending: false },
+                    () => this.coordinator.notifyComplete(requestId),
+                );
+            })
+            .build();
+
+        this.coordinator.add(requestId, request);
+        this.coordinator.start();
+    }
+
+    handleFieldDelete = (sheetId, fieldId) => {
+        const requestId = `field-delete-${fieldId}`;
+
+        const request = new FgRestBuilder()
+            .url(createUrlForFieldDelete(fieldId))
+            .params(createParamsForFieldDelete)
+            .preLoad(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.fieldDeletePending[fieldId] = true;
+                    }),
+                );
+            })
+            .success(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        const sheetIndex = safeState.originalSheets.findIndex(
+                            s => s.id === sheetId,
+                        );
+                        const fieldIndex = safeState.originalSheets[sheetIndex].fields
+                            .findIndex(f => f.id === fieldId);
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.originalSheets[sheetIndex].fields[fieldIndex].hidden = true;
+                    }),
+                );
+            })
+            .postLoad(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        // eslint-disable-next-line no-param-reassign
+                        delete safeState.fieldDeletePending[fieldId];
+                    }),
+                    () => this.coordinator.notifyComplete(requestId),
+                );
+            })
+            .build();
+
+        this.coordinator.add(requestId, request);
+        this.coordinator.start();
+    }
+
+    handleFieldEdit = (sheetId, fieldId, value) => {
+        const requestId = `field-edit-${fieldId}`;
+        const request = new FgRestBuilder()
+            .url(createUrlForFieldEdit(fieldId))
+            .params(() => createParamsForFieldEdit(value))
+            .preLoad(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.fieldEditPending[fieldId] = true;
+                    }),
+                );
+            })
+            .success((response) => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        const sheetIndex = safeState.originalSheets.findIndex(
+                            s => s.id === sheetId,
+                        );
+                        const fieldIndex = safeState.originalSheets[sheetIndex].fields.findIndex(
+                            f => f.id === fieldId,
+                        );
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.originalSheets[sheetIndex].data.columns[fieldId] = (
+                            response.fieldData
+                        );
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.originalSheets[sheetIndex].fields[fieldIndex] = response.field;
+                    }),
+                );
+            })
+            .postLoad(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        // eslint-disable-next-line no-param-reassign
+                        delete safeState.fieldEditPending[fieldId];
+                    }),
+                    () => this.coordinator.notifyComplete(requestId),
+                );
+            })
+            .build();
+
+        this.coordinator.add(requestId, request);
+        this.coordinator.start();
+    }
+
+    handleFieldRetrieve = (sheetId, fieldIds) => {
+        const requestId = `field-retrieve-for-${sheetId}`;
+
+        const fieldIdMap = listToMap(
+            fieldIds,
+            id => id,
+            () => true,
+        );
+
+        const { originalSheets } = this.state;
+        const sheet = originalSheets.find(s => s.id === sheetId);
+        const modification = sheet.fields.map((field) => {
+            const { id } = field;
+            return fieldIdMap[id] ? { id, hidden: false } : { id };
+        });
+
+        const request = new FgRestBuilder()
+            .url(createUrlForFieldRetrieve(sheetId))
+            .params(() => createParamsForFieldRetrieve(modification))
+            .preLoad(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.fieldRetrievePending[sheetId] = true;
+                    }),
+                );
+            })
+            .success(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        const sheetIndex = safeState.originalSheets.findIndex(
+                            s => s.id === sheetId,
+                        );
+                        fieldIds.forEach((fieldId) => {
+                            const fieldIndex = safeState.originalSheets[sheetIndex].fields
+                                .findIndex(f => f.id === fieldId);
+                            // eslint-disable-next-line no-param-reassign
+                            safeState.originalSheets[sheetIndex].fields[fieldIndex].hidden = false;
+                        });
+                    }),
+                );
+            })
+            .postLoad(() => {
+                this.setState(
+                    state => produce(state, (safeState) => {
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.fieldRetrievePending[sheetId] = false;
+                    }),
+                    () => this.coordinator.notifyComplete(requestId),
+                );
+            })
+            .build();
+
+        this.coordinator.add(requestId, request);
+        this.coordinator.start();
+    }
+
+    handleSheetOptionsChange = (sheetId, options) => {
+        this.setState(
+            state => produce(state, (safeState) => {
+                const sheetIndex = safeState.originalSheets.findIndex(
+                    s => s.id === sheetId,
+                );
+                // eslint-disable-next-line no-param-reassign
+                safeState.originalSheets[sheetIndex].options = options;
+            }),
+        );
+
+        clearTimeout(this.backgroundSaveTimeout);
+        this.backgroundSaveTimeout = setTimeout(this.handleSheetOptionsSave, 2000);
+    }
+
+    tabsRendererParams = (key, data) => ({
+        title: data,
+        // NOTE: sheetId was taken from key, so it is a string
+        sheetId: Number(key),
+        deletePending: this.state.sheetDeletePending[key],
+        editPending: this.state.sheetEditPending[key],
+        originalSheets: this.state.originalSheets,
+    })
+
+    tabsRenderer = ({
+        title, className, sheetId, onClick, deletePending, editPending, originalSheets,
+    }) => {
+        const { tabs, sheets } = transformSheets(originalSheets);
+        // FIXME: memoize this
+        const tabKeys = Object.keys(tabs);
+
+        const sheet = sheets[sheetId];
+
+        const disabledSheetEditModal = deletePending || editPending;
+        const disabledSheetEditModalDelete = tabKeys.length <= 1;
+
+        return (
+            <div className={_cs(className, styles.tab)}>
+                <button
+                    onClick={onClick}
+                    className={styles.tabButton}
+                >
+                    {title}
+                </button>
+                <WarningModalButton
+                    className={styles.editButton}
+                    iconName={iconNames.edit}
+                    transparent
+                    title={_ts('tabular', 'sheetEditButtonTooltip')} // Edit
+                    pending={disabledSheetEditModal}
+                    modal={
+                        <SheetEditModal
+                            sheetId={sheetId}
+                            title={sheet.title}
+                            onSheetDelete={this.handleSheetDelete}
+                            onSheetEdit={this.handleSheetEdit}
+                            disabled={disabledSheetEditModal}
+                            disabledDelete={disabledSheetEditModalDelete}
+                        />
+                    }
+                />
+            </div>
+        );
     }
 
     renderBody = ({ invalid, completed, disabled }) => {
-        const {
-            tabs,
-            sheets,
-            activeSheet,
-        } = this.state;
-
         if (invalid) {
             return (
                 <Message>
@@ -253,49 +647,98 @@ export default class TabularBook extends React.PureComponent {
             );
         }
 
-        const sheet = sheets[activeSheet];
+        const {
+            originalSheets,
+            activeSheet,
+            isSheetRetrievePending,
+            sheetDeletePending,
+            fieldRetrievePending,
+            fieldDeletePending,
+            fieldEditPending,
+        } = this.state;
 
-        if (isNotDefined(sheet)) {
-            return (
-                <Message>
-                    {_ts('tabular', 'noSheets')}
-                </Message>
-            );
-        }
+        const {
+            sheets,
+            tabs,
+            firstTab,
+        } = transformSheets(originalSheets);
+
+        const sheetList = getDeletedSheets(sheets);
+
+        const activeSheetKey = (!activeSheet || !sheets[activeSheet] || sheets[activeSheet].hidden)
+            ? firstTab
+            : activeSheet;
+
+        const disabledSheetRetrieveModal = isSheetRetrievePending;
+
+        const sheet = sheets[activeSheetKey];
+        const disabledSheet = sheetDeletePending[activeSheetKey];
+        const isFieldRetrievePending = fieldRetrievePending[activeSheetKey];
 
         return (
             <Fragment>
                 { disabled && <LoadingAnimation /> }
-                <TabularSheet
-                    // dismount on different activeSheet
-                    key={activeSheet}
-                    className={styles.sheetView}
-                    sheet={sheet}
-                    onSheetChange={this.handleSheetChange}
-                />
-                <ScrollTabs
-                    className={styles.tabs}
-                    tabs={tabs}
-                    active={activeSheet}
-                    onClick={this.handleActiveSheetChange}
-                    inverted
-                />
+                {
+                    isNotDefined(sheet) ? (
+                        <Message>
+                            {_ts('tabular', 'noSheets')}
+                        </Message>
+                    ) : (
+                        <Sheet
+                            // NOTE: dismount on different activeSheet
+                            key={activeSheetKey}
+                            className={styles.sheetView}
+                            sheet={sheet}
+                            sheetId={activeSheetKey}
+                            onSheetOptionsChange={this.handleSheetOptionsChange}
+                            disabled={disabledSheet}
+                            onFieldRetrieve={this.handleFieldRetrieve}
+                            isFieldRetrievePending={isFieldRetrievePending}
+                            onFieldDelete={this.handleFieldDelete}
+                            fieldDeletePending={fieldDeletePending}
+                            fieldEditPending={fieldEditPending}
+                            onFieldEdit={this.handleFieldEdit}
+                        />
+                    )
+                }
+                { (sheetList.length > 0 || Object.keys(tabs).length > 0) &&
+                    <ScrollTabs
+                        className={styles.tabs}
+                        tabs={tabs}
+                        active={activeSheetKey}
+                        onClick={this.handleActiveSheetChange}
+                        inverted
+                        showBeforeTabs
+                        renderer={this.tabsRenderer}
+                        rendererParams={this.tabsRendererParams}
+                    >
+                        <ModalButton
+                            iconName={iconNames.more}
+                            title={_ts('tabular', 'sheetShowButtonTooltip')} // Other Sheets
+                            disabled={sheetList.length <= 0}
+                            pending={disabledSheetRetrieveModal}
+                            modal={
+                                <SheetRetrieveModal
+                                    sheets={sheetList}
+                                    onSheetRetrieve={this.handleSheetRetrieve}
+                                    disabled={disabledSheetRetrieveModal}
+                                />
+                            }
+                        />
+                    </ScrollTabs>
+                }
             </Fragment>
         );
     }
 
-    renderActual = ({ invalid, completed }) => {
-        const { sheets } = this.state;
-
+    renderTabularBook = ({ invalid, completed }) => {
         const {
             deleteRequest: {
                 pending: deletePending,
             },
-            saveRequest: {
-                pending: savePending,
-            },
             onCancel,
         } = this.props;
+        const { isSomePending } = this.state;
 
         const className = _cs(
             this.props.className,
@@ -305,45 +748,36 @@ export default class TabularBook extends React.PureComponent {
 
         const Body = this.renderBody;
 
-        const disabled = savePending || deletePending || !completed || invalid;
+        const disabled = deletePending || !completed || invalid;
 
         return (
             <div className={className}>
                 <ModalHeader
                     title={_ts('tabular', 'title')}
                     rightComponent={
-                        <div className={styles.headerContainer}>
-                            <Button
-                                iconName={iconNames.sort}
-                                onClick={this.resetSort}
-                                disabled={disabled}
-                            >
-                                {_ts('tabular', 'resetSortLabel')}
-                            </Button>
-                            <Cloak
-                                hide={TabularBook.shouldHideButtons}
-                                render={
-                                    <Fragment>
-                                        <EditFieldButton
-                                            onChange={this.handleDetailsChange}
-                                            iconName={iconNames.edit}
-                                            disabled={disabled}
-                                            value={sheets}
-                                        >
-                                            {_ts('tabular', 'editButtonLabel')}
-                                        </EditFieldButton>
-                                        <DangerConfirmButton
-                                            iconName={iconNames.delete}
-                                            onClick={this.handleDelete}
-                                            confirmationMessage={_ts('tabular', 'deleteMessage')}
-                                            disabled={disabled}
-                                        >
-                                            {_ts('tabular', 'deleteButtonLabel')}
-                                        </DangerConfirmButton>
-                                    </Fragment>
-                                }
-                            />
-                        </div>
+                        <Cloak
+                            hide={TabularBook.shouldHideButtons}
+                            render={
+                                <div className={styles.headerContainer}>
+                                    { isSomePending &&
+                                        <div className={styles.pendingMessage}>
+                                            {
+                                                // Saving...
+                                                _ts('tabular', 'tabularSavingMessage')
+                                            }
+                                        </div>
+                                    }
+                                    <DangerConfirmButton
+                                        iconName={iconNames.delete}
+                                        onClick={this.handleBookDelete}
+                                        confirmationMessage={_ts('tabular', 'deleteMessage')}
+                                        disabled={disabled || isSomePending}
+                                    >
+                                        {_ts('tabular', 'deleteButtonLabel')}
+                                    </DangerConfirmButton>
+                                </div>
+                            }
+                        />
                     }
                 />
                 <ModalBody className={styles.body}>
@@ -364,16 +798,16 @@ export default class TabularBook extends React.PureComponent {
 
     render() {
         const { bookId } = this.props;
-        const ActualBook = this.renderActual;
+        const ActualTabularBook = this.renderTabularBook;
 
         return (
             <TriggerAndPoll
-                onDataReceived={this.setBook}
+                onDataReceived={this.handleBookGet}
                 url={`/tabular-books/${bookId}/`}
                 triggerUrl={`/tabular-extraction-trigger/${bookId}/`}
                 // schemaName="TabularBookSchema"
             >
-                <ActualBook />
+                <ActualTabularBook />
             </TriggerAndPoll>
         );
     }

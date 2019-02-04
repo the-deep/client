@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 import Faram from '#rscg/Faram';
 
 import {
@@ -150,15 +150,10 @@ export default class RightPanel extends React.PureComponent {
         }
     }
 
-    renderTab = (tabKey) => {
-        const title = this.tabs[tabKey];
-        return (
-            <TabTitle
-                title={title}
-                faramElementName={tabKey}
-            />
-        );
-    }
+    tabRendererParams = (tabKey, data) => ({
+        faramElementName: tabKey,
+        title: data,
+    });
 
     render() {
         const {
@@ -181,14 +176,15 @@ export default class RightPanel extends React.PureComponent {
                 disabled={pending}
                 readOnly={readOnly}
             >
-                <FixedTabs
+                <ScrollTabs
                     className={styles.tabs}
                     useHash
                     defaultHash={this.defaultHash}
                     replaceHistory
                     tabs={this.tabs}
                     itemClassName={styles.tab}
-                    modifier={this.renderTab}
+                    renderer={TabTitle}
+                    rendererParams={this.tabRendererParams}
                 />
                 <MultiViewContainer
                     useHash

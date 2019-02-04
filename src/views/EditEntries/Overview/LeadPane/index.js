@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import Message from '#rscv/Message';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 
 import {
     activeProjectRoleSelector,
@@ -357,7 +357,7 @@ export default class LeftPane extends React.PureComponent {
 
         return (
             <Fragment>
-                <FixedTabs
+                <ScrollTabs
                     className={styles.tabs}
                     active={tabKey}
                     tabs={tabs}
@@ -371,7 +371,7 @@ export default class LeftPane extends React.PureComponent {
                             title={_ts('components.assistedTagging', 'infoTooltip')}
                         />
                     }
-                </FixedTabs>
+                </ScrollTabs>
                 <MultiViewContainer
                     active={tabKey}
                     views={this.views}

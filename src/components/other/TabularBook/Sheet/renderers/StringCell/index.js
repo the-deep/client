@@ -6,7 +6,7 @@ import styles from './styles.scss';
 
 export default class StringCell extends React.PureComponent {
     static propTypes = {
-        value: PropTypes.string,
+        value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         className: PropTypes.string,
         invalid: PropTypes.bool,
         empty: PropTypes.bool,

@@ -126,7 +126,8 @@ export default class LeadFormItem extends React.PureComponent {
     }
 
     handleTabularBookSet = (tabularBook) => {
-        this.handleFieldsChange({ tabularBook });
+        // NOTE: tabuarBook need not be sent to server
+        this.handleFieldsChange({ tabularBook }, true);
     }
 
     handleTabularModalClose = () => {
@@ -144,7 +145,8 @@ export default class LeadFormItem extends React.PureComponent {
     }
 
     handleTabularBookDelete = () => {
-        this.handleFieldsChange({ tabularBook: undefined });
+        // NOTE: tabuarBook need not be sent to server
+        this.handleFieldsChange({ tabularBook: undefined }, true);
     }
 
     createWebInfoExtractRequest = (url) => {
@@ -206,13 +208,13 @@ export default class LeadFormItem extends React.PureComponent {
         this.webInfoExtractRequest.start();
     }
 
-    handleFieldsChange = (fields = {}) => {
+    handleFieldsChange = (fields = {}, ignorePristineChange) => {
         const { lead: { faramValues = {}, faramErrors } = {} } = this.props;
         const newFaramValues = {
             ...faramValues,
             ...fields,
         };
-        this.handleFormChange(newFaramValues, faramErrors);
+        this.handleFormChange(newFaramValues, faramErrors, undefined, ignorePristineChange);
     }
 
     handleFormSuccess = (newValues) => {
@@ -227,7 +229,7 @@ export default class LeadFormItem extends React.PureComponent {
         this.leadSaveRequest.start();
     }
 
-    handleFormChange = (faramValues, faramErrors) => {
+    handleFormChange = (faramValues, faramErrors, faramInfo, ignorePristineChange) => {
         const {
             leadKey: leadId,
             addLeadViewLeadChange,
@@ -237,7 +239,7 @@ export default class LeadFormItem extends React.PureComponent {
             leadId,
             faramValues,
             faramErrors,
-            uiState: { pristine: false, serverError: false },
+            uiState: ignorePristineChange ? undefined : { pristine: false, serverError: false },
         });
     }
 

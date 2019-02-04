@@ -1,0 +1,28 @@
+@import '~base-scss/base';
+
+.tabular-sheet {
+    display: flex;
+    flex-direction: column;
+    background-color: $color-foreground;
+
+    .options-bar {
+        display: flex;
+        flex-direction: row-reverse;
+        flex-shrink: 0;
+        padding: $spacing-small $spacing-small 0 0;
+    }
+
+    .table {
+        flex-grow: 1;
+        .header {
+            padding: 0;
+        }
+
+        .cell {
+            padding: $spacing-small;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}

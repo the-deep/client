@@ -12,7 +12,7 @@ import ModalFooter from '#rscv/Modal/Footer';
 import SortableListView from '#rscv/SortableListView';
 import Faram, { requiredCondition } from '#rscg/Faram';
 import FaramList from '#rscg/FaramList';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import { findDuplicates, randomString } from '#rsu/common';
 
@@ -198,6 +198,11 @@ export default class NumberMatrixOverview extends React.PureComponent {
         this.setState({ selectedTab });
     }
 
+    tabRendererParams = (tabKey, data) => ({
+        faramElementName: tabKey,
+        title: data,
+    });
+
     renderTabsWithButton = () => {
         const { selectedTab } = this.state;
 
@@ -215,12 +220,13 @@ export default class NumberMatrixOverview extends React.PureComponent {
                         className={styles.nonFieldErrors}
                     />
                 </FaramList>
-                <FixedTabs
+                <ScrollTabs
                     className={styles.tabs}
                     tabs={this.tabs}
                     active={selectedTab}
                     onClick={this.handleTabSelect}
-                    modifier={this.renderTab}
+                    renderer={TabTitle}
+                    rendererParams={this.tabRendererParams}
                 >
                     <FaramList faramElementName={selectedTab}>
                         <PrimaryButton
@@ -233,19 +239,8 @@ export default class NumberMatrixOverview extends React.PureComponent {
                             {buttonLabel}
                         </PrimaryButton>
                     </FaramList>
-                </FixedTabs>
+                </ScrollTabs>
             </div>
-        );
-    }
-
-    renderTab = (tabKey) => {
-        const title = this.tabs[tabKey];
-
-        return (
-            <TabTitle
-                title={title}
-                faramElementName={tabKey}
-            />
         );
     }
 

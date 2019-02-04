@@ -254,7 +254,6 @@
         "512": "Entry",
         "513": "There was a problem while fetching leads.",
         "514": "Excerpt",
-        "515": "Format excerpt",
         "517": "Assisted",
         "518": "Original",
         "519": "Images",
@@ -332,7 +331,6 @@
         "774": "Organigram structure",
         "775": "Options",
         "777": "Information date",
-        "778": "Exit",
         "780": "List",
         "781": "Overview",
         "786": "Sub-rows",
@@ -620,8 +618,6 @@
         "8067": "Topic correlation",
         "8068": "Topic modeling",
         "8069": "Tree map",
-        "8071": "No leads found",
-        "8072": "Try with different fitlers",
         "8073": "Failed to get keyword correlation",
         "8074": "Failed to get NER",
         "8075": "Failed to get topic correlation",
@@ -660,7 +656,6 @@
         "9031": "Data collection techniques",
         "9032": "Sampling",
         "9033": "Limitations",
-        "9034": "Attributes",
         "9035": "Drag and drop objectives here",
         "9036": "Drag and drop data collection techniques here",
         "9037": "Drag and drop sampling (site and respondent selection) here",
@@ -690,7 +685,6 @@
         "12551": "Enter title for word category",
         "15000": "Quantitative",
         "15001": "Are you sure you want to delete these table sheets? All changes will be lost.",
-        "15002": "Edit table field",
         "15003": "Separator",
         "15004": "Delimiter",
         "15005": "File type",
@@ -700,8 +694,6 @@
         "15009": "Skip this sheet",
         "15010": "Header row",
         "15011": "Number of entries from this lead",
-        "-12279953": "Entry Cleared",
-        "-94068330": "All local entries were cleared because associated analysis framework was removed.",
         "-4983139": "Remove lead group",
         "-49385196": "Save screenshot",
         "-42880698": "Discard screenshot",
@@ -865,7 +857,6 @@
         "-77428696": "There are no word categories.",
         "-33861958": "Add word category",
         "-47892955": "Can't drop here!",
-        "-64009123": "Convert to tabular",
         "-20173783": "The same page is open in another tab.",
         "-96507602": "Error while trying to reset password.",
         "-27376433": "Anyplace",
@@ -881,14 +872,8 @@
         "-91114337": "Add user group",
         "-50532935": "Miscellaneous",
         "-61910224": "This action will affect the entries tagged with geo-areas of this region.",
-        "-96186123": "Add dimensions from",
-        "-63120597": "Add sectors from",
-        "-89164469": "Add sub dimensions from",
-        "-11158375": "Add sub sectors from",
-        "-60104332": "Can't drop here!",
         "-63188496": "Couldn't read tabular data.",
         "-63188497": "Couldn't delete tabular data.",
-        "-47036305": ",",
         "-45402687": "1",
         "-53408079": "Back",
         "-39430073": "Close",
@@ -901,12 +886,8 @@
         "-14762237": "No regions were selected.",
         "-78572254": "Invalid region",
         "-77224022": "Preview",
-        "-84081563": "Hide",
-        "-61786851": "Headers",
         "-4174557": "Open Tabular",
         "-73878868": "There are no sheets to show.",
-        "-5279830": "Sheet Title",
-        "-28248947": "Column Title",
         "-18101242": "Date Format",
         "-54799911": "External Link",
         "-19937712": "Upload file(s)",
@@ -914,9 +895,13 @@
         "-62030461": "Start page",
         "-93329065": "Drop file(s) here to upload",
         "-16421564": "Uploading file(s)",
-        "-25703789": "Cell tooltip {index}",
         "-50910995": "Looks like your project doesn't have any lead groups.",
-        "-27964979": "Looks like there are no lead groups that match your filtering criteria. Try changing what you're looking for and search again."
+        "-27964979": "Looks like there are no lead groups that match your filtering criteria. Try changing what you're looking for and search again.",
+        "-26016239": "Show other sheets",
+        "-206854": "Saving...",
+        "-6746951": "Fields to show",
+        "-70697056": "Sheets to show",
+        "-43793403": "Show other columns"
     },
     "links": {
         "browserExtension": {
@@ -1135,8 +1120,7 @@
             "errorTitle": -35038655,
             "saveButtonTitle": -49385196,
             "screenshotButtonTitle": -7205609,
-            "viewLinkTooltip": -2224039,
-            "convertTabular": -64009123
+            "viewLinkTooltip": -2224039
         },
         "components.internalGallery": {
             "loadingFileLabel": 1209,
@@ -1434,7 +1418,6 @@
             "affectedGroupsTitle": 9027,
             "locationsTitle": 9028,
             "methodologyContentTitle": 9029,
-            "attributesTitle": 9034,
             "objectivesTitle": 9030,
             "dataCollectionTechniquesTitle": 9031,
             "samplingTitle": 9032,
@@ -1527,8 +1510,6 @@
             "treeMap": 8069,
             "leads": 641,
             "leadsGetFailure": 513,
-            "noLeadsFoundHeader": 8071,
-            "noLeadsFoundDescription": 8072,
             "ner": 540,
             "keywordCorrelationGetFailure": 8073,
             "nerGetFailure": 8074,
@@ -1854,8 +1835,6 @@
             "modalCancel": 61,
             "modalUpdate": 323,
             "modalAdd": 301,
-            "projectDescriptionLabel": 200,
-            "projectDescriptionPlaceholder": 331,
             "searchRegionPlaceholder": 341,
             "addRegionModalTitle": 342,
             "noRegionText": 343,
@@ -1896,7 +1875,6 @@
             "projectDelete": -72636032,
             "noProjectPermissionText": -48490028,
             "addAfTitleLabel": 379,
-            "addAfTitlePlaceholder": 361,
             "noAfText": 359,
             "project": 31,
             "afGetTitle": 379,
@@ -2426,30 +2404,17 @@
         "tabular": {
             "title": 15000,
             "deleteMessage": 15001,
-            "deleteButtonTooltip": -94736495,
-            "resetSortTitle": 15008,
             "invalid": -63188496,
             "deleteFailed": -63188497,
-            "closeButtonTitle": -39430073,
             "tabularBookTitle": -78760514,
             "closeButtonLabel": -39430073,
             "deleteButtonLabel": -94736495,
-            "editButtonLabel": 363,
             "noSheets": -73878868,
-            "resetSortLabel": 15008
+            "sheetEditButtonTooltip": 363,
+            "sheetShowButtonTooltip": -26016239,
+            "tabularSavingMessage": -206854
         },
-        "tabular.editModal.editField": {
-            "title": 15002,
-            "separatorLabel": 15003,
-            "titleLabel": -28248947,
-            "typeLabel": 21,
-            "cancelLabel": 61,
-            "submitLabel": 826,
-            "adminLevelLabel": 89,
-            "adminLevelPlaceholder": 9011,
-            "geoTypeLabel": -50186668,
-            "dateTypeLabel": -18101242
-        },
+        "tabular.editModal.editField": {},
         "project.general.dashboard": {
             "createdAtTitle": 163,
             "createdByTitle": 538,
@@ -2484,11 +2449,7 @@
             "toLabel": 1000
         },
         "dashboard": {
-            "alphaLabel": 1238,
-            "betaLabel": 1237,
-            "deepLabel": 876,
-            "devLabel": 1240,
-            "nightlyLabel": 1239
+            "deepLabel": 876
         },
         "widgets.tagging.conditional": {
             "noWidgetFoundText": -99467671
@@ -2567,23 +2528,10 @@
             "noRegionSelectedMessage": -14762237,
             "invalidRegion": -78572254
         },
-        "tabular.editModal": {
-            "sheetHideLabel": -84081563,
-            "sheetTitleLabel": -5279830,
-            "headersTitle": -61786851,
-            "headerHideLabel": -84081563
-        },
-        "tabular.sheets.date": {
-            "fromPlaceholder": 1009,
-            "toPlaceholder": 1000
-        },
-        "tabular.sheets.number": {
-            "fromPlaceholder": 1009,
-            "toPlaceholder": 1000
-        },
-        "tabular.sheets.string": {
-            "searchPlaceholder": 9
-        },
+        "tabular.editModal": {},
+        "tabular.sheets.date": {},
+        "tabular.sheets.number": {},
+        "tabular.sheets.string": {},
         "components.multiDocumentUploader": {
             "externalLinkLabel": -54799911,
             "uploadFilesLabel": -19937712,
@@ -2602,6 +2550,47 @@
         "leadgroups": {
             "emptyMessage": -50910995,
             "emptyWithFilterMessage": -27964979
+        },
+        "tabular.fieldEditModal": {
+            "adminLevelTitle": 89,
+            "dateFormatTitle": -18101242,
+            "deleteFieldButtonLabel": -94736495,
+            "fieldNameTitle": 13,
+            "fieldTypeTitle": 21,
+            "geoTypeTitle": -50186668,
+            "saveFieldButtonLabel": 25,
+            "separatorTitle": 15003
+        },
+        "tabular.fieldRetrieveModal": {
+            "fieldsLabel": -6746951,
+            "retrieveFieldButtonLabel": 25
+        },
+        "tabular.filter.date": {
+            "fromPlaceholder": 1009,
+            "toPlaceholder": 1000
+        },
+        "tabular.filter.number": {
+            "fromPlaceholder": 1009,
+            "toPlaceholder": 1000
+        },
+        "tabular.filter.string": {
+            "searchPlaceholder": 14
+        },
+        "tabular.header": {
+            "columnEditButtonTooltip": 363
+        },
+        "tabular.sheetEditModal": {
+            "deleteSheetButtonLabel": -94736495,
+            "saveSheetButtonLabel": 25,
+            "sheetNameTitle": 13
+        },
+        "tabular.sheetRetrieveModal": {
+            "retrieveSheetButtonLabel": 25,
+            "sheetsLabel": -70697056
+        },
+        "tabular.sheets": {
+            "resetSortTooltip": 15008,
+            "columnShowButtonTooltip": -43793403
         }
     }
 }

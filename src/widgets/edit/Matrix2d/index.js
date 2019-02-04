@@ -13,7 +13,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
 import Faram, { requiredCondition } from '#rscg/Faram';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import {
     findDuplicates,
@@ -394,6 +394,11 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         ];
     }
 
+    tabRendererParams = (tabKey, data) => ({
+        faramElementName: tabKey,
+        title: data,
+    });
+
     handleTabSelect = (selectedTab) => {
         this.setState({ selectedTab });
     }
@@ -413,12 +418,13 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                         className={styles.error}
                     />
                 </FaramList>
-                <FixedTabs
+                <ScrollTabs
                     className={styles.tabs}
                     tabs={this.tabs}
                     active={selectedTab}
                     onClick={this.handleTabSelect}
-                    modifier={this.renderTab}
+                    renderer={TabTitle}
+                    rendererParams={this.tabRendererParams}
                 >
                     <div className={styles.buttonContainer}>
                         <h5>
@@ -465,21 +471,11 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                             }
                         </FaramList>
                     </div>
-                </FixedTabs>
+                </ScrollTabs>
             </div>
         );
     }
 
-    renderTab = (tabKey) => {
-        const title = this.tabs[tabKey];
-
-        return (
-            <TabTitle
-                title={title}
-                faramElementName={tabKey}
-            />
-        );
-    }
     rendererParams = (key, elem, i) => ({
         index: i,
         faramElementName: String(i),

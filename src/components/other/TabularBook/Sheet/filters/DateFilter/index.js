@@ -2,8 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import DateInput from '#rsci/DateInput';
-import _ts from '#ts';
 
+import { DATA_TYPE } from '#entities/tabular';
+import _ts from '#ts';
 
 export default class DateFilter extends React.PureComponent {
     static propTypes = {
@@ -21,16 +22,20 @@ export default class DateFilter extends React.PureComponent {
     };
 
     handleFromFilterChange = (value) => {
+        const { value: { dateTo } = {} } = this.props;
         this.props.onChange({
-            ...this.props.value,
-            from: value,
+            type: DATA_TYPE.datetime,
+            dateTo,
+            dateFrom: value,
         });
     }
 
     handleToFilterChange = (value) => {
+        const { value: { dateFrom } = {} } = this.props;
         this.props.onChange({
-            ...this.props.value,
-            to: value,
+            type: DATA_TYPE.datetime,
+            dateFrom,
+            dateTo: value,
         });
     }
 
@@ -43,17 +48,17 @@ export default class DateFilter extends React.PureComponent {
         return (
             <div className={className} >
                 <DateInput
-                    placeholder={_ts('tabular.sheets.date', 'fromPlaceholder')}
+                    placeholder={_ts('tabular.filter.date', 'fromPlaceholder')}
                     disabled={disabled}
-                    value={value.from}
+                    value={value.dateFrom}
                     onChange={this.handleFromFilterChange}
                     showLabel={false}
                     showHintAndError={false}
                 />
                 <DateInput
-                    placeholder={_ts('tabular.sheets.date', 'toPlaceholder')}
+                    placeholder={_ts('tabular.filter.date', 'toPlaceholder')}
                     disabled={disabled}
-                    value={value.to}
+                    value={value.dateTo}
                     onChange={this.handleToFilterChange}
                     showLabel={false}
                     showHintAndError={false}
