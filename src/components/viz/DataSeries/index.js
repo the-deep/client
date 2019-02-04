@@ -3,15 +3,23 @@ import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 
 import MultiViewContainer from '#rscv/MultiViewContainer';
+import Modal from '#rscv/Modal';
+import ModalHeader from '#rscv/Modal/Header';
+import ModalBody from '#rscv/Modal/Body';
+import Button from '#rsca/Button';
 import GeoViz from '#components/geo/GeoViz';
 import RotatingInput from '#rsci/RotatingInput';
-import HorizontalBar from '#rscz/HorizontalBar';
-import VerticalBarChart from '#rscz/VerticalBarChart';
+import SimpleHorizontalBarChart from '#rscz/SimpleHorizontalBarChart';
+import SimpleVerticalBarChart from '#rscz/SimpleVerticalBarChart';
 import WordCloud from '#rscz/WordCloud';
+import { iconNames } from '#constants';
+import modalize from '#rscg/Modalize';
 
 import _cs from '#cs';
 import _ts from '#ts';
 import styles from './styles.scss';
+
+const ModalButton = modalize(Button);
 
 const propTypes = {
     className: PropTypes.string,
@@ -39,7 +47,6 @@ const chartMargins = {
     left: 2,
 };
 
-const seriesKeySelector = d => d.key;
 const sizeSelector = d => d.size;
 const chartsLabelSelector = d => d.text;
 const horizontalBarTextSelector = () => '';
@@ -56,8 +63,8 @@ const GRAPH = {
 
 const GRAPH_MODES = {
     string: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart, GRAPH.wordCloud],
-    number: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart, GRAPH.wordCloud],
-    datetime: [GRAPH.horizontalBarChart],
+    number: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart],
+    datetime: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart],
     geo: [GRAPH.geo],
 };
 
@@ -87,19 +94,18 @@ export default class DataSeries extends React.PureComponent {
 
         this.views = {
             [GRAPH.horizontalBarChart]: {
-                component: HorizontalBar,
+                component: SimpleHorizontalBarChart,
                 rendererParams: () => {
                     const { value: { data } } = this.props;
                     return {
                         className: styles.horizontalBarChart,
                         data: this.getNumberCountSeries(data),
-                        valueLabelFormat: horizontalBarTextSelector,
                         ...commonRendererParams,
                     };
                 },
             },
             [GRAPH.verticalBarChart]: {
-                component: VerticalBarChart,
+                component: SimpleVerticalBarChart,
                 rendererParams: () => {
                     const { value: { data } } = this.props;
 
@@ -138,7 +144,7 @@ export default class DataSeries extends React.PureComponent {
         };
 
         this.state = {
-            activeView: GRAPH.horizontalBarChart,
+            activeView: GRAPH.verticalBarChart,
         };
     }
 
@@ -195,6 +201,45 @@ export default class DataSeries extends React.PureComponent {
         this.setState({ activeView: value });
     }
 
+    renderExpandedModal = ({
+        closeModal,
+        title,
+        type,
+        activeView,
+    }) => (
+        <Modal className={styles.expandedView}>
+            <ModalHeader
+                title={title}
+                rightComponent={
+                    <div className={styles.actionButtons}>
+                        <RotatingInput
+                            rendererSelector={rotatingInputLabelSelector}
+                            keySelector={rotatingInputKeySelector}
+                            value={activeView}
+                            onChange={this.handleSegmentStateChange}
+                            options={this.getSegmentOptions(type)}
+                            showLabel={false}
+                            showHintAndError={false}
+                        />
+                        <Button
+                            iconName={iconNames.close}
+                            onClick={closeModal}
+                            className={styles.closeExpandedViewButton}
+                            transparent
+                        />
+                    </div>
+                }
+            />
+            <ModalBody className={styles.body}>
+                <MultiViewContainer
+                    views={this.views}
+                    active={activeView}
+                />
+            </ModalBody>
+        </Modal>
+    );
+
+
     render() {
         const {
             className,
@@ -202,6 +247,9 @@ export default class DataSeries extends React.PureComponent {
         } = this.props;
 
         const { activeView } = this.state;
+        const ExpandedModal = this.renderExpandedModal;
+
+        const options = this.getSegmentOptions(value.type);
 
         return (
             <div className={_cs(className, 'data-series', styles.dataSeries)}>
@@ -210,14 +258,28 @@ export default class DataSeries extends React.PureComponent {
                         {value.title}
                     </h5>
                     <div className={styles.actions}>
-                        <RotatingInput
-                            rendererSelector={rotatingInputLabelSelector}
-                            keySelector={rotatingInputKeySelector}
-                            value={activeView}
-                            onChange={this.handleSegmentStateChange}
-                            options={this.getSegmentOptions(value.type)}
-                            showLabel={false}
-                            showHintAndError={false}
+                        { options && options.length > 1 &&
+                            <RotatingInput
+                                rendererSelector={rotatingInputLabelSelector}
+                                keySelector={rotatingInputKeySelector}
+                                value={activeView}
+                                onChange={this.handleSegmentStateChange}
+                                options={options}
+                                showLabel={false}
+                                showHintAndError={false}
+                            />
+                        }
+                        <ModalButton
+                            iconName={iconNames.expand}
+                            className={styles.expandButton}
+                            transparent
+                            modal={
+                                <ExpandedModal
+                                    title={value.title}
+                                    type={value.type}
+                                    activeView={activeView}
+                                />
+                            }
                         />
                     </div>
                 </header>
