@@ -13,8 +13,8 @@ import {
     compareNumber,
     compareDate,
     caseInsensitiveSubmatch,
-    isFalsyString,
-    isTruthyString,
+    isFalsyString as isFalsyStr,
+    isTruthyString as isTruthyStr,
 } from '#rsu/common';
 import update from '#rsu/immutable-update';
 import _cs from '#cs';
@@ -94,7 +94,7 @@ const filterRenderers = {
 
 const emptyObject = {};
 
-// FIXME: memoize this
+// TODO: memoize this
 const getDeletedFields = fields => fields.filter(f => f.hidden);
 
 export default class Sheet extends React.PureComponent {
@@ -121,6 +121,7 @@ export default class Sheet extends React.PureComponent {
             fieldDeletePending,
             fieldEditPending,
         );
+
         return columns.every((sheetColumn) => {
             const {
                 key: columnKey,
@@ -136,32 +137,42 @@ export default class Sheet extends React.PureComponent {
                 return true;
             }
 
-            if (type === DATA_TYPE.number) {
-                const { from, to } = searchTermForColumn;
+            const { type: searchTermType } = searchTermForColumn;
+
+            if (searchTermType === DATA_TYPE.number && type === DATA_TYPE.number) {
+                const { numberFrom, numberTo } = searchTermForColumn;
                 if (empty || invalid) {
-                    return isFalsyString(from) && isFalsyString(to);
+                    return isFalsyStr(numberFrom) && isFalsyStr(numberTo);
                 }
                 return (
-                    ((isFalsyString(from) && isFalsyString(to)) || isTruthyString(value)) &&
-                    (isFalsyString(from) || parseFloat(value) >= parseFloat(from)) &&
-                    (isFalsyString(to) || parseFloat(value) <= parseFloat(to))
+                    ((isFalsyStr(numberFrom) && isFalsyStr(numberTo)) || isTruthyStr(value)) &&
+                    (isFalsyStr(numberFrom) || parseFloat(value) >= parseFloat(numberFrom)) &&
+                    (isFalsyStr(numberTo) || parseFloat(value) <= parseFloat(numberTo))
                 );
-            } else if (type === DATA_TYPE.datetime) {
-                const { from, to } = searchTermForColumn;
+            } else if (searchTermType === DATA_TYPE.datetime && type === DATA_TYPE.datetime) {
+                const { dateFrom, dateTo } = searchTermForColumn;
                 if (empty || invalid) {
-                    return isFalsyString(from) && isFalsyString(to);
+                    return isFalsyStr(dateFrom) && isFalsyStr(dateTo);
                 }
                 return (
-                    ((isFalsyString(from) && isFalsyString(to)) || isTruthyString(value)) &&
-                    (isFalsyString(from) || new Date(value) >= new Date(from)) &&
-                    (isFalsyString(to) || new Date(value) <= new Date(to))
+                    ((isFalsyStr(dateFrom) && isFalsyStr(dateTo)) || isTruthyStr(value)) &&
+                    (isFalsyStr(dateFrom) || new Date(value) >= new Date(dateFrom)) &&
+                    (isFalsyStr(dateTo) || new Date(value) <= new Date(dateTo))
                 );
+            } else if (
+                (searchTermType === DATA_TYPE.string || searchTermType === DATA_TYPE.geo) &&
+                (type === DATA_TYPE.string || type === DATA_TYPE.geo)
+            ) {
+                // NOTE: we can do normal string search for other types
+                const { text } = searchTermForColumn;
+                if (empty) {
+                    return isFalsyStr(text);
+                }
+                return caseInsensitiveSubmatch(value, text);
             }
-            // NOTE: we can do normal string search for other types
-            if (empty) {
-                return isFalsyString(searchTermForColumn);
-            }
-            return caseInsensitiveSubmatch(value, searchTermForColumn);
+
+            // else don't apply filter
+            return true;
         });
     };
 
@@ -218,7 +229,7 @@ export default class Sheet extends React.PureComponent {
 
         const isFieldDeletePending = this.props.fieldDeletePending[fieldId];
         const isFieldEditPending = this.props.fieldEditPending[fieldId];
-        // FIXME: memoize this
+        // TODO: memoize this
         const fieldsCount = this.props.sheet.fields.filter(field => !field.hidden).length;
 
         return {

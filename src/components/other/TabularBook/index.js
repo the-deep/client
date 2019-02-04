@@ -12,7 +12,7 @@ import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 import ScrollTabs from '#rscv/ScrollTabs';
-
+import { CoordinatorBuilder } from '#rsu/coordinate';
 import { FgRestBuilder } from '#rsu/rest';
 import {
     listToMap,
@@ -114,7 +114,7 @@ const transformSheet = (sheet) => {
     return newSheet;
 };
 
-// FIXME: memoize this
+// TODO: memoize this
 const transformSheets = (originalSheets) => {
     const sheets = listToMap(
         originalSheets,
@@ -140,7 +140,7 @@ const transformSheets = (originalSheets) => {
     };
 };
 
-// FIXME: memoize this
+// TODO: memoize this
 const getDeletedSheets = sheets => mapToList(
     sheets,
     s => ({
@@ -206,18 +206,32 @@ export default class TabularBook extends React.PureComponent {
         this.state = {
             originalSheets: undefined,
 
+            isSomePending: false,
+
             isSheetRetrievePending: false,
+            // isSheetOptionsSavePending: false,
+
             sheetDeletePending: {},
             sheetEditPending: {},
 
             fieldRetrievePending: {},
             fieldDeletePending: {},
             fieldEditPending: {},
-
-            /*
-            sheetOptionsEditPending: false,
-            */
         };
+
+        this.coordinator = new CoordinatorBuilder()
+            .maxActiveActors(6)
+            .preSession(() => {
+                this.setState({ isSomePending: true });
+            })
+            .postSession(() => {
+                this.setState({ isSomePending: false });
+            })
+            .build();
+    }
+
+    componentWillUnmount() {
+        this.coordinator.stop();
     }
 
     handleActiveSheetChange = (activeSheet) => {
@@ -241,7 +255,9 @@ export default class TabularBook extends React.PureComponent {
     }
 
     handleSheetDelete = (sheetId) => {
-        const sheetDeleteRequest = new FgRestBuilder()
+        const requestId = `sheet-delete-${sheetId}`;
+
+        const request = new FgRestBuilder()
             .url(createUrlForSheetDelete(sheetId))
             .params(createParamsForSheetDelete)
             .preLoad(() => {
@@ -269,14 +285,19 @@ export default class TabularBook extends React.PureComponent {
                         // eslint-disable-next-line no-param-reassign
                         delete safeState.sheetDeletePending[sheetId];
                     }),
+                    () => this.coordinator.notifyComplete(requestId),
                 );
             })
             .build();
-        sheetDeleteRequest.start();
+
+        this.coordinator.add(requestId, request);
+        this.coordinator.start();
     }
 
     handleSheetEdit = (sheetId, value) => {
-        const sheetDeleteRequest = new FgRestBuilder()
+        const requestId = `sheet-edit-${sheetId}`;
+
+        const request = new FgRestBuilder()
             .url(createUrlForSheetEdit(sheetId))
             .params(() => createParamsForSheetEdit(value))
             .preLoad(() => {
@@ -307,14 +328,19 @@ export default class TabularBook extends React.PureComponent {
                         // eslint-disable-next-line no-param-reassign
                         delete safeState.sheetEditPending[sheetId];
                     }),
+                    () => this.coordinator.notifyComplete(requestId),
                 );
             })
             .build();
-        sheetDeleteRequest.start();
+
+        this.coordinator.add(requestId, request);
+        this.coordinator.start();
     }
 
     handleSheetRetrieve = (sheetIds) => {
         const { bookId } = this.props;
+
+        const requestId = `sheet-retrieve-for-${bookId}`;
 
         const sheetIdMap = listToMap(
             sheetIds,
@@ -328,7 +354,7 @@ export default class TabularBook extends React.PureComponent {
             return sheetIdMap[id] ? { id, hidden: false } : { id };
         });
 
-        const sheetRetrieveRequest = new FgRestBuilder()
+        const request = new FgRestBuilder()
             .url(createUrlForSheetRetrieve(bookId))
             .params(() => createParamsForSheetRetrieve(modification))
             .preLoad(() => {
@@ -348,14 +374,21 @@ export default class TabularBook extends React.PureComponent {
                 );
             })
             .postLoad(() => {
-                this.setState({ isSheetRetrievePending: false });
+                this.setState(
+                    { isSheetRetrievePending: false },
+                    () => this.coordinator.notifyComplete(requestId),
+                );
             })
             .build();
-        sheetRetrieveRequest.start();
+
+        this.coordinator.add(requestId, request);
+        this.coordinator.start();
     }
 
     handleFieldDelete = (sheetId, fieldId) => {
-        const fieldDeleteRequest = new FgRestBuilder()
+        const requestId = `field-delete-${fieldId}`;
+
+        const request = new FgRestBuilder()
             .url(createUrlForFieldDelete(fieldId))
             .params(createParamsForFieldDelete)
             .preLoad(() => {
@@ -385,15 +418,18 @@ export default class TabularBook extends React.PureComponent {
                         // eslint-disable-next-line no-param-reassign
                         delete safeState.fieldDeletePending[fieldId];
                     }),
+                    () => this.coordinator.notifyComplete(requestId),
                 );
             })
             .build();
-        fieldDeleteRequest.start();
+
+        this.coordinator.add(requestId, request);
+        this.coordinator.start();
     }
 
     handleFieldEdit = (sheetId, fieldId, value) => {
-        // FIXME: clear out filters from value
-        const fieldDeleteRequest = new FgRestBuilder()
+        const requestId = `field-edit-${fieldId}`;
+        const request = new FgRestBuilder()
             .url(createUrlForFieldEdit(fieldId))
             .params(() => createParamsForFieldEdit(value))
             .preLoad(() => {
@@ -419,7 +455,6 @@ export default class TabularBook extends React.PureComponent {
                         );
                         // eslint-disable-next-line no-param-reassign
                         safeState.originalSheets[sheetIndex].fields[fieldIndex] = response.field;
-                        // FIXME: clear out options
                     }),
                 );
             })
@@ -429,13 +464,18 @@ export default class TabularBook extends React.PureComponent {
                         // eslint-disable-next-line no-param-reassign
                         delete safeState.fieldEditPending[fieldId];
                     }),
+                    () => this.coordinator.notifyComplete(requestId),
                 );
             })
             .build();
-        fieldDeleteRequest.start();
+
+        this.coordinator.add(requestId, request);
+        this.coordinator.start();
     }
 
     handleFieldRetrieve = (sheetId, fieldIds) => {
+        const requestId = `field-retrieve-for-${sheetId}`;
+
         const fieldIdMap = listToMap(
             fieldIds,
             id => id,
@@ -449,7 +489,7 @@ export default class TabularBook extends React.PureComponent {
             return fieldIdMap[id] ? { id, hidden: false } : { id };
         });
 
-        const fieldRetrieveRequest = new FgRestBuilder()
+        const request = new FgRestBuilder()
             .url(createUrlForFieldRetrieve(sheetId))
             .params(() => createParamsForFieldRetrieve(modification))
             .preLoad(() => {
@@ -481,13 +521,17 @@ export default class TabularBook extends React.PureComponent {
                         // eslint-disable-next-line no-param-reassign
                         safeState.fieldRetrievePending[sheetId] = false;
                     }),
+                    () => this.coordinator.notifyComplete(requestId),
                 );
             })
             .build();
-        fieldRetrieveRequest.start();
+
+        this.coordinator.add(requestId, request);
+        this.coordinator.start();
     }
 
     handleSheetOptionsChange = (sheetId, options) => {
+        // TODO: save this to server in background
         this.setState(
             state => produce(state, (safeState) => {
                 const sheetIndex = safeState.originalSheets.findIndex(
@@ -497,7 +541,6 @@ export default class TabularBook extends React.PureComponent {
                 safeState.originalSheets[sheetIndex].options = options;
             }),
         );
-        // TODO: save this to server in background
     }
 
     tabsRendererParams = (key, data) => ({
@@ -513,7 +556,7 @@ export default class TabularBook extends React.PureComponent {
         title, className, sheetId, onClick, deletePending, editPending, originalSheets,
     }) => {
         const { tabs, sheets } = transformSheets(originalSheets);
-        // FIXME: memoizel this
+        // FIXME: memoize this
         const tabKeys = Object.keys(tabs);
 
         const sheet = sheets[sheetId];

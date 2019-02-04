@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import NumberInput from '#rsci/NumberInput';
+
+import { DATA_TYPE } from '#entities/tabular';
 import _ts from '#ts';
 import _cs from '#cs';
 
@@ -24,16 +26,20 @@ export default class NumberFilter extends React.PureComponent {
     };
 
     handleFromFilterChange = (value) => {
+        const { value: { numberTo } = {} } = this.props;
         this.props.onChange({
-            ...this.props.value,
-            from: value,
+            type: DATA_TYPE.number,
+            numberTo,
+            numberFrom: value,
         });
     }
 
     handleToFilterChange = (value) => {
+        const { value: { numberFrom } = {} } = this.props;
         this.props.onChange({
-            ...this.props.value,
-            to: value,
+            type: DATA_TYPE.number,
+            numberFrom,
+            numberTo: value,
         });
     }
 
@@ -49,7 +55,7 @@ export default class NumberFilter extends React.PureComponent {
                 <NumberInput
                     placeholder={_ts('tabular.sheets.number', 'fromPlaceholder')}
                     disabled={disabled}
-                    value={value.from}
+                    value={value.numberFrom}
                     onChange={this.handleFromFilterChange}
                     showLabel={false}
                     showHintAndError={false}
@@ -59,7 +65,7 @@ export default class NumberFilter extends React.PureComponent {
                     className={styles.toInput}
                     placeholder={_ts('tabular.sheets.number', 'toPlaceholder')}
                     disabled={disabled}
-                    value={value.to}
+                    value={value.numberTo}
                     onChange={this.handleToFilterChange}
                     showLabel={false}
                     showHintAndError={false}
