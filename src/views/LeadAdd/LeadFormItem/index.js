@@ -452,7 +452,7 @@ export default class LeadFormItem extends React.PureComponent {
                         {
                             tabularBook ? (
                                 <TabularBook
-                                    className={className}
+                                    className={styles.tabularBook}
                                     bookId={tabularBook}
                                     projectId={projectId}
                                     onDelete={this.handleTabularBookDelete}
@@ -460,7 +460,7 @@ export default class LeadFormItem extends React.PureComponent {
                                 />
                             ) : (
                                 <LeadTabular
-                                    className={className}
+                                    className={styles.leadTabular}
                                     mimeType={tabularMimeType}
                                     setTabularBook={this.handleTabularBookSet}
                                     onCancel={this.handleTabularModalClose}

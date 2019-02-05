@@ -1,12 +1,18 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import Modal from '#rscv/Modal';
-import ModalBody from '#rscv/Modal/Body';
 import ListSelection from '#rsci/ListSelection';
+import FloatingContainer from '#rscv/FloatingContainer';
+import {
+    calcFloatPositionInMainWindow,
+    defaultOffset,
+    defaultLimit,
+} from '#rsu/bounds';
 
 import _ts from '#ts';
+import styles from './styles.scss';
 
 export default class FieldRetrieveModal extends React.PureComponent {
     static propTypes = {
@@ -49,33 +55,66 @@ export default class FieldRetrieveModal extends React.PureComponent {
         closeModal();
     }
 
-    render() {
-        const { closeModal, fields, disabled } = this.props;
-        const { selectedFields } = this.state;
-        return (
-            <Modal
-                onClose={closeModal}
-                closeOnEscape
-            >
-                <ModalBody>
-                    <ListSelection
-                        label={_ts('tabular.fieldRetrieveModal', 'fieldsLabel')} // Fields to retrieve
-                        disabled={disabled}
-                        labelSelector={FieldRetrieveModal.labelSelector}
-                        keySelector={FieldRetrieveModal.keySelector}
-                        options={fields}
-                        value={this.state.selectedFields}
-                        onChange={this.handleSelection}
+    handleInvalidate = (container) => {
+        // Note: pass through prop
+        // eslint-disable-next-line react/prop-types
+        const { parentBCR } = this.props;
 
-                    />
+        const contentRect = container.getBoundingClientRect();
+
+        const optionsContainerPosition = (
+            calcFloatPositionInMainWindow({
+                parentRect: parentBCR,
+                contentRect,
+                defaultOffset,
+                limit: {
+                    ...defaultLimit,
+                    minW: 240,
+                    maxW: 360,
+                },
+            })
+        );
+
+        return optionsContainerPosition;
+    }
+
+    render() {
+        const {
+            closeModal,
+            fields,
+            disabled,
+        } = this.props;
+
+        const { selectedFields } = this.state;
+
+        return (
+            <FloatingContainer
+                className={styles.container}
+                onInvalidate={this.handleInvalidate}
+                focusTrap
+            >
+                <ListSelection
+                    label={_ts('tabular.fieldRetrieveModal', 'fieldsLabel')} // Fields to retrieve
+                    disabled={disabled}
+                    labelSelector={FieldRetrieveModal.labelSelector}
+                    keySelector={FieldRetrieveModal.keySelector}
+                    options={fields}
+                    value={this.state.selectedFields}
+                    onChange={this.handleSelection}
+
+                />
+                <div className={styles.actionButtons}>
+                    <Button onClick={closeModal}>
+                        {_ts('tabular.fieldEditModal', 'cancelFieldButtonLabel')}
+                    </Button>
                     <PrimaryButton
                         disabled={disabled || selectedFields.length <= 0}
                         onClick={this.handleRetrieveClick}
                     >
                         {_ts('tabular.fieldRetrieveModal', 'retrieveFieldButtonLabel') /* Retrieve */ }
                     </PrimaryButton>
-                </ModalBody>
-            </Modal>
+                </div>
+            </FloatingContainer>
         );
     }
 }

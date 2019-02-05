@@ -32,7 +32,11 @@ export default class LeadTabular extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    state = { bookId: undefined, fileType: undefined }
+    state = {
+        bookId: undefined,
+        fileType: undefined,
+        currentPage: 0,
+    }
 
     handleBookIdChange = (bookId, fileType, callback) => {
         this.setState({ bookId, fileType }, callback);
@@ -49,6 +53,10 @@ export default class LeadTabular extends React.PureComponent {
         }
     }
 
+    handleWizardPageChange = (page) => {
+        this.setState({ page });
+    }
+
     render() {
         const {
             className,
@@ -57,12 +65,26 @@ export default class LeadTabular extends React.PureComponent {
             lead,
         } = this.props;
 
-        const { bookId, fileType } = this.state;
+        const {
+            bookId,
+            fileType,
+            page,
+        } = this.state;
 
         return (
-            <div className={_cs(className, styles.leadTabular)}>
+            <div
+                className={_cs(
+                    className,
+                    styles.leadTabular,
+                    `page-${page}`,
+                )}
+            >
                 <ModalHeader title={_ts('addLeads.tabular', 'title')} />
-                <Wizard className={styles.wizard}>
+                <Wizard
+                    className={styles.wizard}
+                    onPageChange={this.handleWizardPageChange}
+                    initialPage={page}
+                >
                     <FileTypeSelectionPage
                         lead={lead}
                         mimeType={mimeType}

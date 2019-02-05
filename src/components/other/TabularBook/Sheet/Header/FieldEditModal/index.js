@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Faram, { requiredCondition } from '#rscg/Faram';
@@ -10,11 +11,17 @@ import NumberInput from '#rsci/NumberInput';
 import SegmentInput from '#rsci/SegmentInput';
 import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
-import Modal from '#rscv/Modal';
-import ModalBody from '#rscv/Modal/Body';
+import FloatingContainer from '#rscv/FloatingContainer';
+import { iconNames } from '#constants';
+import {
+    calcFloatPositionInMainWindow,
+    defaultOffset,
+    defaultLimit,
+} from '#rsu/bounds';
 
 import { DATA_TYPE } from '#entities/tabular';
 import _ts from '#ts';
+import styles from './styles.scss';
 
 const DATE_FORMATS = [
     { format: '%m-%d-%Y', label: 'mm-dd-yyyy' },
@@ -170,6 +177,29 @@ export default class FieldEditModal extends React.PureComponent {
         closeModal();
     }
 
+    handleInvalidate = (container) => {
+        // Note: pass through prop
+        // eslint-disable-next-line react/prop-types
+        const { parentBCR } = this.props;
+
+        const contentRect = container.getBoundingClientRect();
+
+        const optionsContainerPosition = (
+            calcFloatPositionInMainWindow({
+                parentRect: parentBCR,
+                contentRect,
+                defaultOffset,
+                limit: {
+                    ...defaultLimit,
+                    minW: 240,
+                    maxW: 360,
+                },
+            })
+        );
+
+        return optionsContainerPosition;
+    }
+
     renderSettingsForType = (type) => {
         if (type === DATA_TYPE.number) {
             return (
@@ -214,62 +244,79 @@ export default class FieldEditModal extends React.PureComponent {
     }
 
     render() {
-        const { closeModal, disabled, disabledDelete } = this.props;
+        const {
+            closeModal,
+            disabled,
+            disabledDelete,
+        } = this.props;
+
         const {
             value,
             error,
             hasError,
             pristine,
         } = this.state;
+
         const { type } = value;
 
         return (
-            <Modal
-                onClose={closeModal}
-                closeOnEscape
+            <FloatingContainer
+                className={styles.container}
+                onInvalidate={this.handleInvalidate}
+                focusTrap
             >
-                <ModalBody>
-                    <Faram
-                        onChange={this.handleFaramChange}
-                        onValidationFailure={this.handleFaramValidationFailure}
-                        onValidationSuccess={this.handleFaramValidationSuccess}
+                <Faram
+                    onChange={this.handleFaramChange}
+                    onValidationFailure={this.handleFaramValidationFailure}
+                    onValidationSuccess={this.handleFaramValidationSuccess}
 
-                        schema={this.schema}
-                        value={value}
-                        error={error}
-                        disabled={disabled}
-                    >
-                        <NonFieldErrors faramElement />
-                        <TextInput
-                            faramElementName="title"
-                            label={_ts('tabular.fieldEditModal', 'fieldNameTitle')} // Title
-                            autoFocus
+                    schema={this.schema}
+                    value={value}
+                    error={error}
+                    disabled={disabled}
+                >
+                    <div className={styles.top}>
+                        <NonFieldErrors
+                            className={styles.nonFieldErrors}
+                            faramElement
                         />
-                        <SegmentInput
-                            faramElementName="type"
-                            label={_ts('tabular.fieldEditModal', 'fieldTypeTitle')} // Type
-                            options={fieldTypes}
-                        />
-
-                        <FaramGroup faramElementName="options">
-                            {this.renderSettingsForType(type)}
-                        </FaramGroup>
-
                         <DangerButton
+                            className={styles.removeColumnButton}
                             disabled={disabled || disabledDelete}
                             onClick={this.handleDeleteClick}
-                        >
-                            {_ts('tabular.fieldEditModal', 'deleteFieldButtonLabel') /* Delete Field */ }
-                        </DangerButton>
+                            iconName={iconNames.trash}
+                            title={_ts('tabular.fieldEditModal', 'deleteFieldButtonLabel')}
+                            transparent
+                        />
+                    </div>
+                    <TextInput
+                        faramElementName="title"
+                        label={_ts('tabular.fieldEditModal', 'fieldNameTitle')} // Title
+                        autoFocus
+                    />
+                    <SegmentInput
+                        faramElementName="type"
+                        label={_ts('tabular.fieldEditModal', 'fieldTypeTitle')} // Type
+                        options={fieldTypes}
+                    />
+
+                    <FaramGroup faramElementName="options">
+                        {this.renderSettingsForType(type)}
+                    </FaramGroup>
+
+                    <div className={styles.actionButtons}>
+                        <Button onClick={closeModal}>
+                            {_ts('tabular.fieldEditModal', 'cancelFieldButtonLabel')}
+                        </Button>
                         <PrimaryButton
                             type="submit"
                             disabled={disabled || hasError || pristine}
                         >
                             {_ts('tabular.fieldEditModal', 'saveFieldButtonLabel') /* Save Field */ }
                         </PrimaryButton>
-                    </Faram>
-                </ModalBody>
-            </Modal>
+                    </div>
+                </Faram>
+            </FloatingContainer>
         );
     }
 }

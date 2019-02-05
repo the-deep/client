@@ -1,0 +1,14 @@
+@import '~base-scss/base';
+
+.container {
+    padding: $spacing-medium;
+
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+
+        >button {
+            margin-left: $spacing-small;
+        }
+    }
+}

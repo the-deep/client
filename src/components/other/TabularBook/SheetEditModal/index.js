@@ -1,15 +1,22 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Faram, { requiredCondition } from '#rscg/Faram';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
-import Modal from '#rscv/Modal';
-import ModalBody from '#rscv/Modal/Body';
+import FloatingContainer from '#rscv/FloatingContainer';
+import { iconNames } from '#constants';
+import {
+    calcFloatPositionInMainWindow,
+    defaultOffset,
+    defaultLimit,
+} from '#rsu/bounds';
 
 import _ts from '#ts';
+import styles from './styles.scss';
 
 export default class SheetEditModal extends React.PureComponent {
     static propTypes = {
@@ -83,46 +90,91 @@ export default class SheetEditModal extends React.PureComponent {
         closeModal();
     }
 
-    render() {
-        const { closeModal, disabled, disabledDelete } = this.props;
-        const { value, error, hasError, pristine } = this.state;
-        return (
-            <Modal
-                onClose={closeModal}
-                closeOnEscape
-            >
-                <ModalBody>
-                    <Faram
-                        onChange={this.handleFaramChange}
-                        onValidationFailure={this.handleFaramValidationFailure}
-                        onValidationSuccess={this.handleFaramValidationSuccess}
+    handleInvalidate = (container) => {
+        // Note: pass through prop
+        // eslint-disable-next-line react/prop-types
+        const { parentBCR } = this.props;
 
-                        schema={this.schema}
-                        value={value}
-                        error={error}
-                        disabled={disabled}
-                    >
-                        <NonFieldErrors faramElement />
-                        <TextInput
-                            faramElementName="title"
-                            label={_ts('tabular.sheetEditModal', 'sheetNameTitle')} // Title
-                            autoFocus
+        const contentRect = container.getBoundingClientRect();
+
+        const optionsContainerPosition = (
+            calcFloatPositionInMainWindow({
+                parentRect: parentBCR,
+                contentRect,
+                defaultOffset,
+                limit: {
+                    ...defaultLimit,
+                    minW: 240,
+                    maxW: 360,
+                },
+            })
+        );
+
+        return optionsContainerPosition;
+    }
+
+    render() {
+        const {
+            closeModal,
+            disabled,
+            disabledDelete,
+        } = this.props;
+
+        const {
+            value,
+            error,
+            hasError,
+            pristine,
+        } = this.state;
+
+        return (
+            <FloatingContainer
+                className={styles.container}
+                onInvalidate={this.handleInvalidate}
+                focusTrap
+            >
+                <Faram
+                    onChange={this.handleFaramChange}
+                    onValidationFailure={this.handleFaramValidationFailure}
+                    onValidationSuccess={this.handleFaramValidationSuccess}
+
+                    schema={this.schema}
+                    value={value}
+                    error={error}
+                    disabled={disabled}
+                >
+                    <div className={styles.top}>
+                        <NonFieldErrors
+                            faramElement
+                            className={styles.nonFieldErrors}
                         />
                         <DangerButton
+                            className={styles.removeSheetButton}
                             disabled={disabled || disabledDelete}
                             onClick={this.handleDeleteClick}
-                        >
-                            {_ts('tabular.sheetEditModal', 'deleteSheetButtonLabel') /* Delete Sheet */ }
-                        </DangerButton>
+                            title={_ts('tabular.sheetEditModal', 'deleteSheetButtonLabel')}
+                            iconName={iconNames.trash}
+                            transparent
+                        />
+                    </div>
+                    <TextInput
+                        faramElementName="title"
+                        label={_ts('tabular.sheetEditModal', 'sheetNameTitle')} // Title
+                        autoFocus
+                    />
+                    <div className={styles.actionButtons}>
+                        <Button onClick={closeModal}>
+                            {_ts('tabular.fieldEditModal', 'cancelFieldButtonLabel')}
+                        </Button>
                         <PrimaryButton
                             type="submit"
                             disabled={disabled || hasError || pristine}
                         >
                             {_ts('tabular.sheetEditModal', 'saveSheetButtonLabel') /* Save Sheet */ }
                         </PrimaryButton>
-                    </Faram>
-                </ModalBody>
-            </Modal>
+                    </div>
+                </Faram>
+            </FloatingContainer>
         );
     }
 }
