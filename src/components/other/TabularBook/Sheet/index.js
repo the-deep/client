@@ -20,6 +20,7 @@ import update from '#rsu/immutable-update';
 import _cs from '#cs';
 import _ts from '#ts';
 
+import Cloak from '#components/general/Cloak';
 import { iconNames } from '#constants';
 import { DATA_TYPE } from '#entities/tabular';
 
@@ -60,6 +61,7 @@ const propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     fieldEditPending: PropTypes.object.isRequired,
     // onSheetChange: PropTypes.func.isRequired,
+    viewMode: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -67,6 +69,7 @@ const defaultProps = {
     sheet: {},
     disabled: false,
     isFieldRetrievePending: false,
+    viewMode: false,
 };
 
 // FIXME: don't use compareNumber as it is not exactly basic number type
@@ -103,7 +106,7 @@ export default class Sheet extends React.PureComponent {
     static keySelector = datum => datum.key;
 
     getFilterCriteria = (datum, searchTerm = emptyObject) => {
-        const { sheet } = this.props;
+        const { sheet, viewMode } = this.props;
         const {
             fields,
             options: {
@@ -120,6 +123,7 @@ export default class Sheet extends React.PureComponent {
             fieldStats,
             fieldDeletePending,
             fieldEditPending,
+            viewMode,
         );
 
         return columns.every((sheetColumn) => {
@@ -179,7 +183,7 @@ export default class Sheet extends React.PureComponent {
     // NOTE: searchTerm, healthBar is used inside this.headerRendererParams
     getSheetColumns = memoize((
         // eslint-disable-next-line no-unused-vars
-        fields, searchTerm, fieldStats, fieldDeletePending, fieldEditPending,
+        fields, searchTerm, fieldStats, fieldDeletePending, fieldEditPending, viewMode,
     ) => (
         fields
             .filter(field => !field.hidden)
@@ -200,6 +204,10 @@ export default class Sheet extends React.PureComponent {
                 ),
             }))
     ));
+
+    shouldHideEditButton = ({ leadPermissions }) => (
+        this.props.viewMode || !leadPermissions.modify
+    );
 
     cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({
         className: _cs(styles[type], styles.cell),
@@ -253,6 +261,7 @@ export default class Sheet extends React.PureComponent {
             onFieldEdit: this.handleFieldEdit,
             isFieldDeletePending,
             isFieldEditPending,
+            viewMode: this.props.viewMode,
         };
     }
 
@@ -335,6 +344,7 @@ export default class Sheet extends React.PureComponent {
             isFieldRetrievePending,
             fieldDeletePending,
             fieldEditPending,
+            viewMode,
         } = this.props;
         const { searchTerm } = options;
 
@@ -344,6 +354,7 @@ export default class Sheet extends React.PureComponent {
             fieldsStats,
             fieldDeletePending,
             fieldEditPending,
+            viewMode,
         );
 
         const fieldList = getDeletedFields(fields);
@@ -351,16 +362,21 @@ export default class Sheet extends React.PureComponent {
         return (
             <div className={_cs(className, styles.tabularSheet, 'tabular-sheet')}>
                 <div className={styles.optionsBar}>
-                    <ModalButton
-                        iconName={iconNames.more}
-                        title={_ts('tabular.sheets', 'columnShowButtonTooltip')} // Other Columns
-                        disabled={disabled || fieldList.length <= 0}
-                        pending={isFieldRetrievePending}
-                        modal={
-                            <FieldRetrieveModal
-                                disabled={disabled}
-                                fields={fieldList}
-                                onFieldRetrieve={this.handleFieldRetrieve}
+                    <Cloak
+                        hide={this.shouldHideEditButton}
+                        render={
+                            <ModalButton
+                                iconName={iconNames.more}
+                                title={_ts('tabular.sheets', 'columnShowButtonTooltip')} // Other Columns
+                                disabled={disabled || fieldList.length <= 0}
+                                pending={isFieldRetrievePending}
+                                modal={
+                                    <FieldRetrieveModal
+                                        disabled={disabled}
+                                        fields={fieldList}
+                                        onFieldRetrieve={this.handleFieldRetrieve}
+                                    />
+                                }
                             />
                         }
                     />

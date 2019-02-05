@@ -6,6 +6,7 @@ import WarningButton from '#rsca/Button/WarningButton';
 import modalize from '#rscg/Modalize';
 import HealthBar from '#rscz/HealthBar';
 
+import Cloak from '#components/general/Cloak';
 import { iconNames } from '#constants';
 import { DATA_TYPE } from '#entities/tabular';
 import _cs from '#cs';
@@ -47,6 +48,7 @@ export default class Header extends React.PureComponent {
         onFieldEdit: PropTypes.func.isRequired,
         isFieldDeletePending: PropTypes.bool,
         isFieldEditPending: PropTypes.bool,
+        viewMode: PropTypes.bool,
     };
 
     static defaultProps = {
@@ -56,7 +58,12 @@ export default class Header extends React.PureComponent {
         isFieldDeletePending: false,
         isFieldEditPending: false,
         filterValue: undefined,
+        viewMode: false,
     };
+
+    shouldHideEditButton = ({ leadPermissions }) => (
+        this.props.viewMode || !leadPermissions.modify
+    );
 
     handleSortClick = () => {
         const { fieldId, onSortClick } = this.props;
@@ -104,21 +111,28 @@ export default class Header extends React.PureComponent {
                 >
                     {value.title}
                 </Button>
-                { icon && <span className={_cs(icon, styles.icon)} /> }
-                <WarningModalButton
-                    iconName={iconNames.edit}
-                    transparent
-                    title={_ts('tabular.header', 'columnEditButtonTooltip')} // Edit
-                    disabled={disabled}
-                    pending={isFieldDeletePending || isFieldEditPending}
-                    modal={
-                        <FieldEditModal
+                { icon &&
+                    <span className={_cs(icon, styles.icon)} />
+                }
+                <Cloak
+                    hide={this.shouldHideEditButton}
+                    render={
+                        <WarningModalButton
+                            iconName={iconNames.edit}
+                            transparent
+                            title={_ts('tabular.header', 'columnEditButtonTooltip')} // Edit
                             disabled={disabled}
-                            disabledDelete={disabledDelete}
-                            fieldId={fieldId}
-                            value={value}
-                            onFieldDelete={onFieldDelete}
-                            onFieldEdit={onFieldEdit}
+                            pending={isFieldDeletePending || isFieldEditPending}
+                            modal={
+                                <FieldEditModal
+                                    disabled={disabled}
+                                    disabledDelete={disabledDelete}
+                                    fieldId={fieldId}
+                                    value={value}
+                                    onFieldDelete={onFieldDelete}
+                                    onFieldEdit={onFieldEdit}
+                                />
+                            }
                         />
                     }
                 />
