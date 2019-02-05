@@ -453,7 +453,11 @@ export default class LeadForm extends React.PureComponent {
                                     className={styles.tabularButton}
                                     onClick={this.handleTabularButtonClick}
                                 >
-                                    {_ts('addLeads', 'tabularButtonTitle')}
+                                    {
+                                        values.tabularBook
+                                            ? _ts('addLeads', 'tabularButtonTitle')
+                                            : _ts('addLeads', 'tabularExtractButtonTitle')
+                                    }
                                 </AccentButton>
                             ) }
                             {/* FIXME: why is hidden input used here? */}
