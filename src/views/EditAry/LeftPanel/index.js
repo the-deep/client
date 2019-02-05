@@ -313,8 +313,8 @@ export default class LeftPanel extends React.PureComponent {
                         <Label
                             className={styles.label}
                             show
-                            text="Lead"
                             // FIXME: use strings
+                            text="Lead"
                         />
                         <SelectInput
                             hideClearButton
