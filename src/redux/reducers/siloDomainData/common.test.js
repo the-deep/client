@@ -31,6 +31,13 @@ test('should set active project', () => {
     });
     const after = {
         activeProject: 2,
+        leadPage: {
+            2: {
+                grid: {
+                    activePage: 1,
+                },
+            },
+        },
     };
 
     expect(reducers[SET_ACTIVE_PROJECT](state, action)).toEqual(after);

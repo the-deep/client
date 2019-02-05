@@ -40,3 +40,42 @@ const decodeTimeInMinutes = (value, separator = ':') => {
 export const compareTime = (a, b) => (
     decodeTimeInMinutes(a) - decodeTimeInMinutes(b)
 );
+
+export const timeFrom = (date) => {
+    const cDate = date instanceof Date ? date : new Date(date);
+
+    const seconds = Math.floor((new Date() - cDate) / 1000);
+
+    const intervals = [
+        {
+            span: 'year',
+            duration: 31536000,
+        },
+        {
+            span: 'month',
+            duration: 2592000,
+        },
+        {
+            span: 'day',
+            duration: 86400,
+        },
+        {
+            span: 'hour',
+            duration: 3600,
+        },
+        {
+            span: 'minute',
+            duration: 60,
+        },
+    ];
+
+    for (let i = 0, len = intervals.length; i < len; i += 1) {
+        const interval = intervals[i];
+        const fromNow = Math.floor(seconds / interval.duration);
+        if (fromNow > 0) {
+            return `${fromNow} ${interval.span}${fromNow > 1 ? 's' : ''} ago`;
+        }
+    }
+
+    return 'just now';
+};

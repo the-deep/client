@@ -14,28 +14,59 @@ const leadPageForProjectSelector = createSelector(
     ),
 );
 
+export const leadPageViewSelector = createSelector(
+    leadPageSelector,
+    leadPage => leadPage.view || 'table',
+);
+
+export const leadPageForActiveViewSelector = createSelector(
+    leadPageForProjectSelector,
+    leadPageViewSelector,
+    (leadPage, view) => leadPage[view] || emptyObject,
+);
+
+export const leadPageTableViewSelector = createSelector(
+    leadPageForProjectSelector,
+    leadPage => leadPage.table || emptyObject,
+);
+
+export const leadPageGridViewSelector = createSelector(
+    leadPageForProjectSelector,
+    leadPage => leadPage.grid || emptyObject,
+);
+
 export const leadPageFilterSelector = createSelector(
     leadPageForProjectSelector,
     leadPage => leadPage.filter || emptyObject,
 );
 
 export const leadPageActivePageSelector = createSelector(
-    leadPageForProjectSelector,
+    leadPageForActiveViewSelector,
     leadPage => leadPage.activePage || 1,
 );
 
 export const leadPageActiveSortSelector = createSelector(
-    leadPageForProjectSelector,
+    leadPageForActiveViewSelector,
     leadPage => leadPage.activeSort || '-created_at',
 );
 
 export const leadPageLeadsPerPageSelector = createSelector(
-    leadPageForProjectSelector,
+    leadPageForActiveViewSelector,
     leadPage => leadPage.leadsPerPage || 25,
 );
 
 export const leadsForProjectSelector = createSelector(
-    leadPageForProjectSelector,
+    leadPageForActiveViewSelector,
+    leadPage => leadPage.leads || emptyList,
+);
+
+export const leadsForProjectGridViewSelector = createSelector(
+    leadPageGridViewSelector,
+    leadPage => leadPage.leads || emptyList,
+);
+
+export const leadsForProjectTableViewSelector = createSelector(
+    leadPageTableViewSelector,
     leadPage => leadPage.leads || emptyList,
 );
 

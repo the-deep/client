@@ -143,12 +143,15 @@ const initialSiloDomainData = {
     leadPage: {
         /*
         1: {
-            activeSort: '-created_at',
-            activePage: 1,
+            table: {
+                activeSort: '-created_at',
+                activePage: 1,
+                leads: [],
+            },
+            view: 'table',
             viewMode: 'viz',
             filters: {
             },
-            leads: [],
             totalLeadsCount: 123,
         },
         */

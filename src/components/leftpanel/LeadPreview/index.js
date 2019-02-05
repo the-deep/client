@@ -9,14 +9,17 @@ import _ts from '#ts';
 
 import styles from './styles.scss';
 
+const noop = () => {};
+
 const propTypes = {
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    handleScreenshot: PropTypes.func.isRequired,
+    handleScreenshot: PropTypes.func,
     showScreenshot: PropTypes.bool,
 };
 
 const defaultProps = {
     showScreenshot: false,
+    handleScreenshot: noop,
 };
 
 export default class LeadPreview extends React.PureComponent {

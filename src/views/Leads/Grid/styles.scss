@@ -1,0 +1,35 @@
+@import '~base-scss/base';
+
+.lead-grids {
+    position: relative;
+    margin: $spacing-small-alt;
+    background-color: $color-background-row;
+    height: 100%;
+    overflow: auto;
+
+    .masonry {
+        background-color: $color-background-row;
+        padding: $spacing-small-alt 0;
+        height: 100%;
+        overflow: auto;
+    }
+}
+
+.modal {
+    display: flex;
+    flex-direction: row;
+    height: calc(100vh - 40px);
+
+    .button_close {
+        display: flex;
+        position: absolute;
+        top: -17px;
+        right: -14px;
+        justify-content: center;
+        border-radius: 50%;
+        background: white;
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+    }
+}

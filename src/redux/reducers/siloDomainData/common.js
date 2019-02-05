@@ -47,6 +47,13 @@ const setActiveProject = (state, action) => {
     const { activeProject } = action;
     const settings = {
         activeProject: { $set: activeProject },
+        leadPage: { $auto: {
+            [activeProject]: { $auto: {
+                grid: { $auto: {
+                    activePage: { $set: 1 },
+                } },
+            } },
+        } },
     };
     return update(state, settings);
 };
