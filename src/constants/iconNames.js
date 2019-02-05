@@ -27,6 +27,8 @@ const iconNames = {
 
     documentText: 'fa fa-file-o',
 
+    table: 'fa fa-table',
+
     json: 'fa fa-file-code-o',
     xml: 'fa fa-file-code-o',
     csv: 'fa fa-file-code-o',

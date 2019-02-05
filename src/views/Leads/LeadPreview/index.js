@@ -15,11 +15,12 @@ import styles from './styles.scss';
 
 const propTypes = {
     value: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    onClose: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     value: [],
+    closeModal: () => {},
 };
 
 
@@ -57,13 +58,13 @@ export default class LeadPreview extends React.PureComponent {
     render() {
         const {
             value,
-            onClose,
+            closeModal,
         } = this.props;
 
         return (
             <Modal
                 className={styles.leadPreview}
-                onClose={this.unsetLeadPreview}
+                onClose={closeModal}
                 closeOnEscape
             >
                 <ModalHeader
@@ -71,7 +72,7 @@ export default class LeadPreview extends React.PureComponent {
                     title={value.title || _ts('leads', 'Preview')}
                     rightComponent={
                         <Button
-                            onClick={onClose}
+                            onClick={closeModal}
                             transparent
                         >
                             <span className={iconNames.close} />

@@ -16,6 +16,7 @@ import {
     reverseRoute,
     isObjectEmpty,
 } from '#rsu/common';
+import modalize from '#rscg/Modalize';
 
 import Cloak from '#components/general/Cloak';
 import MultiViewContainer from '#rscv/MultiViewContainer';
@@ -67,6 +68,8 @@ import Table from './Table';
 import Grid from './Grid';
 
 import styles from './styles.scss';
+
+const AccentModalButton = modalize(AccentButton);
 
 const propTypes = {
     filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -282,7 +285,6 @@ export default class Leads extends React.PureComponent {
         this.state = {
             loadingLeads: true,
             redirectTo: undefined,
-            showLeadPreview: false,
         };
 
         this.views = {
@@ -403,10 +405,6 @@ export default class Leads extends React.PureComponent {
         }
     }
 
-    setLeadPreview = (row) => {
-        this.setState({ showLeadPreview: true, value: row });
-    }
-
     getSortDetails = () => {
         const { activeSort } = this.props;
         let sortDirIcon = iconNames.chevronUp;
@@ -423,10 +421,6 @@ export default class Leads extends React.PureComponent {
             sortDirIcon,
             sortKey,
         };
-    }
-
-    unsetLeadPreview = () => {
-        this.setState({ showLeadPreview: false, value: undefined });
     }
 
     handleSearchSimilarLead = (row) => {
@@ -503,30 +497,31 @@ export default class Leads extends React.PureComponent {
     }
 
     renderMimeType = ({ row }) => {
-        let icon = iconNames.documentText;
-        let url;
-        if (row.attachment) {
-            icon = leadTypeIconMap[row.attachment.mimeType];
-            url = row.attachment.file;
-        } else if (row.url) {
-            icon = iconNames.globe;
-            ({ url } = row);
-        }
-        if (!url) {
-            return (
-                <div className="icon-wrapper">
-                    <i className={icon} />
-                </div>
-            );
-        }
+        const {
+            attachment,
+            url: rowUrl,
+            tabularBook,
+        } = row;
 
+        const icon = (tabularBook && iconNames.table)
+            || (attachment && leadTypeIconMap[attachment.mimeType])
+            || (rowUrl && iconNames.globe)
+            || iconNames.documentText;
+
+        const url = (attachment && attachment.file) || rowUrl;
         return (
             <div className="icon-wrapper">
-                <AccentButton
-                    iconName={icon}
-                    onClick={() => this.setLeadPreview(row)}
-                    transparent
-                />
+                { url ? (
+                    <AccentModalButton
+                        iconName={icon}
+                        transparent
+                        modal={
+                            <LeadPreview value={row} />
+                        }
+                    />
+                ) : (
+                    <span className={icon} />
+                )}
             </div>
         );
     }
@@ -715,6 +710,7 @@ export default class Leads extends React.PureComponent {
             </Message>
         );
     }
+
     renderTableView = () => (
         <Table
             headers={this.headers}
@@ -744,8 +740,6 @@ export default class Leads extends React.PureComponent {
     render() {
         const {
             redirectTo,
-            showLeadPreview,
-            value,
         } = this.state;
 
         if (redirectTo) {
@@ -769,13 +763,6 @@ export default class Leads extends React.PureComponent {
                     activeClassName={styles.active}
                 />
                 <Footer />
-
-                { showLeadPreview &&
-                    <LeadPreview
-                        value={value}
-                        onClose={this.unsetLeadPreview}
-                    />
-                }
             </div>
         );
     }
