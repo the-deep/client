@@ -35,11 +35,15 @@ export default class LeadTabular extends React.PureComponent {
     state = {
         bookId: undefined,
         fileType: undefined,
-        currentPage: 0,
+        metaInfo: undefined,
     }
 
     handleBookIdChange = (bookId, fileType, callback) => {
         this.setState({ bookId, fileType }, callback);
+    }
+
+    handleMetaInfo = (metaInfo, fileType, callback) => {
+        this.setState({ metaInfo, fileType }, callback);
     }
 
     handleComplete = () => {
@@ -69,7 +73,9 @@ export default class LeadTabular extends React.PureComponent {
             bookId,
             fileType,
             page,
+            metaInfo,
         } = this.state;
+        console.warn(lead);
 
         return (
             <div
@@ -88,12 +94,14 @@ export default class LeadTabular extends React.PureComponent {
                     <FileTypeSelectionPage
                         lead={lead}
                         mimeType={mimeType}
-                        onComplete={this.handleBookIdChange}
+                        onMetaGet={this.handleMetaInfo}
                         onCancel={onCancel}
                     />
                     <AttributesPage
                         bookId={bookId}
-                        onComplete={this.handleComplete}
+                        lead={lead}
+                        onComplete={this.handleBookIdChange}
+                        metaInfo={metaInfo}
                         defaultFileType={fileType}
                         onCancel={onCancel}
                     />

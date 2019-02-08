@@ -26,7 +26,7 @@ const propTypes = {
     mimeType: PropTypes.string,
 
     // eslint-disable-next-line react/forbid-prop-types
-    createBookRequest: PropTypes.object.isRequired,
+    getMetaInfoRequest: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -37,12 +37,13 @@ const defaultProps = {
 };
 
 const requests = {
-    createBookRequest: {
-        method: requestMethods.POST,
-        url: '/tabular-books/',
+    getMetaInfoRequest: {
+        method: requestMethods.GET,
+        url: ({ params: { fileId, fileType } }) =>
+            `/meta-extraction/${fileId}/?file_type=${fileType}`,
         body: ({ params: { body } }) => body,
-        onSuccess: ({ props, response }) => {
-            props.onComplete(response.id, response.fileType, props.onNext);
+        onSuccess: ({ props, response, params: { fileType } }) => {
+            props.onMetaGet(response, fileType, props.onNext);
         },
         onFailure: ({ error: { faramErrors }, params: { handleFaramError } }) => {
             handleFaramError(faramErrors);
@@ -96,17 +97,13 @@ export default class FileTypeSelectionPage extends React.PureComponent {
         this.setState({ faramErrors });
     }
 
-    handleFaramValidationSuccess = (faramValues) => {
-        const { lead } = this.props;
-        const { faramValues: { title, attachment: file, url } } = lead;
-        this.props.createBookRequest.do({
-            body: {
-                ...faramValues,
-                title,
-                url,
-                file: file && file.id,
-            },
-            handleFaramError: this.handleFaramValidationFailure,
+    handleFaramValidationSuccess = () => {
+        const { lead, mimeType } = this.props;
+        const { faramValues: { attachment: file } } = lead;
+
+        this.props.getMetaInfoRequest.do({
+            fileId: file.id,
+            fileType: calcFileType(mimeType),
         });
     }
 
@@ -116,11 +113,11 @@ export default class FileTypeSelectionPage extends React.PureComponent {
             faramErrors,
         } = this.state;
         const {
-            createBookRequest,
+            getMetaInfoRequest,
             onCancel,
         } = this.props;
 
-        const { pending } = createBookRequest;
+        const { pending } = getMetaInfoRequest;
 
         return (
             <Faram
