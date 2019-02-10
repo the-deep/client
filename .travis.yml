@@ -17,9 +17,6 @@ before_install:
     - git --git-dir=src/vendor/react-store/.git --no-pager show --pretty=fuller --quiet
     - cp src/vendor/react-store/stylesheets/_user-imports-sample.scss src/vendor/react-store/stylesheets/_user-imports.scss
 
-    - git clone https://github.com/timilsinabishal/react-components.git src/vendor/react-components
-    - git --git-dir=src/vendor/react-components/.git --no-pager show --pretty=fuller --quiet
-
     - docker pull ${DOCKER_IMAGE_CLIENT} || true
     - docker pull ${DOCKER_IMAGE_CLIENT_B} || true
     - |
