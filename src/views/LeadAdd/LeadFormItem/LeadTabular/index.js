@@ -46,15 +46,15 @@ export default class LeadTabular extends React.PureComponent {
         this.setState({ metaInfo, fileType }, callback);
     }
 
-    handleComplete = () => {
+    handleComplete = (bookId, fileType, callback) => {
         const { onCancel, setTabularBook } = this.props;
-        const { bookId } = this.state;
 
         if (!bookId) {
             onCancel();
         } else {
             setTabularBook(bookId);
         }
+        this.setState({ bookId, fileType }, callback);
     }
 
     handleWizardPageChange = (page) => {
@@ -75,7 +75,6 @@ export default class LeadTabular extends React.PureComponent {
             page,
             metaInfo,
         } = this.state;
-        console.warn(lead);
 
         return (
             <div
@@ -100,7 +99,7 @@ export default class LeadTabular extends React.PureComponent {
                     <AttributesPage
                         bookId={bookId}
                         lead={lead}
-                        onComplete={this.handleBookIdChange}
+                        onComplete={this.handleComplete}
                         metaInfo={metaInfo}
                         defaultFileType={fileType}
                         onCancel={onCancel}

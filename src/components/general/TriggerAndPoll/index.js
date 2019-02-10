@@ -26,7 +26,7 @@ const defaultIsValid = r => r.status === 'success';
 
 const requests = {
     initialRequest: {
-        // schemaName: ({ props }) => props.initialSchemaName || props.schemaName,
+        schemaName: ({ props }) => props.initialSchemaName || props.schemaName,
         onMount: ({ props }) => !props.pollOnly,
         // onPropsChanged: {
         //     compareValue: true,

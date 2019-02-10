@@ -3,7 +3,6 @@ import React from 'react';
 
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -29,6 +28,8 @@ import styles from './styles.scss';
 
 const propTypes = {
     onPrev: PropTypes.func,
+    // eslint-disable-next-line react/no-unused-prop-types
+    onNext: PropTypes.func,
     onCancel: PropTypes.func,
     defaultFileType: PropTypes.string,
     metaInfo: PropTypes.string.isRequired,
@@ -41,6 +42,7 @@ const propTypes = {
 
 const defaultProps = {
     onPrev: () => {},
+    onNext: () => {},
     onCancel: () => {},
     defaultFileType: undefined,
 };
@@ -112,10 +114,13 @@ export default class AttributesPage extends React.PureComponent {
             faramErrors: {},
         };
 
+        let faramValues;
+        let schema;
+
         const { lead, defaultFileType } = this.props;
 
         if (fileType === 'csv') {
-            const schema = {
+            schema = {
                 fields: {
                     options: {
                         fields: {
@@ -123,10 +128,14 @@ export default class AttributesPage extends React.PureComponent {
                             noHeaders: [],
                         },
                     },
+                    fileType: [],
+                    title: [],
+                    file: [],
+                    project: [],
                 },
             };
 
-            const faramValues = {
+            faramValues = {
                 options: {
                     delimiter: ',',
                 },
@@ -158,7 +167,7 @@ export default class AttributesPage extends React.PureComponent {
                 }),
             );
 
-            const schema = {
+            schema = {
                 validation: (value = {}) => {
                     const errors = [];
                     const {
@@ -183,12 +192,12 @@ export default class AttributesPage extends React.PureComponent {
                     },
                     title: [],
                     fileType: [],
+                    file: [],
+                    project: [],
                 },
             };
 
-            const faramValues = {
-                title: lead.faramValues.title,
-                fileType: defaultFileType,
+            faramValues = {
                 options: {
                     sheets: listToMap(
                         sheets,
@@ -199,13 +208,19 @@ export default class AttributesPage extends React.PureComponent {
                     ),
                 },
             };
-
-            this.setState({
-                ...params,
-                schema,
-                faramValues,
-            });
         }
+
+        this.setState({
+            ...params,
+            schema,
+            faramValues: {
+                ...faramValues,
+                title: lead.faramValues.title,
+                project: lead.faramValues.project,
+                file: lead.faramValues.attachment.id,
+                fileType: defaultFileType,
+            },
+        });
     }
 
     handleBackClick = () => {
