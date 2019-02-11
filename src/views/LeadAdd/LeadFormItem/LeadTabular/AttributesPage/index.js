@@ -28,8 +28,6 @@ import styles from './styles.scss';
 
 const propTypes = {
     onPrev: PropTypes.func,
-    // eslint-disable-next-line react/no-unused-prop-types
-    onNext: PropTypes.func,
     onCancel: PropTypes.func,
     defaultFileType: PropTypes.string,
     metaInfo: PropTypes.string.isRequired,
@@ -42,7 +40,6 @@ const propTypes = {
 
 const defaultProps = {
     onPrev: () => {},
-    onNext: () => {},
     onCancel: () => {},
     defaultFileType: undefined,
 };
@@ -53,7 +50,7 @@ const requests = {
         url: '/tabular-books/',
         body: ({ params: { body } }) => body,
         onSuccess: ({ props, response }) => {
-            props.onComplete(response.id, response.fileType, props.onNext);
+            props.onComplete(response.id);
         },
         onFailure: ({ error: { faramErrors }, params: { handleFaramError } }) => {
             handleFaramError(faramErrors);
@@ -75,33 +72,26 @@ export default class AttributesPage extends React.PureComponent {
         super(props);
 
         // Initialize faram data
-        const { metaInfo, defaultFileType } = this.props;
-        const initFaramData = this.getInitFaramData({
-            meta: metaInfo,
-            fileType: defaultFileType,
-        });
-        this.state = {
-            fileType: 'undefined',
-            meta: undefined,
-            schema: {},
-            faramValues: {},
-            faramErrors: {},
-            ...initFaramData,
-        };
-    }
+        const {
+            metaInfo: meta = {},
+            defaultFileType: fileType,
+            lead: {
+                faramValues: {
+                    title,
+                    project,
+                    attachment,
+                },
+            },
+        } = this.props;
 
-    getInitFaram = ({ fileType, meta = {} }) => {
-        const params = {
-            fileType: fileType || this.props.defaultFileType,
-            meta,
-            faramErrors: {},
+        let faramValues = {
+            title,
+            project,
+            file: attachment.id,
+            fileType,
         };
 
-        let faramValues;
         let schema;
-
-        const { lead, defaultFileType } = this.props;
-
         if (fileType === 'csv') {
             schema = {
                 fields: {
@@ -119,6 +109,7 @@ export default class AttributesPage extends React.PureComponent {
             };
 
             faramValues = {
+                ...faramValues,
                 options: {
                     delimiter: ',',
                 },
@@ -175,6 +166,7 @@ export default class AttributesPage extends React.PureComponent {
             };
 
             faramValues = {
+                ...faramValues,
                 options: {
                     sheets: listToMap(
                         sheets,
@@ -187,16 +179,12 @@ export default class AttributesPage extends React.PureComponent {
             };
         }
 
-        return {
-            ...params,
+        this.state = {
+            fileType,
+            meta,
             schema,
-            faramValues: {
-                ...faramValues,
-                title: lead.faramValues.title,
-                project: lead.faramValues.project,
-                file: lead.faramValues.attachment.id,
-                fileType: defaultFileType,
-            },
+            faramValues,
+            faramErrors: {},
         };
     }
 
@@ -235,7 +223,6 @@ export default class AttributesPage extends React.PureComponent {
             onCancel,
         } = this.props;
 
-        // TODO: Handle pollRequest.error and saveRequest.error
         const { pending: savePending } = createBookRequest;
 
         // NOTE: Default component should be null but FaramGroup doesn't

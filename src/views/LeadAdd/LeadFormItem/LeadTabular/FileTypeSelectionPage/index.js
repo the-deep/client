@@ -17,6 +17,36 @@ import styles from './styles.scss';
 
 const noOp = () => {};
 
+const requests = {
+    getMetaInfoRequest: {
+        method: requestMethods.GET,
+        url: ({ params: { fileId, fileType } }) => (
+            `/meta-extraction/${fileId}/?file_type=${fileType}`
+        ),
+        onSuccess: ({ props, response, params: { fileType } }) => {
+            props.onMetaGet(response, fileType, props.onNext);
+        },
+        onFailure: ({ error: { faramErrors }, params: { handleFaramError } }) => {
+            handleFaramError(faramErrors);
+        },
+        onFatal: ({ params: { handleFaramError } }) => {
+            handleFaramError({
+                $internal: ['SERVER ERROR'],
+            });
+        },
+    },
+};
+
+const fileTypes = [
+    { key: 'csv', label: 'CSV' },
+    { key: 'xlsx', label: 'XLSX' },
+];
+
+const getFileTypeFromMimeType = (mimeType) => {
+    const leadType = leadPaneTypeMap[mimeType];
+    return leadType === LEAD_PANE_TYPE.spreadsheet ? 'xlsx' : 'csv';
+};
+
 const propTypes = {
     onComplete: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
     onNext: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
@@ -36,46 +66,18 @@ const defaultProps = {
     mimeType: '',
 };
 
-const requests = {
-    getMetaInfoRequest: {
-        method: requestMethods.GET,
-        url: ({ params: { fileId, fileType } }) =>
-            `/meta-extraction/${fileId}/?file_type=${fileType}`,
-        body: ({ params: { body } }) => body,
-        onSuccess: ({ props, response, params: { fileType } }) => {
-            props.onMetaGet(response, fileType, props.onNext);
-        },
-        onFailure: ({ error: { faramErrors }, params: { handleFaramError } }) => {
-            handleFaramError(faramErrors);
-        },
-        onFatal: ({ params: { handleFaramError } }) => {
-            handleFaramError({
-                $internal: ['SERVER ERROR'],
-            });
-        },
-    },
-};
-
-const calcFileType = (mimeType) => {
-    const leadType = leadPaneTypeMap[mimeType];
-    return leadType === LEAD_PANE_TYPE.spreadsheet ? 'xlsx' : 'csv';
-};
-
 @RequestClient(requests)
 export default class FileTypeSelectionPage extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static fileTypes = [
-        { key: 'csv', label: 'CSV' },
-        { key: 'xlsx', label: 'XLSX' },
-    ];
-
     constructor(props) {
         super(props);
+
+        const { mimeType } = this.props;
         this.state = {
             faramValues: {
-                fileType: calcFileType(props.mimeType),
+                fileType: getFileTypeFromMimeType(mimeType),
             },
             faramErrors: {},
         };
@@ -97,13 +99,14 @@ export default class FileTypeSelectionPage extends React.PureComponent {
         this.setState({ faramErrors });
     }
 
-    handleFaramValidationSuccess = () => {
-        const { lead, mimeType } = this.props;
-        const { faramValues: { attachment: file } } = lead;
+    handleFaramValidationSuccess = (faramValues) => {
+        const { lead: { faramValues: { attachment } } } = this.props;
+        const { fileType } = faramValues;
 
         this.props.getMetaInfoRequest.do({
-            fileId: file.id,
-            fileType: calcFileType(mimeType),
+            fileId: attachment.id,
+            fileType,
+            handleFaramError: this.handleFaramValidationFailure,
         });
     }
 
@@ -136,7 +139,7 @@ export default class FileTypeSelectionPage extends React.PureComponent {
                         name="file-type-selection"
                         faramElementName="fileType"
                         label={_ts('addLeads.tabular', 'fileTypeLabel')}
-                        options={FileTypeSelectionPage.fileTypes}
+                        options={fileTypes}
                         showLabel
                         showHintAndError
                         hideClearButton

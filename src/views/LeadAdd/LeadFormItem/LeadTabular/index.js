@@ -32,25 +32,25 @@ export default class LeadTabular extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    state = {
-        bookId: undefined,
-        fileType: undefined,
-        metaInfo: undefined,
+    constructor(props) {
+        super(props);
+        this.state = {
+            fileType: undefined,
+            metaInfo: undefined,
+
+            bookId: undefined,
+
+            page: undefined,
+        };
     }
 
     handleMetaInfo = (metaInfo, fileType, callback) => {
         this.setState({ metaInfo, fileType }, callback);
     }
 
-    handleComplete = (bookId, fileType, callback) => {
-        const { onCancel, setTabularBook } = this.props;
-
-        if (!bookId) {
-            onCancel();
-        } else {
-            setTabularBook(bookId);
-        }
-        this.setState({ bookId, fileType }, callback);
+    handleComplete = (bookId) => {
+        const { setTabularBook } = this.props;
+        setTabularBook(bookId);
     }
 
     handleWizardPageChange = (page) => {
