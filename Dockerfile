@@ -36,6 +36,6 @@ RUN apt-get update && apt-get install yarn
 WORKDIR /code
 
 COPY ./package.json /code/package.json
-RUN yarn install
+RUN yarn install --network-concurrency 1
 
 COPY . /code/

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Masonry from '#rc/Masonry';
+import { Masonry } from '@timilsinabishal/react-components';
 import Button from '#rsca/Button';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { isArrayEqual } from '#rsu/common';
