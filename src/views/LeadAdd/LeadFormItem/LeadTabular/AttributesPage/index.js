@@ -64,23 +64,6 @@ const requests = {
             });
         },
     },
-
-    saveBookRequest: {
-        method: requestMethods.PATCH,
-        url: ({ params: { bookId } }) => `/tabular-books/${bookId}/`,
-        body: ({ params: { body } }) => body,
-        onSuccess: ({ props }) => {
-            props.onComplete();
-        },
-        onFailure: ({ error: { faramErrors }, params: { handleFaramError } }) => {
-            handleFaramError(faramErrors);
-        },
-        onFatal: ({ params: { handleFaramError } }) => {
-            handleFaramError({
-                $internal: ['SERVER ERROR'],
-            });
-        },
-    },
 };
 
 @RequestClient(requests)
@@ -90,24 +73,24 @@ export default class AttributesPage extends React.PureComponent {
 
     constructor(props) {
         super(props);
+
+        // Initialize faram data
+        const { metaInfo, defaultFileType } = this.props;
+        const initFaramData = this.getInitFaramData({
+            meta: metaInfo,
+            fileType: defaultFileType,
+        });
         this.state = {
             fileType: 'undefined',
             meta: undefined,
             schema: {},
             faramValues: {},
             faramErrors: {},
+            ...initFaramData,
         };
     }
 
-    componentDidMount() {
-        const { metaInfo, defaultFileType } = this.props;
-        this.initFaram({
-            meta: metaInfo,
-            fileType: defaultFileType,
-        });
-    }
-
-    initFaram = ({ fileType, meta = {} }) => {
+    getInitFaram = ({ fileType, meta = {} }) => {
         const params = {
             fileType: fileType || this.props.defaultFileType,
             meta,
@@ -140,12 +123,6 @@ export default class AttributesPage extends React.PureComponent {
                     delimiter: ',',
                 },
             };
-
-            this.setState({
-                ...params,
-                schema,
-                faramValues,
-            });
         } else if (fileType === 'xlsx') {
             const { sheets = [] } = meta;
 
@@ -210,7 +187,7 @@ export default class AttributesPage extends React.PureComponent {
             };
         }
 
-        this.setState({
+        return {
             ...params,
             schema,
             faramValues: {
@@ -220,7 +197,7 @@ export default class AttributesPage extends React.PureComponent {
                 file: lead.faramValues.attachment.id,
                 fileType: defaultFileType,
             },
-        });
+        };
     }
 
     handleBackClick = () => {

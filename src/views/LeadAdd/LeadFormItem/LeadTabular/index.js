@@ -38,10 +38,6 @@ export default class LeadTabular extends React.PureComponent {
         metaInfo: undefined,
     }
 
-    handleBookIdChange = (bookId, fileType, callback) => {
-        this.setState({ bookId, fileType }, callback);
-    }
-
     handleMetaInfo = (metaInfo, fileType, callback) => {
         this.setState({ metaInfo, fileType }, callback);
     }
