@@ -426,6 +426,7 @@ export default class EditAry extends React.PureComponent {
                         rightContainerClassName={styles.right}
                         leftChild={
                             <LeftPanel
+                                className={styles.leftPanel}
                                 lead={leadRequest.response}
                                 leadGroup={leadGroupRequest.response}
                                 activeSector={activeSector}

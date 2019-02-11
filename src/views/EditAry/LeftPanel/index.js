@@ -1,58 +1,43 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
+import { connect } from 'react-redux';
+import memoize from 'memoize-one';
 
-import MultiViewContainer from '#rscv/MultiViewContainer';
-import Message from '#rscv/Message';
-import ScrollTabs from '#rscv/ScrollTabs';
+import LeftPanelOriginal from '#components/leftpanel';
 import SelectInput from '#rsci/SelectInput';
-import Label from '#rsci/Label';
 
-import {
-    LEAD_TYPE,
-    LEAD_PANE_TYPE,
-    leadPaneTypeMap,
-} from '#entities/lead';
-import SimplifiedLeadPreview from '#components/leftpanel/SimplifiedLeadPreview';
-import LeadPreview from '#components/leftpanel/LeadPreview';
-import AssistedTagging from '#components/leftpanel/AssistedTagging';
-import ImagesGrid from '#components/viewer/ImagesGrid';
+import { activeProjectRoleSelector } from '#redux';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import EntriesListing from './EntriesListing';
 import styles from './styles.scss';
 
 const propTypes = {
+    projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     lead: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     leadGroup: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     activeSector: PropTypes.string,
 };
 
 const defaultProps = {
+    projectRole: {},
     activeSector: undefined,
     lead: undefined,
     leadGroup: undefined,
 };
 
+const mapStateToProps = state => ({
+    projectRole: activeProjectRoleSelector(state),
+});
+
+@connect(mapStateToProps)
 export default class LeftPanel extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static getPaneType = (lead) => {
-        if (!lead) {
-            return undefined;
-        }
-        const type = lead.sourceType;
-        if (type === LEAD_TYPE.text) {
-            return LEAD_PANE_TYPE.text;
-        } else if (type === LEAD_TYPE.website) {
-            return LEAD_PANE_TYPE.website;
-        }
-        if (!lead.attachment) {
-            return undefined;
-        }
-        const { mimeType } = lead.attachment;
-        return leadPaneTypeMap[mimeType];
-    }
+    static keySelector = lead => lead.id;
+    static labelSelector = lead => lead.title;
 
     constructor(props) {
         super(props);
@@ -60,287 +45,81 @@ export default class LeftPanel extends React.PureComponent {
         const {
             leadGroup,
             lead,
-        } = props;
+        } = this.props;
 
-        let leads = [];
-
-        if (lead) {
-            leads = [lead];
-        }
-
-        if (leadGroup) {
-            ({ leads } = leadGroup);
-        }
-
+        const leads = this.getLeads(lead, leadGroup);
         const firstLead = leads && leads.length > 0 && leads[0];
 
         this.state = {
-            images: [],
-            currentTab: undefined,
-            leads,
             currentLeadId: firstLead && firstLead.id,
         };
-
-        this.leads = leads;
-        this.views = this.calculateTabComponents();
     }
 
-    componentWillReceiveProps(nextProps) {
-        const {
-            leadGroup: oldLeadGroup,
-            lead: oldLead,
-        } = this.props;
+    getLeads = memoize((lead, leadGroup) => (
+        (lead && [lead]) || (leadGroup && leadGroup)
+    ))
 
-        const {
-            leadGroup: newLeadGroup,
-            lead: newLead,
-        } = nextProps;
-
-
-        let changed = false;
-        let leads;
-
-        if (newLead && newLead !== oldLead) {
-            leads = [newLead];
-            changed = true;
-        }
-
-        if (newLeadGroup && newLeadGroup !== oldLeadGroup) {
-            ({ leads } = newLeadGroup.leads);
-            changed = true;
-        }
-
-        if (changed) {
-            this.setState({
-                leads,
-            });
-        }
-    }
-
-    calculateTabComponents = () => ({
-        'simplified-preview': {
-            component: () => (
-                <SimplifiedLeadPreview
-                    className={styles.simplifiedPreview}
-                    leadId={this.state.currentLeadId}
-                    onLoad={this.handleLoadImages}
-                />
-            ),
-            mount: true,
-            lazyMount: true,
-            wrapContainer: true,
-        },
-        'assisted-tagging': {
-            component: () => {
-                const {
-                    currentLeadId,
-                    leads,
-                } = this.state;
-
-                const lead = leads.find(d => d.id === currentLeadId);
-
-                return (
-                    <AssistedTagging
-                        className={styles.assistedTagging}
-                        leadId={currentLeadId}
-                        projectId={lead.project}
-                    />
-                );
-            },
-            mount: true,
-            lazyMount: true,
-            wrapContainer: true,
-        },
-        'original-preview': {
-            component: () => {
-                const {
-                    currentLeadId,
-                    leads,
-                } = this.state;
-
-                const lead = leads.find(d => d.id === currentLeadId);
-                return (
-                    <div className={styles.originalPreview}>
-                        <LeadPreview
-                            lead={lead}
-                            handleScreenshot={this.handleScreenshot}
-                        />
-                    </div>
-                );
-            },
-            mount: true,
-            lazyMount: true,
-            wrapContainer: true,
-        },
-        'images-preview': {
-            component: () => (
-                <ImagesGrid
-                    className={styles.imagesPreview}
-                    images={this.state.images}
-                />
-            ),
-            mount: true,
-            lazyMount: true,
-            wrapContainer: true,
-        },
+    getViews = className => ({
         'entries-listing': {
-            component: () => (
-                <div className={styles.entriesListContainer}>
-                    <EntriesListing
-                        leadId={this.state.currentLeadId}
-                        activeSector={this.props.activeSector}
-                    />
-                </div>
-            ),
+            component: EntriesListing,
+            rendererParams: () => {
+                const { activeSector } = this.props;
+                const { currentLeadId } = this.state;
+                return {
+                    className: _cs(styles.entries, className),
+                    leadId: currentLeadId,
+                    activeSector,
+                };
+            },
             mount: true,
             lazyMount: true,
             wrapContainer: true,
         },
     })
 
-    calculateTabsForLead = (lead, images) => {
-        const leadPaneType = LeftPanel.getPaneType(lead);
+    getTabs = memoize(tabs => ({
+        ...tabs,
+        'entries-listing': _ts('editEntry.overview.leftpane', 'entriesTabLabel'),
+    }))
 
-        let tabs;
-        switch (leadPaneType) {
-            case LEAD_PANE_TYPE.spreadsheet:
-                tabs = {
-                    'original-preview': _ts('editAssessment', 'tabularTabLabel'),
-                    'images-preview': _ts('editAssessment', 'imagesTabLabel'),
-                };
-                break;
-            case LEAD_PANE_TYPE.image:
-                tabs = {
-                    'original-preview': _ts('editAssessment', 'imagesTabLabel'),
-                    'images-preview': _ts('editAssessment', 'imagesTabLabel'),
-                };
-                break;
-            case LEAD_PANE_TYPE.text:
-                tabs = {
-                    'simplified-preview': _ts('editAssessment', 'simplifiedTabLabel'),
-                    'assisted-tagging': _ts('editAssessment', 'assistedTabLabel'),
-                    'images-preview': _ts('editAssessment', 'imagesTabLabel'),
-                };
-                break;
-            case LEAD_PANE_TYPE.word:
-            case LEAD_PANE_TYPE.pdf:
-            case LEAD_PANE_TYPE.presentation:
-            case LEAD_PANE_TYPE.website:
-                tabs = {
-                    'simplified-preview': _ts('editAssessment', 'simplifiedTabLabel'),
-                    'assisted-tagging': _ts('editAssessment', 'assistedTabLabel'),
-                    'original-preview': _ts('editAssessment', 'originalTabLabel'),
-                    'images-preview': _ts('editAssessment', 'imagesTabLabel'),
-                };
-                break;
-            default:
-                return undefined;
-        }
-        // Adding other tabs
-        if (lead.tabularBook) {
-            tabs['tabular-preview'] = _ts('editEntry.overview.leftpane', 'quantitativeTabLabel');
-            delete tabs['original-preview'];
-        }
-        if (!images || images.length <= 0) {
-            delete tabs['images-preview'];
-        }
-
-        tabs['entries-listing'] = _ts('editAssessment', 'entriesTabLabel');
-
-        return tabs;
-    }
-
-    handleTabClick = (key) => {
-        if (key === this.state.currentTab) {
-            return;
-        }
-        this.setState({ currentTab: key });
-    }
-
-    // Simplified Lead Preview
-
-    handleLoadImages = (response) => {
-        if (response.images) {
-            this.setState({ images: response.images });
-        }
-    }
-
-    // Lead Preview
-
-    handleScreenshot = (/* image */) => {
-        console.warn('Screenshot was taken');
-    }
-
-    // Entries
+    handleLeadSelectChange = (id) => {
+        this.setState({ currentLeadId: id });
+    };
 
     render() {
         const {
-            images,
-            currentLeadId,
-            leads,
-        } = this.state;
+            projectRole,
+            lead: leadFromProps,
+            leadGroup,
+            className,
+        } = this.props;
+        const { currentLeadId } = this.state;
 
-        let { currentTab } = this.state;
-
-        const lead = leads.find(d => d.id === currentLeadId);
-
-        // FIXME: move this to componentWillUpdate
-        const tabs = this.calculateTabsForLead(lead, images);
-
-        // If there is no tabs, the lead must have unrecognized type
-        if (!tabs) {
-            return (
-                <Message>
-                    {_ts('editAssessment', 'unrecognizedLeadMessage')}
-                </Message>
-            );
-        }
-
-        // If there is no currentTab, get first visible tab
-        if (!currentTab) {
-            const tabKeys = Object.keys(tabs).filter(a => !!tabs[a]);
-            currentTab = tabKeys.length > 0 ? Object.keys(tabs)[0] : undefined;
-        }
-
-        const handleLeadSelectChange = (id) => {
-            this.setState({ currentLeadId: id });
-        };
+        const leads = this.getLeads(leadFromProps, leadGroup);
+        const lead = leads.find(l => l.id === currentLeadId);
 
         return (
-            <Fragment>
-                <header className={styles.header}>
-                    <div className={styles.leadSelectInputWrap}>
-                        <Label
-                            className={styles.label}
-                            show
-                            text="Lead"
-                            // FIXME: use strings
-                        />
-                        <SelectInput
-                            hideClearButton
-                            className={styles.leadSelectInput}
-                            showLabel={false}
-                            showHintAndError={false}
-                            options={this.leads}
-                            // FIXME: no inline function in props
-                            keySelector={d => d.id}
-                            labelSelector={d => d.title}
-                            value={currentLeadId}
-                            onChange={handleLeadSelectChange}
-                        />
-                    </div>
-                    <ScrollTabs
-                        className={styles.tabs}
-                        active={currentTab}
-                        tabs={tabs}
-                        onClick={this.handleTabClick}
-                    />
-                </header>
-                <MultiViewContainer
-                    active={currentTab}
-                    views={this.views}
+            <div className={_cs(className, styles.leftPanel)}>
+                <SelectInput
+                    hideClearButton
+                    className={styles.leadSelectInput}
+                    showLabel={false}
+                    showHintAndError={false}
+                    options={leads}
+                    onChange={this.handleLeadSelectChange}
+                    value={currentLeadId}
+                    keySelector={LeftPanel.keySelector}
+                    labelSelector={LeftPanel.labelSelector}
                 />
-            </Fragment>
+                <div className={styles.container}>
+                    <LeftPanelOriginal
+                        projectRole={projectRole}
+                        lead={lead}
+                        viewsModifier={this.getViews}
+                        tabsModifier={this.getTabs}
+                    />
+                </div>
+            </div>
         );
     }
 }

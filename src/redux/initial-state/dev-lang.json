@@ -906,7 +906,8 @@
         "-6746951": "Fields to show",
         "-70697056": "Sheets to show",
         "-43793403": "Show other columns",
-        "-54095239": "Remove column"
+        "-54095239": "Remove column",
+        "-2259039": "Extract Tabular"
     },
     "links": {
         "browserExtension": {
@@ -1584,7 +1585,8 @@
             "connectorSourcesGetFailure": 1110,
             "connectorSourcesTitle": 1109,
             "connectorTitle": 1100,
-            "tabularButtonTitle": -4174557
+            "tabularButtonTitle": -4174557,
+            "tabularExtractButtonTitle": -2259039
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,

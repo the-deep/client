@@ -187,10 +187,12 @@ const propTypes = {
     onCancel: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
 
     deleteRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    viewMode: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
+    viewMode: false,
 };
 
 @RequestCoordinator
@@ -198,10 +200,6 @@ const defaultProps = {
 export default class TabularBook extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    static shouldHideButtons = ({ leadPermissions }) => (
-        !leadPermissions.create || !leadPermissions.modify
-    );
 
     constructor(props) {
         super(props);
@@ -235,6 +233,15 @@ export default class TabularBook extends React.PureComponent {
     componentWillUnmount() {
         this.coordinator.stop();
     }
+
+    shouldHideEditButton = ({ leadPermissions }) => (
+        this.props.viewMode || !leadPermissions.modify
+    );
+
+    shouldHideDeleteButton = ({ leadPermissions }) => (
+        this.props.viewMode || !leadPermissions.delete
+    );
+
 
     handleActiveSheetChange = (activeSheet) => {
         // NOTE: activeSheet was taken from ScrollTabs, so it is a strina
@@ -578,6 +585,7 @@ export default class TabularBook extends React.PureComponent {
             }),
         );
 
+        // FIXME: only do this if it has edit permissions
         clearTimeout(this.backgroundSaveTimeout);
         this.backgroundSaveTimeout = setTimeout(this.handleSheetOptionsSave, 2000);
     }
@@ -611,20 +619,25 @@ export default class TabularBook extends React.PureComponent {
                 >
                     {title}
                 </button>
-                <WarningModalButton
-                    className={styles.editButton}
-                    iconName={iconNames.edit}
-                    transparent
-                    title={_ts('tabular', 'sheetEditButtonTooltip')} // Edit
-                    pending={disabledSheetEditModal}
-                    modal={
-                        <SheetEditModal
-                            sheetId={sheetId}
-                            title={sheet.title}
-                            onSheetDelete={this.handleSheetDelete}
-                            onSheetEdit={this.handleSheetEdit}
-                            disabled={disabledSheetEditModal}
-                            disabledDelete={disabledSheetEditModalDelete}
+                <Cloak
+                    hide={this.shouldHideEditButton}
+                    render={
+                        <WarningModalButton
+                            className={styles.editButton}
+                            iconName={iconNames.edit}
+                            transparent
+                            title={_ts('tabular', 'sheetEditButtonTooltip')} // Edit
+                            pending={disabledSheetEditModal}
+                            modal={
+                                <SheetEditModal
+                                    sheetId={sheetId}
+                                    title={sheet.title}
+                                    onSheetDelete={this.handleSheetDelete}
+                                    onSheetEdit={this.handleSheetEdit}
+                                    disabled={disabledSheetEditModal}
+                                    disabledDelete={disabledSheetEditModalDelete}
+                                />
+                            }
                         />
                     }
                 />
@@ -646,6 +659,8 @@ export default class TabularBook extends React.PureComponent {
                 <LoadingAnimation />
             );
         }
+
+        const { viewMode } = this.props;
 
         const {
             originalSheets,
@@ -698,6 +713,7 @@ export default class TabularBook extends React.PureComponent {
                             fieldDeletePending={fieldDeletePending}
                             fieldEditPending={fieldEditPending}
                             onFieldEdit={this.handleFieldEdit}
+                            viewMode={viewMode}
                         />
                     )
                 }
@@ -712,16 +728,21 @@ export default class TabularBook extends React.PureComponent {
                         renderer={this.tabsRenderer}
                         rendererParams={this.tabsRendererParams}
                     >
-                        <ModalButton
-                            iconName={iconNames.more}
-                            title={_ts('tabular', 'sheetShowButtonTooltip')} // Other Sheets
-                            disabled={sheetList.length <= 0}
-                            pending={disabledSheetRetrieveModal}
-                            modal={
-                                <SheetRetrieveModal
-                                    sheets={sheetList}
-                                    onSheetRetrieve={this.handleSheetRetrieve}
-                                    disabled={disabledSheetRetrieveModal}
+                        <Cloak
+                            hide={this.shouldHideEditButton}
+                            render={
+                                <ModalButton
+                                    iconName={iconNames.more}
+                                    title={_ts('tabular', 'sheetShowButtonTooltip')} // Other Sheets
+                                    disabled={sheetList.length <= 0}
+                                    pending={disabledSheetRetrieveModal}
+                                    modal={
+                                        <SheetRetrieveModal
+                                            sheets={sheetList}
+                                            onSheetRetrieve={this.handleSheetRetrieve}
+                                            disabled={disabledSheetRetrieveModal}
+                                        />
+                                    }
                                 />
                             }
                         />
@@ -756,7 +777,7 @@ export default class TabularBook extends React.PureComponent {
                     title={_ts('tabular', 'title')}
                     rightComponent={
                         <Cloak
-                            hide={TabularBook.shouldHideButtons}
+                            hide={this.shouldHideDeleteButton}
                             render={
                                 <div className={styles.headerContainer}>
                                     { isSomePending &&

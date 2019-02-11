@@ -1,72 +1,24 @@
 @import '~base-scss/base';
 
-$height-tabs: 32px;
-$height-lead-select-input-wrap: 36px;
-$height-header: $height-tabs + $height-lead-select-input-wrap;
-
-.header {
+.left-panel {
+    display: flex;
+    flex-direction: column;
     background-color: $color-foreground;
-    height: $height-header;
+    overflow: auto;
 
-    .lead-select-input-wrap {
-        display: flex;
-        align-items: center;
-        padding: 0 $spacing-medium;
-        height: $height-lead-select-input-wrap;
-
-        .label {
-            flex-shrink: 0;
-            padding-right: $spacing-small;
-            width: auto;
-
-            &:after {
-                content: ':';
-            }
-        }
-
-        .lead-select-input {
-            flex-grow: 1;
-        }
+    .lead-select-input {
+        flex-shrink: 0;
+        margin: $spacing-small;
     }
 
-    .tabs {
-        height: $height-tabs;
-    }
-}
+    .container {
+        flex-grow: 1;
+        overflow: auto;
 
-%container {
-    background-color: $color-foreground-alt;
-    height: calc(100% - #{$height-header});
-    overflow-y: auto;
-}
-
-.simplified-preview {
-    @extend %container;
-}
-
-.assisted-tagging {
-    @extend %container;
-
-    :global {
-        .preview {
-            height: calc(100% - 59px);
-            overflow-y: auto;
-        }
-
-        .assistant-options {
-            border-top-color: $color-accent;
+        .entries {
+            // TODO: allocate height dynamically
+            height: calc(100% - 48px);
+            overflow: auto;
         }
     }
-}
-
-.original-preview {
-    @extend %container;
-}
-
-.images-preview {
-    @extend %container;
-}
-
-.entries-list-container {
-    @extend %container;
 }

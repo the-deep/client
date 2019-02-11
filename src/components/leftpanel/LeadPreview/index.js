@@ -6,6 +6,7 @@ import { LEAD_TYPE } from '#entities/lead';
 import InternalGallery from '#components/viewer/InternalGallery';
 import ExternalGallery from '#components/viewer/ExternalGallery';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import styles from './styles.scss';
 
@@ -15,11 +16,13 @@ const propTypes = {
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     handleScreenshot: PropTypes.func,
     showScreenshot: PropTypes.bool,
+    className: PropTypes.string,
 };
 
 const defaultProps = {
     showScreenshot: false,
     handleScreenshot: noop,
+    className: '',
 };
 
 export default class LeadPreview extends React.PureComponent {
@@ -34,15 +37,19 @@ export default class LeadPreview extends React.PureComponent {
 
     render() {
         const {
-            lead,
+            lead: {
+                sourceType: type,
+                url,
+                attachment,
+            },
+            className,
             showScreenshot,
         } = this.props;
-        const { sourceType: type, url, attachment } = lead;
 
         if (LeadPreview.isTypeWithUrl(type) && url) {
             return (
                 <ExternalGallery
-                    className={styles.preview}
+                    className={_cs(styles.preview, className)}
                     url={url}
                     onScreenshotCapture={this.props.handleScreenshot}
                     showScreenshot={showScreenshot}
@@ -52,7 +59,7 @@ export default class LeadPreview extends React.PureComponent {
         } else if (LeadPreview.isTypeWithAttachment(type) && attachment) {
             return (
                 <InternalGallery
-                    className={styles.preview}
+                    className={_cs(styles.preview, className)}
                     galleryId={attachment.id}
                     onScreenshotCapture={this.props.handleScreenshot}
                     showScreenshot={showScreenshot}
@@ -62,9 +69,11 @@ export default class LeadPreview extends React.PureComponent {
         }
 
         return (
-            <Message>
-                {_ts('components.leadPreview', 'previewNotAvailableText')}
-            </Message>
+            <div className={className}>
+                <Message>
+                    {_ts('components.leadPreview', 'previewNotAvailableText')}
+                </Message>
+            </div>
         );
     }
 }

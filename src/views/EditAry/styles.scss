@@ -50,12 +50,17 @@ $color-border-bottom-new: rgba(0, 0, 0, .1);
         .assessments {
             display: flex;
             height: 100%;
+            overflow: auto;
 
             .left {
                 border-right: $width-separator-thin solid $color-separator;
                 width: 30%;
                 min-width: $width-left-min;
-                height: 100%;
+                overflow: auto;
+
+                .left-panel {
+                    height: 100%;
+                }
             }
 
             .right {

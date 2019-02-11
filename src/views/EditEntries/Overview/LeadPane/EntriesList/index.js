@@ -20,11 +20,13 @@ const propTypes = {
     setSelectedEntryKey: PropTypes.func.isRequired,
     leadId: PropTypes.number.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
+    className: PropTypes.string,
 };
 
 const defaultProps = {
     selectedEntryKey: undefined,
     statuses: {},
+    className: '',
 };
 
 export default class EntriesList extends React.PureComponent {
@@ -161,13 +163,16 @@ export default class EntriesList extends React.PureComponent {
     }
 
     render() {
+        const { className } = this.props;
         return (
-            <ListView
-                className={styles.entriesList}
-                modifier={this.renderEntryItem}
-                data={this.props.entries}
-                keySelector={EntriesList.calcEntryKey}
-            />
+            <div className={className}>
+                <ListView
+                    className={styles.entriesList}
+                    modifier={this.renderEntryItem}
+                    data={this.props.entries}
+                    keySelector={EntriesList.calcEntryKey}
+                />
+            </div>
         );
     }
 }

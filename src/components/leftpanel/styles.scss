@@ -1,0 +1,30 @@
+@import '~base-scss/base';
+
+$height-tabs: 48px;
+
+.tabs {
+    height: $height-tabs;
+}
+
+.tabular-modal {
+    width: auto;
+    overflow: auto;
+
+    .tabular-book {
+        width: 90vw;
+        height: 80vh;
+    }
+}
+
+.container {
+    background-color: $color-foreground-alt;
+    height: calc(100% - #{$height-tabs});
+    overflow-y: auto;
+}
+
+.brain-icon {
+    margin-right: $spacing-medium;
+    cursor: pointer;
+    width: $font-size-large;
+    height: $font-size-large;
+}
