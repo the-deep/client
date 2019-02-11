@@ -15,6 +15,7 @@ import {
 } from '#redux';
 import { pathNames } from '#constants';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import EntriesRequest from './requests/EntriesRequest';
 import styles from './styles.scss';
@@ -173,6 +174,7 @@ export default class EntriesListing extends React.PureComponent {
     )
 
     render() {
+        const { className } = this.props;
         const linkToEditEntries = reverseRoute(
             pathNames.editEntries,
             {
@@ -184,7 +186,7 @@ export default class EntriesListing extends React.PureComponent {
         const noOfEntries = entries.length;
 
         return (
-            <div className={styles.entriesListing}>
+            <div className={_cs(className, styles.entriesListing)}>
                 { this.state.pendingEntries && <LoadingAnimation />}
                 <ListView
                     className={styles.entriesList}

@@ -1,1 +1,24 @@
 @import '~base-scss/base';
+
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    background-color: $color-foreground;
+    overflow: auto;
+
+    .lead-select-input {
+        flex-shrink: 0;
+        margin: $spacing-small;
+    }
+
+    .container {
+        flex-grow: 1;
+        overflow: auto;
+
+        .entries {
+            // TODO: allocate height dynamically
+            height: calc(100% - 48px);
+            overflow: auto;
+        }
+    }
+}

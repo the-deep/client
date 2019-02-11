@@ -8,6 +8,7 @@ import SelectInput from '#rsci/SelectInput';
 
 import { activeProjectRoleSelector } from '#redux';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import EntriesListing from './EntriesListing';
 import styles from './styles.scss';
@@ -65,7 +66,7 @@ export default class LeftPanel extends React.PureComponent {
                 const { activeSector } = this.props;
                 const { currentLeadId } = this.state;
                 return {
-                    className,
+                    className: _cs(styles.entries, className),
                     leadId: currentLeadId,
                     activeSector,
                 };
@@ -90,6 +91,7 @@ export default class LeftPanel extends React.PureComponent {
             projectRole,
             lead: leadFromProps,
             leadGroup,
+            className,
         } = this.props;
         const { currentLeadId } = this.state;
 
@@ -97,7 +99,7 @@ export default class LeftPanel extends React.PureComponent {
         const lead = leads.find(l => l.id === currentLeadId);
 
         return (
-            <Fragment>
+            <div className={_cs(className, styles.leftPanel)}>
                 <SelectInput
                     hideClearButton
                     className={styles.leadSelectInput}
@@ -109,16 +111,15 @@ export default class LeftPanel extends React.PureComponent {
                     keySelector={LeftPanel.keySelector}
                     labelSelector={LeftPanel.labelSelector}
                 />
-                <LeftPanelOriginal
-                    projectRole={projectRole}
-                    lead={lead}
-                    viewsModifier={this.getViews}
-                    tabsModifier={this.getTabs}
-                    // onExcerptCreate={onExcerptCreate}
-                    // filteredEntries={filteredEntries}
-                    // setSelectedEntryKey={setSelectedEntryKey}
-                />
-            </Fragment>
+                <div className={styles.container}>
+                    <LeftPanelOriginal
+                        projectRole={projectRole}
+                        lead={lead}
+                        viewsModifier={this.getViews}
+                        tabsModifier={this.getTabs}
+                    />
+                </div>
+            </div>
         );
     }
 }

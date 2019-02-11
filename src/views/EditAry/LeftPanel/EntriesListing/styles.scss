@@ -4,7 +4,7 @@
     display: flex;
     position: relative;
     flex-direction: column;
-    height: 100%;
+    overflow: auto;
 
     .entries-list {
         flex-grow: 1;
