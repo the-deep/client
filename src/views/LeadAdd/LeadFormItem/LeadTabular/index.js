@@ -32,25 +32,25 @@ export default class LeadTabular extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    state = {
-        bookId: undefined,
-        fileType: undefined,
-        currentPage: 0,
+    constructor(props) {
+        super(props);
+        this.state = {
+            fileType: undefined,
+            metaInfo: undefined,
+
+            bookId: undefined,
+
+            page: undefined,
+        };
     }
 
-    handleBookIdChange = (bookId, fileType, callback) => {
-        this.setState({ bookId, fileType }, callback);
+    handleMetaInfo = (metaInfo, fileType, callback) => {
+        this.setState({ metaInfo, fileType }, callback);
     }
 
-    handleComplete = () => {
-        const { onCancel, setTabularBook } = this.props;
-        const { bookId } = this.state;
-
-        if (!bookId) {
-            onCancel();
-        } else {
-            setTabularBook(bookId);
-        }
+    handleComplete = (bookId) => {
+        const { setTabularBook } = this.props;
+        setTabularBook(bookId);
     }
 
     handleWizardPageChange = (page) => {
@@ -69,6 +69,7 @@ export default class LeadTabular extends React.PureComponent {
             bookId,
             fileType,
             page,
+            metaInfo,
         } = this.state;
 
         return (
@@ -88,12 +89,14 @@ export default class LeadTabular extends React.PureComponent {
                     <FileTypeSelectionPage
                         lead={lead}
                         mimeType={mimeType}
-                        onComplete={this.handleBookIdChange}
+                        onMetaGet={this.handleMetaInfo}
                         onCancel={onCancel}
                     />
                     <AttributesPage
                         bookId={bookId}
+                        lead={lead}
                         onComplete={this.handleComplete}
+                        metaInfo={metaInfo}
                         defaultFileType={fileType}
                         onCancel={onCancel}
                     />

@@ -17,32 +17,14 @@ import styles from './styles.scss';
 
 const noOp = () => {};
 
-const propTypes = {
-    onComplete: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
-    onNext: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
-    onCancel: PropTypes.func,
-
-    lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    mimeType: PropTypes.string,
-
-    // eslint-disable-next-line react/forbid-prop-types
-    createBookRequest: PropTypes.object.isRequired,
-};
-
-const defaultProps = {
-    onComplete: noOp,
-    onNext: noOp,
-    onCancel: noOp,
-    mimeType: '',
-};
-
 const requests = {
-    createBookRequest: {
-        method: requestMethods.POST,
-        url: '/tabular-books/',
-        body: ({ params: { body } }) => body,
-        onSuccess: ({ props, response }) => {
-            props.onComplete(response.id, response.fileType, props.onNext);
+    getMetaInfoRequest: {
+        method: requestMethods.GET,
+        url: ({ params: { fileId, fileType } }) => (
+            `/meta-extraction/${fileId}/?file_type=${fileType}`
+        ),
+        onSuccess: ({ props, response, params: { fileType } }) => {
+            props.onMetaGet(response, fileType, props.onNext);
         },
         onFailure: ({ error: { faramErrors }, params: { handleFaramError } }) => {
             handleFaramError(faramErrors);
@@ -55,9 +37,33 @@ const requests = {
     },
 };
 
-const calcFileType = (mimeType) => {
+const fileTypes = [
+    { key: 'csv', label: 'CSV' },
+    { key: 'xlsx', label: 'XLSX' },
+];
+
+const getFileTypeFromMimeType = (mimeType) => {
     const leadType = leadPaneTypeMap[mimeType];
     return leadType === LEAD_PANE_TYPE.spreadsheet ? 'xlsx' : 'csv';
+};
+
+const propTypes = {
+    onComplete: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
+    onNext: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
+    onCancel: PropTypes.func,
+
+    lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    mimeType: PropTypes.string,
+
+    // eslint-disable-next-line react/forbid-prop-types
+    getMetaInfoRequest: PropTypes.object.isRequired,
+};
+
+const defaultProps = {
+    onComplete: noOp,
+    onNext: noOp,
+    onCancel: noOp,
+    mimeType: '',
 };
 
 @RequestClient(requests)
@@ -65,16 +71,13 @@ export default class FileTypeSelectionPage extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static fileTypes = [
-        { key: 'csv', label: 'CSV' },
-        { key: 'xlsx', label: 'XLSX' },
-    ];
-
     constructor(props) {
         super(props);
+
+        const { mimeType } = this.props;
         this.state = {
             faramValues: {
-                fileType: calcFileType(props.mimeType),
+                fileType: getFileTypeFromMimeType(mimeType),
             },
             faramErrors: {},
         };
@@ -97,15 +100,12 @@ export default class FileTypeSelectionPage extends React.PureComponent {
     }
 
     handleFaramValidationSuccess = (faramValues) => {
-        const { lead } = this.props;
-        const { faramValues: { title, attachment: file, url } } = lead;
-        this.props.createBookRequest.do({
-            body: {
-                ...faramValues,
-                title,
-                url,
-                file: file && file.id,
-            },
+        const { lead: { faramValues: { attachment } } } = this.props;
+        const { fileType } = faramValues;
+
+        this.props.getMetaInfoRequest.do({
+            fileId: attachment.id,
+            fileType,
             handleFaramError: this.handleFaramValidationFailure,
         });
     }
@@ -116,11 +116,11 @@ export default class FileTypeSelectionPage extends React.PureComponent {
             faramErrors,
         } = this.state;
         const {
-            createBookRequest,
+            getMetaInfoRequest,
             onCancel,
         } = this.props;
 
-        const { pending } = createBookRequest;
+        const { pending } = getMetaInfoRequest;
 
         return (
             <Faram
@@ -139,7 +139,7 @@ export default class FileTypeSelectionPage extends React.PureComponent {
                         name="file-type-selection"
                         faramElementName="fileType"
                         label={_ts('addLeads.tabular', 'fileTypeLabel')}
-                        options={FileTypeSelectionPage.fileTypes}
+                        options={fileTypes}
                         showLabel
                         showHintAndError
                         hideClearButton
