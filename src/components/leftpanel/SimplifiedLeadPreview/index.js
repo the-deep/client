@@ -3,7 +3,7 @@ import React from 'react';
 import memoize from 'memoize-one';
 
 import { FgRestBuilder } from '#rsu/rest';
-import { isFalsy } from '#rsu/common';
+import { isFalsy } from '@togglecorp/fujs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 

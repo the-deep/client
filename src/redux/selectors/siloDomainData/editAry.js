@@ -8,7 +8,7 @@ import {
     isNotDefined,
     isDefined,
     unique,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import {
     requiredCondition,
     dateCondition,

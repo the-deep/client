@@ -10,7 +10,7 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import DateInput from '#rsci/DateInput';
 import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
-import { decodeDate } from '#rsu/common';
+import { decodeDate } from '@togglecorp/fujs';
 
 import {
     RequestCoordinator,

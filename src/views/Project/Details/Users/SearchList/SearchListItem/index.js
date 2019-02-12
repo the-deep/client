@@ -17,7 +17,7 @@ import {
     addProjectMembershipAction,
     addProjectUsergroupAction,
 } from '#redux';
-import { capitalize } from '#rsu/common';
+import { capitalize } from '@togglecorp/fujs';
 import _ts from '#ts';
 import _cs from '#cs';
 

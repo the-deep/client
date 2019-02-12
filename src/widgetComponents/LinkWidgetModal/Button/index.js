@@ -7,7 +7,7 @@ import Confirm from '#rscv/Modal/Confirm';
 import {
     getDuplicates,
     listToMap,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import { iconNames } from '#constants';
 
 import _ts from '#ts';

@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { FgRestBuilder } from '#rsu/rest';
-import { isObjectEmpty } from '#rsu/common';
+import { isObjectEmpty } from '@togglecorp/fujs';
 import SearchInput from '#rsci/SearchInput';
 import DateFilter from '#rsci/DateFilter';
 import TimeFilter from '#rsci/TimeFilter';

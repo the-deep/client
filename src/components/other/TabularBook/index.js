@@ -19,7 +19,7 @@ import {
     isNotDefined,
     mapToMap,
     mapToList,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import {
     getNaturalNumbers,
     zipWith,

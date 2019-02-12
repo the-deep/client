@@ -16,7 +16,7 @@ import TableHeader from '#rscv/TableHeader';
 import {
     reverseRoute,
     isObjectEmpty,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 import {
     activeProjectIdFromStateSelector,

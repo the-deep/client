@@ -1,5 +1,5 @@
 import boundError from '#rscg/BoundError';
-import { mapToMap, mapToList } from '#rsu/common';
+import { mapToMap, mapToList } from '@togglecorp/fujs';
 import update from '#rsu/immutable-update';
 
 import FrameworkWidgetError from '#components/error/FrameworkWidgetError';

@@ -6,7 +6,7 @@ import { Prompt } from 'react-router-dom';
 import Page from '#rscv/Page';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import { reverseRoute } from '#rsu/common';
+import { reverseRoute } from '@togglecorp/fujs';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import SuccessConfirmButton from '#rsca/ConfirmButton/SuccessConfirmButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';

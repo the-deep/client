@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { reverseRoute } from '#rsu/common';
+import { reverseRoute } from '@togglecorp/fujs';
 import { FgRestBuilder } from '#rsu/rest';
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';

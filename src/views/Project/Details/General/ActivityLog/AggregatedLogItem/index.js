@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import FormattedDate from '#rscv/FormattedDate';
 
-import { reverseRoute } from '#rsu/common';
+import { reverseRoute } from '@togglecorp/fujs';
 import {
     pathNames,
     iconNames,

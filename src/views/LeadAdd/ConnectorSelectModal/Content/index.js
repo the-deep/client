@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { reverseRoute } from '#rsu/common';
+import { reverseRoute } from '@togglecorp/fujs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
 import Table from '#rscv/Table';

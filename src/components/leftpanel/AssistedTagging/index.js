@@ -8,7 +8,7 @@ import SegmentInput from '#rsci/SegmentInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import FloatingContainer from '#rscv/FloatingContainer';
 import ListView from '#rscv/List/ListView';
-import { getHexFromString, listToMap } from '#rsu/common';
+import { getHexFromString, listToMap } from '@togglecorp/fujs';
 import { FgRestBuilder } from '#rsu/rest';
 
 import { iconNames } from '#constants';

@@ -6,7 +6,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { FgRestBuilder } from '#rsu/rest';
-import { reverseRoute } from '#rsu/common';
+import { reverseRoute } from '@togglecorp/fujs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ReCaptcha from '#rsci/ReCaptcha';

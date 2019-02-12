@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import Numeral from '#rscv/Numeral';
 import { FaramOutputElement } from '#rscg/FaramElements';
-import { getColorOnBgColor } from '#rsu/common';
+import { getColorOnBgColor } from '@togglecorp/fujs';
 
 import _cs from '#cs';
 

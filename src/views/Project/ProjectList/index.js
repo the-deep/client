@@ -10,7 +10,7 @@ import Message from '#rscv/Message';
 import {
     reverseRoute,
     caseInsensitiveSubmatch,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import Cloak from '#components/general/Cloak';
 
 import {

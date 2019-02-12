@@ -1,7 +1,7 @@
 import {
     unique,
     isTruthy,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import testMultiSelect from './testMultiSelect';
 
 const emptyArray = [];

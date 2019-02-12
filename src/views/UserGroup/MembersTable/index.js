@@ -6,7 +6,7 @@ import {
     caseInsensitiveSubmatch,
     compareString,
     compareDate,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import FormattedDate from '#rscv/FormattedDate';

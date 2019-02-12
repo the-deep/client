@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import ListView from '#rscv/List/ListView';
-import { randomString } from '#rsu/common';
+import { randomString } from '@togglecorp/fujs';
 
 import { widgetGroups } from '#widgets/widgetMetadata';
 import { addAfViewWidgetAction } from '#redux';

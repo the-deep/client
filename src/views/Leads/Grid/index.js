@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Masonry } from '@timilsinabishal/react-components';
 import Button from '#rsca/Button';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import { isListEqual } from '#rsu/common';
+import { isListEqual } from '@togglecorp/fujs';
 import Modal from '#rscv/Modal';
 import LeadPreview from '#components/leftpanel/LeadPreview';
 import { iconNames } from '#constants';

@@ -13,7 +13,7 @@ import ListView from '#rscv/List/ListView';
 import {
     reverseRoute,
     caseInsensitiveSubmatch,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 import {
     connectorsListSelector,

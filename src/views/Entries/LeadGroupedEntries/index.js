@@ -10,7 +10,7 @@ import {
     viewsAcl,
 } from '#constants';
 
-import { reverseRoute } from '#rsu/common';
+import { reverseRoute } from '@togglecorp/fujs';
 import Cloak from '#components/general/Cloak';
 
 import FormattedDate from '#rscv/FormattedDate';

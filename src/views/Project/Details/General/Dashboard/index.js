@@ -12,7 +12,7 @@ import SparkLines from '#rscz/SparkLines';
 import Numeral from '#rscv/Numeral';
 import Message from '#rscv/Message';
 import { pathNames } from '#constants';
-import { reverseRoute } from '#rsu/common';
+import { reverseRoute } from '@togglecorp/fujs';
 
 import {
     projectDashboardSelector,

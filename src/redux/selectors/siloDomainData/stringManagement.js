@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { unique, mapToList } from '#rsu/common';
+import { unique, mapToList } from '@togglecorp/fujs';
 import update from '#rsu/immutable-update';
 
 import {

@@ -1,5 +1,5 @@
 import update from '#rsu/immutable-update';
-import { listToMap } from '#rsu/common';
+import { listToMap } from '@togglecorp/fujs';
 
 export const SET_PROJECT_DETAILS = 'siloDomainData/SET_PROJECT_DETAILS';
 export const SET_PROJECT_DASHBOARD_DETAILS = 'siloDomainData/SET_PROJECT_DASHBOARD_DETAILS';

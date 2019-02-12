@@ -14,7 +14,7 @@ import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
-import { getDuplicates, randomString, removeKey } from '#rsu/common';
+import { getDuplicates, randomString, removeKey } from '@togglecorp/fujs';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';

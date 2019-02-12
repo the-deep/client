@@ -6,7 +6,7 @@ import {
 } from '#rest';
 import schema from '#schema';
 import _ts from '#ts';
-import { unique } from '#rsu/common';
+import { unique } from '@togglecorp/fujs';
 import LeadInfoForDocumentRequest from './LeadInfoForDocumentRequest';
 
 export default class ProjectClusterDataRequest {

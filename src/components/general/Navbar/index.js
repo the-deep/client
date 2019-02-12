@@ -14,7 +14,7 @@ import {
     isTruthy,
     reverseRoute,
     getFirstKeyByValue,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import SelectInput from '#rsci/SelectInput';
 
 import {

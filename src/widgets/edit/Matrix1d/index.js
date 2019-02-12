@@ -16,7 +16,7 @@ import Faram, { requiredCondition } from '#rscg/Faram';
 import {
     getDuplicates,
     randomString,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import { iconNames } from '#constants';
 
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import {
     isTruthy,
     isObjectEmpty,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import { FgRestBuilder } from '#rsu/rest';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';

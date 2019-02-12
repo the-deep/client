@@ -12,7 +12,7 @@ import FormattedTextArea from '#rsci/FormattedTextArea';
 import ListSelection from '#rsci/ListSelection';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
-import { randomString } from '#rsu/common';
+import { randomString } from '@togglecorp/fujs';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';

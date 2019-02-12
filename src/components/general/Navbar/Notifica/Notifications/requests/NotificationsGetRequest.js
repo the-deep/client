@@ -1,6 +1,6 @@
 // import schema from '#schema';
 import Request from '#utils/Request';
-import { randomString } from '#rsu/common';
+import { randomString } from '@togglecorp/fujs';
 import {
     createUrlForNotificationsGet,
     createParamsForGet,

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import WarningButton from '#rsca/Button/WarningButton';
-import { isTruthy } from '#rsu/common';
+import { isTruthy } from '@togglecorp/fujs';
 
 import {
     LEAD_TYPE,

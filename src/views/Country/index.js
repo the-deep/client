@@ -1,8 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import {
+    caseInsensitiveSubmatch,
+    compareString,
+} from '@togglecorp/fujs';
 
-import { caseInsensitiveSubmatch, compareString } from '#rsu/common';
 import Page from '#rscv/Page';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import SearchInput from '#rsci/SearchInput';

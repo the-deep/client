@@ -1,4 +1,4 @@
-import { getLinkedListNode, getElementAround } from '#rsu/common';
+import { getLinkedListNode, getElementAround } from '@togglecorp/fujs';
 import update from '#rsu/immutable-update';
 
 // TYPE

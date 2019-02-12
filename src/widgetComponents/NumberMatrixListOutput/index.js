@@ -3,7 +3,7 @@ import React from 'react';
 
 import ListView from '#rscv/List/ListView';
 import { FaramOutputElement } from '#rscg/FaramElements';
-import { doesObjectHaveNoData } from '#rsu/common';
+import { doesObjectHaveNoData } from '@togglecorp/fujs';
 
 import Row from './Row';
 import styles from './styles.scss';

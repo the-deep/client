@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 import {
     listToMap,
     compareNumber,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import {
     entryAccessor,
     calculateEntryState,

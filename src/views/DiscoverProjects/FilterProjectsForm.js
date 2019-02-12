@@ -7,7 +7,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import Faram from '#rscg/Faram';
 import MultiSegmentInput from '#rsci/MultiSegmentInput';
 import SearchInput from '#rsci/SearchInput';
-import { isObjectEmpty } from '#rsu/common';
+import { isObjectEmpty } from '@togglecorp/fujs';
 
 import {
     discoverProjectsFiltersSelector,

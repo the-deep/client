@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 
 import Button from '#rsca/Button';
 import FileInput from '#rsci/FileInput';
-import { randomString } from '#rsu/common';
+import { randomString } from '@togglecorp/fujs';
 import { formatDateToString } from '@togglecorp/fujs';
 
 import DropboxChooser from '#components/importer/DropboxChooser';

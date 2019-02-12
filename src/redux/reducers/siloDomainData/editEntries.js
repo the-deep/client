@@ -5,7 +5,7 @@ import {
     randomString,
     getDefinedElementAround,
     formatPdfText,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import update from '#rsu/immutable-update';
 
 const getNewSelectedEntryKey = (entries, selectedEntryKey) => {

@@ -8,7 +8,7 @@ import Confirm from '#rscv/Modal/Confirm';
 import {
     getDuplicates,
     listToMap,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 import { afViewGeoOptionsSelector } from '#redux';
 import _ts from '#ts';

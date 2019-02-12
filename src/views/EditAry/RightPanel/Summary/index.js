@@ -6,7 +6,7 @@ import memoize from 'memoize-one';
 import FaramGroup from '#rscg/FaramGroup';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import VerticalTabs from '#rscv/VerticalTabs/';
-import { listToMap } from '#rsu/common';
+import { listToMap } from '@togglecorp/fujs';
 import TabTitle from '#components/general/TabTitle';
 
 import {

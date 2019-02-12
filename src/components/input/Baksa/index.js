@@ -9,7 +9,7 @@ import FileInput from '#rsci/FileInput';
 import NumberInput from '#rsci/NumberInput';
 import TextInput from '#rsci/TextInput';
 import iconNames from '#rsk/iconNames';
-import { isTruthy, isFalsy } from '#rsu/common';
+import { isTruthy, isFalsy } from '@togglecorp/fujs';
 import { UploadBuilder } from '#rsu/upload';
 import urlRegex from '#rsu/regexForWeburl';
 

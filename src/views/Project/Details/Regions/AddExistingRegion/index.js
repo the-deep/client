@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { compareString, compareNumber } from '#rsu/common';
+import { compareString, compareNumber } from '@togglecorp/fujs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';

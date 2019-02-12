@@ -1,4 +1,4 @@
-import { listToMap } from '#rsu/common';
+import { listToMap } from '@togglecorp/fujs';
 
 export const widgetGroups = {
     // NOTE: misc is a special kind of widgetGroup (should always be defined)

@@ -5,7 +5,7 @@ import Button from '#rsca/Button';
 import SelectInput from '#rsci/SelectInput';
 import SegmentInput from '#rsci/SegmentInput';
 import Message from '#rscv/Message';
-import { randomString } from '#rsu/common';
+import { randomString } from '@togglecorp/fujs';
 
 import { iconNames } from '#constants';
 import _cs from '#cs';

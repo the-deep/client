@@ -7,7 +7,8 @@ import {
     listToMap,
     compareString,
     compareDate,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
+
 import Page from '#rscv/Page';
 import { getFiltersForRequest } from '#entities/lead';
 import update from '#rsu/immutable-update';

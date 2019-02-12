@@ -18,7 +18,7 @@ import {
     caseInsensitiveSubmatch,
     compareString,
     compareDate,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import { UploadBuilder } from '#rsu/upload';
 
 import { iconNames } from '#constants';

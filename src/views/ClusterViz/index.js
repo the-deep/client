@@ -22,7 +22,7 @@ import {
     reverseRoute,
     mapToList,
     listToGroupList,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import Cloak from '#components/general/Cloak';
 import BackLink from '#components/general/BackLink';
 import VizError from '#components/error/VizError';

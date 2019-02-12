@@ -14,7 +14,7 @@ import ModalHeader from '#rscv/Modal/Header';
 import ListView from '#rscv/List/ListView';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
-import { randomString } from '#rsu/common';
+import { randomString } from '@togglecorp/fujs';
 import { iconNames } from '#constants';
 
 import {

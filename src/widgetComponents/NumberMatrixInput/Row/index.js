@@ -5,7 +5,7 @@ import List from '#rscv/List';
 import {
     unique,
     isTruthy,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 import _cs from '#cs';
 

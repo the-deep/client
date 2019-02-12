@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import {
     compareString,
     mapToList,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 const emptyList = [];
 const emptyObject = {};

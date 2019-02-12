@@ -16,7 +16,7 @@ import Pager from '#rscv/Pager';
 import {
     reverseRoute,
     isObjectEmpty,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import modalize from '#rscg/Modalize';
 
 import Cloak from '#components/general/Cloak';

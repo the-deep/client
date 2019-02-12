@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import {
     reverseRoute,
     isObjectEmpty,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 import BoundError from '#rscg/BoundError';
 import LoadingAnimation from '#rscv/LoadingAnimation';

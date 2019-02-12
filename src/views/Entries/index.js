@@ -7,7 +7,7 @@ import { pathNames } from '#constants/';
 import {
     reverseRoute,
     isObjectEmpty,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 import Message from '#rscv/Message';
 import List from '#rscv/List';

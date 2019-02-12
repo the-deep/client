@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Message from '#rscv/Message';
-import { getRandomFromList } from '#rsu/common';
+import { getRandomFromList } from '@togglecorp/fujs';
 import _ts from '#ts';
 
 import styles from './styles.scss';

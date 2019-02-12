@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { FgRestBuilder } from '#rsu/rest';
-import { isObjectEmpty, compareString } from '#rsu/common';
+import { isObjectEmpty, compareString } from '@togglecorp/fujs';
 import List from '#rscv/List';
 import ListView from '#rscv/List/ListView';
 import Page from '#rscv/Page';

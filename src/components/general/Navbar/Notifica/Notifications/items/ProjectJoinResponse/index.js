@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { reverseRoute } from '#rsu/common';
+import { reverseRoute } from '@togglecorp/fujs';
 
 import DisplayPicture from '#components/viewer/DisplayPicture';
 import { pathNames } from '#constants';

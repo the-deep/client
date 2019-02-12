@@ -1,5 +1,5 @@
 import { analyzeErrors } from '#rscg/Faram/validator';
-import { isTruthy } from '#rsu/common';
+import { isTruthy } from '@togglecorp/fujs';
 import update from '#rsu/immutable-update';
 
 // FIXME: copy this to common place

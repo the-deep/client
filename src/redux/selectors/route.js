@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { isFalsy, getFirstKeyByValue } from '#rsu/common';
+import { isFalsy, getFirstKeyByValue } from '@togglecorp/fujs';
 import { pathNames } from '#constants/routes';
 
 const emptyObject = {};

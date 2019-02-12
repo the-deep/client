@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import {
     trimWhitespace,
     splitInWhitespace,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import ListView from '#rscv/List/ListView';
 
 import _ts from '#ts';

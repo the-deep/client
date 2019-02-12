@@ -14,7 +14,7 @@ import Faram, { requiredCondition } from '#rscg/Faram';
 import FaramList from '#rscg/FaramList';
 import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import { getDuplicates, randomString } from '#rsu/common';
+import { getDuplicates, randomString } from '@togglecorp/fujs';
 
 import TabTitle from '#components/general/TabTitle';
 

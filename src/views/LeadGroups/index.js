@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 import {
     reverseRoute,
     isObjectEmpty,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
+
 import Page from '#rscv/Page';
 import FormattedDate from '#rscv/FormattedDate';
 import Message from '#rscv/Message';

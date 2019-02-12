@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link, Prompt } from 'react-router-dom';
+import { reverseRoute } from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
-import { reverseRoute } from '#rsu/common';
 import update from '#rsu/immutable-update';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SuccessButton from '#rsca/Button/SuccessButton';

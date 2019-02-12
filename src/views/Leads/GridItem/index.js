@@ -9,7 +9,7 @@ import {
     iconNames,
     pathNames,
 } from '#constants';
-import { reverseRoute } from '#rsu/common';
+import { reverseRoute } from '@togglecorp/fujs';
 import {
     leadTypeIconMap,
     leadPaneTypeMap,

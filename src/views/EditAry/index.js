@@ -6,7 +6,7 @@ import { Prompt } from 'react-router-dom';
 import Page from '#rscv/Page';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ResizableH from '#rscv/Resizable/ResizableH';
-import { reverseRoute, checkVersion } from '#rsu/common';
+import { reverseRoute, checkVersion } from '@togglecorp/fujs';
 import Message from '#rscv/Message';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerButton from '#rsca/Button/DangerButton';

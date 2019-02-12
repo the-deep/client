@@ -7,7 +7,7 @@ import {
     getRgbRawFromHex,
     getHexFromRgbRaw,
     interpolateRgb,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 import SubdimensionRow from './SubdimensionRow';
 import styles from './styles.scss';

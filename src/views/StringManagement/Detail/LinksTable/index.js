@@ -6,7 +6,7 @@ import {
     compareStringByWordCount,
     compareString,
     compareNumber,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import Table from '#rscv/Table';
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';

@@ -4,7 +4,7 @@ import {
     isObjectEmpty,
     compareString,
     caseInsensitiveSubmatch,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 import {
     LEAD_FILTER_STATUS,

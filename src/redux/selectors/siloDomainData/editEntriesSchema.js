@@ -4,7 +4,7 @@ import {
     inclusiveInBetweenCondition,
 } from '#rscg/Faram';
 
-import { decodeDate } from '#rsu/common';
+import { decodeDate } from '@togglecorp/fujs';
 
 const getSchemaForWidget = (widget) => {
     switch (widget.widgetId) {

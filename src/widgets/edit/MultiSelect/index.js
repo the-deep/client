@@ -12,7 +12,7 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
 import Faram, { requiredCondition } from '#rscg/Faram';
-import { getDuplicates, randomString } from '#rsu/common';
+import { getDuplicates, randomString } from '@togglecorp/fujs';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';

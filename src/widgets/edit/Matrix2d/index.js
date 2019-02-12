@@ -18,7 +18,7 @@ import MultiViewContainer from '#rscv/MultiViewContainer';
 import {
     getDuplicates,
     randomString,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 import TabTitle from '#components/general/TabTitle';
 import { iconNames } from '#constants';

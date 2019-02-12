@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { reverseRoute } from '#rsu/common';
+import { reverseRoute } from '@togglecorp/fujs';
 import Label from '#rsci/Label';
 import ListView from '#rscv/List/ListView';
 import LoadingAnimation from '#rscv/LoadingAnimation';

@@ -5,7 +5,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 
-import { listToMap } from '#rsu/common';
+import { listToMap } from '@togglecorp/fujs';
 
 import { RequestClient } from '#request';
 import _ts from '#ts';

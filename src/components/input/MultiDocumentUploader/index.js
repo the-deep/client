@@ -10,7 +10,7 @@ import FileInput from '#rsci/FileInput';
 import HintAndError from '#rsci/HintAndError';
 import TextInput from '#rsci/TextInput';
 import ListView from '#rscv/List/ListView';
-import { randomString } from '#rsu/common';
+import { randomString } from '@togglecorp/fujs';
 import { CoordinatorBuilder } from '#rsu/coordinate';
 import urlRegex from '#rsu/regexForWeburl';
 import { UploadBuilder } from '#rsu/upload';

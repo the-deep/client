@@ -25,7 +25,7 @@ import TabularSelectInput from '#rsci/TabularSelectInput';
 import Wizard from '#rscv/Wizard';
 import Page from '#rscv/Page';
 
-import { compareNumber } from '#rsu/common';
+import { compareNumber } from '@togglecorp/fujs';
 
 import Faram, {
     integerCondition,
