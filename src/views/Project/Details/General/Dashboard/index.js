@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
-import { formatDateToString } from '@togglecorp/fujs';
+import { formatDateToString, reverseRoute } from '@togglecorp/fujs';
 
 import SelectInput from '#rsci/SelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -12,7 +12,6 @@ import SparkLines from '#rscz/SparkLines';
 import Numeral from '#rscv/Numeral';
 import Message from '#rscv/Message';
 import { pathNames } from '#constants';
-import { reverseRoute } from '@togglecorp/fujs';
 
 import {
     projectDashboardSelector,

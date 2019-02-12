@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import {
     reverseRoute,
-    isObjectEmpty,
+    doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
@@ -296,7 +296,7 @@ export default class LeadGroups extends React.PureComponent {
     renderEmpty = () => {
         const { loadingLeads } = this.state;
 
-        const isFilterEmpty = isObjectEmpty(this.props.filters);
+        const isFilterEmpty = doesObjectHaveNoData(this.props.filters);
 
         if (loadingLeads && isFilterEmpty) {
             return null;

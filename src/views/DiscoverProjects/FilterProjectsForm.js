@@ -7,7 +7,7 @@ import DangerButton from '#rsca/Button/DangerButton';
 import Faram from '#rscg/Faram';
 import MultiSegmentInput from '#rsci/MultiSegmentInput';
 import SearchInput from '#rsci/SearchInput';
-import { isObjectEmpty } from '@togglecorp/fujs';
+import { doesObjectHaveNoData } from '@togglecorp/fujs';
 
 import {
     discoverProjectsFiltersSelector,
@@ -147,7 +147,7 @@ export default class FilterProjectsForm extends React.PureComponent {
     }
 
     handleClearFilters = () => {
-        if (isObjectEmpty(this.props.filters)) {
+        if (doesObjectHaveNoData(this.props.filters)) {
             // NOTE: Only clear component state,
             // as the filters in global state is already empty
             this.setState({ faramValues: {}, pristine: true });
@@ -171,7 +171,7 @@ export default class FilterProjectsForm extends React.PureComponent {
 
         const isApplyDisabled = pristine;
 
-        const isFilterEmpty = isObjectEmpty(filters);
+        const isFilterEmpty = doesObjectHaveNoData(filters);
         const isClearDisabled = isFilterEmpty && pristine;
 
         return (

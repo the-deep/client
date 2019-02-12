@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
 import {
-    isObjectEmpty,
+    doesObjectHaveNoData,
     compareString,
     caseInsensitiveSubmatch,
 } from '@togglecorp/fujs';
@@ -92,7 +92,7 @@ export const addLeadViewFiltersSelector = createSelector(
 
 export const addLeadViewIsFilterEmptySelector = createSelector(
     addLeadViewFiltersSelector,
-    filters => isObjectEmpty(filters),
+    filters => doesObjectHaveNoData(filters),
 );
 
 export const addLeadViewActiveLeadIdSelector = createSelector(

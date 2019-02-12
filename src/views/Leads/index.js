@@ -15,7 +15,7 @@ import SelectInput from '#rsci/SelectInput';
 import Pager from '#rscv/Pager';
 import {
     reverseRoute,
-    isObjectEmpty,
+    doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 import modalize from '#rscg/Modalize';
 
@@ -664,7 +664,7 @@ export default class Leads extends React.PureComponent {
     renderEmpty = () => {
         const { loadingLeads } = this.state;
 
-        const isFilterEmpty = isObjectEmpty(this.props.filters);
+        const isFilterEmpty = doesObjectHaveNoData(this.props.filters);
 
         if (loadingLeads && isFilterEmpty) {
             return null;

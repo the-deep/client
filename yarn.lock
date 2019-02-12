@@ -996,10 +996,10 @@
     hoist-non-react-statics "^3.0.1"
     prop-types "^15.6.2"
 
-"@togglecorp/fujs@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@togglecorp/fujs/-/fujs-1.0.0.tgz#45281a8fe3d4f210da1362b5371fb43930b2d154"
-  integrity sha512-wgU/OOScqnYTEXlMi2CpJfUBKD1cJM0fdVMmDEmx9xD6G1Xpgkjn2GlC498cX+vUaj8x67SpqmTQ2+aAEBNFPw==
+"@togglecorp/fujs@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@togglecorp/fujs/-/fujs-1.0.1.tgz#ec01db609866bdb6a4e0937f3c2c811a3d0fe4fc"
+  integrity sha512-AX+BxdPGOW7vnfTi8yMJ+XStaybBr7LLSGWSmATTDi792R54bcRUaeLP9fH/Y1qSx713c4InvVjgv/anbeIp9Q==
 
 "@togglecorp/ravl@^1.2.0":
   version "1.2.0"

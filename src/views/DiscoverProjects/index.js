@@ -6,7 +6,8 @@ import { Link } from 'react-router-dom';
 import { pathNames } from '#constants/';
 import {
     reverseRoute,
-    isObjectEmpty,
+    doesObjectHaveNoData,
+    formatDateToString,
 } from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
@@ -20,7 +21,6 @@ import FormattedDate from '#rscv/FormattedDate';
 import SparkLines from '#rscz/SparkLines';
 import Numeral from '#rscv/Numeral';
 import BackLink from '#components/general/BackLink';
-import { formatDateToString } from '@togglecorp/fujs';
 
 import {
     discoverProjectsTotalProjectsCountSelector,
@@ -411,7 +411,7 @@ export default class DiscoverProjects extends React.PureComponent {
         if (pending) {
             return null;
         }
-        const isFilterEmpty = isObjectEmpty(this.props.filters);
+        const isFilterEmpty = doesObjectHaveNoData(this.props.filters);
 
         if (!isFilterEmpty) {
             return (
