@@ -1,20 +1,35 @@
 @import '~base-scss/base';
 
 .header {
-    position: relative;
+    padding: $spacing-small;
+    width: 100%;
     user-select: none;
 
-    .title {
-        padding: $spacing-small;
-        word-break: break-all;
+    .top {
+        display: flex;
+        align-items: center;
+
+        .icon {
+            flex-shrink: 0;
+            margin: 0 $spacing-extra-small;
+            color: $color-text-label;
+        }
+
+        .sort-button {
+            padding: $spacing-small;
+            // word-break: break-all;
+        }
+
+        .title {
+            flex-shrink: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
     }
 
-    .icon {
-        margin: 0 $spacing-extra-small;
-        color: $color-text-label;
-    }
-
-    .search-box {
+    .search-input {
         margin: $spacing-small;
         margin-top: 0;
     }
