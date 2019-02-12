@@ -49,6 +49,8 @@ export default class Tab extends React.PureComponent {
                 <button
                     className={className}
                     onClick={onClick}
+                    tabIndex="-1"
+                    type="button"
                 >
                     { title }
                 </button>
