@@ -215,6 +215,10 @@ export default class LeadForm extends React.PureComponent {
         return tabularCompatibleMimeTypes.some(m => MIME_TYPES[m] === mimeType);
     });
 
+    shouldHideTabularButton = ({ isEarlyAccess }) => {
+        const { attachmentMimeType } = this.state;
+        return !isEarlyAccess || !this.isTabularCompatible(attachmentMimeType);
+    }
 
     handleApplyAllClick = attrName => this.props.onApplyAllClick(attrName);
 
@@ -448,18 +452,21 @@ export default class LeadForm extends React.PureComponent {
                     // one of drive, dropbox, or file
                     ATTACHMENT_TYPES.indexOf(type) !== -1 && (
                         <Fragment>
-                            { this.isTabularCompatible(attachmentMimeType) && (
-                                <AccentButton
-                                    className={styles.tabularButton}
-                                    onClick={this.handleTabularButtonClick}
-                                >
-                                    {
-                                        values.tabularBook
-                                            ? _ts('addLeads', 'tabularButtonTitle')
-                                            : _ts('addLeads', 'tabularExtractButtonTitle')
-                                    }
-                                </AccentButton>
-                            ) }
+                            <Cloak
+                                hide={this.shouldHideTabularButton}
+                                render={
+                                    <AccentButton
+                                        className={styles.tabularButton}
+                                        onClick={this.handleTabularButtonClick}
+                                    >
+                                        {
+                                            values.tabularBook
+                                                ? _ts('addLeads', 'tabularButtonTitle')
+                                                : _ts('addLeads', 'tabularExtractButtonTitle')
+                                        }
+                                    </AccentButton>
+                                }
+                            />
                             {/* FIXME: why is hidden input used here? */}
                             <HiddenInput
                                 faramElementName="attachment"

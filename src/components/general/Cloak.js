@@ -86,7 +86,10 @@ export default class Cloak extends React.Component {
 
         const isLoggedIn = !!activeUser.userId;
         const isAdmin = activeUser.isSuperuser;
-        const isExperimental = activeUser.experimental;
+        const {
+            isExperimental,
+            isEarlyAccess,
+        } = activeUser;
         const hasProjects = userProjects.length > 0;
         const hasAssessmentTemplate = !!currentUserActiveProject.assessmentTemplate;
         const hasAnalysisFramework = !!currentUserActiveProject.analysisFramework;
@@ -101,6 +104,7 @@ export default class Cloak extends React.Component {
             isLoggedIn,
             isAdmin,
             isExperimental,
+            isEarlyAccess,
             hasAssessmentTemplate,
             hasAnalysisFramework,
             pathKey,
