@@ -14,7 +14,7 @@ import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
 import Faram, { requiredCondition } from '#rscg/Faram';
 import {
-    findDuplicates,
+    getDuplicates,
     randomString,
 } from '#rsu/common';
 import { iconNames } from '#constants';
@@ -59,7 +59,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                         errors.push(_ts('widgets.editor.matrix1d', 'atLeastOneError'));
                     }
 
-                    const duplicates = findDuplicates(rows, o => o.title);
+                    const duplicates = getDuplicates(rows, o => o.title);
                     if (duplicates.length > 0) {
                         errors.push(_ts(
                             'widgets.editor.matrix1d',
@@ -83,7 +83,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                     errors.push(_ts('widgets.editor.matrix1d', 'atLeastOneError'));
                                 }
 
-                                const duplicates = findDuplicates(cells, o => o.value);
+                                const duplicates = getDuplicates(cells, o => o.value);
                                 if (duplicates.length > 0) {
                                     errors.push(_ts(
                                         'widgets.editor.matrix1d',

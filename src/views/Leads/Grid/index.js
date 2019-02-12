@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Masonry } from '@timilsinabishal/react-components';
 import Button from '#rsca/Button';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import { isArrayEqual } from '#rsu/common';
+import { isListEqual } from '#rsu/common';
 import Modal from '#rscv/Modal';
 import LeadPreview from '#components/leftpanel/LeadPreview';
 import { iconNames } from '#constants';
@@ -51,7 +51,7 @@ export default class LeadGrid extends React.Component {
         const aKeys = a.map(r => r.id);
         const bKeys = b.map(r => r.id);
 
-        return !isArrayEqual(aKeys, bKeys);
+        return !isListEqual(aKeys, bKeys);
     };
 
     constructor(props) {

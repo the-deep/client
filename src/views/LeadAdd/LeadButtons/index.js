@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import Button from '#rsca/Button';
 import FileInput from '#rsci/FileInput';
 import { randomString } from '#rsu/common';
-import { formatDate } from '#rsu/date';
+import { formatDateToString } from '@togglecorp/fujs';
 
 import DropboxChooser from '#components/importer/DropboxChooser';
 import GooglePicker from '#components/importer/GooglePicker';
@@ -352,7 +352,7 @@ export default class LeadButtons extends React.PureComponent {
                     title: l.title,
                     website: l.website,
                     url: l.url,
-                    publishedOn: formatDate(new Date(l.publishedOn), 'yyyy-MM-dd'),
+                    publishedOn: formatDateToString(new Date(l.publishedOn), 'yyyy-MM-dd'),
                     source: l.source,
                     sourceType: LEAD_TYPE.website,
                     project: activeProject,

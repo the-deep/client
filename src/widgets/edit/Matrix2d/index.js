@@ -16,7 +16,7 @@ import Faram, { requiredCondition } from '#rscg/Faram';
 import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import {
-    findDuplicates,
+    getDuplicates,
     randomString,
 } from '#rsu/common';
 
@@ -65,7 +65,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                         errors.push(_ts('widgets.editor.matrix2d', 'atLeastOneError'));
                     }
 
-                    const duplicates = findDuplicates(dimensions, o => o.title);
+                    const duplicates = getDuplicates(dimensions, o => o.title);
                     if (duplicates.length > 0) {
                         errors.push(_ts(
                             'widgets.editor.matrix2d',
@@ -89,7 +89,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                     errors.push(_ts('widgets.editor.matrix2d', 'atLeastOneError'));
                                 }
 
-                                const duplicates = findDuplicates(subdimensions, o => o.title);
+                                const duplicates = getDuplicates(subdimensions, o => o.title);
                                 if (duplicates.length > 0) {
                                     errors.push(_ts(
                                         'widgets.editor.matrix2d',
@@ -118,7 +118,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                         errors.push(_ts('widgets.editor.matrix2d', 'atLeastOneError'));
                     }
 
-                    const duplicates = findDuplicates(sectors, o => o.title);
+                    const duplicates = getDuplicates(sectors, o => o.title);
                     if (duplicates.length > 0) {
                         errors.push(_ts(
                             'widgets.editor.matrix2d',
@@ -138,7 +138,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                             validation: (subsectors) => {
                                 const errors = [];
                                 if (subsectors && subsectors.length > 0) {
-                                    const duplicates = findDuplicates(subsectors, o => o.title);
+                                    const duplicates = getDuplicates(subsectors, o => o.title);
                                     if (duplicates.length > 0) {
                                         errors.push(_ts(
                                             'widgets.editor.matrix2d',

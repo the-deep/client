@@ -12,7 +12,7 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
 import Faram, { requiredCondition } from '#rscg/Faram';
-import { findDuplicates, randomString } from '#rsu/common';
+import { getDuplicates, randomString } from '#rsu/common';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';
@@ -47,7 +47,7 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                         errors.push(_ts('widgets.editor.multiselect', 'atLeastOneError'));
                     }
 
-                    const duplicates = findDuplicates(options, o => o.label);
+                    const duplicates = getDuplicates(options, o => o.label);
                     if (duplicates.length > 0) {
                         errors.push(_ts(
                             'widgets.editor.multiselect',

@@ -21,7 +21,7 @@ import wrapViz from '#rscz/VizWrapper';
 import {
     reverseRoute,
     mapToList,
-    groupList,
+    listToGroupList,
 } from '#rsu/common';
 import Cloak from '#components/general/Cloak';
 import BackLink from '#components/general/BackLink';
@@ -89,7 +89,7 @@ export default class ClusterViz extends PureComponent {
         const keywords = projectClusterData.keywords || [];
         const documents = projectClusterData.documents || [];
 
-        const keywordGroup = groupList(keywords, d => d.cluster);
+        const keywordGroup = listToGroupList(keywords, d => d.cluster);
 
         const documentGroup = Object.keys(documents).map(key => (
             documents[key].map(doc => (

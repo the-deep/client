@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import List from '#rscv/List';
 import {
     getColorOnBgColor,
-    hexToRgb,
-    rgbToHex,
+    getRgbRawFromHex,
+    getHexFromRgbRaw,
     interpolateRgb,
 } from '#rsu/common';
 
@@ -39,11 +39,13 @@ export default class DimensionRow extends React.PureComponent {
 
         const stripeWidth = 4;
         const firstColor = rowStyle.backgroundColor;
-        const secondColor = rgbToHex(interpolateRgb(
-            hexToRgb(rowStyle.backgroundColor),
-            hexToRgb(rowStyle.color),
-            0.4,
-        ));
+        const secondColor = getHexFromRgbRaw(
+            interpolateRgb(
+                getRgbRawFromHex(rowStyle.backgroundColor),
+                getRgbRawFromHex(rowStyle.color),
+                0.4,
+            ),
+        );
 
         return {
             outline: `${outlineWidth}px solid ${firstColor}`,

@@ -13,6 +13,7 @@ import { BgRestBuilder } from '#rsu/rest';
 import {
     isTruthy,
     reverseRoute,
+    getFirstKeyByValue,
 } from '#rsu/common';
 import SelectInput from '#rsci/SelectInput';
 
@@ -90,10 +91,6 @@ const defaultProps = {
     activeUser: {},
     userProjects: [],
 };
-
-const getKeyByValue = (object, value) => (
-    Object.keys(object).find(key => object[key] === value)
-);
 
 @withRouter
 @connect(mapStateToProps, mapDispatchToProps)
@@ -185,7 +182,7 @@ export default class Navbar extends React.PureComponent {
     setLinksForLocation = (location) => {
         this.currentMatch = Navbar.getCurrentMatch(location);
         this.currentPath = this.currentMatch
-            ? getKeyByValue(pathNames, this.currentMatch.path)
+            ? getFirstKeyByValue(pathNames, this.currentMatch.path)
             : 'fourHundredFour';
 
         const navLinks = [
