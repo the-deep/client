@@ -4,7 +4,7 @@ import React from 'react';
 import {
     addClassName,
     removeClassName,
-} from '@togglecorp/fujs';
+} from '#rsu/common';
 
 import Message from '#rscv/Message';
 import { iconNames } from '#constants';

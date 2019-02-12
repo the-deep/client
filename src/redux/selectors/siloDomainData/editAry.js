@@ -1,14 +1,18 @@
 import { createSelector } from 'reselect';
-
-import { median, sum, bucket } from '@togglecorp/fujs';
 import {
-    getObjectChildren,
+    median,
+    sum,
+    bucket,
     isTruthy,
     decodeDate,
     isNotDefined,
     isDefined,
-    unique,
 } from '@togglecorp/fujs';
+
+import {
+    unique,
+    getObjectChildren,
+} from '#rsu/common';
 import {
     requiredCondition,
     dateCondition,
