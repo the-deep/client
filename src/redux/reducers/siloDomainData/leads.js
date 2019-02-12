@@ -70,6 +70,9 @@ export const removeLeadAction = ({ lead }) => ({
 
 const getView = state => state.leadPage.view || 'table';
 
+const emptyObject = {};
+const emptyList = [];
+
 // REDUCER
 
 const leadViewSetFilter = (state, action) => {
@@ -190,6 +193,7 @@ const appendLeads = (state, action) => {
     const { activeProject } = state;
     const { leads, totalLeadsCount } = action;
     const view = getView(state);
+
     const settings = {
         leadPage: {
             [activeProject]: { $auto: {
@@ -207,15 +211,20 @@ const removeLead = (state, action) => {
     const { activeProject } = state;
     const { lead } = action;
     const { totalLeadsCount } = state.leadPage[activeProject];
+
     const settings = {
         leadPage: {
             [activeProject]: {
-                table: {
-                    leads: { $filter: ld => ld.id !== lead.id },
-                },
-                grid: {
-                    leads: { $filter: ld => ld.id !== lead.id },
-                },
+                table: { $auto: {
+                    leads: { $autoArray: {
+                        $filter: ld => ld.id !== lead.id,
+                    } },
+                } },
+                grid: { $auto: {
+                    leads: { $autoArray: {
+                        $filter: ld => ld.id !== lead.id,
+                    } },
+                } },
                 totalLeadsCount: { $set: totalLeadsCount - 1 },
             },
         },
@@ -227,17 +236,25 @@ const patchLead = (state, action) => {
     const { activeProject, leadPage } = state;
     const { lead } = action;
 
-    const tableIndex = leadPage[activeProject].table.leads.findIndex(ld => ld.id === lead.id);
-    const gridIndex = leadPage[activeProject].grid.leads.findIndex(ld => ld.id === lead.id);
+    const tableIndex = ((leadPage[activeProject].table || emptyObject).leads || emptyList)
+        .findIndex(ld => ld.id === lead.id);
+
+    const gridIndex = ((leadPage[activeProject].grid || emptyObject).leads || emptyList)
+        .findIndex(ld => ld.id === lead.id);
+
     const settings = {
         leadPage: {
             [activeProject]: {
-                table: {
-                    leads: { $splice: [[tableIndex, 1, lead]] },
-                },
-                grid: {
-                    leads: { $splice: [[gridIndex, 1, lead]] },
-                },
+                table: { $auto: {
+                    leads: { $autoArray: {
+                        $splice: [[tableIndex, 1, lead]],
+                    } },
+                } },
+                grid: { $auto: {
+                    leads: { $autoArray: {
+                        $splice: [[gridIndex, 1, lead]],
+                    } },
+                } },
             },
         },
     };
