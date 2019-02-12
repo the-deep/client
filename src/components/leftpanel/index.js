@@ -176,6 +176,7 @@ export default class LeftPane extends React.PureComponent {
                 };
             },
             mount: true,
+            lazyMount: true,
             wrapContainer: true,
         },
         'tabular-preview': {
@@ -193,7 +194,7 @@ export default class LeftPane extends React.PureComponent {
                 };
             },
             mount: true,
-            // lazyMount: true,
+            lazyMount: true,
             wrapContainer: true,
         },
         'assisted-tagging': {
@@ -247,6 +248,7 @@ export default class LeftPane extends React.PureComponent {
                 };
             },
             mount: true,
+            lazyMount: true,
             wrapContainer: true,
         },
     })

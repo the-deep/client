@@ -4,6 +4,7 @@
 /node_modules
 vendor/
 src/public/
+generated/
 
 # testing
 /coverage
@@ -22,7 +23,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-generated/
 *.tmp
 *.bak
 *.swp
