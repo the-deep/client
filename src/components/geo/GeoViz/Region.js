@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
-import { RequestHandler } from '@togglecorp/react-rest-request';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
+import createRequestHandler from '#rrr/RequestHandler';
 
 import Map from '#rscz/Map';
 import MapLayer from '#rscz/Map/MapLayer';
@@ -12,6 +12,8 @@ import MapSource from '#rscz/Map/MapSource';
 
 import { RequestClient } from '#request';
 import _ts from '#ts';
+
+const RequestHandler = createRequestHandler(RequestClient);
 
 const emptyObject = {};
 
