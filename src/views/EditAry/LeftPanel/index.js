@@ -56,7 +56,7 @@ export default class LeftPanel extends React.PureComponent {
     }
 
     getLeads = memoize((lead, leadGroup) => (
-        (lead && [lead]) || (leadGroup && leadGroup)
+        (lead && [lead]) || (leadGroup && leadGroup.leads)
     ))
 
     getViews = className => ({
