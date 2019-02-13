@@ -98,46 +98,55 @@ export default class Header extends React.PureComponent {
             [DATA_TYPE.geo]: iconNames.globe,
             [DATA_TYPE.datetime]: iconNames.calendar,
         };
+
         const icon = iconNameMapping[value.type];
 
         return (
             <div className={styles.header}>
-                <Button
-                    className={styles.title}
-                    onClick={this.handleSortClick}
-                    iconName={getSortIcon(sortOrder)}
-                    transparent
-                    disabled={disabled}
-                >
-                    {value.title}
-                </Button>
-                { icon &&
-                    <span className={_cs(icon, styles.icon)} />
-                }
-                <Cloak
-                    hide={this.shouldHideEditButton}
-                    render={
-                        <WarningModalButton
-                            iconName={iconNames.edit}
-                            transparent
-                            title={_ts('tabular.header', 'columnEditButtonTooltip')} // Edit
-                            disabled={disabled}
-                            pending={isFieldDeletePending || isFieldEditPending}
-                            modal={
-                                <FieldEditModal
-                                    disabled={disabled}
-                                    disabledDelete={disabledDelete}
-                                    fieldId={fieldId}
-                                    value={value}
-                                    onFieldDelete={onFieldDelete}
-                                    onFieldEdit={onFieldEdit}
-                                />
-                            }
-                        />
-                    }
-                />
+                <div className={styles.top}>
+                    { icon && (
+                        <span className={_cs(icon, styles.icon)} />
+                    )}
+                    <Button
+                        className={styles.sortButton}
+                        onClick={this.handleSortClick}
+                        iconName={getSortIcon(sortOrder)}
+                        transparent
+                        disabled={disabled}
+                        smallVerticalPadding
+                    />
+                    <div
+                        title={value.title}
+                        className={styles.title}
+                    >
+                        {value.title}
+                    </div>
+                    <Cloak
+                        hide={this.shouldHideEditButton}
+                        render={
+                            <WarningModalButton
+                                iconName={iconNames.edit}
+                                transparent
+                                title={_ts('tabular.header', 'columnEditButtonTooltip')}
+                                disabled={disabled}
+                                smallVerticalPadding
+                                pending={isFieldDeletePending || isFieldEditPending}
+                                modal={
+                                    <FieldEditModal
+                                        disabled={disabled}
+                                        disabledDelete={disabledDelete}
+                                        fieldId={fieldId}
+                                        value={value}
+                                        onFieldDelete={onFieldDelete}
+                                        onFieldEdit={onFieldEdit}
+                                    />
+                                }
+                            />
+                        }
+                    />
+                </div>
                 <Filter
-                    className={styles.searchBox}
+                    className={styles.searchInput}
                     disabled={disabled}
                     value={filterValue}
                     onChange={this.handleFilterChange}

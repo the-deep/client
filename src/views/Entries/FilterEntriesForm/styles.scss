@@ -1,5 +1,7 @@
 @import '~base-scss/base';
 
+$width-filter-input: 160px;
+
 .entries-filters {
     display: flex;
     align-items: flex-end;
@@ -8,6 +10,7 @@
 
     .entries-filter {
         margin: $spacing-small;
+        width: $width-filter-input;
     }
 
     .button {
