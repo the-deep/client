@@ -1,21 +1,11 @@
 @import '~base-scss/base';
 
-$width-sidebar: 240px;
-
 .connectors {
-    display: flex;
-    position: relative;
-    height: 100%;
-
     .sidebar {
         @include background-color($color-foreground-alt);
         display: flex;
         position: relative;
-        flex-basis: $width-sidebar;
         flex-direction: column;
-        flex-shrink: 0;
-        margin: -$spacing-small $spacing-small (-$spacing-small) (-$spacing-small);
-        border-right: $width-separator-thin solid $color-separator-alt;
 
         .header {
             @include background-color($color-background-header);
@@ -66,19 +56,22 @@ $width-sidebar: 240px;
         }
     }
 
-    .connector-details {
-        @extend %main-content;
-        @include background-color($color-background-alt);
-        flex-grow: 1;
-    }
-
-    .no-connector {
-        @include background-color-with-disabled-text($color-foreground-alt);
+    .main-content {
         display: flex;
-        align-items: center;
-        flex-basis: calc(100% - #{$width-sidebar});
-        justify-content: center;
-        margin: 0;
-        font-size: $font-size-extra-large;
+        flex-direction: column;
+
+        .connector-details {
+            @include background-color($color-background-alt);
+            flex-grow: 1;
+        }
+
+        .no-connector {
+            @include background-color-with-disabled-text($color-foreground-alt);
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: center;
+            font-size: $font-size-extra-large;
+        }
     }
 }

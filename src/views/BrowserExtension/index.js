@@ -1,15 +1,14 @@
-/**
- * @author frozenhelium <fren.ankit@gmail.com>
- */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import Page from '#rscv/Page';
 import { tokenSelector } from '#redux';
 import { sendToken } from '#utils/browserExtension';
 import _ts from '#ts';
 import notify from '#notify';
+
+import styles from './styles.scss';
 
 const mapStateToProps = state => ({
     token: tokenSelector(state),
@@ -74,28 +73,23 @@ export default class Export extends React.PureComponent {
     }
 
     render() {
-        const {
-            pending,
-        } = this.state;
+        const { pending } = this.state;
 
-        if (pending) {
-            return (
-                <div>
+        return (
+            <Page
+                mainContentClassName={styles.browserExtensionSetup}
+                mainContent={pending ? (
                     <h2>
                         {/* FIXME: strings */}
                         Just a moment, setting up you extension
                     </h2>
-                </div>
-            );
-        }
-
-        return (
-            <div>
-                <h2>
-                    {/* FIXME: strings */}
-                    You may close this page now
-                </h2>
-            </div>
+                ) : (
+                    <h2>
+                        {/* FIXME: strings */}
+                        You may close this page now
+                    </h2>
+                )}
+            />
         );
     }
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import Page from '#rscv/Page';
 import {
     setLanguageAction,
     selectedLanguageNameSelector,
@@ -84,10 +85,13 @@ export default class StringManagement extends React.PureComponent {
         const { pendingLanguage } = this.state;
 
         return (
-            <div className={styles.stringPanel}>
-                <LeftPane />
-                <Detail pendingLanguage={pendingLanguage} />
-            </div>
+            <Page
+                className={styles.stringPanel}
+                sidebarClassName={styles.sidebar}
+                sidebar={<LeftPane />}
+                mainContentClassName={styles.mainContent}
+                mainContent={<Detail pendingLanguage={pendingLanguage} />}
+            />
         );
     }
 }

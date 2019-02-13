@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import Page from '#rscv/Page';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Modal from '#rscv/Modal';
@@ -126,47 +127,61 @@ export default class Usergroup extends React.PureComponent {
         }
 
         return (
-            <div className={styles.usergroup}>
-                <header className={styles.header}>
-                    <h2>
-                        {_ts('userGroup', 'userGroupTitle')}
-                    </h2>
-                </header>
-                <div className={styles.info}>
-                    <div className={styles.titleContainer}>
-                        <span className={styles.name} >
-                            { usergroup.title }
-                        </span>
-                        {
-                            isCurrentUserAdmin &&
-                                <PrimaryButton
-                                    onClick={this.handleUserGroupEditClick}
-                                    transparent
-                                >
-                                    <span className={iconNames.edit} />
-                                </PrimaryButton>
-                        }
-                    </div>
-                    <p className={styles.description}>
-                        { usergroup.description }
-                    </p>
-                </div>
-                <div className={styles.stats}>
-                    <h2>
-                        {_ts('userGroup', 'userGroupActivtyLogTitle')}
-                    </h2>
-                </div>
-                <ProjectsTable
-                    className={styles.projects}
-                    usergroup={usergroup}
+            <React.Fragment>
+                <Page
+                    className={styles.usergroup}
+                    header={
+                        <h2 className={styles.heading}>
+                            {_ts('userGroup', 'userGroupTitle')}
+                        </h2>
+                    }
+                    mainContentClassName={styles.mainContent}
+                    mainContent={
+                        <React.Fragment>
+                            { pending && <LoadingAnimation /> }
+                            <div className={styles.left}>
+                                <div className={styles.info}>
+                                    <div className={styles.titleContainer}>
+                                        <span className={styles.name} >
+                                            { usergroup.title }
+                                        </span>
+                                        {
+                                            isCurrentUserAdmin &&
+                                                <PrimaryButton
+                                                    onClick={this.handleUserGroupEditClick}
+                                                    transparent
+                                                >
+                                                    <span className={iconNames.edit} />
+                                                </PrimaryButton>
+                                        }
+                                    </div>
+                                    <p className={styles.description}>
+                                        { usergroup.description }
+                                    </p>
+                                </div>
+                                <div className={styles.stats}>
+                                    <h2>
+                                        {_ts('userGroup', 'userGroupActivtyLogTitle')}
+                                    </h2>
+                                </div>
+                            </div>
+                            <div className={styles.right}>
+                                <ProjectsTable
+                                    className={styles.projects}
+                                    usergroup={usergroup}
+                                />
+                                <MembersTable
+                                    className={styles.members}
+                                    userGroupId={userGroupId}
+                                    isCurrentUserAdmin={isCurrentUserAdmin}
+                                    activeUser={this.props.activeUser}
+                                />
+                            </div>
+                        </React.Fragment>
+
+                    }
                 />
-                <MembersTable
-                    className={styles.members}
-                    userGroupId={userGroupId}
-                    isCurrentUserAdmin={isCurrentUserAdmin}
-                    activeUser={this.props.activeUser}
-                />
-                { showUserGroupEditModal &&
+                { showUserGroupEditModal && (
                     <Modal
                         closeOnEscape
                         onClose={this.handleUserGroupEditModalClose}
@@ -190,8 +205,8 @@ export default class Usergroup extends React.PureComponent {
                             />
                         </ModalBody>
                     </Modal>
-                }
-            </div>
+                ) }
+            </React.Fragment>
         );
     }
 }

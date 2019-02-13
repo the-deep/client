@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
 
+import Page from '#rscv/Page';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ResizableH from '#rscv/Resizable/ResizableH';
 import { reverseRoute, checkVersion } from '#rsu/common';
@@ -37,6 +38,7 @@ import {
 import { pathNames } from '#constants';
 import notify from '#notify';
 import _ts from '#ts';
+import _cs from '#cs';
 import BackLink from '#components/general/BackLink';
 
 import LeftPanel from './LeftPanel';
@@ -332,6 +334,7 @@ export default class EditAry extends React.PureComponent {
             activeLeadId,
             editAryIsPristine,
             editAryHasErrors,
+            className: classNameFromProps,
         } = this.props;
 
         const {
@@ -340,11 +343,21 @@ export default class EditAry extends React.PureComponent {
             pendingUploads,
         } = this.state;
 
+        const className = _cs(
+            classNameFromProps,
+            styles.editAssessment,
+        );
+
         if (noTemplate) {
             return (
-                <Message>
-                    {_ts('editAssessment', 'noAryTemplateForProject')}
-                </Message>
+                <Page
+                    className={className}
+                    mainContent={
+                        <Message>
+                            {_ts('editAssessment', 'noAryTemplateForProject')}
+                        </Message>
+                    }
+                />
             );
         } else if (
             leadRequest.pending
@@ -352,7 +365,12 @@ export default class EditAry extends React.PureComponent {
                 || assessmentTemplateRequest.pending
                 || geoOptionsRequest.pending
         ) {
-            return <LoadingAnimation />;
+            return (
+                <Page
+                    className={className}
+                    mainContent={<LoadingAnimation />}
+                />
+            );
         }
 
         const exitPath = reverseRoute(pathNames.leads, {
@@ -364,11 +382,81 @@ export default class EditAry extends React.PureComponent {
             : (leadGroupRequest.response.leads || []).map(lead => lead.title).join(',');
 
         const shouldHidePrompt = editAryIsPristine;
-
         const uploadPending = Object.keys(pendingUploads).some(key => pendingUploads[key]);
 
         return (
-            <div className={styles.editAssessment}>
+            <React.Fragment>
+                <Page
+                    className={className}
+                    headerClassName={styles.header}
+                    header={
+                        <React.Fragment>
+                            <BackLink defaultLink={exitPath} />
+                            <h4 className={styles.heading}>
+                                {title}
+                            </h4>
+                            <Cloak
+                                hide={this.shouldHideSaveButton}
+                                render={
+                                    <div className={styles.actionButtons}>
+                                        <DangerButton
+                                            disabled={
+                                                editAryIsPristine
+                                                    || assessmentRequest.pending
+                                                    || uploadPending
+                                            }
+                                            onClick={this.handleCancelButtonClick}
+                                        >
+                                            { _ts('editAssessment', 'cancelButtonTitle') }
+                                        </DangerButton>
+                                        <SuccessButton
+                                            pending={arySaveRequest.pending}
+                                            onClick={this.handleSaveButtonClick}
+                                            disabled={
+                                                editAryIsPristine
+                                                    || editAryHasErrors
+                                                    || assessmentRequest.pending
+                                                    || uploadPending
+                                            }
+                                        >
+                                            { _ts('editAssessment', 'saveButtonTitle') }
+                                        </SuccessButton>
+                                    </div>
+                                }
+                            />
+                        </React.Fragment>
+                    }
+                    mainContentClassName={styles.main}
+                    mainContent={
+                        <ResizableH
+                            className={styles.assessments}
+                            leftContainerClassName={styles.left}
+                            rightContainerClassName={styles.right}
+                            leftChild={
+                                <LeftPanel
+                                    className={styles.leftPanel}
+                                    lead={leadRequest.response}
+                                    leadGroup={leadGroupRequest.response}
+                                    activeSector={activeSector}
+                                />
+                            }
+                            rightChild={
+                                <Cloak
+                                    makeReadOnly={this.shouldHideSaveButton}
+                                    render={
+                                        <RightPanel
+                                            onActiveSectorChange={this.handleActiveSectorChange}
+                                            onUploadPending={this.handleUploadPending}
+                                            pending={
+                                                arySaveRequest.pending || assessmentRequest.pending
+                                            }
+                                        />
+                                    }
+                                />
+                            }
+                        />
+                    }
+                />
                 <Prompt
                     message={
                         (location) => {
@@ -382,73 +470,7 @@ export default class EditAry extends React.PureComponent {
                         }
                     }
                 />
-                <header className={styles.header}>
-                    <BackLink
-                        defaultLink={exitPath}
-                    />
-                    <h4 className={styles.heading}>
-                        {title}
-                    </h4>
-                    <Cloak
-                        hide={this.shouldHideSaveButton}
-                        render={
-                            <div className={styles.actionButtons}>
-                                <DangerButton
-                                    disabled={
-                                        editAryIsPristine
-                                            || assessmentRequest.pending
-                                            || uploadPending
-                                    }
-                                    onClick={this.handleCancelButtonClick}
-                                >
-                                    { _ts('editAssessment', 'cancelButtonTitle') }
-                                </DangerButton>
-                                <SuccessButton
-                                    pending={arySaveRequest.pending}
-                                    onClick={this.handleSaveButtonClick}
-                                    disabled={
-                                        editAryIsPristine
-                                            || editAryHasErrors
-                                            || assessmentRequest.pending
-                                            || uploadPending
-                                    }
-                                >
-                                    { _ts('editAssessment', 'saveButtonTitle') }
-                                </SuccessButton>
-                            </div>
-                        }
-                    />
-                </header>
-                <div className={styles.content}>
-                    <ResizableH
-                        className={styles.assessments}
-                        leftContainerClassName={styles.left}
-                        rightContainerClassName={styles.right}
-                        leftChild={
-                            <LeftPanel
-                                className={styles.leftPanel}
-                                lead={leadRequest.response}
-                                leadGroup={leadGroupRequest.response}
-                                activeSector={activeSector}
-                            />
-                        }
-                        rightChild={
-                            <Cloak
-                                makeReadOnly={this.shouldHideSaveButton}
-                                render={
-                                    <RightPanel
-                                        onActiveSectorChange={this.handleActiveSectorChange}
-                                        onUploadPending={this.handleUploadPending}
-                                        pending={
-                                            arySaveRequest.pending || assessmentRequest.pending
-                                        }
-                                    />
-                                }
-                            />
-                        }
-                    />
-                </div>
-            </div>
+            </React.Fragment>
         );
     }
 }

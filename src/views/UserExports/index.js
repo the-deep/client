@@ -8,6 +8,7 @@ import {
     compareBoolean,
     compareDate,
 } from '#rsu/common';
+import Page from '#rscv/Page';
 import { FgRestBuilder } from '#rsu/rest';
 import Table from '#rscv/Table';
 import FormattedDate from '#rscv/FormattedDate';
@@ -339,34 +340,42 @@ export default class UserExports extends React.PureComponent {
         const { selectedExport, pendingExports } = this.state;
 
         return (
-            <div className={styles.userExports}>
-                <header className={styles.header}>
-                    <BackLink
-                        defaultLink={reverseRoute(pathNames.export, { projectId })}
-                    />
-                    <h2>
-                        {_ts('export', 'userExportsHeader')}
-                    </h2>
-                </header>
-                <div className={styles.mainContainer}>
-                    { pendingExports && <LoadingAnimation /> }
-                    <div className={styles.tableContainer}>
-                        <Table
-                            data={userExports || emptyList}
-                            headers={this.exportsTableHeader}
-                            keySelector={UserExports.tableKeyExtractor}
-                            highlightRowKey={selectedExport}
-                            onBodyClick={this.handleRowClick}
-                            defaultSort={this.defaultSort}
+            <Page
+                className={styles.userExports}
+                headerClassName={styles.header}
+                header={
+                    <React.Fragment>
+                        <BackLink
+                            className={styles.backLink}
+                            defaultLink={reverseRoute(pathNames.export, { projectId })}
                         />
-                    </div>
-                    <ExportPreview
-                        key={selectedExport}
-                        className={styles.preview}
-                        exportId={selectedExport}
-                    />
-                </div>
-            </div>
+                        <h2 className={styles.heading}>
+                            {_ts('export', 'userExportsHeader')}
+                        </h2>
+                    </React.Fragment>
+                }
+                mainContentClassName={styles.mainContent}
+                mainContent={
+                    <React.Fragment>
+                        { pendingExports && <LoadingAnimation /> }
+                        <div className={styles.tableContainer}>
+                            <Table
+                                data={userExports || emptyList}
+                                headers={this.exportsTableHeader}
+                                keySelector={UserExports.tableKeyExtractor}
+                                highlightRowKey={selectedExport}
+                                onBodyClick={this.handleRowClick}
+                                defaultSort={this.defaultSort}
+                            />
+                        </div>
+                        <ExportPreview
+                            key={selectedExport}
+                            className={styles.preview}
+                            exportId={selectedExport}
+                        />
+                    </React.Fragment>
+                }
+            />
         );
     }
 }

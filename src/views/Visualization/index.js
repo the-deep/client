@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import _ts from '#ts';
 
+import Page from '#rscv/Page';
 import VerticalTabs from '#rscv/VerticalTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 
@@ -372,25 +373,30 @@ export default class Visualization extends React.PureComponent {
 
     render() {
         return (
-            <div className={styles.visualization}>
-                <header className={styles.header}>
+            <Page
+                className={styles.visualization}
+                headerClassName={styles.header}
+                header={
                     <h2>
                         {_ts('visualization', 'visualizationTitle')}
                     </h2>
-                </header>
-                <div className={styles.content}>
-                    <VerticalTabs
-                        tabs={this.tabs}
-                        className={styles.tabs}
-                        useHash
-                    />
-                    <MultiViewContainer
-                        className={styles.visualizations}
-                        views={this.views}
-                        useHash
-                    />
-                </div>
-            </div>
+                }
+                mainContentClassName={styles.content}
+                mainContent={
+                    <Fragment>
+                        <VerticalTabs
+                            tabs={this.tabs}
+                            className={styles.tabs}
+                            useHash
+                        />
+                        <MultiViewContainer
+                            className={styles.visualizations}
+                            views={this.views}
+                            useHash
+                        />
+                    </Fragment>
+                }
+            />
         );
     }
 }

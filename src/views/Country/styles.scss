@@ -4,23 +4,14 @@ $width-sidebar: 240px;
 $page-margin: $spacing-small-alt;
 
 .loading {
-    margin: (-$page-margin);
-    height: calc(100% + #{$page-margin * 2});
+    height: 100%;
 }
 
 .country-panel {
-    display: flex;
-    height: 100%;
-
     .sidebar {
-        @include background-color($color-foreground-alt);
         display: flex;
         position: relative;
-        flex-basis: $width-sidebar;
         flex-direction: column;
-        flex-shrink: 0;
-        margin: -$spacing-small $spacing-small (-$spacing-small) (-$spacing-small);
-        border-right: $width-separator-thin solid $color-separator-alt;
 
         .header {
             @include background-color($color-background-header);
@@ -58,21 +49,24 @@ $page-margin: $spacing-small-alt;
         }
     }
 
-    .country-detail {
-        @extend %main-content;
-        @include background-color($color-background-alt);
-        flex-grow: 1;
-    }
-
-    .country-detail-alt {
-        @include background-color($color-foreground);
-        @include shadow-medium;
+    .main-content {
         display: flex;
-        align-items: center;
         flex-direction: column;
-        flex-grow: 1;
-        justify-content: center;
-        padding: $spacing-medium-alt;
-        font-size: $font-size-extra-large;
+
+        .country-detail {
+            @include background-color($color-background-alt);
+            flex-grow: 1;
+        }
+
+        .country-detail-alt {
+            @include background-color($color-foreground);
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: center;
+            padding: $spacing-medium-alt;
+            font-size: $font-size-extra-large;
+        }
     }
 }

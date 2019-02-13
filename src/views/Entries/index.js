@@ -13,11 +13,11 @@ import Message from '#rscv/Message';
 import List from '#rscv/List';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
+import Page from '#rscv/Page';
 
 import _ts from '#ts';
 import noSearch from '#resources/img/no-search.png';
 import noFilter from '#resources/img/no-filter.png';
-
 
 import {
     setEntriesAction,
@@ -281,38 +281,36 @@ export default class Entries extends React.PureComponent {
         const nonBlockedLoading = pendingEntries;
 
         return (
-            <div className={styles.entriesView}>
-                <header className={styles.header}>
+            <Page
+                className={styles.entriesView}
+                header={
                     <FilterEntriesForm
                         pending={pendingFramework}
                         filters={framework.filters}
                     />
-                </header>
-                <div className={styles.leadGroupedEntriesList}>
-                    {
-                        blockedLoading ? (
+                }
+                mainContentClassName={styles.leadGroupedEntriesList}
+                mainContent={
+                    <React.Fragment>
+                        { (blockedLoading || nonBlockedLoading) && (
                             <LoadingAnimation />
-                        ) : (
-                            <Fragment>
-                                { nonBlockedLoading && <LoadingAnimation /> }
-                                {
-                                    leadGroupedEntriesList.length > 0
-                                        ? <List
-                                            className={styles.leadGroupedEntriesList}
-                                            data={leadGroupedEntriesList}
-                                            renderer={LeadGroupedEntries}
-                                            keySelector={leadKeySelector}
-                                            rendererParams={this.rendererParams}
-                                        />
-                                        : this.renderEmptyEntriesMessage()
-                                }
-                            </Fragment>
-                        )
-                    }
-                </div>
-                {
-                    totalEntriesCount > 0 &&
-                    <footer className={styles.footer}>
+                        )}
+                        { !blockedLoading && (
+                            leadGroupedEntriesList.length > 0 ? (
+                                <List
+                                    className={styles.leadGroupedEntriesList}
+                                    data={leadGroupedEntriesList}
+                                    renderer={LeadGroupedEntries}
+                                    keySelector={leadKeySelector}
+                                    rendererParams={this.rendererParams}
+                                />
+                            ) : this.renderEmptyEntriesMessage()
+                        )}
+                    </React.Fragment>
+                }
+                footerClassName={styles.footer}
+                footer={
+                    totalEntriesCount > 0 ? (
                         <Pager
                             activePage={activePage}
                             itemsCount={totalEntriesCount}
@@ -320,9 +318,9 @@ export default class Entries extends React.PureComponent {
                             onPageClick={this.handlePageClick}
                             showItemsPerPageChange={false}
                         />
-                    </footer>
+                    ) : null
                 }
-            </div>
+            />
         );
     }
 }

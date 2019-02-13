@@ -1,23 +1,7 @@
 @import '~base-scss/base';
 
 .arys {
-    @extend %main-content;
-    display: flex;
-    flex-direction: column;
-    margin: -$spacing-small-alt;
-    border: 0;
-    background-color: transparent;
-    height: calc(100vh - #{$height-navbar});
-
     .header {
-        @include background-color($color-background-header);
-        display: flex;
-        align-items: center;
-        flex-shrink: 0;
-        justify-content: space-between;
-        border-bottom: $width-separator-thin solid $color-separator-alt;
-        padding: $spacing-small;
-
         .filters {
             display: flex;
             flex-grow: 1;
@@ -36,65 +20,67 @@
         }
     }
 
-    .table-container {
-        @include background-color($color-foreground-alt);
-        position: relative;
-        flex-grow: 1;
-        margin: $spacing-small-alt;
-        border: $width-separator-thin solid $color-separator-alt;
-        padding-bottom: $spacing-extra-small;
-        height: 100%;
-        overflow-y: auto;
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
 
-        .arys-table {
-            :global {
-                .header {
-                    position: sticky;
-                    top: 0;
-                }
+        .table-container {
+            position: relative;
+            flex-grow: 1;
+            overflow-y: auto;
 
-                .capitalize {
-                    text-transform: capitalize;
-                }
+            .arys-table {
+                :global {
+                    .header {
+                        position: sticky;
+                        top: 0;
+                    }
 
-                .icon-wrapper {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: $font-size-large;
+                    .capitalize {
+                        text-transform: capitalize;
+                    }
 
-                    a {
-                        color: $color-accent;
+                    .icon-wrapper {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: $font-size-large;
+
+                        a {
+                            color: $color-accent;
+                        }
+                    }
+
+                    .title {
+                        width: 30%;
+                    }
+
+                    .actions {
+                        width: 150px;
                     }
                 }
-
-                .title {
-                    width: 30%;
-                }
-
-                .actions {
-                    width: 150px;
-                }
-            }
-        }
-
-        .empty-message, .empty-filter-message {
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            justify-content: center;
-
-            .image {
-                opacity: 0.3;
-                margin: $spacing-large 0;
-                width: $width-icon-extreme-large;
-                height: $width-icon-extreme-large;
             }
 
-            .empty-link-message {
-                margin: $spacing-medium 0;
-                text-transform: none;
-                color: $color-accent;
+            .empty-message,
+            .empty-filter-message {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                justify-content: center;
+
+                .image {
+                    opacity: 0.3;
+                    margin: $spacing-large 0;
+                    width: $width-icon-extreme-large;
+                    height: $width-icon-extreme-large;
+                }
+
+                .empty-link-message {
+                    margin: $spacing-medium 0;
+                    text-transform: none;
+                    color: $color-accent;
+                }
             }
         }
     }
@@ -103,9 +89,6 @@
         display: flex;
         flex-shrink: 0;
         justify-content: space-between;
-        border-top: $width-separator-thin solid $color-separator;
-        background-color: $color-foreground-alt;
-        padding: $spacing-small $spacing-medium-alt;
 
         .pager {
             display: flex;

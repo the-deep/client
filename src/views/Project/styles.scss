@@ -1,25 +1,36 @@
 @import '~base-scss/base';
 
-$width-project-bar: 280px;
-
 .project-panel {
-    display: flex;
-    height: 100%;
-
-    $page-margin: $spacing-small-alt;
-
     .sidebar {
-        @include background-color($color-foreground);
-        flex-basis: $width-project-bar;
-        flex-grow: 0;
-        flex-shrink: 0;
-        margin: -$page-margin $page-margin (-$page-margin) (-$page-margin);
         border-right: $width-separator-thin solid $color-separator-alt;
     }
 
-    .project-details {
-        @extend %main-content;
-        flex-grow: 1;
-        background-color: $color-foreground-alt;
+    .header {
+        display: flex;
+        align-items: center;
+
+        .heading {
+            flex-grow: 1;
+            overflow: hidden;
+            text-transform: none;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .action-buttons {
+            flex-shrink: 0;
+            padding-left: $spacing-medium;
+        }
+    }
+
+    .main {
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+
+        .project-details {
+            flex-grow: 1;
+            overflow: auto;
+        }
     }
 }
