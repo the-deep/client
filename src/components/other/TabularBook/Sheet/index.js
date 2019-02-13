@@ -105,6 +105,13 @@ export default class Sheet extends React.PureComponent {
     static defaultProps = defaultProps;
     static keySelector = datum => datum.key;
 
+    static getValueByType = (type, obj) => {
+        if (type === DATA_TYPE.number) {
+            return obj.processedValue;
+        }
+        return obj.value;
+    }
+
     getFilterCriteria = (datum, searchTerm = emptyObject) => {
         const { sheet, viewMode } = this.props;
         const {
@@ -197,11 +204,20 @@ export default class Sheet extends React.PureComponent {
                 headerRenderer: Header,
                 cellRenderer: renderers[field.type] || renderers[DATA_TYPE.string],
 
-                comparator: (a, b, d = 1) => comparators[field.type](
-                    a[field.id].invalid || a[field.id].empty ? undefined : a[field.id].value,
-                    b[field.id].invalid || b[field.id].empty ? undefined : b[field.id].value,
-                    d,
-                ),
+                comparator: (a, b, d = 1) => {
+                    const foo = a[field.id];
+                    const bar = b[field.id];
+
+                    return comparators[field.type](
+                        (!foo.invalid && !foo.empty)
+                            ? Sheet.getValueByType(field.type, foo)
+                            : undefined,
+                        (!bar.invalid && !bar.empty)
+                            ? Sheet.getValueByType(field.type, bar)
+                            : undefined,
+                        d,
+                    );
+                },
             }))
     ));
 
@@ -211,7 +227,9 @@ export default class Sheet extends React.PureComponent {
 
     cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({
         className: _cs(styles[type], styles.cell),
-        value: datum[id].value,
+        value: (!datum[id].invalid && !datum[id].empty)
+            ? Sheet.getValueByType(type, datum[id])
+            : datum[id].value,
         invalid: datum[id].invalid,
         empty: datum[id].empty,
         options,
