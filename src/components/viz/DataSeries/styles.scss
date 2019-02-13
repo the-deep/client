@@ -58,7 +58,12 @@ $width-expanded-view: 90vw;
         .vertical-bar-chart,
         .word-cloud,
         .geo-visualization {
+            padding: $spacing-large;
             height: $height-expanded-view-chart;
+        }
+
+        .geo-visualization {
+            padding: 0;
         }
     }
 }

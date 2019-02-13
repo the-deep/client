@@ -125,11 +125,15 @@ export default class DataSeries extends React.PureComponent {
                         },
                     } = this.props;
 
-                    const { region } = options;
+                    const {
+                        regions,
+                        adminLevel,
+                    } = options;
 
                     return {
                         className: styles.geoVisualization,
-                        regions: region,
+                        regions,
+                        adminLevel,
                         value: this.getGeoValue(data),
                     };
                 },
@@ -260,7 +264,6 @@ export default class DataSeries extends React.PureComponent {
         const ExpandedModal = this.renderExpandedModal;
 
         const options = this.getSegmentOptions(value.type);
-        console.warn(options);
 
         return (
             <div className={_cs(className, 'data-series', styles.dataSeries)}>
