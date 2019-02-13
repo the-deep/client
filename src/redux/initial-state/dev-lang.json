@@ -119,7 +119,6 @@
         "137": "Remove lead",
         "138": "Add entry from this lead",
         "139": "Add subcategory",
-        "140": "This lead type is unrecognized.",
         "141": "Are you sure you want to remove this lead? The lead along with all the associated entries and assessment will be removed.",
         "142": "Tabular",
         "143": "Add assessment from this lead",
@@ -1299,13 +1298,6 @@
             "summaryTabLabel": 7003,
             "scoreTabLabel": 7004,
             "noAryTemplateForProject": 144,
-            "simplifiedTabLabel": 424,
-            "assistedTabLabel": 517,
-            "originalTabLabel": 518,
-            "tabularTabLabel": 142,
-            "imagesTabLabel": 519,
-            "entriesTabLabel": 15,
-            "unrecognizedLeadMessage": 140,
             "saveButtonTitle": 25,
             "cancelButtonTitle": 61
         },
@@ -2241,8 +2233,7 @@
             "tabularTabLabel": 142,
             "quantitativeTabLabel": 15000,
             "imagesTabLabel": 519,
-            "entriesTabLabel": 15,
-            "unrecognizedLeadMessage": 140
+            "entriesTabLabel": 15
         },
         "editEntry.overview.leftpane.entryList": {
             "altLabel": 512,
@@ -2464,7 +2455,11 @@
             "toLabel": 1000
         },
         "dashboard": {
-            "deepLabel": 876
+            "deepLabel": 876,
+            "alphaLabel": 1238,
+            "betaLabel": 1237,
+            "devLabel": 1240,
+            "nightlyLabel": 1239
         },
         "widgets.tagging.conditional": {
             "noWidgetFoundText": -99467671
@@ -2533,12 +2528,7 @@
             "geoLabel": -50186668,
             "wordCloudLabel": -50602560
         },
-        "components.dashboard": {
-            "alphaLabel": 1238,
-            "betaLabel": 1237,
-            "devLabel": 1240,
-            "nightlyLabel": 1239
-        },
+        "components.dashboard": {},
         "geoViz": {
             "noRegionSelectedMessage": -14762237,
             "invalidRegion": -78572254
