@@ -11,7 +11,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import { FgRestBuilder } from '#rsu/rest';
-import { reverseRoute } from '#rsu/common';
+import { reverseRoute } from '@togglecorp/fujs';
 
 import { pathNames } from '#constants';
 

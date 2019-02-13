@@ -1,4 +1,4 @@
-import { mapToList } from '#rsu/common';
+import { mapToList } from '@togglecorp/fujs';
 
 const orgChildSelector = d => d.organs;
 const orgLabelSelector = d => d.title;

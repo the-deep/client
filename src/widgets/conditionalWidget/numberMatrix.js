@@ -1,7 +1,6 @@
-import {
-    unique,
-    isTruthy,
-} from '#rsu/common';
+import { isTruthy } from '@togglecorp/fujs';
+import { unique } from '#rsu/common';
+
 import testMultiSelect from './testMultiSelect';
 
 const emptyArray = [];

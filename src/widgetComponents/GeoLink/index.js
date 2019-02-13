@@ -6,9 +6,9 @@ import memoize from 'memoize-one';
 import { FaramInputElement } from '#rscg/FaramElements';
 import Confirm from '#rscv/Modal/Confirm';
 import {
-    findDuplicates,
+    getDuplicates,
     listToMap,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 import { afViewGeoOptionsSelector } from '#redux';
 import _ts from '#ts';
@@ -99,7 +99,7 @@ export default class GeoLink extends React.PureComponent {
         const itemsMap = dataModifier(locations);
         let finalRows = [...value, ...itemsMap];
 
-        const duplicates = findDuplicates(finalRows, titleSelector);
+        const duplicates = getDuplicates(finalRows, titleSelector);
         if (duplicates.length > 0) {
             const duplicatesMap = listToMap(
                 duplicates,

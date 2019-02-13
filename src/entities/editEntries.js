@@ -6,7 +6,7 @@ import {
     compareNumber,
     isFalsy,
     isTruthy,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import {
     pick,
 } from '#utils/common';

@@ -1,4 +1,4 @@
-import { getElementAround } from '#rsu/common';
+import { getElementAround } from '@togglecorp/fujs';
 
 // eslint-disable-next-line import/prefer-default-export
 export const getNewActiveProjectId = (projects, currentActiveProject) => {

@@ -11,7 +11,7 @@ import {
     RequestClient,
     requestMethods,
 } from '#request';
-import { compareString } from '#rsu/common';
+import { compareString } from '@togglecorp/fujs';
 import {
     projectMembershipListSelector,
     projectUsergroupListSelector,

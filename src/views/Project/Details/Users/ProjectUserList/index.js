@@ -18,7 +18,7 @@ import NormalTable from '#rscv/Table';
 import {
     compareString,
     compareDate,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 
 import {

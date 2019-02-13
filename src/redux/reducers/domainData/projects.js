@@ -3,7 +3,7 @@ import {
     compareString,
     listToMap,
     mapToMap,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 import {
     SET_PROJECT_DETAILS as PP__SET_PROJECT_DETAILS,

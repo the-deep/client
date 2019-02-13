@@ -17,7 +17,7 @@ import MultiViewContainer from '#rscv/MultiViewContainer';
 import {
     caseInsensitiveSubmatch,
     reverseRoute,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import update from '#rsu/immutable-update';
 
 import {

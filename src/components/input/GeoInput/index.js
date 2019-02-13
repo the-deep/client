@@ -11,7 +11,7 @@ import { iconNames } from '#constants';
 import {
     listToMap,
     mapToList,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import _cs from '#cs';
 
 import GeoModal from './GeoModal';

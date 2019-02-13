@@ -1,4 +1,4 @@
-import { isTruthy } from '#rsu/common';
+import { isTruthy } from '@togglecorp/fujs';
 
 import createReducerWithMap from '#utils/createReducerWithMap';
 

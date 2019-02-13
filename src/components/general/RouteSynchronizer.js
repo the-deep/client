@@ -10,7 +10,7 @@ import withTracker from '#rscg/withTracker';
 import {
     isParamRequired,
     reverseRoute,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 import AppError from '#components/error/AppError';
 import Cloak from '#components/general/Cloak';

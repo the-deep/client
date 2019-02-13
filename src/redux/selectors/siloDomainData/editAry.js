@@ -1,13 +1,17 @@
 import { createSelector } from 'reselect';
-
-import { median, sum, bucket } from '#rsu/stats';
 import {
-    getObjectChildren,
+    median,
+    sum,
+    bucket,
     isTruthy,
     decodeDate,
     isNotDefined,
     isDefined,
+} from '@togglecorp/fujs';
+
+import {
     unique,
+    getObjectChildren,
 } from '#rsu/common';
 import {
     requiredCondition,
@@ -25,7 +29,6 @@ import {
     assessmentScoreBucketsSelector,
     aryTemplateMetadataSelector,
     aryTemplateMethodologySelector,
-    assessmentSectorsSelector,
 } from '../domainData/props-with-state';
 
 const emptyObject = {};

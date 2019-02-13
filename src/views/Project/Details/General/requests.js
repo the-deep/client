@@ -1,7 +1,7 @@
 import { requestMethods } from '#request';
 import notify from '#notify';
 import { getNewActiveProjectId } from '#entities/project';
-import { checkVersion } from '#rsu/common';
+import { checkVersion } from '@togglecorp/fujs';
 import _ts from '#ts';
 
 

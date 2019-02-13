@@ -1,6 +1,6 @@
 import { RavlError } from '@togglecorp/ravl';
 
-import { isFalsy } from '#rsu/common';
+import { isFalsy } from '@togglecorp/fujs';
 
 const entrySchema = [];
 

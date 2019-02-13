@@ -15,7 +15,7 @@ import Faram, {
 import FaramGroup from '#rscg/FaramGroup';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 
-import { listToMap } from '#rsu/common';
+import { listToMap } from '@togglecorp/fujs';
 
 import { RequestClient, requestMethods } from '#request';
 

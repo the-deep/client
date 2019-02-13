@@ -1,4 +1,4 @@
-import { mapToList } from '#rsu/common';
+import { mapToList } from '@togglecorp/fujs';
 import { widgetTitlesGroupMapForConditional } from '#widgets/widgetMetadata';
 
 import matrix1dConditions from './matrix1d';

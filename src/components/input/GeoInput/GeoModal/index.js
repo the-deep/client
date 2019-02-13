@@ -12,7 +12,7 @@ import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import ListInput from '#rsci/ListInput';
 import { FaramInputElement } from '#rscg/FaramElements';
-import { listToMap } from '#rsu/common';
+import { listToMap } from '@togglecorp/fujs';
 import _ts from '#ts';
 import _cs from '#cs';
 

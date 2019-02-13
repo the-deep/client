@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 
 import {
     reverseRoute,
-    isObjectEmpty,
-} from '#rsu/common';
+    doesObjectHaveNoData,
+} from '@togglecorp/fujs';
 
 import BoundError from '#rscg/BoundError';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -195,7 +195,7 @@ export default class LeadsViz extends React.PureComponent {
             setState: params => this.setState(params),
         });
         this.leadTopicModelingRequest = leadTopicModelingRequest.create({
-            activeProject, docIds, isFilter: !isObjectEmpty(this.props.filters),
+            activeProject, docIds, isFilter: !doesObjectHaveNoData(this.props.filters),
         });
         this.leadTopicModelingRequest.start();
     }
@@ -210,7 +210,7 @@ export default class LeadsViz extends React.PureComponent {
             setState: params => this.setState(params),
         });
         this.leadNerRequest = leadNerRequest.create({
-            activeProject, docIds, isFilter: !isObjectEmpty(this.props.filters),
+            activeProject, docIds, isFilter: !doesObjectHaveNoData(this.props.filters),
         });
         this.leadNerRequest.start();
     }
@@ -225,7 +225,7 @@ export default class LeadsViz extends React.PureComponent {
             setState: params => this.setState(params),
         });
         this.leadTopicCorrelationRequest = leadTopicCorrelationRequest.create({
-            activeProject, docIds, isFilter: !isObjectEmpty(this.props.filters),
+            activeProject, docIds, isFilter: !doesObjectHaveNoData(this.props.filters),
         });
         this.leadTopicCorrelationRequest.start();
     }
@@ -240,7 +240,7 @@ export default class LeadsViz extends React.PureComponent {
             setState: params => this.setState(params),
         });
         this.leadKeywordCorrelationRequest = leadKeywordCorrelationRequest.create({
-            activeProject, docIds, isFilter: !isObjectEmpty(this.props.filters),
+            activeProject, docIds, isFilter: !doesObjectHaveNoData(this.props.filters),
         });
         this.leadKeywordCorrelationRequest.start();
     }
@@ -248,7 +248,7 @@ export default class LeadsViz extends React.PureComponent {
     renderNoLeadFound = () => {
         const { loadingLeads } = this.state;
 
-        const isFilterEmpty = isObjectEmpty(this.props.filters);
+        const isFilterEmpty = doesObjectHaveNoData(this.props.filters);
 
         if (loadingLeads && isFilterEmpty) {
             return null;

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 
-import { getRgbFromHex } from '#rsu/common';
+import { getRgbFromHex } from '@togglecorp/fujs';
 import HealthBar from '#rscz/HealthBar';
 
 import _cs from '#cs';

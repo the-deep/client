@@ -6,8 +6,9 @@ import { Link } from 'react-router-dom';
 import { pathNames } from '#constants/';
 import {
     reverseRoute,
-    isObjectEmpty,
-} from '#rsu/common';
+    doesObjectHaveNoData,
+    formatDateToString,
+} from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
 import Message from '#rscv/Message';
@@ -20,7 +21,6 @@ import FormattedDate from '#rscv/FormattedDate';
 import SparkLines from '#rscz/SparkLines';
 import Numeral from '#rscv/Numeral';
 import BackLink from '#components/general/BackLink';
-import { formatDate } from '#rsu/date';
 
 import {
     discoverProjectsTotalProjectsCountSelector,
@@ -114,7 +114,7 @@ export default class DiscoverProjects extends React.PureComponent {
     static activityDateSelector = a => new Date(a.date).getTime();
     static activityDateModifier = d => `
         ${_ts('discoverProjects.table', 'dateLabel')}:
-        ${formatDate(new Date(d), 'dd-MM-yyyy')} `;
+        ${formatDateToString(new Date(d), 'dd-MM-yyyy')} `;
     static entriesActivityNumberModifier = d => `
         ${_ts('discoverProjects.table', 'numberOfEntries')}: ${d}
     `;
@@ -411,7 +411,7 @@ export default class DiscoverProjects extends React.PureComponent {
         if (pending) {
             return null;
         }
-        const isFilterEmpty = isObjectEmpty(this.props.filters);
+        const isFilterEmpty = doesObjectHaveNoData(this.props.filters);
 
         if (!isFilterEmpty) {
             return (

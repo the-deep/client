@@ -2,7 +2,7 @@ import {
     listToMap,
     getElementAround,
     getNumbers,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import { analyzeErrors } from '#rscg/Faram/validator';
 import update from '#rsu/immutable-update';
 

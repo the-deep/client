@@ -1,5 +1,5 @@
 import _ts from '#ts';
-import { isFalsy } from '#rsu/common';
+import { isFalsy } from '@togglecorp/fujs';
 import { compareTime } from '#utils/common';
 
 const isEqualTo = {

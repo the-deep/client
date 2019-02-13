@@ -1,6 +1,8 @@
 import { createSelector } from 'reselect';
-import { unique, mapToList } from '#rsu/common';
+import { mapToList } from '@togglecorp/fujs';
+
 import update from '#rsu/immutable-update';
+import { unique } from '#rsu/common';
 
 import {
     createFooLanguageSelector,

@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { isFalsy, getKeyByValue } from '#rsu/common';
+import { isFalsy, getFirstKeyByValue } from '@togglecorp/fujs';
 import { pathNames } from '#constants/routes';
 
 const emptyObject = {};
@@ -18,7 +18,7 @@ export const routeIsFirstPageSelector = ({ route }) => (
 
 export const routePathKeySelector = createSelector(
     routePathSelector,
-    path => getKeyByValue(pathNames, path),
+    path => getFirstKeyByValue(pathNames, path),
 );
 
 const propsSelector = (state, props) => props;

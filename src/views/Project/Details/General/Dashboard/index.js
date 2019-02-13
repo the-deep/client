@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
+import { formatDateToString, reverseRoute } from '@togglecorp/fujs';
 
 import SelectInput from '#rsci/SelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -10,9 +11,7 @@ import FormattedDate from '#rscv/FormattedDate';
 import SparkLines from '#rscz/SparkLines';
 import Numeral from '#rscv/Numeral';
 import Message from '#rscv/Message';
-import { formatDate } from '#rsu/date';
 import { pathNames } from '#constants';
-import { reverseRoute } from '#rsu/common';
 
 import {
     projectDashboardSelector,
@@ -115,7 +114,7 @@ export default class ProjectDashboard extends React.PureComponent {
         'project.general.dashboard',
         'activityDateModifier',
         {
-            date: formatDate(new Date(d), 'dd-MM-yyyy'),
+            date: formatDateToString(new Date(d), 'dd-MM-yyyy'),
         },
     );
     static leadsActivityNumberModifier = d => _ts(

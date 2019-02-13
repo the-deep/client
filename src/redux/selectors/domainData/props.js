@@ -1,4 +1,4 @@
-import { isFalsy } from '#rsu/common';
+import { isFalsy } from '@togglecorp/fujs';
 
 // gets identifier from route or prop
 const getFromProps = identifier => ({ route }, props) => {

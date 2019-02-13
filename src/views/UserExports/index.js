@@ -7,7 +7,8 @@ import {
     compareString,
     compareBoolean,
     compareDate,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
+
 import Page from '#rscv/Page';
 import { FgRestBuilder } from '#rsu/rest';
 import Table from '#rscv/Table';

@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 
-import { compareString } from '#rsu/common';
+import { compareString } from '@togglecorp/fujs';
 
 import {
     connectorIdFromRoute,

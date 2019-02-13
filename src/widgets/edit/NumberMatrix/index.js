@@ -14,7 +14,7 @@ import Faram, { requiredCondition } from '#rscg/Faram';
 import FaramList from '#rscg/FaramList';
 import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import { findDuplicates, randomString } from '#rsu/common';
+import { getDuplicates, randomString } from '@togglecorp/fujs';
 
 import TabTitle from '#components/general/TabTitle';
 
@@ -51,7 +51,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                         errors.push(_ts('widgets.editor.numberMatrix', 'atLeastOneError'));
                     }
 
-                    const duplicates = findDuplicates(rowHeaders, o => o.title);
+                    const duplicates = getDuplicates(rowHeaders, o => o.title);
                     if (duplicates.length > 0) {
                         errors.push(_ts(
                             'widgets.editor.numberMatrix',
@@ -76,7 +76,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                         errors.push(_ts('widgets.editor.numberMatrix', 'atLeastOneError'));
                     }
 
-                    const duplicates = findDuplicates(columnHeaders, o => o.title);
+                    const duplicates = getDuplicates(columnHeaders, o => o.title);
                     if (duplicates.length > 0) {
                         errors.push(_ts(
                             'widgets.editor.numberMatrix',

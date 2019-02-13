@@ -4,14 +4,15 @@ import ReactSVG from 'react-svg';
 import { connect } from 'react-redux';
 import { Redirect, Link } from 'react-router-dom';
 
-import Page from '#rscv/Page';
-import { reverseRoute } from '#rsu/common';
+import { reverseRoute } from '@togglecorp/fujs';
 
 import {
     activeProjectIdFromStateSelector,
     activeUserSelector,
     currentUserProjectsSelector,
 } from '#redux';
+
+import Page from '#rscv/Page';
 import { pathNames } from '#constants';
 import _ts from '#ts';
 import logo from '#resources/img/deep-logo.svg';

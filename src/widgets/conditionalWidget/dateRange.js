@@ -1,4 +1,4 @@
-import { compareDate } from '#rsu/common';
+import { compareDate } from '@togglecorp/fujs';
 
 const includes = {
     title: 'Includes',

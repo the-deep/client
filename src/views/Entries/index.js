@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom';
 import { pathNames } from '#constants/';
 import {
     reverseRoute,
-    isObjectEmpty,
-} from '#rsu/common';
+    doesObjectHaveNoData,
+} from '@togglecorp/fujs';
 
 import Message from '#rscv/Message';
 import List from '#rscv/List';
@@ -227,7 +227,7 @@ export default class Entries extends React.PureComponent {
             projectId,
             entriesFilters,
         } = this.props;
-        const isFilterEmpty = isObjectEmpty(entriesFilters);
+        const isFilterEmpty = doesObjectHaveNoData(entriesFilters);
 
         if (!isFilterEmpty) {
             return (

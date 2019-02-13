@@ -1,5 +1,5 @@
 import update from '#rsu/immutable-update';
-import { isFalsy } from '#rsu/common';
+import { isFalsy } from '@togglecorp/fujs';
 
 // TYPE
 

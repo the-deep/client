@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import ListView from '#rscv/List/ListView';
 import { FaramOutputElement } from '#rscg/FaramElements';
-import { listToMap } from '#rsu/common';
+import { listToMap } from '@togglecorp/fujs';
 
 import Row from './Row';
 import styles from './styles.scss';

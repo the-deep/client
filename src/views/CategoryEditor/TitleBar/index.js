@@ -5,7 +5,7 @@ import { pathNames } from '#constants';
 
 import SuccessButton from '#rsca/Button/SuccessButton';
 import BackLink from '#components/general/BackLink';
-import { reverseRoute } from '#rsu/common';
+import { reverseRoute } from '@togglecorp/fujs';
 import _ts from '#ts';
 
 import styles from './styles.scss';

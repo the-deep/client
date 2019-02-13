@@ -7,7 +7,7 @@ import {
 import {
     mapToMap,
     listToMap,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import schema from '#schema';
 import _ts from '#ts';
 

@@ -8,7 +8,7 @@ import {
     isTruthy,
     randomString,
     reverseRoute,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import { CoordinatorBuilder } from '#rsu/coordinate';
 import List from '#rscv/List';
 import Message from '#rscv/Message';

@@ -1,11 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { isTruthy } from '@togglecorp/fujs';
 
 import List from '#rscv/List';
-import {
-    unique,
-    isTruthy,
-} from '#rsu/common';
+import { unique } from '#rsu/common';
 
 import _cs from '#cs';
 

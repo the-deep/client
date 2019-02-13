@@ -15,8 +15,8 @@ import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
 import {
     reverseRoute,
-    isObjectEmpty,
-} from '#rsu/common';
+    doesObjectHaveNoData,
+} from '@togglecorp/fujs';
 
 import {
     activeProjectIdFromStateSelector,
@@ -275,7 +275,7 @@ export default class Arys extends React.PureComponent {
             projectId,
         } = this.props;
 
-        const isFilterEmpty = isObjectEmpty(filters);
+        const isFilterEmpty = doesObjectHaveNoData(filters);
 
         if (!isFilterEmpty) {
             return (
@@ -333,9 +333,6 @@ export default class Arys extends React.PureComponent {
                 />
             );
         }
-
-        const Header = this.renderHeader;
-        const Footer = this.renderFooter;
 
         return (
             <Page

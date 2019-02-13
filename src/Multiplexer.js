@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import {
     addClassName,
     removeClassName,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 */
 // import _ts from '#ts';
 

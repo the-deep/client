@@ -8,7 +8,7 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
 import ColorInput from '#rsci/ColorInput';
-import { randomString } from '#rsu/common';
+import { randomString } from '@togglecorp/fujs';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';

@@ -1,4 +1,4 @@
-import { reverseRoute } from '#rsu/common';
+import { reverseRoute } from '@togglecorp/fujs';
 import { FgRestBuilder } from '#rsu/rest';
 
 import {

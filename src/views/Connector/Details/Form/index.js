@@ -23,7 +23,7 @@ import {
     compareString,
     compareDate,
     isFalsy,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import update from '#rsu/immutable-update';
 
 import { iconNames } from '#constants';

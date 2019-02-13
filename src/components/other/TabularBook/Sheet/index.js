@@ -15,7 +15,7 @@ import {
     caseInsensitiveSubmatch,
     isFalsyString as isFalsyStr,
     isTruthyString as isTruthyStr,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import update from '#rsu/immutable-update';
 import _cs from '#cs';
 import _ts from '#ts';

@@ -1,5 +1,5 @@
 import _ts from '#ts';
-import { isFalsy, compareDate } from '#rsu/common';
+import { isFalsy, compareDate } from '@togglecorp/fujs';
 
 const isEqualTo = {
     title: 'Is equal to',

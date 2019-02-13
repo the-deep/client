@@ -14,7 +14,7 @@ import ModalBody from '#rscv/Modal/Body';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ModalFooter from '#rscv/Modal/Footer';
 import Faram, { requiredCondition } from '#rscg/Faram';
-import { randomString } from '#rsu/common';
+import { randomString } from '@togglecorp/fujs';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 

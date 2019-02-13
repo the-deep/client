@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { caseInsensitiveSubmatch, compareString } from '#rsu/common';
+import { caseInsensitiveSubmatch, compareString } from '@togglecorp/fujs';
 import AccentButton from '#rsca/Button/AccentButton';
 import SearchInput from '#rsci/SearchInput';
 import RadioInput from '#rsci/RadioInput';

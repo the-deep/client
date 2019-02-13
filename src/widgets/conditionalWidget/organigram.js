@@ -1,5 +1,5 @@
 import memoize from 'memoize-one';
-import { isFalsy } from '#rsu/common';
+import { isFalsy } from '@togglecorp/fujs';
 import testMultiSelect from './testMultiSelect';
 
 const emptyObject = {};

@@ -1,6 +1,6 @@
 import Request from '#utils/Request';
 import notify from '#notify';
-import { checkVersion } from '#rsu/common';
+import { checkVersion } from '@togglecorp/fujs';
 
 import _ts from '#ts';
 

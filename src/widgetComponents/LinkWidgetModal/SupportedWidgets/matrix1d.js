@@ -1,4 +1,4 @@
-import { mapToList } from '#rsu/common';
+import { mapToList } from '@togglecorp/fujs';
 
 const getPillars = (widgetData = {}) => (
     widgetData.rows && widgetData.rows.map(r => ({

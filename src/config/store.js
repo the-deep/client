@@ -3,7 +3,7 @@ import {
     createMigrate,
     createTransform,
 } from 'redux-persist';
-import { mapToMap, randomString } from '#rsu/common';
+import { mapToMap, randomString } from '@togglecorp/fujs';
 
 import { isBeta } from './env';
 

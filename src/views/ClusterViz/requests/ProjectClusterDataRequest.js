@@ -1,4 +1,5 @@
 import { FgRestBuilder } from '#rsu/rest';
+import { unique } from '#rsu/common';
 import notify from '#notify';
 import {
     createUrlForProjectClusterData,
@@ -6,7 +7,7 @@ import {
 } from '#rest';
 import schema from '#schema';
 import _ts from '#ts';
-import { unique } from '#rsu/common';
+
 import LeadInfoForDocumentRequest from './LeadInfoForDocumentRequest';
 
 export default class ProjectClusterDataRequest {

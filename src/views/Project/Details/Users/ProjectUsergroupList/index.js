@@ -12,7 +12,7 @@ import _ts from '#ts';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { FaramListElement } from '#rscg/FaramElements';
 import NormalTable from '#rscv/Table';
-import { compareString } from '#rsu/common';
+import { compareString } from '@togglecorp/fujs';
 
 import {
     setProjectUsergroupsAction,

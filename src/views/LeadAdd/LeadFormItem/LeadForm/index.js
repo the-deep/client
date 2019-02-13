@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
+import { formatDateToString } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import AccentButton from '#rsca/Button/AccentButton';
@@ -16,7 +17,6 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import SelectInput from '#rsci/SelectInput';
 import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
-import { formatDate } from '#rsu/date';
 
 import {
     LEAD_TYPE,
@@ -122,7 +122,7 @@ export default class LeadForm extends React.PureComponent {
 
         if (!values.publishedOn) {
             const now = new Date();
-            newValues.publishedOn = formatDate(now, 'yyyy-MM-dd');
+            newValues.publishedOn = formatDateToString(now, 'yyyy-MM-dd');
             valuesChanged = true;
         }
 

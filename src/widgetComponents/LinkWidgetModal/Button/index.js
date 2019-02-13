@@ -5,9 +5,9 @@ import { FaramInputElement } from '#rscg/FaramElements';
 import AccentButton from '#rsca/Button/AccentButton';
 import Confirm from '#rscv/Modal/Confirm';
 import {
-    findDuplicates,
+    getDuplicates,
     listToMap,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import { iconNames } from '#constants';
 
 import _ts from '#ts';
@@ -76,7 +76,7 @@ export default class LinkWidgetModalButton extends React.PureComponent {
         const itemsMap = dataModifier(newItems);
         let finalRows = [...value, ...itemsMap];
 
-        const duplicates = findDuplicates(finalRows, titleSelector);
+        const duplicates = getDuplicates(finalRows, titleSelector);
         if (duplicates.length > 0) {
             const duplicatesMap = listToMap(
                 duplicates,

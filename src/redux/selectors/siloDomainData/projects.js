@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { mapToList } from '#rsu/common';
+import { mapToList } from '@togglecorp/fujs';
 
 import { projectIdFromRoute } from '../domainData';
 

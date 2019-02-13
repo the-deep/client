@@ -1,12 +1,12 @@
 import testMultiSelect from './testMultiSelect';
 
 const emptyObject = {};
+const emptyArray = [];
 
-const isObjectEmpty = obj => (
+// TODO: move this to utils
+const doesObjectHaveNoKey = obj => (
     !!obj && Object.keys(obj).length === 0
 );
-
-const emptyArray = [];
 
 const getDimensionOptions = ({ dimensions = emptyArray } = {}) => (
     dimensions.map(r => ({
@@ -60,7 +60,7 @@ const containsDimension = {
             }
 
             const selectedKeys = Object.keys(dimensionValue)
-                .filter(k => !isObjectEmpty(dimensionValue[k]));
+                .filter(k => !doesObjectHaveNoKey(dimensionValue[k]));
             return selectedKeys.length !== 0;
         }, dimensions),
 };
@@ -82,7 +82,9 @@ const containsSubdimension = {
             if (!dimensionOfSubdimension) {
                 return false;
             }
-            return !isObjectEmpty((value[dimensionOfSubdimension] || emptyObject)[subdimension]);
+            return !doesObjectHaveNoKey(
+                (value[dimensionOfSubdimension] || emptyObject)[subdimension],
+            );
         }, subdimensions),
 };
 
@@ -100,7 +102,7 @@ const containsSector = {
         testMultiSelect(sector => (
             Object.keys(value).some((v) => {
                 const subdimen = value[v];
-                if (isObjectEmpty(subdimen)) {
+                if (doesObjectHaveNoKey(subdimen)) {
                     return false;
                 }
 
@@ -125,13 +127,13 @@ const containsSubsector = {
         testMultiSelect(subsector => (
             Object.keys(value).some((v) => {
                 const subdimen = value[v];
-                if (isObjectEmpty(subdimen)) {
+                if (doesObjectHaveNoKey(subdimen)) {
                     return false;
                 }
 
                 return Object.keys(subdimen).some((sd) => {
                     const subdimenSector = subdimen[sd];
-                    if (isObjectEmpty(subdimenSector)) {
+                    if (doesObjectHaveNoKey(subdimenSector)) {
                         return false;
                     }
                     return Object.keys(subdimenSector).some(sds => (

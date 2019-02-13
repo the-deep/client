@@ -10,7 +10,7 @@ import {
     compareLength,
     compareString,
     isFalsy,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 import FormattedDate from '#rscv/FormattedDate';
 import Table from '#rscv/Table';
 import SearchInput from '#rsci/SearchInput';

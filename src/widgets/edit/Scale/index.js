@@ -14,7 +14,7 @@ import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
-import { findDuplicates, randomString, removeKey } from '#rsu/common';
+import { getDuplicates, randomString, removeKey } from '@togglecorp/fujs';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';
@@ -103,7 +103,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                         errors.push(_ts('widgets.editor.scale', 'requiredErrorMessage'));
                     }
 
-                    const duplicates = findDuplicates(scaleUnits, o => o.label);
+                    const duplicates = getDuplicates(scaleUnits, o => o.label);
                     if (duplicates.length > 0) {
                         errors.push(
                             _ts('widgets.editor.scale', 'duplicateErrorMessage', {

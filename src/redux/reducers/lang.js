@@ -1,6 +1,6 @@
 import createReducerWithMap from '#utils/createReducerWithMap';
 
-import { listToMap } from '#rsu/common';
+import { listToMap } from '@togglecorp/fujs';
 import update from '#rsu/immutable-update';
 
 import initialLangState from '../initial-state/lang';

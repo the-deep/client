@@ -1,5 +1,5 @@
 import { FgRestBuilder } from '#rsu/rest';
-import { checkVersion } from '#rsu/common';
+import { checkVersion } from '@togglecorp/fujs';
 import {
     createParamsForGet,
     createUrlForConnector,

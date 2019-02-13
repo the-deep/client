@@ -11,7 +11,7 @@ import {
     compareString,
     compareStringAsNumber,
     compareStringByWordCount,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 import { iconNames } from '#constants';
 import { allStringsSelector } from '#redux';

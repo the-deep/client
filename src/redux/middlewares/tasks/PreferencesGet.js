@@ -1,5 +1,5 @@
 import { BgRestBuilder } from '#rsu/rest';
-import { isFalsy } from '#rsu/common';
+import { isFalsy } from '@togglecorp/fujs';
 
 import {
     createParamsForGet,

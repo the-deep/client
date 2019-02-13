@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { FgRestBuilder } from '#rsu/rest';
-import { isObjectEmpty } from '#rsu/common';
+import { doesObjectHaveNoData } from '@togglecorp/fujs';
 import SearchInput from '#rsci/SearchInput';
 import DateFilter from '#rsci/DateFilter';
 import TimeFilter from '#rsci/TimeFilter';
@@ -323,7 +323,7 @@ export default class FilterEntriesForm extends React.PureComponent {
             pristine,
             filters,
         } = this.state;
-        const isFilterEmpty = isObjectEmpty(filters);
+        const isFilterEmpty = doesObjectHaveNoData(filters);
 
         const { createdBy } = entryFilterOptions;
 

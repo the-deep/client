@@ -16,7 +16,7 @@ import {
     randomString,
     splitInWhitespace,
     trimWhitespace,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 import {
     categoryEditorViewTitleSelector,

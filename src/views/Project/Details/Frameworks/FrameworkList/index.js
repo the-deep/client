@@ -5,7 +5,7 @@ import memoize from 'memoize-one';
 import {
     caseInsensitiveSubmatch,
     compareString,
-} from '#rsu/common';
+} from '@togglecorp/fujs';
 
 import SearchInput from '#rsci/SearchInput';
 import ListView from '#rscv/List/ListView';

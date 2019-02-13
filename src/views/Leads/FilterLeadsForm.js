@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 
 import {
     isTruthy,
-    isObjectEmpty,
-} from '#rsu/common';
+    doesObjectHaveNoData,
+} from '@togglecorp/fujs';
 import { FgRestBuilder } from '#rsu/rest';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -193,7 +193,7 @@ export default class FilterLeadsForm extends React.PureComponent {
     }
 
     handleClearFilters = () => {
-        if (isObjectEmpty(this.props.filters)) {
+        if (doesObjectHaveNoData(this.props.filters)) {
             // NOTE: Only clear component state,
             // as the filters in global state is already empty
             this.setState({ faramValues: {}, pristine: true });
@@ -221,7 +221,7 @@ export default class FilterLeadsForm extends React.PureComponent {
 
         const isApplyDisabled = pristine;
 
-        const isFilterEmpty = isObjectEmpty(filters);
+        const isFilterEmpty = doesObjectHaveNoData(filters);
         const isClearDisabled = isFilterEmpty && pristine;
 
         return (
