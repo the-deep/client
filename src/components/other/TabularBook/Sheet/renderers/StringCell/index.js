@@ -4,6 +4,8 @@ import React from 'react';
 import _cs from '#cs';
 import styles from './styles.scss';
 
+const emptyText = '-';
+
 export default class StringCell extends React.PureComponent {
     static propTypes = {
         value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -20,10 +22,27 @@ export default class StringCell extends React.PureComponent {
     };
 
     render() {
-        const { value, className, invalid, empty } = this.props;
+        const {
+            value,
+            className,
+            invalid,
+            empty,
+        } = this.props;
+
         return (
-            <div className={_cs(className, invalid && styles.invalid, empty && styles.empty)}>
+            <div className={
+                _cs(
+                    className,
+                    invalid && styles.invalid,
+                    empty && styles.empty,
+                )}
+            >
                 { value }
+                { empty && (
+                    <div className={styles.emptyText}>
+                        { emptyText }
+                    </div>
+                )}
             </div>
         );
     }
