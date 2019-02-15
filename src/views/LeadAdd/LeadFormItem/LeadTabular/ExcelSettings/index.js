@@ -16,10 +16,14 @@ export default class ExcelSettings extends React.PureComponent {
 
     static propTypes = {
         meta: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+        sheets: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+        disabled: PropTypes.bool,
     }
 
     static defaultProps = {
         meta: {},
+        sheets: {},
+        disabled: false,
     }
 
     static renderSheetParams = (key, sheet) => ({
@@ -27,35 +31,42 @@ export default class ExcelSettings extends React.PureComponent {
         title: sheet.title,
     })
 
-    static renderSheetSettings = ({ sheetId, title }) => (
-        <FaramGroup faramElementName={sheetId}>
-            <div className={styles.sheetSetting}>
-                <header className={styles.header}>
-                    <h4 className={styles.sheetTitle}>
-                        {title}
-                    </h4>
+    renderSheetSettings = ({ sheetId, title }) => {
+        const {
+            sheets,
+            disabled,
+        } = this.props;
+        const sheet = sheets[sheetId];
+        return (
+            <FaramGroup faramElementName={sheetId}>
+                <div className={styles.sheetSetting}>
+                    <header className={styles.header}>
+                        <h4 className={styles.sheetTitle}>
+                            {title}
+                        </h4>
+                    </header>
+                    <NumberInput
+                        className={styles.sheetHeaderRowInput}
+                        faramElementName="headerRow"
+                        label={_ts('addLeads.tabular', 'headerRowLabel')}
+                        placeholder={_ts('addLeads.tabular', 'headerRowPlaceholder')}
+                        disabled={sheet.noHeaders || sheet.skip || disabled}
+                    />
+                    <Checkbox
+                        className={styles.checkInput}
+                        faramElementName="noHeaders"
+                        label={_ts('addLeads.tabular', 'noHeaderLabel')}
+                        disabled={sheet.skip || disabled}
+                    />
                     <Checkbox
                         className={styles.checkInput}
                         faramElementName="skip"
                         label={_ts('addLeads.tabular', 'skipLabel')}
                     />
-                </header>
-                <Checkbox
-                    className={styles.checkInput}
-                    faramElementName="noHeaders"
-                    label={_ts('addLeads.tabular', 'noHeaderLabel')}
-                />
-                <NumberInput
-                    className={styles.sheetHeaderRowInput}
-                    faramElementName="headerRow"
-                    label={_ts('addLeads.tabular', 'headerRowLabel')}
-                    placeholder={_ts('addLeads.tabular', 'headerRowPlaceholder')}
-                    showLabel
-                    showHintAndError
-                />
-            </div>
-        </FaramGroup>
-    );
+                </div>
+            </FaramGroup>
+        );
+    }
 
     render() {
         const { meta: { sheets } = {} } = this.props;
@@ -74,7 +85,7 @@ export default class ExcelSettings extends React.PureComponent {
                     className={styles.sheetList}
                     keySelector={ExcelSettings.sheetKeySelector}
                     rendererParams={ExcelSettings.renderSheetParams}
-                    renderer={ExcelSettings.renderSheetSettings}
+                    renderer={this.renderSheetSettings}
                     data={sheets}
                 />
             </FaramGroup>

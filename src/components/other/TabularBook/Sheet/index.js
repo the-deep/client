@@ -301,6 +301,22 @@ export default class Sheet extends React.PureComponent {
         onSheetOptionsChange(sheetId, newOptions);
     }
 
+    handleResetFilter = () => {
+        const {
+            sheet: {
+                options: oldOptions = {},
+            },
+            sheetId,
+            onSheetOptionsChange,
+        } = this.props;
+
+        const settings = {
+            searchTerm: { $set: undefined },
+        };
+        const newOptions = update(oldOptions, settings);
+        onSheetOptionsChange(sheetId, newOptions);
+    }
+
     handleResetSort = () => {
         const {
             sheet: {
@@ -385,7 +401,7 @@ export default class Sheet extends React.PureComponent {
                         render={
                             <ModalButton
                                 iconName={iconNames.more}
-                                title={_ts('tabular.sheets', 'columnShowButtonTooltip')} // Other Columns
+                                title={_ts('tabular.sheets', 'columnShowButtonTooltip')}
                                 disabled={disabled || fieldList.length <= 0}
                                 pending={isFieldRetrievePending}
                                 modal={
@@ -402,7 +418,13 @@ export default class Sheet extends React.PureComponent {
                         iconName={iconNames.sort}
                         onClick={this.handleResetSort}
                         disabled={disabled}
-                        title={_ts('tabular.sheets', 'resetSortTooltip')} // Reset sort
+                        title={_ts('tabular.sheets', 'resetSortTooltip')}
+                    />
+                    <Button
+                        iconName={iconNames.trash}
+                        onClick={this.handleResetFilter}
+                        disabled={disabled}
+                        title={_ts('tabular.sheets', 'resetFilterTooltip')}
                     />
                 </div>
                 <Taebul
