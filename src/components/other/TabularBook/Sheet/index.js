@@ -421,7 +421,7 @@ export default class Sheet extends React.PureComponent {
                         title={_ts('tabular.sheets', 'resetSortTooltip')}
                     />
                     <Button
-                        iconName={iconNames.trash}
+                        iconName={iconNames.close}
                         onClick={this.handleResetFilter}
                         disabled={disabled}
                         title={_ts('tabular.sheets', 'resetFilterTooltip')}

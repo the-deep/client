@@ -7,6 +7,7 @@ $width-input-max: 240px;
 
     .sheet-setting {
         border-bottom: $width-separator-thin solid $color-separator;
+        padding-bottom: $spacing-small;
 
         .header {
             display: flex;
@@ -17,14 +18,9 @@ $width-input-max: 240px;
                 padding: 0 $spacing-medium;
             }
 
-            .check-input {
-                flex-shrink: 0;
-                padding: 0 $spacing-medium;
-                width: auto;
-            }
         }
 
-        .sheet-header-row-input {
+        .input {
             margin: 0 $spacing-medium;
             width: 100%;
             max-width: $width-input-max;

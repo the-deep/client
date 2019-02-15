@@ -147,6 +147,7 @@ export default class LeadFormItem extends React.PureComponent {
     handleTabularBookDelete = () => {
         // NOTE: tabuarBook need not be sent to server
         this.handleFieldsChange({ tabularBook: undefined }, true);
+        this.handleTabularModalClose();
     }
 
     createWebInfoExtractRequest = (url) => {

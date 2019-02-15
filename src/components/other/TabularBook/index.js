@@ -156,7 +156,9 @@ const requests = {
     deleteRequest: {
         method: requestMethods.DELETE,
         url: ({ props }) => `/tabular-books/${props.bookId}/`,
-        onSuccess: ({ props }) => props.onDelete(),
+        onSuccess: ({ props }) => {
+            props.onDelete();
+        },
         onFailure: ({ error = {} }) => {
             const { nonFieldErrors } = error;
             const displayError = nonFieldErrors
@@ -806,9 +808,12 @@ export default class TabularBook extends React.PureComponent {
                             </DangerConfirmButton>
                         }
                     />
-                    <WarningButton onClick={onCancel}>
+                    <Button
+                        onClick={onCancel}
+                        disabled={deletePending || isSomePending}
+                    >
                         {_ts('tabular', 'closeButtonLabel')}
-                    </WarningButton>
+                    </Button>
                 </ModalFooter>
             </div>
         );

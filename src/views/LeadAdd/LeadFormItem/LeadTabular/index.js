@@ -140,9 +140,11 @@ const requests = {
             `/meta-extraction/${fileId}/?file_type=${fileType}`
         ),
         onSuccess: ({ params: { fileType, faramValues, setState }, response: meta }) => {
+            const newFaramValues = createFaramValues(faramValues, meta, fileType);
+            const newSchema = createSchema(meta, fileType);
             setState({
-                faramValues: createFaramValues(faramValues, meta, fileType),
-                schema: createSchema(meta, fileType),
+                faramValues: newFaramValues,
+                schema: newSchema,
                 meta,
             });
         },
@@ -202,24 +204,25 @@ export default class LeadTabular extends React.PureComponent {
 
         const fileType = getFileTypeFromMimeType(mimeType);
 
+        const newFaramValues = {
+            title,
+            project,
+            file: attachment.id,
+            fileType,
+        };
+
         getMetaInfoRequest.setDefaultParams({
             fileId: attachment.id,
             fileType,
-            faramValues,
+            faramValues: newFaramValues,
             setState: val => this.setState(val),
         });
 
         this.state = {
             fileType,
             schema: undefined,
-            faramValues: {
-                title,
-                project,
-                file: attachment.id,
-                fileType,
-            },
+            faramValues: newFaramValues,
             faramErrors: {},
-            pristine: true,
             hasError: false,
         };
     }
@@ -233,7 +236,6 @@ export default class LeadTabular extends React.PureComponent {
         this.setState({
             faramValues,
             faramErrors,
-            pristine: false,
             hasError: faramInfo.hasError,
         });
     }
@@ -262,7 +264,6 @@ export default class LeadTabular extends React.PureComponent {
             faramValues,
             faramErrors,
             hasError,
-            pristine,
             meta,
         } = this.state;
 
@@ -295,7 +296,6 @@ export default class LeadTabular extends React.PureComponent {
 
         return (
             <Faram
-                key={fileType}
                 className={styles.form}
                 onChange={this.handleFaramChange}
                 onValidationFailure={this.handleFaramValidationFailure}
@@ -305,7 +305,7 @@ export default class LeadTabular extends React.PureComponent {
                 error={faramErrors}
                 disabled={savePending}
             >
-                <ModalBody>
+                <ModalBody className={styles.body} >
                     <NonFieldErrors faramElement />
                     { component &&
                         <FaramGroup faramElementName="options">
@@ -320,7 +320,7 @@ export default class LeadTabular extends React.PureComponent {
                     <PrimaryButton
                         type="submit"
                         pending={savePending}
-                        disabled={hasError || pristine}
+                        disabled={hasError}
                     >
                         {_ts('addLeads.tabular', 'extractButtonTitle')}
                     </PrimaryButton>
