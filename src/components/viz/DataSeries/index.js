@@ -1,14 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
+import {
+    listToMap,
+} from '@togglecorp/fujs';
 
+import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import Button from '#rsca/Button';
 import GeoViz from '#components/geo/GeoViz';
-import RotatingInput from '#rsci/RotatingInput';
 import SimpleHorizontalBarChart from '#rscz/SimpleHorizontalBarChart';
 import SimpleVerticalBarChart from '#rscz/SimpleVerticalBarChart';
 import WordCloud from '#rscz/WordCloud';
@@ -51,7 +54,6 @@ const sizeSelector = d => d.size;
 const chartsLabelSelector = d => d.text;
 const tooltipSelector = d => `<span>${d.text}</span>`;
 const rotatingInputKeySelector = d => d.key;
-const rotatingInputLabelSelector = d => d.label;
 
 const GRAPH = {
     horizontalBarChart: 'horizontal-bar-chart',
@@ -68,12 +70,40 @@ const GRAPH_MODES = {
 };
 
 
-const GRAPH_LABELS = {
-    [GRAPH.horizontalBarChart]: <span>{_ts('components.viz.dataSeries', 'horizontalBarChartLabel')}</span>,
-    [GRAPH.verticalBarChart]: <span>{_ts('components.viz.dataSeries', 'verticalBarChartLabel')}</span>,
-    [GRAPH.wordCloud]: <span>{_ts('components.viz.dataSeries', 'wordCloudLabel')}</span>,
-    [GRAPH.geo]: <span>{_ts('components.viz.dataSeries', 'geoLabel')}</span>,
+const GRAPH_DETAILS = {
+    [GRAPH.horizontalBarChart]: {
+        title: _ts('components.viz.dataSeries', 'horizontalBarChartLabel'),
+        iconName: iconNames.horizontalBar,
+    },
+    [GRAPH.verticalBarChart]: {
+        title: _ts('components.viz.dataSeries', 'verticalBarChartLabel'),
+        iconName: iconNames.verticalBar,
+    },
+    [GRAPH.wordCloud]: {
+        title: _ts('components.viz.dataSeries', 'wordCloudLabel'),
+        iconName: iconNames.word,
+    },
+    [GRAPH.geo]: {
+        title: _ts('components.viz.dataSeries', 'geoLabel'),
+        iconName: iconNames.globe,
+    },
 };
+
+const Tab = ({
+    icon,
+    onClick,
+    isActive,
+}) => (
+    <button
+        onClick={onClick}
+        className={_cs(
+            styles.tab,
+            isActive && styles.activeTab,
+        )}
+    >
+        <span className={icon} />
+    </button>
+);
 
 
 export default class DataSeries extends React.PureComponent {
@@ -102,6 +132,7 @@ export default class DataSeries extends React.PureComponent {
                         ...commonRendererParams,
                     };
                 },
+                lazyMount: true,
             },
             [GRAPH.verticalBarChart]: {
                 component: SimpleVerticalBarChart,
@@ -114,6 +145,7 @@ export default class DataSeries extends React.PureComponent {
                         ...commonRendererParams,
                     };
                 },
+                lazyMount: true,
             },
             [GRAPH.geo]: {
                 component: GeoViz,
@@ -137,6 +169,7 @@ export default class DataSeries extends React.PureComponent {
                         value: this.getGeoValue(data),
                     };
                 },
+                lazyMount: true,
             },
             [GRAPH.wordCloud]: {
                 component: WordCloud,
@@ -149,6 +182,7 @@ export default class DataSeries extends React.PureComponent {
                         fontSizeSelector: sizeSelector,
                     };
                 },
+                lazyMount: true,
             },
         };
 
@@ -158,11 +192,10 @@ export default class DataSeries extends React.PureComponent {
     }
 
     getSegmentOptions = memoize(type => (
-        GRAPH_MODES[type].map(
-            mode => ({
-                key: mode,
-                label: GRAPH_LABELS[mode],
-            }),
+        listToMap(
+            GRAPH_MODES[type],
+            mode => mode,
+            mode => GRAPH_DETAILS[mode],
         )
     ))
 
@@ -215,6 +248,10 @@ export default class DataSeries extends React.PureComponent {
         this.setState({ activeView: value });
     }
 
+    scrollTabRendererParams = (_, tab) => ({
+        icon: tab.iconName,
+    })
+
     renderExpandedModal = ({
         closeModal,
         title,
@@ -226,14 +263,14 @@ export default class DataSeries extends React.PureComponent {
                 title={title}
                 rightComponent={
                     <div className={styles.actionButtons}>
-                        <RotatingInput
-                            rendererSelector={rotatingInputLabelSelector}
-                            keySelector={rotatingInputKeySelector}
-                            value={activeView}
-                            onChange={this.handleSegmentStateChange}
-                            options={this.getSegmentOptions(type)}
-                            showLabel={false}
-                            showHintAndError={false}
+                        <ScrollTabs
+                            active={activeView}
+                            className={styles.fixedTabs}
+                            onClick={this.handleSegmentStateChange}
+                            renderer={Tab}
+                            rendererParams={this.scrollTabRendererParams}
+                            tabs={this.getSegmentOptions(type)}
+                            hideBlank
                         />
                         <Button
                             iconName={iconNames.close}
@@ -272,15 +309,15 @@ export default class DataSeries extends React.PureComponent {
                         {value.title}
                     </h5>
                     <div className={styles.actions}>
-                        { options && options.length > 1 &&
-                            <RotatingInput
-                                rendererSelector={rotatingInputLabelSelector}
-                                keySelector={rotatingInputKeySelector}
-                                value={activeView}
-                                onChange={this.handleSegmentStateChange}
-                                options={options}
-                                showLabel={false}
-                                showHintAndError={false}
+                        { options && Object.keys(options).length > 1 &&
+                            <ScrollTabs
+                                active={activeView}
+                                className={styles.fixedTabs}
+                                onClick={this.handleSegmentStateChange}
+                                renderer={Tab}
+                                rendererParams={this.scrollTabRendererParams}
+                                tabs={options}
+                                hideBlank
                             />
                         }
                         <ModalButton

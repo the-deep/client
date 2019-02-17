@@ -49,6 +49,14 @@ $width-expanded-view: 90vw;
 
     .action-buttons {
         display: flex;
+
+        .expanded-tab {
+            display: flex;
+
+            .tab {
+                padding-right: $spacing-small;
+            }
+        }
     }
 
     .body {
@@ -64,6 +72,26 @@ $width-expanded-view: 90vw;
 
         .geo-visualization {
             padding: 0;
+        }
+    }
+}
+
+.fixed-tabs {
+    .tab {
+        flex-shrink: 0;
+        outline: 0;
+        border: 0;
+        background-color: transparent;
+        cursor: pointer;
+        padding: $spacing-extra-small $spacing-small;
+        color: $color-text-label;
+        font-family: inherit;
+        font-size: inherit;
+        user-select: none;
+
+        &.active-tab {
+            background-color: fade-out($color-accent, .92);
+            color: $color-accent;
         }
     }
 }

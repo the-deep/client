@@ -221,8 +221,8 @@ export default class Sheet extends React.PureComponent {
             }))
     ));
 
-    shouldHideEditButton = ({ leadPermissions }) => (
-        this.props.viewMode || !leadPermissions.modify
+    shouldHideEditButton = ({ leadPermissions }, disabled, fieldList) => (
+        this.props.viewMode || !leadPermissions.modify || disabled || fieldList.length <= 0
     );
 
     cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({
@@ -397,7 +397,7 @@ export default class Sheet extends React.PureComponent {
             <div className={_cs(className, styles.tabularSheet, 'tabular-sheet')}>
                 <div className={styles.optionsBar}>
                     <Cloak
-                        hide={this.shouldHideEditButton}
+                        hide={obj => this.shouldHideEditButton(obj, disabled, fieldList)}
                         render={
                             <ModalButton
                                 iconName={iconNames.more}
