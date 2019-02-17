@@ -14,12 +14,14 @@
 
     .table {
         flex-grow: 1;
+
         .header {
             padding: 0;
         }
 
         .cell {
-            padding: $spacing-small;
+            padding: $spacing-extra-small $spacing-small;
+            width: 100%;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;

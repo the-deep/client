@@ -269,13 +269,13 @@ export default class LeadTabular extends React.PureComponent {
 
         const {
             pending,
-            error,
+            responseError,
         } = getMetaInfoRequest;
 
         if (pending) {
             return 'pending';
         }
-        if (error) {
+        if (responseError) {
             return 'error';
         }
 

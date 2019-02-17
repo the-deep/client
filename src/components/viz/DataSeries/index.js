@@ -160,6 +160,7 @@ export default class DataSeries extends React.PureComponent {
     getWordCountSeries = memoize((series) => {
         const sanitizedSeries = series
             .filter(datum => !datum.empty && !datum.invalid);
+
         const tags = sanitizedSeries.reduce(
             (acc, { value }) => {
                 acc[value] = (acc[value] || 0) + 1;
@@ -167,10 +168,12 @@ export default class DataSeries extends React.PureComponent {
             }, {},
         );
 
-        return Object.keys(tags).map(word => ({
+        const newSeries = Object.keys(tags).map(word => ({
             text: word,
-            size: tags[word] * 6,
+            size: tags[word],
         }));
+
+        return newSeries;
     })
 
     getNumberCountSeries = memoize((series) => {

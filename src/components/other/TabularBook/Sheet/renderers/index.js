@@ -18,5 +18,6 @@ export const handleInvalidCell = (Cell) => {
         invalid: false,
         empty: false,
     };
+
     return WrappedCell;
 };
