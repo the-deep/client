@@ -156,7 +156,9 @@ const requests = {
     deleteRequest: {
         method: requestMethods.DELETE,
         url: ({ props }) => `/tabular-books/${props.bookId}/`,
-        onSuccess: ({ props }) => props.onDelete(),
+        onSuccess: ({ props }) => {
+            props.onDelete();
+        },
         onFailure: ({ error = {} }) => {
             const { nonFieldErrors } = error;
             const displayError = nonFieldErrors
@@ -209,7 +211,7 @@ export default class TabularBook extends React.PureComponent {
             isSomePending: false,
 
             isSheetRetrievePending: false,
-            // isSheetOptionsSavePending: false,
+            isSheetOptionsSavePending: false,
 
             sheetDeletePending: {},
             sheetEditPending: {},
@@ -361,18 +363,14 @@ export default class TabularBook extends React.PureComponent {
         const request = new FgRestBuilder()
             .url(createUrlForSheetOptionsSave(bookId))
             .params(() => createParamsForSheetOptionsSave(modification))
-            /*
             .preLoad(() => {
                 this.setState({ isSheetOptionsSavePending: true });
             })
-            */
             .postLoad(() => {
-                /*
                 this.setState(
                     { isSheetOptionsSavePending: false },
                     () => this.coordinator.notifyComplete(requestId),
                 );
-                */
                 this.coordinator.notifyComplete(requestId);
             })
             .build();
@@ -575,6 +573,8 @@ export default class TabularBook extends React.PureComponent {
     }
 
     handleSheetOptionsChange = (sheetId, options) => {
+        clearTimeout(this.backgroundSaveTimeout);
+
         this.setState(
             state => produce(state, (safeState) => {
                 const sheetIndex = safeState.originalSheets.findIndex(
@@ -583,11 +583,10 @@ export default class TabularBook extends React.PureComponent {
                 // eslint-disable-next-line no-param-reassign
                 safeState.originalSheets[sheetIndex].options = options;
             }),
+            () => {
+                this.backgroundSaveTimeout = setTimeout(this.handleSheetOptionsSave, 2000);
+            },
         );
-
-        // FIXME: only do this if it has edit permissions
-        clearTimeout(this.backgroundSaveTimeout);
-        this.backgroundSaveTimeout = setTimeout(this.handleSheetOptionsSave, 2000);
     }
 
     tabsRendererParams = (key, data) => ({
@@ -776,29 +775,16 @@ export default class TabularBook extends React.PureComponent {
                 <ModalHeader
                     title={_ts('tabular', 'title')}
                     rightComponent={
-                        <Cloak
-                            hide={this.shouldHideDeleteButton}
-                            render={
-                                <div className={styles.headerContainer}>
-                                    { isSomePending &&
-                                        <div className={styles.pendingMessage}>
-                                            {
-                                                // Saving...
-                                                _ts('tabular', 'tabularSavingMessage')
-                                            }
-                                        </div>
+                        <div className={styles.headerContainer}>
+                            { isSomePending &&
+                                <div className={styles.pendingMessage}>
+                                    {
+                                        // Saving...
+                                        _ts('tabular', 'tabularSavingMessage')
                                     }
-                                    <DangerConfirmButton
-                                        iconName={iconNames.delete}
-                                        onClick={this.handleBookDelete}
-                                        confirmationMessage={_ts('tabular', 'deleteMessage')}
-                                        disabled={disabled || isSomePending}
-                                    >
-                                        {_ts('tabular', 'deleteButtonLabel')}
-                                    </DangerConfirmButton>
                                 </div>
                             }
-                        />
+                        </div>
                     }
                 />
                 <ModalBody className={styles.body}>
@@ -809,9 +795,25 @@ export default class TabularBook extends React.PureComponent {
                     />
                 </ModalBody>
                 <ModalFooter>
-                    <WarningButton onClick={onCancel}>
+                    <Cloak
+                        hide={this.shouldHideDeleteButton}
+                        render={
+                            <DangerConfirmButton
+                                iconName={iconNames.delete}
+                                onClick={this.handleBookDelete}
+                                confirmationMessage={_ts('tabular', 'deleteMessage')}
+                                disabled={disabled || isSomePending}
+                            >
+                                {_ts('tabular', 'deleteButtonLabel')}
+                            </DangerConfirmButton>
+                        }
+                    />
+                    <Button
+                        onClick={onCancel}
+                        disabled={deletePending || isSomePending}
+                    >
                         {_ts('tabular', 'closeButtonLabel')}
-                    </WarningButton>
+                    </Button>
                 </ModalFooter>
             </div>
         );

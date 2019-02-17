@@ -6,10 +6,15 @@
     flex-grow: 1;
     overflow-y: auto;
 
-    .wizard {
+    .form {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
         overflow: auto;
+
+        .body {
+            width: 480px;
+            height: 480px;
+        }
     }
 }
