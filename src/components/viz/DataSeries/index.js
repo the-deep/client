@@ -49,7 +49,6 @@ const chartMargins = {
 
 const sizeSelector = d => d.size;
 const chartsLabelSelector = d => d.text;
-const horizontalBarTextSelector = () => '';
 const tooltipSelector = d => `<span>${d.text}</span>`;
 const rotatingInputKeySelector = d => d.key;
 const rotatingInputLabelSelector = d => d.label;
@@ -65,7 +64,7 @@ const GRAPH_MODES = {
     string: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart, GRAPH.wordCloud],
     number: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart],
     datetime: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart],
-    geo: [GRAPH.geo],
+    geo: [GRAPH.verticalBarChart, GRAPH.geo],
 };
 
 
@@ -119,13 +118,23 @@ export default class DataSeries extends React.PureComponent {
             [GRAPH.geo]: {
                 component: GeoViz,
                 rendererParams: () => {
-                    const { value: { geodata = {} } } = this.props;
-                    const { regions } = geodata;
+                    const {
+                        value: {
+                            options = {},
+                            data,
+                        },
+                    } = this.props;
+
+                    const {
+                        regions,
+                        adminLevel,
+                    } = options;
 
                     return {
                         className: styles.geoVisualization,
                         regions,
-                        value: this.getGeoValue(geodata),
+                        adminLevel,
+                        value: this.getGeoValue(data),
                     };
                 },
             },
@@ -198,7 +207,9 @@ export default class DataSeries extends React.PureComponent {
         value: parseFloat(item.value),
     })))
 
-    getGeoValue = memoize(geodata => geodata.data.map(d => String(d.selectedId)))
+    getGeoValue = memoize(data => data
+        .map(d => d.processedValue && String(d.processedValue))
+        .filter(d => d))
 
     handleSegmentStateChange = (value) => {
         this.setState({ activeView: value });

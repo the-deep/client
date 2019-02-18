@@ -3,7 +3,7 @@ import React from 'react';
 
 import Button from '#rsca/Button';
 import SelectInput from '#rsci/SelectInput';
-import SegmentInput from '#rsci/SegmentInput';
+// import SegmentInput from '#rsci/SegmentInput';
 import Message from '#rscv/Message';
 import { randomString } from '@togglecorp/fujs';
 
@@ -21,10 +21,12 @@ const propTypes = {
         title: PropTypes.string,
     })).isRequired,
     value: PropTypes.arrayOf(PropTypes.string),
+    adminLevel: PropTypes.number,
 };
 
 const defaultProps = {
     className: '',
+    adminLevel: undefined,
     value: [],
 };
 
@@ -33,6 +35,7 @@ export default class GeoViz extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static entityKeySelector = r => String(r.id);
+    static entityLevelSelector = r => r.level;
     static entityLabelSelector = r => r.title;
 
     constructor(props) {
@@ -68,9 +71,14 @@ export default class GeoViz extends React.PureComponent {
     }
 
     handleAdminLevelsChange = (adminLevels) => {
+        const { adminLevel } = this.props;
+        const filteredAdminLevels = adminLevel && adminLevels
+            .filter(a => (String(GeoViz.entityLevelSelector(a)) === String(adminLevel)));
+
         this.setState({
-            adminLevels,
-            adminLevelId: adminLevels[0] && GeoViz.entityKeySelector(adminLevels[0]),
+            adminLevels: filteredAdminLevels,
+            adminLevelId: filteredAdminLevels[0] &&
+                GeoViz.entityKeySelector(filteredAdminLevels[0]),
         });
     }
 
@@ -122,6 +130,7 @@ export default class GeoViz extends React.PureComponent {
                         {_ts('geoViz', 'noRegionSelectedMessage')}
                     </Message>
                 )}
+                {/*
                 <SegmentInput
                     className={styles.adminLevelSelect}
                     options={adminLevels}
@@ -130,6 +139,7 @@ export default class GeoViz extends React.PureComponent {
                     value={adminLevelId}
                     onChange={this.handleAdminLevelChange}
                 />
+                */}
             </div>
         );
     }

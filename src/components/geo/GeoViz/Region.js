@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
-import { RequestHandler } from '@togglecorp/react-rest-request';
+import { RequestHandler as createRequestHandler } from '@togglecorp/react-rest-request';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
@@ -10,8 +10,13 @@ import Map from '#rscz/Map';
 import MapLayer from '#rscz/Map/MapLayer';
 import MapSource from '#rscz/Map/MapSource';
 
-import { RequestClient } from '#request';
+import {
+    RequestClient,
+    RequestCoordinator,
+} from '#request';
 import _ts from '#ts';
+
+const RequestHandler = createRequestHandler(RequestClient);
 
 const emptyObject = {};
 
@@ -48,6 +53,7 @@ const requests = {
 const boundsFilter = ['==', '$type', 'Polygon'];
 const pointsFilter = ['==', '$type', 'Point'];
 
+@RequestCoordinator
 @RequestClient(requests)
 export default class Region extends React.PureComponent {
     static propTypes = propTypes;

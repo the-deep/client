@@ -52,11 +52,18 @@ $width-expanded-view: 90vw;
     }
 
     .body {
+        padding: 0;
+
         .horizontal-bar-chart,
         .vertical-bar-chart,
         .word-cloud,
-        .geo {
+        .geo-visualization {
+            padding: $spacing-large;
             height: $height-expanded-view-chart;
+        }
+
+        .geo-visualization {
+            padding: 0;
         }
     }
 }

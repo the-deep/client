@@ -148,6 +148,9 @@ const initialSiloDomainData = {
                 activePage: 1,
                 leads: [],
             },
+            grid: {
+                leads: [],
+            },
             view: 'table',
             viewMode: 'viz',
             filters: {

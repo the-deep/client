@@ -9,12 +9,13 @@
 
     .region-select-input {
         position: absolute;
-        top: $spacing-small;
-        left: $spacing-small;
+        top: $spacing-extra-small;
+        left: $spacing-extra-small;
         z-index: 20;
         border: $width-separator-thin solid $color-separator-alt;
         background-color: $color-foreground;
-        padding: $spacing-small;
+        padding: $spacing-extra-small;
+        width: 96px;
     }
 
     .refresh-button {
@@ -26,11 +27,18 @@
 
     .map {
         width: 100%;
-        height: calc(100% - 28px);
-    }
+        height: 100%;
 
-    .admin-level-select {
-        width: 100%;
-        height: 24px;
+        :global {
+            .mapboxgl-ctrl-bottom-right {
+                .mapboxgl-ctrl {
+                    display: flex;
+
+                    .mapboxgl-ctrl-logo {
+                        width: 36px;
+                    }
+                }
+            }
+        }
     }
 }
