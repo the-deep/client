@@ -3,15 +3,15 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 import { formatDateToString } from '@togglecorp/fujs';
-
-import Button from '#rsca/Button';
-import AccentButton from '#rsca/Button/AccentButton';
-import DateInput from '#rsci/DateInput';
 import Faram, {
     requiredCondition,
     urlCondition,
     dateCondition,
-} from '#rscg/Faram';
+} from '@togglecorp/faram';
+
+import Button from '#rsca/Button';
+import AccentButton from '#rsca/Button/AccentButton';
+import DateInput from '#rsci/DateInput';
 import HiddenInput from '#rsci/HiddenInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import SelectInput from '#rsci/SelectInput';

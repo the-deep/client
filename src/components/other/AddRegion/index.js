@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
+import Faram, { requiredCondition } from '@togglecorp/faram';
 
 import TextInput from '#rsci/TextInput';
-import Faram, { requiredCondition } from '#rscg/Faram';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';

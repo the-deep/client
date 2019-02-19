@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
+import Faram, { requiredCondition } from '@togglecorp/faram';
 
-import Faram, { requiredCondition } from '#rscg/Faram';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';

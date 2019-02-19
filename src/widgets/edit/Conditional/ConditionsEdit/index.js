@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
+import Faram, { FaramList } from '@togglecorp/faram';
+import { randomString } from '@togglecorp/fujs';
 
-import Faram from '#rscg/Faram';
-import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -14,7 +14,6 @@ import ModalHeader from '#rscv/Modal/Header';
 import ListView from '#rscv/List/ListView';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
-import { randomString } from '@togglecorp/fujs';
 import { iconNames } from '#constants';
 
 import {

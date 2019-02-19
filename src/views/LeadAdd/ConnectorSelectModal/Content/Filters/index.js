@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Faram from '@togglecorp/faram';
 
-import Faram from '#rscg/Faram';
 import TextInput from '#rsci/TextInput';
 import Button from '#rsca/Button';
 import List from '#rscv/List';

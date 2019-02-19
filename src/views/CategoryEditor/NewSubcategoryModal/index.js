@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Faram, { requiredCondition } from '@togglecorp/faram';
 
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
@@ -8,7 +9,6 @@ import ModalFooter from '#rscv/Modal/Footer';
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
-import Faram, { requiredCondition } from '#rscg/Faram';
 
 import _ts from '#ts';
 

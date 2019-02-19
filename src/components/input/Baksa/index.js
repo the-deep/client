@@ -4,7 +4,7 @@ import React from 'react';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DropZone from '#rsci/DropZone';
-import { FaramInputElement } from '#rscg/FaramElements';
+import { FaramInputElement } from '@togglecorp/faram';
 import FileInput from '#rsci/FileInput';
 import NumberInput from '#rsci/NumberInput';
 import TextInput from '#rsci/TextInput';

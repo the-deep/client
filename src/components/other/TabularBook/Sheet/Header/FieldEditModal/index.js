@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Faram, { FaramGroup, requiredCondition } from '@togglecorp/faram';
 
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import Faram, { requiredCondition } from '#rscg/Faram';
-import FaramGroup from '#rscg/FaramGroup';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import NumberInput from '#rsci/NumberInput';
 import SegmentInput from '#rsci/SegmentInput';

@@ -1,13 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FaramList, FaramGroup } from '@togglecorp/faram';
+import { randomString } from '@togglecorp/fujs';
 
-import FaramGroup from '#rscg/FaramGroup';
-import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
-import { randomString } from '@togglecorp/fujs';
 
 import _ts from '#ts';
 import { iconNames } from '#constants';

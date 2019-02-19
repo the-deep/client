@@ -1,7 +1,7 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
+import { FaramGroup } from '@togglecorp/faram';
 
-import FaramGroup from '#rscg/FaramGroup';
 import AccentButton from '#rsca/Button/AccentButton';
 import DateInput from '#rsci/DateInput';
 import _ts from '#ts';

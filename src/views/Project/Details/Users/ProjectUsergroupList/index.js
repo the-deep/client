@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 import { connect } from 'react-redux';
+import { compareString } from '@togglecorp/fujs';
+import { FaramListElement } from '@togglecorp/faram';
 
 import {
     RequestClient,
@@ -10,9 +12,7 @@ import {
 } from '#request';
 import _ts from '#ts';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import { FaramListElement } from '#rscg/FaramElements';
 import NormalTable from '#rscv/Table';
-import { compareString } from '@togglecorp/fujs';
 
 import {
     setProjectUsergroupsAction,

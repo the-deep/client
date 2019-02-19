@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import Faram from '@togglecorp/faram';
 
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
-import Faram from '#rscg/Faram';
 import MultiSegmentInput from '#rsci/MultiSegmentInput';
 import SearchInput from '#rsci/SearchInput';
 import { doesObjectHaveNoData } from '@togglecorp/fujs';

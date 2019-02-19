@@ -1,5 +1,9 @@
 import { createSelector } from 'reselect';
 import {
+    requiredCondition,
+    dateCondition,
+} from '@togglecorp/faram';
+import {
     median,
     sum,
     bucket,
@@ -13,10 +17,6 @@ import {
     unique,
     getObjectChildren,
 } from '#rsu/common';
-import {
-    requiredCondition,
-    dateCondition,
-} from '#rscg/Faram';
 
 import {
     leadIdFromRouteSelector,

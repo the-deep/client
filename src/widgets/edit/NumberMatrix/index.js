@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Faram, { FaramList, requiredCondition } from '@togglecorp/faram';
+import { getDuplicates, randomString } from '@togglecorp/fujs';
 
 import TextInput from '#rsci/TextInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -10,11 +12,8 @@ import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import SortableListView from '#rscv/SortableListView';
-import Faram, { requiredCondition } from '#rscg/Faram';
-import FaramList from '#rscg/FaramList';
 import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import { getDuplicates, randomString } from '@togglecorp/fujs';
 
 import TabTitle from '#components/general/TabTitle';
 

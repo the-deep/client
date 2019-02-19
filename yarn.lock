@@ -924,7 +924,7 @@
     core-js "^2.5.3"
     regenerator-runtime "^0.11.1"
 
-"@babel/runtime@^7.1.2":
+"@babel/runtime@^7.1.2", "@babel/runtime@^7.3.1":
   version "7.3.1"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.3.1.tgz#574b03e8e8a9898eaf4a872a92ea20b7846f6f2a"
   integrity sha512-7jGW8ppV0ant637pIqAcFfQDDH1orEPGJb8aXfUozuCU3QqX7rX4DA8iwrbPrR1hcH0FTTHz47yQnk+bl5xHQA==
@@ -1126,10 +1126,22 @@
     hoist-non-react-statics "^3.0.1"
     prop-types "^15.6.2"
 
-"@togglecorp/fujs@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@togglecorp/fujs/-/fujs-1.1.0.tgz#339fce2712960d2cd5ba9772b5740c5015438299"
-  integrity sha512-lG1Yh+c8Z4udHUlgnO3nTWzNtr8zBuEYTXwt8X3oVNxgj5CYy91UYV1PS68huhff+pi3mNa1azNmVkA+Ho8KkA==
+"@togglecorp/faram@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@togglecorp/faram/-/faram-1.0.0.tgz#936a5b868a40b7ae668b33546481cce4c712c65d"
+  integrity sha512-peBNzah5jLzMF5h9NobNR0Fir4RBcvC65f8hHwJdJjDaa2J+22vBN+K0KWCdOpzfe26vVwCXZ0dx6vDfdTc+yQ==
+  dependencies:
+    "@babel/runtime" "^7.3.1"
+    "@togglecorp/fujs" "^1.2.1"
+    hoist-non-react-statics "^3.0.1"
+    immer "^2.0.0"
+    memoize-one "^5.0.0"
+    prop-types "^15.6.2"
+
+"@togglecorp/fujs@^1.2.1", "@togglecorp/fujs@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@togglecorp/fujs/-/fujs-1.3.0.tgz#c663826e60eea46129ae7531b2f2db527aff59e7"
+  integrity sha512-Ymhw3uFTSbJmUcWNfytS75ZAkIR7D9QJKgBuIePVYqNpntmx5Inly7y8Ha5vPH2sOYIzzJ1Pc8qZuk3iNjJ0QA==
 
 "@togglecorp/ravl@^1.2.0":
   version "1.2.0"
@@ -5573,6 +5585,11 @@ immer@^1.12.1:
   resolved "https://registry.yarnpkg.com/immer/-/immer-1.12.1.tgz#40c6e5b292c00560836c2993bda3a24379d466f5"
   integrity sha512-3fmKM6ovaqDt0CdC9daXpNi5x/YCYS3i4cwLdTVkhJdk5jrDXoPs7lCm3IqM3yhfSnz4tjjxbRG2CziQ7m8ztg==
 
+immer@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-2.0.0.tgz#d834c874d2d249f73511af39f3ef1ed3b7411132"
+  integrity sha512-qwwvbGbidU0P5SjO4s1wZ9hjNj8fQ908UVtKDSAYgxuDiY1MFylCvsQJSr/fUUo3aeHdxZapdpzPi3vpwTUXUQ==
+
 immutability-helper@^2.7.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/immutability-helper/-/immutability-helper-2.7.0.tgz#4ea9916cc8f45142ec3e3f0fce75fa5d66fa1b38"
@@ -7213,6 +7230,11 @@ memoize-one@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-4.0.0.tgz#fc5e2f1427a216676a62ec652cf7398cfad123db"
   integrity sha512-wdpOJ4XBejprGn/xhd1i2XR8Dv1A25FJeIvR7syQhQlz9eXsv+06llcvcmBxlWVGv4C73QBsWA8kxvZozzNwiQ==
+
+memoize-one@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-5.0.0.tgz#d55007dffefb8de7546659a1722a5d42e128286e"
+  integrity sha512-7g0+ejkOaI9w5x6LvQwmj68kUj6rxROywPSCqmclG/HBacmFnZqhVscQ8kovkn9FBCNJmOz6SY42+jnvZzDWdw==
 
 memory-fs@^0.4.0, memory-fs@~0.4.1:
   version "0.4.1"

@@ -4,16 +4,16 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-
-import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Faram, {
     emailCondition,
     requiredCondition,
-} from '#rscg/Faram';
+} from '@togglecorp/faram';
+import { reverseRoute } from '@togglecorp/fujs';
+
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ReCaptcha from '#rsci/ReCaptcha';
 import TextInput from '#rsci/TextInput';
-import { reverseRoute } from '@togglecorp/fujs';
 import { FgRestBuilder } from '#rsu/rest';
 
 import { reCaptchaSiteKey } from '#config/reCaptcha';

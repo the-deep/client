@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FaramGroup, FaramInputElement } from '@togglecorp/faram';
 
 import Message from '#rscv/Message';
-import FaramGroup from '#rscg/FaramGroup';
-import { FaramInputElement } from '#rscg/FaramElements';
 import {
     fetchWidgetTagComponent,
     fetchWidgetViewComponent,

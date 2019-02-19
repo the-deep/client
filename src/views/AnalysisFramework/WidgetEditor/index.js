@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
+import Faram, { FaramGroup } from '@togglecorp/faram';
 
-import Faram from '#rscg/Faram';
-import FaramGroup from '#rscg/FaramGroup';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import GridLayoutEditor from '#rscv/GridLayoutEditor';
 

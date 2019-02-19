@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FaramList, FaramGroup } from '@togglecorp/faram';
 
-import FaramGroup from '#rscg/FaramGroup';
-import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import AccentButton from '#rsca/Button/AccentButton';

@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
+import { FaramInputElement } from '@togglecorp/faram';
 
-import { FaramInputElement } from '#rscg/FaramElements';
 import Confirm from '#rscv/Modal/Confirm';
 import {
     getDuplicates,

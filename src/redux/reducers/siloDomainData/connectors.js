@@ -1,6 +1,4 @@
-import {
-    analyzeErrors,
-} from '#rscg/Faram/validator';
+import { analyzeErrors } from '@togglecorp/faram';
 import update from '#rsu/immutable-update';
 
 export const SET_USER_CONNECTORS = 'siloDomainData/SET_USER_CONNECTORS';

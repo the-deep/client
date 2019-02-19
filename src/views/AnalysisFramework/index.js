@@ -2,22 +2,21 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
+import {
+    detachedFaram,
+    requiredCondition,
+} from '@togglecorp/faram';
+import { reverseRoute } from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import { reverseRoute } from '@togglecorp/fujs';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import SuccessConfirmButton from '#rsca/ConfirmButton/SuccessConfirmButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import ScrollTabs from '#rscv/ScrollTabs';
 import Message from '#rscv/Message';
 import BackLink from '#components/general/BackLink';
-
-import {
-    detachedFaram,
-    requiredCondition,
-} from '#rscg/Faram';
 
 import { VIEW } from '#widgets';
 import {

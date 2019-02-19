@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FaramOutputElement } from '@togglecorp/faram';
 
 import NormalNumeral from '#rscv/Numeral';
-import { FaramOutputElement } from '#rscg/FaramElements';
 
 import styles from './styles.scss';
 

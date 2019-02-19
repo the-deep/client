@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Faram, { requiredCondition } from '@togglecorp/faram';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import Modal from '#rscv/Modal';
@@ -9,7 +10,6 @@ import ModalHeader from '#rscv/Modal/Header';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
-import Faram, { requiredCondition } from '#rscg/Faram';
 
 import _ts from '#ts';
 

@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import produce from 'immer';
+import { FaramInputElement } from '@togglecorp/faram';
 
 import Button from '#rsca/Button';
-import { FaramInputElement } from '#rscg/FaramElements';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DropZone from '#rsci/DropZone';
 import FileInput from '#rsci/FileInput';

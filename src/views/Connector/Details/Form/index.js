@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
+import Faram, { FaramGroup, requiredCondition, urlCondition } from '@togglecorp/faram';
 
 import AccentButton from '#rsca/Button/AccentButton';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -8,8 +9,6 @@ import WarningButton from '#rsca/Button/WarningButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
-import Faram, { requiredCondition, urlCondition } from '#rscg/Faram';
-import FaramGroup from '#rscg/FaramGroup';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TabularSelectInput from '#rsci/TabularSelectInput';
 import TextInput from '#rsci/TextInput';

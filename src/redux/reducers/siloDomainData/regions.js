@@ -1,6 +1,5 @@
-import {
-    analyzeErrors,
-} from '#rscg/Faram/validator';
+import { analyzeErrors } from '@togglecorp/faram';
+
 import update from '#rsu/immutable-update';
 import {
     SET_REGION_DETAILS,

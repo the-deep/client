@@ -2,8 +2,7 @@ import {
     dateCondition,
     timeCondition,
     inclusiveInBetweenCondition,
-} from '#rscg/Faram';
-
+} from '@togglecorp/faram';
 import { decodeDate } from '@togglecorp/fujs';
 
 const getSchemaForWidget = (widget) => {

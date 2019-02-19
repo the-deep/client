@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FaramGroup } from '@togglecorp/faram';
 
-import FaramGroup from '#rscg/FaramGroup';
 import GridViewLayout from '#rscv/GridViewLayout';
 import {
     VIEW,

@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Faram, { requiredCondition } from '@togglecorp/faram';
+import { isTruthy } from '@togglecorp/fujs';
 
 import NumberInput from '#rsci/NumberInput';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
@@ -10,8 +12,6 @@ import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ModalFooter from '#rscv/Modal/Footer';
-import Faram, { requiredCondition } from '#rscg/Faram';
-import { isTruthy } from '@togglecorp/fujs';
 
 import _ts from '#ts';
 

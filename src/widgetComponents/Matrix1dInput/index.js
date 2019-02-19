@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FaramInputElement } from '@togglecorp/faram';
 
 import ListView from '#rscv/List/ListView';
-import { FaramInputElement } from '#rscg/FaramElements';
 import update from '#rsu/immutable-update';
 
 import Row from './Row';

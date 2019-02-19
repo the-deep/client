@@ -1,11 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Faram from '@togglecorp/faram';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-
-import Faram from '#rscg/Faram';
-
 
 import Overview from './Overview';
 import List from './List';

@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FaramOutputElement } from '@togglecorp/faram';
+import { getColorOnBgColor } from '@togglecorp/fujs';
 
 import Numeral from '#rscv/Numeral';
-import { FaramOutputElement } from '#rscg/FaramElements';
-import { getColorOnBgColor } from '@togglecorp/fujs';
 
 import _cs from '#cs';
 

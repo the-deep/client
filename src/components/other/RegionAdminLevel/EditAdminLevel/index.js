@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import Faram, {
+    greaterThanOrEqualToCondition,
+    requiredCondition,
+    integerCondition,
+} from '@togglecorp/faram';
 
 import { BgRestBuilder } from '#rsu/rest';
 import { UploadBuilder } from '#rsu/upload';
@@ -12,11 +17,6 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import HiddenInput from '#rsci/HiddenInput';
 import FileInput from '#rsci/FileInput';
 import SelectInput from '#rsci/SelectInput';
-import Faram, {
-    greaterThanOrEqualToCondition,
-    requiredCondition,
-    integerCondition,
-} from '#rscg/Faram';
 
 import InternalGallery from '#components/viewer/InternalGallery';
 import {

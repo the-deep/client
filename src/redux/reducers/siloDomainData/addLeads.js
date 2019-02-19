@@ -3,7 +3,8 @@ import {
     getElementAround,
     getNumbers,
 } from '@togglecorp/fujs';
-import { analyzeErrors } from '#rscg/Faram/validator';
+import { analyzeErrors } from '@togglecorp/faram';
+
 import update from '#rsu/immutable-update';
 
 import {

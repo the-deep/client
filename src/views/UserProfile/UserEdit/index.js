@@ -7,9 +7,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import InternalGallery from '#components/viewer/InternalGallery';
+import Faram, { requiredCondition } from '@togglecorp/faram';
 
-import Faram, { requiredCondition } from '#rscg/Faram';
+import InternalGallery from '#components/viewer/InternalGallery';
 import SelectInput from '#rsci/SelectInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ImageInput from '#rsci/FileInput/ImageInput';

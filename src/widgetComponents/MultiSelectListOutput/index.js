@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
-import { FaramOutputElement } from '#rscg/FaramElements';
+import { FaramOutputElement } from '@togglecorp/faram';
 
 import ListView from '#rscv/List/ListView';
 import ListItem from '#components/general/ListItem';

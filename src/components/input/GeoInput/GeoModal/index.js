@@ -11,7 +11,7 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import ListInput from '#rsci/ListInput';
-import { FaramInputElement } from '#rscg/FaramElements';
+import { FaramInputElement } from '@togglecorp/faram';
 import { listToMap } from '@togglecorp/fujs';
 import _ts from '#ts';
 import _cs from '#cs';

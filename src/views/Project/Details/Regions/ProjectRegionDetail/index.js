@@ -8,7 +8,7 @@ import SuccessButton from '#rsca/Button/SuccessButton';
 import WarningButton from '#rsca/Button/WarningButton';
 import Faram, {
     requiredCondition,
-} from '#rscg/Faram';
+} from '@togglecorp/faram';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import RegionAdminLevel from '#components/other/RegionAdminLevel';

@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-
+import Faram, {
+    requiredCondition,
+} from '@togglecorp/faram';
 import { compareString, compareNumber } from '@togglecorp/fujs';
+
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TabularSelectInput from '#rsci/TabularSelectInput';
-import Faram, {
-    requiredCondition,
-} from '#rscg/Faram';
 
 import {
     projectDetailsSelector,
