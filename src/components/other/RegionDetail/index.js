@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FaramGroup } from '@togglecorp/faram';
 
 import TextInput from '#rsci/TextInput';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import FaramGroup from '#rscg/FaramGroup';
 
 import _ts from '#ts';
 

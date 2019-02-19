@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Faram, { FaramGroup } from '@togglecorp/faram';
 
-import Faram from '#rscg/Faram';
-import FaramGroup from '#rscg/FaramGroup';
 import GridViewLayout from '#rscv/GridViewLayout';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 

@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FaramInputElement } from '@togglecorp/faram';
 
 import update from '#rsu/immutable-update';
 import List from '#rscv/List';
-import { FaramInputElement } from '#rscg/FaramElements';
 
 import Row from './Row';
 

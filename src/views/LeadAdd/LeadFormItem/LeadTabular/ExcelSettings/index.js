@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FaramGroup } from '@togglecorp/faram';
 
-import FaramGroup from '#rscg/FaramGroup';
 import Checkbox from '#rsci/Checkbox';
 import NumberInput from '#rsci/NumberInput';
 import ListView from '#rscv/List/ListView';

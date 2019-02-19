@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Faram, { FaramList, requiredCondition } from '@togglecorp/faram';
+import { randomString } from '@togglecorp/fujs';
 
-import FaramList from '#rscg/FaramList';
 import ListView from '#rscv/List/ListView';
 import SortableListView from '#rscv/SortableListView';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
@@ -13,8 +14,6 @@ import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ModalFooter from '#rscv/Modal/Footer';
-import Faram, { requiredCondition } from '#rscg/Faram';
-import { randomString } from '@togglecorp/fujs';
 import { iconNames } from '#constants';
 import _ts from '#ts';
 

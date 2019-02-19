@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-
 import Faram, {
+    FaramList,
     requiredCondition,
-} from '#rscg/Faram';
-import FaramList from '#rscg/FaramList';
+} from '@togglecorp/faram';
+import { getDuplicates, randomString, removeKey } from '@togglecorp/fujs';
+
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import SortableListView from '#rscv/SortableListView';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
@@ -14,7 +15,6 @@ import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
-import { getDuplicates, randomString, removeKey } from '@togglecorp/fujs';
 
 import { iconNames } from '#constants';
 import _ts from '#ts';

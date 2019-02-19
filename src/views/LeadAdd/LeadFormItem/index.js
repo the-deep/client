@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import {
+    requiredCondition,
+    urlCondition,
+} from '@togglecorp/faram';
 
 import Message from '#rscv/Message';
 import Modal from '#rscv/Modal';
 import { FgRestBuilder } from '#rsu/rest';
-import {
-    requiredCondition,
-    urlCondition,
-} from '#rscg/Faram';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ResizableV from '#rscv/Resizable/ResizableV';
 import update from '#rsu/immutable-update';

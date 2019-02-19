@@ -1,10 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Faram, { FaramGroup } from '@togglecorp/faram';
 
 import GridViewLayout from '#rscv/GridViewLayout';
-import Faram from '#rscg/Faram';
-import FaramGroup from '#rscg/FaramGroup';
-
 
 import {
     fetchWidget,

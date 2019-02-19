@@ -6,7 +6,7 @@ import AccentButton from '#rsca/Button/AccentButton';
 import SelectInputWithList from '#rsci/SelectInputWithList';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import Label from '#rsci/Label';
-import { FaramInputElement } from '#rscg/FaramElements';
+import { FaramInputElement } from '@togglecorp/faram';
 import { iconNames } from '#constants';
 import {
     listToMap,

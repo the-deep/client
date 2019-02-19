@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
+import { detachedFaram } from '@togglecorp/faram';
 
 import Page from '#rscv/Page';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -10,7 +11,6 @@ import { reverseRoute, checkVersion } from '@togglecorp/fujs';
 import Message from '#rscv/Message';
 import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerButton from '#rsca/Button/DangerButton';
-import { detachedFaram } from '#rscg/Faram';
 
 import Cloak from '#components/general/Cloak';
 import {

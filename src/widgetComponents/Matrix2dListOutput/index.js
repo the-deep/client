@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FaramOutputElement } from '@togglecorp/faram';
+import { listToMap } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
-import { FaramOutputElement } from '#rscg/FaramElements';
-import { listToMap } from '@togglecorp/fujs';
 
 import Row from './Row';
 import styles from './styles.scss';

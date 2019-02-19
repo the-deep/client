@@ -2,6 +2,11 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Prompt } from 'react-router-dom';
 import { connect } from 'react-redux';
+import Faram, {
+    requiredCondition,
+    dateCondition,
+} from '@togglecorp/faram';
+import { decodeDate } from '@togglecorp/fujs';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
@@ -10,7 +15,6 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import DateInput from '#rsci/DateInput';
 import TextArea from '#rsci/TextArea';
 import TextInput from '#rsci/TextInput';
-import { decodeDate } from '@togglecorp/fujs';
 
 import {
     RequestCoordinator,
@@ -27,10 +31,6 @@ import {
     routeUrlSelector,
 } from '#redux';
 
-import Faram, {
-    requiredCondition,
-    dateCondition,
-} from '#rscg/Faram';
 
 import _ts from '#ts';
 

@@ -1,15 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import Faram, {
+    requiredCondition,
+} from '@togglecorp/faram';
 
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import Faram, {
-    requiredCondition,
-} from '#rscg/Faram';
 
 import { addNewCeAction } from '#redux';
 import _ts from '#ts';

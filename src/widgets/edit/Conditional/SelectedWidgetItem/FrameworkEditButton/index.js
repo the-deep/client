@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import update from 'immutability-helper';
+import { FaramInputElement } from '@togglecorp/faram';
 
 import AccentButton from '#rsca/Button/AccentButton';
-import { FaramInputElement } from '#rscg/FaramElements';
 
 import _ts from '#ts';
 

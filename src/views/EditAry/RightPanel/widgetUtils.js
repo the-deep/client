@@ -1,5 +1,6 @@
 import React from 'react';
-import FaramGroup from '#rscg/FaramGroup';
+import { FaramGroup } from '@togglecorp/faram';
+
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import DateInput from '#rsci/DateInput';

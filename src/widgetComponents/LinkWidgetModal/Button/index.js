@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
+import { FaramInputElement } from '@togglecorp/faram';
 
-import { FaramInputElement } from '#rscg/FaramElements';
 import AccentButton from '#rsca/Button/AccentButton';
 import Confirm from '#rscv/Modal/Confirm';
 import {

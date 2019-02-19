@@ -1,16 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { FaramActionElement } from '@togglecorp/faram';
 
 import SelectInput from '#rsci/SelectInput';
 import { TreeSelectionWithSelectors as TreeSelection } from '#rsci/TreeSelection';
-
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ListView from '#rscv/List/ListView';
 import ModalHeader from '#rscv/Modal/Header';
-import { FaramActionElement } from '#rscg/FaramElements';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import { widgetGroups } from '#widgets/widgetMetadata';

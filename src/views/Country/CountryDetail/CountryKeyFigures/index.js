@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FaramGroup } from '@togglecorp/faram';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import FaramGroup from '#rscg/FaramGroup';
 import TextInput from '#rsci/TextInput';
 
 import { iconNames } from '#constants';

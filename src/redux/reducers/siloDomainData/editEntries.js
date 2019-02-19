@@ -1,11 +1,13 @@
-import { applyDiff, entryAccessor, createEntry } from '#entities/editEntries';
-import { analyzeErrors } from '#rscg/Faram/validator';
+import { analyzeErrors } from '@togglecorp/faram';
+
 import {
     isFalsy,
     randomString,
     getDefinedElementAround,
     formatPdfText,
 } from '@togglecorp/fujs';
+
+import { applyDiff, entryAccessor, createEntry } from '#entities/editEntries';
 import update from '#rsu/immutable-update';
 
 const getNewSelectedEntryKey = (entries, selectedEntryKey) => {

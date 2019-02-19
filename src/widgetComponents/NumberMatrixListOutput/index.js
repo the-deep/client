@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FaramOutputElement } from '@togglecorp/faram';
+import { doesObjectHaveNoData } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
-import { FaramOutputElement } from '#rscg/FaramElements';
-import { doesObjectHaveNoData } from '@togglecorp/fujs';
 
 import Row from './Row';
 import styles from './styles.scss';

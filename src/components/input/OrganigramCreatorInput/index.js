@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { randomString } from '@togglecorp/fujs';
+import { FaramInputElement } from '@togglecorp/faram';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import { FaramInputElement } from '#rscg/FaramElements';
 import TextInput from '#rsci/TextInput';
 import List from '#rscv/List';
 import update from '#rsu/immutable-update';

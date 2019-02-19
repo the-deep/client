@@ -2,6 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 import { connect } from 'react-redux';
+import { FaramListElement } from '@togglecorp/faram';
+import {
+    compareString,
+    compareDate,
+} from '@togglecorp/fujs';
 
 import {
     RequestClient,
@@ -12,14 +17,7 @@ import _ts from '#ts';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import FormattedDate from '#rscv/FormattedDate';
-import { FaramListElement } from '#rscg/FaramElements';
 import NormalTable from '#rscv/Table';
-
-import {
-    compareString,
-    compareDate,
-} from '@togglecorp/fujs';
-
 
 import {
     setProjectMembershipsAction,

@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Faram from '@togglecorp/faram';
 
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import ScrollTabs from '#rscv/ScrollTabs';
-import Faram from '#rscg/Faram';
 
 import {
     leadIdFromRouteSelector,

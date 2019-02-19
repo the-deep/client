@@ -7,6 +7,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import ReactSVG from 'react-svg';
+import { reverseRoute } from '@togglecorp/fujs';
+import Faram, {
+    requiredCondition,
+    emailCondition,
+    lengthGreaterThanCondition,
+} from '@togglecorp/faram';
 
 import {
     FgRestBuilder,
@@ -14,15 +20,9 @@ import {
 } from '#rsu/rest';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import Faram, {
-    requiredCondition,
-    emailCondition,
-    lengthGreaterThanCondition,
-} from '#rscg/Faram';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ReCaptcha from '#rsci/ReCaptcha';
 import TextInput from '#rsci/TextInput';
-import { reverseRoute } from '@togglecorp/fujs';
 
 import { hidUrl } from '#config/hid';
 import { reCaptchaSiteKey } from '#config/reCaptcha';

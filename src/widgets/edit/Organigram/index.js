@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Faram, { requiredCondition } from '@togglecorp/faram';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -9,8 +10,6 @@ import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
-
-import Faram, { requiredCondition } from '#rscg/Faram';
 
 import OrganigramCreatorInput from '#components/input/OrganigramCreatorInput';
 import _ts from '#ts';

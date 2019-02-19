@@ -2,11 +2,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
+import { FaramGroup } from '@togglecorp/faram';
+import { listToMap } from '@togglecorp/fujs';
 
-import FaramGroup from '#rscg/FaramGroup';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import VerticalTabs from '#rscv/VerticalTabs/';
-import { listToMap } from '@togglecorp/fujs';
 import TabTitle from '#components/general/TabTitle';
 
 import {

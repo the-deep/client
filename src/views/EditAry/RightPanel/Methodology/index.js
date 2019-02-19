@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { FaramList, FaramGroup } from '@togglecorp/faram';
 
 import ResizableV from '#rscv/Resizable/ResizableV';
-import FaramGroup from '#rscg/FaramGroup';
-import FaramList from '#rscg/FaramList';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
 import ListView from '#rscv/List/ListView';

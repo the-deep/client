@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { FaramErrorIndicatorElement } from '@togglecorp/faram';
 
 import DangerButton from '#rsca/Button/DangerButton';
-import { FaramErrorIndicatorElement } from '#rscg/FaramElements';
 
 import { iconNames } from '#constants';
 

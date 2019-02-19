@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Faram from '@togglecorp/faram';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import Faram from '#rscg/Faram';
 import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
 

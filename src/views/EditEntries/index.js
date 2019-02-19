@@ -3,12 +3,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link, Prompt } from 'react-router-dom';
 import { reverseRoute } from '@togglecorp/fujs';
+import { detachedFaram } from '@togglecorp/faram';
 
 import Page from '#rscv/Page';
 import update from '#rsu/immutable-update';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
-import { detachedFaram } from '#rscg/Faram';
 import ScrollTabs from '#rscv/ScrollTabs';
 import Message from '#rscv/Message';
 import LoadingAnimation from '#rscv/LoadingAnimation';

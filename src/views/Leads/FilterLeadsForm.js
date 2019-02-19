@@ -1,15 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-
+import Faram from '@togglecorp/faram';
 import {
     isTruthy,
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
+
 import { FgRestBuilder } from '#rsu/rest';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
-import Faram from '#rscg/Faram';
 import SearchInput from '#rsci/SearchInput';
 import DateFilter from '#rsci/DateFilter';
 import MultiSelectInput from '#rsci/MultiSelectInput';

@@ -1,4 +1,11 @@
 import React from 'react';
+import Faram, {
+    integerCondition,
+    requiredCondition,
+    lengthGreaterThanCondition,
+    greaterThanCondition,
+} from '@togglecorp/faram';
+import { compareNumber } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -24,15 +31,6 @@ import SegmentInput from '#rsci/SegmentInput';
 import TabularSelectInput from '#rsci/TabularSelectInput';
 import Wizard from '#rscv/Wizard';
 import Page from '#rscv/Page';
-
-import { compareNumber } from '@togglecorp/fujs';
-
-import Faram, {
-    integerCondition,
-    requiredCondition,
-    lengthGreaterThanCondition,
-    greaterThanCondition,
-} from '#rscg/Faram';
 
 import styles from './styles.scss';
 

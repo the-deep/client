@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { FaramErrorIndicatorElement } from '#rscg/FaramElements';
+import { FaramErrorIndicatorElement } from '@togglecorp/faram';
 
 import _cs from '#cs';
 

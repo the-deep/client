@@ -1,5 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Faram, {
+    requiredCondition,
+} from '@togglecorp/faram';
 
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
@@ -12,10 +15,6 @@ import TextArea from '#rsci/TextArea';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-
-import Faram, {
-    requiredCondition,
-} from '#rscg/Faram';
 
 import _ts from '#ts';
 

@@ -1,7 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Faram, { FaramList, requiredCondition } from '@togglecorp/faram';
+import {
+    getDuplicates,
+    randomString,
+} from '@togglecorp/fujs';
 
-import FaramList from '#rscg/FaramList';
 import SortableListView from '#rscv/SortableListView';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
@@ -12,11 +16,6 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
-import Faram, { requiredCondition } from '#rscg/Faram';
-import {
-    getDuplicates,
-    randomString,
-} from '@togglecorp/fujs';
 import { iconNames } from '#constants';
 
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
