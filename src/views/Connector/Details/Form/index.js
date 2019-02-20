@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
+import re from '#rsu/regexForWeburl';
 import AccentButton from '#rsca/Button/AccentButton';
 import DangerButton from '#rsca/Button/DangerButton';
 import WarningButton from '#rsca/Button/WarningButton';
@@ -50,6 +51,13 @@ import UserListGetRequest from '../../requests/UserListGetRequest';
 import UserProjectsGetRequest from '../../requests/UserProjectsGetRequest';
 
 import styles from './styles.scss';
+
+function isValidUrl(value) {
+    if (!value) {
+        return false;
+    }
+    return re.test(value);
+}
 
 const propTypes = {
     connectorId: PropTypes.number,
@@ -299,9 +307,13 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         if (activeUser) {
             this.startUserProjectsGetRequest(this.props.activeUser.userId);
         }
-        if (key === 'rss-feed' && (faramValues.params || {})['feed-url']) {
-            this.rssFieldGetRequest.init(faramValues.params['feed-url']);
-            this.rssFieldGetRequest.start();
+
+        if (key === 'rss-feed') {
+            const urlFeed = ConnectorDetailsForm.getFeedUrl(faramValues);
+            if (urlFeed && isValidUrl(urlFeed)) {
+                this.rssFieldGetRequest.init(urlFeed);
+                this.rssFieldGetRequest.start();
+            }
         }
     }
 
@@ -340,8 +352,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         if (newConnectorSource.key === 'rss-feed') {
             const newFeedUrl = ConnectorDetailsForm.getFeedUrl(newFaramValues);
             const oldFeedUrl = ConnectorDetailsForm.getFeedUrl(oldFaramValues);
-
-            if (newFeedUrl !== oldFeedUrl) {
+            if (newFeedUrl !== oldFeedUrl && newFeedUrl && isValidUrl(newFeedUrl)) {
                 this.rssFieldGetRequest.init(newFeedUrl);
                 this.rssFieldGetRequest.start();
             }
