@@ -403,6 +403,7 @@ export default class Sheet extends React.PureComponent {
                                 iconName={iconNames.more}
                                 title={_ts('tabular.sheets', 'columnShowButtonTooltip')}
                                 disabled={disabled || fieldList.length <= 0}
+                                transparent
                                 pending={isFieldRetrievePending}
                                 modal={
                                     <FieldRetrieveModal
@@ -419,12 +420,14 @@ export default class Sheet extends React.PureComponent {
                         onClick={this.handleResetSort}
                         disabled={disabled}
                         title={_ts('tabular.sheets', 'resetSortTooltip')}
+                        transparent
                     />
                     <Button
                         iconName={iconNames.close}
                         onClick={this.handleResetFilter}
                         disabled={disabled}
                         title={_ts('tabular.sheets', 'resetFilterTooltip')}
+                        transparent
                     />
                 </div>
                 <Taebul

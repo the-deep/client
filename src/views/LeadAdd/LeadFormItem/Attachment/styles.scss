@@ -1,0 +1,7 @@
+@import '~base-scss/base';
+
+.tabs-container {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}

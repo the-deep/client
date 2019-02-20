@@ -190,11 +190,13 @@ const propTypes = {
 
     deleteRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     viewMode: PropTypes.bool,
+    isModal: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     viewMode: false,
+    isModal: true,
 };
 
 @RequestCoordinator
@@ -757,6 +759,7 @@ export default class TabularBook extends React.PureComponent {
                 pending: deletePending,
             },
             onCancel,
+            isModal,
         } = this.props;
         const { isSomePending } = this.state;
 
@@ -772,21 +775,23 @@ export default class TabularBook extends React.PureComponent {
 
         return (
             <div className={className}>
-                <ModalHeader
-                    title={_ts('tabular', 'title')}
-                    rightComponent={
-                        <div className={styles.headerContainer}>
-                            { isSomePending &&
-                                <div className={styles.pendingMessage}>
-                                    {
-                                        // Saving...
-                                        _ts('tabular', 'tabularSavingMessage')
-                                    }
-                                </div>
-                            }
-                        </div>
-                    }
-                />
+                {isModal &&
+                    <ModalHeader
+                        title={_ts('tabular', 'title')}
+                        rightComponent={
+                            <div className={styles.headerContainer}>
+                                { isSomePending &&
+                                    <div className={styles.pendingMessage}>
+                                        {
+                                            // Saving...
+                                            _ts('tabular', 'tabularSavingMessage')
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                    />
+                }
                 <ModalBody className={styles.body}>
                     <Body
                         completed={completed}
@@ -794,27 +799,29 @@ export default class TabularBook extends React.PureComponent {
                         disabled={disabled}
                     />
                 </ModalBody>
-                <ModalFooter>
-                    <Cloak
-                        hide={this.shouldHideDeleteButton}
-                        render={
-                            <DangerConfirmButton
-                                iconName={iconNames.delete}
-                                onClick={this.handleBookDelete}
-                                confirmationMessage={_ts('tabular', 'deleteMessage')}
-                                disabled={disabled || isSomePending}
-                            >
-                                {_ts('tabular', 'deleteButtonLabel')}
-                            </DangerConfirmButton>
-                        }
-                    />
-                    <Button
-                        onClick={onCancel}
-                        disabled={deletePending || isSomePending}
-                    >
-                        {_ts('tabular', 'closeButtonLabel')}
-                    </Button>
-                </ModalFooter>
+                {isModal &&
+                    <ModalFooter>
+                        <Cloak
+                            hide={this.shouldHideDeleteButton}
+                            render={
+                                <DangerConfirmButton
+                                    iconName={iconNames.delete}
+                                    onClick={this.handleBookDelete}
+                                    confirmationMessage={_ts('tabular', 'deleteMessage')}
+                                    disabled={disabled || isSomePending}
+                                >
+                                    {_ts('tabular', 'deleteButtonLabel')}
+                                </DangerConfirmButton>
+                            }
+                        />
+                        <Button
+                            onClick={onCancel}
+                            disabled={deletePending || isSomePending}
+                        >
+                            {_ts('tabular', 'closeButtonLabel')}
+                        </Button>
+                    </ModalFooter>
+                }
             </div>
         );
     }

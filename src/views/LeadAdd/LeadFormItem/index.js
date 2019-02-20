@@ -13,7 +13,6 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import ResizableV from '#rscv/Resizable/ResizableV';
 import update from '#rsu/immutable-update';
 
-import InternalGallery from '#components/viewer/InternalGallery';
 import ExternalGallery from '#components/viewer/ExternalGallery';
 import TabularBook from '#components/other/TabularBook';
 
@@ -34,6 +33,7 @@ import {
 import _ts from '#ts';
 
 import LeadForm from './LeadForm';
+import Attachment from './Attachment';
 import AddLeadGroup from './AddLeadGroup';
 import LeadTabular from './LeadTabular';
 import styles from './styles.scss';
@@ -338,13 +338,17 @@ export default class LeadFormItem extends React.PureComponent {
 
     // RENDER
 
-
     renderLeadPreview = ({
         lead,
         className,
     }) => {
         const type = leadAccessor.getType(lead);
         const values = leadAccessor.getFaramValues(lead);
+        const {
+            faramValues: {
+                project: projectId,
+            } = {},
+        } = lead;
 
         switch (type) {
             case LEAD_TYPE.text:
@@ -369,11 +373,11 @@ export default class LeadFormItem extends React.PureComponent {
                 return (
                     <div className={className} >
                         { values.attachment ? (
-                            <InternalGallery
+                            <Attachment
+                                attachment={values.attachment}
+                                tabularBook={values.tabularBook}
                                 className={styles.galleryFile}
-                                galleryId={values.attachment && values.attachment.id}
-                                notFoundMessage={_ts('addLeads', 'leadFileNotFound')}
-                                showUrl
+                                projectId={projectId}
                             />
                         ) : (
                             <Message>
