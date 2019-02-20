@@ -86,7 +86,7 @@ export default class Connector extends React.PureComponent {
         if (this.props.connectorsList !== connectorsList) {
             const displayConnectorsList = connectorsList.filter(
                 c => caseInsensitiveSubmatch(
-                    (c.faramValues || emptyObject).title,
+                    c.title,
                     searchInputValue,
                 ),
             );
@@ -138,7 +138,7 @@ export default class Connector extends React.PureComponent {
     handleSearchInputChange = (searchInputValue) => {
         const displayConnectorsList = this.props.connectorsList.filter(
             c => caseInsensitiveSubmatch(
-                (c.faramValues || emptyObject).title,
+                c.title,
                 searchInputValue,
             ),
         );
