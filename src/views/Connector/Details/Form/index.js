@@ -22,6 +22,7 @@ import {
     compareString,
     compareDate,
     isFalsy,
+    isValidUrl,
 } from '@togglecorp/fujs';
 import update from '#rsu/immutable-update';
 
@@ -298,9 +299,13 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         if (activeUser) {
             this.startUserProjectsGetRequest(this.props.activeUser.userId);
         }
-        if (key === 'rss-feed' && (faramValues.params || {})['feed-url']) {
-            this.rssFieldGetRequest.init(faramValues.params['feed-url']);
-            this.rssFieldGetRequest.start();
+
+        if (key === 'rss-feed') {
+            const urlFeed = ConnectorDetailsForm.getFeedUrl(faramValues);
+            if (urlFeed && isValidUrl(urlFeed)) {
+                this.rssFieldGetRequest.init(urlFeed);
+                this.rssFieldGetRequest.start();
+            }
         }
     }
 
@@ -339,8 +344,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         if (newConnectorSource.key === 'rss-feed') {
             const newFeedUrl = ConnectorDetailsForm.getFeedUrl(newFaramValues);
             const oldFeedUrl = ConnectorDetailsForm.getFeedUrl(oldFaramValues);
-
-            if (newFeedUrl !== oldFeedUrl) {
+            if (newFeedUrl !== oldFeedUrl && newFeedUrl && isValidUrl(newFeedUrl)) {
                 this.rssFieldGetRequest.init(newFeedUrl);
                 this.rssFieldGetRequest.start();
             }
