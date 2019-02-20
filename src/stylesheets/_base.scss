@@ -28,7 +28,7 @@ $font-weight-heading: 500;
 }
 
 :global {
-    .modal-shown {
+    .portal-child-shown {
         overflow: hidden;
 
         #root {
