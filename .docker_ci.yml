@@ -1,0 +1,21 @@
+client:
+  image:
+    name: DEEP Client
+    build: ./
+    value: thedeep/deep-client
+  action:
+    test:
+      tag: ORIGIN_BRANCH
+      description: 'Running Yarn Test'
+      command: bash -c 'yarn install && CI=true yarn test'
+      volumes:
+        - ./coverage:/code/coverage
+  tags:
+    ORIGIN_BRANCH:
+      push: on_test
+      env:
+        - TRAVIS_PULL_REQUEST_BRANCH
+        - TRAVIS_BRANCH
+    LATEST:
+      push: on_test
+      value: latest

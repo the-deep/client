@@ -2,41 +2,40 @@ sudo: required
 language: generic
 
 services:
-    - docker
+  - docker
 
 before_install:
-    - |
-      curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64\
-      > /tmp/cc-test-reporter
-    - chmod +x /tmp/cc-test-reporter
-    - get_image() { [[ "$(docker images -q ${1} 2> /dev/null)" != "" ]] && echo ${1} || echo ${2}; }
+  - |
+    curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64\
+    > /tmp/cc-test-reporter
+  - chmod +x /tmp/cc-test-reporter
+  - npm install -g codecov
+  - curl https://s3.amazonaws.com/toggle-utils/docker_ci --output docker_ci && chmod +x docker_ci
 
-    - mkdir -p src/vendor
+  - mkdir -p src/vendor
+  - git clone https://github.com/toggle-corp/react-store.git $REACT_STORE_DIR
+  - git --git-dir=$REACT_STORE_DIR/.git --no-pager show --pretty=fuller --quiet
+  - cp $REACT_STORE_DIR/stylesheets/_user-imports-sample.scss $REACT_STORE_DIR/stylesheets/_user-imports.scss
 
-    - git clone https://github.com/toggle-corp/react-store.git src/vendor/react-store
-    - git --git-dir=src/vendor/react-store/.git --no-pager show --pretty=fuller --quiet
-    - cp src/vendor/react-store/stylesheets/_user-imports-sample.scss src/vendor/react-store/stylesheets/_user-imports.scss
-
-    - docker pull ${DOCKER_IMAGE_CLIENT} || true
-    - docker pull ${DOCKER_IMAGE_CLIENT_B} || true
-    - |
-      docker build\
-      --cache-from $(get_image ${DOCKER_IMAGE_CLIENT_B} ${DOCKER_IMAGE_CLIENT})\
-      --tag ${DOCKER_IMAGE_CLIENT} --tag ${DOCKER_IMAGE_CLIENT_B} .
+  # Pull docker images
+  - ./docker_ci pull
 
 before_script:
-    - npm install -g codecov
-    - /tmp/cc-test-reporter before-build
+  - /tmp/cc-test-reporter before-build
+  # Build server
+  - ./docker_ci build
 
 script:
-    - python -c "import fcntl; fcntl.fcntl(1, fcntl.F_SETFL, 0)"
-    - docker run -t -v `pwd`/coverage:/code/coverage thedeep/deep-client:latest bash -c 'export CI=true && yarn install && yarn test'
+  # Run test
+  - python -c "import fcntl; fcntl.fcntl(1, fcntl.F_SETFL, 0)"
+  - ./docker_ci action --name test
 
 after_success:
-    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    - codecov
-    - /tmp/cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT -p /code/
-    - docker push thedeep/deep-client:latest
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - codecov
+  - /tmp/cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT -p /code/
+  # Push docker images
+  - ./docker_ci push --on on_test
 
 notifications:
   slack:
@@ -45,7 +44,4 @@ notifications:
 
 env:
   global:
-    - DOCKER_IMAGE=thedeep/deep-client
-    - DOCKER_IMAGE_CLIENT=${DOCKER_IMAGE}:latest
-    - DEEP_CLIENT_ORIGIN_BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
-    - DOCKER_IMAGE_CLIENT_B=${DOCKER_IMAGE}:${DEEP_CLIENT_ORIGIN_BRANCH}
+    - REACT_STORE_DIR=src/vendor/react-store
