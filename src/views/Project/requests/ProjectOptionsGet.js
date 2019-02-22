@@ -47,7 +47,10 @@ export default class ProjectOptionsGet extends Request {
     init = (projectId) => {
         this.projectId = projectId;
         this.createDefault({
-            url: createUrlForProjectOptions(projectId),
+            url: createUrlForProjectOptions({
+                project: projectId,
+                fields: ['regions', 'status', 'involvement'],
+            }),
             params: createParamsForGet(),
         });
     }
