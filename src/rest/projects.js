@@ -11,7 +11,8 @@ import {
 export const createUrlForProject = projectId => `${wsEndpoint}/projects/${projectId}/`;
 export const createUrlForProjectJoin = projectId => `${wsEndpoint}/projects/${projectId}/join/`;
 export const createUrlForProjectJoinCancel = projectId => `${wsEndpoint}/projects/${projectId}/join/cancel/`;
-export const createUrlForProjectOptions = projectId => `${wsEndpoint}/project-options/?${p({ project: projectId })}`;
+export const createUrlForProjectOptions = params =>
+    `${wsEndpoint}/project-options/?${p(params)}`;
 
 export const urlForProjectUserGroup = `${wsEndpoint}/project-usergroups/`;
 export const createUrlForProjectUserGroupGet = project => `${wsEndpoint}/project-usergroups/?${p({ project })}`;
