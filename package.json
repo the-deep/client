@@ -107,7 +107,7 @@
     },
     "dependencies": {
         "@togglecorp/ravl": "^1.1.0",
-        "@togglecorp/react-rest-request": "^1.3.0",
+        "@togglecorp/react-rest-request": "1.3.0",
         "body-parser": "^1.18.3",
         "d3-area-label": "^1.4.0",
         "d3-array": "^1.2.1",
