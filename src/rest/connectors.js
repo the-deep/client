@@ -8,6 +8,7 @@ import {
 } from '#config/rest';
 
 const connectorsMiniFields = ['id', 'title', 'version_id', 'source', 'role', 'filters'];
+
 export const urlForConnectors = `${wsEndpoint}/connectors/?${p({ fields: connectorsMiniFields })}`;
 export const urlForConnectorsForAdmin = `${wsEndpoint}/connectors/?${p({
     fields: connectorsMiniFields,
@@ -15,12 +16,13 @@ export const urlForConnectorsForAdmin = `${wsEndpoint}/connectors/?${p({
 })}`;
 export const urlForConnectorsFull = `${wsEndpoint}/connectors/`;
 export const createUrlForConnector = connectorId => `${wsEndpoint}/connectors/${connectorId}/`;
-export const createUrlForConnectorleads = connectorId =>
-    `${wsEndpoint}/connectors/${connectorId}/leads/`;
+export const createUrlForConnectorleads = connectorId => (
+    `${wsEndpoint}/connectors/${connectorId}/leads/`
+);
 export const urlForConnectorSources = `${wsEndpoint}/connector-sources/`;
 
-export const createUrlForRssField = url => `${wsEndpoint}/connector-sources/rss-feed/fields/?feed-url=${url}`;
-export const createUrlForConnectorTest = source => `${urlForConnectorSources}${source}/leads/`;
+export const createUrlForRssField = url => `${wsEndpoint}/connector-sources/rss-feed/fields/?${p({ 'feed-url': url })}`;
+export const createUrlForConnectorTest = source => `${wsEndpoint}/connector-sources/${source}/leads/`;
 
 export const createUrlForConnectorsOfProject = projectId => `${urlForConnectors}&projects=${projectId}`;
 

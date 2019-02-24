@@ -121,7 +121,7 @@ const projectSchema = [];
         },
         fields: {
             regions: { type: 'array.keyValuePair', required: true },
-            userGroups: { type: 'array.keyValuePair', required: true },
+            userGroups: { type: 'array.keyValuePair' },
         },
     };
     projectSchema.push({ name, schema });
