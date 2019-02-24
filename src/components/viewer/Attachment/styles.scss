@@ -4,4 +4,8 @@
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+
+    .tabs {
+        flex-shrink: 0;
+    }
 }

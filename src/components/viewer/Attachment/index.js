@@ -14,8 +14,8 @@ const TAB_TABULAR = 'tabular';
 const TAB_ORIGINAL = 'original';
 
 const tabTitles = {
-    [TAB_TABULAR]: 'Tabular',
-    [TAB_ORIGINAL]: 'Tabular aaaa',
+    [TAB_TABULAR]: _ts('viewer.attachment', 'tabularTabTitle'),
+    [TAB_ORIGINAL]: _ts('viewer.attachment', 'originalTabTitle'),
 };
 
 export default class Attachment extends React.PureComponent {
@@ -75,7 +75,9 @@ export default class Attachment extends React.PureComponent {
             return (
                 <div className={_cs(className, styles.tabsContainer)}>
                     <ScrollTabs
+                        className={styles.tabs}
                         tabs={tabTitles}
+                        active={activeTab}
                         onClick={this.handleTabClick}
                     />
                     <MultiViewContainer

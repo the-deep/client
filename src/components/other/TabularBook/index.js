@@ -775,53 +775,61 @@ export default class TabularBook extends React.PureComponent {
 
         return (
             <div className={className}>
-                {isModal &&
-                    <ModalHeader
-                        title={_ts('tabular', 'title')}
-                        rightComponent={
-                            <div className={styles.headerContainer}>
-                                { isSomePending &&
-                                    <div className={styles.pendingMessage}>
-                                        {
-                                            // Saving...
-                                            _ts('tabular', 'tabularSavingMessage')
-                                        }
-                                    </div>
-                                }
-                            </div>
-                        }
-                    />
-                }
-                <ModalBody className={styles.body}>
-                    <Body
-                        completed={completed}
-                        invalid={invalid}
-                        disabled={disabled}
-                    />
-                </ModalBody>
-                {isModal &&
-                    <ModalFooter>
-                        <Cloak
-                            hide={this.shouldHideDeleteButton}
-                            render={
-                                <DangerConfirmButton
-                                    iconName={iconNames.delete}
-                                    onClick={this.handleBookDelete}
-                                    confirmationMessage={_ts('tabular', 'deleteMessage')}
-                                    disabled={disabled || isSomePending}
-                                >
-                                    {_ts('tabular', 'deleteButtonLabel')}
-                                </DangerConfirmButton>
+                {isModal ? (
+                    <React.Fragment>
+                        <ModalHeader
+                            title={_ts('tabular', 'title')}
+                            rightComponent={
+                                <div className={styles.headerContainer}>
+                                    { isSomePending &&
+                                        <div className={styles.pendingMessage}>
+                                            {
+                                                // Saving...
+                                                _ts('tabular', 'tabularSavingMessage')
+                                            }
+                                        </div>
+                                    }
+                                </div>
                             }
                         />
-                        <Button
-                            onClick={onCancel}
-                            disabled={deletePending || isSomePending}
-                        >
-                            {_ts('tabular', 'closeButtonLabel')}
-                        </Button>
-                    </ModalFooter>
-                }
+                        <ModalBody className={styles.body}>
+                            <Body
+                                completed={completed}
+                                invalid={invalid}
+                                disabled={disabled}
+                            />
+                        </ModalBody>
+                        <ModalFooter>
+                            <Cloak
+                                hide={this.shouldHideDeleteButton}
+                                render={
+                                    <DangerConfirmButton
+                                        iconName={iconNames.delete}
+                                        onClick={this.handleBookDelete}
+                                        confirmationMessage={_ts('tabular', 'deleteMessage')}
+                                        disabled={disabled || isSomePending}
+                                    >
+                                        {_ts('tabular', 'deleteButtonLabel')}
+                                    </DangerConfirmButton>
+                                }
+                            />
+                            <Button
+                                onClick={onCancel}
+                                disabled={deletePending || isSomePending}
+                            >
+                                {_ts('tabular', 'closeButtonLabel')}
+                            </Button>
+                        </ModalFooter>
+                    </React.Fragment>
+                ) : (
+                    <ModalBody className={styles.body}>
+                        <Body
+                            completed={completed}
+                            invalid={invalid}
+                            disabled={disabled}
+                        />
+                    </ModalBody>
+                )}
             </div>
         );
     }

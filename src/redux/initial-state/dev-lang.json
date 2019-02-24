@@ -2597,6 +2597,10 @@
         "tabular.sheets": {
             "resetSortTooltip": 15008,
             "columnShowButtonTooltip": -43793403
+        },
+        "viewer.attachment": {
+            "originalTabTitle": 518,
+            "tabularTabTitle": 142
         }
     }
 }

@@ -15,6 +15,7 @@ import update from '#rsu/immutable-update';
 
 import ExternalGallery from '#components/viewer/ExternalGallery';
 import TabularBook from '#components/other/TabularBook';
+import Attachment from '#components/viewer/Attachment';
 
 import {
     addLeadViewLeadChangeAction,
@@ -33,7 +34,6 @@ import {
 import _ts from '#ts';
 
 import LeadForm from './LeadForm';
-import Attachment from './Attachment';
 import AddLeadGroup from './AddLeadGroup';
 import LeadTabular from './LeadTabular';
 import styles from './styles.scss';

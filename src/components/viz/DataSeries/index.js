@@ -96,6 +96,7 @@ const Tab = ({
 }) => (
     <button
         onClick={onClick}
+        type="button"
         className={_cs(
             styles.tab,
             isActive && styles.activeTab,
@@ -193,8 +194,8 @@ export default class DataSeries extends React.PureComponent {
     })))
 
     getGeoValue = memoize(data => data
-        .map(d => d.processedValue && String(d.processedValue))
-        .filter(d => d))
+        .filter(d => d.processedValue)
+        .map(d => String(d.processedValue)))
 
     createView = ({ showLegend }) => {
         const commonRendererParams = {
@@ -300,7 +301,6 @@ export default class DataSeries extends React.PureComponent {
                             renderer={Tab}
                             rendererParams={this.scrollTabRendererParams}
                             tabs={this.getSegmentOptions(type)}
-                            hideBlank
                         />
                         <Button
                             iconName={iconNames.close}
@@ -346,7 +346,6 @@ export default class DataSeries extends React.PureComponent {
                                 renderer={Tab}
                                 rendererParams={this.scrollTabRendererParams}
                                 tabs={options}
-                                hideBlank
                             />
                         }
                         <ModalButton

@@ -221,9 +221,17 @@ export default class Sheet extends React.PureComponent {
             }))
     ));
 
-    shouldHideEditButton = ({ leadPermissions }, disabled, fieldList) => (
-        this.props.viewMode || !leadPermissions.modify || disabled || fieldList.length <= 0
-    );
+    shouldHideEditButton = ({ leadPermissions }) => {
+        const {
+            sheet: {
+                fields,
+            },
+            disabled,
+        } = this.props;
+        const fieldList = getDeletedFields(fields);
+
+        return this.props.viewMode || !leadPermissions.modify || disabled || fieldList.length <= 0;
+    };
 
     cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({
         className: _cs(styles[type], styles.cell),
@@ -380,6 +388,7 @@ export default class Sheet extends React.PureComponent {
             fieldEditPending,
             viewMode,
         } = this.props;
+
         const { searchTerm } = options;
 
         const columns = this.getSheetColumns(
@@ -397,7 +406,7 @@ export default class Sheet extends React.PureComponent {
             <div className={_cs(className, styles.tabularSheet, 'tabular-sheet')}>
                 <div className={styles.optionsBar}>
                     <Cloak
-                        hide={obj => this.shouldHideEditButton(obj, disabled, fieldList)}
+                        hide={this.shouldHideEditButton}
                         render={
                             <ModalButton
                                 iconName={iconNames.more}

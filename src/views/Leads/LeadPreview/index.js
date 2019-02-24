@@ -5,7 +5,7 @@ import Modal from '#rscv/Modal';
 import Button from '#rsca/Button';
 import ExternalGallery from '#components/viewer/ExternalGallery';
 import { iconNames } from '#constants';
-import InternalGallery from '#components/viewer/InternalGallery';
+import Attachment from '#components/viewer/Attachment';
 import Message from '#rscv/Message';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
@@ -19,7 +19,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    value: [],
+    value: {},
     closeModal: () => {},
 };
 
@@ -28,23 +28,32 @@ export default class LeadPreview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    renderLeadPreview = (row) => {
-        if (row.url) {
+    renderLeadPreview = () => {
+        const {
+            value: {
+                url,
+                attachment,
+                projectId,
+                tabularBook,
+            },
+        } = this.props;
+
+        if (url) {
             return (
                 <ExternalGallery
                     className={styles.galleryFile}
-                    url={row.url}
+                    url={url}
                     showUrl
                 />
             );
         }
-        if (row.attachment) {
+        if (attachment) {
             return (
-                <InternalGallery
+                <Attachment
+                    attachment={attachment}
+                    tabularBook={tabularBook}
                     className={styles.galleryFile}
-                    galleryId={row.attachment && row.attachment.id}
-                    notFoundMessage={_ts('addLeads', 'leadFileNotFound')}
-                    showUrl
+                    projectId={projectId}
                 />
             );
         }
@@ -60,6 +69,8 @@ export default class LeadPreview extends React.PureComponent {
             value,
             closeModal,
         } = this.props;
+
+        const Preview = this.renderLeadPreview;
 
         return (
             <Modal
@@ -82,7 +93,7 @@ export default class LeadPreview extends React.PureComponent {
                 <ModalBody
                     className={styles.body}
                 >
-                    {this.renderLeadPreview(value)}
+                    <Preview />
                 </ModalBody>
             </Modal>
         );
