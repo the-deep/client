@@ -8,16 +8,16 @@ $position-right: $spacing-small-alt;
 
 .region-detail-view {
     @include shadow-small;
-    background-color: $color-foreground;
-color: $color-text-on-foreground;
     display: flex;
     position: absolute;
     top: $position-top;
     right: $position-right;
     flex-direction: column;
     z-index: $z-index-region-detail-view;
+    background-color: $color-foreground;
     width: $width-region-detail-view;
     max-height: $height-region-detail-max;
+    color: $color-text-on-foreground;
 
     .heading {
         flex-shrink: 0;
@@ -31,9 +31,9 @@ color: $color-text-on-foreground;
         overflow-y: auto;
 
         .row {
-            background-color: $color-background-row-alt;
-color: $color-text-on-background-row-alt
             display: table-row;
+            background-color: $color-background-row-alt;
+            // color: $color-text-on-background-row-alt;
 
             .title {
                 display: table-cell;
@@ -56,7 +56,7 @@ color: $color-text-on-background-row-alt
 
             &:nth-child(odd) {
                 background-color: $color-background-row;
-color: $color-text-on-background-row
+                // color: $color-text-on-background-row
             }
         }
     }

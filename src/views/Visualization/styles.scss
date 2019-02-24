@@ -5,14 +5,14 @@
     flex-direction: column;
 
     .header{
-        background-color: $color-background-header;
-color: $color-text-on-background-header
         display: flex;
         align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
         border-bottom: $width-separator-thin solid $color-separator-alt;
+        background-color: $color-background-header;
         padding: $spacing-small;
+        color: $color-text-on-background-header;
     }
 
     .content {
@@ -22,12 +22,12 @@ color: $color-text-on-background-header
         $width-tabs: 240px;
 
         .tabs {
-            background-color: $color-foreground;
-color: $color-text-on-foreground;
             flex-basis: $width-tabs;
             flex-grow: 0;
             flex-shrink: 0;
             border-right: $width-separator-thin solid $color-separator;
+            background-color: $color-foreground;
+            color: $color-text-on-foreground;
         }
 
         .visualizations {
@@ -35,10 +35,10 @@ color: $color-text-on-foreground;
             flex-direction: column;
 
             %viz {
-                background-color: $color-foreground-alt;
-color: $color-text-on-foreground-alt
                 flex-grow: 1;
                 margin-bottom: $spacing-small;
+                background-color: $color-foreground-alt;
+                color: $color-text-on-foreground-alt;
             }
             .chord-diagram {
                 @extend %viz;

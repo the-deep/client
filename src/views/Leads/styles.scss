@@ -10,12 +10,12 @@
 
         .add-lead-link {
             @extend %button-like-link;
-            background-color: $color-primary;
-color: $color-text-on-primary;
             align-self: flex-end;
             flex-shrink: 0;
             margin: $spacing-small;
+            background-color: $color-primary;
             padding: $spacing-small $spacing-medium-alt;
+            color: $color-text-on-primary;
         }
 
         :global {
@@ -49,7 +49,7 @@ color: $color-text-on-primary;
                     font-size: $font-size-extra-large;
 
                     &.active {
-                        background-color: $color-background-hover-light;
+                        background-color: $color-background-hover;
                         color: $color-accent;
                     }
                 }
@@ -92,8 +92,6 @@ color: $color-text-on-primary;
 
 
     .footer {
-        background-color: $color-background-alt;
-color: $color-text-on-background-alt
         display: flex;
         align-items: center;
         flex-shrink: 0;
@@ -101,6 +99,7 @@ color: $color-text-on-background-alt
         border-top: $width-separator-thin solid $color-separator;
         background-color: $color-foreground-alt;
         padding: $spacing-medium;
+        color: $color-text-on-background-alt;
 
         .pager {
             display: flex;
@@ -113,9 +112,9 @@ color: $color-text-on-background-alt
             .link {
                 margin: 0 $spacing-small;
                 margin-right: $spacing-extra-small;
-                @extend %button-like-link;
                 // background-color: $color-accent;
-color: $color-text-on-accent;
+                color: $color-text-on-accent;
+                @extend %button-like-link;
             }
         }
 

@@ -5,23 +5,37 @@ $color-text-disabled: var(--color-text-disabled) !default;
 $color-text-label: var(--color-text-label) !default;
 
 $color-primary: var(--color-primary) !default;
+$color-text-on-primary: var(--color-text-on-primary) !default;
 $color-accent: var(--color-accent) !default;
+$color-text-on-accent: var(--color-text-on-accent) !default;
 $color-info: var(--color-info) !default;
+$color-text-on-info: var(--color-text-on-info) !default;
 $color-success: var(--color-success) !default;
+$color-text-on-success: var(--color-text-on-success) !default;
 $color-warning: var(--color-warning) !default;
+$color-text-on-warning: var(--color-text-on-warning) !default;
 $color-danger: var(--color-danger) !default;
+$color-text-on-danger: var(--color-text-on-danger) !default;
 
 $color-background: var(--color-background) !default;
+$color-text-on-background: var(--color-text-on-background) !default;
 $color-background-alt: var(color-background-alt) !default;
+$color-text-on-background-alt: var(--color-text-on-background-alt) !default;
 
 $color-foreground: var(--color-foreground) !default;
+$color-text-on-foreground: var(--color-text-on-foreground) !default;
 $color-foreground-alt: var(--color-foreground-alt) !default;
+$color-text-on-foreground-alt: var(--color-text-on-foreground-alt) !default;
 
 $color-background-header: var(--color-background-header) !default;
+$color-text-on-background-header: var(--color-text-on-background-header) !default;
 $color-background-header-alt: var(--color-background-header) !default;
+$color-text-on-background-header-alt: var(--color-text-on-background-header) !default;
 
 $color-background-hover: var(--color-background-hover) !default;
+$color-text-on-background-hover: var(--color-text-on-background-hover) !default;
 $color-background-disabled: var(--color-background-disabled) !default;
+$color-text-on-background-disabled: var(--color-text-on-background-disabled) !default;
 
 $color-background-hover: var(--color-background-hover) !default;
 $color-background-selected: var(--color-background-hover) !default;

@@ -8,14 +8,14 @@ $region-detail-form-width: 320px;
     overflow: auto;
 
     >.header {
-        background-color: $color-background-header;
-color: $color-text-on-background-header
         display: flex;
         align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
         border-bottom: $width-separator-thin solid $color-separator;
+        background-color: $color-background-header;
         padding: $spacing-small;
+        color: $color-text-on-background-header;
 
         .action-buttons {
             display: flex;
@@ -56,11 +56,11 @@ color: $color-text-on-background-header
             }
 
             .region-detail-form {
-                background-color: $color-foreground;
-color: $color-text-on-foreground;
                 flex-basis: $region-detail-form-width;
                 flex-shrink: 0;
                 border-left: $width-separator-thin solid $color-separator;
+                background-color: $color-foreground;
+                color: $color-text-on-foreground;
             }
         }
 

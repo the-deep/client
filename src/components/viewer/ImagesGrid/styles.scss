@@ -13,7 +13,7 @@ $color-text-on-primary: get-text-color($color-primary);
         overflow-y: auto;
 
         .image {
-            flex-basis: calc(calc(100% - #{$spacing-small * 3}) / 2);
+            flex-basis: calc(100% - (var(--spacing-small) * 3) / 2);
             margin: $spacing-small $spacing-small 0;
             border: $width-separator-thin solid $color-separator-alt;
             background-color: $color-foreground;

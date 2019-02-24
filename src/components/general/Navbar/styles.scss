@@ -59,11 +59,13 @@ $color-text-on-primary: get-text-color($color-primary);
         :global {
             .input-wrapper {
                 .input {
-                    border-bottom-color: get-text-color($color-navbar, $color-separator-on-light, $color-separator-on-dark);
+                    // border-bottom-color: get-text-color($color-navbar, $color-separator-on-light, $color-separator-on-dark);
+                    border-bottom-color: $color-separator;
                     color: $color-text-on-navbar;
 
                     &::placeholder {
-                        color: get-text-color($color-navbar, $color-text-placeholder-on-light, $color-text-placeholder-on-dark);
+                        color: $color-text-placeholder;
+                        // color: get-text-color($color-navbar, $color-text-placeholder-on-light, $color-text-placeholder-on-dark);
                     }
                 }
             }

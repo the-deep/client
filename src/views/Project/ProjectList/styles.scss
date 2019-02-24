@@ -5,15 +5,15 @@
     flex-direction: column;
 
     .header {
-        background-color: $color-background-header;
-color: $color-text-on-background-header
         display: flex;
         align-items: center;
         flex-shrink: 0;
         flex-wrap: wrap;
         justify-content: space-between;
         border-bottom: $width-separator-thin solid $color-separator;
+        background-color: $color-background-header;
         padding: $spacing-medium;
+        color: $color-text-on-background-header;
 
         .heading {
             flex-grow: 1;

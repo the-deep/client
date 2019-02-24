@@ -4,12 +4,12 @@
     // border-bottom: $width-separator-thin solid $color-separator;
 
     .header {
-        background-color: $color-background-header;
-color: $color-text-on-background-header
         display: flex;
         align-items: center;
         z-index: 1;
         box-shadow: 0 0 $radius-blur-medium $radius-spread-medium $color-shadow-medium;
+        background-color: $color-background-header;
+        color: $color-text-on-background-header;
 
         .heading {
             display: flex;
@@ -44,14 +44,14 @@ color: $color-text-on-background-header
         }
 
         .edit-entry-link {
-            background-color: $color-primary;
-color: $color-text-on-primary;
             display: flex;
             align-items: center;
             align-self: stretch;
             flex-shrink: 0;
             justify-content: center;
+            background-color: $color-primary;
             padding: $spacing-small $spacing-medium;
+            color: $color-text-on-primary;
             font-size: $font-size-large;
         }
     }

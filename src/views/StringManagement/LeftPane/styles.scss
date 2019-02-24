@@ -1,11 +1,11 @@
 @import '~base-scss/base';
 
 .header {
-    background-color: $color-background-header;
-color: $color-text-on-background-header
     flex-shrink: 0;
     border-bottom: $width-separator-thin solid $color-separator;
+    background-color: $color-background-header;
     padding: $spacing-small;
+    color: $color-text-on-background-header;
 }
 
 .links {
@@ -30,17 +30,17 @@ color: $color-text-on-background-header
 
             &.error {
                 background-color: $color-danger;
-color: $color-text-on-danger;
+                color: $color-text-on-danger;
             }
 
             &.warning {
                 background-color: $color-warning;
-color: $color-text-on-warning;
+                color: $color-text-on-warning;
             }
 
             &.info {
                 background-color: $color-info;
-color: $color-text-on-info;
+                color: $color-text-on-info;
             }
         }
     }

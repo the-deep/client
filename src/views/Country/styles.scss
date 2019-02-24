@@ -14,15 +14,15 @@ $page-margin: $spacing-small-alt;
         flex-direction: column;
 
         .header {
-            background-color: $color-background-header;
-color: $color-text-on-background-header
             display: flex;
             align-items: center;
             flex-shrink: 0;
             flex-wrap: wrap;
             justify-content: space-between;
             border-bottom: $width-separator-thin solid $color-separator;
+            background-color: $color-background-header;
             padding: $spacing-small;
+            color: $color-text-on-background-header;
 
             .heading {
                 flex-grow: 1;
@@ -55,20 +55,20 @@ color: $color-text-on-background-header
         flex-direction: column;
 
         .country-detail {
-            background-color: $color-background-alt;
-color: $color-text-on-background-alt
             flex-grow: 1;
+            background-color: $color-background-alt;
+            color: $color-text-on-background-alt;
         }
 
         .country-detail-alt {
-            background-color: $color-foreground;
-color: $color-text-on-foreground;
             display: flex;
             align-items: center;
             flex-direction: column;
             flex-grow: 1;
             justify-content: center;
+            background-color: $color-foreground;
             padding: $spacing-medium-alt;
+            color: $color-text-on-foreground;
             font-size: $font-size-extra-large;
         }
     }

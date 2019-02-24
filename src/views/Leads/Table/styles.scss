@@ -3,14 +3,14 @@
 $width-assignee-column: 96px;
 
 .table-container {
-    background-color: $color-foreground-alt;
-color: $color-text-on-foreground-alt
     display: flex;
     position: relative;
     flex-direction: column;
     flex-grow: 1;
+    background-color: $color-foreground-alt;
     padding-bottom: $spacing-extra-small;
     overflow: auto;
+    color: $color-text-on-foreground-alt;
 
     .scroll-wrapper {
         flex-grow: 1;

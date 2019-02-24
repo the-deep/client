@@ -36,7 +36,7 @@
         }
 
         .title {
-            flex-basis: calc(100% - #{($width-icon-large + $spacing-small * 2) * 2});
+            flex-basis: calc(100% - (var(--width-icon-large) + var(--spacing-small) * 2 ) * 2);
             margin: 0;
             padding: $spacing-small 0;
             text-align: left;

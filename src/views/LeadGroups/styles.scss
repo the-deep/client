@@ -38,10 +38,10 @@
             overflow-y: auto;
 
             .lead-groups-table {
-                background-color: $color-foreground-alt;
-color: $color-text-on-foreground-alt
                 border: $width-separator-thin solid $color-separator-alt;
+                background-color: $color-foreground-alt;
                 padding-bottom: $spacing-extra-small;
+                color: $color-text-on-foreground-alt;
 
                 :global {
                     .header {

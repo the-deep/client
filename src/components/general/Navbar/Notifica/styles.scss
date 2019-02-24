@@ -4,17 +4,17 @@
     position: relative;
 
     .count {
-        background-color: $color-danger;
-color: $color-text-on-danger;
         display: flex;
         position: absolute;
         top: $spacing-small;
         right: $spacing-small;
         align-items: center;
         justify-content: center;
-        border-radius: ($font-size-extra-small + $spacing-extra-small * 2) / 2;
+        border-radius: calc((var(--font-size-extra-small) + var(--spacing-extra-small) * 2) / 2);
+        background-color: $color-danger;
         padding: $spacing-extra-small;
-        min-width: $font-size-extra-small + $spacing-extra-small * 2;
+        min-width: calc(var(--font-size-extra-small) + var(--spacing-extra-small) * 2);
+        color: $color-text-on-danger;
         font-size: $font-size-extra-small;
         font-weight: $font-weight-bold;
     }

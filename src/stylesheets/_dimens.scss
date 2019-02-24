@@ -51,6 +51,7 @@ $width-icon-large: var(--width-icon-large) !default;
 $width-icon-extra-large: var(--width-icon-extra-large) !default;
 $width-icon-extra-large-alt: var(--width-icon-extra-large-alt) !default;
 $width-icon-super-large: var(--width-icon-super-large) !default;
+$width-icon-extreme-large: var(--width-icon-extreme-large) !default;
 
 $width-login-form: var(--width-login-form) !default;
 $width-register-form: var(--width-register-form) !default;
@@ -71,11 +72,14 @@ $duration-medium: var(--duration-medium) !default;
 $duration-fast: var(--duration-fast) !default;
 
 $width-modal-medium: var(--width-modal-medium) !default;
+$width-modal-large: var(--width-modal-large) !default;
 $width-modal-small: var(--width-modal-small) !default;
 $width-modal-extra-small: var(--width-modal-extra-small) !default;
 
 $width-navbar-icon: var(--width-navbar-icon) !default;
 $height-navbar-icon: var(--height-navbar-icon) !default;
+$width-navbar-avatar: var(--width-navbar-avatar) !default;
+$height-navbar-avatar: var(--height-navbar-avatar) !default;
 
 $radius-blur-medium: var(--radius-blur-medium) !default;
 $radius-blur-small: var(--radius-blur-small) !default;
@@ -110,6 +114,7 @@ $width-indicator: var(--width-indicator) !default;
 $height-header: var(--height-header) !default;
 
 $width-modal-medium: var(--width-modal-medium) !default;
+$height-modal-medium: var(--height-modal-medium) !default;
 $height-modal-header: var(--height-modal-header) !default;
 $height-modal-footer: var(--height-modal-footer) !default;
 $height-tabbar: var(--height-tabbar) !default;
