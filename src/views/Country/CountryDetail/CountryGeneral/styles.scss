@@ -19,12 +19,12 @@ $region-detail-form-width: 320px;
         }
 
         .region-detail-form {
-            background-color: $color-foreground;
-color: $color-text-on-foreground;
             flex-basis: $region-detail-form-width;
             flex-grow: 0;
             flex-shrink: 0;
             border-left: $width-separator-thin solid $color-separator;
+            background-color: $color-foreground;
+            color: $color-text-on-foreground;
         }
     }
 

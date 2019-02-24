@@ -29,21 +29,21 @@ $width-error-pane: 320px;
         &.error {
             .title {
                 background-color: $color-danger;
-color: $color-text-on-danger;
+                color: $color-text-on-danger;
             }
         }
 
         &.warning {
             .title {
                 background-color: $color-warning;
-color: $color-text-on-warning;
+                color: $color-text-on-warning;
             }
         }
 
         &.info {
             .title {
                 background-color: $color-info;
-color: $color-text-on-info;
+                color: $color-text-on-info;
             }
         }
     }

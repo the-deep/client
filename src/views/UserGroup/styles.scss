@@ -85,14 +85,14 @@ $info-height: 144px;
 
         .usergroup-alt {
             @include shadow-medium;
-            background-color: $color-foreground;
-color: $color-text-on-foreground;
             display: flex;
             align-items: center;
             flex-direction: column;
             flex-grow: 1;
             justify-content: center;
+            background-color: $color-foreground;
             padding: $spacing-medium-alt;
+            color: $color-text-on-foreground;
             font-size: $font-size-extra-large;
             grid-area: info / info / groups / groups;
         }

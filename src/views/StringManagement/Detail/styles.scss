@@ -1,12 +1,12 @@
 @import '~base-scss/base';
 
 .header {
-    background-color: $color-foreground;
-color: $color-text-on-foreground;
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    background-color: $color-foreground;
     padding: $spacing-small 0;
+    color: $color-text-on-foreground;
 
     .inputs {
         display: flex;

@@ -59,7 +59,7 @@ $color-text-on-primary: get-text-color($color-primary);
 
     &.active {
         background-color: $color-accent;
-color: $color-text-on-accent;
+        color: $color-text-on-accent;
     }
 }
 

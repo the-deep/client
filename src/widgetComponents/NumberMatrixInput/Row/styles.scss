@@ -2,21 +2,21 @@
 
 .table-header-row {
     background-color: $color-foreground;
-color: $color-text-on-foreground;
     padding: $spacing-small;
+    color: $color-text-on-foreground;
 
     &.not-similar {
         background-color: $color-danger;
-color: $color-text-on-danger;
+        color: $color-text-on-danger;
     }
 
     &.similar {
         background-color: $color-success;
-color: $color-text-on-success;
+        color: $color-text-on-success;
     }
 
     &.partial-similar {
         background-color: $color-background;
-color: $color-text-on-background;
+        color: $color-text-on-background;
     }
 }

@@ -1,13 +1,13 @@
 @import '~base-scss/base';
 
 .add-lead-buttons {
-    background-color: $color-foreground;
-color: $color-text-on-foreground;
     display: flex;
     align-items: center;
     flex-shrink: 0;
     flex-wrap: wrap;
     justify-content: space-around;
+    background-color: $color-foreground;
+    color: $color-text-on-foreground;
 
     .heading {
         flex-basis: 100%;

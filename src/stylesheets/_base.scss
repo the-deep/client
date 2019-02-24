@@ -110,10 +110,10 @@ body {
             display: flex;
             align-items: center;
             justify-content: center;
-            height: $height-nagbar;
-            font-weight: $font-weight-bold;
             background-color: $color-warning;
-color: $color-text-on-warning
+            height: $height-nagbar;
+            color: $color-text-on-warning;
+            font-weight: $font-weight-bold;
         }
     }
 }

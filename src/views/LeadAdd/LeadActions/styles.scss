@@ -26,13 +26,13 @@ $radius-button-border: 2px;
     .save-buttons {
         @extend %button-basic;
         background-color: $color-success;
-color: $color-text-on-success;
+        color: $color-text-on-success;
     }
 
     .remove-buttons {
         @extend %button-basic;
         background-color: $color-warning;
-color: $color-text-on-warning;
+        color: $color-text-on-warning;
     }
 }
 
