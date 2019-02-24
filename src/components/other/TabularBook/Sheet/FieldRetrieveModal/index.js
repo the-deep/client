@@ -92,6 +92,7 @@ export default class FieldRetrieveModal extends React.PureComponent {
                 className={styles.container}
                 onInvalidate={this.handleInvalidate}
                 focusTrap
+                showHaze
             >
                 <ListSelection
                     label={_ts('tabular.fieldRetrieveModal', 'fieldsLabel')} // Fields to retrieve

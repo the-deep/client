@@ -263,6 +263,7 @@ export default class FieldEditModal extends React.PureComponent {
                 className={styles.container}
                 onInvalidate={this.handleInvalidate}
                 focusTrap
+                showHaze
             >
                 <Faram
                     onChange={this.handleFaramChange}
