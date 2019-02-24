@@ -1,103 +1,127 @@
-$font-size-super-small: 7px;
-$font-size-super-small-alt: 8px;
-$font-size-extra-small: 9px;
-$font-size-extra-small-alt: 10px;
-$font-size-small: 11px;
-$font-size-small-alt: 12px;
-$font-size-medium: 13px;
-$font-size-medium-alt: 14px;
-$font-size-large: 16px;
-$font-size-large-alt: 18px;
-$font-size-extra-large: 20px;
-$font-size-extra-large-alt: 22px;
-$font-size-super-large: 26px;
-$font-size-super-large-alt: 28px;
+$font-size-super-small: var(--font-size-super-small) !default;
 
-$font-size-default: $font-size-medium;
+$font-size-super-small-alt: var(--font-size-super-small-alt) !default;
+$font-size-extra-small: var(--font-size-extra-small) !default;
+$font-size-extra-small-alt: var(--font-size-extra-small-alt) !default;
+$font-size-small: var(--font-size-small) !default;
+$font-size-small-alt: var(--font-size-small-alt) !default;
+$font-size-medium: var(--font-size-medium) !default;
+$font-size-medium-alt: var(--font-size-medium-alt) !default;
+$font-size-large: var(--font-size-large) !default;
+$font-size-large-alt: var(--font-size-large-alt) !default;
+$font-size-extra-large: var(--font-size-extra-large) !default;
+$font-size-extra-large-alt: var(--font-size-extra-large-alt) !default;
+$font-size-super-large: var(--font-size-super-large) !default;
+$font-size-super-large-alt: var(--font-size-super-large-alt) !default;
 
-$font-weight-light: 300;
-$font-weight-normal: 400;
-$font-weight-medium: 400;
-$font-weight-medium-alt: 500;
-$font-weight-bold: 600;
-$font-weight-default: $font-weight-medium;
+$font-size-default: var(--font-size-default) !default;
 
-$spacing-super-small: 1px;
-$spacing-extra-small: 2px;
-$spacing-extra-small-alt: 3px;
-$spacing-small: 6px;
-$spacing-small-alt: 8px;
-$spacing-medium: 10px;
-$spacing-medium-alt: 12px;
-$spacing-large: 18px;
-$spacing-large-alt: 22px;
-$spacing-extra-large: 26px;
-$spacing-extra-large-alt: 30px;
-$spacing-super-large: 36px;
-$spacing-super-large-alt: 42px;
+$font-weight-light: var(--font-weight-light) !default;
+$font-weight-normal: var(--font-weight-normal) !default;
+$font-weight-medium: var(--font-weight-medium) !default;
+$font-weight-bold: var(--font-weight-bold) !default;
+$font-weight-default: var(--font-weight-default) !default;
 
-$spacing-default: $spacing-medium;
+$spacing-super-small: var(--spacing-super-small) !default;
+$spacing-extra-small: var(--spacing-extra-small) !default;
+$spacing-extra-small-alt: var(--spacing-extra-small-alt) !default;
+$spacing-small: var(--spacing-small) !default;
+$spacing-small-alt: var(--spacing-small-alt) !default;
+$spacing-medium: var(--spacing-medium) !default;
+$spacing-medium-alt: var(--spacing-medium-alt) !default;
+$spacing-large: var(--spacing-large) !default;
+$spacing-large-alt: var(--spacing-large-alt) !default;
+$spacing-extra-large: var(--spacing-extra-large) !default;
+$spacing-extra-large-alt: var(--spacing-extra-large-alt) !default;
+$spacing-super-large: var(--spacing-super-large) !default;
+$spacing-super-large-alt: var(--spacing-super-large-alt) !default;
 
-$height-navbar: 48px;
-$height-progress-bar: 3px;
+$spacing-default: var(--spacing-default) !default;
 
-$width-separator-thin: 1px;
-$width-separator-medium: 2px;
-$width-separator-thick: 4px;
+$height-navbar: var(--height-navbar) !default;
+$height-progress-bar: var(--height-progress-bar) !default;
 
-$width-icon-medium: 16px;
-$width-icon-large-alt: 24px;
-$width-icon-large: 24px;
-$width-icon-extra-large: 32px;
-$width-icon-extra-large-alt: 40px;
-$width-icon-super-large: 48px;
-$width-icon-extreme-large: 96px;
+$width-separator-thin: var(--width-separator-thin) !default;
+$width-separator-medium: var(--width-separator-medium) !default;
+$width-separator-thick: var(--width-separator-thick) !default;
 
-$width-navbar-avatar: 24px;
-$height-navbar-avatar: 24px;
+$width-icon-medium: var(--width-icon-medium) !default;
+$width-icon-large-alt: var(--width-icon-large-alt) !default;
+$width-icon-large: var(--width-icon-large) !default;
+$width-icon-extra-large: var(--width-icon-extra-large) !default;
+$width-icon-extra-large-alt: var(--width-icon-extra-large-alt) !default;
+$width-icon-super-large: var(--width-icon-super-large) !default;
 
-$width-login-form: 360px;
-$width-register-form: 520px;
+$width-login-form: var(--width-login-form) !default;
+$width-register-form: var(--width-register-form) !default;
 
-$width-matrix-1d-title: 108px;
+$width-matrix-1d-title: var(--width-matrix-1d-title) !default;
 
-$z-index-region-detail-view: 3;
+$z-index-region-detail-view: var(--z-index-region-detail-view) !default;
 
-$height-scale-widget-unit: 20px;
-$width-scale-widget-unit: 10px;
-$height-scale-widget-unit-selected: 24px;
-$width-scale-widget-unit-selected: 12px;
+$height-scale-widget-unit: var(--height-scale-widget-unit) !default;
+$width-scale-widget-unit: var(--width-scale-widget-unit) !default;
+$height-scale-widget-unit-selected: var(--height-scale-widget-unit-selected) !default;
+$width-scale-widget-unit-selected: var(--width-scale-widget-unit-selected) !default;
 
-$width-scrollbar: 10px;
+$width-scrollbar: var(--width-scrollbar) !default;
 
-$duration-slow: .3s;
-$duration-medium: .2s;
-$duration-fast: .1s;
+$duration-slow: var(--duration-slow) !default;
+$duration-medium: var(--duration-medium) !default;
+$duration-fast: var(--duration-fast) !default;
 
-$width-modal-large: 720px;
-$width-modal-medium: 640px;
-$width-modal-small: 480px;
-$width-modal-extra-small: 320px;
+$width-modal-medium: var(--width-modal-medium) !default;
+$width-modal-small: var(--width-modal-small) !default;
+$width-modal-extra-small: var(--width-modal-extra-small) !default;
 
-$height-modal-small: 480px;
-$height-modal-medium: 640px;
+$width-navbar-icon: var(--width-navbar-icon) !default;
+$height-navbar-icon: var(--height-navbar-icon) !default;
 
-$width-navbar-icon: 24px;
-$height-navbar-icon: 24px;
+$radius-blur-medium: var(--radius-blur-medium) !default;
+$radius-blur-small: var(--radius-blur-small) !default;
+$radius-blur-large: var(--radius-blur-large) !default;
 
-$radius-blur-medium: 10px;
-$radius-blur-small: 7px;
-$radius-blur-large: 15px;
+$radius-spread-medium: var(--radius-spread-medium) !default;
+$radius-spread-small: var(radius-spread-small) !default;
+$radius-spread-large: var(radius-spread-large) !default;
 
-$radius-spread-medium: -3px;
-$radius-spread-small: -2px;
-$radius-spread-large: -5px;
-$radius-button-border: 2px;
+$radius-border-medium: var(--radius-border-medium) !default;
+$radius-border-small: var(--radius-border-small) !default;
+$radius-border-large: var(--radius-border-large) !default;
 
-$duration-transition-slow: .4s;
-$duration-transition-medium: .2s;
-$duration-transition-fast: .1s;
+$duration-transition-slow: var(--duration-transition-slow) !default;
+$duration-transition-medium: var(--duration-transition-medium) !default;
+$duration-transition-fast: var(--duration-transition-fast) !default;
 
-$width-input-min: 180px;
+$width-segment-button: var(--width-segment-button) !default;
+$height-segment-button: var(--height-segment-button) !default;
 
-$page-margin: $spacing-small-alt;
+$width-icon-medium: var(--width-icon-medium) !default;
+$width-icon-large-alt: var(--width-icon-large-alt) !default;
+$width-icon-large: var(--width-icon-large) !default;
+$width-icon-extra-large: var(--width-icon-extra-large) !default;
+$width-icon-super-large: var(--width-icon-super-large) !default;
+
+// High Low Indicator
+$height-indicator-line: var(--height-indicator-line) !default;
+$height-indicator: var(--height-indicator) !default;
+$width-indicator: var(--width-indicator) !default;
+
+$height-header: var(--height-header) !default;
+
+$width-modal-medium: var(--width-modal-medium) !default;
+$height-modal-header: var(--height-modal-header) !default;
+$height-modal-footer: var(--height-modal-footer) !default;
+$height-tabbar: var(--height-tabbar) !default;
+
+$width-login-form: var(--width-login-form) !default;
+$width-register-form: var(--width-register-form) !default;
+
+$width-loading-icon: var(--width-loading-icon) !default;
+$height-loading-icon: var(--height-loading-icon) !default;
+
+$font-size-loading-icon-small: var(--font-size-loading-icon-small) !default;
+$font-size-loading-icon-medium: var(--font-size-loading-icon-medium) !default;
+$font-size-loading-icon-large: var(--font-size-loading-icon-large) !default;
+
+$page-margin: var(--page-margin) !default;
