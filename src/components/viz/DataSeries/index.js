@@ -20,6 +20,7 @@ import modalize from '#rscg/Modalize';
 
 import _cs from '#cs';
 import _ts from '#ts';
+
 import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
@@ -53,7 +54,6 @@ const chartMargins = {
 const sizeSelector = d => d.size;
 const chartsLabelSelector = d => d.text;
 const tooltipSelector = d => `<span>${d.text}</span>`;
-const rotatingInputKeySelector = d => d.key;
 
 const GRAPH = {
     horizontalBarChart: 'horizontal-bar-chart',
@@ -105,6 +105,16 @@ const Tab = ({
     </button>
 );
 
+Tab.propTypes = {
+    icon: PropTypes.string,
+    onClick: PropTypes.func.isRequired,
+    isActive: PropTypes.bool.isRequired,
+};
+
+Tab.defaultProps = {
+    icon: '',
+};
+
 
 export default class DataSeries extends React.PureComponent {
     static propTypes = propTypes;
@@ -113,15 +123,90 @@ export default class DataSeries extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        this.views = this.createView({ showLegend: false });
+        this.modalViews = this.createView({ showLegend: true });
+
+        this.state = {
+            activeView: GRAPH.verticalBarChart,
+        };
+    }
+
+    getSegmentOptions = memoize(type => (
+        listToMap(
+            GRAPH_MODES[type],
+            mode => mode,
+            mode => GRAPH_DETAILS[mode],
+        )
+    ))
+
+    getWordCountSeries = memoize((series) => {
+        const sanitizedSeries = series
+            .filter(datum => !datum.empty && !datum.invalid);
+
+        const tags = sanitizedSeries.reduce(
+            (acc, { value }) => {
+                acc[value] = (acc[value] || 0) + 1;
+                return acc;
+            }, {},
+        );
+
+        const newSeries = Object.keys(tags).map(word => ({
+            text: word,
+            size: tags[word],
+        }));
+
+        return newSeries;
+    })
+
+    getGeoCountSeries = memoize((series) => {
+        const sanitizedSeries = series
+            .filter(datum => !datum.empty && !datum.invalid);
+        const tags = sanitizedSeries.reduce(
+            (acc, { processedValue }) => {
+                acc[processedValue] = (acc[processedValue] || 0) + 1;
+                return acc;
+            }, {},
+        );
+        return tags;
+    })
+
+    getNumberCountSeries = memoize((series) => {
+        const sanitizedSeries = series
+            .filter(datum => !datum.empty && !datum.invalid);
+        const tags = sanitizedSeries.reduce(
+            (acc, { value }) => {
+                acc[value] = (acc[value] || 0) + 1;
+                return acc;
+            }, {},
+        );
+        return Object.keys(tags)
+            .map(word => ({
+                text: word,
+                size: tags[word],
+            }))
+            .sort((a, b) => a.size - b.size);
+    })
+
+    getNumberSeries = memoize(series => series.map((item, index) => ({
+        key: index,
+        value: parseFloat(item.value),
+    })))
+
+    getGeoValue = memoize(data => data
+        .map(d => d.processedValue && String(d.processedValue))
+        .filter(d => d))
+
+    createView = ({ showLegend }) => {
         const commonRendererParams = {
             valueSelector: sizeSelector,
             showTooltip: true,
             margins: chartMargins,
             tooltipSelector,
             labelSelector: chartsLabelSelector,
+            showLegend,
         };
 
-        this.views = {
+        return {
             [GRAPH.horizontalBarChart]: {
                 component: SimpleHorizontalBarChart,
                 rendererParams: () => {
@@ -167,6 +252,8 @@ export default class DataSeries extends React.PureComponent {
                         regions,
                         adminLevel,
                         value: this.getGeoValue(data),
+                        frequency: this.getGeoCountSeries(data),
+                        ...commonRendererParams,
                     };
                 },
                 lazyMount: true,
@@ -185,64 +272,7 @@ export default class DataSeries extends React.PureComponent {
                 lazyMount: true,
             },
         };
-
-        this.state = {
-            activeView: GRAPH.verticalBarChart,
-        };
     }
-
-    getSegmentOptions = memoize(type => (
-        listToMap(
-            GRAPH_MODES[type],
-            mode => mode,
-            mode => GRAPH_DETAILS[mode],
-        )
-    ))
-
-    getWordCountSeries = memoize((series) => {
-        const sanitizedSeries = series
-            .filter(datum => !datum.empty && !datum.invalid);
-
-        const tags = sanitizedSeries.reduce(
-            (acc, { value }) => {
-                acc[value] = (acc[value] || 0) + 1;
-                return acc;
-            }, {},
-        );
-
-        const newSeries = Object.keys(tags).map(word => ({
-            text: word,
-            size: tags[word],
-        }));
-
-        return newSeries;
-    })
-
-    getNumberCountSeries = memoize((series) => {
-        const sanitizedSeries = series
-            .filter(datum => !datum.empty && !datum.invalid);
-        const tags = sanitizedSeries.reduce(
-            (acc, { value }) => {
-                acc[value] = (acc[value] || 0) + 1;
-                return acc;
-            }, {},
-        );
-        return Object.keys(tags)
-            .map(word => ({
-                text: word,
-                size: tags[word],
-            }))
-            .sort((a, b) => a.size - b.size);
-    })
-
-    getNumberSeries = memoize(series => series.map((item, index) => ({
-        key: index,
-        value: parseFloat(item.value),
-    })))
-
-    getGeoValue = memoize(data => data
-        .map(d => d.processedValue && String(d.processedValue))
-        .filter(d => d))
 
     handleSegmentStateChange = (value) => {
         this.setState({ activeView: value });
@@ -275,7 +305,6 @@ export default class DataSeries extends React.PureComponent {
                         <Button
                             iconName={iconNames.close}
                             onClick={closeModal}
-                            className={styles.closeExpandedViewButton}
                             transparent
                         />
                     </div>
@@ -283,7 +312,7 @@ export default class DataSeries extends React.PureComponent {
             />
             <ModalBody className={styles.body}>
                 <MultiViewContainer
-                    views={this.views}
+                    views={this.modalViews}
                     active={activeView}
                 />
             </ModalBody>

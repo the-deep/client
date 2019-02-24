@@ -8,13 +8,17 @@ import Message from '#rscv/Message';
 
 import Map from '#rscz/Map';
 import MapLayer from '#rscz/Map/MapLayer';
+import MapLegend from '#rscz/Map/Legend';
 import MapSource from '#rscz/Map/MapSource';
+
 
 import {
     RequestClient,
     RequestCoordinator,
 } from '#request';
 import _ts from '#ts';
+
+import styles from './styles.scss';
 
 const RequestHandler = createRequestHandler(RequestClient);
 
@@ -30,6 +34,7 @@ const propTypes = {
     adminLevelId: PropTypes.string,
     regionRequest: RequestClient.propType.isRequired,
     value: PropTypes.arrayOf(PropTypes.string),
+    frequency: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
@@ -52,6 +57,14 @@ const requests = {
 
 const boundsFilter = ['==', '$type', 'Polygon'];
 const pointsFilter = ['==', '$type', 'Point'];
+
+const colors = [
+    '#ffffcc',
+    '#a1dab4',
+    '#41b6c4',
+    '#2c7fb8',
+    '#253494',
+];
 
 @RequestCoordinator
 @RequestClient(requests)
@@ -78,14 +91,49 @@ export default class Region extends React.PureComponent {
         'fill-opacity': 0.5,
     }))
 
-    calcSelectionFillPaint = memoize(() => ({
-        'fill-color': '#6e599f',
-        'fill-opacity': 0.5,
-    }))
+    calcLegendDetails = (frequency, step) => {
+        const maxFreq = Math.max(...Object.values(frequency));
+        const stepSize = maxFreq / step;
+        const details = [];
+
+        // eslint-disable-next-line no-plusplus
+        for (let i = 1; i <= step; i++) {
+            const min = Math.floor(stepSize * (i - 1));
+            const max = Math.floor(stepSize * i);
+            const unit = {
+                min,
+                max,
+                label: `${min} - ${max}`,
+                color: colors[i - 1],
+            };
+            details.push(unit);
+        }
+        return details;
+    }
+
+    calcSelectionFillPaint = memoize((_, frequency) => {
+        const details = this.calcLegendDetails(frequency, 5);
+        const iterableDetails = [];
+
+        details.forEach((d) => {
+            iterableDetails.push(d.min);
+            iterableDetails.push(d.color);
+        });
+
+        return ({
+            'fill-color': [
+                'interpolate',
+                ['linear'],
+                ['get', 'count'],
+                ...iterableDetails,
+            ],
+            'fill-opacity': 0.9,
+        });
+    });
 
     calcBorderPaint = memoize(() => ({
-        'line-color': '#fff',
-        'line-opacity': 1,
+        'line-color': '#717171',
+        'line-opacity': 0.8,
         'line-width': 1,
     }))
 
@@ -140,6 +188,21 @@ export default class Region extends React.PureComponent {
         ['!in', 'pk', ...value],
     ])
 
+    calcNewGeojsonWithFrequency = memoize((geoJson, frequency) => {
+        const newFeatures = [];
+        geoJson.features.forEach((f) => {
+            const featurePk = f.properties.pk;
+            const newFeature = { ...f };
+            // eslint-disable-next-line no-param-reassign
+            f.properties.count = frequency[featurePk] || 0;
+            newFeatures.push(newFeature);
+        });
+        return ({
+            ...geoJson,
+            features: newFeatures,
+        });
+    });
+
     handleGeoJsonRequest = (request, adminLevel) => {
         this.setState({
             [`geoJson-${adminLevel.id}`]: request,
@@ -179,6 +242,7 @@ export default class Region extends React.PureComponent {
             adminLevels,
             adminLevelId,
             value,
+            frequency,
         } = this.props;
 
         if (pending) {
@@ -195,13 +259,16 @@ export default class Region extends React.PureComponent {
 
         const adminLevel = adminLevels.find(a => String(a.id) === adminLevelId);
         const { response: geoJson } = geoJsonRequest;
+        const newGeoJson = this.calcNewGeojsonWithFrequency(geoJson, frequency);
+        const bgPaint = this.calcSelectionFillPaint(adminLevel, frequency);
 
         return (
             <MapSource
                 sourceKey="bounds"
-                geoJson={geoJson}
+                geoJson={newGeoJson}
                 supportHover
             >
+                {/*
                 <MapLayer
                     layerKey="bounds-fill"
                     type="fill"
@@ -210,14 +277,16 @@ export default class Region extends React.PureComponent {
                     paint={this.calcFillPaint(adminLevel)}
                     hoverInfo={this.calcBoundsHoverInfo(adminLevel)}
                 />
+                */}
+
                 <MapLayer
                     layerKey="bounds-fill-selection"
                     type="fill"
                     property="pk"
-                    filter={this.calcSelectedBoundsFilter(value)}
-                    paint={this.calcSelectionFillPaint(adminLevel)}
+                    paint={bgPaint}
                     hoverInfo={this.calcBoundsHoverInfo(adminLevel)}
                 />
+
                 <MapLayer
                     layerKey="bounds-border"
                     type="line"
@@ -233,6 +302,7 @@ export default class Region extends React.PureComponent {
                     paint={this.calcPointPaint(adminLevel)}
                     hoverInfo={this.calcPointHoverInfo(adminLevel)}
                 />
+
                 <MapLayer
                     layerKey="points-selection"
                     type="circle"
@@ -289,10 +359,24 @@ export default class Region extends React.PureComponent {
     }
 
     render() {
+        const {
+            frequency,
+            showLegend,
+        } = this.props;
+
+        const legendItems = this.calcLegendDetails(frequency, 5);
+
         return (
             <React.Fragment>
                 {this.renderContent()}
                 {this.props.adminLevels.map(this.renderAdminLevel)}
+                {showLegend &&
+                    <MapLegend
+                        className={styles.legend}
+                        legendItems={legendItems}
+                        type="square"
+                    />
+                }
             </React.Fragment>
         );
     }

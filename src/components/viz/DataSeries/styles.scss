@@ -49,14 +49,6 @@ $width-expanded-view: 90vw;
 
     .action-buttons {
         display: flex;
-
-        .expanded-tab {
-            display: flex;
-
-            .tab {
-                padding-right: $spacing-small;
-            }
-        }
     }
 
     .body {
