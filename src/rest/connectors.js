@@ -24,6 +24,7 @@ export const urlForConnectorSources = `${wsEndpoint}/connector-sources/`;
 export const createUrlForRssField = url => `${wsEndpoint}/connector-sources/rss-feed/fields/?${p({ 'feed-url': url })}`;
 export const createUrlForConnectorTest = source => `${wsEndpoint}/connector-sources/${source}/leads/`;
 
+export const createUrlForConnectorsOfProject = projectId => `${urlForConnectors}&projects=${projectId}`;
 
 export const createParamsForConnectorCreate = data => ({
     method: POST,
