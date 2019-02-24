@@ -85,7 +85,8 @@ $info-height: 144px;
 
         .usergroup-alt {
             @include shadow-medium;
-            @include background-color($color-foreground);
+            background-color: $color-foreground;
+color: $color-text-on-foreground;
             display: flex;
             align-items: center;
             flex-direction: column;

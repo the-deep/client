@@ -42,7 +42,8 @@ $height-deep-logo: 256px;
         width: $width-login-form;
 
         .hid-link-container {
-            @include background-color($color-foreground);
+            background-color: $color-foreground;
+color: $color-text-on-foreground;
             display: flex;
             align-items: center;
             flex-basis: 100%;
@@ -79,7 +80,8 @@ $height-deep-logo: 256px;
                 }
 
                 .or {
-                    @include background-color($color-foreground);
+                    background-color: $color-foreground;
+color: $color-text-on-foreground;
                     position: absolute;
                     top: 0;
                     left: 50%;
@@ -92,7 +94,8 @@ $height-deep-logo: 256px;
         }
 
         .login-form {
-            @include background-color($color-foreground);
+            background-color: $color-foreground;
+color: $color-text-on-foreground;
             padding: $spacing-small $spacing-large $spacing-large;
             width: 100%;
 
@@ -109,7 +112,8 @@ $height-deep-logo: 256px;
         }
 
         .register-link-container {
-            @include background-color($color-foreground);
+            background-color: $color-foreground;
+color: $color-text-on-foreground;
             display: flex;
             align-items: center;
             flex-basis: 100%;

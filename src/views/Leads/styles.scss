@@ -10,7 +10,8 @@
 
         .add-lead-link {
             @extend %button-like-link;
-            @include background-color($color-primary);
+            background-color: $color-primary;
+color: $color-text-on-primary;
             align-self: flex-end;
             flex-shrink: 0;
             margin: $spacing-small;
@@ -91,7 +92,8 @@
 
 
     .footer {
-        @include background-color($color-background-alt);
+        background-color: $color-background-alt;
+color: $color-text-on-background-alt
         display: flex;
         align-items: center;
         flex-shrink: 0;
@@ -112,7 +114,8 @@
                 margin: 0 $spacing-small;
                 margin-right: $spacing-extra-small;
                 @extend %button-like-link;
-                // @include background-color($color-accent);
+                // background-color: $color-accent;
+color: $color-text-on-accent;
             }
         }
 

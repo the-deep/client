@@ -4,7 +4,8 @@
     // border-bottom: $width-separator-thin solid $color-separator;
 
     .header {
-        @include background-color($color-background-header);
+        background-color: $color-background-header;
+color: $color-text-on-background-header
         display: flex;
         align-items: center;
         z-index: 1;
@@ -43,7 +44,8 @@
         }
 
         .edit-entry-link {
-            @include background-color($color-primary);
+            background-color: $color-primary;
+color: $color-text-on-primary;
             display: flex;
             align-items: center;
             align-self: stretch;

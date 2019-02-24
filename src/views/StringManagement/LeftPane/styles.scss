@@ -1,7 +1,8 @@
 @import '~base-scss/base';
 
 .header {
-    @include background-color($color-background-header);
+    background-color: $color-background-header;
+color: $color-text-on-background-header
     flex-shrink: 0;
     border-bottom: $width-separator-thin solid $color-separator;
     padding: $spacing-small;
@@ -28,15 +29,18 @@
             font-size: $font-size-small;
 
             &.error {
-                @include background-color($color-danger);
+                background-color: $color-danger;
+color: $color-text-on-danger;
             }
 
             &.warning {
-                @include background-color($color-warning);
+                background-color: $color-warning;
+color: $color-text-on-warning;
             }
 
             &.info {
-                @include background-color($color-info);
+                background-color: $color-info;
+color: $color-text-on-info;
             }
         }
     }

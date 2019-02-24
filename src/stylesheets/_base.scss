@@ -112,7 +112,8 @@ body {
             justify-content: center;
             height: $height-nagbar;
             font-weight: $font-weight-bold;
-            @include background-color($color-warning);
+            background-color: $color-warning;
+color: $color-text-on-warning
         }
     }
 }

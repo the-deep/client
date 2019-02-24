@@ -8,7 +8,8 @@ $position-right: $spacing-small-alt;
 
 .region-detail-view {
     @include shadow-small;
-    @include background-color($color-foreground);
+    background-color: $color-foreground;
+color: $color-text-on-foreground;
     display: flex;
     position: absolute;
     top: $position-top;
@@ -30,7 +31,8 @@ $position-right: $spacing-small-alt;
         overflow-y: auto;
 
         .row {
-            @include background-color($color-background-row-alt);
+            background-color: $color-background-row-alt;
+color: $color-text-on-background-row-alt
             display: table-row;
 
             .title {
@@ -53,7 +55,8 @@ $position-right: $spacing-small-alt;
             }
 
             &:nth-child(odd) {
-                @include background-color($color-background-row);
+                background-color: $color-background-row;
+color: $color-text-on-background-row
             }
         }
     }

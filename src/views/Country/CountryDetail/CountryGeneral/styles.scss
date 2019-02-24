@@ -19,7 +19,8 @@ $region-detail-form-width: 320px;
         }
 
         .region-detail-form {
-            @include background-color($color-foreground);
+            background-color: $color-foreground;
+color: $color-text-on-foreground;
             flex-basis: $region-detail-form-width;
             flex-grow: 0;
             flex-shrink: 0;

@@ -32,7 +32,8 @@
         :global {
             label {
                 @extend %button-like-link;
-                @include background-color($color-primary);
+                background-color: $color-primary;
+color: $color-text-on-primary;
             }
         }
     }

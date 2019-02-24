@@ -8,7 +8,8 @@ $region-detail-form-width: 320px;
     overflow: auto;
 
     >.header {
-        @include background-color($color-background-header);
+        background-color: $color-background-header;
+color: $color-text-on-background-header
         display: flex;
         align-items: center;
         flex-shrink: 0;
@@ -55,7 +56,8 @@ $region-detail-form-width: 320px;
             }
 
             .region-detail-form {
-                @include background-color($color-foreground);
+                background-color: $color-foreground;
+color: $color-text-on-foreground;
                 flex-basis: $region-detail-form-width;
                 flex-shrink: 0;
                 border-left: $width-separator-thin solid $color-separator;

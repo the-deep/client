@@ -4,7 +4,8 @@
     position: relative;
 
     .count {
-        @include background-color($color-danger);
+        background-color: $color-danger;
+color: $color-text-on-danger;
         display: flex;
         position: absolute;
         top: $spacing-small;

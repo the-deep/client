@@ -1,7 +1,8 @@
 @import '~base-scss/base';
 
 .header {
-    @include background-color($color-foreground);
+    background-color: $color-foreground;
+color: $color-text-on-foreground;
     display: flex;
     align-items: center;
     flex-shrink: 0;

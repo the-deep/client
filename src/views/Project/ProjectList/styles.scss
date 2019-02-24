@@ -5,7 +5,8 @@
     flex-direction: column;
 
     .header {
-        @include background-color($color-background-header);
+        background-color: $color-background-header;
+color: $color-text-on-background-header
         display: flex;
         align-items: center;
         flex-shrink: 0;

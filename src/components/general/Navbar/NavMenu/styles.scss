@@ -58,7 +58,8 @@ $color-text-on-primary: get-text-color($color-primary);
     }
 
     &.active {
-        @include background-color($color-accent);
+        background-color: $color-accent;
+color: $color-text-on-accent;
     }
 }
 

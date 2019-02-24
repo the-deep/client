@@ -3,12 +3,14 @@
 
 .matrix-cell {
     @extend %button-base;
-    @include background-color($color-background-alt);
+    background-color: $color-background-alt;
+color: $color-text-on-background-alt
     position: relative;
     margin: $spacing-extra-small;
 
     &.active {
-        @include background-color($color-accent);
+        background-color: $color-accent;
+color: $color-text-on-accent;
     }
 
     &.is-being-dragged-over {

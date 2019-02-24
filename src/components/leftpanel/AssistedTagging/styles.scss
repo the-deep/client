@@ -29,7 +29,8 @@ $min-width-assistant: 240px;
         border-top: $width-separator-thin solid $color-separator;
         padding: $spacing-medium-alt;
         height: $height-assistant-options;
-        @include background-color($color-background-header);
+        background-color: $color-background-header;
+color: $color-text-on-background-header
 
         .assisted-source-change-btn {
             flex-basis: 60%;

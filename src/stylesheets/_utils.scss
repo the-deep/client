@@ -113,7 +113,8 @@
 $radius-button-border: 2px;
 
 %button-like-link {
-    @include background-color($color-foreground);
+    background-color: $color-foreground;
+color: $color-text-on-foreground;
     @include shadow-button;
     border: 0;
     border-radius: $radius-button-border;
@@ -174,9 +175,11 @@ $radius-button-border: 2px;
 }
 
 %background-alternating-row {
-    @include background-color($color-background-row);
+    background-color: $color-background-row;
+color: $color-text-on-background-row
 
     &:nth-child(odd) {
-        @include background-color($color-background-row-alt);
+        background-color: $color-background-row-alt;
+color: $color-text-on-background-row-alt
     }
 }

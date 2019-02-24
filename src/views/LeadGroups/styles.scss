@@ -38,7 +38,8 @@
             overflow-y: auto;
 
             .lead-groups-table {
-                @include background-color($color-foreground-alt);
+                background-color: $color-foreground-alt;
+color: $color-text-on-foreground-alt
                 border: $width-separator-thin solid $color-separator-alt;
                 padding-bottom: $spacing-extra-small;
 

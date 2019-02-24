@@ -3,7 +3,8 @@
 $width-assignee-column: 96px;
 
 .table-container {
-    @include background-color($color-foreground-alt);
+    background-color: $color-foreground-alt;
+color: $color-text-on-foreground-alt
     display: flex;
     position: relative;
     flex-direction: column;

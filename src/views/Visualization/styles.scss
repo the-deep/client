@@ -5,7 +5,8 @@
     flex-direction: column;
 
     .header{
-        @include background-color($color-background-header);
+        background-color: $color-background-header;
+color: $color-text-on-background-header
         display: flex;
         align-items: center;
         flex-shrink: 0;
@@ -21,7 +22,8 @@
         $width-tabs: 240px;
 
         .tabs {
-            @include background-color($color-foreground);
+            background-color: $color-foreground;
+color: $color-text-on-foreground;
             flex-basis: $width-tabs;
             flex-grow: 0;
             flex-shrink: 0;
@@ -33,7 +35,8 @@
             flex-direction: column;
 
             %viz {
-                @include background-color($color-foreground-alt);
+                background-color: $color-foreground-alt;
+color: $color-text-on-foreground-alt
                 flex-grow: 1;
                 margin-bottom: $spacing-small;
             }

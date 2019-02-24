@@ -8,7 +8,8 @@ $height-header: 42px;
     flex-direction: column;
 
     .header {
-        @include background-color($color-background-header);
+        background-color: $color-background-header;
+color: $color-text-on-background-header
         flex-shrink: 0;
         padding: 0;
 

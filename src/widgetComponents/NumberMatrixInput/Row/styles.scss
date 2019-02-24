@@ -1,18 +1,22 @@
 @import '~base-scss/base';
 
 .table-header-row {
-    @include background-color($color-foreground);
+    background-color: $color-foreground;
+color: $color-text-on-foreground;
     padding: $spacing-small;
 
     &.not-similar {
-        @include background-color($color-danger);
+        background-color: $color-danger;
+color: $color-text-on-danger;
     }
 
     &.similar {
-        @include background-color($color-success);
+        background-color: $color-success;
+color: $color-text-on-success;
     }
 
     &.partial-similar {
-        @include background-color($color-background);
+        background-color: $color-background;
+color: $color-text-on-background;
     }
 }

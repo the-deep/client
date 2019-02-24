@@ -6,7 +6,8 @@
     overflow: auto;
 
     .table-header {
-        @include background-color($color-foreground);
+        background-color: $color-foreground;
+color: $color-text-on-foreground;
         padding: $spacing-small;
     }
 }
