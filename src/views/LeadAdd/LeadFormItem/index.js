@@ -90,6 +90,7 @@ export default class LeadFormItem extends React.PureComponent {
             pendingExtraction: false,
             showAddLeadGroupModal: false,
             isTabularCapable: true,
+            tabularChangeKey: 1,
         };
 
         if (props.setSubmitter) {
@@ -131,9 +132,12 @@ export default class LeadFormItem extends React.PureComponent {
     }
 
     handleTabularModalClose = () => {
+        const { tabularChangeKey } = this.state;
+
         this.setState({
             showTabularModal: false,
             tabularMimeType: undefined,
+            tabularChangeKey: tabularChangeKey + 1,
         });
     }
 
@@ -341,6 +345,7 @@ export default class LeadFormItem extends React.PureComponent {
     renderLeadPreview = ({
         lead,
         className,
+        key,
     }) => {
         const type = leadAccessor.getType(lead);
         const values = leadAccessor.getFaramValues(lead);
@@ -374,6 +379,7 @@ export default class LeadFormItem extends React.PureComponent {
                     <div className={className} >
                         { values.attachment ? (
                             <Attachment
+                                key={key}
                                 attachment={values.attachment}
                                 tabularBook={values.tabularBook}
                                 className={styles.galleryFile}
@@ -411,6 +417,7 @@ export default class LeadFormItem extends React.PureComponent {
             isTabularCapable,
             isUrlValid,
             pendingExtraction,
+            tabularChangeKey,
         } = this.state;
 
         const LeadPreview = this.renderLeadPreview;
@@ -501,6 +508,7 @@ export default class LeadFormItem extends React.PureComponent {
                     bottomChild={
                         showLeadPreview && (
                             <LeadPreview
+                                key={tabularChangeKey}
                                 lead={lead}
                                 className={styles.leadPreview}
                             />

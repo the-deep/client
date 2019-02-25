@@ -772,6 +772,13 @@ export default class TabularBook extends React.PureComponent {
         const Body = this.renderBody;
 
         const disabled = deletePending || !completed || invalid;
+        const body = (
+            <Body
+                completed={completed}
+                invalid={invalid}
+                disabled={disabled}
+            />
+        );
 
         return (
             <div className={className}>
@@ -793,11 +800,7 @@ export default class TabularBook extends React.PureComponent {
                             }
                         />
                         <ModalBody className={styles.body}>
-                            <Body
-                                completed={completed}
-                                invalid={invalid}
-                                disabled={disabled}
-                            />
+                            {body}
                         </ModalBody>
                         <ModalFooter>
                             <Cloak
@@ -823,11 +826,7 @@ export default class TabularBook extends React.PureComponent {
                     </React.Fragment>
                 ) : (
                     <ModalBody className={styles.body}>
-                        <Body
-                            completed={completed}
-                            invalid={invalid}
-                            disabled={disabled}
-                        />
+                        {body}
                     </ModalBody>
                 )}
             </div>

@@ -906,7 +906,8 @@
         "-70697056": "Sheets to show",
         "-43793403": "Show other columns",
         "-54095239": "Remove column",
-        "-2259039": "Extract Tabular"
+        "-2259039": "Extract Tabular",
+        "-17116359": "Reset filter"
     },
     "links": {
         "browserExtension": {
@@ -2595,8 +2596,9 @@
             "sheetsLabel": -70697056
         },
         "tabular.sheets": {
-            "resetSortTooltip": 15008,
-            "columnShowButtonTooltip": -43793403
+            "columnShowButtonTooltip": -43793403,
+            "resetSortTitle": 15008,
+            "resetFilterTooltip": -17116359
         },
         "viewer.attachment": {
             "originalTabTitle": 518,

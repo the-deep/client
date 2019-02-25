@@ -425,19 +425,19 @@ export default class Sheet extends React.PureComponent {
                         }
                     />
                     <Button
-                        iconName={iconNames.sort}
                         onClick={this.handleResetSort}
                         disabled={disabled}
-                        title={_ts('tabular.sheets', 'resetSortTooltip')}
                         transparent
-                    />
+                    >
+                        {_ts('tabular.sheets', 'resetSortTitle')}
+                    </Button>
                     <Button
-                        iconName={iconNames.close}
                         onClick={this.handleResetFilter}
                         disabled={disabled}
-                        title={_ts('tabular.sheets', 'resetFilterTooltip')}
                         transparent
-                    />
+                    >
+                        {_ts('tabular.sheets', 'resetFilterTooltip')}
+                    </Button>
                 </div>
                 <Taebul
                     className={styles.table}
