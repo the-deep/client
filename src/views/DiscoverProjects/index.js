@@ -411,7 +411,7 @@ export default class DiscoverProjects extends React.PureComponent {
         if (pending) {
             return null;
         }
-        const isFilterEmpty = doesObjectHaveNoData(this.props.filters);
+        const isFilterEmpty = doesObjectHaveNoData(this.props.filters, ['']);
 
         if (!isFilterEmpty) {
             return (

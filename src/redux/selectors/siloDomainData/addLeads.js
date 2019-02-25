@@ -92,7 +92,7 @@ export const addLeadViewFiltersSelector = createSelector(
 
 export const addLeadViewIsFilterEmptySelector = createSelector(
     addLeadViewFiltersSelector,
-    filters => doesObjectHaveNoData(filters),
+    filters => doesObjectHaveNoData(filters, ['']),
 );
 
 export const addLeadViewActiveLeadIdSelector = createSelector(

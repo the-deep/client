@@ -227,7 +227,7 @@ export default class Entries extends React.PureComponent {
             projectId,
             entriesFilters,
         } = this.props;
-        const isFilterEmpty = doesObjectHaveNoData(entriesFilters);
+        const isFilterEmpty = doesObjectHaveNoData(entriesFilters, ['']);
 
         if (!isFilterEmpty) {
             return (
