@@ -71,10 +71,10 @@ export const createParamsForFieldRetrieve = fields => ({
 });
 
 export const createUrlForFieldEdit = fieldId => (
-    `${wsEndpoint}/tabular-field-update/${fieldId}/`
+    `${wsEndpoint}/tabular-fields/${fieldId}/`
 );
 export const createParamsForFieldEdit = value => ({
-    method: PUT,
+    method: PATCH,
     headers: commonHeaderForPost,
     body: JSON.stringify(value),
 });

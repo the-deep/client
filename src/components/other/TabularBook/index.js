@@ -60,18 +60,18 @@ const ModalButton = modalize(Button);
 
 const transformSheet = (sheet) => {
     const {
-        data: { columns },
+        fields,
         options,
         ...other
     } = sheet;
 
-    const fieldsStats = mapToMap(
-        columns,
-        k => k,
+    const fieldsStats = listToMap(
+        fields,
+        value => value.id,
         (value) => {
-            const invalidCount = value.filter(x => x.invalid).length;
-            const emptyCount = value.filter(x => x.empty).length;
-            const totalCount = value.length;
+            const invalidCount = value.data.filter(x => x.invalid).length;
+            const emptyCount = value.data.filter(x => x.empty).length;
+            const totalCount = value.data.length;
             return {
                 healthBar: [
                     {
@@ -91,22 +91,25 @@ const transformSheet = (sheet) => {
         },
     );
 
-    const newColumns = {
-        ...columns,
-        key: getNaturalNumbers(), // gives a list of natural numbers
+    const fieldsMeta = fields.map(({ data, ...others }) => others);
+
+    const columns = {
+        ...listToMap(fields, elem => elem.id, elem => elem.data),
+        key: getNaturalNumbers(),
     };
 
     const getObjFromZippedRows = (...zippedRow) => mapToMap(
-        newColumns,
+        columns,
         k => k,
         (k, v, i) => zippedRow[i],
     );
 
-    const rows = [...zipWith(getObjFromZippedRows, ...mapToList(newColumns))];
+    const rows = [...zipWith(getObjFromZippedRows, ...mapToList(columns))];
 
     const newSheet = {
         rows,
         fieldsStats,
+        fields: fieldsMeta,
         options: {
             ...options,
             defaultColumnWidth: 250,
@@ -213,7 +216,6 @@ export default class TabularBook extends React.PureComponent {
             isSomePending: false,
 
             isSheetRetrievePending: false,
-            isSheetOptionsSavePending: false,
 
             sheetDeletePending: {},
             sheetEditPending: {},
@@ -365,16 +367,6 @@ export default class TabularBook extends React.PureComponent {
         const request = new FgRestBuilder()
             .url(createUrlForSheetOptionsSave(bookId))
             .params(() => createParamsForSheetOptionsSave(modification))
-            .preLoad(() => {
-                this.setState({ isSheetOptionsSavePending: true });
-            })
-            .postLoad(() => {
-                this.setState(
-                    { isSheetOptionsSavePending: false },
-                    () => this.coordinator.notifyComplete(requestId),
-                );
-                this.coordinator.notifyComplete(requestId);
-            })
             .build();
 
         this.coordinator.add(requestId, request);
@@ -494,11 +486,7 @@ export default class TabularBook extends React.PureComponent {
                             f => f.id === fieldId,
                         );
                         // eslint-disable-next-line no-param-reassign
-                        safeState.originalSheets[sheetIndex].data.columns[fieldId] = (
-                            response.fieldData
-                        );
-                        // eslint-disable-next-line no-param-reassign
-                        safeState.originalSheets[sheetIndex].fields[fieldIndex] = response.field;
+                        safeState.originalSheets[sheetIndex].fields[fieldIndex] = response;
                     }),
                 );
             })
