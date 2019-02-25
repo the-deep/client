@@ -35,6 +35,7 @@ const healthColorScheme = [
 
 const valueSelector = x => x.value;
 const keySelector = x => x.key;
+const labelSelector = keySelector;
 
 export default class Field extends React.PureComponent {
     static propTypes = propTypes;
@@ -134,6 +135,7 @@ export default class Field extends React.PureComponent {
                     data={healthStatusData}
                     valueSelector={valueSelector}
                     keySelector={keySelector}
+                    labelSelector={labelSelector}
                     colorScheme={healthColorScheme}
                     enlargeOnHover={false}
                     hideLabel

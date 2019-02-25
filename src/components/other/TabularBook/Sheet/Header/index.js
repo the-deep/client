@@ -155,6 +155,7 @@ export default class Header extends React.PureComponent {
                     data={statusData}
                     valueSelector={healthBarValueSelector}
                     keySelector={healthBarKeySelector}
+                    labelSelector={healthBarKeySelector}
                     className={styles.healthBar}
                     hideLabel
                     enlargeOnHover={false}
