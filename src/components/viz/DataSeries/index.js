@@ -1,14 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
+import {
+    listToMap,
+} from '@togglecorp/fujs';
 
+import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import Button from '#rsca/Button';
 import GeoViz from '#components/geo/GeoViz';
-import RotatingInput from '#rsci/RotatingInput';
 import SimpleHorizontalBarChart from '#rscz/SimpleHorizontalBarChart';
 import SimpleVerticalBarChart from '#rscz/SimpleVerticalBarChart';
 import WordCloud from '#rscz/WordCloud';
@@ -17,6 +20,7 @@ import modalize from '#rscg/Modalize';
 
 import _cs from '#cs';
 import _ts from '#ts';
+
 import styles from './styles.scss';
 
 const ModalButton = modalize(Button);
@@ -50,8 +54,6 @@ const chartMargins = {
 const sizeSelector = d => d.size;
 const chartsLabelSelector = d => d.text;
 const tooltipSelector = d => `<span>${d.text}</span>`;
-const rotatingInputKeySelector = d => d.key;
-const rotatingInputLabelSelector = d => d.label;
 
 const GRAPH = {
     horizontalBarChart: 'horizontal-bar-chart',
@@ -68,11 +70,50 @@ const GRAPH_MODES = {
 };
 
 
-const GRAPH_LABELS = {
-    [GRAPH.horizontalBarChart]: <span>{_ts('components.viz.dataSeries', 'horizontalBarChartLabel')}</span>,
-    [GRAPH.verticalBarChart]: <span>{_ts('components.viz.dataSeries', 'verticalBarChartLabel')}</span>,
-    [GRAPH.wordCloud]: <span>{_ts('components.viz.dataSeries', 'wordCloudLabel')}</span>,
-    [GRAPH.geo]: <span>{_ts('components.viz.dataSeries', 'geoLabel')}</span>,
+const GRAPH_DETAILS = {
+    [GRAPH.horizontalBarChart]: {
+        title: _ts('components.viz.dataSeries', 'horizontalBarChartLabel'),
+        iconName: iconNames.horizontalBar,
+    },
+    [GRAPH.verticalBarChart]: {
+        title: _ts('components.viz.dataSeries', 'verticalBarChartLabel'),
+        iconName: iconNames.verticalBar,
+    },
+    [GRAPH.wordCloud]: {
+        title: _ts('components.viz.dataSeries', 'wordCloudLabel'),
+        iconName: iconNames.word,
+    },
+    [GRAPH.geo]: {
+        title: _ts('components.viz.dataSeries', 'geoLabel'),
+        iconName: iconNames.globe,
+    },
+};
+
+const Tab = ({
+    icon,
+    onClick,
+    isActive,
+}) => (
+    <button
+        onClick={onClick}
+        type="button"
+        className={_cs(
+            styles.tab,
+            isActive && styles.activeTab,
+        )}
+    >
+        <span className={icon} />
+    </button>
+);
+
+Tab.propTypes = {
+    icon: PropTypes.string,
+    onClick: PropTypes.func.isRequired,
+    isActive: PropTypes.bool.isRequired,
+};
+
+Tab.defaultProps = {
+    icon: '',
 };
 
 
@@ -83,74 +124,8 @@ export default class DataSeries extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const commonRendererParams = {
-            valueSelector: sizeSelector,
-            showTooltip: true,
-            margins: chartMargins,
-            tooltipSelector,
-            labelSelector: chartsLabelSelector,
-        };
-
-        this.views = {
-            [GRAPH.horizontalBarChart]: {
-                component: SimpleHorizontalBarChart,
-                rendererParams: () => {
-                    const { value: { data } } = this.props;
-                    return {
-                        className: styles.horizontalBarChart,
-                        data: this.getNumberCountSeries(data),
-                        ...commonRendererParams,
-                    };
-                },
-            },
-            [GRAPH.verticalBarChart]: {
-                component: SimpleVerticalBarChart,
-                rendererParams: () => {
-                    const { value: { data } } = this.props;
-
-                    return {
-                        className: styles.verticalBarChart,
-                        data: this.getNumberCountSeries(data),
-                        ...commonRendererParams,
-                    };
-                },
-            },
-            [GRAPH.geo]: {
-                component: GeoViz,
-                rendererParams: () => {
-                    const {
-                        value: {
-                            options = {},
-                            data,
-                        },
-                    } = this.props;
-
-                    const {
-                        regions,
-                        adminLevel,
-                    } = options;
-
-                    return {
-                        className: styles.geoVisualization,
-                        regions,
-                        adminLevel,
-                        value: this.getGeoValue(data),
-                    };
-                },
-            },
-            [GRAPH.wordCloud]: {
-                component: WordCloud,
-                rendererParams: () => {
-                    const { value: { data } } = this.props;
-
-                    return {
-                        className: styles.wordCloud,
-                        data: this.getWordCountSeries(data),
-                        fontSizeSelector: sizeSelector,
-                    };
-                },
-            },
-        };
+        this.views = this.createView({ showLegend: false });
+        this.modalViews = this.createView({ showLegend: true });
 
         this.state = {
             activeView: GRAPH.verticalBarChart,
@@ -158,11 +133,10 @@ export default class DataSeries extends React.PureComponent {
     }
 
     getSegmentOptions = memoize(type => (
-        GRAPH_MODES[type].map(
-            mode => ({
-                key: mode,
-                label: GRAPH_LABELS[mode],
-            }),
+        listToMap(
+            GRAPH_MODES[type],
+            mode => mode,
+            mode => GRAPH_DETAILS[mode],
         )
     ))
 
@@ -183,6 +157,18 @@ export default class DataSeries extends React.PureComponent {
         }));
 
         return newSeries;
+    })
+
+    getGeoCountSeries = memoize((series) => {
+        const sanitizedSeries = series
+            .filter(datum => !datum.empty && !datum.invalid);
+        const tags = sanitizedSeries.reduce(
+            (acc, { processedValue }) => {
+                acc[processedValue] = (acc[processedValue] || 0) + 1;
+                return acc;
+            }, {},
+        );
+        return tags;
     })
 
     getNumberCountSeries = memoize((series) => {
@@ -208,12 +194,94 @@ export default class DataSeries extends React.PureComponent {
     })))
 
     getGeoValue = memoize(data => data
-        .map(d => d.processedValue && String(d.processedValue))
-        .filter(d => d))
+        .filter(d => d.processedValue)
+        .map(d => String(d.processedValue)))
+
+    createView = ({ showLegend }) => {
+        const commonRendererParams = {
+            valueSelector: sizeSelector,
+            showTooltip: true,
+            margins: chartMargins,
+            tooltipSelector,
+            labelSelector: chartsLabelSelector,
+            showLegend,
+        };
+
+        return {
+            [GRAPH.horizontalBarChart]: {
+                component: SimpleHorizontalBarChart,
+                rendererParams: () => {
+                    const { value: { data } } = this.props;
+                    return {
+                        className: styles.horizontalBarChart,
+                        data: this.getNumberCountSeries(data),
+                        ...commonRendererParams,
+                    };
+                },
+                lazyMount: true,
+            },
+            [GRAPH.verticalBarChart]: {
+                component: SimpleVerticalBarChart,
+                rendererParams: () => {
+                    const { value: { data } } = this.props;
+
+                    return {
+                        className: styles.verticalBarChart,
+                        data: this.getNumberCountSeries(data),
+                        ...commonRendererParams,
+                    };
+                },
+                lazyMount: true,
+            },
+            [GRAPH.geo]: {
+                component: GeoViz,
+                rendererParams: () => {
+                    const {
+                        value: {
+                            options = {},
+                            data,
+                        },
+                    } = this.props;
+
+                    const {
+                        regions,
+                        adminLevel,
+                    } = options;
+
+                    return {
+                        className: styles.geoVisualization,
+                        regions,
+                        adminLevel,
+                        value: this.getGeoValue(data),
+                        frequency: this.getGeoCountSeries(data),
+                        ...commonRendererParams,
+                    };
+                },
+                lazyMount: true,
+            },
+            [GRAPH.wordCloud]: {
+                component: WordCloud,
+                rendererParams: () => {
+                    const { value: { data } } = this.props;
+
+                    return {
+                        className: styles.wordCloud,
+                        data: this.getWordCountSeries(data),
+                        fontSizeSelector: sizeSelector,
+                    };
+                },
+                lazyMount: true,
+            },
+        };
+    }
 
     handleSegmentStateChange = (value) => {
         this.setState({ activeView: value });
     }
+
+    scrollTabRendererParams = (_, tab) => ({
+        icon: tab.iconName,
+    })
 
     renderExpandedModal = ({
         closeModal,
@@ -226,19 +294,17 @@ export default class DataSeries extends React.PureComponent {
                 title={title}
                 rightComponent={
                     <div className={styles.actionButtons}>
-                        <RotatingInput
-                            rendererSelector={rotatingInputLabelSelector}
-                            keySelector={rotatingInputKeySelector}
-                            value={activeView}
-                            onChange={this.handleSegmentStateChange}
-                            options={this.getSegmentOptions(type)}
-                            showLabel={false}
-                            showHintAndError={false}
+                        <ScrollTabs
+                            active={activeView}
+                            className={styles.fixedTabs}
+                            onClick={this.handleSegmentStateChange}
+                            renderer={Tab}
+                            rendererParams={this.scrollTabRendererParams}
+                            tabs={this.getSegmentOptions(type)}
                         />
                         <Button
                             iconName={iconNames.close}
                             onClick={closeModal}
-                            className={styles.closeExpandedViewButton}
                             transparent
                         />
                     </div>
@@ -246,7 +312,7 @@ export default class DataSeries extends React.PureComponent {
             />
             <ModalBody className={styles.body}>
                 <MultiViewContainer
-                    views={this.views}
+                    views={this.modalViews}
                     active={activeView}
                 />
             </ModalBody>
@@ -272,15 +338,14 @@ export default class DataSeries extends React.PureComponent {
                         {value.title}
                     </h5>
                     <div className={styles.actions}>
-                        { options && options.length > 1 &&
-                            <RotatingInput
-                                rendererSelector={rotatingInputLabelSelector}
-                                keySelector={rotatingInputKeySelector}
-                                value={activeView}
-                                onChange={this.handleSegmentStateChange}
-                                options={options}
-                                showLabel={false}
-                                showHintAndError={false}
+                        { options && Object.keys(options).length > 1 &&
+                            <ScrollTabs
+                                active={activeView}
+                                className={styles.fixedTabs}
+                                onClick={this.handleSegmentStateChange}
+                                renderer={Tab}
+                                rendererParams={this.scrollTabRendererParams}
+                                tabs={options}
                             />
                         }
                         <ModalButton

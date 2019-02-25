@@ -13,9 +13,9 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import ResizableV from '#rscv/Resizable/ResizableV';
 import update from '#rsu/immutable-update';
 
-import InternalGallery from '#components/viewer/InternalGallery';
 import ExternalGallery from '#components/viewer/ExternalGallery';
 import TabularBook from '#components/other/TabularBook';
+import Attachment from '#components/viewer/Attachment';
 
 import {
     addLeadViewLeadChangeAction,
@@ -90,6 +90,7 @@ export default class LeadFormItem extends React.PureComponent {
             pendingExtraction: false,
             showAddLeadGroupModal: false,
             isTabularCapable: true,
+            tabularChangeKey: 1,
         };
 
         if (props.setSubmitter) {
@@ -131,9 +132,12 @@ export default class LeadFormItem extends React.PureComponent {
     }
 
     handleTabularModalClose = () => {
+        const { tabularChangeKey } = this.state;
+
         this.setState({
             showTabularModal: false,
             tabularMimeType: undefined,
+            tabularChangeKey: tabularChangeKey + 1,
         });
     }
 
@@ -338,13 +342,18 @@ export default class LeadFormItem extends React.PureComponent {
 
     // RENDER
 
-
     renderLeadPreview = ({
         lead,
         className,
+        key,
     }) => {
         const type = leadAccessor.getType(lead);
         const values = leadAccessor.getFaramValues(lead);
+        const {
+            faramValues: {
+                project: projectId,
+            } = {},
+        } = lead;
 
         switch (type) {
             case LEAD_TYPE.text:
@@ -369,11 +378,12 @@ export default class LeadFormItem extends React.PureComponent {
                 return (
                     <div className={className} >
                         { values.attachment ? (
-                            <InternalGallery
+                            <Attachment
+                                key={key}
+                                attachment={values.attachment}
+                                tabularBook={values.tabularBook}
                                 className={styles.galleryFile}
-                                galleryId={values.attachment && values.attachment.id}
-                                notFoundMessage={_ts('addLeads', 'leadFileNotFound')}
-                                showUrl
+                                projectId={projectId}
                             />
                         ) : (
                             <Message>
@@ -407,6 +417,7 @@ export default class LeadFormItem extends React.PureComponent {
             isTabularCapable,
             isUrlValid,
             pendingExtraction,
+            tabularChangeKey,
         } = this.state;
 
         const LeadPreview = this.renderLeadPreview;
@@ -497,6 +508,7 @@ export default class LeadFormItem extends React.PureComponent {
                     bottomChild={
                         showLeadPreview && (
                             <LeadPreview
+                                key={tabularChangeKey}
                                 lead={lead}
                                 className={styles.leadPreview}
                             />

@@ -21,8 +21,7 @@
     flex-shrink: 0;
     justify-content: space-between;
     border-bottom: $width-separator-thin solid $color-separator;
-    padding: $spacing-small;
-    padding-top: 0;
+    padding: 0 0 $spacing-small $spacing-small;
 
     .button-container {
         display: flex;

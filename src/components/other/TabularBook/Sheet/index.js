@@ -221,9 +221,17 @@ export default class Sheet extends React.PureComponent {
             }))
     ));
 
-    shouldHideEditButton = ({ leadPermissions }) => (
-        this.props.viewMode || !leadPermissions.modify
-    );
+    shouldHideEditButton = ({ leadPermissions }) => {
+        const {
+            sheet: {
+                fields,
+            },
+            disabled,
+        } = this.props;
+        const fieldList = getDeletedFields(fields);
+
+        return this.props.viewMode || !leadPermissions.modify || disabled || fieldList.length <= 0;
+    };
 
     cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({
         className: _cs(styles[type], styles.cell),
@@ -380,6 +388,7 @@ export default class Sheet extends React.PureComponent {
             fieldEditPending,
             viewMode,
         } = this.props;
+
         const { searchTerm } = options;
 
         const columns = this.getSheetColumns(
@@ -403,6 +412,7 @@ export default class Sheet extends React.PureComponent {
                                 iconName={iconNames.more}
                                 title={_ts('tabular.sheets', 'columnShowButtonTooltip')}
                                 disabled={disabled || fieldList.length <= 0}
+                                transparent
                                 pending={isFieldRetrievePending}
                                 modal={
                                     <FieldRetrieveModal
@@ -415,17 +425,19 @@ export default class Sheet extends React.PureComponent {
                         }
                     />
                     <Button
-                        iconName={iconNames.sort}
                         onClick={this.handleResetSort}
                         disabled={disabled}
-                        title={_ts('tabular.sheets', 'resetSortTooltip')}
-                    />
+                        transparent
+                    >
+                        {_ts('tabular.sheets', 'resetSortTitle')}
+                    </Button>
                     <Button
-                        iconName={iconNames.close}
                         onClick={this.handleResetFilter}
                         disabled={disabled}
-                        title={_ts('tabular.sheets', 'resetFilterTooltip')}
-                    />
+                        transparent
+                    >
+                        {_ts('tabular.sheets', 'resetFilterTooltip')}
+                    </Button>
                 </div>
                 <Taebul
                     className={styles.table}

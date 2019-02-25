@@ -3,7 +3,6 @@ import React from 'react';
 
 import Button from '#rsca/Button';
 import SelectInput from '#rsci/SelectInput';
-// import SegmentInput from '#rsci/SegmentInput';
 import Message from '#rscv/Message';
 import { randomString } from '@togglecorp/fujs';
 
@@ -21,13 +20,17 @@ const propTypes = {
         title: PropTypes.string,
     })).isRequired,
     value: PropTypes.arrayOf(PropTypes.string),
+    frequency: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     adminLevel: PropTypes.number,
+    showLegend: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     adminLevel: undefined,
     value: [],
+    showLegend: true,
+    frequency: {},
 };
 
 export default class GeoViz extends React.PureComponent {
@@ -87,6 +90,8 @@ export default class GeoViz extends React.PureComponent {
             className,
             regions,
             value,
+            frequency,
+            showLegend,
         } = this.props;
 
         const {
@@ -106,6 +111,7 @@ export default class GeoViz extends React.PureComponent {
                     value={regionId}
                     onChange={this.handleRegionChange}
                     showHintAndError={false}
+                    showLabel={false}
                     hideClearButton
                 />
                 <Button
@@ -123,6 +129,8 @@ export default class GeoViz extends React.PureComponent {
                         adminLevels={adminLevels}
                         onAdminLevelsFetched={this.handleAdminLevelsChange}
                         value={value}
+                        frequency={frequency}
+                        showLegend={showLegend}
                     />
                 )}
                 {!regionId && (

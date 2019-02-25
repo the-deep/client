@@ -89,6 +89,8 @@ const projectSchema = [];
             entryPermissions: { type: 'array.string', required: true },
             setupPermissions: { type: 'array.string', required: true },
             exportPermissions: { type: 'array.string', required: true },
+            assessmentPermissions: { type: 'array.string', required: true },
+            level: { type: 'number', required: true },
         },
     };
     projectSchema.push({ name, schema });
@@ -103,6 +105,7 @@ const projectSchema = [];
         fields: {
             id: { type: 'uint', required: true },
             title: { type: 'string', required: true },
+            memberStatus: { type: 'string', required: true },
             role: { type: 'uint' },
             analysisFramework: { type: 'uint', required: false },
             assessmentTemplate: { type: 'uint', required: false },

@@ -41,4 +41,10 @@
             }
         }
     }
+
+    .legend {
+        position: absolute;
+        bottom: $spacing-small;
+        left: $spacing-small;
+    }
 }
