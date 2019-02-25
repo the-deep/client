@@ -113,8 +113,8 @@
                 margin: 0 $spacing-small;
                 margin-right: $spacing-extra-small;
                 // background-color: $color-accent;
-                color: $color-text-on-accent;
-                @extend %button-like-link;
+                // color: $color-text-on-accent;
+                @include button-like-link($color-accent);
             }
         }
 
@@ -130,7 +130,7 @@
                 width: 46px;
 
                 :global {
-                    .input {
+                    .raw-input {
                         // border-bottom: $width-separator-medium solid transparent;
                         direction: rtl;
                     }
@@ -142,8 +142,8 @@
             display: flex;
             align-items: center;
 
-            > p {
-                margin: 0 $spacing-medium-alt 0 0;
+            .text {
+                padding: 0 $spacing-medium;
             }
         }
     }

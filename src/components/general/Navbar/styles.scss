@@ -7,7 +7,7 @@ $color-text-on-primary: get-text-color($color-primary);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 $spacing-extra-small $spacing-small (-$spacing-extra-small) $color-shadow-medium;
+    box-shadow: 0 $spacing-extra-small $spacing-small $radius-spread-medium $color-shadow-medium;
     background-color: $color-navbar;
     padding: 0 $spacing-medium-alt;
     color: $color-text-on-navbar;

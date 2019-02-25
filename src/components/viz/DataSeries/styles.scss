@@ -128,7 +128,9 @@ $width-expanded-view: 90vw;
         }
 
         &.active-tab {
-            background-color: fade-out($color-accent, .92);
+            // background-color: fade-out($color-accent, .92);
+            // TODO: use hint of accent color
+            background-color: $color-background-hover;
             color: $color-accent;
         }
 

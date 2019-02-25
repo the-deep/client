@@ -144,8 +144,9 @@ $radius-button-border: 2px;
     background-color: $color-foreground;
     padding: $spacing-small $spacing-small-alt;
     text-transform: uppercase;
+    color: $background-color;
     font-size: $font-size-small;
-    font-weight: $font-weight-bold;
+    // font-weight: $font-weight-bold;
 
     &:active {
         @include shadow-button-active;
@@ -153,8 +154,8 @@ $radius-button-border: 2px;
     }
 
     &:hover {
-        // background-color: $color-background-hover;
-        color: $background-color;
+        background-color: $color-background-hover;
+        // color: $background-color;
         // background-color: get-hover-color($background-color);
     }
 
