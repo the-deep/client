@@ -9,13 +9,12 @@
         justify-content: space-between;
 
         .add-lead-link {
-            @extend %button-like-link;
+            @include button-like-link($color-primary);
+            // @extend %button-like-link;
             align-self: flex-end;
             flex-shrink: 0;
             margin: $spacing-small;
-            background-color: $color-primary;
             padding: $spacing-small $spacing-medium-alt;
-            color: $color-text-on-primary;
         }
 
         :global {

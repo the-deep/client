@@ -1,9 +1,11 @@
-%widget {
-    $height-header: 20px;
+:root {
+    --height-widget-header: 20px;
+}
 
+%widget {
     .header {
         background-color: $color-background-header;
-        height: $height-header;
+        height: var(--height-widget-header);
         font-size: $font-size-small;
 
         .heading {
@@ -14,6 +16,6 @@
 
     .content {
         background-color: $color-foreground;
-        height: calc(100% - var(--height-header));
+        height: calc(100% - var(--height-widget-header));
     }
 }

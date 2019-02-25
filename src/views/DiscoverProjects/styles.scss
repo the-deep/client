@@ -17,7 +17,11 @@
 
             :global {
                 .projects-filter {
-                    margin: $spacing-small;
+                    margin: $spacing-small $spacing-medium;
+                }
+
+                .list-selection {
+                    flex-shrink: 0;
                 }
 
                 .button {
