@@ -63,6 +63,7 @@ const iconNames = {
     chat: 'ion-ios-chatboxes-outline',
     globe: 'ion-earth',
     verticalBar: 'ion-connection-bars',
+    histogram: 'ion-arrow-graph-up-right',
     horizontalBar: 'ion-navicon',
     word: 'ion-social-wordpress-outline',
     calculator: 'ion-ios-calculator',

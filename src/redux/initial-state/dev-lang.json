@@ -907,7 +907,8 @@
         "-43793403": "Show other columns",
         "-54095239": "Remove column",
         "-2259039": "Extract Tabular",
-        "-17116359": "Reset filter"
+        "-17116359": "Reset filter",
+        "-2956489": "Histogram"
     },
     "links": {
         "browserExtension": {
@@ -2527,7 +2528,8 @@
             "verticalBarChartLabel": -5214537,
             "horizontalBarChartLabel": -26663455,
             "geoLabel": -50186668,
-            "wordCloudLabel": -50602560
+            "wordCloudLabel": -50602560,
+            "histogramLabel": -2956489
         },
         "components.dashboard": {},
         "geoViz": {
