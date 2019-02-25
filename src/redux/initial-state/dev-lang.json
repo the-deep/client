@@ -908,7 +908,9 @@
         "-54095239": "Remove column",
         "-2259039": "Extract Tabular",
         "-17116359": "Reset filter",
-        "-2956489": "Histogram"
+        "-2956489": "Histogram",
+        "-2259035": "Extracting Information...",
+        "-17116359": "Reset filter"
     },
     "links": {
         "browserExtension": {
@@ -1580,7 +1582,8 @@
             "connectorSourcesTitle": 1109,
             "connectorTitle": 1100,
             "tabularButtonTitle": -4174557,
-            "tabularExtractButtonTitle": -2259039
+            "tabularExtractButtonTitle": -2259039,
+            "tabularExtractionLoading": -2259035
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,
@@ -1652,7 +1655,9 @@
             "backButtonTitle": -53408079,
             "extractButtonTitle": 15006,
             "nextButtonTitle": 23,
-            "noHeaderLabel": -39031808
+            "noHeaderLabel": -39031808,
+            "tabularExtractionLoading": -2259035,
+            "tabularExtractionError": 630
         },
         "register": {
             "checkYourEmailText": 818,

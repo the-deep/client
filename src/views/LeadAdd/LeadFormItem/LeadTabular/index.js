@@ -13,9 +13,11 @@ import ModalFooter from '#rscv/Modal/Footer';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Button from '#rsca/Button';
 import NonFieldErrors from '#rsci/NonFieldErrors';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import _ts from '#ts';
 import _cs from '#cs';
+import notify from '#notify';
 
 import {
     RequestCoordinator,
@@ -220,7 +222,7 @@ export default class LeadTabular extends React.PureComponent {
 
         this.state = {
             fileType,
-            schema: undefined,
+            schema: {},
             faramValues: newFaramValues,
             faramErrors: {},
             hasError: false,
@@ -272,11 +274,13 @@ export default class LeadTabular extends React.PureComponent {
             responseError,
         } = getMetaInfoRequest;
 
-        if (pending) {
-            return 'pending';
-        }
         if (responseError) {
-            return 'error';
+            notify.send({
+                title: _ts('addLeads.tabular', 'tabularExtractionError'),
+                type: notify.type.SUCCESS,
+                message: _ts('addLeads.tabular', 'tabularExtractionError'),
+                duration: notify.duration.MEDIUM,
+            });
         }
 
         const { pending: savePending } = createBookRequest;
@@ -284,8 +288,8 @@ export default class LeadTabular extends React.PureComponent {
         // NOTE: Default component should be null but FaramGroup doesn't
         // support null child yet.
         const component = (
-            (fileType === 'csv' && <CsvSettings />) ||
-            (fileType === 'xlsx' &&
+            (fileType === 'csv' && !pending && <CsvSettings />) ||
+            (fileType === 'xlsx' && !pending &&
                 <ExcelSettings
                     meta={meta}
                     sheets={faramValues.options.sheets}
@@ -303,14 +307,27 @@ export default class LeadTabular extends React.PureComponent {
                 schema={schema}
                 value={faramValues}
                 error={faramErrors}
-                disabled={savePending}
+                disabled={savePending || pending}
             >
+                <ModalHeader title={_ts('addLeads.tabular', 'title')} />
                 <ModalBody className={styles.body} >
-                    <NonFieldErrors faramElement />
-                    { component &&
-                        <FaramGroup faramElementName="options">
-                            {component}
-                        </FaramGroup>
+                    {
+                        pending ? (
+                            <div className={styles.pending}>
+                                <LoadingAnimation
+                                    message={_ts('addLeads.tabular', 'tabularExtractionLoading')}
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <NonFieldErrors faramElement />
+                                { component &&
+                                    <FaramGroup faramElementName="options">
+                                        {component}
+                                    </FaramGroup>
+                                }
+                            </div>
+                        )
                     }
                 </ModalBody>
                 <ModalFooter>
@@ -320,7 +337,7 @@ export default class LeadTabular extends React.PureComponent {
                     <PrimaryButton
                         type="submit"
                         pending={savePending}
-                        disabled={hasError}
+                        disabled={hasError || pending}
                     >
                         {_ts('addLeads.tabular', 'extractButtonTitle')}
                     </PrimaryButton>
@@ -340,7 +357,6 @@ export default class LeadTabular extends React.PureComponent {
                     styles.leadTabular,
                 )}
             >
-                <ModalHeader title={_ts('addLeads.tabular', 'title')} />
                 <Body />
             </div>
         );
