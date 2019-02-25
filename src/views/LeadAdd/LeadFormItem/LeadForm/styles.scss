@@ -17,7 +17,7 @@
 
     .title,
     .source {
-        flex-basis: calc(100% / 2 - #{$spacing-medium});
+        flex-basis: calc(100% / 2 - var(--spacing-medium));
         padding: $spacing-medium 0;
     }
 
@@ -37,18 +37,18 @@
     .confidentiality,
     .user,
     .date {
-        flex-basis: calc(100% / 3 - #{$spacing-medium});
+        flex-basis: calc(100% / 3 - var(--spacing-medium));
         padding: $spacing-medium 0;
     }
 
     .url,
     .website {
-        flex-basis: calc(50% - #{$spacing-medium});
+        flex-basis: calc(50% - var(--spacing-medium));
     }
 
     .project,
     .lead-group-container {
-        flex-basis: calc(100% / 2 - #{$spacing-medium});
+        flex-basis: calc(100% / 2 - var(--spacing-medium));
         padding: $spacing-medium 0;
     }
 

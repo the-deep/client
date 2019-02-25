@@ -4,7 +4,7 @@
     $width-id-column: 72px;
     $width-refs-column: 64px;
     $width-duplicates-column: 108px;
-    $width-string-column: calc(100% - #{$width-id-column + $width-refs-column + $width-duplicates-column});
+    $width-string-column: calc(100% - var(--width-id-column) - var(--width-refs-column) - var(--width-duplicates-column));
 
     :global {
         .headers {

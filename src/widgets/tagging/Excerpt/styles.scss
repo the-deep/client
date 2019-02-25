@@ -19,7 +19,7 @@
     .text {
         margin: $spacing-extra-small $spacing-small;
         width: calc(100% - var(--spacing-small) * 2);
-        height: calc(100% - var(--$spacing-extra-small) * 2);
+        height: calc(100% - var(--spacing-extra-small) * 2);
         resize: none;
 
         :global {

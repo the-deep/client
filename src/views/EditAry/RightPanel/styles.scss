@@ -19,7 +19,7 @@ $height-tabs: 32px;
 
     %tab-content {
         position: relative;
-        height: calc(100% - #{$height-tabs});
+        height: calc(100% - var(--height-tabs));
     }
 
     .metadata {

@@ -8,7 +8,7 @@ $height-header: 42px;
     .main-content {
         display: flex;
         margin: $spacing-small;
-        height: calc(100% - #{$height-header});
+        height: calc(100% - var(--height-header));
 
         .left {
             display: flex;

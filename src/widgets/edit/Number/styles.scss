@@ -10,7 +10,7 @@
     justify-content: space-between;
 
     .input {
-        flex-basis: calc(50% - #{$spacing-extra-small});
+        flex-basis: calc(50% - var(--spacing-extra-small));
     }
 }
 

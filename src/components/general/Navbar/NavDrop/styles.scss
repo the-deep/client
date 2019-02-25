@@ -24,7 +24,7 @@
     }
 
     .label {
-        flex-basis: calc(100% - #{$width-icon-extra-large});
+        flex-basis: calc(100% - var(--width-icon-extra-large));
         color: $color-text;
     }
 

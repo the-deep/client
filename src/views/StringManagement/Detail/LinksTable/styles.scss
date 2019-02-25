@@ -4,7 +4,7 @@
     $width-id-column: 40%;
     $width-refs-column: 64px;
     $width-string-id-column: 108px;
-    $width-string-column: calc(100% - #{$width-id-column} - #{$width-refs-column + $width-string-id-column});
+    $width-string-column: calc(100% - var(--width-id-column) - var(--width-refs-column) - var(--width-string-id-column));
 
     :global {
         .headers {

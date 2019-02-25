@@ -56,7 +56,7 @@ $height-header: 42px;
         flex-grow: 1;
 
         .region-details {
-            bottom: calc(#{$spacing-medium} + 24px);
+            bottom: calc(var(--spacing-medium) + 24px);
         }
 
         .region-map {

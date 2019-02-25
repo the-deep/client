@@ -46,7 +46,7 @@ $width-region-list: 240px;
     }
 
     .region-details-container {
-        flex-basis: calc(100% - #{$width-region-list});
+        flex-basis: calc(100% - var(--width-region-list));
         flex-grow: 0;
         flex-shrink: 0;
         overflow: auto;
@@ -55,7 +55,7 @@ $width-region-list: 240px;
     .no-regions {
         display: flex;
         align-items: center;
-        flex-basis: calc(100% - #{$width-region-list});
+        flex-basis: calc(100% - var(--width-region-list));
         justify-content: center;
         color: $color-text-disabled;
         font-size: $font-size-large;

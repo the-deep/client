@@ -97,7 +97,7 @@ body {
             perspective: 1000px;
             background-color: $color-background;
             // padding: $spacing-small-alt;
-            height: calc(100vh - #{$height-navbar});
+            height: calc(100vh - var(--height-navbar));
             overflow-y: auto;
         }
 
@@ -121,12 +121,12 @@ body {
 :global {
     .nagbar-shown {
         .deep-main-content {
-            height: calc(100vh - #{$height-navbar} - #{$height-nagbar});
+            height: calc(100vh - var(--height-navbar) - var(--height-nagbar));
         }
 
         .no-nav + .deep-main-content {
             padding: 0;
-            height: calc(100vh - #{$height-nagbar});
+            height: calc(100vh - var(--height-nagbar));
         }
     }
 }

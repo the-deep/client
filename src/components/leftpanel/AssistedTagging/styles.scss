@@ -14,7 +14,7 @@ $min-width-assistant: 240px;
     }
 
     .preview {
-        height: calc(100% - #{$height-assistant-options});
+        height: calc(100% - var(--height-assistant-options));
     }
 
     &:not(.assistant-options-shown) {
