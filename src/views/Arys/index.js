@@ -275,7 +275,7 @@ export default class Arys extends React.PureComponent {
             projectId,
         } = this.props;
 
-        const isFilterEmpty = doesObjectHaveNoData(filters);
+        const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
 
         if (!isFilterEmpty) {
             return (

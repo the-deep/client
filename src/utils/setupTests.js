@@ -6,7 +6,10 @@ import raf from './tempPolyfills'; // eslint-disable-line no-unused-vars
 // React 16 Enzyme adapter
 Enzyme.configure({ adapter: new Adapter() });
 
-jest.mock('mapbox-gl', () => undefined);
+jest.mock(
+    'mapbox-gl',
+    () => ({ supported: () => false }),
+);
 
 /*
 // Make Enzyme functions available in all test files without importing

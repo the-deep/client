@@ -146,7 +146,7 @@ export default class FilterArysForm extends React.PureComponent {
     }
 
     handleClearFilters = () => {
-        if (doesObjectHaveNoData(this.props.filters)) {
+        if (doesObjectHaveNoData(this.props.filters, [''])) {
             // NOTE: Only clear component state,
             // as the filters in global state is already empty
             this.setState({ faramValues: {}, pristine: true });
@@ -171,7 +171,7 @@ export default class FilterArysForm extends React.PureComponent {
 
         const isApplyDisabled = pristine;
 
-        const isFilterEmpty = doesObjectHaveNoData(filters);
+        const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
         const isClearDisabled = isFilterEmpty && pristine;
 
         return (

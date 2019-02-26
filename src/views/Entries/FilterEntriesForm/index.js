@@ -323,7 +323,7 @@ export default class FilterEntriesForm extends React.PureComponent {
             pristine,
             filters,
         } = this.state;
-        const isFilterEmpty = doesObjectHaveNoData(filters);
+        const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
 
         const { createdBy } = entryFilterOptions;
 

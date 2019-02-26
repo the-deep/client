@@ -296,7 +296,7 @@ export default class LeadGroups extends React.PureComponent {
     renderEmpty = () => {
         const { loadingLeads } = this.state;
 
-        const isFilterEmpty = doesObjectHaveNoData(this.props.filters);
+        const isFilterEmpty = doesObjectHaveNoData(this.props.filters, ['']);
 
         if (loadingLeads && isFilterEmpty) {
             return null;
