@@ -14,6 +14,7 @@ import Button from '#rsca/Button';
 import GeoViz from '#components/geo/GeoViz';
 import SimpleHorizontalBarChart from '#rscz/SimpleHorizontalBarChart';
 import SimpleVerticalBarChart from '#rscz/SimpleVerticalBarChart';
+import Histogram from '#rscz/Histogram';
 import WordCloud from '#rscz/WordCloud';
 import { iconNames } from '#constants';
 import modalize from '#rscg/Modalize';
@@ -59,12 +60,13 @@ const GRAPH = {
     horizontalBarChart: 'horizontal-bar-chart',
     verticalBarChart: 'vertical-bar-chart',
     wordCloud: 'world-cloud',
+    histogram: 'histogram',
     geo: 'geo',
 };
 
 const GRAPH_MODES = {
     string: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart, GRAPH.wordCloud],
-    number: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart],
+    number: [GRAPH.histogram],
     datetime: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart],
     geo: [GRAPH.verticalBarChart, GRAPH.geo],
 };
@@ -78,6 +80,10 @@ const GRAPH_DETAILS = {
     [GRAPH.verticalBarChart]: {
         title: _ts('components.viz.dataSeries', 'verticalBarChartLabel'),
         iconName: iconNames.verticalBar,
+    },
+    [GRAPH.histogram]: {
+        title: _ts('components.viz.dataSeries', 'histogramLabel'),
+        iconName: iconNames.histogram,
     },
     [GRAPH.wordCloud]: {
         title: _ts('components.viz.dataSeries', 'wordCloudLabel'),
@@ -128,7 +134,7 @@ export default class DataSeries extends React.PureComponent {
         this.modalViews = this.createView({ showLegend: true });
 
         this.state = {
-            activeView: GRAPH.verticalBarChart,
+            activeView: undefined,
         };
     }
 
@@ -220,6 +226,18 @@ export default class DataSeries extends React.PureComponent {
                 },
                 lazyMount: true,
             },
+            [GRAPH.histogram]: {
+                component: Histogram,
+                rendererParams: () => {
+                    const { value: { data } } = this.props;
+                    return {
+                        className: styles.horizontalBarChart,
+                        data: data.map(d => d.processedValue && d.processedValue),
+                        ...commonRendererParams,
+                    };
+                },
+                lazyMount: true,
+            },
             [GRAPH.verticalBarChart]: {
                 component: SimpleVerticalBarChart,
                 rendererParams: () => {
@@ -287,37 +305,44 @@ export default class DataSeries extends React.PureComponent {
         closeModal,
         title,
         type,
-        activeView,
-    }) => (
-        <Modal className={styles.expandedView}>
-            <ModalHeader
-                title={title}
-                rightComponent={
-                    <div className={styles.actionButtons}>
-                        <ScrollTabs
-                            active={activeView}
-                            className={styles.fixedTabs}
-                            onClick={this.handleSegmentStateChange}
-                            renderer={Tab}
-                            rendererParams={this.scrollTabRendererParams}
-                            tabs={this.getSegmentOptions(type)}
-                        />
-                        <Button
-                            iconName={iconNames.close}
-                            onClick={closeModal}
-                            transparent
-                        />
-                    </div>
-                }
-            />
-            <ModalBody className={styles.body}>
-                <MultiViewContainer
-                    views={this.modalViews}
-                    active={activeView}
+        activeView: activeViewFromState,
+    }) => {
+        const options = this.getSegmentOptions(type);
+        const activeView = activeViewFromState || Object.keys(options)[0];
+
+        return (
+            <Modal className={styles.expandedView}>
+                <ModalHeader
+                    title={title}
+                    rightComponent={
+                        <div className={styles.actionButtons}>
+                            { options && Object.keys(options).length > 1 &&
+                                <ScrollTabs
+                                    active={activeView}
+                                    className={styles.fixedTabs}
+                                    onClick={this.handleSegmentStateChange}
+                                    renderer={Tab}
+                                    rendererParams={this.scrollTabRendererParams}
+                                    tabs={options}
+                                />
+                            }
+                            <Button
+                                iconName={iconNames.close}
+                                onClick={closeModal}
+                                transparent
+                            />
+                        </div>
+                    }
                 />
-            </ModalBody>
-        </Modal>
-    );
+                <ModalBody className={styles.body}>
+                    <MultiViewContainer
+                        views={this.modalViews}
+                        active={activeView}
+                    />
+                </ModalBody>
+            </Modal>
+        );
+    };
 
 
     render() {
@@ -326,10 +351,11 @@ export default class DataSeries extends React.PureComponent {
             value,
         } = this.props;
 
-        const { activeView } = this.state;
+        const { activeView: activeViewFromState } = this.state;
         const ExpandedModal = this.renderExpandedModal;
 
         const options = this.getSegmentOptions(value.type);
+        const activeView = activeViewFromState || Object.keys(options)[0];
 
         return (
             <div className={_cs(className, 'data-series', styles.dataSeries)}>

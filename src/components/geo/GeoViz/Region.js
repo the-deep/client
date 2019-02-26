@@ -34,7 +34,7 @@ const propTypes = {
     adminLevelId: PropTypes.string,
     regionRequest: RequestClient.propType.isRequired,
     value: PropTypes.arrayOf(PropTypes.string),
-    frequency: PropTypes.object.isRequired,
+    frequency: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {

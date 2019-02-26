@@ -53,21 +53,21 @@ export default class NumberFilter extends React.PureComponent {
         return (
             <div className={_cs(className, styles.numberFilter)} >
                 <NumberInput
-                    placeholder={_ts('tabular.filter.number', 'fromPlaceholder')}
+                    label={_ts('tabular.filter.number', 'fromPlaceholder')}
+                    placeholder="Any"
                     disabled={disabled}
                     value={value.numberFrom}
                     onChange={this.handleFromFilterChange}
-                    showLabel={false}
                     showHintAndError={false}
                     separator=" "
                 />
                 <NumberInput
                     className={styles.toInput}
-                    placeholder={_ts('tabular.filter.number', 'toPlaceholder')}
+                    label={_ts('tabular.filter.number', 'toPlaceholder')}
+                    placeholder="Any"
                     disabled={disabled}
                     value={value.numberTo}
                     onChange={this.handleToFilterChange}
-                    showLabel={false}
                     showHintAndError={false}
                     separator=" "
                 />

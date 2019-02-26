@@ -40,7 +40,6 @@ export default class StringFilter extends React.PureComponent {
                 disabled={disabled}
                 value={value.text}
                 onChange={this.handleFilterChange}
-                showLabel={false}
                 showHintAndError={false}
             />
         );

@@ -25,7 +25,7 @@ const getSortIcon = sortOrder => ({
 const healthColorScheme = [
     '#41cf76',
     '#f44336',
-    '#dddddd',
+    '#ef8c00',
 ];
 
 const healthBarValueSelector = x => x.value;
@@ -155,6 +155,7 @@ export default class Header extends React.PureComponent {
                     data={statusData}
                     valueSelector={healthBarValueSelector}
                     keySelector={healthBarKeySelector}
+                    labelSelector={healthBarKeySelector}
                     className={styles.healthBar}
                     hideLabel
                     enlargeOnHover={false}
