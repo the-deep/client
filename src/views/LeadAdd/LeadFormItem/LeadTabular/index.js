@@ -14,10 +14,10 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Button from '#rsca/Button';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import Message from '#rscv/Message';
 
 import _ts from '#ts';
 import _cs from '#cs';
-import notify from '#notify';
 
 import {
     RequestCoordinator,
@@ -274,22 +274,15 @@ export default class LeadTabular extends React.PureComponent {
             responseError,
         } = getMetaInfoRequest;
 
-        if (responseError) {
-            notify.send({
-                title: _ts('addLeads.tabular', 'tabularExtractionError'),
-                type: notify.type.SUCCESS,
-                message: _ts('addLeads.tabular', 'tabularExtractionError'),
-                duration: notify.duration.MEDIUM,
-            });
-        }
+        const noForm = pending || !!responseError;
 
         const { pending: savePending } = createBookRequest;
 
         // NOTE: Default component should be null but FaramGroup doesn't
         // support null child yet.
         const component = (
-            (fileType === 'csv' && !pending && <CsvSettings />) ||
-            (fileType === 'xlsx' && !pending &&
+            (fileType === 'csv' && !noForm && <CsvSettings />) ||
+            (fileType === 'xlsx' && !noForm &&
                 <ExcelSettings
                     meta={meta}
                     sheets={faramValues.options.sheets}
@@ -307,18 +300,23 @@ export default class LeadTabular extends React.PureComponent {
                 schema={schema}
                 value={faramValues}
                 error={faramErrors}
-                disabled={savePending || pending}
+                disabled={savePending || noForm}
             >
                 <ModalHeader title={_ts('addLeads.tabular', 'title')} />
                 <ModalBody className={styles.body} >
+                    { pending &&
+                        <LoadingAnimation
+                            message={_ts('addLeads.tabular', 'tabularExtractionLoading')}
+                        />
+                    }
                     {
-                        pending ? (
-                            <div className={styles.pending}>
-                                <LoadingAnimation
-                                    message={_ts('addLeads.tabular', 'tabularExtractionLoading')}
-                                />
-                            </div>
-                        ) : (
+                        responseError &&
+                        <Message>
+                            {_ts('addLeads.tabular', 'tabularExtractionError')}
+                        </Message>
+                    }
+                    {
+                        !noForm &&
                             <div>
                                 <NonFieldErrors faramElement />
                                 { component &&
@@ -327,7 +325,6 @@ export default class LeadTabular extends React.PureComponent {
                                     </FaramGroup>
                                 }
                             </div>
-                        )
                     }
                 </ModalBody>
                 <ModalFooter>
@@ -337,7 +334,7 @@ export default class LeadTabular extends React.PureComponent {
                     <PrimaryButton
                         type="submit"
                         pending={savePending}
-                        disabled={hasError || pending}
+                        disabled={hasError || noForm}
                     >
                         {_ts('addLeads.tabular', 'extractButtonTitle')}
                     </PrimaryButton>

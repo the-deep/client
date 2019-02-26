@@ -909,8 +909,8 @@
         "-2259039": "Extract Tabular",
         "-17116359": "Reset filter",
         "-2956489": "Histogram",
-        "-2259035": "Extracting Information...",
-        "-17116359": "Reset filter"
+        "-2259035": "Extracting tabular data",
+        "-13659065": "Couldn't extract tabular information."
     },
     "links": {
         "browserExtension": {
@@ -1657,7 +1657,7 @@
             "nextButtonTitle": 23,
             "noHeaderLabel": -39031808,
             "tabularExtractionLoading": -2259035,
-            "tabularExtractionError": 630
+            "tabularExtractionError": -13659065
         },
         "register": {
             "checkYourEmailText": 818,

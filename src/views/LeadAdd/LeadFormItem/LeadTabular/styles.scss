@@ -13,16 +13,9 @@
         overflow: auto;
 
         .body {
+            display: flex;
             width: 480px;
             height: 480px;
-            display: flex;
-
-            .pending {
-                margin: auto;
-                padding: $spacing-large $spacing-small;
-            }
+        }
     }
-}
-
-
 }
