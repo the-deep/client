@@ -367,6 +367,9 @@ export default class TabularBook extends React.PureComponent {
         const request = new FgRestBuilder()
             .url(createUrlForSheetOptionsSave(bookId))
             .params(() => createParamsForSheetOptionsSave(modification))
+            .postLoad(() => {
+                this.coordinator.notifyComplete(requestId);
+            })
             .build();
 
         this.coordinator.add(requestId, request);
