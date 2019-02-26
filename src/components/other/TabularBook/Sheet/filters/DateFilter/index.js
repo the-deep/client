@@ -5,6 +5,9 @@ import DateInput from '#rsci/DateInput';
 
 import { DATA_TYPE } from '#entities/tabular';
 import _ts from '#ts';
+import _cs from '#cs';
+
+import styles from './styles.scss';
 
 export default class DateFilter extends React.PureComponent {
     static propTypes = {
@@ -46,21 +49,20 @@ export default class DateFilter extends React.PureComponent {
             disabled,
         } = this.props;
         return (
-            <div className={className} >
+            <div className={_cs(className, styles.dateFilter)} >
                 <DateInput
-                    placeholder={_ts('tabular.filter.date', 'fromPlaceholder')}
+                    label={_ts('tabular.filter.date', 'fromPlaceholder')}
                     disabled={disabled}
                     value={value.dateFrom}
                     onChange={this.handleFromFilterChange}
-                    showLabel={false}
                     showHintAndError={false}
                 />
                 <DateInput
-                    placeholder={_ts('tabular.filter.date', 'toPlaceholder')}
+                    className={styles.toInput}
+                    label={_ts('tabular.filter.date', 'toPlaceholder')}
                     disabled={disabled}
                     value={value.dateTo}
                     onChange={this.handleToFilterChange}
-                    showLabel={false}
                     showHintAndError={false}
                 />
             </div>

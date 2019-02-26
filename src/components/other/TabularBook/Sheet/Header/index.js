@@ -25,7 +25,7 @@ const getSortIcon = sortOrder => ({
 const healthColorScheme = [
     '#41cf76',
     '#f44336',
-    '#dddddd',
+    '#ef8c00',
 ];
 
 const healthBarValueSelector = x => x.value;

@@ -30,7 +30,7 @@ const defaultProps = {
 const healthColorScheme = [
     '#41cf76',
     '#f44336',
-    '#dddddd',
+    '#ef8c00',
 ];
 
 const valueSelector = x => x.value;
