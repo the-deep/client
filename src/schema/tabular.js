@@ -28,38 +28,10 @@ const tabularSchema = [];
     const schema = {
         doc: { name: 'TabularSheet' },
         fields: {
-            data: {
-                required: true,
-                type: {
-                    doc: { name: 'Data' },
-                    fields: {
-                        columns: {
-                            required: true,
-                            type: {
-                                doc: { name: 'CellMap' },
-                                fields: {
-                                    '*': {
-                                        required: true,
-                                        arrayType: {
-                                            doc: { name: 'Cell' },
-                                            fields: {
-                                                value: { type: 'unknown' },
-                                                processedValue: { type: 'unknown' },
-                                                invalid: { type: 'boolean' },
-                                                empty: { type: 'boolean' },
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
             fields: {
                 required: true,
                 arrayType: {
-                    doc: { name: 'Fields' },
+                    doc: { name: 'Field' },
                     fields: {
                         hidden: { type: 'boolean' },
                         id: { type: 'uint', required: true },
@@ -67,6 +39,18 @@ const tabularSchema = [];
                         ordering: { type: 'uint', required: true },
                         title: { type: 'string', required: true },
                         type: { type: 'string', required: true },
+                        data: {
+                            required: true,
+                            arrayType: {
+                                doc: { name: 'Data' },
+                                fields: {
+                                    value: { type: 'unknown' },
+                                    processedValue: { type: 'unknown' },
+                                    invalid: { type: 'boolean' },
+                                    empty: { type: 'boolean' },
+                                },
+                            },
+                        },
                     },
                 },
             },
