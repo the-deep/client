@@ -26,12 +26,12 @@ export default class TabularSheetPreview extends React.PureComponent {
     static defaultProps = defaultProps;
     static keySelector = d => d.id;
 
-    renderParams = (key, { id, title, type, options }) => ({
+    renderParams = (key, { id, title, type, options, data }) => ({
         fieldId: id,
         title,
         type,
         options,
-        column: this.props.sheet.data.columns[id],
+        column: data,
         color: (this.props.highlights[id] || {}).color,
         leadKey: (this.props.highlights[id] || {}).key,
         onClick: this.props.onClick,
