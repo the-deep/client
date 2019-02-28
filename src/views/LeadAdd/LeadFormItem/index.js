@@ -381,9 +381,11 @@ export default class LeadFormItem extends React.PureComponent {
                             <Attachment
                                 key={key}
                                 attachment={values.attachment}
+                                title={values.title}
                                 tabularBook={values.tabularBook}
                                 className={styles.galleryFile}
                                 projectId={projectId}
+                                onTabularButtonClick={this.handleTabularButtonClick}
                             />
                         ) : (
                             <Message>
@@ -501,7 +503,6 @@ export default class LeadFormItem extends React.PureComponent {
                             isExtractionDisabled={!isUrlValid}
                             onExtractClick={this.handleExtractClick}
                             isTabularCapable={isTabularCapable}
-                            onTabularButtonClick={this.handleTabularButtonClick}
                             {...otherProps}
                         />
                     }

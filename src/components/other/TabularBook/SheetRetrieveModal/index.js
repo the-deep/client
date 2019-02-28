@@ -92,6 +92,7 @@ export default class SheetRetrieveModal extends React.PureComponent {
                 className={styles.container}
                 onInvalidate={this.handleInvalidate}
                 focusTrap
+                showHaze
             >
                 <ListSelection
                     label={_ts('tabular.sheetRetrieveModal', 'sheetsLabel')} // Sheets to retrieve

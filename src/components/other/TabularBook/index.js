@@ -14,6 +14,7 @@ import ModalHeader from '#rscv/Modal/Header';
 import ScrollTabs from '#rscv/ScrollTabs';
 import { CoordinatorBuilder } from '#rsu/coordinate';
 import { FgRestBuilder } from '#rsu/rest';
+import FormattedDate from '#rscv/FormattedDate';
 import {
     listToMap,
     isNotDefined,
@@ -213,6 +214,7 @@ export default class TabularBook extends React.PureComponent {
             originalSheets: undefined,
 
             isSomePending: false,
+            lastSavedDate: undefined,
 
             isSheetRetrievePending: false,
 
@@ -230,7 +232,11 @@ export default class TabularBook extends React.PureComponent {
                 this.setState({ isSomePending: true });
             })
             .postSession(() => {
-                this.setState({ isSomePending: false });
+                const date = new Date();
+                this.setState({
+                    isSomePending: false,
+                    lastSavedDate: date,
+                });
             })
             .build();
     }
@@ -751,7 +757,10 @@ export default class TabularBook extends React.PureComponent {
             onCancel,
             isModal,
         } = this.props;
-        const { isSomePending } = this.state;
+        const {
+            isSomePending,
+            lastSavedDate,
+        } = this.state;
 
         const className = _cs(
             this.props.className,
@@ -778,21 +787,34 @@ export default class TabularBook extends React.PureComponent {
                             title={_ts('tabular', 'title')}
                             rightComponent={
                                 <div className={styles.headerContainer}>
-                                    { isSomePending &&
-                                        <div className={styles.pendingMessage}>
-                                            {
-                                                // Saving...
-                                                _ts('tabular', 'tabularSavingMessage')
+                                    { isSomePending ? (
+                                        _ts('tabular', 'tabularSavingMessage')
+                                    ) : (
+                                        <div className={styles.lastSavedMessage}>
+                                            {lastSavedDate &&
+                                                _ts(
+                                                    'tabular',
+                                                    'lastSavedTitle',
+                                                    {
+                                                        value: (
+                                                            <FormattedDate
+                                                                className={styles.date}
+                                                                value={lastSavedDate}
+                                                                mode="dd-MM-yyyy hh:mm"
+                                                            />
+                                                        ),
+                                                    },
+                                                )
                                             }
                                         </div>
-                                    }
+                                    )}
                                 </div>
                             }
                         />
                         <ModalBody className={styles.body}>
                             {body}
                         </ModalBody>
-                        <ModalFooter>
+                        <ModalFooter className={styles.footer}>
                             <Cloak
                                 hide={this.shouldHideDeleteButton}
                                 render={

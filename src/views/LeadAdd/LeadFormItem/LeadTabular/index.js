@@ -256,6 +256,7 @@ export default class LeadTabular extends React.PureComponent {
 
     renderBody = () => {
         const {
+            lead,
             onCancel,
             getMetaInfoRequest,
             createBookRequest,
@@ -302,7 +303,7 @@ export default class LeadTabular extends React.PureComponent {
                 error={faramErrors}
                 disabled={savePending || noForm}
             >
-                <ModalHeader title={_ts('addLeads.tabular', 'title')} />
+                <ModalHeader title={_ts('addLeads.tabular', 'title', { title: lead.title })} />
                 <ModalBody className={styles.body} >
                     { pending &&
                         <LoadingAnimation

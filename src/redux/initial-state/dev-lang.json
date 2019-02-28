@@ -906,11 +906,13 @@
         "-70697056": "Sheets to show",
         "-43793403": "Show other columns",
         "-54095239": "Remove column",
-        "-2259039": "Extract Tabular",
+        "-2259039": "Extract Tabular: {title}",
         "-17116359": "Reset filter",
         "-2956489": "Histogram",
         "-2259035": "Extracting tabular data",
-        "-13659065": "Couldn't extract tabular information."
+        "-13659065": "Couldn't extract tabular information.",
+        "-52729578": "Last saved on {value}",
+        "-40920464": "Click to extract to tabular format. This will allow you to tag the dimensions of {title}."
     },
     "links": {
         "browserExtension": {
@@ -1582,8 +1584,7 @@
             "connectorSourcesTitle": 1109,
             "connectorTitle": 1100,
             "tabularButtonTitle": -4174557,
-            "tabularExtractButtonTitle": -2259039,
-            "tabularExtractionLoading": -2259035
+            "extractTabularButtonTitle": -40920464
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,
@@ -2425,7 +2426,8 @@
             "noSheets": -73878868,
             "sheetEditButtonTooltip": 363,
             "sheetShowButtonTooltip": -26016239,
-            "tabularSavingMessage": -206854
+            "tabularSavingMessage": -206854,
+            "lastSavedTitle": -52729578
         },
         "tabular.editModal.editField": {},
         "project.general.dashboard": {

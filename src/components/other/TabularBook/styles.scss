@@ -11,9 +11,15 @@
         display: flex;
         align-items: center;
 
-        .pending-message {
-            margin-right: $spacing-medium;
+        .last-saved-message {
+            display: flex;
+            align-items: center;
+            margin-right: $spacing-small;
             color: $color-text-label;
+
+            .date {
+                margin-left: $spacing-small;
+            }
         }
     }
 
@@ -39,6 +45,15 @@
                     text-transform: uppercase;
                 }
             }
+        }
+    }
+
+    .footer {
+        display: flex;
+        justify-content: space-between;
+
+        >button {
+            margin: 0;
         }
     }
 }

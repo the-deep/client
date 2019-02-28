@@ -5,7 +5,34 @@
     flex-direction: column;
     overflow-y: auto;
 
+    .extract-button {
+        @include transition-medium();
+        margin: 0 $spacing-small;
+        outline: 0;
+        border: $width-separator-thin solid $color-accent;
+        background-color: $color-foreground;
+        cursor: pointer;
+        padding: $spacing-medium;
+        font-family: inherit;
+        font-size: $font-size-large;
+
+        &:hover {
+            background-color: $color-background-hover;
+        }
+    }
+
     .tabs {
         flex-shrink: 0;
+
+        .tabular-button {
+            margin: 0 $spacing-small;
+        }
+    }
+
+    .extract-tabular-view {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        justify-content: center;
     }
 }
