@@ -187,6 +187,7 @@ const requests = {
 
 const propTypes = {
     className: PropTypes.string,
+    leadTitle: PropTypes.string,
     bookId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
     onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     onCancel: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
@@ -200,6 +201,7 @@ const defaultProps = {
     className: '',
     viewMode: false,
     isModal: true,
+    leadTitle: '',
 };
 
 @RequestCoordinator
@@ -756,7 +758,9 @@ export default class TabularBook extends React.PureComponent {
             },
             onCancel,
             isModal,
+            leadTitle,
         } = this.props;
+
         const {
             isSomePending,
             lastSavedDate,
@@ -784,7 +788,7 @@ export default class TabularBook extends React.PureComponent {
                 {isModal ? (
                     <React.Fragment>
                         <ModalHeader
-                            title={_ts('tabular', 'title')}
+                            title={_ts('tabular', 'title', { title: leadTitle })}
                             rightComponent={
                                 <div className={styles.headerContainer}>
                                     { isSomePending ? (

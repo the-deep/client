@@ -2,15 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Masonry } from '@timilsinabishal/react-components';
-import Button from '#rsca/Button';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { isListEqual } from '@togglecorp/fujs';
 import Modal from '#rscv/Modal';
-import LeadPreview from '#components/leftpanel/LeadPreview';
 import {
     leadsForProjectGridViewSelector,
 } from '#redux';
+
 import LeadItem from '../GridItem';
+import LeadPreview from '../LeadPreview';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -140,24 +141,10 @@ export default class LeadGrid extends React.Component {
                     </div>
                     {
                         this.state.showPreview &&
-                        <Modal
-                            className={styles.modal}
-                            onClose={this.hideLeadDetailPreview}
-                            closeOnOutsideClick
-                            closeOnEscape
-                        >
                             <LeadPreview
                                 lead={previewLead}
                                 showScreenshot={false}
                             />
-                            <Button
-                                className={styles.buttonClose}
-                                onClick={this.hideLeadDetailPreview}
-                                tabIndex="-1"
-                                transparent
-                                iconName="close"
-                            />
-                        </Modal>
                     }
                 </React.Fragment>
             );

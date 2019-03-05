@@ -426,6 +426,7 @@ export default class LeadFormItem extends React.PureComponent {
 
         const {
             faramValues: {
+                title,
                 project: projectId,
                 sourceType,
                 tabularBook,
@@ -466,6 +467,7 @@ export default class LeadFormItem extends React.PureComponent {
                         {
                             tabularBook ? (
                                 <TabularBook
+                                    leadTitle={title}
                                     className={styles.tabularBook}
                                     bookId={tabularBook}
                                     projectId={projectId}

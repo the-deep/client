@@ -906,13 +906,14 @@
         "-70697056": "Sheets to show",
         "-43793403": "Show other columns",
         "-54095239": "Remove column",
-        "-2259039": "Extract Tabular: {title}",
+        "-2259039": "Tabular Extraction - {title}",
         "-17116359": "Reset filter",
         "-2956489": "Histogram",
         "-2259035": "Extracting tabular data",
         "-13659065": "Couldn't extract tabular information.",
         "-52729578": "Last saved on {value}",
-        "-40920464": "Click to extract to tabular format. This will allow you to tag the dimensions of {title}."
+        "-40920464": "Click to extract to tabular format. This will allow you to tag the dimensions of {title}.",
+        "-49732387": "Tabular - {title}"
     },
     "links": {
         "browserExtension": {
@@ -2416,7 +2417,7 @@
             "backButtonTooltip": -1045504
         },
         "tabular": {
-            "title": 15000,
+            "title": -49732387,
             "deleteMessage": 15001,
             "invalid": -63188496,
             "deleteFailed": -63188497,
