@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 
-import { getRgbFromHex } from '@togglecorp/fujs';
+import { getRgbRawFromHex } from '@togglecorp/fujs';
 import HealthBar from '#rscz/HealthBar';
 
 import _cs from '#cs';
@@ -111,7 +111,7 @@ export default class Field extends React.PureComponent {
 
         let style;
         if (color) {
-            const { r, g, b } = getRgbFromHex(color);
+            const [r, g, b] = getRgbRawFromHex(color);
             const backgroundColor = `rgba(${r}, ${g}, ${b}, 0.2)`;
             style = { backgroundColor };
         }
