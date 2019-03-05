@@ -142,8 +142,8 @@ export default class LeadGrid extends React.Component {
                     {
                         this.state.showPreview &&
                             <LeadPreview
-                                lead={previewLead}
-                                showScreenshot={false}
+                                value={previewLead}
+                                closeModal={this.hideLeadDetailPreview}
                             />
                     }
                 </React.Fragment>

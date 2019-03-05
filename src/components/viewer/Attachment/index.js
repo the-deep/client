@@ -4,6 +4,7 @@ import memoize from 'memoize-one';
 
 import InternalGallery from '#components/viewer/InternalGallery';
 import AccentButton from '#rsca/Button/AccentButton';
+import Cloak from '#components/general/Cloak';
 import TabularBook from '#components/other/TabularBook';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import ScrollTabs from '#rscv/ScrollTabs';
@@ -111,6 +112,19 @@ export default class Attachment extends React.PureComponent {
         });
     }
 
+    shouldHideTabularButton = ({ isEarlyAccess }) => {
+        const {
+            tabularBook,
+            viewOnly,
+        } = this.props;
+
+        const { attachmentMimeType } = this.state;
+
+        const tabularCompatible = this.isTabularCompatible(attachmentMimeType);
+
+        return !(isEarlyAccess && (tabularBook || (!viewOnly && tabularCompatible)));
+    }
+
     render() {
         const {
             attachment,
@@ -124,40 +138,41 @@ export default class Attachment extends React.PureComponent {
             attachmentMimeType,
         } = this.state;
 
-        const tabularCompatible = this.isTabularCompatible(attachmentMimeType);
-
-        if (tabularBook || (!viewOnly && tabularCompatible)) {
-            return (
-                <div className={_cs(className, styles.tabsContainer)}>
-                    <ScrollTabs
-                        className={styles.tabs}
-                        tabs={tabTitles}
-                        active={activeTab}
-                        onClick={this.handleTabClick}
-                    >
-                        {!viewOnly && tabularBook && (
-                            <AccentButton
-                                className={styles.tabularButton}
-                                onClick={this.handleTabularButtonClick}
-                            >
-                                {_ts('addLeads', 'tabularButtonTitle')}
-                            </AccentButton>
-                        )}
-                    </ScrollTabs>
-                    <MultiViewContainer
-                        views={this.views}
-                        active={activeTab}
-                    />
-                </div>
-            );
-        }
         return (
-            <InternalGallery
-                className={className}
-                galleryId={attachment && attachment.id}
-                notFoundMessage={_ts('addLeads', 'leadFileNotFound')}
-                showUrl
-                onMimeTypeGet={this.handleAttachmentMimeTypeGet}
+            <Cloak
+                hide={this.shouldHideTabularButton}
+                render={
+                    <div className={_cs(className, styles.tabsContainer)}>
+                        <ScrollTabs
+                            className={styles.tabs}
+                            tabs={tabTitles}
+                            active={activeTab}
+                            onClick={this.handleTabClick}
+                        >
+                            {!viewOnly && tabularBook && (
+                                <AccentButton
+                                    className={styles.tabularButton}
+                                    onClick={this.handleTabularButtonClick}
+                                >
+                                    {_ts('addLeads', 'tabularButtonTitle')}
+                                </AccentButton>
+                            )}
+                        </ScrollTabs>
+                        <MultiViewContainer
+                            views={this.views}
+                            active={activeTab}
+                        />
+                    </div>
+                }
+                renderOnHide={
+                    <InternalGallery
+                        className={className}
+                        galleryId={attachment && attachment.id}
+                        notFoundMessage={_ts('addLeads', 'leadFileNotFound')}
+                        showUrl
+                        onMimeTypeGet={this.handleAttachmentMimeTypeGet}
+                    />
+                }
             />
         );
     }

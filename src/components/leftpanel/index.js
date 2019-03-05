@@ -325,7 +325,7 @@ export default class LeftPane extends React.PureComponent {
             className={styles.tabularModal}
         >
             <TabularBook
-                leadTitle={(this.props.lead || emptyObject).title}
+                leadTitle={this.props.lead.title}
                 className={styles.tabularBook}
                 bookId={this.props.lead.tabularBook}
                 projectId={this.props.lead.project}

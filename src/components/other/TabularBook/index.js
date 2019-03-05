@@ -7,6 +7,7 @@ import WarningButton from '#rsca/Button/WarningButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import modalize from '#rscg/Modalize';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import Spinner from '#rscz/Spinner';
 import Message from '#rscv/Message';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
@@ -644,6 +645,12 @@ export default class TabularBook extends React.PureComponent {
         );
     }
 
+    handleZeClick = () => {
+        if (window.zE) {
+            window.zE.activate({ hideOnClose: true });
+        }
+    }
+
     renderBody = ({ invalid, completed, disabled }) => {
         if (invalid) {
             return (
@@ -653,9 +660,28 @@ export default class TabularBook extends React.PureComponent {
             );
         }
 
+        const zendeskLinkTitle = _ts('tabular', 'zendeskLinkTitle');
+        const zendeskTitle = _ts('tabular', 'zendeskTitle');
+
         if (!completed) {
             return (
-                <LoadingAnimation />
+                <div className={styles.extractionProcess} >
+                    <Spinner loading />
+                    <div className={styles.processingText} >
+                        {_ts('tabular', 'processing', {
+                            zendeskLink: (
+                                <button
+                                    className={styles.joinLink}
+                                    onClick={this.handleZeClick}
+                                    title={zendeskLinkTitle}
+                                    type="button"
+                                >
+                                    {zendeskTitle}
+                                </button>
+                            ),
+                        })}
+                    </div>
+                </div>
             );
         }
 

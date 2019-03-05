@@ -913,7 +913,9 @@
         "-13659065": "Couldn't extract tabular information.",
         "-52729578": "Last saved on {value}",
         "-40920464": "Click to extract to tabular format. This will allow you to tag the dimensions of {title}.",
-        "-49732387": "Tabular - {title}"
+        "-49732387": "Tabular - {title}",
+        "-99678591": "We’re busy processing your tabular data and should be done shortly depending on the size of the file. If you still see this message after a few minutes, send us a message through {zendeskLink}.",
+        "-82516607": "this form"
     },
     "links": {
         "browserExtension": {
@@ -2428,7 +2430,10 @@
             "sheetEditButtonTooltip": 363,
             "sheetShowButtonTooltip": -26016239,
             "tabularSavingMessage": -206854,
-            "lastSavedTitle": -52729578
+            "lastSavedTitle": -52729578,
+            "processing": -99678591,
+            "zendeskTitle": -82516607,
+            "zendeskLinkTitle": -81583708
         },
         "tabular.editModal.editField": {},
         "project.general.dashboard": {
