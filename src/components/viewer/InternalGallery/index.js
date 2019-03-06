@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Icon from '#rscg/Icon';
 import Message from '#rscv/Message';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import GalleryViewer from '../GalleryViewer';
@@ -21,7 +21,10 @@ const PreviewNothing = ({
                 <span className={styles.label} >
                     { pendingLabel || _ts('components.internalGallery', 'loadingFileLabel') }
                 </span>
-                <span className={`${iconNames.loading} ${styles.loadingAnimation}`} />
+                <Icon
+                    name="loading"
+                    className={styles.loadingAnimation}
+                />
             </div>
         );
     }

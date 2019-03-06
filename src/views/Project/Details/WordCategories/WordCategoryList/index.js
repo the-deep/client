@@ -7,12 +7,12 @@ import {
     compareString,
 } from '@togglecorp/fujs';
 
+import Icon from '#rscg/Icon';
 import SearchInput from '#rsci/SearchInput';
 import ListView from '#rscv/List/ListView';
 import ListItem from '#rscv/List/ListItem';
 
 import _ts from '#ts';
-import { iconNames } from '#constants';
 
 import AddWordCategoryButton from './AddWordCategoryButton';
 import styles from './styles.scss';
@@ -44,25 +44,23 @@ const WordCategoryListItem = ({
     isSelected,
     wordCategory: { title },
     onClick,
-}) => {
-    const iconClassName = `
-        ${iconNames.checkCircle}
-        ${styles.check} 
-    `;
-
-    return (
-        <ListItem
-            className={className}
-            active={isActive}
-            onClick={onClick}
-        >
-            <div className={styles.title}>
-                { title }
-            </div>
-            { isSelected && <div className={iconClassName} /> }
-        </ListItem>
-    );
-};
+}) => (
+    <ListItem
+        className={className}
+        active={isActive}
+        onClick={onClick}
+    >
+        <div className={styles.title}>
+            { title }
+        </div>
+        { isSelected &&
+            <Icon
+                className={styles.check}
+                name="checkCircle"
+            />
+        }
+    </ListItem>
+);
 
 WordCategoryListItem.propTypes = {
     className: PropTypes.string,

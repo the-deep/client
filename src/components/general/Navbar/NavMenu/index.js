@@ -9,10 +9,7 @@ import { reverseRoute } from '@togglecorp/fujs';
 import List from '#rscv/List';
 import DropdownMenu from '#rsca/DropdownMenu';
 
-import {
-    iconNames,
-    pathNames,
-} from '#constants';
+import { pathNames } from '#constants';
 import _ts from '#ts';
 
 import Cloak from '../../Cloak';
@@ -200,7 +197,7 @@ export default class NavMenu extends React.PureComponent {
                     keySelector={NavMenu.keySelector}
                 />
                 <DropdownMenu
-                    iconName={iconNames.overflowHorizontal}
+                    iconName="overflowHorizontal"
                     className={styles.overflowMenu}
                     dropdownClassName={styles.navbarOverflowDropdown}
                     hideDropdownIcon

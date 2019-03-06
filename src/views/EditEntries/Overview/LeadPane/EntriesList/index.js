@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import ListView from '#rscv/List/ListView';
 
 import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
 import Cloak from '#components/general/Cloak';
-import { iconNames } from '#constants';
 import _ts from '#ts';
 import _cs from '#cs';
 
@@ -34,13 +34,22 @@ export default class EntriesList extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static iconMap = {
-        [ENTRY_STATUS.requesting]: `${iconNames.loading} ${styles.pending}`,
-        [ENTRY_STATUS.localError]: `${iconNames.error} ${styles.error}`,
-        [ENTRY_STATUS.serverError]: `${iconNames.error} ${styles.error}`,
-        [ENTRY_STATUS.nonPristine]: `${iconNames.codeWorking} ${styles.pristine}`,
-        [ENTRY_STATUS.complete]: `${iconNames.checkCircle} ${styles.complete}`,
-        markedForRemoval: `${iconNames.removeCircle} ${styles.warning}`,
+        [ENTRY_STATUS.requesting]: 'loading',
+        [ENTRY_STATUS.localError]: 'error',
+        [ENTRY_STATUS.serverError]: 'error',
+        [ENTRY_STATUS.nonPristine]: 'codeWorking',
+        [ENTRY_STATUS.complete]: 'checkCircle',
+        markedAsDeleted: 'removeCircle',
     };
+
+    static styleMap = {
+        [ENTRY_STATUS.requesting]: styles.pending,
+        [ENTRY_STATUS.localError]: styles.error,
+        [ENTRY_STATUS.serverError]: styles.error,
+        [ENTRY_STATUS.nonPristine]: styles.pristine,
+        [ENTRY_STATUS.complete]: styles.complete,
+        markedAsDeleted: styles.warning,
+    }
 
     static calcEntryKey = entry => entryAccessor.key(entry)
 
@@ -105,13 +114,15 @@ export default class EntriesList extends React.PureComponent {
         const isActive = currentEntryKey === selectedEntryKey;
         const isMarkedAsDeleted = entryAccessor.isMarkedAsDeleted(entry);
 
-        const status = statuses[currentEntryKey];
 
         const className = _cs(
             styles.entriesListItem,
             isActive && styles.active,
-            isMarkedAsDeleted && styles.markedForDelete,
+            // isMarkedAsDeleted && styles.markedForDelete,
         );
+
+        const status = statuses[currentEntryKey];
+        const realStatus = isMarkedAsDeleted ? 'markedAsDeleted' : status;
 
         const pending = (status === ENTRY_STATUS.requesting);
 
@@ -128,10 +139,10 @@ export default class EntriesList extends React.PureComponent {
                 >
                     {this.renderEntryLabel(entry)}
                     <div className={styles.statusIcons}>
-                        { isMarkedAsDeleted &&
-                            <span className={EntriesList.iconMap.markedForRemoval} />
-                        }
-                        <span className={EntriesList.iconMap[status] || ''} />
+                        <Icon
+                            name={EntriesList.iconMap[realStatus]}
+                            className={EntriesList.styleMap[realStatus]}
+                        />
                     </div>
                 </button>
                 {
@@ -139,7 +150,7 @@ export default class EntriesList extends React.PureComponent {
                         <Button
                             className={styles.removeButton}
                             onClick={() => handleMarkAsDeletedEntry(currentEntryKey, false)}
-                            iconName={iconNames.undo}
+                            iconName="undo"
                             title={_ts('editEntry.overview.leftpane.entryList', 'removeEntryButtonTitle')}
                             disabled={pending}
                         />
@@ -150,7 +161,7 @@ export default class EntriesList extends React.PureComponent {
                                 <DangerButton
                                     className={styles.removeButton}
                                     onClick={() => handleMarkAsDeletedEntry(currentEntryKey, true)}
-                                    iconName={iconNames.delete}
+                                    iconName="delete"
                                     title={_ts('editEntry.overview.leftpane.entryList', 'undoRemoveEntryButtonTitle')}
                                     disabled={pending}
                                 />

@@ -3,6 +3,7 @@ import React from 'react';
 import produce from 'immer';
 import { FaramInputElement } from '@togglecorp/faram';
 
+import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DropZone from '#rsci/DropZone';
@@ -15,7 +16,6 @@ import { CoordinatorBuilder } from '#rsu/coordinate';
 import urlRegex from '#rsu/regexForWeburl';
 import { UploadBuilder } from '#rsu/upload';
 import Label from '#rsci/Label';
-import { iconNames } from '#constants';
 import {
     urlForUpload,
     createParamsForFileUpload,
@@ -316,7 +316,7 @@ export default class MultiDocumentUploader extends React.PureComponent {
                             <Button
                                 className={styles.addButton}
                                 onClick={this.handleUrlAdd}
-                                iconName={iconNames.add}
+                                iconName="add"
                                 disabled={disabled || readOnly || !(
                                     urlValue && isUrlValid(urlValue)
                                 )}
@@ -333,9 +333,9 @@ export default class MultiDocumentUploader extends React.PureComponent {
                             multiple
                             value=""
                         >
-                            <span
+                            <Icon
                                 title={_ts('components.multiDocumentUploader', 'uploadFilesLabel')}
-                                className={iconNames.upload}
+                                name="upload"
                             />
                         </FileInput>
                     )}

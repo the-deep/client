@@ -1,5 +1,4 @@
 import update from '#rsu/immutable-update';
-import iconNames from '#constants/iconNames';
 
 export const LEAD_TYPE = {
     dropbox: 'dropbox',
@@ -95,30 +94,30 @@ export const leadPaneTypeMap = {
 };
 
 export const leadTypeIconMap = {
-    [mimeType.text]: iconNames.documentText,
+    [mimeType.text]: 'documentText',
 
-    [mimeType.docx]: iconNames.docx,
-    [mimeType.rtf]: iconNames.rtf,
-    [mimeType.otf]: iconNames.otf,
-    [mimeType.msword]: iconNames.msword,
+    [mimeType.docx]: 'docx',
+    [mimeType.rtf]: 'rtf',
+    [mimeType.otf]: 'otf',
+    [mimeType.msword]: 'msword',
 
-    [mimeType.pdf]: iconNames.pdf,
+    [mimeType.pdf]: 'pdf',
 
-    [mimeType.pptx]: iconNames.pptx,
-    [mimeType.ppt]: iconNames.ppt,
+    [mimeType.pptx]: 'pptx',
+    [mimeType.ppt]: 'ppt',
 
-    [mimeType.xls]: iconNames.xls,
-    [mimeType.xlxs]: iconNames.xlxs,
+    [mimeType.xls]: 'xls',
+    [mimeType.xlxs]: 'xlxs',
 
-    [mimeType.csv]: iconNames.csv,
+    [mimeType.csv]: 'csv',
 
-    [mimeType.png]: iconNames.png,
-    [mimeType.jpg]: iconNames.jpg,
-    [mimeType.jpeg]: iconNames.jpeg,
-    [mimeType.fig]: iconNames.fig,
+    [mimeType.png]: 'png',
+    [mimeType.jpg]: 'jpg',
+    [mimeType.jpeg]: 'jpeg',
+    [mimeType.fig]: 'fig',
 
-    [mimeType.json]: iconNames.json,
-    [mimeType.xml]: iconNames.xml,
+    [mimeType.json]: 'json',
+    [mimeType.xml]: 'xml',
 };
 
 export const leadAccessor = {

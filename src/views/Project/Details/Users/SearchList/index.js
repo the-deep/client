@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { compareString } from '@togglecorp/fujs';
 
+import Icon from '#rscg/Icon';
 import SearchInput from '#rsci/SearchInput';
 import ListView from '#rscv/List/ListView';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -11,12 +13,10 @@ import {
     RequestClient,
     requestMethods,
 } from '#request';
-import { compareString } from '@togglecorp/fujs';
 import {
     projectMembershipListSelector,
     projectUsergroupListSelector,
 } from '#redux';
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import noSearch from '#resources/img/no-filter.png';
@@ -72,13 +72,12 @@ const SearchTip = () => {
         { numberOfCharacters: MIN_SEARCH_TEXT_CHARACTERS },
     );
 
-    const iconClassName = `
-        ${iconNames.info}
-        ${styles.icon}
-    `;
     return (
         <Message className={styles.searchTip}>
-            <span className={iconClassName} />
+            <Icon
+                name="info"
+                className={styles.icon}
+            />
             <div className={styles.text}>
                 { tipText }
             </div>

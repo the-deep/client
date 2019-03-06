@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { iconNames } from '#constants';
+import Icon from '#rscg/Icon';
 import { routeIsFirstPageSelector } from '#redux';
 import _cs from '#cs';
 import _ts from '#ts';
@@ -29,7 +29,7 @@ const propTypes = {
 
 const defaultProps = {
     title: undefined,
-    iconName: undefined,
+    iconName: 'back',
     className: '',
     children: undefined,
 };
@@ -53,8 +53,8 @@ export default class BackLink extends React.PureComponent {
             defaultLink,
             title = _ts('components.backLink', 'backButtonTooltip'),
             className: classNameFromProps,
-            iconName = iconNames.back,
             children,
+            iconName,
         } = this.props;
 
 
@@ -74,7 +74,7 @@ export default class BackLink extends React.PureComponent {
                 to={defaultLink}
                 onClick={onClick}
             >
-                { children || <i className={iconName} /> }
+                { children || <Icon name={iconName} /> }
             </Link>
         );
     }

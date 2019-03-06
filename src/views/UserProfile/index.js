@@ -20,7 +20,6 @@ import {
     userIdFromRouteSelector,
 } from '#redux';
 import _ts from '#ts';
-import { iconNames } from '#constants';
 
 import UserInformationGetRequest from './requests/UserInformationGetRequest';
 import UserProjectsGetRequest from './requests/UserProjectsGetRequest';
@@ -133,9 +132,8 @@ export default class UserProfile extends React.PureComponent {
                         <PrimaryButton
                             onClick={this.handleEditProfileClose}
                             transparent
-                        >
-                            <span className={iconNames.close} />
-                        </PrimaryButton>
+                            iconName="close"
+                        />
                     }
                 />
                 <ModalBody>
@@ -208,7 +206,7 @@ export default class UserProfile extends React.PureComponent {
                                                         className={styles.editProfileButton}
                                                         onClick={this.handleEditProfileClick}
                                                         transparent
-                                                        iconName={iconNames.edit}
+                                                        iconName="edit"
                                                     />
                                                 )}
                                                 { showEditProfileModal && <EditProfileModal /> }

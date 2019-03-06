@@ -1,15 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
-
 import { reverseRoute } from '@togglecorp/fujs';
+
+import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 
-import {
-    iconNames,
-    pathNames,
-} from '#constants/';
+import { pathNames } from '#constants/';
 import Cloak from '#components/general/Cloak';
 import _ts from '#ts';
 import _cs from '#cs';
@@ -129,7 +127,7 @@ export default class ActionButtons extends React.PureComponent {
                             <Button
                                 tabIndex="-1"
                                 title={_ts('leads', 'markAsProcessedTitle')}
-                                iconName={iconNames.check}
+                                iconName="check"
                                 onClick={() => onMarkProcessed(row)}
                                 transparent
                                 disabled={row.status !== 'pending'}
@@ -142,7 +140,7 @@ export default class ActionButtons extends React.PureComponent {
                             <Button
                                 tabIndex="-1"
                                 title={_ts('leads', 'markAsPendingTitle')}
-                                iconName={iconNames.undo}
+                                iconName="undo"
                                 onClick={() => onMarkPending(row)}
                                 transparent
                                 disabled={row.status !== 'processed'}
@@ -156,7 +154,7 @@ export default class ActionButtons extends React.PureComponent {
                         title={_ts('leads', 'searchSimilarLeadButtonTitle')}
                         onClick={() => onSearchSimilarLead(row)}
                         transparent
-                        iconName={iconNames.search}
+                        iconName="search"
                     />
                     <Cloak
                         hide={ActionButtons.shouldHideLeadDelete}
@@ -166,7 +164,7 @@ export default class ActionButtons extends React.PureComponent {
                                 title={_ts('leads', 'removeLeadLeadButtonTitle')}
                                 onClick={() => onRemoveLead(row)}
                                 transparent
-                                iconName={iconNames.delete}
+                                iconName="delete"
                                 confirmationMessage={_ts('leads', 'leadDeleteConfirmText')}
                             />
                         }
@@ -180,7 +178,7 @@ export default class ActionButtons extends React.PureComponent {
                                 title={_ts('leads', 'editLeadButtonTitle')}
                                 to={links.editLead}
                             >
-                                <i className={iconNames.edit} />
+                                <Icon name="edit" />
                             </Link>
                         }
                     />
@@ -195,7 +193,7 @@ export default class ActionButtons extends React.PureComponent {
                                 title={_ts('leads', 'addAssessmentFromLeadButtonTitle')}
                                 to={links.addAssessment}
                             >
-                                <i className={iconNames.forward} />
+                                <Icon name="forward" />
                             </Link>
                         }
                     />
@@ -208,7 +206,7 @@ export default class ActionButtons extends React.PureComponent {
                                 title={_ts('leads', 'addEntryFromLeadButtonTitle')}
                                 to={links.editEntries}
                             >
-                                <i className={iconNames.forward} />
+                                <Icon name="forward" />
                             </Link>
                         }
                     />

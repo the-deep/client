@@ -25,7 +25,6 @@ import {
 import { VIEW } from '#widgets';
 
 import _ts from '#ts';
-import { iconNames } from '#constants';
 import Cloak from '#components/general/Cloak';
 
 import WidgetFaram from '../WidgetFaram';
@@ -163,7 +162,7 @@ export default class Overview extends React.PureComponent {
                                             onClick={this.handleEntryDelete}
                                             disabled={pending}
                                             // disabled={!entry || pending}
-                                            iconName={iconNames.remove}
+                                            iconName="remove"
                                         />
                                     }
                                 />
@@ -173,7 +172,7 @@ export default class Overview extends React.PureComponent {
                                         <PrimaryButton
                                             onClick={this.handleEmptyExcerptCreate}
                                             className={styles.addNewEntryButton}
-                                            iconName={iconNames.add}
+                                            iconName="add"
                                         />
                                     }
                                 />

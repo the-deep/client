@@ -8,7 +8,6 @@ import {
     getDuplicates,
     listToMap,
 } from '@togglecorp/fujs';
-import { iconNames } from '#constants';
 
 import _ts from '#ts';
 import _cs from '#cs';
@@ -118,7 +117,7 @@ export default class LinkWidgetModalButton extends React.PureComponent {
                     title={addFromWidgetsLabel}
                     tabIndex="-1"
                     transparent
-                    iconName={iconNames.widget}
+                    iconName="widget"
                     onClick={this.handleClick}
                 >
                     {addFromWidgetsLabel}

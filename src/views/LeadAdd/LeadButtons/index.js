@@ -1,15 +1,11 @@
-/**
- * @author frozenhelium <fren.ankit@gmail.com>
- * @co-author tnagorra <weathermist@gmail.com>
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { randomString, formatDateToString } from '@togglecorp/fujs';
 
+import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import FileInput from '#rsci/FileInput';
-import { randomString, formatDateToString } from '@togglecorp/fujs';
 
 import DropboxChooser from '#components/importer/DropboxChooser';
 import GooglePicker from '#components/importer/GooglePicker';
@@ -18,7 +14,6 @@ import {
     googleDriveClientId,
     googleDriveDeveloperKey,
 } from '#config/google-drive';
-import { iconNames } from '#constants';
 import { LEAD_TYPE, leadAccessor } from '#entities/lead';
 import notify from '#notify';
 import {
@@ -408,7 +403,7 @@ export default class LeadButtons extends React.PureComponent {
                     multiselect
                     navHidden
                 >
-                    <span className={iconNames.googleDrive} />
+                    <Icon name="googleDrive" />
                     <p>
                         {_ts('addLeads.sourceButtons', 'googleDriveLabel')}
                     </p>
@@ -423,7 +418,7 @@ export default class LeadButtons extends React.PureComponent {
                     cancel={this.handleDropboxChooserCancel}
                     disabled={dropboxDisabled}
                 >
-                    <span className={iconNames.dropbox} />
+                    <Icon name="dropbox" />
                     <p>
                         {_ts('addLeads.sourceButtons', 'dropboxLabel')}
                     </p>
@@ -435,7 +430,7 @@ export default class LeadButtons extends React.PureComponent {
                     multiple
                     accept=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf, image/*"
                 >
-                    <span className={iconNames.upload} />
+                    <Icon name="upload" />
                     <p>
                         {_ts('addLeads.sourceButtons', 'localDiskLabel')}
                     </p>
@@ -445,7 +440,7 @@ export default class LeadButtons extends React.PureComponent {
                     transparent
                     onClick={this.handleLeadAddFromWebsite}
                 >
-                    <span className={iconNames.globe} />
+                    <Icon name="globe" />
                     <p>
                         {_ts('addLeads.sourceButtons', 'websiteLabel')}
                     </p>
@@ -455,7 +450,7 @@ export default class LeadButtons extends React.PureComponent {
                     transparent
                     onClick={this.handleLeadAddFromText}
                 >
-                    <span className={iconNames.clipboard} />
+                    <Icon name="clipboard" />
                     <p>
                         {_ts('addLeads.sourceButtons', 'textLabel')}
                     </p>
@@ -465,7 +460,7 @@ export default class LeadButtons extends React.PureComponent {
                     transparent
                     onClick={this.handleConnectorSelectButtonClick}
                 >
-                    <span className={iconNames.link} />
+                    <Icon name="link" />
                     <p>
                         {_ts('addLeads.sourceButtons', 'connectorsLabel')}
                     </p>

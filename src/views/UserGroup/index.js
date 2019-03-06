@@ -10,7 +10,6 @@ import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
 import Message from '#rscv/Message';
 
-import { iconNames } from '#constants';
 import {
     usergroupInformationSelector,
     isCurrentUserAdminOfCurrentUsergroup,
@@ -145,14 +144,12 @@ export default class Usergroup extends React.PureComponent {
                                         <span className={styles.name} >
                                             { usergroup.title }
                                         </span>
-                                        {
-                                            isCurrentUserAdmin &&
-                                                <PrimaryButton
-                                                    onClick={this.handleUserGroupEditClick}
-                                                    transparent
-                                                >
-                                                    <span className={iconNames.edit} />
-                                                </PrimaryButton>
+                                        { isCurrentUserAdmin &&
+                                            <PrimaryButton
+                                                onClick={this.handleUserGroupEditClick}
+                                                transparent
+                                                iconName="edit"
+                                            />
                                         }
                                     </div>
                                     <p className={styles.description}>
@@ -193,9 +190,8 @@ export default class Usergroup extends React.PureComponent {
                                 <PrimaryButton
                                     onClick={this.handleUserGroupEditModalClose}
                                     transparent
-                                >
-                                    <span className={iconNames.close} />
-                                </PrimaryButton>
+                                    iconName="close"
+                                />
                             }
                         />
                         <ModalBody>

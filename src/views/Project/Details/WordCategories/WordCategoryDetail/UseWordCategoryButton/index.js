@@ -3,7 +3,6 @@ import React from 'react';
 
 import WarningConfirmButton from '#rsca/ConfirmButton/WarningConfirmButton';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import UseWordCategoryRequest from './requests/UseWordCategoryRequest';
@@ -80,7 +79,7 @@ export default class UseWordCategoryButton extends React.PureComponent {
 
         return (
             <WarningConfirmButton
-                iconName={iconNames.check}
+                iconName="check"
                 onClick={this.handleWordCategoryConfirmClose}
                 disabled={disabled || pending}
                 confirmationMessage={confirmationMessage}

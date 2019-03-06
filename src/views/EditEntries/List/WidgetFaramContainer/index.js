@@ -7,7 +7,6 @@ import WarningButton from '#rsca/Button/WarningButton';
 import Cloak from '#components/general/Cloak';
 
 import { entryAccessor } from '#entities/editEntries';
-import { iconNames } from '#constants';
 import {
     editEntriesSetSelectedEntryKeyAction,
     leadIdFromRoute,
@@ -121,7 +120,7 @@ export default class WidgetFaramContainer extends React.PureComponent {
                         render={
                             <DangerButton
                                 transparent
-                                iconName={iconNames.delete}
+                                iconName="delete"
                                 title={_ts('editEntry.list.widgetForm', 'deleteButtonTooltip')}
                                 onClick={this.handleEntryDelete}
                                 disabled={pending}
@@ -135,7 +134,7 @@ export default class WidgetFaramContainer extends React.PureComponent {
                                 transparent
                                 onClick={this.handleEdit}
                                 title={_ts('editEntry.list.widgetForm', 'editButtonTooltip')}
-                                iconName={iconNames.edit}
+                                iconName="edit"
                                 // NOTE: no need to disable edit on save pending
                             />
                         }

@@ -6,6 +6,7 @@ import {
     randomString,
 } from '@togglecorp/fujs';
 
+import Icon from '#rscg/Icon';
 import SortableListView from '#rscv/SortableListView';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
@@ -16,7 +17,6 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
-import { iconNames } from '#constants';
 
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
@@ -201,13 +201,15 @@ export default class Matrix1dEditWidget extends React.PureComponent {
         const { selectedRowKey } = this.state;
 
         const className = _cs(
-            iconNames.hamburger,
             styles.dragHandle,
             selectedRowKey === key && styles.active,
         );
 
         return (
-            <span className={className} />
+            <Icon
+                className={className}
+                name="hamburger"
+            />
         );
     };
 
@@ -292,7 +294,7 @@ export default class Matrix1dEditWidget extends React.PureComponent {
                                         <AccentButton
                                             faramElementName="add-btn"
                                             faramAction={this.addRowClick}
-                                            iconName={iconNames.clipboard}
+                                            iconName="clipboard"
                                             transparent
                                         >
                                             {_ts('widgets.editor.matrix1d', 'addRowButtonTitle')}

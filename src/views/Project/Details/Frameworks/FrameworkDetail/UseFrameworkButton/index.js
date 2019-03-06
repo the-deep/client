@@ -3,7 +3,6 @@ import React from 'react';
 
 import WarningConfirmButton from '#rsca/ConfirmButton/WarningConfirmButton';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import UseFrameworkRequest from './requests/UseFrameworkRequest';
@@ -80,7 +79,7 @@ export default class UseFrameworkButton extends React.PureComponent {
 
         return (
             <WarningConfirmButton
-                iconName={iconNames.check}
+                iconName="check"
                 onClick={this.handleFrameworkConfirmClose}
                 disabled={disabled || pendingFrameworkUse}
                 confirmationMessage={confirmationMessage}

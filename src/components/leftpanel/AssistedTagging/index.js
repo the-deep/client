@@ -11,7 +11,6 @@ import ListView from '#rscv/List/ListView';
 import { getHexFromString, listToMap } from '@togglecorp/fujs';
 import { FgRestBuilder } from '#rsu/rest';
 
-import { iconNames } from '#constants';
 import _cs from '#cs';
 import notify from '#notify';
 import {
@@ -490,16 +489,14 @@ export default class AssistedTagging extends React.PureComponent {
                     title={_ts('components.assistedTagging', 'accurateTextTitle')}
                     onClick={() => this.handleFeedbackClick(sector.label, 'true')}
                     transparent
-                >
-                    <span className={iconNames.thumbsUp} />
-                </SuccessButton>
+                    iconName="thumbsUp"
+                />
                 <WarningButton
                     title={_ts('components.assistedTagging', 'notAccurateTextTitle')}
                     onClick={() => this.handleFeedbackClick(sector.label, 'false')}
                     transparent
-                >
-                    <span className={iconNames.thumbsDown} />
-                </WarningButton>
+                    iconName="thumbsDown"
+                />
             </div>
         </div>
     );
@@ -536,9 +533,8 @@ export default class AssistedTagging extends React.PureComponent {
                         <PrimaryButton
                             onClick={this.handleOnCloseAssistedActions}
                             transparent
-                        >
-                            <span className={iconNames.close} />
-                        </PrimaryButton>
+                            iconName="close"
+                        />
                     </header>
                     <div className={styles.infoBar}>
                         <span>
@@ -562,7 +558,7 @@ export default class AssistedTagging extends React.PureComponent {
                     )}
                     {onEntryAdd && (
                         <PrimaryButton
-                            iconName={iconNames.add}
+                            iconName="add"
                             className={styles.addButton}
                             onClick={() => this.handleEntryAdd(
                                 activeHighlightDetails.text,

@@ -10,7 +10,6 @@ import TextInput from '#rsci/TextInput';
 import List from '#rscv/List';
 import update from '#rsu/immutable-update';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -117,7 +116,7 @@ export default class OrganigramCreatorInput extends React.PureComponent {
                             title={_ts('components.organigramCreator', 'addChildButtonTitle')}
                             tabIndex="-1"
                             transparent
-                            iconName={iconNames.fork}
+                            iconName="fork"
                             disabled={disabled}
                         />
                         {
@@ -128,7 +127,7 @@ export default class OrganigramCreatorInput extends React.PureComponent {
                                     title={_ts('components.organigramCreator', 'removeElementButtonTitle')}
                                     tabIndex="-1"
                                     transparent
-                                    iconName={iconNames.trash}
+                                    iconName="trash"
                                     disabled={disabled}
                                 />
                             )

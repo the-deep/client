@@ -2,14 +2,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import Cloak from '#components/general/Cloak';
+import { reverseRoute } from '@togglecorp/fujs';
+
+import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+
+import Cloak from '#components/general/Cloak';
 import {
-    iconNames,
     pathNames,
 } from '#constants';
-import { reverseRoute } from '@togglecorp/fujs';
 import {
     leadTypeIconMap,
     leadPaneTypeMap,
@@ -89,11 +91,11 @@ export default class GridItem extends React.PureComponent {
 
     getMimeIcon() {
         const { lead } = this.props;
-        let icon = iconNames.documentText;
+        let icon = 'documentText';
         if (lead.attachment) {
             icon = leadTypeIconMap[lead.attachment.mimeType];
         } else if (lead.url) {
-            icon = iconNames.globe;
+            icon = 'globe';
         }
         return icon;
     }
@@ -144,7 +146,7 @@ export default class GridItem extends React.PureComponent {
                     className={classNames(styles.markProcessed, styles.mark)}
                     onClick={this.handleMarkAsProcessedClick}
                     transparent
-                    iconName={iconNames.check}
+                    iconName="check"
                 />
             );
         } else if (lead.status === 'processed') {
@@ -155,7 +157,7 @@ export default class GridItem extends React.PureComponent {
                     className={classNames(styles.markPending, styles.mark)}
                     onClick={this.handleMarkAsPendingClick}
                     transparent
-                    iconName={iconNames.close}
+                    iconName="close"
                 />
             );
         }
@@ -178,7 +180,10 @@ export default class GridItem extends React.PureComponent {
                                 title={_ts('leads', 'addEntryFromLeadButtonTitle')}
                                 to={this.links.editEntries}
                             >
-                                <i className={iconNames.add} />
+                                <Icon
+                                    className={styles.icon}
+                                    name="add"
+                                />
                             </Link>
                         }
                     />
@@ -190,21 +195,24 @@ export default class GridItem extends React.PureComponent {
                         title={_ts('leads', 'searchSimilarLeadButtonTitle')}
                         onClick={this.handleSearchLeadClick}
                         transparent
-                        iconName={iconNames.search}
+                        iconName="search"
                     />
                     <Link
                         className={styles.actionButton}
                         title={_ts('leads', 'editLeadButtonTitle')}
                         to={this.links.editLead}
                     >
-                        <i className={iconNames.edit} />
+                        <Icon
+                            className={styles.icon}
+                            name="edit"
+                        />
                     </Link>
                     <DangerConfirmButton
                         tabIndex="-1"
                         title={_ts('leads', 'removeLeadLeadButtonTitle')}
                         onClick={this.handleRemoveLeadClick}
                         transparent
-                        iconName={iconNames.trash}
+                        iconName="trash"
                         confirmationMessage={_ts('leads', 'leadDeleteConfirmText')}
                     />
                 </div>
@@ -239,7 +247,10 @@ export default class GridItem extends React.PureComponent {
                     [styles.documentTypeProcessed]: isProcessed,
                 })}
                 >
-                    <i className={mimeIcon} />
+                    <Icon
+                        className={styles.icon}
+                        name={mimeIcon}
+                    />
                 </div>
 
                 <Actions />

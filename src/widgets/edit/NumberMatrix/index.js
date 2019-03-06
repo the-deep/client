@@ -18,7 +18,6 @@ import MultiViewContainer from '#rscv/MultiViewContainer';
 import TabTitle from '#components/general/TabTitle';
 
 import _ts from '#ts';
-import { iconNames } from '#constants';
 
 import InputRow from './InputRow';
 import styles from './styles.scss';
@@ -231,7 +230,7 @@ export default class NumberMatrixOverview extends React.PureComponent {
                         <PrimaryButton
                             faramElementName="add-btn"
                             faramAction={NumberMatrixOverview.addOptionClick}
-                            iconName={iconNames.add}
+                            iconName="add"
                             title={buttonLabel}
                             transparent
                         >

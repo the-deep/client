@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import Icon from '#rscg/Icon';
 import { reverseRoute } from '@togglecorp/fujs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
@@ -9,10 +10,7 @@ import Table from '#rscv/Table';
 import FormattedDate from '#rscv/FormattedDate';
 import Checkbox from '#rsci/Checkbox';
 import AccentButton from '#rsca/Button/AccentButton';
-import {
-    iconNames,
-    pathNames,
-} from '#constants';
+import { pathNames } from '#constants';
 import _ts from '#ts';
 
 import ConnectorLeadsGetRequest from '../../requests/ConnectorLeadsGetRequest';
@@ -295,10 +293,10 @@ export default class ConnectorContent extends React.PureComponent {
                         target="_blank"
                         to={reverseRoute(pathNames.connectors, { connectorId })}
                     >
-                        <span className={iconNames.settings} />
+                        <Icon name="settings" />
                     </Link>
                     <AccentButton
-                        iconName={iconNames.refresh}
+                        iconName="refresh"
                         onClick={this.handleRefreshButtonClick}
                         className={styles.button}
                         transparent

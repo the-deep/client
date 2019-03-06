@@ -1,9 +1,3 @@
-/**
- * @author frozenhelium <fren.ankit@gmail.com>
- * @co-author tnagorra <weathermist@gmail.com>
- * @co-author thenav56 <ayernavin@gmail.com>
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -15,6 +9,8 @@ import {
     compareLength,
     compareString,
 } from '@togglecorp/fujs';
+
+import Icon from '#rscg/Icon';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import FormattedDate from '#rscv/FormattedDate';
@@ -29,10 +25,7 @@ import {
     userIdFromRouteSelector,
     projectRolesSelector,
 } from '#redux';
-import {
-    iconNames,
-    pathNames,
-} from '#constants';
+import { pathNames } from '#constants';
 import _ts from '#ts';
 
 import ProjectAddForm from '#components/other/ProjectAddForm';
@@ -156,7 +149,7 @@ export default class UserProject extends React.PureComponent {
                                 to={reverseRoute(pathNames.projects, { projectId: d.id })}
                                 className={styles.link}
                             >
-                                <span className={iconNames.openLink} />
+                                <Icon name="openLink" />
                             </Link>
                         );
                     }
@@ -225,9 +218,8 @@ export default class UserProject extends React.PureComponent {
                                 <PrimaryButton
                                     onClick={this.handleAddProjectClose}
                                     transparent
-                                >
-                                    <span className={iconNames.close} />
-                                </PrimaryButton>
+                                    iconName="close"
+                                />
                             }
                         />
                         <ModalBody>

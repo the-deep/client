@@ -14,7 +14,6 @@ import {
     activeProjectRoleSelector,
 } from '#redux';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 const propTypes = {
@@ -100,7 +99,7 @@ export default class HeaderComponent extends React.PureComponent {
                     title={_ts('editEntry.list.widgetForm', 'formatAllButtonTitle')}
                     tabIndex="-1"
                     transparent
-                    iconName={iconNames.format}
+                    iconName="format"
                     confirmationMessage={_ts('editEntry.list.widgetForm', 'formatAll')}
                     onClick={this.handleFormatAll}
                 />
@@ -113,7 +112,7 @@ export default class HeaderComponent extends React.PureComponent {
                     title={_ts('editEntry.list.widgetForm', 'applyAllButtonTitle')}
                     tabIndex="-1"
                     transparent
-                    iconName={iconNames.applyAll}
+                    iconName="applyAll"
                     confirmationMessage={_ts('editEntry.list.widgetForm', 'applyToAll')}
                     onClick={this.handleApplyAll}
                 />
@@ -121,7 +120,7 @@ export default class HeaderComponent extends React.PureComponent {
                     title={_ts('editEntry.list.widgetForm', 'applyAllBelowButtonTitle')}
                     tabIndex="-1"
                     transparent
-                    iconName={iconNames.applyAllBelow}
+                    iconName="applyAllBelow"
                     confirmationMessage={_ts('editEntry.list.widgetForm', 'applyToAllBelow')}
                     onClick={this.handleApplyAllBelow}
                 />

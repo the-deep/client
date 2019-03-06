@@ -3,6 +3,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import Faram, { FaramGroup } from '@togglecorp/faram';
 
+import Icon from '#rscg/Icon';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import GridLayoutEditor from '#rscv/GridLayoutEditor';
 
@@ -12,7 +13,6 @@ import {
     removeAfViewWidgetAction,
 } from '#redux';
 import { isDevelopment } from '#config/env';
-import { iconNames } from '#constants';
 
 import {
     fetchWidget,
@@ -159,7 +159,7 @@ export default class WidgetEditor extends React.PureComponent {
                                     onChange={this.handleItemChange}
                                 />
                                 <DangerConfirmButton
-                                    iconName={iconNames.delete}
+                                    iconName="delete"
                                     title={_ts('framework.widgetEditor', 'deleteTooltip')}
                                     tabIndex="-1"
                                     confirmationMessage={_ts('framework.widgetEditor', 'deleteConfirmDetail')}
@@ -168,8 +168,9 @@ export default class WidgetEditor extends React.PureComponent {
                                 />
                             </Fragment>
                         ) : (
-                            <span
-                                className={`${iconNames.info} ${styles.infoIcon}`}
+                            <Icon
+                                name="info"
+                                className={styles.infoIcon}
                                 title={_ts('framework.widgetEditor', 'infoTooltip', { addedFrom })}
                             />
                         )

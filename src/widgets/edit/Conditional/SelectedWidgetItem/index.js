@@ -4,7 +4,6 @@ import { FaramGroup } from '@togglecorp/faram';
 
 import DangerButton from '#rsca/Button/DangerButton';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import { fetchWidget } from '#widgets';
@@ -57,7 +56,7 @@ export default class SelectedWidgetItem extends React.PureComponent {
                 </FaramGroup>
                 <DangerButton
                     className={styles.deleteButton}
-                    iconName={iconNames.delete}
+                    iconName="delete"
                     title={_ts('widgets.editor.multiselect', 'removeOptionButtonTitle')}
                     faramElementName={index}
                     faramAction={deleteClick}

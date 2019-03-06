@@ -6,7 +6,6 @@ import DangerButton from '#rsca/Button/DangerButton';
 import TextInput from '#rsci/TextInput';
 
 import _ts from '#ts';
-import { iconNames } from '#constants';
 
 import styles from './styles.scss';
 
@@ -38,7 +37,7 @@ const InputRow = ({ index }) => (
             faramAction={deleteClick}
             faramElementName={index}
             className={styles.deleteButton}
-            iconName={iconNames.delete}
+            iconName="delete"
             title={_ts('widgets.editor.matrix1d', 'removeCellButtonTitle')}
             transparent
         />

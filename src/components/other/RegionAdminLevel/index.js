@@ -23,7 +23,6 @@ import {
     unsetAdminLevelForRegionAction,
 } from '#redux';
 import schema from '#schema';
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import notify from '#notify';
@@ -114,7 +113,7 @@ export default class RegionAdminLevel extends React.PureComponent {
                             onClick={() => this.editAdminLevel(row)}
                             smallVerticalPadding
                             transparent
-                            iconName={iconNames.edit}
+                            iconName="edit"
                             disabled={this.props.readOnly}
                         />
                         <DangerConfirmButton
@@ -124,7 +123,7 @@ export default class RegionAdminLevel extends React.PureComponent {
                             onClick={() => this.handleDeleteAdminLevel(row)}
                             smallVerticalPadding
                             transparent
-                            iconName={iconNames.delete}
+                            iconName="delete"
                             disabled={this.props.readOnly}
                         />
                     </div>
@@ -270,7 +269,7 @@ export default class RegionAdminLevel extends React.PureComponent {
                         {_ts('components.regionAdminLevel', 'adminLevelsHeader')}
                     </h5>
                     <PrimaryButton
-                        iconName={iconNames.add}
+                        iconName="add"
                         disabled={deletePending || readOnly}
                         onClick={this.addAdminLevel}
                     >
@@ -287,9 +286,8 @@ export default class RegionAdminLevel extends React.PureComponent {
                                     <PrimaryButton
                                         onClick={this.handleModalClose}
                                         transparent
-                                    >
-                                        <span className={iconNames.close} />
-                                    </PrimaryButton>
+                                        iconName="close"
+                                    />
                                 }
                             />
                             <ModalBody>
@@ -319,9 +317,8 @@ export default class RegionAdminLevel extends React.PureComponent {
                                     <PrimaryButton
                                         onClick={this.handleModalClose}
                                         transparent
-                                    >
-                                        <span className={iconNames.close} />
-                                    </PrimaryButton>
+                                        iconName="close"
+                                    />
                                 }
                             />
                             <ModalBody>

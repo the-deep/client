@@ -7,7 +7,6 @@ import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 
-import { iconNames } from '#constants';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -110,9 +109,8 @@ export default class ImagesGrid extends React.PureComponent {
                                     className={styles.transparentBtn}
                                     onClick={this.handleImagePreviewClose}
                                     transparent
-                                >
-                                    <span className={iconNames.close} />
-                                </PrimaryButton>
+                                    iconName="close"
+                                />
                             }
                         />
                         <ModalBody className={styles.modalBody}>

@@ -19,7 +19,6 @@ import {
     setActiveProjectAction,
     unsetProjectDetailsAction,
 } from '#redux';
-import { iconNames } from '#constants';
 import notify from '#notify';
 import _ts from '#ts';
 
@@ -140,7 +139,7 @@ export default class ProjectPanel extends React.PureComponent {
                     render={
                         <div className={styles.actionButtons}>
                             <DangerConfirmButton
-                                iconName={iconNames.delete}
+                                iconName="delete"
                                 onClick={this.handleProjectDelete}
                                 confirmationTitle="Warning!"
                                 confirmationMessage={_ts('project', 'deleteConfirmMessage', {

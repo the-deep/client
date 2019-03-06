@@ -4,7 +4,6 @@ import update from 'immutability-helper';
 
 import WarningButton from '#rsca/Button/WarningButton';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 const propTypes = {
@@ -65,7 +64,7 @@ export default class EditButton extends React.PureComponent {
         return (
             <Fragment>
                 <WarningButton
-                    iconName={iconNames.edit}
+                    iconName="edit"
                     title={_ts('framework.widgetEditor', 'editTooltip')}
                     tabIndex="-1"
                     transparent

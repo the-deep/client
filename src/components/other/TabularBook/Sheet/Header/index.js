@@ -1,15 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
 import modalize from '#rscg/Modalize';
 import HealthBar from '#rscz/HealthBar';
 
 import Cloak from '#components/general/Cloak';
-import { iconNames } from '#constants';
 import { DATA_TYPE } from '#entities/tabular';
-import _cs from '#cs';
 import _ts from '#ts';
 
 import FieldEditModal from './FieldEditModal';
@@ -18,9 +17,9 @@ import styles from './styles.scss';
 const WarningModalButton = modalize(WarningButton);
 
 const getSortIcon = sortOrder => ({
-    asc: iconNames.sortAscending,
-    dsc: iconNames.sortDescending,
-})[sortOrder] || iconNames.sort;
+    asc: 'sortAscending',
+    dsc: 'sortDescending',
+})[sortOrder] || 'sort';
 
 const healthColorScheme = [
     '#41cf76',
@@ -93,10 +92,10 @@ export default class Header extends React.PureComponent {
         } = this.props;
 
         const iconNameMapping = {
-            [DATA_TYPE.string]: iconNames.text,
-            [DATA_TYPE.number]: iconNames.calculator,
-            [DATA_TYPE.geo]: iconNames.globe,
-            [DATA_TYPE.datetime]: iconNames.calendar,
+            [DATA_TYPE.string]: 'text',
+            [DATA_TYPE.number]: 'calculator',
+            [DATA_TYPE.geo]: 'globe',
+            [DATA_TYPE.datetime]: 'calendar',
         };
 
         const icon = iconNameMapping[value.type];
@@ -104,9 +103,12 @@ export default class Header extends React.PureComponent {
         return (
             <div className={styles.header}>
                 <div className={styles.top}>
-                    { icon && (
-                        <span className={_cs(icon, styles.icon)} />
-                    )}
+                    { icon &&
+                        <Icon
+                            className={styles.icon}
+                            name={icon}
+                        />
+                    }
                     <Button
                         className={styles.sortButton}
                         onClick={this.handleSortClick}
@@ -125,7 +127,7 @@ export default class Header extends React.PureComponent {
                         hide={this.shouldHideEditButton}
                         render={
                             <WarningModalButton
-                                iconName={iconNames.edit}
+                                iconName="edit"
                                 transparent
                                 title={_ts('tabular.header', 'columnEditButtonTooltip')}
                                 disabled={disabled}

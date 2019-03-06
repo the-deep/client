@@ -1,22 +1,26 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Icon from '#rscg/Icon';
 import {
     addClassName,
     removeClassName,
 } from '#rsu/common';
 
 import Message from '#rscv/Message';
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import styles from './styles.scss';
 
 const propTypes = {
     blockDrop: PropTypes.bool,
+    className: PropTypes.string,
+    children: PropTypes.node,
 };
 const defaultProps = {
     blockDrop: false,
+    className: '',
+    children: null,
 };
 
 export default class WidgetContentWrapper extends React.PureComponent {
@@ -84,11 +88,6 @@ export default class WidgetContentWrapper extends React.PureComponent {
             ${styles.widgetContentWrapper}
         `;
 
-        const iconClassName = `
-            ${styles.icon}
-            ${iconNames.minusOutline}
-        `;
-
         return (
             <div
                 className={className}
@@ -101,7 +100,10 @@ export default class WidgetContentWrapper extends React.PureComponent {
                 { children }
                 { blockDrop &&
                     <Message className={styles.overlay}>
-                        <span className={iconClassName} />
+                        <Icon
+                            className={styles.icon}
+                            name="minusOutline"
+                        />
                         { _ts('editEntry', 'noDropMessage') }
                     </Message>
                 }

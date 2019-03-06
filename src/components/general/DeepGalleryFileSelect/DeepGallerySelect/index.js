@@ -3,6 +3,7 @@ import React from 'react';
 import memoize from 'memoize-one';
 import { connect } from 'react-redux';
 
+import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import AccentButton from '#rsca/Button/AccentButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -21,7 +22,6 @@ import {
 } from '@togglecorp/fujs';
 import { UploadBuilder } from '#rsu/upload';
 
-import { iconNames } from '#constants';
 import { leadTypeIconMap } from '#entities/lead';
 import {
     userGalleryFilesSelector,
@@ -234,10 +234,10 @@ export default class DgSelect extends React.PureComponent {
     keySelector = file => file.id
 
     renderGalleryFileType = (row) => {
-        const icon = leadTypeIconMap[row.mimeType] || iconNames.documentText;
+        const icon = leadTypeIconMap[row.mimeType] || 'documentText';
         const url = row.file;
 
-        const iconChild = <i className={icon} />;
+        const iconChild = <Icon name={icon} />;
 
         if (!url) {
             return iconChild;
@@ -266,8 +266,8 @@ export default class DgSelect extends React.PureComponent {
             transparent
             iconName={
                 row.selected
-                    ? iconNames.checkbox
-                    : iconNames.checkboxOutlineBlank
+                    ? 'checkbox'
+                    : 'checkboxOutlineBlank'
             }
         />
     )

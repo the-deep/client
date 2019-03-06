@@ -2,7 +2,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import {
+    caseInsensitiveSubmatch,
+    reverseRoute,
+} from '@togglecorp/fujs';
 
+import Icon from '#rscg/Icon';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SearchInput from '#rsci/SearchInput';
@@ -14,16 +19,9 @@ import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import {
-    caseInsensitiveSubmatch,
-    reverseRoute,
-} from '@togglecorp/fujs';
 import update from '#rsu/immutable-update';
 
-import {
-    iconNames,
-    pathNames,
-} from '#constants';
+import { pathNames } from '#constants';
 import {
     addLeadViewConnectorsListSelector,
     projectIdFromRouteSelector,
@@ -436,7 +434,7 @@ export default class ConnectorSelectModal extends React.PureComponent {
                         rel="noopener noreferrer"
                         to={reverseRoute(pathNames.connectors, { })}
                     >
-                        <span className={iconNames.settings} />
+                        <Icon name="settings" />
                     </Link>
                 </Message>
             );
@@ -468,9 +466,8 @@ export default class ConnectorSelectModal extends React.PureComponent {
                             <PrimaryButton
                                 onClick={this.handleConnectorSelectModalClose}
                                 transparent
-                            >
-                                <span className={iconNames.close} />
-                            </PrimaryButton>
+                                iconName="close"
+                            />
                         </div>
                     }
                 />

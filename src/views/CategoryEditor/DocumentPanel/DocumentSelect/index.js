@@ -14,7 +14,6 @@ import {
     categoryEditorProjectsSelector,
 } from '#redux';
 import DeepGalleryFileSelect from '#components/general/DeepGalleryFileSelect';
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -129,7 +128,7 @@ export default class DocumentSelect extends React.PureComponent {
                 className={styles.icon}
                 onClick={() => this.handleRemoveFiles(fileId)}
                 transparent
-                iconName={iconNames.delete}
+                iconName="delete"
                 // FIXME: use strings
                 title="Remove document"
                 // FIXME: use strings

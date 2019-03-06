@@ -7,7 +7,6 @@ import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -62,7 +61,7 @@ export default class AddProjectButton extends React.PureComponent {
                 <PrimaryButton
                     className={className}
                     onClick={this.handleClick}
-                    iconName={iconNames.add}
+                    iconName="add"
                 >
                     {_ts('project', 'addProjectButtonLabel')}
                 </PrimaryButton>

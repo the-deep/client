@@ -2,12 +2,13 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import Icon from '#rscg/Icon';
+
 import {
     RequestCoordinator,
     RequestClient,
     requestMethods,
 } from '#request';
-import iconNames from '#constants/iconNames';
 import { adminEndpoint } from '#config/rest';
 import {
     setPagesInfoAction,
@@ -85,19 +86,9 @@ export default class HelpLink extends React.PureComponent {
             currentPageMeta || pagesInfo.default || emptyObject
         );
 
-        const iconClassName = `
-            ${styles.icon}
-            ${iconNames.helpOutlined}
-        `;
-
         const className = `
             ${classNameFromProps}
             ${styles.helpLinkContainer}
-        `;
-
-        const addOrEditIconClassName = `
-            ${currentPageMeta ? iconNames.edit : iconNames.add}
-            ${styles.addOrEditIcon}
         `;
 
         return (
@@ -110,7 +101,10 @@ export default class HelpLink extends React.PureComponent {
                     title={meta.title}
                     className={styles.helpLink}
                 >
-                    <span className={iconClassName} />
+                    <Icon
+                        className={styles.icon}
+                        name="helpOutlined"
+                    />
                     <div className={styles.content} >
                         <div
                             className={styles.text}
@@ -135,7 +129,10 @@ export default class HelpLink extends React.PureComponent {
                             className={styles.addOrEditHelpLink}
                             title={_ts('components.navbar', 'addOrEditHelpLinkTitle')}
                         >
-                            <span className={addOrEditIconClassName} />
+                            <Icon
+                                className={styles.addOrEditIconClassName}
+                                name={currentPageMeta ? 'edit' : 'add'}
+                            />
                         </a>
                     }
                 />

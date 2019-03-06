@@ -6,6 +6,7 @@ import {
     randomString,
 } from '@togglecorp/fujs';
 
+import Icon from '#rscg/Icon';
 import SortableListView from '#rscv/SortableListView';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import Modal from '#rscv/Modal';
@@ -20,7 +21,6 @@ import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 
 import TabTitle from '#components/general/TabTitle';
-import { iconNames } from '#constants';
 import _ts from '#ts';
 import _cs from '#cs';
 
@@ -452,7 +452,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                     <AccentButton
                                         faramElementName="add-dimension-btn"
                                         faramAction={this.addDimensionClick}
-                                        iconName={iconNames.add}
+                                        iconName="add"
                                         transparent
                                     >
                                         {_ts('widgets.editor.matrix2d', 'addDimensionButtonTitle')}
@@ -461,7 +461,7 @@ export default class Matrix2dEditWidget extends React.PureComponent {
                                     <AccentButton
                                         faramElementName="add-sector-btn"
                                         faramAction={this.addSectorClick}
-                                        iconName={iconNames.add}
+                                        iconName="add"
                                         transparent
                                     >
                                         {_ts('widgets.editor.matrix2d', 'addSectorButtonTitle')}
@@ -502,11 +502,13 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         const dragHandleClassName = _cs(
             styles.dragHandle,
             selectedDimensionKey === key && styles.active,
-            iconNames.hamburger,
         );
 
         return (
-            <span className={dragHandleClassName} />
+            <Icon
+                className={dragHandleClassName}
+                name="hamburger"
+            />
         );
     };
 
@@ -515,11 +517,13 @@ export default class Matrix2dEditWidget extends React.PureComponent {
         const dragHandleClassName = _cs(
             styles.dragHandle,
             selectedSectorKey === key && styles.active,
-            iconNames.hamburger,
         );
 
         return (
-            <span className={dragHandleClassName} />
+            <Icon
+                className={dragHandleClassName}
+                name="hamburger"
+            />
         );
     };
 

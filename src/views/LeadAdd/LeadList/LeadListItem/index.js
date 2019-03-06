@@ -1,15 +1,15 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-
-import WarningButton from '#rsca/Button/WarningButton';
 import { isTruthy } from '@togglecorp/fujs';
+
+import Icon from '#rscg/Icon';
+import WarningButton from '#rsca/Button/WarningButton';
 
 import {
     LEAD_TYPE,
     LEAD_STATUS,
     leadAccessor,
 } from '#entities/lead';
-import { iconNames } from '#constants';
 
 import _cs from '#cs';
 
@@ -46,11 +46,11 @@ export default class LeadListItem extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static leadTypeToIconClassMap = {
-        [LEAD_TYPE.drive]: iconNames.googleDrive,
-        [LEAD_TYPE.dropbox]: iconNames.dropbox,
-        [LEAD_TYPE.file]: iconNames.upload,
-        [LEAD_TYPE.website]: iconNames.globe,
-        [LEAD_TYPE.text]: iconNames.clipboard,
+        [LEAD_TYPE.drive]: 'googleDrive',
+        [LEAD_TYPE.dropbox]: 'dropbox',
+        [LEAD_TYPE.file]: 'upload',
+        [LEAD_TYPE.website]: 'globe',
+        [LEAD_TYPE.text]: 'clipboard',
     };
 
     static styleMap = {
@@ -71,10 +71,6 @@ export default class LeadListItem extends React.PureComponent {
         [LEAD_STATUS.complete]: 'checkCircle',
     };
 
-    static getIconClassName(type) {
-        return LeadListItem.leadTypeToIconClassMap[type];
-    }
-
     // HANDLE
 
     handleClick = () => {
@@ -83,18 +79,6 @@ export default class LeadListItem extends React.PureComponent {
 
     handleRemoveClick = () => {
         this.props.onRemove(this.props.leadKey);
-    }
-
-    // RENDER
-
-    renderIcon = ({ leadState }) => {
-        const className = _cs(
-            styles.statusIcon,
-            LeadListItem.styleMap[leadState],
-            iconNames[LeadListItem.iconMap[leadState]],
-        );
-
-        return <span className={className} />;
     }
 
     renderUploadProgress = ({ leadState, upload = {} }) => {
@@ -133,20 +117,31 @@ export default class LeadListItem extends React.PureComponent {
         const type = leadAccessor.getType(lead);
         const { title } = leadAccessor.getFaramValues(lead);
 
-        const LeadListIcon = this.renderIcon;
         const UploadProgress = this.renderUploadProgress;
+
+        const stateIconClassName = _cs(
+            styles.statusIcon,
+            LeadListItem.styleMap[leadState],
+        );
 
         return (
             <div className={styles.leadListItem}>
                 <button
                     className={`${styles.addLeadListItem} ${active ? styles.active : ''} ${className}`}
                     onClick={this.handleClick}
+                    type="button"
                 >
-                    <span className={`${styles.icon} ${LeadListItem.getIconClassName(type)}`} />
+                    <Icon
+                        className={styles.icon}
+                        name={LeadListItem.leadTypeToIconClassMap[type]}
+                    />
                     <span className={styles.title} >
                         { title }
                     </span>
-                    <LeadListIcon leadState={leadState} />
+                    <Icon
+                        className={stateIconClassName}
+                        name={LeadListItem.iconMap[leadState]}
+                    />
                     <UploadProgress
                         leadState={leadState}
                         upload={upload}
@@ -156,7 +151,7 @@ export default class LeadListItem extends React.PureComponent {
                     className={styles.removeButton}
                     disabled={isRemoveDisabled}
                     onClick={this.handleRemoveClick}
-                    iconName={iconNames.delete}
+                    iconName="delete"
                 />
             </div>
         );

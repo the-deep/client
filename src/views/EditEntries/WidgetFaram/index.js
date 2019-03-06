@@ -2,11 +2,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Faram, { FaramGroup } from '@togglecorp/faram';
 
+import Icon from '#rscg/Icon';
 import GridViewLayout from '#rscv/GridViewLayout';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import { entryAccessor } from '#entities/editEntries';
-import { iconNames } from '#constants';
 
 import {
     VIEW,
@@ -113,7 +113,7 @@ export default class WidgetFaram extends React.PureComponent {
                     title={error || title}
                     className={styles.heading}
                 >
-                    { hasError && <span className={iconNames.warning} /> }
+                    { hasError && <Icon name="warning" /> }
                     { hasError ? `${title} : ${error}` : title }
                 </h5>
                 { ActionComponent && entry && isViewPage && (

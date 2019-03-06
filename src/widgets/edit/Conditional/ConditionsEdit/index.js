@@ -5,6 +5,7 @@ import memoize from 'memoize-one';
 import Faram, { FaramList } from '@togglecorp/faram';
 import { randomString } from '@togglecorp/fujs';
 
+import Icon from '#rscg/Icon';
 import SortableListView from '#rscv/SortableListView';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -14,7 +15,6 @@ import ModalHeader from '#rscv/Modal/Header';
 import ListView from '#rscv/List/ListView';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
-import { iconNames } from '#constants';
 
 import {
     afViewAnalysisFrameworkSelector,
@@ -247,9 +247,10 @@ class ConditionsEditModal extends React.PureComponent {
                             <div className={styles.leftContainer}>
                                 <header className={styles.header}>
                                     {widgetsTitle}
-                                    <span
-                                        className={`${iconNames.info} ${styles.headerInfo}`}
+                                    <Icon
+                                        className={styles.headerInfo}
                                         title={widgetsHeaderInfo}
+                                        name="info"
                                     />
                                 </header>
                                 <ListView

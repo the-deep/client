@@ -10,7 +10,6 @@ import ColorInput from '#rsci/ColorInput';
 import { randomString } from '@togglecorp/fujs';
 
 import _ts from '#ts';
-import { iconNames } from '#constants';
 
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
@@ -122,7 +121,7 @@ export default class RowContent extends React.PureComponent {
                                 <AccentButton
                                     faramElementName="add-btn"
                                     faramAction={RowContent.addOptionClick}
-                                    iconName={iconNames.clipboard}
+                                    iconName="clipboard"
                                     transparent
                                 >
                                     {_ts('widgets.editor.matrix1d', 'addCellButtonTitle')}

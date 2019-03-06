@@ -16,7 +16,6 @@ import {
     projectRoleListSelector,
 } from '#redux';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -168,7 +167,7 @@ export default class Actions extends React.PureComponent {
                 <DangerConfirmButton
                     smallVerticalPadding
                     title={_ts('project.users', 'removeMembershipButtonPlaceholder')}
-                    iconName={iconNames.delete}
+                    iconName="delete"
                     onClick={this.handleRemoveMembershipButtonClick}
                     confirmationMessage={removeUG}
                     transparent

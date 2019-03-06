@@ -21,7 +21,6 @@ import _cs from '#cs';
 import _ts from '#ts';
 
 import Cloak from '#components/general/Cloak';
-import { iconNames } from '#constants';
 import { DATA_TYPE } from '#entities/tabular';
 
 import FieldRetrieveModal from './FieldRetrieveModal';
@@ -409,7 +408,7 @@ export default class Sheet extends React.PureComponent {
                         hide={this.shouldHideEditButton}
                         render={
                             <ModalButton
-                                iconName={iconNames.more}
+                                iconName="more"
                                 title={_ts('tabular.sheets', 'columnShowButtonTooltip')}
                                 disabled={disabled || fieldList.length <= 0}
                                 transparent

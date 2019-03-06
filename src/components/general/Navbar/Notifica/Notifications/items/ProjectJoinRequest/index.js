@@ -16,10 +16,7 @@ import SuccessButton from '#rsca/Button/SuccessButton';
 import DangerButton from '#rsca/Button/DangerButton';
 
 import DisplayPicture from '#components/viewer/DisplayPicture';
-import {
-    pathNames,
-    iconNames,
-} from '#constants';
+import { pathNames } from '#constants';
 import _ts from '#ts';
 
 import Notification from '../Notification';
@@ -212,7 +209,7 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                             <SuccessButton
                                 disabled={pending}
                                 className={styles.button}
-                                iconName={iconNames.check}
+                                iconName="check"
                                 onClick={this.handleAddButtonClick}
                                 transparent
                                 pending={pendingProjectJoinAcceptRequest}
@@ -222,7 +219,7 @@ export default class ProjectJoinRequestItem extends React.PureComponent {
                             <DangerButton
                                 disabled={pending}
                                 className={styles.button}
-                                iconName={iconNames.close}
+                                iconName="close"
                                 onClick={this.handleRejectButtonClick}
                                 transparent
                                 pending={pendingProjectJoinRejectRequest}

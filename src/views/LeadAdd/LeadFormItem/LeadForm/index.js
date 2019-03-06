@@ -30,7 +30,6 @@ import {
     activeUserSelector,
     projectDetailsSelector,
 } from '#redux';
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import ApplyAll, { ExtractThis } from './ApplyAll';
@@ -270,7 +269,7 @@ export default class LeadForm extends React.PureComponent {
             </ApplyAll>
             <Button
                 onClick={this.handleAddLeadGroupClick}
-                iconName={iconNames.add}
+                iconName="add"
                 transparent
                 disabled={disabled}
             />

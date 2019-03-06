@@ -9,6 +9,7 @@ import {
     compareDate,
 } from '@togglecorp/fujs';
 
+import Icon from '#rscg/Icon';
 import Page from '#rscv/Page';
 import { FgRestBuilder } from '#rsu/rest';
 import Table from '#rscv/Table';
@@ -30,10 +31,7 @@ import {
 
     projectIdFromRouteSelector,
 } from '#redux';
-import {
-    pathNames,
-    iconNames,
-} from '#constants';
+import { pathNames } from '#constants';
 import { leadTypeIconMap } from '#entities/lead';
 import schema from '#schema';
 import notify from '#notify';
@@ -91,12 +89,12 @@ export default class UserExports extends React.PureComponent {
                     compareString(a.title, b.title)
                 ),
                 modifier: (row) => {
-                    const icon = leadTypeIconMap[row.mimeType] || iconNames.documentText;
+                    const icon = leadTypeIconMap[row.mimeType] || 'documentText';
                     const url = row.file;
                     return (
                         <div className="icon-wrapper">
                             <a href={url} target="_blank" rel="noopener noreferrer">
-                                <i className={icon} />
+                                <Icon name={icon} />
                             </a>
                         </div>
                     );
@@ -163,7 +161,7 @@ export default class UserExports extends React.PureComponent {
                     } else if (!row.pending && !row.file) {
                         return (
                             <div className="file-error">
-                                <span className={iconNames.error} />
+                                <Icon name="error" />
                             </div>
                         );
                     }
@@ -174,7 +172,7 @@ export default class UserExports extends React.PureComponent {
                             rel="noopener noreferrer"
                             className="file-download"
                         >
-                            <span className={iconNames.download} />
+                            <Icon name="download" />
                         </a>
                     );
                 },

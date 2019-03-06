@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Icon from '#rscg/Icon';
 import FormattedDate from '#rscv/FormattedDate';
-import { iconNames } from '#constants';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -34,16 +34,6 @@ export default class Notification extends React.PureComponent {
             timestamp,
         } = this.props;
 
-        const timestampIconClassName = `
-            ${iconNames.calendar}
-            ${styles.timestampIcon}
-        `;
-
-        const defaultIconClassName = `
-            ${iconNames.notification}
-            ${styles.defaultIcon}
-        `;
-
         const className = `
             ${classNameFromProps}
             ${styles.notification}
@@ -53,14 +43,22 @@ export default class Notification extends React.PureComponent {
             <div className={className}>
                 <div className={styles.left}>
                     { icon }
-                    { !icon && <span className={defaultIconClassName} /> }
+                    { !icon &&
+                        <Icon
+                            name="defaultIcon"
+                            className={styles.defaultIcon}
+                        />
+                    }
                 </div>
                 <div className={styles.right}>
                     <div className={styles.message}>
                         { message }
                     </div>
                     <div className={styles.timestamp}>
-                        <span className={timestampIconClassName} />
+                        <Icon
+                            className={styles.timestampIcon}
+                            name="calendar"
+                        />
                         <FormattedDate
                             className={styles.date}
                             date={timestamp}

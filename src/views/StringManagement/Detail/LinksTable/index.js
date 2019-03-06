@@ -15,8 +15,6 @@ import {
     linkCollectionSelector,
 } from '#redux';
 
-import { iconNames } from '#constants';
-
 import DeleteConfirm from '../DeleteConfirm';
 import EditLinkModal from '../EditLinkModal';
 import EditStringModal from '../EditStringModal';
@@ -94,21 +92,21 @@ export default class LinksTable extends React.PureComponent {
                     <Fragment>
                         <Button
                             onClick={() => { this.handleEditStringButtonClick(data.stringId); }}
-                            iconName={iconNames.edit}
+                            iconName="edit"
                             transparent
                             smallVerticalPadding
                             disabled={this.props.disabled}
                         />
                         <WarningButton
                             onClick={() => { this.handleEditButtonClick(data.id); }}
-                            iconName={iconNames.edit}
+                            iconName="edit"
                             transparent
                             smallVerticalPadding
                             disabled={this.props.disabled}
                         />
                         <DangerButton
                             onClick={() => { this.handleDeleteButtonClick(data.id); }}
-                            iconName={iconNames.delete}
+                            iconName="delete"
                             transparent
                             smallVerticalPadding
                             disabled={this.props.disabled}

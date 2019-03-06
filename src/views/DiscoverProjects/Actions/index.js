@@ -3,13 +3,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '@togglecorp/fujs';
+
+import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 
-import {
-    iconNames,
-    pathNames,
-} from '#constants/';
+import { pathNames } from '#constants';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -48,13 +47,13 @@ export default class Actions extends React.PureComponent {
                         title={_ts('discoverProjects.table', 'editProjectTooltip')}
                         to={link}
                     >
-                        <i className={iconNames.edit} />
+                        <Icon name="edit" />
                     </Link>
                 );
             } case 'pending':
                 return (
                     <DangerButton
-                        iconName={iconNames.close}
+                        iconName="close"
                         title={_ts('discoverProjects.table', 'cancelJoinRequest')}
                         transparent
                         onClick={() => this.props.onProjectJoinCancel(project)}
@@ -107,7 +106,7 @@ export default class Actions extends React.PureComponent {
                 title={_ts('discoverProjects.table', 'contactAdminsTitle')}
                 href={contantLink}
             >
-                <span className={iconNames.email} />
+                <Icon name="email" />
             </a>
         );
     }

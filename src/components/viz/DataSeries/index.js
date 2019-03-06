@@ -5,20 +5,20 @@ import {
     listToMap,
 } from '@togglecorp/fujs';
 
+import Icon from '#rscg/Icon';
 import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import Button from '#rsca/Button';
-import GeoViz from '#components/geo/GeoViz';
 import SimpleHorizontalBarChart from '#rscz/SimpleHorizontalBarChart';
 import SimpleVerticalBarChart from '#rscz/SimpleVerticalBarChart';
 import Histogram from '#rscz/Histogram';
 import WordCloud from '#rscz/WordCloud';
-import { iconNames } from '#constants';
 import modalize from '#rscg/Modalize';
 
+import GeoViz from '#components/geo/GeoViz';
 import _cs from '#cs';
 import _ts from '#ts';
 
@@ -75,23 +75,23 @@ const GRAPH_MODES = {
 const GRAPH_DETAILS = {
     [GRAPH.horizontalBarChart]: {
         title: _ts('components.viz.dataSeries', 'horizontalBarChartLabel'),
-        iconName: iconNames.horizontalBar,
+        iconName: 'horizontalBar',
     },
     [GRAPH.verticalBarChart]: {
         title: _ts('components.viz.dataSeries', 'verticalBarChartLabel'),
-        iconName: iconNames.verticalBar,
+        iconName: 'verticalBar',
     },
     [GRAPH.histogram]: {
         title: _ts('components.viz.dataSeries', 'histogramLabel'),
-        iconName: iconNames.histogram,
+        iconName: 'histogram',
     },
     [GRAPH.wordCloud]: {
         title: _ts('components.viz.dataSeries', 'wordCloudLabel'),
-        iconName: iconNames.word,
+        iconName: 'word',
     },
     [GRAPH.geo]: {
         title: _ts('components.viz.dataSeries', 'geoLabel'),
-        iconName: iconNames.globe,
+        iconName: 'globe',
     },
 };
 
@@ -108,7 +108,7 @@ const Tab = ({
             isActive && styles.activeTab,
         )}
     >
-        <span className={icon} />
+        <Icon name={icon} />
     </button>
 );
 
@@ -327,7 +327,7 @@ export default class DataSeries extends React.PureComponent {
                                 />
                             }
                             <Button
-                                iconName={iconNames.close}
+                                iconName="close"
                                 onClick={closeModal}
                                 transparent
                             />
@@ -375,7 +375,7 @@ export default class DataSeries extends React.PureComponent {
                             />
                         }
                         <ModalButton
-                            iconName={iconNames.expand}
+                            iconName="expand"
                             className={styles.expandButton}
                             transparent
                             modal={

@@ -3,7 +3,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
-
 import {
     reverseRoute,
     caseInsensitiveSubmatch,
@@ -11,6 +10,8 @@ import {
     compareString,
     isFalsy,
 } from '@togglecorp/fujs';
+
+import Icon from '#rscg/Icon';
 import FormattedDate from '#rscv/FormattedDate';
 import Table from '#rscv/Table';
 import SearchInput from '#rsci/SearchInput';
@@ -20,10 +21,7 @@ import {
 
     setUsergroupViewAction,
 } from '#redux';
-import {
-    iconNames,
-    pathNames,
-} from '#constants';
+import { pathNames } from '#constants';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -125,7 +123,7 @@ export default class ProjectsTable extends React.PureComponent {
                             to={reverseRoute(pathNames.projects, { projectId: row.id })}
                             className={styles.link}
                         >
-                            <span className={iconNames.openLink} />
+                            <Icon name="openLink" />
                         </Link>
                     </div>
                 ),
