@@ -1,14 +1,12 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
-
 import { reverseRoute } from '@togglecorp/fujs';
+
+import Icon from '#rscg/Icon';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 
-import {
-    iconNames,
-    pathNames,
-} from '#constants/';
+import { pathNames } from '#constants/';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -57,7 +55,7 @@ export default class LeadGroupsActionButtons extends React.PureComponent {
                     onClick={() => onRemoveLeadGroup(row)}
                     smallVerticalPadding
                     transparent
-                    iconName={iconNames.delete}
+                    iconName="delete"
                     confirmationMessage={_ts('leadGroups', 'leadGroupDeleteConfirmText')}
                 />
                 <Link
@@ -66,7 +64,7 @@ export default class LeadGroupsActionButtons extends React.PureComponent {
                     title={_ts('leadGroups', 'addAssessmentFromLeadButtonTitle')}
                     to={links.addAssessment}
                 >
-                    <i className={iconNames.forward} />
+                    <Icon name="forward" />
                 </Link>
             </Fragment>
         );

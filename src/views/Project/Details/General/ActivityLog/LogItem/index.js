@@ -1,16 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { reverseRoute, isObject } from '@togglecorp/fujs';
+
+import Icon from '#rscg/Icon';
 import FormattedDate from '#rscv/FormattedDate';
 
-import { reverseRoute, isObject } from '@togglecorp/fujs';
-import {
-    pathNames,
-    iconNames,
-} from '#constants';
+import { pathNames } from '#constants';
 import { camelToNormalCase } from '#utils/common';
 import _ts from '#ts';
-import _cs from '#cs';
 
 import AggregatedLogItem from '../AggregatedLogItem';
 import styles from './styles.scss';
@@ -105,7 +103,10 @@ const LogItem = ({
             <div className={styles.metaData}>
                 { user && (
                     <div className={styles.user}>
-                        <span className={_cs(iconNames.user, styles.icon)} />
+                        <Icon
+                            className={styles.icon}
+                            name="user"
+                        />
                         <Link
                             className={styles.link}
                             target="_blank"
@@ -116,7 +117,10 @@ const LogItem = ({
                     </div>
                 )}
                 <div className={styles.date} >
-                    <span className={_cs(iconNames.calendar, styles.icon)} />
+                    <Icon
+                        className={styles.icon}
+                        name="calendar"
+                    />
                     <FormattedDate
                         className={styles.formattedDate}
                         date={time}

@@ -16,7 +16,6 @@ import {
     stringMgmtRemoveStringChangeAction,
     stringMgmtRemoveLinkChangeAction,
 } from '#redux';
-import { iconNames } from '#constants';
 
 import EditLinkModal from '../EditLinkModal';
 /*
@@ -113,7 +112,7 @@ export default class InfoPane extends React.PureComponent {
                         <DangerButton
                             transparent
                             smallVerticalPadding
-                            iconName={iconNames.delete}
+                            iconName="delete"
                             disabled
                         />
                         */}
@@ -129,7 +128,7 @@ export default class InfoPane extends React.PureComponent {
                         <DangerButton
                             transparent
                             smallVerticalPadding
-                            iconName={iconNames.delete}
+                            iconName="delete"
                             disabled
                         />
                         */}
@@ -143,7 +142,7 @@ export default class InfoPane extends React.PureComponent {
                         <SuccessButton
                             transparent
                             smallVerticalPadding
-                            iconName={iconNames.add}
+                            iconName="add"
                             onClick={() => this.handleEditLinkButtonClick(d)}
                             disabled={this.props.disabled}
                         />
@@ -158,7 +157,7 @@ export default class InfoPane extends React.PureComponent {
                         <WarningButton
                             transparent
                             smallVerticalPadding
-                            iconName={iconNames.edit}
+                            iconName="edit"
                             disabled
                         />
                         */}
@@ -173,7 +172,7 @@ export default class InfoPane extends React.PureComponent {
                         <DangerConfirmButton
                             transparent
                             smallVerticalPadding
-                            iconName={iconNames.delete}
+                            iconName="delete"
                             onClick={() => this.handleLinkChangeDeleteButtonClick(d.key)}
                             confirmationMessage="Do you want to discard this change"
                             disabled={this.props.disabled}
@@ -193,7 +192,7 @@ export default class InfoPane extends React.PureComponent {
                         <DangerConfirmButton
                             transparent
                             smallVerticalPadding
-                            iconName={iconNames.delete}
+                            iconName="delete"
                             onClick={() => this.handleLinkChangeDeleteButtonClick(d.key)}
                             confirmationMessage="Do you want to discard this change"
                             disabled={this.props.disabled}
@@ -213,7 +212,7 @@ export default class InfoPane extends React.PureComponent {
                         <DangerConfirmButton
                             transparent
                             smallVerticalPadding
-                            iconName={iconNames.delete}
+                            iconName="delete"
                             onClick={() => this.handleLinkChangeDeleteButtonClick(d.key)}
                             confirmationMessage="Do you want to discard this change"
                             disabled={this.props.disabled}
@@ -231,7 +230,7 @@ export default class InfoPane extends React.PureComponent {
                         <DangerConfirmButton
                             transparent
                             smallVerticalPadding
-                            iconName={iconNames.delete}
+                            iconName="delete"
                             onClick={() => this.handleStringChangeDeleteButtonClick(d.id)}
                             confirmationMessage="Do you want to discard this change"
                             disabled={this.props.disabled}
@@ -251,7 +250,7 @@ export default class InfoPane extends React.PureComponent {
                         <DangerConfirmButton
                             transparent
                             smallVerticalPadding
-                            iconName={iconNames.delete}
+                            iconName="delete"
                             onClick={() => this.handleStringChangeDeleteButtonClick(d.id)}
                             confirmationMessage="Do you want to discard this change"
                             disabled={this.props.disabled}
@@ -269,7 +268,7 @@ export default class InfoPane extends React.PureComponent {
                         <DangerConfirmButton
                             transparent
                             smallVerticalPadding
-                            iconName={iconNames.delete}
+                            iconName="delete"
                             onClick={() => this.handleStringChangeDeleteButtonClick(d.id)}
                             confirmationMessage="Do you want to discard this change"
                             disabled={this.props.disabled}

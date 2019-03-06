@@ -5,8 +5,9 @@ import {
     withRouter,
     Link,
 } from 'react-router-dom';
-
 import { reverseRoute } from '@togglecorp/fujs';
+
+import Icon from '#rscg/Icon';
 import List from '#rscv/List';
 import DropdownMenu from '#rsca/DropdownMenu';
 import DropdownGroup from '#rsca/DropdownMenu/Group';
@@ -19,7 +20,6 @@ import {
     currentUserInformationSelector,
 } from '#redux';
 import {
-    iconNames,
     pathNames,
 } from '#constants';
 import _ts from '#ts';
@@ -36,7 +36,10 @@ const AdminPanelLink = ({ disabled }) => (
         rel="noopener noreferrer"
         disabled={disabled}
     >
-        <span className={`${styles.icon} ${iconNames.locked}`} />
+        <Icon
+            className={styles.icon}
+            name="locked"
+        />
         {_ts('components.navbar', 'adminPanelLabel')}
     </a>
 );
@@ -54,7 +57,10 @@ const LogoutLink = ({ disabled, onClick }) => (
             onClick={onClick}
             disabled={disabled}
         >
-            <span className={`${styles.icon} ${iconNames.logout}`} />
+            <Icon
+                className={styles.icon}
+                name="logout"
+            />
             {_ts('components.navbar', 'logoutLabel')}
         </button>
     </DropdownGroup>
@@ -73,7 +79,12 @@ const DropItem = ({ itemKey, disabled, iconName, ...otherProps }) => (
         className={`${styles.dropdownItem} ${disabled ? styles.disabled : ''}`}
         disabled={disabled}
     >
-        { iconName && <span className={`${iconName} ${styles.icon}`} />}
+        { iconName &&
+            <Icon
+                className={styles.icon}
+                name={iconName}
+            />
+        }
         { _ts('pageTitle', itemKey) }
     </Link>
 );
@@ -120,14 +131,14 @@ export default class NavDrop extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static dropdownItemIcons = {
-        apiDocs: iconNames.code,
-        userProfile: iconNames.person,
-        stringManagement: iconNames.world,
-        projects: iconNames.map,
-        countries: iconNames.globe,
-        connectors: iconNames.link,
-        visualization: iconNames.pizza,
-        workshop: iconNames.settings,
+        apiDocs: 'code',
+        userProfile: 'person',
+        stringManagement: 'world',
+        projects: 'map',
+        countries: 'globe',
+        connectors: 'link',
+        visualization: 'pizza',
+        workshop: 'settings',
     };
 
     static getDropItemKey = item => item.key
@@ -212,7 +223,10 @@ export default class NavDrop extends React.PureComponent {
                     rel="noopener noreferrer"
                     href="https://chrome.google.com/webstore/detail/deep-2-add-lead/kafonkgglonkbldmcigbdojiadfcmcdc"
                 >
-                    <span className={`${styles.icon} ${iconNames.chrome}`} />
+                    <Icon
+                        className={styles.icon}
+                        name="chrome"
+                    />
                     <span className={styles.label}>
                         { _ts('pageTitle', 'browserExtension') }
                     </span>

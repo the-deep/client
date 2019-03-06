@@ -7,7 +7,6 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import { isListEqual } from '@togglecorp/fujs';
 import Modal from '#rscv/Modal';
 import LeadPreview from '#components/leftpanel/LeadPreview';
-import { iconNames } from '#constants';
 import {
     leadsForProjectGridViewSelector,
 } from '#redux';
@@ -156,7 +155,7 @@ export default class LeadGrid extends React.Component {
                                 onClick={this.hideLeadDetailPreview}
                                 tabIndex="-1"
                                 transparent
-                                iconName={iconNames.close}
+                                iconName="close"
                             />
                         </Modal>
                     }

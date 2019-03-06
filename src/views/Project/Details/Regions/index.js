@@ -17,7 +17,6 @@ import {
 
     setProjectOptionsAction,
 } from '#redux';
-import { iconNames } from '#constants';
 import _ts from '#ts';
 import _cs from '#cs';
 import AddRegion from '#components/other/AddRegion';
@@ -317,7 +316,7 @@ export default class ProjectRegions extends React.PureComponent {
                         { regionLabel }
                     </h4>
                     <AccentButton
-                        iconName={iconNames.add}
+                        iconName="add"
                         className={styles.addRegionButton}
                         onClick={this.handleAddRegionButtonClick}
                         disabled={readOnly || pendingProjectOptions}

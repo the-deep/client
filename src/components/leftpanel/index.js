@@ -14,7 +14,6 @@ import {
     leadPaneTypeMap,
 } from '#entities/lead';
 import { entryAccessor } from '#entities/editEntries';
-import { iconNames } from '#constants';
 import ImagesGrid from '#components/viewer/ImagesGrid';
 import TabularBook from '#components/other/TabularBook';
 import brainIcon from '#resources/img/brain.png';
@@ -372,7 +371,7 @@ export default class LeftPane extends React.PureComponent {
                     }
                     { tabKey === 'tabular-preview' &&
                         <AccentModalButton
-                            iconName={iconNames.table}
+                            iconName="table"
                             transparent
                             // FIXME: use strings
                             title="Show tabular"

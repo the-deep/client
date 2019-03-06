@@ -3,7 +3,6 @@ import React from 'react';
 
 import Button from '#rsca/Button';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -47,7 +46,7 @@ export default class WidgetPreview extends React.PureComponent {
                 <Button
                     transparent
                     onClick={this.handleAddClick}
-                    iconName={iconNames.add}
+                    iconName="add"
                     title={_ts('framework.widgetList', 'addWidgetButtonLabel')}
                 />
             </div>

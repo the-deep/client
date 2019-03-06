@@ -9,7 +9,6 @@ import AccentButton from '#rsca/Button/AccentButton';
 import TextInput from '#rsci/TextInput';
 
 import _ts from '#ts';
-import { iconNames } from '#constants';
 
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
@@ -118,7 +117,7 @@ export default class SectorContent extends React.PureComponent {
                                 <AccentButton
                                     faramElementName="add-btn"
                                     faramAction={SectorContent.addSubsectorClick}
-                                    iconName={iconNames.add}
+                                    iconName="add"
                                     transparent
                                 >
                                     {_ts('widgets.editor.matrix2d', 'addSubsectorButtonTitle')}

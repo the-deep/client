@@ -7,7 +7,6 @@ import SelectInputWithList from '#rsci/SelectInputWithList';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import Label from '#rsci/Label';
 import { FaramInputElement } from '@togglecorp/faram';
-import { iconNames } from '#constants';
 import {
     listToMap,
     mapToList,
@@ -241,7 +240,7 @@ export default class GeoInput extends React.PureComponent {
         return (
             <AccentButton
                 className={styles.action}
-                iconName={iconNames.globe}
+                iconName="globe"
                 onClick={this.handleShowModal}
                 disabled={disabled || readOnly}
                 transparent
@@ -285,7 +284,7 @@ export default class GeoInput extends React.PureComponent {
                     }
                     <AccentButton
                         className={styles.action}
-                        iconName={iconNames.globe}
+                        iconName="globe"
                         onClick={this.handleShowModal}
                         disabled={disabled || readOnly}
                         transparent

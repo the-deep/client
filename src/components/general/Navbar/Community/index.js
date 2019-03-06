@@ -3,7 +3,6 @@ import React from 'react';
 
 import DropdownMenu from '#rsca/DropdownMenu';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import slackLogo from '#resources/img/slack.png';
@@ -46,16 +45,12 @@ export default class Community extends React.PureComponent {
         const skypeTitle = _ts('components.navbar', 'skypeTitle');
         const zendeskTitle = _ts('components.navbar', 'zendeskTitle');
 
-        const iconClassName = `
-            ${iconNames.chat}
-            ${styles.icon}
-        `;
-
         return (
             <DropdownMenu
                 className={className}
                 dropdownClassName={styles.communityDropdown}
-                dropdownIcon={iconClassName}
+                dropdownIcon="chat"
+                dropdownIconClassName={styles.icon}
                 closeOnClick
             >
                 <a

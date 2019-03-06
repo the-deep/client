@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { connect } from 'react-redux';
-import { iconNames } from '#constants';
+import { capitalize } from '@togglecorp/fujs';
+
+import Icon from '#rscg/Icon';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+
 import DisplayPicture from '#components/viewer/DisplayPicture';
 
 import {
@@ -10,14 +13,10 @@ import {
     requestMethods,
     notifyOnFailure,
 } from '#request';
-
-import PrimaryButton from '#rsca/Button/PrimaryButton';
-
 import {
     addProjectMembershipAction,
     addProjectUsergroupAction,
 } from '#redux';
-import { capitalize } from '@togglecorp/fujs';
 import _ts from '#ts';
 import _cs from '#cs';
 
@@ -177,15 +176,13 @@ export default class SearchListItem extends React.PureComponent {
                 ${styles.usergroup}
             `;
 
-            const iconClassName = `
-                ${iconNames.userGroup}
-                ${styles.icon}
-            `;
-
             return (
                 <div className={className}>
                     <div className={styles.top}>
-                        <div className={iconClassName} />
+                        <Icon
+                            className={styles.icon}
+                            name="userGroup"
+                        />
                         <div className={styles.name}>
                             <div className={styles.text}>
                                 { usergroupTitle }
@@ -195,7 +192,7 @@ export default class SearchListItem extends React.PureComponent {
                     <div className={actionButtonsClassName}>
                         <PrimaryButton
                             onClick={this.handleAddUsergroupButtonClick}
-                            iconName={iconNames.add}
+                            iconName="add"
                             title={capitalize(_ts('project.users', 'addUsergroupButtonTooltip'))}
                             pending={usergroupMembershipRequest.pending}
                         />
@@ -227,7 +224,7 @@ export default class SearchListItem extends React.PureComponent {
                     <div className={actionButtonsClassName}>
                         <PrimaryButton
                             onClick={this.handleAddUserButtonClick}
-                            iconName={iconNames.add}
+                            iconName="add"
                             title={capitalize(_ts('project.users', 'addUserButtonTooltip'))}
                             pending={userMembershipRequest.pending}
                         />

@@ -5,6 +5,7 @@ import { Link, Prompt } from 'react-router-dom';
 import { reverseRoute } from '@togglecorp/fujs';
 import { detachedFaram } from '@togglecorp/faram';
 
+import Icon from '#rscg/Icon';
 import Page from '#rscv/Page';
 import update from '#rsu/immutable-update';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
@@ -20,10 +21,7 @@ import Cloak from '#components/general/Cloak';
 import { entryAccessor, ENTRY_STATUS } from '#entities/editEntries';
 
 import { RequestCoordinator } from '#request';
-import {
-    iconNames,
-    pathNames,
-} from '#constants';
+import { pathNames } from '#constants';
 import {
     leadIdFromRoute,
     projectIdFromRoute,
@@ -675,7 +673,10 @@ export default class EditEntries extends React.PureComponent {
                                             className={styles.editFrameworkLink}
                                             to={frameworkPath}
                                         >
-                                            <span className={`${iconNames.edit} ${styles.editIcon}`} />
+                                            <Icon
+                                                name="edit"
+                                                className={styles.editIcon}
+                                            />
                                             { _ts('editEntry', 'editFrameworkTitle') }
                                         </Link>
                                     }

@@ -45,7 +45,6 @@ import {
     createParamsForCeViewPatch,
     transformResponseErrorToFormError,
 } from '#rest';
-import { iconNames } from '#constants';
 import schema from '#schema';
 import notify from '#notify';
 import _ts from '#ts';
@@ -533,7 +532,7 @@ export default class CategoryEditor extends React.PureComponent {
                                             <PrimaryButton
                                                 onClick={this.handleNewCategory}
                                                 disabled={pending}
-                                                iconName={iconNames.add}
+                                                iconName="add"
                                                 title={_ts('categoryEditor', 'addCategoryTooltip')}
                                             />
                                             { isTruthy(activeCategoryId) && (
@@ -541,13 +540,13 @@ export default class CategoryEditor extends React.PureComponent {
                                                     <PrimaryButton
                                                         onClick={this.handleEditCategory}
                                                         disabled={pending}
-                                                        iconName={iconNames.edit}
+                                                        iconName="edit"
                                                         title={_ts('categoryEditor', 'editCategoryTooltip')}
                                                     />
                                                     <DangerConfirmButton
                                                         onClick={this.handleRemoveCategory}
                                                         disabled={pending}
-                                                        iconName={iconNames.delete}
+                                                        iconName="delete"
                                                         title={_ts('categoryEditor', 'deleteCategoryTooltip')}
                                                         confirmationMessage={confirmMessage}
                                                     />

@@ -26,7 +26,6 @@ import {
 } from '@togglecorp/fujs';
 import update from '#rsu/immutable-update';
 
-import { iconNames } from '#constants';
 import {
     connectorDetailsSelector,
     connectorSourceSelector,
@@ -203,7 +202,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                                         : _ts('connector', 'grantAdminRightsTitle')
                                 }
                                 onClick={() => this.handleToggleUserRoleClick(row)}
-                                iconName={isAdmin ? iconNames.locked : iconNames.person}
+                                iconName={isAdmin ? 'locked' : 'person'}
                                 transparent
                             />
                             <DangerButton
@@ -211,7 +210,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                                 key="delete-member"
                                 title={_ts('connector', 'deleteMemberLinkTitle')}
                                 onClick={() => this.handleDeleteUserClick(row)}
-                                iconName={iconNames.delete}
+                                iconName="delete"
                                 transparent
                             />
                         </Fragment>
@@ -267,7 +266,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                                 key="role-change"
                                 title={toggleTitle}
                                 onClick={() => this.handleToggleProjectRoleClick(row)}
-                                iconName={isGlobal ? iconNames.globe : iconNames.locked}
+                                iconName={isGlobal ? 'globe' : 'locked'}
                                 disabled={!isProjectAdmin}
                                 transparent
                             />
@@ -276,7 +275,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                                 key="delete-member"
                                 title={deleteTitle}
                                 onClick={() => this.handleDeleteProjectClick(row)}
-                                iconName={iconNames.delete}
+                                iconName="delete"
                                 transparent
                             />
                         </Fragment>

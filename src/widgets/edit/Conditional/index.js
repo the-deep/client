@@ -3,6 +3,7 @@ import React from 'react';
 import Faram, { FaramList, requiredCondition } from '@togglecorp/faram';
 import { randomString } from '@togglecorp/fujs';
 
+import Icon from '#rscg/Icon';
 import ListView from '#rscv/List/ListView';
 import SortableListView from '#rscv/SortableListView';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
@@ -14,7 +15,6 @@ import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ModalFooter from '#rscv/Modal/Footer';
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import { widgetList } from '#widgets/conditionalWidget';
@@ -219,8 +219,9 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                                 <div className={styles.leftContainer}>
                                     <header className={styles.header}>
                                         {widgetsTitle}
-                                        <span
-                                            className={`${iconNames.info} ${styles.headerInfo}`}
+                                        <Icon
+                                            className={styles.headerInfo}
+                                            name="info"
                                             title={widgetsHeaderInfo}
                                         />
                                     </header>
@@ -242,8 +243,9 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
                                 <div className={styles.rightContainer}>
                                     <header className={styles.header}>
                                         {addedWidgetsTitle}
-                                        <span
-                                            className={`${iconNames.info} ${styles.headerInfo}`}
+                                        <Icon
+                                            className={styles.headerInfo}
+                                            name="info"
                                             title={addedWidgetsHeaderInfo}
                                         />
                                     </header>

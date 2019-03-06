@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Icon from '#rscg/Icon';
 import Checkbox from '#rsci/Checkbox';
 import TreeSelection from '#rsci/TreeSelection';
 import List from '#rscv/List';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 import _cs from '#cs';
 
@@ -184,7 +184,10 @@ export default class ExportTypePane extends React.PureComponent {
             key="info"
             className={styles.info}
         >
-            <span className={`${styles.icon} ${iconNames.info}`} />
+            <Icon
+                className={styles.icon}
+                name="info"
+            />
             <div>
                 <p>{_ts('export', 'decoupledEntriesTitle2')}</p>
                 <p>{_ts('export', 'decoupledEntriesTitle')}</p>

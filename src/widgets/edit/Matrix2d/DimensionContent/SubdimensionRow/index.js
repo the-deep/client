@@ -6,7 +6,6 @@ import DangerButton from '#rsca/Button/DangerButton';
 import TextInput from '#rsci/TextInput';
 
 import _ts from '#ts';
-import { iconNames } from '#constants';
 
 import styles from './styles.scss';
 
@@ -35,7 +34,7 @@ const SubdimensionRow = ({ index }) => (
             faramElementName={index}
             faramAction={deleteClick}
             className={styles.deleteButton}
-            iconName={iconNames.delete}
+            iconName="delete"
             title={_ts('widgets.editor.matrix2d', 'removeSubdimensionButtonTooltip')}
             transparent
         />

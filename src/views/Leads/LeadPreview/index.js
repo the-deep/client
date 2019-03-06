@@ -4,7 +4,6 @@ import React from 'react';
 import Modal from '#rscv/Modal';
 import Button from '#rsca/Button';
 import ExternalGallery from '#components/viewer/ExternalGallery';
-import { iconNames } from '#constants';
 import Attachment from '#components/viewer/Attachment';
 import Message from '#rscv/Message';
 import ModalBody from '#rscv/Modal/Body';
@@ -85,9 +84,8 @@ export default class LeadPreview extends React.PureComponent {
                         <Button
                             onClick={closeModal}
                             transparent
-                        >
-                            <span className={iconNames.close} />
-                        </Button>
+                            iconName="close"
+                        />
                     }
                 />
                 <ModalBody

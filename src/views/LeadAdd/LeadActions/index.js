@@ -1,8 +1,3 @@
-/**
- * @author frozenhelium <fren.ankit@gmail.com>
- * @co-author tnagorra <weathermist@gmail.com>
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -12,7 +7,6 @@ import Checkbox from '#rsci/Checkbox';
 import DropdownMenu from '#rsca/DropdownMenu';
 import Confirm from '#rscv/Modal/Confirm';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 import notify from '#notify';
 import {
@@ -301,13 +295,13 @@ export default class LeadFilter extends React.PureComponent {
                     <Button
                         disabled={!addLeadViewCanPrev}
                         onClick={this.handlePrevButtonClick}
-                        iconName={iconNames.prev}
+                        iconName="prev"
                         title={_ts('addLeads.actions', 'previousButtonLabel')}
                     />
                     <Button
                         disabled={!addLeadViewCanNext}
                         onClick={this.handleNextButtonClick}
-                        iconName={iconNames.next}
+                        iconName="next"
                         title={_ts('addLeads.actions', 'nextButtonLabel')}
                     />
                 </div>
@@ -324,7 +318,7 @@ export default class LeadFilter extends React.PureComponent {
                     </p>
                 </Confirm>
                 <DropdownMenu
-                    iconName={iconNames.delete}
+                    iconName="delete"
                     className={styles.removeButtons}
                     title={_ts('addLeads.actions', 'removeButtonTitle')}
                     closeOnClick
@@ -363,7 +357,7 @@ export default class LeadFilter extends React.PureComponent {
                     </button>
                 </DropdownMenu>
                 <DropdownMenu
-                    iconName={iconNames.save}
+                    iconName="save"
                     className={styles.saveButtons}
                     title={_ts('addLeads.actions', 'saveButtonTitle')}
                     closeOnClick

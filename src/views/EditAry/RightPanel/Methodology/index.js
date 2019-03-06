@@ -14,7 +14,6 @@ import DangerButton from '#rsca/Button/DangerButton';
 import { randomString } from '@togglecorp/fujs';
 
 import _ts from '#ts';
-import { iconNames } from '#constants';
 import {
     aryTemplateMethodologySelector,
     assessmentSectorsSelector,
@@ -157,7 +156,7 @@ export default class Methodology extends React.PureComponent {
                 />
                 <div className={styles.actionButtons}>
                     <DangerButton
-                        iconName={iconNames.delete}
+                        iconName="delete"
                         faramElementName={index}
                         faramAction={Methodology.removeAttribute}
                     />
@@ -229,7 +228,7 @@ export default class Methodology extends React.PureComponent {
                                                                 faramAction={
                                                                     Methodology.addAttribute
                                                                 }
-                                                                iconName={iconNames.add}
+                                                                iconName="add"
                                                             />
                                                         </div>
                                                     </div>

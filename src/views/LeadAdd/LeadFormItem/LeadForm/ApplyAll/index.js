@@ -5,7 +5,6 @@ import AccentConfirmButton from '#rsca/ConfirmButton/AccentConfirmButton';
 import WarningConfirmButton from '#rsca/ConfirmButton/WarningConfirmButton';
 
 import _ts from '#ts';
-import { iconNames } from '#constants';
 
 import styles from './styles.scss';
 
@@ -47,7 +46,7 @@ export default class ApplyAll extends React.PureComponent {
                         disabled={disabled}
                         onClick={() => onApplyAllClick(identiferName)}
                         tabIndex="-1"
-                        iconName={iconNames.applyAll}
+                        iconName="applyAll"
                         confirmationMessage={_ts('addLeads', 'applyToAll')}
                     />
                     <WarningConfirmButton
@@ -57,7 +56,7 @@ export default class ApplyAll extends React.PureComponent {
                         disabled={disabled}
                         onClick={() => onApplyAllBelowClick(identiferName)}
                         tabIndex="-1"
-                        iconName={iconNames.applyAllBelow}
+                        iconName="applyAllBelow"
                         confirmationMessage={_ts('addLeads', 'applyToAllBelow')}
                     />
                 </div>

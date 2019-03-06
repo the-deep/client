@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-
 import {
     caseInsensitiveSubmatch,
     compareString,
     compareDate,
 } from '@togglecorp/fujs';
+
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import FormattedDate from '#rscv/FormattedDate';
@@ -24,7 +24,6 @@ import {
     setUsergroupViewMembershipAction,
 } from '#redux';
 import _ts from '#ts';
-import { iconNames } from '#constants';
 
 import MembershipRoleChangeRequest from '../requests/MembershipRoleChangeRequest';
 import MembershipDeleteRequest from '../requests/MembershipDeleteRequest';
@@ -234,9 +233,8 @@ export default class MembersTable extends React.PureComponent {
                                 <PrimaryButton
                                     onClick={this.handleAddMemberModalClose}
                                     transparent
-                                >
-                                    <span className={iconNames.close} />
-                                </PrimaryButton>
+                                    iconName="close"
+                                />
                             }
                         />
                         <ModalBody

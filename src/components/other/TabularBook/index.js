@@ -44,7 +44,6 @@ import {
     createUrlForFieldEdit,
     createParamsForFieldEdit,
 } from '#rest';
-import { iconNames } from '#constants';
 import { RequestCoordinator, RequestClient, requestMethods } from '#request';
 import notify from '#notify';
 import _ts from '#ts';
@@ -616,7 +615,7 @@ export default class TabularBook extends React.PureComponent {
                     render={
                         <WarningModalButton
                             className={styles.editButton}
-                            iconName={iconNames.edit}
+                            iconName="edit"
                             transparent
                             title={_ts('tabular', 'sheetEditButtonTooltip')} // Edit
                             pending={disabledSheetEditModal}
@@ -724,7 +723,7 @@ export default class TabularBook extends React.PureComponent {
                             hide={this.shouldHideEditButton}
                             render={
                                 <ModalButton
-                                    iconName={iconNames.more}
+                                    iconName="more"
                                     title={_ts('tabular', 'sheetShowButtonTooltip')} // Other Sheets
                                     disabled={sheetList.length <= 0}
                                     pending={disabledSheetRetrieveModal}
@@ -798,7 +797,7 @@ export default class TabularBook extends React.PureComponent {
                                 hide={this.shouldHideDeleteButton}
                                 render={
                                     <DangerConfirmButton
-                                        iconName={iconNames.delete}
+                                        iconName="delete"
                                         onClick={this.handleBookDelete}
                                         confirmationMessage={_ts('tabular', 'deleteMessage')}
                                         disabled={disabled || isSomePending}

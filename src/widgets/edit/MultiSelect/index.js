@@ -13,7 +13,6 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import TextInput from '#rsci/TextInput';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import InputRow from './InputRow';
@@ -193,7 +192,7 @@ export default class MultiSelectEditWidget extends React.PureComponent {
                                     <PrimaryButton
                                         faramElementName="add-btn"
                                         faramAction={MultiSelectEditWidget.optionAddClick}
-                                        iconName={iconNames.add}
+                                        iconName="add"
                                         transparent
                                     >
                                         {_ts('widgets.editor.multiselect', 'addOptionButtonLabel')}

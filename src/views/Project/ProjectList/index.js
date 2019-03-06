@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import memoize from 'memoize-one';
 
+import Icon from '#rscg/Icon';
 import ListView from '#rscv/List/ListView';
 import SearchInput from '#rsci/SearchInput';
 import Message from '#rscv/Message';
@@ -14,7 +15,6 @@ import {
 import Cloak from '#components/general/Cloak';
 
 import {
-    iconNames,
     viewsAcl,
     pathNames,
 } from '#constants';
@@ -119,7 +119,10 @@ export default class ProjectList extends React.PureComponent {
                                 to={reverseRoute(pathNames.discoverProjects, {})}
                                 className={styles.link}
                             >
-                                <span className={`${iconNames.discover} ${styles.discoverIcon}`} />
+                                <Icon
+                                    name="discover"
+                                    className={styles.discoverIcon}
+                                />
                                 {_ts('project', 'discoverProjectButtonLabel')}
                             </Link>
                         }

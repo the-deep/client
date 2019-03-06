@@ -1,15 +1,13 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
-
 import { reverseRoute } from '@togglecorp/fujs';
+
+import Icon from '#rscg/Icon';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryConfirmButton from '#rsca/ConfirmButton/PrimaryConfirmButton';
 
-import {
-    iconNames,
-    pathNames,
-} from '#constants/';
+import { pathNames } from '#constants/';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -52,7 +50,7 @@ export default class ActionButtons extends React.PureComponent {
             title={_ts('userGroup', 'viewMemberLinkTitle')}
             to={this.getLinks().userProfile}
         >
-            <i className={iconNames.openLink} />
+            <Icon name="openLink" />
         </Link>
     )
 
@@ -97,7 +95,7 @@ export default class ActionButtons extends React.PureComponent {
                             : _ts('userGroup', 'grantAdminLinkTitle')
                     }
                     onClick={() => onChangeMemberRole(row)}
-                    iconName={isAdmin ? iconNames.locked : iconNames.person}
+                    iconName={isAdmin ? 'locked' : 'person'}
                     smallVerticalPadding
                     transparent
                     confirmationMessage={permissionConfirmMsg}
@@ -105,7 +103,7 @@ export default class ActionButtons extends React.PureComponent {
                 <DangerConfirmButton
                     title={_ts('userGroup', 'deleteMemberLinkTitle')}
                     onClick={() => onRemoveMember(row)}
-                    iconName={iconNames.delete}
+                    iconName="delete"
                     smallVerticalPadding
                     transparent
                     confirmationMessage={confirmMsg}

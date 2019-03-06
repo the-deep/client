@@ -4,7 +4,6 @@ import React from 'react';
 import AccentButton from '#rsca/Button/AccentButton';
 
 import _ts from '#ts';
-import { iconNames } from '#constants';
 
 import styles from './styles.scss';
 
@@ -41,9 +40,8 @@ export default class ExtractThis extends React.PureComponent {
                         disabled={disabled}
                         onClick={onClick}
                         tabIndex="-1"
-                    >
-                        <span className={iconNames.eye} />
-                    </AccentButton>
+                        iconName="eye"
+                    />
                 </div>
             </div>
         );

@@ -4,8 +4,6 @@ import React from 'react';
 import ListView from '#rscv/List/ListView';
 import DangerButton from '#rsca/Button/DangerButton';
 
-import { iconNames } from '#constants';
-
 import styles from './styles.scss';
 
 const propTypes = {
@@ -37,9 +35,8 @@ export default class NGram extends React.PureComponent {
                 <DangerButton
                     onClick={() => this.props.onDelete(data)}
                     transparent
-                >
-                    <span className={iconNames.delete} />
-                </DangerButton>
+                    iconName="delete"
+                />
             </div>
         </div>
     )

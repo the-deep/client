@@ -9,7 +9,6 @@ import {
 } from '#request';
 
 import DropdownMenu from '#rsca/DropdownMenu';
-import { iconNames } from '#constants';
 
 import {
     setNotificationsCountAction,
@@ -121,11 +120,6 @@ export default class Notifica extends React.PureComponent {
             } = {},
         } = this.props;
 
-        const iconClassName = `
-            ${iconNames.notification}
-            ${styles.icon}
-        `;
-
         const className = `
             ${classNameFromProps}
             ${styles.notifica}
@@ -141,7 +135,8 @@ export default class Notifica extends React.PureComponent {
                 <DropdownMenu
                     className={styles.dropdownMenu}
                     dropdownClassName={styles.notificationDropdown}
-                    dropdownIcon={iconClassName}
+                    dropdownIcon="notification"
+                    dropdownIconClassName={styles.icon}
                 >
                     <Notifications
                         className={styles.notifications}

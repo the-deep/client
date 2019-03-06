@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FaramGroup } from '@togglecorp/faram';
 
+import Icon from '#rscg/Icon';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
 import ListView from '#rscv/List/ListView';
@@ -21,7 +22,6 @@ import {
     editArySelectedSectorsSelector,
     assessmentSectorsSelector,
 } from '#redux';
-import iconNames from '#constants/iconNames';
 import _cs from '#cs';
 
 import ScaleMatrixInput from './ScaleMatrixInput';
@@ -88,11 +88,6 @@ export default class Score extends React.PureComponent {
             id,
         } = data;
 
-        const iconClassName = _cs(
-            styles.infoIcon,
-            iconNames.info,
-        );
-
         return (
             <tr
                 key={id}
@@ -105,9 +100,10 @@ export default class Score extends React.PureComponent {
                         </div>
                         {
                             description && (
-                                <span
+                                <Icon
                                     title={description}
-                                    className={iconClassName}
+                                    className={styles.infoIcon}
+                                    name="info"
                                 />
                             )
                         }

@@ -4,8 +4,6 @@ import { FaramErrorIndicatorElement } from '@togglecorp/faram';
 
 import DangerButton from '#rsca/Button/DangerButton';
 
-import { iconNames } from '#constants';
-
 import _ts from '#ts';
 import _cs from '#cs';
 import styles from './styles.scss';
@@ -80,7 +78,7 @@ export default class RowTitle extends React.PureComponent {
                     faramElementName={index}
                     className={styles.deleteButton}
                     title={_ts('widgets.editor.matrix1d', 'deleteButtonTooltip')}
-                    iconName={iconNames.delete}
+                    iconName="delete"
                     transparent
                 />
             </div>

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { iconNames } from '#constants';
+import Icon from '#rscg/Icon';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -41,7 +41,10 @@ export default class GalleryImage extends React.PureComponent {
                             src={imageUrl}
                         />
                     ) : (
-                        <span className={`image-alt ${styles.imageAlt} ${iconNames.user}`} />
+                        <Icon
+                            className={`image-alt ${styles.imageAlt}`}
+                            name="user"
+                        />
                     )
                 }
             </div>

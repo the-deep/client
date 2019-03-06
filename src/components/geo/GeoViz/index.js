@@ -6,7 +6,6 @@ import SelectInput from '#rsci/SelectInput';
 import Message from '#rscv/Message';
 import { randomString } from '@togglecorp/fujs';
 
-import { iconNames } from '#constants';
 import _cs from '#cs';
 import _ts from '#ts';
 
@@ -117,9 +116,8 @@ export default class GeoViz extends React.PureComponent {
                 <Button
                     className={styles.refreshButton}
                     onClick={this.handleRefresh}
-                >
-                    <span className={iconNames.refresh} />
-                </Button>
+                    iconName="refresh"
+                />
                 {regionId && (
                     <Region
                         key={uniqueKey}

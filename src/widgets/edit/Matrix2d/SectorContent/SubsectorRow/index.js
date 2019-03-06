@@ -5,7 +5,6 @@ import { FaramGroup } from '@togglecorp/faram';
 import DangerButton from '#rsca/Button/DangerButton';
 import TextInput from '#rsci/TextInput';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -35,7 +34,7 @@ const SubsectorRow = ({ index }) => (
             faramElementName={index}
             faramAction={deleteClick}
             className={styles.deleteButton}
-            iconName={iconNames.delete}
+            iconName="delete"
             title={_ts('widgets.editor.matrix2d', 'removeSubsectorButtonTooltip')}
             transparent
         />

@@ -1,19 +1,14 @@
-/**
- * @author frozenhelium <fren.ankit@gmail.com>
- * @co-author tnagorra <weathermist@gmail.com>
- * @co-author jacky <prabes.pathak@gmail.com>
- */
-
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-
 import {
     reverseRoute,
     compareString,
     compareDate,
 } from '@togglecorp/fujs';
+
+import Icon from '#rscg/Icon';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -29,10 +24,7 @@ import {
     unsetUserProfileUsergroupAction,
     userIdFromRouteSelector,
 } from '#redux';
-import {
-    iconNames,
-    pathNames,
-} from '#constants';
+import { pathNames } from '#constants';
 import _ts from '#ts';
 
 import UserGroupDeleteRequest from '../requests/UserGroupDeleteRequest';
@@ -139,7 +131,7 @@ export default class UserGroup extends React.PureComponent {
                                 to={linkToUserGroup}
                                 className={styles.link}
                             >
-                                <span className={iconNames.openLink} />
+                                <Icon name="openLink" />
                             </Link>
                         );
                     }
@@ -155,12 +147,12 @@ export default class UserGroup extends React.PureComponent {
                                 to={linkToUserGroup}
                                 className={styles.link}
                             >
-                                <span className={iconNames.edit} />
+                                <Icon name="edit" />
                             </Link>
                             <DangerConfirmButton
                                 title={_ts('userProfile', 'deleteUsergroupLinkTitle')}
                                 onClick={() => this.handleDeleteUserGroupClick(d)}
-                                iconName={iconNames.delete}
+                                iconName="delete"
                                 smallVerticalPadding
                                 confirmationMessage={confirmText}
                                 transparent
@@ -241,9 +233,8 @@ export default class UserGroup extends React.PureComponent {
                                 <PrimaryButton
                                     onClick={this.handleAddUserGroupClose}
                                     transparent
-                                >
-                                    <span className={iconNames.close} />
-                                </PrimaryButton>
+                                    iconName="close"
+                                />
                             }
                         />
                         <ModalBody>

@@ -22,10 +22,7 @@ import {
     setConnectorSourcesAction,
     setUserConnectorsAction,
 } from '#redux';
-import {
-    iconNames,
-    pathNames,
-} from '#constants';
+import { pathNames } from '#constants';
 import _ts from '#ts';
 import _cs from '#cs';
 
@@ -184,7 +181,7 @@ export default class Connector extends React.PureComponent {
                 </h3>
                 <PrimaryButton
                     onClick={this.handleAddConnectorClick}
-                    iconName={iconNames.add}
+                    iconName="add"
                 >
                     {_ts('connector', 'addConnectorButtonLabel')}
                 </PrimaryButton>
@@ -216,9 +213,8 @@ export default class Connector extends React.PureComponent {
                         <PrimaryButton
                             onClick={this.handleAddConnectorModalClose}
                             transparent
-                        >
-                            <span className={iconNames.close} />
-                        </PrimaryButton>
+                            iconName="close"
+                        />
                     }
                 />
                 <ModalBody>

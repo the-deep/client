@@ -10,7 +10,6 @@ import TextInput from '#rsci/TextInput';
 import ColorInput from '#rsci/ColorInput';
 
 import _ts from '#ts';
-import { iconNames } from '#constants';
 
 import LinkWidgetModalButton from '#widgetComponents/LinkWidgetModal/Button';
 import GeoLink from '#widgetComponents/GeoLink';
@@ -124,7 +123,7 @@ export default class DimensionContent extends React.PureComponent {
                                 <AccentButton
                                     faramElementName="add-btn"
                                     faramAction={DimensionContent.addSubdimensionClick}
-                                    iconName={iconNames.add}
+                                    iconName="add"
                                     transparent
                                 >
                                     {_ts('widgets.editor.matrix2d', 'addSubdimensionButtonTitle')}

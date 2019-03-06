@@ -19,7 +19,6 @@ import {
     addUsergroupViewMembershipsAction,
 } from '#redux';
 import _ts from '#ts';
-import { iconNames } from '#constants';
 
 import UsersGetRequest from '../../requests/UsersGetRequest';
 import MembershipPostRequest from '../../requests/MembershipPostRequest';
@@ -115,7 +114,7 @@ export default class AddUserGroupMembers extends React.PureComponent {
                             <PrimaryButton
                                 title={title}
                                 onClick={() => this.handleRoleChangeForNewMember(row)}
-                                iconName={isAdmin ? iconNames.locked : iconNames.person}
+                                iconName={isAdmin ? 'locked' : 'person'}
                                 smallVerticalPadding
                                 transparent
                             />

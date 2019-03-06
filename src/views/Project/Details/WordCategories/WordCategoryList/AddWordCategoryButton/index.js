@@ -7,7 +7,6 @@ import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
 
 import _ts from '#ts';
-import { iconNames } from '#constants';
 
 import AddWordCategoryForm from '../../AddWordCategoryForm';
 import styles from './styles.scss';
@@ -56,7 +55,7 @@ export default class AddWordCategoryButton extends React.PureComponent {
             <React.Fragment>
                 <AccentButton
                     className={className}
-                    iconName={iconNames.add}
+                    iconName="add"
                     onClick={this.handleAddWordCategoryButtonClick}
                     disabled={disabled}
                 >

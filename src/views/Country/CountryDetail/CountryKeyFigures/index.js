@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { FaramGroup } from '@togglecorp/faram';
 
+import Icon from '#rscg/Icon';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import TextInput from '#rsci/TextInput';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -44,10 +44,11 @@ export default class CountryKeyFigures extends React.PureComponent {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    <span
-                                        className={`${iconNames.link} ${styles.icon}`}
+                                    <Icon
                                         // FIXME: use strings
                                         title="Click to open"
+                                        className={styles.icon}
+                                        name="link"
                                     />
                                 </a>
                             </h3>
@@ -84,10 +85,11 @@ export default class CountryKeyFigures extends React.PureComponent {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    <span
-                                        className={`${iconNames.link} ${styles.icon}`}
+                                    <Icon
                                         // FIXME: use strings
                                         title="Click to open"
+                                        className={styles.icon}
+                                        name="link"
                                     />
                                 </a>
                             </h3>
@@ -112,10 +114,11 @@ export default class CountryKeyFigures extends React.PureComponent {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    <span
-                                        className={`${iconNames.link} ${styles.icon}`}
+                                    <Icon
                                         // FIXME: use strings
                                         title="Click to open"
+                                        className={styles.icon}
+                                        name="link"
                                     />
                                 </a>
                             </h3>
@@ -152,10 +155,11 @@ export default class CountryKeyFigures extends React.PureComponent {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    <span
-                                        className={`${iconNames.link} ${styles.icon}`}
+                                    <Icon
                                         // FIXME: use strings
                                         title="Click to open"
+                                        className={styles.icon}
+                                        name="link"
                                     />
                                 </a>
                             </h3>

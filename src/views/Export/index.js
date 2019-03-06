@@ -36,7 +36,6 @@ import {
     setAnalysisFrameworkAction,
     setProjectAction,
 } from '#redux';
-import { iconNames } from '#constants';
 import notify from '#notify';
 import schema from '#schema';
 
@@ -92,16 +91,13 @@ export default class Export extends React.PureComponent {
                 sortable: false,
                 modifier: (d) => {
                     const key = Export.leadKeyExtractor(d);
-                    const iconName = d.selected ?
-                        iconNames.checkbox : iconNames.checkboxOutlineBlank;
-
                     return (
                         <AccentButton
                             title={d.selected ? 'Unselect' : 'Select'}
+                            iconName={d.selected ? 'checkbox' : 'checkboxOutlineBlank'}
                             onClick={() => this.handleSelectLeadChange(key, !d.selected)}
                             smallVerticalPadding
                             transparent
-                            iconName={iconName}
                         />
                     );
                 },

@@ -9,7 +9,6 @@ import ListView from '#rscv/List/ListView';
 import SelectInput from '#rsci/SelectInput';
 import Checkbox from '#rsci/Checkbox';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import Attribute from './Attributes';
@@ -98,7 +97,7 @@ export default class ConditionsInputRow extends React.PureComponent {
                         </FaramGroup>
                         <DangerButton
                             className={styles.deleteButton}
-                            iconName={iconNames.delete}
+                            iconName="delete"
                             title={_ts('widgets.editor.conditional', 'removeOptionButtonTitle')}
                             faramAction={deleteClick}
                             faramElementName={index}

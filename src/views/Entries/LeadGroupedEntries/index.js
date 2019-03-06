@@ -1,20 +1,18 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { reverseRoute } from '@togglecorp/fujs';
 
-import _ts from '#ts';
+import Icon from '#rscg/Icon';
+import FormattedDate from '#rscv/FormattedDate';
+import ListView from '#rscv/List/ListView';
 
+import Cloak from '#components/general/Cloak';
 import {
-    iconNames,
     pathNames,
     viewsAcl,
 } from '#constants';
-
-import { reverseRoute } from '@togglecorp/fujs';
-import Cloak from '#components/general/Cloak';
-
-import FormattedDate from '#rscv/FormattedDate';
-import ListView from '#rscv/List/ListView';
+import _ts from '#ts';
 
 import Entry from '../Entry';
 import styles from './styles.scss';
@@ -103,7 +101,7 @@ export default class LeadGroupedEntries extends React.PureComponent {
                             title={_ts('entries', 'editEntryLinkTitle')}
                             to={route}
                         >
-                            <span className={iconNames.edit} />
+                            <Icon name="edit" />
                         </Link>
                     }
                 />

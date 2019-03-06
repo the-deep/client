@@ -4,11 +4,9 @@ import { Link } from 'react-router-dom';
 
 import { reverseRoute } from '@togglecorp/fujs';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
+import Icon from '#rscg/Icon';
 
-import {
-    iconNames,
-    pathNames,
-} from '#constants/';
+import { pathNames } from '#constants/';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -59,7 +57,7 @@ export default class ActionButtons extends React.PureComponent {
                     onClick={() => onRemoveAry(row)}
                     smallVerticalPadding
                     transparent
-                    iconName={iconNames.delete}
+                    iconName="delete"
                     confirmationMessage={_ts('assessments', 'aryDeleteConfirmText')}
                 />
                 <Link
@@ -67,7 +65,7 @@ export default class ActionButtons extends React.PureComponent {
                     title={_ts('assessments', 'editAryButtonTitle')}
                     to={links.editAry}
                 >
-                    <i className={iconNames.edit} />
+                    <Icon name="edit" />
                 </Link>
             </Fragment>
         );

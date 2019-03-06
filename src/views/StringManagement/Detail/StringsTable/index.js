@@ -13,7 +13,6 @@ import {
     compareStringByWordCount,
 } from '@togglecorp/fujs';
 
-import { iconNames } from '#constants';
 import { allStringsSelector } from '#redux';
 
 import DeleteConfirm from '../DeleteConfirm';
@@ -95,14 +94,14 @@ export default class StringsTable extends React.PureComponent {
                     <Fragment>
                         <WarningButton
                             onClick={() => { this.handleEditButtonClick(data.id); }}
-                            iconName={iconNames.edit}
+                            iconName="edit"
                             transparent
                             smallVerticalPadding
                             disabled={this.props.disabled}
                         />
                         <DangerButton
                             onClick={() => { this.handleDeleteButtonClick(data.id); }}
-                            iconName={iconNames.delete}
+                            iconName="delete"
                             transparent
                             smallVerticalPadding
                             disabled={this.props.disabled}

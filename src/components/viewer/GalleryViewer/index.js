@@ -7,9 +7,9 @@ import DangerButton from '#rsca/Button/DangerButton';
 import TextInput from '#rsci/TextInput';
 import Message from '#rscv/Message';
 import urlRegex from '#rsu/regexForWeburl';
+import Icon from '#rscg/Icon';
 
 import { galleryMapping, galleryType } from '#config/deepMimeTypes';
-import { iconNames } from '#constants';
 import notify from '#notify';
 import _ts from '#ts';
 import _cs from '#cs';
@@ -131,7 +131,7 @@ const Bar = ({ url = '', children }) => {
                         rel="noopener noreferrer"
                         title={_ts('components.galleryViewer', 'viewLinkTooltip')} // open link in new tab
                     >
-                        <span className={iconNames.openLink} />
+                        <Icon name="openLink" />
                     </a>
                     {children}
                 </div>
@@ -200,7 +200,7 @@ export default class GalleryViewer extends React.PureComponent {
         if (!screenshotMode) {
             return (
                 <AccentButton
-                    iconName={iconNames.camera}
+                    iconName="camera"
                     onClick={this.handleScreenshotStart}
                     transparent
                     title={_ts('components.galleryViewer', 'screenshotButtonTitle')} // take screenshot
@@ -212,14 +212,14 @@ export default class GalleryViewer extends React.PureComponent {
             <Fragment>
                 { currentScreenshot &&
                     <SuccessButton
-                        iconName={iconNames.check}
+                        iconName="check"
                         onClick={this.handleScreenshotDone}
                         title={_ts('components.galleryViewer', 'saveButtonTitle')} // save screenshot
                         transparent
                     />
                 }
                 <DangerButton
-                    iconName={iconNames.close}
+                    iconName="close"
                     onClick={this.handleScreenshotClose}
                     title={_ts('components.galleryViewer', 'discardButtonTitle')} // discard screenshot
                     transparent

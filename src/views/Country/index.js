@@ -23,7 +23,6 @@ import {
     activeUserSelector,
 } from '#redux';
 import _ts from '#ts';
-import { iconNames } from '#constants';
 import AddRegion from '#components/other/AddRegion';
 
 import CountriesGetRequest from './requests/CountriesGetRequest';
@@ -228,7 +227,7 @@ export default class CountryPanel extends React.PureComponent {
                                 </h3>
                                 { activeUser.isSuperuser && (
                                     <PrimaryButton
-                                        iconName={iconNames.add}
+                                        iconName="add"
                                         onClick={this.onAddCountry}
                                     >
                                         {_ts('countries', 'addCountryButtonLabel')}

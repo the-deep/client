@@ -33,7 +33,7 @@ $width-icon-mark: 40px;
     color: $icon-color-light;
     font-size: $mimetype-icon-size;
 
-    i {
+    .icon {
         z-index: 1;
         margin-top: $spacing-small-alt;
         margin-right: $spacing-small-alt;
@@ -160,7 +160,7 @@ $width-icon-mark: 40px;
             background-color: $unprocessed-color;
         }
 
-        i {
+        >span {
             color: $icon-color-light;
         }
     }
@@ -200,7 +200,7 @@ $width-icon-mark: 40px;
             font-size: $font-size-large;
         }
 
-        i {
+        .icon {
             color: $icon-color;
         }
     }

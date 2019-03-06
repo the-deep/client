@@ -7,7 +7,6 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import { FgRestBuilder } from '#rsu/rest';
 import Message from '#rscv/Message';
 
-import { iconNames } from '#constants';
 import {
     createParamsForGet,
     createUrlForAdminLevelsForRegion,
@@ -338,9 +337,8 @@ export default class RegionMap extends React.PureComponent {
                 <Button
                     className={styles.refreshButton}
                     onClick={this.handleRefresh}
-                >
-                    <span className={iconNames.refresh} />
-                </Button>
+                    iconName="refresh"
+                />
                 <GeoJsonMap
                     selections={this.props.selections}
                     className={styles.geoJsonMap}

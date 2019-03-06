@@ -5,7 +5,6 @@ import { FaramGroup } from '@togglecorp/faram';
 import AccentButton from '#rsca/Button/AccentButton';
 import DateInput from '#rsci/DateInput';
 import _ts from '#ts';
-import { iconNames } from '#constants';
 
 import styles from './styles.scss';
 
@@ -45,7 +44,7 @@ export default class DateRangeWidget extends React.PureComponent {
                     <div className={styles.actions}>
                         <AccentButton
                             title={_ts('widgets.tagging.dateRange', 'swapButtonTitle')}
-                            iconName={iconNames.swap}
+                            iconName="swap"
                             faramElementName="swap-button"
                             faramAction={DateRangeWidget.handleValueSwap}
                             transparent

@@ -21,7 +21,6 @@ import {
     activeUserSelector,
     currentUserProjectsSelector,
 } from '#redux';
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -250,7 +249,7 @@ export default class Actions extends React.PureComponent {
                             memberEmail,
                         },
                     )}
-                    iconName={iconNames.delete}
+                    iconName="delete"
                     onClick={this.handleRemoveMembershipButtonClick}
                     transparent
                 />

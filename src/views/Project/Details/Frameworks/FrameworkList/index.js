@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
-
 import {
     caseInsensitiveSubmatch,
     compareString,
 } from '@togglecorp/fujs';
 
+import Icon from '#rscg/Icon';
 import SearchInput from '#rsci/SearchInput';
 import ListView from '#rscv/List/ListView';
 import ListItem from '#rscv/List/ListItem';
@@ -14,7 +14,6 @@ import AccentButton from '#rsca/Button/AccentButton';
 import modalize from '#rscg/Modalize';
 
 import _ts from '#ts';
-import { iconNames } from '#constants';
 
 import AddFrameworkModal from './AddFrameworkModal';
 import styles from './styles.scss';
@@ -48,25 +47,23 @@ const FrameworkListItem = ({
     isSelected,
     framework: { title },
     onClick,
-}) => {
-    const iconClassName = `
-        ${iconNames.checkCircle}
-        ${styles.check} 
-    `;
-
-    return (
-        <ListItem
-            className={className}
-            active={isActive}
-            onClick={onClick}
-        >
-            <div className={styles.title}>
-                { title }
-            </div>
-            { isSelected && <div className={iconClassName} /> }
-        </ListItem>
-    );
-};
+}) => (
+    <ListItem
+        className={className}
+        active={isActive}
+        onClick={onClick}
+    >
+        <div className={styles.title}>
+            { title }
+        </div>
+        { isSelected &&
+            <Icon
+                name="checkCircle"
+                className={styles.check}
+            />
+        }
+    </ListItem>
+);
 
 FrameworkListItem.propTypes = {
     className: PropTypes.string,
@@ -160,7 +157,7 @@ export default class FrameworkList extends React.PureComponent {
                     </h4>
 
                     <AccentModalButton
-                        iconName={iconNames.add}
+                        iconName="add"
                         disabled={readOnly}
                         modal={
                             <AddFrameworkModal

@@ -11,7 +11,6 @@ import SegmentInput from '#rsci/SegmentInput';
 import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
 import FloatingContainer from '#rscv/FloatingContainer';
-import { iconNames } from '#constants';
 import {
     calcFloatPositionInMainWindow,
     defaultOffset,
@@ -284,7 +283,7 @@ export default class FieldEditModal extends React.PureComponent {
                             className={styles.removeColumnButton}
                             disabled={disabled || disabledDelete}
                             onClick={this.handleDeleteClick}
-                            iconName={iconNames.trash}
+                            iconName="trash"
                             title={_ts('tabular.fieldEditModal', 'deleteFieldButtonLabel')}
                             transparent
                         />

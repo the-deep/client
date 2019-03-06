@@ -17,6 +17,7 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import HiddenInput from '#rsci/HiddenInput';
 import FileInput from '#rsci/FileInput';
 import SelectInput from '#rsci/SelectInput';
+import Icon from '#rscg/Icon';
 
 import InternalGallery from '#components/viewer/InternalGallery';
 import {
@@ -30,7 +31,6 @@ import {
 } from '#rest';
 import { addAdminLevelForRegionAction } from '#redux';
 import schema from '#schema';
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import notify from '#notify';
@@ -403,12 +403,12 @@ export default class EditAdminLevel extends React.PureComponent {
                                 accept=".zip, .json, .geojson"
                             >
                                 <span className={styles.load}>
-                                    <i className={iconNames.uploadFa} />
+                                    <Icon name="uploadFa" />
                                     {_ts('components.editAdminLevel', 'loadGeoShapeFile')}
                                 </span>
                             </FileInput>
-                            <span
-                                className={iconNames.help}
+                            <Icon
+                                name="help"
                                 title={_ts('components.editAdminLevel', 'geoshapeTooltip')}
                             />
                             <HiddenInput faramElementName="geoShapeFile" />

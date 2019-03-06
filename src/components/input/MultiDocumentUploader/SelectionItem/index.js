@@ -3,7 +3,6 @@ import React from 'react';
 
 import DangerButton from '#rsca/Button/DangerButton';
 import NumberInput from '#rsci/NumberInput';
-import iconNames from '#rsk/iconNames';
 import _cs from '#cs';
 import _ts from '#ts';
 
@@ -91,7 +90,7 @@ export default class Selection extends React.PureComponent {
                     </a>
                     <DangerButton
                         className={styles.removeButton}
-                        iconName={iconNames.close}
+                        iconName="close"
                         onClick={this.handleRemoveClick}
                         disabled={disabled || readOnly}
                         title={_ts('components.multiDocumentUploader', 'removeButtonLabel')}

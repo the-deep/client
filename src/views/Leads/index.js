@@ -6,6 +6,7 @@ import {
     Redirect,
 } from 'react-router-dom';
 
+import Icon from '#rscg/Icon';
 import Page from '#rscv/Page';
 import Message from '#rscv/Message';
 import AccentButton from '#rsca/Button/AccentButton';
@@ -23,7 +24,6 @@ import Cloak from '#components/general/Cloak';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import FixedTabs from '#rscv/FixedTabs';
 import {
-    iconNames,
     pathNames,
     viewsAcl,
 } from '#constants';
@@ -126,8 +126,8 @@ const TABLE_VIEW = 'table';
 const GRID_VIEW = 'grid';
 
 const tabsIcons = {
-    [TABLE_VIEW]: iconNames.list,
-    [GRID_VIEW]: iconNames.grid,
+    [TABLE_VIEW]: 'list',
+    [GRID_VIEW]: 'grid',
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -140,7 +140,7 @@ export default class Leads extends React.PureComponent {
     static sortLabelSelector = s => s.label
 
     static tabsModifier = key => (
-        <i className={tabsIcons[key]} />
+        <Icon name={tabsIcons[key]} />
     );
 
     static tabs = {
@@ -407,14 +407,14 @@ export default class Leads extends React.PureComponent {
 
     getSortDetails = () => {
         const { activeSort } = this.props;
-        let sortDirIcon = iconNames.chevronUp;
+        let sortDirIcon = 'chevronUp';
         let sortKey = activeSort;
 
         if (!activeSort) {
-            sortDirIcon = iconNames.chevronUp;
+            sortDirIcon = 'chevronUp';
             sortKey = '';
         } else if (activeSort[0] === '-') {
-            sortDirIcon = iconNames.chevronDown;
+            sortDirIcon = 'chevronDown';
             sortKey = activeSort.slice(1);
         }
         return {
@@ -503,10 +503,10 @@ export default class Leads extends React.PureComponent {
             tabularBook,
         } = row;
 
-        const icon = (tabularBook && iconNames.table)
+        const icon = (tabularBook && 'table')
             || (attachment && leadTypeIconMap[attachment.mimeType])
-            || (rowUrl && iconNames.globe)
-            || iconNames.documentText;
+            || (rowUrl && 'globe')
+            || 'documentText';
 
         const url = (attachment && attachment.file) || rowUrl;
         return (
@@ -515,10 +515,12 @@ export default class Leads extends React.PureComponent {
                     <AccentModalButton
                         iconName={icon}
                         transparent
-                        modal={<LeadPreview value={row} />}
+                        modal={
+                            <LeadPreview value={row} />
+                        }
                     />
                 ) : (
-                    <span className={icon} />
+                    <Icon name={icon} />
                 )}
             </div>
         );
@@ -642,6 +644,7 @@ export default class Leads extends React.PureComponent {
                                 faramElementName="assignee"
                                 keySelector={this.sortKeySelector}
                                 labelSelector={this.sortLabelSelector}
+                                showLabel={false}
                                 value={sortKey}
                                 options={this.sortableHeaders}
                                 onChange={this.handleSortItemClick}

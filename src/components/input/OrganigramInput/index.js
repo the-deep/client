@@ -17,7 +17,6 @@ import Label from '#rsci/Label';
 import _ts from '#ts';
 import _cs from '#cs';
 
-import { iconNames } from '#constants';
 import styles from './styles.scss';
 
 
@@ -239,7 +238,7 @@ export default class OrganigramInput extends React.PureComponent {
         return (
             <AccentButton
                 className={styles.action}
-                iconName={iconNames.chart}
+                iconName="chart"
                 onClick={this.handleShowModal}
                 transparent
                 disabled={disabled || readOnly}
@@ -281,7 +280,7 @@ export default class OrganigramInput extends React.PureComponent {
                     />
                     <AccentButton
                         className={styles.action}
-                        iconName={iconNames.chart}
+                        iconName="chart"
                         onClick={this.handleShowModal}
                         disabled={disabled || readOnly}
                         transparent

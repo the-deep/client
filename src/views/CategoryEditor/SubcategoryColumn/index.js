@@ -6,7 +6,6 @@ import ListView from '#rscv/List/ListView';
 
 import _cs from '#cs';
 import _ts from '#ts';
-import { iconNames } from '#constants';
 
 import styles from './styles.scss';
 
@@ -169,7 +168,7 @@ export default class SubcategoryColumn extends React.PureComponent {
                     <AccentButton
                         onClick={this.handleNewSubcategoryButtonClick}
                         title={_ts('categoryEditor', 'addSubcategory')}
-                        iconName={iconNames.add}
+                        iconName="add"
                         transparent
                     />
                 </header>

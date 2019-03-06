@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Icon from '#rscg/Icon';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DropZone from '#rsci/DropZone';
@@ -8,7 +9,6 @@ import { FaramInputElement } from '@togglecorp/faram';
 import FileInput from '#rsci/FileInput';
 import NumberInput from '#rsci/NumberInput';
 import TextInput from '#rsci/TextInput';
-import iconNames from '#rsk/iconNames';
 import { isTruthy, isFalsy } from '@togglecorp/fujs';
 import { UploadBuilder } from '#rsu/upload';
 import urlRegex from '#rsu/regexForWeburl';
@@ -327,7 +327,10 @@ export default class Baksa extends React.PureComponent {
                 <div>
                     { file.name }
                 </div>
-                <span className={`${styles.action} ${iconNames.loading} ${styles.loadingIcon}`} />
+                <Icon
+                    className={`${styles.action} ${styles.loadingIcon}`}
+                    name="loading"
+                />
             </div>
         );
     }
@@ -346,7 +349,7 @@ export default class Baksa extends React.PureComponent {
                 </a>
                 <DangerButton
                     className={styles.action}
-                    iconName={iconNames.close}
+                    iconName="close"
                     onClick={this.resetValue}
                     disabled={disabled || readOnly}
                     // FIXME: Use strings

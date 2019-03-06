@@ -16,7 +16,6 @@ import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 
-import { iconNames } from '#constants';
 import _ts from '#ts';
 
 import InputRow from './InputRow';
@@ -230,7 +229,7 @@ export default class ScaleFrameworkList extends React.PureComponent {
                                     <PrimaryButton
                                         faramElementName="add-btn"
                                         faramAction={ScaleFrameworkList.addOptionClick}
-                                        iconName={iconNames.add}
+                                        iconName="add"
                                         transparent
                                     >
                                         {_ts('widgets.editor.scale', 'addOptionButtonLabel')}

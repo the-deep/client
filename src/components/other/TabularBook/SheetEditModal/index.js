@@ -8,7 +8,6 @@ import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
 import FloatingContainer from '#rscv/FloatingContainer';
-import { iconNames } from '#constants';
 import {
     calcFloatPositionInMainWindow,
     defaultOffset,
@@ -154,7 +153,7 @@ export default class SheetEditModal extends React.PureComponent {
                             disabled={disabled || disabledDelete}
                             onClick={this.handleDeleteClick}
                             title={_ts('tabular.sheetEditModal', 'deleteSheetButtonLabel')}
-                            iconName={iconNames.trash}
+                            iconName="trash"
                             transparent
                         />
                     </div>
