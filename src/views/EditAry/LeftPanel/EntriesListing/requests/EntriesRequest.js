@@ -27,9 +27,9 @@ export default class EntriesRequest {
                 try {
                     schema.validate(response, 'entriesGetResponse');
                     this.setEntries({
-                        entries: response.results.entries,
+                        entries: response.results,
                         leadId,
-                        lead: response.results.leads[0],
+                        lead: response.results[0].lead,
                     });
                     this.setState({ pendingEntries: false });
                 } catch (er) {

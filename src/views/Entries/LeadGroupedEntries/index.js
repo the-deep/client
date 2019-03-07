@@ -14,7 +14,7 @@ import {
 } from '#constants';
 import _ts from '#ts';
 
-import Entry from '../Entry';
+import Entry from './Entry';
 import styles from './styles.scss';
 
 const propTypes = {

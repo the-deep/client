@@ -3,6 +3,7 @@ import {
     createUrlForFilteredEntries,
     createParamsForFilteredEntries,
 } from '#rest';
+import { unique } from '#rsu/common';
 
 export default class EntriesRequest extends Request {
     schemaName = 'entriesGetResponse';
@@ -17,21 +18,24 @@ export default class EntriesRequest extends Request {
 
     handleSuccess = (response) => {
         const {
-            results: {
-                entries: responseEntries,
-                leads: responseLeads,
-            },
+            results: responseEntries,
             count: totalEntriesCount,
         } = response;
 
-        const entries = responseLeads.map(lead => ({
-            ...lead,
-            entries: responseEntries.filter(e => e.lead === lead.id),
+        const uniqueLeadList = unique(
+            responseEntries.map(entry => entry.lead),
+            v => v,
+            v => v.id,
+        ).map(l => ({
+            ...l,
+            entries: responseEntries
+                .filter(e => l.id === e.lead.id)
+                .map(e => ({ ...e, lead: e.lead.id })),
         }));
 
         this.parent.setEntries({
             projectId: this.parent.getProjectId(),
-            entries,
+            entries: uniqueLeadList,
             totalEntriesCount,
         });
     }
