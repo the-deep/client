@@ -36,6 +36,7 @@ const iconNames = {
     error: 'ion-android-alert',
     expand: 'ion-arrow-expand',
     eye: 'ion-eye',
+    eyeDisabled: 'ion-eye-disabled',
     fig: 'fa fa-file-image-o',
     fork: 'ion-fork-repo',
     format: 'ion-android-list',

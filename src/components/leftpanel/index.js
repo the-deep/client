@@ -82,6 +82,8 @@ export default class LeftPane extends React.PureComponent {
         this.state = {
             images: [],
             currentTab: undefined,
+
+            showGraphs: false,
         };
 
         const { viewsModifier } = this.props;
@@ -189,12 +191,14 @@ export default class LeftPane extends React.PureComponent {
                     filteredEntries,
                     onTabularLoad,
                 } = this.props;
+                const { showGraphs } = this.state;
                 return {
                     className: styles.container,
                     bookId: tabularBook,
                     highlights: this.getHighlightsForTabular(filteredEntries),
                     onClick: this.handleHighlightClick,
                     onLoad: onTabularLoad,
+                    showGraphs,
                 };
             },
             mount: true,
@@ -318,6 +322,12 @@ export default class LeftPane extends React.PureComponent {
 
     // Other
 
+    handlePreviewClick = () => {
+        this.setState({
+            showGraphs: !this.state.showGraphs,
+        });
+    }
+
     handleTabClick = (key) => {
         this.setState({ currentTab: key });
     }
@@ -347,6 +357,7 @@ export default class LeftPane extends React.PureComponent {
         const {
             images,
             currentTab,
+            showGraphs,
         } = this.state;
 
         const tabs = this.getTabs(lead, images, entryPermissions);
@@ -375,15 +386,24 @@ export default class LeftPane extends React.PureComponent {
                         />
                     }
                     { tabKey === 'tabular-preview' &&
-                        <AccentModalButton
-                            iconName="table"
-                            transparent
-                            // FIXME: use strings
-                            title="Show tabular"
-                            modal={
-                                <TabularModal />
-                            }
-                        />
+                        <Fragment>
+                            <AccentButton
+                                iconName={showGraphs ? 'eye' : 'eyeDisabled'}
+                                transparent
+                                // FIXME: use strings
+                                title={showGraphs ? 'Hide graph' : 'Show graph'}
+                                onClick={this.handlePreviewClick}
+                            />
+                            <AccentModalButton
+                                iconName="table"
+                                transparent
+                                // FIXME: use strings
+                                title="Show tabular"
+                                modal={
+                                    <TabularModal />
+                                }
+                            />
+                        </Fragment>
                     }
                 </ScrollTabs>
                 <MultiViewContainer

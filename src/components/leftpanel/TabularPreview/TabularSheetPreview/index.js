@@ -12,6 +12,7 @@ const propTypes = {
     }),
     onClick: PropTypes.func.isRequired,
     highlights: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    showGraphs: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -27,7 +28,7 @@ export default class TabularSheetPreview extends React.PureComponent {
 
     renderParams = (key, field) => ({
         fieldId: field.id,
-        // title: field.title,
+        title: field.title,
         // type,
         options: field.optinos,
         healthStats: field.cache.healthStats,
@@ -35,6 +36,7 @@ export default class TabularSheetPreview extends React.PureComponent {
         color: (this.props.highlights[field.id] || {}).color,
         leadKey: (this.props.highlights[field.id] || {}).key,
         onClick: this.props.onClick,
+        showGraphs: this.props.showGraphs,
     })
 
     render() {
