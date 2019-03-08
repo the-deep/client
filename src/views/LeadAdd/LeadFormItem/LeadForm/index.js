@@ -66,21 +66,12 @@ const propTypes = {
     onExtractClick: PropTypes.func.isRequired,
 
     setSubmitFunction: PropTypes.func,
-    onTabularButtonClick: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
     setSubmitFunction: undefined,
-    onTabularButtonClick: undefined,
 };
-
-const tabularCompatibleMimeTypes = [
-    'xls',
-    'xlxs',
-    'xlxs2',
-    'csv',
-];
 
 const mapStateToProps = (state, props) => ({
     activeUser: activeUserSelector(state),
@@ -174,10 +165,6 @@ export default class LeadForm extends React.PureComponent {
             },
         };
 
-        this.state = {
-            attachmentMimeType: undefined,
-        };
-
         if (props.setSubmitFunction) {
             props.setSubmitFunction(this.submit);
         }
@@ -206,38 +193,11 @@ export default class LeadForm extends React.PureComponent {
         this.submitForm = func;
     }
 
-    isTabularCompatible = memoize((mimeType) => {
-        if (!mimeType) {
-            return false;
-        }
-
-        return tabularCompatibleMimeTypes.some(m => MIME_TYPES[m] === mimeType);
-    });
-
-    shouldHideTabularButton = ({ isEarlyAccess }) => {
-        const { attachmentMimeType } = this.state;
-        return !isEarlyAccess || !this.isTabularCompatible(attachmentMimeType);
-    }
-
     handleApplyAllClick = attrName => this.props.onApplyAllClick(attrName);
 
     handleApplyAllBelowClick = attrName => this.props.onApplyAllBelowClick(attrName);
 
     handleAddLeadGroupClick = () => this.props.onAddLeadGroupClick();
-
-    handleTabularButtonClick = () => {
-        const { onTabularButtonClick } = this.props;
-        const { attachmentMimeType } = this.state;
-        if (onTabularButtonClick) {
-            onTabularButtonClick(attachmentMimeType);
-        }
-    }
-
-    handleAttachmentMimeTypeGet = (mimeType) => {
-        this.setState({
-            attachmentMimeType: mimeType,
-        });
-    }
 
     submit = () => {
         if (this.submitForm && !this.props.isSaveDisabled) {
@@ -291,8 +251,6 @@ export default class LeadForm extends React.PureComponent {
             isExtractionDisabled,
             onExtractClick,
         } = this.props;
-
-        const { attachmentMimeType } = this.state;
 
         const values = leadAccessor.getFaramValues(lead);
         const type = leadAccessor.getType(lead);
@@ -451,21 +409,6 @@ export default class LeadForm extends React.PureComponent {
                     // one of drive, dropbox, or file
                     ATTACHMENT_TYPES.indexOf(type) !== -1 && (
                         <Fragment>
-                            <Cloak
-                                hide={this.shouldHideTabularButton}
-                                render={
-                                    <AccentButton
-                                        className={styles.tabularButton}
-                                        onClick={this.handleTabularButtonClick}
-                                    >
-                                        {
-                                            values.tabularBook
-                                                ? _ts('addLeads', 'tabularButtonTitle')
-                                                : _ts('addLeads', 'tabularExtractButtonTitle')
-                                        }
-                                    </AccentButton>
-                                }
-                            />
                             {/* FIXME: why is hidden input used here? */}
                             <HiddenInput
                                 faramElementName="attachment"

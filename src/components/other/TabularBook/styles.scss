@@ -11,9 +11,15 @@
         display: flex;
         align-items: center;
 
-        .pending-message {
-            margin-right: $spacing-medium;
+        .last-saved-message {
+            display: flex;
+            align-items: center;
+            margin-right: $spacing-small;
             color: $color-text-label;
+
+            .date {
+                margin-left: $spacing-small;
+            }
         }
     }
 
@@ -39,6 +45,43 @@
                     text-transform: uppercase;
                 }
             }
+        }
+
+        .extraction-process {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: center;
+
+            .processing-text {
+                margin-top: $spacing-large;
+                width: 60%;
+                text-align: center;
+                font-size: $font-size-large;
+
+                .join-link {
+                    display: inline;
+                    outline: 0;
+                    border: none;
+                    background-color: transparent;
+                    cursor: pointer;
+                    padding: 0;
+                    text-decoration: underline;
+                    color: $color-accent;
+                    font-family: inherit;
+                    font-size: $font-size-large;
+                }
+            }
+        }
+    }
+
+    .footer {
+        display: flex;
+        justify-content: space-between;
+
+        >button {
+            margin: 0;
         }
     }
 }

@@ -7,6 +7,7 @@ import WarningButton from '#rsca/Button/WarningButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import modalize from '#rscg/Modalize';
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import Spinner from '#rscz/Spinner';
 import Message from '#rscv/Message';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
@@ -14,6 +15,7 @@ import ModalHeader from '#rscv/Modal/Header';
 import ScrollTabs from '#rscv/ScrollTabs';
 import { CoordinatorBuilder } from '#rsu/coordinate';
 import { FgRestBuilder } from '#rsu/rest';
+import FormattedDate from '#rscv/FormattedDate';
 import {
     listToMap,
     isNotDefined,
@@ -186,6 +188,7 @@ const requests = {
 
 const propTypes = {
     className: PropTypes.string,
+    leadTitle: PropTypes.string,
     bookId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
     onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     onCancel: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
@@ -199,6 +202,7 @@ const defaultProps = {
     className: '',
     viewMode: false,
     isModal: true,
+    leadTitle: '',
 };
 
 @RequestCoordinator
@@ -213,6 +217,7 @@ export default class TabularBook extends React.PureComponent {
             originalSheets: undefined,
 
             isSomePending: false,
+            lastSavedDate: undefined,
 
             isSheetRetrievePending: false,
 
@@ -230,7 +235,11 @@ export default class TabularBook extends React.PureComponent {
                 this.setState({ isSomePending: true });
             })
             .postSession(() => {
-                this.setState({ isSomePending: false });
+                const date = new Date();
+                this.setState({
+                    isSomePending: false,
+                    lastSavedDate: date,
+                });
             })
             .build();
     }
@@ -636,6 +645,12 @@ export default class TabularBook extends React.PureComponent {
         );
     }
 
+    handleZeClick = () => {
+        if (window.zE) {
+            window.zE.activate({ hideOnClose: true });
+        }
+    }
+
     renderBody = ({ invalid, completed, disabled }) => {
         if (invalid) {
             return (
@@ -645,9 +660,28 @@ export default class TabularBook extends React.PureComponent {
             );
         }
 
+        const zendeskLinkTitle = _ts('tabular', 'zendeskLinkTitle');
+        const zendeskTitle = _ts('tabular', 'zendeskTitle');
+
         if (!completed) {
             return (
-                <LoadingAnimation />
+                <div className={styles.extractionProcess} >
+                    <Spinner loading />
+                    <div className={styles.processingText} >
+                        {_ts('tabular', 'processing', {
+                            zendeskLink: (
+                                <button
+                                    className={styles.joinLink}
+                                    onClick={this.handleZeClick}
+                                    title={zendeskLinkTitle}
+                                    type="button"
+                                >
+                                    {zendeskTitle}
+                                </button>
+                            ),
+                        })}
+                    </div>
+                </div>
             );
         }
 
@@ -750,8 +784,13 @@ export default class TabularBook extends React.PureComponent {
             },
             onCancel,
             isModal,
+            leadTitle,
         } = this.props;
-        const { isSomePending } = this.state;
+
+        const {
+            isSomePending,
+            lastSavedDate,
+        } = this.state;
 
         const className = _cs(
             this.props.className,
@@ -775,24 +814,37 @@ export default class TabularBook extends React.PureComponent {
                 {isModal ? (
                     <React.Fragment>
                         <ModalHeader
-                            title={_ts('tabular', 'title')}
+                            title={_ts('tabular', 'title', { title: leadTitle })}
                             rightComponent={
                                 <div className={styles.headerContainer}>
-                                    { isSomePending &&
-                                        <div className={styles.pendingMessage}>
-                                            {
-                                                // Saving...
-                                                _ts('tabular', 'tabularSavingMessage')
+                                    { isSomePending ? (
+                                        _ts('tabular', 'tabularSavingMessage')
+                                    ) : (
+                                        <div className={styles.lastSavedMessage}>
+                                            {lastSavedDate &&
+                                                _ts(
+                                                    'tabular',
+                                                    'lastSavedTitle',
+                                                    {
+                                                        value: (
+                                                            <FormattedDate
+                                                                className={styles.date}
+                                                                value={lastSavedDate}
+                                                                mode="dd-MM-yyyy hh:mm"
+                                                            />
+                                                        ),
+                                                    },
+                                                )
                                             }
                                         </div>
-                                    }
+                                    )}
                                 </div>
                             }
                         />
                         <ModalBody className={styles.body}>
                             {body}
                         </ModalBody>
-                        <ModalFooter>
+                        <ModalFooter className={styles.footer}>
                             <Cloak
                                 hide={this.shouldHideDeleteButton}
                                 render={

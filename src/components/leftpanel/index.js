@@ -27,6 +27,7 @@ import TabularPreview from './TabularPreview';
 import styles from './styles.scss';
 
 const AccentModalButton = modalize(AccentButton);
+const emptyObject = {};
 
 const propTypes = {
     projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -324,6 +325,7 @@ export default class LeftPane extends React.PureComponent {
             className={styles.tabularModal}
         >
             <TabularBook
+                leadTitle={this.props.lead.title}
                 className={styles.tabularBook}
                 bookId={this.props.lead.tabularBook}
                 projectId={this.props.lead.project}

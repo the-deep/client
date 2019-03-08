@@ -53,6 +53,7 @@ export default class LeadPreview extends React.PureComponent {
                     tabularBook={tabularBook}
                     className={styles.galleryFile}
                     projectId={projectId}
+                    viewOnly
                 />
             );
         }
