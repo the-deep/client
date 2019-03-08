@@ -58,9 +58,7 @@ export default class EntriesList extends React.PureComponent {
     )
 
     renderEntryLabel = (entry) => {
-        console.warn(entry);
         const values = entryAccessor.data(entry);
-        console.warn(values);
         const {
             entryType,
             excerpt,

@@ -127,7 +127,7 @@ const entrySchema = [];
                             },
                             required: true,
                         },
-                        tabularField: { type: 'object' }, // FIXME: change here
+                        tabularFieldData: { type: 'object' }, // FIXME: change here
                     },
                 },
                 // type: 'array.entry',
