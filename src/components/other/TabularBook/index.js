@@ -864,6 +864,7 @@ export default class TabularBook extends React.PureComponent {
                                         {_ts('tabular', 'deleteButtonLabel')}
                                     </DangerConfirmButton>
                                 }
+                                renderOnHide={<div />}
                             />
                             <Button
                                 onClick={onCancel}
