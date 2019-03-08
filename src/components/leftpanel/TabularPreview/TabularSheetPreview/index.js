@@ -8,7 +8,6 @@ const propTypes = {
     className: PropTypes.string,
     sheet: PropTypes.shape({
         fields: PropTypes.array,
-        data: PropTypes.object,
         options: PropTypes.object,
     }),
     onClick: PropTypes.func.isRequired,
@@ -26,12 +25,12 @@ export default class TabularSheetPreview extends React.PureComponent {
     static defaultProps = defaultProps;
     static keySelector = d => d.id;
 
-    renderParams = (key, { id, title, type, options, data }) => ({
+    renderParams = (key, { id, title, options, cache }) => ({
         fieldId: id,
         title,
-        type,
+        // type,
         options,
-        column: data,
+        healthStats: cache.healthStats,
         color: (this.props.highlights[id] || {}).color,
         leadKey: (this.props.highlights[id] || {}).key,
         onClick: this.props.onClick,
@@ -40,7 +39,9 @@ export default class TabularSheetPreview extends React.PureComponent {
     render() {
         const {
             className,
-            sheet,
+            sheet: {
+                fields,
+            },
         } = this.props;
 
         return (
@@ -48,7 +49,7 @@ export default class TabularSheetPreview extends React.PureComponent {
                 className={className}
                 keySelector={TabularSheetPreview.keySelector}
                 rendererParams={this.renderParams}
-                data={sheet.fields}
+                data={fields}
                 renderer={Field}
             />
         );

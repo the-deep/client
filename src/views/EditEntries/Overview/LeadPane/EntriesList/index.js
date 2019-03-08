@@ -58,13 +58,15 @@ export default class EntriesList extends React.PureComponent {
     )
 
     renderEntryLabel = (entry) => {
+        console.warn(entry);
         const values = entryAccessor.data(entry);
+        console.warn(values);
         const {
             entryType,
             excerpt,
             order,
             image,
-            dataSeries,
+            tabularField,
         } = values;
 
         if (entryType === 'image') {
@@ -80,7 +82,8 @@ export default class EntriesList extends React.PureComponent {
         if (entryType === 'dataSeries') {
             return (
                 <div>
-                    {dataSeries.title}
+                    {/* FIXME: get title */}
+                    { tabularField }
                 </div>
             );
         }

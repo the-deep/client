@@ -30,7 +30,7 @@ export const entryAccessor = {
     ),
     entryType: (entry = {}) => (entry.data || {}).entryType,
     excerpt: (entry = {}) => (entry.data || {}).excerpt,
-    dataSeries: (entry = {}) => (entry.data || {}).dataSeries,
+    tabularField: (entry = {}) => (entry.data || {}).tabularField,
     order: (entry = {}) => (entry.data || {}).order,
     serverId: (entry = {}) => (entry.data || {}).id,
 
@@ -89,7 +89,7 @@ export const createEntry = ({
     const keysToPick = [
         'excerpt',
         'image',
-        'dataSeries',
+        'tabularField',
         'entryType',
         'lead',
         'order',

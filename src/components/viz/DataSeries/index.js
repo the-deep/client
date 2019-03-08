@@ -5,6 +5,7 @@ import {
     listToMap,
 } from '@togglecorp/fujs';
 
+import Message from '#rscv/Message';
 import Icon from '#rscg/Icon';
 import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
@@ -52,9 +53,10 @@ const chartMargins = {
     left: 2,
 };
 
-const sizeSelector = d => d.size;
-const chartsLabelSelector = d => d.text;
-const tooltipSelector = d => `<span>${d.text}</span>`;
+const frequencySelector = d => d.count;
+const valueSelector = d => d.value;
+
+const tooltipSelector = d => `<span>${d.value}</span>`;
 
 const GRAPH = {
     horizontalBarChart: 'horizontal-bar-chart',
@@ -146,109 +148,61 @@ export default class DataSeries extends React.PureComponent {
         )
     ))
 
-    getWordCountSeries = memoize((series) => {
-        const sanitizedSeries = series
-            .filter(datum => !datum.empty && !datum.invalid);
-
-        const tags = sanitizedSeries.reduce(
-            (acc, { value }) => {
-                acc[value] = (acc[value] || 0) + 1;
-                return acc;
-            }, {},
-        );
-
-        const newSeries = Object.keys(tags).map(word => ({
-            text: word,
-            size: tags[word],
-        }));
-
-        return newSeries;
-    })
-
-    getGeoCountSeries = memoize((series) => {
-        const sanitizedSeries = series
-            .filter(datum => !datum.empty && !datum.invalid);
-        const tags = sanitizedSeries.reduce(
-            (acc, { processedValue }) => {
-                acc[processedValue] = (acc[processedValue] || 0) + 1;
-                return acc;
-            }, {},
-        );
-        return tags;
-    })
-
-    getNumberCountSeries = memoize((series) => {
-        const sanitizedSeries = series
-            .filter(datum => !datum.empty && !datum.invalid);
-        const tags = sanitizedSeries.reduce(
-            (acc, { value }) => {
-                acc[value] = (acc[value] || 0) + 1;
-                return acc;
-            }, {},
-        );
-        return Object.keys(tags)
-            .map(word => ({
-                text: word,
-                size: tags[word],
-            }))
-            .sort((a, b) => a.size - b.size);
-    })
-
-    getNumberSeries = memoize(series => series.map((item, index) => ({
-        key: index,
-        value: parseFloat(item.value),
-    })))
-
-    getGeoValue = memoize(data => data
-        .filter(d => d.processedValue)
-        .map(d => String(d.processedValue)))
-
     createView = ({ showLegend }) => {
-        const commonRendererParams = {
-            valueSelector: sizeSelector,
-            showTooltip: true,
-            margins: chartMargins,
-            tooltipSelector,
-            labelSelector: chartsLabelSelector,
-            showLegend,
-        };
+        const {
+            value: {
+                cache: {
+                    series = [],
+                } = {},
+            } = {},
+        } = this.props;
 
         return {
             [GRAPH.horizontalBarChart]: {
                 component: SimpleHorizontalBarChart,
-                rendererParams: () => {
-                    const { value: { data } } = this.props;
-                    return {
-                        className: styles.horizontalBarChart,
-                        data: this.getNumberCountSeries(data),
-                        ...commonRendererParams,
-                    };
-                },
-                lazyMount: true,
-            },
-            [GRAPH.histogram]: {
-                component: Histogram,
-                rendererParams: () => {
-                    const { value: { data } } = this.props;
-                    return {
-                        className: styles.horizontalBarChart,
-                        data: data.map(d => d.processedValue && d.processedValue),
-                        ...commonRendererParams,
-                    };
-                },
+                rendererParams: () => ({
+                    className: styles.horizontalBarChart,
+                    margins: chartMargins,
+
+                    data: series,
+                    valueSelector: frequencySelector,
+                    labelSelector: valueSelector,
+                    tooltipSelector,
+                }),
                 lazyMount: true,
             },
             [GRAPH.verticalBarChart]: {
                 component: SimpleVerticalBarChart,
-                rendererParams: () => {
-                    const { value: { data } } = this.props;
+                rendererParams: () => ({
+                    className: styles.verticalBarChart,
+                    margins: chartMargins,
 
-                    return {
-                        className: styles.verticalBarChart,
-                        data: this.getNumberCountSeries(data),
-                        ...commonRendererParams,
-                    };
-                },
+                    data: series,
+                    valueSelector: frequencySelector,
+                    labelSelector: valueSelector,
+                    tooltipSelector,
+                }),
+                lazyMount: true,
+            },
+            [GRAPH.histogram]: {
+                component: Histogram,
+                rendererParams: () => ({
+                    className: styles.horizontalBarChart,
+                    margins: chartMargins,
+
+                    data: series,
+                }),
+                lazyMount: true,
+            },
+            [GRAPH.wordCloud]: {
+                component: WordCloud,
+                rendererParams: () => ({
+                    className: styles.wordCloud,
+
+                    data: series,
+                    labelSelector: valueSelector,
+                    frequencySelector,
+                }),
                 lazyMount: true,
             },
             [GRAPH.geo]: {
@@ -256,36 +210,20 @@ export default class DataSeries extends React.PureComponent {
                 rendererParams: () => {
                     const {
                         value: {
-                            options = {},
-                            data,
+                            options: {
+                                regions,
+                                adminLevel,
+                            } = {},
                         },
                     } = this.props;
-
-                    const {
-                        regions,
-                        adminLevel,
-                    } = options;
-
                     return {
                         className: styles.geoVisualization,
                         regions,
                         adminLevel,
-                        value: this.getGeoValue(data),
-                        frequency: this.getGeoCountSeries(data),
-                        ...commonRendererParams,
-                    };
-                },
-                lazyMount: true,
-            },
-            [GRAPH.wordCloud]: {
-                component: WordCloud,
-                rendererParams: () => {
-                    const { value: { data } } = this.props;
-
-                    return {
-                        className: styles.wordCloud,
-                        data: this.getWordCountSeries(data),
-                        fontSizeSelector: sizeSelector,
+                        showLegend,
+                        data: series,
+                        valueSelector,
+                        frequencySelector,
                     };
                 },
                 lazyMount: true,
@@ -293,8 +231,8 @@ export default class DataSeries extends React.PureComponent {
         };
     }
 
-    handleSegmentStateChange = (value) => {
-        this.setState({ activeView: value });
+    handleSegmentStateChange = (view) => {
+        this.setState({ activeView: view });
     }
 
     scrollTabRendererParams = (_, tab) => ({
@@ -348,20 +286,35 @@ export default class DataSeries extends React.PureComponent {
     render() {
         const {
             className,
-            value,
+            value: {
+                cache,
+                type,
+                title,
+            },
         } = this.props;
+
+        if (!cache || cache.status !== 'success') {
+            return (
+                <div className={_cs(className, 'data-series', styles.dataSeries)}>
+                    <Message>
+                        {/* FIXME: use strings */}
+                        Processing not complete
+                    </Message>
+                </div>
+            );
+        }
 
         const { activeView: activeViewFromState } = this.state;
         const ExpandedModal = this.renderExpandedModal;
 
-        const options = this.getSegmentOptions(value.type);
+        const options = this.getSegmentOptions(type);
         const activeView = activeViewFromState || Object.keys(options)[0];
 
         return (
             <div className={_cs(className, 'data-series', styles.dataSeries)}>
                 <header className={styles.header}>
                     <h5 className={styles.heading}>
-                        {value.title}
+                        {title}
                     </h5>
                     <div className={styles.actions}>
                         { options && Object.keys(options).length > 1 &&
@@ -380,8 +333,8 @@ export default class DataSeries extends React.PureComponent {
                             transparent
                             modal={
                                 <ExpandedModal
-                                    title={value.title}
-                                    type={value.type}
+                                    title={title}
+                                    type={type}
                                     activeView={activeView}
                                 />
                             }

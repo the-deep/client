@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 
 import Button from '#rsca/Button';
 import SelectInput from '#rsci/SelectInput';
 import Message from '#rscv/Message';
-import { randomString } from '@togglecorp/fujs';
+import { isTruthy, randomString, listToMap } from '@togglecorp/fujs';
 
 import _cs from '#cs';
 import _ts from '#ts';
@@ -14,22 +15,22 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     regions: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.number,
         title: PropTypes.string,
     })).isRequired,
-    value: PropTypes.arrayOf(PropTypes.string),
-    frequency: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     adminLevel: PropTypes.number,
     showLegend: PropTypes.bool,
+    valueSelector: PropTypes.func.isRequired,
+    frequencySelector: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     className: '',
     adminLevel: undefined,
-    value: [],
+    data: [],
     showLegend: true,
-    frequency: {},
 };
 
 export default class GeoViz extends React.PureComponent {
@@ -53,6 +54,19 @@ export default class GeoViz extends React.PureComponent {
             uniqueKey: randomString(),
         };
     }
+
+    getGeoValue = memoize(data => (
+        data
+            .map(this.props.valueSelector)
+            .filter(isTruthy)
+            .map(val => String(val))
+    ))
+
+    getGeoFrequency = memoize(data => listToMap(
+        data,
+        this.props.valueSelector,
+        this.props.frequencySelector,
+    ))
 
     handleRefresh = () => {
         this.setState({
@@ -88,8 +102,11 @@ export default class GeoViz extends React.PureComponent {
         const {
             className,
             regions,
+            data,
+            /*
             value,
             frequency,
+            */
             showLegend,
         } = this.props;
 
@@ -99,6 +116,9 @@ export default class GeoViz extends React.PureComponent {
             adminLevels,
             uniqueKey,
         } = this.state;
+
+        const value = this.getGeoValue(data);
+        const frequency = this.getGeoFrequency(data);
 
         return (
             <div className={_cs(styles.geoViz, className, 'geo-viz')}>

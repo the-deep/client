@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import { Link } from 'react-router-dom';
@@ -65,7 +65,6 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const propTypes = {
-
     activePage: PropTypes.number.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     entriesFilter: PropTypes.object.isRequired,
@@ -91,7 +90,7 @@ const defaultProps = {
 
 const leadKeySelector = d => d.id;
 
-const MAX_ENTRIES_PER_REQUEST = 5;
+const MAX_ENTRIES_PER_REQUEST = 50;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Entries extends React.PureComponent {
@@ -292,9 +291,9 @@ export default class Entries extends React.PureComponent {
                 mainContentClassName={styles.leadGroupedEntriesList}
                 mainContent={
                     <React.Fragment>
-                        { (blockedLoading || nonBlockedLoading) && (
+                        { (blockedLoading || nonBlockedLoading) &&
                             <LoadingAnimation />
-                        )}
+                        }
                         { !blockedLoading && (
                             leadGroupedEntriesList.length > 0 ? (
                                 <List

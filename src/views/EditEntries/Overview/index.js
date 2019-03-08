@@ -75,14 +75,15 @@ export default class Overview extends React.PureComponent {
 
     static entryLabelSelector = (entry) => {
         const values = entryAccessor.data(entry);
-        const { excerpt, dataSeries, order } = values;
+        const { excerpt, tabularField, order } = values;
 
         if (excerpt) {
             return excerpt;
         }
 
-        if (dataSeries) {
-            return dataSeries.title;
+        if (tabularField) {
+            // FIXME: set title
+            return tabularField;
         }
 
         return _ts('editEntry.overview', 'unnamedExcerptTitle', { index: order });
