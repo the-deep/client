@@ -16,11 +16,13 @@ import {
     editEntriesWidgetsSelector,
     editEntriesSelectedEntrySelector,
     editEntriesStatusesSelector,
+    editEntriesSelectedEntryTabularDataSelector,
 
     editEntriesSelectedEntryKeySelector,
     editEntriesFilteredEntriesSelector,
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
+    editEntriesTabularDataSelector,
 } from '#redux';
 import { VIEW } from '#widgets';
 
@@ -34,17 +36,22 @@ import styles from './styles.scss';
 const propTypes = {
     leadId: PropTypes.number.isRequired,
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    tabularDataForSelectedEntry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     selectedEntryKey: PropTypes.string,
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setSelectedEntryKey: PropTypes.func.isRequired,
     onExcerptCreate: PropTypes.func.isRequired,
+    onTabularLoad: PropTypes.func.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     entry: undefined,
+    tabularDataForSelectedEntry: undefined,
+    tabularData: {},
     widgets: [],
     entries: [],
     statuses: {},
@@ -56,6 +63,8 @@ const mapStateToProps = state => ({
     leadId: leadIdFromRoute(state),
     widgets: editEntriesWidgetsSelector(state),
     entry: editEntriesSelectedEntrySelector(state),
+    tabularDataForSelectedEntry: editEntriesSelectedEntryTabularDataSelector(state),
+    tabularData: editEntriesTabularDataSelector(state),
     selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
     entries: editEntriesFilteredEntriesSelector(state),
     statuses: editEntriesStatusesSelector(state),
@@ -73,7 +82,9 @@ export default class Overview extends React.PureComponent {
 
     static entryKeySelector = entry => entryAccessor.key(entry)
 
-    static entryLabelSelector = (entry) => {
+    static shouldHideEntryAdd = ({ entryPermissions }) => !entryPermissions.create
+
+    entryLabelSelector = (entry) => {
         const values = entryAccessor.data(entry);
         const { excerpt, tabularField, order } = values;
 
@@ -82,14 +93,16 @@ export default class Overview extends React.PureComponent {
         }
 
         if (tabularField) {
-            // FIXME: set title
-            return tabularField;
+            const { tabularData } = this.props;
+            const {
+                title,
+            } = tabularData[tabularField] || {};
+            // FIXME: use strings
+            return title || `Column ${tabularField}`;
         }
 
         return _ts('editEntry.overview', 'unnamedExcerptTitle', { index: order });
     };
-
-    static shouldHideEntryAdd = ({ entryPermissions }) => !entryPermissions.create
 
     shouldHideEntryDelete = ({ entryPermissions }) => (
         !entryPermissions.delete && !!entryAccessor.serverId(this.props.entry)
@@ -122,6 +135,8 @@ export default class Overview extends React.PureComponent {
     render() {
         const {
             entry,
+            tabularDataForSelectedEntry,
+            tabularData, // eslint-disable-line no-unused-vars
             leadId, // eslint-disable-line no-unused-vars
             entries, // eslint-disable-line no-unused-vars
             statuses,
@@ -129,6 +144,8 @@ export default class Overview extends React.PureComponent {
 
             ...otherProps
         } = this.props;
+
+        console.warn(otherProps);
 
         const pending = statuses[selectedEntryKey] === ENTRY_STATUS.requesting;
 
@@ -138,6 +155,7 @@ export default class Overview extends React.PureComponent {
                 leftChild={
                     <LeadPane
                         onExcerptCreate={this.props.onExcerptCreate}
+                        onTabularLoad={this.props.onTabularLoad}
                     />
                 }
                 rightChild={
@@ -147,7 +165,7 @@ export default class Overview extends React.PureComponent {
                                 className={styles.entrySelectInput}
                                 placeholder={_ts('editEntry.overview', 'selectEntryPlaceholder')}
                                 keySelector={Overview.entryKeySelector}
-                                labelSelector={Overview.entryLabelSelector}
+                                labelSelector={this.entryLabelSelector}
                                 onChange={this.handleEntrySelect}
                                 options={this.props.entries}
                                 value={this.props.selectedEntryKey}
@@ -183,6 +201,7 @@ export default class Overview extends React.PureComponent {
                             className={styles.content}
                             key={Overview.entryKeySelector(entry)}
                             entry={entry}
+                            tabularData={tabularDataForSelectedEntry}
                             pending={pending}
                             widgetType={VIEW.overview}
                             {...otherProps}

@@ -10,6 +10,7 @@ import {
     editEntriesFilteredEntriesSelector,
     editEntriesWidgetsSelector,
     editEntriesStatusesSelector,
+    editEntriesTabularDataSelector,
 } from '#redux';
 import {
     entryAccessor,
@@ -19,6 +20,8 @@ import { VIEW } from '#widgets';
 
 import WidgetFaramContainer from './WidgetFaramContainer';
 import styles from './styles.scss';
+
+const emptyObject = {};
 
 const EmptyComponent = () => (
     <Message>
@@ -30,18 +33,21 @@ const propTypes = {
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     entries: [],
     statuses: {},
     widgets: [],
+    tabularData: {},
 };
 
 const mapStateToProps = state => ({
     entries: editEntriesFilteredEntriesSelector(state),
     statuses: editEntriesStatusesSelector(state),
     widgets: editEntriesWidgetsSelector(state),
+    tabularData: editEntriesTabularDataSelector(state),
 });
 
 @connect(mapStateToProps)
@@ -70,12 +76,16 @@ export default class Listing extends React.PureComponent {
         const {
             entries, // eslint-disable-line
             statuses,
+            tabularData,
             ...otherProps
         } = this.props;
+        const tabularField = entryAccessor.tabularField(entry);
+        const tabularDataForEntry = tabularData[tabularField] || emptyObject;
 
         return {
             entry,
             pending: statuses[key] === ENTRY_STATUS.requesting,
+            tabularData: tabularDataForEntry,
             widgetType: VIEW.list,
             ...otherProps,
         };

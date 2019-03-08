@@ -21,12 +21,14 @@ const propTypes = {
     leadId: PropTypes.number.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
     className: PropTypes.string,
+    tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     selectedEntryKey: undefined,
     statuses: {},
     className: '',
+    tabularData: {},
 };
 
 export default class EntriesList extends React.PureComponent {
@@ -78,10 +80,17 @@ export default class EntriesList extends React.PureComponent {
         }
 
         if (entryType === 'dataSeries') {
+            const { tabularData } = this.props;
+            const {
+                title,
+            } = tabularData[tabularField] || {};
+            // FIXME: use strings
+            const tabularTitle = title || `Column ${tabularField}`;
+
             return (
-                <div>
+                <div className={styles.entryExcerpt}>
                     {/* FIXME: get title */}
-                    { tabularField }
+                    {tabularTitle}
                 </div>
             );
         }

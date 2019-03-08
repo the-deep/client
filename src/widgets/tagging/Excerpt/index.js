@@ -17,6 +17,7 @@ const propTypes = {
     excerpt: PropTypes.string,
     image: PropTypes.string,
     tabularField: PropTypes.number,
+    tabularFieldData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     onExcerptChange: PropTypes.func,
     onExcerptCreate: PropTypes.func,
     disabled: PropTypes.bool,
@@ -29,6 +30,7 @@ const defaultProps = {
     excerpt: undefined,
     image: undefined,
     tabularField: undefined,
+    tabularFieldData: undefined,
     disabled: false,
     readOnly: false,
     onExcerptChange: () => {},
@@ -176,7 +178,7 @@ export default class Excerpt extends React.PureComponent {
     }
 
     renderDataSeries = () => {
-        const { tabularField } = this.props;
+        const { tabularFieldData } = this.props;
         const className = `
             ${styles.dataSeries}
             data-series
@@ -185,7 +187,7 @@ export default class Excerpt extends React.PureComponent {
         return (
             <DataSeries
                 className={className}
-                value={tabularField}
+                value={tabularFieldData}
             />
         );
     }

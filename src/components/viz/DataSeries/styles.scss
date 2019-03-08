@@ -71,6 +71,7 @@ $width-expanded-view: 90vw;
 .fixed-tabs {
     .tab {
         flex-shrink: 0;
+        margin: $spacing-extra-small 0;
         outline: 0;
         border: 0;
         background-color: transparent;

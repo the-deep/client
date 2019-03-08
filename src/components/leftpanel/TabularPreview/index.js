@@ -24,6 +24,7 @@ const propTypes = {
     setDefaultRequestParams: PropTypes.func.isRequired,
     extractRequest: RequestClient.propType.isRequired,
     bookRequest: RequestClient.propType.isRequired,
+    onLoad: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -75,6 +76,8 @@ export default class TabularPreview extends React.PureComponent {
             sheets,
             activeSheet: Object.keys(tabs)[0],
         });
+
+        this.props.onLoad(response);
     }
 
     setInvalid = () => {

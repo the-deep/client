@@ -79,6 +79,7 @@ export default class Overview extends React.PureComponent {
                             excerpt=""
                             image={undefined}
                             tabularField={undefined}
+                            tabularFieldData={undefined}
 
                             disabled
                         />

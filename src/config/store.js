@@ -3,7 +3,8 @@ import {
     createMigrate,
     createTransform,
 } from 'redux-persist';
-import { mapToMap, randomString } from '@togglecorp/fujs';
+import produce from 'immer';
+import { randomString } from '@togglecorp/fujs';
 
 import { isBeta } from './env';
 
@@ -16,22 +17,29 @@ const migrations = {
 };
 
 const myTransform = createTransform(
-    inboundState => ({
-        ...inboundState,
-        addLeadView: {
-            ...inboundState.addLeadView,
-            leadRests: undefined,
-            leadUploads: undefined,
-            leadDriveRests: undefined,
-            leadDropboxRests: undefined,
-
-            removeModalState: undefined,
-        },
-        editEntries: mapToMap(
-            inboundState.editEntries,
-            k => k,
-            obj => ({ ...obj, entryRests: undefined }),
-        ),
+    inboundState => produce(inboundState, (state) => {
+        if (state.addLeadView) {
+            // eslint-disable-next-line no-param-reassign
+            delete state.addLeadView.leadRests;
+            // eslint-disable-next-line no-param-reassign
+            delete state.addLeadView.leadUploads;
+            // eslint-disable-next-line no-param-reassign
+            delete state.addLeadView.leadDriveRests;
+            // eslint-disable-next-line no-param-reassign
+            delete state.addLeadView.leadDropboxRests;
+            // eslint-disable-next-line no-param-reassign
+            delete state.addLeadView.removeModalState;
+        }
+        if (state.editEntries) {
+            Object.keys(state.editEntries).forEach((key) => {
+                if (state.editEntries[key]) {
+                    // eslint-disable-next-line no-param-reassign
+                    delete state.editEntries[key].entryRests;
+                    // eslint-disable-next-line no-param-reassign
+                    delete state.editEntries[key].tabularData;
+                }
+            });
+        }
     }),
     undefined,
     { whitelist: ['siloDomainData'] },

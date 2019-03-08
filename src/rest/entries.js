@@ -91,7 +91,7 @@ export const createParamsForEntryEdit = data => ({
 });
 
 export const createUrlForEntriesOfLead = leadId => (
-    `${wsEndpoint}/entries/?${p({ lead: leadId })}`
+    `${wsEndpoint}/entries/processed/?${p({ lead: leadId })}`
 );
 
 export const createUrlForDeleteEntry = entryId => (

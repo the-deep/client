@@ -8,14 +8,14 @@ const propTypes = {
     entryType: PropTypes.string.isRequired,
     excerpt: PropTypes.string,
     image: PropTypes.string,
-    tabularField: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    tabularFieldData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     className: '',
     excerpt: '',
     image: '',
-    tabularField: undefined,
+    tabularFieldData: undefined,
 };
 
 const TEXT = 'excerpt';
@@ -38,7 +38,7 @@ export default class ExcerptWidget extends React.PureComponent {
             entryType,
             excerpt,
             image,
-            tabularField,
+            tabularFieldData,
         } = this.props;
 
         let value;
@@ -50,7 +50,7 @@ export default class ExcerptWidget extends React.PureComponent {
                 value = image;
                 break;
             case DATA_SERIES:
-                value = tabularField;
+                value = tabularFieldData;
                 break;
             default:
                 console.error('Unknown entry type', entryType);

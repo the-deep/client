@@ -21,6 +21,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     schema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     computeSchema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -39,6 +40,7 @@ const defaultProps = {
     className: '',
     disabled: false,
     entry: undefined,
+    tabularData: undefined,
     widgets: [],
     onChange: () => {},
     schema: {},
@@ -143,6 +145,7 @@ export default class WidgetFaram extends React.PureComponent {
         const {
             widgetType,
             entry,
+            tabularData,
         } = this.props;
         const {
             id,
@@ -176,6 +179,7 @@ export default class WidgetFaram extends React.PureComponent {
                 excerpt,
                 image,
                 tabularField,
+                tabularFieldData: tabularData,
             };
         }
 
