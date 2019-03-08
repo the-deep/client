@@ -145,8 +145,6 @@ export default class Overview extends React.PureComponent {
             ...otherProps
         } = this.props;
 
-        console.warn(otherProps);
-
         const pending = statuses[selectedEntryKey] === ENTRY_STATUS.requesting;
 
         return (

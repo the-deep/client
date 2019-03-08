@@ -167,7 +167,7 @@ export default class SearchListItem extends React.PureComponent {
 
         const actionButtonsClassName = _cs(
             styles.actionButtons,
-            usergroupMembershipRequest.pending || userMembershipRequest.pending || styles.pending,
+            (usergroupMembershipRequest.pending || userMembershipRequest.pending) && styles.pending,
         );
 
         if (type === USERGROUP) {
