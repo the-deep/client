@@ -13,13 +13,14 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     fieldId: PropTypes.number.isRequired,
-    // title: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
     // type: PropTypes.string.isRequired,
     healthStats: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     options: PropTypes.shape({}),
     color: PropTypes.string,
     leadKey: PropTypes.string,
     onClick: PropTypes.func.isRequired,
+    showGraphs: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -106,7 +107,9 @@ export default class Field extends React.PureComponent {
             healthStats,
             color,
             leadKey,
+            title,
             tabularFieldData,
+            showGraphs,
         } = this.props;
 
         const healthStatusData = this.getHealthStatusData(healthStats);
@@ -135,15 +138,16 @@ export default class Field extends React.PureComponent {
                 onClick={this.handleClick}
                 onKeyDown={this.handleClick}
             >
-                {/*
-                <h5>
-                    {title}
-                </h5>
-                */}
-                <DataSeries
-                    className={styles.series}
-                    value={tabularFieldData}
-                />
+                { showGraphs ? (
+                    <DataSeries
+                        className={styles.series}
+                        value={tabularFieldData}
+                    />
+                ) : (
+                    <h5>
+                        {title}
+                    </h5>
+                )}
                 <HealthBar
                     className={styles.healthBar}
                     data={healthStatusData}

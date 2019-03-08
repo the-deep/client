@@ -25,6 +25,7 @@ const propTypes = {
     extractRequest: RequestClient.propType.isRequired,
     bookRequest: RequestClient.propType.isRequired,
     onLoad: PropTypes.func.isRequired,
+    showGraphs: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -108,6 +109,7 @@ export default class TabularPreview extends React.PureComponent {
             className: classNameFromProps,
             highlights: highlightsFromProps,
             onClick,
+            showGraphs,
         } = this.props;
 
         const className = _cs(
@@ -142,10 +144,15 @@ export default class TabularPreview extends React.PureComponent {
         return (
             <div className={className}>
                 <SheetPreview
+                    // FIXME:
+                    // virtualized list doesn't work properly when child height change, so
+                    // unmounting sheet preview when graph is added/removed
+                    key={showGraphs}
                     className={styles.sheet}
                     sheet={sheets[activeSheet]}
                     highlights={highlights}
                     onClick={onClick}
+                    showGraphs={showGraphs}
                 />
                 <ScrollTabs
                     className={styles.tabs}
