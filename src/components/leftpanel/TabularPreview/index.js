@@ -59,7 +59,7 @@ export default class TabularPreview extends React.PureComponent {
         const sheets = listToMap(
             response.sheets,
             sheet => sheet.id,
-            sheet => ({ ...sheet, options: { ...sheet.options, defaultColumnWidth: 250 } }),
+            sheet => sheet,
         );
 
         const tabs = listToMap(
@@ -131,8 +131,8 @@ export default class TabularPreview extends React.PureComponent {
 
         // FIXME: memoize this
         const highlights = listToMap(
-            highlightsFromProps.filter(highlight => !!highlight.dataSeriesFieldId),
-            highlight => highlight.dataSeriesFieldId,
+            highlightsFromProps.filter(highlight => !!highlight.tabularFieldId),
+            highlight => highlight.tabularFieldId,
             highlight => highlight,
         );
 

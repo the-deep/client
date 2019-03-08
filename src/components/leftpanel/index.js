@@ -271,8 +271,7 @@ export default class LeftPane extends React.PureComponent {
             .filter(e => entryAccessor.entryType(e) === 'dataSeries')
             .map(entry => ({
                 key: entryAccessor.key(entry),
-                // dataSeries fieldId is used by simplified lead preview
-                dataSeriesFieldId: (entryAccessor.dataSeries(entry) || {}).fieldId,
+                tabularFieldId: entryAccessor.tabularField(entry),
                 color: entryAccessor.color(entry) || '#c0c0c0',
             }))
     ))

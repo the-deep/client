@@ -90,7 +90,7 @@ export default class Entry extends React.PureComponent {
                     entryType={entryType}
                     excerpt={excerpt}
                     image={image}
-                    dataSeries={tabularField}
+                    tabularField={tabularField}
                 />
             );
         } else {

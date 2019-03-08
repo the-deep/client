@@ -5,6 +5,7 @@ import {
     listToMap,
 } from '@togglecorp/fujs';
 
+import Message from '#rscv/Message';
 import Icon from '#rscg/Icon';
 import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
@@ -52,8 +53,8 @@ const chartMargins = {
     left: 2,
 };
 
-const sizeSelector = d => d.count;
-const chartsLabelSelector = d => d.value;
+const frequencySelector = d => d.count;
+const valueSelector = d => d.value;
 
 const tooltipSelector = d => `<span>${d.value}</span>`;
 
@@ -148,7 +149,13 @@ export default class DataSeries extends React.PureComponent {
     ))
 
     createView = ({ showLegend }) => {
-        const { value: { cache: { series } } } = this.props;
+        const {
+            value: {
+                cache: {
+                    series = [],
+                } = {},
+            } = {},
+        } = this.props;
 
         return {
             [GRAPH.horizontalBarChart]: {
@@ -158,8 +165,8 @@ export default class DataSeries extends React.PureComponent {
                     margins: chartMargins,
 
                     data: series,
-                    valueSelector: sizeSelector,
-                    labelSelector: chartsLabelSelector,
+                    valueSelector: frequencySelector,
+                    labelSelector: valueSelector,
                     tooltipSelector,
                 }),
                 lazyMount: true,
@@ -171,8 +178,8 @@ export default class DataSeries extends React.PureComponent {
                     margins: chartMargins,
 
                     data: series,
-                    valueSelector: sizeSelector,
-                    labelSelector: chartsLabelSelector,
+                    valueSelector: frequencySelector,
+                    labelSelector: valueSelector,
                     tooltipSelector,
                 }),
                 lazyMount: true,
@@ -193,8 +200,8 @@ export default class DataSeries extends React.PureComponent {
                     className: styles.wordCloud,
 
                     data: series,
-                    textSelector: chartsLabelSelector,
-                    sizeSelector,
+                    labelSelector: valueSelector,
+                    frequencySelector,
                 }),
                 lazyMount: true,
             },
@@ -215,8 +222,8 @@ export default class DataSeries extends React.PureComponent {
                         adminLevel,
                         showLegend,
                         data: series,
-                        valueSelector: chartsLabelSelector,
-                        frequencySelector: sizeSelector,
+                        valueSelector,
+                        frequencySelector,
                     };
                 },
                 lazyMount: true,
@@ -286,10 +293,13 @@ export default class DataSeries extends React.PureComponent {
             },
         } = this.props;
 
-        if (!cache || !cache.status === 'success') {
+        if (!cache || cache.status !== 'success') {
             return (
-                <div>
-                    Processing not complete
+                <div className={_cs(className, 'data-series', styles.dataSeries)}>
+                    <Message>
+                        {/* FIXME: use strings */}
+                        Processing not complete
+                    </Message>
                 </div>
             );
         }

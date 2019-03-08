@@ -283,7 +283,7 @@ const setEntryExcerpt = (state, action) => {
 
     const excerpt = excerptType === 'excerpt' ? excerptValue : undefined;
     const image = excerptType === 'image' ? excerptValue : undefined;
-    const dataSeries = excerptType === 'dataSeries' ? excerptValue : undefined;
+    const tabularField = excerptType === 'dataSeries' ? excerptValue : undefined;
 
     const entryIndex = entries.findIndex(entry => entryAccessor.key(entry) === key);
     const settings = {
@@ -295,7 +295,7 @@ const setEntryExcerpt = (state, action) => {
                             entryType: { $set: excerptType },
                             excerpt: { $set: excerpt },
                             image: { $set: image },
-                            dataSeries: { $set: dataSeries },
+                            tabularField: { $set: tabularField },
                         },
                         localData: {
                             isPristine: { $set: false },
@@ -341,7 +341,7 @@ const addEntry = (state, action) => {
         entryType: excerptType,
         excerpt: excerptType === 'excerpt' ? excerptValue : undefined,
         image: excerptType === 'image' ? excerptValue : undefined,
-        dataSeries: excerptType === 'dataSeries' ? excerptValue : undefined,
+        tabularField: excerptType === 'dataSeries' ? excerptValue : undefined,
         lead: leadId,
         order: maxEntryOrder + 1,
     };
@@ -383,7 +383,7 @@ const setEntryData = (state, action) => {
     if (info.action === 'changeExcerpt') {
         const excerpt = info.type === 'excerpt' ? info.value : undefined;
         const image = info.type === 'image' ? info.value : undefined;
-        const dataSeries = info.type === 'dataSeries' ? info.value : undefined;
+        const tabularField = info.type === 'dataSeries' ? info.value : undefined;
 
         const settings = {
             editEntries: {
@@ -394,7 +394,7 @@ const setEntryData = (state, action) => {
                                 entryType: { $set: info.type },
                                 excerpt: { $set: excerpt },
                                 image: { $set: image },
-                                dataSeries: { $set: dataSeries },
+                                tabularField: { $set: tabularField },
                             },
                             localData: {
                                 isPristine: { $set: false },

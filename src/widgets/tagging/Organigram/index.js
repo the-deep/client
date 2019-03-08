@@ -13,7 +13,7 @@ const propTypes = {
     entryType: PropTypes.string,
     excerpt: PropTypes.string,
     image: PropTypes.string,
-    dataSeries: PropTypes.shape({}),
+    tabularField: PropTypes.number,
 };
 
 const defaultProps = {
@@ -21,7 +21,7 @@ const defaultProps = {
     entryType: undefined,
     excerpt: undefined,
     image: undefined,
-    dataSeries: undefined,
+    tabularField: undefined,
 };
 
 const getData = (widget) => {
@@ -70,7 +70,7 @@ export default class OrganigramWidget extends React.PureComponent {
             entryType,
             excerpt,
             image,
-            dataSeries,
+            tabularField,
         } = this.props;
 
         let excerptValue;
@@ -82,7 +82,7 @@ export default class OrganigramWidget extends React.PureComponent {
                 excerptValue = image;
                 break;
             case DATA_SERIES:
-                excerptValue = dataSeries;
+                excerptValue = tabularField;
                 break;
             default:
                 console.error('Unknown entry type', entryType);

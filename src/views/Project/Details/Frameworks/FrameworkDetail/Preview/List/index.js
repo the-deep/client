@@ -78,7 +78,7 @@ export default class List extends React.PureComponent {
                             entryType="excerpt"
                             excerpt=""
                             image={undefined}
-                            dataSeries={undefined}
+                            tabularField={undefined}
                         />
                     </FaramGroup>
                 </FaramGroup>

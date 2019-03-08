@@ -84,8 +84,8 @@ const entrySchema = [];
             order: { type: 'uint', required: true },
         },
         validator: (self, context) => {
-            if (isFalsy(self.excerpt) && isFalsy(self.image) && isFalsy(self.dataSeries)) {
-                throw new RavlError('image or excerpt or dataSeries is required', context);
+            if (isFalsy(self.excerpt) && isFalsy(self.image) && isFalsy(self.tabularField)) {
+                throw new RavlError('image or excerpt or tabularField is required', context);
             }
         },
     };

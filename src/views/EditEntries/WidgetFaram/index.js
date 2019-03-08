@@ -153,7 +153,7 @@ export default class WidgetFaram extends React.PureComponent {
             entryType,
             excerpt,
             image,
-            dataSeries,
+            tabularField,
         } = entryAccessor.data(entry) || {};
 
         let widgetProps = {
@@ -175,7 +175,7 @@ export default class WidgetFaram extends React.PureComponent {
                 entryType,
                 excerpt,
                 image,
-                dataSeries,
+                tabularField,
             };
         }
 

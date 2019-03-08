@@ -16,7 +16,7 @@ const propTypes = {
     entryType: PropTypes.string,
     excerpt: PropTypes.string,
     image: PropTypes.string,
-    dataSeries: PropTypes.shape({}),
+    tabularField: PropTypes.number,
     onExcerptChange: PropTypes.func,
     onExcerptCreate: PropTypes.func,
     disabled: PropTypes.bool,
@@ -28,7 +28,7 @@ const defaultProps = {
     entryType: undefined,
     excerpt: undefined,
     image: undefined,
-    dataSeries: undefined,
+    tabularField: undefined,
     disabled: false,
     readOnly: false,
     onExcerptChange: () => {},
@@ -119,7 +119,7 @@ export default class Excerpt extends React.PureComponent {
             entryType,
             image,
             excerpt,
-            dataSeries,
+            tabularField,
             onExcerptChange,
             onExcerptCreate,
         } = this.props;
@@ -128,7 +128,7 @@ export default class Excerpt extends React.PureComponent {
         const hasExcerpt =
             (entryType === IMAGE && !!image) ||
             (entryType === TEXT && !!excerpt) ||
-            (entryType === DATA_SERIES && !!dataSeries);
+            (entryType === DATA_SERIES && !!tabularField);
 
         if (!hasEntry || hasExcerpt) {
             onExcerptCreate({
@@ -176,16 +176,16 @@ export default class Excerpt extends React.PureComponent {
     }
 
     renderDataSeries = () => {
-        const { dataSeries } = this.props;
+        const { tabularField } = this.props;
         const className = `
             ${styles.dataSeries}
-            dataSeries
+            data-series
         `;
 
         return (
             <DataSeries
                 className={className}
-                value={dataSeries}
+                value={tabularField}
             />
         );
     }

@@ -12,8 +12,8 @@ const propTypes = {
     className: PropTypes.string,
     fieldId: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-    column: PropTypes.arrayOf(PropTypes.object).isRequired,
+    // type: PropTypes.string.isRequired,
+    healthStats: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     options: PropTypes.shape({}),
     color: PropTypes.string,
     leadKey: PropTypes.string,
@@ -25,6 +25,7 @@ const defaultProps = {
     color: undefined,
     leadKey: undefined,
     options: undefined,
+    healthStats: {},
 };
 
 const healthColorScheme = [
@@ -43,38 +44,36 @@ export default class Field extends React.PureComponent {
 
     static dataKeySelector = d => d.key;
 
-    getHealthStatusData = memoize((data) => {
-        const invalidCount = data.filter(x => x.invalid).length;
-        const emptyCount = data.filter(x => x.empty).length;
-        const totalCount = data.length;
-
-        return [
-            {
-                key: 'valid',
-                value: totalCount - emptyCount - invalidCount,
-            },
-            {
-                key: 'invalid',
-                value: invalidCount,
-            },
-            {
-                key: 'empty',
-                value: emptyCount,
-            },
-        ];
-    });
+    getHealthStatusData = memoize(data => ([
+        {
+            key: 'valid',
+            value: data.total - data.empty - data.invalid,
+        },
+        {
+            key: 'invalid',
+            value: data.invalid,
+        },
+        {
+            key: 'empty',
+            value: data.empty,
+        },
+    ]))
 
 
     handleOnDragStart = (e) => {
         const {
+            /*
             title,
             type,
             column,
             options,
+            */
             fieldId,
         } = this.props;
         const data = JSON.stringify({
             type: 'dataSeries',
+            data: fieldId,
+            /*
             data: {
                 fieldId,
                 title,
@@ -82,6 +81,7 @@ export default class Field extends React.PureComponent {
                 data: column,
                 options,
             },
+            */
         });
         e.dataTransfer.setData('text/plain', data);
         e.dataTransfer.dropEffect = 'copy';
@@ -102,12 +102,12 @@ export default class Field extends React.PureComponent {
         const {
             className,
             title,
-            column,
+            healthStats,
             color,
             leadKey,
         } = this.props;
 
-        const healthStatusData = this.getHealthStatusData(column);
+        const healthStatusData = this.getHealthStatusData(healthStats);
 
         let style;
         if (color) {

@@ -6,7 +6,7 @@ export default {
         onPropsChanged: ['bookId'],
 
         method: requestMethods.GET,
-        url: ({ props }) => `/tabular-books/${props.bookId}/`,
+        url: ({ props }) => `/tabular-books/${props.bookId}/processed/`,
         onSuccess: ({ response, params: {
             triggerExtraction,
             startPolling,
@@ -25,7 +25,7 @@ export default {
         },
         onFailure: ({ params: { setInvalid } }) => setInvalid(),
         onFatal: ({ params: { setInvalid } }) => setInvalid(),
-        schemaName: 'TabularBookSchema',
+        // schemaName: 'TabularBookSchema',
     },
 
     extractRequest: {
@@ -36,7 +36,7 @@ export default {
 
     bookRequest: {
         method: requestMethods.GET,
-        url: ({ props }) => `/tabular-books/${props.bookId}/`,
+        url: ({ props }) => `/tabular-books/${props.bookId}/processed/`,
         options: {
             pollTime: 1200,
             maxPollAttempts: 100,
