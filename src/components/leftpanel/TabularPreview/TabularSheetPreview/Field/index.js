@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
-
 import { getRgbRawFromHex } from '@togglecorp/fujs';
+
 import HealthBar from '#rscz/HealthBar';
+
+import DataSeries from '#components/viz/DataSeries';
 
 import _cs from '#cs';
 import styles from './styles.scss';
@@ -11,7 +13,7 @@ import styles from './styles.scss';
 const propTypes = {
     className: PropTypes.string,
     fieldId: PropTypes.number.isRequired,
-    title: PropTypes.string.isRequired,
+    // title: PropTypes.string.isRequired,
     // type: PropTypes.string.isRequired,
     healthStats: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     options: PropTypes.shape({}),
@@ -101,10 +103,10 @@ export default class Field extends React.PureComponent {
     render() {
         const {
             className,
-            title,
             healthStats,
             color,
             leadKey,
+            tabularFieldData,
         } = this.props;
 
         const healthStatusData = this.getHealthStatusData(healthStats);
@@ -112,13 +114,13 @@ export default class Field extends React.PureComponent {
         let style;
         if (color) {
             const [r, g, b] = getRgbRawFromHex(color);
-            const borderColor = `rgba(${r}, ${g}, ${b}, 0.2)`;
+            const borderColor = `rgba(${r}, ${g}, ${b}, 0.6)`;
             style = {
-                borderLeft: `10px solid ${borderColor}`,
+                borderLeft: `8px solid ${borderColor}`,
             };
         } else {
             style = {
-                borderLeft: '10px solid transparent',
+                borderLeft: '8px solid transparent',
             };
         }
 
@@ -133,9 +135,15 @@ export default class Field extends React.PureComponent {
                 onClick={this.handleClick}
                 onKeyDown={this.handleClick}
             >
+                {/*
                 <h5>
                     {title}
                 </h5>
+                */}
+                <DataSeries
+                    className={styles.series}
+                    value={tabularFieldData}
+                />
                 <HealthBar
                     className={styles.healthBar}
                     data={healthStatusData}

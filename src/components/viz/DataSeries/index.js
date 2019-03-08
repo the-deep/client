@@ -68,9 +68,9 @@ const GRAPH = {
 
 const GRAPH_MODES = {
     string: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart, GRAPH.wordCloud],
-    number: [GRAPH.histogram],
     datetime: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart],
-    geo: [GRAPH.verticalBarChart, GRAPH.geo],
+    number: [GRAPH.histogram],
+    geo: [GRAPH.geo],
 };
 
 
