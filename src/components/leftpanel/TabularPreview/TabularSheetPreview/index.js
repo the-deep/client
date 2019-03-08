@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import ListView from '#rscv/List/ListView';
+import VirtualizedListView from '#rscv/VirtualizedListView';
 import Field from './Field';
 
 const propTypes = {
@@ -25,14 +25,15 @@ export default class TabularSheetPreview extends React.PureComponent {
     static defaultProps = defaultProps;
     static keySelector = d => d.id;
 
-    renderParams = (key, { id, title, options, cache }) => ({
-        fieldId: id,
-        title,
+    renderParams = (key, field) => ({
+        fieldId: field.id,
+        // title: field.title,
         // type,
-        options,
-        healthStats: cache.healthStats,
-        color: (this.props.highlights[id] || {}).color,
-        leadKey: (this.props.highlights[id] || {}).key,
+        options: field.optinos,
+        healthStats: field.cache.healthStats,
+        tabularFieldData: field,
+        color: (this.props.highlights[field.id] || {}).color,
+        leadKey: (this.props.highlights[field.id] || {}).key,
         onClick: this.props.onClick,
     })
 
@@ -45,7 +46,7 @@ export default class TabularSheetPreview extends React.PureComponent {
         } = this.props;
 
         return (
-            <ListView
+            <VirtualizedListView
                 className={className}
                 keySelector={TabularSheetPreview.keySelector}
                 rendererParams={this.renderParams}

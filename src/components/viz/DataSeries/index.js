@@ -30,10 +30,10 @@ const ModalButton = modalize(Button);
 const propTypes = {
     className: PropTypes.string,
     value: PropTypes.shape({
-        fieldId: PropTypes.number,
         title: PropTypes.string,
         type: PropTypes.string,
-        series: PropTypes.array,
+        cache: PropTypes.object,
+        options: PropTypes.object,
     }),
 };
 
@@ -68,9 +68,9 @@ const GRAPH = {
 
 const GRAPH_MODES = {
     string: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart, GRAPH.wordCloud],
-    number: [GRAPH.histogram],
     datetime: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart],
-    geo: [GRAPH.verticalBarChart, GRAPH.geo],
+    number: [GRAPH.histogram],
+    geo: [GRAPH.geo],
 };
 
 
@@ -148,6 +148,18 @@ export default class DataSeries extends React.PureComponent {
         )
     ))
 
+    getHistogramData = memoize((series) => {
+        const newSeries = [];
+        series.forEach((datum) => {
+            const frequency = frequencySelector(datum);
+            const value = valueSelector(datum);
+            for (let i = 0; i <= frequency; i += 1) {
+                newSeries.push(value);
+            }
+        });
+        return newSeries;
+    })
+
     createView = ({ showLegend }) => ({
         [GRAPH.horizontalBarChart]: {
             component: SimpleHorizontalBarChart,
@@ -207,7 +219,7 @@ export default class DataSeries extends React.PureComponent {
                     className: styles.horizontalBarChart,
                     margins: chartMargins,
 
-                    data: series,
+                    data: this.getHistogramData(series),
                 };
             },
             lazyMount: true,

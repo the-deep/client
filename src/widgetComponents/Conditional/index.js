@@ -18,6 +18,7 @@ const propTypes = {
     excerpt: PropTypes.string,
     image: PropTypes.string,
     tabularField: PropTypes.number,
+    tabularFieldData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     isView: PropTypes.bool,
 
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -31,6 +32,7 @@ const defaultProps = {
     excerpt: undefined,
     image: undefined,
     tabularField: undefined,
+    tabularFieldData: undefined,
     isView: false,
 
     value: {},
@@ -87,6 +89,7 @@ export default class Conditional extends React.PureComponent {
             excerpt,
             image,
             tabularField,
+            tabularFieldData,
         } = this.props;
 
         let child = null;
@@ -102,6 +105,7 @@ export default class Conditional extends React.PureComponent {
                         excerpt={excerpt}
                         image={image}
                         tabularField={tabularField}
+                        tabularFieldData={tabularFieldData}
                     />
                 );
                 break;

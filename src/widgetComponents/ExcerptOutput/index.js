@@ -28,7 +28,7 @@ const propTypes = {
 const defaultProps = {
     className: '',
     type: TEXT,
-    value: '',
+    value: undefined,
 };
 
 export default class ExcerptOutput extends React.PureComponent {
