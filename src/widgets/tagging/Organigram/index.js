@@ -13,7 +13,7 @@ const propTypes = {
     entryType: PropTypes.string,
     excerpt: PropTypes.string,
     image: PropTypes.string,
-    tabularField: PropTypes.number,
+    tabularFieldData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -21,7 +21,7 @@ const defaultProps = {
     entryType: undefined,
     excerpt: undefined,
     image: undefined,
-    tabularField: undefined,
+    tabularFieldData: undefined,
 };
 
 const getData = (widget) => {
@@ -70,7 +70,7 @@ export default class OrganigramWidget extends React.PureComponent {
             entryType,
             excerpt,
             image,
-            tabularField,
+            tabularFieldData,
         } = this.props;
 
         let excerptValue;
@@ -82,7 +82,7 @@ export default class OrganigramWidget extends React.PureComponent {
                 excerptValue = image;
                 break;
             case DATA_SERIES:
-                excerptValue = tabularField;
+                excerptValue = tabularFieldData;
                 break;
             default:
                 console.error('Unknown entry type', entryType);

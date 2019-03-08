@@ -11,14 +11,12 @@ const propTypes = {
     entryType: PropTypes.string,
     excerpt: PropTypes.string,
     image: PropTypes.string,
-    tabularField: PropTypes.number,
 };
 
 const defaultProps = {
     entryType: undefined,
     excerpt: undefined,
     image: undefined,
-    tabularField: undefined,
 };
 
 
