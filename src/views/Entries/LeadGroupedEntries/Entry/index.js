@@ -74,6 +74,7 @@ export default class Entry extends React.PureComponent {
                 excerpt,
                 image,
                 tabularField,
+                tabularFieldData,
             },
         } = this.props;
 
@@ -91,6 +92,7 @@ export default class Entry extends React.PureComponent {
                     excerpt={excerpt}
                     image={image}
                     tabularField={tabularField}
+                    tabularFieldData={tabularFieldData}
                 />
             );
         } else {

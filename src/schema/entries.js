@@ -133,29 +133,39 @@ const entrySchema = [];
                 // type: 'array.entry',
                 required: true,
             },
-            /*
-            results: {
-                type: {
-                    doc: {
-                        name: 'LeadsEntriesObject',
-                        description: 'Object of array of leads and entries',
-                    },
-                    fields: {
-                        leads: {
-                            arrayType: ,
-                            required: true,
-                        },
-                        entries: { type: 'array.entry', required: true },
-                    },
-                },
-                required: true,
-            },
-            */
         },
     };
     entrySchema.push({ name, schema });
 }
 
+{
+    const name = 'entriesForEditAryGetResponse';
+    const schema = {
+        doc: {
+            name: 'Entries',
+            description: 'List of entry',
+        },
+        fields: {
+            count: { type: 'uint', required: true },
+            next: { type: 'string' },
+            previous: { type: 'string' },
+            results: {
+                arrayType: {
+                    doc: {
+                        name: 'entry-without-lead',
+                        description: 'Entry with lead',
+                    },
+                    extends: 'entry',
+                    fields: {
+                        tabularFieldData: { type: 'object' }, // FIXME: change here
+                    },
+                },
+                required: true,
+            },
+        },
+    };
+    entrySchema.push({ name, schema });
+}
 {
     const name = 'entriesForEditEntriesGetResponse';
     const schema = {

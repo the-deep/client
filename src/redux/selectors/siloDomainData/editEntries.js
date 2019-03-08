@@ -87,6 +87,23 @@ export const editEntriesSelectedEntrySelector = createSelector(
     },
 );
 
+export const editEntriesTabularDataSelector = createSelector(
+    editEntriesForLeadSelector,
+    editEntry => (editEntry.tabularData || emptyObject),
+);
+
+export const editEntriesSelectedEntryTabularDataSelector = createSelector(
+    editEntriesTabularDataSelector,
+    editEntriesSelectedEntrySelector,
+    (tabularData, entry) => {
+        if (!entry) {
+            return emptyObject;
+        }
+        const tabularField = entryAccessor.tabularField(entry);
+        return tabularData[tabularField] || emptyObject;
+    },
+);
+
 export const editEntriesProjectSelector = createSelector(
     editEntriesLeadSelector,
     projectsSelector,

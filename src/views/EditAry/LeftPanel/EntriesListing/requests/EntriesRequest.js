@@ -25,7 +25,7 @@ export default class EntriesRequest {
             })
             .success((response) => {
                 try {
-                    schema.validate(response, 'entriesGetResponse');
+                    schema.validate(response, 'entriesForEditAryGetResponse');
                     this.setEntries({
                         entries: response.results,
                         leadId,

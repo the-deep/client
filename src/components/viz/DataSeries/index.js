@@ -148,19 +148,18 @@ export default class DataSeries extends React.PureComponent {
         )
     ))
 
-    createView = ({ showLegend }) => {
-        const {
-            value: {
-                cache: {
-                    series = [],
-                } = {},
-            } = {},
-        } = this.props;
-
-        return {
-            [GRAPH.horizontalBarChart]: {
-                component: SimpleHorizontalBarChart,
-                rendererParams: () => ({
+    createView = ({ showLegend }) => ({
+        [GRAPH.horizontalBarChart]: {
+            component: SimpleHorizontalBarChart,
+            rendererParams: () => {
+                const {
+                    value: {
+                        cache: {
+                            series = [],
+                        } = {},
+                    } = {},
+                } = this.props;
+                return {
                     className: styles.horizontalBarChart,
                     margins: chartMargins,
 
@@ -168,12 +167,21 @@ export default class DataSeries extends React.PureComponent {
                     valueSelector: frequencySelector,
                     labelSelector: valueSelector,
                     tooltipSelector,
-                }),
-                lazyMount: true,
+                };
             },
-            [GRAPH.verticalBarChart]: {
-                component: SimpleVerticalBarChart,
-                rendererParams: () => ({
+            lazyMount: true,
+        },
+        [GRAPH.verticalBarChart]: {
+            component: SimpleVerticalBarChart,
+            rendererParams: () => {
+                const {
+                    value: {
+                        cache: {
+                            series = [],
+                        } = {},
+                    } = {},
+                } = this.props;
+                return {
                     className: styles.verticalBarChart,
                     margins: chartMargins,
 
@@ -181,55 +189,76 @@ export default class DataSeries extends React.PureComponent {
                     valueSelector: frequencySelector,
                     labelSelector: valueSelector,
                     tooltipSelector,
-                }),
-                lazyMount: true,
+                };
             },
-            [GRAPH.histogram]: {
-                component: Histogram,
-                rendererParams: () => ({
+            lazyMount: true,
+        },
+        [GRAPH.histogram]: {
+            component: Histogram,
+            rendererParams: () => {
+                const {
+                    value: {
+                        cache: {
+                            series = [],
+                        } = {},
+                    } = {},
+                } = this.props;
+                return {
                     className: styles.horizontalBarChart,
                     margins: chartMargins,
 
                     data: series,
-                }),
-                lazyMount: true,
+                };
             },
-            [GRAPH.wordCloud]: {
-                component: WordCloud,
-                rendererParams: () => ({
+            lazyMount: true,
+        },
+        [GRAPH.wordCloud]: {
+            component: WordCloud,
+            rendererParams: () => {
+                const {
+                    value: {
+                        cache: {
+                            series = [],
+                        } = {},
+                    } = {},
+                } = this.props;
+                return {
                     className: styles.wordCloud,
 
                     data: series,
                     labelSelector: valueSelector,
                     frequencySelector,
-                }),
-                lazyMount: true,
+                };
             },
-            [GRAPH.geo]: {
-                component: GeoViz,
-                rendererParams: () => {
-                    const {
-                        value: {
-                            options: {
-                                regions,
-                                adminLevel,
-                            } = {},
-                        },
-                    } = this.props;
-                    return {
-                        className: styles.geoVisualization,
-                        regions,
-                        adminLevel,
-                        showLegend,
-                        data: series,
-                        valueSelector,
-                        frequencySelector,
-                    };
-                },
-                lazyMount: true,
+            lazyMount: true,
+        },
+        [GRAPH.geo]: {
+            component: GeoViz,
+            rendererParams: () => {
+                const {
+                    value: {
+                        options: {
+                            regions,
+                            adminLevel,
+                        } = {},
+                        cache: {
+                            series = [],
+                        } = {},
+                    },
+                } = this.props;
+                return {
+                    className: styles.geoVisualization,
+                    regions,
+                    adminLevel,
+                    showLegend,
+                    data: series,
+                    valueSelector,
+                    frequencySelector,
+                };
             },
-        };
-    }
+            lazyMount: true,
+        },
+    })
 
     handleSegmentStateChange = (view) => {
         this.setState({ activeView: view });
@@ -281,7 +310,6 @@ export default class DataSeries extends React.PureComponent {
             </Modal>
         );
     };
-
 
     render() {
         const {

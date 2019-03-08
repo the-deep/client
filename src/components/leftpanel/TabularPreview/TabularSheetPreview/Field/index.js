@@ -112,8 +112,14 @@ export default class Field extends React.PureComponent {
         let style;
         if (color) {
             const [r, g, b] = getRgbRawFromHex(color);
-            const backgroundColor = `rgba(${r}, ${g}, ${b}, 0.2)`;
-            style = { backgroundColor };
+            const borderColor = `rgba(${r}, ${g}, ${b}, 0.2)`;
+            style = {
+                borderLeft: `10px solid ${borderColor}`,
+            };
+        } else {
+            style = {
+                borderLeft: '10px solid transparent',
+            };
         }
 
         return (

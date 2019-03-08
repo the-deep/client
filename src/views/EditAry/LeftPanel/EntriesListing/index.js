@@ -144,7 +144,14 @@ export default class EntriesListing extends React.PureComponent {
     }
 
     renderEntryLabel = (entry) => {
-        if (entry.entryType === 'image') {
+        const {
+            entryType,
+            excerpt,
+            tabularFieldData,
+            order,
+        } = entry;
+
+        if (entryType === 'image') {
             return (
                 <img
                     className={styles.image}
@@ -154,10 +161,19 @@ export default class EntriesListing extends React.PureComponent {
             );
         }
 
+        if (entryType === 'dataSeries') {
+            return (
+                <div className={styles.entryExcerpt}>
+                    { tabularFieldData.title }
+                </div>
+            );
+        }
+
         // FIXME: use strings
+        const excerptTitle = excerpt || `Excerpt ${order}`;
         return (
             <div className={styles.entryExcerpt}>
-                {entry.excerpt || `Excerpt ${entry.order}`}
+                {excerptTitle}
             </div>
         );
     }
