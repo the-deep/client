@@ -43,6 +43,8 @@ const supportedGoogleDriveMimeTypes = [
     'application/vnd.ms-powerpoint', 'application/vnd.ms-excel',
     'application/vnd.openxmlformats-officedocument.presentationml.presentation',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/wps-office.xlsx',
+    'application/vnd.oasis.opendocument.spreadsheet',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     'image/fig',
     'image/jpeg',
@@ -53,9 +55,11 @@ const supportedGoogleDriveMimeTypes = [
 const supportedDropboxExtension = [
     '.doc', '.docx', '.rtf', '.txt',
     '.otf', '.pdf', '.ppt', '.pptx',
-    '.xls', '.xlsx', '.csv', '.png',
+    '.xls', '.xlsx', '.ods', '.csv', '.png',
     '.jpg', '.gif', '.json', '.xml',
 ];
+
+const acceptFileTypes = '.pdf, .ppt, .pptx, .csv, .ods, .xls, .xlsx, .doc, .docx, .odt, .rtf, image/*';
 
 const defaultProps = {
 };
@@ -428,7 +432,7 @@ export default class LeadButtons extends React.PureComponent {
                     onChange={this.handleLeadAddFromDisk}
                     showStatus={false}
                     multiple
-                    accept=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf, image/*"
+                    accept={acceptFileTypes}
                 >
                     <Icon name="upload" />
                     <p>

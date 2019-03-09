@@ -101,7 +101,7 @@ export default class ExportTypePane extends React.PureComponent {
             },
             {
                 key: 'excel',
-                title: _ts('export', 'xlxsLabel'),
+                title: _ts('export', 'xlsxLabel'),
                 img: excelIcon,
             },
             {

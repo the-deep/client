@@ -13,7 +13,6 @@ import {
 } from '#redux';
 import _ts from '#ts';
 
-import Baksa from '#components/input/Baksa';
 import MultiDocumentUploader from '#components/input/MultiDocumentUploader';
 
 import { renderWidget } from '../widgetUtils';
@@ -35,6 +34,8 @@ const mapStateToProps = state => ({
     aryTemplateMetadata: aryTemplateMetadataSelector(state),
     sources: assessmentSourcesSelector(state),
 });
+
+const acceptFileTypes = '.pdf, .ppt, .pptx, .csv, .xls, .xlsx, .ods, .doc, .docx, .odt, .rtf';
 
 @connect(mapStateToProps)
 export default class Metadata extends React.PureComponent {
@@ -128,7 +129,7 @@ export default class Metadata extends React.PureComponent {
                                             className={styles.baksa}
                                             faramElementName="executiveSummary"
                                             showPageRange
-                                            acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
+                                            acceptFileTypes={acceptFileTypes}
                                             onPending={this.handleExecutiveSummaryPending}
                                         />
                                         <MultiDocumentUploader
@@ -136,7 +137,7 @@ export default class Metadata extends React.PureComponent {
                                             className={styles.baksa}
                                             faramElementName="assessmentData"
                                             showUrlInput
-                                            acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
+                                            acceptFileTypes={acceptFileTypes}
                                             onPending={this.handleAssessmentDataPending}
                                         />
                                         <MultiDocumentUploader
@@ -144,7 +145,7 @@ export default class Metadata extends React.PureComponent {
                                             className={styles.baksa}
                                             faramElementName="questionnaire"
                                             showPageRange
-                                            acceptFileTypes=".pdf, .ppt, .pptx, .csv, .xls, .xlsx, .doc, .docx, .odt, .rtf"
+                                            acceptFileTypes={acceptFileTypes}
                                             onPending={this.handleQuestionnairePending}
                                         />
                                         <MultiDocumentUploader

@@ -83,11 +83,6 @@ $width-assignee-column: 96px;
                     text-align: right;
                 }
 
-                .status,
-                .confidentiality {
-                    text-transform: capitalize;
-                }
-
                 .created-by-link,
                 .assignee-link {
                     @extend %accent-color-link;
