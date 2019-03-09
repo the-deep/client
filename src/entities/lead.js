@@ -39,8 +39,9 @@ export const mimeType = {
     pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
     ppt: 'application/vnd.ms-powerpoint',
     xls: 'application/vnd.ms-excel',
-    xlxs: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    xlxs2: 'application/wps-office.xlsx',
+    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    xlsx2: 'application/wps-office.xlsx',
+    ods: 'application/vnd.oasis.opendocument.spreadsheet',
     csv: 'text/csv',
     png: 'image/png',
     jpg: 'image/jpg',
@@ -84,8 +85,9 @@ export const leadPaneTypeMap = {
     [mimeType.ppt]: LEAD_PANE_TYPE.presentation,
 
     [mimeType.xls]: LEAD_PANE_TYPE.spreadsheet,
-    [mimeType.xlxs]: LEAD_PANE_TYPE.spreadsheet,
-    [mimeType.xlxs2]: LEAD_PANE_TYPE.spreadsheet,
+    [mimeType.xlsx]: LEAD_PANE_TYPE.spreadsheet,
+    [mimeType.xlsx2]: LEAD_PANE_TYPE.spreadsheet,
+    [mimeType.ods]: LEAD_PANE_TYPE.spreadsheet,
 
     [mimeType.png]: LEAD_PANE_TYPE.image,
     [mimeType.jpg]: LEAD_PANE_TYPE.image,
@@ -107,7 +109,8 @@ export const leadTypeIconMap = {
     [mimeType.ppt]: 'ppt',
 
     [mimeType.xls]: 'xls',
-    [mimeType.xlxs]: 'xlxs',
+    [mimeType.xlsx]: 'xlsx',
+    [mimeType.ods]: 'ods',
 
     [mimeType.csv]: 'csv',
 
@@ -118,6 +121,13 @@ export const leadTypeIconMap = {
 
     [mimeType.json]: 'json',
     [mimeType.xml]: 'xml',
+};
+
+export const leadTabularTypeMap = {
+    [mimeType.xls]: 'xls',
+    [mimeType.xlsx]: 'xlsx',
+    [mimeType.ods]: 'ods',
+    [mimeType.csv]: 'csv',
 };
 
 export const leadAccessor = {

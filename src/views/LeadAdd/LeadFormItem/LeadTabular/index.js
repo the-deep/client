@@ -24,16 +24,18 @@ import {
     RequestClient,
     requestMethods,
 } from '#request';
-import { leadPaneTypeMap, LEAD_PANE_TYPE } from '#entities/lead';
+import { leadTabularTypeMap, LEAD_PANE_TYPE } from '#entities/lead';
 
 import CsvSettings from './CsvSettings';
 import ExcelSettings from './ExcelSettings';
 import styles from './styles.scss';
 
 const getFileTypeFromMimeType = (mimeType) => {
-    const leadType = leadPaneTypeMap[mimeType];
-    return leadType === LEAD_PANE_TYPE.spreadsheet ? 'xlsx' : 'csv';
+    const leadType = leadTabularTypeMap[mimeType];
+    return leadType;
 };
+
+const spreadsheetTypes = ['ods', 'xlsx', 'xls'];
 
 const createFaramValues = (faramValues, meta, fileType) => {
     if (fileType === 'csv') {
@@ -43,7 +45,7 @@ const createFaramValues = (faramValues, meta, fileType) => {
                 delimiter: ',',
             },
         };
-    } else if (fileType === 'xlsx') {
+    } else if (spreadsheetTypes.includes(fileType)) {
         const { sheets = [] } = meta;
         return {
             ...faramValues,
@@ -77,7 +79,7 @@ const createSchema = (meta, fileType) => {
                 project: [],
             },
         };
-    } else if (fileType === 'xlsx') {
+    } else if (spreadsheetTypes.includes(fileType)) {
         const { sheets = [] } = meta;
 
         const xlsxSchema = listToMap(
@@ -287,7 +289,7 @@ export default class LeadTabular extends React.PureComponent {
         // support null child yet.
         const component = (
             (fileType === 'csv' && !noForm && <CsvSettings />) ||
-            (fileType === 'xlsx' && !noForm &&
+            (spreadsheetTypes.includes(fileType) && !noForm &&
                 <ExcelSettings
                     meta={meta}
                     sheets={faramValues.options.sheets}

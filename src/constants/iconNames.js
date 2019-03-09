@@ -107,7 +107,8 @@ const iconNames = {
     world: 'ion-ios-world',
     wrench: 'ion-wrench',
     xls: 'fa fa-file-excel-o',
-    xlxs: 'fa fa-file-excel-o',
+    xlsx: 'fa fa-file-excel-o',
+    ods: 'fa fa-file-excel-o',
     xml: 'fa fa-file-code-o',
 };
 

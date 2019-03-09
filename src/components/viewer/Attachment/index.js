@@ -19,9 +19,10 @@ const TAB_ORIGINAL = 'original';
 
 const tabularCompatibleMimeTypes = [
     'xls',
-    'xlxs',
-    'xlxs2',
+    'xlsx',
+    'xlsx2',
     'csv',
+    'ods',
 ];
 
 const tabTitles = {
@@ -29,7 +30,28 @@ const tabTitles = {
     [TAB_ORIGINAL]: _ts('viewer.attachment', 'originalTabTitle'),
 };
 
+const propTypes = {
+    attachment: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    tabularBook: PropTypes.number,
+    projectId: PropTypes.number,
+    className: PropTypes.string,
+    onTabularButtonClick: PropTypes.func.isRequired,
+    title: PropTypes.string,
+    viewOnly: PropTypes.bool,
+};
+
+const defaultProps = {
+    tabularBook: undefined,
+    projectId: undefined,
+    className: '',
+    title: '',
+    viewOnly: false,
+};
+
 export default class Attachment extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
     constructor(props) {
         super(props);
 
@@ -112,31 +134,29 @@ export default class Attachment extends React.PureComponent {
         });
     }
 
-    shouldHideTabularButton = ({ isEarlyAccess }) => {
-        const {
-            tabularBook,
-            viewOnly,
-        } = this.props;
-
+    isExtractable = () => {
+        const { viewOnly } = this.props;
         const { attachmentMimeType } = this.state;
+        return !viewOnly && this.isTabularCompatible(attachmentMimeType);
+    }
 
-        const tabularCompatible = this.isTabularCompatible(attachmentMimeType);
-
-        return !(isEarlyAccess && (tabularBook || (!viewOnly && tabularCompatible)));
+    shouldHideTabularButton = ({ isEarlyAccess }) => {
+        const { tabularBook } = this.props;
+        const isAlreadyExtracted = !!tabularBook;
+        return !(isEarlyAccess && (isAlreadyExtracted || this.isExtractable()));
     }
 
     render() {
         const {
             attachment,
-            tabularBook,
             className,
             viewOnly,
+            tabularBook,
         } = this.props;
 
-        const {
-            activeTab,
-            attachmentMimeType,
-        } = this.state;
+        const { activeTab } = this.state;
+
+        const isAlreadyExtracted = !!tabularBook;
 
         return (
             <Cloak
@@ -149,14 +169,14 @@ export default class Attachment extends React.PureComponent {
                             active={activeTab}
                             onClick={this.handleTabClick}
                         >
-                            {!viewOnly && tabularBook && (
+                            { !viewOnly && isAlreadyExtracted &&
                                 <AccentButton
                                     className={styles.tabularButton}
                                     onClick={this.handleTabularButtonClick}
                                 >
                                     {_ts('addLeads', 'tabularButtonTitle')}
                                 </AccentButton>
-                            )}
+                            }
                         </ScrollTabs>
                         <MultiViewContainer
                             views={this.views}
@@ -177,21 +197,3 @@ export default class Attachment extends React.PureComponent {
         );
     }
 }
-
-Attachment.propTypes = {
-    attachment: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    tabularBook: PropTypes.number,
-    projectId: PropTypes.number,
-    className: PropTypes.string,
-    onTabularButtonClick: PropTypes.func.isRequired,
-    title: PropTypes.string,
-    viewOnly: PropTypes.bool,
-};
-
-Attachment.defaultProps = {
-    tabularBook: undefined,
-    projectId: undefined,
-    className: '',
-    title: '',
-    viewOnly: false,
-};
