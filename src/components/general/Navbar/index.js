@@ -8,6 +8,7 @@ import {
     matchPath,
 } from 'react-router-dom';
 
+import Icon from '#rscg/Icon';
 import Confirm from '#rscv/Modal/Confirm';
 import { BgRestBuilder } from '#rsu/rest';
 import {
@@ -250,11 +251,12 @@ export default class Navbar extends React.PureComponent {
                     to={reverseRoute(pathNames.homeScreen, {})}
                     className={styles.brand}
                 >
-                    <ReactSVG
-                        className={styles.iconWrapper}
-                        svgClassName={styles.icon}
-                        path={logo}
-                    />
+                    <div className={styles.iconWrapper}>
+                        <Icon
+                            className={styles.icon}
+                            name="deepLogo"
+                        />
+                    </div>
                     <div className={styles.title}>
                         {_ts('components.navbar', 'deepLabel')}
                     </div>

@@ -26,10 +26,7 @@ $color-text-on-primary: get-text-color($color-primary);
             .icon {
                 width: $width-navbar-icon;
                 height: $height-navbar-icon;
-
-                path {
-                    fill: $color-text-on-navbar;
-                }
+                color: $color-text-on-navbar;
             }
         }
 
