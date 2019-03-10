@@ -22,10 +22,7 @@ $height-deep-logo: 256px;
             margin-bottom: $spacing-extra-large;
             width: $width-deep-logo;
             height: $height-deep-logo;
-
-            path {
-                fill: $color-accent;
-            }
+            color: $color-accent;
         }
 
         .heading {

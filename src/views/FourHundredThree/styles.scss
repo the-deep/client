@@ -14,10 +14,7 @@ $width-message-max: 540px;
         margin-bottom: $spacing-large;
         width: 256px;
         height: 256px;
-
-        path {
-            fill: $color-text-disabled;
-        }
+        color: $color-text-disabled;
     }
 
     .heading {

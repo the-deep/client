@@ -1,11 +1,10 @@
 import React from 'react';
-import ReactSVG from 'react-svg';
 
 import _ts from '#ts';
 import Page from '#rscv/Page';
+import Icon from '#rscg/Icon';
 import BackLink from '#components/general/BackLink';
 import { pathNames } from '#constants';
-import logo from '#resources/img/deep-logo.svg';
 
 import styles from './styles.scss';
 
@@ -17,9 +16,9 @@ export default class FourHundredThree extends React.PureComponent {
                 mainContentClassName={styles.fourHundredThree}
                 mainContent={
                     <React.Fragment>
-                        <ReactSVG
-                            svgClassName={styles.deepLogo}
-                            path={logo}
+                        <Icon
+                            className={styles.deepLogo}
+                            name="deepLogo"
                         />
                         <h1 className={styles.heading}>
                             {_ts('fourHundredThree', 'errorThreeHundredThree')}

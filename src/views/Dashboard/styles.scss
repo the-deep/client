@@ -11,10 +11,7 @@
             margin: 0 0 $spacing-large;
             width: 256px;
             height: 256px;
-
-            path {
-                fill: $color-text-disabled;
-            }
+            color: $color-text-disabled;
         }
 
         .deep-text {

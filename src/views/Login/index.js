@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import ReactSVG from 'react-svg';
 import { reverseRoute } from '@togglecorp/fujs';
 import Faram, {
     requiredCondition,
@@ -19,6 +18,7 @@ import {
     RestRequest,
 } from '#rsu/rest';
 
+import Icon from '#rscg/Icon';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import ReCaptcha from '#rsci/ReCaptcha';
@@ -27,7 +27,6 @@ import TextInput from '#rsci/TextInput';
 import { hidUrl } from '#config/hid';
 import { reCaptchaSiteKey } from '#config/reCaptcha';
 import { pathNames } from '#constants';
-import logo from '#resources/img/deep-logo.svg';
 import hidLogo from '#resources/img/hid-logo.png';
 import {
     alterResponseErrorToFaramError,
@@ -248,9 +247,9 @@ export default class Login extends React.PureComponent {
         return (
             <div className={styles.login}>
                 <div className={styles.deepContainer}>
-                    <ReactSVG
-                        svgClassName={styles.logo}
-                        path={logo}
+                    <Icon
+                        className={styles.logo}
+                        name="deepLogo"
                     />
                     <h2 className={styles.heading}>
                         <small>{_ts('login', 'welcomeToText')}</small><br />

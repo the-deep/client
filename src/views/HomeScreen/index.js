@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactSVG from 'react-svg';
 import { connect } from 'react-redux';
 import { Redirect, Link } from 'react-router-dom';
 
@@ -12,10 +11,10 @@ import {
     currentUserProjectsSelector,
 } from '#redux';
 
+import Icon from '#rscg/Icon';
 import Page from '#rscv/Page';
 import { pathNames } from '#constants';
 import _ts from '#ts';
-import logo from '#resources/img/deep-logo.svg';
 
 import styles from './styles.scss';
 
@@ -80,9 +79,9 @@ export default class HomeScreen extends React.PureComponent {
                 mainContentClassName={styles.homeScreen}
                 mainContent={
                     <React.Fragment>
-                        <ReactSVG
-                            svgClassName={styles.deepLogo}
-                            path={logo}
+                        <Icon
+                            className={styles.deepLogo}
+                            name="deepLogo"
                         />
                         <div className={styles.container}>
                             <span className={styles.welcomeMessage}>

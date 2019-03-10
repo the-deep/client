@@ -13,10 +13,7 @@ $color-text-on-primary: get-text-color($color-primary);
         margin-bottom: $spacing-large;
         width: 256px;
         height: 256px;
-
-        path {
-            fill: $color-text-disabled;
-        }
+        color: $color-text-disabled;
     }
 
     .heading {
