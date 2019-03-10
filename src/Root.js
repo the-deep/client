@@ -7,6 +7,7 @@ import { addIcon } from '#rscg/Icon';
 import {
     iconNames,
     svgPaths,
+    imagePaths,
 } from '#constants';
 
 import store from '#store';
@@ -20,6 +21,10 @@ Object.keys(iconNames).forEach((key) => {
 
 Object.keys(svgPaths).forEach((key) => {
     addIcon('svg', key, svgPaths[key]);
+});
+
+Object.keys(imagePaths).forEach((key) => {
+    addIcon('image', key, imagePaths[key]);
 });
 
 export default class Root extends React.Component {

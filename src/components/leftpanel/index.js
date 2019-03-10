@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import memoize from 'memoize-one';
 
+import Icon from '#rscg/Icon';
 import Modal from '#rscv/Modal';
 import modalize from '#rscg/Modalize';
 import AccentButton from '#rsca/Button/AccentButton';
@@ -16,7 +17,6 @@ import {
 import { entryAccessor } from '#entities/editEntries';
 import ImagesGrid from '#components/viewer/ImagesGrid';
 import TabularBook from '#components/other/TabularBook';
-import brainIcon from '#resources/img/brain.png';
 import _ts from '#ts';
 
 import AssistedTagging from './AssistedTagging';
@@ -378,9 +378,9 @@ export default class LeftPane extends React.PureComponent {
                     onClick={this.handleTabClick}
                 >
                     { tabKey === 'assisted-tagging' &&
-                        <img
+                        <Icon
                             className={styles.brainIcon}
-                            src={brainIcon}
+                            name="brainIcon"
                             alt="assisted-tagging"
                             title={_ts('components.assistedTagging', 'infoTooltip')}
                         />

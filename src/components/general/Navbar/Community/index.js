@@ -2,12 +2,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import DropdownMenu from '#rsca/DropdownMenu';
+import Icon from '#rscg/Icon';
 
 import _ts from '#ts';
-
-import slackLogo from '#resources/img/slack.png';
-import skypeLogo from '#resources/img/skype.png';
-import zendeskLogo from '#resources/img/zendesk.png';
 
 import styles from './styles.scss';
 
@@ -60,10 +57,9 @@ export default class Community extends React.PureComponent {
                     rel="noopener noreferrer"
                     title={slackLinkTitle}
                 >
-                    <img
+                    <Icon
                         className={styles.image}
-                        src={slackLogo}
-                        alt=""
+                        name="slackLogo"
                     />
                     <div className={styles.title}>
                         {slackTitle}
@@ -76,10 +72,9 @@ export default class Community extends React.PureComponent {
                     rel="noopener noreferrer"
                     title={skypeLinkTitle}
                 >
-                    <img
+                    <Icon
                         className={styles.image}
-                        alt=""
-                        src={skypeLogo}
+                        name="skypeLogo"
                     />
                     <div className={styles.title}>
                         {skypeTitle}
@@ -90,10 +85,9 @@ export default class Community extends React.PureComponent {
                     onClick={this.handleZeClick}
                     title={zendeskLinkTitle}
                 >
-                    <img
+                    <Icon
                         className={styles.image}
-                        alt=""
-                        src={zendeskLogo}
+                        name="zendeskLogo"
                     />
                     <div className={styles.title}>
                         {zendeskTitle}

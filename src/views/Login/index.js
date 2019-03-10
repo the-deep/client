@@ -27,7 +27,6 @@ import TextInput from '#rsci/TextInput';
 import { hidUrl } from '#config/hid';
 import { reCaptchaSiteKey } from '#config/reCaptcha';
 import { pathNames } from '#constants';
-import hidLogo from '#resources/img/hid-logo.png';
 import {
     alterResponseErrorToFaramError,
     createParamsForTokenCreate,
@@ -262,9 +261,9 @@ export default class Login extends React.PureComponent {
                             href={hidUrl}
                             onClick={this.onHidLoginClick}
                         >
-                            <img
+                            <Icon
                                 className={styles.logo}
-                                src={hidLogo}
+                                name="hidLogo"
                                 alt={_ts('login', 'logInWIthHid')}
                                 draggable="false"
                             />
