@@ -1,9 +1,8 @@
 import React, { Fragment } from 'react';
-import ReactSVG from 'react-svg';
 
 import Page from '#rscv/Page';
+import Icon from '#rscg/Icon';
 import _ts from '#ts';
-import logo from '#resources/img/deep-logo.svg';
 
 import styles from './styles.scss';
 
@@ -15,9 +14,9 @@ export default class ProjectDenied extends React.PureComponent {
                 mainContentClassName={styles.projectDenied}
                 mainContent={
                     <Fragment>
-                        <ReactSVG
-                            svgClassName={styles.deepLogo}
-                            path={logo}
+                        <Icon
+                            className={styles.deepLogo}
+                            name="deepLogo"
                         />
                         <h1 className={styles.heading}>
                             {_ts('projectDenied', 'errorThreeHundredThree')}

@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import Page from '#rscv/Page';
 import Icon from '#rscg/Icon';
 import { currentUserActiveProjectSelector } from '#redux';
-import logo from '#resources/img/deep-logo.svg';
 
 import { envText } from '#config/env';
 import _ts from '#ts';

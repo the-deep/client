@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactSVG from 'react-svg';
 import { connect } from 'react-redux';
 import {
     withRouter,
