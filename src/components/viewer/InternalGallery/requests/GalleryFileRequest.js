@@ -27,7 +27,7 @@ export default class GalleryFileRequest extends Request {
             notFound: false,
         });
 
-        this.parent.notifyMimeType(response.mimeType);
+        this.parent.notifyMimeType(response);
     }
 
     init = (galleryId) => {

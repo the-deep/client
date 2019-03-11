@@ -24,16 +24,11 @@ import {
     RequestClient,
     requestMethods,
 } from '#request';
-import { leadTabularTypeMap, LEAD_PANE_TYPE } from '#entities/lead';
+import { leadTabularTypeMap } from '#entities/lead';
 
 import CsvSettings from './CsvSettings';
 import ExcelSettings from './ExcelSettings';
 import styles from './styles.scss';
-
-const getFileTypeFromMimeType = (mimeType) => {
-    const leadType = leadTabularTypeMap[mimeType];
-    return leadType;
-};
 
 const spreadsheetTypes = ['ods', 'xlsx', 'xls'];
 
@@ -173,7 +168,7 @@ const requests = {
 
 const propTypes = {
     className: PropTypes.string,
-    mimeType: PropTypes.string,
+    fileType: PropTypes.string,
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setTabularBook: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     onCancel: PropTypes.func.isRequired,
@@ -181,7 +176,7 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    mimeType: '',
+    fileType: '',
 };
 
 
@@ -195,9 +190,9 @@ export default class LeadTabular extends React.PureComponent {
         super(props);
 
         const {
-            mimeType,
             lead: { faramValues },
             getMetaInfoRequest,
+            fileType,
         } = this.props;
 
         const {
@@ -205,8 +200,6 @@ export default class LeadTabular extends React.PureComponent {
             project,
             attachment,
         } = faramValues;
-
-        const fileType = getFileTypeFromMimeType(mimeType);
 
         const newFaramValues = {
             title,
