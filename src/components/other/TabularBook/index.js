@@ -213,13 +213,20 @@ export default class TabularBook extends React.PureComponent {
     }
 
     getTransformSheets = memoize((originalSheets) => {
+        const validSheets = originalSheets.filter(
+            sheet => sheet.fields.length > 0,
+        );
+
         const sheets = listToMap(
-            originalSheets,
+            validSheets,
             sheet => sheet.id,
             transformSheet,
         );
 
-        const filteredSheets = originalSheets.filter(sheet => !sheet.hidden);
+        const filteredSheets = validSheets.filter(
+            sheet => !sheet.hidden,
+        );
+
         const tabs = listToMap(
             filteredSheets,
             sheet => sheet.id,
