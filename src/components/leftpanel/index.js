@@ -395,7 +395,7 @@ export default class LeftPane extends React.PureComponent {
                                 onClick={this.handlePreviewClick}
                             />
                             <AccentModalButton
-                                iconName="table"
+                                iconName="tabularIcon"
                                 transparent
                                 // FIXME: use strings
                                 title="Show tabular"
