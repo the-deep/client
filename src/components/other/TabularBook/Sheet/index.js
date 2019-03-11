@@ -71,8 +71,6 @@ const defaultProps = {
     viewMode: false,
 };
 
-// FIXME: don't use compareNumber as it is not exactly basic number type
-// Try generating actual values which can be used for sorting
 const comparators = {
     [DATA_TYPE.string]: compareString,
     [DATA_TYPE.number]: compareNumber,
@@ -96,9 +94,6 @@ const filterRenderers = {
 
 const emptyObject = {};
 
-// TODO: memoize this
-const getDeletedFields = fields => fields.filter(f => f.hidden);
-
 export default class Sheet extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -110,6 +105,14 @@ export default class Sheet extends React.PureComponent {
         }
         return obj.value;
     }
+
+    getDeletedFields = memoize(fields => (
+        fields.filter(f => f.hidden)
+    ))
+
+    getFieldsCount = memoize(fields => (
+        fields.filter(field => !field.hidden).length
+    ))
 
     getFilterCriteria = (datum, searchTerm = emptyObject) => {
         const { sheet, viewMode } = this.props;
@@ -184,7 +187,7 @@ export default class Sheet extends React.PureComponent {
             // else don't apply filter
             return true;
         });
-    };
+    }
 
     // NOTE: searchTerm, healthBar is used inside this.headerRendererParams
     getSheetColumns = memoize((
@@ -218,7 +221,7 @@ export default class Sheet extends React.PureComponent {
                     );
                 },
             }))
-    ));
+    ))
 
     shouldHideEditButton = ({ leadPermissions }) => {
         const {
@@ -227,10 +230,10 @@ export default class Sheet extends React.PureComponent {
             },
             disabled,
         } = this.props;
-        const fieldList = getDeletedFields(fields);
+        const fieldList = this.getDeletedFields(fields);
 
         return this.props.viewMode || !leadPermissions.modify || disabled || fieldList.length <= 0;
-    };
+    }
 
     cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({
         className: _cs(styles[type], styles.cell),
@@ -262,8 +265,8 @@ export default class Sheet extends React.PureComponent {
 
         const isFieldDeletePending = this.props.fieldDeletePending[fieldId];
         const isFieldEditPending = this.props.fieldEditPending[fieldId];
-        // TODO: memoize this
-        const fieldsCount = this.props.sheet.fields.filter(field => !field.hidden).length;
+
+        const fieldsCount = this.getFieldsCount(this.props.sheet.fields);
 
         return {
             fieldId,
@@ -399,7 +402,7 @@ export default class Sheet extends React.PureComponent {
             viewMode,
         );
 
-        const fieldList = getDeletedFields(fields);
+        const fieldList = this.getDeletedFields(fields);
 
         return (
             <div className={_cs(className, styles.tabularSheet, 'tabular-sheet')}>

@@ -8,6 +8,7 @@ $width-right-min: 370px;
     height: 100%;
 
     .left {
+        border-right: $width-separator-thin solid $color-separator;
         background-color: $color-foreground-alt;
         width: 30%;
         min-width: $width-left-min;
@@ -25,7 +26,6 @@ $width-right-min: 370px;
             display: flex;
             align-items: center;
             border-bottom: $width-separator-medium solid $color-separator;
-            border-left: $width-separator-medium solid $color-separator;
             background-color: $color-foreground;
             height: $height-header;
 
