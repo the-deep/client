@@ -235,14 +235,14 @@ export default class Sheet extends React.PureComponent {
         return this.props.viewMode || !leadPermissions.modify || disabled || fieldList.length <= 0;
     }
 
-    cellRendererParams = ({ datum, column: { value: { type, id, options } } }) => ({
+    cellRendererParams = ({ datum, column: { value: { type, id /* , options */ } } }) => ({
         className: _cs(styles[type], styles.cell),
         value: (!datum[id].invalid && !datum[id].empty)
             ? Sheet.getValueByType(type, datum[id])
             : datum[id].value,
         invalid: datum[id].invalid,
         empty: datum[id].empty,
-        options,
+        // options,
     })
 
     headerRendererParams = ({ column, columnKey }) => {
