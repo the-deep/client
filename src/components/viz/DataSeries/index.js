@@ -104,8 +104,8 @@ const GRAPH_DETAILS = {
 };
 
 const colorRange = [
-    '#008975',
-    '#008975',
+    '#cce7e3',
+    '#cce7e3',
 ];
 
 const Tab = ({

@@ -76,6 +76,7 @@ const initialSiloDomainData = {
                 uiState: {
                     error: true,
                     pristine: false,
+                    tabularIgnored: true,
                 },
             },
             */

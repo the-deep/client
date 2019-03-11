@@ -349,6 +349,7 @@ export default class LeadFormItem extends React.PureComponent {
         lead,
         className,
         key,
+        tabularIgnored,
     }) => {
         const type = leadAccessor.getType(lead);
         const values = leadAccessor.getFaramValues(lead);
@@ -388,6 +389,7 @@ export default class LeadFormItem extends React.PureComponent {
                                 tabularBook={values.tabularBook}
                                 className={styles.galleryFile}
                                 projectId={projectId}
+                                tabularIgnored={tabularIgnored}
                                 onTabularButtonClick={this.handleTabularButtonClick}
                             />
                         ) : (
@@ -433,6 +435,9 @@ export default class LeadFormItem extends React.PureComponent {
                 project: projectId,
                 sourceType,
                 tabularBook,
+            } = {},
+            uiState: {
+                tabularIgnored,
             } = {},
         } = lead;
 
@@ -517,6 +522,7 @@ export default class LeadFormItem extends React.PureComponent {
                                 key={tabularChangeKey}
                                 lead={lead}
                                 className={styles.leadPreview}
+                                tabularIgnored={tabularIgnored}
                             />
                         )
                     }

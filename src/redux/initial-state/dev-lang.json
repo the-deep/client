@@ -912,13 +912,14 @@
         "-2259035": "Extracting tabular data",
         "-13659065": "Couldn't extract tabular information.",
         "-52729578": "Last saved on {value}",
-        "-40920464": "Click to extract to tabular format. This will allow you to tag the dimensions of {title}.",
+        "-40920464": "To tag the dimensions of \"{title}\", you can extract to tabular format.",
         "-49732387": "Tabular - {title}",
         "-99678591": "We’re busy processing your tabular data and should be done shortly depending on the size of the file. If you still see this message after a few minutes, send us a message through {zendeskLink}.",
         "-82516607": "this form",
         "-57170437": "Regions present in this project",
         "-65526481": "Failed to fetch region/admin levels of this project.",
-        "-69836040": "There are no regions in this project."
+        "-69836040": "There are no regions in this project.",
+        "-75298941": "Ignore"
     },
     "links": {
         "browserExtension": {
@@ -1590,7 +1591,9 @@
             "connectorSourcesTitle": 1109,
             "connectorTitle": 1100,
             "tabularButtonTitle": -4174557,
-            "extractTabularButtonTitle": -40920464
+            "extractTabularButtonTitle": 15006,
+            "ignoreTabularButtonTitle": -75298941,
+            "extractTabularHeaderTitle": -40920464
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,
