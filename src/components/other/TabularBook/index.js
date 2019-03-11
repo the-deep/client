@@ -163,10 +163,9 @@ const requests = {
         onSuccess: ({ props }) => {
             props.onDelete();
         },
-        onFailure: ({ error = {} }) => {
-            const { nonFieldErrors } = error;
-            const displayError = nonFieldErrors
-                ? nonFieldErrors.join(' ')
+        onFailure: ({ error: { faramErrors } }) => {
+            const displayError = faramErrors
+                ? faramErrors.$internal.join(' ')
                 : _ts('tabular', 'deleteFailed');
             notify.send({
                 type: notify.type.ERROR,

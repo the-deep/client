@@ -140,10 +140,10 @@ export default class InternalGallery extends React.PureComponent {
 
         this.galleryFileRequest = new GalleryFileRequest({
             setState: params => this.setState(params),
-            notifyMimeType: (mimeType) => {
+            notifyMimeType: (response) => {
                 const { onMimeTypeGet } = this.props;
                 if (onMimeTypeGet) {
-                    onMimeTypeGet(mimeType);
+                    onMimeTypeGet(response);
                 }
             },
         });

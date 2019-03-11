@@ -188,8 +188,8 @@ const requests = {
 
             onItemsPull([...users, ...userGroups]);
         },
-        onFailure: ({ params, error: { body } }) => {
-            params.setSearchError(body.$internal.join(' '));
+        onFailure: ({ params, error: { faramErrors } }) => {
+            params.setSearchError(faramErrors.$internal.join(' '));
         },
         onFatal: ({ params, error: { errorMessage } }) => {
             params.setSearchError(errorMessage);

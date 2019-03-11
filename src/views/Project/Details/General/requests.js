@@ -38,7 +38,7 @@ const requests = {
                 });
             }
         },
-        onFailure: ({ props, faramErrors }) => {
+        onFailure: ({ props, error: { faramErrors } }) => {
             props.setErrorProjectDetails({
                 faramErrors,
                 projectId: props.projectId,
@@ -64,7 +64,7 @@ const requests = {
                 project, projectId,
             });
         },
-        onFailure: ({ props, faramErrors }) => {
+        onFailure: ({ props, error: { faramErrors } }) => {
             props.setErrorProjectDetails({
                 faramErrors,
                 projectId: props.projectId,

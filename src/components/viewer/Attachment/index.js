@@ -8,7 +8,6 @@ import Cloak from '#components/general/Cloak';
 import TabularBook from '#components/other/TabularBook';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import ScrollTabs from '#rscv/ScrollTabs';
-import { mimeType as MIME_TYPES } from '#entities/lead';
 
 import _ts from '#ts';
 import _cs from '#cs';
@@ -17,10 +16,10 @@ import styles from './styles.scss';
 const TAB_TABULAR = 'tabular';
 const TAB_ORIGINAL = 'original';
 
-const tabularCompatibleMimeTypes = [
+const tabularCompatibleFileTypes = [
     'xls',
     'xlsx',
-    'xlsx2',
+    // 'xlsx2',
     'csv',
     'ods',
 ];
@@ -57,7 +56,7 @@ export default class Attachment extends React.PureComponent {
 
         this.state = {
             activeTab: TAB_TABULAR,
-            attachmentMimeType: undefined,
+            response: {},
         };
 
         this.views = {
@@ -108,19 +107,19 @@ export default class Attachment extends React.PureComponent {
         };
     }
 
-    isTabularCompatible = memoize((mimeType) => {
-        if (!mimeType) {
+    isTabularCompatible = memoize((fileType) => {
+        if (!fileType) {
             return false;
         }
 
-        return tabularCompatibleMimeTypes.some(m => MIME_TYPES[m] === mimeType);
+        return tabularCompatibleFileTypes.some(m => m === fileType);
     });
 
     handleTabularButtonClick = () => {
         const { onTabularButtonClick } = this.props;
-        const { attachmentMimeType } = this.state;
+        const { response } = this.state;
         if (onTabularButtonClick) {
-            onTabularButtonClick(attachmentMimeType);
+            onTabularButtonClick(response);
         }
     }
 
@@ -128,16 +127,25 @@ export default class Attachment extends React.PureComponent {
         this.setState({ activeTab });
     };
 
-    handleAttachmentMimeTypeGet = (mimeType) => {
+    handleAttachmentMimeTypeGet = (response) => {
+        const {
+            title = '',
+        } = response;
+        const fileType = title.toLowerCase().match(/(?:\.([^.]+))?$/)[1];
+        const newResponse = {
+            ...response,
+            fileType,
+        };
+
         this.setState({
-            attachmentMimeType: mimeType,
+            response: newResponse,
         });
     }
 
     isExtractable = () => {
         const { viewOnly } = this.props;
-        const { attachmentMimeType } = this.state;
-        return !viewOnly && this.isTabularCompatible(attachmentMimeType);
+        const { response } = this.state;
+        return !viewOnly && this.isTabularCompatible(response.fileType);
     }
 
     shouldHideTabularButton = ({ isEarlyAccess }) => {

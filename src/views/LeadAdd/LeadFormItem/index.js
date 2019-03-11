@@ -136,15 +136,18 @@ export default class LeadFormItem extends React.PureComponent {
 
         this.setState({
             showTabularModal: false,
-            tabularMimeType: undefined,
+            tabularFileType: undefined,
             tabularChangeKey: tabularChangeKey + 1,
         });
     }
 
-    handleTabularButtonClick = (mimeType) => {
+    handleTabularButtonClick = (response) => {
+        const {
+            fileType,
+        } = response;
         this.setState({
             showTabularModal: true,
-            tabularMimeType: mimeType,
+            tabularFileType: fileType,
         });
     }
 
@@ -415,7 +418,7 @@ export default class LeadFormItem extends React.PureComponent {
         const {
             showAddLeadGroupModal,
             showTabularModal,
-            tabularMimeType,
+            tabularFileType,
             isTabularCapable,
             isUrlValid,
             pendingExtraction,
@@ -477,7 +480,7 @@ export default class LeadFormItem extends React.PureComponent {
                             ) : (
                                 <LeadTabular
                                     className={styles.leadTabular}
-                                    mimeType={tabularMimeType}
+                                    fileType={tabularFileType}
                                     setTabularBook={this.handleTabularBookSet}
                                     onCancel={this.handleTabularModalClose}
                                     lead={lead}
