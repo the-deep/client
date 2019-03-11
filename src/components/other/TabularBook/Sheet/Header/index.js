@@ -48,6 +48,7 @@ export default class Header extends React.PureComponent {
         isFieldDeletePending: PropTypes.bool,
         isFieldEditPending: PropTypes.bool,
         viewMode: PropTypes.bool,
+        projectRegions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     };
 
     static defaultProps = {
@@ -58,6 +59,7 @@ export default class Header extends React.PureComponent {
         isFieldEditPending: false,
         filterValue: undefined,
         viewMode: false,
+        projectRegions: {},
     };
 
     shouldHideEditButton = ({ leadPermissions }) => (
@@ -89,6 +91,7 @@ export default class Header extends React.PureComponent {
             isFieldEditPending,
             onFieldDelete,
             onFieldEdit,
+            projectRegions,
         } = this.props;
 
         const iconNameMapping = {
@@ -141,6 +144,7 @@ export default class Header extends React.PureComponent {
                                         value={value}
                                         onFieldDelete={onFieldDelete}
                                         onFieldEdit={onFieldEdit}
+                                        projectRegions={projectRegions}
                                     />
                                 }
                             />

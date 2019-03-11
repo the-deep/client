@@ -15,6 +15,18 @@
         }
     }
 
+    .info-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .info-icon {
+            cursor: pointer;
+            color: $color-primary;
+            font-size: $font-size-large;
+        }
+    }
+
     .action-buttons {
         display: flex;
         justify-content: flex-end;

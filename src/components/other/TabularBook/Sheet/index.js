@@ -49,6 +49,7 @@ const propTypes = {
         options: PropTypes.object,
     }),
     sheetId: PropTypes.number.isRequired,
+    projectRegions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     onSheetOptionsChange: PropTypes.func.isRequired,
     onFieldRetrieve: PropTypes.func.isRequired,
     onFieldDelete: PropTypes.func.isRequired,
@@ -69,6 +70,7 @@ const defaultProps = {
     disabled: false,
     isFieldRetrievePending: false,
     viewMode: false,
+    projectRegions: {},
 };
 
 const comparators = {
@@ -250,28 +252,35 @@ export default class Sheet extends React.PureComponent {
         const fieldId = Number(columnKey);
 
         const {
-            sheet: {
-                options: {
-                    searchTerm = {},
-                } = {},
-                fieldsStats: {
-                    [fieldId]: {
-                        healthBar,
-                    },
-                },
-            },
+            disabled,
+            sheet,
+            projectRegions,
+            fieldDeletePending,
+            fieldEditPending,
+            viewMode,
         } = this.props;
 
+        const {
+            options: {
+                searchTerm = {},
+            } = {},
+            fields,
+            fieldsStats: {
+                [fieldId]: {
+                    healthBar,
+                },
+            },
+        } = sheet;
 
-        const isFieldDeletePending = this.props.fieldDeletePending[fieldId];
-        const isFieldEditPending = this.props.fieldEditPending[fieldId];
 
-        const fieldsCount = this.getFieldsCount(this.props.sheet.fields);
+        const isFieldDeletePending = fieldDeletePending[fieldId];
+        const isFieldEditPending = fieldEditPending[fieldId];
+        const fieldsCount = this.getFieldsCount(fields);
 
         return {
             fieldId,
 
-            disabled: this.props.disabled || isFieldDeletePending || isFieldEditPending,
+            disabled: disabled || isFieldDeletePending || isFieldEditPending,
             disabledDelete: fieldsCount <= 1,
 
             onFilterChange: this.handleFilterChange,
@@ -289,7 +298,8 @@ export default class Sheet extends React.PureComponent {
             onFieldEdit: this.handleFieldEdit,
             isFieldDeletePending,
             isFieldEditPending,
-            viewMode: this.props.viewMode,
+            viewMode,
+            projectRegions,
         };
     }
 

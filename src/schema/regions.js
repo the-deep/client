@@ -154,5 +154,30 @@ const regionSchema = [];
     };
     regionSchema.push({ name, schema });
 }
+{
+    const name = 'projectRegionsAdminLevelResponse';
+    const schema = {
+        doc: {
+            name: 'Project regions admin level get',
+            description: 'Get project regions for tabular book',
+        },
+        fields: {
+            regions: {
+                arrayType: {
+                    doc: {
+                        name: 'Project regions admin level get',
+                        description: 'Get project regions for tabular book',
+                    },
+                    fields: {
+                        adminLevels: { type: 'array.adminLevel', required: false },
+                        title: { type: 'string', required: true },
+                    },
+                },
+                required: true,
+            },
+        },
+    };
+    regionSchema.push({ name, schema });
+}
 
 export default regionSchema;

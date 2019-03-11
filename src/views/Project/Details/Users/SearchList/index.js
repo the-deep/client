@@ -108,7 +108,7 @@ const SearchValueNotFound = () => {
 const requests = {
     userSearchRequest: {
         url: '/combined/',
-        schema: 'userUserGroupSearchResponse',
+        schemaName: 'userUserGroupSearchResponse',
         onMount: ({ props: { searchInputValue } }) => {
             const searchText = searchInputValue.trim();
             // FIXME: anti-pattern
