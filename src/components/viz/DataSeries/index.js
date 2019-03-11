@@ -80,7 +80,6 @@ const GRAPH_MODES = {
     geo: [GRAPH.geo],
 };
 
-
 const GRAPH_DETAILS = {
     [GRAPH.horizontalBarChart]: {
         title: _ts('components.viz.dataSeries', 'horizontalBarChartLabel'),
@@ -103,6 +102,11 @@ const GRAPH_DETAILS = {
         iconName: 'globe',
     },
 };
+
+const colorRange = [
+    '#008975',
+    '#008975',
+];
 
 const Tab = ({
     icon,
@@ -226,7 +230,7 @@ export default class DataSeries extends React.PureComponent {
                     className: styles.horizontalBarChart,
                     margins: showLegend ? chartMarginsLarge : chartMargins,
                     showAxis: showLegend,
-
+                    colorRange,
                     data: this.getHistogramData(series),
                 };
             },
