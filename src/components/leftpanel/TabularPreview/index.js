@@ -57,11 +57,18 @@ export default class TabularPreview extends React.PureComponent {
     }
 
     setBook = (response) => {
-        const filteredSheets = response.sheets.filter(sheet => !sheet.hidden);
+        const validSheets = response.sheets.filter(
+            sheet => sheet.fields.length > 0,
+        );
+
         const sheets = listToMap(
-            response.sheets,
+            validSheets,
             sheet => sheet.id,
             sheet => sheet,
+        );
+
+        const filteredSheets = validSheets.filter(
+            sheet => !sheet.hidden,
         );
 
         const tabs = listToMap(
