@@ -203,6 +203,7 @@ export default class TabularBook extends React.PureComponent {
         super(props);
         this.state = {
             originalSheets: undefined,
+            entryCount: 0,
 
             isSomePending: false,
             lastSavedDate: undefined,
@@ -298,18 +299,29 @@ export default class TabularBook extends React.PureComponent {
             viewMode,
         } = this.props;
 
-        const { project } = response;
-        if (!viewMode) {
-            projectRegionsRequest.do({ project });
-        }
+        const {
+            project,
+            sheets,
+            entryCount,
+        } = response;
+
+        console.warn(response);
+
         this.setState(
-            { originalSheets: response.sheets },
+            {
+                originalSheets: sheets,
+                entryCount,
+            },
             () => {
                 if (onComplete) {
                     onComplete();
                 }
             },
         );
+
+        if (!viewMode) {
+            projectRegionsRequest.do({ project });
+        }
     }
 
     handleBookDelete = () => {
@@ -840,6 +852,7 @@ export default class TabularBook extends React.PureComponent {
         const {
             isSomePending,
             lastSavedDate,
+            entryCount,
         } = this.state;
 
         const className = _cs(
@@ -901,7 +914,7 @@ export default class TabularBook extends React.PureComponent {
                                     <DangerConfirmButton
                                         iconName="delete"
                                         onClick={this.handleBookDelete}
-                                        confirmationMessage={_ts('tabular', 'deleteMessage')}
+                                        confirmationMessage={_ts('tabular', 'deleteMessage', { count: entryCount })}
                                         disabled={disabled || isSomePending}
                                     >
                                         {_ts('tabular', 'deleteButtonLabel')}
