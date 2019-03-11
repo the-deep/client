@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import produce from 'immer';
+import memoize from 'memoize-one';
 
 import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
@@ -120,42 +121,6 @@ const transformSheet = (sheet) => {
     return newSheet;
 };
 
-// TODO: memoize this
-const transformSheets = (originalSheets) => {
-    const sheets = listToMap(
-        originalSheets,
-        sheet => sheet.id,
-        transformSheet,
-    );
-
-    const filteredSheets = originalSheets.filter(sheet => !sheet.hidden);
-    const tabs = listToMap(
-        filteredSheets,
-        sheet => sheet.id,
-        sheet => sheet.title,
-    );
-
-    // NOTE: at least one sheet should be available
-    const firstKey = Object.keys(tabs)[0];
-
-    return {
-        sheets,
-        tabs,
-        // NOTE: activeSheet was taken from Object.keys, so it is a strina
-        firstTab: (firstKey !== undefined) && Number(firstKey),
-    };
-};
-
-// TODO: memoize this
-const getDeletedSheets = sheets => mapToList(
-    sheets,
-    s => ({
-        title: s.title,
-        id: s.id,
-        hidden: s.hidden,
-    }),
-).filter(s => s.hidden);
-
 const requests = {
     deleteRequest: {
         method: requestMethods.DELETE,
@@ -246,6 +211,41 @@ export default class TabularBook extends React.PureComponent {
     componentWillUnmount() {
         this.coordinator.stop();
     }
+
+    getTransformSheets = memoize((originalSheets) => {
+        const sheets = listToMap(
+            originalSheets,
+            sheet => sheet.id,
+            transformSheet,
+        );
+
+        const filteredSheets = originalSheets.filter(sheet => !sheet.hidden);
+        const tabs = listToMap(
+            filteredSheets,
+            sheet => sheet.id,
+            sheet => sheet.title,
+        );
+
+        // NOTE: at least one sheet should be available
+        const firstKey = Object.keys(tabs)[0];
+
+        return {
+            sheets,
+            tabs,
+            // NOTE: activeSheet was taken from Object.keys, so it is a strina
+            firstTab: (firstKey !== undefined) && Number(firstKey),
+        };
+    });
+
+    getDeletedSheets = memoize(sheets => mapToList(
+        sheets,
+        s => ({
+            title: s.title,
+            id: s.id,
+            hidden: s.hidden,
+        }),
+    ).filter(s => s.hidden));
+
 
     shouldHideEditButton = ({ leadPermissions }) => (
         this.props.viewMode || !leadPermissions.modify
@@ -601,8 +601,9 @@ export default class TabularBook extends React.PureComponent {
     tabsRenderer = ({
         title, className, sheetId, onClick, deletePending, editPending, originalSheets,
     }) => {
-        const { tabs, sheets } = transformSheets(originalSheets);
-        // FIXME: memoize this
+        const { tabs, sheets } = this.getTransformSheets(originalSheets);
+
+        // TODO: memoize this
         const tabKeys = Object.keys(tabs);
 
         const sheet = sheets[sheetId];
@@ -700,9 +701,9 @@ export default class TabularBook extends React.PureComponent {
             sheets,
             tabs,
             firstTab,
-        } = transformSheets(originalSheets);
+        } = this.getTransformSheets(originalSheets);
 
-        const sheetList = getDeletedSheets(sheets);
+        const sheetList = this.getDeletedSheets(sheets);
 
         const activeSheetKey = (!activeSheet || !sheets[activeSheet] || sheets[activeSheet].hidden)
             ? firstTab
