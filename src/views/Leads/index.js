@@ -503,7 +503,7 @@ export default class Leads extends React.PureComponent {
             tabularBook,
         } = row;
 
-        const icon = (tabularBook && 'table')
+        const icon = (tabularBook && 'tabularIcon')
             || (attachment && leadTypeIconMap[attachment.mimeType])
             || (rowUrl && 'globe')
             || 'documentText';
