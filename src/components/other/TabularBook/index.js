@@ -8,7 +8,6 @@ import WarningButton from '#rsca/Button/WarningButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import modalize from '#rscg/Modalize';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import Spinner from '#rscz/Spinner';
 import Message from '#rscv/Message';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
@@ -304,8 +303,6 @@ export default class TabularBook extends React.PureComponent {
             sheets,
             entryCount,
         } = response;
-
-        console.warn(response);
 
         this.setState(
             {
