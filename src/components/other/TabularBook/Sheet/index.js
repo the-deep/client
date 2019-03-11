@@ -102,7 +102,7 @@ export default class Sheet extends React.PureComponent {
     static keySelector = datum => datum.key;
 
     static getValueByType = (type, obj) => {
-        if (type === DATA_TYPE.number) {
+        if (type === DATA_TYPE.number || type === DATA_TYPE.datetime) {
             return obj.processedValue;
         }
         return obj.value;

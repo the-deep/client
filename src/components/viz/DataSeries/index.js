@@ -74,8 +74,8 @@ const GRAPH = {
 };
 
 const GRAPH_MODES = {
-    string: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart, GRAPH.wordCloud],
-    datetime: [GRAPH.horizontalBarChart, GRAPH.verticalBarChart],
+    string: [GRAPH.verticalBarChart, GRAPH.horizontalBarChart, GRAPH.wordCloud],
+    datetime: [GRAPH.verticalBarChart, GRAPH.horizontalBarChart],
     number: [GRAPH.histogram],
     geo: [GRAPH.geo],
 };

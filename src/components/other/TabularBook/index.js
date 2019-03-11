@@ -8,7 +8,6 @@ import WarningButton from '#rsca/Button/WarningButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import modalize from '#rscg/Modalize';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import Spinner from '#rscz/Spinner';
 import Message from '#rscv/Message';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
@@ -203,6 +202,7 @@ export default class TabularBook extends React.PureComponent {
         super(props);
         this.state = {
             originalSheets: undefined,
+            entryCount: 0,
 
             isSomePending: false,
             lastSavedDate: undefined,
@@ -298,18 +298,27 @@ export default class TabularBook extends React.PureComponent {
             viewMode,
         } = this.props;
 
-        const { project } = response;
-        if (!viewMode) {
-            projectRegionsRequest.do({ project });
-        }
+        const {
+            project,
+            sheets,
+            entryCount,
+        } = response;
+
         this.setState(
-            { originalSheets: response.sheets },
+            {
+                originalSheets: sheets,
+                entryCount,
+            },
             () => {
                 if (onComplete) {
                     onComplete();
                 }
             },
         );
+
+        if (!viewMode) {
+            projectRegionsRequest.do({ project });
+        }
     }
 
     handleBookDelete = () => {
@@ -840,6 +849,7 @@ export default class TabularBook extends React.PureComponent {
         const {
             isSomePending,
             lastSavedDate,
+            entryCount,
         } = this.state;
 
         const className = _cs(
@@ -901,7 +911,7 @@ export default class TabularBook extends React.PureComponent {
                                     <DangerConfirmButton
                                         iconName="delete"
                                         onClick={this.handleBookDelete}
-                                        confirmationMessage={_ts('tabular', 'deleteMessage')}
+                                        confirmationMessage={_ts('tabular', 'deleteMessage', { count: entryCount })}
                                         disabled={disabled || isSomePending}
                                     >
                                         {_ts('tabular', 'deleteButtonLabel')}

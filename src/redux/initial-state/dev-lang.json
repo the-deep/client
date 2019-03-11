@@ -687,7 +687,7 @@
         "13002": "Pages",
         "13003": "Showing {leadsCount} leads out of {totalLeadsCount}",
         "15000": "Quantitative",
-        "15001": "Are you sure you want to delete these table sheets? All changes will be lost.",
+        "15001": "Are you sure you want to delete these tabular sheets? {count} entries will be deleted.",
         "15003": "Separator",
         "15004": "Delimiter",
         "15005": "File type",
