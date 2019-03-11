@@ -706,21 +706,25 @@ export default class TabularBook extends React.PureComponent {
         if (!completed) {
             return (
                 <div className={styles.extractionProcess} >
-                    <Spinner loading />
-                    <div className={styles.processingText} >
-                        {_ts('tabular', 'processing', {
-                            zendeskLink: (
-                                <button
-                                    className={styles.joinLink}
-                                    onClick={this.handleZeClick}
-                                    title={zendeskLinkTitle}
-                                    type="button"
-                                >
-                                    {zendeskTitle}
-                                </button>
-                            ),
-                        })}
-                    </div>
+                    <LoadingAnimation
+                        message={
+                            <div className={styles.processingText} >
+                                {_ts('tabular', 'processing', {
+                                    zendeskLink: (
+                                        <button
+                                            className={styles.joinLink}
+                                            onClick={this.handleZeClick}
+                                            title={zendeskLinkTitle}
+                                            type="button"
+                                        >
+                                            {zendeskTitle}
+                                        </button>
+                                    ),
+                                })}
+                            </div>
+                        }
+                        delay={5000}
+                    />
                 </div>
             );
         }
