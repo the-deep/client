@@ -92,10 +92,10 @@ export default class Header extends React.PureComponent {
         } = this.props;
 
         const iconNameMapping = {
-            [DATA_TYPE.string]: 'text',
-            [DATA_TYPE.number]: 'calculator',
+            [DATA_TYPE.string]: 'stringIcon',
+            [DATA_TYPE.number]: 'numericalIcon',
             [DATA_TYPE.geo]: 'globe',
-            [DATA_TYPE.datetime]: 'calendar',
+            [DATA_TYPE.datetime]: 'dateIcon',
         };
 
         const icon = iconNameMapping[value.type];

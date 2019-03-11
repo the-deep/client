@@ -77,11 +77,11 @@ const GRAPH_MODES = {
 const GRAPH_DETAILS = {
     [GRAPH.horizontalBarChart]: {
         title: _ts('components.viz.dataSeries', 'horizontalBarChartLabel'),
-        iconName: 'horizontalBar',
+        iconName: 'horizontalbarIcon',
     },
     [GRAPH.verticalBarChart]: {
         title: _ts('components.viz.dataSeries', 'verticalBarChartLabel'),
-        iconName: 'verticalBar',
+        iconName: 'verticalbarIcon',
     },
     [GRAPH.histogram]: {
         title: _ts('components.viz.dataSeries', 'histogramLabel'),
@@ -89,7 +89,7 @@ const GRAPH_DETAILS = {
     },
     [GRAPH.wordCloud]: {
         title: _ts('components.viz.dataSeries', 'wordCloudLabel'),
-        iconName: 'word',
+        iconName: 'wordcloudIcon',
     },
     [GRAPH.geo]: {
         title: _ts('components.viz.dataSeries', 'geoLabel'),
