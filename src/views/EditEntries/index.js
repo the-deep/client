@@ -178,7 +178,7 @@ export default class EditEntries extends React.PureComponent {
                     />
                 ),
                 wrapContainer: true,
-                lazyMount: true,
+                lazyMount: false,
                 mount: true,
             },
 
