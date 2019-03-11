@@ -143,7 +143,7 @@ export default class Region extends React.PureComponent {
             'fill-opacity': 0.2,
         },
         showTooltip: true,
-        tooltipProperty: 'title',
+        tooltipProperty: 'tooltip',
     }))
 
     calcPointPaint = memoize(() => ({
@@ -195,6 +195,8 @@ export default class Region extends React.PureComponent {
             const newFeature = { ...f };
             // eslint-disable-next-line no-param-reassign
             f.properties.count = frequency[featurePk] || 0;
+            // eslint-disable-next-line no-param-reassign
+            f.properties.tooltip = `${f.properties.title} - ${frequency[featurePk] || 0}`;
             newFeatures.push(newFeature);
         });
         return ({
