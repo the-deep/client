@@ -33,6 +33,7 @@ import TriggerAndPoll from '#components/general/TriggerAndPoll';
 
 import {
     createUrlForSheetEdit,
+    createUrlForProjectRegions,
     createParamsForSheetEdit,
     createUrlForSheetDelete,
     createParamsForSheetDelete,
@@ -148,6 +149,27 @@ const requests = {
             });
         },
     },
+    projectRegionsRequest: {
+        method: requestMethods.GET,
+        schemaName: 'projectRegionsAdminLevelResponse',
+        url: ({ params }) => createUrlForProjectRegions(params.project, ['admin_levels', 'title']),
+        onFailure: () => {
+            notify.send({
+                type: notify.type.ERROR,
+                title: _ts('tabular', 'tabularBookTitle'),
+                message: _ts('tabular', 'regionDetailsFetchFailed'),
+                duration: notify.duration.SLOW,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                type: notify.type.ERROR,
+                title: _ts('tabular', 'tabularBookTitle'),
+                message: _ts('tabular', 'regionDetailsFetchFailed'),
+                duration: notify.duration.SLOW,
+            });
+        },
+    },
 };
 
 const propTypes = {
@@ -158,6 +180,8 @@ const propTypes = {
     onCancel: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
 
     deleteRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/forbid-prop-types
+    projectRegionsRequest: PropTypes.object.isRequired,
     viewMode: PropTypes.bool,
     isModal: PropTypes.bool,
 };
@@ -269,6 +293,15 @@ export default class TabularBook extends React.PureComponent {
     }
 
     handleBookGet = (response, onComplete) => {
+        const {
+            projectRegionsRequest,
+            viewMode,
+        } = this.props;
+
+        const { project } = response;
+        if (!viewMode) {
+            projectRegionsRequest.do({ project });
+        }
         this.setState(
             { originalSheets: response.sheets },
             () => {
@@ -673,26 +706,35 @@ export default class TabularBook extends React.PureComponent {
         if (!completed) {
             return (
                 <div className={styles.extractionProcess} >
-                    <Spinner loading />
-                    <div className={styles.processingText} >
-                        {_ts('tabular', 'processing', {
-                            zendeskLink: (
-                                <button
-                                    className={styles.joinLink}
-                                    onClick={this.handleZeClick}
-                                    title={zendeskLinkTitle}
-                                    type="button"
-                                >
-                                    {zendeskTitle}
-                                </button>
-                            ),
-                        })}
-                    </div>
+                    <LoadingAnimation
+                        message={
+                            <div className={styles.processingText} >
+                                {_ts('tabular', 'processing', {
+                                    zendeskLink: (
+                                        <button
+                                            className={styles.joinLink}
+                                            onClick={this.handleZeClick}
+                                            title={zendeskLinkTitle}
+                                            type="button"
+                                        >
+                                            {zendeskTitle}
+                                        </button>
+                                    ),
+                                })}
+                            </div>
+                        }
+                        delay={5000}
+                    />
                 </div>
             );
         }
 
-        const { viewMode } = this.props;
+        const {
+            viewMode,
+            projectRegionsRequest: {
+                response: projectRegions,
+            },
+        } = this.props;
 
         const {
             originalSheets,
@@ -746,6 +788,7 @@ export default class TabularBook extends React.PureComponent {
                             fieldEditPending={fieldEditPending}
                             onFieldEdit={this.handleFieldEdit}
                             viewMode={viewMode}
+                            projectRegions={projectRegions}
                         />
                     )
                 }
@@ -864,6 +907,7 @@ export default class TabularBook extends React.PureComponent {
                                         {_ts('tabular', 'deleteButtonLabel')}
                                     </DangerConfirmButton>
                                 }
+                                renderOnHide={<div />}
                             />
                             <Button
                                 onClick={onCancel}

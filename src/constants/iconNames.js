@@ -50,6 +50,7 @@ const iconNames = {
     histogram: 'ion-arrow-graph-up-right',
     horizontalBar: 'ion-navicon',
     info: 'ion-ios-information',
+    infoOutline: 'ion-ios-information-outline',
     jpeg: 'fa fa-file-image-o',
     jpg: 'fa fa-file-image-o',
     json: 'fa fa-file-code-o',

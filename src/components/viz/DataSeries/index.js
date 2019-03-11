@@ -53,6 +53,13 @@ const chartMargins = {
     left: 2,
 };
 
+const chartMarginsLarge = {
+    top: 12,
+    right: 2,
+    bottom: 36,
+    left: 36,
+};
+
 const frequencySelector = d => d.count;
 const valueSelector = d => d.value;
 
@@ -72,7 +79,6 @@ const GRAPH_MODES = {
     number: [GRAPH.histogram],
     geo: [GRAPH.geo],
 };
-
 
 const GRAPH_DETAILS = {
     [GRAPH.horizontalBarChart]: {
@@ -96,6 +102,11 @@ const GRAPH_DETAILS = {
         iconName: 'globe',
     },
 };
+
+const colorRange = [
+    '#008975',
+    '#008975',
+];
 
 const Tab = ({
     icon,
@@ -217,8 +228,9 @@ export default class DataSeries extends React.PureComponent {
                 } = this.props;
                 return {
                     className: styles.horizontalBarChart,
-                    margins: chartMargins,
-
+                    margins: showLegend ? chartMarginsLarge : chartMargins,
+                    showAxis: showLegend,
+                    colorRange,
                     data: this.getHistogramData(series),
                 };
             },

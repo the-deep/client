@@ -49,6 +49,7 @@ const propTypes = {
         options: PropTypes.object,
     }),
     sheetId: PropTypes.number.isRequired,
+    projectRegions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     onSheetOptionsChange: PropTypes.func.isRequired,
     onFieldRetrieve: PropTypes.func.isRequired,
     onFieldDelete: PropTypes.func.isRequired,
@@ -69,6 +70,7 @@ const defaultProps = {
     disabled: false,
     isFieldRetrievePending: false,
     viewMode: false,
+    projectRegions: {},
 };
 
 const comparators = {
@@ -115,7 +117,11 @@ export default class Sheet extends React.PureComponent {
     ))
 
     getFilterCriteria = (datum, searchTerm = emptyObject) => {
-        const { sheet, viewMode } = this.props;
+        const {
+            sheet,
+            viewMode,
+            projectRegions,
+        } = this.props;
         const {
             fields,
             options: {
@@ -128,11 +134,12 @@ export default class Sheet extends React.PureComponent {
 
         const columns = this.getSheetColumns(
             fields,
-            oldSearchTerm,
             fieldStats,
             fieldDeletePending,
             fieldEditPending,
             viewMode,
+            projectRegions,
+            oldSearchTerm,
         );
 
         return columns.every((sheetColumn) => {
@@ -189,10 +196,17 @@ export default class Sheet extends React.PureComponent {
         });
     }
 
-    // NOTE: searchTerm, healthBar is used inside this.headerRendererParams
+    // NOTE: searchTerm, projectRegions is used inside this.headerRendererParams
     getSheetColumns = memoize((
+        fields,
+        fieldStats,
+        fieldDeletePending,
+        fieldEditPending,
+        viewMode,
         // eslint-disable-next-line no-unused-vars
-        fields, searchTerm, fieldStats, fieldDeletePending, fieldEditPending, viewMode,
+        projectRegions,
+        // eslint-disable-next-line no-unused-vars
+        searchTerm,
     ) => (
         fields
             .filter(field => !field.hidden)
@@ -250,28 +264,35 @@ export default class Sheet extends React.PureComponent {
         const fieldId = Number(columnKey);
 
         const {
-            sheet: {
-                options: {
-                    searchTerm = {},
-                } = {},
-                fieldsStats: {
-                    [fieldId]: {
-                        healthBar,
-                    },
-                },
-            },
+            disabled,
+            sheet,
+            projectRegions,
+            fieldDeletePending,
+            fieldEditPending,
+            viewMode,
         } = this.props;
 
+        const {
+            options: {
+                searchTerm = {},
+            } = {},
+            fields,
+            fieldsStats: {
+                [fieldId]: {
+                    healthBar,
+                },
+            },
+        } = sheet;
 
-        const isFieldDeletePending = this.props.fieldDeletePending[fieldId];
-        const isFieldEditPending = this.props.fieldEditPending[fieldId];
 
-        const fieldsCount = this.getFieldsCount(this.props.sheet.fields);
+        const isFieldDeletePending = fieldDeletePending[fieldId];
+        const isFieldEditPending = fieldEditPending[fieldId];
+        const fieldsCount = this.getFieldsCount(fields);
 
         return {
             fieldId,
 
-            disabled: this.props.disabled || isFieldDeletePending || isFieldEditPending,
+            disabled: disabled || isFieldDeletePending || isFieldEditPending,
             disabledDelete: fieldsCount <= 1,
 
             onFilterChange: this.handleFilterChange,
@@ -289,7 +310,8 @@ export default class Sheet extends React.PureComponent {
             onFieldEdit: this.handleFieldEdit,
             isFieldDeletePending,
             isFieldEditPending,
-            viewMode: this.props.viewMode,
+            viewMode,
+            projectRegions,
         };
     }
 
@@ -388,6 +410,7 @@ export default class Sheet extends React.PureComponent {
             isFieldRetrievePending,
             fieldDeletePending,
             fieldEditPending,
+            projectRegions,
             viewMode,
         } = this.props;
 
@@ -395,11 +418,12 @@ export default class Sheet extends React.PureComponent {
 
         const columns = this.getSheetColumns(
             fields,
-            searchTerm,
             fieldsStats,
             fieldDeletePending,
             fieldEditPending,
             viewMode,
+            projectRegions,
+            searchTerm,
         );
 
         const fieldList = this.getDeletedFields(fields);

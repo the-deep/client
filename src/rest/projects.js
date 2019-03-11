@@ -13,6 +13,7 @@ export const createUrlForProjectJoin = projectId => `${wsEndpoint}/projects/${pr
 export const createUrlForProjectJoinCancel = projectId => `${wsEndpoint}/projects/${projectId}/join/cancel/`;
 export const createUrlForProjectOptions = params =>
     `${wsEndpoint}/project-options/?${p(params)}`;
+export const createUrlForProjectRegions = (projectId, fields) => `${wsEndpoint}/projects/${projectId}/regions/?${p({ fields })}`;
 
 export const urlForProjectUserGroup = `${wsEndpoint}/project-usergroups/`;
 export const createUrlForProjectUserGroupGet = project => `${wsEndpoint}/project-usergroups/?${p({ project })}`;

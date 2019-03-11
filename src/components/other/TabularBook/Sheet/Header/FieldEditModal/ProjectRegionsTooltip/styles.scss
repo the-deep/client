@@ -1,0 +1,31 @@
+@import '~base-scss/base';
+
+.tooltip {
+    .heading {
+        padding: $spacing-small;
+        padding-bottom: 0;
+    }
+
+    .admin-level {
+        display: flex;
+        border-bottom: $width-separator-thin solid $color-separator;
+        padding: $spacing-extra-small $spacing-medium;
+
+        .level {
+            &:after {
+                padding: 0 $spacing-small;
+                content: '-';
+            }
+        }
+
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+
+    .group {
+        &:not(:first-child) {
+            border-top: $width-separator-thin solid $color-separator;
+        }
+    }
+}
