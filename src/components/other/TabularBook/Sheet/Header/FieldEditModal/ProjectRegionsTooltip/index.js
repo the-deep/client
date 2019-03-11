@@ -38,25 +38,24 @@ const groupRendererParams = groupKey => ({
 const adminLevelKeySelector = adminLevel => adminLevel.key;
 const groupKeySelector = adminLevel => adminLevel.regionTitle;
 
-const emptyObject = {};
 const emptyList = [];
 
 export default class ProjectRegionsTooltip extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getFlatAdminLevels = memoize((regions) => {
-        let adminLevels = [];
-        regions.forEach((r = emptyObject) => {
-            const newAdminLevels = (r.adminLevels || emptyList).map(a => ({
-                ...a,
-                regionTitle: r.title,
-                key: `${r.title}-${a.id}`,
-            }));
-            adminLevels = [...adminLevels, ...newAdminLevels];
-        });
-        return adminLevels;
-    });
+    getFlatAdminLevels = memoize(regions => (
+        regions
+            .map(
+                region => (region.adminLevels || emptyList).map(
+                    adminLevel => ({
+                        ...adminLevel,
+                        regionTitle: region.title,
+                        key: `${region.title}-${adminLevel.id}`,
+                    }),
+                ),
+            ).flat()
+    ));
 
     adminLevelRendererParams = (key, data) => ({
         title: data.title,
@@ -67,21 +66,28 @@ export default class ProjectRegionsTooltip extends React.PureComponent {
     render() {
         const { regions } = this.props;
         const adminLevels = this.getFlatAdminLevels(regions);
+        const noAdminLevels = adminLevels.length === 0;
 
         return (
             <div className={styles.tooltip}>
-                <span>
-                    {_ts('tabular', 'regionAdminLevelsInfo')}
-                </span>
-                <ListView
-                    data={adminLevels}
-                    renderer={AdminLevel}
-                    keySelector={adminLevelKeySelector}
-                    rendererParams={this.adminLevelRendererParams}
-                    groupKeySelector={groupKeySelector}
-                    groupRendererParams={groupRendererParams}
-                    groupRendererClassName={styles.group}
-                />
+                <h4 className={styles.heading} >
+                    {noAdminLevels ? (
+                        _ts('tabular', 'noRegionsInProject')
+                    ) : (
+                        _ts('tabular', 'regionAdminLevelsInfo')
+                    )}
+                </h4>
+                {!noAdminLevels &&
+                    <ListView
+                        data={adminLevels}
+                        renderer={AdminLevel}
+                        keySelector={adminLevelKeySelector}
+                        rendererParams={this.adminLevelRendererParams}
+                        groupKeySelector={groupKeySelector}
+                        groupRendererParams={groupRendererParams}
+                        groupRendererClassName={styles.group}
+                    />
+                }
             </div>
         );
     }

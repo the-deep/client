@@ -1,8 +1,9 @@
 @import '~base-scss/base';
 
 .tooltip {
-    >span {
-        padding: $spacing-extra-small $spacing-medium 0 $spacing-medium;
+    .heading {
+        padding: $spacing-small;
+        padding-bottom: 0;
     }
 
     .admin-level {

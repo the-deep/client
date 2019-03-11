@@ -117,7 +117,11 @@ export default class Sheet extends React.PureComponent {
     ))
 
     getFilterCriteria = (datum, searchTerm = emptyObject) => {
-        const { sheet, viewMode } = this.props;
+        const {
+            sheet,
+            viewMode,
+            projectRegions,
+        } = this.props;
         const {
             fields,
             options: {
@@ -130,11 +134,12 @@ export default class Sheet extends React.PureComponent {
 
         const columns = this.getSheetColumns(
             fields,
-            oldSearchTerm,
             fieldStats,
             fieldDeletePending,
             fieldEditPending,
             viewMode,
+            projectRegions,
+            oldSearchTerm,
         );
 
         return columns.every((sheetColumn) => {
@@ -191,10 +196,17 @@ export default class Sheet extends React.PureComponent {
         });
     }
 
-    // NOTE: searchTerm, healthBar is used inside this.headerRendererParams
+    // NOTE: searchTerm, projectRegions is used inside this.headerRendererParams
     getSheetColumns = memoize((
+        fields,
+        fieldStats,
+        fieldDeletePending,
+        fieldEditPending,
+        viewMode,
         // eslint-disable-next-line no-unused-vars
-        fields, searchTerm, fieldStats, fieldDeletePending, fieldEditPending, viewMode,
+        projectRegions,
+        // eslint-disable-next-line no-unused-vars
+        searchTerm,
     ) => (
         fields
             .filter(field => !field.hidden)
@@ -398,6 +410,7 @@ export default class Sheet extends React.PureComponent {
             isFieldRetrievePending,
             fieldDeletePending,
             fieldEditPending,
+            projectRegions,
             viewMode,
         } = this.props;
 
@@ -405,11 +418,12 @@ export default class Sheet extends React.PureComponent {
 
         const columns = this.getSheetColumns(
             fields,
-            searchTerm,
             fieldsStats,
             fieldDeletePending,
             fieldEditPending,
             viewMode,
+            projectRegions,
+            searchTerm,
         );
 
         const fieldList = this.getDeletedFields(fields);
