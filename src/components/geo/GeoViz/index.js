@@ -19,7 +19,7 @@ const propTypes = {
     regions: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.number,
         title: PropTypes.string,
-    })).isRequired,
+    })),
     adminLevel: PropTypes.number,
     showLegend: PropTypes.bool,
     valueSelector: PropTypes.func.isRequired,
@@ -30,6 +30,7 @@ const defaultProps = {
     className: '',
     adminLevel: undefined,
     data: [],
+    regions: [],
     showLegend: true,
 };
 
