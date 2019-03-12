@@ -3,6 +3,7 @@ import React, { Fragment } from 'react';
 import produce from 'immer';
 import memoize from 'memoize-one';
 
+import { forEach } from '#rsu/common';
 import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
@@ -60,6 +61,34 @@ import styles from './styles.scss';
 const WarningModalButton = modalize(WarningButton);
 const ModalButton = modalize(Button);
 
+const getFieldStat = (value) => {
+    const invalidCount = value.data.filter(x => x.invalid).length;
+    const emptyCount = value.data.filter(x => x.empty).length;
+    const totalCount = value.data.length;
+    return {
+        healthBar: [
+            {
+                key: 'valid',
+                value: totalCount - emptyCount - invalidCount,
+            },
+            {
+                key: 'invalid',
+                value: invalidCount,
+            },
+            {
+                key: 'empty',
+                value: emptyCount,
+            },
+        ],
+    };
+};
+
+const getFieldMeta = (value) => {
+    const newValue = { ...value };
+    delete newValue.data;
+    return newValue;
+};
+
 const transformSheet = (sheet) => {
     const {
         fields,
@@ -67,46 +96,24 @@ const transformSheet = (sheet) => {
         ...other
     } = sheet;
 
-    const fieldsStats = listToMap(
-        fields,
-        value => value.id,
-        (value) => {
-            const invalidCount = value.data.filter(x => x.invalid).length;
-            const emptyCount = value.data.filter(x => x.empty).length;
-            const totalCount = value.data.length;
-            return {
-                healthBar: [
-                    {
-                        key: 'valid',
-                        value: totalCount - emptyCount - invalidCount,
-                    },
-                    {
-                        key: 'invalid',
-                        value: invalidCount,
-                    },
-                    {
-                        key: 'empty',
-                        value: emptyCount,
-                    },
-                ],
-            };
-        },
-    );
-
-    const fieldsMeta = fields.map(({ data, ...others }) => others);
-
     const columns = {
         ...listToMap(fields, elem => elem.id, elem => elem.data),
         key: getNaturalNumbers(),
     };
-
     const getObjFromZippedRows = (...zippedRow) => mapToMap(
         columns,
         k => k,
         (k, v, i) => zippedRow[i],
     );
-
     const rows = [...zipWith(getObjFromZippedRows, ...mapToList(columns))];
+
+    const fieldsStats = listToMap(
+        fields,
+        value => value.id,
+        getFieldStat,
+    );
+
+    const fieldsMeta = fields.map(getFieldMeta);
 
     const newSheet = {
         rows,
@@ -120,6 +127,46 @@ const transformSheet = (sheet) => {
     };
     return newSheet;
 };
+
+const getSheets = (sheetsFromServer) => {
+    const validSheets = sheetsFromServer.filter(
+        sheet => sheet.fields.length > 0,
+    );
+
+    const sheets = listToMap(
+        validSheets,
+        sheet => sheet.id,
+        transformSheet,
+    );
+    return sheets;
+};
+
+const getTabs = (sheets) => {
+    const tabs = {
+        ...sheets,
+    };
+    forEach(tabs, (key, tab) => {
+        if (tab.hidden) {
+            delete tabs[key];
+        }
+    });
+
+    return mapToMap(
+        tabs,
+        k => k,
+        sheet => sheet.title,
+    );
+};
+
+const getTransformSheets = (sheetsFromServer) => {
+    const sheets = getSheets(sheetsFromServer);
+    const tabs = getTabs(sheets);
+    return {
+        sheets,
+        tabs,
+    };
+};
+
 
 const requests = {
     deleteRequest: {
@@ -204,7 +251,10 @@ export default class TabularBook extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            originalSheets: undefined,
+            // originalSheets: undefined,
+            sheets: undefined,
+            tabs: undefined,
+
             entryCount: 0,
 
             isSomePending: false,
@@ -240,40 +290,7 @@ export default class TabularBook extends React.PureComponent {
     }
 
     getHighlightsFromHighlightList = memoize(highlightList =>
-        listToMap(highlightList, d => d.tabularFieldId, d => d),
-    )
-
-    getTransformSheets = memoize((originalSheets) => {
-        const validSheets = originalSheets.filter(
-            sheet => sheet.fields.length > 0,
-        );
-
-        const sheets = listToMap(
-            validSheets,
-            sheet => sheet.id,
-            transformSheet,
-        );
-
-        const filteredSheets = validSheets.filter(
-            sheet => !sheet.hidden,
-        );
-
-        const tabs = listToMap(
-            filteredSheets,
-            sheet => sheet.id,
-            sheet => sheet.title,
-        );
-
-        // NOTE: at least one sheet should be available
-        const firstKey = Object.keys(tabs)[0];
-
-        return {
-            sheets,
-            tabs,
-            // NOTE: activeSheet was taken from Object.keys, so it is a strina
-            firstTab: (firstKey !== undefined) && Number(firstKey),
-        };
-    });
+        listToMap(highlightList, d => d.tabularFieldId, d => d))
 
     getDeletedSheets = memoize(sheets => mapToList(
         sheets,
@@ -307,13 +324,20 @@ export default class TabularBook extends React.PureComponent {
 
         const {
             project,
-            sheets,
+            sheets: sheetsFromServer,
             entryCount,
         } = response;
 
+        const {
+            sheets,
+            tabs,
+        } = getTransformSheets(sheetsFromServer);
+
         this.setState(
             {
-                originalSheets: sheets,
+                sheets,
+                tabs,
+                // originalSheets: sheets,
                 entryCount,
             },
             () => {
@@ -347,15 +371,14 @@ export default class TabularBook extends React.PureComponent {
                 );
             })
             .success(() => {
-                this.setState(
-                    state => produce(state, (safeState) => {
-                        const sheetIndex = safeState.originalSheets.findIndex(
-                            s => s.id === sheetId,
-                        );
+                this.setState((state) => {
+                    const newSheets = produce(state.sheets, (safeSheets) => {
                         // eslint-disable-next-line no-param-reassign
-                        safeState.originalSheets[sheetIndex].hidden = true;
-                    }),
-                );
+                        safeSheets[sheetId].hidden = true;
+                    });
+                    const newTabs = getTabs(newSheets);
+                    return { sheets: newSheets, tabs: newTabs };
+                });
             })
             .postLoad(() => {
                 this.setState(
@@ -387,18 +410,17 @@ export default class TabularBook extends React.PureComponent {
                 );
             })
             .success(() => {
-                this.setState(
-                    state => produce(state, (safeState) => {
-                        const sheetIndex = safeState.originalSheets.findIndex(
-                            s => s.id === sheetId,
-                        );
+                this.setState((state) => {
+                    const newSheets = produce(state.sheets, (safeSheets) => {
                         // eslint-disable-next-line no-param-reassign
-                        safeState.originalSheets[sheetIndex] = {
-                            ...safeState.originalSheets[sheetIndex],
+                        safeSheets[sheetId] = {
+                            ...safeSheets[sheetId],
                             ...value,
                         };
-                    }),
-                );
+                    });
+                    const newTabs = getTabs(newSheets);
+                    return { sheets: newSheets, tabs: newTabs };
+                });
             })
             .postLoad(() => {
                 this.setState(
@@ -421,11 +443,14 @@ export default class TabularBook extends React.PureComponent {
         const requestId = `sheet-save-${bookId}`;
         this.coordinator.remove(requestId);
 
-        const { originalSheets } = this.state;
-        const modification = originalSheets.map((sheet) => {
-            const { id, options } = sheet;
-            return { id, options };
-        });
+        const { sheets } = this.state;
+        const modification = mapToList(
+            sheets,
+            (sheet) => {
+                const { id, options } = sheet;
+                return { id, options };
+            },
+        );
 
         const request = new FgRestBuilder()
             .url(createUrlForSheetOptionsSave(bookId))
@@ -450,11 +475,14 @@ export default class TabularBook extends React.PureComponent {
             () => true,
         );
 
-        const { originalSheets } = this.state;
-        const modification = originalSheets.map((sheet) => {
-            const { id } = sheet;
-            return sheetIdMap[id] ? { id, hidden: false } : { id };
-        });
+        const { sheets } = this.state;
+        const modification = mapToList(
+            sheets,
+            (sheet) => {
+                const { id } = sheet;
+                return sheetIdMap[id] ? { id, hidden: false } : { id };
+            },
+        );
 
         const request = new FgRestBuilder()
             .url(createUrlForSheetRetrieve(bookId))
@@ -463,17 +491,16 @@ export default class TabularBook extends React.PureComponent {
                 this.setState({ isSheetRetrievePending: true });
             })
             .success(() => {
-                this.setState(
-                    state => produce(state, (safeState) => {
+                this.setState((state) => {
+                    const newSheets = produce(state.sheets, (safeSheets) => {
                         sheetIds.forEach((sheetId) => {
-                            const sheetIndex = safeState.originalSheets.findIndex(
-                                s => s.id === sheetId,
-                            );
                             // eslint-disable-next-line no-param-reassign
-                            safeState.originalSheets[sheetIndex].hidden = false;
+                            safeSheets[sheetId].hidden = false;
                         });
-                    }),
-                );
+                    });
+                    const newTabs = getTabs(newSheets);
+                    return { sheets: newSheets, tabs: newTabs };
+                });
             })
             .postLoad(() => {
                 this.setState(
@@ -485,6 +512,20 @@ export default class TabularBook extends React.PureComponent {
 
         this.coordinator.add(requestId, request);
         this.coordinator.start();
+    }
+
+    handleSheetOptionsChange = (sheetId, options) => {
+        clearTimeout(this.backgroundSaveTimeout);
+
+        this.setState(
+            state => produce(state, (safeState) => {
+                // eslint-disable-next-line no-param-reassign
+                safeState.sheets[sheetId].options = options;
+            }),
+            () => {
+                this.backgroundSaveTimeout = setTimeout(this.handleSheetOptionsSave, 2000);
+            },
+        );
     }
 
     handleFieldDelete = (sheetId, fieldId) => {
@@ -504,13 +545,10 @@ export default class TabularBook extends React.PureComponent {
             .success(() => {
                 this.setState(
                     state => produce(state, (safeState) => {
-                        const sheetIndex = safeState.originalSheets.findIndex(
-                            s => s.id === sheetId,
-                        );
-                        const fieldIndex = safeState.originalSheets[sheetIndex].fields
+                        const fieldIndex = safeState.sheets[sheetId].fields
                             .findIndex(f => f.id === fieldId);
                         // eslint-disable-next-line no-param-reassign
-                        safeState.originalSheets[sheetIndex].fields[fieldIndex].hidden = true;
+                        safeState.sheets[sheetId].fields[fieldIndex].hidden = true;
                     }),
                 );
             })
@@ -545,14 +583,20 @@ export default class TabularBook extends React.PureComponent {
             .success((response) => {
                 this.setState(
                     state => produce(state, (safeState) => {
-                        const sheetIndex = safeState.originalSheets.findIndex(
-                            s => s.id === sheetId,
-                        );
-                        const fieldIndex = safeState.originalSheets[sheetIndex].fields.findIndex(
+                        const fieldIndex = safeState.sheets[sheetId].fields.findIndex(
                             f => f.id === fieldId,
                         );
                         // eslint-disable-next-line no-param-reassign
-                        safeState.originalSheets[sheetIndex].fields[fieldIndex] = response;
+                        safeState.sheets[sheetId].fieldsStats[fieldId] = getFieldStat(response);
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.sheets[sheetId].fields[fieldIndex] = getFieldMeta(response);
+                        // eslint-disable-next-line no-param-reassign
+                        safeState.sheets[sheetId].rows = safeState.sheets[sheetId].rows.map(
+                            (row, index) => ({
+                                ...row,
+                                [fieldId]: response.data[index],
+                            }),
+                        );
                     }),
                 );
             })
@@ -580,12 +624,15 @@ export default class TabularBook extends React.PureComponent {
             () => true,
         );
 
-        const { originalSheets } = this.state;
-        const sheet = originalSheets.find(s => s.id === sheetId);
-        const modification = sheet.fields.map((field) => {
-            const { id } = field;
-            return fieldIdMap[id] ? { id, hidden: false } : { id };
-        });
+        const { sheets } = this.state;
+        const sheet = sheets[sheetId];
+        const modification = mapToList(
+            sheet.fields,
+            (field) => {
+                const { id } = field;
+                return fieldIdMap[id] ? { id, hidden: false } : { id };
+            },
+        );
 
         const request = new FgRestBuilder()
             .url(createUrlForFieldRetrieve(sheetId))
@@ -601,14 +648,11 @@ export default class TabularBook extends React.PureComponent {
             .success(() => {
                 this.setState(
                     state => produce(state, (safeState) => {
-                        const sheetIndex = safeState.originalSheets.findIndex(
-                            s => s.id === sheetId,
-                        );
                         fieldIds.forEach((fieldId) => {
-                            const fieldIndex = safeState.originalSheets[sheetIndex].fields
+                            const fieldIndex = safeState.sheets[sheetId].fields
                                 .findIndex(f => f.id === fieldId);
                             // eslint-disable-next-line no-param-reassign
-                            safeState.originalSheets[sheetIndex].fields[fieldIndex].hidden = false;
+                            safeState.sheets[sheetId].fields[fieldIndex].hidden = false;
                         });
                     }),
                 );
@@ -628,36 +672,22 @@ export default class TabularBook extends React.PureComponent {
         this.coordinator.start();
     }
 
-    handleSheetOptionsChange = (sheetId, options) => {
-        clearTimeout(this.backgroundSaveTimeout);
-
-        this.setState(
-            state => produce(state, (safeState) => {
-                const sheetIndex = safeState.originalSheets.findIndex(
-                    s => s.id === sheetId,
-                );
-                // eslint-disable-next-line no-param-reassign
-                safeState.originalSheets[sheetIndex].options = options;
-            }),
-            () => {
-                this.backgroundSaveTimeout = setTimeout(this.handleSheetOptionsSave, 2000);
-            },
-        );
-    }
-
     tabsRendererParams = (key, data) => ({
         title: data,
         // NOTE: sheetId was taken from key, so it is a string
         sheetId: Number(key),
         deletePending: this.state.sheetDeletePending[key],
         editPending: this.state.sheetEditPending[key],
-        originalSheets: this.state.originalSheets,
+        // originalSheets: this.state.originalSheets,
+        tabs: this.state.tabs,
+        sheets: this.state.sheets,
     })
 
     tabsRenderer = ({
-        title, className, sheetId, onClick, deletePending, editPending, originalSheets,
+        title, className, sheetId, onClick, deletePending, editPending, // originalSheets,
+        tabs, sheets,
     }) => {
-        const { tabs, sheets } = this.getTransformSheets(originalSheets);
+        // const { tabs, sheets } = this.getTransformSheets(originalSheets);
 
         // TODO: memoize this
         const tabKeys = Object.keys(tabs);
@@ -761,13 +791,22 @@ export default class TabularBook extends React.PureComponent {
             fieldRetrievePending,
             fieldDeletePending,
             fieldEditPending,
+
+            tabs,
+            sheets,
         } = this.state;
 
+        /*
         const {
             sheets,
             tabs,
             firstTab,
         } = this.getTransformSheets(originalSheets);
+        */
+
+        const firstKey = Object.keys(tabs)[0];
+        // NOTE: activeSheet was taken from Object.keys, so it is a string
+        const firstTab = (firstKey !== undefined) && Number(firstKey);
 
         const sheetList = this.getDeletedSheets(sheets);
 
@@ -828,6 +867,7 @@ export default class TabularBook extends React.PureComponent {
                                     iconName="more"
                                     title={_ts('tabular', 'sheetShowButtonTooltip')} // Other Sheets
                                     disabled={sheetList.length <= 0}
+                                    transparent
                                     pending={disabledSheetRetrieveModal}
                                     modal={
                                         <SheetRetrieveModal

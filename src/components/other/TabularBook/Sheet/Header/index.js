@@ -147,6 +147,7 @@ export default class Header extends React.PureComponent {
                         hide={this.shouldHideEditButton}
                         render={
                             <WarningModalButton
+                                className={styles.editButton}
                                 iconName="edit"
                                 transparent
                                 title={_ts('tabular.header', 'columnEditButtonTooltip')}

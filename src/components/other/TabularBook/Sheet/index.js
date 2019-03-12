@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 
+import Numeral from '#rscv/Numeral';
 import modalize from '#rscg/Modalize';
 import Button from '#rsca/Button';
 import Searchable from '#rscv/Taebul/Searchable';
@@ -465,6 +466,30 @@ export default class Sheet extends React.PureComponent {
                     >
                         {_ts('tabular.sheets', 'resetFilterTooltip')}
                     </Button>
+                    <div className={styles.infoBar}>
+                        <div className={styles.info}>
+                            <Numeral
+                                className={styles.value}
+                                value={rows.length}
+                                precision={0}
+                            />
+                            <div className={styles.label}>
+                                {/* FIXME: use strings */}
+                                rows
+                            </div>
+                        </div>
+                        <div className={styles.info}>
+                            <Numeral
+                                precision={0}
+                                className={styles.value}
+                                value={columns.length}
+                            />
+                            <div className={styles.label}>
+                                {/* FIXME: use strings */}
+                                columns
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <Taebul
                     className={styles.table}
