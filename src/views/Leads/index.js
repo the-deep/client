@@ -27,7 +27,7 @@ import {
     pathNames,
     viewsAcl,
 } from '#constants';
-import { leadTypeIconMap } from '#entities/lead';
+import { mimeTypeToIconMap } from '#entities/lead';
 import {
     activeProjectIdFromStateSelector,
     totalLeadsCountForProjectSelector,
@@ -504,7 +504,7 @@ export default class Leads extends React.PureComponent {
         } = row;
 
         const icon = (tabularBook && 'tabularIcon')
-            || (attachment && leadTypeIconMap[attachment.mimeType])
+            || (attachment && mimeTypeToIconMap[attachment.mimeType])
             || (rowUrl && 'globe')
             || 'documentText';
 

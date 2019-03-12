@@ -32,7 +32,7 @@ import {
     projectIdFromRouteSelector,
 } from '#redux';
 import { pathNames } from '#constants';
-import { leadTypeIconMap } from '#entities/lead';
+import { mimeTypeToIconMap } from '#entities/lead';
 import schema from '#schema';
 import notify from '#notify';
 import _ts from '#ts';
@@ -89,7 +89,7 @@ export default class UserExports extends React.PureComponent {
                     compareString(a.title, b.title)
                 ),
                 modifier: (row) => {
-                    const icon = leadTypeIconMap[row.mimeType] || 'documentText';
+                    const icon = mimeTypeToIconMap[row.mimeType] || 'documentText';
                     const url = row.file;
                     return (
                         <div className="icon-wrapper">

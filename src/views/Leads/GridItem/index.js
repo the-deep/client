@@ -13,9 +13,8 @@ import {
     pathNames,
 } from '#constants';
 import {
-    leadTypeIconMap,
-    leadPaneTypeMap,
-    LEAD_PANE_TYPE,
+    mimeTypeToIconMap,
+    mimeType,
 } from '#entities/lead';
 import _ts from '#ts';
 import { timeFrom } from '#utils/common';
@@ -93,7 +92,7 @@ export default class GridItem extends React.PureComponent {
         const { lead } = this.props;
         let icon = 'documentText';
         if (lead.attachment) {
-            icon = leadTypeIconMap[lead.attachment.mimeType];
+            icon = mimeTypeToIconMap[lead.attachment.mimeType];
         } else if (lead.url) {
             icon = 'globe';
         }
@@ -105,10 +104,11 @@ export default class GridItem extends React.PureComponent {
 
         let thumbnail = `url(${leadThumbnail})`;
 
+        const imageMimes = [mimeType.png, mimeType.jpg, mimeType.jpeg, mimeType.fig];
+
         if (lead.thumbnail) {
             thumbnail = `url(${lead.thumbnail})`;
-        } else if (lead.attachment &&
-            leadPaneTypeMap[lead.attachment.mimeType] === LEAD_PANE_TYPE.image) {
+        } else if (lead.attachment && imageMimes.includes(lead.attachment.mimeType)) {
             thumbnail = `url(${lead.attachment.file})`;
         }
 

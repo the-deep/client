@@ -9,11 +9,7 @@ import AccentButton from '#rsca/Button/AccentButton';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import ScrollTabs from '#rscv/ScrollTabs';
 
-import {
-    LEAD_TYPE,
-    LEAD_PANE_TYPE,
-    leadPaneTypeMap,
-} from '#entities/lead';
+import { LEAD_TYPE } from '#entities/lead';
 import { entryAccessor } from '#entities/editEntries';
 import ImagesGrid from '#components/viewer/ImagesGrid';
 import TabularBook from '#components/other/TabularBook';
@@ -27,7 +23,48 @@ import TabularPreview from './TabularPreview';
 import styles from './styles.scss';
 
 const AccentModalButton = modalize(AccentButton);
-const emptyObject = {};
+
+const LEAD_PANE_TYPE = {
+    txt: 'txt',
+    csv: 'csv',
+    json: 'json',
+    xml: 'xml',
+
+    word: 'word',
+    pdf: 'pdf',
+    presentation: 'presentation',
+    spreadsheet: 'spreadsheet',
+    image: 'image',
+
+    text: 'text',
+    website: 'website',
+};
+
+const fileTypeToLeadPaneTypeMap = {
+    txt: LEAD_PANE_TYPE.txt,
+    json: LEAD_PANE_TYPE.json,
+    xml: LEAD_PANE_TYPE.xml,
+
+    docx: LEAD_PANE_TYPE.word,
+    rtf: LEAD_PANE_TYPE.word,
+    otf: LEAD_PANE_TYPE.word,
+    msword: LEAD_PANE_TYPE.word,
+
+    pdf: LEAD_PANE_TYPE.pdf,
+
+    pptx: LEAD_PANE_TYPE.presentation,
+    ppt: LEAD_PANE_TYPE.presentation,
+
+    xls: LEAD_PANE_TYPE.spreadsheet,
+    xlsx: LEAD_PANE_TYPE.spreadsheet,
+    ods: LEAD_PANE_TYPE.spreadsheet,
+    csv: LEAD_PANE_TYPE.spreadsheet,
+
+    png: LEAD_PANE_TYPE.image,
+    jpg: LEAD_PANE_TYPE.image,
+    jpeg: LEAD_PANE_TYPE.image,
+    fig: LEAD_PANE_TYPE.image,
+};
 
 const propTypes = {
     projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -67,8 +104,10 @@ const getPaneType = (lead) => {
     if (!attachment) {
         return undefined;
     }
-    const { mimeType } = attachment;
-    return leadPaneTypeMap[mimeType];
+    const { title = '' } = attachment;
+    // FIXME: move this to common utils
+    const fileType = title.toLowerCase().match(/(?:\.([^.]+))?$/)[1];
+    return fileTypeToLeadPaneTypeMap[fileType];
 };
 
 // TODO: use this in assessment as well
@@ -106,8 +145,6 @@ export default class LeftPane extends React.PureComponent {
         const leadPaneType = getPaneType(lead);
         let tabs = {};
         switch (leadPaneType) {
-            case LEAD_PANE_TYPE.csv:
-                break;
             case LEAD_PANE_TYPE.spreadsheet:
                 tabs = {
                     ...tabs,
