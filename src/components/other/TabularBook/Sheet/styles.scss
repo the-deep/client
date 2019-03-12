@@ -7,9 +7,25 @@
 
     .options-bar {
         display: flex;
-        flex-direction: row-reverse;
         flex-shrink: 0;
         padding: $spacing-extra-small $spacing-small 0;
+
+        .info-bar {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: flex-end;
+
+            .info {
+                display: flex;
+                padding: 0 $spacing-medium;
+                color: $color-text-label;
+            }
+
+            .value {
+                padding-right: $spacing-extra-small;
+            }
+        }
     }
 
     .table {

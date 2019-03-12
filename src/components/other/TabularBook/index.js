@@ -867,6 +867,7 @@ export default class TabularBook extends React.PureComponent {
                                     iconName="more"
                                     title={_ts('tabular', 'sheetShowButtonTooltip')} // Other Sheets
                                     disabled={sheetList.length <= 0}
+                                    transparent
                                     pending={disabledSheetRetrieveModal}
                                     modal={
                                         <SheetRetrieveModal

@@ -27,6 +27,15 @@
             white-space: nowrap;
         }
 
+        .edit-button {
+            opacity: 0;
+        }
+
+        &:hover {
+            .edit-button {
+                opacity: 1;
+            }
+        }
     }
 
     .search-input {
