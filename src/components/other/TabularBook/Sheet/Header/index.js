@@ -48,6 +48,9 @@ export default class Header extends React.PureComponent {
         isFieldDeletePending: PropTypes.bool,
         isFieldEditPending: PropTypes.bool,
         viewMode: PropTypes.bool,
+        highlight: PropTypes.shape({
+            color: PropTypes.string,
+        }),
         projectRegions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     };
 
@@ -60,6 +63,7 @@ export default class Header extends React.PureComponent {
         filterValue: undefined,
         viewMode: false,
         projectRegions: {},
+        highlight: undefined,
     };
 
     shouldHideEditButton = ({ leadPermissions }) => (
@@ -92,7 +96,17 @@ export default class Header extends React.PureComponent {
             onFieldDelete,
             onFieldEdit,
             projectRegions,
+
+            highlight,
         } = this.props;
+
+        const style = {
+            borderTop: '3px solid transparent',
+        };
+
+        if (highlight) {
+            style.borderTop = `3px solid ${highlight.color}`;
+        }
 
         const iconNameMapping = {
             [DATA_TYPE.string]: 'stringIcon',
@@ -104,7 +118,10 @@ export default class Header extends React.PureComponent {
         const icon = iconNameMapping[value.type];
 
         return (
-            <div className={styles.header}>
+            <div
+                className={styles.header}
+                style={style}
+            >
                 <div className={styles.top}>
                     { icon &&
                         <Icon

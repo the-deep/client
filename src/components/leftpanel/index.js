@@ -369,21 +369,27 @@ export default class LeftPane extends React.PureComponent {
         this.setState({ currentTab: key });
     }
 
-    renderTabularModal = ({ closeModal }) => (
-        <Modal
-            onClose={closeModal}
-            className={styles.tabularModal}
-        >
-            <TabularBook
-                leadTitle={this.props.lead.title}
-                className={styles.tabularBook}
-                bookId={this.props.lead.tabularBook}
-                projectId={this.props.lead.project}
-                onCancel={closeModal}
-                viewMode
-            />
-        </Modal>
-    )
+    renderTabularModal = ({ closeModal }) => {
+        const { filteredEntries } = this.props;
+        const highlightList = this.getHighlightsForTabular(filteredEntries);
+
+        return (
+            <Modal
+                onClose={closeModal}
+                className={styles.tabularModal}
+            >
+                <TabularBook
+                    leadTitle={this.props.lead.title}
+                    className={styles.tabularBook}
+                    bookId={this.props.lead.tabularBook}
+                    projectId={this.props.lead.project}
+                    onCancel={closeModal}
+                    highlightList={highlightList}
+                    viewMode
+                />
+            </Modal>
+        );
+    }
 
     render() {
         const {
