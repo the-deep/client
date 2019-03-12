@@ -459,11 +459,9 @@ export default class DataSeries extends React.PureComponent {
         return (
             <div className={_cs(className, 'data-series', styles.dataSeries)}>
                 <header className={styles.header}>
-                    <div className={styles.leftContainer}>
-                        <h5 className={styles.heading}>
-                            {title}
-                        </h5>
-                    </div>
+                    <h5 className={styles.heading}>
+                        {title}
+                    </h5>
                     <div className={styles.actions}>
                         { options && Object.keys(options).length > 1 &&
                             <ScrollTabs
