@@ -12,6 +12,7 @@ $width-expanded-view: 90vw;
         display: flex;
         align-items: center;
         flex-shrink: 0;
+        justify-content: space-between;
 
         .heading {
             flex-grow: 1;
@@ -51,6 +52,31 @@ $width-expanded-view: 90vw;
         display: flex;
     }
 
+    .header {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: space-between;
+        border-bottom: $width-separator-thin solid $color-separator;
+        padding: $spacing-medium $spacing-medium-alt;
+
+        .heading {
+            flex-grow: 1;
+            padding: 0 $spacing-small;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: $color-text;
+            font-size: $font-size-large;
+            font-weight: $font-weight-medium;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-shrink: 0;
+        }
+    }
+
     .body {
         padding: 0;
 
@@ -69,6 +95,10 @@ $width-expanded-view: 90vw;
 }
 
 .fixed-tabs {
+    flex-shrink: 0;
+    margin-right: $spacing-small;
+    background-color: transparent;
+
     .tab {
         flex-shrink: 0;
         margin: $spacing-extra-small 0;
@@ -81,6 +111,10 @@ $width-expanded-view: 90vw;
         font-family: inherit;
         font-size: inherit;
         user-select: none;
+
+        .icon {
+            height: $font-size-extra-small;
+        }
 
         &.active-tab {
             background-color: fade-out($color-accent, .92);

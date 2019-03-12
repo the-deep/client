@@ -16,14 +16,23 @@ $width-input-max: 240px;
             .sheet-title {
                 flex-grow: 1;
                 padding: 0 $spacing-medium;
+                text-transform: none;
             }
 
         }
 
-        .input {
-            margin: 0 $spacing-medium;
-            width: 100%;
-            max-width: $width-input-max;
+        .content {
+            display: flex;
+
+            .input {
+                margin: 0 $spacing-medium;
+                width: 100%;
+                max-width: $width-input-max;
+            }
+
+            .left-content {
+                flex-basis: 50%;
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ import ListView from '#rscv/List/ListView';
 import Message from '#rscv/Message';
 
 import _ts from '#ts';
+import _cs from '#cs';
 
 import styles from './styles.scss';
 
@@ -45,24 +46,28 @@ export default class ExcelSettings extends React.PureComponent {
                             {title}
                         </h4>
                     </header>
-                    <NumberInput
-                        className={styles.input}
-                        faramElementName="headerRow"
-                        label={_ts('addLeads.tabular', 'headerRowLabel')}
-                        placeholder={_ts('addLeads.tabular', 'headerRowPlaceholder')}
-                        disabled={sheet.noHeaders || sheet.skip || disabled}
-                    />
-                    <Checkbox
-                        className={styles.input}
-                        faramElementName="noHeaders"
-                        label={_ts('addLeads.tabular', 'noHeaderLabel')}
-                        disabled={sheet.skip || disabled}
-                    />
-                    <Checkbox
-                        className={styles.input}
-                        faramElementName="skip"
-                        label={_ts('addLeads.tabular', 'skipLabel')}
-                    />
+                    <div className={styles.content} >
+                        <NumberInput
+                            className={_cs(styles.input, styles.leftContent)}
+                            faramElementName="headerRow"
+                            label={_ts('addLeads.tabular', 'headerRowLabel')}
+                            placeholder={_ts('addLeads.tabular', 'headerRowPlaceholder')}
+                            disabled={sheet.noHeaders || sheet.skip || disabled}
+                        />
+                        <div className={styles.rightContent}>
+                            <Checkbox
+                                className={styles.input}
+                                faramElementName="noHeaders"
+                                label={_ts('addLeads.tabular', 'noHeaderLabel')}
+                                disabled={sheet.skip || disabled}
+                            />
+                            <Checkbox
+                                className={styles.input}
+                                faramElementName="skip"
+                                label={_ts('addLeads.tabular', 'skipLabel')}
+                            />
+                        </div>
+                    </div>
                 </div>
             </FaramGroup>
         );

@@ -59,11 +59,11 @@ const boundsFilter = ['==', '$type', 'Polygon'];
 const pointsFilter = ['==', '$type', 'Point'];
 
 const colors = [
-    '#ffffcc',
-    '#a1dab4',
-    '#41b6c4',
-    '#2c7fb8',
-    '#253494',
+    '#d5e7e2',
+    '#a9cfc6',
+    '#7db8a9',
+    '#50a08f',
+    '#008975',
 ];
 
 @RequestCoordinator

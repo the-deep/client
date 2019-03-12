@@ -10,6 +10,7 @@ import Icon from '#rscg/Icon';
 import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import Modal from '#rscv/Modal';
+import RotatingInput from '#rsci/RotatingInput';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import Button from '#rsca/Button';
@@ -60,8 +61,46 @@ const chartMarginsLarge = {
     left: 36,
 };
 
+const sortingLabels = [
+    {
+        renderer: (
+            <div title={_ts('components.viz.dataSeries', 'descendingTitle')}>
+                <Icon name="sortAmountDescending" />
+            </div>
+        ),
+        key: 'sortingDes',
+    },
+    {
+        renderer: (
+            <div title={_ts('components.viz.dataSeries', 'ascendingTitle')}>
+                <Icon name="sortAmountAscending" />
+            </div>
+        ),
+        key: 'sortingAsc',
+    },
+    {
+        renderer: (
+            <div title={_ts('components.viz.dataSeries', 'alphabeticalDescendingTitle')}>
+                <Icon name="sortAlphabeticalDescending" />
+            </div>
+        ),
+        key: 'sortingAlphaDes',
+    },
+    {
+        renderer: (
+            <div title={_ts('components.viz.dataSeries', 'alphabeticalAscendingTitle')}>
+                <Icon name="sortAlphabeticalAscending" />
+            </div>
+        ),
+        key: 'sortingAlphaAsc',
+    },
+];
+
 const frequencySelector = d => d.count;
 const valueSelector = d => d.value;
+
+const sortKeySelector = d => d.key;
+const sortRendererSelector = d => d.renderer;
 
 const tooltipSelector = d => `<span>${d.value}</span>`;
 
@@ -121,7 +160,10 @@ const Tab = ({
             isActive && styles.activeTab,
         )}
     >
-        <Icon name={icon} />
+        <Icon
+            className={styles.icon}
+            name={icon}
+        />
     </button>
 );
 
@@ -148,6 +190,7 @@ export default class DataSeries extends React.PureComponent {
 
         this.state = {
             activeView: undefined,
+            activeSort: 'sortingDes',
         };
     }
 
@@ -182,11 +225,14 @@ export default class DataSeries extends React.PureComponent {
                         } = {},
                     } = {},
                 } = this.props;
+                const { activeSort } = this.state;
+                const sortedData = this.sort(activeSort, series);
+
                 return {
                     className: styles.horizontalBarChart,
                     margins: chartMargins,
 
-                    data: series,
+                    data: sortedData,
                     valueSelector: frequencySelector,
                     labelSelector: valueSelector,
                     tooltipSelector,
@@ -204,11 +250,15 @@ export default class DataSeries extends React.PureComponent {
                         } = {},
                     } = {},
                 } = this.props;
+
+                const { activeSort } = this.state;
+                const sortedData = this.sort(activeSort, series);
+
                 return {
                     className: styles.verticalBarChart,
                     margins: chartMargins,
 
-                    data: series,
+                    data: sortedData,
                     valueSelector: frequencySelector,
                     labelSelector: valueSelector,
                     tooltipSelector,
@@ -288,6 +338,21 @@ export default class DataSeries extends React.PureComponent {
         this.setState({ activeView: view });
     }
 
+    handleSortChange = (sort) => {
+        this.setState({ activeSort: sort });
+    }
+
+    sort = (activeSort, data) => {
+        if (activeSort === 'sortingAsc') {
+            return [...data].sort((a, b) => b.count - a.count);
+        } else if (activeSort === 'sortingAlphaDes') {
+            return [...data].sort((a, b) => String(a.value).localeCompare(String(b.value)));
+        } else if (activeSort === 'sortingAlphaAsc') {
+            return [...data].sort((a, b) => String(b.value).localeCompare(String(a.value)));
+        }
+        return data;
+    }
+
     scrollTabRendererParams = (_, tab) => ({
         icon: tab.iconName,
     })
@@ -300,31 +365,45 @@ export default class DataSeries extends React.PureComponent {
     }) => {
         const options = this.getSegmentOptions(type);
         const activeView = activeViewFromState || Object.keys(options)[0];
+        const { activeSort } = this.state;
+        const showSort = (activeView === GRAPH.horizontalBarChart)
+            || (activeView === GRAPH.verticalBarChart);
 
         return (
             <Modal className={styles.expandedView}>
-                <ModalHeader
-                    title={title}
-                    rightComponent={
-                        <div className={styles.actionButtons}>
-                            { options && Object.keys(options).length > 1 &&
-                                <ScrollTabs
-                                    active={activeView}
-                                    className={styles.fixedTabs}
-                                    onClick={this.handleSegmentStateChange}
-                                    renderer={Tab}
-                                    rendererParams={this.scrollTabRendererParams}
-                                    tabs={options}
-                                />
-                            }
-                            <Button
-                                iconName="close"
-                                onClick={closeModal}
-                                transparent
+                <header className={styles.header}>
+                    <h2 className={styles.heading}>
+                        {title}
+                    </h2>
+                    <div className={styles.actionButtons}>
+                        { options && Object.keys(options).length > 1 &&
+                            <ScrollTabs
+                                active={activeView}
+                                className={styles.fixedTabs}
+                                onClick={this.handleSegmentStateChange}
+                                renderer={Tab}
+                                rendererParams={this.scrollTabRendererParams}
+                                tabs={options}
                             />
-                        </div>
-                    }
-                />
+                        }
+                        {showSort &&
+                            <RotatingInput
+                                rendererSelector={sortRendererSelector}
+                                keySelector={sortKeySelector}
+                                value={activeSort}
+                                onChange={this.handleSortChange}
+                                options={sortingLabels}
+                                showLabel={false}
+                                showHintAndError={false}
+                            />
+                        }
+                        <Button
+                            iconName="close"
+                            onClick={closeModal}
+                            transparent
+                        />
+                    </div>
+                </header>
                 <ModalBody className={styles.body}>
                     <MultiViewContainer
                         views={this.modalViews}
@@ -356,18 +435,25 @@ export default class DataSeries extends React.PureComponent {
             );
         }
 
-        const { activeView: activeViewFromState } = this.state;
+        const {
+            activeView: activeViewFromState,
+            activeSort,
+        } = this.state;
         const ExpandedModal = this.renderExpandedModal;
 
         const options = this.getSegmentOptions(type);
         const activeView = activeViewFromState || Object.keys(options)[0];
+        const showSort = (activeView === GRAPH.horizontalBarChart)
+            || (activeView === GRAPH.verticalBarChart);
 
         return (
             <div className={_cs(className, 'data-series', styles.dataSeries)}>
                 <header className={styles.header}>
-                    <h5 className={styles.heading}>
-                        {title}
-                    </h5>
+                    <div className={styles.leftContainer}>
+                        <h5 className={styles.heading}>
+                            {title}
+                        </h5>
+                    </div>
                     <div className={styles.actions}>
                         { options && Object.keys(options).length > 1 &&
                             <ScrollTabs
@@ -377,6 +463,18 @@ export default class DataSeries extends React.PureComponent {
                                 renderer={Tab}
                                 rendererParams={this.scrollTabRendererParams}
                                 tabs={options}
+                            />
+                        }
+                        {showSort &&
+                            <RotatingInput
+                                className={styles.sortButton}
+                                rendererSelector={sortRendererSelector}
+                                keySelector={sortKeySelector}
+                                value={activeSort}
+                                onChange={this.handleSortChange}
+                                options={sortingLabels}
+                                showLabel={false}
+                                showHintAndError={false}
                             />
                         }
                         <ModalButton

@@ -280,7 +280,7 @@ export default class LeadTabular extends React.PureComponent {
         // NOTE: Default component should be null but FaramGroup doesn't
         // support null child yet.
         const component = (
-            (fileType === 'csv' && !noForm && <CsvSettings />) ||
+            (fileType === 'csv' && !noForm && <CsvSettings className={styles.csv} />) ||
             (spreadsheetTypes.includes(fileType) && !noForm &&
                 <ExcelSettings
                     meta={meta}
@@ -301,7 +301,10 @@ export default class LeadTabular extends React.PureComponent {
                 error={faramErrors}
                 disabled={savePending || noForm}
             >
-                <ModalHeader title={_ts('addLeads.tabular', 'title', { title })} />
+                <ModalHeader
+                    className={styles.header}
+                    title={_ts('addLeads.tabular', 'title', { title })}
+                />
                 <ModalBody className={styles.body} >
                     { pending &&
                         <LoadingAnimation
@@ -316,7 +319,7 @@ export default class LeadTabular extends React.PureComponent {
                     }
                     {
                         !noForm &&
-                            <div>
+                            <div className={styles.options} >
                                 <NonFieldErrors faramElement />
                                 { component &&
                                     <FaramGroup faramElementName="options">
