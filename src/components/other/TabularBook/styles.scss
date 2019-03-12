@@ -44,18 +44,6 @@
                     padding: $spacing-small-alt $spacing-medium;
                     text-transform: uppercase;
                 }
-
-                .edit-button {
-                    opacity: 0;
-                    margin-left: -($spacing-extra-small-alt);
-                    padding: 0;
-                }
-
-                &:hover {
-                    .edit-button {
-                        opacity: 1;
-                    }
-                }
             }
         }
 
