@@ -160,7 +160,10 @@ const Tab = ({
             isActive && styles.activeTab,
         )}
     >
-        <Icon name={icon} />
+        <Icon
+            className={styles.icon}
+            name={icon}
+        />
     </button>
 );
 
@@ -369,22 +372,9 @@ export default class DataSeries extends React.PureComponent {
         return (
             <Modal className={styles.expandedView}>
                 <header className={styles.header}>
-                    <div className={styles.leftContainer}>
-                        <h2 className={styles.heading}>
-                            {title}
-                        </h2>
-                        {showSort &&
-                            <RotatingInput
-                                rendererSelector={sortRendererSelector}
-                                keySelector={sortKeySelector}
-                                value={activeSort}
-                                onChange={this.handleSortChange}
-                                options={sortingLabels}
-                                showLabel={false}
-                                showHintAndError={false}
-                            />
-                        }
-                    </div>
+                    <h2 className={styles.heading}>
+                        {title}
+                    </h2>
                     <div className={styles.actionButtons}>
                         { options && Object.keys(options).length > 1 &&
                             <ScrollTabs
@@ -394,6 +384,17 @@ export default class DataSeries extends React.PureComponent {
                                 renderer={Tab}
                                 rendererParams={this.scrollTabRendererParams}
                                 tabs={options}
+                            />
+                        }
+                        {showSort &&
+                            <RotatingInput
+                                rendererSelector={sortRendererSelector}
+                                keySelector={sortKeySelector}
+                                value={activeSort}
+                                onChange={this.handleSortChange}
+                                options={sortingLabels}
+                                showLabel={false}
+                                showHintAndError={false}
                             />
                         }
                         <Button
@@ -452,17 +453,6 @@ export default class DataSeries extends React.PureComponent {
                         <h5 className={styles.heading}>
                             {title}
                         </h5>
-                        {showSort &&
-                            <RotatingInput
-                                rendererSelector={sortRendererSelector}
-                                keySelector={sortKeySelector}
-                                value={activeSort}
-                                onChange={this.handleSortChange}
-                                options={sortingLabels}
-                                showLabel={false}
-                                showHintAndError={false}
-                            />
-                        }
                     </div>
                     <div className={styles.actions}>
                         { options && Object.keys(options).length > 1 &&
@@ -473,6 +463,18 @@ export default class DataSeries extends React.PureComponent {
                                 renderer={Tab}
                                 rendererParams={this.scrollTabRendererParams}
                                 tabs={options}
+                            />
+                        }
+                        {showSort &&
+                            <RotatingInput
+                                className={styles.sortButton}
+                                rendererSelector={sortRendererSelector}
+                                keySelector={sortKeySelector}
+                                value={activeSort}
+                                onChange={this.handleSortChange}
+                                options={sortingLabels}
+                                showLabel={false}
+                                showHintAndError={false}
                             />
                         }
                         <ModalButton
