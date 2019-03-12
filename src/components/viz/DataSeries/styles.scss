@@ -12,14 +12,20 @@ $width-expanded-view: 90vw;
         display: flex;
         align-items: center;
         flex-shrink: 0;
+        justify-content: space-between;
 
-        .heading {
-            flex-grow: 1;
-            padding: 0 $spacing-small;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            color: $color-text;
+        .left-container {
+            display: flex;
+            align-items: center;
+
+            .heading {
+                flex-grow: 1;
+                padding: 0 $spacing-small;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                color: $color-text;
+            }
         }
 
         .actions {
@@ -51,6 +57,25 @@ $width-expanded-view: 90vw;
         display: flex;
     }
 
+    .header {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: space-between;
+        border-bottom: $width-separator-thin solid $color-separator;
+        padding: $spacing-medium $spacing-medium-alt;
+
+        .left-container {
+            display: flex;
+            align-items: center;
+
+            .heading {
+                font-size: $font-size-large;
+                font-weight: $font-weight-medium;
+            }
+        }
+    }
+
     .body {
         padding: 0;
 
@@ -69,6 +94,8 @@ $width-expanded-view: 90vw;
 }
 
 .fixed-tabs {
+    background-color: transparent;
+
     .tab {
         flex-shrink: 0;
         margin: $spacing-extra-small 0;

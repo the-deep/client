@@ -694,7 +694,7 @@
         "15006": "Extract",
         "15007": "Extract Tabular Data from Lead",
         "15008": "Reset sort",
-        "15009": "Skip",
+        "15009": "Skip sheet",
         "15010": "Header row",
         "15011": "Number of entries from this lead",
         "-4983139": "Remove lead group",
@@ -919,7 +919,11 @@
         "-57170437": "Regions present in this project",
         "-65526481": "Failed to fetch region/admin levels of this project.",
         "-69836040": "There are no regions in this project.",
-        "-75298941": "Ignore"
+        "-75298941": "Ignore",
+        "-73426620": "Ascending",
+        "-8251517": "Descending",
+        "-20881567": "Alphabetical Ascending",
+        "-93837566": "Alphabetical Descending"
     },
     "links": {
         "browserExtension": {
@@ -2551,7 +2555,11 @@
             "horizontalBarChartLabel": -26663455,
             "geoLabel": -50186668,
             "wordCloudLabel": -50602560,
-            "histogramLabel": -2956489
+            "histogramLabel": -2956489,
+            "alphabeticalAscendingTitle": -20881567,
+            "alphabeticalDescendingTitle": -93837566,
+            "ascendingTitle": -73426620,
+            "descendingTitle": -8251517
         },
         "components.dashboard": {},
         "geoViz": {
