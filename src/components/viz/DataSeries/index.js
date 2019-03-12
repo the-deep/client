@@ -5,6 +5,7 @@ import {
     listToMap,
 } from '@togglecorp/fujs';
 
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import Icon from '#rscg/Icon';
 import ScrollTabs from '#rscv/ScrollTabs';
@@ -424,12 +425,21 @@ export default class DataSeries extends React.PureComponent {
             },
         } = this.props;
 
-        if (!cache || cache.status !== 'success') {
+        if (!cache || cache.status === 'pending') {
+            return (
+                <div className={_cs(className, 'data-series', styles.dataSeries)}>
+                    <LoadingAnimation
+                        // FIXME: use strings
+                        message="Loading data"
+                    />
+                </div>
+            );
+        } else if (cache.status !== 'success') {
             return (
                 <div className={_cs(className, 'data-series', styles.dataSeries)}>
                     <Message>
                         {/* FIXME: use strings */}
-                        Processing not complete
+                        Processing has failed
                     </Message>
                 </div>
             );
