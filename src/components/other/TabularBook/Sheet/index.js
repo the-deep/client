@@ -270,6 +270,7 @@ export default class Sheet extends React.PureComponent {
             fieldDeletePending,
             fieldEditPending,
             viewMode,
+            highlights,
         } = this.props;
 
         const {
@@ -283,7 +284,6 @@ export default class Sheet extends React.PureComponent {
                 },
             },
         } = sheet;
-
 
         const isFieldDeletePending = fieldDeletePending[fieldId];
         const isFieldEditPending = fieldEditPending[fieldId];
@@ -312,6 +312,7 @@ export default class Sheet extends React.PureComponent {
             isFieldEditPending,
             viewMode,
             projectRegions,
+            highlight: highlights[fieldId],
         };
     }
 

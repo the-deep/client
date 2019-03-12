@@ -183,6 +183,8 @@ const propTypes = {
     projectRegionsRequest: PropTypes.object.isRequired,
     viewMode: PropTypes.bool,
     isModal: PropTypes.bool,
+
+    highlightList: PropTypes.arrayOf(PropTypes.object),
 };
 
 const defaultProps = {
@@ -190,6 +192,7 @@ const defaultProps = {
     viewMode: false,
     isModal: true,
     leadTitle: '',
+    highlightList: [],
 };
 
 @RequestCoordinator
@@ -235,6 +238,10 @@ export default class TabularBook extends React.PureComponent {
     componentWillUnmount() {
         this.coordinator.stop();
     }
+
+    getHighlightsFromHighlightList = memoize(highlightList =>
+        listToMap(highlightList, d => d.tabularFieldId, d => d),
+    )
 
     getTransformSheets = memoize((originalSheets) => {
         const validSheets = originalSheets.filter(
@@ -743,6 +750,7 @@ export default class TabularBook extends React.PureComponent {
             projectRegionsRequest: {
                 response: projectRegions,
             },
+            highlightList,
         } = this.props;
 
         const {
@@ -798,6 +806,7 @@ export default class TabularBook extends React.PureComponent {
                             onFieldEdit={this.handleFieldEdit}
                             viewMode={viewMode}
                             projectRegions={projectRegions}
+                            highlights={this.getHighlightsFromHighlightList(highlightList)}
                         />
                     )
                 }
