@@ -24,7 +24,6 @@ import {
     RequestClient,
     requestMethods,
 } from '#request';
-import { leadTabularTypeMap } from '#entities/lead';
 
 import CsvSettings from './CsvSettings';
 import ExcelSettings from './ExcelSettings';

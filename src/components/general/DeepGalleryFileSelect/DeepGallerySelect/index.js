@@ -22,7 +22,7 @@ import {
 } from '@togglecorp/fujs';
 import { UploadBuilder } from '#rsu/upload';
 
-import { leadTypeIconMap } from '#entities/lead';
+import { mimeTypeToIconMap } from '#entities/lead';
 import {
     userGalleryFilesSelector,
     setUserGalleryFilesAction,
@@ -234,7 +234,7 @@ export default class DgSelect extends React.PureComponent {
     keySelector = file => file.id
 
     renderGalleryFileType = (row) => {
-        const icon = leadTypeIconMap[row.mimeType] || 'documentText';
+        const icon = mimeTypeToIconMap[row.mimeType] || 'documentText';
         const url = row.file;
 
         const iconChild = <Icon name={icon} />;

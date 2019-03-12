@@ -24,6 +24,7 @@ import styles from './styles.scss';
 const TAB_TABULAR = 'tabular';
 const TAB_ORIGINAL = 'original';
 
+// FIXME: use is LeadPaneType spreadsheet
 const tabularCompatibleFileTypes = [
     'xls',
     'xlsx',
@@ -187,6 +188,7 @@ export default class Attachment extends React.PureComponent {
         const {
             title = '',
         } = response;
+        // FIXME: move this to common utils
         const fileType = title.toLowerCase().match(/(?:\.([^.]+))?$/)[1];
         const newResponse = {
             ...response,
