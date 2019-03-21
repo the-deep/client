@@ -130,6 +130,8 @@ const tabsIcons = {
     [GRID_VIEW]: 'grid',
 };
 
+const hideOnBeta = ({ isBeta }) => !isBeta;
+
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Leads extends React.PureComponent {
     static propTypes = propTypes;
@@ -315,7 +317,16 @@ export default class Leads extends React.PureComponent {
             filters,
             activePage,
             leadsPerPage,
+            view,
+            setLeadPageView,
         } = this.props;
+
+        // TODO: Remove this after enabling grids view
+        // in beta
+        if (view === GRID_VIEW) {
+            setLeadPageView({ view: TABLE_VIEW });
+        }
+        window.location.replace(`#/${TABLE_VIEW}`);
 
         const request = new LeadsRequest({
             setState: params => this.setState(params),
@@ -535,14 +546,19 @@ export default class Leads extends React.PureComponent {
         return (
             <React.Fragment>
                 <FilterLeadsForm className={styles.filters} />
-                <FixedTabs
-                    tabs={Leads.tabs}
-                    useHash
-                    replaceHistory
-                    className={styles.tabs}
-                    modifier={Leads.tabsModifier}
-                    onClick={this.handleTabClick}
-                    defaultHash={this.props.view}
+                <Cloak
+                    hide={hideOnBeta}
+                    render={
+                        <FixedTabs
+                            tabs={Leads.tabs}
+                            useHash
+                            replaceHistory
+                            className={styles.tabs}
+                            modifier={Leads.tabsModifier}
+                            onClick={this.handleTabClick}
+                            defaultHash={this.props.view}
+                        />
+                    }
                 />
                 <Cloak
                     {...viewsAcl.addLeads}
