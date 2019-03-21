@@ -327,7 +327,6 @@ export default class Leads extends React.PureComponent {
         if (view === GRID_VIEW && isBetaEnv) {
             setLeadPageView({ view: TABLE_VIEW });
         }
-
         window.location.replace(`#/${TABLE_VIEW}`);
 
         const request = new LeadsRequest({
