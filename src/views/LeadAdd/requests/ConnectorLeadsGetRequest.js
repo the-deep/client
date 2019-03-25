@@ -1,9 +1,11 @@
 import { FgRestBuilder } from '#rsu/rest';
+import { mapToList } from '@togglecorp/fujs';
 import {
     createParamsForConnectorLeads,
     createUrlForConnectorleads,
     alterAndCombineResponseError,
 } from '#rest';
+
 import _ts from '#ts';
 import schema from '#schema';
 import notify from '#notify';
@@ -26,8 +28,17 @@ export default class ConnectorLeadsRequest {
                     isSelected,
                 };
             });
+            const leadsMap = {};
+            leads.forEach((l) => { leadsMap[l.key] = l; });
+
+            // FIXME: Use unique function
+            const uniqueLeads = mapToList(
+                leadsMap,
+                lead => lead,
+            );
+
             this.props.setConnectorLeads({
-                leads,
+                leads: uniqueLeads,
                 totalCount: response.count,
                 connectorId,
                 countPerPage: response.countPerPage,
