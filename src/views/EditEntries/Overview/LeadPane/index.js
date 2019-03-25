@@ -78,6 +78,7 @@ export default class LeftPane extends React.PureComponent {
                     markAsDeletedEntry,
                     tabularData,
                 } = this.props;
+
                 return {
                     className,
                     entries,

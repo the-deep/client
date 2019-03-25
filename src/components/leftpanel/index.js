@@ -128,7 +128,7 @@ export default class LeftPane extends React.PureComponent {
         const { viewsModifier } = this.props;
         this.views = {
             ...this.getViews(styles.container),
-            ...(viewsModifier ? viewsModifier() : {}),
+            ...(viewsModifier ? viewsModifier(styles.container) : {}),
         };
     }
 

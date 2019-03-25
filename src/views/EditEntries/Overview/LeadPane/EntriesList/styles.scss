@@ -1,8 +1,6 @@
 @import '~base-scss/base';
 
 .entries-list {
-    height: 100%;
-
     .entries-list-item {
         position: relative;
         border-bottom: $width-separator-thin solid $color-separator;
