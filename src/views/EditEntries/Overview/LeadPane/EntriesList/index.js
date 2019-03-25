@@ -186,14 +186,12 @@ export default class EntriesList extends React.PureComponent {
     render() {
         const { className } = this.props;
         return (
-            <div className={className}>
-                <ListView
-                    className={styles.entriesList}
-                    modifier={this.renderEntryItem}
-                    data={this.props.entries}
-                    keySelector={EntriesList.calcEntryKey}
-                />
-            </div>
+            <ListView
+                className={_cs(styles.entriesList, className)}
+                modifier={this.renderEntryItem}
+                data={this.props.entries}
+                keySelector={EntriesList.calcEntryKey}
+            />
         );
     }
 }
