@@ -314,25 +314,31 @@ export default class ProjectDashboard extends React.PureComponent {
                     <div className={styles.label}>
                         {_ts('project.general.dashboard', 'totalLeadsTitle')}
                     </div>
-                    <div className={styles.numericValue}>
-                        {project.numberOfLeads}
-                    </div>
+                    <Numeral
+                        className={styles.numericValue}
+                        value={project.numberOfLeads}
+                        precision={0}
+                    />
                 </div>
                 <div className={styles.infoItem}>
                     <div className={styles.label}>
                         {_ts('project.general.dashboard', 'totalEntriesTitle')}
                     </div>
-                    <div className={styles.numericValue}>
-                        {project.numberOfEntries}
-                    </div>
+                    <Numeral
+                        className={styles.numericValue}
+                        value={project.numberOfEntries}
+                        precision={0}
+                    />
                 </div>
                 <div className={styles.infoItem}>
                     <div className={styles.label}>
                         {_ts('project.general.dashboard', 'totalUsersTitle')}
                     </div>
-                    <div className={styles.numericValue}>
-                        {project.numberOfUsers}
-                    </div>
+                    <Numeral
+                        className={styles.numericValue}
+                        value={project.numberOfUsers}
+                        precision={0}
+                    />
                 </div>
             </div>
         );
