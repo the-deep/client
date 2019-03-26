@@ -14,6 +14,7 @@ export const uniqueTabId = randomString(64);
 const migrations = {
     // NOTE: clear out domainData and siloDomainData only
     2: ({ auth, lang }) => ({ auth, lang }),
+    3: () => ({}),
 };
 
 const myTransform = createTransform(
@@ -48,7 +49,7 @@ const myTransform = createTransform(
 const storeConfig = {
     blacklist: ['notify', 'route', 'app'],
     key: 'deeper',
-    version: 2,
+    version: 3,
     storage: localforage,
     transforms: [myTransform],
     migrate: createMigrate(migrations, { debug: !isBeta }),
