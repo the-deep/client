@@ -7,6 +7,7 @@ export const galleryDocsMimeType = [
     'application/vnd.ms-powerpoint', 'application/vnd.ms-excel',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     'text/csv', 'application/json', 'application/xml', 'application/msword',
+    'application/wps-office.docx',
 ];
 
 export const galleryType = {
