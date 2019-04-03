@@ -31,6 +31,7 @@ const LEAD_PANE_TYPE = {
     xml: 'xml',
 
     word: 'word',
+    doc: 'doc',
     pdf: 'pdf',
     presentation: 'presentation',
     spreadsheet: 'spreadsheet',
@@ -49,6 +50,7 @@ const fileTypeToLeadPaneTypeMap = {
     rtf: LEAD_PANE_TYPE.word,
     otf: LEAD_PANE_TYPE.word,
     msword: LEAD_PANE_TYPE.word,
+    doc: LEAD_PANE_TYPE.word,
 
     pdf: LEAD_PANE_TYPE.pdf,
 
