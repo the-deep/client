@@ -21,10 +21,12 @@ $width-connectors-list: 240px;
         position: relative;
         flex-direction: column;
         padding: 0;
+        overflow-y: auto;
 
         .main {
             display: flex;
             flex-grow: 1;
+            overflow-y: auto;
 
             .sidebar {
                 display: flex;
@@ -32,6 +34,7 @@ $width-connectors-list: 240px;
                 flex-direction: column;
                 flex-shrink: 0;
                 border-right: $width-separator-thin solid $color-separator;
+                overflow-y: auto;
 
                 .header {
                     @include background-color($color-background-header);
@@ -46,6 +49,7 @@ $width-connectors-list: 240px;
                         flex-basis: 100%;
                     }
                 }
+
                 .connectors-list {
                     flex-grow: 1;
                     overflow-y: auto;

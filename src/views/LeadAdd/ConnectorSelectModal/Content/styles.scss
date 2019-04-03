@@ -43,6 +43,15 @@
 
         .table {
             :global {
+                .headers {
+                    .header {
+                        top: -2px;
+
+                        >div {
+                            border-top-color: #f0f0f0;
+                        }
+                    }
+                }
                 .selected {
                     >div {
                         padding-top: $spacing-small-alt;
