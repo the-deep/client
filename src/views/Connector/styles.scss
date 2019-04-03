@@ -61,12 +61,11 @@
         flex-direction: column;
 
         .connector-details {
-            @include background-color($color-background-alt);
             flex-grow: 1;
         }
 
         .no-connector {
-            @include background-color-with-disabled-text($color-foreground-alt);
+            @include background-color-with-disabled-text($color-foreground);
             display: flex;
             align-items: center;
             flex-grow: 1;

@@ -4,7 +4,9 @@
     display: flex;
     position: relative;
     flex-direction: column;
+    background-color: $color-foreground;
     height: 100%;
+    overflow-y: auto;
 
     .no-connector-found {
         @include background-color-with-disabled-text($color-foreground-alt);

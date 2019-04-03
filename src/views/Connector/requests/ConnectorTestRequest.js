@@ -3,6 +3,7 @@ import { FgRestBuilder } from '#rsu/rest';
 import {
     createParamsForConnectorTest,
     createUrlForConnectorTest,
+    alterAndCombineResponseError,
 } from '#rest';
 import _ts from '#ts';
 import schema from '#schema';
@@ -23,10 +24,11 @@ export default class ConnectorTestRequest {
     }
 
     failure = (response) => {
+        const message = alterAndCombineResponseError(response.errors).join(' ');
         notify.send({
             title: _ts('connector', 'connectorTitle'),
             type: notify.type.ERROR,
-            message: response.error,
+            message,
             duration: notify.duration.MEDIUM,
         });
     }

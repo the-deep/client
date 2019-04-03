@@ -15,5 +15,14 @@
     .table-container {
         flex-grow: 1;
         overflow-y: auto;
+
+        .table {
+            :global {
+                .row {
+                    border-bottom: $width-separator-thin solid $color-separator;
+                    background-color: $color-foreground;
+                }
+            }
+        }
     }
 }
