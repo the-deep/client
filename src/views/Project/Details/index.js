@@ -121,7 +121,6 @@ export default class ProjectDetails extends React.PureComponent {
 
         this.views = {
             general: {
-                mount: true,
                 wrapContainer: true,
                 lazyMount: true,
                 component: () => (
