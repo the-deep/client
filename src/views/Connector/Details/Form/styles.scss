@@ -49,6 +49,50 @@
         .tabular-select-inputs {
             padding: $spacing-small;
             width: 60%;
+
+            :global {
+                .raw-table {
+                    border-right: $width-separator-thin solid $color-separator;
+                    border-left: $width-separator-thin solid $color-separator;
+                }
+
+                .headers {
+                    .header {
+                        &.role {
+                            width: 160px;
+                        }
+
+                        &.actions {
+                            width: 72px;
+                        }
+                    }
+                }
+
+                .row {
+                    border-bottom: $width-separator-thin solid $color-separator;
+                    background-color: $color-foreground;
+                }
+            }
+
+            .users {
+                :global {
+                    .headers {
+                        .header {
+                            &.role {
+                                width: 92px;
+                            }
+
+                            &.actions {
+                                width: 72px;
+                            }
+
+                            &.addedAt {
+                                width: 160px;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

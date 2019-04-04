@@ -139,6 +139,7 @@ export default class ConnectorTestResults extends React.PureComponent {
                 <div className={styles.tableContainer} >
                     <Table
                         data={testLeads}
+                        className={styles.table}
                         headers={tableHeader}
                         keySelector={ConnectorTestResults.leadKeySelector}
                     />

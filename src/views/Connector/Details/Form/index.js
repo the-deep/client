@@ -842,6 +842,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                     {!(userDataLoading || connectorDataLoading) &&
                         <div className={styles.tabularSelectInputs} >
                             <TabularSelectInput
+                                className={styles.users}
                                 faramElementName="users"
                                 options={usersOptions}
                                 label={_ts('connector', 'connectorUsersLabel')}
@@ -852,6 +853,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                                 hideSelectAllButton
                             />
                             <TabularSelectInput
+                                className={styles.projects}
                                 faramElementName="projects"
                                 options={projectsOptions}
                                 label={_ts('connector', 'connectorProjectsLabel')}
