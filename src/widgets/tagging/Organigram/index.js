@@ -97,6 +97,7 @@ export default class OrganigramWidget extends React.PureComponent {
                 childSelector={OrganigramWidget.childSelector}
                 labelSelector={OrganigramWidget.labelSelector}
                 idSelector={OrganigramWidget.idSelector}
+                showLabel={false}
                 emptyComponent={null}
                 modalLeftComponent={
                     <div className={styles.excerptContainer}>

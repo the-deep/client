@@ -298,6 +298,7 @@ export default class OrganigramInput extends React.PureComponent {
                 keySelector={OrganigramInput.selectIdSelector}
                 showHintAndError={false}
                 topRightChild={this.renderShowModalButton}
+                showLabel={false}
                 hideSelectAllButton
                 disabled={disabled}
                 readOnly={readOnly}
