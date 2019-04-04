@@ -83,7 +83,7 @@ export default class GeoWidget extends React.PureComponent {
                 faramElementName="value"
                 geoOptionsByRegion={geoOptions}
                 regions={projectDetails.regions}
-                showHeader={false}
+                showLabel={false}
                 emptyComponent={null}
                 modalLeftComponent={
                     <div className={styles.excerptContainer}>
