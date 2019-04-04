@@ -135,9 +135,21 @@ export default class Screenshot extends React.PureComponent {
             image.src = result.image;
         }).catch(() => {
             // FIXME: use strings
-            const captureError = 'Failed to capture screenshot.\n ' +
-                'Please make sure you have latest browser extension installed.';
-            console.warn(captureError);
+            const captureError = (
+                <React.Fragment>
+                    In order to use the screenshot functionality,
+                    you must have the Chrome extension installed.
+                    You can download it from the Chrome store
+                    <a
+                        className={styles.link}
+                        href="https://chrome.google.com/webstore/detail/deep-2-add-lead/kafonkgglonkbldmcigbdojiadfcmcdc"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        here.
+                    </a>
+                </React.Fragment>
+            );
             if (this.props.onCaptureError) {
                 this.props.onCaptureError(captureError);
             }
