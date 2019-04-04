@@ -185,7 +185,7 @@ export default class GalleryViewer extends React.PureComponent {
             title: _ts('components.galleryViewer', 'errorTitle'), // screenshot
             type: notify.type.ERROR,
             message,
-            duration: notify.duration.MEDIUM,
+            duration: notify.duration.SLOW,
         });
 
         this.handleScreenshotClose();

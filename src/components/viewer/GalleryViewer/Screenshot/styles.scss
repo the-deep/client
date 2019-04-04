@@ -1,5 +1,11 @@
 @import '~base-scss/base';
 
+.link {
+    padding: 0 $spacing-extra-small-alt;
+    text-transform: none;
+    color: $color-accent;
+}
+
 .screenshot {
     display: flex;
     position: absolute;
