@@ -141,11 +141,13 @@ export default class Overview extends React.PureComponent {
             entries, // eslint-disable-line no-unused-vars
             statuses,
             selectedEntryKey, // eslint-disable-line no-unused-vars
+            entryStates,
 
             ...otherProps
         } = this.props;
 
         const pending = statuses[selectedEntryKey] === ENTRY_STATUS.requesting;
+        const key = Overview.entryKeySelector(entry);
 
         return (
             <ResizableH
@@ -197,11 +199,13 @@ export default class Overview extends React.PureComponent {
                         </header>
                         <WidgetFaram
                             className={styles.content}
-                            key={Overview.entryKeySelector(entry)}
+                            // NOTE: dismount on key change
+                            key={key}
                             entry={entry}
                             tabularData={tabularDataForSelectedEntry}
                             pending={pending}
                             widgetType={VIEW.overview}
+                            entryState={entryStates[key]}
                             {...otherProps}
                         />
                     </React.Fragment>

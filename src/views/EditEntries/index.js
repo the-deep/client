@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link, Prompt } from 'react-router-dom';
+import produce from 'immer';
+
 import { reverseRoute, listToMap } from '@togglecorp/fujs';
 import { detachedFaram } from '@togglecorp/faram';
 
@@ -162,6 +164,7 @@ export default class EditEntries extends React.PureComponent {
             pendingEditEntryData: true,
             pendingSaveAll: false,
             projectMismatch: false,
+            entryStates: {},
         };
 
         this.views = {
@@ -175,6 +178,8 @@ export default class EditEntries extends React.PureComponent {
                         onExcerptCreate={this.handleExcerptCreate}
                         schema={this.props.schema}
                         computeSchema={this.props.computeSchema}
+                        entryStates={this.state.entryStates}
+                        onEntryStateChange={this.handleEntryStateChange}
                     />
                 ),
                 wrapContainer: true,
@@ -193,6 +198,8 @@ export default class EditEntries extends React.PureComponent {
                         onExcerptCreate={this.handleExcerptCreate}
                         schema={this.props.schema}
                         computeSchema={this.props.computeSchema}
+                        entryStates={this.state.entryStates}
+                        onEntryStateChange={this.handleEntryStateChange}
                     />
                 ),
                 wrapContainer: true,
@@ -340,7 +347,17 @@ export default class EditEntries extends React.PureComponent {
         return !entryPermissions.create;
     }
 
-    // Calculations
+    shouldHideEditLink = () => {
+        const {
+            analysisFramework: {
+                isAdmin,
+            },
+        } = this.props;
+        return !isAdmin;
+    }
+
+    // CALCULATIONS
+
     calculateFirstTimeAttributes = attributes => calculateFirstTimeAttributes(
         attributes,
         this.props.analysisFramework,
@@ -351,7 +368,6 @@ export default class EditEntries extends React.PureComponent {
         attributes,
         this.props.analysisFramework,
     )
-
 
     // APIS
 
@@ -603,13 +619,15 @@ export default class EditEntries extends React.PureComponent {
         this.editEntryDataRequest.start();
     }
 
-    shouldHideEditLink = () => {
-        const {
-            analysisFramework: {
-                isAdmin,
-            },
-        } = this.props;
-        return !isAdmin;
+    handleEntryStateChange = (entryKey, value) => {
+        this.setState((state) => {
+            const { entryStates } = state;
+            const newEntryStates = produce(entryStates, (deferred) => {
+                // eslint-disable-next-line no-param-reassign
+                deferred[entryKey] = value;
+            });
+            return { entryStates: newEntryStates };
+        });
     }
 
     render() {

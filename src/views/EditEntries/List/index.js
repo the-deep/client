@@ -77,6 +77,7 @@ export default class Listing extends React.PureComponent {
             entries, // eslint-disable-line
             statuses,
             tabularData,
+            entryStates,
             ...otherProps
         } = this.props;
         const tabularField = entryAccessor.tabularField(entry);
@@ -87,6 +88,7 @@ export default class Listing extends React.PureComponent {
             pending: statuses[key] === ENTRY_STATUS.requesting,
             tabularData: tabularDataForEntry,
             widgetType: VIEW.list,
+            entryState: entryStates[key],
             ...otherProps,
         };
     }

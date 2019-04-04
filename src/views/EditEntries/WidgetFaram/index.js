@@ -146,6 +146,8 @@ export default class WidgetFaram extends React.PureComponent {
             widgetType,
             entry,
             tabularData,
+            onEntryStateChange,
+            entryState,
         } = this.props;
         const {
             id,
@@ -173,6 +175,8 @@ export default class WidgetFaram extends React.PureComponent {
             'conditionalWidget',
         ];
         if (levelOneWidgets.includes(widgetId)) {
+            const entryKey = entryAccessor.key(this.props.entry);
+
             widgetProps = {
                 ...widgetProps,
                 entryType,
@@ -180,6 +184,9 @@ export default class WidgetFaram extends React.PureComponent {
                 image,
                 tabularField,
                 tabularFieldData: tabularData,
+                entryState,
+                onEntryStateChange,
+                entryKey,
             };
         }
 

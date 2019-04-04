@@ -12,7 +12,6 @@ import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import Modal from '#rscv/Modal';
 import RotatingInput from '#rsci/RotatingInput';
-import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import Button from '#rsca/Button';
 import SimpleHorizontalBarChart from '#rscz/SimpleHorizontalBarChart';
@@ -108,7 +107,7 @@ const tooltipSelector = d => `<span>${d.value}</span>`;
 const GRAPH = {
     horizontalBarChart: 'horizontal-bar-chart',
     verticalBarChart: 'vertical-bar-chart',
-    wordCloud: 'world-cloud',
+    wordCloud: 'word-cloud',
     histogram: 'histogram',
     geo: 'geo',
 };
@@ -188,11 +187,6 @@ export default class DataSeries extends React.PureComponent {
 
         this.views = this.createView({ showLegend: false });
         this.modalViews = this.createView({ showLegend: true });
-
-        this.state = {
-            activeView: undefined,
-            activeSort: 'sortingDes',
-        };
     }
 
     getSegmentOptions = memoize(type => (
@@ -225,8 +219,10 @@ export default class DataSeries extends React.PureComponent {
                             series = [],
                         } = {},
                     } = {},
+                    entryState: {
+                        activeSort,
+                    } = {},
                 } = this.props;
-                const { activeSort } = this.state;
                 const sortedData = this.sort(activeSort, series);
 
                 return {
@@ -250,9 +246,11 @@ export default class DataSeries extends React.PureComponent {
                             series = [],
                         } = {},
                     } = {},
+                    entryState: {
+                        activeSort,
+                    } = {},
                 } = this.props;
 
-                const { activeSort } = this.state;
                 const sortedData = this.sort(activeSort, series);
 
                 return {
@@ -336,14 +334,30 @@ export default class DataSeries extends React.PureComponent {
     })
 
     handleSegmentStateChange = (view) => {
-        this.setState({ activeView: view });
+        const {
+            onEntryStateChange,
+            entryKey,
+            entryState,
+        } = this.props;
+        onEntryStateChange(
+            entryKey,
+            { ...entryState, activeView: view },
+        );
     }
 
     handleSortChange = (sort) => {
-        this.setState({ activeSort: sort });
+        const {
+            onEntryStateChange,
+            entryKey,
+            entryState,
+        } = this.props;
+        onEntryStateChange(
+            entryKey,
+            { ...entryState, activeSort: sort },
+        );
     }
 
-    sort = (activeSort, data) => {
+    sort = (activeSort = 'sortingDes', data) => {
         if (activeSort === 'sortingAsc') {
             return [...data].sort((a, b) => b.count - a.count);
         } else if (activeSort === 'sortingAlphaDes') {
@@ -362,13 +376,11 @@ export default class DataSeries extends React.PureComponent {
         closeModal,
         title,
         type,
-        activeView: activeViewFromState,
+        activeView,
+        activeSort,
+        showSort,
     }) => {
         const options = this.getSegmentOptions(type);
-        const activeView = activeViewFromState || Object.keys(options)[0];
-        const { activeSort } = this.state;
-        const showSort = (activeView === GRAPH.horizontalBarChart)
-            || (activeView === GRAPH.verticalBarChart);
 
         return (
             <Modal className={styles.expandedView}>
@@ -423,6 +435,10 @@ export default class DataSeries extends React.PureComponent {
                 type,
                 title,
             },
+            entryState: {
+                activeView: activeViewFromState,
+                activeSort = 'sortingDes',
+            } = {},
         } = this.props;
 
         if (!cache || cache.status === 'pending') {
@@ -445,16 +461,14 @@ export default class DataSeries extends React.PureComponent {
             );
         }
 
-        const {
-            activeView: activeViewFromState,
-            activeSort,
-        } = this.state;
         const ExpandedModal = this.renderExpandedModal;
 
         const options = this.getSegmentOptions(type);
         const activeView = activeViewFromState || Object.keys(options)[0];
-        const showSort = (activeView === GRAPH.horizontalBarChart)
-            || (activeView === GRAPH.verticalBarChart);
+        const showSort = (
+            (activeView === GRAPH.horizontalBarChart)
+            || (activeView === GRAPH.verticalBarChart)
+        );
 
         return (
             <div className={_cs(className, 'data-series', styles.dataSeries)}>
@@ -494,6 +508,8 @@ export default class DataSeries extends React.PureComponent {
                                     title={title}
                                     type={type}
                                     activeView={activeView}
+                                    activeSort={activeSort}
+                                    showSort={showSort}
                                 />
                             }
                         />

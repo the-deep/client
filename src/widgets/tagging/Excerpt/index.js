@@ -178,7 +178,12 @@ export default class Excerpt extends React.PureComponent {
     }
 
     renderDataSeries = () => {
-        const { tabularFieldData } = this.props;
+        const {
+            tabularFieldData,
+            onEntryStateChange,
+            entryState,
+            entryKey,
+        } = this.props;
         const className = `
             ${styles.dataSeries}
             data-series
@@ -188,6 +193,9 @@ export default class Excerpt extends React.PureComponent {
             <DataSeries
                 className={className}
                 value={tabularFieldData}
+                onEntryStateChange={onEntryStateChange}
+                entryState={entryState}
+                entryKey={entryKey}
             />
         );
     }
