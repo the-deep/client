@@ -333,11 +333,14 @@ export default class DataSeries extends React.PureComponent {
         },
     })
 
-    handleSegmentStateChange = (view) => {
+    handleSegmentStateChange = (view, e) => {
         const {
             onEntryStateChange,
             entryState,
         } = this.props;
+
+        e.stopPropagation();
+
         onEntryStateChange({
             ...entryState,
             activeView: view,

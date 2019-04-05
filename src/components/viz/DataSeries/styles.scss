@@ -120,5 +120,9 @@ $width-expanded-view: 90vw;
             background-color: fade-out($color-accent, .92);
             color: $color-accent;
         }
+
+        &:hover {
+            background-color: $color-foreground-alt;
+        }
     }
 }
