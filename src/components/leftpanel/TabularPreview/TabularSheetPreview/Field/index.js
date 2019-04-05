@@ -148,27 +148,29 @@ export default class Field extends React.PureComponent {
                 onKeyDown={this.handleClick}
             >
                 { showGraphs ? (
-                    <DataSeries
-                        className={styles.series}
-                        value={tabularFieldData}
-                        onEntryStateChange={this.handleFieldStateChange}
-                        entryState={fieldState}
-                    />
+                    <React.Fragment>
+                        <DataSeries
+                            className={styles.series}
+                            value={tabularFieldData}
+                            onEntryStateChange={this.handleFieldStateChange}
+                            entryState={fieldState}
+                        />
+                        <HealthBar
+                            className={styles.healthBar}
+                            data={healthStatusData}
+                            valueSelector={valueSelector}
+                            keySelector={keySelector}
+                            labelSelector={labelSelector}
+                            colorScheme={healthColorScheme}
+                            enlargeOnHover={false}
+                            hideLabel
+                        />
+                    </React.Fragment>
                 ) : (
                     <h5>
                         {title}
                     </h5>
                 )}
-                <HealthBar
-                    className={styles.healthBar}
-                    data={healthStatusData}
-                    valueSelector={valueSelector}
-                    keySelector={keySelector}
-                    labelSelector={labelSelector}
-                    colorScheme={healthColorScheme}
-                    enlargeOnHover={false}
-                    hideLabel
-                />
             </div>
         );
     }
