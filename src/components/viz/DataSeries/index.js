@@ -361,6 +361,7 @@ export default class DataSeries extends React.PureComponent {
     }
 
     sort = (activeSort = 'sortingDes', data) => {
+        // FIXME: use compare functions from utils
         if (activeSort === 'sortingAsc') {
             return [...data].sort((a, b) => b.count - a.count);
         } else if (activeSort === 'sortingAlphaDes') {

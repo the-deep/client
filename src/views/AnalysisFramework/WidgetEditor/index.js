@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
+
 import Faram, { FaramGroup } from '@togglecorp/faram';
 
 import Icon from '#rscg/Icon';
@@ -58,6 +60,12 @@ export default class WidgetEditor extends React.PureComponent {
 
     static schema = {};
     static value = {};
+
+    getWidgets = memoize((widgets, widgetType) => (
+        widgets.filter(
+            w => hasWidgetFrameworkComponent(w.widgetId, widgetType, w.properties.addedFrom),
+        )
+    ))
 
     widgetMinSizeSelector = (widget) => {
         const { widgetType } = this.props;
@@ -262,10 +270,7 @@ export default class WidgetEditor extends React.PureComponent {
             widgetType,
         } = this.props;
 
-        // TODO: memoize
-        const filteredWidgets = widgets.filter(
-            w => hasWidgetFrameworkComponent(w.widgetId, widgetType, w.properties.addedFrom),
-        );
+        const filteredWidgets = this.getWidgets(widgets, widgetType);
 
         return (
             <Faram

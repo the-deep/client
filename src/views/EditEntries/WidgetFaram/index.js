@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Faram, { FaramGroup } from '@togglecorp/faram';
+import memoize from 'memoize-one';
 
 import Icon from '#rscg/Icon';
 import GridViewLayout from '#rscv/GridViewLayout';
@@ -53,6 +54,12 @@ export default class WidgetFaram extends React.PureComponent {
     static defaultProps = defaultProps;
 
     static keySelector = widget => widget.key
+
+    getWidgets = memoize((widgets, widgetType) => (
+        widgets.filter(
+            w => hasWidgetTagComponent(w.widgetId, widgetType, w.properties.addedFrom),
+        )
+    ))
 
     // Faram
 
@@ -251,10 +258,7 @@ export default class WidgetFaram extends React.PureComponent {
             'widget-faram'
         `;
 
-        // TODO: memoize
-        const filteredWidgets = widgets.filter(
-            w => hasWidgetTagComponent(w.widgetId, widgetType, w.properties.addedFrom),
-        );
+        const filteredWidgets = this.getWidgets(widgets, widgetType);
 
         const {
             data: { attributes } = {},
