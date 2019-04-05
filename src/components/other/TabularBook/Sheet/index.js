@@ -16,6 +16,7 @@ import {
     caseInsensitiveSubmatch,
     isFalsyString as isFalsyStr,
     isTruthyString as isTruthyStr,
+    doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 import update from '#rsu/immutable-update';
 import _cs from '#cs';
@@ -416,7 +417,7 @@ export default class Sheet extends React.PureComponent {
             viewMode,
         } = this.props;
 
-        const { searchTerm } = options;
+        const { searchTerm, sortOrder } = options;
 
         const columns = this.getSheetColumns(
             fields,
@@ -454,14 +455,14 @@ export default class Sheet extends React.PureComponent {
                     />
                     <Button
                         onClick={this.handleResetSort}
-                        disabled={disabled}
+                        disabled={disabled || doesObjectHaveNoData(sortOrder)}
                         transparent
                     >
                         {_ts('tabular.sheets', 'resetSortTitle')}
                     </Button>
                     <Button
                         onClick={this.handleResetFilter}
-                        disabled={disabled}
+                        disabled={disabled || doesObjectHaveNoData(searchTerm)}
                         transparent
                     >
                         {_ts('tabular.sheets', 'resetFilterTooltip')}
