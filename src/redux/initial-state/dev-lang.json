@@ -686,7 +686,6 @@
         "13001": "Words",
         "13002": "Pages",
         "13003": "Showing {leadsCount} leads out of {totalLeadsCount}",
-        "15000": "Quantitative",
         "15001": "Are you sure you want to delete these tabular sheets? {count} entries will be deleted.",
         "15003": "Separator",
         "15004": "Delimiter",
@@ -2252,7 +2251,7 @@
             "assistedTabLabel": 517,
             "originalTabLabel": 518,
             "tabularTabLabel": 142,
-            "quantitativeTabLabel": 15000,
+            "quantitativeTabLabel": 142,
             "imagesTabLabel": 519,
             "entriesTabLabel": 15
         },
