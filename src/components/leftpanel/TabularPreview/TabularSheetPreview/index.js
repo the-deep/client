@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import produce from 'immer';
 
 import VirtualizedListView from '#rscv/VirtualizedListView';
 import Field from './Field';
@@ -26,6 +27,25 @@ export default class TabularSheetPreview extends React.PureComponent {
     static defaultProps = defaultProps;
     static keySelector = d => d.id;
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            fieldStates: {},
+        };
+    }
+
+    handleFieldStateChange = (fieldKey, value) => {
+        this.setState((state) => {
+            const { fieldStates } = state;
+            const newFieldStates = produce(fieldStates, (deferred) => {
+                // eslint-disable-next-line no-param-reassign
+                deferred[fieldKey] = value;
+            });
+            return { fieldStates: newFieldStates };
+        });
+    }
+
     renderParams = (key, field) => ({
         fieldId: field.id,
         title: field.title,
@@ -37,6 +57,9 @@ export default class TabularSheetPreview extends React.PureComponent {
         leadKey: (this.props.highlights[field.id] || {}).key,
         onClick: this.props.onClick,
         showGraphs: this.props.showGraphs,
+
+        fieldState: this.state.fieldStates[field.id],
+        onFieldStateChange: this.handleFieldStateChange,
     })
 
     render() {

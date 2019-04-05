@@ -37,12 +37,24 @@ export default class ExcerptOutput extends React.PureComponent {
 
     static shouldHideZoomable = ({ isExperimental }) => !isExperimental;
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            entryState: {},
+        };
+    }
+
+    handleEntryStateChange = (value) => {
+        this.setState({ entryState: value });
+    }
+
     render() {
         const {
             className: classNameFromProps,
             type,
             value,
         } = this.props;
+        const { entryState } = this.state;
 
         const className = `
             ${classNameFromProps}
@@ -87,6 +99,8 @@ export default class ExcerptOutput extends React.PureComponent {
                     <DataSeries
                         className={styles.dataSeries}
                         value={value}
+                        onEntryStateChange={this.handleEntryStateChange}
+                        entryState={entryState}
                     />
                 );
                 break;

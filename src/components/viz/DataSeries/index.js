@@ -336,25 +336,23 @@ export default class DataSeries extends React.PureComponent {
     handleSegmentStateChange = (view) => {
         const {
             onEntryStateChange,
-            entryKey,
             entryState,
         } = this.props;
-        onEntryStateChange(
-            entryKey,
-            { ...entryState, activeView: view },
-        );
+        onEntryStateChange({
+            ...entryState,
+            activeView: view,
+        });
     }
 
     handleSortChange = (sort) => {
         const {
             onEntryStateChange,
-            entryKey,
             entryState,
         } = this.props;
-        onEntryStateChange(
-            entryKey,
-            { ...entryState, activeSort: sort },
-        );
+        onEntryStateChange({
+            ...entryState,
+            activeSort: sort,
+        });
     }
 
     sort = (activeSort = 'sortingDes', data) => {
@@ -389,16 +387,6 @@ export default class DataSeries extends React.PureComponent {
                         {title}
                     </h2>
                     <div className={styles.actionButtons}>
-                        { options && Object.keys(options).length > 1 &&
-                            <ScrollTabs
-                                active={activeView}
-                                className={styles.fixedTabs}
-                                onClick={this.handleSegmentStateChange}
-                                renderer={Tab}
-                                rendererParams={this.scrollTabRendererParams}
-                                tabs={options}
-                            />
-                        }
                         {showSort &&
                             <RotatingInput
                                 rendererSelector={sortRendererSelector}
@@ -408,6 +396,16 @@ export default class DataSeries extends React.PureComponent {
                                 options={sortingLabels}
                                 showLabel={false}
                                 showHintAndError={false}
+                            />
+                        }
+                        { options && Object.keys(options).length > 1 &&
+                            <ScrollTabs
+                                active={activeView}
+                                className={styles.fixedTabs}
+                                onClick={this.handleSegmentStateChange}
+                                renderer={Tab}
+                                rendererParams={this.scrollTabRendererParams}
+                                tabs={options}
                             />
                         }
                         <Button
@@ -477,16 +475,6 @@ export default class DataSeries extends React.PureComponent {
                         {title}
                     </h5>
                     <div className={styles.actions}>
-                        { options && Object.keys(options).length > 1 &&
-                            <ScrollTabs
-                                active={activeView}
-                                className={styles.fixedTabs}
-                                onClick={this.handleSegmentStateChange}
-                                renderer={Tab}
-                                rendererParams={this.scrollTabRendererParams}
-                                tabs={options}
-                            />
-                        }
                         {showSort &&
                             <RotatingInput
                                 className={styles.sortButton}
@@ -497,6 +485,16 @@ export default class DataSeries extends React.PureComponent {
                                 options={sortingLabels}
                                 showLabel={false}
                                 showHintAndError={false}
+                            />
+                        }
+                        { options && Object.keys(options).length > 1 &&
+                            <ScrollTabs
+                                active={activeView}
+                                className={styles.fixedTabs}
+                                onClick={this.handleSegmentStateChange}
+                                renderer={Tab}
+                                rendererParams={this.scrollTabRendererParams}
+                                tabs={options}
                             />
                         }
                         <ModalButton
