@@ -147,30 +147,25 @@ export default class Field extends React.PureComponent {
                 onClick={this.handleClick}
                 onKeyDown={this.handleClick}
             >
-                { showGraphs ? (
-                    <React.Fragment>
-                        <DataSeries
-                            className={styles.series}
-                            value={tabularFieldData}
-                            onEntryStateChange={this.handleFieldStateChange}
-                            entryState={fieldState}
-                        />
-                        <HealthBar
-                            className={styles.healthBar}
-                            data={healthStatusData}
-                            valueSelector={valueSelector}
-                            keySelector={keySelector}
-                            labelSelector={labelSelector}
-                            colorScheme={healthColorScheme}
-                            enlargeOnHover={false}
-                            hideLabel
-                        />
-                    </React.Fragment>
-                ) : (
-                    <h5>
-                        {title}
-                    </h5>
-                )}
+                <DataSeries
+                    className={showGraphs && styles.series}
+                    value={tabularFieldData}
+                    onEntryStateChange={this.handleFieldStateChange}
+                    entryState={fieldState}
+                    hideDetails={!showGraphs}
+                />
+                { showGraphs &&
+                    <HealthBar
+                        className={styles.healthBar}
+                        data={healthStatusData}
+                        valueSelector={valueSelector}
+                        keySelector={keySelector}
+                        labelSelector={labelSelector}
+                        colorScheme={healthColorScheme}
+                        enlargeOnHover={false}
+                        hideLabel
+                    />
+                }
             </div>
         );
     }

@@ -36,6 +36,7 @@ const propTypes = {
         cache: PropTypes.object,
         options: PropTypes.object,
     }),
+    hideDetails: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -45,6 +46,7 @@ const defaultProps = {
         type: 'string',
         series: [],
     },
+    hideDetails: false,
 };
 
 const chartMargins = {
@@ -436,6 +438,7 @@ export default class DataSeries extends React.PureComponent {
                 type,
                 title,
             },
+            hideDetails,
             entryState: {
                 activeView: activeViewFromState,
                 activeSort = 'sortingDes',
@@ -474,54 +477,58 @@ export default class DataSeries extends React.PureComponent {
         return (
             <div className={_cs(className, 'data-series', styles.dataSeries)}>
                 <header className={styles.header}>
-                    <h5 className={styles.heading}>
+                    <h4 className={styles.heading}>
                         {title}
-                    </h5>
-                    <div className={styles.actions}>
-                        {showSort &&
-                            <RotatingInput
-                                className={styles.sortButton}
-                                rendererSelector={sortRendererSelector}
-                                keySelector={sortKeySelector}
-                                value={activeSort}
-                                onChange={this.handleSortChange}
-                                options={sortingLabels}
-                                showLabel={false}
-                                showHintAndError={false}
-                            />
-                        }
-                        { options && Object.keys(options).length > 1 &&
-                            <ScrollTabs
-                                active={activeView}
-                                className={styles.fixedTabs}
-                                onClick={this.handleSegmentStateChange}
-                                renderer={Tab}
-                                rendererParams={this.scrollTabRendererParams}
-                                tabs={options}
-                            />
-                        }
-                        <ModalButton
-                            iconName="expand"
-                            className={styles.expandButton}
-                            transparent
-                            modal={
-                                <ExpandedModal
-                                    title={title}
-                                    type={type}
-                                    activeView={activeView}
-                                    activeSort={activeSort}
-                                    showSort={showSort}
+                    </h4>
+                    { !hideDetails &&
+                        <div className={styles.actions}>
+                            {showSort &&
+                                <RotatingInput
+                                    className={styles.sortButton}
+                                    rendererSelector={sortRendererSelector}
+                                    keySelector={sortKeySelector}
+                                    value={activeSort}
+                                    onChange={this.handleSortChange}
+                                    options={sortingLabels}
+                                    showLabel={false}
+                                    showHintAndError={false}
                                 />
                             }
+                            { options && Object.keys(options).length > 1 &&
+                                <ScrollTabs
+                                    active={activeView}
+                                    className={styles.fixedTabs}
+                                    onClick={this.handleSegmentStateChange}
+                                    renderer={Tab}
+                                    rendererParams={this.scrollTabRendererParams}
+                                    tabs={options}
+                                />
+                            }
+                            <ModalButton
+                                iconName="expand"
+                                className={styles.expandButton}
+                                transparent
+                                modal={
+                                    <ExpandedModal
+                                        title={title}
+                                        type={type}
+                                        activeView={activeView}
+                                        activeSort={activeSort}
+                                        showSort={showSort}
+                                    />
+                                }
+                            />
+                        </div>
+                    }
+                </header>
+                { !hideDetails &&
+                    <div className={styles.content}>
+                        <MultiViewContainer
+                            views={this.views}
+                            active={activeView}
                         />
                     </div>
-                </header>
-                <div className={styles.content}>
-                    <MultiViewContainer
-                        views={this.views}
-                        active={activeView}
-                    />
-                </div>
+                }
             </div>
         );
     }
