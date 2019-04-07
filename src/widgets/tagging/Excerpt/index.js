@@ -147,6 +147,15 @@ export default class Excerpt extends React.PureComponent {
         this.setState({ isBeingDraggedOver: false });
     }
 
+    handleEntryStateChange = (value) => {
+        const {
+            onEntryStateChange,
+            entryState,
+            entryKey,
+        } = this.props;
+        onEntryStateChange(entryKey, value);
+    }
+
     renderExcerptImage = () => {
         const { image } = this.props;
 
@@ -178,7 +187,10 @@ export default class Excerpt extends React.PureComponent {
     }
 
     renderDataSeries = () => {
-        const { tabularFieldData } = this.props;
+        const {
+            tabularFieldData,
+            entryState,
+        } = this.props;
         const className = `
             ${styles.dataSeries}
             data-series
@@ -188,6 +200,8 @@ export default class Excerpt extends React.PureComponent {
             <DataSeries
                 className={className}
                 value={tabularFieldData}
+                onEntryStateChange={this.handleEntryStateChange}
+                entryState={entryState}
             />
         );
     }

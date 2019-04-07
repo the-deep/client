@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
@@ -55,6 +56,14 @@ export default class TabularPreview extends React.PureComponent {
             setInvalid: this.setInvalid,
         });
     }
+
+    getHighlights = memoize(highlights => (
+        listToMap(
+            highlights.filter(highlight => !!highlight.tabularFieldId),
+            highlight => highlight.tabularFieldId,
+            highlight => highlight,
+        )
+    ))
 
     setBook = (response) => {
         const validSheets = response.sheets.filter(
@@ -141,12 +150,7 @@ export default class TabularPreview extends React.PureComponent {
             );
         }
 
-        // FIXME: memoize this
-        const highlights = listToMap(
-            highlightsFromProps.filter(highlight => !!highlight.tabularFieldId),
-            highlight => highlight.tabularFieldId,
-            highlight => highlight,
-        );
+        const highlights = this.getHighlights(highlightsFromProps);
 
         return (
             <div className={className}>

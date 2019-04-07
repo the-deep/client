@@ -101,6 +101,14 @@ export default class Field extends React.PureComponent {
         onClick(e, { key: leadKey });
     }
 
+    handleFieldStateChange = (value) => {
+        const {
+            onFieldStateChange,
+            fieldId,
+        } = this.props;
+        onFieldStateChange(fieldId, value);
+    }
+
     render() {
         const {
             className,
@@ -110,6 +118,7 @@ export default class Field extends React.PureComponent {
             title,
             tabularFieldData,
             showGraphs,
+            fieldState,
         } = this.props;
 
         const healthStatusData = this.getHealthStatusData(healthStats);
@@ -138,26 +147,25 @@ export default class Field extends React.PureComponent {
                 onClick={this.handleClick}
                 onKeyDown={this.handleClick}
             >
-                { showGraphs ? (
-                    <DataSeries
-                        className={styles.series}
-                        value={tabularFieldData}
-                    />
-                ) : (
-                    <h5>
-                        {title}
-                    </h5>
-                )}
-                <HealthBar
-                    className={styles.healthBar}
-                    data={healthStatusData}
-                    valueSelector={valueSelector}
-                    keySelector={keySelector}
-                    labelSelector={labelSelector}
-                    colorScheme={healthColorScheme}
-                    enlargeOnHover={false}
-                    hideLabel
+                <DataSeries
+                    className={showGraphs && styles.series}
+                    value={tabularFieldData}
+                    onEntryStateChange={this.handleFieldStateChange}
+                    entryState={fieldState}
+                    hideDetails={!showGraphs}
                 />
+                { showGraphs &&
+                    <HealthBar
+                        className={styles.healthBar}
+                        data={healthStatusData}
+                        valueSelector={valueSelector}
+                        keySelector={keySelector}
+                        labelSelector={labelSelector}
+                        colorScheme={healthColorScheme}
+                        enlargeOnHover={false}
+                        hideLabel
+                    />
+                }
             </div>
         );
     }

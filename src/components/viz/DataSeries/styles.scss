@@ -18,6 +18,7 @@ $width-expanded-view: 90vw;
             flex-grow: 1;
             padding: 0 $spacing-small;
             overflow: hidden;
+            text-transform: none;
             text-overflow: ellipsis;
             white-space: nowrap;
             color: $color-text;
@@ -119,6 +120,10 @@ $width-expanded-view: 90vw;
         &.active-tab {
             background-color: fade-out($color-accent, .92);
             color: $color-accent;
+        }
+
+        &:hover {
+            background-color: $color-foreground-alt;
         }
     }
 }

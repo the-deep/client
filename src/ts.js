@@ -14,8 +14,8 @@ const insertBetweenItems = (lst, obj) => {
         return lst;
     }
     const [firstItem, ...otherItem] = lst;
-    const newLst = [firstItem];
 
+    const newLst = [firstItem];
     otherItem.forEach((item) => {
         newLst.push(obj);
         newLst.push(item);
@@ -26,6 +26,7 @@ const insertBetweenItems = (lst, obj) => {
 
 const hasReactElement = lst => lst.find(p => React.isValidElement(p));
 
+// FIXME: Array.flat can be used
 const flatten = (lst) => {
     const newLst = [];
     lst.forEach((item) => {
