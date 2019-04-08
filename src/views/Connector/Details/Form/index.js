@@ -853,7 +853,6 @@ export default class ConnectorDetailsForm extends React.PureComponent {
                                 hideSelectAllButton
                             />
                             <TabularSelectInput
-                                className={styles.projects}
                                 faramElementName="projects"
                                 options={projectsOptions}
                                 label={_ts('connector', 'connectorProjectsLabel')}
