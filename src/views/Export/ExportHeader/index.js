@@ -8,11 +8,15 @@ import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import AccentButton from '#rsca/Button/AccentButton';
 
+import Cloak from '#components/general/Cloak';
 import {
     urlForExportTrigger,
     createParamsForExportTrigger,
 } from '#rest';
-import { pathNames } from '#constants';
+import {
+    pathNames,
+    viewsAcl,
+} from '#constants';
 import _ts from '#ts';
 import notify from '#notify';
 
@@ -174,13 +178,19 @@ export default class ExportHeader extends React.PureComponent {
                     >
                         {_ts('export', 'showPreviewButtonLabel')}
                     </Button>
-                    <AccentButton
-                        className={styles.button}
-                        onClick={this.handleAssessmentExportClick}
-                        disabled={this.props.pending}
-                    >
-                        {_ts('export', 'startAssessmentExportButtonLabel')}
-                    </AccentButton>
+                    <Cloak
+                        // NOTE: this is temporary, will be moved to new page
+                        {...viewsAcl.arys}
+                        render={
+                            <AccentButton
+                                className={styles.button}
+                                onClick={this.handleAssessmentExportClick}
+                                disabled={this.props.pending}
+                            >
+                                {_ts('export', 'startAssessmentExportButtonLabel')}
+                            </AccentButton>
+                        }
+                    />
                     <PrimaryButton
                         className={styles.button}
                         onClick={this.handleExport}
