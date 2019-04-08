@@ -19,6 +19,9 @@ const notLeadEditable = ({ isLoggedIn, leadPermissions }) => (
     !isLoggedIn || !(leadPermissions.create || leadPermissions.modify)
 );
 
+const notLeadVizViewable = ({ isLoggedIn, leadPermissions, isBeta }) => (
+    !isLoggedIn || !leadPermissions.view || isBeta
+);
 const notClusteringViewable = ({ isLoggedIn, leadPermissions, isBeta }) => (
     !isLoggedIn || !leadPermissions.view || isBeta
 );
@@ -54,7 +57,7 @@ const acl = {
     workshop: { hide: notDevAndAdmin },
     connectors: { hide: notLoggedIn },
 
-    leadsViz: { hide: notLeadViewable },
+    leadsViz: { hide: notLeadVizViewable },
     clusterViz: { hide: notClusteringViewable },
     leads: { hide: notLeadViewable },
     leadGroups: { hide: notLeadViewable },
