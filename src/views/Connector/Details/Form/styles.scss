@@ -56,6 +56,14 @@
                     border-left: $width-separator-thin solid $color-separator;
                 }
 
+                .table-container {
+                    background-color: $color-foreground;
+
+                    .empty {
+                        display: none;
+                    }
+                }
+
                 .headers {
                     .header {
                         &.role {
