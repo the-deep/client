@@ -1,7 +1,8 @@
 import {
     listToMap,
-    getElementAround,
     getNumbers,
+    isDefined,
+    getDefinedElementAround,
 } from '@togglecorp/fujs';
 import { analyzeErrors } from '@togglecorp/faram';
 
@@ -127,9 +128,9 @@ export const addLeadViewLeadSaveAction = ({ leadId, serverId }) => ({
     serverId,
 });
 
-export const addLeadViewLeadRemoveAction = leadId => ({
+export const addLeadViewLeadRemoveAction = leadIds => ({
     type: LA__LEAD_REMOVE,
-    leadId,
+    leadIds,
 });
 
 export const addLeadViewRemoveSavedLeadsAction = () => ({
@@ -267,20 +268,33 @@ const addLeadViewNextLead = (state) => {
 };
 
 const addLeadViewRemoveLead = (state, action) => {
-    const { addLeadView: { leads } } = state;
+    const { addLeadView: { leads, activeLeadId } } = state;
 
-    const { leadId } = action;
-    const leadIndex = leads.findIndex(
-        lead => leadAccessor.getKey(lead) === leadId,
+    const { leadIds } = action;
+
+    const filteredLeads = leads.map(
+        lead => (leadIds.includes(leadAccessor.getKey(lead)) ? undefined : lead),
     );
+    const finalFilteredLeads = filteredLeads.filter(isDefined);
+
+    let newActiveLeadId;
+    if (finalFilteredLeads.includes(activeLeadId)) {
+        newActiveLeadId = activeLeadId;
+    } else {
+        const leadIndex = leads.findIndex(lead => leadAccessor.getKey(lead) === activeLeadId);
+        const newActiveLead = getDefinedElementAround(filteredLeads, leadIndex);
+        if (newActiveLead) {
+            newActiveLeadId = leadAccessor.getKey(newActiveLead);
+        }
+    }
 
     // limiting the newActiveid
-    const newActiveLead = getElementAround(leads, leadIndex);
-    const newActiveLeadId = newActiveLead ? leadAccessor.getKey(newActiveLead) : undefined;
+    // const newActiveLead = getElementAround(leads, leadIndex);
+    // const newActiveLeadId = newActiveLead ? leadAccessor.getKey(newActiveLead) : undefined;
 
     const settings = {
         addLeadView: {
-            leads: { $splice: [[leadIndex, 1]] },
+            leads: { $set: finalFilteredLeads },
             activeLeadId: { $set: newActiveLeadId },
         },
     };

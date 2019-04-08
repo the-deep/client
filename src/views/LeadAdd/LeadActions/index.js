@@ -147,7 +147,7 @@ export default class LeadFilter extends React.PureComponent {
 
     removeSelected = (leadId) => {
         this.props.uploadCoordinator.remove(leadId);
-        this.props.addLeadViewLeadRemove(leadId);
+        this.props.addLeadViewLeadRemove([leadId]);
 
         notify.send({
             title: _ts('addLeads.actions', 'leadDiscard'),
@@ -160,8 +160,8 @@ export default class LeadFilter extends React.PureComponent {
     removeFiltered = () => {
         this.props.filteredLeadKeys.forEach((leadId) => {
             this.props.uploadCoordinator.remove(leadId);
-            this.props.addLeadViewLeadRemove(leadId);
         });
+        this.props.addLeadViewLeadRemove(this.props.filteredLeadKeys);
 
         notify.send({
             title: _ts('addLeads.actions', 'leadsDiscard'),
@@ -174,8 +174,8 @@ export default class LeadFilter extends React.PureComponent {
     removeCompleted = () => {
         this.props.completedLeadKeys.forEach((leadId) => {
             this.props.uploadCoordinator.remove(leadId);
-            this.props.addLeadViewLeadRemove(leadId);
         });
+        this.props.addLeadViewLeadRemove(this.props.uploadCoordinator);
 
         notify.send({
             title: _ts('addLeads.actions', 'leadsDiscard'),
@@ -188,8 +188,8 @@ export default class LeadFilter extends React.PureComponent {
     removeBulk = () => {
         this.props.leadKeys.forEach((leadId) => {
             this.props.uploadCoordinator.remove(leadId);
-            this.props.addLeadViewLeadRemove(leadId);
         });
+        this.props.addLeadViewLeadRemove(this.props.leadKeys);
 
         notify.send({
             title: _ts('addLeads.actions', 'leadsDiscard'),
