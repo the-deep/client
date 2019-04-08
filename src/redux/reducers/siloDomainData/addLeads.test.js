@@ -170,12 +170,94 @@ test('should remove lead from top', () => {
             ],
         },
     };
-    const action = addLeadViewLeadRemoveAction(1);
+    const action = addLeadViewLeadRemoveAction([1]);
     const after = {
         addLeadView: {
             activeLeadId: 2,
             leads: [
                 { id: 2 },
+            ],
+        },
+    };
+    expect(reducers[LA__LEAD_REMOVE](state, action)).toEqual(after);
+});
+
+test('should remove lead from middle', () => {
+    const state = {
+        addLeadView: {
+            activeLeadId: 2,
+            leads: [
+                { id: 1 },
+                { id: 2 },
+                { id: 3 },
+                { id: 4 },
+                { id: 5 },
+            ],
+        },
+    };
+    const action = addLeadViewLeadRemoveAction([2, 3]);
+    const after = {
+        addLeadView: {
+            activeLeadId: 1,
+            leads: [
+                { id: 1 },
+                { id: 4 },
+                { id: 5 },
+            ],
+        },
+    };
+    expect(reducers[LA__LEAD_REMOVE](state, action)).toEqual(after);
+});
+
+test('should remove lead from middle', () => {
+    const state = {
+        addLeadView: {
+            activeLeadId: 3,
+            leads: [
+                { id: 1 },
+                { id: 2 },
+                { id: 3 },
+                { id: 4 },
+                { id: 5 },
+            ],
+        },
+    };
+    const action = addLeadViewLeadRemoveAction([2, 3]);
+    const after = {
+        addLeadView: {
+            activeLeadId: 4,
+            leads: [
+                { id: 1 },
+                { id: 4 },
+                { id: 5 },
+            ],
+        },
+    };
+    expect(reducers[LA__LEAD_REMOVE](state, action)).toEqual(after);
+});
+
+test('should remove lead from middle', () => {
+    const state = {
+        addLeadView: {
+            activeLeadId: 2,
+            leads: [
+                { id: 1 },
+                { id: 2 },
+                { id: 3 },
+                { id: 4 },
+                { id: 5 },
+            ],
+        },
+    };
+    const action = addLeadViewLeadRemoveAction([2]);
+    const after = {
+        addLeadView: {
+            activeLeadId: 3,
+            leads: [
+                { id: 1 },
+                { id: 3 },
+                { id: 4 },
+                { id: 5 },
             ],
         },
     };
@@ -192,7 +274,7 @@ test('should remove lead from bottom', () => {
             ],
         },
     };
-    const action = addLeadViewLeadRemoveAction(2);
+    const action = addLeadViewLeadRemoveAction([2]);
     const after = {
         addLeadView: {
             activeLeadId: 1,
