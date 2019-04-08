@@ -81,6 +81,7 @@ export default class ProjectRegionsTooltip extends React.PureComponent {
                     <ListView
                         data={adminLevels}
                         renderer={AdminLevel}
+                        className={styles.list}
                         keySelector={adminLevelKeySelector}
                         rendererParams={this.adminLevelRendererParams}
                         groupKeySelector={groupKeySelector}

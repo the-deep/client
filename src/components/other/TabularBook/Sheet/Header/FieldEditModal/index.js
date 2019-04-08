@@ -3,7 +3,6 @@ import React from 'react';
 import Faram, { FaramGroup, requiredCondition } from '@togglecorp/faram';
 
 import Button from '#rsca/Button';
-import Icon from '#rscg/Icon';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
@@ -12,7 +11,6 @@ import SegmentInput from '#rsci/SegmentInput';
 import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
 import FloatingContainer from '#rscv/FloatingContainer';
-import Tooltip from '#rscv/Tooltip';
 import {
     calcFloatPositionInMainWindow,
     defaultOffset,
@@ -204,6 +202,33 @@ export default class FieldEditModal extends React.PureComponent {
         return optionsContainerPosition;
     }
 
+    handleTooltipInvalidate = (container) => {
+        // Note: pass through prop
+        // eslint-disable-next-line react/prop-types
+        const { parentBCR } = this.props;
+
+        const contentRect = container.getBoundingClientRect();
+
+        const optionsContainerPosition = (
+            calcFloatPositionInMainWindow({
+                parentRect: parentBCR,
+                contentRect,
+                offset: {
+                    ...defaultOffset,
+                    left: -260,
+                },
+                limit: {
+                    ...defaultLimit,
+                    minW: 240,
+                    maxW: 240,
+                    maxH: 360,
+                },
+            })
+        );
+
+        return optionsContainerPosition;
+    }
+
     renderSettingsForType = (type) => {
         if (type === DATA_TYPE.number) {
             return (
@@ -223,19 +248,16 @@ export default class FieldEditModal extends React.PureComponent {
 
             return (
                 <React.Fragment>
-                    <div className={styles.infoContainer}>
-                        <SegmentInput
-                            faramElementName="geoType"
-                            label={_ts('tabular.fieldEditModal', 'geoTypeTitle')} // Geo Type
-                            options={geoTypeOptions}
-                        />
-                        <Tooltip tooltip={tooltip} >
-                            <Icon
-                                name="infoOutline"
-                                className={styles.infoIcon}
-                            />
-                        </Tooltip>
-                    </div>
+                    <SegmentInput
+                        faramElementName="geoType"
+                        label={_ts('tabular.fieldEditModal', 'geoTypeTitle')} // Geo Type
+                        options={geoTypeOptions}
+                    />
+                    <FloatingContainer
+                        onInvalidate={this.handleTooltipInvalidate}
+                    >
+                        {tooltip}
+                    </FloatingContainer>
                     <NumberInput
                         faramElementName="adminLevel"
                         label={_ts('tabular.fieldEditModal', 'adminLevelTitle')} // Admin Level
