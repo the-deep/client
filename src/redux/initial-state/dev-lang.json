@@ -922,7 +922,8 @@
         "-73426620": "Ascending",
         "-8251517": "Descending",
         "-20881567": "Alphabetical Ascending",
-        "-93837566": "Alphabetical Descending"
+        "-93837566": "Alphabetical Descending",
+        "-58642627": "Start assessment export"
     },
     "links": {
         "browserExtension": {
@@ -1384,7 +1385,8 @@
             "projectLabel": 31,
             "cantLoadProject": 646,
             "afLabel": 379,
-            "cantLoadAf": 648
+            "cantLoadAf": 648,
+            "startAssessmentExportButtonLabel": -58642627
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,
