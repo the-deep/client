@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 import {
     listToMap,
+    isDefined,
+    isNotDefined,
 } from '@togglecorp/fujs';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -211,6 +213,28 @@ export default class DataSeries extends React.PureComponent {
         return newSeries;
     })
 
+    getWordCloudData = memoize((series) => {
+        const tokens = {};
+        series.forEach((datum) => {
+            const frequency = frequencySelector(datum);
+            const labels = valueSelector(datum);
+            if (isNotDefined(labels)) {
+                return;
+            }
+            labels.split(/\s+/).forEach((label) => {
+                if (isDefined(tokens[label])) {
+                    tokens[label] += frequency;
+                } else {
+                    tokens[label] = frequency;
+                }
+            });
+        });
+        return Object.keys(tokens).map(key => ({
+            count: tokens[key],
+            value: key,
+        }));
+    });
+
     createView = ({ showLegend }) => ({
         [GRAPH.horizontalBarChart]: {
             component: SimpleHorizontalBarChart,
@@ -300,7 +324,7 @@ export default class DataSeries extends React.PureComponent {
                 return {
                     className: styles.wordCloud,
 
-                    data: series,
+                    data: this.getWordCloudData(series),
                     labelSelector: valueSelector,
                     frequencySelector,
                 };
