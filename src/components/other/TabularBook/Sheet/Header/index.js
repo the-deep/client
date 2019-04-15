@@ -181,6 +181,7 @@ export default class Header extends React.PureComponent {
                     keySelector={healthBarKeySelector}
                     labelSelector={healthBarKeySelector}
                     className={styles.healthBar}
+                    centerTooltip
                     hideLabel
                     enlargeOnHover={false}
                     colorScheme={healthColorScheme}
