@@ -131,7 +131,7 @@ const tabsIcons = {
     [GRID_VIEW]: 'grid',
 };
 
-const hideOnBeta = ({ isBeta }) => isBeta;
+const hideExperimental = ({ isExperimental }) => !isExperimental;
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Leads extends React.PureComponent {
@@ -549,7 +549,7 @@ export default class Leads extends React.PureComponent {
             <React.Fragment>
                 <FilterLeadsForm className={styles.filters} />
                 <Cloak
-                    hide={hideOnBeta}
+                    hide={hideExperimental}
                     render={
                         <FixedTabs
                             tabs={Leads.tabs}
