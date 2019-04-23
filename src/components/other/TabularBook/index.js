@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import produce from 'immer';
 import memoize from 'memoize-one';
+import { connect } from 'react-redux';
 
 import { forEach } from '#rsu/common';
 import Button from '#rsca/Button';
@@ -17,6 +18,12 @@ import ScrollTabs from '#rscv/ScrollTabs';
 import { CoordinatorBuilder } from '#rsu/coordinate';
 import { FgRestBuilder } from '#rsu/rest';
 import FormattedDate from '#rscv/FormattedDate';
+
+import {
+    selectedTabForTabularBook,
+    setTabularSelectedTabAction,
+} from '#redux';
+
 import {
     listToMap,
     isNotDefined,
@@ -232,6 +239,8 @@ const propTypes = {
     isModal: PropTypes.bool,
 
     highlightList: PropTypes.arrayOf(PropTypes.object),
+    selectedTab: PropTypes.string,
+    setSelectedTab: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -240,10 +249,20 @@ const defaultProps = {
     isModal: true,
     leadTitle: '',
     highlightList: [],
+    selectedTab: undefined,
 };
+
+const mapStateToProps = (state, props) => ({
+    selectedTab: selectedTabForTabularBook(state, props),
+});
+
+const mapDispatchToProps = dispatch => ({
+    setSelectedTab: params => dispatch(setTabularSelectedTabAction(params)),
+});
 
 @RequestCoordinator
 @RequestClient(requests)
+@connect(mapStateToProps, mapDispatchToProps)
 export default class TabularBook extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -311,9 +330,17 @@ export default class TabularBook extends React.PureComponent {
     );
 
 
-    handleActiveSheetChange = (activeSheet) => {
+    handleActiveSheetChange = (selectedTab) => {
         // NOTE: activeSheet was taken from ScrollTabs, so it is a strina
-        this.setState({ activeSheet: Number(activeSheet) });
+        const {
+            setSelectedTab,
+            bookId,
+        } = this.props;
+
+        setSelectedTab({
+            bookId,
+            selectedTab: Number(selectedTab),
+        });
     }
 
     handleBookGet = (response, onComplete) => {
@@ -781,11 +808,11 @@ export default class TabularBook extends React.PureComponent {
                 response: projectRegions,
             },
             highlightList,
+            selectedTab: activeSheet,
         } = this.props;
 
         const {
             originalSheets,
-            activeSheet,
             isSheetRetrievePending,
             sheetDeletePending,
             fieldRetrievePending,
