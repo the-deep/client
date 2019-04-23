@@ -5,7 +5,7 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import DateInput from '#rsci/DateInput';
 import SelectInput from '#rsci/SelectInput';
-import SelectInputWithList from '#rsci/SelectInputWithList';
+import ListInput from '#rsci/ListInput';
 import NumberInput from '#rsci/NumberInput';
 import TextInput from '#rsci/TextInput';
 
@@ -31,7 +31,7 @@ const widgets = {
     date: DateInput,
     daterange: DateRangeInput,
     multiselect: MultiSelectInput,
-    multiselectWithList: SelectInputWithList,
+    listInput: ListInput,
     select: SelectInput,
 };
 
@@ -79,7 +79,7 @@ export const renderWidget = (k, data, sources, readonly = false, expandMultisele
     };
 
     const fieldType = fieldTypeRaw === 'multiselect' && expandMultiselect
-        ? 'multiselectWithList'
+        ? 'listInput'
         : fieldTypeRaw;
 
     const Component = widgets[fieldType];
