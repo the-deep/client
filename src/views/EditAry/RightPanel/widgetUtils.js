@@ -34,7 +34,7 @@ const widgets = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export const renderWidget = (k, data, sources, hide, secondaryDataReviewKey) => {
+export const renderWidget = (k, data, sources, readonly = false) => {
     const {
         fieldType,
         id: key,
@@ -44,10 +44,6 @@ export const renderWidget = (k, data, sources, hide, secondaryDataReviewKey) => 
         tooltip,
         sourceType,
     } = data;
-
-    if (String(key) !== secondaryDataReviewKey && hide) {
-        return null;
-    }
 
     let someOptions;
     switch (sourceType) {
@@ -92,6 +88,7 @@ export const renderWidget = (k, data, sources, hide, secondaryDataReviewKey) => 
             className="widget"
             {...commonProps}
             {...typeSpecificProps[fieldType]}
+            disabled={readonly}
         />
     );
 };

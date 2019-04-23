@@ -224,12 +224,16 @@ const createBasicInformationSchema = (aryTemplateMetadata = {}) => {
     return schema;
 };
 
+export const isDataCollectionTechniqueColumn = field => (
+    field.title.toLowerCase().trim() === 'data collection technique'
+);
+
 // NOTE:
 export const getDataCollectionTechnique = (aryTemplateMethodology) => {
     let dataCollectionTechnique;
     aryTemplateMethodology.some(
         group => group.fields.some((field) => {
-            if (field.title.toLowerCase().trim() === 'data collection technique') {
+            if (isDataCollectionTechniqueColumn(field)) {
                 dataCollectionTechnique = field;
                 return true;
             }

@@ -25,6 +25,7 @@ import {
     geoOptionsForProjectSelector,
 
     isSecondaryDataReviewOption,
+    isDataCollectionTechniqueColumn,
     getDataCollectionTechnique,
 } from '#redux';
 import OrganigramInput from '#components/input/OrganigramInput/';
@@ -101,17 +102,18 @@ export default class Methodology extends React.PureComponent {
         );
     };
 
-    renderAttribute = (key, index, hide, secondaryDataReviewKey) => {
+    renderAttribute = (key, index, isSecondaryDataReviewSelected) => {
         const { aryTemplateMethodology: attributesTemplate } = this.props;
         const methodologyGroup = attributesTemplate[key];
 
-        const renderCustomWidget = (k, data) => renderWidget(
-            k,
-            data,
-            this.props.sources,
-            hide,
-            secondaryDataReviewKey,
-        );
+        const renderCustomWidget = (k, data) => {
+            const hide = !isDataCollectionTechniqueColumn(data) && isSecondaryDataReviewSelected;
+            if (hide) {
+                return null;
+            }
+
+            return renderWidget(k, data, this.props.sources);
+        };
 
         return (
             <FaramGroup
@@ -130,20 +132,22 @@ export default class Methodology extends React.PureComponent {
     renderAttributeRow = (rowKey, attribute, index) => {
         // FIXME: memoize this
         const { aryTemplateMethodology: attributesTemplate } = this.props;
-        const attributesTemplateKeys = Object.keys(attributesTemplate);
+
         const dataCollectionTechnique = getDataCollectionTechnique(attributesTemplate);
         const secondaryDataReview = dataCollectionTechnique.options.find(
             isSecondaryDataReviewOption,
         );
-
-        const hide = attribute[dataCollectionTechnique.id] === secondaryDataReview.key;
+        const isSecondaryDataReviewSelected = (
+            attribute[dataCollectionTechnique.id] === secondaryDataReview.key
+        );
 
         const renderAttribute = (k, key) => this.renderAttribute(
             key,
             index,
-            hide,
-            secondaryDataReview.key,
+            isSecondaryDataReviewSelected,
         );
+
+        const attributesTemplateKeys = Object.keys(attributesTemplate);
 
         return (
             <div
