@@ -1,18 +1,14 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 
-import {
-    _cs,
-} from '@togglecorp/fujs';
-
-import { renderWidget } from '../../../widgetUtils';
+import { FaramInputElement } from '@togglecorp/faram';
+import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 
 const propTypes = {};
 const defaultProps = {};
 
-export default class LeadPreview extends React.PureComponent {
+class Widget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -22,10 +18,6 @@ export default class LeadPreview extends React.PureComponent {
         this.state = {
             isBeingDraggedOver: false,
         };
-    }
-
-    handleDrop = (data) => {
-        console.warn(data);
     }
 
     handleDragEnter = () => {
@@ -45,9 +37,21 @@ export default class LeadPreview extends React.PureComponent {
 
         const data = e.dataTransfer.getData('text');
 
+        const {
+            value,
+            onChange,
+        } = this.props;
+
         try {
             const parsedData = JSON.parse(data);
-            console.warn(parsedData);
+            if (parsedData && parsedData.organizationId) {
+                console.warn(parsedData.organizationId);
+                if (!value) {
+                    onChange([value]);
+                } else if (value.findIndex(v => v === parsedData.organizationId) === -1) {
+                    onChange([...value, parsedData.organizationId]);
+                }
+            }
         } catch (ex) {
             console.warn('hmmmm');
         }
@@ -58,21 +62,25 @@ export default class LeadPreview extends React.PureComponent {
 
     render() {
         const {
+            /*
             index,
             data,
             sources,
-            className,
+            */
+            containerClassName,
+            renderer: Renderer,
+            ...otherProps
         } = this.props;
 
-        const {
-            isBeingDraggedOver,
-        } = this.state;
+        const { isBeingDraggedOver } = this.state;
+
+        console.warn(this.props);
 
         return (
             <div
                 className={_cs(
                     styles.widget,
-                    className,
+                    containerClassName,
                     isBeingDraggedOver && styles.draggedOver,
                 )}
                 onDragEnter={this.handleDragEnter}
@@ -80,8 +88,12 @@ export default class LeadPreview extends React.PureComponent {
                 onDragOver={this.handleDragOver}
                 onDrop={this.handleDrop}
             >
-                { renderWidget(index, data, sources, false, true) }
+                <Renderer
+                    {...otherProps}
+                />
             </div>
         );
     }
 }
+
+export default FaramInputElement(Widget);

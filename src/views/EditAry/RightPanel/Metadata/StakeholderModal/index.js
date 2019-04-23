@@ -18,9 +18,9 @@ import ListView from '#rscv/List/ListView';
 import VirtualizedListView from '#rscv/VirtualizedListView';
 
 import SearchInput from '#rsci/SearchInput';
-import Widget from './Widget';
+// import Widget from './Widget';
 
-import { renderWidget } from '../../widgetUtils';
+import { renderDroppableWidget } from '../../widgetUtils';
 
 import styles from './styles.scss';
 
@@ -73,14 +73,21 @@ export default class LeadPreview extends React.PureComponent {
         return newOptions;
     });
 
+    /*
     widgetRendererParams = (i, data) => ({
         index: i,
         data,
         sources: this.props.sources,
         className: styles.widget,
     })
+    */
 
-    renderWidget = (k, data) => renderWidget(k, data, this.props.sources, false, true);
+    renderWidget = (k, data) => renderDroppableWidget(
+        k,
+        data,
+        this.props.sources,
+        { containerClassName: styles.widget },
+    );
 
     render() {
         const {
@@ -143,9 +150,9 @@ export default class LeadPreview extends React.PureComponent {
                         <ListView
                             className={styles.widgetList}
                             data={fields}
-                            rendererParams={this.widgetRendererParams}
-                            renderer={Widget}
-                            // modifier={this.renderWidget}
+                            modifier={this.renderWidget}
+                            // rendererParams={this.widgetRendererParams}
+                            // renderer={Widget}
                         />
                     </div>
                 </ModalBody>

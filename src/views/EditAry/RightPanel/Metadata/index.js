@@ -73,7 +73,11 @@ export default class Metadata extends React.PureComponent {
 
     renderWidget = (k, data) => renderWidget(k, data, this.props.sources);
 
-    renderReadonlyWidget = (k, data) => renderWidget(k, data, this.props.sources, true);
+    renderReadonlyWidget = (k, data) => renderWidget(
+        k,
+        data,
+        this.props.sources, { readonly: true },
+    );
 
     renderMetadata = (k, data) => {
         const {

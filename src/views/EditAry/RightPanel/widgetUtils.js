@@ -5,9 +5,11 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import DateInput from '#rsci/DateInput';
 import SelectInput from '#rsci/SelectInput';
-import ListInput from '#rsci/ListInput';
+// import ListInput from '#rsci/ListInput';
 import NumberInput from '#rsci/NumberInput';
 import TextInput from '#rsci/TextInput';
+
+import Widget from './Metadata/StakeholderModal/Widget';
 
 const DateRangeInput = ({ label, faramElementName, ...props }) => (
     <FaramGroup faramElementName={faramElementName}>
@@ -31,14 +33,32 @@ const widgets = {
     date: DateInput,
     daterange: DateRangeInput,
     multiselect: MultiSelectInput,
-    listInput: ListInput,
+    // listInput: ListInput,
     select: SelectInput,
 };
 
-// eslint-disable-next-line import/prefer-default-export
-export const renderWidget = (k, data, sources, readonly = false, expandMultiselect = false) => {
+const widgetSpecificProps = {
+    number: {
+        separator: ' ',
+    },
+};
+
+const getOptions = (sourceType, sources, options) => {
+    switch (sourceType) {
+        case 'countries':
+            return sources.countries;
+        case 'donors':
+            return sources.donors;
+        case 'organizations':
+            return sources.organizations;
+        default:
+            return options;
+    }
+};
+
+const getProps = (data, sources) => {
     const {
-        fieldType: fieldTypeRaw,
+        fieldType,
         id: key,
         options,
         placeholder,
@@ -47,41 +67,27 @@ export const renderWidget = (k, data, sources, readonly = false, expandMultisele
         sourceType,
     } = data;
 
-    let someOptions;
-    switch (sourceType) {
-        case 'countries':
-            someOptions = sources.countries;
-            break;
-        case 'donors':
-            someOptions = sources.donors;
-            break;
-        case 'organizations':
-            someOptions = sources.organizations;
-            break;
-        default:
-            someOptions = options;
-            break;
-    }
-
     const id = String(key);
     const commonProps = {
         faramElementName: id,
         key: id,
         label: title,
-        options: someOptions,
+        options: getOptions(sourceType, sources, options),
         placeholder,
         title: tooltip,
     };
-    const typeSpecificProps = {
-        number: {
-            separator: ' ',
-        },
+
+    const specificProps = widgetSpecificProps[fieldType];
+
+    return {
+        ...commonProps,
+        ...specificProps,
     };
+};
 
-    const fieldType = fieldTypeRaw === 'multiselect' && expandMultiselect
-        ? 'listInput'
-        : fieldTypeRaw;
-
+// eslint-disable-next-line import/prefer-default-export
+export const renderWidget = (k, data, sources, otherProps) => {
+    const { fieldType } = data;
     const Component = widgets[fieldType];
 
     if (!Component) {
@@ -89,12 +95,33 @@ export const renderWidget = (k, data, sources, readonly = false, expandMultisele
         return null;
     }
 
+    const props = getProps(data, sources);
+
+    console.warn(props);
+
     return (
         <Component
             className="widget"
-            {...commonProps}
-            {...typeSpecificProps[fieldType]}
-            disabled={readonly}
+            {...props}
+            {...otherProps}
         />
     );
+};
+
+// eslint-disable-next-line import/prefer-default-export
+export const renderDroppableWidget = (k, data, sources, otherProps, className) => {
+    const { sourceType, fieldType, id: key } = data;
+
+    if (sourceType === 'organizations' && fieldType === 'multiselect') {
+        const renderer = widgets[fieldType];
+        const props = getProps(data, sources);
+        return (
+            <Widget
+                {...props}
+                className={className}
+                renderer={renderer}
+            />
+        );
+    }
+    return renderWidget(k, data, sources, otherProps);
 };
