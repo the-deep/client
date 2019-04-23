@@ -35,6 +35,7 @@ export * from './reducers/siloDomainData/clusterViz';
 export * from './reducers/siloDomainData/users';
 export * from './reducers/siloDomainData/usergroups';
 export * from './reducers/siloDomainData/projects';
+export * from './reducers/siloDomainData/tabular';
 
 export * from './reducers/domainData/analysisFrameworks';
 export * from './reducers/domainData/leadFilter';
