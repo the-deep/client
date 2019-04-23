@@ -3,6 +3,7 @@ import React from 'react';
 import memoize from 'memoize-one';
 
 import {
+    _cs,
     caseInsensitiveSubmatch,
     getRatingForContentInString as rate,
 } from '@togglecorp/fujs';
@@ -16,7 +17,8 @@ import ModalHeader from '#rscv/Modal/Header';
 import ListView from '#rscv/List/ListView';
 import VirtualizedListView from '#rscv/VirtualizedListView';
 
-import TextInput from '#rsci/TextInput';
+import SearchInput from '#rsci/SearchInput';
+import Widget from './Widget';
 
 import { renderWidget } from '../../widgetUtils';
 
@@ -40,12 +42,23 @@ export default class LeadPreview extends React.PureComponent {
         super(props);
         this.state = {
             searchValue: '',
+            isBeingDraggedOver: false,
         };
     }
 
     handleSearch = (value) => {
         this.setState({ searchValue: value });
     }
+
+    handleOnDragStart = id => (e) => {
+        const data = JSON.stringify({
+            organizationId: id,
+        });
+
+        e.dataTransfer.setData('text/plain', data);
+        e.dataTransfer.dropEffect = 'copy';
+    }
+
 
     filterOrganization = memoize((options, value) => {
         const newOptions = options
@@ -60,6 +73,13 @@ export default class LeadPreview extends React.PureComponent {
         return newOptions;
     });
 
+    widgetRendererParams = (i, data) => ({
+        index: i,
+        data,
+        sources: this.props.sources,
+        className: styles.widget,
+    })
+
     renderWidget = (k, data) => renderWidget(k, data, this.props.sources, false, true);
 
     render() {
@@ -69,6 +89,7 @@ export default class LeadPreview extends React.PureComponent {
             fields,
             sources,
         } = this.props;
+
         const {
             searchValue,
         } = this.state;
@@ -79,9 +100,7 @@ export default class LeadPreview extends React.PureComponent {
                 closeOnEscape
                 className={styles.modal}
             >
-                <ModalHeader
-                    title="Stakeholders"
-                />
+                <ModalHeader title="Stakeholders" />
                 <ModalBody className={styles.modalBody}>
                     <div className={styles.left}>
                         <div className={styles.top}>
@@ -90,26 +109,43 @@ export default class LeadPreview extends React.PureComponent {
                             >
                                 Add organization
                             </PrimaryButton>
-                            <TextInput
+                            <SearchInput
                                 label="Search"
                                 placeholder="Any organization"
                                 value={searchValue}
                                 onChange={this.handleSearch}
+                                showHintAndError={false}
                             />
                         </div>
                         <VirtualizedListView
                             className={styles.organizationList}
                             data={this.filterOrganization(sources.organizations, searchValue)}
                             // FIXME: don't use inline methods
-                            rendererParams={(key, d) => ({ name: d.label })}
+                            rendererParams={(key, d) => ({
+                                name: d.label,
+                                itemKey: key,
+                            })}
                             keySelector={item => item.key}
-                            renderer={({ name }) => <div>{name}</div>}
+
+                            // FIXME: use separate component
+                            renderer={({ className, name, itemKey }) => (
+                                <div
+                                    className={_cs(styles.organizationItem, className)}
+                                    draggable
+                                    onDragStart={this.handleOnDragStart(itemKey)}
+                                >
+                                    { name }
+                                </div>
+                            )}
                         />
                     </div>
                     <div className={styles.right}>
                         <ListView
+                            className={styles.widgetList}
                             data={fields}
-                            modifier={this.renderWidget}
+                            rendererParams={this.widgetRendererParams}
+                            renderer={Widget}
+                            // modifier={this.renderWidget}
                         />
                     </div>
                 </ModalBody>

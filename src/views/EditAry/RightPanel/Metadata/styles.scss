@@ -50,6 +50,8 @@ $height-additional-documents: 250px;
                         flex-shrink: 0;
 
                         .heading {
+                            display: flex;
+                            align-items: center;
                             flex-shrink: 0;
                             padding: $spacing-medium-alt;
                             text-transform: capitalize;

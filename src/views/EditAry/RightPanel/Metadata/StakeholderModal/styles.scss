@@ -7,7 +7,6 @@
 
 .modal-body {
     display: flex;
-    border: 1px solid red;
     overflow: auto;
 
     .left {
@@ -17,16 +16,38 @@
 
         .top {
             flex-shrink: 0;
+            padding-bottom: $spacing-small;
+
+            .add-organization-button {
+                margin-bottom: $spacing-medium;
+            }
         }
 
         .organization-list {
             flex-grow: 1;
             overflow: auto;
+
+            .organization-item {
+                padding: $spacing-small 0;
+            }
         }
     }
 
     .right {
+        display: flex;
         flex-basis: 70%;
+        flex-direction: column;
         overflow: auto;
+
+        .widget-list {
+            display: flex;
+            flex-grow: 1;
+            flex-wrap: wrap;
+
+            .widget {
+                flex-basis: calc(100% / 3);
+                height: 200px;
+            }
+        }
     }
 }

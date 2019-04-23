@@ -116,6 +116,7 @@ const iconNames = {
     xlsx: 'fa fa-file-excel-o',
     ods: 'fa fa-file-excel-o',
     xml: 'fa fa-file-code-o',
+    people: 'ion-android-people',
 };
 
 export default iconNames;

@@ -1,0 +1,9 @@
+@import '~base-scss/base';
+
+.widget {
+    border: 1px solid $color-separator;
+
+    &.dragged-over {
+        border: 1px solid blue;
+    }
+}

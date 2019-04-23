@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FaramGroup } from '@togglecorp/faram';
 
-import Button from '#rsca/Button';
+import AccentButton from '#rsca/Button/AccentButton';
 import ResizableV from '#rscv/Resizable/ResizableV';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
@@ -41,7 +41,14 @@ const mapStateToProps = state => ({
 
 const acceptFileTypes = '.pdf, .ppt, .pptx, .csv, .xls, .xlsx, .ods, .doc, .docx, .odt, .rtf';
 
-const ModalButton = modalize(Button);
+const StakeholderButton = props => (
+    <AccentButton
+        iconName="people"
+        transparent
+        {...props}
+    />
+);
+const ModalButton = modalize(StakeholderButton);
 
 @connect(mapStateToProps)
 export default class Metadata extends React.PureComponent {
@@ -85,19 +92,18 @@ export default class Metadata extends React.PureComponent {
             >
                 <h4 className={styles.heading}>
                     {title}
+                    {isStakeholderColumn &&
+                        <ModalButton
+                            className={styles.showMoreButton}
+                            modal={
+                                <StakeholderModal
+                                    fields={fieldValues}
+                                    sources={this.props.sources}
+                                />
+                            }
+                        />
+                    }
                 </h4>
-                {isStakeholderColumn &&
-                    <ModalButton
-                        modal={
-                            <StakeholderModal
-                                fields={fieldValues}
-                                sources={this.props.sources}
-                            />
-                        }
-                    >
-                        Show more
-                    </ModalButton>
-                }
                 <ListView
                     className={styles.content}
                     data={fieldValues}
