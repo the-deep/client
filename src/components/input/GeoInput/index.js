@@ -4,7 +4,7 @@ import memoize from 'memoize-one';
 
 import AccentButton from '#rsca/Button/AccentButton';
 import SelectInputWithList from '#rsci/SelectInputWithList';
-import MultiSelectInput from '#rsci/MultiSelectInput';
+import SearchMultiSelectInput from '#rsci/SearchMultiSelectInput';
 import Label from '#rsci/Label';
 import { FaramInputElement } from '@togglecorp/faram';
 import {
@@ -15,6 +15,8 @@ import _cs from '#cs';
 
 import GeoModal from './GeoModal';
 import styles from './styles.scss';
+
+const MAX_DISPLAY_OPTIONS = 100;
 
 const propTypes = {
     className: PropTypes.string,
@@ -262,13 +264,14 @@ export default class GeoInput extends React.PureComponent {
             label,
             hideInput,
             placeholder,
+            emptyComponent,
         } = this.props;
 
         if (hideList || hideInput) {
             return (
                 <div className={styles.noListSelection} >
                     {!hideInput &&
-                        <MultiSelectInput
+                        <SearchMultiSelectInput
                             showLabel={false}
                             value={value}
                             onChange={this.handleSelectChange}
@@ -280,6 +283,7 @@ export default class GeoInput extends React.PureComponent {
                             disabled={disabled}
                             readOnly={readOnly}
                             placeholder={placeholder}
+                            maxDisplayOptions={MAX_DISPLAY_OPTIONS}
                         />
                     }
                     <AccentButton
@@ -309,7 +313,8 @@ export default class GeoInput extends React.PureComponent {
                 hideSelectAllButton
                 disabled={disabled}
                 readOnly={readOnly}
-                emptyComponent={this.props.emptyComponent}
+                emptyComponent={emptyComponent}
+                maxDisplayOptions={MAX_DISPLAY_OPTIONS}
             />
         );
     }

@@ -930,7 +930,8 @@
         "-93775770": "Invalid",
         "-60840374": "Total",
         "-16598080": "Valid",
-        "-61649895": "Import tabular data"
+        "-61649895": "Import tabular data",
+        "-65943043": "Search geo areas"
     },
     "links": {
         "browserExtension": {
@@ -2549,7 +2550,8 @@
             "applyButtonLabel": 427,
             "cancelButtonLabel": 61,
             "geoAreasLabel": -10995037,
-            "regionLabel": -67487923
+            "regionLabel": -67487923,
+            "geoAreasPlaceholder": -65943043
         },
         "project.regions": {
             "saveButtonLabel": 25,
