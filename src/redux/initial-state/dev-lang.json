@@ -923,7 +923,9 @@
         "-8251517": "Descending",
         "-20881567": "Alphabetical Ascending",
         "-93837566": "Alphabetical Descending",
-        "-58642627": "Start assessment export"
+        "-58642627": "Start assessment export",
+        "-80445601": "Add New Excerpt",
+        "-62252913": "Delete Excerpt"
     },
     "links": {
         "browserExtension": {
@@ -2246,7 +2248,9 @@
         },
         "editEntry.overview": {
             "unnamedExcerptTitle": -39451070,
-            "selectEntryPlaceholder": -90258572
+            "selectEntryPlaceholder": -90258572,
+            "addExcerptTooltip": -80445601,
+            "deleteExcerptTooltip": -62252913
         },
         "editEntry.overview.leftpane": {
             "simplifiedTabLabel": 424,
