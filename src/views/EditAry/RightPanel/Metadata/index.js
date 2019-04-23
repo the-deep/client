@@ -89,19 +89,10 @@ export default class Metadata extends React.PureComponent {
                 {isStakeholderColumn &&
                     <ModalButton
                         modal={
-                            <StakeholderModal>
-                                <ListView
-                                    className={styles.content}
-                                    data={fieldValues}
-                                    modifier={this.renderWidget}
-                                />
-                                <ListView
-                                    data={this.props.sources.organizations}
-                                    rendererParams={(key, d) => ({ name: d.label })}
-                                    keySelector={item => item.key}
-                                    renderer={({ name }) => <div>{name}</div>}
-                                />
-                            </StakeholderModal>
+                            <StakeholderModal
+                                fields={fieldValues}
+                                sources={this.props.sources}
+                            />
                         }
                     >
                         Show more

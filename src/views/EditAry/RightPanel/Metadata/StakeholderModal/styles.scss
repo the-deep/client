@@ -1,1 +1,32 @@
 @import '~base-scss/base';
+
+.modal {
+    width: 70vw;
+    height: 70vh;
+}
+
+.modal-body {
+    display: flex;
+    border: 1px solid red;
+    overflow: auto;
+
+    .left {
+        display: flex;
+        flex-basis: 30%;
+        flex-direction: column;
+
+        .top {
+            flex-shrink: 0;
+        }
+
+        .organization-list {
+            flex-grow: 1;
+            overflow: auto;
+        }
+    }
+
+    .right {
+        flex-basis: 70%;
+        overflow: auto;
+    }
+}
