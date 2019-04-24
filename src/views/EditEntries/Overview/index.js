@@ -161,6 +161,31 @@ export default class Overview extends React.PureComponent {
                 rightChild={
                     <React.Fragment>
                         <header className={styles.header}>
+                            <div className={styles.actionButtons}>
+                                <Cloak
+                                    hide={Overview.shouldHideEntryAdd}
+                                    render={
+                                        <PrimaryButton
+                                            onClick={this.handleEmptyExcerptCreate}
+                                            className={styles.addNewEntryButton}
+                                            iconName="add"
+                                            title={_ts('editEntry.overview', 'addExcerptTooltip')}
+                                        />
+                                    }
+                                />
+                                <Cloak
+                                    hide={this.shouldHideEntryDelete}
+                                    render={
+                                        <DangerButton
+                                            onClick={this.handleEntryDelete}
+                                            disabled={pending}
+                                            // disabled={!entry || pending}
+                                            iconName="remove"
+                                            title={_ts('editEntry.overview', 'deleteExcerptTooltip')}
+                                        />
+                                    }
+                                />
+                            </div>
                             <SelectInput
                                 className={styles.entrySelectInput}
                                 placeholder={_ts('editEntry.overview', 'selectEntryPlaceholder')}
@@ -173,29 +198,6 @@ export default class Overview extends React.PureComponent {
                                 showLabel={false}
                                 hideClearButton
                             />
-                            <div className={styles.actionButtons}>
-                                <Cloak
-                                    hide={this.shouldHideEntryDelete}
-                                    render={
-                                        <DangerButton
-                                            onClick={this.handleEntryDelete}
-                                            disabled={pending}
-                                            // disabled={!entry || pending}
-                                            iconName="remove"
-                                        />
-                                    }
-                                />
-                                <Cloak
-                                    hide={Overview.shouldHideEntryAdd}
-                                    render={
-                                        <PrimaryButton
-                                            onClick={this.handleEmptyExcerptCreate}
-                                            className={styles.addNewEntryButton}
-                                            iconName="add"
-                                        />
-                                    }
-                                />
-                            </div>
                         </header>
                         <WidgetFaram
                             className={styles.content}
