@@ -23,6 +23,7 @@ import WordCloud from '#rscz/WordCloud';
 import modalize from '#rscg/Modalize';
 
 import GeoViz from '#components/geo/GeoViz';
+import TextOutput from '#components/general/TextOutput';
 import _cs from '#cs';
 import _ts from '#ts';
 
@@ -406,9 +407,17 @@ export default class DataSeries extends React.PureComponent {
         type,
         activeView,
         activeSort,
+        healthStats = {},
         showSort,
     }) => {
         const options = this.getSegmentOptions(type);
+        const {
+            total = 0,
+            empty = 0,
+            invalid = 0,
+        } = healthStats;
+
+        const valid = total - empty - invalid;
 
         return (
             <Modal className={styles.expandedView}>
@@ -446,6 +455,32 @@ export default class DataSeries extends React.PureComponent {
                     </div>
                 </header>
                 <ModalBody className={styles.body}>
+                    <header className={styles.healthStats}>
+                        <TextOutput
+                            className={styles.text}
+                            label={_ts('components.viz.dataSeries', 'totalLabel')}
+                            value={total}
+                            isNumericValue
+                        />
+                        <TextOutput
+                            className={styles.text}
+                            label={_ts('components.viz.dataSeries', 'validLabel')}
+                            value={valid}
+                            isNumericValue
+                        />
+                        <TextOutput
+                            className={styles.text}
+                            label={_ts('components.viz.dataSeries', 'inValidLabel')}
+                            value={invalid}
+                            isNumericValue
+                        />
+                        <TextOutput
+                            className={styles.text}
+                            label={_ts('components.viz.dataSeries', 'emptyLabel')}
+                            value={empty}
+                            isNumericValue
+                        />
+                    </header>
                     <MultiViewContainer
                         views={this.modalViews}
                         active={activeView}
@@ -540,6 +575,7 @@ export default class DataSeries extends React.PureComponent {
                                         activeView={activeView}
                                         activeSort={activeSort}
                                         showSort={showSort}
+                                        healthStats={cache.healthStats}
                                     />
                                 }
                             />
