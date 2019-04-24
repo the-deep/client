@@ -18,3 +18,4 @@ export * from './stringManagement';
 export * from './projects';
 export * from './users';
 export * from './usergroups';
+export * from './tabular';

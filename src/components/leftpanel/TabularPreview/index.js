@@ -1,12 +1,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
+import { listToMap } from '@togglecorp/fujs';
+import { connect } from 'react-redux';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 
-import { listToMap } from '@togglecorp/fujs';
+import {
+    selectedTabForTabularBook,
+    setTabularSelectedTabAction,
+} from '#redux';
 
 import { RequestClient } from '#request';
 import _ts from '#ts';
@@ -20,6 +25,7 @@ const propTypes = {
     className: PropTypes.string,
     bookId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
     highlights: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    selectedTab: PropTypes.string,
 
     onClick: PropTypes.func.isRequired,
     setDefaultRequestParams: PropTypes.func.isRequired,
@@ -27,14 +33,25 @@ const propTypes = {
     bookRequest: RequestClient.propType.isRequired,
     onLoad: PropTypes.func.isRequired,
     showGraphs: PropTypes.bool.isRequired,
+    setSelectedTab: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     className: '',
     highlights: [],
+    selectedTab: undefined,
 };
 
+const mapStateToProps = (state, props) => ({
+    selectedTab: selectedTabForTabularBook(state, props),
+});
+
+const mapDispatchToProps = dispatch => ({
+    setSelectedTab: params => dispatch(setTabularSelectedTabAction(params)),
+});
+
 @RequestClient(requests)
+@connect(mapStateToProps, mapDispatchToProps)
 export default class TabularPreview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -44,7 +61,6 @@ export default class TabularPreview extends React.PureComponent {
         this.state = {
             tabs: {},
             sheets: {},
-            activeSheet: undefined,
             completed: false,
             invalid: false,
         };
@@ -109,22 +125,31 @@ export default class TabularPreview extends React.PureComponent {
         this.props.bookRequest.do();
     }
 
-    handleActiveSheetChange = (activeSheet) => {
-        this.setState({ activeSheet });
+    handleActiveSheetChange = (selectedTab) => {
+        const {
+            setSelectedTab,
+            bookId,
+        } = this.props;
+
+        setSelectedTab({
+            bookId,
+            selectedTab,
+        });
     }
 
     render() {
         const {
             tabs,
             sheets,
-            activeSheet,
             invalid,
             completed,
         } = this.state;
+
         const {
             className: classNameFromProps,
             highlights: highlightsFromProps,
             onClick,
+            selectedTab,
             showGraphs,
         } = this.props;
 
@@ -160,7 +185,7 @@ export default class TabularPreview extends React.PureComponent {
                     // unmounting sheet preview when graph is added/removed
                     key={showGraphs}
                     className={styles.sheet}
-                    sheet={sheets[activeSheet]}
+                    sheet={sheets[selectedTab]}
                     highlights={highlights}
                     onClick={onClick}
                     showGraphs={showGraphs}
@@ -168,7 +193,7 @@ export default class TabularPreview extends React.PureComponent {
                 <ScrollTabs
                     className={styles.tabs}
                     tabs={tabs}
-                    active={activeSheet}
+                    active={selectedTab}
                     onClick={this.handleActiveSheetChange}
                 />
             </div>

@@ -161,6 +161,7 @@ export default class Field extends React.PureComponent {
                         valueSelector={valueSelector}
                         keySelector={keySelector}
                         labelSelector={labelSelector}
+                        centerTooltip
                         colorScheme={healthColorScheme}
                         enlargeOnHover={false}
                         hideLabel

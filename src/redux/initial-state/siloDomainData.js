@@ -140,6 +140,9 @@ const initialSiloDomainData = {
         */
     },
 
+    tabularView: {
+    },
+
     // i specifies project
     leadPage: {
         /*
