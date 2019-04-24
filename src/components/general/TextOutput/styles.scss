@@ -1,0 +1,66 @@
+@import '~base-scss/base';
+
+.normal {
+    display: flex;
+    align-items: center;
+
+    .label {
+        flex-shrink: 0;
+        color: $color-text-label;
+
+        &:after {
+            margin-right: $spacing-small;
+            content: ':';
+        }
+    }
+
+    .icon-label {
+        flex-shrink: 0;
+        margin-right: $spacing-small;
+        color: $color-text-label;
+    }
+
+    .value {
+        flex-grow: 1;
+        font-family: $font-family-sans-serif;
+    }
+}
+
+.table {
+    display: table-row;
+    align-items: center;
+    font-size: $font-size-large;
+
+    .label {
+        display: table-cell;
+        padding: $spacing-extra-small;
+        color: $color-text-label;
+    }
+
+    .icon-label {
+        flex-shrink: 0;
+        margin-right: $spacing-small;
+        color: $color-text-label;
+    }
+
+    .value {
+        display: table-cell;
+        padding-left: $spacing-medium;
+    }
+}
+
+.block {
+    display: flex;
+    flex-direction: column;
+
+    .label {
+        color: $color-text-label;
+        font-weight: $font-weight-bold;
+    }
+
+    .value {
+        color: $color-accent;
+        font-size: $font-size-large;
+        font-weight: $font-weight-bold;
+    }
+}

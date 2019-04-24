@@ -81,6 +81,16 @@ $width-expanded-view: 90vw;
     .body {
         padding: 0;
 
+        .health-stats {
+            display: flex;
+            border-bottom: $width-separator-thin solid $color-separator;
+            padding: $spacing-small $spacing-medium;
+
+            .text {
+                margin-right: $spacing-medium;
+            }
+        }
+
         .horizontal-bar-chart,
         .vertical-bar-chart,
         .word-cloud,

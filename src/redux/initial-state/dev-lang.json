@@ -925,7 +925,11 @@
         "-93837566": "Alphabetical Descending",
         "-58642627": "Start assessment export",
         "-80445601": "Add New Excerpt",
-        "-62252913": "Delete Excerpt"
+        "-62252913": "Delete Excerpt",
+        "-10197310": "Empty",
+        "-93775770": "Invalid",
+        "-60840374": "Total",
+        "-16598080": "Valid"
     },
     "links": {
         "browserExtension": {
@@ -2564,7 +2568,11 @@
             "alphabeticalAscendingTitle": -20881567,
             "alphabeticalDescendingTitle": -93837566,
             "ascendingTitle": -73426620,
-            "descendingTitle": -8251517
+            "descendingTitle": -8251517,
+            "emptyLabel": -10197310,
+            "inValidLabel": -93775770,
+            "totalLabel": -60840374,
+            "validLabel": -16598080
         },
         "components.dashboard": {},
         "geoViz": {
