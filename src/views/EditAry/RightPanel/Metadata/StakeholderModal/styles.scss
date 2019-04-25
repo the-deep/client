@@ -1,8 +1,8 @@
 @import '~base-scss/base';
 
 .modal {
-    width: 70vw;
-    height: 70vh;
+    width: 80vw;
+    height: 80vh;
 }
 
 .modal-body {
@@ -11,8 +11,9 @@
 
     .left {
         display: flex;
-        flex-basis: 30%;
         flex-direction: column;
+        width: 320px;
+        overflow: auto;
 
         .top {
             flex-shrink: 0;
@@ -28,25 +29,54 @@
             overflow: auto;
 
             .organization-item {
+                cursor: grab;
                 padding: $spacing-small 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+
+                &:hover {
+                    background-color: $color-background-hover;
+                }
             }
         }
     }
 
+    $height-droppable-widget: 400px;
+
     .right {
         display: flex;
-        flex-basis: 70%;
         flex-direction: column;
+        flex-grow: 1;
         overflow: auto;
 
         .widget-list {
             display: flex;
+            align-content: flex-start;
             flex-grow: 1;
             flex-wrap: wrap;
+            overflow: auto;
 
-            .widget {
+            .widget-container {
+                display: flex;
                 flex-basis: calc(100% / 3);
-                height: 200px;
+                flex-direction: column;
+                flex-grow: 0;
+                overflow: auto;
+
+                .widget {
+                    padding: $spacing-medium;
+                }
+
+                .droppable-widget {
+                    flex-grow: 1;
+                    padding: $spacing-medium;
+                    height: $height-droppable-widget;
+
+                    .widget-item {
+                        padding: $spacing-small $spacing-small $spacing-small 0;
+                    }
+                }
             }
         }
     }

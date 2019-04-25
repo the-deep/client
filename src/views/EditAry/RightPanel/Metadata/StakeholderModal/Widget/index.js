@@ -74,8 +74,6 @@ class Widget extends React.PureComponent {
 
         const { isBeingDraggedOver } = this.state;
 
-        console.warn(this.props);
-
         return (
             <div
                 className={_cs(

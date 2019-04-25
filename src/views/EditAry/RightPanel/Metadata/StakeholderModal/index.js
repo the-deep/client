@@ -20,7 +20,10 @@ import VirtualizedListView from '#rscv/VirtualizedListView';
 import SearchInput from '#rsci/SearchInput';
 // import Widget from './Widget';
 
-import { renderDroppableWidget } from '../../widgetUtils';
+import {
+    renderDroppableWidget,
+    isDroppableWidget,
+} from '../../widgetUtils';
 
 import styles from './styles.scss';
 
@@ -86,7 +89,12 @@ export default class LeadPreview extends React.PureComponent {
         k,
         data,
         this.props.sources,
-        { containerClassName: styles.widget },
+        {
+            containerClassName: styles.widgetContainer,
+            className: isDroppableWidget(data.sourceType, data.fieldType)
+                ? styles.droppableWidget : styles.widget,
+            itemClassName: styles.widgetItem,
+        },
     );
 
     render() {
@@ -137,6 +145,7 @@ export default class LeadPreview extends React.PureComponent {
                             // FIXME: use separate component
                             renderer={({ className, name, itemKey }) => (
                                 <div
+                                    title={name}
                                     className={_cs(styles.organizationItem, className)}
                                     draggable
                                     onDragStart={this.handleOnDragStart(itemKey)}

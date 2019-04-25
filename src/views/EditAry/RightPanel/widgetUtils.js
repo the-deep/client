@@ -5,7 +5,7 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import DateInput from '#rsci/DateInput';
 import SelectInput from '#rsci/SelectInput';
-// import ListInput from '#rsci/ListInput';
+import SimpleListInput from '#rsci/SimpleListInput';
 import NumberInput from '#rsci/NumberInput';
 import TextInput from '#rsci/TextInput';
 
@@ -33,7 +33,7 @@ const widgets = {
     date: DateInput,
     daterange: DateRangeInput,
     multiselect: MultiSelectInput,
-    // listInput: ListInput,
+    listInput: SimpleListInput,
     select: SelectInput,
 };
 
@@ -97,31 +97,45 @@ export const renderWidget = (k, data, sources, otherProps) => {
 
     const props = getProps(data, sources);
 
-    console.warn(props);
-
     return (
         <Component
-            className="widget"
             {...props}
             {...otherProps}
         />
     );
 };
 
-// eslint-disable-next-line import/prefer-default-export
-export const renderDroppableWidget = (k, data, sources, otherProps, className) => {
-    const { sourceType, fieldType, id: key } = data;
+export const isDroppableWidget = (sourceType, fieldType) => (
+    (sourceType === 'organizations' && fieldType === 'multiselect')
+);
 
-    if (sourceType === 'organizations' && fieldType === 'multiselect') {
-        const renderer = widgets[fieldType];
+// eslint-disable-next-line import/prefer-default-export
+export const renderDroppableWidget = (k, data, sources, otherProps = {}) => {
+    const {
+        sourceType,
+        fieldType,
+        id: key,
+    } = data;
+
+    if (isDroppableWidget(sourceType, fieldType)) {
+        const newFieldType = fieldType === 'multiselect' ? 'listInput' : fieldType;
+        const renderer = widgets[newFieldType];
         const props = getProps(data, sources);
+
         return (
             <Widget
                 {...props}
-                className={className}
                 renderer={renderer}
+                {...otherProps}
             />
         );
     }
-    return renderWidget(k, data, sources, otherProps);
+
+    // NOTE: just wrapping other widget for common styling
+    const { containerClassName, ...someOtherProps } = otherProps;
+    return (
+        <div className={containerClassName}>
+            {renderWidget(k, data, sources, someOtherProps)}
+        </div>
+    );
 };

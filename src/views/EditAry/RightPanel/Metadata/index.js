@@ -98,6 +98,7 @@ export default class Metadata extends React.PureComponent {
                     {title}
                     {isStakeholderColumn &&
                         <ModalButton
+                            initialShowModal
                             className={styles.showMoreButton}
                             modal={
                                 <StakeholderModal
