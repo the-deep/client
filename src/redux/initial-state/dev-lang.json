@@ -929,7 +929,8 @@
         "-10197310": "Empty",
         "-93775770": "Invalid",
         "-60840374": "Total",
-        "-16598080": "Valid"
+        "-16598080": "Valid",
+        "-61649895": "Import tabular data"
     },
     "links": {
         "browserExtension": {
@@ -1602,7 +1603,7 @@
             "connectorSourcesTitle": 1109,
             "connectorTitle": 1100,
             "tabularButtonTitle": -4174557,
-            "extractTabularButtonTitle": 15006,
+            "extractTabularButtonTitle": -61649895,
             "ignoreTabularButtonTitle": -75298941,
             "extractTabularHeaderTitle": -40920464
         },
@@ -1674,7 +1675,7 @@
             "headerRowPlaceholder": -45402687,
             "cancelButtonTitle": 61,
             "backButtonTitle": -53408079,
-            "extractButtonTitle": 15006,
+            "extractButtonTitle": -61649895,
             "nextButtonTitle": 23,
             "noHeaderLabel": -39031808,
             "tabularExtractionLoading": -2259035,
