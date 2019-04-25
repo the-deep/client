@@ -1,22 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
-import { connect } from 'react-redux';
 
 import InternalGallery from '#components/viewer/InternalGallery';
 import Cloak from '#components/general/Cloak';
 import TabularBook from '#components/other/TabularBook';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import Message from '#rscv/Message';
-import Button from '#rsca/Button';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
 import AccentButton from '#rsca/Button/AccentButton';
 import ScrollTabs from '#rscv/ScrollTabs';
 
-import {
-    addLeadViewActiveLeadIdSelector,
-    addLeadViewLeadChangeAction,
-} from '#redux';
 import _ts from '#ts';
 import _cs from '#cs';
 import styles from './styles.scss';
@@ -33,42 +25,22 @@ const tabularCompatibleFileTypes = [
     'ods',
 ];
 
-const tabTitles = {
-    [TAB_TABULAR]: _ts('viewer.attachment', 'tabularTabTitle'),
-    [TAB_ORIGINAL]: _ts('viewer.attachment', 'originalTabTitle'),
-};
-
 const propTypes = {
     attachment: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     tabularBook: PropTypes.number,
     projectId: PropTypes.number,
     className: PropTypes.string,
     onTabularButtonClick: PropTypes.func.isRequired,
-    title: PropTypes.string,
     viewOnly: PropTypes.bool,
-    activeLeadId: PropTypes.string.isRequired,
-    addLeadViewLeadChange: PropTypes.func.isRequired,
-    tabularIgnored: PropTypes.bool,
 };
 
 const defaultProps = {
     tabularBook: undefined,
-    tabularIgnored: false,
     projectId: undefined,
     className: '',
-    title: '',
     viewOnly: false,
 };
 
-const mapStateToProps = state => ({
-    activeLeadId: addLeadViewActiveLeadIdSelector(state),
-});
-
-const mapDispatchToProps = dispatch => ({
-    addLeadViewLeadChange: params => dispatch(addLeadViewLeadChangeAction(params)),
-});
-
-@connect(mapStateToProps, mapDispatchToProps)
 export default class Attachment extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -76,13 +48,19 @@ export default class Attachment extends React.PureComponent {
     constructor(props) {
         super(props);
         const {
-            tabularIgnored: tIgnored,
             tabularBook: tBook,
         } = props;
-        const activeTab = (tBook || !tIgnored) ? TAB_TABULAR : TAB_ORIGINAL;
+
+        this.tabTitles = {
+            [TAB_ORIGINAL]: _ts('viewer.attachment', 'originalTabTitle'),
+        };
+
+        if (tBook) {
+            this.tabTitles[TAB_TABULAR] = _ts('viewer.attachment', 'tabularTabTitle');
+        }
 
         this.state = {
-            activeTab,
+            activeTab: TAB_ORIGINAL,
             response: {},
         };
 
@@ -91,45 +69,19 @@ export default class Attachment extends React.PureComponent {
                 component: () => {
                     const {
                         tabularBook,
-                        tabularIgnored,
                         projectId,
-                        title,
                     } = this.props;
 
-                    if (tabularBook) {
-                        return (
-                            <TabularBook
-                                bookId={tabularBook}
-                                projectId={projectId}
-                                isModal={false}
-                                viewMode
-                            />
-                        );
+                    if (!tabularBook) {
+                        return null;
                     }
                     return (
-                        <div className={styles.extractTabularView} >
-                            <div className={styles.messageContainer}>
-                                <Message className={styles.message}>
-                                    {_ts('addLeads', 'extractTabularHeaderTitle', { title })}
-                                </Message>
-                            </div>
-                            <div className={styles.buttonContainer}>
-                                <PrimaryButton
-                                    className={styles.button}
-                                    onClick={this.handleTabularButtonClick}
-                                >
-                                    {_ts('addLeads', 'extractTabularButtonTitle')}
-                                </PrimaryButton>
-                                {!tabularIgnored &&
-                                    <Button
-                                        className={styles.button}
-                                        onClick={this.handleTabularIgnoreClick}
-                                    >
-                                        {_ts('addLeads', 'ignoreTabularButtonTitle')}
-                                    </Button>
-                                }
-                            </div>
-                        </div>
+                        <TabularBook
+                            bookId={tabularBook}
+                            projectId={projectId}
+                            isModal={false}
+                            viewMode
+                        />
                     );
                 },
             },
@@ -163,21 +115,6 @@ export default class Attachment extends React.PureComponent {
         if (onTabularButtonClick) {
             onTabularButtonClick(response);
         }
-    }
-
-    handleTabularIgnoreClick = () => {
-        const {
-            addLeadViewLeadChange,
-            activeLeadId,
-        } = this.props;
-
-        addLeadViewLeadChange({
-            leadId: activeLeadId,
-            uiState: {
-                tabularIgnored: true,
-            },
-        });
-        this.setState({ activeTab: TAB_ORIGINAL });
     }
 
     handleTabClick = (activeTab) => {
@@ -231,16 +168,19 @@ export default class Attachment extends React.PureComponent {
                     <div className={_cs(className, styles.tabsContainer)}>
                         <ScrollTabs
                             className={styles.tabs}
-                            tabs={tabTitles}
+                            tabs={this.tabTitles}
                             active={activeTab}
                             onClick={this.handleTabClick}
                         >
-                            { !viewOnly && isAlreadyExtracted &&
+                            { !viewOnly &&
                                 <AccentButton
                                     className={styles.tabularButton}
                                     onClick={this.handleTabularButtonClick}
                                 >
-                                    {_ts('addLeads', 'tabularButtonTitle')}
+                                    {isAlreadyExtracted ?
+                                        _ts('addLeads', 'tabularButtonTitle') :
+                                        _ts('addLeads', 'extractTabularButtonTitle')
+                                    }
                                 </AccentButton>
                             }
                         </ScrollTabs>

@@ -12,29 +12,4 @@
             margin: 0 $spacing-small;
         }
     }
-
-    .extract-tabular-view {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
-        flex-grow: 1;
-        justify-content: center;
-
-        .message-container {
-            width: 100%;
-
-            .message {
-                color: $color-text;
-            }
-        }
-
-        .button-container {
-            display: flex;
-            justify-content: space-around;
-
-            .button {
-                margin: $spacing-large;
-            }
-        }
-    }
 }
