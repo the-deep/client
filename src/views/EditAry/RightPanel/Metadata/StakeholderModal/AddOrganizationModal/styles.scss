@@ -1,0 +1,15 @@
+@import '~base-scss/base';
+
+.modal {
+    width: 30vw;
+    height: 45vh;
+}
+
+.modal-body {
+    display: flex;
+    overflow: auto;
+    padding: $spacing-large;
+    flex-direction: column;
+}
+
+

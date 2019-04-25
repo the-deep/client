@@ -8,6 +8,7 @@
 .modal-body {
     display: flex;
     overflow: auto;
+    padding: $spacing-small;
 
     .left {
         display: flex;
@@ -20,20 +21,22 @@
             padding-bottom: $spacing-small;
 
             .add-organization-button {
-                margin-bottom: $spacing-medium;
+                margin: $spacing-medium 0;
             }
         }
 
         .organization-list {
             flex-grow: 1;
             overflow: auto;
+            border: $width-separator-thin solid $color-separator;
 
             .organization-item {
                 cursor: grab;
-                padding: $spacing-small 0;
+                padding: $spacing-medium $spacing-small;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
+                border-bottom: $width-separator-thin solid $color-separator;
 
                 &:hover {
                     background-color: $color-background-hover;
@@ -56,13 +59,16 @@
             flex-grow: 1;
             flex-wrap: wrap;
             overflow: auto;
+            border: $width-separator-thin solid $color-separator;
 
             .widget-container {
                 display: flex;
                 flex-basis: calc(100% / 3);
                 flex-direction: column;
                 flex-grow: 0;
+                height: 50%;
                 overflow: auto;
+                border: $width-separator-thin solid $color-separator;
 
                 .widget {
                     padding: $spacing-medium;

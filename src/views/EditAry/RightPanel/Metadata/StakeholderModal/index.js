@@ -8,6 +8,7 @@ import {
     getRatingForContentInString as rate,
 } from '@togglecorp/fujs';
 
+import Modalize from '#rscg/Modalize';
 import Modal from '#rscv/Modal';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -25,7 +26,10 @@ import {
     isDroppableWidget,
 } from '../../widgetUtils';
 
+import AddOrganizationModal from './AddOrganizationModal';
 import styles from './styles.scss';
+
+const PrimaryModalButton = Modalize(PrimaryButton);
 
 const propTypes = {
     closeModal: PropTypes.func.isRequired,
@@ -119,11 +123,14 @@ export default class LeadPreview extends React.PureComponent {
                 <ModalBody className={styles.modalBody}>
                     <div className={styles.left}>
                         <div className={styles.top}>
-                            <PrimaryButton
+                            <PrimaryModalButton
                                 className={styles.addOrganizationButton}
+                                modal={
+                                    <AddOrganizationModal />
+                                }
                             >
                                 Add organization
-                            </PrimaryButton>
+                            </PrimaryModalButton>
                             <SearchInput
                                 label="Search"
                                 placeholder="Any organization"
