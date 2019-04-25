@@ -46,6 +46,14 @@ $font-weight-heading: 500;
             }
         }
     }
+
+    .numeral {
+        font-family: $font-family-sans-serif;
+    }
+
+    .formatted-date {
+        font-family: $font-family-sans-serif;
+    }
 }
 
 $height-nagbar: 32px;
