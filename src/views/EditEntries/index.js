@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link, Prompt } from 'react-router-dom';
 import produce from 'immer';
 
-import { reverseRoute, listToMap } from '@togglecorp/fujs';
+import { reverseRoute } from '@togglecorp/fujs';
 import { detachedFaram } from '@togglecorp/faram';
 
 import Icon from '#rscg/Icon';
@@ -372,17 +372,9 @@ export default class EditEntries extends React.PureComponent {
     // APIS
 
     handleTabularLoad = (book) => {
-        const fields = book.sheets
-            .map(sheet => sheet.fields)
-            .flat();
-        const fieldMap = listToMap(
-            fields,
-            field => field.id,
-            field => field,
-        );
         this.props.setTabularData({
             leadId: this.props.leadId,
-            tabularData: fieldMap,
+            tabularData: book,
         });
     }
 

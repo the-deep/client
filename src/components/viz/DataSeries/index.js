@@ -494,7 +494,10 @@ export default class DataSeries extends React.PureComponent {
         const {
             className,
             value: {
-                cache,
+                cache: {
+                    healthStats,
+                    status,
+                } = {},
                 type,
                 title,
             },
@@ -505,25 +508,6 @@ export default class DataSeries extends React.PureComponent {
             } = {},
         } = this.props;
 
-        if (!cache || cache.status === 'pending') {
-            return (
-                <div className={_cs(className, 'data-series', styles.dataSeries)}>
-                    <LoadingAnimation
-                        // FIXME: use strings
-                        message="Loading data"
-                    />
-                </div>
-            );
-        } else if (cache.status !== 'success') {
-            return (
-                <div className={_cs(className, 'data-series', styles.dataSeries)}>
-                    <Message>
-                        {/* FIXME: use strings */}
-                        Processing has failed
-                    </Message>
-                </div>
-            );
-        }
 
         const ExpandedModal = this.renderExpandedModal;
 
@@ -533,6 +517,10 @@ export default class DataSeries extends React.PureComponent {
             (activeView === GRAPH.horizontalBarChart)
             || (activeView === GRAPH.verticalBarChart)
         );
+
+        const isPending = !status || status === 'pending';
+        const isFailing = !isPending && status !== 'success';
+        const disabled = isPending || isFailing;
 
         return (
             <div className={_cs(className, 'data-series', styles.dataSeries)}>
@@ -544,6 +532,7 @@ export default class DataSeries extends React.PureComponent {
                         <div className={styles.actions}>
                             {showSort &&
                                 <RotatingInput
+                                    disabled={disabled}
                                     className={styles.sortButton}
                                     rendererSelector={sortRendererSelector}
                                     keySelector={sortKeySelector}
@@ -562,12 +551,14 @@ export default class DataSeries extends React.PureComponent {
                                     renderer={Tab}
                                     rendererParams={this.scrollTabRendererParams}
                                     tabs={options}
+                                    disabled={disabled}
                                 />
                             }
                             <ModalButton
                                 iconName="expand"
                                 className={styles.expandButton}
                                 transparent
+                                disabled={disabled}
                                 modal={
                                     <ExpandedModal
                                         title={title}
@@ -575,14 +566,28 @@ export default class DataSeries extends React.PureComponent {
                                         activeView={activeView}
                                         activeSort={activeSort}
                                         showSort={showSort}
-                                        healthStats={cache.healthStats}
+                                        healthStats={healthStats}
                                     />
                                 }
                             />
                         </div>
                     }
                 </header>
-                { !hideDetails &&
+                {!hideDetails && isPending &&
+                    <div className={styles.content}>
+                        <Message>
+                            Data processing in progress
+                        </Message>
+                    </div>
+                }
+                {!hideDetails && isFailing &&
+                    <div className={styles.content}>
+                        <Message>
+                            Data processing failed
+                        </Message>
+                    </div>
+                }
+                { !hideDetails && !isPending && !isFailing &&
                     <div className={styles.content}>
                         <MultiViewContainer
                             views={this.views}

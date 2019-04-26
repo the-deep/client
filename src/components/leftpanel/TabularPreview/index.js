@@ -29,8 +29,8 @@ const propTypes = {
 
     onClick: PropTypes.func.isRequired,
     setDefaultRequestParams: PropTypes.func.isRequired,
-    extractRequest: RequestClient.propType.isRequired,
-    bookRequest: RequestClient.propType.isRequired,
+    // extractRequest: RequestClient.propType.isRequired,
+    // bookRequest: RequestClient.propType.isRequired,
     onLoad: PropTypes.func.isRequired,
     showGraphs: PropTypes.bool.isRequired,
     setSelectedTab: PropTypes.func.isRequired,
@@ -66,10 +66,11 @@ export default class TabularPreview extends React.PureComponent {
         };
 
         props.setDefaultRequestParams({
-            triggerExtraction: this.triggerExtraction,
-            startPolling: this.startPolling,
+            // triggerExtraction: this.triggerExtraction,
+            // startPolling: this.startPolling,
             setBook: this.setBook,
             setInvalid: this.setInvalid,
+            pollFields: this.pollFields,
         });
     }
 
@@ -112,17 +113,38 @@ export default class TabularPreview extends React.PureComponent {
         this.props.onLoad(response);
     }
 
+    setFields = (fields) => {
+        // TODO:
+        // 1. patch for leadpreview
+        // 2. patch for global (should be transparent, how can this be done?)
+        console.warn(fields);
+    }
+
     setInvalid = () => {
         this.setState({ invalid: true });
     }
 
+    pollFields = (fields) => {
+        // NOTE: create a new polling request everytime
+        this.props.pollRequest.do({
+            fields,
+            setInvalid: this.setInvalid,
+            setFields: this.setFields,
+            pollFields: this.pollFields,
+        });
+    }
+
+    /*
     triggerExtraction = () => {
         this.props.extractRequest.do();
     }
+    */
 
+    /*
     startPolling = () => {
         this.props.bookRequest.do();
     }
+    */
 
     handleActiveSheetChange = (selectedTab) => {
         const {
@@ -186,7 +208,7 @@ export default class TabularPreview extends React.PureComponent {
         return (
             <div className={className}>
                 <SheetPreview
-                    // FIXME:
+                    // NOTE:
                     // virtualized list doesn't work properly when child height change, so
                     // unmounting sheet preview when graph is added/removed
                     key={showGraphs}

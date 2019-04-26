@@ -1,10 +1,10 @@
 import { analyzeErrors } from '@togglecorp/faram';
-
 import {
     isFalsy,
     randomString,
     getDefinedElementAround,
     formatPdfText,
+    listToMap,
 } from '@togglecorp/fujs';
 
 import { applyDiff, entryAccessor, createEntry } from '#entities/editEntries';
@@ -653,10 +653,22 @@ const setPending = (state, action) => {
 
 const setTabularData = (state, action) => {
     const { leadId, tabularData } = action;
+
+    const fields = tabularData.sheets
+        .map(sheet => sheet.fields)
+        .flat();
+    const fieldMap = listToMap(
+        fields,
+        field => field.id,
+        field => field,
+    );
+
+    // TODO: clear out cache if pending is set to true here, for consistency
+
     const settings = {
         editEntries: { $auto: {
             [leadId]: { $auto: {
-                tabularData: { $set: tabularData },
+                tabularData: { $set: fieldMap },
             } },
         } },
     };
