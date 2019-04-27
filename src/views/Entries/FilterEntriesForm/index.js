@@ -32,6 +32,8 @@ import schema from '#schema';
 import notify from '#notify';
 import _ts from '#ts';
 
+import GeoFilter from './GeoFilter';
+
 import styles from './styles.scss';
 
 const mapStateToProps = state => ({
@@ -201,7 +203,8 @@ export default class FilterEntriesForm extends React.PureComponent {
                     geoOptions,
                     projectDetails,
                 } = this.props;
-                return (
+
+                /*
                     <GeoInput
                         {...props}
                         value={props.value || emptyList}
@@ -211,6 +214,15 @@ export default class FilterEntriesForm extends React.PureComponent {
                         placeholder={_ts('entries', 'geoPlaceholder')}
                         showHeader={false}
                         hideList
+                    />
+                */
+                return (
+                    <GeoFilter
+                        {...props}
+                        value={props.value}
+                        disabled={props.disabled || !this.state.geoSelectionEnable}
+                        geoOptions={geoOptions}
+                        regions={projectDetails.regions}
                     />
                 );
             }

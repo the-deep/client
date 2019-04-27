@@ -18,6 +18,7 @@ const iconNames = {
     chevronLeft: 'ion-chevron-left',
     chevronRight: 'ion-chevron-right',
     chevronUp: 'ion-chevron-up',
+    downArrow: 'ion-arrow-down-a',
     chrome: 'ion-social-chrome',
     clipboard: 'ion-clipboard',
     close: 'ion-close',

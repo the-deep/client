@@ -931,7 +931,8 @@
         "-60840374": "Total",
         "-16598080": "Valid",
         "-61649895": "Import tabular data",
-        "-65943043": "Search geo areas"
+        "-65943043": "Search geo areas",
+        "-11188842": "Include sub-regions"
     },
     "links": {
         "browserExtension": {
@@ -1352,7 +1353,8 @@
             "multiselectPlaceholder": 14,
             "multiselectRangePlaceholder": 14,
             "timePlaceholder": 18,
-            "numberOfEntriesTooltip": 15011
+            "numberOfEntriesTooltip": 15011,
+            "includeSubRegionsTitle": -11188842
         },
         "export": {
             "headerExport": 600,
