@@ -249,6 +249,8 @@ export default class WidgetFaram extends React.PureComponent {
             pending,
             disabled,
             widgetType,
+            fieldId,
+            bookId,
         } = this.props;
 
         const error = entryAccessor.error(entry);

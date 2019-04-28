@@ -9,8 +9,12 @@ import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 
 import {
-    selectedTabForTabularBook,
+    selectedTabForTabularBookSelector,
     setTabularSelectedTabAction,
+    setTabularDataAction,
+    sheetsMapForTabularBookSelector,
+    tabsForTabularBookSelector,
+    patchTabularFieldsAction,
 } from '#redux';
 
 import { RequestClient } from '#request';
@@ -31,7 +35,6 @@ const propTypes = {
     setDefaultRequestParams: PropTypes.func.isRequired,
     // extractRequest: RequestClient.propType.isRequired,
     // bookRequest: RequestClient.propType.isRequired,
-    onLoad: PropTypes.func.isRequired,
     showGraphs: PropTypes.bool.isRequired,
     setSelectedTab: PropTypes.func.isRequired,
 };
@@ -43,11 +46,15 @@ const defaultProps = {
 };
 
 const mapStateToProps = (state, props) => ({
-    selectedTab: selectedTabForTabularBook(state, props),
+    selectedTab: selectedTabForTabularBookSelector(state, props),
+    sheets: sheetsMapForTabularBookSelector(state, props),
+    tabs: tabsForTabularBookSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
     setSelectedTab: params => dispatch(setTabularSelectedTabAction(params)),
+    setTabularData: params => dispatch(setTabularDataAction(params)),
+    patchTabularFields: params => dispatch(patchTabularFieldsAction(params)),
 });
 
 @RequestClient(requests)
@@ -59,8 +66,6 @@ export default class TabularPreview extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            tabs: {},
-            sheets: {},
             completed: false,
             invalid: false,
         };
@@ -83,41 +88,26 @@ export default class TabularPreview extends React.PureComponent {
     ))
 
     setBook = (response) => {
-        const validSheets = response.sheets.filter(
-            sheet => sheet.fields.length > 0,
-        );
-
-        const sheets = listToMap(
-            validSheets,
-            sheet => sheet.id,
-            sheet => sheet,
-        );
-
-        const filteredSheets = validSheets.filter(
-            sheet => !sheet.hidden,
-        );
-
-        const tabs = listToMap(
-            filteredSheets,
-            sheet => sheet.id,
-            sheet => sheet.title,
-        );
-
         this.setState({
             invalid: false,
             completed: true,
-            tabs,
-            sheets,
         });
 
-        this.props.onLoad(response);
+        const {
+            bookId,
+            setTabularData,
+        } = this.props;
+
+        setTabularData({ bookId, book: response });
     }
 
     setFields = (fields) => {
-        // TODO:
-        // 1. patch for leadpreview
-        // 2. patch for global (should be transparent, how can this be done?)
-        console.warn(fields);
+        const {
+            bookId,
+            patchTabularFields,
+        } = this.props;
+
+        patchTabularFields({ bookId, fields });
     }
 
     setInvalid = () => {
@@ -134,18 +124,6 @@ export default class TabularPreview extends React.PureComponent {
         });
     }
 
-    /*
-    triggerExtraction = () => {
-        this.props.extractRequest.do();
-    }
-    */
-
-    /*
-    startPolling = () => {
-        this.props.bookRequest.do();
-    }
-    */
-
     handleActiveSheetChange = (selectedTab) => {
         const {
             setSelectedTab,
@@ -160,11 +138,13 @@ export default class TabularPreview extends React.PureComponent {
 
     render() {
         const {
-            tabs,
-            sheets,
             invalid,
             completed,
         } = this.state;
+        const {
+            sheets,
+            tabs,
+        } = this.props;
 
         const {
             className: classNameFromProps,

@@ -20,7 +20,7 @@ import { FgRestBuilder } from '#rsu/rest';
 import FormattedDate from '#rscv/FormattedDate';
 
 import {
-    selectedTabForTabularBook,
+    selectedTabForTabularBookSelector,
     setTabularSelectedTabAction,
 } from '#redux';
 
@@ -253,7 +253,7 @@ const defaultProps = {
 };
 
 const mapStateToProps = (state, props) => ({
-    selectedTab: selectedTabForTabularBook(state, props),
+    selectedTab: selectedTabForTabularBookSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({

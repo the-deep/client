@@ -45,7 +45,6 @@ export const EEB__APPLY_TO_ALL_ENTRIES = 'siloDomainData/EEB__APPLY_TO_ALL_ENTRI
 export const EEB__APPLY_TO_ALL_ENTRIES_BELOW = 'siloDomainData/EEB__APPLY_TO_ALL_ENTRIES_BELOW';
 export const EEB__FORMAT_ALL_ENTRIES = 'siloDomainData/EEB__FORMAT_ALL_ENTRIES';
 export const EEB__SET_PENDING = 'siloDomainData/EEB__SET_PENDING';
-export const EEB__SET_TABULAR_DATA = 'siloDomainData/EEB__SET_TABULAR_DATA';
 export const EEB__SAVE_ENTRY = 'siloDomainData/EEB__SAVE_ENTRY';
 export const EEB__RESET_UI_STATE = 'siloDomainData/EEB__RESET_UI_STATE';
 
@@ -62,12 +61,6 @@ export const editEntriesSetPendingAction = ({ leadId, entryKey, pending }) => ({
     leadId,
     entryKey,
     pending,
-});
-
-export const editEntriesSetTabularDataAction = ({ leadId, tabularData }) => ({
-    type: EEB__SET_TABULAR_DATA,
-    leadId,
-    tabularData,
 });
 
 export const editEntriesApplyToAllEntriesAction = ({
@@ -651,30 +644,6 @@ const setPending = (state, action) => {
     return update(state, settings);
 };
 
-const setTabularData = (state, action) => {
-    const { leadId, tabularData } = action;
-
-    const fields = tabularData.sheets
-        .map(sheet => sheet.fields)
-        .flat();
-    const fieldMap = listToMap(
-        fields,
-        field => field.id,
-        field => field,
-    );
-
-    // TODO: clear out cache if pending is set to true here, for consistency
-
-    const settings = {
-        editEntries: { $auto: {
-            [leadId]: { $auto: {
-                tabularData: { $set: fieldMap },
-            } },
-        } },
-    };
-    return update(state, settings);
-};
-
 const saveEntry = (state, action) => {
     const { leadId, entryKey, response, color } = action;
 
@@ -778,7 +747,6 @@ const reducers = {
     [EEB__APPLY_TO_ALL_ENTRIES]: applyToAllEntries('all'),
     [EEB__APPLY_TO_ALL_ENTRIES_BELOW]: applyToAllEntries('all-below'),
     [EEB__SET_PENDING]: setPending,
-    [EEB__SET_TABULAR_DATA]: setTabularData,
     [EEB__SAVE_ENTRY]: saveEntry,
     [EEB__RESET_UI_STATE]: editEntriesResetUiState,
     [EEB__FORMAT_ALL_ENTRIES]: formatAllEntries,

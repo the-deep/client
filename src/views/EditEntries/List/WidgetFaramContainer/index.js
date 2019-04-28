@@ -25,7 +25,6 @@ const propTypes = {
     className: PropTypes.string,
     widgetType: PropTypes.string.isRequired,
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setSelectedEntryKey: PropTypes.func.isRequired,
     leadId: PropTypes.number.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
@@ -36,7 +35,6 @@ const defaultProps = {
     pending: false,
     className: '',
     entry: undefined,
-    tabularData: undefined,
 };
 
 const mapStateToProps = state => ({
@@ -93,7 +91,6 @@ export default class WidgetFaramContainer extends React.PureComponent {
             pending,
             widgetType,
             entry,
-            tabularData,
 
             ...otherProps
         } = this.props;
@@ -146,7 +143,6 @@ export default class WidgetFaramContainer extends React.PureComponent {
                 <WidgetFaram
                     className={widgetClassName}
                     entry={entry}
-                    tabularData={tabularData}
                     widgets={widgets}
                     pending={pending}
                     widgetType={widgetType}

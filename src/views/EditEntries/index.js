@@ -49,7 +49,6 @@ import {
     editEntriesSetLeadAction,
     editEntriesSetPendingAction,
     editEntriesResetUiStateAction,
-    editEntriesSetTabularDataAction,
 
     setAnalysisFrameworkAction,
     setGeoOptionsAction,
@@ -98,7 +97,6 @@ const propTypes = {
     setLead: PropTypes.func.isRequired,
     setPending: PropTypes.func.isRequired,
     setRegions: PropTypes.func.isRequired,
-    setTabularData: PropTypes.func.isRequired,
 
     resetUiState: PropTypes.func.isRequired,
     routeUrl: PropTypes.string.isRequired,
@@ -142,7 +140,6 @@ const mapDispatchToProps = dispatch => ({
     setPending: params => dispatch(editEntriesSetPendingAction(params)),
     setRegions: params => dispatch(setRegionsForProjectAction(params)),
     resetUiState: params => dispatch(editEntriesResetUiStateAction(params)),
-    setTabularData: params => dispatch(editEntriesSetTabularDataAction(params)),
 });
 
 @RequestCoordinator
@@ -173,13 +170,13 @@ export default class EditEntries extends React.PureComponent {
                     <Overview
                         // injected inside WidgetFaram
                         onChange={this.handleChange}
-                        onTabularLoad={this.handleTabularLoad}
                         onExcerptChange={this.handleExcerptChange}
                         onExcerptCreate={this.handleExcerptCreate}
                         schema={this.props.schema}
                         computeSchema={this.props.computeSchema}
                         entryStates={this.state.entryStates}
                         onEntryStateChange={this.handleEntryStateChange}
+                        bookId={this.props.lead && this.props.lead.tabularBook}
                     />
                 ),
                 wrapContainer: true,
@@ -200,6 +197,7 @@ export default class EditEntries extends React.PureComponent {
                         computeSchema={this.props.computeSchema}
                         entryStates={this.state.entryStates}
                         onEntryStateChange={this.handleEntryStateChange}
+                        bookId={this.props.lead && this.props.lead.tabularBook}
                     />
                 ),
                 wrapContainer: true,
@@ -370,13 +368,6 @@ export default class EditEntries extends React.PureComponent {
     )
 
     // APIS
-
-    handleTabularLoad = (book) => {
-        this.props.setTabularData({
-            leadId: this.props.leadId,
-            tabularData: book,
-        });
-    }
 
     // can only edit entry
     handleExcerptChange = ({ type, value }, entryKey, entryId) => {
