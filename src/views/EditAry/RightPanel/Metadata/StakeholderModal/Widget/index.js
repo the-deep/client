@@ -18,14 +18,24 @@ class Widget extends React.PureComponent {
         this.state = {
             isBeingDraggedOver: false,
         };
+
+        this.dragEnterCount = 0;
     }
 
     handleDragEnter = () => {
-        this.setState({ isBeingDraggedOver: true });
+        if (this.dragEnterCount === 0) {
+            this.setState({ isBeingDraggedOver: true });
+        }
+
+        this.dragEnterCount += 1;
     }
 
-    handleDragExit = () => {
-        this.setState({ isBeingDraggedOver: false });
+    handleDragLeave = () => {
+        this.dragEnterCount -= 1;
+
+        if (this.dragEnterCount === 0) {
+            this.setState({ isBeingDraggedOver: false });
+        }
     }
 
     handleDragOver = (e) => {
@@ -45,7 +55,6 @@ class Widget extends React.PureComponent {
         try {
             const parsedData = JSON.parse(data);
             if (parsedData && parsedData.organizationId) {
-                console.warn(parsedData.organizationId);
                 if (!value) {
                     onChange([value]);
                 } else if (value.findIndex(v => v === parsedData.organizationId) === -1) {
@@ -53,7 +62,7 @@ class Widget extends React.PureComponent {
                 }
             }
         } catch (ex) {
-            console.warn('hmmmm');
+            console.warn('Only organizations supported');
         }
 
         this.setState({ isBeingDraggedOver: false });
@@ -62,11 +71,6 @@ class Widget extends React.PureComponent {
 
     render() {
         const {
-            /*
-            index,
-            data,
-            sources,
-            */
             containerClassName,
             renderer: Renderer,
             ...otherProps
@@ -82,10 +86,13 @@ class Widget extends React.PureComponent {
                     isBeingDraggedOver && styles.draggedOver,
                 )}
                 onDragEnter={this.handleDragEnter}
-                onDragLeave={this.handleDragExit}
+                onDragLeave={this.handleDragLeave}
                 onDragOver={this.handleDragOver}
                 onDrop={this.handleDrop}
             >
+                <div className={styles.dropMessage}>
+                    Drop organization
+                </div>
                 <Renderer
                     {...otherProps}
                 />
