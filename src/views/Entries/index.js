@@ -205,7 +205,6 @@ export default class Entries extends React.PureComponent {
 
     startEntriesRequest = () => {
         const { successFramework, successGeoOptions } = this.state;
-        console.warn(successFramework, successGeoOptions);
         if (successFramework && successGeoOptions) {
             this.entriesRequest.init();
             this.entriesRequest.start();

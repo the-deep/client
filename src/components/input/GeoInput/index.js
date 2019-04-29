@@ -243,6 +243,8 @@ export default class GeoInput extends React.PureComponent {
             <AccentButton
                 className={styles.action}
                 iconName="globe"
+                // FIXME: use strings
+                title="Open geo modal"
                 onClick={this.handleShowModal}
                 disabled={disabled || readOnly}
                 transparent

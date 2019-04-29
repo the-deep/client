@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Faram from '@togglecorp/faram';
 import Icon from '#rscg/Icon';
 import RotatingInput from '#rsci/RotatingInput';
 import GeoInput from '#components/input/GeoInput/';
 import _ts from '#ts';
+import _cs from '#cs';
 
 import styles from './styles.scss';
 
@@ -33,21 +33,23 @@ const keySelector = d => d.key;
 const options = [
     {
         renderer: (
-            <Icon
-                name="fork"
-                title={_ts('entries', 'includeSubRegionsTitle')}
-                className={styles.subRegionSelected}
-            />
+            <div className={styles.subRegionSelected} >
+                <Icon
+                    name="suborgIcon"
+                    title={_ts('entries', 'includeSubRegionsTitle')}
+                />
+            </div>
         ),
         key: true,
     },
     {
         renderer: (
-            <Icon
-                name="fork"
-                title={_ts('entries', 'includeSubRegionsTitle')}
-                className={styles.subRegionNotSelected}
-            />
+            <div className={styles.subRegionNotSelected} >
+                <Icon
+                    name="suborgIcon"
+                    title={_ts('entries', 'includeSubRegionsTitle')}
+                />
+            </div>
         ),
         key: false,
     },
@@ -57,20 +59,26 @@ export default class GeoFilter extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
+    handleGeoChange = (areas) => {
+        this.props.onChange({
+            ...this.props.value,
+            areas,
+        });
+    }
 
-        this.schema = {
-            fields: {
-                includeSubRegions: [],
-                areas: [],
-            },
-        };
+    handleRotatingInputChange = (includeSubRegions) => {
+        this.props.onChange({
+            ...this.props.value,
+            includeSubRegions,
+        });
     }
 
     render() {
         const {
-            value,
+            value: {
+                areas = [],
+                includeSubRegions = false,
+            } = {},
             label,
             disabled,
             geoOptions,
@@ -79,32 +87,33 @@ export default class GeoFilter extends React.PureComponent {
         } = this.props;
 
         return (
-            <Faram
+            <div
                 className={styles.geoFilter}
                 onChange={onChange}
-                schema={this.schema}
-                value={value}
-                disabled={disabled}
             >
                 <GeoInput
-                    faramElementName="areas"
+                    value={areas}
                     className={styles.geoInput}
                     geoOptionsByRegion={geoOptions}
+                    onChange={this.handleGeoChange}
                     regions={regions}
                     placeholder={_ts('entries', 'geoPlaceholder')}
                     showHeader={false}
                     label={label}
+                    disabled={disabled}
                     hideList
                 />
                 <RotatingInput
-                    className={styles.rotatingInput}
+                    value={includeSubRegions}
+                    className={_cs(disabled && styles.disabled, styles.rotatingInput)}
                     options={options}
+                    onChange={this.handleRotatingInputChange}
                     rendererSelector={rendererSelector}
                     keySelector={keySelector}
-                    faramElementName="includeSubRegions"
                     showHintAndError={false}
+                    disabled={disabled}
                 />
-            </Faram>
+            </div>
         );
     }
 }

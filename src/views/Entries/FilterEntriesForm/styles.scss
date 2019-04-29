@@ -25,16 +25,19 @@ $width-filter-input: 160px;
         .rotating-input {
             width: auto;
 
-            .sub-region-selected {
-                color: $color-accent;
-            }
+            &:not(.disabled) {
+                .sub-region-selected {
+                    color: $color-accent;
+                }
 
-            .sub-region-not-selected {
-                color: $color-text-label;
+                .sub-region-not-selected {
+                    color: $color-text-label;
+                }
             }
 
             >button {
                 padding: 4px $spacing-small;
+                line-height: 1;
             }
         }
     }

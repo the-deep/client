@@ -220,7 +220,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                     <GeoFilter
                         {...props}
                         value={props.value}
-                        disabled={props.disabled || !this.state.geoSelectionEnable}
+                        disabled={props.disabled}
                         geoOptions={geoOptions}
                         regions={projectDetails.regions}
                     />

@@ -299,7 +299,6 @@
         "642": "Couldn't load leads",
         "643": "Select",
         "644": "Unselect",
-        "646": "Couldn't load project",
         "648": "Couldn't load analysis framework",
         "649": "Uncategorized",
         "650": "Dismiss",
@@ -689,9 +688,6 @@
         "15001": "Are you sure you want to delete these tabular sheets? {count} entries will be deleted.",
         "15003": "Separator",
         "15004": "Delimiter",
-        "15005": "File type",
-        "15006": "Extract",
-        "15007": "Extract Tabular Data from Lead",
         "15008": "Reset sort",
         "15009": "Skip sheet",
         "15010": "Header row",
@@ -877,7 +873,6 @@
         "-63188496": "Couldn't read tabular data.",
         "-63188497": "Couldn't delete tabular data.",
         "-45402687": "1",
-        "-53408079": "Back",
         "-39430073": "Close",
         "-24457818": "Sectors",
         "-26663455": "Horizontal bar",
@@ -911,14 +906,11 @@
         "-2259035": "Extracting tabular data",
         "-13659065": "Couldn't extract tabular information.",
         "-52729578": "Last saved on {value}",
-        "-40920464": "To tag the dimensions of \"{title}\", you can extract to tabular format.",
         "-49732387": "Tabular - {title}",
         "-99678591": "We’re busy processing your tabular data and should be done shortly depending on the size of the file. If you still see this message after a few minutes, send us a message through {zendeskLink}.",
         "-82516607": "this form",
         "-57170437": "Regions present in this project",
         "-65526481": "Failed to fetch region/admin levels of this project.",
-        "-69836040": "There are no regions in this project.",
-        "-75298941": "Ignore",
         "-73426620": "Ascending",
         "-8251517": "Descending",
         "-20881567": "Alphabetical Ascending",
@@ -932,7 +924,8 @@
         "-16598080": "Valid",
         "-61649895": "Import tabular data",
         "-65943043": "Search geo areas",
-        "-11188842": "Include sub-regions"
+        "-11188842": "Include sub-regions",
+        "-80682543": "Geo Options"
     },
     "links": {
         "browserExtension": {
@@ -1392,11 +1385,11 @@
             "cantLoadLeads": 642,
             "selectLabel": 643,
             "titleLabel": 13,
-            "projectLabel": 31,
-            "cantLoadProject": 646,
             "afLabel": 379,
             "cantLoadAf": 648,
-            "startAssessmentExportButtonLabel": -58642627
+            "startAssessmentExportButtonLabel": -58642627,
+            "geoLabel": -80682543,
+            "cantLoadGeo": 534
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,
@@ -1606,9 +1599,7 @@
             "connectorSourcesTitle": 1109,
             "connectorTitle": 1100,
             "tabularButtonTitle": -4174557,
-            "extractTabularButtonTitle": -61649895,
-            "ignoreTabularButtonTitle": -75298941,
-            "extractTabularHeaderTitle": -40920464
+            "extractTabularButtonTitle": -61649895
         },
         "addLeads.actions": {
             "deleteLeadConfirmText": 133,
@@ -1671,15 +1662,12 @@
         "addLeads.tabular": {
             "title": -2259039,
             "delimiterLabel": 15004,
-            "fileTypeLabel": 15005,
             "skipLabel": 15009,
             "headerRowLabel": 15010,
             "invalid": -63188496,
             "headerRowPlaceholder": -45402687,
             "cancelButtonTitle": 61,
-            "backButtonTitle": -53408079,
             "extractButtonTitle": -61649895,
-            "nextButtonTitle": 23,
             "noHeaderLabel": -39031808,
             "tabularExtractionLoading": -2259035,
             "tabularExtractionError": -13659065

@@ -75,13 +75,19 @@ export const processEntryFilters = (filters, framework, geoOptions) => {
                 totMinutes(filterOptions.endTime),
             ]);
         } else if (widgetId === 'geoWidget') {
-            const bubbledOptions = getChildren(
-                new Set(filterOptions),
-                treeMap,
-                item => item.key,
-                item => item.children,
-            );
-            const options = [...bubbledOptions];
+            const { areas, includeSubRegions } = filterOptions;
+
+            let options = areas;
+            if (includeSubRegions) {
+                const bubbledOptions = getChildren(
+                    new Set(areas),
+                    treeMap,
+                    item => item.key,
+                    item => item.children,
+                );
+                options = [...bubbledOptions];
+            }
+
             result.push([filterKey, options]);
         } else {
             result.push([filterKey, filterOptions]);
