@@ -10,6 +10,9 @@ import styles from './styles.scss';
 const propTypes = {};
 const defaultProps = {};
 
+// FIXME: Use strings everywhere, define all the props
+// FIXME: No inline functions
+
 class Widget extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

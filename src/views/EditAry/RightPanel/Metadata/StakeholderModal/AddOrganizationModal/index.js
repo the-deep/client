@@ -11,7 +11,10 @@ import ImageInput from '#rsci/FileInput/ImageInput';
 import Checkbox from '#rsci/Checkbox';
 import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
-import Faram, { requiredCondition } from '@togglecorp/faram';
+import Faram, {
+    requiredCondition,
+    urlCondition,
+} from '@togglecorp/faram';
 import _ts from '#ts';
 import notify from '#notify';
 
@@ -29,12 +32,14 @@ import {
 
 import styles from './styles.scss';
 
+// FIXME: Use strings everywhere, define all the props
+// FIXME: No inline functions
+// FIXME: Donot define props inline in image input
+
 const propTypes = {
-    closeModal: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
-    closeModal: () => {},
 };
 
 const requests = {
@@ -49,12 +54,15 @@ const requests = {
 @RequestCoordinator
 @RequestClient(requests)
 export default class AddOrganizationModal extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
     static schema = {
         fields: {
             title: [requiredCondition],
             shortName: [requiredCondition],
-            longName: [],
-            url: [],
+            longName: [requiredCondition],
+            url: [urlCondition],
             organizationType: [requiredCondition],
             logo: [],
         },
@@ -85,19 +93,14 @@ export default class AddOrganizationModal extends React.PureComponent {
 
     handleFaramValidationFailure = (faramErrors) => {
         this.setState({ faramErrors });
-        console.warn('faram validation failure');
     };
 
     handleFaramValidationSuccess = (values) => {
-        console.warn('faram validation success', values);
-
-        /*
         const { addOrganizationRequest } = this.props;
         addOrganizationRequest.do({
             body: values,
             onSuccess: this.handleAddOrganizationRequestSuccess,
         });
-        */
     };
 
     handleImageInputChange = (files, { invalidFiles }) => {
@@ -161,30 +164,33 @@ export default class AddOrganizationModal extends React.PureComponent {
             closeModal,
             children,
             organizationTypeList,
+            addOrganizationRequest: {
+                pending: pendingAddOrganizationRequest,
+            },
         } = this.props;
 
         const {
             faramValues,
             faramErrors,
             pristine,
-            pending,
+            pendingLogoUpload,
         } = this.state;
 
         return (
-            <Faram
-                className={styles.addOrgModal}
-                onChange={this.handleFaramChange}
-                onValidationSuccess={this.handleFaramValidationSuccess}
-                onValidationFailure={this.handleFaramValidationFailure}
-                schema={AddOrganizationModal.schema}
-                value={faramValues}
-                error={faramErrors}
-                // disabled={pending}
+            <Modal
+                onClose={closeModal}
+                closeOnEscape
+                className={styles.modal}
             >
-                <Modal
-                    onClose={closeModal}
-                    closeOnEscape
-                    className={styles.modal}
+                <Faram
+                    className={styles.addOrgModal}
+                    onChange={this.handleFaramChange}
+                    onValidationSuccess={this.handleFaramValidationSuccess}
+                    onValidationFailure={this.handleFaramValidationFailure}
+                    schema={AddOrganizationModal.schema}
+                    value={faramValues}
+                    error={faramErrors}
+                    disabled={pendingAddOrganizationRequest}
                 >
                     <ModalHeader title="Add Organization" />
                     <ModalBody className={styles.modalBody}>
@@ -228,15 +234,21 @@ export default class AddOrganizationModal extends React.PureComponent {
                         />
                     </ModalBody>
                     <ModalFooter>
-                        <DangerButton onClick={closeModal}>
+                        <DangerButton
+                            onClick={closeModal}
+                            disable={pendingLogoUpload}
+                        >
                             Cancel
                         </DangerButton>
-                        <PrimaryButton type="submit">
+                        <PrimaryButton
+                            type="submit"
+                            disable={pendingLogoUpload}
+                        >
                             Save
                         </PrimaryButton>
                     </ModalFooter>
-                </Modal>
-            </Faram>
+                </Faram>
+            </Modal>
         );
     }
 }
