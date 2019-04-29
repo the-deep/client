@@ -1,5 +1,5 @@
-import { listToMap } from '@togglecorp/fujs';
-import { unflat, getChildren } from '#utils/tree';
+import { listToMap, union } from '@togglecorp/fujs';
+import { generateRelation } from '#utils/forest';
 
 // TODO: move this somewhere else
 const ONE_DAY = 24 * 60 * 60 * 1000;
@@ -39,9 +39,8 @@ export const processEntryFilters = (filters, framework, geoOptions) => {
         .map(([key, value]) => value)
         .flat();
 
-    const treeMap = unflat(
+    const treeMap = generateRelation(
         flatGeoOptions,
-        undefined,
         item => item.key,
         item => item.parent,
     );
@@ -79,13 +78,15 @@ export const processEntryFilters = (filters, framework, geoOptions) => {
 
             let options = areas;
             if (includeSubRegions) {
-                const bubbledOptions = getChildren(
-                    new Set(areas),
-                    treeMap,
-                    item => item.key,
-                    item => item.children,
-                );
-                options = [...bubbledOptions];
+                let newOptions = new Set(areas);
+                newOptions.forEach((option) => {
+                    const treeNode = treeMap[option];
+                    if (!treeNode) {
+                        return;
+                    }
+                    newOptions = union(newOptions, new Set(Object.values(treeNode.children)));
+                });
+                options = [...newOptions];
             }
 
             result.push([filterKey, options]);

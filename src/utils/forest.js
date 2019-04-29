@@ -15,7 +15,7 @@ export function generateRelation(options, idSelector, parentSelector) {
         } else {
             acc[id] = {
                 ...node,
-                children: [],
+                children: {},
             };
         }
 
@@ -26,11 +26,19 @@ export function generateRelation(options, idSelector, parentSelector) {
 
             // Create a placeholder parent if there is none
             if (!parent) {
-                // parent = { id: parentId, fake: true, children: [node.id] };
-                parent = { children: [id, ...acc[id].children].sort((a, b) => a - b) };
+                parent = {
+                    children: {
+                        ...acc[id].children,
+                        [id]: id,
+                    },
+                };
                 acc[parentId] = parent;
             } else {
-                parent.children = [...parent.children, id, ...acc[id].children].sort((a, b) => a - b);
+                parent.children = {
+                    ...parent.children,
+                    ...acc[id].children,
+                    [id]: id,
+                };
             }
 
             parentId = parentSelector(parent);
@@ -40,19 +48,16 @@ export function generateRelation(options, idSelector, parentSelector) {
     return acc;
 }
 
-export function simpleShuffle(options, n) {
+export function simpleShuffle(options) {
     if (!options || options.length <= 1) {
         return options;
     }
     const newOptions = [...options];
     const len = newOptions.length;
-    const iteration = n === undefined
-        ? 2 * len
-        : n;
-    for (let i = 0; i < iteration; i += 1) {
+    for (let i = 0; i < len; i += 1) {
         const randIndex = Math.floor(Math.random() * len);
-        const tmp = newOptions[0];
-        newOptions[0] = newOptions[randIndex];
+        const tmp = newOptions[i];
+        newOptions[i] = newOptions[randIndex];
         newOptions[randIndex] = tmp;
     }
     return newOptions;

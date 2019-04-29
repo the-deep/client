@@ -13,7 +13,7 @@ const propTypes = {
     label: PropTypes.string,
     disabled: PropTypes.bool.isRequired,
     geoOptions: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    regions: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    regions: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     value: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     onChange: PropTypes.func.isRequired,
 };
@@ -33,22 +33,22 @@ const keySelector = d => d.key;
 const options = [
     {
         renderer: (
-            <div className={styles.subRegionSelected} >
-                <Icon
-                    name="suborgIcon"
-                    title={_ts('entries', 'includeSubRegionsTitle')}
-                />
+            <div
+                className={styles.subRegionSelected}
+                title={_ts('entries', 'includeSubRegionsTitle')}
+            >
+                <Icon name="suborgIcon" />
             </div>
         ),
         key: true,
     },
     {
         renderer: (
-            <div className={styles.subRegionNotSelected} >
-                <Icon
-                    name="suborgIcon"
-                    title={_ts('entries', 'includeSubRegionsTitle')}
-                />
+            <div
+                className={styles.subRegionNotSelected}
+                title={_ts('entries', 'includeSubRegionsTitle')}
+            >
+                <Icon name="suborgIcon" />
             </div>
         ),
         key: false,

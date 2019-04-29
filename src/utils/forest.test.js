@@ -43,47 +43,47 @@ const tree = {
     1: {
         id: 1,
         parent: undefined,
-        children: [2, 3, 4, 5, 6, 7, 8, 9],
+        children: { 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9 },
     },
     2: {
         id: 2,
         parent: 1,
-        children: [],
+        children: {},
     },
     3: {
         id: 3,
         parent: 1,
-        children: [4, 5, 6, 7, 9],
+        children: { 4: 4, 5: 5, 6: 6, 7: 7, 9: 9 },
     },
     4: {
         id: 4,
         parent: 3,
-        children: [],
+        children: {},
     },
     5: {
         id: 5,
         parent: 3,
-        children: [6, 7],
+        children: { 6: 6, 7: 7 },
     },
     6: {
         id: 6,
         parent: 5,
-        children: [7],
+        children: { 7: 7 },
     },
     7: {
         id: 7,
         parent: 6,
-        children: [],
+        children: {},
     },
     8: {
         id: 8,
         parent: 1,
-        children: [],
+        children: {},
     },
     9: {
         id: 9,
         parent: 3,
-        children: [],
+        children: {},
     },
 };
 
