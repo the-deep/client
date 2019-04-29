@@ -97,7 +97,7 @@ export default class ExportHeader extends React.PureComponent {
 
         const exportType = (
             (exportItem === 'assessment' && 'excel')
-            || (isWord && isPdf === 'report')
+            || ((isWord || isPdf) && 'report')
             || activeExportTypeKey
         );
 
