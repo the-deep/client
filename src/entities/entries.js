@@ -1,37 +1,5 @@
-import { listToMap, isDefined } from '@togglecorp/fujs';
-
-const difference = (a, b) => (
-    new Set([...a].filter(x => !b.has(x)))
-);
-
-const union = (a, b) => (
-    new Set([...a, ...b])
-);
-
-const aggregate = (keys, geoOptionsMap) => {
-    if (keys.size <= 0) {
-        return new Set();
-    }
-
-    const items = [...keys]
-        .map(key => geoOptionsMap[key])
-        .filter(isDefined);
-
-    const validKeys = new Set(
-        items.map(item => item.key),
-    );
-
-    const parentKeys = new Set(
-        items.map(item => item.parent).filter(isDefined),
-    );
-
-    const trueParentKeys = difference(
-        parentKeys,
-        validKeys,
-    );
-
-    return union(validKeys, aggregate(trueParentKeys, geoOptionsMap));
-};
+import { listToMap } from '@togglecorp/fujs';
+import { unflat, getChildren } from '#utils/tree';
 
 // TODO: move this somewhere else
 const ONE_DAY = 24 * 60 * 60 * 1000;
@@ -70,10 +38,12 @@ export const processEntryFilters = (filters, framework, geoOptions) => {
     const flatGeoOptions = Object.entries(geoOptions)
         .map(([key, value]) => value)
         .flat();
-    const geoOptionsMap = listToMap(
+
+    const treeMap = unflat(
         flatGeoOptions,
-        geo => geo.key,
-        geo => geo,
+        undefined,
+        item => item.key,
+        item => item.parent,
     );
 
     const result = [];
@@ -105,9 +75,14 @@ export const processEntryFilters = (filters, framework, geoOptions) => {
                 totMinutes(filterOptions.endTime),
             ]);
         } else if (widgetId === 'geoWidget') {
-            const options = new Set(filterOptions.map(item => +item));
-            const bubbledOptions = [...aggregate(options, geoOptionsMap)];
-            result.push([filterKey, bubbledOptions]);
+            const bubbledOptions = getChildren(
+                new Set(filterOptions),
+                treeMap,
+                item => item.key,
+                item => item.children,
+            );
+            const options = [...bubbledOptions];
+            result.push([filterKey, options]);
         } else {
             result.push([filterKey, filterOptions]);
         }
