@@ -8,6 +8,7 @@ import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import AccentButton from '#rsca/Button/AccentButton';
 
+import { processEntryFilters } from '#entities/entries';
 import Cloak from '#components/general/Cloak';
 import {
     urlForExportTrigger,
@@ -23,6 +24,18 @@ import notify from '#notify';
 import styles from './styles.scss';
 
 const emptyList = [];
+
+const createReportStructureForExport = nodes => nodes
+    .filter(node => node.selected)
+    .map(node => (
+        node.nodes ? {
+            id: node.key,
+            levels: createReportStructureForExport(node.nodes),
+        } : {
+            id: node.key,
+        }
+    ));
+
 
 const propTypes = {
     className: PropTypes.string,
@@ -43,9 +56,24 @@ const defaultProps = {
     entriesFilters: {},
 };
 
+const EXPORT_TYPE = {
+    assessmentExport: 'assessment-export',
+    entriesExport: 'entries-export',
+    entriesPreview: 'entries-preview',
+};
+
 export default class ExportHeader extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            exportPending: false,
+            exportClass: undefined,
+        };
+    }
 
     componentWillUnmount() {
         if (this.exportRequest) {
@@ -53,18 +81,7 @@ export default class ExportHeader extends React.PureComponent {
         }
     }
 
-    createReportStructureForExport = nodes => nodes
-        .filter(node => node.selected)
-        .map(node => (
-            node.nodes ? {
-                id: node.key,
-                levels: this.createReportStructureForExport(node.nodes),
-            } : {
-                id: node.key,
-            }
-        ));
-
-    export = (onSuccess, isPreview = false, pdf = false, exportItem = 'entry') => {
+    export = ({ onSuccess, isPreview = false, exportItem = 'entry' }) => {
         // Let's start by collecting the filters
         const {
             projectId,
@@ -75,43 +92,71 @@ export default class ExportHeader extends React.PureComponent {
             decoupledEntries,
         } = this.props;
 
-        let exportType;
-        if (exportItem === 'assessment') {
-            exportType = 'excel';
-        } else if (activeExportTypeKey === 'word' || activeExportTypeKey === 'pdf') {
-            exportType = 'report';
-        } else {
-            exportType = activeExportTypeKey;
-        }
+        const isWord = activeExportTypeKey === 'word';
+        const isPdf = activeExportTypeKey === 'pdf';
 
+        const exportType = (
+            (exportItem === 'assessment' && 'excel')
+            || (isWord && isPdf === 'report')
+            || activeExportTypeKey
+        );
 
-        const filters = {
+        const exportClass = (
+            (isPreview && EXPORT_TYPE.entriesPreview)
+            || (exportItem === 'entry' && EXPORT_TYPE.entriesExport)
+            || (exportItem === 'assessement' && EXPORT_TYPE.assessmentExport)
+            || undefined
+        );
+
+        console.warn(exportItem, exportClass);
+
+        const otherFilters = {
             project: projectId,
-            export_type: exportType,
-            ...entriesFilters,
-            decoupled: decoupledEntries,
             lead: Object.keys(selectedLeads).filter(l => selectedLeads[l]),
-            report_structure: this.createReportStructureForExport(reportStructure || emptyList),
-            is_preview: isPreview,
-            pdf,
+
+            export_type: exportType,
+            // for excel
+            decoupled: decoupledEntries,
+            // for pdf or word
+            report_structure: createReportStructureForExport(reportStructure || emptyList),
+            // differentiate between pdf or word
+            pdf: isPdf,
+
+            // entry or assessment
             export_item: exportItem,
+
+            // temporary or permanent
+            is_preview: isPreview,
         };
+
+        const processedFilters = processEntryFilters(
+            entriesFilters,
+            this.props.analysisFramework,
+            this.props.geoOptions,
+        );
+
+        const filters = [
+            ...Object.entries(otherFilters),
+            ...processedFilters,
+        ];
 
         if (this.exportRequest) {
             this.exportRequest.stop();
         }
-
         this.exportRequest = this.createRequestForExport({
             filters,
-        }, onSuccess);
-
+            onSuccess,
+            exportClass,
+        });
         this.exportRequest.start();
     }
 
-    createRequestForExport = ({ filters }, onSuccess) => {
+    createRequestForExport = ({ filters, onSuccess, exportClass }) => {
         const exportRequest = new FgRestBuilder()
             .url(urlForExportTrigger)
             .params(() => createParamsForExportTrigger(filters))
+            .preLoad(() => this.setState({ exportPending: true, exportClass }))
+            .postLoad(() => this.setState({ exportPending: false, exportClass: undefined }))
             .success((response) => {
                 // FIXME: write schema
                 onSuccess(response.exportTriggered);
@@ -121,7 +166,7 @@ export default class ExportHeader extends React.PureComponent {
     }
 
     handleExport = () => {
-        const exportFn = (exportId) => {
+        const onSuccess = (exportId) => {
             console.log('Exporting to ', exportId);
             notify.send({
                 title: _ts('export', 'headerExport'),
@@ -130,11 +175,11 @@ export default class ExportHeader extends React.PureComponent {
                 duration: 15000,
             });
         };
-        this.export(exportFn, false, this.props.activeExportTypeKey === 'pdf');
+        this.export({ onSuccess });
     }
 
     handleAssessmentExportClick = () => {
-        const exportFn = (exportId) => {
+        const onSuccess = (exportId) => {
             console.log('Exporting to ', exportId);
             notify.send({
                 title: _ts('export', 'headerExport'),
@@ -144,18 +189,24 @@ export default class ExportHeader extends React.PureComponent {
             });
         };
 
-        this.export(exportFn, false, false, 'assessment');
+        this.export({ onSuccess, exportItem: 'assessment' });
     }
 
     handlePreview = () => {
-        this.export(this.props.onPreview, true, this.props.activeExportTypeKey === 'pdf');
+        const { onPreview } = this.props;
+        this.export({ onSuccess: onPreview, isPreview: true });
     }
 
     render() {
         const {
             projectId,
             className,
+            pending,
         } = this.props;
+        const {
+            exportPending,
+            exportClass,
+        } = this.state;
 
         const classNames = `${styles.header} ${className}`;
 
@@ -174,7 +225,8 @@ export default class ExportHeader extends React.PureComponent {
                     <Button
                         className={styles.button}
                         onClick={this.handlePreview}
-                        disabled={this.props.pending}
+                        disabled={pending || exportPending}
+                        pending={exportClass === EXPORT_TYPE.entriesPreview}
                     >
                         {_ts('export', 'showPreviewButtonLabel')}
                     </Button>
@@ -185,7 +237,8 @@ export default class ExportHeader extends React.PureComponent {
                             <AccentButton
                                 className={styles.button}
                                 onClick={this.handleAssessmentExportClick}
-                                disabled={this.props.pending}
+                                disabled={pending || exportPending}
+                                pending={exportClass === EXPORT_TYPE.assessmentExport}
                             >
                                 {_ts('export', 'startAssessmentExportButtonLabel')}
                             </AccentButton>
@@ -194,7 +247,8 @@ export default class ExportHeader extends React.PureComponent {
                     <PrimaryButton
                         className={styles.button}
                         onClick={this.handleExport}
-                        disabled={this.props.pending}
+                        disabled={pending || exportPending}
+                        pending={exportClass === EXPORT_TYPE.entriesExport}
                     >
                         {_ts('export', 'startExportButtonLabel')}
                     </PrimaryButton>

@@ -8,7 +8,7 @@ export default class FrameworkRequest extends Request {
     schemaName = 'analysisFramework';
 
     handlePreLoad = () => {
-        this.parent.setState({ pendingFramework: true });
+        this.parent.setState({ pendingFramework: true, successFramework: false });
     }
 
     handleAfterLoad = () => {
@@ -17,6 +17,7 @@ export default class FrameworkRequest extends Request {
 
     handleSuccess = (response) => {
         this.parent.setFramework({ analysisFramework: response });
+        this.parent.setSuccess();
     }
 
     getUrl = () => (

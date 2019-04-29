@@ -23,16 +23,10 @@ import {
     projectDetailsSelector,
     entryFilterOptionsForProjectSelector,
     setEntryFilterOptionsAction,
-    setGeoOptionsAction,
-    geoOptionsForProjectSelector,
 } from '#redux';
 import {
-    createUrlForGeoOptions,
     createUrlForEntryFilterOptions,
-
     createParamsForGet,
-
-    transformResponseErrorToFormError,
 } from '#rest';
 import schema from '#schema';
 import notify from '#notify';
@@ -44,14 +38,12 @@ const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
     entriesFilters: entriesViewFilterSelector(state),
     entryFilterOptions: entryFilterOptionsForProjectSelector(state),
-    geoOptions: geoOptionsForProjectSelector(state),
     projectDetails: projectDetailsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
     setEntriesViewFilter: params => dispatch(setEntriesViewFilterAction(params)),
     setEntryFilterOptions: params => dispatch(setEntryFilterOptionsAction(params)),
-    setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
     unsetEntriesViewFilter: params => dispatch(unsetEntriesViewFilterAction(params)),
 });
 
@@ -67,7 +59,6 @@ const propTypes = {
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setEntriesViewFilter: PropTypes.func.isRequired,
     setEntryFilterOptions: PropTypes.func.isRequired,
-    setGeoOptions: PropTypes.func.isRequired,
     unsetEntriesViewFilter: PropTypes.func.isRequired,
 };
 
@@ -93,7 +84,6 @@ export default class FilterEntriesForm extends React.PureComponent {
 
         this.state = {
             pristine: true,
-            geoSelectionEnable: false,
             filters: this.props.entriesFilters,
         };
     }
@@ -101,9 +91,6 @@ export default class FilterEntriesForm extends React.PureComponent {
     componentWillMount() {
         const { activeProject } = this.props;
         this.requestProjectEntryFilterOptions(activeProject);
-
-        this.geoOptionsRequest = this.createGeoOptionsRequest(activeProject);
-        this.geoOptionsRequest.start();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -131,55 +118,9 @@ export default class FilterEntriesForm extends React.PureComponent {
 
     componentWillUnmount() {
         this.entryFilterOptionsRequest.stop();
-
-        if (this.geoOptionsRequest) {
-            this.geoOptionsRequest.stop();
-        }
     }
 
     // REST
-
-    createGeoOptionsRequest = (projectId) => {
-        const geoOptionsRequest = new FgRestBuilder()
-            .url(createUrlForGeoOptions(projectId))
-            .params(createParamsForGet)
-            .preLoad(() => this.setState({ geoSelectionEnable: false }))
-            .success((response) => {
-                try {
-                    schema.validate(response, 'geoOptions');
-                    this.props.setGeoOptions({
-                        projectId,
-                        locations: response,
-                    });
-                    this.setState({ geoSelectionEnable: true });
-                } catch (er) {
-                    console.error(er);
-                }
-            })
-            .failure((response) => {
-                console.warn(response);
-                const message = transformResponseErrorToFormError(response.errors)
-                    .formErrors
-                    .errors
-                    .join(' ');
-                notify.send({
-                    title: _ts('entries', 'entriesTabLabel'),
-                    type: notify.type.ERROR,
-                    message,
-                    duration: notify.duration.MEDIUM,
-                });
-            })
-            .fatal(() => {
-                notify.send({
-                    title: _ts('entries', 'entriesTabLabel'),
-                    type: notify.type.ERROR,
-                    message: _ts('entries', 'geoOptionsFatalMessage'),
-                    duration: notify.duration.MEDIUM,
-                });
-            })
-            .build();
-        return geoOptionsRequest;
-    };
 
     requestProjectEntryFilterOptions = (activeProject) => {
         if (this.entryFilterOptionsRequest) {
@@ -264,7 +205,7 @@ export default class FilterEntriesForm extends React.PureComponent {
                     <GeoInput
                         {...props}
                         value={props.value || emptyList}
-                        disabled={props.disabled || !this.state.geoSelectionEnable}
+                        disabled={props.disabled}
                         geoOptionsByRegion={geoOptions}
                         regions={projectDetails.regions}
                         placeholder={_ts('entries', 'geoPlaceholder')}
