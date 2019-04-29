@@ -10,6 +10,7 @@ import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SelectInput from '#rsci/SelectInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
+import SearchMultiSelectInput from '#rsci/SearchMultiSelectInput';
 import ListInput from '#rsci/ListInput';
 import { FaramInputElement } from '@togglecorp/faram';
 import { listToMap } from '@togglecorp/fujs';
@@ -18,6 +19,8 @@ import _cs from '#cs';
 
 import RegionMap from '#components/geo/RegionMap';
 import styles from './styles.scss';
+
+const MAX_DISPLAY_OPTIONS = 100;
 
 const propTypes = {
     title: PropTypes.string,
@@ -300,7 +303,7 @@ export default class GeoModal extends React.PureComponent {
                                     value={selectedAdminLevel}
                                     showHintAndError={false}
                                 />
-                                <MultiSelectInput
+                                <SearchMultiSelectInput
                                     label={_ts('components.geo.geoModal', 'geoAreasLabel')}
                                     className={styles.selectInput}
                                     options={optionsForSelectedAdminLevels}
@@ -309,6 +312,9 @@ export default class GeoModal extends React.PureComponent {
                                     onChange={this.handleFilteredRegionValueChange}
                                     value={filteredValues}
                                     showHintAndError={false}
+                                    placeholder={_ts('components.geo.geoModal', 'geoAreasPlaceholder')}
+                                    maxDisplayOptions={MAX_DISPLAY_OPTIONS}
+                                    hideSelectAllButton
                                 />
                             </div>
                         </div>
