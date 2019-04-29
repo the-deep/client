@@ -137,6 +137,7 @@ const regionSchema = [];
             region: { type: 'uint', required: true },
             regionTitle: { type: 'string', required: true },
             title: { type: 'string' },
+            parent: { type: 'uint' },
         },
     };
     regionSchema.push({ name, schema });

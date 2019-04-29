@@ -7,6 +7,7 @@ import numericalIcon from '#resources/img/numerical.svg';
 import verticalbarIcon from '#resources/img/verticalbar.svg';
 import wordcloudIcon from '#resources/img/wordcloud.svg';
 import tabularIcon from '#resources/img/tabular.svg';
+import suborgIcon from '#resources/img/suborg.svg';
 
 const svgPaths = {
     deepLogo,
@@ -18,6 +19,7 @@ const svgPaths = {
     verticalbarIcon,
     wordcloudIcon,
     tabularIcon,
+    suborgIcon,
 };
 
 export default svgPaths;

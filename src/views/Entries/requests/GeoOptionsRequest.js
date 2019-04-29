@@ -11,7 +11,7 @@ export default class GeoOptionsRequest extends Request {
     schemaName = 'geoOptions';
 
     handlePreLoad = () => {
-        this.parent.setState({ pendingGeoOptions: true });
+        this.parent.setState({ pendingGeoOptions: true, successGeoOptions: false });
     }
 
     handleAfterLoad = () => {
@@ -23,6 +23,7 @@ export default class GeoOptionsRequest extends Request {
             projectId: this.parent.getProjectId(),
             locations: response,
         });
+        this.parent.setSuccess();
     }
 
     handleFailure = (response) => {

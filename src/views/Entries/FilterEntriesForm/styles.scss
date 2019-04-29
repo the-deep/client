@@ -13,6 +13,35 @@ $width-filter-input: 160px;
         width: $width-filter-input;
     }
 
+    .geo-filter {
+        display: flex;
+        align-items: flex-end;
+        margin: $spacing-small;
+
+        .geo-input {
+            width: $width-filter-input;
+        }
+
+        .rotating-input {
+            width: auto;
+
+            &:not(.disabled) {
+                .sub-region-selected {
+                    color: $color-accent;
+                }
+
+                .sub-region-not-selected {
+                    color: $color-text-label;
+                }
+            }
+
+            >button {
+                padding: 4px $spacing-small;
+                line-height: 1;
+            }
+        }
+    }
+
     .button {
         flex-shrink: 0;
         margin: $spacing-small;

@@ -34,6 +34,7 @@ import {
     entriesViewActivePageSelector,
     totalEntriesCountForProjectSelector,
     setEntriesViewActivePageAction,
+    geoOptionsForProjectSelector,
 } from '#redux';
 
 import EntriesRequest from './requests/EntriesRequest';
@@ -53,6 +54,7 @@ const mapStateToProps = state => ({
     projectId: projectIdFromRouteSelector(state),
     totalEntriesCount: totalEntriesCountForProjectSelector(state),
     entriesFilters: entriesViewFilterSelector(state),
+    geoOptions: geoOptionsForProjectSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -74,6 +76,7 @@ const propTypes = {
     leadGroupedEntriesList: PropTypes.array.isRequired,
     projectId: PropTypes.number.isRequired,
     totalEntriesCount: PropTypes.number,
+    geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 
     setEntries: PropTypes.func.isRequired,
     setEntriesViewActivePage: PropTypes.func.isRequired,
@@ -86,6 +89,7 @@ const propTypes = {
 const defaultProps = {
     framework: {},
     totalEntriesCount: 0,
+    geoOptions: {},
 };
 
 const leadKeySelector = d => d.id;
@@ -104,6 +108,9 @@ export default class Entries extends React.PureComponent {
             pendingEntries: true,
             pendingFramework: true,
             pendingGeoOptions: true,
+
+            successFramework: false,
+            successGeoOptions: false,
         };
 
         this.entriesRequest = new EntriesRequest({
@@ -113,27 +120,28 @@ export default class Entries extends React.PureComponent {
             getProjectId: () => this.props.projectId,
             setEntries: this.props.setEntries,
             setState: params => this.setState(params),
+            getFramework: () => this.props.framework,
+            getGeoOptions: () => this.props.geoOptions,
         });
 
         this.geoOptionsRequest = new GeoOptionsRequest({
             setState: params => this.setState(params),
             getProjectId: () => this.props.projectId,
             setGeoOptions: this.props.setGeoOptions,
+            setSuccess: () => this.setState({ successGeoOptions: true }, this.startEntriesRequest),
         });
 
         this.frameworkRequest = new FrameworkRequest({
             setState: params => this.setState(params),
             getProjectId: () => this.props.projectId,
             setFramework: this.props.setFramework,
+            setSuccess: () => this.setState({ successFramework: true }, this.startEntriesRequest),
         });
 
         this.leadEntries = React.createRef();
     }
 
     componentDidMount() {
-        this.entriesRequest.init();
-        this.entriesRequest.start();
-
         this.geoOptionsRequest.init();
         this.geoOptionsRequest.start();
 
@@ -170,8 +178,8 @@ export default class Entries extends React.PureComponent {
             this.geoOptionsRequest.init();
             this.geoOptionsRequest.start();
 
-            this.entriesRequest.init();
-            this.entriesRequest.start();
+            // this.entriesRequest.init();
+            // this.entriesRequest.start();
             return;
         }
 
@@ -181,6 +189,7 @@ export default class Entries extends React.PureComponent {
         }
 
         if (oldFilter !== newFilter || oldActivePage !== newActivePage) {
+            // FIXME: only if not pending anything
             this.entriesRequest.init();
             this.entriesRequest.start();
         }
@@ -192,6 +201,14 @@ export default class Entries extends React.PureComponent {
         this.frameworkRequest.stop();
 
         window.removeEventListener('scroll', this.handleScroll, true);
+    }
+
+    startEntriesRequest = () => {
+        const { successFramework, successGeoOptions } = this.state;
+        if (successFramework && successGeoOptions) {
+            this.entriesRequest.init();
+            this.entriesRequest.start();
+        }
     }
 
     handleScroll = (e) => {
@@ -268,6 +285,7 @@ export default class Entries extends React.PureComponent {
             framework,
             activePage,
             totalEntriesCount,
+            geoOptions,
         } = this.props;
 
         const {
@@ -286,6 +304,7 @@ export default class Entries extends React.PureComponent {
                     <FilterEntriesForm
                         pending={pendingFramework}
                         filters={framework.filters}
+                        geoOptions={geoOptions}
                     />
                 }
                 mainContentClassName={styles.leadGroupedEntriesList}

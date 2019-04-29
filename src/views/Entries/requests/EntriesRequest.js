@@ -3,6 +3,7 @@ import {
     createUrlForFilteredEntries,
     createParamsForFilteredEntries,
 } from '#rest';
+import { processEntryFilters } from '#entities/entries';
 import { unique } from '#rsu/common';
 
 export default class EntriesRequest extends Request {
@@ -47,12 +48,26 @@ export default class EntriesRequest extends Request {
         })
     )
 
-    getParam = () => (
-        createParamsForFilteredEntries({
-            ...this.parent.getFilters(),
+    getParam = () => {
+        const widgetFilters = this.parent.getFilters();
+        const framework = this.parent.getFramework();
+        const geoOptions = this.parent.getGeoOptions();
+
+        const otherFilters = {
             project: this.parent.getProjectId(),
-        })
-    )
+        };
+
+        const processedFilters = processEntryFilters(
+            widgetFilters,
+            framework,
+            geoOptions,
+        );
+
+        return createParamsForFilteredEntries([
+            ...processedFilters,
+            ...Object.entries(otherFilters),
+        ]);
+    }
 
     init = () => {
         this.createDefault({

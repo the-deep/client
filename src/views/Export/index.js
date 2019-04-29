@@ -3,7 +3,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import {
-    isFalsy,
     listToMap,
     compareString,
     compareDate,
@@ -20,11 +19,10 @@ import FormattedDate from '#rscv/FormattedDate';
 
 import ExportPreview from '#components/other/ExportPreview';
 import {
-    createUrlForProject,
-    createUrlForAnalysisFramework,
-
     createParamsForGet,
     createUrlForLeadsOfProject,
+    createUrlForProjectFramework,
+    createUrlForGeoOptions,
 
     transformResponseErrorToFormError,
 } from '#rest';
@@ -34,7 +32,8 @@ import {
     projectIdFromRouteSelector,
     leadPageFilterSelector,
     setAnalysisFrameworkAction,
-    setProjectAction,
+    setGeoOptionsAction,
+    geoOptionsForProjectSelector,
 } from '#redux';
 import notify from '#notify';
 import schema from '#schema';
@@ -52,23 +51,26 @@ const mapStateToProps = state => ({
     analysisFramework: analysisFrameworkForProjectSelector(state),
     entriesFilters: entriesViewFilterSelector(state),
     filters: leadPageFilterSelector(state),
+    geoOptions: geoOptionsForProjectSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-    setProject: params => dispatch(setProjectAction(params)),
     setAnalysisFramework: params => dispatch(setAnalysisFrameworkAction(params)),
+    setGeoOptions: params => dispatch(setGeoOptionsAction(params)),
 });
 
 const propTypes = {
-    setProject: PropTypes.func.isRequired,
     setAnalysisFramework: PropTypes.func.isRequired,
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     projectId: PropTypes.number.isRequired,
     entriesFilters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    setGeoOptions: PropTypes.func.isRequired,
+    geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
+    geoOptions: {},
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
@@ -141,6 +143,7 @@ export default class Export extends React.PureComponent {
             selectedLeads: {},
             pendingLeads: true,
             pendingAf: true,
+            pendingGeoOptions: true,
         };
     }
 
@@ -152,8 +155,15 @@ export default class Export extends React.PureComponent {
         });
         this.leadRequest.start();
 
-        this.projectRequest = this.createRequestForProject(projectId);
-        this.projectRequest.start();
+        this.analysisFrameworkRequest = this.createRequestForAnalysisFramework(
+            projectId,
+        );
+        this.analysisFrameworkRequest.start();
+
+        this.geoOptionsRequest = this.createRequestForGeoOptions(
+            projectId,
+        );
+        this.geoOptionsRequest.start();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -178,17 +188,21 @@ export default class Export extends React.PureComponent {
         }
 
         if (oldActiveProject !== newActiveProject) {
-            if (this.projectRequest) {
-                this.projectRequest.stop();
-            }
             if (this.analysisFrameworkRequest) {
                 this.analysisFrameworkRequest.stop();
             }
+            this.analysisFrameworkRequest = this.createRequestForAnalysisFramework(
+                newActiveProject,
+            );
+            this.analysisFrameworkRequest.start();
 
-            this.setState({ pendingAf: true });
-
-            this.projectRequest = this.createRequestForProject(newActiveProject);
-            this.projectRequest.start();
+            if (this.geoOptionsRequest) {
+                this.geoOptionsRequest.stop();
+            }
+            this.geoOptionsRequest = this.createRequestForGeoOptions(
+                newActiveProject,
+            );
+            this.geoOptionsRequest.start();
         }
     }
 
@@ -196,85 +210,67 @@ export default class Export extends React.PureComponent {
         if (this.leadRequest) {
             this.leadRequest.stop();
         }
-        if (this.projectRequest) {
-            this.projectRequest.stop();
-        }
         if (this.analysisFrameworkRequest) {
             this.analysisFrameworkRequest.stop();
         }
+        if (this.geoOptionsRequest) {
+            this.geoOptionsRequest.stop();
+        }
     }
 
-    setSelectedLeads = (response) => {
-        const selectedLeads = listToMap(response.results, d => d.id, () => true);
-        const leads = [];
-
-        (response.results || []).forEach((l) => {
-            leads.push({
-                selected: true,
-                ...l,
-            });
-        });
-
-        this.setState({
-            leads,
-            selectedLeads,
-        });
-    }
-
-    createRequestForProject = (projectId) => {
-        const projectRequest = new FgRestBuilder()
-            .url(createUrlForProject(projectId))
+    createRequestForAnalysisFramework = (projectId) => {
+        const urlForAnalysisFramework = createUrlForGeoOptions(
+            projectId,
+        );
+        const geoOptionsRequest = new FgRestBuilder()
+            .url(urlForAnalysisFramework)
             .params(createParamsForGet)
+            .delay(0)
             .preLoad(() => {
-                this.setState({ pendingAf: true });
+                this.setState({ pendingGeoOptions: true });
+            })
+            .postLoad(() => {
+                this.setState({ pendingGeoOptions: false });
             })
             .success((response) => {
                 try {
-                    schema.validate(response, 'projectGetResponse');
-                    this.props.setProject({ project: response });
-
-                    if (isFalsy(response.analysisFramework)) {
-                        console.error('There is no analysis framework');
-                        this.setState({ pendingAf: false });
-                    } else {
-                        this.analysisFrameworkRequest = this.createRequestForAnalysisFramework(
-                            response.analysisFramework,
-                        );
-                        this.analysisFrameworkRequest.start();
-                    }
+                    schema.validate(response, 'geoOptions');
+                    this.props.setGeoOptions({
+                        projectId,
+                        locations: response,
+                    });
                 } catch (er) {
                     console.error(er);
                 }
             })
             .failure((response) => {
-                this.setState({ pendingAf: false });
+                console.warn(response);
                 const message = transformResponseErrorToFormError(response.errors)
                     .formErrors
                     .errors
                     .join(' ');
                 notify.send({
-                    title: _ts('export', 'projectLabel'),
+                    title: _ts('export', 'geoLabel'),
                     type: notify.type.ERROR,
                     message,
                     duration: notify.duration.MEDIUM,
                 });
             })
             .fatal(() => {
-                this.setState({ pendingAf: false });
                 notify.send({
-                    title: _ts('export', 'projectLabel'),
+                    title: _ts('export', 'geoLabel'),
                     type: notify.type.ERROR,
-                    message: _ts('export', 'cantLoadProject'),
+                    message: _ts('export', 'cantLoadGeo'),
                     duration: notify.duration.MEDIUM,
                 });
             })
             .build();
-        return projectRequest;
-    };
+        return geoOptionsRequest;
+    }
 
-    createRequestForAnalysisFramework = (analysisFrameworkId) => {
-        const urlForAnalysisFramework = createUrlForAnalysisFramework(
-            analysisFrameworkId,
+    createRequestForGeoOptions = (projectId) => {
+        const urlForAnalysisFramework = createUrlForProjectFramework(
+            projectId,
         );
         const analysisFrameworkRequest = new FgRestBuilder()
             .url(urlForAnalysisFramework)
@@ -338,7 +334,7 @@ export default class Export extends React.PureComponent {
             })
             .success((response) => {
                 // FIXME: write schema
-                this.setSelectedLeads(response);
+                this.handleSelectedLeadsSet(response);
             })
             .failure((response) => {
                 const message = transformResponseErrorToFormError(response.errors)
@@ -362,6 +358,23 @@ export default class Export extends React.PureComponent {
             })
             .build();
         return leadRequest;
+    }
+
+    handleSelectedLeadsSet = (response) => {
+        const selectedLeads = listToMap(response.results, d => d.id, () => true);
+
+        const leads = [];
+        (response.results || []).forEach((l) => {
+            leads.push({
+                selected: true,
+                ...l,
+            });
+        });
+
+        this.setState({
+            leads,
+            selectedLeads,
+        });
     }
 
     handleSelectLeadChange = (key, value) => {
@@ -390,7 +403,6 @@ export default class Export extends React.PureComponent {
             selectedLeads: newSelectedLeads,
             leads: newLeads,
         });
-        console.warn(newSelectedLeads, newLeads);
     }
 
     handleReportStructureChange = (value) => {
@@ -420,13 +432,16 @@ export default class Export extends React.PureComponent {
 
             pendingLeads,
             pendingAf,
+            pendingGeoOptions,
         } = this.state;
 
         const {
             analysisFramework,
             entriesFilters,
             projectId,
+            geoOptions,
         } = this.props;
+        const { filters } = analysisFramework || {};
 
         return (
             <Page
@@ -441,7 +456,9 @@ export default class Export extends React.PureComponent {
                         reportStructure={reportStructure}
                         decoupledEntries={decoupledEntries}
                         onPreview={this.handlePreview}
-                        pending={pendingLeads || pendingAf}
+                        pending={pendingLeads || pendingAf || pendingGeoOptions}
+                        analysisFramework={analysisFramework}
+                        geoOptions={geoOptions}
                     />
                 }
                 mainContentClassName={styles.mainContent}
@@ -454,8 +471,9 @@ export default class Export extends React.PureComponent {
                                 </h4>
                                 <FilterEntriesForm
                                     applyOnChange
-                                    pending={pendingAf}
-                                    filters={(analysisFramework || {}).filters}
+                                    pending={pendingAf || pendingGeoOptions}
+                                    filters={filters}
+                                    geoOptions={geoOptions}
                                 />
                             </div>
                             <div className={styles.leadFilters}>
