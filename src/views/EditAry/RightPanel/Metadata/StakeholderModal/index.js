@@ -10,15 +10,16 @@ import {
 
 import Modalize from '#rscg/Modalize';
 import Modal from '#rscv/Modal';
+import Icon from '#rscg/Icon';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 import ListView from '#rscv/List/ListView';
-import VirtualizedListView from '#rscv/VirtualizedListView';
 
 import SearchInput from '#rsci/SearchInput';
+import HighlightableTextOutput from './HighlightableTextOutput';
 // import Widget from './Widget';
 
 import {
@@ -41,6 +42,8 @@ const defaultProps = {
 
 const labelSelector = organization => organization.label;
 
+const MAX_DISPLAY_ORGANIZATIONS = 50;
+
 export default class LeadPreview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -57,17 +60,25 @@ export default class LeadPreview extends React.PureComponent {
         this.setState({ searchValue: value });
     }
 
-    handleOnDragStart = id => (e) => {
+    handleOnDragStart = (id, isDonor, name) => (e) => {
         const data = JSON.stringify({
             organizationId: id,
+            isDonor,
+            organizationName: name,
         });
 
         e.dataTransfer.setData('text/plain', data);
         e.dataTransfer.dropEffect = 'copy';
     }
 
-
     filterOrganization = memoize((options, value) => {
+        if (value === '') {
+            return {
+                isCapped: false,
+                organizations: [],
+            };
+        }
+
         const newOptions = options
             .filter(
                 option => (
@@ -77,17 +88,13 @@ export default class LeadPreview extends React.PureComponent {
             .sort((a, b) => (
                 rate(value, labelSelector(a)) - rate(value, labelSelector(b))
             ));
-        return newOptions;
-    });
 
-    /*
-    widgetRendererParams = (i, data) => ({
-        index: i,
-        data,
-        sources: this.props.sources,
-        className: styles.widget,
-    })
-    */
+        const resultsCapped = newOptions.length > MAX_DISPLAY_ORGANIZATIONS;
+        return {
+            isCapped: resultsCapped,
+            organizations: newOptions.slice(0, MAX_DISPLAY_ORGANIZATIONS),
+        };
+    });
 
     renderWidget = (k, data) => renderDroppableWidget(
         k,
@@ -113,6 +120,12 @@ export default class LeadPreview extends React.PureComponent {
             searchValue,
         } = this.state;
 
+        const results = this.filterOrganization(sources.organizations, searchValue);
+        const {
+            isCapped,
+            organizations,
+        } = results;
+
         return (
             <Modal
                 onClose={closeModal}
@@ -123,15 +136,19 @@ export default class LeadPreview extends React.PureComponent {
                 <ModalBody className={styles.modalBody}>
                     <div className={styles.left}>
                         <div className={styles.top}>
-                            <PrimaryModalButton
-                                className={styles.addOrganizationButton}
-                                modal={
-                                    <AddOrganizationModal />
-                                }
-                            >
-                                Add organization
-                            </PrimaryModalButton>
+                            <header className={styles.header}>
+                                <h3 className={styles.heading}>
+                                    Organizations
+                                </h3>
+                                <PrimaryModalButton
+                                    className={styles.addOrganizationButton}
+                                    modal={<AddOrganizationModal />}
+                                >
+                                    Add new
+                                </PrimaryModalButton>
+                            </header>
                             <SearchInput
+                                className={styles.searchInput}
                                 label="Search"
                                 placeholder="Any organization"
                                 value={searchValue}
@@ -139,25 +156,67 @@ export default class LeadPreview extends React.PureComponent {
                                 showHintAndError={false}
                             />
                         </div>
-                        <VirtualizedListView
+                        { isCapped && (
+                            <div className={styles.capWarning}>
+                                <Icon
+                                    name="info"
+                                    className={styles.icon}
+                                />
+                                <div className={styles.text}>
+                                    Showing only top {MAX_DISPLAY_ORGANIZATIONS} results
+                                </div>
+                            </div>
+                        )}
+                        <ListView
                             className={styles.organizationList}
-                            data={this.filterOrganization(sources.organizations, searchValue)}
+                            data={organizations}
+                            emptyComponent={() => (
+                                <div className={styles.emptyComponent}>
+                                    { searchValue.length === 0 ? (
+                                        'Start typing above to search for the organization'
+                                    ) : (
+                                        'No result found, try different search text'
+                                    )}
+                                </div>
+                            )}
                             // FIXME: don't use inline methods
                             rendererParams={(key, d) => ({
                                 name: d.label,
                                 itemKey: key,
+                                logo: d.logo,
+                                isDonor: d.donor,
                             })}
                             keySelector={item => item.key}
 
                             // FIXME: use separate component
-                            renderer={({ className, name, itemKey }) => (
+                            renderer={({ className, name, itemKey, logo, isDonor }) => (
                                 <div
                                     title={name}
                                     className={_cs(styles.organizationItem, className)}
                                     draggable
-                                    onDragStart={this.handleOnDragStart(itemKey)}
+                                    onDragStart={this.handleOnDragStart(itemKey, isDonor, name)}
                                 >
-                                    { name }
+                                    <div className={styles.logo}>
+                                        { logo ? (
+                                            <img
+                                                className={styles.image}
+                                                src={logo}
+                                                alt={name.substr(0, 1)}
+                                            />
+                                        ) : (
+                                            <Icon name="people" />
+                                        )}
+                                    </div>
+                                    <HighlightableTextOutput
+                                        className={styles.name}
+                                        text={name}
+                                        highlightText={searchValue}
+                                    />
+                                    { isDonor && (
+                                        <div className={styles.donorFlag}>
+                                            Donor
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         />

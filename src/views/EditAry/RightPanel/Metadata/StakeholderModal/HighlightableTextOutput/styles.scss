@@ -1,0 +1,16 @@
+@import '~base-scss/base';
+
+.highlightable-text-output {
+    .start {
+        display: inline;
+    }
+
+    .highlight {
+        display: inline;
+        background-color: yellow;
+    }
+
+    .end {
+        display: inline;
+    }
+}

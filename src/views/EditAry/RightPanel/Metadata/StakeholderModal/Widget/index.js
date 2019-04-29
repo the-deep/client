@@ -3,6 +3,8 @@ import React from 'react';
 import { FaramInputElement } from '@togglecorp/faram';
 import { _cs } from '@togglecorp/fujs';
 
+import Confirm from '#rscv/Modal/Confirm';
+
 import styles from './styles.scss';
 
 const propTypes = {};
@@ -17,9 +19,26 @@ class Widget extends React.PureComponent {
 
         this.state = {
             isBeingDraggedOver: false,
+            showConfirmation: false,
+            droppedOrganizationId: undefined,
+            droppedOrganizationName: undefined,
         };
 
         this.dragEnterCount = 0;
+    }
+
+    handleConfirmation = (confirm) => {
+        if (confirm) {
+            this.props.onChange([
+                ...this.props.value,
+                this.state.droppedOrganizationId,
+            ]);
+        }
+        this.setState({
+            droppedOrganizationId: undefined,
+            droppedOrganizationName: undefined,
+            showConfirmation: false,
+        });
     }
 
     handleDragEnter = () => {
@@ -55,16 +74,31 @@ class Widget extends React.PureComponent {
         try {
             const parsedData = JSON.parse(data);
             if (parsedData && parsedData.organizationId) {
+                const {
+                    organizationId,
+                    isDonor,
+                    organizationName,
+                } = parsedData;
                 if (!value) {
                     onChange([value]);
-                } else if (value.findIndex(v => v === parsedData.organizationId) === -1) {
-                    onChange([...value, parsedData.organizationId]);
+                } else if (value.findIndex(v => v === organizationId) === -1) {
+                    const intercept = !isDonor && this.props.sourceType === 'donors';
+                    if (intercept) {
+                        this.setState({
+                            showConfirmation: true,
+                            droppedOrganizationId: organizationId,
+                            droppedOrganizationName: organizationName,
+                        });
+                    } else {
+                        onChange([...value, organizationId]);
+                    }
                 }
             }
         } catch (ex) {
             console.warn('Only organizations supported');
         }
 
+        this.dragEnterCount = 0;
         this.setState({ isBeingDraggedOver: false });
     }
 
@@ -75,6 +109,10 @@ class Widget extends React.PureComponent {
             renderer: Renderer,
             ...otherProps
         } = this.props;
+        const {
+            showConfirmation,
+            droppedOrganizationName,
+        } = this.state;
 
         const { isBeingDraggedOver } = this.state;
 
@@ -91,11 +129,22 @@ class Widget extends React.PureComponent {
                 onDrop={this.handleDrop}
             >
                 <div className={styles.dropMessage}>
-                    Drop organization
+                    {/* FIXME: use strings */}
+                    Drop here
                 </div>
                 <Renderer
                     {...otherProps}
                 />
+                <Confirm
+                    show={showConfirmation}
+                    onClose={this.handleConfirmation}
+                >
+                    <p>
+                        {/* FIXME: use strings */}
+                        <b>{droppedOrganizationName}</b> is not a donor organization.
+                        Do you want to continue?
+                    </p>
+                </Confirm>
             </div>
         );
     }

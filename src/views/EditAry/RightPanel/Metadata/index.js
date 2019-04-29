@@ -76,7 +76,7 @@ export default class Metadata extends React.PureComponent {
     renderReadonlyWidget = (k, data) => renderWidget(
         k,
         data,
-        this.props.sources, { readonly: true },
+        this.props.sources, { readOnly: true },
     );
 
     renderMetadata = (k, data) => {
@@ -86,7 +86,7 @@ export default class Metadata extends React.PureComponent {
             title,
         } = data;
 
-        const isStakeholderColumn = title === 'Stakeholders';
+        const isStakeholderColumn = title.toLowerCase() === 'stakeholders';
 
         const fieldValues = Object.values(fields);
         return (
@@ -98,7 +98,6 @@ export default class Metadata extends React.PureComponent {
                     {title}
                     {isStakeholderColumn &&
                         <ModalButton
-                            initialShowModal
                             className={styles.showMoreButton}
                             modal={
                                 <StakeholderModal

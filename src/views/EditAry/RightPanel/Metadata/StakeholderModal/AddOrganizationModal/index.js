@@ -124,14 +124,14 @@ export default class AddOrganizationModal extends React.PureComponent {
                         <h4>Logo</h4>
                     </ModalBody>
                     <ModalFooter>
-                        <PrimaryButton >
-                            Save
-                        </PrimaryButton>
                         <DangerButton
                             onClick={closeModal}
                         >
                             Close
                         </DangerButton>
+                        <PrimaryButton >
+                            Save
+                        </PrimaryButton>
                     </ModalFooter>
                 </Modal>
             </Faram>
