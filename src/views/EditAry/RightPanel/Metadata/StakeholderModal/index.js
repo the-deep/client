@@ -142,7 +142,11 @@ export default class LeadPreview extends React.PureComponent {
                                 </h3>
                                 <PrimaryModalButton
                                     className={styles.addOrganizationButton}
-                                    modal={<AddOrganizationModal />}
+                                    modal={
+                                        <AddOrganizationModal
+                                            organizationTypeList={sources.organizationType}
+                                        />
+                                    }
                                 >
                                     Add new
                                 </PrimaryModalButton>

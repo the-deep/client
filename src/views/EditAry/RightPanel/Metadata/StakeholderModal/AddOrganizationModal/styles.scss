@@ -1,15 +1,31 @@
 @import '~base-scss/base';
 
 .modal {
-    width: 30vw;
-    height: 45vh;
+    width: 480px;
+    height: 70vh;
 }
 
 .modal-body {
     display: flex;
-    overflow: auto;
-    padding: $spacing-large;
     flex-direction: column;
+    padding: $spacing-large;
+    overflow: auto;
+
+    .image-input {
+        width: 128px;
+    }
+}
+
+:global {
+    .image-input-preview {
+        width: 128px;
+        height: 128px;
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    }
 }
 
 
