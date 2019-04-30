@@ -54,12 +54,14 @@ export default class OrganizationItem extends React.PureComponent {
             isDonor,
             logo,
             name,
+            longName,
+            shortName,
             searchValue,
         } = this.props;
 
         return (
             <div
-                title={name}
+                title={longName}
                 className={_cs(styles.organizationItem, className)}
                 draggable
                 onDragStart={this.handleDragStart}
@@ -72,19 +74,33 @@ export default class OrganizationItem extends React.PureComponent {
                             alt={name}
                         />
                     ) : (
-                        <Icon name="people" />
+                        <Icon
+                            className={styles.icon}
+                            name="people"
+                        />
                     )}
                 </div>
-                <HighlightableTextOutput
-                    className={styles.name}
-                    text={name}
-                    highlightText={searchValue}
-                />
-                { isDonor && (
-                    <div className={styles.donorFlag}>
-                        Donor
+                <div className={styles.text}>
+                    <div className={styles.top}>
+                        <HighlightableTextOutput
+                            className={styles.name}
+                            text={name}
+                            highlightText={searchValue}
+                        />
                     </div>
-                )}
+                    <div className={styles.bottom}>
+                        <HighlightableTextOutput
+                            className={styles.abbr}
+                            text={shortName}
+                            highlightText={searchValue}
+                        />
+                        { isDonor && (
+                            <div className={styles.donorFlag}>
+                                Donor
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
         );
     }
