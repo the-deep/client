@@ -3,27 +3,47 @@
 .modal {
     width: 480px;
     height: 70vh;
-}
 
-.modal-body {
-    display: flex;
-    flex-direction: column;
-    padding: $spacing-large;
-    overflow: auto;
+    .add-org-modal {
+        display: flex;
+        position: relative;
+        flex-direction: column;
+        height: 100%;
 
-    .image-input {
-        width: 128px;
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: $spacing-large;
+            overflow-y: auto;
+
+            .image-input {
+                width: 128px;
+            }
+
+            .logo-title {
+                margin-top: $spacing-extra-small;
+            }
+        }
     }
-}
 
-:global {
-    .image-input-preview {
-        width: 128px;
-        height: 128px;
+    :global {
+        .image-input-preview {
+            border: $width-separator-thin solid $color-separator;
+            width: 128px;
+            height: 128px;
 
-        img {
-            width: 100%;
-            height: 100%;
+            img {
+                width: 100%;
+                height: 100%;
+            }
+
+        }
+        .file-input {
+            label {
+                margin-top: $spacing-small;
+                @include button-like-link($color-accent);
+            }
         }
     }
 }
