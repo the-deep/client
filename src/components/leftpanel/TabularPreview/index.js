@@ -107,7 +107,6 @@ export default class TabularPreview extends React.PureComponent {
             completed: true,
             tabs,
             sheets,
-            activeSheet: Object.keys(tabs)[0],
         });
 
         this.props.onLoad(response);
@@ -149,7 +148,7 @@ export default class TabularPreview extends React.PureComponent {
             className: classNameFromProps,
             highlights: highlightsFromProps,
             onClick,
-            selectedTab,
+            selectedTab: selectedTabFromProps,
             showGraphs,
         } = this.props;
 
@@ -176,6 +175,13 @@ export default class TabularPreview extends React.PureComponent {
         }
 
         const highlights = this.getHighlights(highlightsFromProps);
+
+        const firstKey = Object.keys(tabs)[0];
+        // NOTE: activeTab was taken from Object.keys, so it is a string
+        const firstTab = (firstKey !== undefined) && Number(firstKey);
+        const selectedTab = (!selectedTabFromProps || !tabs[selectedTabFromProps])
+            ? firstTab
+            : selectedTabFromProps;
 
         return (
             <div className={className}>
