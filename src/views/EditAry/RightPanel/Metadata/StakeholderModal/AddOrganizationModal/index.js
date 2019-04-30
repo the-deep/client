@@ -1,7 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
+import Faram, {
+    requiredCondition,
+    urlCondition,
+} from '@togglecorp/faram';
 
 import Modal from '#rscv/Modal';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import ModalBody from '#rscv/Modal/Body';
@@ -9,12 +15,13 @@ import ModalFooter from '#rscv/Modal/Footer';
 import ModalHeader from '#rscv/Modal/Header';
 import ImageInput from '#rsci/FileInput/ImageInput';
 import Checkbox from '#rsci/Checkbox';
+import Label from '#rsci/Label';
 import SelectInput from '#rsci/SelectInput';
 import TextInput from '#rsci/TextInput';
-import Faram, {
-    requiredCondition,
-    urlCondition,
-} from '@togglecorp/faram';
+import {
+    projectIdFromRoute,
+    setNewOrganizationAction,
+} from '#redux';
 import _ts from '#ts';
 import notify from '#notify';
 
@@ -48,9 +55,39 @@ const requests = {
         method: requestMethods.POST,
         onMount: false,
         body: ({ params: { body } }) => body,
+        onSuccess: ({
+            props: {
+                setNewOrganization,
+                projectId,
+                closeModal,
+            },
+            response,
+        }) => {
+            const newOrganization = {
+                key: response.id,
+                label: response.title,
+                donor: response.donor,
+            };
+
+            setNewOrganization({
+                projectId,
+                organization: newOrganization,
+            });
+
+            closeModal();
+        },
     },
 };
 
+const mapStateToProps = state => ({
+    projectId: projectIdFromRoute(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+    setNewOrganization: params => dispatch(setNewOrganizationAction(params)),
+});
+
+@connect(mapStateToProps, mapDispatchToProps)
 @RequestCoordinator
 @RequestClient(requests)
 export default class AddOrganizationModal extends React.PureComponent {
@@ -87,20 +124,13 @@ export default class AddOrganizationModal extends React.PureComponent {
         });
     };
 
-    handleAddOrganizationRequestSuccess = () => {
-        console.warn('woo hooo');
-    }
-
     handleFaramValidationFailure = (faramErrors) => {
         this.setState({ faramErrors });
     };
 
     handleFaramValidationSuccess = (values) => {
         const { addOrganizationRequest } = this.props;
-        addOrganizationRequest.do({
-            body: values,
-            onSuccess: this.handleAddOrganizationRequestSuccess,
-        });
+        addOrganizationRequest.do({ body: values });
     };
 
     handleImageInputChange = (files, { invalidFiles }) => {
@@ -131,14 +161,12 @@ export default class AddOrganizationModal extends React.PureComponent {
             .preLoad(() => this.setState({ logoUploadPending: true }))
             .postLoad(() => this.setState({ logoUploadPending: false }))
             .success((response) => {
-                console.warn('woooo hooo', response.id);
                 this.setState({
                     ...this.state.faramValues,
                     logo: response.id,
                 });
             })
             .failure((response) => {
-                console.warn('Failure', response);
                 notify.send({
                     title: _ts('assessment.metadata.stakeholder', 'logoUploadTitle'),
                     type: notify.type.ERROR,
@@ -147,7 +175,6 @@ export default class AddOrganizationModal extends React.PureComponent {
                 });
             })
             .fatal((response) => {
-                console.warn('Failure', response);
                 notify.send({
                     title: _ts('assessment.metadata.stakeholder', 'logoUploadTitle'),
                     type: notify.type.ERROR,
@@ -176,6 +203,8 @@ export default class AddOrganizationModal extends React.PureComponent {
             pendingLogoUpload,
         } = this.state;
 
+        const pending = pendingLogoUpload || pendingAddOrganizationRequest;
+
         return (
             <Modal
                 onClose={closeModal}
@@ -194,6 +223,7 @@ export default class AddOrganizationModal extends React.PureComponent {
                 >
                     <ModalHeader title="Add Organization" />
                     <ModalBody className={styles.modalBody}>
+                        {pendingAddOrganizationRequest && <LoadingAnimation />}
                         <TextInput
                             faramElementName="title"
                             label="Organization Name"
@@ -212,7 +242,7 @@ export default class AddOrganizationModal extends React.PureComponent {
                         <TextInput
                             faramElementName="url"
                             label="URL"
-                            placeholder="www.unicef.org"
+                            placeholder="https://www.unicef.org"
                         />
                         <SelectInput
                             faramElementName="organizationType"
@@ -225,6 +255,10 @@ export default class AddOrganizationModal extends React.PureComponent {
                             faramElementName="donor"
                             label="Donor"
                         />
+                        <Label
+                            className={styles.logoTitle}
+                            text="Logo"
+                        />
                         <ImageInput
                             className={styles.imageInput}
                             showPreview
@@ -234,15 +268,13 @@ export default class AddOrganizationModal extends React.PureComponent {
                         />
                     </ModalBody>
                     <ModalFooter>
-                        <DangerButton
-                            onClick={closeModal}
-                            disable={pendingLogoUpload}
-                        >
+                        <DangerButton onClick={closeModal} >
                             Cancel
                         </DangerButton>
                         <PrimaryButton
                             type="submit"
-                            disable={pendingLogoUpload}
+                            pending={pending}
+                            disabled={pristine}
                         >
                             Save
                         </PrimaryButton>

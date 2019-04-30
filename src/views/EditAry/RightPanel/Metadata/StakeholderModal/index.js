@@ -25,7 +25,6 @@ import styles from './styles.scss';
 
 const propTypes = {
     closeModal: PropTypes.func.isRequired,
-
     // eslint-disable-next-line react/forbid-prop-types
     sources: PropTypes.object,
 
