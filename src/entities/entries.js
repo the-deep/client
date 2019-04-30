@@ -48,30 +48,34 @@ export const processEntryFilters = (filters, framework, geoOptions) => {
     const result = [];
     Object.keys(filters).forEach((filterKey) => {
         const filterOptions = filters[filterKey];
-        const widget = widgetsMapping[filterKey];
-
-        if (!widget) {
+        if (!filterOptions) {
             return;
         }
-        const { widgetId } = widget;
 
-        if (widgetId === 'dateWidget') {
+        const widget = widgetsMapping[filterKey];
+        const { widgetId } = widget || {};
+
+        // TODO: handle static filters
+        // if (filterKey === 'search' || filterKey === 'created_by') {
+        if (widgetId === 'dateWidget' || filterKey === 'created_at') {
+            const { startDate, endDate } = filterOptions;
             result.push([
                 `${filterKey}__gt`,
-                toDays(filterOptions.startDate),
+                toDays(startDate),
             ]);
             result.push([
                 `${filterKey}__lt`,
-                toDays(filterOptions.endDate),
+                toDays(endDate),
             ]);
         } else if (widgetId === 'timeWidget') {
+            const { startTime, endTime } = filterOptions;
             result.push([
                 `${filterKey}__gt`,
-                totMinutes(filterOptions.startTime),
+                totMinutes(startTime),
             ]);
             result.push([
                 `${filterKey}__lt`,
-                totMinutes(filterOptions.endTime),
+                totMinutes(endTime),
             ]);
         } else if (widgetId === 'geoWidget') {
             const { areas, includeSubRegions } = filterOptions;
