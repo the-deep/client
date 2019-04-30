@@ -5,8 +5,11 @@ import NonFieldErrors from '#rsci/NonFieldErrors';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import DateInput from '#rsci/DateInput';
 import SelectInput from '#rsci/SelectInput';
+import SimpleListInput from '#rsci/SimpleListInput';
 import NumberInput from '#rsci/NumberInput';
 import TextInput from '#rsci/TextInput';
+
+import Widget from './Metadata/StakeholderModal/Widget';
 
 const DateRangeInput = ({ label, faramElementName, ...props }) => (
     <FaramGroup faramElementName={faramElementName}>
@@ -30,11 +33,31 @@ const widgets = {
     date: DateInput,
     daterange: DateRangeInput,
     multiselect: MultiSelectInput,
+    listInput: SimpleListInput,
     select: SelectInput,
 };
 
-// eslint-disable-next-line import/prefer-default-export
-export const renderWidget = (k, data, sources, hide, secondaryDataReviewKey) => {
+const widgetSpecificProps = {
+    number: {
+        separator: ' ',
+    },
+};
+
+const getOptions = (sourceType, sources, options) => {
+    switch (sourceType) {
+        case 'countries':
+            return sources.countries;
+        case 'donors':
+            // donor is subset of organization
+            return sources.organizations;
+        case 'organizations':
+            return sources.organizations;
+        default:
+            return options;
+    }
+};
+
+const getProps = (data, sources) => {
     const {
         fieldType,
         id: key,
@@ -45,41 +68,27 @@ export const renderWidget = (k, data, sources, hide, secondaryDataReviewKey) => 
         sourceType,
     } = data;
 
-    if (String(key) !== secondaryDataReviewKey && hide) {
-        return null;
-    }
-
-    let someOptions;
-    switch (sourceType) {
-        case 'countries':
-            someOptions = sources.countries;
-            break;
-        case 'donors':
-            someOptions = sources.donors;
-            break;
-        case 'organizations':
-            someOptions = sources.organizations;
-            break;
-        default:
-            someOptions = options;
-            break;
-    }
-
     const id = String(key);
     const commonProps = {
         faramElementName: id,
         key: id,
         label: title,
-        options: someOptions,
+        options: getOptions(sourceType, sources, options),
         placeholder,
         title: tooltip,
     };
-    const typeSpecificProps = {
-        number: {
-            separator: ' ',
-        },
-    };
 
+    const specificProps = widgetSpecificProps[fieldType];
+
+    return {
+        ...commonProps,
+        ...specificProps,
+    };
+};
+
+// eslint-disable-next-line import/prefer-default-export
+export const renderWidget = (k, data, sources, otherProps) => {
+    const { fieldType } = data;
     const Component = widgets[fieldType];
 
     if (!Component) {
@@ -87,11 +96,49 @@ export const renderWidget = (k, data, sources, hide, secondaryDataReviewKey) => 
         return null;
     }
 
+    const props = getProps(data, sources);
+    // console.warn(otherProps);
+
     return (
         <Component
-            className="widget"
-            {...commonProps}
-            {...typeSpecificProps[fieldType]}
+            {...props}
+            {...otherProps}
         />
+    );
+};
+
+export const isDroppableWidget = (sourceType, fieldType) => (
+    ((sourceType === 'organizations' || sourceType === 'donors') && fieldType === 'multiselect')
+);
+
+// eslint-disable-next-line import/prefer-default-export
+export const renderDroppableWidget = (k, data, sources, otherProps = {}) => {
+    const {
+        sourceType,
+        fieldType,
+        id: key,
+    } = data;
+
+    if (isDroppableWidget(sourceType, fieldType)) {
+        const newFieldType = fieldType === 'multiselect' ? 'listInput' : fieldType;
+        const renderer = widgets[newFieldType];
+        const props = getProps(data, sources);
+
+        return (
+            <Widget
+                {...props}
+                renderer={renderer}
+                sourceType={sourceType}
+                {...otherProps}
+            />
+        );
+    }
+
+    // NOTE: just wrapping other widget for common styling
+    const { containerClassName, ...someOtherProps } = otherProps;
+    return (
+        <div className={containerClassName}>
+            {renderWidget(k, data, sources, someOtherProps)}
+        </div>
     );
 };

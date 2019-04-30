@@ -1,0 +1,39 @@
+@import '~base-scss/base';
+
+.organization-item {
+    display: flex;
+    align-items: center;
+    border-bottom: $width-separator-thin solid $color-separator;
+    cursor: grab;
+
+    .logo {
+        flex-shrink: 0;
+        margin: 0 $spacing-medium;
+        width: $font-size-large;
+        height: $font-size-large;
+
+        .image {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .name {
+        flex-grow: 1;
+        padding: $spacing-medium;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .donor-flag {
+        flex-shrink: 0;
+        margin-right: $spacing-small;
+        color: $color-text-disabled;
+        font-size: $font-size-extra-small;
+    }
+
+    &:hover {
+        background-color: $color-background-hover;
+    }
+}

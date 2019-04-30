@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
 import { FaramGroup } from '@togglecorp/faram';
+
+import AccentButton from '#rsca/Button/AccentButton';
 import ResizableV from '#rscv/Resizable/ResizableV';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
+import modalize from '#rscg/Modalize';
 
 import {
     aryTemplateMetadataSelector,
@@ -17,6 +19,8 @@ import MultiDocumentUploader from '#components/input/MultiDocumentUploader';
 
 import { renderWidget } from '../widgetUtils';
 import Header from '../Header';
+
+import StakeholderModal from './StakeholderModal';
 
 import styles from './styles.scss';
 
@@ -36,6 +40,15 @@ const mapStateToProps = state => ({
 });
 
 const acceptFileTypes = '.pdf, .ppt, .pptx, .csv, .xls, .xlsx, .ods, .doc, .docx, .odt, .rtf';
+
+const StakeholderButton = props => (
+    <AccentButton
+        iconName="people"
+        transparent
+        {...props}
+    />
+);
+const ModalButton = modalize(StakeholderButton);
 
 @connect(mapStateToProps)
 export default class Metadata extends React.PureComponent {
@@ -60,12 +73,20 @@ export default class Metadata extends React.PureComponent {
 
     renderWidget = (k, data) => renderWidget(k, data, this.props.sources);
 
+    renderReadonlyWidget = (k, data) => renderWidget(
+        k,
+        data,
+        this.props.sources, { readOnly: true },
+    );
+
     renderMetadata = (k, data) => {
         const {
             fields,
             id,
             title,
         } = data;
+
+        const isStakeholderColumn = title.toLowerCase() === 'stakeholders';
 
         const fieldValues = Object.values(fields);
         return (
@@ -75,11 +96,26 @@ export default class Metadata extends React.PureComponent {
             >
                 <h4 className={styles.heading}>
                     {title}
+                    {isStakeholderColumn &&
+                        <ModalButton
+                            className={styles.showMoreButton}
+                            modal={
+                                <StakeholderModal
+                                    fields={fieldValues}
+                                    sources={this.props.sources}
+                                />
+                            }
+                        />
+                    }
                 </h4>
                 <ListView
                     className={styles.content}
                     data={fieldValues}
-                    modifier={this.renderWidget}
+                    modifier={
+                        isStakeholderColumn
+                            ? this.renderReadonlyWidget
+                            : this.renderWidget
+                    }
                 />
             </div>
         );

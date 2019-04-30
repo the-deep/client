@@ -2,8 +2,8 @@
 
 .multi-document-uploader {
     display: flex;
-    flex-direction: column;
     position: relative;
+    flex-direction: column;
 
     .label {
         flex-shrink: 0;
@@ -57,8 +57,8 @@
             margin-top: -$spacing-large;
 
             .file-input {
-                width: auto;
                 padding: $spacing-extra-small;
+                width: auto;
 
                 label {
                     color: $color-primary;
