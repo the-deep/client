@@ -3,6 +3,7 @@
 .organization-list {
     display: flex;
     flex-direction: column;
+    border-right: $width-separator-thin solid $color-separator;
     overflow: auto;
 
     .top {
@@ -52,7 +53,6 @@
 
     .content {
         flex-grow: 1;
-        border: $width-separator-thin solid $color-separator;
         overflow: auto;
 
         .empty-component {

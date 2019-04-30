@@ -67,6 +67,8 @@ const requests = {
                 key: response.id,
                 label: response.title,
                 donor: response.donor,
+                shortName: response.shortName,
+                logo: response.logoUrl,
             };
 
             setNewOrganization({
@@ -74,6 +76,12 @@ const requests = {
                 organization: newOrganization,
             });
 
+            notify.send({
+                title: 'Organization add',
+                type: notify.type.SUCCESS,
+                message: 'Organization added successfully.',
+                duration: notify.duration.FAST,
+            });
             closeModal();
         },
     },
@@ -99,7 +107,7 @@ export default class AddOrganizationModal extends React.PureComponent {
             title: [requiredCondition],
             shortName: [requiredCondition],
             longName: [requiredCondition],
-            url: [urlCondition],
+            url: [urlCondition, requiredCondition],
             organizationType: [requiredCondition],
             logo: [],
         },
@@ -158,12 +166,14 @@ export default class AddOrganizationModal extends React.PureComponent {
             .file(file)
             .url(urlForUpload)
             .params(() => createParamsForFileUpload({ is_public: true }))
-            .preLoad(() => this.setState({ logoUploadPending: true }))
-            .postLoad(() => this.setState({ logoUploadPending: false }))
+            .preLoad(() => this.setState({ pendingLogoUpload: true }))
+            .postLoad(() => this.setState({ pendingLogoUpload: false }))
             .success((response) => {
                 this.setState({
-                    ...this.state.faramValues,
-                    logo: response.id,
+                    faramValues: {
+                        ...this.state.faramValues,
+                        logo: response.id,
+                    },
                 });
             })
             .failure((response) => {

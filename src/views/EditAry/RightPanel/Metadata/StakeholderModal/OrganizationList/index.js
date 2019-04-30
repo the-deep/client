@@ -6,6 +6,7 @@ import {
     _cs,
     caseInsensitiveSubmatch,
     getRatingForContentInString as rate,
+    compareStringSearch,
 } from '@togglecorp/fujs';
 
 import Modalize from '#rscg/Modalize';
@@ -36,6 +37,7 @@ const defaultProps = {
 
 const MAX_DISPLAY_ORGANIZATIONS = 50;
 const organizationLabelSelector = organization => organization.label;
+const organizationAbbrSelector = organization => organization.shortName;
 const organizationKeySelector = item => item.key;
 
 const PrimaryModalButton = Modalize(PrimaryButton);
@@ -52,11 +54,13 @@ export default class OrganizationList extends React.PureComponent {
     }
 
     getOrganizationItemRendererParams = (key, d) => ({
-        name: d.label,
+        isDonor: d.donor,
         itemKey: key,
         logo: d.logo,
-        isDonor: d.donor,
+        longName: d.longName,
+        name: d.label,
         searchValue: this.state.searchValue,
+        shortName: d.shortName,
     })
 
     filterOrganization = memoize((options, value) => {
@@ -68,16 +72,20 @@ export default class OrganizationList extends React.PureComponent {
         }
 
         const newOptions = options
-            .filter(
-                option => (
-                    value === undefined || caseInsensitiveSubmatch(
-                        organizationLabelSelector(option), value)
-                ),
-            )
+            .filter(option => (
+                value === undefined
+                    || caseInsensitiveSubmatch(organizationLabelSelector(option), value)
+                    || caseInsensitiveSubmatch(organizationAbbrSelector(option), value)
+            ))
             .sort((a, b) => (
-                rate(
+                compareStringSearch(
+                    organizationAbbrSelector(a),
+                    organizationAbbrSelector(b),
                     value,
-                    organizationLabelSelector(a)) - rate(value, organizationLabelSelector(b),
+                ) || compareStringSearch(
+                    organizationLabelSelector(a),
+                    organizationLabelSelector(b),
+                    value,
                 )
             ));
 

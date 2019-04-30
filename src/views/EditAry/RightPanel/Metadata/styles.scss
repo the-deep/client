@@ -56,6 +56,10 @@ $height-additional-documents: 250px;
                             padding: $spacing-medium-alt;
                             text-transform: capitalize;
                             color: $color-accent;
+
+                            .show-more-button {
+                                font-size: $font-size-large;
+                            }
                         }
 
                         >.content {

@@ -9,26 +9,50 @@
     .logo {
         flex-shrink: 0;
         margin: 0 $spacing-medium;
-        width: $font-size-large;
-        height: $font-size-large;
+        width: $font-size-super-large;
+        height: $font-size-super-large;
 
         .image {
             width: 100%;
             height: 100%;
         }
+
+        .icon {
+            font-size: $font-size-super-large;
+        }
     }
 
-    .name {
+    .text {
         flex-grow: 1;
-        padding: $spacing-medium;
+        padding: $spacing-medium 0;
+
+        .top {
+            .name {
+                padding: 0 $spacing-medium;
+                font-size: $font-size-large;
+            }
+        }
+
+        .bottom {
+            display: flex;
+            align-items: flex-start;
+
+            .abbr {
+                flex-grow: 1;
+                padding: 0 $spacing-medium;
+                color: $color-text-label;
+            }
+
+            .donor-flag {
+                flex-shrink: 0;
+                margin-right: $spacing-small;
+                padding: $spacing-small $spacing-medium;
+                color: $color-accent;
+                font-size: $font-size-small;
+            }
+        }
     }
 
-    .donor-flag {
-        flex-shrink: 0;
-        margin-right: $spacing-small;
-        color: $color-text-disabled;
-        font-size: $font-size-extra-small;
-    }
 
     &:hover {
         background-color: $color-background-hover;

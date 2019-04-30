@@ -5,9 +5,10 @@ import { _cs } from '@togglecorp/fujs';
 
 import styles from './styles.scss';
 
+// FIXME: Declare proptypes
 
 export default class HighlightableTextOutput extends React.PureComponent {
-    splitHighlightText = memoize((text, highlightText = '') => {
+    splitHighlightText = memoize((text = '', highlightText = '') => {
         const testText = text.toLowerCase();
         const testHighlightText = highlightText.toLowerCase();
 
