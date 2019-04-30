@@ -21,9 +21,6 @@
     .name {
         flex-grow: 1;
         padding: $spacing-medium;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
     }
 
     .donor-flag {
