@@ -112,11 +112,11 @@ export const isDroppableWidget = (sourceType, fieldType) => (
 );
 
 // eslint-disable-next-line import/prefer-default-export
-export const renderDroppableWidget = (k, data, sources, otherProps = {}) => {
+export const renderDroppableWidget = (key, data, sources, otherProps = {}) => {
     const {
         sourceType,
         fieldType,
-        id: key,
+        // id: key,
     } = data;
 
     if (isDroppableWidget(sourceType, fieldType)) {
@@ -126,6 +126,7 @@ export const renderDroppableWidget = (k, data, sources, otherProps = {}) => {
 
         return (
             <Widget
+                key={key}
                 {...props}
                 renderer={renderer}
                 sourceType={sourceType}
@@ -137,8 +138,11 @@ export const renderDroppableWidget = (k, data, sources, otherProps = {}) => {
     // NOTE: just wrapping other widget for common styling
     const { containerClassName, ...someOtherProps } = otherProps;
     return (
-        <div className={containerClassName}>
-            {renderWidget(k, data, sources, someOtherProps)}
+        <div
+            key={key}
+            className={containerClassName}
+        >
+            {renderWidget(key, data, sources, someOtherProps)}
         </div>
     );
 };

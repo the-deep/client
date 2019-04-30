@@ -83,7 +83,7 @@ class Widget extends React.PureComponent {
                     organizationName,
                 } = parsedData;
                 if (!value) {
-                    onChange([value]);
+                    onChange([organizationId]);
                 } else if (value.findIndex(v => v === organizationId) === -1) {
                     const intercept = !isDonor && this.props.sourceType === 'donors';
                     if (intercept) {
