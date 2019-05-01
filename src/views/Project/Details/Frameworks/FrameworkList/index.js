@@ -4,6 +4,7 @@ import memoize from 'memoize-one';
 import {
     caseInsensitiveSubmatch,
     compareString,
+    compareStringSearch,
 } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
@@ -81,12 +82,9 @@ FrameworkListItem.defaultProps = {
 
 
 const filterFrameworks = memoize((frameworkList, searchInputValue) => {
-    const displayFrameworkList = frameworkList.filter(
-        framework => caseInsensitiveSubmatch(
-            framework.title,
-            searchInputValue,
-        ),
-    );
+    const displayFrameworkList = frameworkList
+        .filter(framework => caseInsensitiveSubmatch(framework.title, searchInputValue))
+        .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
 
     displayFrameworkList.sort(
         (a, b) => compareString(

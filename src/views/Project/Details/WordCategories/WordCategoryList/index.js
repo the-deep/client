@@ -5,6 +5,7 @@ import memoize from 'memoize-one';
 import {
     caseInsensitiveSubmatch,
     compareString,
+    compareStringSearch,
 } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
@@ -77,12 +78,9 @@ WordCategoryListItem.defaultProps = {
 };
 
 const filterWordCategories = memoize((wordCategoryList, searchInputValue) => {
-    const displayWordCategoryList = wordCategoryList.filter(
-        wordCategory => caseInsensitiveSubmatch(
-            wordCategory.title,
-            searchInputValue,
-        ),
-    );
+    const displayWordCategoryList = wordCategoryList
+        .filter(wordCategory => caseInsensitiveSubmatch(wordCategory.title, searchInputValue))
+        .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
 
     displayWordCategoryList.sort(
         (a, b) => compareString(

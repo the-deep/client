@@ -17,6 +17,7 @@ import ModalHeader from '#rscv/Modal/Header';
 import Table from '#rscv/Table';
 import {
     caseInsensitiveSubmatch,
+    compareStringSearch,
     compareString,
     compareDate,
 } from '@togglecorp/fujs';
@@ -163,9 +164,9 @@ export default class DgSelect extends React.PureComponent {
     }
 
     getTableData = memoize(({ galleryFiles, selected, searchInputValue }) => {
-        const filterdGalleryFiles = galleryFiles.filter(
-            file => caseInsensitiveSubmatch(file.title, searchInputValue),
-        );
+        const filterdGalleryFiles = galleryFiles
+            .filter(file => caseInsensitiveSubmatch(file.title, searchInputValue))
+            .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
 
         return filterdGalleryFiles.map(file => (
             { ...file, selected: selected.includes(file.id) }

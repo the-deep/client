@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import {
     caseInsensitiveSubmatch,
     reverseRoute,
+    compareStringSearch,
 } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
@@ -112,9 +113,9 @@ export default class ConnectorSelectModal extends React.PureComponent {
 
         if (newConnectorsList !== oldConnectorsList) {
             this.views = this.getContentViews(newConnectorsList);
-            const displayConnectorsList = newConnectorsList.filter(
-                c => caseInsensitiveSubmatch(c.title, searchInputValue),
-            );
+            const displayConnectorsList = newConnectorsList
+                .filter(c => caseInsensitiveSubmatch(c.title, searchInputValue))
+                .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
             this.setState({ displayConnectorsList });
         }
 
@@ -351,9 +352,9 @@ export default class ConnectorSelectModal extends React.PureComponent {
     }
 
     handleSearchInputChange = (searchInputValue) => {
-        const displayConnectorsList = this.props.connectorsList.filter(
-            c => caseInsensitiveSubmatch(c.title, searchInputValue),
-        );
+        const displayConnectorsList = this.props.connectorsList
+            .filter(c => caseInsensitiveSubmatch(c.title, searchInputValue))
+            .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
 
         this.setState({
             displayConnectorsList,

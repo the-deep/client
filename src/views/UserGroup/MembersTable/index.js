@@ -5,6 +5,7 @@ import {
     caseInsensitiveSubmatch,
     compareString,
     compareDate,
+    compareStringSearch,
 } from '@togglecorp/fujs';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -155,9 +156,10 @@ export default class MembersTable extends React.PureComponent {
 
     handleSearchMemberChange = (value) => {
         const { membershipList } = this.props;
-        const filteredMemberData = membershipList.filter(
-            member => caseInsensitiveSubmatch(member.memberName, value),
-        );
+        const filteredMemberData = membershipList
+            .filter(member => caseInsensitiveSubmatch(member.memberName, value))
+            .sort((a, b) => compareStringSearch(a.memberName, b.memberName, value));
+
         this.setState({
             searchMemberInputValue: value,
             membershipList: filteredMemberData,

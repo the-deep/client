@@ -6,6 +6,7 @@ import memoize from 'memoize-one';
 import {
     reverseRoute,
     caseInsensitiveSubmatch,
+    compareStringSearch,
     compareLength,
     compareString,
     isFalsy,
@@ -44,10 +45,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const searchProject = memoize((projects, value) => (
-    !isFalsy(value) ?
-        projects.filter(
-            project => caseInsensitiveSubmatch(project.title, value),
-        )
+    !isFalsy(value)
+        ? projects
+            .filter(project => caseInsensitiveSubmatch(project.title, value))
+            .sort((a, b) => compareStringSearch(a.title, b.title, value))
         : projects
 ));
 
