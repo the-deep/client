@@ -1,7 +1,3 @@
-@import 'colors';
-@import 'dimens';
-@import 'utils';
-
 :root {
     --font-family-sans-serif: 'Source Sans Pro', sans-serif;
     --font-family-heading: 'Asap', sans-serif;
@@ -10,7 +6,6 @@
     --font-weight-heading: 500;
     --height-nagbar: 32px;
 }
-
 
 * {
     box-sizing: border-box;
@@ -133,7 +128,6 @@ body {
 }
 
 %main-content {
-    // @frozenhelium
     transform-origin: bottom;
     border: var(--width-separator-thin) solid var(--color-separator-alt);
     background-color: var(--color-background-alt);
@@ -152,4 +146,6 @@ body {
         opacity: 1;
     }
 }
+
+
 

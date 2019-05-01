@@ -19,7 +19,7 @@
     border-radius: 50%;
 }
 
-@mixin documentType(var(--color)) {
+@mixin documentType($color) {
     @include transition-slow;
     display: flex;
     position: absolute;
@@ -39,7 +39,7 @@
 
     &:before {
         position: absolute;
-        border-top: var(--status-indicator-dimension) solid var(--color);
+        border-top: var(--status-indicator-dimension) solid $color;
         border-left: var(--status-indicator-dimension) solid transparent;
         width: 0;
         height: 0;

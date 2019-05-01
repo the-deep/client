@@ -61,7 +61,7 @@
     }
 }
 
-@function get-text-color() {
+@function get-text-color($bg-color) {
     @return var(--color-text);
 }
 
@@ -85,16 +85,16 @@
     // @return darken(var(--color), 10%);
 }
 
-@mixin button-like-link(var(--background-color)) {
+@mixin button-like-link($bg-color) {
     // @include shadow-button;
     display: inline-block;
-    border: var(--width-separator-thin) solid var(--background-color);
+    border: var(--width-separator-thin) solid $bg-color;
     border-radius: var(--radius-button-border);
-    // @include background-color(var(--background-color));
+    // @include background-color($bg-color);
     background-color: var(--color-foreground);
     padding: var(--spacing-small) var(--spacing-small-alt);
     text-transform: capitalize;
-    color: var(--background-color);
+    color: $bg-color;
     font-size: var(--font-size-small);
     // font-weight: var(--font-weight-bold);
 
@@ -108,14 +108,14 @@
     }
 
     &:focus {
-        @include outline-button(var(--background-color));
+        @include outline-button($bg-color);
     }
 }
 
-@mixin transparent-button-like-link(var(--color)) {
+@mixin transparent-button-like-link($color) {
     @extend %transparent-button-like-link;
     display: inline-block;
-    color: var(--color);
+    color: $color;
 }
 
 %empty-text {
@@ -172,4 +172,12 @@
     color: var(--color-text);
     font-family: inherit;
     font-size: inherit;
+}
+
+%background-alternating-row {
+    background-color: var(--color-background-row);
+
+    &:nth-child(odd) {
+        background-color: var(--color-background-row-alt);
+    }
 }
