@@ -16,13 +16,14 @@ import {
     editEntriesWidgetsSelector,
     editEntriesSelectedEntrySelector,
     editEntriesStatusesSelector,
-    editEntriesSelectedEntryTabularDataSelector,
+    // editEntriesSelectedEntryTabularDataSelector,
 
     editEntriesSelectedEntryKeySelector,
     editEntriesFilteredEntriesSelector,
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
-    editEntriesTabularDataSelector,
+    // editEntriesTabularDataSelector,
+    fieldsMapForTabularBookSelector,
 } from '#redux';
 import { VIEW } from '#widgets';
 
@@ -36,22 +37,21 @@ import styles from './styles.scss';
 const propTypes = {
     leadId: PropTypes.number.isRequired,
     entry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    tabularDataForSelectedEntry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    // tabularDataForSelectedEntry: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    // tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     widgets: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     selectedEntryKey: PropTypes.string,
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setSelectedEntryKey: PropTypes.func.isRequired,
     onExcerptCreate: PropTypes.func.isRequired,
-    onTabularLoad: PropTypes.func.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     entry: undefined,
-    tabularDataForSelectedEntry: undefined,
-    tabularData: {},
+    // tabularDataForSelectedEntry: undefined,
+    // tabularData: {},
     widgets: [],
     entries: [],
     statuses: {},
@@ -59,15 +59,17 @@ const defaultProps = {
 };
 
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, props) => ({
     leadId: leadIdFromRoute(state),
     widgets: editEntriesWidgetsSelector(state),
     entry: editEntriesSelectedEntrySelector(state),
-    tabularDataForSelectedEntry: editEntriesSelectedEntryTabularDataSelector(state),
-    tabularData: editEntriesTabularDataSelector(state),
+    // tabularDataForSelectedEntry: editEntriesSelectedEntryTabularDataSelector(state),
+    // tabularData: editEntriesTabularDataSelector(state),
     selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
     entries: editEntriesFilteredEntriesSelector(state),
     statuses: editEntriesStatusesSelector(state),
+
+    tabularFields: fieldsMapForTabularBookSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -86,19 +88,17 @@ export default class Overview extends React.PureComponent {
 
     entryLabelSelector = (entry) => {
         const values = entryAccessor.data(entry);
-        const { excerpt, tabularField, order } = values;
+        const fieldId = entryAccessor.tabularField(entry);
+        const { excerpt, order } = values;
 
         if (excerpt) {
             return excerpt;
         }
 
-        if (tabularField) {
-            const { tabularData } = this.props;
-            const {
-                title,
-            } = tabularData[tabularField] || {};
+        if (fieldId) {
+            const field = this.props.tabularFields[fieldId];
             // FIXME: use strings
-            return title || `Column ${tabularField}`;
+            return (field && field.title) || `Column ${fieldId}`;
         }
 
         return _ts('editEntry.overview', 'unnamedExcerptTitle', { index: order });
@@ -135,13 +135,15 @@ export default class Overview extends React.PureComponent {
     render() {
         const {
             entry,
-            tabularDataForSelectedEntry,
-            tabularData, // eslint-disable-line no-unused-vars
+            // tabularDataForSelectedEntry,
+            // tabularData, // eslint-disable-line no-unused-vars
             leadId, // eslint-disable-line no-unused-vars
             entries, // eslint-disable-line no-unused-vars
             statuses,
             selectedEntryKey, // eslint-disable-line no-unused-vars
             entryStates,
+
+            tabularFields,
 
             ...otherProps
         } = this.props;
@@ -149,13 +151,16 @@ export default class Overview extends React.PureComponent {
         const pending = statuses[selectedEntryKey] === ENTRY_STATUS.requesting;
         const key = Overview.entryKeySelector(entry);
 
+        const fieldId = entryAccessor.tabularField(entry);
+        const field = tabularFields[fieldId];
+
         return (
             <ResizableH
                 className={styles.overview}
                 leftChild={
                     <LeadPane
                         onExcerptCreate={this.props.onExcerptCreate}
-                        onTabularLoad={this.props.onTabularLoad}
+                        tabularFields={tabularFields}
                     />
                 }
                 rightChild={
@@ -204,10 +209,10 @@ export default class Overview extends React.PureComponent {
                             // NOTE: dismount on key change
                             key={key}
                             entry={entry}
-                            tabularData={tabularDataForSelectedEntry}
                             pending={pending}
                             widgetType={VIEW.overview}
                             entryState={entryStates[key]}
+                            tabularData={field}
                             {...otherProps}
                         />
                     </React.Fragment>

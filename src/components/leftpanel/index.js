@@ -72,7 +72,6 @@ const propTypes = {
     projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     onExcerptCreate: PropTypes.func,
-    onTabularLoad: PropTypes.func,
     filteredEntries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     setSelectedEntryKey: PropTypes.func,
     viewsModifier: PropTypes.func,
@@ -83,7 +82,6 @@ const defaultProps = {
     projectRole: {},
     filteredEntries: [],
     onExcerptCreate: () => {},
-    onTabularLoad: () => {},
     setSelectedEntryKey: () => {},
     viewsModifier: undefined,
     tabsModifier: undefined,
@@ -228,7 +226,6 @@ export default class LeftPane extends React.PureComponent {
                 const {
                     lead: { tabularBook },
                     filteredEntries,
-                    onTabularLoad,
                 } = this.props;
                 const { showGraphs } = this.state;
                 return {
@@ -236,7 +233,6 @@ export default class LeftPane extends React.PureComponent {
                     bookId: tabularBook,
                     highlights: this.getHighlightsForTabular(filteredEntries),
                     onClick: this.handleHighlightClick,
-                    onLoad: onTabularLoad,
                     showGraphs,
                 };
             },

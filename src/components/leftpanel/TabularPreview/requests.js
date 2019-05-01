@@ -1,24 +1,31 @@
 import { requestMethods } from '#request';
 
 export default {
-    initialRequest: {
+    bookRequest: {
         onMount: true,
         onPropsChanged: ['bookId'],
-
         method: requestMethods.GET,
         url: ({ props }) => `/tabular-books/${props.bookId}/processed/`,
-        onSuccess: ({ response, params: {
-            triggerExtraction,
-            startPolling,
-            setBook,
-            setInvalid,
-        } }) => {
+        options: {
+            pollTime: 1200,
+            maxPollAttempts: 100,
+            shouldPoll: r => r.status === 'pending',
+        },
+        onSuccess: ({ response, params: { setBook, setInvalid, pollFields } }) => {
+            /*
             if (response.status === 'initial') {
                 triggerExtraction();
-            } else if (response.status === 'pending') {
-                startPolling();
-            } else if (response.status === 'success') {
+                extraction request: {
+                    method: requestMethods.POST,
+                    url: ({ props }) => `/tabular-extraction-trigger/${props.bookId}/`,
+                    onSuccess: ({ params: { startPolling } }) => startPolling(),
+                }
+            */
+            if (response.status === 'success') {
                 setBook(response);
+                if (response.pendingFields && response.pendingFields.length > 0) {
+                    pollFields(response.pendingFields);
+                }
             } else {
                 setInvalid();
             }
@@ -28,27 +35,23 @@ export default {
         // schemaName: 'TabularBookSchema',
     },
 
-    extractRequest: {
+    pollRequest: {
         method: requestMethods.POST,
-        url: ({ props }) => `/tabular-extraction-trigger/${props.bookId}/`,
-        onSuccess: ({ params: { startPolling } }) => startPolling(),
-    },
-
-    bookRequest: {
-        method: requestMethods.GET,
-        url: ({ props }) => `/tabular-books/${props.bookId}/processed/`,
+        url: ({ props }) => `/tabular-books/${props.bookId}/fields/`,
+        body: ({ params: { fields } }) => ({ fields }),
         options: {
-            pollTime: 1200,
-            maxPollAttempts: 100,
-            shouldPoll: r => r.status === 'pending',
+            // call this on certain delay
+            delay: 3000,
         },
-        onSuccess: ({ response, params: { setBook, setInvalid } }) => {
-            if (response.status === 'success') {
-                setBook(response);
-            } else {
-                setInvalid();
+        onSuccess: ({ response, params: { pollFields, setFields } }) => {
+            if (response.fields && response.fields.length > 0) {
+                setFields(response.fields);
+            }
+            if (response.pendingFields && response.pendingFields.length > 0) {
+                pollFields(response.pendingFields);
             }
         },
-        schemaName: 'TabularBookSchema',
+        onFailure: ({ params: { setInvalid } }) => setInvalid(),
+        onFatal: ({ params: { setInvalid } }) => setInvalid(),
     },
 };

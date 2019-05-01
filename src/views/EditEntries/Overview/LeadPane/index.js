@@ -12,7 +12,7 @@ import {
     editEntriesSelectedEntryKeySelector,
     editEntriesSetSelectedEntryKeyAction,
     editEntriesMarkAsDeletedEntryAction,
-    editEntriesTabularDataSelector,
+    // editEntriesTabularDataSelector,
 } from '#redux';
 import _ts from '#ts';
 
@@ -24,14 +24,13 @@ const propTypes = {
     projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     onExcerptCreate: PropTypes.func.isRequired,
-    onTabularLoad: PropTypes.func.isRequired,
     entries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     filteredEntries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     statuses: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     selectedEntryKey: PropTypes.string,
     setSelectedEntryKey: PropTypes.func.isRequired,
     markAsDeletedEntry: PropTypes.func.isRequired,
-    tabularData: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    tabularFields: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
@@ -40,7 +39,6 @@ const defaultProps = {
     filteredEntries: [],
     statuses: {},
     selectedEntryKey: undefined,
-    tabularData: {},
 };
 
 const mapStateToProps = state => ({
@@ -50,7 +48,7 @@ const mapStateToProps = state => ({
     filteredEntries: editEntriesFilteredEntriesSelector(state),
     selectedEntryKey: editEntriesSelectedEntryKeySelector(state),
     statuses: editEntriesStatusesSelector(state),
-    tabularData: editEntriesTabularDataSelector(state),
+    // tabularData: editEntriesTabularDataSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -76,7 +74,7 @@ export default class LeftPane extends React.PureComponent {
                     selectedEntryKey,
                     setSelectedEntryKey,
                     markAsDeletedEntry,
-                    tabularData,
+                    tabularFields,
                 } = this.props;
 
                 return {
@@ -87,7 +85,7 @@ export default class LeftPane extends React.PureComponent {
                     selectedEntryKey,
                     setSelectedEntryKey,
                     markAsDeletedEntry,
-                    tabularData,
+                    tabularFields,
                 };
             },
             mount: true,
@@ -108,7 +106,6 @@ export default class LeftPane extends React.PureComponent {
             onExcerptCreate,
             filteredEntries,
             setSelectedEntryKey,
-            onTabularLoad,
         } = this.props;
 
         return (
@@ -121,7 +118,6 @@ export default class LeftPane extends React.PureComponent {
                 tabsModifier={this.getTabs}
 
                 onExcerptCreate={onExcerptCreate}
-                onTabularLoad={onTabularLoad}
             />
         );
     }

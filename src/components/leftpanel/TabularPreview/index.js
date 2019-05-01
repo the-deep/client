@@ -9,8 +9,12 @@ import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 
 import {
-    selectedTabForTabularBook,
+    selectedTabForTabularBookSelector,
     setTabularSelectedTabAction,
+    setTabularDataAction,
+    sheetsMapForTabularBookSelector,
+    tabsForTabularBookSelector,
+    patchTabularFieldsAction,
 } from '#redux';
 
 import { RequestClient } from '#request';
@@ -29,9 +33,8 @@ const propTypes = {
 
     onClick: PropTypes.func.isRequired,
     setDefaultRequestParams: PropTypes.func.isRequired,
-    extractRequest: RequestClient.propType.isRequired,
-    bookRequest: RequestClient.propType.isRequired,
-    onLoad: PropTypes.func.isRequired,
+    // extractRequest: RequestClient.propType.isRequired,
+    // bookRequest: RequestClient.propType.isRequired,
     showGraphs: PropTypes.bool.isRequired,
     setSelectedTab: PropTypes.func.isRequired,
 };
@@ -43,11 +46,15 @@ const defaultProps = {
 };
 
 const mapStateToProps = (state, props) => ({
-    selectedTab: selectedTabForTabularBook(state, props),
+    selectedTab: selectedTabForTabularBookSelector(state, props),
+    sheets: sheetsMapForTabularBookSelector(state, props),
+    tabs: tabsForTabularBookSelector(state, props),
 });
 
 const mapDispatchToProps = dispatch => ({
     setSelectedTab: params => dispatch(setTabularSelectedTabAction(params)),
+    setTabularData: params => dispatch(setTabularDataAction(params)),
+    patchTabularFields: params => dispatch(patchTabularFieldsAction(params)),
 });
 
 @RequestClient(requests)
@@ -59,17 +66,16 @@ export default class TabularPreview extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            tabs: {},
-            sheets: {},
             completed: false,
             invalid: false,
         };
 
         props.setDefaultRequestParams({
-            triggerExtraction: this.triggerExtraction,
-            startPolling: this.startPolling,
+            // triggerExtraction: this.triggerExtraction,
+            // startPolling: this.startPolling,
             setBook: this.setBook,
             setInvalid: this.setInvalid,
+            pollFields: this.pollFields,
         });
     }
 
@@ -82,46 +88,40 @@ export default class TabularPreview extends React.PureComponent {
     ))
 
     setBook = (response) => {
-        const validSheets = response.sheets.filter(
-            sheet => sheet.fields.length > 0,
-        );
-
-        const sheets = listToMap(
-            validSheets,
-            sheet => sheet.id,
-            sheet => sheet,
-        );
-
-        const filteredSheets = validSheets.filter(
-            sheet => !sheet.hidden,
-        );
-
-        const tabs = listToMap(
-            filteredSheets,
-            sheet => sheet.id,
-            sheet => sheet.title,
-        );
-
         this.setState({
             invalid: false,
             completed: true,
-            tabs,
-            sheets,
         });
 
-        this.props.onLoad(response);
+        const {
+            bookId,
+            setTabularData,
+        } = this.props;
+
+        setTabularData({ bookId, book: response });
+    }
+
+    setFields = (fields) => {
+        const {
+            bookId,
+            patchTabularFields,
+        } = this.props;
+
+        patchTabularFields({ bookId, fields });
     }
 
     setInvalid = () => {
         this.setState({ invalid: true });
     }
 
-    triggerExtraction = () => {
-        this.props.extractRequest.do();
-    }
-
-    startPolling = () => {
-        this.props.bookRequest.do();
+    pollFields = (fields) => {
+        // NOTE: create a new polling request everytime
+        this.props.pollRequest.do({
+            fields,
+            setInvalid: this.setInvalid,
+            setFields: this.setFields,
+            pollFields: this.pollFields,
+        });
     }
 
     handleActiveSheetChange = (selectedTab) => {
@@ -138,11 +138,13 @@ export default class TabularPreview extends React.PureComponent {
 
     render() {
         const {
-            tabs,
-            sheets,
             invalid,
             completed,
         } = this.state;
+        const {
+            sheets,
+            tabs,
+        } = this.props;
 
         const {
             className: classNameFromProps,
@@ -186,7 +188,7 @@ export default class TabularPreview extends React.PureComponent {
         return (
             <div className={className}>
                 <SheetPreview
-                    // FIXME:
+                    // NOTE:
                     // virtualized list doesn't work properly when child height change, so
                     // unmounting sheet preview when graph is added/removed
                     key={showGraphs}
