@@ -2,6 +2,11 @@
     --height-tabs: 32px;
 }
 
+%tab-content {
+    position: relative;
+    height: calc(100% - var(--height-tabs));
+}
+
 .right-panel {
     display: flex;
     flex-direction: column;
@@ -15,11 +20,6 @@
         .tab {
             text-transform: capitalize;
         }
-    }
-
-    %tab-content {
-        position: relative;
-        height: calc(100% - var(--height-tabs));
     }
 
     .metadata {

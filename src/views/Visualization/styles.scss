@@ -2,6 +2,13 @@
     --width-tabs: 240px;
 }
 
+%viz {
+    flex-grow: 1;
+    margin-bottom: var(--spacing-small);
+    background-color: var(--color-foreground-alt);
+    color: var(--color-text-on-foreground-alt);
+}
+
 .visualization {
     display: flex;
     flex-direction: column;
@@ -35,12 +42,6 @@
             display: flex;
             flex-direction: column;
 
-            %viz {
-                flex-grow: 1;
-                margin-bottom: var(--spacing-small);
-                background-color: var(--color-foreground-alt);
-                color: var(--color-text-on-foreground-alt);
-            }
             .chord-diagram {
                 @extend %viz;
             }

@@ -1,6 +1,11 @@
+%register-basic {
+    position: relative;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-large) var(--spacing-large);
+    width: var(--width-register-form);
+}
 
 .register {
-    @extend %main-content;
     display: flex;
     align-content: center;
     align-items: center;
@@ -10,13 +15,6 @@
     height: 100vh;
 
     .register-box {
-        %register-basic {
-            position: relative;
-            background-color: var(--color-foreground);
-            padding: var(--spacing-small) var(--spacing-large) var(--spacing-large);
-            width: var(--width-register-form);
-        }
-
         .register-form {
             @extend %register-basic;
 

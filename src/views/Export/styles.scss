@@ -1,3 +1,10 @@
+%filter-group {
+    .heading {
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-background-header);
+        padding: var(--spacing-small);
+    }
+}
 
 .export {
     .main-content {
@@ -13,14 +20,6 @@
             flex-basis: 50%;
             flex-direction: column;
             overflow: auto;
-
-            %filter-group {
-                .heading {
-                    border-bottom: var(--width-separator-thin) solid var(--color-separator);
-                    background-color: var(--color-background-header);
-                    padding: var(--spacing-small);
-                }
-            }
 
             .entry-filters {
                 @extend %filter-group;

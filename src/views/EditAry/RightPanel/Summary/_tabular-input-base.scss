@@ -1,9 +1,9 @@
+%cell {
+    padding: var(--spacing-medium-alt);
+}
+
 %tabular-input-base {
     padding: var(--spacing-medium);
-
-    %cell {
-        padding: var(--spacing-medium-alt);
-    }
 
     .table {
         width: 100%;

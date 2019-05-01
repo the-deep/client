@@ -3,6 +3,47 @@
     --width-title-min: 96px;
 }
 
+%activity-percentage-basic {
+    flex-basis: 50%;
+    padding: var(--spacing-medium);
+
+    .heading {
+        padding: var(--spacing-medium);
+        text-transform: none;
+        font-weight: var(--font-weight-light);
+    }
+
+    .list {
+        .item {
+            display: flex;
+            align-items: baseline;
+
+            &:hover {
+                background-color: var(--color-background-hover);
+            }
+
+            .title {
+                flex-grow: 1;
+                padding: var(--spacing-small) var(--spacing-medium);
+                min-width: var(--width-title-min);
+
+                a {
+                    text-transform: none;
+
+                    &:hover {
+                        color: var(--color-accent);
+                    }
+                }
+            }
+
+            .value {
+                flex-shrink: 0;
+                padding: var(--spacing-small) var(--spacing-medium);
+            }
+        }
+    }
+}
+
 .project-dashboard {
     display: flex;
     position: relative;
@@ -106,47 +147,6 @@
                 flex-basis: 50%;
                 flex-grow: 1;
                 justify-content: center;
-
-                %activity-percentage-basic {
-                    flex-basis: 50%;
-                    padding: var(--spacing-medium);
-
-                    .heading {
-                        padding: var(--spacing-medium);
-                        text-transform: none;
-                        font-weight: var(--font-weight-light);
-                    }
-
-                    .list {
-                        .item {
-                            display: flex;
-                            align-items: baseline;
-
-                            &:hover {
-                                background-color: var(--color-background-hover);
-                            }
-
-                            .title {
-                                flex-grow: 1;
-                                padding: var(--spacing-small) var(--spacing-medium);
-                                min-width: var(--width-title-min);
-
-                                a {
-                                    text-transform: none;
-
-                                    &:hover {
-                                        color: var(--color-accent);
-                                    }
-                                }
-                            }
-
-                            .value {
-                                flex-shrink: 0;
-                                padding: var(--spacing-small) var(--spacing-medium);
-                            }
-                        }
-                    }
-                }
 
                 .sourcers-list-container {
                     @extend %activity-percentage-basic;

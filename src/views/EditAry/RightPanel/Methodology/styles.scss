@@ -4,6 +4,45 @@
     --height-bottom: 240px;
 }
 
+%cell {
+    display: table-cell;
+    padding: var(--spacing-small-alt);
+
+}
+
+%action-buttons {
+    @extend %cell;
+    width: var(--width-action-buttons);
+}
+
+%heading {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--color-foreground);
+}
+
+%content {
+    display: flex;
+    flex-basis: calc(100% / 4);
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: auto;
+    overflow-y: auto;
+
+    :global {
+        .empty {
+            display: block;
+            padding: var(--spacing-small) var(--spacing-medium);
+        }
+    }
+}
+
+%header {
+    font-size: var(--font-size-medium);
+    font-weight: var(--font-weight-light);
+}
+
 .header {
     flex-shrink: 0;
     background-color: var(--color-foreground);
@@ -63,26 +102,8 @@
                             width: 100%;
                             overflow: auto;
 
-                            %cell {
-                                display: table-cell;
-                                padding: var(--spacing-small-alt);
-
-                            }
-
-                            %action-buttons {
-                                @extend %cell;
-                                width: var(--width-action-buttons);
-                            }
-
                             >.header {
                                 display: table-row;
-
-                                %heading {
-                                    position: sticky;
-                                    top: 0;
-                                    z-index: 1;
-                                    background-color: var(--color-foreground);
-                                }
 
                                 .title {
                                     @extend %cell;
@@ -131,27 +152,6 @@
                     flex-grow: 1;
                     border-top: var(--width-separator-thin) solid var(--color-separator);
                     height: 100%;
-
-                    %content {
-                        display: flex;
-                        flex-basis: calc(100% / 4);
-                        flex-direction: column;
-                        flex-grow: 1;
-                        overflow: auto;
-                        overflow-y: auto;
-
-                        :global {
-                            .empty {
-                                display: block;
-                                padding: var(--spacing-small) var(--spacing-medium);
-                            }
-                        }
-                    }
-
-                    %header {
-                        font-size: var(--font-size-medium);
-                        font-weight: var(--font-weight-light);
-                    }
 
                     .focuses,
                     .sectors {

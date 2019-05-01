@@ -85,26 +85,6 @@
     // @return darken(var(--color), 10%);
 }
 
-%empty-text {
-    color: var(--color-text-disabled);
-}
-
-%button-like-link {
-    border: 0;
-    border-radius: var(--radius-button-border);
-    background-color: var(--color-foreground);
-    padding: var(--spacing-small) var(--spacing-small-alt);
-    text-transform: capitalize;
-    color: var(--color-text-on-foreground);
-    font-family: inherit;
-    font-size: var(--font-size-small);
-    @include shadow-button;
-
-    &:active {
-        transform: translateY(1px);
-    }
-}
-
 @mixin button-like-link(var(--background-color)) {
     // @include shadow-button;
     display: inline-block;
@@ -132,6 +112,32 @@
     }
 }
 
+@mixin transparent-button-like-link(var(--color)) {
+    @extend %transparent-button-like-link;
+    display: inline-block;
+    color: var(--color);
+}
+
+%empty-text {
+    color: var(--color-text-disabled);
+}
+
+%button-like-link {
+    border: 0;
+    border-radius: var(--radius-button-border);
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-small-alt);
+    text-transform: capitalize;
+    color: var(--color-text-on-foreground);
+    font-family: inherit;
+    font-size: var(--font-size-small);
+    @include shadow-button;
+
+    &:active {
+        transform: translateY(1px);
+    }
+}
+
 %transparent-button-like-link {
     border: 0;
     background-color: transparent;
@@ -146,12 +152,6 @@
     &:active {
         transform: translateY(1px);
     }
-}
-
-@mixin transparent-button-like-link(var(--color)) {
-    @extend %transparent-button-like-link;
-    display: inline-block;
-    color: var(--color);
 }
 
 %accent-color-link {

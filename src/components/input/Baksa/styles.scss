@@ -1,5 +1,10 @@
 @import '~rs-scss/input-label';
 
+%hint-and-error {
+    margin: var(--spacing-extra-small) 0 0;
+    font-size: var(--font-size-extra-small);
+}
+
 .baksa {
     display: flex;
     flex-direction: column;
@@ -19,11 +24,6 @@
         .label {
             color: var(--color-danger);
         }
-    }
-
-    %hint-and-error {
-        margin: var(--spacing-extra-small) 0 0;
-        font-size: var(--font-size-extra-small);
     }
 
     .hint {

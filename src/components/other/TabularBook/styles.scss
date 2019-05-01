@@ -1,3 +1,5 @@
+@import '~base-scss/utils';
+
 .tabular-book {
     display: flex;
     flex-direction: column;
@@ -37,7 +39,7 @@
 
             .tab {
                 .tab-button {
-                    // @extend %button-base;
+                    @extend %button-base;
                     padding: var(--spacing-small-alt) var(--spacing-medium);
                     text-transform: uppercase;
                 }

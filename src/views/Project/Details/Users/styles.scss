@@ -2,6 +2,23 @@
     --width-search-list: 240px;
 }
 
+%list-base {
+    flex-basis: 50%;
+    flex-grow: 0;
+    flex-shrink: 0;
+
+    .empty-search,
+    .empty-list {
+        color: var(--color-text-disabled);
+
+        .image {
+            opacity: 0.3;
+            width: var(--width-icon-super-large);
+            height: var(--width-icon-super-large);
+        }
+    }
+}
+
 .users {
     display: flex;
     position: relative;
@@ -21,24 +38,6 @@
         flex-direction: column;
         flex-grow: 1;
         overflow: auto;
-
-        %list-base {
-            flex-basis: 50%;
-            flex-grow: 0;
-            flex-shrink: 0;
-
-            .empty-search,
-            .empty-list {
-                color: var(--color-text-disabled);
-
-                .image {
-                    opacity: 0.3;
-                    width: var(--width-icon-super-large);
-                    height: var(--width-icon-super-large);
-                }
-            }
-
-        }
 
         .user-list {
             @extend %list-base;
