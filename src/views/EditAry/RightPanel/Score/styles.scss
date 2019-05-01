@@ -1,5 +1,6 @@
-
---width-table: 320px;
+:root {
+    --width-table: 320px;
+}
 
 %cell {
     padding: var(--spacing-small);

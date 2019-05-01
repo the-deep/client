@@ -1,9 +1,10 @@
-
---height-geo-modal: 86vh;
---width-geo-modal: 80%;
---width-left-container-min: 240px;
---width-right-container-min: 240px;
---width-right-container-max: 320px;
+:root {
+    --height-geo-modal: 86vh;
+    --width-geo-modal: 80%;
+    --width-left-container-min: 240px;
+    --width-right-container-min: 240px;
+    --width-right-container-max: 320px;
+}
 
 .geo-modal {
     width: var(--width-geo-modal);

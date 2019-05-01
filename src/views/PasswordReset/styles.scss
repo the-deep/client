@@ -1,5 +1,6 @@
-
---width-reset-form: 420px;
+:root {
+    --width-reset-form: 420px;
+}
 
 .reset-password {
     @extend %main-content;

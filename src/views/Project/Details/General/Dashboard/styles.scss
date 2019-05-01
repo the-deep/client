@@ -1,6 +1,7 @@
-
---height-map-min: 360px;
---width-title-min: 96px;
+:root {
+    --height-map-min: 360px;
+    --width-title-min: 96px;
+}
 
 .project-dashboard {
     display: flex;

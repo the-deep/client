@@ -1,6 +1,7 @@
-
---color-text-on-primary: get-text-color(var(--color-primary));
---width-message-max: 540px;
+:root {
+    --color-text-on-primary: get-text-color(var(--color-primary));
+    --width-message-max: 540px;
+}
 
 .four-hundred-three {
     display: flex;

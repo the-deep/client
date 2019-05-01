@@ -1,10 +1,11 @@
-
---height-assistant-options: 58px;
---position-info-top: 16px;
---position-info-right: 12px;
---min-width-sector: 96px;
---max-height-info-bar: 40vh;
---min-width-assistant: 240px;
+:root {
+    --height-assistant-options: 58px;
+    --position-info-top: 16px;
+    --position-info-right: 12px;
+    --min-width-sector: 96px;
+    --max-height-info-bar: 40vh;
+    --min-width-assistant: 240px;
+}
 
 .assisted-tagging {
     &.assistant-shown {

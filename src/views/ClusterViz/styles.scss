@@ -1,6 +1,8 @@
---table-width: 400px;
---width-cluster-details: 420px;
---height-cluster-header: 36px;
+:root {
+    --table-width: 400px;
+    --width-cluster-details: 420px;
+    --height-cluster-header: 36px;
+}
 
 .cluster-visualization {
     >.header {

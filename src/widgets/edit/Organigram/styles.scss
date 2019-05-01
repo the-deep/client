@@ -1,6 +1,7 @@
-
---width-edit-modal: 72vw;
---height-edit-modal: 72vh;
+:root {
+    --width-edit-modal: 72vw;
+    --height-edit-modal: 72vh;
+}
 
 .edit-modal {
     width: var(--width-edit-modal);

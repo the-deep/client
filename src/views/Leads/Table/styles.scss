@@ -1,5 +1,7 @@
-
---width-assignee-column: 96px;
+:root {
+    --width-assignee-column: 96px;
+    --mime-column-width: 48px;
+}
 
 .table-container {
     display: flex;
@@ -22,7 +24,6 @@
                 top: 0;
             }
 
-            --mime-column-width: 48px;
 
             :global {
                 .header {

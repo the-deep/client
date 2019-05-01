@@ -1,9 +1,9 @@
-
---width-region-detail-view: 280px;
---height-region-detail-max: 320px;
-
---position-top: 42px;
---position-right: var(--spacing-small-alt);
+:root {
+    --width-region-detail-view: 280px;
+    --height-region-detail-max: 320px;
+    --position-top: 42px;
+    --position-right: var(--spacing-small-alt);
+}
 
 .region-detail-view {
     @include shadow-small;

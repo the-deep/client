@@ -1,7 +1,8 @@
-
---width-category-select-input: 240px;
---width-title-input: 240px;
---height-header: 42px;
+:root {
+    --width-category-select-input: 240px;
+    --width-title-input: 240px;
+    --height-header: 42px;
+}
 
 .category-editor {
     .main-content {

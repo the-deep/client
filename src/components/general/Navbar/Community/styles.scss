@@ -1,5 +1,7 @@
 
---width-dropdown-min: 120px;
+:root {
+    --width-dropdown-min: 120px;
+}
 
 .community-dropdown {
     min-width: var(--width-dropdown-min);

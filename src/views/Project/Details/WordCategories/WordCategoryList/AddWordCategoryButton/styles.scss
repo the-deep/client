@@ -1,5 +1,6 @@
-
---width-add-word-category-modal: 480px;
+:root {
+    --width-add-word-category-modal: 480px;
+}
 
 .add-word-category-modal {
     width: var(--width-add-word-category-modal);

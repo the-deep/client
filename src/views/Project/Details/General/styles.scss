@@ -1,7 +1,8 @@
-
---width-inputs-container: 280px;
---width-activity-log: 320px;
---width-dashboard-min: 480px;
+:root {
+    --width-inputs-container: 280px;
+    --width-activity-log: 320px;
+    --width-dashboard-min: 480px;
+}
 
 .general {
     display: flex;

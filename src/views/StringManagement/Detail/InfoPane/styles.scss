@@ -1,5 +1,6 @@
-
---width-error-pane: 320px;
+:root {
+    --width-error-pane: 320px;
+}
 
 %error-pane {
     flex-basis: var(--width-error-pane);

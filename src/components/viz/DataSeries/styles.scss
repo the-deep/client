@@ -1,6 +1,7 @@
-
---height-expanded-view-chart: 80vh;
---width-expanded-view: 90vw;
+:root {
+    --height-expanded-view-chart: 80vh;
+    --width-expanded-view: 90vw;
+}
 
 .data-series {
     display: flex;

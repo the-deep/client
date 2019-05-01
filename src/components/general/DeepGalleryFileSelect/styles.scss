@@ -1,5 +1,7 @@
 
---width-gallery-file-modal: 80vw;
+:root {
+    --width-gallery-file-modal: 80vw;
+}
 
 .add-gallery-file-modal {
     width: var(--width-gallery-file-modal);

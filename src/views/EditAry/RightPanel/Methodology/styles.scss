@@ -1,7 +1,8 @@
-
---width-action-buttons: 48px;
---height-center: 196px;
---height-bottom: 240px;
+:root {
+    --width-action-buttons: 48px;
+    --height-center: 196px;
+    --height-bottom: 240px;
+}
 
 .header {
     flex-shrink: 0;

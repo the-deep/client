@@ -1,8 +1,8 @@
-
---font-size-help-icon: var(--font-size-super-large);
---width-help-link: var(--font-size-help-icon) + var(--spacing-small-alt);
-
---width-link-container-max: 240px;
+:root {
+    --font-size-help-icon: var(--font-size-super-large);
+    --width-help-link: var(--font-size-help-icon) + var(--spacing-small-alt);
+    --width-link-container-max: 240px;
+}
 
 .help-link-container {
     display: flex;

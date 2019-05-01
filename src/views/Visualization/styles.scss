@@ -1,3 +1,6 @@
+:root {
+    --width-tabs: 240px;
+}
 
 .visualization {
     display: flex;
@@ -18,7 +21,6 @@
         display: flex;
         flex: 1;
 
-        --width-tabs: 240px;
 
         .tabs {
             flex-basis: var(--width-tabs);

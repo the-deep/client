@@ -1,3 +1,7 @@
+:root {
+    --radius-button-border: 2px;
+}
+
 @mixin shadow-medium() {
     box-shadow: 0 var(--spacing-small) var(--radius-blur-medium) var(--radius-spread-medium) var(--color-shadow-medium);
 }
@@ -57,6 +61,7 @@
     }
 }
 
+/*
 // Newton's method for calculation of square roots
 @function sqrt(var(--r)) {
     --x0: 1;
@@ -77,6 +82,7 @@
     --l: sqrt(.299 * var(--r) * var(--r) + .587 * var(--g) * var(--g) + .114 * var(--b) * var(--b));
     @return var(--l);
 }
+*/
 
 /*
 @function get-text-color(--background-color, var(--color-for-light): var(--color-text-on-light), var(--color-for-dark): var(--color-text-on-dark)) {
@@ -116,8 +122,6 @@
 %empty-text {
     color: var(--color-text-disabled);
 }
-
---radius-button-border: 2px;
 
 %button-like-link {
     border: 0;

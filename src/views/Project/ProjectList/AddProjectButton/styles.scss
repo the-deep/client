@@ -1,5 +1,6 @@
-
---width-add-project-modal: 360px;
+:root {
+    --width-add-project-modal: 360px;
+}
 
 .add-project-modal {
     width: var(--width-add-project-modal);

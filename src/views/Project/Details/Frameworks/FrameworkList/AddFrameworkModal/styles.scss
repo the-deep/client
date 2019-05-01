@@ -1,5 +1,6 @@
-
---width-add-framework-modal: 480px;
+:root {
+    --width-add-framework-modal: 480px;
+}
 
 .add-framework-modal {
     width: var(--width-add-framework-modal);

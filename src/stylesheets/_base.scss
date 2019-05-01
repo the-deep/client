@@ -2,12 +2,15 @@
 @import 'dimens';
 @import 'utils';
 
---font-family-sans-serif: 'Source Sans Pro', sans-serif;
---font-family-heading: 'Asap', sans-serif;
---font-family-monospace: 'Oxygen Mono', monospace;
---font-family-icons: 'Ionicons';
+:root {
+    --font-family-sans-serif: 'Source Sans Pro', sans-serif;
+    --font-family-heading: 'Asap', sans-serif;
+    --font-family-monospace: 'Oxygen Mono', monospace;
+    --font-family-icons: 'Ionicons';
+    --font-weight-heading: 500;
+    --height-nagbar: 32px;
+}
 
---font-weight-heading: 500;
 
 * {
     box-sizing: border-box;
@@ -55,8 +58,6 @@
         font-family: var(--font-family-sans-serif);
     }
 }
-
---height-nagbar: 32px;
 
 body {
     margin: 0;

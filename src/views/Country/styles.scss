@@ -1,6 +1,7 @@
-
---width-sidebar: 240px;
---page-margin: var(--spacing-small-alt);
+:root {
+    --width-sidebar: 240px;
+    --page-margin: var(--spacing-small-alt);
+}
 
 .loading {
     height: 100%;

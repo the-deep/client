@@ -1,5 +1,6 @@
-
---width-dimension-column: 96px;
+:root {
+    --width-dimension-column: 96px;
+}
 
 .dimension-td {
     width: var(--width-dimension-column);

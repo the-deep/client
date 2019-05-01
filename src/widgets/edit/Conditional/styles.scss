@@ -1,6 +1,7 @@
-
---height-modal-body: 720px;
---width-modal: 960px;
+:root {
+    --height-modal-body: 720px;
+    --width-modal: 960px;
+}
 
 .sortable-unit {
     border-top: var(--width-separator-thin) solid var(--color-separator);

@@ -1,7 +1,8 @@
-
---height-orgchart-modal: 86vh;
---width-orgchart-modal: 80%;
---width-left-container-min: 180px;
+:root {
+    --height-orgchart-modal: 86vh;
+    --width-orgchart-modal: 80%;
+    --width-left-container-min: 180px;
+}
 
 .organigram-input {
     display: flex;

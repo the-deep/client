@@ -1,6 +1,7 @@
-
---width-search-input: 240px;
---height-modal-body: 60vh;
+:root {
+    --width-search-input: 240px;
+    --height-modal-body: 60vh;
+}
 
 .modal-header {
     border-bottom: none;

@@ -1,17 +1,14 @@
-
---icon-color: #656565;
---icon-color-light: white;
-
---processed-color: #27a254;
---unprocessed-color: #d85959;
-
---status-indicator-dimension: 80px;
---mimetype-icon-size: 30px;
-
---radius-lead: 4px;
-
---width-icon-add-entry: 44px;
---width-icon-mark: 40px;
+:root {
+    --icon-color: #656565;
+    --icon-color-light: white;
+    --processed-color: #27a254;
+    --unprocessed-color: #d85959;
+    --status-indicator-dimension: 80px;
+    --mimetype-icon-size: 30px;
+    --radius-lead: 4px;
+    --width-icon-add-entry: 44px;
+    --width-icon-mark: 40px;
+}
 
 %actions {
     display: flex;

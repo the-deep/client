@@ -1,10 +1,9 @@
-
---height-header: 42px;
-
---width-left-min: 390px;
---width-right-min: 800px;
-
---color-border-bottom-new: rgba(0, 0, 0, .1);
+:root {
+    --height-header: 42px;
+    --width-left-min: 390px;
+    --width-right-min: 800px;
+    --color-border-bottom-new: rgba(0, 0, 0, .1);
+}
 
 .edit-assessment {
     .header {

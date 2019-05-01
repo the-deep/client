@@ -1,6 +1,8 @@
-
---width-left-min: 390px;
---width-right-min: 370px;
+:root {
+    --width-left-min: 390px;
+    --width-right-min: 370px;
+    --height-header: 48px;
+}
 
 .overview {
     display: flex;
@@ -18,8 +20,6 @@
         width: 70%;
         min-width: var(--width-left-min);
         height: 100%;
-
-        --height-header: 48px;
 
         .header {
             display: flex;

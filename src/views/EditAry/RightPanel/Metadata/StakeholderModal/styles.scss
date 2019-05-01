@@ -1,3 +1,7 @@
+:root {
+    --height-droppable-widget: 320px;
+}
+
 
 .modal {
     width: 80vw;
@@ -13,8 +17,6 @@
             flex-shrink: 0;
             width: 320px;
         }
-
-        --height-droppable-widget: 320px;
 
         .right {
             display: flex;

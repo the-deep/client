@@ -1,5 +1,7 @@
---height-grid-item-header: 24px;
---color-grid-item-border: var(--color-separator);
+:root {
+    --height-grid-item-header: 24px;
+    --color-grid-item-border: var(--color-separator);
+}
 
 %grid-item {
     padding: var(--spacing-extra-small);

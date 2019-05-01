@@ -1,6 +1,7 @@
-
---color-text-on-navbar: get-text-color(var(--color-navbar));
---color-text-on-primary: get-text-color(var(--color-primary));
+:root {
+    --color-text-on-navbar: get-text-color(var(--color-navbar));
+    --color-text-on-primary: get-text-color(var(--color-primary));
+}
 
 .nav-menu {
     display: flex;

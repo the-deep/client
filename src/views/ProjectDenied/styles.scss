@@ -1,8 +1,9 @@
-
---color-text-on-primary: get-text-color(var(--color-primary));
---width-message-max: 540px;
---width-deep-logo: 256px;
---height-deep-logo: 256px;
+:root {
+    --color-text-on-primary: get-text-color(var(--color-primary));
+    --width-message-max: 540px;
+    --width-deep-logo: 256px;
+    --height-deep-logo: 256px;
+}
 
 .project-denied {
     display: flex;

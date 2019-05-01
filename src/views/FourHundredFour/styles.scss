@@ -1,5 +1,6 @@
-
---color-text-on-primary: get-text-color(var(--color-primary));
+:root {
+    --color-text-on-primary: get-text-color(var(--color-primary));
+}
 
 .four-hundred-four {
     display: flex;

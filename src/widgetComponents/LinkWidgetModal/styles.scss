@@ -1,5 +1,6 @@
-
---height-edit-modal: 60vh;
+:root {
+    --height-edit-modal: 60vh;
+}
 
 .modal {
     width: var(--width-modal-large);
