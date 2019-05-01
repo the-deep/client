@@ -1,10 +1,9 @@
-@import '~base-scss/base';
 
 .container {
     display: flex;
     align-items: center;
 
     .input {
-        padding: 0 $spacing-small;
+        padding: 0 var(--spacing-small);
     }
 }

@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .header {
     display: flex;
@@ -8,13 +7,13 @@
 
     .action-buttons {
         .button {
-            margin-left: $spacing-small;
+            margin-left: var(--spacing-small);
         }
 
         .link {
             @extend %button-like-link;
-            margin-left: $spacing-small;
-            font-weight: $font-weight-bold;
+            margin-left: var(--spacing-small);
+            font-weight: var(--font-weight-bold);
         }
     }
 }

@@ -1,15 +1,14 @@
-@import '~base-scss/base';
 
 .entries-list {
     .entries-list-item {
         position: relative;
-        border-bottom: $width-separator-thin solid $color-separator;
-        border-left: $width-separator-thick solid transparent;
-        // padding: $spacing-small;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        border-left: var(--width-separator-thick) solid transparent;
+        // padding: var(--spacing-small);
 
         &.active {
-            border-left: $width-separator-thick solid $color-accent;
-            background-color: $color-background-selected;
+            border-left: var(--width-separator-thick) solid var(--color-accent);
+            background-color: var(--color-background-selected);
         }
 
         .add-entry-list-item {
@@ -19,7 +18,7 @@
             border: 0;
             background-color: transparent;
             cursor: pointer;
-            padding: $spacing-medium;
+            padding: var(--spacing-medium);
             width: 100%;
             text-align: left;
             font-family: inherit;
@@ -27,7 +26,7 @@
 
             .entry-excerpt {
                 flex-grow: 1;
-                padding-right: $spacing-large;
+                padding-right: var(--spacing-large);
                 text-align: justify;
             }
 
@@ -46,10 +45,10 @@
                 .complete,
                 .pristine {
                     flex-shrink: 0;
-                    margin-left: $spacing-small;
+                    margin-left: var(--spacing-small);
                     padding: 0;
-                    color: $color-text-label;
-                    font-size: $font-size-medium-alt;
+                    color: var(--color-text-label);
+                    font-size: var(--font-size-medium-alt);
                 }
 
                 .pending {
@@ -57,15 +56,15 @@
                 }
 
                 .warning {
-                    color: $color-warning;
+                    color: var(--color-warning);
                 }
 
                 .error {
-                    color: $color-danger;
+                    color: var(--color-danger);
                 }
 
                 .complete {
-                    color: $color-success;
+                    color: var(--color-success);
                 }
             }
 
@@ -79,8 +78,8 @@
         .remove-button {
             display: none;
             position: absolute;
-            top: $spacing-small;
-            right: $spacing-small;
+            top: var(--spacing-small);
+            right: var(--spacing-small);
         }
 
         &:hover {
@@ -99,7 +98,7 @@
 
         &:not(.marked-for-delete) {
             &:hover {
-                background-color: $color-background-hover;
+                background-color: var(--color-background-hover);
             }
         }
     }

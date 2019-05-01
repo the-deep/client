@@ -1,7 +1,6 @@
-@import '~base-scss/base';
 
 .link {
     margin: 1px;
-    padding: 0 $spacing-medium;
+    padding: 0 var(--spacing-medium);
     text-transform: none;
 }

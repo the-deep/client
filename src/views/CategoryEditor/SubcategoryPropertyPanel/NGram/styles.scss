@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .ngram {
     flex-grow: 1;
@@ -7,8 +6,8 @@
     .keyword {
         display: flex;
         align-items: center;
-        border-bottom: $width-separator-thin solid $color-separator;
-        padding: $spacing-small $spacing-medium;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-small) var(--spacing-medium);
 
         .title {
             flex-grow: 1;

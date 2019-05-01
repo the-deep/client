@@ -1,7 +1,6 @@
-@import '~base-scss/base';
 
 .container {
-    padding: $spacing-medium;
+    padding: var(--spacing-medium);
 
     .top {
         display: flex;
@@ -20,7 +19,7 @@
         justify-content: flex-end;
 
         >button {
-            margin-left: $spacing-small;
+            margin-left: var(--spacing-small);
         }
     }
 }

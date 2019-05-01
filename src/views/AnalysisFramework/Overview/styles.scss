@@ -1,6 +1,5 @@
-@import '~base-scss/base';
 
-$height-header: 48px;
+--height-header: 48px;
 
 .overview {
     display: flex;
@@ -12,18 +11,18 @@ $height-header: 48px;
     }
 
     .grid-layout-container {
-        background-color: $color-background-alt;
+        background-color: var(--color-background-alt);
         width: 70%;
 
         .header {
             display: flex;
             align-items: flex-end;
-            background-color: $color-foreground;
-            height: $height-header;
+            background-color: var(--color-foreground);
+            height: var(--height-header);
 
             .name-input {
                 flex-shrink: 0;
-                padding: 0 $spacing-medium;
+                padding: 0 var(--spacing-medium);
 
                 :global {
                     .input {
@@ -39,7 +38,7 @@ $height-header: 48px;
 
             .description-input {
                 flex-grow: 1;
-                padding: 0 $spacing-medium;
+                padding: 0 var(--spacing-medium);
 
                 :global {
                     .input {

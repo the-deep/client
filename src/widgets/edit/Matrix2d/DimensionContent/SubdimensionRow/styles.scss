@@ -1,14 +1,13 @@
-@import '~base-scss/base';
 
 .subdimension-row {
     display: flex;
     align-items: center;
-    padding: $spacing-small;
+    padding: var(--spacing-small);
     width: 100%;
 
     .input {
         flex-grow: 1;
-        margin-right: $spacing-small;
+        margin-right: var(--spacing-small);
     }
 
     .delete-button {

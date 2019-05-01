@@ -1,18 +1,17 @@
-@import '~base-scss/base';
 
-$width-search-list: 240px;
+--width-search-list: 240px;
 
 .users {
     display: flex;
     position: relative;
     flex-grow: 1;
-    background-color: $color-foreground;
+    background-color: var(--color-foreground);
     overflow: auto;
 
     .search-list {
-        flex-basis: $width-search-list;
+        flex-basis: var(--width-search-list);
         flex-shrink: 0;
-        border-right: $width-separator-thin solid $color-separator;
+        border-right: var(--width-separator-thin) solid var(--color-separator);
 
     }
 
@@ -29,12 +28,12 @@ $width-search-list: 240px;
 
             .empty-search,
             .empty-list {
-                color: $color-text-disabled;
+                color: var(--color-text-disabled);
 
                 .image {
                     opacity: 0.3;
-                    width: $width-icon-super-large;
-                    height: $width-icon-super-large;
+                    width: var(--width-icon-super-large);
+                    height: var(--width-icon-super-large);
                 }
             }
 
@@ -47,7 +46,7 @@ $width-search-list: 240px;
 
         .usergroup-list {
             @extend %list-base;
-            border-top: $width-separator-thin solid $color-separator;
+            border-top: var(--width-separator-thin) solid var(--color-separator);
             overflow: auto;
         }
     }

@@ -1,15 +1,14 @@
-@import '~base-scss/base';
 
 .test-results {
     display: flex;
     position: relative;
     flex-direction: column;
-    border-top: $width-separator-thin solid $color-separator;
+    border-top: var(--width-separator-thin) solid var(--color-separator);
 
     .header {
         flex-shrink: 0;
-        background-color: $color-background-header;
-        padding: $spacing-small;
+        background-color: var(--color-background-header);
+        padding: var(--spacing-small);
     }
 
     .table-container {
@@ -19,8 +18,8 @@
         .table {
             :global {
                 .row {
-                    border-bottom: $width-separator-thin solid $color-separator;
-                    background-color: $color-foreground;
+                    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                    background-color: var(--color-foreground);
                 }
             }
         }

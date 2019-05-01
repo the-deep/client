@@ -1,7 +1,6 @@
-@import '~base-scss/base';
 
-$height-expanded-view-chart: 80vh;
-$width-expanded-view: 90vw;
+--height-expanded-view-chart: 80vh;
+--width-expanded-view: 90vw;
 
 .data-series {
     display: flex;
@@ -16,12 +15,12 @@ $width-expanded-view: 90vw;
 
         .heading {
             flex-grow: 1;
-            padding: 0 $spacing-small;
+            padding: 0 var(--spacing-small);
             overflow: hidden;
             text-transform: none;
             text-overflow: ellipsis;
             white-space: nowrap;
-            color: $color-text;
+            color: var(--color-text);
         }
 
         .actions {
@@ -47,7 +46,7 @@ $width-expanded-view: 90vw;
 }
 
 .expanded-view {
-    width: $width-expanded-view;
+    width: var(--width-expanded-view);
 
     .action-buttons {
         display: flex;
@@ -58,18 +57,18 @@ $width-expanded-view: 90vw;
         align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
-        border-bottom: $width-separator-thin solid $color-separator;
-        padding: $spacing-medium $spacing-medium-alt;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-medium) var(--spacing-medium-alt);
 
         .heading {
             flex-grow: 1;
-            padding: 0 $spacing-small;
+            padding: 0 var(--spacing-small);
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            color: $color-text;
-            font-size: $font-size-large;
-            font-weight: $font-weight-medium;
+            color: var(--color-text);
+            font-size: var(--font-size-large);
+            font-weight: var(--font-weight-medium);
         }
 
         .action-buttons {
@@ -83,11 +82,11 @@ $width-expanded-view: 90vw;
 
         .health-stats {
             display: flex;
-            border-bottom: $width-separator-thin solid $color-separator;
-            padding: $spacing-small $spacing-medium;
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            padding: var(--spacing-small) var(--spacing-medium);
 
             .text {
-                margin-right: $spacing-medium;
+                margin-right: var(--spacing-medium);
             }
         }
 
@@ -95,8 +94,8 @@ $width-expanded-view: 90vw;
         .vertical-bar-chart,
         .word-cloud,
         .geo-visualization {
-            padding: $spacing-large;
-            height: $height-expanded-view-chart;
+            padding: var(--spacing-large);
+            height: var(--height-expanded-view-chart);
         }
 
         .geo-visualization {
@@ -107,35 +106,35 @@ $width-expanded-view: 90vw;
 
 .fixed-tabs {
     flex-shrink: 0;
-    margin-right: $spacing-small;
+    margin-right: var(--spacing-small);
     background-color: transparent;
 
     .tab {
         flex-shrink: 0;
-        margin: $spacing-extra-small 0;
+        margin: var(--spacing-extra-small) 0;
         outline: 0;
         border: 0;
         background-color: transparent;
         cursor: pointer;
-        padding: $spacing-extra-small $spacing-small;
-        color: $color-text-label;
+        padding: var(--spacing-extra-small) var(--spacing-small);
+        color: var(--color-text-label);
         font-family: inherit;
         font-size: inherit;
         user-select: none;
 
         .icon {
-            height: $font-size-extra-small;
+            height: var(--font-size-extra-small);
         }
 
         &.active-tab {
-            // background-color: fade-out($color-accent, .92);
+            // background-color: fade-out(var(--color-accent), .92);
             // TODO: use hint of accent color
-            background-color: $color-background-hover;
-            color: $color-accent;
+            background-color: var(--color-background-hover);
+            color: var(--color-accent);
         }
 
         &:hover {
-            background-color: $color-foreground-alt;
+            background-color: var(--color-foreground-alt);
         }
     }
 }

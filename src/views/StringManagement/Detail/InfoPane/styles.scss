@@ -1,12 +1,11 @@
-@import '~base-scss/base';
 
-$width-error-pane: 320px;
+--width-error-pane: 320px;
 
 %error-pane {
-    flex-basis: $width-error-pane;
+    flex-basis: var(--width-error-pane);
     flex-shrink: 0;
-    border-top: $width-separator-thin solid $color-separator;
-    border-left: $width-separator-thin solid $color-separator;
+    border-top: var(--width-separator-thin) solid var(--color-separator);
+    border-left: var(--width-separator-thin) solid var(--color-separator);
 }
 
 .no-problems {
@@ -22,41 +21,41 @@ $width-error-pane: 320px;
         .title {
             position: sticky;
             top: 0;
-            padding: $spacing-small;
-            font-weight: $font-weight-bold;
+            padding: var(--spacing-small);
+            font-weight: var(--font-weight-bold);
         }
 
         &.error {
             .title {
-                background-color: $color-danger;
-                color: $color-text-on-danger;
+                background-color: var(--color-danger);
+                color: var(--color-text-on-danger);
             }
         }
 
         &.warning {
             .title {
-                background-color: $color-warning;
-                color: $color-text-on-warning;
+                background-color: var(--color-warning);
+                color: var(--color-text-on-warning);
             }
         }
 
         &.info {
             .title {
-                background-color: $color-info;
-                color: $color-text-on-info;
+                background-color: var(--color-info);
+                color: var(--color-text-on-info);
             }
         }
     }
 
     .instances {
-        font-family: $font-family-monospace;
+        font-family: var(--font-family-monospace);
 
         .item {
-            border-bottom: $width-separator-thin solid $color-separator;
-            padding: $spacing-small;
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            padding: var(--spacing-small);
 
             .message {
-                color: $color-text-label;
+                color: var(--color-text-label);
             }
         }
     }

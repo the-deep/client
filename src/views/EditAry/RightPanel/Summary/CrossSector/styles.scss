@@ -1,5 +1,3 @@
-@import '~base-scss/base';
-@import '../tabular-input-base';
 
 .cross-sector {
     @extend %tabular-input-base;
@@ -8,6 +6,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: $color-text-disabled;
+        color: var(--color-text-disabled);
     }
 }

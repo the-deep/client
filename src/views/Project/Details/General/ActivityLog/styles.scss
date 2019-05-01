@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .activity-log {
     display: flex;
@@ -6,10 +5,10 @@
 
     .header {
         flex-shrink: 0;
-        border-bottom: $width-separator-thin solid $color-separator;
-        padding: $spacing-small $spacing-medium;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-small) var(--spacing-medium);
         text-transform: capitalize;
-        color: $color-primary;
+        color: var(--color-primary);
     }
 
     .log {

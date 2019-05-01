@@ -1,6 +1,5 @@
-@import '~base-scss/base';
 
-$width-filter-input: 160px;
+--width-filter-input: 160px;
 
 .entries-filters {
     display: flex;
@@ -9,17 +8,17 @@ $width-filter-input: 160px;
     flex-wrap: wrap;
 
     .entries-filter {
-        margin: $spacing-small;
-        width: $width-filter-input;
+        margin: var(--spacing-small);
+        width: var(--width-filter-input);
     }
 
     .geo-filter {
         display: flex;
         align-items: flex-end;
-        margin: $spacing-small;
+        margin: var(--spacing-small);
 
         .geo-input {
-            width: $width-filter-input;
+            width: var(--width-filter-input);
         }
 
         .rotating-input {
@@ -27,16 +26,16 @@ $width-filter-input: 160px;
 
             &:not(.disabled) {
                 .sub-region-selected {
-                    color: $color-accent;
+                    color: var(--color-accent);
                 }
 
                 .sub-region-not-selected {
-                    color: $color-text-label;
+                    color: var(--color-text-label);
                 }
             }
 
             >button {
-                padding: 4px $spacing-small;
+                padding: 4px var(--spacing-small);
                 line-height: 1;
             }
         }
@@ -44,6 +43,6 @@ $width-filter-input: 160px;
 
     .button {
         flex-shrink: 0;
-        margin: $spacing-small;
+        margin: var(--spacing-small);
     }
 }

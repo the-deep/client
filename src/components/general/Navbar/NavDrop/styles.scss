@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .user-dropdown {
     min-width: 196px;
@@ -10,7 +9,7 @@
     border: 0;
     background-color: transparent;
     cursor: pointer;
-    padding: $spacing-medium-alt $spacing-large;
+    padding: var(--spacing-medium-alt) var(--spacing-large);
     width: 100%;
     text-align: left;
     text-transform: uppercase;
@@ -19,17 +18,17 @@
 
     .icon {
         display: inline-block;
-        flex-basis: $width-icon-extra-large;
+        flex-basis: var(--width-icon-extra-large);
         flex-shrink: 0;
     }
 
     .label {
         flex-basis: calc(100% - var(--width-icon-extra-large));
-        color: $color-text;
+        color: var(--color-text);
     }
 
     &:hover {
-        background-color: $color-background-hover;
+        background-color: var(--color-background-hover);
     }
 
     &.disabled {
@@ -38,8 +37,8 @@
 }
 
 .display-picture {
-    margin: 0 $spacing-extra-small;
-    width: $width-navbar-avatar;
-    height: $height-navbar-avatar;
+    margin: 0 var(--spacing-extra-small);
+    width: var(--width-navbar-avatar);
+    height: var(--height-navbar-avatar);
 }
 

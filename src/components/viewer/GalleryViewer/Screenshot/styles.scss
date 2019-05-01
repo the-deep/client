@@ -1,9 +1,8 @@
-@import '~base-scss/base';
 
 .link {
-    padding: 0 $spacing-extra-small-alt;
+    padding: 0 var(--spacing-extra-small-alt);
     text-transform: none;
-    color: $color-accent;
+    color: var(--color-accent);
 }
 
 .screenshot {

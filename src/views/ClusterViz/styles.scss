@@ -1,7 +1,6 @@
-@import '~base-scss/base';
-$table-width: 400px;
-$width-cluster-details: 420px;
-$height-cluster-header: 36px;
+--table-width: 400px;
+--width-cluster-details: 420px;
+--height-cluster-header: 36px;
 
 .cluster-visualization {
     >.header {
@@ -14,7 +13,7 @@ $height-cluster-header: 36px;
 
         .heading {
             flex-grow: 1;
-            padding: 0 $spacing-medium;
+            padding: 0 var(--spacing-medium);
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -30,17 +29,17 @@ $height-cluster-header: 36px;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            background-color: $color-foreground;
+            background-color: var(--color-foreground);
 
             .message {
                 display: inline-block;
                 flex-shrink: 0;
-                padding: $spacing-extra-large $spacing-large;
+                padding: var(--spacing-extra-large) var(--spacing-large);
                 text-align: center;
 
                 .link {
                     @extend %accent-color-link;
-                    margin: 0 $spacing-extra-small-alt;
+                    margin: 0 var(--spacing-extra-small-alt);
                     padding: 0;
                     text-transform: lowercase;
                 }
@@ -60,68 +59,68 @@ $height-cluster-header: 36px;
 
             .forced-directed-graph {
                 flex-grow: 1;
-                background-color: $color-foreground;
+                background-color: var(--color-foreground);
                 height: auto;
                 overflow: auto;
             }
 
             .cluster-details {
-                flex-basis: $width-cluster-details;
+                flex-basis: var(--width-cluster-details);
                 flex-shrink: 0;
-                border-left: $width-separator-thin solid $color-separator;
+                border-left: var(--width-separator-thin) solid var(--color-separator);
                 overflow-y: auto;
 
                 .cluster-detail {
-                    transition: $duration-transition-medium border-color ease-in-out;
-                    border-bottom: $width-separator-thin solid $color-separator;
-                    background-color: $color-foreground;
+                    transition: var(--duration-transition-medium) border-color ease-in-out;
+                    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                    background-color: var(--color-foreground);
 
                     .header {
                         display: flex;
                         position: sticky;
                         top: 0;
-                        border-bottom: $width-separator-thin solid $color-separator;
-                        background-color: $color-background-header;
-                        padding: $spacing-small-alt 0;
-                        height: $height-cluster-header;
+                        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                        background-color: var(--color-background-header);
+                        padding: var(--spacing-small-alt) 0;
+                        height: var(--height-cluster-header);
 
                         >.heading {
                             flex-grow: 1;
-                            padding: 0 $spacing-small;
-                            color: $color-primary;
-                            font-weight: $font-weight-medium;
+                            padding: 0 var(--spacing-small);
+                            color: var(--color-primary);
+                            font-weight: var(--font-weight-medium);
                         }
 
                         .leads-count {
                             display: flex;
                             flex-shrink: 0;
-                            padding: 0 $spacing-small;
+                            padding: 0 var(--spacing-small);
 
                             .number {
                                 flex-shrink: 0;
-                                padding-right: $spacing-small;
-                                font-family: $font-family-monospace;
+                                padding-right: var(--spacing-small);
+                                font-family: var(--font-family-monospace);
                             }
                         }
                     }
 
                     .keyword-list {
                         >.heading {
-                            padding: $spacing-small;
-                            color: $color-accent;
-                            font-weight: $font-weight-bold;
+                            padding: var(--spacing-small);
+                            color: var(--color-accent);
+                            font-weight: var(--font-weight-bold);
                         }
 
                         .keywords {
                             display: flex;
                             flex-wrap: wrap;
-                            padding-bottom: $spacing-medium;
+                            padding-bottom: var(--spacing-medium);
 
                             .keyword {
-                                transition: $duration-transition-medium border-color, $duration-transition-medium color;
-                                border: $width-separator-thin solid transparent;
-                                padding: $spacing-extra-small $spacing-small;
-                                font-family: $font-family-monospace;
+                                transition: var(--duration-transition-medium) border-color, var(--duration-transition-medium) color;
+                                border: var(--width-separator-thin) solid transparent;
+                                padding: var(--spacing-extra-small) var(--spacing-small);
+                                font-family: var(--font-family-monospace);
 
                                 &:not(:last-child):after {
                                     content: ',';
@@ -133,24 +132,24 @@ $height-cluster-header: 36px;
                     .leads-table {
                         :global {
                             .header {
-                                top: $height-cluster-header;
-                                background-color: $color-foreground;
+                                top: var(--height-cluster-header);
+                                background-color: var(--color-foreground);
                             }
                             .body {
                                 .row {
-                                    border-bottom: $width-separator-thin solid $color-separator;
-                                    background-color: $color-foreground-alt;
+                                    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                                    background-color: var(--color-foreground-alt);
                                     cursor: pointer;
 
                                     &:nth-child(odd) {
-                                        background-color: $color-foreground-alt;
+                                        background-color: var(--color-foreground-alt);
                                     }
 
                                     &.highlighted {
-                                        background-color: $color-accent;
+                                        background-color: var(--color-accent);
 
                                         .link {
-                                            color: get-text-color($color-accent);
+                                            color: get-text-color(var(--color-accent));
                                         }
                                     }
 
@@ -166,18 +165,18 @@ $height-cluster-header: 36px;
 
                     .lead-list {
                         >.heading {
-                            padding: $spacing-small;
-                            color: $color-accent;
-                            font-weight: $font-weight-bold;
+                            padding: var(--spacing-small);
+                            color: var(--color-accent);
+                            font-weight: var(--font-weight-bold);
                         }
 
                         .leads-empty {
-                            padding: 0 $spacing-small;
+                            padding: 0 var(--spacing-small);
                         }
                     }
 
                     &.active-cluster {
-                        border-color: $color-accent;
+                        border-color: var(--color-accent);
                     }
                 }
             }

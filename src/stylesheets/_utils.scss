@@ -1,50 +1,50 @@
 @mixin shadow-medium() {
-    box-shadow: 0 $spacing-small $radius-blur-medium $radius-spread-medium $color-shadow-medium;
+    box-shadow: 0 var(--spacing-small) var(--radius-blur-medium) var(--radius-spread-medium) var(--color-shadow-medium);
 }
 
 @mixin shadow-small() {
-    box-shadow: 0 $spacing-extra-small $radius-blur-small $radius-spread-small $color-shadow-medium;
+    box-shadow: 0 var(--spacing-extra-small) var(--radius-blur-small) var(--radius-spread-small) var(--color-shadow-medium);
 }
 
 @mixin shadow-small-upward() {
-    box-shadow: 0 (-$spacing-extra-small) $radius-blur-small $radius-spread-small $color-shadow-medium;
+    box-shadow: 0 (-var(--spacing-extra-small)) var(--radius-blur-small) var(--radius-spread-small) var(--color-shadow-medium);
 }
 
 @mixin shadow-large() {
-    box-shadow: 0 $spacing-small-alt $radius-blur-medium $radius-spread-medium $color-shadow-medium;
+    box-shadow: 0 var(--spacing-small-alt) var(--radius-blur-medium) var(--radius-spread-medium) var(--color-shadow-medium);
 }
 
 @mixin shadow-large-upward() {
-    box-shadow: 0 (-$spacing-small-alt) $radius-blur-medium $radius-spread-medium $color-shadow-medium;
+    box-shadow: 0 (-var(--spacing-small-alt)) var(--radius-blur-medium) var(--radius-spread-medium) var(--color-shadow-medium);
 }
 
 @mixin shadow-large-dark() {
-    box-shadow: 0 $spacing-small-alt $radius-blur-medium $radius-spread-medium $color-shadow-dark;
+    box-shadow: 0 var(--spacing-small-alt) var(--radius-blur-medium) var(--radius-spread-medium) var(--color-shadow-dark);
 }
 
 @mixin shadow-button() {
-    box-shadow: 0 1px 3px -1px $color-shadow-medium;
+    box-shadow: 0 1px 3px -1px var(--color-shadow-medium);
 }
 
 @mixin shadow-button-active() {
-    box-shadow: 0 1px 2px -1px $color-shadow-medium;
+    box-shadow: 0 1px 2px -1px var(--color-shadow-medium);
 }
 
 @mixin transition-slow() {
-    transition: $duration-transition-slow all ease-in-out;
+    transition: var(--duration-transition-slow) all ease-in-out;
 }
 
 @mixin transition-medium() {
-    transition: $duration-transition-medium all ease-in-out;
+    transition: var(--duration-transition-medium) all ease-in-out;
 }
 
 @mixin transition-fast() {
-    transition: $duration-transition-fast all ease-in-out;
+    transition: var(--duration-transition-fast) all ease-in-out;
 }
 
-@mixin outline-button($background-color) {
-    outline: $width-separator-thin dotted get-text-color($background-color);
-    outline-offset: -$spacing-extra-small-alt;
+@mixin outline-button(var(--background-color)) {
+    outline: var(--width-separator-thin) dotted get-text-color(var(--background-color));
+    outline-offset: -var(--spacing-extra-small-alt);
 }
 
 @keyframes spin {
@@ -58,76 +58,76 @@
 }
 
 // Newton's method for calculation of square roots
-@function sqrt($r) {
-    $x0: 1;
-    $x1: $x0;
+@function sqrt(var(--r)) {
+    --x0: 1;
+    --x1: var(--x0);
 
-    @for $i from 1 through 10 {
-        $x1: $x0 - ($x0 * $x0 - abs($r)) / (2 * $x0);
-        $x0: $x1;
+    @for var(--i) from 1 through 10 {
+        --x1: var(--x0) - (var(--x0) * var(--x0) - abs(var(--r))) / (2 * var(--x0));
+        --x0: var(--x1);
     }
 
-    @return $x1;
+    @return var(--x1);
 }
 
-@function get-luminance($color) {
-    $r: red($color);
-    $g: green($color);
-    $b: blue($color);
-    $l: sqrt(.299 * $r * $r + .587 * $g * $g + .114 * $b * $b);
-    @return $l;
+@function get-luminance(var(--color)) {
+    --r: red(var(--color));
+    --g: green(var(--color));
+    --b: blue(var(--color));
+    --l: sqrt(.299 * var(--r) * var(--r) + .587 * var(--g) * var(--g) + .114 * var(--b) * var(--b));
+    @return var(--l);
 }
 
 /*
-@function get-text-color($background-color, $color-for-light: $color-text-on-light, $color-for-dark: $color-text-on-dark) {
-    $l: get-luminance($background-color);
-    @if ($l > 176) {
-        @return $color-for-light;
+@function get-text-color(--background-color, var(--color-for-light): var(--color-text-on-light), var(--color-for-dark): var(--color-text-on-dark)) {
+    --l: get-luminance(var(--background-color));
+    @if (var(--l) > 176) {
+        @return var(--color-for-light);
     }
 
-    @return $color-for-dark;
+    @return var(--color-for-dark);
 }
 */
 
-@function get-text-color($background-color, $color: $color-text) {
-    @return $color;
+@function get-text-color(--background-color, var(--color): var(--color-text)) {
+    @return var(--color);
 }
 
-@mixin background-color($background-color) {
-    background-color: $background-color;
-    color: get-text-color($background-color);
+@mixin background-color(var(--background-color)) {
+    background-color: var(--background-color);
+    color: get-text-color(var(--background-color));
 }
 
-@mixin background-color-with-label-text($background-color) {
-    background-color: $background-color;
-    color: get-text-color($background-color, $color-text-label);
+@mixin background-color-with-label-text(var(--background-color)) {
+    background-color: var(--background-color);
+    color: get-text-color(var(--background-color), var(--color-text-label));
 }
 
-@mixin background-color-with-disabled-text($background-color) {
-    background-color: $background-color;
-    color: get-text-color($background-color, $color-text-disabled);
+@mixin background-color-with-disabled-text(var(--background-color)) {
+    background-color: var(--background-color);
+    color: get-text-color(var(--background-color), var(--color-text-disabled));
 }
 
-@function get-hover-color($color) {
-    @return $color;
-    // @return darken($color, 10%);
+@function get-hover-color(var(--color)) {
+    @return var(--color);
+    // @return darken(var(--color), 10%);
 }
 
 %empty-text {
-    color: $color-text-disabled;
+    color: var(--color-text-disabled);
 }
 
-$radius-button-border: 2px;
+--radius-button-border: 2px;
 
 %button-like-link {
     border: 0;
-    border-radius: $radius-button-border;
-    background-color: $color-foreground;
-    padding: $spacing-small $spacing-small-alt;
+    border-radius: var(--radius-button-border);
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-small-alt);
     text-transform: capitalize;
-    color: $color-text-on-foreground;
+    color: var(--color-text-on-foreground);
     font-family: inherit;
-    font-size: $font-size-small;
+    font-size: var(--font-size-small);
     @include shadow-button;
 
     &:active {
@@ -135,18 +135,18 @@ $radius-button-border: 2px;
     }
 }
 
-@mixin button-like-link($background-color) {
+@mixin button-like-link(var(--background-color)) {
     // @include shadow-button;
     display: inline-block;
-    border: $width-separator-thin solid $background-color;
-    border-radius: $radius-button-border;
-    // @include background-color($background-color);
-    background-color: $color-foreground;
-    padding: $spacing-small $spacing-small-alt;
+    border: var(--width-separator-thin) solid var(--background-color);
+    border-radius: var(--radius-button-border);
+    // @include background-color(var(--background-color));
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-small-alt);
     text-transform: capitalize;
-    color: $background-color;
-    font-size: $font-size-small;
-    // font-weight: $font-weight-bold;
+    color: var(--background-color);
+    font-size: var(--font-size-small);
+    // font-weight: var(--font-weight-bold);
 
     &:active {
         @include shadow-button-active;
@@ -154,13 +154,13 @@ $radius-button-border: 2px;
     }
 
     &:hover {
-        background-color: $color-background-hover;
-        // color: $background-color;
-        // background-color: get-hover-color($background-color);
+        background-color: var(--color-background-hover);
+        // color: var(--background-color);
+        // background-color: get-hover-color(var(--background-color));
     }
 
     &:focus {
-        @include outline-button($background-color);
+        @include outline-button(var(--background-color));
     }
 }
 
@@ -168,32 +168,32 @@ $radius-button-border: 2px;
     border: 0;
     background-color: transparent;
     cursor: pointer;
-    padding: $spacing-small $spacing-small-alt;
+    padding: var(--spacing-small) var(--spacing-small-alt);
     text-transform: uppercase;
-    color: $color-text;
+    color: var(--color-text);
     font-family: inherit;
-    font-size: $font-size-small;
-    font-weight: $font-weight-bold;
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-bold);
 
     &:active {
         transform: translateY(1px);
     }
 }
 
-@mixin transparent-button-like-link($color) {
+@mixin transparent-button-like-link(var(--color)) {
     @extend %transparent-button-like-link;
     display: inline-block;
-    color: $color;
+    color: var(--color);
 }
 
 %background-alternating-row {
-    background-color: $color-background-row;
-    // color: $color-text-on-background-row;
-    color: $color-text;
+    background-color: var(--color-background-row);
+    // color: var(--color-text-on-background-row);
+    color: var(--color-text);
 
     &:nth-child(odd) {
-        background-color: $color-background-row-alt;
-        // color: $color-text-on-background-row-alt;
-        color: $color-text;
+        background-color: var(--color-background-row-alt);
+        // color: var(--color-text-on-background-row-alt);
+        color: var(--color-text);
     }
 }

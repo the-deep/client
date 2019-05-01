@@ -1,8 +1,7 @@
-@import '~base-scss/base';
 
 .properties {
     display: table;
-    margin-bottom: $spacing-small;
+    margin-bottom: var(--spacing-small);
     width: 100%;
 
     .property {
@@ -11,16 +10,16 @@
 
         .label {
             display: table-cell;
-            padding: $spacing-small;
+            padding: var(--spacing-small);
             text-transform: uppercase;
             white-space: nowrap;
-            color: $color-text-label;
-            font-size: $font-size-small;
+            color: var(--color-text-label);
+            font-size: var(--font-size-small);
         }
 
         .value {
             display: table-cell;
-            padding: $spacing-small;
+            padding: var(--spacing-small);
             width: 100%;
         }
     }

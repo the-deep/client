@@ -1,16 +1,15 @@
-@import '~base-scss/base';
 
 .input-row {
     display: flex;
     align-items: center;
-    padding: $spacing-small;
+    padding: var(--spacing-small);
     width: 100%;
 
     .input {
         flex-grow: 1;
 
         &:first-child {
-            margin-right: $spacing-small;
+            margin-right: var(--spacing-small);
         }
     }
 

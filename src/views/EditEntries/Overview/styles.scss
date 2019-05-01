@@ -1,37 +1,36 @@
-@import '~base-scss/base';
 
-$width-left-min: 390px;
-$width-right-min: 370px;
+--width-left-min: 390px;
+--width-right-min: 370px;
 
 .overview {
     display: flex;
     height: 100%;
 
     .left {
-        border-right: $width-separator-thin solid $color-separator;
-        background-color: $color-foreground-alt;
+        border-right: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-foreground-alt);
         width: 30%;
-        min-width: $width-left-min;
+        min-width: var(--width-left-min);
         height: 100%;
     }
 
     .right {
         width: 70%;
-        min-width: $width-left-min;
+        min-width: var(--width-left-min);
         height: 100%;
 
-        $height-header: 48px;
+        --height-header: 48px;
 
         .header {
             display: flex;
             align-items: center;
-            border-bottom: $width-separator-medium solid $color-separator;
-            background-color: $color-foreground;
-            height: $height-header;
+            border-bottom: var(--width-separator-medium) solid var(--color-separator);
+            background-color: var(--color-foreground);
+            height: var(--height-header);
 
             .entry-select-input {
                 flex-grow: 1;
-                padding: 0 $spacing-medium;
+                padding: 0 var(--spacing-medium);
             }
 
             .action-buttons {
@@ -39,11 +38,11 @@ $width-right-min: 370px;
                 flex-shrink: 0;
 
                 button {
-                    margin: 0 $spacing-small;
+                    margin: 0 var(--spacing-small);
                 }
 
                 .add-new-entry-button {
-                    margin-right: $spacing-extra-small;
+                    margin-right: var(--spacing-extra-small);
                 }
             }
         }

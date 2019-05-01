@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .word-category-detail {
     display: flex;
@@ -8,12 +7,12 @@
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        border-bottom: $width-separator-thin solid $color-separator;
-        background-color: $color-background-header;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-background-header);
 
         .heading {
             flex-grow: 1;
-            padding: $spacing-small $spacing-medium;
+            padding: var(--spacing-small) var(--spacing-medium);
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -21,16 +20,16 @@
 
         .action-buttons {
             flex-shrink: 0;
-            padding: $spacing-small $spacing-medium;
+            padding: var(--spacing-small) var(--spacing-medium);
 
             button {
-                margin-left: $spacing-small;
+                margin-left: var(--spacing-small);
             }
 
 
             .edit-category-editor-link {
-                @include button-like-link($color-warning);
-                margin-left: $spacing-small;
+                @include button-like-link(var(--color-warning));
+                margin-left: var(--spacing-small);
             }
         }
     }

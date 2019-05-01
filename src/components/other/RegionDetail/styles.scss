@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .region-detail-form {
     display: flex;
@@ -11,8 +10,8 @@
         align-items: center;
         flex-shrink: 0;
         flex-wrap: wrap;
-        border-bottom: $width-separator-thin solid $color-separator;
-        padding: $spacing-small;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-small);
 
         .heading {
             flex-grow: 1;
@@ -21,7 +20,7 @@
 
     .input-container {
         flex-grow: 1;
-        padding: $spacing-small;
+        padding: var(--spacing-small);
         overflow-y: auto;
 
         .text-input {

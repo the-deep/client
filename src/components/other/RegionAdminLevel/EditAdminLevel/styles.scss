@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .form-container {
     .edit-admin-level-form {
@@ -13,18 +12,18 @@
             }
 
             .select-input {
-                margin-bottom: $spacing-small;
+                margin-bottom: var(--spacing-small);
             }
 
             .current-upload {
                 display: flex;
                 align-items: center;
-                margin-bottom: $spacing-medium;
+                margin-bottom: var(--spacing-medium);
                 text-transform: uppercase;
-                color: $color-text-label;
+                color: var(--color-text-label);
 
                 >p:after {
-                    margin-right: $spacing-small;
+                    margin-right: var(--spacing-small);
                     content: ':';
                 }
             }
@@ -32,9 +31,9 @@
             .no-file-upload {
                 display: flex;
                 align-items: center;
-                margin-bottom: $spacing-medium;
+                margin-bottom: var(--spacing-medium);
                 text-transform: uppercase;
-                color: $color-text-label;
+                color: var(--color-text-label);
             }
         }
     }
@@ -49,7 +48,7 @@
             align-items: center;
 
             >* {
-                margin-right: $spacing-medium-alt;
+                margin-right: var(--spacing-medium-alt);
             }
 
             .geo-file {
@@ -57,16 +56,16 @@
 
                 :global {
                     label {
-                        @include button-like-link($color-accent);
+                        @include button-like-link(var(--color-accent));
                     }
                 }
 
                 .load {
-                    padding: $spacing-small;
+                    padding: var(--spacing-small);
                 }
 
                 i {
-                    margin-right: $spacing-small;
+                    margin-right: var(--spacing-small);
                 }
 
                 >p {
@@ -74,8 +73,8 @@
                 }
 
                 a {
-                    margin: 0 $spacing-small;
-                    color: $color-primary;
+                    margin: 0 var(--spacing-small);
+                    color: var(--color-primary);
                 }
             }
         }
@@ -85,7 +84,7 @@
             align-items: center;
 
             >* {
-                margin-left: $spacing-medium-alt;
+                margin-left: var(--spacing-medium-alt);
             }
         }
     }

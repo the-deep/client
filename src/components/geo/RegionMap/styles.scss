@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .region-map {
     display: flex;
@@ -19,7 +18,7 @@
             display: flex;
             flex-shrink: 0;
             justify-content: center;
-            border-top: $width-separator-thin solid $color-separator;
+            border-top: var(--width-separator-thin) solid var(--color-separator);
         }
 
         .refresh-button {

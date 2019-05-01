@@ -1,32 +1,31 @@
-@import '~base-scss/base';
 
-$color-text-on-navbar: get-text-color($color-navbar);
-$color-text-on-primary: get-text-color($color-primary);
+--color-text-on-navbar: get-text-color(var(--color-navbar));
+--color-text-on-primary: get-text-color(var(--color-primary));
 
 .navbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 $spacing-extra-small $spacing-small $radius-spread-medium $color-shadow-medium;
-    background-color: $color-navbar;
-    padding: 0 $spacing-medium-alt;
-    color: $color-text-on-navbar;
+    box-shadow: 0 var(--spacing-extra-small) var(--spacing-small) var(--radius-spread-medium) var(--color-shadow-medium);
+    background-color: var(--color-navbar);
+    padding: 0 var(--spacing-medium-alt);
+    color: var(--color-text-on-navbar);
 
     .brand {
         display: flex;
         position: relative;
         align-items: center;
         align-self: stretch;
-        color: $color-text-on-navbar;
-        font-size: $font-size-super-large;
+        color: var(--color-text-on-navbar);
+        font-size: var(--font-size-super-large);
 
         .icon-wrapper {
-            margin-right: $spacing-small;
+            margin-right: var(--spacing-small);
 
             .icon {
-                width: $width-navbar-icon;
-                height: $height-navbar-icon;
-                color: $color-text-on-navbar;
+                width: var(--width-navbar-icon);
+                height: var(--height-navbar-icon);
+                color: var(--color-text-on-navbar);
             }
         }
 
@@ -34,20 +33,20 @@ $color-text-on-primary: get-text-color($color-primary);
             display: flex;
             align-items: center;
             text-transform: uppercase;
-            font-size: $font-size-extra-large;
+            font-size: var(--font-size-extra-large);
         }
 
         .beta-label {
             position: absolute;
             top: 50%;
-            right: -$spacing-extra-small;
+            right: -var(--spacing-extra-small);
             transform: translate(100%, -100%);
             opacity: .7;
-            border-radius: $font-size-extra-small;
-            background-color: $color-foreground;
-            padding: 0 $spacing-extra-small-alt;
-            color: $color-primary;
-            font-size: $font-size-extra-small;
+            border-radius: var(--font-size-extra-small);
+            background-color: var(--color-foreground);
+            padding: 0 var(--spacing-extra-small-alt);
+            color: var(--color-primary);
+            font-size: var(--font-size-extra-small);
         }
     }
 
@@ -59,13 +58,13 @@ $color-text-on-primary: get-text-color($color-primary);
         :global {
             .input-wrapper {
                 .input {
-                    // border-bottom-color: get-text-color($color-navbar, $color-separator-on-light, $color-separator-on-dark);
-                    border-bottom-color: $color-separator;
-                    color: $color-text-on-navbar;
+                    // border-bottom-color: get-text-color(var(--color-navbar), var(--color-separator-on-light), var(--color-separator-on-dark));
+                    border-bottom-color: var(--color-separator);
+                    color: var(--color-text-on-navbar);
 
                     &::placeholder {
-                        color: $color-text-placeholder;
-                        // color: get-text-color($color-navbar, $color-text-placeholder-on-light, $color-text-placeholder-on-dark);
+                        color: var(--color-text-placeholder);
+                        // color: get-text-color(var(--color-navbar), var(--color-text-placeholder-on-light), var(--color-text-placeholder-on-dark));
                     }
                 }
             }
@@ -77,12 +76,12 @@ $color-text-on-primary: get-text-color($color-primary);
         flex-grow: 1;
 
         >button {
-            padding: $spacing-small;
+            padding: var(--spacing-small);
         }
     }
 
     .help-link {
-        margin-right: $spacing-medium;
+        margin-right: var(--spacing-medium);
     }
 
     .community-dropdown {
@@ -98,6 +97,6 @@ $color-text-on-primary: get-text-color($color-primary);
     .user-menu {
         align-self: stretch;
         flex-shrink: 0;
-        margin-left: $spacing-medium;
+        margin-left: var(--spacing-medium);
     }
 }

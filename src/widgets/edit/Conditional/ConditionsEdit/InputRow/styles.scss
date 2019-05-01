@@ -1,21 +1,20 @@
-@import '~base-scss/base';
 
 .input-container {
     display: flex;
     flex-direction: column;
-    // border-left: $width-separator-thin solid $color-separator;
-    background-color: $color-foreground;
-    padding: $spacing-small $spacing-extra-small;
+    // border-left: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-extra-small);
     width: 100%;
 
     .header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding-bottom: $spacing-small;
+        padding-bottom: var(--spacing-small);
 
         .title {
-            font-weight: $font-weight-bold;
+            font-weight: var(--font-weight-bold);
         }
 
         .right-container {
@@ -24,12 +23,12 @@
 
             .delete-button {
                 flex-shrink: 0;
-                font-size: $font-size-large;
+                font-size: var(--font-size-large);
             }
 
             .invert-checkbox {
                 flex-shrink: 0;
-                margin-right: $spacing-small;
+                margin-right: var(--spacing-small);
                 width: auto;
                 text-transform: uppercase;
             }
@@ -42,13 +41,13 @@
         flex-wrap: wrap;
 
         .condition-type-select {
-            margin-right: $spacing-small;
-            padding-bottom: $spacing-extra-small;
+            margin-right: var(--spacing-small);
+            padding-bottom: var(--spacing-extra-small);
         }
 
         .condition-attributes {
             display: flex;
-            padding-bottom: $spacing-extra-small;
+            padding-bottom: var(--spacing-extra-small);
         }
     }
 }

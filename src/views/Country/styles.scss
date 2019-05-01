@@ -1,7 +1,6 @@
-@import '~base-scss/base';
 
-$width-sidebar: 240px;
-$page-margin: $spacing-small-alt;
+--width-sidebar: 240px;
+--page-margin: var(--spacing-small-alt);
 
 .loading {
     height: 100%;
@@ -19,10 +18,10 @@ $page-margin: $spacing-small-alt;
             flex-shrink: 0;
             flex-wrap: wrap;
             justify-content: space-between;
-            border-bottom: $width-separator-thin solid $color-separator;
-            background-color: $color-background-header;
-            padding: $spacing-small;
-            color: $color-text-on-background-header;
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-background-header);
+            padding: var(--spacing-small);
+            color: var(--color-text-on-background-header);
 
             .heading {
                 flex-grow: 1;
@@ -45,7 +44,7 @@ $page-margin: $spacing-small-alt;
             }
 
             :hover {
-                background-color: $color-background-hover;
+                background-color: var(--color-background-hover);
             }
         }
     }
@@ -56,8 +55,8 @@ $page-margin: $spacing-small-alt;
 
         .country-detail {
             flex-grow: 1;
-            background-color: $color-background-alt;
-            color: $color-text-on-background-alt;
+            background-color: var(--color-background-alt);
+            color: var(--color-text-on-background-alt);
         }
 
         .country-detail-alt {
@@ -66,10 +65,10 @@ $page-margin: $spacing-small-alt;
             flex-direction: column;
             flex-grow: 1;
             justify-content: center;
-            background-color: $color-foreground;
-            padding: $spacing-medium-alt;
-            color: $color-text-on-foreground;
-            font-size: $font-size-extra-large;
+            background-color: var(--color-foreground);
+            padding: var(--spacing-medium-alt);
+            color: var(--color-text-on-foreground);
+            font-size: var(--font-size-extra-large);
         }
     }
 }

@@ -1,6 +1,5 @@
-@import '~base-scss/base';
 
-$width-reset-form: 420px;
+--width-reset-form: 420px;
 
 .reset-password {
     @extend %main-content;
@@ -9,21 +8,21 @@ $width-reset-form: 420px;
     justify-content: center;
 
     .form-container {
-        width: $width-reset-form;
+        width: var(--width-reset-form);
 
         .info {
             display: flex;
             align-items: center;
             flex-grow: 1;
             justify-content: center;
-            background-color: $color-foreground;
-            padding: $spacing-large;
+            background-color: var(--color-foreground);
+            padding: var(--spacing-large);
         }
 
         .reset-password-form {
             position: relative;
-            background-color: $color-foreground;
-            padding: $spacing-small $spacing-large $spacing-large;
+            background-color: var(--color-foreground);
+            padding: var(--spacing-small) var(--spacing-large) var(--spacing-large);
 
             .action-buttons {
                 display: flex;
@@ -35,12 +34,12 @@ $width-reset-form: 420px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-top: $spacing-extra-small;
-            background-color: $color-foreground;
-            padding: $spacing-large;
+            margin-top: var(--spacing-extra-small);
+            background-color: var(--color-foreground);
+            padding: var(--spacing-large);
 
             .go-back-link {
-                color: $color-accent;
+                color: var(--color-accent);
             }
         }
     }

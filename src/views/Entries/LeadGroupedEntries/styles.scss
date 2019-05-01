@@ -1,15 +1,14 @@
-@import '~base-scss/base';
 
 .lead-grouped-entries {
-    // border-bottom: $width-separator-thin solid $color-separator;
+    // border-bottom: var(--width-separator-thin) solid var(--color-separator);
 
     .header {
         display: flex;
         align-items: center;
         z-index: 1;
-        box-shadow: 0 0 $radius-blur-medium $radius-spread-medium $color-shadow-medium;
-        background-color: $color-background-header;
-        color: $color-text-on-background-header;
+        box-shadow: 0 0 var(--radius-blur-medium) var(--radius-spread-medium) var(--color-shadow-medium);
+        background-color: var(--color-background-header);
+        color: var(--color-text-on-background-header);
 
         .heading {
             display: flex;
@@ -18,29 +17,29 @@
             overflow: hidden;
 
             .title {
-                padding: $spacing-small-alt $spacing-small-alt $spacing-small-alt $spacing-medium;
+                padding: var(--spacing-small-alt) var(--spacing-small-alt) var(--spacing-small-alt) var(--spacing-medium);
                 overflow: hidden;
                 text-transform: none;
                 text-overflow: ellipsis;
                 white-space: nowrap;
-                font-size: $font-size-large;
-                font-weight: $font-weight-normal;
+                font-size: var(--font-size-large);
+                font-weight: var(--font-weight-normal);
             }
 
             .date {
                 flex-shrink: 0;
-                padding: $spacing-small;
-                color: $color-text-label;
-                font-size: $font-size-medium;
+                padding: var(--spacing-small);
+                color: var(--color-text-label);
+                font-size: var(--font-size-medium);
             }
         }
 
         .number-of-entries {
             flex-shrink: 0;
-            padding: $spacing-small $spacing-medium;
+            padding: var(--spacing-small) var(--spacing-medium);
             width: 5ch;
             text-align: right;
-            font-family: $font-family-monospace;
+            font-family: var(--font-family-monospace);
         }
 
         .edit-entry-link {
@@ -49,10 +48,10 @@
             align-self: stretch;
             flex-shrink: 0;
             justify-content: center;
-            background-color: $color-primary;
-            padding: $spacing-small $spacing-medium;
-            color: $color-text-on-primary;
-            font-size: $font-size-large;
+            background-color: var(--color-primary);
+            padding: var(--spacing-small) var(--spacing-medium);
+            color: var(--color-text-on-primary);
+            font-size: var(--font-size-large);
         }
     }
 

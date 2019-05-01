@@ -1,15 +1,14 @@
-@import '~base-scss/base';
 
 .dropdown-container {
     display: flex;
     position: absolute;
     align-items: center;
     justify-content: center;
-    outline: $width-separator-medium dashed $color-separator;
-    outline-offset: -$spacing-small-alt;
-    background-color: $color-foreground-alt;
+    outline: var(--width-separator-medium) dashed var(--color-separator);
+    outline-offset: -var(--spacing-small-alt);
+    background-color: var(--color-foreground-alt);
     width: 100%;
     height: 100%;
-    color: $color-text-placeholder;
+    color: var(--color-text-placeholder);
     pointer-events: none;
 }

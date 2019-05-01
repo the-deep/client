@@ -1,10 +1,9 @@
-@import '~base-scss/base';
 
 .details {
     display: flex;
     position: relative;
     flex-direction: column;
-    background-color: $color-foreground;
+    background-color: var(--color-foreground);
     height: 100%;
     overflow-y: auto;
 
@@ -13,11 +12,11 @@
         align-items: center;
         justify-content: center;
         margin: 0;
-        // @include background-color-with-disabled-text($color-foreground-alt);
-        background-color: $color-foreground-alt;
+        // @include background-color-with-disabled-text(var(--color-foreground-alt));
+        background-color: var(--color-foreground-alt);
         height: 100%;
-        color: $color-text-disabled;
-        font-size: $font-size-extra-large;
+        color: var(--color-text-disabled);
+        font-size: var(--font-size-extra-large);
     }
 
     .form {

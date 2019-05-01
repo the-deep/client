@@ -1,11 +1,10 @@
-@import '~base-scss/base';
 
 .header {
     flex-shrink: 0;
-    border-bottom: $width-separator-thin solid $color-separator;
-    background-color: $color-background-header;
-    padding: $spacing-small;
-    color: $color-text-on-background-header;
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-background-header);
+    padding: var(--spacing-small);
+    color: var(--color-text-on-background-header);
 }
 
 .links {
@@ -15,7 +14,7 @@
     .item {
         display: flex;
         align-items: center;
-        font-family: $font-family-monospace;
+        font-family: var(--font-family-monospace);
 
         .title {
             flex-grow: 1;
@@ -25,22 +24,22 @@
 
         .badge {
             flex-shrink: 0;
-            padding: 0 $spacing-extra-small-alt;
-            font-size: $font-size-small;
+            padding: 0 var(--spacing-extra-small-alt);
+            font-size: var(--font-size-small);
 
             &.error {
-                background-color: $color-danger;
-                color: $color-text-on-danger;
+                background-color: var(--color-danger);
+                color: var(--color-text-on-danger);
             }
 
             &.warning {
-                background-color: $color-warning;
-                color: $color-text-on-warning;
+                background-color: var(--color-warning);
+                color: var(--color-text-on-warning);
             }
 
             &.info {
-                background-color: $color-info;
-                color: $color-text-on-info;
+                background-color: var(--color-info);
+                color: var(--color-text-on-info);
             }
         }
     }

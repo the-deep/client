@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .widget-content-wrapper {
     .overlay {
@@ -16,13 +15,13 @@
             left: 0;
             align-items: center;
             justify-content: center;
-            background-color: $color-background-header;
+            background-color: var(--color-background-header);
             width: 100%;
             height: 100%;
 
             .icon {
-                padding: $spacing-small;
-                color: $color-danger;
+                padding: var(--spacing-small);
+                color: var(--color-danger);
             }
 
             .message {

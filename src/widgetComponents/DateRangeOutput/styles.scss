@@ -1,9 +1,8 @@
-@import '~base-scss/base';
 
 .to {
-    padding: 0 $spacing-small;
+    padding: 0 var(--spacing-small);
 }
 
 .empty {
-    color: $color-text-placeholder;
+    color: var(--color-text-placeholder);
 }

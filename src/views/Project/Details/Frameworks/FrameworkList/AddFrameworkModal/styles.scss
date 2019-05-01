@@ -1,12 +1,11 @@
-@import '~base-scss/base';
 
-$width-add-framework-modal: 480px;
+--width-add-framework-modal: 480px;
 
 .add-framework-modal {
-    width: $width-add-framework-modal;
+    width: var(--width-add-framework-modal);
 
     .modal-body {
-        padding: $spacing-large;
+        padding: var(--spacing-large);
 
         .add-analysis-framework-form {
             display: flex;
@@ -15,7 +14,7 @@ $width-add-framework-modal: 480px;
             height: 100%;
 
             .title {
-                margin-bottom: $spacing-medium;
+                margin-bottom: var(--spacing-medium);
             }
 
             .description {
@@ -27,10 +26,10 @@ $width-add-framework-modal: 480px;
             .action-buttons {
                 display: flex;
                 justify-content: flex-end;
-                margin-top: $spacing-medium;
+                margin-top: var(--spacing-medium);
 
                 button {
-                    margin-left: $spacing-medium;
+                    margin-left: var(--spacing-medium);
                 }
             }
         }

@@ -1,7 +1,5 @@
-@import '~base-scss/base';
-@import '~base-scss/grid-item';
 
-$height-grid-layout: 50vh;
+--height-grid-layout: 50vh;
 
 .list {
     display: flex;
@@ -15,13 +13,13 @@ $height-grid-layout: 50vh;
         :global {
             .widget-list-item {
                 display: inline-flex;
-                margin: $spacing-extra-small;
-                border: $width-separator-thin solid $color-separator;
+                margin: var(--spacing-extra-small);
+                border: var(--width-separator-thin) solid var(--color-separator);
             }
 
             .widget-list-group + .widget-list-item {
-                margin-left: $spacing-medium;
-                border: $width-separator-thin solid $color-separator;
+                margin-left: var(--spacing-medium);
+                border: var(--width-separator-thin) solid var(--color-separator);
             }
 
             .widget-list-group {
@@ -31,13 +29,13 @@ $height-grid-layout: 50vh;
     }
 
     .grid-layout-wrapper {
-        border-bottom: $width-separator-thin solid $color-separator;
-        background-color: $color-background-alt;
-        height: $height-grid-layout;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-background-alt);
+        height: var(--height-grid-layout);
         overflow: auto;
 
         // .grid-layout {
-        //     background-color: $color-foreground-alt;
+        //     background-color: var(--color-foreground-alt);
         //     min-width: 100%;
         //     min-height: 100%;
         // }

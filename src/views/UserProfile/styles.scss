@@ -1,13 +1,12 @@
-@import '~base-scss/base';
 
-$width-left-content: 420px;
-$width-display-picture: 108px;
+--width-left-content: 420px;
+--width-display-picture: 108px;
 
 .user-profile {
     overflow: auto;
 
     .heading {
-        padding: $spacing-small 0;
+        padding: var(--spacing-small) 0;
     }
 
     .main-content {
@@ -16,26 +15,26 @@ $width-display-picture: 108px;
 
         .left {
             display: flex;
-            flex-basis: $width-left-content;
+            flex-basis: var(--width-left-content);
             flex-direction: column;
             flex-grow: 0;
             flex-shrink: 0;
-            border-right: $width-separator-thin solid $color-separator;
+            border-right: var(--width-separator-thin) solid var(--color-separator);
 
             .info {
                 display: flex;
                 align-items: flex-start;
                 flex-shrink: 0;
-                border-bottom: $width-separator-thin solid $color-separator;
-                padding: $spacing-large;
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                padding: var(--spacing-large);
 
                 .display-picture {
                     display: block;
                     flex-shrink: 0;
-                    margin-right: $spacing-large;
-                    border: $width-separator-medium solid $color-accent;
-                    width: $width-display-picture;
-                    height: $width-display-picture;
+                    margin-right: var(--spacing-large);
+                    border: var(--width-separator-medium) solid var(--color-accent);
+                    width: var(--width-display-picture);
+                    height: var(--width-display-picture);
                 }
 
                 .detail {
@@ -48,10 +47,10 @@ $width-display-picture: 108px;
                         .name {
                             display: flex;
                             flex-grow: 1;
-                            font-size: $font-size-super-large;
+                            font-size: var(--font-size-super-large);
 
                             .first {
-                                margin-right: $spacing-small;
+                                margin-right: var(--spacing-small);
                             }
                         }
 
@@ -61,20 +60,20 @@ $width-display-picture: 108px;
                     }
 
                     .email {
-                        margin-bottom: $spacing-small;
-                        color: $color-text-label;
-                        font-size: $font-size-large;
+                        margin-bottom: var(--spacing-small);
+                        color: var(--color-text-label);
+                        font-size: var(--font-size-large);
                     }
 
                     .organization {
-                        font-size: $font-size-large;
+                        font-size: var(--font-size-large);
                     }
                 }
             }
 
             .stats {
                 flex-grow: 1;
-                padding: $spacing-medium;
+                padding: var(--spacing-medium);
             }
         }
 
@@ -88,8 +87,8 @@ $width-display-picture: 108px;
                 flex-basis: 60%;
                 flex-grow: 0;
                 flex-shrink: 0;
-                border-bottom: $width-separator-thin solid $color-separator;
-                background-color: $color-background-row;
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                background-color: var(--color-background-row);
                 overflow: auto;
             }
 
@@ -97,7 +96,7 @@ $width-display-picture: 108px;
                 flex-basis: 40%;
                 flex-grow: 0;
                 flex-shrink: 0;
-                background-color: $color-background-row;
+                background-color: var(--color-background-row);
                 overflow: auto;
             }
         }

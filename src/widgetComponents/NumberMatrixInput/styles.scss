@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .overview {
     width: 100%;
@@ -6,8 +5,8 @@
     overflow: auto;
 
     .table-header {
-        background-color: $color-foreground;
-        padding: $spacing-small;
-        color: $color-text-on-foreground;
+        background-color: var(--color-foreground);
+        padding: var(--spacing-small);
+        color: var(--color-text-on-foreground);
     }
 }

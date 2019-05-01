@@ -1,10 +1,9 @@
-@import '~base-scss/base';
 
 .field {
-    border-bottom: $width-separator-thin solid $color-separator;
-    background-color: $color-foreground;
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
     cursor: pointer;
-    padding: $spacing-medium;
+    padding: var(--spacing-medium);
     user-select: none;
 
     .series {
@@ -12,11 +11,11 @@
     }
 
     &:hover {
-        background-color: $color-background-hover;
+        background-color: var(--color-background-hover);
     }
 
     .health-bar {
-        margin-top: $spacing-small;
+        margin-top: var(--spacing-small);
         height: 6px;
     }
 }

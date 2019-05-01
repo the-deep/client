@@ -1,11 +1,10 @@
-@import '~base-scss/base';
 
 .widget-list-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: $color-foreground;
-    padding: $spacing-small $spacing-medium;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-medium);
 
     .title {
         color: inherit;

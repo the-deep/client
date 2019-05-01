@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .api-docs {
     overflow-y: auto;
@@ -11,21 +10,21 @@
 
     .docs {
         h1 {
-            background-color: $color-foreground;
-            padding: $spacing-medium;
+            background-color: var(--color-foreground);
+            padding: var(--spacing-medium);
         }
 
         .api {
             h2 {
-                background-color: $color-foreground-alt;
-                padding: $spacing-medium;
+                background-color: var(--color-foreground-alt);
+                padding: var(--spacing-medium);
             }
 
             .endpoint {
-                background-color: $color-background-row-alt;
+                background-color: var(--color-background-row-alt);
 
                 &:nth-child(odd) {
-                    background-color: $color-background-row;
+                    background-color: var(--color-background-row);
                 }
 
                 h3 {
@@ -37,7 +36,7 @@
                         border: 0;
                         background-color: transparent;
                         cursor: pointer;
-                        padding: $spacing-small-alt;
+                        padding: var(--spacing-small-alt);
                         width: 100%;
                         height: 100%;
                         text-align: start;
@@ -48,31 +47,31 @@
                 }
 
                 .method {
-                    margin: $spacing-extra-small-alt;
-                    background-color: $color-background-row-alt;
-                    padding: $spacing-medium-alt;
+                    margin: var(--spacing-extra-small-alt);
+                    background-color: var(--color-background-row-alt);
+                    padding: var(--spacing-medium-alt);
 
                     h4 {
                         text-transform: inherit;
-                        color: $color-accent;
-                        font-family: $font-family-monospace;
+                        color: var(--color-accent);
+                        font-family: var(--font-family-monospace);
                     }
 
                     .path {
-                        font-family: $font-family-monospace;
+                        font-family: var(--font-family-monospace);
                     }
 
                     .schema {
                         margin: 8px 0;
-                        background-color: $color-background-header;
+                        background-color: var(--color-background-header);
 
                         h5 {
-                            background-color: $color-background-header-alt;
+                            background-color: var(--color-background-header-alt);
                             padding: 8px;
                             width: 100%;
                             text-transform: inherit;
                             font-size: 1em;
-                            font-weight: $font-weight-normal;
+                            font-weight: var(--font-weight-normal);
                         }
 
                         pre {

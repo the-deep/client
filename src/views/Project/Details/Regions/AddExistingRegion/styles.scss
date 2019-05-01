@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .add-region-form {
     display: flex;
@@ -14,10 +13,10 @@
         display: flex;
         flex-shrink: 0;
         justify-content: flex-end;
-        margin-top: $spacing-medium;
+        margin-top: var(--spacing-medium);
 
         button {
-            margin-left: $spacing-medium;
+            margin-left: var(--spacing-medium);
         }
     }
 }

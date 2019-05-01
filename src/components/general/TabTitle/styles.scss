@@ -1,12 +1,10 @@
-@import '~base-scss/base';
-@import '~rs-scss/button-base';
 
 .button {
     @extend %button-base;
-    padding: $spacing-small-alt $spacing-medium;
+    padding: var(--spacing-small-alt) var(--spacing-medium);
     text-transform: uppercase;
 
     &.error {
-        color: $color-danger;
+        color: var(--color-danger);
     }
 }

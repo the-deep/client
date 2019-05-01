@@ -1,4 +1,4 @@
-$width-dimension-column: 96px;
+--width-dimension-column: 96px;
 
 %matrix-2d-overview-table {
     width: 100%;
@@ -12,19 +12,19 @@ $width-dimension-column: 96px;
         th {
             position: sticky;
             top: 0;
-            background-color: $color-foreground;
-            padding: $spacing-extra-small $spacing-small;
+            background-color: var(--color-foreground);
+            padding: var(--spacing-extra-small) var(--spacing-small);
         }
     }
 
     tbody {
         td {
-            border: $width-separator-thin solid $color-foreground;
-            padding: $spacing-extra-small;
+            border: var(--width-separator-thin) solid var(--color-foreground);
+            padding: var(--spacing-extra-small);
         }
 
         .dimension-td {
-            width: $width-dimension-column;
+            width: var(--width-dimension-column);
         }
     }
 }

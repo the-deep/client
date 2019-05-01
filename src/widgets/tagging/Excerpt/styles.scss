@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .excerpt {
     position: relative;
@@ -17,14 +16,14 @@
     }
 
     .text {
-        margin: $spacing-extra-small $spacing-small;
+        margin: var(--spacing-extra-small) var(--spacing-small);
         width: calc(100% - var(--spacing-small) * 2);
         height: calc(100% - var(--spacing-extra-small) * 2);
         resize: none;
 
         :global {
             .input {
-                padding: $spacing-small;
+                padding: var(--spacing-small);
                 width: 100%;
                 height: 100%;
                 resize: none;

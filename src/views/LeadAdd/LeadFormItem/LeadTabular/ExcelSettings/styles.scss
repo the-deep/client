@@ -1,21 +1,20 @@
-@import '~base-scss/base';
 
-$width-input-max: 240px;
+--width-input-max: 240px;
 
 .sheet-list {
     flex-grow: 1;
 
     .sheet-setting {
-        border-bottom: $width-separator-thin solid $color-separator;
-        padding-bottom: $spacing-small;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        padding-bottom: var(--spacing-small);
 
         .header {
             display: flex;
-            padding: $spacing-medium 0;
+            padding: var(--spacing-medium) 0;
 
             .sheet-title {
                 flex-grow: 1;
-                padding: 0 $spacing-medium;
+                padding: 0 var(--spacing-medium);
                 text-transform: none;
             }
 
@@ -25,9 +24,9 @@ $width-input-max: 240px;
             display: flex;
 
             .input {
-                margin: 0 $spacing-medium;
+                margin: 0 var(--spacing-medium);
                 width: 100%;
-                max-width: $width-input-max;
+                max-width: var(--width-input-max);
             }
 
             .left-content {

@@ -1,13 +1,12 @@
-@import '~base-scss/base';
 
 .score-item {
-    padding: $spacing-small $spacing-medium;
+    padding: var(--spacing-small) var(--spacing-medium);
 
     .title {
         opacity: .8;
     }
 
     .number {
-        font-size: $font-size-large;
+        font-size: var(--font-size-large);
     }
 }

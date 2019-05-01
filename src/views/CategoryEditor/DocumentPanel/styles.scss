@@ -1,20 +1,19 @@
-@import '~base-scss/base';
 
 %tab {
     flex-grow: 1;
     outline: 0;
     border: 0;
-    border-bottom: $width-separator-medium solid $color-separator;
+    border-bottom: var(--width-separator-medium) solid var(--color-separator);
     background-color: transparent;
     cursor: pointer;
-    padding: $spacing-small $spacing-medium;
-    color: $color-text;
+    padding: var(--spacing-small) var(--spacing-medium);
+    color: var(--color-text);
     font-family: inherit;
     font-size: inherit;
 
     &.active {
-        border-bottom-color: $color-accent;
-        color: $color-accent;
+        border-bottom-color: var(--color-accent);
+        color: var(--color-accent);
     }
 }
 
@@ -22,7 +21,7 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    border-right: $width-separator-medium solid $color-separator;
+    border-right: var(--width-separator-medium) solid var(--color-separator);
 
     .header {
         display: flex;
@@ -31,7 +30,7 @@
 
         .tab-header {
             @extend %tab;
-            padding: $spacing-medium;
+            padding: var(--spacing-medium);
             text-transform: uppercase;
         }
     }

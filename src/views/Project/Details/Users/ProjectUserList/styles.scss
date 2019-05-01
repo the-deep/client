@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .project-user-list {
     display: flex;
@@ -10,7 +9,7 @@
         flex-shrink: 0;
 
         .heading {
-            padding: $spacing-medium;
+            padding: var(--spacing-medium);
         }
     }
 
@@ -22,11 +21,11 @@
             :global {
                 .header {
                     z-index: 1;
-                    background-color: $color-foreground-alt;
+                    background-color: var(--color-foreground-alt);
                 }
 
                 .row {
-                    border-bottom: $width-separator-thin solid $color-separator;
+                    border-bottom: var(--width-separator-thin) solid var(--color-separator);
                     background-color: transparent;
                 }
             }

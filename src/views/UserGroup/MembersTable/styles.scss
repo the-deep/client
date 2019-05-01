@@ -1,6 +1,5 @@
-@import '~base-scss/base';
 
-$height-add-member-modal: 600px;
+--height-add-member-modal: 600px;
 
 .members {
     display: flex;
@@ -12,9 +11,9 @@ $height-add-member-modal: 600px;
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        background-color: $color-background-header;
-        padding: $spacing-small $spacing-medium;
-        height: $height-navbar;
+        background-color: var(--color-background-header);
+        padding: var(--spacing-small) var(--spacing-medium);
+        height: var(--height-navbar);
 
         >* {
             flex-shrink: 0;
@@ -25,14 +24,14 @@ $height-add-member-modal: 600px;
         }
 
         .search-input {
-            margin: 0 $spacing-medium;
+            margin: 0 var(--spacing-medium);
         }
     }
 
     .content {
         flex-basis: 100%;
         flex-grow: 1;
-        background-color: $color-background-row;
+        background-color: var(--color-background-row);
         overflow-y: auto;
     }
 }
@@ -40,7 +39,7 @@ $height-add-member-modal: 600px;
 .add-member-modal {
     display: flex;
     flex-direction: column;
-    height: $height-add-member-modal;
+    height: var(--height-add-member-modal);
 
     .add-member {
         display: flex;

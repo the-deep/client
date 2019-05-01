@@ -1,20 +1,19 @@
-@import '~base-scss/base';
 
-$height-map-min: 360px;
-$width-title-min: 96px;
+--height-map-min: 360px;
+--width-title-min: 96px;
 
 .project-dashboard {
     display: flex;
     position: relative;
     flex-direction: column;
-    background-color: $color-foreground;
+    background-color: var(--color-foreground);
     overflow: auto;
 
     .metadata {
         display: flex;
         flex-direction: column;
         flex-shrink: 0;
-        border-bottom: $width-separator-thin solid $color-separator;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
 
         .basic-info {
             display: flex;
@@ -24,23 +23,23 @@ $width-title-min: 96px;
 
             .info-item {
                 flex-shrink: 0;
-                padding: $spacing-large;
+                padding: var(--spacing-large);
 
                 .label {
-                    margin-bottom: $spacing-small;
-                    color: $color-text-label;
-                    font-size: $font-size-small;
+                    margin-bottom: var(--spacing-small);
+                    color: var(--color-text-label);
+                    font-size: var(--font-size-small);
                 }
 
                 .string-value {
-                    font-size: $font-size-extra-large;
-                    font-weight: $font-weight-light;
+                    font-size: var(--font-size-extra-large);
+                    font-weight: var(--font-weight-light);
 
                     a {
                         text-transform: none;
 
                         &:hover {
-                            color: $color-accent;
+                            color: var(--color-accent);
                         }
                     }
                 }
@@ -48,13 +47,13 @@ $width-title-min: 96px;
                 .numeric-value {
                     display: block;
                     text-align: center;
-                    font-family: $font-family-monospace;
-                    font-size: $font-size-super-large;
+                    font-family: var(--font-family-monospace);
+                    font-size: var(--font-size-super-large);
                 }
 
                 .date-value {
-                    color: $color-text-label;
-                    font-size: $font-size-large;
+                    color: var(--color-text-label);
+                    font-size: var(--font-size-large);
                 }
             }
         }
@@ -68,11 +67,11 @@ $width-title-min: 96px;
                 flex-grow: 1;
 
                 .chart {
-                    padding: $spacing-small $spacing-medium;
+                    padding: var(--spacing-small) var(--spacing-medium);
                     overflow: hidden;
 
                     .heading {
-                        padding: $spacing-small $spacing-medium;
+                        padding: var(--spacing-small) var(--spacing-medium);
                         text-transform: none;
                     }
 
@@ -87,12 +86,12 @@ $width-title-min: 96px;
 
                                 .fill {
                                     opacity: 0.3;
-                                    fill: $color-accent;
-                                    stroke: $color-accent;
+                                    fill: var(--color-accent);
+                                    stroke: var(--color-accent);
                                 }
 
                                 .line {
-                                    stroke: $color-accent;
+                                    stroke: var(--color-accent);
                                     stroke-width: 1px;
                                 }
                             }
@@ -109,12 +108,12 @@ $width-title-min: 96px;
 
                 %activity-percentage-basic {
                     flex-basis: 50%;
-                    padding: $spacing-medium;
+                    padding: var(--spacing-medium);
 
                     .heading {
-                        padding: $spacing-medium;
+                        padding: var(--spacing-medium);
                         text-transform: none;
-                        font-weight: $font-weight-light;
+                        font-weight: var(--font-weight-light);
                     }
 
                     .list {
@@ -123,26 +122,26 @@ $width-title-min: 96px;
                             align-items: baseline;
 
                             &:hover {
-                                background-color: $color-background-hover;
+                                background-color: var(--color-background-hover);
                             }
 
                             .title {
                                 flex-grow: 1;
-                                padding: $spacing-small $spacing-medium;
-                                min-width: $width-title-min;
+                                padding: var(--spacing-small) var(--spacing-medium);
+                                min-width: var(--width-title-min);
 
                                 a {
                                     text-transform: none;
 
                                     &:hover {
-                                        color: $color-accent;
+                                        color: var(--color-accent);
                                     }
                                 }
                             }
 
                             .value {
                                 flex-shrink: 0;
-                                padding: $spacing-small $spacing-medium;
+                                padding: var(--spacing-small) var(--spacing-medium);
                             }
                         }
                     }
@@ -164,7 +163,7 @@ $width-title-min: 96px;
         position: relative;
         flex-direction: column;
         flex-grow: 1;
-        min-height: $height-map-min;
+        min-height: var(--height-map-min);
 
         .map {
             flex-grow: 1;
@@ -172,12 +171,12 @@ $width-title-min: 96px;
 
         .region-select-input {
             position: absolute;
-            top: $spacing-small;
-            left: $spacing-small;
+            top: var(--spacing-small);
+            left: var(--spacing-small);
             z-index: 20;
-            border: $width-separator-thin solid $color-separator-alt;
-            background-color: $color-foreground;
-            padding: $spacing-small;
+            border: var(--width-separator-thin) solid var(--color-separator-alt);
+            background-color: var(--color-foreground);
+            padding: var(--spacing-small);
         }
     }
 }

@@ -1,6 +1,5 @@
-@import '~base-scss/base';
 
-$width-connectors-list: 240px;
+--width-connectors-list: 240px;
 
 .modal {
     width: 80vw;
@@ -11,8 +10,8 @@ $width-connectors-list: 240px;
 
         .settings-link {
             display: block;
-            padding: $spacing-small;
-            font-size: $font-size-large;
+            padding: var(--spacing-small);
+            font-size: var(--font-size-large);
         }
     }
 
@@ -30,10 +29,10 @@ $width-connectors-list: 240px;
 
             .sidebar {
                 display: flex;
-                flex-basis: $width-connectors-list;
+                flex-basis: var(--width-connectors-list);
                 flex-direction: column;
                 flex-shrink: 0;
-                border-right: $width-separator-thin solid $color-separator;
+                border-right: var(--width-separator-thin) solid var(--color-separator);
                 overflow-y: auto;
 
                 .header {
@@ -41,10 +40,10 @@ $width-connectors-list: 240px;
                     align-items: center;
                     flex-shrink: 0;
                     flex-wrap: wrap;
-                    border-bottom: $width-separator-thin solid $color-separator;
-                    background-color: $color-background-header;
-                    padding: $spacing-small;
-                    color: $color-text-on-background-header;
+                    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                    background-color: var(--color-background-header);
+                    padding: var(--spacing-small);
+                    color: var(--color-text-on-background-header);
 
                     .search-input {
                         flex-basis: 100%;
@@ -68,8 +67,8 @@ $width-connectors-list: 240px;
                 height: auto;
 
                 .settings-link {
-                    margin-top: $spacing-medium;
-                    font-size: $font-size-super-large-alt;
+                    margin-top: var(--spacing-medium);
+                    font-size: var(--font-size-super-large-alt);
                 }
             }
         }
@@ -78,11 +77,11 @@ $width-connectors-list: 240px;
             display: flex;
             flex-shrink: 0;
             justify-content: flex-end;
-            border-top: $width-separator-thin solid $color-separator;
-            padding: $spacing-small $spacing-medium-alt;
+            border-top: var(--width-separator-thin) solid var(--color-separator);
+            padding: var(--spacing-small) var(--spacing-medium-alt);
 
             button {
-                margin-left: $spacing-small;
+                margin-left: var(--spacing-small);
             }
         }
     }

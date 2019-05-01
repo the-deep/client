@@ -1,5 +1,3 @@
-@import '~base-scss/base';
-@import '~rs-scss/button-base';
 
 .tabular-book {
     display: flex;
@@ -14,11 +12,11 @@
         .last-saved-message {
             display: flex;
             align-items: center;
-            margin-right: $spacing-small;
-            color: $color-text-label;
+            margin-right: var(--spacing-small);
+            color: var(--color-text-label);
 
             .date {
-                margin-left: $spacing-small;
+                margin-left: var(--spacing-small);
             }
         }
     }
@@ -41,7 +39,7 @@
             .tab {
                 .tab-button {
                     @extend %button-base;
-                    padding: $spacing-small-alt $spacing-medium;
+                    padding: var(--spacing-small-alt) var(--spacing-medium);
                     text-transform: uppercase;
                 }
             }
@@ -55,10 +53,10 @@
             justify-content: center;
 
             .processing-text {
-                margin-top: $spacing-large;
+                margin-top: var(--spacing-large);
                 width: 60%;
                 text-align: center;
-                font-size: $font-size-large;
+                font-size: var(--font-size-large);
 
                 .join-link {
                     display: inline;
@@ -68,9 +66,9 @@
                     cursor: pointer;
                     padding: 0;
                     text-decoration: underline;
-                    color: $color-accent;
+                    color: var(--color-accent);
                     font-family: inherit;
-                    font-size: $font-size-large;
+                    font-size: var(--font-size-large);
                 }
             }
         }

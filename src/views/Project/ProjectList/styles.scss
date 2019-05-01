@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .project-list {
     display: flex;
@@ -10,10 +9,10 @@
         flex-shrink: 0;
         flex-wrap: wrap;
         justify-content: space-between;
-        border-bottom: $width-separator-thin solid $color-separator;
-        background-color: $color-background-header;
-        padding: $spacing-medium;
-        color: $color-text-on-background-header;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-background-header);
+        padding: var(--spacing-medium);
+        color: var(--color-text-on-background-header);
 
         .heading {
             flex-grow: 1;
@@ -21,15 +20,15 @@
 
         .search-input {
             flex-basis: 100%;
-            margin-top: $spacing-medium;
+            margin-top: var(--spacing-medium);
         }
 
         .link {
-            @include button-like-link($color-accent);
-            margin-right: $spacing-small;
+            @include button-like-link(var(--color-accent));
+            margin-right: var(--spacing-small);
 
             .discover-icon {
-                padding-right: $spacing-small;
+                padding-right: var(--spacing-small);
             }
         }
     }
@@ -40,24 +39,24 @@
 
         .list-item {
             display: block;
-            border-bottom: $width-separator-thin solid $color-separator;
-            border-left: $width-separator-thick solid transparent;
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            border-left: var(--width-separator-thick) solid transparent;
 
             .link {
                 display: block;
-                padding: $spacing-small-alt $spacing-medium;
+                padding: var(--spacing-small-alt) var(--spacing-medium);
                 width: 100%;
                 height: 100%;
                 text-transform: none;
             }
 
             &:hover {
-                background-color: $color-background-hover;
+                background-color: var(--color-background-hover);
             }
 
             &.active {
-                border-left-color: $color-accent;
-                background-color: $color-background-selected;
+                border-left-color: var(--color-accent);
+                background-color: var(--color-background-selected);
             }
         }
 
@@ -65,8 +64,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: $spacing-medium;
-            color: $color-text-disabled;
+            padding: var(--spacing-medium);
+            color: var(--color-text-disabled);
         }
     }
 }

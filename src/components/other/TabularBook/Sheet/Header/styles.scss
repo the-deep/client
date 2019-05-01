@@ -1,7 +1,6 @@
-@import '~base-scss/base';
 
 .header {
-    padding: $spacing-small;
+    padding: var(--spacing-small);
     width: 100%;
     user-select: none;
 
@@ -11,12 +10,12 @@
 
         .icon {
             flex-shrink: 0;
-            margin: 0 $spacing-extra-small;
-            color: $color-text-label;
+            margin: 0 var(--spacing-extra-small);
+            color: var(--color-text-label);
         }
 
         .sort-button {
-            padding: $spacing-small;
+            padding: var(--spacing-small);
             // word-break: break-all;
         }
 
@@ -29,7 +28,7 @@
     }
 
     .search-input {
-        margin: $spacing-small;
+        margin: var(--spacing-small);
         margin-top: 0;
     }
 

@@ -1,9 +1,8 @@
-@import '~base-scss/base';
 
 .edit-modal {
-    width: $width-modal-extra-small;
+    width: var(--width-modal-extra-small);
 
     .checkbox {
-        margin-top: $spacing-large;
+        margin-top: var(--spacing-large);
     }
 }

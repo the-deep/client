@@ -1,6 +1,5 @@
-@import '~base-scss/base';
 
-$height-header: 42px;
+--height-header: 42px;
 
 .country-detail {
     display: flex;
@@ -9,15 +8,15 @@ $height-header: 42px;
 
     .header {
         flex-shrink: 0;
-        background-color: $color-background-header;
+        background-color: var(--color-background-header);
         padding: 0;
-        color: $color-text-on-background-header;
+        color: var(--color-text-on-background-header);
 
         .top-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: $spacing-small;
+            padding: var(--spacing-small);
             padding-bottom: 0;
 
             .heading {
@@ -28,7 +27,7 @@ $height-header: 42px;
                 display: flex;
 
                 button {
-                    margin-left: $spacing-small;
+                    margin-left: var(--spacing-small);
                 }
             }
         }
@@ -45,8 +44,8 @@ $height-header: 42px;
 
     .loading-animation {
         z-index: 111;
-        background-color: $color-foreground;
-        // background-color: $color-background-overlay-opaque;
+        background-color: var(--color-foreground);
+        // background-color: var(--color-background-overlay-opaque);
     }
 
     .details-no-edit {

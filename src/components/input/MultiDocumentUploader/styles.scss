@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .multi-document-uploader {
     display: flex;
@@ -20,7 +19,7 @@
             label {
                 padding: 0;
                 text-transform: none;
-                font-size: $font-size-large;
+                font-size: var(--font-size-large);
             }
         }
 
@@ -29,7 +28,7 @@
 
             .url-container {
                 display: flex;
-                padding: $spacing-small 0;
+                padding: var(--spacing-small) 0;
 
                 .url-input {
                     flex-grow: 1;
@@ -38,14 +37,14 @@
                 .add-button {
                     position: relative;
                     flex-shrink: 0;
-                    margin-left: $spacing-small;
+                    margin-left: var(--spacing-small);
                 }
             }
 
             .file-input {
-                @include button-like-link($color-primary);
-                margin-left: $spacing-medium;
-                padding: $spacing-extra-small $spacing-small;
+                @include button-like-link(var(--color-primary));
+                margin-left: var(--spacing-medium);
+                padding: var(--spacing-extra-small) var(--spacing-small);
                 width: auto;
                 text-transform: none;
 
@@ -54,14 +53,14 @@
 
         &:not(.with-url-input) {
             justify-content: flex-end;
-            margin-top: -$spacing-large;
+            margin-top: -var(--spacing-large);
 
             .file-input {
-                padding: $spacing-extra-small;
+                padding: var(--spacing-extra-small);
                 width: auto;
 
                 label {
-                    color: $color-primary;
+                    color: var(--color-primary);
                 }
             }
         }
@@ -74,17 +73,17 @@
 
         .loading-animation-wrapper {
             position: relative;
-            width: $font-size-medium;
-            height: $font-size-medium;
+            width: var(--font-size-medium);
+            height: var(--font-size-medium);
 
             .loading-animation {
                 padding: 0 !important;
-                font-size: $font-size-medium !important;
+                font-size: var(--font-size-medium) !important;
             }
         }
 
         .pending-message {
-            padding: 0 $spacing-small;
+            padding: 0 var(--spacing-small);
         }
     }
 
@@ -99,7 +98,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            background-color: $color-foreground;
+            background-color: var(--color-foreground);
             width: 100%;
             height: 100%;
         }
@@ -109,8 +108,8 @@
             overflow: auto;
 
             .selection-item {
-                margin-bottom: $spacing-small;
-                // background-color: $color-background-input;
+                margin-bottom: var(--spacing-small);
+                // background-color: var(--color-background-input);
             }
         }
     }

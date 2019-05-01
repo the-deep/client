@@ -1,6 +1,5 @@
-@import '~base-scss/base';
 
-$region-detail-form-width: 320px;
+--region-detail-form-width: 320px;
 
 .region-details-container {
     display: flex;
@@ -12,16 +11,16 @@ $region-detail-form-width: 320px;
         align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
-        border-bottom: $width-separator-thin solid $color-separator;
-        background-color: $color-background-header;
-        padding: $spacing-small;
-        color: $color-text-on-background-header;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-background-header);
+        padding: var(--spacing-small);
+        color: var(--color-text-on-background-header);
 
         .action-buttons {
             display: flex;
 
             button {
-                margin-left: $spacing-small;
+                margin-left: var(--spacing-small);
             }
         }
     }
@@ -56,11 +55,11 @@ $region-detail-form-width: 320px;
             }
 
             .region-detail-form {
-                flex-basis: $region-detail-form-width;
+                flex-basis: var(--region-detail-form-width);
                 flex-shrink: 0;
-                border-left: $width-separator-thin solid $color-separator;
-                background-color: $color-foreground;
-                color: $color-text-on-foreground;
+                border-left: var(--width-separator-thin) solid var(--color-separator);
+                background-color: var(--color-foreground);
+                color: var(--color-text-on-foreground);
             }
         }
 

@@ -1,6 +1,5 @@
-@import '~base-scss/base';
 
-$width-word-category-list: 240px;
+--width-word-category-list: 240px;
 
 .word-categories {
     display: flex;
@@ -8,9 +7,9 @@ $width-word-category-list: 240px;
     flex-grow: 1;
 
     .word-category-list {
-        flex-basis: $width-word-category-list;
+        flex-basis: var(--width-word-category-list);
         flex-shrink: 0;
-        border-right: $width-separator-thin solid $color-separator;
+        border-right: var(--width-separator-thin) solid var(--color-separator);
     }
 
     .details {

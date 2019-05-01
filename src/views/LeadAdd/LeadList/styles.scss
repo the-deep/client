@@ -1,7 +1,6 @@
-@import '~base-scss/base';
 
 .lead-list {
     flex-grow: 1;
-    background-color: $color-foreground-alt;
+    background-color: var(--color-foreground-alt);
     overflow-y: auto;
 }

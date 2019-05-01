@@ -1,6 +1,5 @@
-@import '~base-scss/base';
 
 .preview {
-    background-color: $color-background-alt;
+    background-color: var(--color-background-alt);
     overflow: auto;
 }

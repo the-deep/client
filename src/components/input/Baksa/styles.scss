@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 @import '~rs-scss/input-label';
 
 .baksa {
@@ -7,34 +6,34 @@
 
     .label {
         @extend %input-label;
-        margin-bottom: $spacing-extra-small;
+        margin-bottom: var(--spacing-extra-small);
     }
 
     &.disabled {
         .label {
-            color: $color-text-disabled;
+            color: var(--color-text-disabled);
         }
     }
 
     &.error {
         .label {
-            color: $color-danger;
+            color: var(--color-danger);
         }
     }
 
     %hint-and-error {
-        margin: $spacing-extra-small 0 0;
-        font-size: $font-size-extra-small;
+        margin: var(--spacing-extra-small) 0 0;
+        font-size: var(--font-size-extra-small);
     }
 
     .hint {
         @extend %hint-and-error;
-        color: $color-text-label;
+        color: var(--color-text-label);
     }
 
     .error {
         @extend %hint-and-error;
-        color: $color-danger;
+        color: var(--color-danger);
     }
 
     .empty {
@@ -53,7 +52,7 @@
 
         .separator {
             flex-shrink: 0;
-            margin: 0 $spacing-large;
+            margin: 0 var(--spacing-large);
         }
     }
 
@@ -82,16 +81,16 @@
         position: relative;
         align-items: center;
         justify-content: space-between;
-        margin: $spacing-medium 0;
+        margin: var(--spacing-medium) 0;
 
         a {
             word-break: break-all;
-            color: $color-accent;
+            color: var(--color-accent);
         }
 
         .action {
             display: flex;
-            margin-left: $spacing-small;
+            margin-left: var(--spacing-small);
         }
 
         .loading-icon {
@@ -103,7 +102,7 @@
         display: flex;
         align-items: flex-end;
         flex-shrink: 0;
-        margin-top: $spacing-small;
+        margin-top: var(--spacing-small);
 
         .url-input {
             flex-grow: 1;
@@ -111,7 +110,7 @@
 
         .action {
             flex-shrink: 0;
-            margin-left: $spacing-small;
+            margin-left: var(--spacing-small);
         }
     }
 }

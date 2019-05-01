@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .word-category-list {
     display: flex;
@@ -9,8 +8,8 @@
         align-items: center;
         flex-shrink: 0;
         flex-wrap: wrap;
-        background-color: $color-background-header;
-        padding: $spacing-medium;
+        background-color: var(--color-background-header);
+        padding: var(--spacing-medium);
 
         .heading {
             flex-grow: 1;
@@ -18,7 +17,7 @@
 
         .word-category-search-input {
             flex-basis: 100%;
-            margin-top: $spacing-small;
+            margin-top: var(--spacing-small);
         }
     }
 
@@ -35,8 +34,8 @@
 
             .check {
                 flex-shrink: 0;
-                padding-left: $spacing-small;
-                color: $color-success;
+                padding-left: var(--spacing-small);
+                color: var(--color-success);
             }
         }
     }

@@ -1,28 +1,28 @@
-$height-grid-item-header: 24px;
-$color-grid-item-border: $color-separator;
+--height-grid-item-header: 24px;
+--color-grid-item-border: var(--color-separator);
 
 %grid-item {
-    padding: $spacing-extra-small;
+    padding: var(--spacing-extra-small);
 
     .header {
         display: flex;
         align-items: center;
-        border: $width-separator-thin solid $color-grid-item-border;
+        border: var(--width-separator-thin) solid var(--color-grid-item-border);
         border-bottom: 0;
-        height: $height-grid-item-header;
+        height: var(--height-grid-item-header);
 
         .heading {
             flex-grow: 1;
             cursor: grab;
-            padding: 0 $spacing-small;
-            color: $color-primary;
-            font-size: $font-size-small;
-            font-weight: $font-weight-bold;
+            padding: 0 var(--spacing-small);
+            color: var(--color-primary);
+            font-size: var(--font-size-small);
+            font-weight: var(--font-weight-bold);
         }
     }
 
     .content {
-        border: $width-separator-thin solid $color-grid-item-border;
+        border: var(--width-separator-thin) solid var(--color-grid-item-border);
         height: calc(100% - var(--height-grid-item-header));
     }
 }

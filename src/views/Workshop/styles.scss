@@ -1,11 +1,10 @@
-@import '~base-scss/base';
 
 .workshop {
     overflow: auto;
 
     .page {
-        background-color: $color-foreground;
-        padding: $spacing-extra-large;
+        background-color: var(--color-foreground);
+        padding: var(--spacing-extra-large);
     }
 
     .faram {
@@ -15,9 +14,9 @@
         justify-content: space-around;
 
         > * {
-            margin: $spacing-small;
-            background-color: $color-foreground;
-            padding: $spacing-small;
+            margin: var(--spacing-small);
+            background-color: var(--color-foreground);
+            padding: var(--spacing-small);
             width: auto;
             @include shadow-small;
         }

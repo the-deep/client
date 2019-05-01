@@ -1,8 +1,7 @@
-@import '~base-scss/base';
 
-$height-orgchart-modal: 86vh;
-$width-orgchart-modal: 80%;
-$width-left-container-min: 180px;
+--height-orgchart-modal: 86vh;
+--width-orgchart-modal: 80%;
+--width-left-container-min: 180px;
 
 .organigram-input {
     display: flex;
@@ -10,7 +9,7 @@ $width-left-container-min: 180px;
     height: 100%;
 
     .action {
-        padding: $spacing-extra-small $spacing-small;
+        padding: var(--spacing-extra-small) var(--spacing-small);
     }
 
     .select-input {
@@ -23,8 +22,8 @@ $width-left-container-min: 180px;
 }
 
 .orgchart-modal {
-    width: $width-orgchart-modal;
-    height: $height-orgchart-modal;
+    width: var(--width-orgchart-modal);
+    height: var(--height-orgchart-modal);
 
     .body {
         display: flex;
@@ -35,8 +34,8 @@ $width-left-container-min: 180px;
             display: flex;
             flex-basis: 24%;
             flex-direction: column;
-            border-right: $width-separator-thin solid $color-separator;
-            min-width: $width-left-container-min;
+            border-right: var(--width-separator-thin) solid var(--color-separator);
+            min-width: var(--width-left-container-min);
         }
 
         .orgchart {

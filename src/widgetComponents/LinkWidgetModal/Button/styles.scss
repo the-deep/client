@@ -1,11 +1,10 @@
-@import '~base-scss/base';
 
 .non-duplicates {
-    margin-top: $spacing-large;
+    margin-top: var(--spacing-large);
 }
 
 .duplicate-items {
-    font-weight: $font-weight-bold;
+    font-weight: var(--font-weight-bold);
 }
 
 .disable-modal {

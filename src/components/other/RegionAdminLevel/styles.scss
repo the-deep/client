@@ -1,25 +1,24 @@
-@import '~base-scss/base';
 
 .admin-levels {
     display: flex;
     flex-direction: column;
-    border-top: $width-separator-thin solid $color-separator;
+    border-top: var(--width-separator-thin) solid var(--color-separator);
 
     .header {
         display: flex;
         align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
-        border-bottom: $width-separator-thin solid $color-separator;
-        background-color: $color-background-header;
-        padding: $spacing-small $spacing-medium;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-background-header);
+        padding: var(--spacing-small) var(--spacing-medium);
         text-transform: uppercase;
-        font-size: $font-size-extra-large;
+        font-size: var(--font-size-extra-large);
     }
 
     .admin-levels-list {
         flex-grow: 1;
-        background-color: $color-background-row;
+        background-color: var(--color-background-row);
         overflow: auto;
     }
 }

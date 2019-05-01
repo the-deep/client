@@ -1,6 +1,5 @@
-@import '~base-scss/base';
 
 .number-output {
-    padding: $spacing-small;
+    padding: var(--spacing-small);
     overflow: auto;
 }

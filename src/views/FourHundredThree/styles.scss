@@ -1,7 +1,6 @@
-@import '~base-scss/base';
 
-$color-text-on-primary: get-text-color($color-primary);
-$width-message-max: 540px;
+--color-text-on-primary: get-text-color(var(--color-primary));
+--width-message-max: 540px;
 
 .four-hundred-three {
     display: flex;
@@ -11,27 +10,27 @@ $width-message-max: 540px;
     line-height: 2;
 
     .deep-logo {
-        margin-bottom: $spacing-large;
+        margin-bottom: var(--spacing-large);
         width: 256px;
         height: 256px;
-        color: $color-text-disabled;
+        color: var(--color-text-disabled);
     }
 
     .heading {
-        color: $color-danger;
-        font-size: $font-size-super-large-alt;
-        font-weight: $font-weight-bold;
+        color: var(--color-danger);
+        font-size: var(--font-size-super-large-alt);
+        font-weight: var(--font-weight-bold);
     }
 
     .message {
-        margin: $spacing-large 0;
-        max-width: $width-message-max;
+        margin: var(--spacing-large) 0;
+        max-width: var(--width-message-max);
         text-align: center;
-        font-size: $font-size-large-alt;
+        font-size: var(--font-size-large-alt);
     }
 
     .home-screen-link {
-        color: $color-accent;
-        font-size: $font-size-large;
+        color: var(--color-accent);
+        font-size: var(--font-size-large);
     }
 }

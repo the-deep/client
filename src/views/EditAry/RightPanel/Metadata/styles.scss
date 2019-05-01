@@ -1,6 +1,5 @@
-@import '~base-scss/base';
 
-$height-additional-documents: 250px;
+--height-additional-documents: 250px;
 
 %section-basic {
     display: flex;
@@ -20,7 +19,7 @@ $height-additional-documents: 250px;
     display: flex;
     position: relative;
     flex-grow: 1;
-    background-color: $color-foreground;
+    background-color: var(--color-foreground);
     overflow: auto;
 
     .resizable {
@@ -37,7 +36,7 @@ $height-additional-documents: 250px;
             .basic-information {
                 @extend %section-basic;
                 flex-grow: 1;
-                border-bottom: $width-separator-thin solid $color-separator;
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
                 height: 100%;
 
                 >.content {
@@ -53,24 +52,24 @@ $height-additional-documents: 250px;
                             display: flex;
                             align-items: center;
                             flex-shrink: 0;
-                            padding: $spacing-medium-alt;
+                            padding: var(--spacing-medium-alt);
                             text-transform: capitalize;
-                            color: $color-accent;
+                            color: var(--color-accent);
 
                             .show-more-button {
-                                font-size: $font-size-large;
+                                font-size: var(--font-size-large);
                             }
                         }
 
                         >.content {
                             flex-grow: 1;
-                            padding: $spacing-medium;
+                            padding: var(--spacing-medium);
                             overflow-y: auto;
                         }
 
                         :global {
                             .widget {
-                                margin: $spacing-small-alt 0;
+                                margin: var(--spacing-small-alt) 0;
                             }
                         }
                     }
@@ -89,30 +88,30 @@ $height-additional-documents: 250px;
             .additional-documents {
                 @extend %section-basic;
                 flex-shrink: 0;
-                border-top: $width-separator-medium solid $color-separator;
+                border-top: var(--width-separator-medium) solid var(--color-separator);
                 height: 100%;
 
                 .header {
                     flex-shrink: 0;
-                    padding: $spacing-small;
+                    padding: var(--spacing-small);
 
                     h3 {
                         text-transform: capitalize;
-                        color: $color-accent;
-                        font-size: $font-size-medium;
+                        color: var(--color-accent);
+                        font-size: var(--font-size-medium);
                     }
                 }
 
                 >.content {
                     display: flex;
                     flex-grow: 1;
-                    padding: 0 $spacing-medium;
+                    padding: 0 var(--spacing-medium);
                     overflow: auto;
 
                     .baksa {
                         flex-grow: 0;
                         flex-shrink: 0;
-                        padding: $spacing-medium;
+                        padding: var(--spacing-medium);
                         width: 25%;
                     }
                 }

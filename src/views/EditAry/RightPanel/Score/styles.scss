@@ -1,23 +1,22 @@
-@import '~base-scss/base';
 
-$width-table: 320px;
+--width-table: 320px;
 
 %cell {
-    padding: $spacing-small;
+    padding: var(--spacing-small);
 }
 
 .score {
     display: flex;
     flex-direction: column;
-    background-color: $color-foreground;
+    background-color: var(--color-foreground);
 
     .summary {
         display: flex;
         flex-shrink: 0;
         justify-content: space-around;
-        border-bottom: $width-separator-thin solid $color-separator;
-        background-color: $color-foreground;
-        padding: $spacing-medium;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-foreground);
+        padding: var(--spacing-medium);
 
         .left {
             display: flex;
@@ -29,12 +28,12 @@ $width-table: 320px;
         }
 
         .scale-item {
-            margin-right: $spacing-extra-small;
+            margin-right: var(--spacing-extra-small);
         }
 
         .final-score-item {
-            border: $width-separator-thin solid $color-foreground;
-            box-shadow: 0 0 $radius-blur-small $color-shadow-medium;
+            border: var(--width-separator-thin) solid var(--color-foreground);
+            box-shadow: 0 0 var(--radius-blur-small) var(--color-shadow-medium);
         }
     }
 
@@ -50,10 +49,10 @@ $width-table: 320px;
                 flex-wrap: wrap;
 
                 >.title {
-                    padding: $spacing-small;
+                    padding: var(--spacing-small);
                     text-transform: capitalize;
-                    color: $color-accent;
-                    font-weight: $font-weight-bold;
+                    color: var(--color-accent);
+                    font-weight: var(--font-weight-bold);
                 }
 
                 .content {
@@ -61,10 +60,10 @@ $width-table: 320px;
                     flex-wrap: wrap;
 
                     .matrix-question {
-                        padding: $spacing-small;
+                        padding: var(--spacing-small);
 
                         .title {
-                            color: $color-text;
+                            color: var(--color-text);
                         }
                     }
                 }
@@ -73,9 +72,9 @@ $width-table: 320px;
         }
 
         .left {
-            flex-basis: $width-table;
+            flex-basis: var(--width-table);
             flex-shrink: 0;
-            border-right: $width-separator-thin solid $color-separator;
+            border-right: var(--width-separator-thin) solid var(--color-separator);
             overflow-y: auto;
 
             .table {
@@ -85,7 +84,7 @@ $width-table: 320px;
                 .body {
                     .header-row {
                         &:not(:first-child) {
-                            border-top: $width-separator-thin solid $color-separator;
+                            border-top: var(--width-separator-thin) solid var(--color-separator);
                         }
 
                         .pillar-title {
@@ -93,10 +92,10 @@ $width-table: 320px;
                             position: sticky;
                             top: 0;
                             left: 0;
-                            background-color: $color-foreground;
+                            background-color: var(--color-foreground);
                             text-transform: capitalize;
-                            color: $color-accent;
-                            font-weight: $font-weight-bold;
+                            color: var(--color-accent);
+                            font-weight: var(--font-weight-bold);
                         }
                     }
                     .row {
@@ -115,16 +114,16 @@ $width-table: 320px;
                                 }
 
                                 .info-icon {
-                                    transition: $duration-medium opacity ease-in-out;
+                                    transition: var(--duration-medium) opacity ease-in-out;
                                     opacity: 0;
-                                    color: $color-text-label;
-                                    font-size: $font-size-extra-large;
+                                    color: var(--color-text-label);
+                                    font-size: var(--font-size-extra-large);
                                 }
                             }
                         }
 
                         &:hover {
-                            background-color: $color-background-hover;
+                            background-color: var(--color-background-hover);
 
                             .cell {
                                 .content {

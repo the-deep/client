@@ -1,13 +1,12 @@
-@import '~base-scss/base';
 
 %base {
     display: inline-block;
-    padding: $spacing-extra-small $spacing-small;
+    padding: var(--spacing-extra-small) var(--spacing-small);
 }
 
 %link {
     @extend %base;
-    color: $color-text-label;
+    color: var(--color-text-label);
 }
 
 .edit-link {
@@ -22,23 +21,23 @@
     .body {
         .row {
             &:hover {
-                background-color: $color-background-hover;
+                background-color: var(--color-background-hover);
 
                 .email-link {
-                    color: $color-danger;
+                    color: var(--color-danger);
                 }
 
                 .edit-link {
-                    color: $color-warning;
+                    color: var(--color-warning);
                 }
 
                 .join-button {
-                    background-color: $color-primary;
-                    color: $color-foreground;
+                    background-color: var(--color-primary);
+                    color: var(--color-foreground);
 
                     &:hover {
-                        background-color: get-hover-color($color-primary);
-                        color: $color-foreground;
+                        background-color: get-hover-color(var(--color-primary));
+                        color: var(--color-foreground);
                     }
                 }
             }

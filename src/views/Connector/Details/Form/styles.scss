@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .connector-details-form {
     display: flex;
@@ -9,9 +8,9 @@
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        border-bottom: $width-separator-thin solid $color-separator;
-        background-color: $color-background-header;
-        padding: $spacing-small;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-background-header);
+        padding: var(--spacing-small);
 
         .heading {
             flex-grow: 1;
@@ -22,7 +21,7 @@
             flex-shrink: 0;
 
             button {
-                margin-left: $spacing-medium;
+                margin-left: var(--spacing-medium);
             }
         }
     }
@@ -34,7 +33,7 @@
         flex-direction: row;
         flex-grow: 1;
         flex-wrap: wrap;
-        padding: 0 $spacing-small;
+        padding: 0 var(--spacing-small);
         overflow-y: auto;
 
         .errors {
@@ -42,22 +41,22 @@
         }
 
         .normal-inputs {
-            padding: $spacing-small;
+            padding: var(--spacing-small);
             width: 40%;
         }
 
         .tabular-select-inputs {
-            padding: $spacing-small;
+            padding: var(--spacing-small);
             width: 60%;
 
             :global {
                 .raw-table {
-                    border-right: $width-separator-thin solid $color-separator;
-                    border-left: $width-separator-thin solid $color-separator;
+                    border-right: var(--width-separator-thin) solid var(--color-separator);
+                    border-left: var(--width-separator-thin) solid var(--color-separator);
                 }
 
                 .table-container {
-                    background-color: $color-foreground;
+                    background-color: var(--color-foreground);
 
                     .empty {
                         display: none;
@@ -77,8 +76,8 @@
                 }
 
                 .row {
-                    border-bottom: $width-separator-thin solid $color-separator;
-                    background-color: $color-foreground;
+                    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                    background-color: var(--color-foreground);
                 }
             }
 
@@ -119,7 +118,7 @@
                 position: initial;
                 flex-shrink: 0;
                 background-color: transparent;
-                padding-left: $spacing-small;
+                padding-left: var(--spacing-small);
                 width: auto;
             }
         }

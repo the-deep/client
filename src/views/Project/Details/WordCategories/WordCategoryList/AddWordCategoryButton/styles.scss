@@ -1,11 +1,10 @@
-@import '~base-scss/base';
 
-$width-add-word-category-modal: 480px;
+--width-add-word-category-modal: 480px;
 
 .add-word-category-modal {
-    width: $width-add-word-category-modal;
+    width: var(--width-add-word-category-modal);
 
     .modal-body {
-        padding: $spacing-large;
+        padding: var(--spacing-large);
     }
 }

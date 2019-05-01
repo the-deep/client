@@ -1,14 +1,13 @@
-@import '~base-scss/base';
 
 .lead-grids {
     position: relative;
-    background-color: $color-background-row;
+    background-color: var(--color-background-row);
     height: 100%;
     overflow: auto;
 
     .masonry {
-        background-color: $color-background-row;
-        padding: $spacing-large 0;
+        background-color: var(--color-background-row);
+        padding: var(--spacing-large) 0;
         height: 100%;
         overflow: auto;
     }

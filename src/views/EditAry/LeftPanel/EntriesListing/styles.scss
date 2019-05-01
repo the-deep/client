@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .entries-listing {
     display: flex;
@@ -12,9 +11,9 @@
 
         .entries-list-item {
             position: relative;
-            border-bottom: $width-separator-thin solid $color-separator;
-            border-left: $width-separator-thick solid transparent;
-            padding: $spacing-small;
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            border-left: var(--width-separator-thick) solid transparent;
+            padding: var(--spacing-small);
 
             .add-entry-list-item {
                 display: flex;
@@ -22,7 +21,7 @@
                 outline: 0;
                 border: 0;
                 background-color: transparent;
-                padding: $spacing-small;
+                padding: var(--spacing-small);
                 width: 100%;
                 text-align: left;
                 font-family: inherit;
@@ -30,7 +29,7 @@
 
                 .entry-excerpt {
                     flex-grow: 1;
-                    padding-right: $spacing-large;
+                    padding-right: var(--spacing-large);
                     text-align: justify;
                 }
 
@@ -47,18 +46,18 @@
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        border-top: $width-separator-thin solid $color-accent;
-        padding: $spacing-medium;
+        border-top: var(--width-separator-thin) solid var(--color-accent);
+        padding: var(--spacing-medium);
 
         .no-of-entries-wrap {
             display: flex;
             align-items: baseline;
             flex-grow: 1;
-            padding: 0 $spacing-medium;
+            padding: 0 var(--spacing-medium);
 
             .label {
                 flex-shrink: 0;
-                padding-right: $spacing-small;
+                padding-right: var(--spacing-small);
                 width: auto;
 
                 &:after {
@@ -72,7 +71,7 @@
         }
 
         .edit-entries-link {
-            @include button-like-link($color-accent);
+            @include button-like-link(var(--color-accent));
             flex-shrink: 0;
         }
     }

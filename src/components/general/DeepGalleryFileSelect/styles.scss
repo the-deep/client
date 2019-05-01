@@ -1,7 +1,6 @@
-@import '~base-scss/base';
 
-$width-gallery-file-modal: 80vw;
+--width-gallery-file-modal: 80vw;
 
 .add-gallery-file-modal {
-    width: $width-gallery-file-modal;
+    width: var(--width-gallery-file-modal);
 }
