@@ -2,7 +2,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { caseInsensitiveSubmatch, compareString } from '@togglecorp/fujs';
+import {
+    caseInsensitiveSubmatch,
+    compareString,
+    compareStringSearch,
+} from '@togglecorp/fujs';
 import AccentButton from '#rsca/Button/AccentButton';
 import SearchInput from '#rsci/SearchInput';
 import RadioInput from '#rsci/RadioInput';
@@ -110,9 +114,9 @@ export default class ProjectRegions extends React.PureComponent {
 
         if (this.props.projectDetails !== projectDetails) {
             const { regions = [] } = projectDetails;
-            const displayRegionList = regions.filter(
-                region => caseInsensitiveSubmatch(region.title, searchInputValue),
-            );
+            const displayRegionList = regions
+                .filter(region => caseInsensitiveSubmatch(region.title, searchInputValue))
+                .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
 
             let newSelectedRegion = selectedRegion;
             if (regions.findIndex(r => r.id === selectedRegion) === -1) {
@@ -151,9 +155,9 @@ export default class ProjectRegions extends React.PureComponent {
     handleSearchInputChange = (searchInputValue) => {
         const { projectDetails } = this.props;
         const { regions = [] } = projectDetails;
-        const displayRegionList = regions.filter(
-            region => caseInsensitiveSubmatch(region.title, searchInputValue),
-        );
+        const displayRegionList = regions
+            .filter(region => caseInsensitiveSubmatch(region.title, searchInputValue))
+            .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
 
         this.setState({
             displayRegionList,

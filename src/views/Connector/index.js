@@ -13,6 +13,7 @@ import ListView from '#rscv/List/ListView';
 import {
     reverseRoute,
     caseInsensitiveSubmatch,
+    compareStringSearch,
 } from '@togglecorp/fujs';
 
 import {
@@ -82,12 +83,9 @@ export default class Connector extends React.PureComponent {
         const { searchInputValue } = this.state;
 
         if (this.props.connectorsList !== connectorsList) {
-            const displayConnectorsList = connectorsList.filter(
-                c => caseInsensitiveSubmatch(
-                    c.title,
-                    searchInputValue,
-                ),
-            );
+            const displayConnectorsList = connectorsList
+                .filter(c => caseInsensitiveSubmatch(c.title, searchInputValue))
+                .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
             this.setState({ displayConnectorsList });
         }
     }
@@ -134,12 +132,9 @@ export default class Connector extends React.PureComponent {
     }
 
     handleSearchInputChange = (searchInputValue) => {
-        const displayConnectorsList = this.props.connectorsList.filter(
-            c => caseInsensitiveSubmatch(
-                c.title,
-                searchInputValue,
-            ),
-        );
+        const displayConnectorsList = this.props.connectorsList
+            .filter(c => caseInsensitiveSubmatch(c.title, searchInputValue))
+            .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
 
         this.setState({
             displayConnectorsList,

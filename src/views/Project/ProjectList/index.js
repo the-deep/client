@@ -11,6 +11,7 @@ import Message from '#rscv/Message';
 import {
     reverseRoute,
     caseInsensitiveSubmatch,
+    compareStringSearch,
 } from '@togglecorp/fujs';
 import Cloak from '#components/general/Cloak';
 
@@ -38,12 +39,9 @@ const defaultProps = {
 };
 
 const filterProjects = memoize((userProjects, searchInputValue) => {
-    const displayUserProjects = userProjects.filter(
-        project => caseInsensitiveSubmatch(
-            project.title,
-            searchInputValue,
-        ),
-    );
+    const displayUserProjects = userProjects
+        .filter(project => caseInsensitiveSubmatch(project.title, searchInputValue))
+        .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
 
     return displayUserProjects;
 });

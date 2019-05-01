@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import {
     caseInsensitiveSubmatch,
     compareString,
+    compareStringSearch,
 } from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
@@ -82,10 +83,9 @@ export default class CountryPanel extends React.PureComponent {
         const { countries } = nextProps;
         const { searchInputValue } = this.state;
         if (this.props.countries !== countries) {
-            const displayCountryList = countries.filter(
-                country => caseInsensitiveSubmatch(country.title, searchInputValue),
-            );
-            displayCountryList.sort((a, b) => compareString(a.title, b.title));
+            const displayCountryList = countries
+                .filter(country => caseInsensitiveSubmatch(country.title, searchInputValue))
+                .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
             this.setState({ displayCountryList });
         }
     }
@@ -115,10 +115,9 @@ export default class CountryPanel extends React.PureComponent {
     }
 
     handleSearchInputChange = (searchInputValue) => {
-        const displayCountryList = this.props.countries.filter(
-            country => caseInsensitiveSubmatch(country.title, searchInputValue),
-        );
-
+        const displayCountryList = this.props.countries
+            .filter(country => caseInsensitiveSubmatch(country.title, searchInputValue))
+            .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
         this.setState({
             displayCountryList,
             searchInputValue,
