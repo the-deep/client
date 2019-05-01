@@ -40,7 +40,7 @@
                 text-align: center;
 
                 .link {
-                    @extend %accent-color-link;
+                    // @extend %accent-color-link;
                     margin: 0 var(--spacing-extra-small-alt);
                     padding: 0;
                     text-transform: lowercase;

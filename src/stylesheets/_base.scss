@@ -141,15 +141,6 @@ body {
     animation: slide-in var(--duration-slow) ease forwards;
 }
 
-%accent-color-link {
-    text-transform: initial;
-    color: var(--color-accent);
-
-    &:hover {
-        text-decoration: underline;
-    }
-}
-
 @keyframes slide-in {
     from {
         transform: rotateX(1deg);

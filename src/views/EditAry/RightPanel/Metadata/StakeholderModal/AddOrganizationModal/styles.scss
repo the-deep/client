@@ -1,6 +1,5 @@
 @import '~base-scss/utils';
 
-
 .modal {
     width: 480px;
     height: 70vh;
@@ -43,8 +42,8 @@
         }
         .file-input {
             label {
-                margin-top: var(--spacing-small);
                 @include button-like-link(var(--color-accent));
+                margin-top: var(--spacing-small);
             }
         }
     }

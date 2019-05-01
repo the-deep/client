@@ -46,8 +46,8 @@
     transition: var(--duration-transition-fast) all ease-in-out;
 }
 
-@mixin outline-button(var(--background-color)) {
-    outline: var(--width-separator-thin) dotted get-text-color(var(--background-color));
+@mixin outline-button($bg-color) {
+    outline: var(--width-separator-thin) dotted get-text-color($bg-color);
     outline-offset: -var(--spacing-extra-small-alt);
 }
 
@@ -61,61 +61,27 @@
     }
 }
 
-/*
-// Newton's method for calculation of square roots
-@function sqrt(var(--r)) {
-    --x0: 1;
-    --x1: var(--x0);
-
-    @for var(--i) from 1 through 10 {
-        --x1: var(--x0) - (var(--x0) * var(--x0) - abs(var(--r))) / (2 * var(--x0));
-        --x0: var(--x1);
-    }
-
-    @return var(--x1);
+@function get-text-color() {
+    @return var(--color-text);
 }
 
-@function get-luminance(var(--color)) {
-    --r: red(var(--color));
-    --g: green(var(--color));
-    --b: blue(var(--color));
-    --l: sqrt(.299 * var(--r) * var(--r) + .587 * var(--g) * var(--g) + .114 * var(--b) * var(--b));
-    @return var(--l);
-}
-*/
-
-/*
-@function get-text-color(--background-color, var(--color-for-light): var(--color-text-on-light), var(--color-for-dark): var(--color-text-on-dark)) {
-    --l: get-luminance(var(--background-color));
-    @if (var(--l) > 176) {
-        @return var(--color-for-light);
-    }
-
-    @return var(--color-for-dark);
-}
-*/
-
-@function get-text-color(--background-color, var(--color): var(--color-text)) {
-    @return var(--color);
+@mixin background-color($bg-color) {
+    background-color: $bg-color;
+    color: var(--color-text);
 }
 
-@mixin background-color(var(--background-color)) {
-    background-color: var(--background-color);
-    color: get-text-color(var(--background-color));
+@mixin background-color-with-label-text($bg-color) {
+    background-color: $bg-color;
+    color: var(--color-text-label);
 }
 
-@mixin background-color-with-label-text(var(--background-color)) {
-    background-color: var(--background-color);
-    color: get-text-color(var(--background-color), var(--color-text-label));
+@mixin background-color-with-disabled-text($bg-color) {
+    background-color: $bg-color;
+    color: var(--color-text-disabled);
 }
 
-@mixin background-color-with-disabled-text(var(--background-color)) {
-    background-color: var(--background-color);
-    color: get-text-color(var(--background-color), var(--color-text-disabled));
-}
-
-@function get-hover-color(var(--color)) {
-    @return var(--color);
+@function get-hover-color($color) {
+    @return $color;
     // @return darken(var(--color), 10%);
 }
 
@@ -159,8 +125,6 @@
 
     &:hover {
         background-color: var(--color-background-hover);
-        // color: var(--background-color);
-        // background-color: get-hover-color(var(--background-color));
     }
 
     &:focus {
@@ -190,14 +154,22 @@
     color: var(--color);
 }
 
-%background-alternating-row {
-    background-color: var(--color-background-row);
-    // color: var(--color-text-on-background-row);
-    color: var(--color-text);
+%accent-color-link {
+    text-transform: initial;
+    color: var(--color-accent);
 
-    &:nth-child(odd) {
-        background-color: var(--color-background-row-alt);
-        // color: var(--color-text-on-background-row-alt);
-        color: var(--color-text);
+    &:hover {
+        text-decoration: underline;
     }
+}
+
+%button-base {
+    outline: 0;
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+    padding: var(--spacing-extra-small) var(--spacing-small);
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: inherit;
 }
