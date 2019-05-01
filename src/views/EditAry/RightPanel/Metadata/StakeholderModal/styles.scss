@@ -33,7 +33,7 @@
 
                 .widget-container {
                     display: flex;
-                    flex-basis: calc(calc(100% / 3) - #{$spacing-small* 2});
+                    flex-basis: calc(calc(100% / 3) - calc(var(--spacing-small) * 2));
                     flex-direction: column;
                     flex-grow: 0;
                     margin: $spacing-small;

@@ -668,7 +668,6 @@ export default class Leads extends React.PureComponent {
                                 onChange={this.handleSortItemClick}
                                 placeholder={_ts('leads', 'placeholderAnybody')}
                                 showHintAndError={false}
-                                showLabel={false}
                             />
                             <Button
                                 tabIndex="-1"
