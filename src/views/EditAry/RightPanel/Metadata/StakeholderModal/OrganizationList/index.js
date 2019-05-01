@@ -5,7 +5,6 @@ import memoize from 'memoize-one';
 import {
     _cs,
     caseInsensitiveSubmatch,
-    getRatingForContentInString as rate,
     compareStringSearch,
 } from '@togglecorp/fujs';
 

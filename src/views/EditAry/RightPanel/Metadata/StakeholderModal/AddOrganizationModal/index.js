@@ -49,6 +49,9 @@ const propTypes = {
 const defaultProps = {
 };
 
+const idSelector = foo => foo.id;
+const titleSelector = foo => foo.title;
+
 const requests = {
     addOrganizationRequest: {
         url: '/organizations/',
@@ -106,7 +109,7 @@ export default class AddOrganizationModal extends React.PureComponent {
         fields: {
             title: [requiredCondition],
             shortName: [requiredCondition],
-            longName: [requiredCondition],
+            // longName: [requiredCondition],
             url: [urlCondition, requiredCondition],
             organizationType: [requiredCondition],
             logo: [],
@@ -138,7 +141,12 @@ export default class AddOrganizationModal extends React.PureComponent {
 
     handleFaramValidationSuccess = (values) => {
         const { addOrganizationRequest } = this.props;
-        addOrganizationRequest.do({ body: values });
+        // NOTE: adding title as long name
+        const newValues = {
+            ...values,
+            longName: values.title,
+        };
+        addOrganizationRequest.do({ body: newValues });
     };
 
     handleImageInputChange = (files, { invalidFiles }) => {
@@ -233,7 +241,9 @@ export default class AddOrganizationModal extends React.PureComponent {
                 >
                     <ModalHeader title="Add Organization" />
                     <ModalBody className={styles.modalBody}>
-                        {pendingAddOrganizationRequest && <LoadingAnimation />}
+                        {pendingAddOrganizationRequest &&
+                            <LoadingAnimation />
+                        }
                         <TextInput
                             faramElementName="title"
                             label="Organization Name"
@@ -244,11 +254,14 @@ export default class AddOrganizationModal extends React.PureComponent {
                             label="Abbreviation/Acronym"
                             placeholder="eg. UN OCHA"
                         />
+                        {/*
                         <TextInput
                             faramElementName="longName"
                             label="Long Name"
-                            placeholder="eg. United Nations Organization for Coordination of Humanitarian Affairs"
+                            placeholder="eg. United Nations Organization
+                            for Coordination of Humanitarian Affairs"
                         />
+                        */}
                         <TextInput
                             faramElementName="url"
                             label="URL"
@@ -258,8 +271,8 @@ export default class AddOrganizationModal extends React.PureComponent {
                             faramElementName="organizationType"
                             label="Organization Type"
                             options={organizationTypeList}
-                            keySelector={d => d.id}
-                            labelSelector={d => d.title}
+                            keySelector={idSelector}
+                            labelSelector={titleSelector}
                         />
                         <Checkbox
                             faramElementName="donor"
