@@ -42,6 +42,7 @@
         .sub-category {
             @extend %button;
             display: flex;
+            border-right: var(--width-separator-medium) solid transparent;
             border-bottom: var(--width-separator-thin) solid var(--color-separator);
             padding: var(--spacing-small);
             width: 100%;
@@ -62,12 +63,13 @@
             }
 
             &.selected {
-                background-color: var(--color-background-selected);
+                border-right-color: var(--color-accent);
+                background-color: var(--color-background-accent-hint);
             }
 
             &.active {
-                background-color: var(--color-accent);
-                color: var(--color-text-on-accent);
+                border-right-color: var(--color-accent);
+                background-color: var(--color-background-accent-hint);
 
                 .title {
                     color: inherit;

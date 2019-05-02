@@ -147,12 +147,14 @@ export default class LeadListItem extends React.PureComponent {
                         upload={upload}
                     />
                 </button>
-                <WarningButton
-                    className={styles.removeButton}
-                    disabled={isRemoveDisabled}
-                    onClick={this.handleRemoveClick}
-                    iconName="delete"
-                />
+                <div className={styles.removeButtonContainer}>
+                    <WarningButton
+                        className={styles.removeButton}
+                        disabled={isRemoveDisabled}
+                        onClick={this.handleRemoveClick}
+                        iconName="delete"
+                    />
+                </div>
             </div>
         );
     }

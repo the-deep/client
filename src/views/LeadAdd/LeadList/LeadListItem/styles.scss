@@ -25,7 +25,6 @@
             background-color: var(--color-background-hover);
         }
 
-
         .icon {
             flex-shrink: 0;
             margin: 0 var(--spacing-small);
@@ -97,7 +96,7 @@
         }
     }
 
-    .remove-button {
+    .remove-button-container {
         display: none;
         position: absolute;
         top: 50%;
@@ -112,7 +111,7 @@
             }
         }
 
-        .remove-button {
+        .remove-button-container {
             display: initial;
             opacity: 1;
             animation: fade .5s linear;

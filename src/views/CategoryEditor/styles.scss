@@ -5,10 +5,13 @@
 }
 
 .category-editor {
+    overflow: auto;
+
     .main-content {
         display: flex;
         margin: var(--spacing-small);
         height: calc(100% - var(--height-header));
+        overflow: auto;
 
         .left {
             display: flex;
@@ -16,6 +19,7 @@
             flex-direction: column;
             background-color: var(--color-foreground);
             width: 24%;
+            overflow: auto;
 
             .document-panel {
                 flex-grow: 1;
@@ -27,6 +31,7 @@
             flex-basis: 76%;
             flex-direction: column;
             width: 76%;
+            overflow: auto;
 
             >.header {
                 display: flex;
@@ -63,15 +68,18 @@
             .content {
                 display: flex;
                 flex-grow: 1;
+                overflow: auto;
 
                 .sub-categories {
                     display: flex;
-                    flex-basis: 70%;
                     background-color: var(--color-foreground-alt);
-                    overflow-x: auto;
+                    width: 70%;
+                    overflow: auto;
 
                     .column {
+                        display: flex;
                         flex-shrink: 0;
+                        overflow: auto;
                     }
                 }
             }

@@ -21,6 +21,7 @@
     flex-direction: column;
     flex-grow: 1;
     border-right: var(--width-separator-medium) solid var(--color-separator);
+    overflow: auto;
 
     .header {
         display: flex;
@@ -39,9 +40,11 @@
         position: relative;
         flex-direction: column;
         flex-grow: 1;
+        overflow: auto;
 
         .tab-content {
             display: none;
+            overflow: auto;
 
             &.active {
                 display: flex;
