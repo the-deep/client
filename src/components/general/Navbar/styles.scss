@@ -1,8 +1,3 @@
-:root {
-    --color-text-on-navbar: get-text-color(var(--color-navbar));
-    --color-text-on-primary: get-text-color(var(--color-primary));
-}
-
 .navbar {
     display: flex;
     align-items: center;
@@ -40,7 +35,7 @@
         .beta-label {
             position: absolute;
             top: 50%;
-            right: -var(--spacing-extra-small);
+            right: calc(var(--spacing-extra-small) * -1);
             transform: translate(100%, -100%);
             opacity: .7;
             border-radius: var(--font-size-extra-small);

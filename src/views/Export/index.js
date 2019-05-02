@@ -465,17 +465,6 @@ export default class Export extends React.PureComponent {
                 mainContent={
                     <React.Fragment>
                         <section className={styles.filters} >
-                            <div className={styles.entryFilters}>
-                                <h4 className={styles.heading}>
-                                    {_ts('export', 'entryAttributesLabel')}
-                                </h4>
-                                <FilterEntriesForm
-                                    applyOnChange
-                                    pending={pendingAf || pendingGeoOptions}
-                                    filters={filters}
-                                    geoOptions={geoOptions}
-                                />
-                            </div>
                             <div className={styles.leadFilters}>
                                 <div className={styles.leadAttributes}>
                                     <h4 className={styles.heading}>
@@ -493,6 +482,17 @@ export default class Export extends React.PureComponent {
                                         keySelector={Export.leadKeyExtractor}
                                     />
                                 </div>
+                            </div>
+                            <div className={styles.entryFilters}>
+                                <h4 className={styles.heading}>
+                                    {_ts('export', 'entryAttributesLabel')}
+                                </h4>
+                                <FilterEntriesForm
+                                    applyOnChange
+                                    pending={pendingAf || pendingGeoOptions}
+                                    filters={filters}
+                                    geoOptions={geoOptions}
+                                />
                             </div>
                         </section>
                         <ExportTypePane

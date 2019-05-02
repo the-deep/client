@@ -12,7 +12,7 @@
         color: var(--color-text-disabled);
 
         .image {
-            opacity: 0.3;
+            opacity: .3;
             width: var(--width-icon-super-large);
             height: var(--width-icon-super-large);
         }
@@ -22,21 +22,18 @@
 .users {
     display: flex;
     position: relative;
-    flex-grow: 1;
     background-color: var(--color-foreground);
     overflow: auto;
 
     .search-list {
-        flex-basis: var(--width-search-list);
-        flex-shrink: 0;
         border-right: var(--width-separator-thin) solid var(--color-separator);
-
+        width: var(--width-search-list);
     }
 
     .details {
         display: flex;
         flex-direction: column;
-        flex-grow: 1;
+        width: calc(100% - var(--width-search-list));
         overflow: auto;
 
         .user-list {

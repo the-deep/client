@@ -93,7 +93,7 @@
     // @include background-color($bg-color);
     background-color: var(--color-foreground);
     padding: var(--spacing-small) var(--spacing-small-alt);
-    text-transform: capitalize;
+    text-transform: uppercase;
     color: $bg-color;
     font-size: var(--font-size-small);
     // font-weight: var(--font-weight-bold);
@@ -179,5 +179,25 @@
 
     &:nth-child(odd) {
         background-color: var(--color-background-row-alt);
+    }
+}
+
+%main-content {
+    transform-origin: bottom;
+    border: var(--width-separator-thin) solid var(--color-separator-alt);
+    background-color: var(--color-background-alt);
+    height: 100%;
+    animation: slide-in var(--duration-slow) ease forwards;
+}
+
+@keyframes slide-in {
+    from {
+        transform: rotateX(1deg);
+        opacity: .5;
+    }
+
+    to {
+        transform: none;
+        opacity: 1;
     }
 }

@@ -1,7 +1,6 @@
+@import '~base-scss/utils';
 
 .lead-grouped-entries {
-    // border-bottom: var(--width-separator-thin) solid var(--color-separator);
-
     .header {
         display: flex;
         align-items: center;
@@ -37,21 +36,13 @@
         .number-of-entries {
             flex-shrink: 0;
             padding: var(--spacing-small) var(--spacing-medium);
-            width: 5ch;
             text-align: right;
-            font-family: var(--font-family-monospace);
         }
 
         .edit-entry-link {
-            display: flex;
-            align-items: center;
-            align-self: stretch;
+            @include button-like-link(var(--color-primary));
             flex-shrink: 0;
-            justify-content: center;
-            background-color: var(--color-primary);
-            padding: var(--spacing-small) var(--spacing-medium);
-            color: var(--color-text-on-primary);
-            font-size: var(--font-size-large);
+            margin-right: var(--spacing-medium);
         }
     }
 

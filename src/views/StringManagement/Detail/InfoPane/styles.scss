@@ -3,10 +3,9 @@
 }
 
 %error-pane {
-    flex-basis: var(--width-error-pane);
-    flex-shrink: 0;
     border-top: var(--width-separator-thin) solid var(--color-separator);
     border-left: var(--width-separator-thin) solid var(--color-separator);
+    width: var(--width-error-pane);
 }
 
 .no-problems {

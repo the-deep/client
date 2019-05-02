@@ -6,8 +6,6 @@
         display: flex;
         position: relative;
         flex-direction: column;
-        background-color: var(--color-foreground-alt);
-        color: var(--color-text-on-foreground-alt);
 
         .header {
             display: flex;
@@ -50,7 +48,7 @@
 
             .active {
                 border-left-color: var(--color-accent);
-                background-color: var(--color-background-selected);
+                background-color: var(--color-background-accent-hint);
             }
 
             :hover {
@@ -65,8 +63,6 @@
 
         .connector-details {
             flex-grow: 1;
-            background-color: var(--color-background-alt);
-            color: var(--color-text-on-background-alt);
         }
 
         .no-connector {

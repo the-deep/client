@@ -12,7 +12,7 @@
         }
 
         .link {
-            @extend %button-like-link;
+            @include button-like-link(var(--color-accent));
             margin-left: var(--spacing-small);
             font-weight: var(--font-weight-bold);
         }

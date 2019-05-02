@@ -38,8 +38,14 @@
                     }
                 }
 
+                .row {
+                    &:hover {
+                        background-color: var(--color-background-accent-hint);
+                    }
+                }
+
                 .cell {
-                    padding: var(--spacing-small);
+                    padding: var(--spacing-small) var(--spacing-medium);
 
                     &.created_by,
                     &.assignee {

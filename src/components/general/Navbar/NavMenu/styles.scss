@@ -22,11 +22,13 @@
         font-weight: var(--font-weight-bold);
 
         &:hover {
+            background-color: var(--color-background-hover);
             color: var(--color-accent);
         }
 
         &.active {
             border-bottom-color: var(--color-accent);
+            background-color: var(--color-background-accent-hint);
             color: var(--color-accent);
             // color: var(--color-text-on-navbar);
         }

@@ -14,6 +14,6 @@
 
     &.active {
         border-left: var(--width-separator-thick) solid var(--color-accent);
-        background-color: var(--color-background-selected);
+        background-color: var(--color-background-accent-hint);
     }
 }

@@ -10,7 +10,6 @@
 
         .add-lead-link {
             @include button-like-link(var(--color-primary));
-            // @extend %button-like-link;
             align-self: flex-end;
             flex-shrink: 0;
             margin: var(--spacing-small);

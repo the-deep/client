@@ -2,7 +2,6 @@
     --radius-button-border: 2px;
 }
 
-
 %button-basic {
     align-self: stretch;
     flex-shrink: 0;
@@ -25,14 +24,16 @@
     }
     .save-buttons {
         @extend %button-basic;
-        background-color: var(--color-success);
-        color: var(--color-text-on-success);
+        border: var(--width-separator-thin) solid var(--color-success);
+        background-color: var(--color-foreground);
+        color: var(--color-success);
     }
 
     .remove-buttons {
         @extend %button-basic;
-        background-color: var(--color-warning);
-        color: var(--color-text-on-warning);
+        border: var(--width-separator-thin) solid var(--color-warning);
+        background-color: var(--color-foreground);
+        color: var(--color-warning);
     }
 }
 

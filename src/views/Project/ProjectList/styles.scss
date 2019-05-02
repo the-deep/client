@@ -57,7 +57,8 @@
 
             &.active {
                 border-left-color: var(--color-accent);
-                background-color: var(--color-background-selected);
+                background-color: var(--color-background-accent-hint);
+                color: var(--color-text-on-accent-hint);
             }
         }
 

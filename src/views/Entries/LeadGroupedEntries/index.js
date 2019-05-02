@@ -91,7 +91,8 @@ export default class LeadGroupedEntries extends React.PureComponent {
                     title={_ts('entries', 'numberOfEntriesTooltip')}
                     className={styles.numberOfEntries}
                 >
-                    { entries.length }
+                    {/* FIXME: string */}
+                    <strong>{ entries.length }</strong> entries
                 </div>
                 <Cloak
                     {...viewsAcl.editEntries}

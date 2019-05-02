@@ -1,6 +1,8 @@
 %filter-group {
+    background-color: var(--color-foreground);
+
     .heading {
-        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        // border-bottom: var(--width-separator-thin) solid var(--color-separator);
         background-color: var(--color-background-header);
         padding: var(--spacing-small);
     }
@@ -23,7 +25,7 @@
 
             .entry-filters {
                 @extend %filter-group;
-                border-bottom: var(--width-separator-medium) solid var(--color-separator);
+                border-top: var(--width-separator-thin) solid var(--color-separator);
 
                 :global {
                     .entries-filters {
