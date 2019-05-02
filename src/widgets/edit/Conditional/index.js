@@ -182,6 +182,7 @@ export default class ConditionalWidgetEdit extends React.PureComponent {
         return (
             <Modal className={styles.modal}>
                 <Faram
+                    className={styles.form}
                     onChange={this.handleFaramChange}
                     onValidationFailure={this.handleFaramValidationFailure}
                     onValidationSuccess={this.handleFaramValidationSuccess}

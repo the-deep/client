@@ -1,3 +1,6 @@
+:root {
+    --height-modal-medium: 70vh;
+}
 
 .sortable-unit {
     border-top: var(--width-separator-thin) solid var(--color-separator);
@@ -15,16 +18,19 @@
 .edit-modal {
     width: var(--width-modal-medium);
     height: var(--height-modal-medium);
+    overflow: auto;
 
     .form {
         display: flex;
         flex-direction: column;
         height: 100%;
+        overflow: auto;
 
         .body {
             display: flex;
             flex-direction: column;
             padding: 0;
+            overflow: auto;
 
             .non-field-errors {
                 flex-shrink: 0;
@@ -40,6 +46,7 @@
                 display: flex;
                 flex-direction: column;
                 flex-shrink: 0;
+                overflow: auto;
 
                 .tabs {
                     flex-grow: 1;
@@ -51,10 +58,11 @@
                 flex-direction: column;
                 flex-grow: 1;
                 border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                overflow: auto;
 
                 .edit-list {
                     flex-grow: 1;
-                    overflow-y: auto;
+                    overflow: auto;
 
                     .sortable-unit {
                         border-top-color: transparent;

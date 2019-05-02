@@ -17,33 +17,6 @@
     @extend %link;
 }
 
-:global {
-    .body {
-        .row {
-            &:hover {
-                background-color: var(--color-background-hover);
-
-                .email-link {
-                    color: var(--color-danger);
-                }
-
-                .edit-link {
-                    color: var(--color-warning);
-                }
-
-                .join-button {
-                    background-color: var(--color-primary);
-                    color: var(--color-foreground);
-
-                    &:hover {
-                        background-color: get-hover-color(var(--color-primary));
-                        color: var(--color-foreground);
-                    }
-                }
-            }
-        }
-    }
-}
 
 
 

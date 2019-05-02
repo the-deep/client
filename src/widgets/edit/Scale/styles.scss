@@ -15,17 +15,20 @@
 .edit-modal {
     width: var(--width-modal-medium);
     height: var(--height-modal-medium);
+    overflow: auto;
 
     .form {
         display: flex;
         flex-direction: column;
         height: 100%;
+        overflow: auto;
 
         .body {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
             padding: 0;
+            overflow: auto;
 
             .non-field-errors {
                 flex-shrink: 0;
@@ -41,6 +44,7 @@
                 display: flex;
                 flex-direction: column;
                 flex-grow: 1;
+                overflow: auto;
 
                 .header {
                     display: flex;
@@ -53,7 +57,7 @@
 
                 .edit-list {
                     flex-grow: 1;
-                    overflow-y: auto;
+                    overflow: auto;
 
                     .sortable-unit {
                         border-top-color: transparent;

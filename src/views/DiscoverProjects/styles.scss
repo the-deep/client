@@ -42,7 +42,6 @@
             position: relative;
             flex-direction: column;
             flex-grow: 1;
-            background-color: var(--color-background-row);
             overflow: auto;
 
             .projects-table {
@@ -62,6 +61,20 @@
 
                     .actions {
                         white-space: nowrap;
+                    }
+
+                    .body {
+                        .row {
+                            &:hover {
+                                .email-link {
+                                    color: var(--color-primary);
+                                }
+
+                                .edit-link {
+                                    color: var(--color-warning);
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -90,7 +103,8 @@
                 }
             }
 
-            .empty-message, .empty-filter-message {
+            .empty-message,
+            .empty-filter-message {
                 display: flex;
                 align-items: center;
                 flex-direction: column;

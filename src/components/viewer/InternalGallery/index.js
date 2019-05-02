@@ -72,15 +72,20 @@ const PreviewGallery = ({
     if (pending) {
         return (
             <div className={`${className} ${styles.previewGallery}`}>
-                <LoadingAnimation />
+                <LoadingAnimation
+                    minPaddingSize={0}
+                    minFontSize={14}
+                />
             </div>
         );
     }
     if (notFound) {
         return (
-            <Message className={`${className} ${styles.previewGallery}`}>
-                {notFoundMessage || _ts('components.internalGallery', 'deepFileNotFound')}
-            </Message>
+            <div className={`${className} ${styles.previewGallery}`}>
+                <Message>
+                    {notFoundMessage || _ts('components.internalGallery', 'deepFileNotFound')}
+                </Message>
+            </div>
         );
     }
     // use supported file viewer component

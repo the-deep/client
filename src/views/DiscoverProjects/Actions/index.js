@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { reverseRoute } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
-import Button from '#rsca/Button';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
 import DangerButton from '#rsca/Button/DangerButton';
 
 import { pathNames } from '#constants';
@@ -65,13 +65,13 @@ export default class Actions extends React.PureComponent {
                 );
             case 'none':
                 return (
-                    <Button
+                    <PrimaryButton
                         className="join-button"
                         title={_ts('discoverProjects.table', 'joinLabel')}
                         onClick={() => this.props.onProjectJoin(project)}
                     >
                         {_ts('discoverProjects.table', 'joinLabel')}
-                    </Button>
+                    </PrimaryButton>
                 );
             default:
                 return null;

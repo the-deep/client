@@ -17,7 +17,7 @@
         padding: var(--spacing-small);
 
         &.active {
-            background-color: var(--color-background-selected);
+            background-color: var(--color-background-accent-hint);
         }
     }
 }
@@ -25,17 +25,20 @@
 .edit-modal {
     width: var(--width-modal-large);
     height: var(--height-edit-modal);
+    overflow: auto;
 
     .form {
         display: flex;
         flex-direction: column;
         height: 100%;
+        overflow: auto;
 
         .body {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
             padding: 0;
+            overflow: auto;
 
             .error {
                 flex-shrink: 0;
@@ -50,6 +53,7 @@
                 display: flex;
                 flex-direction: column;
                 flex-shrink: 0;
+                overflow: auto;
 
                 .tabs {
                     flex-grow: 1;
@@ -73,6 +77,7 @@
                 display: flex;
                 flex-direction: column;
                 flex-grow: 1;
+                overflow: auto;
 
                 .error {
                     flex-shrink: 0;
@@ -81,11 +86,12 @@
                 .panels {
                     display: flex;
                     flex-grow: 1;
+                    overflow: auto;
 
                     .left-panel {
                         flex-basis: 30%;
                         border-right: var(--width-separator-thin) solid var(--color-separator);
-                        overflow-y: auto;
+                        overflow: auto;
 
                         .item {
                             border-top: 0;
@@ -96,6 +102,7 @@
                         display: flex;
                         flex-basis: 70%;
                         flex-direction: column;
+                        overflow: auto;
                     }
                 }
             }
