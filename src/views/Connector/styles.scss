@@ -1,21 +1,22 @@
-@import '~base-scss/base';
+@import '~base-scss/utils';
+
 
 .connectors {
     .sidebar {
-        @include background-color($color-foreground-alt);
         display: flex;
         position: relative;
         flex-direction: column;
 
         .header {
-            @include background-color($color-background-header);
             display: flex;
             align-items: center;
             flex-shrink: 0;
             flex-wrap: wrap;
             justify-content: space-between;
-            border-bottom: $width-separator-thin solid $color-separator;
-            padding: $spacing-small;
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-background-header);
+            padding: var(--spacing-small);
+            color: var(--color-text-on-background-header);
 
             .heading {
                 flex-grow: 1;
@@ -33,12 +34,12 @@
 
             .list-item {
                 display: block;
-                border-bottom: $width-separator-thin solid $color-separator;
-                border-left: $width-separator-thick solid transparent;
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                border-left: var(--width-separator-thick) solid transparent;
 
                 .link {
                     display: block;
-                    padding: $spacing-small;
+                    padding: var(--spacing-small);
                     width: 100%;
                     height: 100%;
                     text-transform: none;
@@ -46,12 +47,12 @@
             }
 
             .active {
-                border-left-color: $color-accent;
-                background-color: $color-background-selected;
+                border-left-color: var(--color-accent);
+                background-color: var(--color-background-accent-hint);
             }
 
             :hover {
-                background-color: $color-background-hover;
+                background-color: var(--color-background-hover);
             }
         }
     }
@@ -65,12 +66,12 @@
         }
 
         .no-connector {
-            @include background-color-with-disabled-text($color-foreground);
+            @include background-color-with-disabled-text(var(--color-foreground));
             display: flex;
             align-items: center;
             flex-grow: 1;
             justify-content: center;
-            font-size: $font-size-extra-large;
+            font-size: var(--font-size-extra-large);
         }
     }
 }

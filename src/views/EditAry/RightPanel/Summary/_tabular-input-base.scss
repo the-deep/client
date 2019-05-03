@@ -1,9 +1,9 @@
-%tabular-input-base {
-    padding: $spacing-medium;
+%cell {
+    padding: var(--spacing-medium-alt);
+}
 
-    %cell {
-        padding: $spacing-medium-alt;
-    }
+%tabular-input-base {
+    padding: var(--spacing-medium);
 
     .table {
         width: 100%;
@@ -13,8 +13,8 @@
         .head {
             .row {
                 .header {
-                    border-bottom: $width-separator-thin solid $color-separator;
-                    padding: $spacing-medium-alt;
+                    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                    padding: var(--spacing-medium-alt);
                     text-align: left;
                 }
             }
@@ -31,8 +31,8 @@
                         .section-title {
                             flex-shrink: 0;
                             text-transform: capitalize;
-                            color: $color-accent;
-                            font-weight: $font-weight-bold;
+                            color: var(--color-accent);
+                            font-weight: var(--font-weight-bold);
                         }
 
                         .section-non-field-errors {
@@ -41,10 +41,10 @@
                             justify-content: flex-start;
                             padding: 0;
                             text-align: initial;
-                            font-size: $font-size-small;
+                            font-size: var(--font-size-small);
 
                             >div {
-                                padding: 0 $spacing-medium;
+                                padding: 0 var(--spacing-medium);
                             }
                         }
                     }

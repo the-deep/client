@@ -656,8 +656,8 @@ export default class Leads extends React.PureComponent {
                         </div>
                     ) : (
                         <div className={styles.sortingContainer}>
-                            <p>{_ts('leadsGrid', 'leadsRange', { leadsCount, totalLeadsCount })}</p>
-                            <p>{_ts('leadsGrid', 'sortedByLabel')}:</p>
+                            <div className={styles.text}>{_ts('leadsGrid', 'leadsRange', { leadsCount, totalLeadsCount })}</div>
+                            <div className={styles.text}>{_ts('leadsGrid', 'sortedByLabel')}:</div>
                             <SelectInput
                                 faramElementName="assignee"
                                 keySelector={this.sortKeySelector}

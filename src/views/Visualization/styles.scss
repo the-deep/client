@@ -1,42 +1,47 @@
-@import '~base-scss/base';
+:root {
+    --width-tabs: 240px;
+}
+
+%viz {
+    flex-grow: 1;
+    margin-bottom: var(--spacing-small);
+    background-color: var(--color-foreground-alt);
+    color: var(--color-text-on-foreground-alt);
+}
 
 .visualization {
     display: flex;
     flex-direction: column;
 
     .header{
-        @include background-color($color-background-header);
         display: flex;
         align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
-        border-bottom: $width-separator-thin solid $color-separator-alt;
-        padding: $spacing-small;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator-alt);
+        background-color: var(--color-background-header);
+        padding: var(--spacing-small);
+        color: var(--color-text-on-background-header);
     }
 
     .content {
         display: flex;
         flex: 1;
 
-        $width-tabs: 240px;
 
         .tabs {
-            @include background-color($color-foreground);
-            flex-basis: $width-tabs;
+            flex-basis: var(--width-tabs);
             flex-grow: 0;
             flex-shrink: 0;
-            border-right: $width-separator-thin solid $color-separator;
+            border-right: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-foreground);
+            color: var(--color-text-on-foreground);
         }
 
         .visualizations {
             display: flex;
             flex-direction: column;
 
-            %viz {
-                @include background-color($color-foreground-alt);
-                flex-grow: 1;
-                margin-bottom: $spacing-small;
-            }
             .chord-diagram {
                 @extend %viz;
             }

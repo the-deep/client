@@ -1,22 +1,22 @@
-@import '~base-scss/base';
-
-$size-default-icon: 48px;
+:root {
+    --size-default-icon: 48px;
+}
 
 .notification {
     display: flex;
-    padding: $spacing-small 0;
+    padding: var(--spacing-small) 0;
 
     &:not(:last-child) {
-        border-bottom: $width-separator-thin solid $color-separator;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
     }
 
     .left {
-        flex-basis: $size-default-icon;
+        flex-basis: var(--size-default-icon);
         flex-shrink: 0;
-        margin: $spacing-medium;
-        border: $width-separator-thin solid $color-accent;
+        margin: var(--spacing-medium);
+        border: var(--width-separator-thin) solid var(--color-accent);
         border-radius: 50%;
-        height: $size-default-icon;
+        height: var(--size-default-icon);
         overflow: hidden;
 
         >* {
@@ -28,7 +28,7 @@ $size-default-icon: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: $font-size-super-large;
+            font-size: var(--font-size-super-large);
         }
     }
 
@@ -36,25 +36,25 @@ $size-default-icon: 48px;
         flex-grow: 1;
 
         .message {
-            padding: $spacing-small $spacing-medium;
+            padding: var(--spacing-small) var(--spacing-medium);
         }
 
         .timestamp {
             display: flex;
-            padding: 0 $spacing-medium;
+            padding: 0 var(--spacing-medium);
 
             .timestamp-icon {
                 flex-shrink: 0;
-                padding-right: $spacing-small;
+                padding-right: var(--spacing-small);
             }
 
             .date {
-                color: $color-text-label;
+                color: var(--color-text-label);
             }
         }
 
         .actions {
-            margin-top: $spacing-medium-alt;
+            margin-top: var(--spacing-medium-alt);
         }
     }
 }

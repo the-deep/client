@@ -1,14 +1,13 @@
-@import '~base-scss/base';
 
 .left-panel {
     display: flex;
     flex-direction: column;
-    background-color: $color-foreground;
+    background-color: var(--color-foreground);
     overflow: auto;
 
     .lead-select-input {
         flex-shrink: 0;
-        margin: $spacing-small;
+        margin: var(--spacing-small);
     }
 
     .container {

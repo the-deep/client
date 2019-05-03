@@ -1,19 +1,19 @@
-@import '~base-scss/base';
-
-$spacing-drag-handle: 14px;
-$height-modal-body: 720px;
+:root {
+    --spacing-drag-handle: 14px;
+    --height-modal-body: 720px;
+}
 
 .sortable-unit {
-    border-top: $width-separator-thin solid $color-separator;
-    border-bottom: $width-separator-thin solid $color-separator;
+    border-top: var(--width-separator-thin) solid var(--color-separator);
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
 
     .drag-handle {
         display: flex;
         align-items: flex-start;
         align-self: stretch;
         justify-content: center;
-        background-color: $color-foreground;
-        padding: $spacing-drag-handle $spacing-small-alt;
+        background-color: var(--color-foreground);
+        padding: var(--spacing-drag-handle) var(--spacing-small-alt);
     }
 }
 
@@ -24,7 +24,7 @@ $height-modal-body: 720px;
         display: flex;
         flex-grow: 1;
         padding: 0;
-        height: $height-modal-body;
+        height: var(--height-modal-body);
         max-height: 80vh;
 
         .left-container {
@@ -32,7 +32,7 @@ $height-modal-body: 720px;
             flex-basis: 30%;
             flex-direction: column;
             flex-shrink: 0;
-            border-right: $spacing-extra-small solid $color-separator;
+            border-right: var(--spacing-extra-small) solid var(--color-separator);
             height: 100%;
 
             .header {
@@ -40,15 +40,15 @@ $height-modal-body: 720px;
                 align-items: center;
                 flex-shrink: 0;
                 justify-content: space-between;
-                border-bottom: $width-separator-thin solid $color-separator;
-                padding: $spacing-small;
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                padding: var(--spacing-small);
                 text-transform: uppercase;
-                font-size: $font-size-large;
-                font-weight: $font-weight-light;
+                font-size: var(--font-size-large);
+                font-weight: var(--font-weight-light);
 
                 .header-info {
                     cursor: pointer;
-                    color: $color-info;
+                    color: var(--color-info);
                 }
             }
 
@@ -57,17 +57,19 @@ $height-modal-body: 720px;
                 overflow-y: auto;
 
                 .group {
-                    background-color: $color-background-row-alt;
-                    padding: $spacing-small $spacing-medium;
-                    font-size: $font-size-medium-alt;
+                    background-color: var(--color-background-row-alt);
+                    padding: var(--spacing-small) var(--spacing-medium);
+                    font-size: var(--font-size-medium-alt);
 
                     &:not(:first-child) {
-                        margin-top: $spacing-medium;
+                        margin-top: var(--spacing-medium);
                     }
                 }
 
                 .item {
-                    border-top: $width-separator-thin solid $color-separator;
+                    &:hover {
+                        background-color: var(--color-background-accent-hint);
+                    }
                 }
 
                 .group + .item {
@@ -86,13 +88,13 @@ $height-modal-body: 720px;
                 align-items: center;
                 flex-shrink: 0;
                 justify-content: space-between;
-                border-bottom: $width-separator-thin solid $color-separator;
-                padding: $spacing-small;
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                padding: var(--spacing-small);
 
                 .heading {
                     text-transform: uppercase;
-                    font-size: $font-size-large;
-                    font-weight: $font-weight-light;
+                    font-size: var(--font-size-large);
+                    font-weight: var(--font-weight-light);
                 }
             }
 

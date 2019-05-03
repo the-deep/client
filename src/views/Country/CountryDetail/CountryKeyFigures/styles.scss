@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .key-figures {
     position: relative;
@@ -14,21 +13,21 @@
 
             .heading {
                 flex-basis: 100%;
-                padding: $spacing-medium;
+                padding: var(--spacing-medium);
             }
 
             .inputs {
-                padding: $spacing-medium;
+                padding: var(--spacing-medium);
             }
 
             &:not(:last-child) {
-                border-right: $width-separator-thin solid $color-separator;
+                border-right: var(--width-separator-thin) solid var(--color-separator);
             }
         }
     }
 
     .icon {
-        margin-left: $spacing-small;
-        font-size: $font-size-extra-large;
+        margin-left: var(--spacing-small);
+        font-size: var(--font-size-extra-large);
     }
 }

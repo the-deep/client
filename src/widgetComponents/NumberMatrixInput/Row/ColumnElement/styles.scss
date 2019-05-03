@@ -1,6 +1,6 @@
-@import '~base-scss/base';
 
 .table-cell {
-    @include background-color($color-foreground);
-    padding: $spacing-extra-small $spacing-small;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-extra-small) var(--spacing-small);
+    color: var(--color-text-on-foreground);
 }

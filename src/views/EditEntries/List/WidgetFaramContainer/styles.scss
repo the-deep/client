@@ -1,6 +1,6 @@
-@import '~base-scss/base';
-
-$width-action-buttons: 40px;
+:root {
+    --width-action-buttons: 40px;
+}
 
 .widget-faram-container {
     .header {
@@ -12,13 +12,13 @@ $width-action-buttons: 40px;
         >* {
             border-radius: 0;
             box-shadow: none;
-            padding: $spacing-extra-small-alt $spacing-small-alt;
+            padding: var(--spacing-extra-small-alt) var(--spacing-small-alt);
         }
     }
 
     .widget {
         display: inline-block;
-        border-bottom: $width-separator-thin solid $color-separator-alt;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator-alt);
         min-width: 100%;
     }
 }

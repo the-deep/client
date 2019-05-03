@@ -1,21 +1,25 @@
-@import '~base-scss/base';
+:root {
+    --width-notification-dropdown: 420px;
+    --height-notification-dropdown: 520px;
+}
 
 .notifica {
     position: relative;
 
     .count {
-        @include background-color($color-danger);
         display: flex;
         position: absolute;
-        top: $spacing-small;
-        right: $spacing-small;
+        top: var(--spacing-small);
+        right: var(--spacing-small);
         align-items: center;
         justify-content: center;
-        border-radius: ($font-size-extra-small + $spacing-extra-small * 2) / 2;
-        padding: $spacing-extra-small;
-        min-width: $font-size-extra-small + $spacing-extra-small * 2;
-        font-size: $font-size-extra-small;
-        font-weight: $font-weight-bold;
+        border-radius: calc((var(--font-size-extra-small) + var(--spacing-extra-small) * 2) / 2);
+        background-color: var(--color-danger);
+        padding: var(--spacing-extra-small);
+        min-width: calc(var(--font-size-extra-small) + var(--spacing-extra-small) * 2);
+        color: var(--color-text-on-danger);
+        font-size: var(--font-size-extra-small);
+        font-weight: var(--font-weight-bold);
     }
 
     .dropdown-menu {
@@ -24,12 +28,9 @@
     }
 }
 
-$width-notification-dropdown: 420px;
-$height-notification-dropdown: 520px;
-
 .notification-dropdown {
-    width: $width-notification-dropdown;
-    height: $height-notification-dropdown;
+    width: var(--width-notification-dropdown);
+    height: var(--height-notification-dropdown);
 
     .notifications {
         height: 100%;
@@ -37,5 +38,5 @@ $height-notification-dropdown: 520px;
 }
 
 .icon {
-    font-size: $font-size-super-large;
+    font-size: var(--font-size-super-large);
 }

@@ -1,16 +1,14 @@
-@import '~base-scss/base';
-
 .search-list {
     display: flex;
     flex-direction: column;
 
     .header {
         flex-shrink: 0;
-        background-color: $color-background-header;
-        padding: $spacing-medium;
+        background-color: var(--color-background-header);
+        padding: var(--spacing-medium);
 
         .heading {
-            padding-bottom: $spacing-small;
+            padding-bottom: var(--spacing-small);
         }
     }
 
@@ -25,7 +23,7 @@
             overflow-y: auto;
 
             .list-item {
-                border-top: $width-separator-thin solid $color-separator;
+                border-top: var(--width-separator-thin) solid var(--color-separator);
                 border-bottom: 0;
             }
 
@@ -34,10 +32,10 @@
             }
 
             .list-group {
-                background-color: $color-foreground-alt;
+                background-color: var(--color-foreground-alt);
 
                 &:not(:first-child) {
-                    margin-top: $spacing-small;
+                    margin-top: var(--spacing-small);
                 }
             }
         }
@@ -46,7 +44,7 @@
             flex-direction: column;
 
             .icon {
-                font-size: $font-size-super-large;
+                font-size: var(--font-size-super-large);
             }
         }
 
@@ -55,12 +53,12 @@
 
             .image {
                 opacity: 0.3;
-                width: $width-icon-super-large;
-                height: $width-icon-super-large;
+                width: var(--width-icon-super-large);
+                height: var(--width-icon-super-large);
             }
 
             .text {
-                margin: $spacing-medium 0;
+                margin: var(--spacing-medium) 0;
             }
         }
     }

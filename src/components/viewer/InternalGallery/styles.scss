@@ -1,11 +1,10 @@
-@import '~base-scss/base';
 
 .preview-gallery {
     position: relative;
 }
 
 .gallery-file-name {
-    color: $color-accent;
+    color: var(--color-accent);
 }
 
 .preview-nothing {
@@ -14,7 +13,7 @@
     justify-content: center;
 
     .label {
-        margin-right: $spacing-small;
+        margin-right: var(--spacing-small);
     }
 
     .loading-animation {

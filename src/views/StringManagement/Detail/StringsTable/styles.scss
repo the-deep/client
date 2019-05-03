@@ -1,27 +1,28 @@
-@import '~base-scss/base';
+:root {
+    --width-id-column: 72px;
+    --width-refs-column: 64px;
+    --width-duplicates-column: 108px;
+    --width-string-column: calc(100% - var(--width-id-column) - var(--width-refs-column) - var(--width-duplicates-column));
+}
 
 .strings-table {
-    $width-id-column: 72px;
-    $width-refs-column: 64px;
-    $width-duplicates-column: 108px;
-    $width-string-column: calc(100% - #{$width-id-column + $width-refs-column + $width-duplicates-column});
 
     :global {
         .headers {
             .id {
-                width: $width-id-column;
+                width: var(--width-id-column);
             }
 
             .refs {
-                width: $width-refs-column;
+                width: var(--width-refs-column);
             }
 
             .duplicates {
-                width: $width-duplicates-column;
+                width: var(--width-duplicates-column);
             }
 
             .string {
-                width: $width-string-column;
+                width: var(--width-string-column);
             }
         }
 
@@ -29,7 +30,7 @@
             .id,
             .refs,
             .duplicates {
-                font-family: $font-family-monospace;
+                font-family: var(--font-family-monospace);
             }
 
             .actions {

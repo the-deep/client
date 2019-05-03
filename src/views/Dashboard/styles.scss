@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .dashboard {
     .main-content {
@@ -8,17 +7,17 @@
         justify-content: center;
 
         .deep-logo {
-            margin: 0 0 $spacing-large;
+            margin: 0 0 var(--spacing-large);
             width: 256px;
             height: 256px;
-            color: $color-text-disabled;
+            color: var(--color-text-disabled);
         }
 
         .deep-text {
-            margin-top: $spacing-large;
+            margin-top: var(--spacing-large);
             text-transform: uppercase;
-            color: $color-accent;
-            font-size: $font-size-super-large;
+            color: var(--color-accent);
+            font-size: var(--font-size-super-large);
         }
     }
 }

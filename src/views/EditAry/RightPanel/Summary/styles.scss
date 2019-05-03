@@ -1,8 +1,7 @@
-@import '~base-scss/base';
 
 .summary {
     display: flex;
-    background-color: $color-foreground;
+    background-color: var(--color-foreground);
     height: 100%;
 
     .view {
@@ -12,6 +11,6 @@
     .tabs {
         flex-basis: 20%;
         flex-shrink: 0;
-        border-right: $width-separator-thin solid $color-separator;
+        border-right: var(--width-separator-thin) solid var(--color-separator);
     }
 }

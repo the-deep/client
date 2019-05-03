@@ -1,4 +1,7 @@
-@import '~base-scss/base';
+:root {
+    --height-droppable-widget: 320px;
+}
+
 
 .modal {
     width: 80vw;
@@ -6,7 +9,7 @@
 
     .modal-body {
         display: flex;
-        padding: $spacing-small;
+        padding: var(--spacing-small);
         padding: 0;
         overflow: auto;
 
@@ -14,8 +17,6 @@
             flex-shrink: 0;
             width: 320px;
         }
-
-        $height-droppable-widget: 320px;
 
         .right {
             display: flex;
@@ -28,31 +29,31 @@
                 align-content: flex-start;
                 flex-grow: 1;
                 flex-wrap: wrap;
-                padding: $spacing-small;
+                padding: var(--spacing-small);
                 overflow: auto;
 
                 .widget-container {
                     display: flex;
-                    flex-basis: calc(calc(100% / 3) - #{$spacing-small* 2});
+                    flex-basis: calc(calc(100% / 3) - calc(var(--spacing-small) * 2));
                     flex-direction: column;
                     flex-grow: 0;
-                    margin: $spacing-small;
-                    border: $width-separator-thin solid $color-separator;
+                    margin: var(--spacing-small);
+                    border: var(--width-separator-thin) solid var(--color-separator);
                     border-radius: 5px;
                     min-width: 200px;
                     overflow: auto;
 
                     .widget {
-                        margin: $spacing-medium;
+                        margin: var(--spacing-medium);
                     }
 
                     .droppable-widget {
                         flex-grow: 1;
-                        padding: $spacing-medium;
-                        height: $height-droppable-widget;
+                        padding: var(--spacing-medium);
+                        height: var(--height-droppable-widget);
 
                         .widget-item {
-                            padding: $spacing-small $spacing-small $spacing-small 0;
+                            padding: var(--spacing-small) var(--spacing-small) var(--spacing-small) 0;
                         }
                     }
                 }

@@ -1,13 +1,14 @@
-@import '~base-scss/base';
+@import '~base-scss/utils';
+
 
 %base {
     display: inline-block;
-    padding: $spacing-extra-small $spacing-small;
+    padding: var(--spacing-extra-small) var(--spacing-small);
 }
 
 %link {
     @extend %base;
-    color: $color-text-label;
+    color: var(--color-text-label);
 }
 
 .action-buttons {
@@ -17,7 +18,7 @@
         flex-shrink: 0;
 
         &:not(:last-child) {
-            padding: 0 $spacing-small;
+            padding: 0 var(--spacing-small);
         }
 
         button {
@@ -26,7 +27,7 @@
 
         .edit-link {
             @extend %link;
-            @include transparent-button-like-link($color-warning);
+            @include transparent-button-like-link(var(--color-warning));
         }
 
         .add-entry-link,
@@ -35,7 +36,7 @@
         }
 
         .add-entry-link {
-            color: $color-accent;
+            color: var(--color-accent);
 
             &.disabled {
                 pointer-events: none;
@@ -43,7 +44,7 @@
         }
 
         .add-assessment-link {
-            color: $color-info;
+            color: var(--color-info);
 
             &.disabled {
                 pointer-events: none;

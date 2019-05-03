@@ -1,21 +1,25 @@
-@import '~base-scss/base';
-
-$width-category-select-input: 240px;
-$width-title-input: 240px;
-$height-header: 42px;
+:root {
+    --width-category-select-input: 240px;
+    --width-title-input: 240px;
+    --height-header: 42px;
+}
 
 .category-editor {
+    overflow: auto;
+
     .main-content {
         display: flex;
-        margin: $spacing-small;
-        height: calc(100% - #{$height-header});
+        margin: var(--spacing-small);
+        height: calc(100% - var(--height-header));
+        overflow: auto;
 
         .left {
             display: flex;
             flex-basis: 24%;
             flex-direction: column;
-            background-color: $color-foreground;
+            background-color: var(--color-foreground);
             width: 24%;
+            overflow: auto;
 
             .document-panel {
                 flex-grow: 1;
@@ -27,14 +31,15 @@ $height-header: 42px;
             flex-basis: 76%;
             flex-direction: column;
             width: 76%;
+            overflow: auto;
 
             >.header {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                border-bottom: $width-separator-thin solid $color-separator-alt;
-                background-color: $color-foreground;
-                padding: $spacing-large $spacing-medium $spacing-small $spacing-medium;
+                border-bottom: var(--width-separator-thin) solid var(--color-separator-alt);
+                background-color: var(--color-foreground);
+                padding: var(--spacing-large) var(--spacing-medium) var(--spacing-small) var(--spacing-medium);
 
                 .title-input {
                     flex-basis: 30%;
@@ -54,7 +59,7 @@ $height-header: 42px;
                         flex-shrink: 0;
 
                         button {
-                            margin-left: $spacing-small;
+                            margin-left: var(--spacing-small);
                         }
                     }
                 }
@@ -63,15 +68,18 @@ $height-header: 42px;
             .content {
                 display: flex;
                 flex-grow: 1;
+                overflow: auto;
 
                 .sub-categories {
                     display: flex;
-                    flex-basis: 70%;
-                    background-color: $color-foreground-alt;
-                    overflow-x: auto;
+                    background-color: var(--color-foreground-alt);
+                    width: 70%;
+                    overflow: auto;
 
                     .column {
+                        display: flex;
                         flex-shrink: 0;
+                        overflow: auto;
                     }
                 }
             }
@@ -81,7 +89,7 @@ $height-header: 42px;
                 align-items: center;
                 flex-grow: 1;
                 justify-content: center;
-                color: $color-text-disabled;
+                color: var(--color-text-disabled);
             }
         }
     }

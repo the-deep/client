@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .time-range {
     display: flex;
@@ -13,7 +12,7 @@
         flex-wrap: wrap;
 
         .time-input {
-            padding: $spacing-extra-small $spacing-small;
+            padding: var(--spacing-extra-small) var(--spacing-small);
         }
     }
 

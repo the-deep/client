@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .user-exports {
     .header {
@@ -22,17 +21,17 @@
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            background-color: $color-background-row;
+            background-color: var(--color-background-row);
             overflow-y: auto;
 
             .loading-animation {
                 position: relative;
-                height: $font-size-large;
+                height: var(--font-size-large);
 
                 >div {
                     background-color: transparent;
                     padding: 0!important;
-                    font-size: $font-size-large!important;
+                    font-size: var(--font-size-large)!important;
                 }
             }
 
@@ -54,7 +53,8 @@
 
                         .row {
                             &.highlighted {
-                                @include background-color($color-accent);
+                                background-color: var(--color-accent);
+                                color: var(--color-text-on-accent);
 
                                 .file-download {
                                     color: inherit;
@@ -76,13 +76,13 @@
                 .file-error {
                     display: flex;
                     justify-content: center;
-                    color: $color-danger;
+                    color: var(--color-danger);
                 }
 
                 .file-download {
                     display: flex;
                     justify-content: center;
-                    color: $color-accent;
+                    color: var(--color-accent);
                 }
             }
         }
@@ -91,8 +91,8 @@
             flex-basis: 30%;
             flex-grow: 0;
             flex-shrink: 0;
-            border-left: $width-separator-thin solid $color-separator;
-            background-color: $color-foreground-alt;
+            border-left: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-foreground-alt);
         }
     }
 }

@@ -1,19 +1,21 @@
-%widget {
-    $height-header: 20px;
+:root {
+    --height-widget-header: 20px;
+}
 
+%widget {
     .header {
-        background-color: $color-background-header;
-        height: $height-header;
-        font-size: $font-size-small;
+        background-color: var(--color-background-header);
+        height: var(--height-widget-header);
+        font-size: var(--font-size-small);
 
         .heading {
-            color: $color-primary;
-            font-weight: $font-weight-bold;
+            color: var(--color-primary);
+            font-weight: var(--font-weight-bold);
         }
     }
 
     .content {
-        background-color: $color-foreground;
-        height: calc(100% - #{$height-header});
+        background-color: var(--color-foreground);
+        height: calc(100% - var(--height-widget-header));
     }
 }

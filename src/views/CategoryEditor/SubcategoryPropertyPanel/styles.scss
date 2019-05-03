@@ -1,29 +1,29 @@
-@import '~base-scss/base';
-
 %ngram-selects {
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    border-top: $width-separator-thin solid $color-separator-alt;
-    background-color: $color-foreground;
+    border-top: var(--width-separator-thin) solid var(--color-separator-alt);
+    background-color: var(--color-foreground);
 
     .heading {
-        padding: $spacing-small $spacing-medium;
+        padding: var(--spacing-small) var(--spacing-medium);
     }
 
     .ngram-select-list {
-        padding: $spacing-small $spacing-medium;
+        padding: var(--spacing-small) var(--spacing-medium);
+        overflow: auto;
 
         .ngram-select {
             outline: 0;
             border: 0;
             background-color: transparent;
             cursor: pointer;
-            padding: $spacing-small $spacing-medium;
+            padding: var(--spacing-small) var(--spacing-medium);
             font-family: inherit;
 
             &.active {
-                @include background-color($color-accent);
+                background-color: var(--color-accent);
+                color: var(--color-text-on-accent);
             }
         }
     }
@@ -31,31 +31,33 @@
 
 .property-panel {
     display: flex;
-    flex-basis: 30%;
     flex-direction: column;
-    border-left: $width-separator-thin solid $color-separator-alt;
-    background-color: $color-foreground;
+    border-left: var(--width-separator-thin) solid var(--color-separator-alt);
+    background-color: var(--color-foreground);
+    width: 30%;
+    overflow: auto;
 
     .header {
         display: flex;
         align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
-        border-bottom: $width-separator-thin solid $color-separator;
-        padding: $spacing-small 0;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-small) 0;
 
         .heading {
-            padding: 0 $spacing-medium;
+            padding: 0 var(--spacing-medium);
         }
 
         .action-buttons {
-            padding: 0 $spacing-medium;
+            padding: 0 var(--spacing-medium);
         }
     }
 
     .properties {
         flex-shrink: 0;
-        padding: $spacing-medium;
+        padding: var(--spacing-medium);
+        overflow: auto;
 
         textarea {
             resize: none;
@@ -67,9 +69,11 @@
         display: flex;
         flex-direction: column;
         flex-grow: 1;
+        overflow: auto;
 
         .ngram-selects {
             @extend %ngram-selects;
+            overflow: auto;
         }
 
         .ngram {
@@ -78,8 +82,8 @@
 
         >.action-buttons {
             flex-shrink: 0;
-            background-color: $color-foreground-alt;
-            padding: $spacing-small;
+            background-color: var(--color-foreground-alt);
+            padding: var(--spacing-small);
             text-align: right;
         }
     }
@@ -89,6 +93,6 @@
         align-items: center;
         flex-grow: 1;
         justify-content: center;
-        color: $color-text-disabled;
+        color: var(--color-text-disabled);
     }
 }

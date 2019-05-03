@@ -1,22 +1,23 @@
-@import '~base-scss/base';
-@import '~rs-scss/button-base';
+@import '~base-scss/utils';
 
 .matrix-cell {
     @extend %button-base;
-    @include background-color($color-background-alt);
     position: relative;
-    margin: $spacing-extra-small;
+    margin: var(--spacing-extra-small);
+    background-color: var(--color-background-alt);
+    color: var(--color-text-on-background-alt);
 
     &.active {
-        @include background-color($color-accent);
+        background-color: var(--color-accent);
+        color: var(--color-text-on-accent);
     }
 
     &.is-being-dragged-over {
-        outline: $width-separator-thin dashed get-text-color($color-background-alt);
-        outline-offset: -$spacing-extra-small-alt;
+        outline: var(--width-separator-thin) dashed get-text-color(var(--color-background-alt));
+        outline-offset: -var(--spacing-extra-small-alt);
 
         &.active {
-            outline: $width-separator-thin dashed get-text-color($color-accent);
+            outline: var(--width-separator-thin) dashed get-text-color(var(--color-accent));
         }
     }
 

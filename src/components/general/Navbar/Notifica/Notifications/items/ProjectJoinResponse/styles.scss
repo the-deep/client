@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .project-join-response-notification {
     .display-picture {
@@ -8,16 +7,16 @@
 
     .responder-name {
         text-transform: none;
-        font-weight: $font-weight-bold;
+        font-weight: var(--font-weight-bold);
     }
 
     .requestor-name {
         text-transform: none;
-        font-weight: $font-weight-bold;
+        font-weight: var(--font-weight-bold);
     }
 
     .project-title {
         text-transform: none;
-        font-weight: $font-weight-bold;
+        font-weight: var(--font-weight-bold);
     }
 }

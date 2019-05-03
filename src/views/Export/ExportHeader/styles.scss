@@ -1,4 +1,4 @@
-@import '~base-scss/base';
+@import '~base-scss/utils';
 
 .header {
     display: flex;
@@ -8,13 +8,13 @@
 
     .action-buttons {
         .button {
-            margin-left: $spacing-small;
+            margin-left: var(--spacing-small);
         }
 
         .link {
-            @extend %button-like-link;
-            margin-left: $spacing-small;
-            font-weight: $font-weight-bold;
+            @include button-like-link(var(--color-accent));
+            margin-left: var(--spacing-small);
+            font-weight: var(--font-weight-bold);
         }
     }
 }

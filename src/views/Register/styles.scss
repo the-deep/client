@@ -1,7 +1,11 @@
-@import '~base-scss/base';
+%register-basic {
+    position: relative;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) var(--spacing-large) var(--spacing-large);
+    width: var(--width-register-form);
+}
 
 .register {
-    @extend %main-content;
     display: flex;
     align-content: center;
     align-items: center;
@@ -11,26 +15,19 @@
     height: 100vh;
 
     .register-box {
-        %register-basic {
-            position: relative;
-            background-color: $color-foreground;
-            padding: $spacing-small $spacing-large $spacing-large;
-            width: $width-register-form;
-        }
-
         .register-form {
             @extend %register-basic;
 
             .action-buttons {
                 display: flex;
                 justify-content: flex-end;
-                margin-top: $spacing-medium;
+                margin-top: var(--spacing-medium);
             }
         }
 
         .register-success {
             @extend %register-basic;
-            padding: $spacing-large;
+            padding: var(--spacing-large);
             text-align: center;
         }
 
@@ -39,14 +36,14 @@
             align-items: center;
             flex-basis: 100%;
             justify-content: center;
-            margin-top: $spacing-extra-small;
-            background-color: $color-foreground;
-            padding: $spacing-medium;
+            margin-top: var(--spacing-extra-small);
+            background-color: var(--color-foreground);
+            padding: var(--spacing-medium);
 
             .login-link {
-                margin: $spacing-medium;
-                color: $color-accent;
-                font-weight: $font-weight-medium;
+                margin: var(--spacing-medium);
+                color: var(--color-accent);
+                font-weight: var(--font-weight-medium);
             }
         }
     }

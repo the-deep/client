@@ -9,6 +9,7 @@ import {
     svgPaths,
     imagePaths,
 } from '#constants';
+import { initializeStyles } from '#rsu/styles';
 
 import store from '#store';
 
@@ -33,6 +34,8 @@ export default class Root extends React.Component {
 
         this.state = { rehydrated: false };
         this.store = store;
+
+        initializeStyles();
 
         console.info('React version:', React.version);
     }

@@ -1,18 +1,17 @@
-@import '~base-scss/base';
 
 .matrix-row {
     display: flex;
     align-items: center;
 
     &:not(:last-child) {
-        border-bottom: $width-separator-thin solid $color-separator;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
     }
 
     .title {
-        flex-basis: $width-matrix-1d-title;
+        flex-basis: var(--width-matrix-1d-title);
         flex-shrink: 0;
-        padding: $spacing-extra-small $spacing-small;
-        font-weight: $font-weight-bold;
+        padding: var(--spacing-extra-small) var(--spacing-small);
+        font-weight: var(--font-weight-bold);
     }
 
     .cells {
@@ -20,6 +19,6 @@
         flex-basis: 100%;
         flex-grow: 1;
         flex-wrap: wrap;
-        padding: $spacing-extra-small 0;
+        padding: var(--spacing-extra-small) 0;
     }
 }

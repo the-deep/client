@@ -1,9 +1,8 @@
-@import '~base-scss/base';
 
 .clone-framework-modal {
     .modal-body {
         .title {
-            margin-bottom: $spacing-medium;
+            margin-bottom: var(--spacing-medium);
         }
 
         .description {

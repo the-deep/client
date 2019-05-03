@@ -1,9 +1,10 @@
-@import '~base-scss/base';
 
-$height-tabs: 48px;
+:root {
+    --height-leftpanel-tabs: 48px;
+}
 
 .tabs {
-    height: $height-tabs;
+    height: var(--height-leftpanel-tabs);
 }
 
 .tabular-modal {
@@ -17,14 +18,14 @@ $height-tabs: 48px;
 }
 
 .container {
-    background-color: $color-foreground-alt;
-    height: calc(100% - #{$height-tabs});
+    background-color: var(--color-foreground-alt);
+    height: calc(100% - var(--height-leftpanel-tabs));
     overflow-y: auto;
 }
 
 .brain-icon {
-    margin-right: $spacing-medium;
+    margin-right: var(--spacing-medium);
     cursor: pointer;
-    width: $font-size-large;
-    height: $font-size-large;
+    width: var(--font-size-large);
+    height: var(--font-size-large);
 }

@@ -1,6 +1,13 @@
-@import '~base-scss/base';
+:root {
+    --radius-button-border: 2px;
+}
 
-$radius-button-border: 2px;
+%button-basic {
+    align-self: stretch;
+    flex-shrink: 0;
+    margin-left: var(--spacing-extra-small-alt);
+    border-radius: var(--radius-button-border);
+}
 
 .action-buttons {
     display: flex;
@@ -9,28 +16,24 @@ $radius-button-border: 2px;
 
     .movement-buttons {
         flex-shrink: 0;
-        margin: 0 $spacing-medium;
+        margin: 0 var(--spacing-medium);
 
         >button:first-child {
-            margin-right: $spacing-extra-small-alt;
+            margin-right: var(--spacing-extra-small-alt);
         }
     }
-
-    %button-basic {
-        align-self: stretch;
-        flex-shrink: 0;
-        margin-left: $spacing-extra-small-alt;
-        border-radius: $radius-button-border;
-    }
-
     .save-buttons {
         @extend %button-basic;
-        @include background-color($color-success);
+        border: var(--width-separator-thin) solid var(--color-success);
+        background-color: var(--color-foreground);
+        color: var(--color-success);
     }
 
     .remove-buttons {
         @extend %button-basic;
-        @include background-color($color-warning);
+        border: var(--width-separator-thin) solid var(--color-warning);
+        background-color: var(--color-foreground);
+        color: var(--color-warning);
     }
 }
 
@@ -39,20 +42,20 @@ $radius-button-border: 2px;
     border: 0;
     background-color: transparent;
     cursor: pointer;
-    padding: $spacing-small $spacing-medium;
+    padding: var(--spacing-small) var(--spacing-medium);
     width: 100%;
     text-align: left;
     text-transform: uppercase;
-    color: $color-text;
+    color: var(--color-text);
     font-family: inherit;
-    font-size: $font-size-medium;
+    font-size: var(--font-size-medium);
 
     &:hover {
-        background-color: $color-background-hover;
+        background-color: var(--color-background-hover);
     }
 
     &:disabled {
         cursor: default;
-        color: $color-text-disabled;
+        color: var(--color-text-disabled);
     }
 }

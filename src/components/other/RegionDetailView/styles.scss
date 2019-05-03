@@ -1,27 +1,29 @@
-@import '~base-scss/base';
+@import '~base-scss/utils';
 
-$width-region-detail-view: 280px;
-$height-region-detail-max: 320px;
-
-$position-top: 42px;
-$position-right: $spacing-small-alt;
+:root {
+    --width-region-detail-view: 280px;
+    --height-region-detail-max: 320px;
+    --position-top: 42px;
+    --position-right: var(--spacing-small-alt);
+}
 
 .region-detail-view {
     @include shadow-small;
-    @include background-color($color-foreground);
     display: flex;
     position: absolute;
-    top: $position-top;
-    right: $position-right;
+    top: var(--position-top);
+    right: var(--position-right);
     flex-direction: column;
-    z-index: $z-index-region-detail-view;
-    width: $width-region-detail-view;
-    max-height: $height-region-detail-max;
+    z-index: var(--z-index-region-detail-view);
+    background-color: var(--color-foreground);
+    width: var(--width-region-detail-view);
+    max-height: var(--height-region-detail-max);
+    color: var(--color-text-on-foreground);
 
     .heading {
         flex-shrink: 0;
-        padding: $spacing-small;
-        color: $color-primary;
+        padding: var(--spacing-small);
+        color: var(--color-primary);
     }
 
     .content {
@@ -30,15 +32,16 @@ $position-right: $spacing-small-alt;
         overflow-y: auto;
 
         .row {
-            @include background-color($color-background-row-alt);
             display: table-row;
+            background-color: var(--color-background-row-alt);
+            // color: var(--color-text-on-background-row-alt);
 
             .title {
                 display: table-cell;
-                padding: $spacing-small;
+                padding: var(--spacing-small);
                 text-transform: uppercase;
-                color: $color-text-label;
-                font-size: $font-size-small;
+                color: var(--color-text-label);
+                font-size: var(--font-size-small);
 
                 &::after {
                     content: ':';
@@ -47,13 +50,14 @@ $position-right: $spacing-small-alt;
 
             .value {
                 display: table-cell;
-                padding: $spacing-extra-small $spacing-medium;
+                padding: var(--spacing-extra-small) var(--spacing-medium);
                 width: 100%;
-                font-size: $font-size-medium-alt;
+                font-size: var(--font-size-medium-alt);
             }
 
             &:nth-child(odd) {
-                @include background-color($color-background-row);
+                background-color: var(--color-background-row);
+                // color: var(--color-text-on-background-row)
             }
         }
     }

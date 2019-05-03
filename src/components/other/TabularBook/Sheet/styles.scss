@@ -1,14 +1,13 @@
-@import '~base-scss/base';
 
 .tabular-sheet {
     display: flex;
     flex-direction: column;
-    background-color: $color-foreground;
+    background-color: var(--color-foreground);
 
     .options-bar {
         display: flex;
         flex-shrink: 0;
-        padding: $spacing-extra-small $spacing-small 0;
+        padding: var(--spacing-extra-small) var(--spacing-small) 0;
 
         .info-bar {
             display: flex;
@@ -18,12 +17,12 @@
 
             .info {
                 display: flex;
-                padding: 0 $spacing-medium;
-                color: $color-text-label;
+                padding: 0 var(--spacing-medium);
+                color: var(--color-text-label);
             }
 
             .value {
-                padding-right: $spacing-extra-small;
+                padding-right: var(--spacing-extra-small);
             }
         }
     }
@@ -36,7 +35,7 @@
         }
 
         .cell {
-            padding: $spacing-extra-small $spacing-small;
+            padding: var(--spacing-extra-small) var(--spacing-small);
             width: 100%;
             overflow: hidden;
             text-overflow: ellipsis;

@@ -1,4 +1,4 @@
-@import '~base-scss/base';
+@import '~base-scss/utils';
 
 
 .gallery-viewer {
@@ -7,9 +7,9 @@
 
     .urlbar {
         display: flex;
-        border-bottom: $width-separator-thin solid $color-separator;
-        background-color: $color-background-header;
-        padding: $spacing-small;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-background-header);
+        padding: var(--spacing-small);
 
         .url {
             display: flex;
@@ -17,10 +17,10 @@
             flex-grow: 1;
 
             :global .input {
-                border: $width-separator-thin solid $color-separator;
+                border: var(--width-separator-thin) solid var(--color-separator);
                 border-radius: 3px;
-                background-color: $color-foreground;
-                padding: $spacing-small $spacing-small;
+                background-color: var(--color-foreground);
+                padding: var(--spacing-small) var(--spacing-small);
             }
         }
 
@@ -28,11 +28,11 @@
             display: flex;
             align-items: center;
             flex-shrink: 0;
-            margin-left: $spacing-small;
+            margin-left: var(--spacing-small);
 
             .open-link {
                 @extend %transparent-button-like-link;
-                color: $color-accent;
+                color: var(--color-accent);
             }
         }
     }
@@ -59,5 +59,5 @@
 .error-url {
     flex-grow: 1;
     height: auto;
-    color: $color-danger;
+    color: var(--color-danger);
 }

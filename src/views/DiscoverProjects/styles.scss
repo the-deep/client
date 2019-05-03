@@ -1,4 +1,4 @@
-@import '~base-scss/base';
+@import '~base-scss/utils';
 @import '~rs-scss/input-label';
 
 .discover-projects {
@@ -17,13 +17,17 @@
 
             :global {
                 .projects-filter {
-                    margin: $spacing-small;
+                    margin: var(--spacing-small) var(--spacing-medium);
+                }
+
+                .list-selection {
+                    flex-shrink: 0;
                 }
 
                 .button {
                     align-self: flex-end;
                     flex-shrink: 0;
-                    margin: $spacing-small;
+                    margin: var(--spacing-small);
                 }
             }
         }
@@ -38,7 +42,6 @@
             position: relative;
             flex-direction: column;
             flex-grow: 1;
-            background-color: $color-background-row;
             overflow: auto;
 
             .projects-table {
@@ -59,6 +62,20 @@
                     .actions {
                         white-space: nowrap;
                     }
+
+                    .body {
+                        .row {
+                            &:hover {
+                                .email-link {
+                                    color: var(--color-primary);
+                                }
+
+                                .edit-link {
+                                    color: var(--color-warning);
+                                }
+                            }
+                        }
+                    }
                 }
 
                 .spark-line {
@@ -68,11 +85,11 @@
                     :global {
                         .fill {
                             opacity: 0.3;
-                            fill: $color-accent;
-                            stroke: $color-accent;
+                            fill: var(--color-accent);
+                            stroke: var(--color-accent);
                         }
                         .line {
-                            stroke: $color-accent;
+                            stroke: var(--color-accent);
                         }
                     }
                 }
@@ -86,7 +103,8 @@
                 }
             }
 
-            .empty-message, .empty-filter-message {
+            .empty-message,
+            .empty-filter-message {
                 display: flex;
                 align-items: center;
                 flex-direction: column;
@@ -96,9 +114,9 @@
 
                 .image {
                     opacity: 0.3;
-                    margin: $spacing-large 0;
-                    width: $width-icon-extreme-large;
-                    height: $width-icon-extreme-large;
+                    margin: var(--spacing-large) 0;
+                    width: var(--width-icon-extreme-large);
+                    height: var(--width-icon-extreme-large);
                 }
             }
         }

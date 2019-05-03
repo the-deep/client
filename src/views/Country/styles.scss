@@ -1,7 +1,7 @@
-@import '~base-scss/base';
-
-$width-sidebar: 240px;
-$page-margin: $spacing-small-alt;
+:root {
+    --width-sidebar: 240px;
+    --page-margin: var(--spacing-small-alt);
+}
 
 .loading {
     height: 100%;
@@ -14,14 +14,15 @@ $page-margin: $spacing-small-alt;
         flex-direction: column;
 
         .header {
-            @include background-color($color-background-header);
             display: flex;
             align-items: center;
             flex-shrink: 0;
             flex-wrap: wrap;
             justify-content: space-between;
-            border-bottom: $width-separator-thin solid $color-separator;
-            padding: $spacing-small;
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-background-header);
+            padding: var(--spacing-small);
+            color: var(--color-text-on-background-header);
 
             .heading {
                 flex-grow: 1;
@@ -44,7 +45,7 @@ $page-margin: $spacing-small-alt;
             }
 
             :hover {
-                background-color: $color-background-hover;
+                background-color: var(--color-background-hover);
             }
         }
     }
@@ -54,19 +55,21 @@ $page-margin: $spacing-small-alt;
         flex-direction: column;
 
         .country-detail {
-            @include background-color($color-background-alt);
             flex-grow: 1;
+            background-color: var(--color-background-alt);
+            color: var(--color-text-on-background-alt);
         }
 
         .country-detail-alt {
-            @include background-color($color-foreground);
             display: flex;
             align-items: center;
             flex-direction: column;
             flex-grow: 1;
             justify-content: center;
-            padding: $spacing-medium-alt;
-            font-size: $font-size-extra-large;
+            background-color: var(--color-foreground);
+            padding: var(--spacing-medium-alt);
+            color: var(--color-text-on-foreground);
+            font-size: var(--font-size-extra-large);
         }
     }
 }

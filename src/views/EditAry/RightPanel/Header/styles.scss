@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .header {
     display: flex;
@@ -6,12 +5,12 @@
 
     .heading {
         flex-shrink: 0;
-        padding: 0 $spacing-medium;
+        padding: 0 var(--spacing-medium);
     }
 
     .non-field-errors {
         flex-grow: 1;
-        padding: 0 $spacing-medium;
+        padding: 0 var(--spacing-medium);
         text-align: center;
     }
 }

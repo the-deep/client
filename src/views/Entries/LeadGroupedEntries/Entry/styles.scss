@@ -1,19 +1,18 @@
-@import '~base-scss/base';
 @import '~base-scss/widget';
 
 .entry {
-    padding: $spacing-small;
+    padding: var(--spacing-small);
     min-width: 100%;
     overflow: hidden;
 
     &:not(:last-child) {
-        border-bottom: $width-separator-thin solid $color-separator;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
     }
 
     .widget {
         @extend %widget;
-        // border: $width-separator-thin solid $color-separator;
-        padding: $spacing-extra-small;
+        // border: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-extra-small);
 
         .header {
             display: flex;
@@ -21,7 +20,7 @@
 
             .heading {
                 flex-basis: 100%;
-                padding: 0 $spacing-small;
+                padding: 0 var(--spacing-small);
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
@@ -29,7 +28,7 @@
         }
 
         .content {
-            background-color: $color-foreground;
+            background-color: var(--color-foreground);
         }
     }
 }

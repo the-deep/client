@@ -1,7 +1,6 @@
-@import '~base-scss/base';
 
 .input {
-    margin-right: $spacing-small;
+    margin-right: var(--spacing-small);
 }
 
 .multi-select-container {
@@ -10,7 +9,7 @@
 
     .multi-input {
         flex-shrink: 0;
-        padding-right: $spacing-small;
+        padding-right: var(--spacing-small);
         width: 180px;
     }
 }

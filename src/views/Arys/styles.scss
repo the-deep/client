@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .arys {
     .header {
@@ -8,13 +7,13 @@
 
             :global {
                 .arys-filter {
-                    margin: $spacing-small;
+                    margin: var(--spacing-small);
                 }
 
                 .button {
                     align-self: flex-end;
                     flex-shrink: 0;
-                    margin: $spacing-small;
+                    margin: var(--spacing-small);
                 }
             }
         }
@@ -45,10 +44,10 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        font-size: $font-size-large;
+                        font-size: var(--font-size-large);
 
                         a {
-                            color: $color-accent;
+                            color: var(--color-accent);
                         }
                     }
 
@@ -71,15 +70,15 @@
 
                 .image {
                     opacity: 0.3;
-                    margin: $spacing-large 0;
-                    width: $width-icon-extreme-large;
-                    height: $width-icon-extreme-large;
+                    margin: var(--spacing-large) 0;
+                    width: var(--width-icon-extreme-large);
+                    height: var(--width-icon-extreme-large);
                 }
 
                 .empty-link-message {
-                    margin: $spacing-medium 0;
+                    margin: var(--spacing-medium) 0;
                     text-transform: none;
-                    color: $color-accent;
+                    color: var(--color-accent);
                 }
             }
         }

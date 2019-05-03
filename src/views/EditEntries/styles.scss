@@ -1,4 +1,5 @@
-@import '~base-scss/base';
+@import '~base-scss/utils';
+
 
 .edit-entries {
     height: 100%;
@@ -9,7 +10,7 @@
 
         .heading {
             flex-grow: 1;
-            padding: 0 $spacing-medium;
+            padding: 0 var(--spacing-medium);
             overflow: hidden;
             text-transform: none;
             text-overflow: ellipsis;
@@ -18,24 +19,24 @@
 
         .tabs {
             flex-shrink: 0;
-            margin-right: $spacing-small;
+            margin-right: var(--spacing-small);
             background-color: transparent;
         }
 
         .action-buttons {
             flex-shrink: 0;
-            padding: 0 $spacing-medium;
+            padding: 0 var(--spacing-medium);
 
             .edit-framework-link {
-                @include button-like-link($color-accent);
+                @include button-like-link(var(--color-accent));
 
                 .edit-icon {
-                    margin-right: $spacing-small;
+                    margin-right: var(--spacing-small);
                 }
             }
 
             >button {
-                margin-left: $spacing-medium;
+                margin-left: var(--spacing-medium);
             }
         }
     }

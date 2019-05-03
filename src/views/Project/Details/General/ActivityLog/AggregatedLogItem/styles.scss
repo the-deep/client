@@ -1,17 +1,16 @@
-@import '~base-scss/base';
 
 .log-item {
     display: flex;
     flex-direction: column;
-    border-bottom: $width-separator-thin solid $color-separator;
-    padding: $spacing-medium;
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    padding: var(--spacing-medium);
 
     .log {
-        color: $color-text-label;
+        color: var(--color-text-label);
 
         .fields {
             text-transform: capitalize;
-            font-weight: $font-weight-bold;
+            font-weight: var(--font-weight-bold);
         }
     }
 
@@ -19,21 +18,21 @@
         display: flex;
         align-items: baseline;
         justify-content: flex-start;
-        padding-top: $spacing-medium;
-        color: $color-text-label;
+        padding-top: var(--spacing-medium);
+        color: var(--color-text-label);
 
         .user {
-            margin-right: $spacing-large;
+            margin-right: var(--spacing-large);
 
             .icon {
                 display: inline-block;
-                margin-right: $spacing-small;
+                margin-right: var(--spacing-small);
             }
 
             .link {
                 display: inline-block;
                 text-transform: capitalize;
-                color: $color-accent;
+                color: var(--color-accent);
 
                 &:hover {
                     text-decoration: underline;
@@ -44,7 +43,7 @@
         .date {
             .icon {
                 display: inline-block;
-                margin-right: $spacing-small;
+                margin-right: var(--spacing-small);
             }
 
             .formatted-date {

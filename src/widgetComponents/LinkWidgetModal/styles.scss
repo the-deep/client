@@ -1,34 +1,34 @@
-@import '~base-scss/base';
-
-$height-edit-modal: 60vh;
+:root {
+    --height-edit-modal: 60vh;
+}
 
 .modal {
-    width: $width-modal-large;
-    height: $height-edit-modal;
+    width: var(--width-modal-large);
+    height: var(--height-edit-modal);
 
     .modal-body {
         display: flex;
         padding: 0;
 
         .left-container {
-            border-right: $width-separator-thin solid $color-separator;
+            border-right: var(--width-separator-thin) solid var(--color-separator);
             width: 30%;
 
             .widget-list {
                 overflow-y: auto;
 
                 .group {
-                    background-color: $color-background-row-alt;
-                    padding: $spacing-small $spacing-medium;
-                    font-size: $font-size-medium-alt;
+                    background-color: var(--color-background-row-alt);
+                    padding: var(--spacing-small) var(--spacing-medium);
+                    font-size: var(--font-size-medium-alt);
 
                     &:not(:first-child) {
-                        margin-top: $spacing-medium;
+                        margin-top: var(--spacing-medium);
                     }
                 }
 
                 .item {
-                    border-top: $width-separator-thin solid $color-separator;
+                    border-top: var(--width-separator-thin) solid var(--color-separator);
                 }
 
                 .group + .item {
@@ -47,12 +47,12 @@ $height-edit-modal: 60vh;
                 align-items: center;
                 flex-shrink: 0;
                 justify-content: space-between;
-                border-bottom: $width-separator-thin solid $color-separator;
-                padding: 0 $spacing-small;
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                padding: 0 var(--spacing-small);
                 height: 48px;
 
                 .select-input {
-                    padding: $spacing-medium $spacing-small;
+                    padding: var(--spacing-medium) var(--spacing-small);
                 }
             }
 
@@ -63,10 +63,10 @@ $height-edit-modal: 60vh;
 
                 .header {
                     flex-shrink: 0;
-                    padding: $spacing-medium $spacing-small;
+                    padding: var(--spacing-medium) var(--spacing-small);
                     text-transform: uppercase;
-                    font-size: $font-size-medium;
-                    font-weight: $font-weight-light;
+                    font-size: var(--font-size-medium);
+                    font-weight: var(--font-weight-light);
                 }
 
                 .tree {
@@ -75,12 +75,12 @@ $height-edit-modal: 60vh;
 
                     :global {
                         .parent-node {
-                            padding: $spacing-extra-small $spacing-small;
+                            padding: var(--spacing-extra-small) var(--spacing-small);
 
                             .button {
                                 &.node-title {
-                                    color: $color-text-disabled;
-                                    font-weight: $font-weight-bold;
+                                    color: var(--color-text-disabled);
+                                    font-weight: var(--font-weight-bold);
                                 }
                             }
                         }

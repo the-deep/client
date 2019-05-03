@@ -1,10 +1,12 @@
-@import '~base-scss/base';
+@import '~base-scss/utils';
 
-$width-organ-header-min: 108px;
+:root {
+    --width-organ-header-min: 108px;
+}
 
 .organ {
     +.organ {
-        border-left: $width-separator-medium solid $color-separator;
+        border-left: var(--width-separator-medium) solid var(--color-separator);
     }
 
     .organ-header {
@@ -12,9 +14,9 @@ $width-organ-header-min: 108px;
         position: relative;
         flex-grow: 1;
         flex-shrink: 0;
-        margin: $spacing-small $spacing-medium;
-        padding: $spacing-extra-small;
-        min-width: $width-organ-header-min;
+        margin: var(--spacing-small) var(--spacing-medium);
+        padding: var(--spacing-extra-small);
+        min-width: var(--width-organ-header-min);
 
         .action-buttons {
             @include transition-medium;
@@ -46,6 +48,6 @@ $width-organ-header-min: 108px;
         display: flex;
         align-items: stretch;
         flex-grow: 1;
-        padding: 0 $spacing-small;
+        padding: 0 var(--spacing-small);
     }
 }

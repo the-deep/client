@@ -1,18 +1,57 @@
-@import '~base-scss/base';
+:root {
+    --width-action-buttons: 48px;
+    --height-center: 196px;
+    --height-bottom: 240px;
+}
 
-$width-action-buttons: 48px;
-$height-center: 196px;
-$height-bottom: 240px;
+%cell {
+    display: table-cell;
+    padding: var(--spacing-small-alt);
+
+}
+
+%action-buttons {
+    @extend %cell;
+    width: var(--width-action-buttons);
+}
+
+%heading {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--color-foreground);
+}
+
+%content {
+    display: flex;
+    flex-basis: calc(100% / 4);
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: auto;
+    overflow-y: auto;
+
+    :global {
+        .empty {
+            display: block;
+            padding: var(--spacing-small) var(--spacing-medium);
+        }
+    }
+}
+
+%header {
+    font-size: var(--font-size-medium);
+    font-weight: var(--font-weight-light);
+}
 
 .header {
     flex-shrink: 0;
-    background-color: $color-foreground;
-    padding: $spacing-small 0;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) 0;
 
     h3 {
         text-transform: capitalize;
-        color: $color-accent;
-        font-size: $font-size-medium;
+        color: var(--color-accent);
+        font-size: var(--font-size-medium);
     }
 }
 
@@ -20,7 +59,7 @@ $height-bottom: 240px;
     display: flex;
     position: relative;
     flex-grow: 1;
-    background-color: $color-foreground;
+    background-color: var(--color-foreground);
     overflow: auto;
 
     .resizable {
@@ -63,33 +102,15 @@ $height-bottom: 240px;
                             width: 100%;
                             overflow: auto;
 
-                            %cell {
-                                display: table-cell;
-                                padding: $spacing-small-alt;
-
-                            }
-
-                            %action-buttons {
-                                @extend %cell;
-                                width: $width-action-buttons;
-                            }
-
                             >.header {
                                 display: table-row;
-
-                                %heading {
-                                    position: sticky;
-                                    top: 0;
-                                    z-index: 1;
-                                    background-color: $color-foreground;
-                                }
 
                                 .title {
                                     @extend %cell;
                                     @extend %heading;
                                     text-transform: capitalize;
-                                    color: $color-accent;
-                                    font-weight: $font-weight-bold;
+                                    color: var(--color-accent);
+                                    font-weight: var(--font-weight-bold);
                                 }
 
                                 .action-buttons {
@@ -111,7 +132,7 @@ $height-bottom: 240px;
 
                                 :global {
                                     .widget {
-                                        margin: $spacing-small-alt 0;
+                                        margin: var(--spacing-small-alt) 0;
                                     }
                                 }
                             }
@@ -129,35 +150,14 @@ $height-bottom: 240px;
                 .middle-section {
                     display: flex;
                     flex-grow: 1;
-                    border-top: $width-separator-thin solid $color-separator;
+                    border-top: var(--width-separator-thin) solid var(--color-separator);
                     height: 100%;
-
-                    %content {
-                        display: flex;
-                        flex-basis: calc(100% / 4);
-                        flex-direction: column;
-                        flex-grow: 1;
-                        overflow: auto;
-                        overflow-y: auto;
-
-                        :global {
-                            .empty {
-                                display: block;
-                                padding: $spacing-small $spacing-medium;
-                            }
-                        }
-                    }
-
-                    %header {
-                        font-size: $font-size-medium;
-                        font-weight: $font-weight-light;
-                    }
 
                     .focuses,
                     .sectors {
                         display: flex;
                         flex-direction: column;
-                        padding: 0 $spacing-medium;
+                        padding: 0 var(--spacing-medium);
                         height: auto;
                         overflow-y: auto;
 
@@ -179,7 +179,7 @@ $height-bottom: 240px;
                     .location-selection,
                     .affected-groups {
                         :global .select-input-with-list {
-                            padding: $spacing-small;
+                            padding: var(--spacing-small);
                         }
                     }
 
@@ -190,10 +190,10 @@ $height-bottom: 240px;
 
                         .title {
                             flex-shrink: 0;
-                            padding: $spacing-small $spacing-medium;
+                            padding: var(--spacing-small) var(--spacing-medium);
                             text-transform: uppercase;
-                            font-size: $font-size-large;
-                            font-weight: $font-weight-light;
+                            font-size: var(--font-size-large);
+                            font-weight: var(--font-weight-light);
                         }
                     }
                 }
@@ -211,7 +211,7 @@ $height-bottom: 240px;
                 display: flex;
                 flex-direction: column;
                 flex-grow: 1;
-                border-top: $width-separator-thin solid $color-separator;
+                border-top: var(--width-separator-thin) solid var(--color-separator);
                 height: 100%;
 
                 .content {
@@ -223,7 +223,7 @@ $height-bottom: 240px;
                         display: flex;
                         flex-basis: calc(100% / 4);
                         flex-direction: column;
-                        padding: $spacing-small $spacing-medium;
+                        padding: var(--spacing-small) var(--spacing-medium);
                         overflow: auto;
 
                         .text-area {

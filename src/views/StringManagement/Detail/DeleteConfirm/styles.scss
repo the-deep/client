@@ -1,8 +1,8 @@
-@import '~base-scss/base';
+@import '~base-scss/utils';
 
 .message {
-    margin-bottom: $spacing-medium;
-    font-weight: $font-weight-bold;
+    margin-bottom: var(--spacing-medium);
+    font-weight: var(--font-weight-bold);
 }
 
 .properties {
@@ -15,16 +15,16 @@
 
         .label {
             display: table-cell;
-            padding: $spacing-small;
+            padding: var(--spacing-small);
             text-transform: uppercase;
             white-space: nowrap;
-            color: $color-text-label;
-            font-size: $font-size-small;
+            color: var(--color-text-label);
+            font-size: var(--font-size-small);
         }
 
         .value {
             display: table-cell;
-            padding: $spacing-small;
+            padding: var(--spacing-small);
             width: 100%;
         }
     }

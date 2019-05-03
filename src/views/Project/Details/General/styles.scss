@@ -1,19 +1,19 @@
-@import '~base-scss/base';
-
-$width-inputs-container: 280px;
-$width-activity-log: 320px;
-$width-dashboard-min: 480px;
+:root {
+    --width-inputs-container: 280px;
+    --width-activity-log: 320px;
+    --width-dashboard-min: 480px;
+}
 
 .general {
     display: flex;
     position: relative;
     flex-grow: 1;
-    background-color: $color-foreground-light;
+    background-color: var(--color-foreground);
     overflow: auto;
 
     .form {
         display: flex;
-        flex-basis: $width-inputs-container;
+        flex-basis: var(--width-inputs-container);
         flex-direction: column;
         flex-grow: 0;
         flex-shrink: 0;
@@ -24,7 +24,7 @@ $width-dashboard-min: 480px;
             .header {
                 display: flex;
                 flex-shrink: 0;
-                padding: $spacing-large;
+                padding: var(--spacing-large);
 
                 .non-field-errors {
                     flex-grow: 1;
@@ -34,19 +34,19 @@ $width-dashboard-min: 480px;
                     flex-shrink: 0;
 
                     .button {
-                        margin-left: $spacing-medium;
+                        margin-left: var(--spacing-medium);
                     }
                 }
             }
 
             .content {
                 flex-shrink: 0;
-                padding: $spacing-large;
+                padding: var(--spacing-large);
 
                 .start-date,
                 .end-date,
                 .name {
-                    margin-bottom: $spacing-medium;
+                    margin-bottom: var(--spacing-medium);
                 }
 
                 .description {
@@ -61,15 +61,15 @@ $width-dashboard-min: 480px;
     .dashboard {
         display: flex;
         flex-grow: 1;
-        border-right: $width-separator-thin solid $color-separator;
-        border-left: $width-separator-thin solid $color-separator;
-        min-width: $width-dashboard-min;
+        border-right: var(--width-separator-thin) solid var(--color-separator);
+        border-left: var(--width-separator-thin) solid var(--color-separator);
+        min-width: var(--width-dashboard-min);
         overflow: auto;
     }
 
     .activity-log {
         display: flex;
-        flex-basis: $width-activity-log;
+        flex-basis: var(--width-activity-log);
         flex-grow: 0;
         flex-shrink: 0;
     }

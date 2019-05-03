@@ -1,60 +1,63 @@
-@import '~base-scss/base';
 
 .sortable-unit {
-    border-top: $width-separator-thin solid $color-separator;
-    border-bottom: $width-separator-thin solid $color-separator;
+    border-top: var(--width-separator-thin) solid var(--color-separator);
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
 
     .drag-handle {
         display: flex;
         align-items: center;
         align-self: stretch;
-        background-color: $color-foreground;
-        padding: $spacing-small;
+        background-color: var(--color-foreground);
+        padding: var(--spacing-small);
     }
 }
 
 .edit-modal {
-    width: $width-modal-medium;
-    height: $height-modal-medium;
+    width: var(--width-modal-medium);
+    height: var(--height-modal-medium);
+    overflow: auto;
 
     .form {
         display: flex;
         flex-direction: column;
         height: 100%;
+        overflow: auto;
 
         .body {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
             padding: 0;
+            overflow: auto;
 
             .non-field-errors {
                 flex-shrink: 0;
-                padding: 0 $spacing-small;
+                padding: 0 var(--spacing-small);
             }
 
             .title {
                 flex-shrink: 0;
-                padding: 0 $spacing-small;
+                padding: 0 var(--spacing-small);
             }
 
             .option-inputs {
                 display: flex;
                 flex-direction: column;
                 flex-grow: 1;
+                overflow: auto;
 
                 .header {
                     display: flex;
                     align-items: center;
                     flex-shrink: 0;
                     justify-content: space-between;
-                    border-bottom: $width-separator-thin solid $color-separator;
-                    padding: $spacing-small;
+                    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                    padding: var(--spacing-small);
                 }
 
                 .edit-list {
                     flex-grow: 1;
-                    overflow-y: auto;
+                    overflow: auto;
 
                     .sortable-unit {
                         border-top-color: transparent;

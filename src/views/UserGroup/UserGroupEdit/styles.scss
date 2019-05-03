@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .user-group-edit-form {
     position: relative;
@@ -14,7 +13,7 @@
         justify-content: flex-end;
 
         button {
-            margin-left: $spacing-medium;
+            margin-left: var(--spacing-medium);
         }
     }
 }

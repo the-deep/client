@@ -1,6 +1,6 @@
-@import '~base-scss/base';
-
-$region-detail-form-width: 320px;
+:root {
+    --region-detail-form-width: 320px;
+}
 
 .region-details-container {
     display: flex;
@@ -8,19 +8,20 @@ $region-detail-form-width: 320px;
     overflow: auto;
 
     >.header {
-        @include background-color($color-background-header);
         display: flex;
         align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
-        border-bottom: $width-separator-thin solid $color-separator;
-        padding: $spacing-small;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-background-header);
+        padding: var(--spacing-small);
+        color: var(--color-text-on-background-header);
 
         .action-buttons {
             display: flex;
 
             button {
-                margin-left: $spacing-small;
+                margin-left: var(--spacing-small);
             }
         }
     }
@@ -55,10 +56,11 @@ $region-detail-form-width: 320px;
             }
 
             .region-detail-form {
-                @include background-color($color-foreground);
-                flex-basis: $region-detail-form-width;
+                flex-basis: var(--region-detail-form-width);
                 flex-shrink: 0;
-                border-left: $width-separator-thin solid $color-separator;
+                border-left: var(--width-separator-thin) solid var(--color-separator);
+                background-color: var(--color-foreground);
+                color: var(--color-text-on-foreground);
             }
         }
 

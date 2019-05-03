@@ -1,26 +1,26 @@
-@import '~base-scss/base';
 
 .header {
-    @include background-color($color-foreground);
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    padding: $spacing-small 0;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small) 0;
+    color: var(--color-text-on-foreground);
 
     .inputs {
         display: flex;
         flex-grow: 1;
-        padding: 0 $spacing-small;
+        padding: 0 var(--spacing-small);
     }
 
     .action-buttons {
         display: flex;
         align-items: center;
         flex-shrink: 0;
-        padding: 0 $spacing-small;
+        padding: 0 var(--spacing-small);
 
         >* {
-            margin-left: $spacing-small;
+            margin-left: var(--spacing-small);
         }
     }
 }
@@ -33,7 +33,7 @@
 
     .scroll-wrapper {
         flex-grow: 1;
-        background-color: $color-background-row;
+        background-color: var(--color-background-row);
         overflow-x: auto;
         overflow-y: scroll;
     }

@@ -38,6 +38,8 @@ import {
     // removeSelfTabStatusAction,
 } from '#redux';
 
+import styles from './styles.scss';
+
 const ROUTE = {
     exclusivelyPublic: 'exclusively-public',
     public: 'public',

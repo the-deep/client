@@ -1,6 +1,11 @@
-@import '~base-scss/base';
+:root {
+    --height-tabs: 32px;
+}
 
-$height-tabs: 32px;
+%tab-content {
+    position: relative;
+    height: calc(100% - var(--height-tabs));
+}
 
 .right-panel {
     display: flex;
@@ -10,16 +15,11 @@ $height-tabs: 32px;
 
     .tabs {
         flex-shrink: 0;
-        height: $height-tabs;
+        height: var(--height-tabs);
 
         .tab {
             text-transform: capitalize;
         }
-    }
-
-    %tab-content {
-        position: relative;
-        height: calc(100% - #{$height-tabs});
     }
 
     .metadata {
@@ -35,7 +35,7 @@ $height-tabs: 32px;
     }
 
     .save-button {
-        margin: 0 $spacing-small;
+        margin: 0 var(--spacing-small);
     }
 }
 

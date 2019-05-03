@@ -1,9 +1,8 @@
-@import '~base-scss/base';
-
 .document-tab {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    overflow: auto;
 
     .file-list-view {
         display: flex;
@@ -16,8 +15,8 @@
             align-items: center;
             flex-shrink: 0;
             justify-content: space-between;
-            border-bottom: $width-separator-thin solid $color-separator;
-            padding: $spacing-small;
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            padding: var(--spacing-small);
 
             .title {
                 flex-grow: 1;
@@ -33,12 +32,12 @@
         display: flex;
         flex-shrink: 0;
         justify-content: flex-end;
-        border-top: $width-separator-thin solid $color-separator;
-        background-color: $color-foreground-alt;
-        padding: $spacing-medium-alt $spacing-small;
+        border-top: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-foreground-alt);
+        padding: var(--spacing-medium-alt) var(--spacing-small);
 
         .button {
-            margin-left: $spacing-small;
+            margin-left: var(--spacing-small);
         }
     }
 }

@@ -1,6 +1,6 @@
-@import '~base-scss/base';
-
-$region-detail-form-width: 320px;
+:root {
+    --region-detail-form-width: 320px;
+}
 
 .country-general {
     display: flex;
@@ -19,11 +19,12 @@ $region-detail-form-width: 320px;
         }
 
         .region-detail-form {
-            @include background-color($color-foreground);
-            flex-basis: $region-detail-form-width;
+            flex-basis: var(--region-detail-form-width);
             flex-grow: 0;
             flex-shrink: 0;
-            border-left: $width-separator-thin solid $color-separator;
+            border-left: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-foreground);
+            color: var(--color-text-on-foreground);
         }
     }
 

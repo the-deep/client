@@ -1,7 +1,6 @@
-@import '~base-scss/base';
 
 .list {
-    padding: $spacing-small;
+    padding: var(--spacing-small);
     width: 100%;
     height: 100%;
     overflow-y: auto;

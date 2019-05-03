@@ -1,6 +1,6 @@
-@import '~base-scss/base';
-
-$width-region-list: 240px;
+:root {
+    --width-region-list: 240px;
+}
 
 .project-regions {
     display: flex;
@@ -9,20 +9,22 @@ $width-region-list: 240px;
 
     .region-list {
         display: flex;
-        flex-basis: $width-region-list;
+        flex-basis: var(--width-region-list);
         flex-direction: column;
         flex-grow: 0;
         flex-shrink: 0;
-        border-right: $width-separator-thin solid $color-separator-alt;
+        border-right: var(--width-separator-thin) solid var(--color-separator-alt);
+        background-color: var(--color-foreground);
 
         >.header {
-            @include background-color($color-background-header);
             display: flex;
             align-items: center;
             flex-shrink: 0;
             flex-wrap: wrap;
-            border-bottom: $width-separator-thin solid $color-separator;
-            padding: $spacing-medium;
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-background-header);
+            padding: var(--spacing-medium);
+            color: var(--color-text-on-background-header);
 
             .heading {
                 flex-grow: 1;
@@ -34,7 +36,7 @@ $width-region-list: 240px;
 
             .region-search-input {
                 flex-basis: 100%;
-                margin-top: $spacing-small;
+                margin-top: var(--spacing-small);
             }
         }
 
@@ -45,7 +47,7 @@ $width-region-list: 240px;
     }
 
     .region-details-container {
-        flex-basis: calc(100% - #{$width-region-list});
+        flex-basis: calc(100% - var(--width-region-list));
         flex-grow: 0;
         flex-shrink: 0;
         overflow: auto;
@@ -54,10 +56,10 @@ $width-region-list: 240px;
     .no-regions {
         display: flex;
         align-items: center;
-        flex-basis: calc(100% - #{$width-region-list});
+        flex-basis: calc(100% - var(--width-region-list));
         justify-content: center;
-        color: $color-text-disabled;
-        font-size: $font-size-large;
+        color: var(--color-text-disabled);
+        font-size: var(--font-size-large);
     }
 }
 

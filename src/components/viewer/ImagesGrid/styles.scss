@@ -1,6 +1,6 @@
-@import '~base-scss/base';
-
-$color-text-on-primary: get-text-color($color-primary);
+:root {
+    --color-text-on-primary: get-text-color(var(--color-primary));
+}
 
 .images-grid {
     .images {
@@ -13,12 +13,12 @@ $color-text-on-primary: get-text-color($color-primary);
         overflow-y: auto;
 
         .image {
-            flex-basis: calc(calc(100% - #{$spacing-small * 3}) / 2);
-            margin: $spacing-small $spacing-small 0;
-            border: $width-separator-thin solid $color-separator-alt;
-            background-color: $color-foreground;
+            flex-basis: calc(100% - (var(--spacing-small) * 3) / 2);
+            margin: var(--spacing-small) var(--spacing-small) 0;
+            border: var(--width-separator-thin) solid var(--color-separator-alt);
+            background-color: var(--color-foreground);
             cursor: pointer;
-            padding: $spacing-small;
+            padding: var(--spacing-small);
             height: 144px;
             overflow: hidden;
             object-fit: cover;
@@ -29,7 +29,7 @@ $color-text-on-primary: get-text-color($color-primary);
             }
 
             &:hover {
-                border-color: $color-accent;
+                border-color: var(--color-accent);
                 filter: brightness(80%);
             }
         }
@@ -49,11 +49,11 @@ $color-text-on-primary: get-text-color($color-primary);
         flex-shrink: 0;
         opacity: .8;
         height: 64px;
-        color: $color-text-on-primary;
+        color: var(--color-text-on-primary);
 
         .transparent-btn {
-            color: $color-text-on-primary;
-            font-size: $font-size-super-large;
+            color: var(--color-text-on-primary);
+            font-size: var(--font-size-super-large);
         }
     }
 
@@ -61,13 +61,13 @@ $color-text-on-primary: get-text-color($color-primary);
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: $spacing-extra-small;
+        padding: var(--spacing-extra-small);
         height: calc(100vh - 64px);
     }
 }
 
 .preview-image {
-    background-color: $color-foreground;
+    background-color: var(--color-foreground);
     max-width: 80%;
     max-height: 80%;
     object-fit: contain;

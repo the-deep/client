@@ -1,24 +1,23 @@
-@import '~base-scss/base';
 
 .add-lead-form {
     display: flex;
     position: relative;
     flex-wrap: wrap;
     justify-content: space-between;
-    padding: 0 $spacing-large;
+    padding: 0 var(--spacing-large);
 
     .header {
         display: flex;
         align-items: center;
         flex-basis: 100%;
         justify-content: space-between;
-        padding: $spacing-small 0;
+        padding: var(--spacing-small) 0;
     }
 
     .title,
     .source {
-        flex-basis: calc(100% / 2 - #{$spacing-medium});
-        padding: $spacing-medium 0;
+        flex-basis: calc(100% / 2 - var(--spacing-medium));
+        padding: var(--spacing-medium) 0;
     }
 
     .lead-group-container {
@@ -37,19 +36,19 @@
     .confidentiality,
     .user,
     .date {
-        flex-basis: calc(100% / 3 - #{$spacing-medium});
-        padding: $spacing-medium 0;
+        flex-basis: calc(100% / 3 - var(--spacing-medium));
+        padding: var(--spacing-medium) 0;
     }
 
     .url,
     .website {
-        flex-basis: calc(50% - #{$spacing-medium});
+        flex-basis: calc(50% - var(--spacing-medium));
     }
 
     .project,
     .lead-group-container {
-        flex-basis: calc(100% / 2 - #{$spacing-medium});
-        padding: $spacing-medium 0;
+        flex-basis: calc(100% / 2 - var(--spacing-medium));
+        padding: var(--spacing-medium) 0;
     }
 
     .text {
@@ -58,11 +57,11 @@
 
     .file-title {
         flex-grow: 1;
-        margin: $spacing-small 0;
-        color: $color-text;
+        margin: var(--spacing-small) 0;
+        color: var(--color-text);
     }
 
     .tabular-button {
-        margin-right: $spacing-medium;
+        margin-right: var(--spacing-medium);
     }
 }

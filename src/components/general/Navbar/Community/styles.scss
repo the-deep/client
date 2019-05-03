@@ -1,10 +1,11 @@
-@import '~base-scss/base';
-@import '~rs-scss/button-base';
+@import '~base-scss/utils';
 
-$width-dropdown-min: 120px;
+:root {
+    --width-dropdown-min: 120px;
+}
 
 .community-dropdown {
-    min-width: $width-dropdown-min;
+    min-width: var(--width-dropdown-min);
 
     .button {
         @extend %button-base;
@@ -15,22 +16,22 @@ $width-dropdown-min: 120px;
         @include transition-medium();
         display: flex;
         align-items: center;
-        padding: $spacing-small;
+        padding: var(--spacing-small);
 
         .image {
-            margin: $spacing-small $spacing-medium;
+            margin: var(--spacing-small) var(--spacing-medium);
         }
 
         .title {
-            padding: $spacing-small $spacing-medium;
+            padding: var(--spacing-small) var(--spacing-medium);
         }
 
         &:hover {
-            background-color: $color-background-hover;
+            background-color: var(--color-background-hover);
         }
     }
 }
 
 .icon {
-    font-size: $font-size-super-large;
+    font-size: var(--font-size-super-large);
 }

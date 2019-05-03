@@ -1,4 +1,5 @@
-@import '~base-scss/base';
+@import '~base-scss/utils';
+
 
 .apply-input {
     position: relative;
@@ -11,8 +12,8 @@
         opacity: 0;
 
         .apply-button {
-            margin-right: $spacing-extra-small;
-            padding: $spacing-extra-small;
+            margin-right: var(--spacing-extra-small);
+            padding: var(--spacing-extra-small);
         }
     }
 

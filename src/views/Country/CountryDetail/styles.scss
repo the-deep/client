@@ -1,6 +1,6 @@
-@import '~base-scss/base';
-
-$height-header: 42px;
+:root {
+    --height-header: 42px;
+}
 
 .country-detail {
     display: flex;
@@ -8,15 +8,16 @@ $height-header: 42px;
     flex-direction: column;
 
     .header {
-        @include background-color($color-background-header);
         flex-shrink: 0;
+        background-color: var(--color-background-header);
         padding: 0;
+        color: var(--color-text-on-background-header);
 
         .top-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: $spacing-small;
+            padding: var(--spacing-small);
             padding-bottom: 0;
 
             .heading {
@@ -27,7 +28,7 @@ $height-header: 42px;
                 display: flex;
 
                 button {
-                    margin-left: $spacing-small;
+                    margin-left: var(--spacing-small);
                 }
             }
         }
@@ -44,7 +45,8 @@ $height-header: 42px;
 
     .loading-animation {
         z-index: 111;
-        background-color: $color-background-overlay-opaque;
+        background-color: var(--color-foreground);
+        // background-color: var(--color-background-overlay-opaque);
     }
 
     .details-no-edit {
@@ -54,7 +56,7 @@ $height-header: 42px;
         flex-grow: 1;
 
         .region-details {
-            bottom: calc(#{$spacing-medium} + 24px);
+            bottom: calc(var(--spacing-medium) + 24px);
         }
 
         .region-map {

@@ -1,12 +1,20 @@
-@import '~base-scss/base';
+%filter-group {
+    background-color: var(--color-foreground);
+
+    .heading {
+        // border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-background-header);
+        padding: var(--spacing-small);
+    }
+}
 
 .export {
     .main-content {
         display: flex;
         flex-grow: 1;
-        margin: $spacing-small-alt;
-        border: $width-separator-thin solid $color-separator-alt;
-        padding-bottom: $spacing-extra-small;
+        margin: var(--spacing-small-alt);
+        border: var(--width-separator-thin) solid var(--color-separator-alt);
+        padding-bottom: var(--spacing-extra-small);
         overflow: auto;
 
         .filters {
@@ -15,17 +23,9 @@
             flex-direction: column;
             overflow: auto;
 
-            %filter-group {
-                .heading {
-                    border-bottom: $width-separator-thin solid $color-separator;
-                    background-color: $color-background-header;
-                    padding: $spacing-small;
-                }
-            }
-
             .entry-filters {
                 @extend %filter-group;
-                border-bottom: $width-separator-medium solid $color-separator;
+                border-top: var(--width-separator-thin) solid var(--color-separator);
 
                 :global {
                     .entries-filters {
@@ -33,12 +33,12 @@
                         align-items: flex-end;
                         flex-shrink: 0;
                         flex-wrap: wrap;
-                        border-bottom: $width-separator-thin solid $color-separator;
-                        padding: $spacing-small;
+                        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                        padding: var(--spacing-small);
 
                         .entries-filter,
                         .select-input {
-                            margin: $spacing-small;
+                            margin: var(--spacing-small);
 
                             &.flat-select-input {
                                 margin: 0;
@@ -51,13 +51,13 @@
                             margin: 0;
 
                             .single-select-input {
-                                margin: $spacing-small;
+                                margin: var(--spacing-small);
                             }
                         }
 
                         >.button {
                             flex-shrink: 0;
-                            margin: $spacing-small;
+                            margin: var(--spacing-small);
                         }
                     }
                 }
@@ -77,16 +77,16 @@
                             align-items: flex-end;
                             flex-shrink: 0;
                             flex-wrap: wrap;
-                            padding: $spacing-small;
+                            padding: var(--spacing-small);
 
                             .leads-filter {
-                                margin: $spacing-small;
+                                margin: var(--spacing-small);
                             }
 
                             .button {
                                 align-self: flex-end;
                                 flex-shrink: 0;
-                                margin: $spacing-small;
+                                margin: var(--spacing-small);
                             }
                         }
                     }
@@ -119,11 +119,11 @@
             align-items: center;
             flex-basis: 30%;
             justify-content: center;
-            border-left: $width-separator-thin solid $color-separator;
-            background-color: $color-foreground-alt;
+            border-left: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-foreground-alt);
             text-align: center;
-            color: $color-text-disabled;
-            font-size: $font-size-large;
+            color: var(--color-text-disabled);
+            font-size: var(--font-size-large);
         }
     }
 }

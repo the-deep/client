@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .tooltip {
     display: flex;
@@ -8,18 +7,18 @@
 
     .heading {
         flex-grow: 1;
-        padding: $spacing-small;
+        padding: var(--spacing-small);
         padding-bottom: 0;
     }
 
     .admin-level {
         display: flex;
-        border-bottom: $width-separator-thin solid $color-separator;
-        padding: $spacing-extra-small $spacing-medium;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-extra-small) var(--spacing-medium);
 
         .level {
             &:after {
-                padding: 0 $spacing-small;
+                padding: 0 var(--spacing-small);
                 content: '-';
             }
         }
@@ -39,7 +38,7 @@
         position: sticky;
 
         &:not(:first-child) {
-            border-top: $width-separator-thin solid $color-separator;
+            border-top: var(--width-separator-thin) solid var(--color-separator);
         }
     }
 }

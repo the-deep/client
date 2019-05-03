@@ -1,17 +1,16 @@
-@import '~base-scss/base';
 
 .item {
-    border-top: $width-separator-thin solid $color-separator;
-    border-bottom: $width-separator-thin solid $color-separator;
-    background-color: $color-foreground;
+    border-top: var(--width-separator-thin) solid var(--color-separator);
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
     padding: 0;
 
     .drag-handle {
         display: flex;
         align-items: center;
         align-self: stretch;
-        background-color: $color-foreground;
-        padding: $spacing-small;
+        background-color: var(--color-foreground);
+        padding: var(--spacing-small);
     }
 }
 
@@ -20,8 +19,8 @@
     align-items: center;
     flex-shrink: 0;
     justify-content: space-between;
-    border-bottom: $width-separator-thin solid $color-separator;
-    padding: $spacing-small;
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    padding: var(--spacing-small);
     padding-top: 0;
 
     .button-container {
@@ -29,7 +28,7 @@
         align-items: center;
 
         h5 {
-            padding-right: $spacing-small;
+            padding-right: var(--spacing-small);
 
             &:after {
                 content: ':';
@@ -46,18 +45,18 @@
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    padding: 0 $spacing-small;
+    padding: 0 var(--spacing-small);
 
     .input {
         flex-grow: 1;
-        margin-left: $spacing-small;
-        padding: 0 $spacing-extra-small;
+        margin-left: var(--spacing-small);
+        padding: 0 var(--spacing-extra-small);
     }
 }
 
 .cell-list {
     flex-grow: 1;
-    border-right: $width-separator-thin solid $color-separator;
+    border-right: var(--width-separator-thin) solid var(--color-separator);
     overflow-y: auto;
 
     .item {

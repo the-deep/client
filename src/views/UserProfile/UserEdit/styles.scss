@@ -1,4 +1,4 @@
-@import '~base-scss/base';
+@import '~base-scss/utils';
 
 .user-profile-edit-form {
     display: flex;
@@ -6,7 +6,7 @@
     flex-direction: column;
 
     .gallery-image {
-        margin-bottom: $spacing-small;
+        margin-bottom: var(--spacing-small);
         width: 100%;
         height: 200px;
 
@@ -32,7 +32,8 @@
         :global {
             label {
                 @extend %button-like-link;
-                @include background-color($color-primary);
+                background-color: var(--color-primary);
+                color: var(--color-text-on-primary);
             }
         }
     }
@@ -50,7 +51,7 @@
         justify-content: flex-end;
 
         button {
-            margin-left: $spacing-medium;
+            margin-left: var(--spacing-medium);
         }
     }
 }

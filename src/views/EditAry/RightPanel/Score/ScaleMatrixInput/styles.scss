@@ -1,8 +1,7 @@
-@import '~base-scss/base';
 
 .scale-matrix-input {
     .table {
-        border-spacing: $width-separator-thin;
+        border-spacing: var(--width-separator-thin);
 
         .cell {
             .button {
@@ -10,13 +9,13 @@
                 border: 0;
                 background-color: transparent;
                 cursor: pointer;
-                padding: $spacing-extra-small $spacing-small-alt;
+                padding: var(--spacing-extra-small) var(--spacing-small-alt);
                 color: inherit;
             }
 
             &.active {
-                box-shadow: inset 0 0 0 2px $color-accent;
-                background-color: $color-foreground;
+                box-shadow: inset 0 0 0 2px var(--color-accent);
+                background-color: var(--color-foreground);
             }
         }
     }

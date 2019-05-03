@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 @import '~base-scss/widget';
 
 .widget-editor-faram {
@@ -11,7 +10,7 @@
 
         .widget {
             @extend %widget;
-            padding: $spacing-extra-small;
+            padding: var(--spacing-extra-small);
 
             .header {
                 display: flex;
@@ -19,28 +18,28 @@
 
                 .heading {
                     flex-grow: 1;
-                    padding: 0 0 0 $spacing-small;
+                    padding: 0 0 0 var(--spacing-small);
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
 
                     &.disabled {
-                        color: $color-text-label;
+                        color: var(--color-text-label);
                     }
                 }
 
                 .action-buttons {
                     flex-shrink: 0;
-                    transition: $duration-transition-medium opacity ease-in-out;
+                    transition: var(--duration-transition-medium) opacity ease-in-out;
                     opacity: 0;
-                    padding-left: $spacing-small;
+                    padding-left: var(--spacing-small);
 
                     >* {
-                        padding: $spacing-extra-small $spacing-extra-small-alt;
+                        padding: var(--spacing-extra-small) var(--spacing-extra-small-alt);
                     }
 
                     .info-icon {
-                        color: $color-info;
+                        color: var(--color-info);
                     }
                 }
             }
@@ -59,12 +58,12 @@
                     transition: 0.2s all ease-in-out;
                     opacity: 0;
                     z-index: 0;
-                    background-color: $color-background-header;
-                    padding: $spacing-small;
+                    background-color: var(--color-background-header);
+                    padding: var(--spacing-small);
                     width: 100%;
                     height: 100%;
                     text-align: center;
-                    color: $color-text-disabled;
+                    color: var(--color-text-disabled);
                     pointer-events: none;
                 }
 

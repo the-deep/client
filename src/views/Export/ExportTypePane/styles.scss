@@ -1,10 +1,12 @@
-@import '~base-scss/base';
+@import '~base-scss/utils';
+
 
 .export-types {
     display: flex;
     flex-basis: 20%;
     flex-direction: column;
-    border-left: $width-separator-thin solid $color-separator;
+    border-left: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
 
     .export-type-select-list {
         display: flex;
@@ -17,21 +19,21 @@
             flex-shrink: 0;
             outline: 0;
             border: 0;
-            border-bottom: $width-separator-medium solid $color-separator;
+            border-bottom: var(--width-separator-medium) solid var(--color-separator);
             background-color: transparent;
             cursor: pointer;
-            padding: $spacing-medium;
+            padding: var(--spacing-medium);
 
             .image {
                 @include transition-medium;
-                width: $width-icon-extra-large-alt;
+                width: var(--width-icon-extra-large-alt);
                 height: auto;
                 filter: grayscale(80%);
             }
 
             &.active {
-                border-bottom-color: $color-accent;
-                background-color: $color-foreground-alt;
+                border-bottom-color: var(--color-accent);
+                background-color: var(--color-background-accent-hint);
 
                 .image {
                     filter: grayscale(0%);
@@ -42,22 +44,22 @@
 
     .export-type-options {
         flex-grow: 1;
-        padding: $spacing-medium;
+        padding: var(--spacing-medium);
         overflow: auto;
 
         p {
-            margin: 0 0 $spacing-small $spacing-small;
-            color: $color-text-label;
+            margin: 0 0 var(--spacing-small) var(--spacing-small);
+            color: var(--color-text-label);
         }
 
         .info {
             display: flex;
-            margin-top: $spacing-medium;
+            margin-top: var(--spacing-medium);
 
             .icon {
                 flex-shrink: 0;
-                color: $color-info;
-                font-size: $font-size-large;
+                color: var(--color-info);
+                font-size: var(--font-size-large);
             }
 
         }

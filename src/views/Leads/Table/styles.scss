@@ -1,15 +1,19 @@
-@import '~base-scss/base';
+@import '~base-scss/utils';
 
-$width-assignee-column: 96px;
+:root {
+    --width-assignee-column: 96px;
+    --mime-column-width: 48px;
+}
 
 .table-container {
-    @include background-color($color-foreground-alt);
     display: flex;
     position: relative;
     flex-direction: column;
     flex-grow: 1;
-    padding-bottom: $spacing-extra-small;
+    background-color: var(--color-foreground-alt);
+    padding-bottom: var(--spacing-extra-small);
     overflow: auto;
+    color: var(--color-text-on-foreground-alt);
 
     .scroll-wrapper {
         flex-grow: 1;
@@ -22,13 +26,11 @@ $width-assignee-column: 96px;
                 top: 0;
             }
 
-            $mime-column-width: 48px;
-
             :global {
                 .header {
                     &.created_by,
                     &.assignee {
-                        width: $width-assignee-column;
+                        width: var(--width-assignee-column);
                     }
 
                     >div {
@@ -36,12 +38,18 @@ $width-assignee-column: 96px;
                     }
                 }
 
+                .row {
+                    &:hover {
+                        background-color: var(--color-background-accent-hint);
+                    }
+                }
+
                 .cell {
-                    padding: $spacing-small;
+                    padding: var(--spacing-small) var(--spacing-medium);
 
                     &.created_by,
                     &.assignee {
-                        color: $color-text-label;
+                        color: var(--color-text-label);
                     }
 
                     &.actions {
@@ -50,7 +58,7 @@ $width-assignee-column: 96px;
                 }
 
                 .attachmentMimeType {
-                    width: $mime-column-width;
+                    width: var(--mime-column-width);
                 }
 
                 .title {
@@ -86,17 +94,17 @@ $width-assignee-column: 96px;
                 .created-by-link,
                 .assignee-link {
                     @extend %accent-color-link;
-                    margin-right: $spacing-small;
+                    margin-right: var(--spacing-small);
                 }
 
                 .icon-wrapper {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: $font-size-large;
+                    font-size: var(--font-size-large);
 
                     button {
-                        color: $color-accent;
+                        color: var(--color-accent);
                     }
                 }
             }

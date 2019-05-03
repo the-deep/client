@@ -1,21 +1,20 @@
-@import '~base-scss/base';
 
 .notifications {
     display: flex;
     position: relative;
     flex-direction: column;
-    background-color: $color-foreground;
+    background-color: var(--color-foreground);
 
     .loading-animation {
         position: absolute;
-        top: $spacing-medium;
-        right: $spacing-medium;
-        width: $font-size-extra-large;
-        height: $font-size-extra-large;
+        top: var(--spacing-medium);
+        right: var(--spacing-medium);
+        width: var(--font-size-extra-large);
+        height: var(--font-size-extra-large);
 
         >div {
             padding: 0!important;
-            font-size: $font-size-large!important;
+            font-size: var(--font-size-large)!important;
         }
     }
 
@@ -24,8 +23,8 @@
     //     display: flex;
     //     align-items: center;
     //     flex-shrink: 0;
-    //     background-color: $color-foreground;
-    //     padding: $spacing-medium-alt;
+    //     background-color: var(--color-foreground);
+    //     padding: var(--spacing-medium-alt);
 
     //     .heading {
     //         flex-grow: 1;
@@ -34,7 +33,7 @@
     //     .loading-animation {
     //         position: relative;
     //         flex-shrink: 0;
-    //         padding: 0 $spacing-medium;
+    //         padding: 0 var(--spacing-medium);
     //     }
     // }
 
@@ -47,11 +46,11 @@
             top: 0;
             left: 0;
             z-index: 1;
-            border-bottom: $width-separator-thin solid $color-separator;
-            background-color: $color-foreground;
-            padding: $spacing-medium;
-            color: $color-primary;
-            font-size: $font-size-large;
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            background-color: var(--color-foreground);
+            padding: var(--spacing-medium);
+            color: var(--color-primary);
+            font-size: var(--font-size-large);
         }
     }
 

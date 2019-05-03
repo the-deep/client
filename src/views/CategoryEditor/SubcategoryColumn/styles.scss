@@ -1,38 +1,37 @@
-@import '~base-scss/base';
+
+%button {
+    outline: 0;
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+    padding: var(--spacing-medium);
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: inherit;
+}
 
 .column {
     display: flex;
     flex-basis: calc(100% / 3);
     flex-direction: column;
     flex-shrink: 0;
-    border-right: $width-separator-thin solid $color-separator;
-
-    %button {
-        outline: 0;
-        border: 0;
-        background-color: transparent;
-        cursor: pointer;
-        padding: $spacing-medium;
-        color: $color-text;
-        font-family: inherit;
-        font-size: inherit;
-    }
+    border-right: var(--width-separator-thin) solid var(--color-separator);
 
     .header {
         display: flex;
         align-items: center;
         flex-shrink: 0;
         justify-content: space-between;
-        border-bottom: $width-separator-thin solid $color-separator;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator);
 
         .heading {
-            padding: $spacing-medium;
+            padding: var(--spacing-medium);
         }
 
         button {
             @extend %button;
             text-transform: uppercase;
-            color: $color-accent;
+            color: var(--color-accent);
         }
     }
 
@@ -43,46 +42,49 @@
         .sub-category {
             @extend %button;
             display: flex;
-            border-bottom: $width-separator-thin solid $color-separator;
-            padding: $spacing-small;
+            border-right: var(--width-separator-medium) solid transparent;
+            border-bottom: var(--width-separator-thin) solid var(--color-separator);
+            padding: var(--spacing-small);
             width: 100%;
             text-align: left;
 
             .title {
                 flex-grow: 1;
-                border: $width-separator-thin solid transparent;
-                padding: $spacing-small;
-                color: $color-text;
+                border: var(--width-separator-thin) solid transparent;
+                padding: var(--spacing-small);
+                color: var(--color-text);
                 pointer-events: none;
             }
 
             .number {
                 flex-shrink: 0;
-                padding: $spacing-extra-small $spacing-small;
+                padding: var(--spacing-extra-small) var(--spacing-small);
                 pointer-events: none;
             }
 
             &.selected {
-                background-color: $color-background-selected;
+                border-right-color: var(--color-accent);
+                background-color: var(--color-background-accent-hint);
             }
 
             &.active {
-                @include background-color($color-accent);
+                border-right-color: var(--color-accent);
+                background-color: var(--color-background-accent-hint);
 
                 .title {
                     color: inherit;
-                    font-weight: $font-weight-bold;
+                    font-weight: var(--font-weight-bold);
                 }
             }
 
             &.drag-enter {
                 .title {
-                    border: $width-separator-thin dashed $color-separator-alt;
+                    border: var(--width-separator-thin) dashed var(--color-separator-alt);
                 }
 
                 &.active {
                     .title {
-                        border: $width-separator-thin dashed get-text-color($color-accent);
+                        border: var(--width-separator-thin) dashed get-text-color(var(--color-accent));
                     }
                 }
             }

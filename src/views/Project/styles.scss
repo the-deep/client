@@ -1,8 +1,7 @@
-@import '~base-scss/base';
 
 .project-panel {
     .sidebar {
-        border-right: $width-separator-thin solid $color-separator-alt;
+        border-right: var(--width-separator-thin) solid var(--color-separator-alt);
         height: 100%;
     }
 
@@ -20,7 +19,7 @@
 
         .action-buttons {
             flex-shrink: 0;
-            padding-left: $spacing-medium;
+            padding-left: var(--spacing-medium);
         }
     }
 

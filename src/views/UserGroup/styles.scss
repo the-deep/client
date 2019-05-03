@@ -1,12 +1,14 @@
-@import '~base-scss/base';
+@import '~base-scss/utils';
 
-$width-left-content: 420px;
-$width-display-picture: 108px;
-$info-height: 144px;
+:root {
+    --width-left-content: 420px;
+    --width-display-picture: 108px;
+    --info-height: 144px;
+}
 
 .usergroup {
     .heading {
-        padding: $spacing-small 0;
+        padding: var(--spacing-small) 0;
     }
 
     .main-content {
@@ -15,46 +17,46 @@ $info-height: 144px;
 
         .left {
             display: flex;
-            flex-basis: $width-left-content;
+            flex-basis: var(--width-left-content);
             flex-direction: column;
             flex-grow: 0;
             flex-shrink: 0;
-            border-right: $width-separator-thin solid $color-separator;
+            border-right: var(--width-separator-thin) solid var(--color-separator);
 
             .info {
                 display: flex;
                 flex-direction: column;
                 flex-shrink: 0;
-                border-bottom: $width-separator-thin solid $color-separator;
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
 
                 .title-container {
                     display: flex;
                     align-items: flex-start;
                     flex-shrink: 0;
-                    padding: $spacing-small $spacing-medium-alt;
+                    padding: var(--spacing-small) var(--spacing-medium-alt);
 
                     .name {
-                        color: $color-text;
-                        font-size: $font-size-super-large;
+                        color: var(--color-text);
+                        font-size: var(--font-size-super-large);
                     }
                 }
 
                 .description {
                     flex-grow: 1;
                     margin: 0;
-                    padding: 0 $spacing-medium-alt;
+                    padding: 0 var(--spacing-medium-alt);
                     overflow-y: auto;
                     text-align: justify;
                 }
 
                 button {
-                    margin-left: $spacing-small;
+                    margin-left: var(--spacing-small);
                 }
             }
 
             .stats {
                 flex-grow: 1;
-                padding: $spacing-medium;
+                padding: var(--spacing-medium);
             }
 
         }
@@ -69,8 +71,8 @@ $info-height: 144px;
                 flex-basis: 60%;
                 flex-grow: 0;
                 flex-shrink: 0;
-                border-bottom: $width-separator-thin solid $color-separator;
-                background-color: $color-background-row;
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                background-color: var(--color-background-row);
                 overflow-y: auto;
             }
 
@@ -78,21 +80,22 @@ $info-height: 144px;
                 flex-basis: 40%;
                 flex-grow: 0;
                 flex-shrink: 0;
-                background-color: $color-background-row;
+                background-color: var(--color-background-row);
                 overflow-y: auto;
             }
         }
 
         .usergroup-alt {
             @include shadow-medium;
-            @include background-color($color-foreground);
             display: flex;
             align-items: center;
             flex-direction: column;
             flex-grow: 1;
             justify-content: center;
-            padding: $spacing-medium-alt;
-            font-size: $font-size-extra-large;
+            background-color: var(--color-foreground);
+            padding: var(--spacing-medium-alt);
+            color: var(--color-text-on-foreground);
+            font-size: var(--font-size-extra-large);
             grid-area: info / info / groups / groups;
         }
     }

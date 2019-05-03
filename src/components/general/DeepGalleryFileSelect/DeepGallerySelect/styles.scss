@@ -1,28 +1,30 @@
-@import '~base-scss/base';
+@import '~base-scss/utils';
 
-$width-search-input: 240px;
-$height-modal-body: 60vh;
+:root {
+    --width-search-input: 240px;
+    --height-modal-body: 60vh;
+}
 
 .modal-header {
     border-bottom: none;
 }
 
 .search-input {
-    width: $width-search-input;
+    width: var(--width-search-input);
 }
 
 .modal-body {
     position: relative;
-    background-color: $color-background-row;
+    background-color: var(--color-background-row);
     padding: 0;
-    height: $height-modal-body;
+    height: var(--height-modal-body);
 }
 
 .file-input {
     width: auto;
 
     :global .label {
-        @include button-like-link($color-foreground);
+        @include button-like-link(var(--color-foreground));
     }
 }
 

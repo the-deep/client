@@ -1,11 +1,11 @@
-@import '~base-scss/base';
-
-$width-edit-modal: 72vw;
-$height-edit-modal: 72vh;
+:root {
+    --width-edit-modal: 72vw;
+    --height-edit-modal: 72vh;
+}
 
 .edit-modal {
-    width: $width-edit-modal;
-    height: $height-edit-modal;
+    width: var(--width-edit-modal);
+    height: var(--height-edit-modal);
 
     .form {
         display: flex;
@@ -22,11 +22,11 @@ $height-edit-modal: 72vh;
 
     .title-input-container {
         flex-shrink: 0;
-        padding: $spacing-medium;
+        padding: var(--spacing-medium);
     }
 
     .organigram-structure-header {
-        padding: $spacing-medium $spacing-medium 0;
+        padding: var(--spacing-medium) var(--spacing-medium) 0;
     }
 
     .organs {

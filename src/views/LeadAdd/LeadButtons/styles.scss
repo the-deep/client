@@ -1,45 +1,44 @@
-@import '~base-scss/base';
-
 .add-lead-buttons {
-    @include background-color($color-foreground);
     display: flex;
     align-items: center;
     flex-shrink: 0;
     flex-wrap: wrap;
     justify-content: space-around;
+    background-color: var(--color-foreground);
+    color: var(--color-text-on-foreground);
 
     .heading {
         flex-basis: 100%;
         margin: 0;
-        border-top: $width-separator-thin solid $color-separator;
-        padding: $spacing-medium $spacing-large;
-        font-size: $font-size-small;
-        font-weight: $font-weight-medium;
+        border-top: var(--width-separator-thin) solid var(--color-separator);
+        padding: var(--spacing-medium) var(--spacing-large);
+        font-size: var(--font-size-small);
+        font-weight: var(--font-weight-medium);
     }
 
     .add-lead-btn {
         flex-basis: 16%;
-        color: $color-text;
+        color: var(--color-text);
         font-family: inherit;
         font-size: inherit;
 
         span {
-            font-size: $font-size-extra-large;
+            font-size: var(--font-size-extra-large);
         }
 
         p {
-            margin: $spacing-medium 0 0;
-            font-size: $font-size-extra-small;
+            margin: var(--spacing-medium) 0 0;
+            font-size: var(--font-size-extra-small);
         }
 
         &:hover {
             cursor: pointer;
-            color: $color-accent;
+            color: var(--color-accent);
         }
 
         &:disabled {
             cursor: pointer;
-            color: $color-text-disabled;
+            color: var(--color-text-disabled);
         }
     }
 }

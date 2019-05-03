@@ -1,9 +1,9 @@
-@import '~base-scss/base';
-
-$color-text-on-primary: get-text-color($color-primary);
-$width-message-max: 540px;
-$width-deep-logo: 256px;
-$height-deep-logo: 256px;
+:root {
+    --color-text-on-primary: get-text-color(var(--color-primary));
+    --width-message-max: 540px;
+    --width-deep-logo: 256px;
+    --height-deep-logo: 256px;
+}
 
 .project-denied {
     display: flex;
@@ -12,26 +12,26 @@ $height-deep-logo: 256px;
     justify-content: center;
 
     .deep-logo {
-        margin-bottom: $spacing-large;
-        width: $width-deep-logo;
-        height: $height-deep-logo;
+        margin-bottom: var(--spacing-large);
+        width: var(--width-deep-logo);
+        height: var(--height-deep-logo);
 
         path {
-            fill: $color-text-disabled;
+            fill: var(--color-text-disabled);
         }
     }
 
     .heading {
-        color: $color-danger;
-        font-size: $font-size-super-large-alt;
-        font-weight: $font-weight-bold;
+        color: var(--color-danger);
+        font-size: var(--font-size-super-large-alt);
+        font-weight: var(--font-weight-bold);
     }
 
     .message {
-        margin: $spacing-large 0;
-        max-width: $width-message-max;
+        margin: var(--spacing-large) 0;
+        max-width: var(--width-message-max);
         text-align: center;
         line-height: 2;
-        font-size: $font-size-large-alt;
+        font-size: var(--font-size-large-alt);
     }
 }

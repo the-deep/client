@@ -1,15 +1,14 @@
-@import '~base-scss/base';
 
 .input-container {
     display: flex;
     align-items: center;
-    background-color: $color-foreground;
-    padding: $spacing-small;
+    background-color: var(--color-foreground);
+    padding: var(--spacing-small);
     width: 100%;
 
     .title-input {
         flex-grow: 1;
-        padding: 0 $spacing-extra-small;
+        padding: 0 var(--spacing-extra-small);
     }
 
     .delete-button {

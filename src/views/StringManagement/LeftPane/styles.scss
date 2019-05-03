@@ -1,10 +1,10 @@
-@import '~base-scss/base';
 
 .header {
-    @include background-color($color-background-header);
     flex-shrink: 0;
-    border-bottom: $width-separator-thin solid $color-separator;
-    padding: $spacing-small;
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-background-header);
+    padding: var(--spacing-small);
+    color: var(--color-text-on-background-header);
 }
 
 .links {
@@ -14,7 +14,7 @@
     .item {
         display: flex;
         align-items: center;
-        font-family: $font-family-monospace;
+        font-family: var(--font-family-monospace);
 
         .title {
             flex-grow: 1;
@@ -24,19 +24,22 @@
 
         .badge {
             flex-shrink: 0;
-            padding: 0 $spacing-extra-small-alt;
-            font-size: $font-size-small;
+            padding: 0 var(--spacing-extra-small-alt);
+            font-size: var(--font-size-small);
 
             &.error {
-                @include background-color($color-danger);
+                background-color: var(--color-danger);
+                color: var(--color-text-on-danger);
             }
 
             &.warning {
-                @include background-color($color-warning);
+                background-color: var(--color-warning);
+                color: var(--color-text-on-warning);
             }
 
             &.info {
-                @include background-color($color-info);
+                background-color: var(--color-info);
+                color: var(--color-text-on-info);
             }
         }
     }

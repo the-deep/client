@@ -1,14 +1,14 @@
-@import '~base-scss/base';
-
-$height-geo-modal: 86vh;
-$width-geo-modal: 80%;
-$width-left-container-min: 240px;
-$width-right-container-min: 240px;
-$width-right-container-max: 320px;
+:root {
+    --height-geo-modal: 86vh;
+    --width-geo-modal: 80%;
+    --width-left-container-min: 240px;
+    --width-right-container-min: 240px;
+    --width-right-container-max: 320px;
+}
 
 .geo-modal {
-    width: $width-geo-modal;
-    height: $height-geo-modal;
+    width: var(--width-geo-modal);
+    height: var(--height-geo-modal);
 
     .select-inputs {
         display: flex;
@@ -24,28 +24,28 @@ $width-right-container-max: 320px;
             display: flex;
             flex-basis: 24%;
             flex-direction: column;
-            border-right: $width-separator-thin solid $color-separator;
-            min-width: $width-left-container-min;
+            border-right: var(--width-separator-thin) solid var(--color-separator);
+            min-width: var(--width-left-container-min);
         }
 
         .map-wrapper {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            border-right: $width-separator-thin solid $color-separator;
-            border-left: $width-separator-thin solid $color-separator;
+            border-right: var(--width-separator-thin) solid var(--color-separator);
+            border-left: var(--width-separator-thin) solid var(--color-separator);
 
             .select-inputs {
                 display: flex;
                 justify-content: space-between;
-                border-bottom: $width-separator-thin solid $color-separator;
-                padding: $spacing-small $spacing-medium;
+                border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                padding: var(--spacing-small) var(--spacing-medium);
 
                 .left-inputs {
                     display: flex;
 
                     .select-input {
-                        padding-left: $spacing-small;
+                        padding-left: var(--spacing-small);
                     }
                 }
             }
@@ -58,19 +58,19 @@ $width-right-container-max: 320px;
         .right {
             flex-basis: 20%;
             flex-grow: 1;
-            min-width: $width-right-container-min;
-            max-width: $width-right-container-max;
+            min-width: var(--width-right-container-min);
+            max-width: var(--width-right-container-max);
             overflow-y: auto;
 
             .selection-group {
                 .title {
                     display: block;
                     flex-shrink: 0;
-                    padding: $spacing-medium $spacing-small;
+                    padding: var(--spacing-medium) var(--spacing-small);
                     width: 100%;
                     text-transform: uppercase;
-                    color: $color-accent;
-                    font-size: $font-size-extra-small;
+                    color: var(--color-accent);
+                    font-size: var(--font-size-extra-small);
                 }
             }
         }

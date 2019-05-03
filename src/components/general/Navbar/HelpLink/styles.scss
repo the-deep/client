@@ -1,16 +1,15 @@
-@import '~base-scss/base';
-
-$font-size-help-icon: $font-size-super-large;
-$width-help-link: $font-size-help-icon + $spacing-small-alt;
-
-$width-link-container-max: 240px;
+:root {
+    --font-size-help-icon: var(--font-size-super-large);
+    --width-help-link: calc(var(--font-size-help-icon) + var(--spacing-small-alt));
+    --width-link-container-max: 240px;
+}
 
 .help-link-container {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    transition: $duration-transition-medium width ease-in-out;
-    width: $width-help-link;
+    transition: var(--duration-transition-medium) width ease-in-out;
+    width: var(--width-help-link);
 
     .help-link {
         display: flex;
@@ -20,9 +19,9 @@ $width-link-container-max: 240px;
 
         .icon {
             flex-shrink: 0;
-            width: $width-help-link;
+            width: var(--width-help-link);
             text-align: center;
-            font-size: $font-size-help-icon;
+            font-size: var(--font-size-help-icon);
         }
 
         .text {
@@ -34,23 +33,23 @@ $width-link-container-max: 240px;
         }
 
         &:hover {
-            color: $color-accent;
+            color: var(--color-accent);
         }
     }
 
     .add-or-edit-help-link {
         display: none;
         flex-shrink: 0;
-        padding: $spacing-small-alt;
-        font-size: $font-size-medium;
+        padding: var(--spacing-small-alt);
+        font-size: var(--font-size-medium);
 
         &:hover {
-            color: $color-accent;
+            color: var(--color-accent);
         }
     }
 
     &:hover {
-        width: $width-link-container-max;
+        width: var(--width-link-container-max);
 
         .help-link {
             .text {

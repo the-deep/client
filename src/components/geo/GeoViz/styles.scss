@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 
 .geo-viz {
     display: flex;
@@ -9,19 +8,19 @@
 
     .region-select-input {
         position: absolute;
-        top: $spacing-extra-small;
-        left: $spacing-extra-small;
+        top: var(--spacing-extra-small);
+        left: var(--spacing-extra-small);
         z-index: 20;
-        border: $width-separator-thin solid $color-separator-alt;
-        background-color: $color-foreground;
-        padding: $spacing-extra-small;
+        border: var(--width-separator-thin) solid var(--color-separator-alt);
+        background-color: var(--color-foreground);
+        padding: var(--spacing-extra-small);
         width: 96px;
     }
 
     .refresh-button {
         position: absolute;
-        top: $spacing-small;
-        right: $spacing-small;
+        top: var(--spacing-small);
+        right: var(--spacing-small);
         z-index: 20;
     }
 
@@ -44,7 +43,7 @@
 
     .legend {
         position: absolute;
-        bottom: $spacing-small;
-        left: $spacing-small;
+        bottom: var(--spacing-small);
+        left: var(--spacing-small);
     }
 }

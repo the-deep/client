@@ -1,12 +1,10 @@
-@import '~base-scss/base';
-
-$color-text-on-primary: get-text-color($color-primary);
-
-$width-deep-logo: 256px;
-$height-deep-logo: 256px;
+:root {
+    --color-text-on-primary: get-text-color(var(--color-primary));
+    --width-deep-logo: 256px;
+    --height-deep-logo: 256px;
+}
 
 .login {
-    @extend %main-content;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -16,13 +14,13 @@ $height-deep-logo: 256px;
         display: flex;
         align-items: center;
         flex-direction: column;
-        padding: $spacing-extra-large;
+        padding: var(--spacing-extra-large);
 
         .logo {
-            margin-bottom: $spacing-extra-large;
-            width: $width-deep-logo;
-            height: $height-deep-logo;
-            color: $color-accent;
+            margin-bottom: var(--spacing-extra-large);
+            width: var(--width-deep-logo);
+            height: var(--height-deep-logo);
+            color: var(--color-accent);
         }
 
         .heading {
@@ -38,30 +36,31 @@ $height-deep-logo: 256px;
         display: flex;
         position: relative;
         flex-direction: column;
-        margin: $spacing-extra-large;
-        width: $width-login-form;
+        margin: var(--spacing-extra-large);
+        width: var(--width-login-form);
 
         .hid-link-container {
-            @include background-color($color-foreground);
             display: flex;
             align-items: center;
             flex-basis: 100%;
             flex-direction: column;
-            padding: $spacing-large;
+            background-color: var(--color-foreground);
+            padding: var(--spacing-large);
+            color: var(--color-text-on-foreground);
 
             .hid-link {
                 display: flex;
                 align-items: center;
                 flex-basis: 100%;
-                margin-bottom: $spacing-large;
-                border: $width-separator-thin solid $color-separator-alt;
+                margin-bottom: var(--spacing-large);
+                border: var(--width-separator-thin) solid var(--color-separator-alt);
                 border-radius: 3px;
-                padding: $spacing-small $spacing-large;
-                font-size: $font-size-medium-alt;
+                padding: var(--spacing-small) var(--spacing-large);
+                font-size: var(--font-size-medium-alt);
 
                 .logo {
-                    margin-right: $spacing-small;
-                    height: $font-size-medium-alt;
+                    margin-right: var(--spacing-small);
+                    height: var(--font-size-medium-alt);
                 }
             }
 
@@ -74,27 +73,29 @@ $height-deep-logo: 256px;
                     position: absolute;
                     top: 0;
                     left: 0;
-                    border: $width-separator-thin solid $color-separator;
+                    border: var(--width-separator-thin) solid var(--color-separator);
                     width: 100%;
                 }
 
                 .or {
-                    @include background-color($color-foreground);
                     position: absolute;
                     top: 0;
                     left: 50%;
                     transform: translate(-50%);
-                    padding: 0 $spacing-extra-small;
+                    background-color: var(--color-foreground);
+                    padding: 0 var(--spacing-extra-small);
                     text-transform: uppercase;
-                    font-size: $font-size-small;
+                    color: var(--color-text-on-foreground);
+                    font-size: var(--font-size-small);
                 }
             }
         }
 
         .login-form {
-            @include background-color($color-foreground);
-            padding: $spacing-small $spacing-large $spacing-large;
+            background-color: var(--color-foreground);
+            padding: var(--spacing-small) var(--spacing-large) var(--spacing-large);
             width: 100%;
+            color: var(--color-text-on-foreground);
 
             .action-buttons {
                 display: flex;
@@ -102,27 +103,28 @@ $height-deep-logo: 256px;
                 justify-content: space-between;
 
                 .forgot-password-link {
-                    // color: $color-text-label;
-                    font-size: $font-size-extra-small;
+                    // color: var(--color-text-label);
+                    font-size: var(--font-size-extra-small);
                 }
             }
         }
 
         .register-link-container {
-            @include background-color($color-foreground);
             display: flex;
             align-items: center;
             flex-basis: 100%;
             justify-content: center;
-            margin-top: $spacing-extra-small;
-            padding: $spacing-large;
+            margin-top: var(--spacing-extra-small);
+            background-color: var(--color-foreground);
+            padding: var(--spacing-large);
+            color: var(--color-text-on-foreground);
 
             p {
-                margin: $spacing-small;
+                margin: var(--spacing-small);
             }
 
             .register-link {
-                color: $color-accent;
+                color: var(--color-accent);
             }
         }
     }

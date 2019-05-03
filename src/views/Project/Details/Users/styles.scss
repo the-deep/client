@@ -1,44 +1,40 @@
-@import '~base-scss/base';
+:root {
+    --width-search-list: 240px;
+}
 
-$width-search-list: 240px;
+%list-base {
+    flex-basis: 50%;
+    flex-grow: 0;
+    flex-shrink: 0;
+
+    .empty-search,
+    .empty-list {
+        color: var(--color-text-disabled);
+
+        .image {
+            opacity: .3;
+            width: var(--width-icon-super-large);
+            height: var(--width-icon-super-large);
+        }
+    }
+}
 
 .users {
     display: flex;
     position: relative;
-    flex-grow: 1;
-    background-color: $color-foreground;
+    background-color: var(--color-foreground);
     overflow: auto;
 
     .search-list {
-        flex-basis: $width-search-list;
-        flex-shrink: 0;
-        border-right: $width-separator-thin solid $color-separator;
-
+        border-right: var(--width-separator-thin) solid var(--color-separator);
+        width: var(--width-search-list);
     }
 
     .details {
         display: flex;
         flex-direction: column;
-        flex-grow: 1;
+        width: calc(100% - var(--width-search-list));
         overflow: auto;
-
-        %list-base {
-            flex-basis: 50%;
-            flex-grow: 0;
-            flex-shrink: 0;
-
-            .empty-search,
-            .empty-list {
-                color: $color-text-disabled;
-
-                .image {
-                    opacity: 0.3;
-                    width: $width-icon-super-large;
-                    height: $width-icon-super-large;
-                }
-            }
-
-        }
 
         .user-list {
             @extend %list-base;
@@ -47,7 +43,7 @@ $width-search-list: 240px;
 
         .usergroup-list {
             @extend %list-base;
-            border-top: $width-separator-thin solid $color-separator;
+            border-top: var(--width-separator-thin) solid var(--color-separator);
             overflow: auto;
         }
     }

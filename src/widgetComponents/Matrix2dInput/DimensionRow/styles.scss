@@ -1,8 +1,8 @@
-@import '~base-scss/base';
-
-$width-dimension-column: 96px;
+:root {
+    --width-dimension-column: 96px;
+}
 
 .dimension-td {
-    width: $width-dimension-column;
-    font-weight: $font-weight-bold;
+    width: var(--width-dimension-column);
+    font-weight: var(--font-weight-bold);
 }

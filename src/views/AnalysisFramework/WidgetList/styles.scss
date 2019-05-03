@@ -1,34 +1,31 @@
-@import '~base-scss/base';
-
 .widget-list-container {
     display: flex;
     flex-direction: column;
-    border-right: $width-separator-thin solid $color-separator;
+    border-right: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
 
     .heading {
         flex-shrink: 0;
-        background-color: $color-foreground;
-        padding: $spacing-medium;
+        padding: var(--spacing-medium);
     }
 
     .widget-list {
         flex-grow: 1;
-        background-color: $color-background-row;
         overflow-y: auto;
 
         .group {
-            background-color: $color-background-row-alt;
-            padding: $spacing-small $spacing-medium;
-            // text-transform: uppercase;
-            font-size: $font-size-medium-alt;
+            padding: var(--spacing-small) var(--spacing-medium);
+            font-size: var(--font-size-medium-alt);
 
             &:not(:first-child) {
-                margin-top: $spacing-medium;
+                margin-top: var(--spacing-medium);
             }
         }
 
         .item {
-            border-top: $width-separator-thin solid $color-separator;
+            &:hover {
+                background-color: var(--color-background-accent-hint);
+            }
         }
 
         .group + .item {

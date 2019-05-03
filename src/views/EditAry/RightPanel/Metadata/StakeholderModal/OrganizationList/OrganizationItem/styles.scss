@@ -1,16 +1,15 @@
-@import '~base-scss/base';
 
 .organization-item {
     display: flex;
     align-items: center;
-    border-bottom: $width-separator-thin solid $color-separator;
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
     cursor: grab;
 
     .logo {
         flex-shrink: 0;
-        margin: 0 $spacing-medium;
-        width: $font-size-super-large;
-        height: $font-size-super-large;
+        margin: 0 var(--spacing-medium);
+        width: var(--font-size-super-large);
+        height: var(--font-size-super-large);
 
         .image {
             width: 100%;
@@ -18,18 +17,18 @@
         }
 
         .icon {
-            font-size: $font-size-super-large;
+            font-size: var(--font-size-super-large);
         }
     }
 
     .text {
         flex-grow: 1;
-        padding: $spacing-medium 0;
+        padding: var(--spacing-medium) 0;
 
         .top {
             .name {
-                padding: 0 $spacing-medium;
-                font-size: $font-size-large;
+                padding: 0 var(--spacing-medium);
+                font-size: var(--font-size-large);
             }
         }
 
@@ -39,22 +38,22 @@
 
             .abbr {
                 flex-grow: 1;
-                padding: 0 $spacing-medium;
-                color: $color-text-label;
+                padding: 0 var(--spacing-medium);
+                color: var(--color-text-label);
             }
 
             .donor-flag {
                 flex-shrink: 0;
-                margin-right: $spacing-small;
-                padding: $spacing-small $spacing-medium;
-                color: $color-accent;
-                font-size: $font-size-small;
+                margin-right: var(--spacing-small);
+                padding: var(--spacing-small) var(--spacing-medium);
+                color: var(--color-accent);
+                font-size: var(--font-size-small);
             }
         }
     }
 
 
     &:hover {
-        background-color: $color-background-hover;
+        background-color: var(--color-background-hover);
     }
 }

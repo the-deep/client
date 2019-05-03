@@ -1,16 +1,14 @@
-@import '~base-scss/base';
-
 %list-item {
     display: flex;
     position: relative;
     flex-direction: column;
-    border-bottom: $width-separator-thin solid $color-separator;
-    padding: $spacing-medium 0;
+    border-bottom: var(--width-separator-thin) solid var(--color-separator);
+    padding: var(--spacing-medium) 0;
     overflow: hidden;
 
 
     .picture {
-        margin: 0 $spacing-small;
+        margin: 0 var(--spacing-small);
         width: 30px;
         height: 30px;
     }
@@ -22,30 +20,30 @@
 
         .icon {
             flex-shrink: 0;
-            padding: 0 $spacing-medium;
-            font-size: $font-size-extra-large;
+            padding: 0 var(--spacing-medium);
+            font-size: var(--font-size-extra-large);
         }
 
         .name {
             display: flex;
             flex-direction: column;
-            padding: 0 $spacing-medium 0 0;
-            word-break: break-all;
             flex-grow: 1;
+            padding: 0 var(--spacing-medium) 0 0;
+            word-break: break-all;
 
             .text {
-                margin: 0 $spacing-extra-small;
-                font-weight: $font-weight-bold;
+                margin: 0 var(--spacing-extra-small);
+                font-weight: var(--font-weight-bold);
             }
         }
     }
 
     .action-buttons {
         position: absolute;
-        top: $spacing-medium;
-        right: $spacing-small;
+        top: var(--spacing-medium);
+        right: var(--spacing-small);
         transform: translateX(100%);
-        transition: all $duration-transition-medium ease-in-out;
+        transition: all var(--duration-transition-medium) ease-in-out;
         opacity: 0;
 
         &.pending {
@@ -55,7 +53,7 @@
     }
 
     &:hover {
-        background-color: $color-background-hover;
+        background-color: var(--color-background-hover);
 
         .action-buttons {
             transform: none;

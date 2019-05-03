@@ -1,4 +1,3 @@
-@import '~base-scss/base';
 @import '~base-scss/widget';
 
 .widget-faram {
@@ -6,7 +5,7 @@
 
     .widget {
         @extend %widget;
-        padding: $spacing-extra-small;
+        padding: var(--spacing-extra-small);
 
         .header {
             display: flex;
@@ -14,7 +13,7 @@
 
             .heading {
                 flex-grow: 1;
-                padding: 0 $spacing-small;
+                padding: 0 var(--spacing-small);
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
@@ -22,20 +21,20 @@
 
             .action-buttons {
                 flex-shrink: 0;
-                transition: $duration-transition-medium opacity ease-in-out;
+                transition: var(--duration-transition-medium) opacity ease-in-out;
                 opacity: 0;
 
                 >* {
-                    padding: $spacing-extra-small $spacing-extra-small-alt;
+                    padding: var(--spacing-extra-small) var(--spacing-extra-small-alt);
                 }
             }
 
             &.error {
                 .heading {
-                    color: $color-danger;
+                    color: var(--color-danger);
                     >span {
                         display: inline-block;
-                        margin-right: $spacing-small;
+                        margin-right: var(--spacing-small);
                     }
                 }
             }

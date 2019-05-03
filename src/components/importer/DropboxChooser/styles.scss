@@ -1,23 +1,22 @@
-@import '~base-scss/base';
 
 
 .dropbox-btn {
     flex-basis: 20%;
-    color: $color-text;
+    color: var(--color-text);
     font-family: inherit;
     font-size: inherit;
 
     span {
-        font-size: $font-size-extra-large;
+        font-size: var(--font-size-extra-large);
     }
 
     p {
-        margin: $spacing-medium 0 0;
-        font-size: $font-size-extra-small;
+        margin: var(--spacing-medium) 0 0;
+        font-size: var(--font-size-extra-small);
     }
 
     &:hover {
         cursor: pointer;
-        color: $color-accent;
+        color: var(--color-accent);
     }
 }

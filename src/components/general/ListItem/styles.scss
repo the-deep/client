@@ -1,14 +1,13 @@
-@import '~base-scss/base';
 
 .list-item {
     display: flex;
-    padding: $spacing-extra-small 0;
+    padding: var(--spacing-extra-small) 0;
 
     .marker {
         align-self: flex-start;
         flex-shrink: 0;
-        padding-right: $spacing-small;
-        color: $color-text-label;
+        padding-right: var(--spacing-small);
+        color: var(--color-text-label);
     }
 
     .label {
