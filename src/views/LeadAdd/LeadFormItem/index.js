@@ -145,6 +145,7 @@ export default class LeadFormItem extends React.PureComponent {
         const {
             fileType,
         } = response;
+
         this.setState({
             showTabularModal: true,
             tabularFileType: fileType,
@@ -433,6 +434,9 @@ export default class LeadFormItem extends React.PureComponent {
                 project: projectId,
                 sourceType,
                 tabularBook,
+                attachment: {
+                    id: attachmentId,
+                } = {},
             } = {},
         } = lead;
 
@@ -468,7 +472,7 @@ export default class LeadFormItem extends React.PureComponent {
                         onClose={this.handleTabularModalClose}
                     >
                         {
-                            tabularBook ? (
+                            tabularBook || tabularFileType !== 'csv' ? (
                                 <TabularBook
                                     leadTitle={title}
                                     className={styles.tabularBook}
@@ -476,6 +480,9 @@ export default class LeadFormItem extends React.PureComponent {
                                     projectId={projectId}
                                     onDelete={this.handleTabularBookDelete}
                                     onCancel={this.handleTabularModalClose}
+                                    fileId={attachmentId}
+                                    fileType={tabularFileType}
+                                    onTabularBookCreate={this.handleTabularBookSet}
                                 />
                             ) : (
                                 <LeadTabular

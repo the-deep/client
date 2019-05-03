@@ -84,3 +84,32 @@
         }
     }
 }
+
+.initial-loading-container {
+    display: flex;
+    flex-direction: column;
+
+    .body {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        .book-creation-failed-message {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: center;
+            height: 100%;
+            color: var(--color-danger);
+            font-size: var(--font-size-large);
+        }
+
+        .loading-animation-container {
+            flex-grow: 1;
+        }
+    }
+
+    .footer {
+        flex-shrink: 0;
+    }
+}

@@ -176,6 +176,20 @@ const getTransformSheets = (sheetsFromServer) => {
 
 
 const requests = {
+    createBookRequest: {
+        method: requestMethods.POST,
+        url: '/tabular-books/',
+        body: ({ params: { body } }) => body,
+        onSuccess: ({ params, response }) => {
+            params.onComplete(response.id);
+        },
+        onFailure: ({ error: { faramErrors }, params: { handleFaramError } }) => {
+            handleFaramError(faramErrors);
+        },
+        onFatal: ({ params: { handleFaramError } }) => {
+            handleFaramError({ $internal: ['SERVER ERROR'] });
+        },
+    },
     deleteRequest: {
         method: requestMethods.DELETE,
         url: ({ props }) => `/tabular-books/${props.bookId}/`,
@@ -228,7 +242,7 @@ const requests = {
 const propTypes = {
     className: PropTypes.string,
     leadTitle: PropTypes.string,
-    bookId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
+    bookId: PropTypes.number, // eslint-disable-line react/no-unused-prop-types
     onDelete: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     onCancel: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
 
@@ -244,6 +258,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    bookId: undefined,
     className: '',
     viewMode: false,
     isModal: true,
@@ -287,6 +302,8 @@ export default class TabularBook extends React.PureComponent {
             fieldRetrievePending: {},
             fieldDeletePending: {},
             fieldEditPending: {},
+
+            bookCreateRequestFailed: false,
         };
 
         this.coordinator = new CoordinatorBuilder()
@@ -302,6 +319,30 @@ export default class TabularBook extends React.PureComponent {
                 });
             })
             .build();
+    }
+
+    componentDidMount() {
+        const {
+            createBookRequest,
+            bookId,
+            fileId,
+            fileType,
+            projectId,
+            leadTitle,
+        } = this.props;
+
+        if (!bookId) {
+            createBookRequest.do({
+                body: {
+                    file: fileId,
+                    fileType,
+                    project: projectId,
+                    title: leadTitle,
+                },
+                handleFaramError: this.handleBookCreateRequestFailure,
+                onComplete: this.handleBookCreateRequestComplete,
+            });
+        }
     }
 
     componentWillUnmount() {
@@ -320,6 +361,22 @@ export default class TabularBook extends React.PureComponent {
         }),
     ).filter(s => s.hidden));
 
+
+    handleBookCreateRequestFailure = (faramErrors) => {
+        this.setState({
+            bookCreateRequestFailed: true,
+        });
+
+        console.error(faramErrors);
+    }
+
+    handleBookCreateRequestComplete = (bookId) => {
+        const { onTabularBookCreate } = this.props;
+
+        if (onTabularBookCreate) {
+            onTabularBookCreate(bookId);
+        }
+    }
 
     shouldHideEditButton = ({ leadPermissions }) => (
         this.props.viewMode || !leadPermissions.modify
@@ -1013,8 +1070,46 @@ export default class TabularBook extends React.PureComponent {
     }
 
     render() {
-        const { bookId } = this.props;
+        const {
+            bookId,
+            className,
+            onCancel,
+            deleteRequest: {
+                pending: deletePending,
+            },
+        } = this.props;
         const ActualTabularBook = this.renderTabularBook;
+
+        const {
+            bookCreateRequestFailed,
+            isSomePending,
+        } = this.state;
+
+        if (!bookId) {
+            return (
+                <div className={_cs(className, styles.initialLoadingContainer)}>
+                    <ModalBody className={styles.body}>
+                        { bookCreateRequestFailed ? (
+                            <div className={styles.bookCreationFailedMessage}>
+                                { _ts('tabular', 'tabularCreationFailedMessage') }
+                            </div>
+                        ) : (
+                            <div className={styles.loadingAnimationContainer}>
+                                <LoadingAnimation />
+                            </div>
+                        ) }
+                    </ModalBody>
+                    <ModalFooter className={styles.footer}>
+                        <Button
+                            onClick={onCancel}
+                            disabled={deletePending || isSomePending}
+                        >
+                            {_ts('tabular', 'closeButtonLabel')}
+                        </Button>
+                    </ModalFooter>
+                </div>
+            );
+        }
 
         return (
             <TriggerAndPoll
