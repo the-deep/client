@@ -15,7 +15,6 @@ before_install:
   - mkdir -p src/vendor
   - git clone https://github.com/toggle-corp/react-store.git $REACT_STORE_DIR
   - git --git-dir=$REACT_STORE_DIR/.git --no-pager show --pretty=fuller --quiet
-  - cp $REACT_STORE_DIR/stylesheets/_user-imports-sample.scss $REACT_STORE_DIR/stylesheets/_user-imports.scss
 
   # Pull docker images
   - ./docker_ci pull
