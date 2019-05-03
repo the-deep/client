@@ -1,24 +1,20 @@
-
 .widget-list-container {
     display: flex;
     flex-direction: column;
     border-right: var(--width-separator-thin) solid var(--color-separator);
+    background-color: var(--color-foreground);
 
     .heading {
         flex-shrink: 0;
-        background-color: var(--color-foreground);
         padding: var(--spacing-medium);
     }
 
     .widget-list {
         flex-grow: 1;
-        background-color: var(--color-background-row);
         overflow-y: auto;
 
         .group {
-            background-color: var(--color-background-row-alt);
             padding: var(--spacing-small) var(--spacing-medium);
-            // text-transform: uppercase;
             font-size: var(--font-size-medium-alt);
 
             &:not(:first-child) {
@@ -27,7 +23,9 @@
         }
 
         .item {
-            border-top: var(--width-separator-thin) solid var(--color-separator);
+            &:hover {
+                background-color: var(--color-background-accent-hint);
+            }
         }
 
         .group + .item {

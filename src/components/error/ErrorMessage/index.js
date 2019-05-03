@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { _cs } from '@togglecorp/fujs';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Message from '#rscv/Message';
@@ -24,23 +25,26 @@ export default class ErrorMessage extends React.PureComponent {
         const {
             errorText,
             reportButtonText,
+            className,
         } = this.props;
 
         return (
-            <Message className={styles.messageContainer}>
-                { errorText }
-                <Cloak
-                    hide={ErrorMessage.shouldHideReport}
-                    render={
-                        <PrimaryButton
-                            onClick={handleReport}
-                            className={styles.button}
-                        >
-                            {reportButtonText}
-                        </PrimaryButton>
-                    }
-                />
-            </Message>
+            <div className={_cs(className, styles.messageContainer)}>
+                <Message>
+                    { errorText }
+                    <Cloak
+                        hide={ErrorMessage.shouldHideReport}
+                        render={
+                            <PrimaryButton
+                                onClick={handleReport}
+                                className={styles.button}
+                            >
+                                {reportButtonText}
+                            </PrimaryButton>
+                        }
+                    />
+                </Message>
+            </div>
         );
     }
 }

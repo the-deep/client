@@ -356,6 +356,7 @@ export default class RegionMap extends React.PureComponent {
                         onChange={this.handleAdminLevelSelection}
                         keySelector={RegionMap.adminLevelKeySelector}
                         labelSelector={RegionMap.adminLevelLabelSelector}
+                        showLabel={false}
                         showHintAndError={false}
                     />
                 </div>

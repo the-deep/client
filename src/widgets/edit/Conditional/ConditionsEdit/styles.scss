@@ -67,7 +67,9 @@
                 }
 
                 .item {
-                    border-top: var(--width-separator-thin) solid var(--color-separator);
+                    &:hover {
+                        background-color: var(--color-background-accent-hint);
+                    }
                 }
 
                 .group + .item {
