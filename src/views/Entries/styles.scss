@@ -3,6 +3,25 @@
     display: flex;
     flex-direction: column;
 
+    .header {
+        .tabs {
+            margin-right: var(--spacing-extra-large);
+            background-color: transparent;
+
+            :global {
+                .fixed-tab {
+                    border-bottom: none;
+                    font-size: var(--font-size-extra-large);
+
+                    &.active {
+                        background-color: var(--color-background-hover);
+                        color: var(--color-accent);
+                    }
+                }
+            }
+        }
+    }
+
     .lead-grouped-entries-list {
         .lead-grouped-header {
             position: sticky;

@@ -9,11 +9,14 @@ import {
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 
+import Icon from '#rscg/Icon';
 import Message from '#rscv/Message';
 import List from '#rscv/List';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
 import Page from '#rscv/Page';
+import MultiViewContainer from '#rscv/MultiViewContainer';
+import FixedTabs from '#rscv/FixedTabs';
 
 import _ts from '#ts';
 import noSearch from '#resources/img/no-search.png';
@@ -41,6 +44,7 @@ import EntriesRequest from './requests/EntriesRequest';
 import FrameworkRequest from './requests/FrameworkRequest';
 import GeoOptionsRequest from './requests/GeoOptionsRequest';
 
+import EntriesViz from './EntriesViz';
 import FilterEntriesForm from './FilterEntriesForm';
 import LeadGroupedEntries from './LeadGroupedEntries';
 
@@ -96,10 +100,28 @@ const leadKeySelector = d => d.id;
 
 const MAX_ENTRIES_PER_REQUEST = 50;
 
+const LIST_VIEW = 'list';
+const VIZ_VIEW = 'viz';
+
+const tabsIcons = {
+    [LIST_VIEW]: 'list',
+    [VIZ_VIEW]: 'grid',
+};
+
+
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Entries extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static tabsModifier = key => (
+        <Icon name={tabsIcons[key]} />
+    );
+
+    static tabs = {
+        [LIST_VIEW]: LIST_VIEW,
+        [VIZ_VIEW]: VIZ_VIEW,
+    };
 
     constructor(props) {
         super(props);
@@ -111,6 +133,24 @@ export default class Entries extends React.PureComponent {
 
             successFramework: false,
             successGeoOptions: false,
+
+            view: LIST_VIEW,
+        };
+
+        this.views = {
+            [LIST_VIEW]: {
+                component: this.renderListView,
+                wrapContainer: true,
+                mount: true,
+                lazyMount: true,
+            },
+
+            [VIZ_VIEW]: {
+                component: EntriesViz,
+                wrapContainer: true,
+                mount: true,
+                lazyMount: true,
+            },
         };
 
         this.entriesRequest = new EntriesRequest({
@@ -222,6 +262,10 @@ export default class Entries extends React.PureComponent {
         this.props.setEntriesViewActivePage({ activePage: page });
     }
 
+    handleTabClick = (view) => {
+        this.setState({ view });
+    }
+
     rendererParams = (key, datum) => {
         const {
             projectId,
@@ -279,15 +323,10 @@ export default class Entries extends React.PureComponent {
         );
     }
 
-    render() {
+    renderListView = () => {
         const {
             leadGroupedEntriesList,
-            framework,
-            activePage,
-            totalEntriesCount,
-            geoOptions,
         } = this.props;
-
         const {
             pendingGeoOptions,
             pendingEntries,
@@ -297,46 +336,79 @@ export default class Entries extends React.PureComponent {
         const blockedLoading = pendingGeoOptions || pendingFramework;
         const nonBlockedLoading = pendingEntries;
 
+        // FIXME: loading animation is messed up
+
+        return (
+            <React.Fragment>
+                { (blockedLoading || nonBlockedLoading) &&
+                    <LoadingAnimation />
+                }
+                { !blockedLoading && (
+                    leadGroupedEntriesList.length > 0 ? (
+                        <List
+                            className={styles.leadGroupedEntriesList}
+                            data={leadGroupedEntriesList}
+                            renderer={LeadGroupedEntries}
+                            keySelector={leadKeySelector}
+                            rendererParams={this.rendererParams}
+                        />
+                    ) : this.renderEmptyEntriesMessage()
+                )}
+            </React.Fragment>
+        );
+    }
+
+    render() {
+        const {
+            framework,
+            activePage,
+            totalEntriesCount,
+            geoOptions,
+        } = this.props;
+
+        const { pendingFramework } = this.state;
+
         return (
             <Page
                 className={styles.entriesView}
+                headerClassName={styles.header}
                 header={
-                    <FilterEntriesForm
-                        pending={pendingFramework}
-                        filters={framework.filters}
-                        geoOptions={geoOptions}
-                    />
+                    <React.Fragment>
+                        <FilterEntriesForm
+                            pending={pendingFramework}
+                            filters={framework.filters}
+                            geoOptions={geoOptions}
+                        />
+                        <FixedTabs
+                            tabs={Entries.tabs}
+                            useHash
+                            replaceHistory
+                            modifier={Entries.tabsModifier}
+                            className={styles.tabs}
+                            onClick={this.handleTabClick}
+                            defaultHash={this.state.view}
+                        />
+                    </React.Fragment>
                 }
                 mainContentClassName={styles.leadGroupedEntriesList}
                 mainContent={
-                    <React.Fragment>
-                        { (blockedLoading || nonBlockedLoading) &&
-                            <LoadingAnimation />
-                        }
-                        { !blockedLoading && (
-                            leadGroupedEntriesList.length > 0 ? (
-                                <List
-                                    className={styles.leadGroupedEntriesList}
-                                    data={leadGroupedEntriesList}
-                                    renderer={LeadGroupedEntries}
-                                    keySelector={leadKeySelector}
-                                    rendererParams={this.rendererParams}
-                                />
-                            ) : this.renderEmptyEntriesMessage()
-                        )}
-                    </React.Fragment>
+                    <MultiViewContainer
+                        views={this.views}
+                        useHash
+                        // activeClassName={styles.active}
+                        // containerClassName={styles.container}
+                    />
                 }
                 footerClassName={styles.footer}
                 footer={
-                    totalEntriesCount > 0 ? (
-                        <Pager
-                            activePage={activePage}
-                            itemsCount={totalEntriesCount}
-                            maxItemsPerPage={MAX_ENTRIES_PER_REQUEST}
-                            onPageClick={this.handlePageClick}
-                            showItemsPerPageChange={false}
-                        />
-                    ) : null
+                    totalEntriesCount > 0 && this.state.view === LIST_VIEW &&
+                    <Pager
+                        activePage={activePage}
+                        itemsCount={totalEntriesCount}
+                        maxItemsPerPage={MAX_ENTRIES_PER_REQUEST}
+                        onPageClick={this.handlePageClick}
+                        showItemsPerPageChange={false}
+                    />
                 }
             />
         );

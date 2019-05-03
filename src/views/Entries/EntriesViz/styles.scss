@@ -1,0 +1,18 @@
+.content {
+    padding: var(--spacing-small);
+    .adder {
+        margin-left: var(--spacing-small);
+    }
+
+    .remover {
+        margin-left: var(--spacing-small);
+    }
+
+    .entry {
+        display: inline-block;
+        margin: var(--spacing-small);
+        border-radius: 3px;
+        background-color: var(--color-background-accent-hint);
+        padding: var(--spacing-small);
+    }
+}
