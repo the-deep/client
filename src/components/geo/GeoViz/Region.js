@@ -59,7 +59,7 @@ const boundsFilter = ['==', '$type', 'Polygon'];
 const pointsFilter = ['==', '$type', 'Point'];
 
 const colors = [
-    '#d5e7e2',
+    '#ffffff',
     '#a9cfc6',
     '#7db8a9',
     '#50a08f',
@@ -270,17 +270,6 @@ export default class Region extends React.PureComponent {
                 geoJson={newGeoJson}
                 supportHover
             >
-                {/*
-                <MapLayer
-                    layerKey="bounds-fill"
-                    type="fill"
-                    property="pk"
-                    filter={this.calcNonSelectedBoundsFilter(value)}
-                    paint={this.calcFillPaint(adminLevel)}
-                    hoverInfo={this.calcBoundsHoverInfo(adminLevel)}
-                />
-                */}
-
                 <MapLayer
                     layerKey="bounds-fill-selection"
                     type="fill"
@@ -288,30 +277,11 @@ export default class Region extends React.PureComponent {
                     paint={bgPaint}
                     hoverInfo={this.calcBoundsHoverInfo(adminLevel)}
                 />
-
                 <MapLayer
                     layerKey="bounds-border"
                     type="line"
                     filter={boundsFilter}
                     paint={this.calcBorderPaint(adminLevel)}
-                />
-
-                <MapLayer
-                    layerKey="points"
-                    type="circle"
-                    property="pk"
-                    filter={this.calcNonSelectedPointsFilter(value)}
-                    paint={this.calcPointPaint(adminLevel)}
-                    hoverInfo={this.calcPointHoverInfo(adminLevel)}
-                />
-
-                <MapLayer
-                    layerKey="points-selection"
-                    type="circle"
-                    property="pk"
-                    filter={this.calcSelectedPointsFilter(value)}
-                    paint={this.calcSelectionPointPaint(adminLevel)}
-                    hoverInfo={this.calcPointHoverInfo(adminLevel)}
                 />
             </MapSource>
         );

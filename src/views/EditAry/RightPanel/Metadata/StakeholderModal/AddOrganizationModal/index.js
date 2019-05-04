@@ -154,7 +154,7 @@ export default class AddOrganizationModal extends React.PureComponent {
     handleImageInputChange = (files, { invalidFiles }) => {
         if (invalidFiles > 0) {
             notify.send({
-                title: _ts('assessment.metadata.stakeholder', 'logoSelection'),
+                title: _ts('assessment.metadata.stakeholder', 'logoUploadTitle'),
                 type: notify.type.WARNING,
                 message: _ts('assessment.metadata.stakeholder', 'invalidFileSelection'),
                 duration: notify.duration.SLOW,

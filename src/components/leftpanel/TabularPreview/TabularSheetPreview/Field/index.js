@@ -148,7 +148,7 @@ export default class Field extends React.PureComponent {
                 onKeyDown={this.handleClick}
             >
                 <DataSeries
-                    className={showGraphs && styles.series}
+                    className={_cs(showGraphs && styles.series)}
                     value={tabularFieldData}
                     onEntryStateChange={this.handleFieldStateChange}
                     entryState={fieldState}

@@ -925,7 +925,11 @@
         "-61649895": "Import tabular data",
         "-65943043": "Search geo areas",
         "-11188842": "Include sub-regions",
-        "-80682543": "Geo Options"
+        "-80682543": "Geo Options",
+        "-44804579": "Logo upload",
+        "-44817445": "Selected file is invalid",
+        "-57281759": "Failed to upload logo",
+        "-40341683": "The format is not supported"
     },
     "links": {
         "browserExtension": {
@@ -2068,7 +2072,8 @@
             "userUserGroupGetFatal": -59897985,
             "userGroupPostFatal": 204,
             "userPatchFatal": -71533605,
-            "userProfileTitle": 5566
+            "userProfileTitle": 5566,
+            "logoUploadFailureMessage": -57281759
         },
         "notifications": {
             "notificationHeaderTitle": 1929,
@@ -2641,6 +2646,14 @@
         "viewer.attachment": {
             "originalTabTitle": 518,
             "tabularTabTitle": 142
+        },
+        "assessment.metadata.stakeholder": {
+            "logoUploadTitle": -44804579,
+            "invalidFileSelection": -44817445
+        },
+        "components.viewer.fileImagePreview": {
+            "notFoundTitle": 1301,
+            "notSupportedTitle": -40341683
         }
     }
 }
