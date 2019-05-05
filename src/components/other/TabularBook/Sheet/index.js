@@ -500,6 +500,7 @@ export default class Sheet extends React.PureComponent {
                     columns={columns}
                     onChange={this.handleSettingsChange}
                     searchFunction={this.getFilterCriteria}
+                    rowHeight={24}
                 />
             </div>
         );

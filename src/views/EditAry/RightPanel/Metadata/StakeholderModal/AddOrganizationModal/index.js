@@ -109,6 +109,7 @@ export default class AddOrganizationModal extends React.PureComponent {
         fields: {
             title: [requiredCondition],
             shortName: [requiredCondition],
+            donor: [],
             // longName: [requiredCondition],
             url: [urlCondition, requiredCondition],
             organizationType: [requiredCondition],
@@ -146,6 +147,7 @@ export default class AddOrganizationModal extends React.PureComponent {
             ...values,
             longName: values.title,
         };
+
         addOrganizationRequest.do({ body: newValues });
     };
 
