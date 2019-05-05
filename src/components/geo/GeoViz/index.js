@@ -89,8 +89,11 @@ export default class GeoViz extends React.PureComponent {
 
     handleAdminLevelsChange = (adminLevels) => {
         const { adminLevel } = this.props;
-        const filteredAdminLevels = adminLevel && adminLevels
-            .filter(a => (String(GeoViz.entityLevelSelector(a)) === String(adminLevel)));
+        let filteredAdminLevels = [];
+        if (adminLevel !== undefined) {
+            filteredAdminLevels = adminLevels
+                .filter(a => (String(GeoViz.entityLevelSelector(a)) === String(adminLevel)));
+        }
 
         this.setState({
             adminLevels: filteredAdminLevels,

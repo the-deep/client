@@ -53,10 +53,10 @@ const defaultProps = {
 };
 
 const chartMargins = {
-    top: 2,
-    right: 2,
-    bottom: 2,
-    left: 2,
+    top: 16,
+    right: 24,
+    bottom: 24,
+    left: 24,
 };
 
 const chartMarginsLarge = {
