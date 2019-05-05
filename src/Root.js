@@ -2,6 +2,8 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
 
+import styleProperties from '#constants/styleProperties';
+
 import { startActionsSync } from '#rsu/redux-sync';
 import { addIcon } from '#rscg/Icon';
 import {
@@ -9,7 +11,10 @@ import {
     svgPaths,
     imagePaths,
 } from '#constants';
-import { initializeStyles } from '#rsu/styles';
+import {
+    initializeStyles,
+    setStyleProperties,
+} from '#rsu/styles';
 
 import store from '#store';
 
@@ -36,6 +41,7 @@ export default class Root extends React.Component {
         this.store = store;
 
         initializeStyles();
+        setStyleProperties(styleProperties);
 
         console.info('React version:', React.version);
     }

@@ -60,7 +60,8 @@
                     "#store": "./src/store",
                     "#request": "./src/request",
                     "#ts": "./src/ts",
-                    "#cs": "./src/cs"
+                    "#cs": "./src/cs",
+                    '#theme': "./src/theme"
                 }
             }
         ]

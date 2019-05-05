@@ -52,16 +52,19 @@
         margin: 0 5%;
 
         :global {
-            .input-wrapper {
-                .input {
-                    // border-bottom-color: get-text-color(var(--color-navbar), var(--color-separator-on-light), var(--color-separator-on-dark));
-                    border-bottom-color: var(--color-separator);
+            .input-and-actions {
+                border-bottom-color: var(--color-separator-on-navbar);
+
+                .raw-input {
                     color: var(--color-text-on-navbar);
 
                     &::placeholder {
-                        color: var(--color-text-placeholder);
-                        // color: get-text-color(var(--color-navbar), var(--color-text-placeholder-on-light), var(--color-text-placeholder-on-dark));
+                        color: var(--color-text-on-navbar);
                     }
+                }
+
+                .icon {
+                    color: var(--color-text-on-navbar);
                 }
             }
         }
