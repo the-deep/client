@@ -1,4 +1,5 @@
 const initialDomainDataState = {
+    currentThemeId: 'default',
 
     // index is project id
     projects: {
@@ -241,4 +242,5 @@ const initialDomainDataState = {
         items: [],
     },
 };
+
 export default initialDomainDataState;

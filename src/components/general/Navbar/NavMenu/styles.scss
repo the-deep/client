@@ -23,14 +23,13 @@
 
         &:hover {
             background-color: var(--color-background-hover);
-            color: var(--color-accent);
+            color: var(--color-navbar-menu-item-hover);
         }
 
         &.active {
-            border-bottom-color: var(--color-accent);
+            border-bottom-color: var(--color-navbar-active-menu-item-border);
             background-color: var(--color-background-accent-hint);
-            color: var(--color-accent);
-            // color: var(--color-text-on-navbar);
+            color: var(--color-navbar-active-menu-item);
         }
 
         &.disabled {

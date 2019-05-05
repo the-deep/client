@@ -14,6 +14,7 @@ import connectorReducers from './connectors';
 import commonReducers from './common';
 import pagesInfo from './pagesInfo';
 import notifications from './notifications';
+import userConfig from './userConfig';
 
 import initialDomainData from '../../initial-state/domainData';
 
@@ -32,6 +33,7 @@ const reducers = {
     ...connectorReducers,
     ...pagesInfo,
     ...notifications,
+    ...userConfig,
 };
 
 const reducer = createReducerWithMap(reducers, initialDomainData);

@@ -50,3 +50,4 @@ export * from './reducers/domainData/assessmentRegistry';
 export * from './reducers/domainData/pagesInfo';
 export * from './reducers/domainData/connectors';
 export * from './reducers/domainData/notifications';
+export * from './reducers/domainData/userConfig';

@@ -1,8 +1,16 @@
-// import { currentStyle } from '#rsu/styles';
+import defaultColors from '#rsu/styles/default/colors';
 
 const styleProperties = {
-    colorSeparatorOnNavbar: 'rgba(255, 255, 255, .1)',
-    colorSeparatorHoverOnNavbar: 'rgba(255, 255, 255, .3)',
+    colors: {
+        colorSeparatorOnNavbar: defaultColors.colorSeparator,
+        colorSeparatorHoverOnNavbar: defaultColors.colorSeparatorHover,
+        colorNavbarActiveMenuItemBorder: defaultColors.colorAccent,
+        colorNavbarActiveMenuItem: defaultColors.colorAccent,
+        colorNavbarMenuItemHover: defaultColors.colorAccent,
+    },
+
+    dimens: {
+    },
 };
 
 export default styleProperties;

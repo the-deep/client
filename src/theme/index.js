@@ -1,17 +1,31 @@
 import { initializeStyles } from '#rsu/styles';
 
-import classicColors from './classic/colors';
-import classicDimens from './classic/dimens';
+import purpleAndPinkColors from './purple-and-pink/colors';
+import purpleAndPinkDimens from './purple-and-pink/dimens';
 
+import nordColors from './nord/colors';
+import nordDimens from './nord/dimens';
 
-const themes = {
+import defaultColors from './default/colors';
+import defaultDimens from './default/dimens';
+
+export const themes = {
     default: {
+        title: 'Default',
+        colors: defaultColors,
+        dimens: defaultDimens,
     },
 
-    classic: {
-        title: 'Classic',
-        colors: classicColors,
-        dimens: classicDimens,
+    purpleAndPink: {
+        title: 'Purple & Pink',
+        colors: purpleAndPinkColors,
+        dimens: purpleAndPinkDimens,
+    },
+
+    nord: {
+        title: 'Nord',
+        colors: nordColors,
+        dimens: nordDimens,
     },
 };
 

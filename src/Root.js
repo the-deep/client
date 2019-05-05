@@ -41,7 +41,8 @@ export default class Root extends React.Component {
         this.store = store;
 
         initializeStyles();
-        setStyleProperties(styleProperties);
+        setStyleProperties(styleProperties.colors);
+        setStyleProperties(styleProperties.dimens);
 
         console.info('React version:', React.version);
     }

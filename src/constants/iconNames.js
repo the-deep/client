@@ -117,6 +117,7 @@ const iconNames = {
     ods: 'fa fa-file-excel-o',
     xml: 'fa fa-file-code-o',
     people: 'ion-android-people',
+    colorPallete: 'ion-android-color-palette',
 };
 
 export default iconNames;

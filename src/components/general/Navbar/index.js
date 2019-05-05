@@ -39,7 +39,11 @@ import {
     hideNavbar,
 } from '#constants';
 
-import { envText, commitHash } from '#config/env';
+import {
+    envText,
+    commitHash,
+    isDev,
+} from '#config/env';
 import logo from '#resources/img/deep-logo-simplified.svg';
 
 import Cloak from '#components/general/Cloak';
@@ -48,6 +52,7 @@ import NavDrop from './NavDrop';
 import Community from './Community';
 import Notifica from './Notifica';
 import HelpLink from './HelpLink';
+import ThemeMenu from './ThemeMenu';
 import styles from './styles.scss';
 
 const mapStateToProps = state => ({
@@ -297,6 +302,7 @@ export default class Navbar extends React.PureComponent {
                 />
                 <Community className={styles.communityDropdown} />
                 <Notifica className={styles.notificationDropdown} />
+                { isDev && <ThemeMenu className={styles.themeMenu} /> }
                 <NavDrop
                     className={styles.userMenu}
                     links={this.validDropLinks}
