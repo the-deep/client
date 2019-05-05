@@ -364,14 +364,16 @@ export default class Region extends React.PureComponent {
         const {
             frequency,
             showLegend,
+            adminLevels,
         } = this.props;
 
+        // FIXME: No hardcoded numbers
         const legendItems = this.calcLegendDetails(frequency, 5);
 
         return (
             <React.Fragment>
                 {this.renderContent()}
-                {this.props.adminLevels.map(this.renderAdminLevel)}
+                {adminLevels.map(this.renderAdminLevel)}
                 {showLegend &&
                     <MapLegend
                         className={styles.legend}

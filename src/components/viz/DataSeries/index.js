@@ -53,17 +53,17 @@ const defaultProps = {
 };
 
 const chartMargins = {
-    top: 2,
+    top: 16,
+    right: 24,
+    bottom: 24,
+    left: 24,
+};
+
+const chartMarginsSmall = {
+    top: 12,
     right: 2,
     bottom: 2,
     left: 2,
-};
-
-const chartMarginsLarge = {
-    top: 12,
-    right: 2,
-    bottom: 36,
-    left: 36,
 };
 
 const sortingLabels = [
@@ -254,12 +254,13 @@ export default class DataSeries extends React.PureComponent {
 
                 return {
                     className: styles.horizontalBarChart,
-                    margins: chartMargins,
+                    margins: showLegend ? chartMargins : chartMarginsSmall,
 
                     data: sortedData,
                     valueSelector: frequencySelector,
                     labelSelector: valueSelector,
                     tooltipSelector,
+                    showTicks: showLegend,
                 };
             },
             lazyMount: true,
@@ -282,12 +283,13 @@ export default class DataSeries extends React.PureComponent {
 
                 return {
                     className: styles.verticalBarChart,
-                    margins: chartMargins,
+                    margins: showLegend ? chartMargins : chartMarginsSmall,
 
                     data: sortedData,
                     valueSelector: frequencySelector,
                     labelSelector: valueSelector,
                     tooltipSelector,
+                    showTicks: showLegend,
                 };
             },
             lazyMount: true,
@@ -304,7 +306,7 @@ export default class DataSeries extends React.PureComponent {
                 } = this.props;
                 return {
                     className: styles.horizontalBarChart,
-                    margins: showLegend ? chartMarginsLarge : chartMargins,
+                    margins: showLegend ? chartMargins : chartMarginsSmall,
                     showAxis: showLegend,
                     colorRange,
                     data: this.getHistogramData(series),
