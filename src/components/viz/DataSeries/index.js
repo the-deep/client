@@ -59,11 +59,11 @@ const chartMargins = {
     left: 24,
 };
 
-const chartMarginsLarge = {
+const chartMarginsSmall = {
     top: 12,
     right: 2,
-    bottom: 36,
-    left: 36,
+    bottom: 2,
+    left: 2,
 };
 
 const sortingLabels = [
@@ -254,12 +254,13 @@ export default class DataSeries extends React.PureComponent {
 
                 return {
                     className: styles.horizontalBarChart,
-                    margins: chartMargins,
+                    margins: showLegend ? chartMargins : chartMarginsSmall,
 
                     data: sortedData,
                     valueSelector: frequencySelector,
                     labelSelector: valueSelector,
                     tooltipSelector,
+                    showTicks: showLegend,
                 };
             },
             lazyMount: true,
@@ -282,12 +283,13 @@ export default class DataSeries extends React.PureComponent {
 
                 return {
                     className: styles.verticalBarChart,
-                    margins: chartMargins,
+                    margins: showLegend ? chartMargins : chartMarginsSmall,
 
                     data: sortedData,
                     valueSelector: frequencySelector,
                     labelSelector: valueSelector,
                     tooltipSelector,
+                    showTicks: showLegend,
                 };
             },
             lazyMount: true,
@@ -304,10 +306,8 @@ export default class DataSeries extends React.PureComponent {
                 } = this.props;
                 return {
                     className: styles.horizontalBarChart,
-                    margins: chartMarginsLarge,
-                    showAxis: true,
-                    // margins: showLegend ? chartMarginsLarge : chartMargins,
-                    // showAxis: showLegend,
+                    margins: showLegend ? chartMargins : chartMarginsSmall,
+                    showAxis: showLegend,
                     colorRange,
                     data: this.getHistogramData(series),
                 };
