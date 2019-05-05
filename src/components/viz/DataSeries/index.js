@@ -304,8 +304,10 @@ export default class DataSeries extends React.PureComponent {
                 } = this.props;
                 return {
                     className: styles.horizontalBarChart,
-                    margins: showLegend ? chartMarginsLarge : chartMargins,
-                    showAxis: showLegend,
+                    margins: chartMarginsLarge,
+                    showAxis: true,
+                    // margins: showLegend ? chartMarginsLarge : chartMargins,
+                    // showAxis: showLegend,
                     colorRange,
                     data: this.getHistogramData(series),
                 };
