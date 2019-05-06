@@ -239,17 +239,9 @@ export default class Sheet extends React.PureComponent {
             }))
     ))
 
-    shouldHideEditButton = ({ leadPermissions }) => {
-        const {
-            sheet: {
-                fields,
-            },
-            disabled,
-        } = this.props;
-        const fieldList = this.getDeletedFields(fields);
-
-        return this.props.viewMode || !leadPermissions.modify || disabled || fieldList.length <= 0;
-    }
+    shouldHideEditButton = ({ leadPermissions }) => (
+        this.props.viewMode || !leadPermissions.modify
+    )
 
     cellRendererParams = ({ datum, column: { value: { type, id /* , options */ } } }) => ({
         className: _cs(styles[type], styles.cell),
