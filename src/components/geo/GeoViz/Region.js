@@ -9,9 +9,8 @@ import Message from '#rscv/Message';
 
 import Map from '#rscz/Map';
 import MapLayer from '#rscz/Map/MapLayer';
-import MapLegend from '#rscz/Map/Legend';
 import MapSource from '#rscz/Map/MapSource';
-
+import Numeral from '#rscv/Numeral';
 
 import {
     RequestClient,
@@ -34,15 +33,15 @@ const propTypes = {
     adminLevels: PropTypes.arrayOf(PropTypes.object),
     adminLevelId: PropTypes.string,
     regionRequest: RequestClient.propType.isRequired,
-    value: PropTypes.arrayOf(PropTypes.string),
     frequency: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    showLegend: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     adminLevels: [],
     adminLevelId: undefined,
-    value: [],
+    showLegend: true,
 };
 
 const requests = {
@@ -57,9 +56,9 @@ const requests = {
 };
 
 const boundsFilter = ['==', '$type', 'Polygon'];
-const pointsFilter = ['==', '$type', 'Point'];
 
-const colors = [
+/*
+const colorScheme = [
     '#ffffff',
     '#e0eeea',
     '#c2ddd6',
@@ -69,6 +68,48 @@ const colors = [
     '#409a87',
     '#008975',
 ];
+*/
+
+const colorScheme = [
+    '#ffffff',
+    currentStyle.colorAccent,
+];
+
+const LinearLegend = ({ min, max, colors }) => {
+    const style = {
+        backgroundImage: `linear-gradient(to right, ${colors.join(',')})`,
+    };
+
+    return (
+        <div className={styles.legend}>
+            <header>
+                <h4 className={styles.heading}>
+                    {_ts('geoViz', 'legendTitle')}
+                </h4>
+            </header>
+            <div
+                className={styles.bar}
+                style={style}
+            />
+            <div className={styles.legendNumbers} >
+                <Numeral
+                    value={min}
+                    precision={0}
+                />
+                <Numeral
+                    value={max}
+                    precision={0}
+                />
+            </div>
+        </div>
+    );
+};
+
+LinearLegend.propTypes = {
+    min: PropTypes.number.isRequired,
+    max: PropTypes.number.isRequired,
+    colors: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+};
 
 @RequestCoordinator
 @RequestClient(requests)
@@ -90,11 +131,7 @@ export default class Region extends React.PureComponent {
         this.borderPaints = {};
     }
 
-    calcFillPaint = memoize(() => ({
-        'fill-color': '#088',
-        'fill-opacity': 0.5,
-    }))
-
+    /*
     calcLegendDetails = (frequency, step) => {
         const maxFreq = Math.max(...Object.values(frequency));
         const stepSize = maxFreq / step;
@@ -108,31 +145,42 @@ export default class Region extends React.PureComponent {
                 min,
                 max,
                 label: `${min} - ${max}`,
-                color: colors[i - 1],
+                color: colorScheme[i - 1],
             };
             details.push(unit);
         }
         return details;
     }
+    */
+
+    calcDataRange = memoize((frequency) => {
+        const values = Object.values(frequency);
+        const sortedFreq = values.sort((a, b) => b - a);
+
+        return ({
+            min: sortedFreq[values.length - 1],
+            max: sortedFreq[0],
+        });
+    })
 
     calcSelectionFillPaint = memoize((_, frequency) => {
-        const details = this.calcLegendDetails(frequency, colors.length);
-        const iterableDetails = [];
-        let max = 0;
+        // const details = this.calcLegendDetails(frequency, colorScheme.length);
+        // const iterableDetails = [];
 
-        details.forEach((d) => {
-            iterableDetails.push(d.min);
-            iterableDetails.push(d.color);
-            max = d.max > max ? d.max : max;
-        });
+        // details.forEach((d) => {
+        //     iterableDetails.push(d.min);
+        //     iterableDetails.push(d.color);
+        //     max = d.max > max ? d.max : max;
+        // });
+        const { max } = this.calcDataRange(frequency);
 
         return ({
             'fill-color': [
                 'interpolate',
                 ['linear'],
                 ['get', 'count'],
-                0, '#ffffff',
-                max, currentStyle.colorAccent,
+                0, colorScheme[0],
+                max, colorScheme[1],
             ],
             'fill-opacity': 1,
         });
@@ -152,48 +200,6 @@ export default class Region extends React.PureComponent {
         showTooltip: true,
         tooltipProperty: 'tooltip',
     }))
-
-    calcPointPaint = memoize(() => ({
-        'circle-color': '#088',
-        'circle-radius': 8,
-    }))
-
-    calcSelectionPointPaint = memoize(() => ({
-        'circle-color': '#6e599f',
-        'circle-opacity': 0.5,
-        'circle-radius': 8,
-    }))
-
-    calcPointHoverInfo = memoize(() => ({
-        paint: {
-            'circle-color': '#fff',
-            'circle-opacity': 0.2,
-        },
-        showTooltip: true,
-        tooltipProperty: 'title',
-    }))
-
-    calcSelectedBoundsFilter = memoize(value => [
-        'all',
-        boundsFilter,
-        ['in', 'pk', ...value],
-    ])
-    calcNonSelectedBoundsFilter = memoize(value => [
-        'all',
-        boundsFilter,
-        ['!in', 'pk', ...value],
-    ])
-
-    calcSelectedPointsFilter = memoize(value => [
-        'all',
-        pointsFilter,
-        ['in', 'pk', ...value],
-    ])
-    calcNonSelectedPointsFilter = memoize(value => [
-        'all',
-        pointsFilter,
-        ['!in', 'pk', ...value],
-    ])
 
     calcNewGeojsonWithFrequency = memoize((geoJson, frequency) => {
         const newFeatures = [];
@@ -250,7 +256,6 @@ export default class Region extends React.PureComponent {
         const {
             adminLevels,
             adminLevelId,
-            value,
             frequency,
         } = this.props;
 
@@ -344,18 +349,18 @@ export default class Region extends React.PureComponent {
             adminLevels,
         } = this.props;
 
-        // FIXME: No hardcoded numbers
-        const legendItems = this.calcLegendDetails(frequency, colors.length);
+        // const legendItems = this.calcLegendDetails(frequency, colorScheme.length);
+        const { max } = this.calcDataRange(frequency);
 
         return (
             <React.Fragment>
                 {this.renderContent()}
                 {adminLevels.map(this.renderAdminLevel)}
                 {showLegend &&
-                    <MapLegend
-                        className={styles.legend}
-                        legendItems={legendItems}
-                        type="square"
+                    <LinearLegend
+                        min={0}
+                        max={max}
+                        colors={colorScheme}
                     />
                 }
             </React.Fragment>

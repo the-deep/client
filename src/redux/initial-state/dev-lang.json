@@ -929,7 +929,8 @@
         "-44804579": "Logo upload",
         "-44817445": "Selected file is invalid",
         "-57281759": "Failed to upload logo",
-        "-40341683": "The format is not supported"
+        "-40341683": "The format is not supported",
+        "-37259810": "Legend"
     },
     "links": {
         "browserExtension": {
@@ -2575,7 +2576,8 @@
         "components.dashboard": {},
         "geoViz": {
             "noRegionSelectedMessage": -14762237,
-            "invalidRegion": -78572254
+            "invalidRegion": -78572254,
+            "legendTitle": -37259810
         },
         "tabular.editModal": {},
         "tabular.sheets.date": {},
