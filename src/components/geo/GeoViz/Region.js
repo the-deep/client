@@ -4,6 +4,7 @@ import memoize from 'memoize-one';
 import { RequestHandler as createRequestHandler } from '@togglecorp/react-rest-request';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import { currentStyle } from '#rsu/styles';
 import Message from '#rscv/Message';
 
 import Map from '#rscz/Map';
@@ -60,9 +61,12 @@ const pointsFilter = ['==', '$type', 'Point'];
 
 const colors = [
     '#ffffff',
-    '#a9cfc6',
-    '#7db8a9',
-    '#50a08f',
+    '#e0eeea',
+    '#c2ddd6',
+    '#a3ccc2',
+    '#84bbae',
+    '#64aa9a',
+    '#409a87',
     '#008975',
 ];
 
@@ -112,12 +116,14 @@ export default class Region extends React.PureComponent {
     }
 
     calcSelectionFillPaint = memoize((_, frequency) => {
-        const details = this.calcLegendDetails(frequency, 5);
+        const details = this.calcLegendDetails(frequency, colors.length);
         const iterableDetails = [];
+        let max = 0;
 
         details.forEach((d) => {
             iterableDetails.push(d.min);
             iterableDetails.push(d.color);
+            max = d.max > max ? d.max : max;
         });
 
         return ({
@@ -125,9 +131,10 @@ export default class Region extends React.PureComponent {
                 'interpolate',
                 ['linear'],
                 ['get', 'count'],
-                ...iterableDetails,
+                0, '#ffffff',
+                max, currentStyle.colorAccent,
             ],
-            'fill-opacity': 0.9,
+            'fill-opacity': 1,
         });
     });
 
@@ -338,7 +345,7 @@ export default class Region extends React.PureComponent {
         } = this.props;
 
         // FIXME: No hardcoded numbers
-        const legendItems = this.calcLegendDetails(frequency, 5);
+        const legendItems = this.calcLegendDetails(frequency, colors.length);
 
         return (
             <React.Fragment>

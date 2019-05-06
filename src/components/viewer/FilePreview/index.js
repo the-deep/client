@@ -4,21 +4,24 @@ import { _cs } from '@togglecorp/fujs';
 
 import Image from '#rscv/Image';
 import Message from '#rscv/Message';
-import { createUrlForGalleryFilePreview } from '#rest';
 
 import _ts from '#ts';
 import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    fileId: PropTypes.number,
+    fileUrl: PropTypes.string,
+    fileName: PropTypes.string,
     format: PropTypes.string,
+    notFound: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
-    fileId: undefined,
+    fileUrl: undefined,
+    fileName: '',
     format: 'png',
+    notFound: false,
 };
 
 export default class FilePreview extends React.PureComponent {
@@ -29,10 +32,12 @@ export default class FilePreview extends React.PureComponent {
         const {
             className,
             format,
-            fileId,
+            fileUrl,
+            notFound,
+            fileName,
         } = this.props;
 
-        if (fileId && (format === 'png' || format === 'svg')) {
+        if (!notFound && (format === 'png' || format === 'svg')) {
             return (
                 <Image
                     className={className}
@@ -42,8 +47,8 @@ export default class FilePreview extends React.PureComponent {
                             format === 'svg' && styles.svgImage,
                         )
                     }
-                    src={createUrlForGalleryFilePreview(fileId)}
-                    alt=""
+                    src={fileUrl}
+                    alt={fileName}
                     zoomable
                 />
             );
@@ -52,7 +57,7 @@ export default class FilePreview extends React.PureComponent {
         return (
             <div className={_cs(styles.notFound, className)}>
                 <Message>
-                    {!fileId
+                    {notFound
                         ? _ts('components.viewer.fileImagePreview', 'notFoundTitle')
                         : _ts('components.viewer.fileImagePreview', 'notSupportedTitle')
                     }

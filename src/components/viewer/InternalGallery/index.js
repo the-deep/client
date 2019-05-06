@@ -121,12 +121,14 @@ const propTypes = {
     galleryId: PropTypes.number,
     onlyFileName: PropTypes.bool,
     onMimeTypeGet: PropTypes.func,
+    renderer: PropTypes.func,
 };
 
 const defaultProps = {
     galleryId: undefined,
     onlyFileName: false,
     onMimeTypeGet: undefined,
+    renderer: undefined,
 };
 
 export default class InternalGallery extends React.PureComponent {
@@ -192,10 +194,14 @@ export default class InternalGallery extends React.PureComponent {
         const {
             galleryId, // eslint-disable-line no-unused-vars
             onlyFileName,
+            renderer,
             ...otherProps
         } = this.props;
 
-        const Preview = onlyFileName ? PreviewNothing : PreviewGallery;
+        let Preview = onlyFileName ? PreviewNothing : PreviewGallery;
+        if (renderer) {
+            Preview = renderer;
+        }
 
         return (
             <Preview

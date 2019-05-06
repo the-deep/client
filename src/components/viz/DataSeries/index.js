@@ -25,6 +25,7 @@ import BoundError from '#rscg/BoundError';
 import ComponentError from '#components/error/ComponentError';
 import GeoViz from '#components/geo/GeoViz';
 import TextOutput from '#components/general/TextOutput';
+import InternalGallery from '#components/viewer/InternalGallery';
 import FilePreview from '#components/viewer/FilePreview';
 import _cs from '#cs';
 import _ts from '#ts';
@@ -342,7 +343,7 @@ export default class DataSeries extends React.PureComponent {
             lazyMount: true,
         },
         [GRAPH.geo]: {
-            component: isExpandedView ? GeoViz : FilePreview,
+            component: isExpandedView ? GeoViz : InternalGallery,
             rendererParams: () => {
                 const {
                     value: {
@@ -361,9 +362,9 @@ export default class DataSeries extends React.PureComponent {
 
                 if (!isExpandedView) {
                     return {
-                        fileId: (svgImage || {}).id,
-                        format: 'svg',
+                        galleryId: (svgImage || {}).id,
                         className: styles.image,
+                        renderer: FilePreview,
                     };
                 }
 
