@@ -1,3 +1,7 @@
+:root {
+    --width-legend: 240px;
+    --height-legend: 12px;
+}
 
 .geo-viz {
     display: flex;
@@ -45,5 +49,26 @@
         position: absolute;
         bottom: var(--spacing-small);
         left: var(--spacing-small);
+        border: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-foreground);
+        padding: var(--spacing-medium);
+        width: var(--width-legend);
+
+        .heading {
+            margin-bottom: var(--spacing-small);
+            text-transform: capitalize;
+        }
+
+        .bar {
+            // border: var(--width-separator-thin) solid var(--color-separator);
+            width: 100%;
+            height: var(--height-legend);
+        }
+
+        .legend-numbers {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
     }
 }

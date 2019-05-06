@@ -7,7 +7,6 @@ import {
     isNotDefined,
 } from '@togglecorp/fujs';
 
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import Message from '#rscv/Message';
 import Icon from '#rscg/Icon';
 import ScrollTabs from '#rscv/ScrollTabs';
@@ -21,9 +20,13 @@ import SimpleVerticalBarChart from '#rscz/SimpleVerticalBarChart';
 import Histogram from '#rscz/Histogram';
 import WordCloud from '#rscz/WordCloud';
 import modalize from '#rscg/Modalize';
+import BoundError from '#rscg/BoundError';
 
+import ComponentError from '#components/error/ComponentError';
 import GeoViz from '#components/geo/GeoViz';
 import TextOutput from '#components/general/TextOutput';
+import InternalGallery from '#components/viewer/InternalGallery';
+import FilePreview from '#components/viewer/FilePreview';
 import _cs from '#cs';
 import _ts from '#ts';
 
@@ -183,6 +186,7 @@ Tab.defaultProps = {
 };
 
 
+@BoundError(ComponentError)
 export default class DataSeries extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -190,8 +194,8 @@ export default class DataSeries extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.views = this.createView({ showLegend: false });
-        this.modalViews = this.createView({ showLegend: true });
+        this.views = this.createView({ isExpandedView: false });
+        this.modalViews = this.createView({ isExpandedView: true });
     }
 
     getSegmentOptions = memoize(type => (
@@ -236,7 +240,7 @@ export default class DataSeries extends React.PureComponent {
         }));
     });
 
-    createView = ({ showLegend }) => ({
+    createView = ({ isExpandedView }) => ({
         [GRAPH.horizontalBarChart]: {
             component: SimpleHorizontalBarChart,
             rendererParams: () => {
@@ -254,13 +258,15 @@ export default class DataSeries extends React.PureComponent {
 
                 return {
                     className: styles.horizontalBarChart,
-                    margins: showLegend ? chartMargins : chartMarginsSmall,
+                    margins: isExpandedView ? chartMargins : chartMarginsSmall,
 
                     data: sortedData,
                     valueSelector: frequencySelector,
                     labelSelector: valueSelector,
                     tooltipSelector,
-                    showTicks: showLegend,
+                    showTicks: isExpandedView,
+                    showGrids: isExpandedView,
+                    hideXAxis: !isExpandedView,
                 };
             },
             lazyMount: true,
@@ -283,13 +289,14 @@ export default class DataSeries extends React.PureComponent {
 
                 return {
                     className: styles.verticalBarChart,
-                    margins: showLegend ? chartMargins : chartMarginsSmall,
+                    margins: isExpandedView ? chartMargins : chartMarginsSmall,
 
                     data: sortedData,
                     valueSelector: frequencySelector,
                     labelSelector: valueSelector,
                     tooltipSelector,
-                    showTicks: showLegend,
+                    showTicks: isExpandedView,
+                    showGrids: isExpandedView,
                 };
             },
             lazyMount: true,
@@ -306,10 +313,11 @@ export default class DataSeries extends React.PureComponent {
                 } = this.props;
                 return {
                     className: styles.horizontalBarChart,
-                    margins: showLegend ? chartMargins : chartMarginsSmall,
-                    showAxis: showLegend,
+                    margins: isExpandedView ? chartMargins : chartMarginsSmall,
+                    showAxis: isExpandedView,
                     colorRange,
                     data: this.getHistogramData(series),
+                    showGrids: isExpandedView,
                 };
             },
             lazyMount: true,
@@ -335,7 +343,7 @@ export default class DataSeries extends React.PureComponent {
             lazyMount: true,
         },
         [GRAPH.geo]: {
-            component: GeoViz,
+            component: isExpandedView ? GeoViz : InternalGallery,
             rendererParams: () => {
                 const {
                     value: {
@@ -344,15 +352,27 @@ export default class DataSeries extends React.PureComponent {
                             adminLevel,
                         } = {},
                         cache: {
+                            images = [],
                             series = [],
                         } = {},
                     },
                 } = this.props;
+
+                const svgImage = images.find(i => i.format === 'svg');
+
+                if (!isExpandedView) {
+                    return {
+                        galleryId: (svgImage || {}).id,
+                        className: styles.image,
+                        renderer: FilePreview,
+                    };
+                }
+
                 return {
                     className: styles.geoVisualization,
                     regions,
                     adminLevel,
-                    showLegend,
+                    showLegend: isExpandedView,
                     data: series,
                     valueSelector,
                     frequencySelector,

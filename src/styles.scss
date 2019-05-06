@@ -1,3 +1,12 @@
+:root {
+    --font-family-sans-serif: 'Source Sans Pro', sans-serif;
+    --font-family-heading: 'Source Sans Pro', sans-serif;
+    --font-family-monospace: 'Oxygen Mono', monospace;
+    --font-family-icons: 'Ionicons';
+    --font-weight-heading: 500;
+    --height-nagbar: 32px;
+}
+
 :global {
     .portal-child-shown {
         overflow: hidden;
@@ -19,12 +28,13 @@
     }
 
     .numeral {
-        font-family: var(--font-family-sans-serif);
+        font-family: var(--font-family-sans-serif)!important;
     }
 
     .formatted-date {
-        font-family: var(--font-family-sans-serif);
+        font-family: var(--font-family-sans-serif)!important;
     }
+
     .nagbar-shown {
         .deep-main-content {
             height: calc(100vh - var(--height-navbar) - var(--height-nagbar));
@@ -35,15 +45,6 @@
             height: calc(100vh - var(--height-nagbar));
         }
     }
-}
-
-:root {
-    --font-family-sans-serif: 'Source Sans Pro', sans-serif;
-    --font-family-heading: 'Source Sans Pro', sans-serif;
-    --font-family-monospace: 'Oxygen Mono', monospace;
-    --font-family-icons: 'Ionicons';
-    --font-weight-heading: 500;
-    --height-nagbar: 32px;
 }
 
 body {
