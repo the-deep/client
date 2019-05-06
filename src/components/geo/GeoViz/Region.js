@@ -182,24 +182,24 @@ export default class Region extends React.PureComponent {
                 0, colorScheme[0],
                 max, colorScheme[1],
             ],
-            'fill-opacity': 1,
+            'fill-opacity': 0.9,
         });
     });
 
-    calcBorderPaint = memoize(() => ({
-        'line-color': '#717171',
-        'line-opacity': 0.8,
+    calcBorderPaint = () => ({
+        'line-color': currentStyle.colorText,
+        'line-opacity': 0.9,
         'line-width': 1,
-    }))
+    })
 
-    calcBoundsHoverInfo = memoize(() => ({
+    calcBoundsHoverInfo = () => ({
         paint: {
-            'fill-color': '#fff',
+            'fill-color': currentStyle.colorForeground,
             'fill-opacity': 0.2,
         },
         showTooltip: true,
         tooltipProperty: 'tooltip',
-    }))
+    })
 
     calcNewGeojsonWithFrequency = memoize((geoJson, frequency) => {
         const newFeatures = [];

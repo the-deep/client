@@ -1,3 +1,7 @@
+:root {
+    --width-legend: 240px;
+    --height-legend: 12px;
+}
 
 .geo-viz {
     display: flex;
@@ -48,7 +52,7 @@
         border: var(--width-separator-thin) solid var(--color-separator);
         background-color: var(--color-foreground);
         padding: var(--spacing-medium);
-        width: 240px;
+        width: var(--width-legend);
 
         .heading {
             margin-bottom: var(--spacing-small);
@@ -58,7 +62,7 @@
         .bar {
             // border: var(--width-separator-thin) solid var(--color-separator);
             width: 100%;
-            height: 12px;
+            height: var(--height-legend);
         }
 
         .legend-numbers {

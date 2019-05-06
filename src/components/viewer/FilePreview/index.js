@@ -41,12 +41,7 @@ export default class FilePreview extends React.PureComponent {
             return (
                 <Image
                     className={className}
-                    imageClassName={
-                        _cs(
-                            styles.image,
-                            format === 'svg' && styles.svgImage,
-                        )
-                    }
+                    imageClassName={styles.image}
                     src={fileUrl}
                     alt={fileName}
                     zoomable
