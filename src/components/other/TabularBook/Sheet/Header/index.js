@@ -6,6 +6,9 @@ import Button from '#rsca/Button';
 import WarningButton from '#rsca/Button/WarningButton';
 import modalize from '#rscg/Modalize';
 import HealthBar from '#rscz/HealthBar';
+import {
+    isDefined,
+} from '@togglecorp/fujs';
 
 import Cloak from '#components/general/Cloak';
 import { DATA_TYPE } from '#entities/tabular';
@@ -98,6 +101,7 @@ export default class Header extends React.PureComponent {
             projectRegions,
 
             highlight,
+            overrideTitle,
         } = this.props;
 
         const style = {
@@ -138,10 +142,11 @@ export default class Header extends React.PureComponent {
                         smallVerticalPadding
                     />
                     <div
-                        title={value.title}
+                        title={overrideTitle}
                         className={styles.title}
                     >
-                        {value.title}
+                        {/* NOTE:  server doesn't update the header if header row is set to 0 */}
+                        {overrideTitle || 'Untitled'}
                     </div>
                     <Cloak
                         hide={this.shouldHideEditButton}
@@ -159,6 +164,7 @@ export default class Header extends React.PureComponent {
                                         disabled={disabled}
                                         disabledDelete={disabledDelete}
                                         fieldId={fieldId}
+                                        overrideTitle={overrideTitle}
                                         value={value}
                                         onFieldDelete={onFieldDelete}
                                         onFieldEdit={onFieldEdit}

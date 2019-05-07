@@ -29,6 +29,7 @@ import {
     isNotDefined,
     mapToMap,
     mapToList,
+    isDefined,
 } from '@togglecorp/fujs';
 import {
     getNaturalNumbers,
@@ -68,31 +69,9 @@ import styles from './styles.scss';
 const WarningModalButton = modalize(WarningButton);
 const ModalButton = modalize(Button);
 
-const getFieldStat = (value) => {
-    const invalidCount = value.data.filter(x => x.invalid).length;
-    const emptyCount = value.data.filter(x => x.empty).length;
-    const totalCount = value.data.length;
-    return {
-        healthBar: [
-            {
-                key: 'valid',
-                value: totalCount - emptyCount - invalidCount,
-            },
-            {
-                key: 'invalid',
-                value: invalidCount,
-            },
-            {
-                key: 'empty',
-                value: emptyCount,
-            },
-        ],
-    };
-};
-
 const getFieldMeta = (value) => {
-    const newValue = { ...value };
-    delete newValue.data;
+    // eslint-disable-next-line no-unused-vars
+    const { data, ...newValue } = value;
     return newValue;
 };
 
@@ -100,6 +79,7 @@ const transformSheet = (sheet) => {
     const {
         fields,
         options,
+        // dataRowIndex,
         ...other
     } = sheet;
 
@@ -114,17 +94,10 @@ const transformSheet = (sheet) => {
     );
     const rows = [...zipWith(getObjFromZippedRows, ...mapToList(columns))];
 
-    const fieldsStats = listToMap(
-        fields,
-        value => value.id,
-        getFieldStat,
-    );
-
     const fieldsMeta = fields.map(getFieldMeta);
 
     const newSheet = {
         rows,
-        fieldsStats,
         fields: fieldsMeta,
         options: {
             ...options,
@@ -132,6 +105,7 @@ const transformSheet = (sheet) => {
         },
         ...other,
     };
+
     return newSheet;
 };
 
@@ -493,13 +467,13 @@ export default class TabularBook extends React.PureComponent {
                     }),
                 );
             })
-            .success(() => {
+            .success((response) => {
                 this.setState((state) => {
                     const newSheets = produce(state.sheets, (safeSheets) => {
                         // eslint-disable-next-line no-param-reassign
                         safeSheets[sheetId] = {
                             ...safeSheets[sheetId],
-                            ...value,
+                            ...response,
                         };
                     });
                     const newTabs = getTabs(newSheets);
@@ -665,13 +639,17 @@ export default class TabularBook extends React.PureComponent {
                 );
             })
             .success((response) => {
+                const {
+                    sheets: {
+                        [sheetId]: dataRowIndex,
+                    },
+                } = this.state;
+
                 this.setState(
                     state => produce(state, (safeState) => {
                         const fieldIndex = safeState.sheets[sheetId].fields.findIndex(
                             f => f.id === fieldId,
                         );
-                        // eslint-disable-next-line no-param-reassign
-                        safeState.sheets[sheetId].fieldsStats[fieldId] = getFieldStat(response);
                         // eslint-disable-next-line no-param-reassign
                         safeState.sheets[sheetId].fields[fieldIndex] = getFieldMeta(response);
                         // eslint-disable-next-line no-param-reassign
@@ -771,8 +749,6 @@ export default class TabularBook extends React.PureComponent {
         title, className, sheetId, onClick, deletePending, editPending, // originalSheets,
         tabs, sheets,
     }) => {
-        // const { tabs, sheets } = this.getTransformSheets(originalSheets);
-
         // TODO: memoize this
         const tabKeys = Object.keys(tabs);
 
@@ -802,6 +778,8 @@ export default class TabularBook extends React.PureComponent {
                                 <SheetEditModal
                                     sheetId={sheetId}
                                     title={sheet.title}
+                                    dataRowIndex={sheet.dataRowIndex}
+                                    dataRowCount={sheet.rows.length}
                                     onSheetDelete={this.handleSheetDelete}
                                     onSheetEdit={this.handleSheetEdit}
                                     disabled={disabledSheetEditModal}
@@ -879,14 +857,6 @@ export default class TabularBook extends React.PureComponent {
             tabs,
             sheets,
         } = this.state;
-
-        /*
-        const {
-            sheets,
-            tabs,
-            firstTab,
-        } = this.getTransformSheets(originalSheets);
-        */
 
         const firstKey = Object.keys(tabs)[0];
         // NOTE: activeSheet was taken from Object.keys, so it is a string
@@ -1077,6 +1047,7 @@ export default class TabularBook extends React.PureComponent {
             deleteRequest: {
                 pending: deletePending,
             },
+            leadTitle,
         } = this.props;
         const ActualTabularBook = this.renderTabularBook;
 
@@ -1088,6 +1059,9 @@ export default class TabularBook extends React.PureComponent {
         if (!bookId) {
             return (
                 <div className={_cs(className, styles.initialLoadingContainer)}>
+                    <ModalHeader
+                        title={_ts('tabular', 'title', { title: leadTitle })}
+                    />
                     <ModalBody className={styles.body}>
                         { bookCreateRequestFailed ? (
                             <div className={styles.bookCreationFailedMessage}>

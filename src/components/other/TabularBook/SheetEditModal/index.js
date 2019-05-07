@@ -1,12 +1,22 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import Faram, { requiredCondition } from '@togglecorp/faram';
+import {
+    isNotDefined,
+} from '@togglecorp/fujs';
+import Faram, {
+    requiredCondition,
+    greaterThanCondition,
+    lessThanOrEqualToCondition,
+    integerCondition,
+} from '@togglecorp/faram';
 
 import Button from '#rsca/Button';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import NonFieldErrors from '#rsci/NonFieldErrors';
+import Checkbox from '#rsci/Checkbox';
 import TextInput from '#rsci/TextInput';
+import NumberInput from '#rsci/NumberInput';
 import FloatingContainer from '#rscv/FloatingContainer';
 import {
     calcFloatPositionInMainWindow,
@@ -38,10 +48,18 @@ export default class SheetEditModal extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const { title } = this.props;
+        const {
+            title,
+            dataRowIndex,
+            dataRowCount,
+        } = this.props;
 
         this.state = {
-            value: { title },
+            value: {
+                title,
+                dataRowIndex: dataRowIndex === 0 ? undefined : dataRowIndex,
+                hasNoHeaderRow: dataRowIndex === 0,
+            },
             error: {},
             hasError: false,
             pristine: true,
@@ -50,17 +68,48 @@ export default class SheetEditModal extends React.PureComponent {
         this.schema = {
             fields: {
                 title: [requiredCondition],
+                // dataRowIndex = User input
+                // - 1 because user uses one-indexing
+                // + 1 because dataRowIndex is one greater than header row index
+                hasNoHeaderRow: [],
+                dataRowIndex: [
+                    requiredCondition,
+                    integerCondition,
+                    greaterThanCondition(0),
+                    lessThanOrEqualToCondition(dataRowCount),
+                ],
             },
         };
     }
 
     handleFaramChange = (faramValues, faramErrors, faramInfo) => {
-        this.setState({
-            value: faramValues,
-            error: faramErrors,
-            pristine: false,
-            hasError: faramInfo.hasError,
-        });
+        const { dataRowIndex } = this.state.value;
+        // NOTE: if no header is selected and data row index is no set, set it to 1
+        // so that there will not be any 'isRequired' error
+        if (
+            (isNotDefined(dataRowIndex) || this.state.error.dataRowIndex)
+            && faramValues.hasNoHeaderRow
+        ) {
+            this.setState({
+                value: {
+                    ...faramValues,
+                    dataRowIndex: 1,
+                },
+                error: {
+                    ...faramErrors,
+                    dataRowIndex: undefined,
+                },
+                pristine: false,
+                hasError: faramInfo.hasError,
+            });
+        } else {
+            this.setState({
+                value: faramValues,
+                error: faramErrors,
+                pristine: false,
+                hasError: faramInfo.hasError,
+            });
+        }
     };
 
     handleFaramValidationFailure = (faramErrors) => {
@@ -74,7 +123,18 @@ export default class SheetEditModal extends React.PureComponent {
             closeModal,
         } = this.props;
 
-        onSheetEdit(sheetId, value);
+        const {
+            dataRowIndex,
+            hasNoHeaderRow,
+            ...otherValue
+        } = value;
+
+        const newValue = {
+            ...otherValue,
+            dataRowIndex: hasNoHeaderRow ? 0 : dataRowIndex,
+        };
+
+        onSheetEdit(sheetId, newValue);
         closeModal();
     };
 
@@ -161,6 +221,16 @@ export default class SheetEditModal extends React.PureComponent {
                         faramElementName="title"
                         label={_ts('tabular.sheetEditModal', 'sheetNameTitle')} // Title
                         autoFocus
+                    />
+                    <NumberInput
+                        faramElementName="dataRowIndex"
+                        label={_ts('tabular.sheetEditModal', 'sheetDataRowIndexTitle')}
+                        separator=" "
+                        disabled={value.hasNoHeaderRow}
+                    />
+                    <Checkbox
+                        faramElementName="hasNoHeaderRow"
+                        label={_ts('tabular.sheetEditModal', 'hasNoHeaderTitle')}
                     />
                     <div className={styles.actionButtons}>
                         <Button onClick={closeModal}>

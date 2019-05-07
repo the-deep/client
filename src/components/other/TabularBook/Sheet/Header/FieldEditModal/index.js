@@ -90,10 +90,17 @@ export default class FieldEditModal extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        const { value } = this.props;
+        const {
+            value,
+            overrideTitle,
+        } = this.props;
 
         this.state = {
-            value,
+            value: {
+                ...value,
+                // NOTE: override using override title
+                title: overrideTitle,
+            },
             error: {},
             hasError: false,
             pristine: true,
