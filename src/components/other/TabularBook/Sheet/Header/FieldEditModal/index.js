@@ -183,6 +183,11 @@ export default class FieldEditModal extends React.PureComponent {
         // Note: pass through prop
         // eslint-disable-next-line react/prop-types
         const { parentBCR } = this.props;
+        const {
+            value: {
+                type,
+            },
+        } = this.state;
 
         const contentRect = container.getBoundingClientRect();
 
@@ -193,35 +198,8 @@ export default class FieldEditModal extends React.PureComponent {
                 defaultOffset,
                 limit: {
                     ...defaultLimit,
-                    minW: 240,
-                    maxW: 360,
-                },
-            })
-        );
-
-        return optionsContainerPosition;
-    }
-
-    handleTooltipInvalidate = (container) => {
-        // Note: pass through prop
-        // eslint-disable-next-line react/prop-types
-        const { parentBCR } = this.props;
-
-        const contentRect = container.getBoundingClientRect();
-
-        const optionsContainerPosition = (
-            calcFloatPositionInMainWindow({
-                parentRect: parentBCR,
-                contentRect,
-                offset: {
-                    ...defaultOffset,
-                    left: -260,
-                },
-                limit: {
-                    ...defaultLimit,
-                    minW: 240,
-                    maxW: 240,
-                    maxH: 360,
+                    maxW: type === DATA_TYPE.geo ? 480 : 240,
+                    minW: type === DATA_TYPE.geo ? 480 : 240,
                 },
             })
         );
@@ -241,11 +219,6 @@ export default class FieldEditModal extends React.PureComponent {
         }
 
         if (type === DATA_TYPE.geo) {
-            const { projectRegions } = this.props;
-            const tooltip = (
-                <ProjectRegionsTooltip regions={projectRegions.regions} />
-            );
-
             return (
                 <React.Fragment>
                     <SegmentInput
@@ -253,11 +226,6 @@ export default class FieldEditModal extends React.PureComponent {
                         label={_ts('tabular.fieldEditModal', 'geoTypeTitle')} // Geo Type
                         options={geoTypeOptions}
                     />
-                    <FloatingContainer
-                        onInvalidate={this.handleTooltipInvalidate}
-                    >
-                        {tooltip}
-                    </FloatingContainer>
                     <NumberInput
                         faramElementName="adminLevel"
                         label={_ts('tabular.fieldEditModal', 'adminLevelTitle')} // Admin Level
@@ -287,6 +255,7 @@ export default class FieldEditModal extends React.PureComponent {
             closeModal,
             disabled,
             disabledDelete,
+            projectRegions,
         } = this.props;
 
         const {
@@ -300,6 +269,7 @@ export default class FieldEditModal extends React.PureComponent {
 
         return (
             <FloatingContainer
+                key={type}
                 className={styles.container}
                 onInvalidate={this.handleInvalidate}
                 focusTrap
@@ -307,6 +277,7 @@ export default class FieldEditModal extends React.PureComponent {
             >
                 <Faram
                     onChange={this.handleFaramChange}
+                    className={styles.faram}
                     onValidationFailure={this.handleFaramValidationFailure}
                     onValidationSuccess={this.handleFaramValidationSuccess}
 
@@ -315,46 +286,54 @@ export default class FieldEditModal extends React.PureComponent {
                     error={error}
                     disabled={disabled}
                 >
-                    <div className={styles.top}>
-                        <NonFieldErrors
-                            className={styles.nonFieldErrors}
-                            faramElement
+                    <div className={styles.left} >
+                        <div className={styles.top}>
+                            <NonFieldErrors
+                                className={styles.nonFieldErrors}
+                                faramElement
+                            />
+                            <DangerButton
+                                className={styles.removeColumnButton}
+                                disabled={disabled || disabledDelete}
+                                onClick={this.handleDeleteClick}
+                                iconName="trash"
+                                title={_ts('tabular.fieldEditModal', 'deleteFieldButtonLabel')}
+                                transparent
+                            />
+                        </div>
+                        <TextInput
+                            faramElementName="title"
+                            label={_ts('tabular.fieldEditModal', 'fieldNameTitle')} // Title
+                            autoFocus
                         />
-                        <DangerButton
-                            className={styles.removeColumnButton}
-                            disabled={disabled || disabledDelete}
-                            onClick={this.handleDeleteClick}
-                            iconName="trash"
-                            title={_ts('tabular.fieldEditModal', 'deleteFieldButtonLabel')}
-                            transparent
+                        <SegmentInput
+                            faramElementName="type"
+                            label={_ts('tabular.fieldEditModal', 'fieldTypeTitle')} // Type
+                            options={fieldTypes}
                         />
-                    </div>
-                    <TextInput
-                        faramElementName="title"
-                        label={_ts('tabular.fieldEditModal', 'fieldNameTitle')} // Title
-                        autoFocus
-                    />
-                    <SegmentInput
-                        faramElementName="type"
-                        label={_ts('tabular.fieldEditModal', 'fieldTypeTitle')} // Type
-                        options={fieldTypes}
-                    />
 
-                    <FaramGroup faramElementName="options">
-                        {this.renderSettingsForType(type)}
-                    </FaramGroup>
+                        <FaramGroup faramElementName="options">
+                            {this.renderSettingsForType(type)}
+                        </FaramGroup>
 
-                    <div className={styles.actionButtons}>
-                        <Button onClick={closeModal}>
-                            {_ts('tabular.fieldEditModal', 'cancelFieldButtonLabel')}
-                        </Button>
-                        <PrimaryButton
-                            type="submit"
-                            disabled={disabled || hasError || pristine}
-                        >
-                            {_ts('tabular.fieldEditModal', 'saveFieldButtonLabel') /* Save Field */ }
-                        </PrimaryButton>
+                        <div className={styles.actionButtons}>
+                            <Button onClick={closeModal}>
+                                {_ts('tabular.fieldEditModal', 'cancelFieldButtonLabel')}
+                            </Button>
+                            <PrimaryButton
+                                type="submit"
+                                disabled={disabled || hasError || pristine}
+                            >
+                                {_ts('tabular.fieldEditModal', 'saveFieldButtonLabel') /* Save Field */ }
+                            </PrimaryButton>
+                        </div>
                     </div>
+                    {type === DATA_TYPE.geo &&
+                        <ProjectRegionsTooltip
+                            className={styles.right}
+                            regions={projectRegions.regions}
+                        />
+                    }
                 </Faram>
             </FloatingContainer>
         );

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
+import { _cs } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
 import _ts from '#ts';
@@ -9,10 +10,12 @@ import styles from './styles.scss';
 
 const propTypes = {
     regions: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    className: PropTypes.string,
 };
 
 const defaultProps = {
     regions: [],
+    className: '',
 };
 
 const AdminLevel = ({ title, level }) => (
@@ -64,12 +67,15 @@ export default class ProjectRegionsTooltip extends React.PureComponent {
     })
 
     render() {
-        const { regions } = this.props;
+        const {
+            regions,
+            className,
+        } = this.props;
         const adminLevels = this.getFlatAdminLevels(regions);
         const noAdminLevels = adminLevels.length === 0;
 
         return (
-            <div className={styles.tooltip}>
+            <div className={_cs(styles.tooltip, className)}>
                 <h4 className={styles.heading} >
                     {noAdminLevels ? (
                         _ts('tabular', 'noRegionsInProject')
