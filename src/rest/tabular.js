@@ -17,7 +17,7 @@ export const createParamsForSheetDelete = () => ({
 });
 
 export const createUrlForSheetEdit = sheetId => (
-    `${wsEndpoint}/tabular-sheets/${sheetId}/?${p({ fields: ['id'] })}`
+    `${wsEndpoint}/tabular-sheets/${sheetId}/?${p({ fields: ['id', 'title', 'data_row_index'] })}`
 );
 export const createParamsForSheetEdit = value => ({
     method: PATCH,

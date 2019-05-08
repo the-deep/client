@@ -2634,7 +2634,9 @@
         "tabular.sheetEditModal": {
             "deleteSheetButtonLabel": -94736495,
             "saveSheetButtonLabel": 25,
-            "sheetNameTitle": 13
+            "sheetNameTitle": 13,
+            "hasNoHeaderTitle": -39031808,
+            "sheetDataRowIndexTitle": 15010
         },
         "tabular.sheetRetrieveModal": {
             "retrieveSheetButtonLabel": 25,

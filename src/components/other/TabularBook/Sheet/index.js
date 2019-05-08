@@ -16,7 +16,9 @@ import {
     caseInsensitiveSubmatch,
     isFalsyString as isFalsyStr,
     isTruthyString as isTruthyStr,
+    isDefined,
     doesObjectHaveNoData,
+    listToMap,
 } from '@togglecorp/fujs';
 import update from '#rsu/immutable-update';
 import _cs from '#cs';
@@ -42,6 +44,28 @@ import styles from './styles.scss';
 const ModalButton = modalize(Button);
 
 const Taebul = Searchable(Sortable(ColumnWidth(NormalTaebul)));
+
+const getFieldStat = (value) => {
+    const invalidCount = value.filter(x => x.invalid).length;
+    const emptyCount = value.filter(x => x.empty).length;
+    const totalCount = value.length;
+    return {
+        healthBar: [
+            {
+                key: 'valid',
+                value: totalCount - emptyCount - invalidCount,
+            },
+            {
+                key: 'invalid',
+                value: invalidCount,
+            },
+            {
+                key: 'empty',
+                value: emptyCount,
+            },
+        ],
+    };
+};
 
 const propTypes = {
     className: PropTypes.string,
@@ -110,6 +134,23 @@ export default class Sheet extends React.PureComponent {
         return obj.value;
     }
 
+    getSlicedRows = memoize((rows, dataRowIndex) => (
+        isDefined(dataRowIndex) && dataRowIndex >= 0
+            ? rows.slice(dataRowIndex, rows.length)
+            : rows
+    ))
+
+    getFieldStats = memoize((fields, rows) => (
+        listToMap(
+            fields,
+            field => field.id,
+            (field) => {
+                const columnData = rows.map(row => row[field.id]);
+                return getFieldStat(columnData);
+            },
+        )
+    ))
+
     getDeletedFields = memoize(fields => (
         fields.filter(f => f.hidden)
     ))
@@ -128,7 +169,7 @@ export default class Sheet extends React.PureComponent {
             fields,
             options: {
                 searchTerm: oldSearchTerm,
-                fieldStats,
+                dataRowIndex: oldDataRowIndex,
             } = {},
             fieldDeletePending,
             fieldEditPending,
@@ -136,12 +177,14 @@ export default class Sheet extends React.PureComponent {
 
         const columns = this.getSheetColumns(
             fields,
-            fieldStats,
+            /*
             fieldDeletePending,
             fieldEditPending,
             viewMode,
             projectRegions,
             oldSearchTerm,
+            oldDataRowIndex,
+            */
         );
 
         return columns.every((sheetColumn) => {
@@ -199,17 +242,7 @@ export default class Sheet extends React.PureComponent {
     }
 
     // NOTE: searchTerm, projectRegions is used inside this.headerRendererParams
-    getSheetColumns = memoize((
-        fields,
-        fieldStats,
-        fieldDeletePending,
-        fieldEditPending,
-        viewMode,
-        // eslint-disable-next-line no-unused-vars
-        projectRegions,
-        // eslint-disable-next-line no-unused-vars
-        searchTerm,
-    ) => (
+    getSheetColumns = memoize(fields => (
         fields
             .filter(field => !field.hidden)
             .map(field => ({
@@ -272,16 +305,21 @@ export default class Sheet extends React.PureComponent {
                 searchTerm = {},
             } = {},
             fields,
-            fieldsStats: {
-                [fieldId]: {
-                    healthBar,
-                },
-            },
+            rows,
+            dataRowIndex,
         } = sheet;
 
         const isFieldDeletePending = fieldDeletePending[fieldId];
         const isFieldEditPending = fieldEditPending[fieldId];
         const fieldsCount = this.getFieldsCount(fields);
+
+        const slicedRows = this.getSlicedRows(rows, dataRowIndex);
+
+        const fieldStats = this.getFieldStats(fields, slicedRows);
+        const { healthBar } = fieldStats[fieldId];
+
+        const headerRow = rows[dataRowIndex - 1];
+        const headerTitle = headerRow ? headerRow[fieldId].value : undefined;
 
         return {
             fieldId,
@@ -292,6 +330,7 @@ export default class Sheet extends React.PureComponent {
             onFilterChange: this.handleFilterChange,
 
             value: column.value,
+            overrideTitle: headerTitle,
             sortOrder: column.sortOrder,
             onSortClick: column.onSortClick,
             className: styles.header,
@@ -397,9 +436,10 @@ export default class Sheet extends React.PureComponent {
             className,
             sheet: {
                 rows,
+                dataRowIndex,
                 options = emptyObject,
                 fields,
-                fieldsStats,
+                // fieldsStats,
             },
             disabled,
             isFieldRetrievePending,
@@ -413,15 +453,20 @@ export default class Sheet extends React.PureComponent {
 
         const columns = this.getSheetColumns(
             fields,
+            /*
             fieldsStats,
             fieldDeletePending,
             fieldEditPending,
             viewMode,
             projectRegions,
             searchTerm,
+            dataRowIndex,
+            */
         );
 
         const fieldList = this.getDeletedFields(fields);
+
+        const slicedRows = this.getSlicedRows(rows, dataRowIndex);
 
         return (
             <div className={_cs(className, styles.tabularSheet, 'tabular-sheet')}>
@@ -463,7 +508,7 @@ export default class Sheet extends React.PureComponent {
                         <div className={styles.info}>
                             <Numeral
                                 className={styles.value}
-                                value={rows.length}
+                                value={slicedRows.length}
                                 precision={0}
                             />
                             <div className={styles.label}>
@@ -486,7 +531,7 @@ export default class Sheet extends React.PureComponent {
                 </div>
                 <Taebul
                     className={styles.table}
-                    data={rows}
+                    data={slicedRows}
                     settings={options}
                     keySelector={Sheet.keySelector}
                     columns={columns}
