@@ -42,7 +42,6 @@ import {
 import {
     envText,
     commitHash,
-    isDev,
 } from '#config/env';
 import logo from '#resources/img/deep-logo-simplified.svg';
 
@@ -130,6 +129,8 @@ export default class Navbar extends React.PureComponent {
             .map(link => ({ key: link, ...currentValidLinks[link] }))
             .filter(d => !!d);
     }
+
+    static shouldHideThemeMenu = ({ isDevMode }) => !isDevMode;
 
     constructor(props) {
         super(props);
@@ -302,7 +303,14 @@ export default class Navbar extends React.PureComponent {
                 />
                 <Community className={styles.communityDropdown} />
                 <Notifica className={styles.notificationDropdown} />
-                { isDev && <ThemeMenu className={styles.themeMenu} /> }
+                <Cloak
+                    hide={Navbar.shouldHideThemeMenu}
+                    render={
+                        <ThemeMenu
+                            className={styles.themeMenu}
+                        />
+                    }
+                />
                 <NavDrop
                     className={styles.userMenu}
                     links={this.validDropLinks}
