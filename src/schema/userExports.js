@@ -40,4 +40,18 @@ const exportSchema = [];
     exportSchema.push({ name, schema });
 }
 
+{
+    const name = 'exportStatusGetResponse';
+    const schema = {
+        doc: {
+            name: 'Project Export Status Get Response',
+            description: 'Response for GET /projects/{id}/export-status',
+        },
+        fields: {
+            tabularPendingFieldsCount: { type: 'uint', required: true },
+        },
+    };
+    exportSchema.push({ name, schema });
+}
+
 export default exportSchema;

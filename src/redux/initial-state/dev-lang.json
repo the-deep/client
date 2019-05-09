@@ -930,7 +930,10 @@
         "-44817445": "Selected file is invalid",
         "-57281759": "Failed to upload logo",
         "-40341683": "The format is not supported",
-        "-37259810": "Legend"
+        "-37259810": "Legend",
+        "-33031804": "Export Status",
+        "-22307298": "Continue",
+        "-46932501": "Not all graphs are done generating yet for your tabular data. The export will be generated but you can try again later to get the rest of the graphs."
     },
     "links": {
         "browserExtension": {
@@ -1394,7 +1397,10 @@
             "cantLoadAf": 648,
             "startAssessmentExportButtonLabel": -58642627,
             "geoLabel": -80682543,
-            "cantLoadGeo": 534
+            "cantLoadGeo": 534,
+            "exportStatusTitle": -33031804,
+            "continueButtonLabel": -22307298,
+            "exportImageGnerationPending": -46932501
         },
         "fourHundredFour": {
             "errorFourHundredFour": 870,

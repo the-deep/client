@@ -13,6 +13,7 @@ export const createUrlForExportsOfProject = projectId => (
 );
 
 export const createUrlForExport = exportId => `${urlForExports}${exportId}/`;
+export const createUrlForExportStatus = projectId => `${wsEndpoint}/projects/${projectId}/export-status/`;
 
 export const createParamsForExportTrigger = filters => ({
     method: POST,
