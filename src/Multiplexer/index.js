@@ -30,10 +30,13 @@ import {
     routes,
 } from '#constants';
 
+import { setTheme } from '#theme';
+
 import {
     authenticatedSelector,
     lastNotifySelector,
     notifyHideAction,
+    currentThemeIdSelector,
     // tabsByCurrentUrlSelector,
     // removeSelfTabStatusAction,
 } from '#redux';
@@ -53,6 +56,7 @@ const propTypes = {
 };
 
 const mapStateToProps = state => ({
+    currentThemeId: currentThemeIdSelector(state),
     authenticated: authenticatedSelector(state),
     lastNotify: lastNotifySelector(state),
     // tabsByCurrentUrl: tabsByCurrentUrlSelector(state, props),
@@ -87,11 +91,12 @@ const views = mapObjectToObject(
 export default class Multiplexer extends React.PureComponent {
     static propTypes = propTypes;
 
-    /*
     componentDidMount() {
-        window.onunload = this.props.removeSelfTabStatus;
+        const { currentThemeId } = this.props;
+        // window.onunload = this.props.removeSelfTabStatus;
+
+        setTheme(currentThemeId);
     }
-    */
 
     handleToastClose = () => {
         const { notifyHide } = this.props;
