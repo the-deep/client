@@ -16,7 +16,6 @@ import AccentButton from '#rsca/Button/AccentButton';
 import Table from '#rscv/Table';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import FormattedDate from '#rscv/FormattedDate';
-
 import ExportPreview from '#components/other/ExportPreview';
 import {
     createParamsForGet,
