@@ -19,6 +19,7 @@ import Button from '#rsca/Button';
 import SimpleHorizontalBarChart from '#rscz/SimpleHorizontalBarChart';
 import SimpleVerticalBarChart from '#rscz/SimpleVerticalBarChart';
 import Histogram from '#rscz/Histogram';
+import previewImage from '#resources/img/filler-viz.png';
 import WordCloud from '#rscz/WordCloud';
 import modalize from '#rscg/Modalize';
 import BoundError from '#rscg/BoundError';
@@ -598,7 +599,13 @@ export default class DataSeries extends React.PureComponent {
                 </header>
                 {!hideDetails && isPending &&
                     <div className={styles.content}>
+                        <img
+                            src={previewImage}
+                            className={styles.processingImage}
+                            alt=""
+                        />
                         <LoadingAnimation
+                            className={styles.processing}
                             // FIXME: use strings
                             message="Data processing is in progress"
                         />
