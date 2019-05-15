@@ -8,6 +8,7 @@ import {
 } from '@togglecorp/fujs';
 
 import Message from '#rscv/Message';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import Icon from '#rscg/Icon';
 import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
@@ -18,6 +19,7 @@ import Button from '#rsca/Button';
 import SimpleHorizontalBarChart from '#rscz/SimpleHorizontalBarChart';
 import SimpleVerticalBarChart from '#rscz/SimpleVerticalBarChart';
 import Histogram from '#rscz/Histogram';
+import previewImage from '#resources/img/filler-viz.png';
 import WordCloud from '#rscz/WordCloud';
 import modalize from '#rscg/Modalize';
 import BoundError from '#rscg/BoundError';
@@ -597,15 +599,23 @@ export default class DataSeries extends React.PureComponent {
                 </header>
                 {!hideDetails && isPending &&
                     <div className={styles.content}>
-                        <Message>
-                            Data processing in progress
-                        </Message>
+                        <img
+                            src={previewImage}
+                            className={styles.processingImage}
+                            alt=""
+                        />
+                        <LoadingAnimation
+                            className={styles.processing}
+                            // FIXME: use strings
+                            message="Data processing is in progress"
+                        />
                     </div>
                 }
                 {!hideDetails && isFailing &&
                     <div className={styles.content}>
                         <Message>
-                            Data processing failed
+                            {/* FIXME: Use strings */}
+                            Data processing has failed
                         </Message>
                     </div>
                 }
