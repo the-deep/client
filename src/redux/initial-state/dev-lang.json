@@ -933,7 +933,9 @@
         "-37259810": "Legend",
         "-33031804": "Export Status",
         "-22307298": "Continue",
-        "-46932501": "Not all graphs are done generating yet for your tabular data. The export will be generated but you can try again later to get the rest of the graphs."
+        "-46932501": "Not all graphs are done generating yet for your tabular data. The export will be generated but you can try again later to get the rest of the graphs.",
+        "-5594696": "Looks like there are no data matching your criteria. Try changing what you're looking for and search again.",
+        "-10096447": "Looks like this document doesn't have any tabular data"
     },
     "links": {
         "browserExtension": {
@@ -2651,7 +2653,9 @@
         "tabular.sheets": {
             "columnShowButtonTooltip": -43793403,
             "resetSortTitle": 15008,
-            "resetFilterTooltip": -17116359
+            "resetFilterTooltip": -17116359,
+            "filterEmptyMessage": -5594696,
+            "tabularEmptyMessage": -10096447
         },
         "viewer.attachment": {
             "originalTabTitle": 518,

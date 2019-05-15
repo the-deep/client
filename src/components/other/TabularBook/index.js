@@ -29,7 +29,6 @@ import {
     isNotDefined,
     mapToMap,
     mapToList,
-    isDefined,
 } from '@togglecorp/fujs';
 import {
     getNaturalNumbers,
@@ -119,6 +118,7 @@ const getSheets = (sheetsFromServer) => {
         sheet => sheet.id,
         transformSheet,
     );
+
     return sheets;
 };
 
