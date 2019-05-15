@@ -323,8 +323,8 @@ export default class Sheet extends React.PureComponent {
         const fieldStats = this.getFieldStats(fields, slicedRows);
         const { healthBar } = fieldStats[fieldId];
 
-        const headerRow = rows[dataRowIndex - 1];
-        const headerTitle = headerRow ? headerRow[fieldId].value : undefined;
+        // const headerRow = rows[dataRowIndex - 1];
+        // const headerTitle = headerRow ? headerRow[fieldId].value : undefined;
 
         return {
             fieldId,
@@ -335,7 +335,6 @@ export default class Sheet extends React.PureComponent {
             onFilterChange: this.handleFilterChange,
 
             value: column.value,
-            overrideTitle: headerTitle,
             sortOrder: column.sortOrder,
             onSortClick: column.onSortClick,
             className: styles.header,

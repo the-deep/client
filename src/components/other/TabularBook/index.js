@@ -148,7 +148,6 @@ const getTransformSheets = (sheetsFromServer) => {
     };
 };
 
-
 const requests = {
     createBookRequest: {
         method: requestMethods.POST,
@@ -475,6 +474,17 @@ export default class TabularBook extends React.PureComponent {
                             ...safeSheets[sheetId],
                             ...response,
                         };
+
+                        if (
+                            state.sheets[sheetId].dataRowIndex !== response.dataRowIndex
+                            && response.dataRowIndex > 0
+                        ) {
+                            const row = safeSheets[sheetId].rows[response.dataRowIndex - 1];
+                            safeSheets[sheetId].fields.forEach((field) => {
+                                // eslint-disable-next-line no-param-reassign
+                                field.title = row[field.id].value;
+                            });
+                        }
                     });
                     const newTabs = getTabs(newSheets);
                     return { sheets: newSheets, tabs: newTabs };

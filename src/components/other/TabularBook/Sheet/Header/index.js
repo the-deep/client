@@ -101,7 +101,6 @@ export default class Header extends React.PureComponent {
             projectRegions,
 
             highlight,
-            overrideTitle,
         } = this.props;
 
         const style = {
@@ -142,11 +141,10 @@ export default class Header extends React.PureComponent {
                         smallVerticalPadding
                     />
                     <div
-                        title={overrideTitle}
+                        title={value.title}
                         className={styles.title}
                     >
-                        {/* NOTE:  server doesn't update the header if header row is set to 0 */}
-                        {overrideTitle || 'Untitled'}
+                        {value.title}
                     </div>
                     <Cloak
                         hide={this.shouldHideEditButton}
@@ -164,7 +162,6 @@ export default class Header extends React.PureComponent {
                                         disabled={disabled}
                                         disabledDelete={disabledDelete}
                                         fieldId={fieldId}
-                                        overrideTitle={overrideTitle}
                                         value={value}
                                         onFieldDelete={onFieldDelete}
                                         onFieldEdit={onFieldEdit}

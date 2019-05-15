@@ -61,7 +61,7 @@ const chartMargins = {
     top: 16,
     right: 24,
     bottom: 24,
-    left: 24,
+    left: 48,
 };
 
 const chartMarginsSmall = {
