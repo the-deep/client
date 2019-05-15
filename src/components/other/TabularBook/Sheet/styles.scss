@@ -1,4 +1,3 @@
-
 .tabular-sheet {
     display: flex;
     flex-direction: column;
@@ -42,4 +41,10 @@
             white-space: nowrap;
         }
     }
+}
+
+.empty {
+    position: sticky;
+    top: 0;
+    left: 0;
 }

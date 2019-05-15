@@ -9,6 +9,7 @@ import Searchable from '#rscv/Taebul/Searchable';
 import Sortable from '#rscv/Taebul/Sortable';
 import ColumnWidth from '#rscv/Taebul/ColumnWidth';
 import NormalTaebul from '#rscv/Taebul';
+import Message from '#rscv/Message';
 import {
     compareString,
     compareNumber,
@@ -431,6 +432,32 @@ export default class Sheet extends React.PureComponent {
         onSheetOptionsChange(sheetId, options);
     }
 
+    renderEmptyComponent = () => {
+        const {
+            sheet,
+        } = this.props;
+
+        const {
+            rows,
+            options: {
+                searchTerm = {},
+            } = {},
+        } = sheet;
+
+        const hasFilterText = !doesObjectHaveNoData(searchTerm);
+        const isFilterEmpty = hasFilterText && rows.length !== 0;
+
+        return (
+            <Message className={styles.empty}>
+                { isFilterEmpty ? (
+                    _ts('tabular.sheets', 'filterEmptyMessage')
+                ) : (
+                    _ts('tabular.sheets', 'tabularEmptyMessage')
+                )}
+            </Message>
+        );
+    }
+
     render() {
         const {
             className,
@@ -538,6 +565,7 @@ export default class Sheet extends React.PureComponent {
                     onChange={this.handleSettingsChange}
                     searchFunction={this.getFilterCriteria}
                     rowHeight={24}
+                    emptyComponent={this.renderEmptyComponent}
                 />
             </div>
         );

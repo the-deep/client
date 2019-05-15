@@ -324,7 +324,9 @@ export default class Leads extends React.PureComponent {
 
         // TODO: Remove this after enabling grids view
         // in beta
-        if (view === GRID_VIEW && isBetaEnv) {
+        if (view === GRID_VIEW && !isBetaEnv) {
+            setLeadPageView({ view: GRID_VIEW });
+        } else {
             setLeadPageView({ view: TABLE_VIEW });
         }
 
