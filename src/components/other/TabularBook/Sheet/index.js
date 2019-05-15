@@ -10,6 +10,10 @@ import Sortable from '#rscv/Taebul/Sortable';
 import ColumnWidth from '#rscv/Taebul/ColumnWidth';
 import NormalTaebul from '#rscv/Taebul';
 import Message from '#rscv/Message';
+
+import noDataIcon from '#resources/img/no-search.png';
+import noFilterDataIcon from '#resources/img/no-filter.png';
+
 import {
     compareString,
     compareNumber,
@@ -449,6 +453,11 @@ export default class Sheet extends React.PureComponent {
 
         return (
             <Message className={styles.empty}>
+                <img
+                    className={styles.image}
+                    src={isFilterEmpty ? noFilterDataIcon : noDataIcon}
+                    alt="x"
+                />
                 { isFilterEmpty ? (
                     _ts('tabular.sheets', 'filterEmptyMessage')
                 ) : (
