@@ -36,6 +36,7 @@ export default {
     },
 
     pollRequest: {
+        schemaName: 'TabularBookPollSchema',
         method: requestMethods.POST,
         url: ({ props }) => `/tabular-books/${props.bookId}/fields/`,
         body: ({ params: { fields } }) => ({ fields }),

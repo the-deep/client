@@ -63,5 +63,16 @@ const tabularSchema = [];
     };
     tabularSchema.push({ name, schema });
 }
+{
+    const name = 'TabularBookPollSchema';
+    const schema = {
+        doc: { name: 'TabularSheet' },
+        fields: {
+            fields: { type: 'array.uint', required: true },
+            pendingFields: { type: 'array.uint', required: true },
+        },
+    };
+    tabularSchema.push({ name, schema });
+}
 
 export default tabularSchema;
