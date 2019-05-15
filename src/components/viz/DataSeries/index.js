@@ -8,6 +8,7 @@ import {
 } from '@togglecorp/fujs';
 
 import Message from '#rscv/Message';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import Icon from '#rscg/Icon';
 import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
@@ -597,15 +598,17 @@ export default class DataSeries extends React.PureComponent {
                 </header>
                 {!hideDetails && isPending &&
                     <div className={styles.content}>
-                        <Message>
-                            Data processing in progress
-                        </Message>
+                        <LoadingAnimation
+                            // FIXME: use strings
+                            message="Data processing is in progress"
+                        />
                     </div>
                 }
                 {!hideDetails && isFailing &&
                     <div className={styles.content}>
                         <Message>
-                            Data processing failed
+                            {/* FIXME: Use strings */}
+                            Data processing has failed
                         </Message>
                     </div>
                 }

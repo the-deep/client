@@ -7,7 +7,7 @@ export default {
         method: requestMethods.GET,
         url: ({ props }) => `/tabular-books/${props.bookId}/processed/`,
         options: {
-            pollTime: 1200,
+            pollTime: 5000,
             maxPollAttempts: 100,
             shouldPoll: r => r.status === 'pending',
         },
