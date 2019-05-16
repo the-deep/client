@@ -377,6 +377,21 @@ export const shouldShowAltTagComponent = (widgetId, view, addedFrom) => (
     view !== addedFrom
 );
 
+// Get viewComponent
+export const fetchWidgetViewComponent = (widgetId, addedFrom) => {
+    const widget = fetchWidget(
+        VIEW.list,
+        widgetId,
+    );
+
+    if (!addedFrom) {
+        console.warn(`ERROR: addedFrom is not defined for ${widgetId}`);
+        return undefined;
+    }
+
+    return widget.viewComponent;
+};
+
 // Get tagComponent or altTagComponent
 export const fetchWidgetTagComponent = (widgetId, view, addedFrom) => {
     const widget = fetchWidget(view, widgetId);
@@ -391,21 +406,14 @@ export const fetchWidgetTagComponent = (widgetId, view, addedFrom) => {
         : widget.tagComponent;
 };
 
-// Get viewComponent
-export const fetchWidgetViewComponent = widgetId => fetchWidget(
-    VIEW.list,
-    widgetId,
-).viewComponent;
-
 // Same as above but also check if a frameworkComponent exists
 export const fetchWidgetFrameworkComponent = (widgetId, view, addedFrom) => {
-    const { frameworkComponent } = fetchWidget(view, widgetId);
     const tagComponent = fetchWidgetTagComponent(widgetId, view, addedFrom);
-
     if (!tagComponent) {
         return undefined;
     }
 
+    const { frameworkComponent } = fetchWidget(view, widgetId);
     if (frameworkComponent) {
         return frameworkComponent;
     }
@@ -416,6 +424,11 @@ export const fetchWidgetFrameworkComponent = (widgetId, view, addedFrom) => {
 // Identify if there is a tag component
 export const hasWidgetTagComponent = (widgetId, view, addedFrom) => (
     !!fetchWidgetTagComponent(widgetId, view, addedFrom)
+);
+
+// Identify if there is a view component
+export const hasWidgetViewComponent = (widgetId, addedFrom) => (
+    !!fetchWidgetViewComponent(widgetId, addedFrom)
 );
 
 // Identify if there is a framework component

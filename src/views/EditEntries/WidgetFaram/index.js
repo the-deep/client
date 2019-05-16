@@ -254,6 +254,7 @@ export default class WidgetFaram extends React.PureComponent {
         } = this.props;
 
         const error = entryAccessor.error(entry);
+
         const className = `
             ${styles.widgetFaram}
             ${classNameFromProps}
