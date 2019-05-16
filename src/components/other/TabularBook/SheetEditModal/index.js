@@ -100,7 +100,8 @@ export default class SheetEditModal extends React.PureComponent {
                     dataRowIndex: undefined,
                 },
                 pristine: false,
-                hasError: faramInfo.hasError,
+                // TODO: calculate error here better way
+                hasError: false, // faramInfo.hasError,
             });
         } else {
             this.setState({

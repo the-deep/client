@@ -148,7 +148,6 @@ const getTransformSheets = (sheetsFromServer) => {
     };
 };
 
-
 const requests = {
     createBookRequest: {
         method: requestMethods.POST,
@@ -414,6 +413,20 @@ export default class TabularBook extends React.PureComponent {
         this.props.deleteRequest.do();
     }
 
+    handleSheetOptionsChange = (sheetId, options) => {
+        clearTimeout(this.backgroundSaveTimeout);
+
+        this.setState(
+            state => produce(state, (safeState) => {
+                // eslint-disable-next-line no-param-reassign
+                safeState.sheets[sheetId].options = options;
+            }),
+            () => {
+                this.backgroundSaveTimeout = setTimeout(this.handleSheetOptionsSave, 2000);
+            },
+        );
+    }
+
     handleSheetDelete = (sheetId) => {
         const requestId = `sheet-delete-${sheetId}`;
 
@@ -428,12 +441,16 @@ export default class TabularBook extends React.PureComponent {
                     }),
                 );
             })
-            .success(() => {
+            .success((response) => {
                 this.setState((state) => {
                     const newSheets = produce(state.sheets, (safeSheets) => {
                         // eslint-disable-next-line no-param-reassign
-                        safeSheets[sheetId].hidden = true;
+                        safeSheets[sheetId] = {
+                            ...safeSheets[sheetId],
+                            ...response,
+                        };
                     });
+
                     const newTabs = getTabs(newSheets);
                     return { sheets: newSheets, tabs: newTabs };
                 });
@@ -475,6 +492,18 @@ export default class TabularBook extends React.PureComponent {
                             ...safeSheets[sheetId],
                             ...response,
                         };
+
+                        // NOTE: change title when dataRowIndex has changed
+                        if (
+                            state.sheets[sheetId].dataRowIndex !== response.dataRowIndex
+                            && response.dataRowIndex > 0
+                        ) {
+                            const row = safeSheets[sheetId].rows[response.dataRowIndex - 1];
+                            safeSheets[sheetId].fields.forEach((field) => {
+                                // eslint-disable-next-line no-param-reassign
+                                field.title = row[field.id].value;
+                            });
+                        }
                     });
                     const newTabs = getTabs(newSheets);
                     return { sheets: newSheets, tabs: newTabs };
@@ -548,7 +577,7 @@ export default class TabularBook extends React.PureComponent {
             .preLoad(() => {
                 this.setState({ isSheetRetrievePending: true });
             })
-            .success(() => {
+            .success((response) => {
                 this.setState((state) => {
                     const newSheets = produce(state.sheets, (safeSheets) => {
                         sheetIds.forEach((sheetId) => {
@@ -572,20 +601,6 @@ export default class TabularBook extends React.PureComponent {
         this.coordinator.start();
     }
 
-    handleSheetOptionsChange = (sheetId, options) => {
-        clearTimeout(this.backgroundSaveTimeout);
-
-        this.setState(
-            state => produce(state, (safeState) => {
-                // eslint-disable-next-line no-param-reassign
-                safeState.sheets[sheetId].options = options;
-            }),
-            () => {
-                this.backgroundSaveTimeout = setTimeout(this.handleSheetOptionsSave, 2000);
-            },
-        );
-    }
-
     handleFieldDelete = (sheetId, fieldId) => {
         const requestId = `field-delete-${fieldId}`;
 
@@ -600,13 +615,16 @@ export default class TabularBook extends React.PureComponent {
                     }),
                 );
             })
-            .success(() => {
+            .success((response) => {
                 this.setState(
                     state => produce(state, (safeState) => {
                         const fieldIndex = safeState.sheets[sheetId].fields
                             .findIndex(f => f.id === fieldId);
                         // eslint-disable-next-line no-param-reassign
-                        safeState.sheets[sheetId].fields[fieldIndex].hidden = true;
+                        safeState.sheets[sheetId].fields[fieldIndex] = {
+                            ...safeState.sheets[sheetId].fields[fieldIndex],
+                            ...response,
+                        };
                     }),
                 );
             })

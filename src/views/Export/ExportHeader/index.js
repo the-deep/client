@@ -81,10 +81,7 @@ const requests = {
         url: ({ props }) => createUrlForExportStatus(props.projectId),
         onSuccess: ({ response, params: { handleExportStatus } }) => {
             const { tabularPendingFieldsCount: fieldsCount } = response;
-
-            if (fieldsCount > 0) {
-                handleExportStatus(fieldsCount);
-            }
+            handleExportStatus(fieldsCount);
         },
         onFailure: () => {
             // No action needed on failure
