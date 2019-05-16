@@ -27,7 +27,7 @@ export const createParamsForSheetEdit = value => ({
 
 // NOTE: some problem here
 export const createUrlForFieldRetrieve = sheetId => (
-    `${wsEndpoint}/tabular-sheets/${sheetId}/?${p({ fields: ['id'] })}`
+    `${wsEndpoint}/tabular-sheets/${sheetId}/fields/`
 );
 export const createParamsForFieldRetrieve = fields => ({
     method: PATCH,
@@ -59,7 +59,7 @@ export const createParamsForFieldEdit = value => ({
 
 // NOTE: some problem here
 export const createUrlForSheetRetrieve = bookId => (
-    `${wsEndpoint}/tabular-books/${bookId}/?${p({ fields: ['id'] })}`
+    `${wsEndpoint}/tabular-books/${bookId}/sheets/`
 );
 export const createParamsForSheetRetrieve = sheets => ({
     method: PATCH,
@@ -71,7 +71,7 @@ export const createParamsForSheetRetrieve = sheets => ({
 
 // NOTE: some problem here
 export const createUrlForSheetOptionsSave = bookId => (
-    `${wsEndpoint}/tabular-books/${bookId}/?${p({ fields: ['id'] })}`
+    `${wsEndpoint}/tabular-books/${bookId}/sheets/`
 );
 export const createParamsForSheetOptionsSave = sheets => ({
     method: PATCH,
