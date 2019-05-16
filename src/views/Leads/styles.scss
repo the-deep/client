@@ -41,9 +41,14 @@
             margin-right: var(--spacing-extra-large);
             background-color: transparent;
 
+            &.hidden {
+                display: none;
+            }
+
             :global {
-                .fixed-tab {
+                .scroll-tab {
                     border-bottom: none;
+                    padding: 0 var(--spacing-small);
                     font-size: var(--font-size-extra-large);
 
                     &.active {
