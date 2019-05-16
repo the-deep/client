@@ -87,10 +87,7 @@ export default class GeoFilter extends React.PureComponent {
         } = this.props;
 
         return (
-            <div
-                className={styles.geoFilter}
-                onChange={onChange}
-            >
+            <div className={styles.geoFilter}>
                 <GeoInput
                     value={areas}
                     className={styles.geoInput}
