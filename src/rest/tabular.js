@@ -6,7 +6,7 @@ import {
 } from '#config/rest';
 
 export const createUrlForSheetDelete = sheetId => (
-    `${wsEndpoint}/tabular-sheets/${sheetId}/?${p({ fields: ['id'] })}`
+    `${wsEndpoint}/tabular-sheets/${sheetId}/?${p({ fields: ['id', 'hidden'] })}`
 );
 export const createParamsForSheetDelete = () => ({
     method: PATCH,
@@ -25,6 +25,7 @@ export const createParamsForSheetEdit = value => ({
     body: JSON.stringify(value),
 });
 
+// NOTE: some problem here
 export const createUrlForFieldRetrieve = sheetId => (
     `${wsEndpoint}/tabular-sheets/${sheetId}/?${p({ fields: ['id'] })}`
 );
@@ -37,7 +38,7 @@ export const createParamsForFieldRetrieve = fields => ({
 });
 
 export const createUrlForFieldDelete = fieldId => (
-    `${wsEndpoint}/tabular-fields/${fieldId}/?${p({ fields: ['id'] })}`
+    `${wsEndpoint}/tabular-fields/${fieldId}/?${p({ fields: ['id', 'hidden'] })}`
 );
 export const createParamsForFieldDelete = () => ({
     method: PATCH,
@@ -56,6 +57,7 @@ export const createParamsForFieldEdit = value => ({
     body: JSON.stringify(value),
 });
 
+// NOTE: some problem here
 export const createUrlForSheetRetrieve = bookId => (
     `${wsEndpoint}/tabular-books/${bookId}/?${p({ fields: ['id'] })}`
 );
@@ -67,6 +69,7 @@ export const createParamsForSheetRetrieve = sheets => ({
     }),
 });
 
+// NOTE: some problem here
 export const createUrlForSheetOptionsSave = bookId => (
     `${wsEndpoint}/tabular-books/${bookId}/?${p({ fields: ['id'] })}`
 );
