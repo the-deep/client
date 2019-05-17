@@ -79,7 +79,7 @@ export default class Conditional extends React.PureComponent {
         const { widget: { properties: { addedFrom } }, widgetType, isView } = this.props;
 
         const Widget = isView ? (
-            fetchWidgetViewComponent(widgetId)
+            fetchWidgetViewComponent(widgetId, addedFrom)
         ) : (
             fetchWidgetTagComponent(widgetId, widgetType, addedFrom)
         );

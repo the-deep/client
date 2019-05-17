@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Faram, { FaramGroup } from '@togglecorp/faram';
+import memoize from 'memoize-one';
 
 import GridViewLayout from '#rscv/GridViewLayout';
 
 import {
-    fetchWidget,
+    fetchWidgetViewComponent,
+    hasWidgetViewComponent,
     VIEW,
 } from '#widgets';
 
@@ -42,6 +44,11 @@ export default class Entry extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    getWidgets = memoize(widgets => (
+        widgets.filter(
+            w => hasWidgetViewComponent(w.widgetId, w.properties.addedFrom),
+        )
+    ))
 
     renderWidgetHeader = (widget) => {
         const { title } = widget;
@@ -66,6 +73,7 @@ export default class Entry extends React.PureComponent {
         const {
             widgetId,
             id,
+            properties: { addedFrom },
         } = widget;
 
         const {
@@ -78,7 +86,7 @@ export default class Entry extends React.PureComponent {
             },
         } = this.props;
 
-        const { viewComponent: Widget } = fetchWidget(VIEW.list, widgetId);
+        const Widget = fetchWidgetViewComponent(widgetId, addedFrom);
 
         let child;
         if (widgetId === 'excerptWidget') {
@@ -130,6 +138,8 @@ export default class Entry extends React.PureComponent {
             ${styles.entry}
         `;
 
+        const filteredWidgets = this.getWidgets(widgets);
+
         return (
             <Faram
                 className={className}
@@ -138,7 +148,7 @@ export default class Entry extends React.PureComponent {
             >
                 <GridViewLayout
                     className={className}
-                    data={widgets}
+                    data={filteredWidgets}
                     itemClassName={styles.widget}
                     itemContentModifier={this.renderWidgetContent}
                     itemHeaderModifier={this.renderWidgetHeader}

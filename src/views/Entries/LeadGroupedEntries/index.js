@@ -49,10 +49,11 @@ export default class LeadGroupedEntries extends React.PureComponent {
         widgets: this.props.widgets,
     });
 
-    renderHeader = () => {
+    render() {
+        const { className: classNameFromProps } = this.props;
         const {
             projectId,
-            headerClassName,
+            headerClassName: headerClassNameFromProps,
             lead: {
                 title: leadTitle,
                 id: leadId,
@@ -67,82 +68,59 @@ export default class LeadGroupedEntries extends React.PureComponent {
         });
 
         const className = `
-            ${headerClassName}
+            ${classNameFromProps}
+            ${styles.leadGroupedEntries}
+        `;
+
+        const headerClassName = `
+            ${headerClassNameFromProps}
             ${styles.header}
         `;
 
         // {_ts('entries', 'editEntryButtonLabel')}
         return (
-            <header className={className}>
-                <h3
-                    title={leadTitle}
-                    className={styles.heading}
-                >
-                    <div className={styles.title}>
-                        { leadTitle }
-                    </div>
-                    <FormattedDate
-                        className={styles.date}
-                        date={leadCreatedAt}
-                        mode="dd-MM-yyyy"
-                    />
-                </h3>
-                <div
-                    title={_ts('entries', 'numberOfEntriesTooltip')}
-                    className={styles.numberOfEntries}
-                >
-                    {/* FIXME: string */}
-                    <strong>{ entries.length }</strong> entries
-                </div>
-                <Cloak
-                    {...viewsAcl.editEntries}
-                    render={
-                        <Link
-                            className={styles.editEntryLink}
-                            title={_ts('entries', 'editEntryLinkTitle')}
-                            to={route}
-                        >
-                            <Icon name="edit" />
-                        </Link>
-                    }
-                />
-            </header>
-        );
-    }
-
-    renderEntries = () => {
-        const {
-            lead: {
-                entries,
-            },
-        } = this.props;
-
-        return (
-            <ListView
-                className={styles.entryList}
-                data={entries}
-                renderer={Entry}
-                rendererParams={this.getEntryParams}
-                keySelector={entryKeySelector}
-            />
-        );
-    }
-
-    render() {
-        const { className: classNameFromProps } = this.props;
-
-        const Header = this.renderHeader;
-        const Entries = this.renderEntries;
-
-        const className = `
-            ${classNameFromProps}
-            ${styles.leadGroupedEntries}
-        `;
-
-        return (
             <div className={className}>
-                <Header />
-                <Entries />
+                <header className={headerClassName}>
+                    <h3
+                        title={leadTitle}
+                        className={styles.heading}
+                    >
+                        <div className={styles.title}>
+                            { leadTitle }
+                        </div>
+                        <FormattedDate
+                            className={styles.date}
+                            date={leadCreatedAt}
+                            mode="dd-MM-yyyy"
+                        />
+                    </h3>
+                    <div
+                        title={_ts('entries', 'numberOfEntriesTooltip')}
+                        className={styles.numberOfEntries}
+                    >
+                        {/* FIXME: use string */}
+                        <strong>{ entries.length }</strong> entries
+                    </div>
+                    <Cloak
+                        {...viewsAcl.editEntries}
+                        render={
+                            <Link
+                                className={styles.editEntryLink}
+                                title={_ts('entries', 'editEntryLinkTitle')}
+                                to={route}
+                            >
+                                <Icon name="edit" />
+                            </Link>
+                        }
+                    />
+                </header>
+                <ListView
+                    className={styles.entryList}
+                    data={entries}
+                    renderer={Entry}
+                    rendererParams={this.getEntryParams}
+                    keySelector={entryKeySelector}
+                />
             </div>
         );
     }
