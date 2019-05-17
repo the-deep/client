@@ -9,7 +9,6 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    isDonor: PropTypes.bool,
     itemKey: PropTypes.number.isRequired,
     logo: PropTypes.string,
     name: PropTypes.string,
@@ -18,7 +17,6 @@ const propTypes = {
 
 const defaultProps = {
     className: undefined,
-    isDonor: false,
     logo: undefined,
     name: undefined,
     searchValue: undefined,
@@ -35,12 +33,10 @@ export default class OrganizationItem extends React.PureComponent {
         const {
             name,
             itemKey,
-            isDonor,
         } = this.props;
 
         const data = JSON.stringify({
             organizationId: itemKey,
-            isDonor,
             organizationName: name,
         });
 
@@ -51,13 +47,16 @@ export default class OrganizationItem extends React.PureComponent {
     render() {
         const {
             className,
-            isDonor,
             logo,
             name,
             longName,
             shortName,
             searchValue,
+            type,
+            organizationTypes,
         } = this.props;
+
+        const organizationType = organizationTypes[type];
 
         return (
             <div
@@ -81,20 +80,24 @@ export default class OrganizationItem extends React.PureComponent {
                     )}
                 </div>
                 <div className={styles.text}>
-                    <div className={styles.top}>
-                        <HighlightableTextOutput
-                            className={styles.name}
-                            text={name}
-                            highlightText={searchValue}
-                        />
-                    </div>
-                    <div className={styles.bottom}>
-                        <HighlightableTextOutput
-                            className={styles.abbr}
-                            text={shortName}
-                            highlightText={searchValue}
-                        />
-                    </div>
+                    <HighlightableTextOutput
+                        className={styles.name}
+                        text={name}
+                        highlightText={searchValue}
+                    />
+                    <HighlightableTextOutput
+                        className={styles.abbr}
+                        text={shortName}
+                        highlightText={searchValue}
+                    />
+                    { organizationType && (
+                        <div
+                            title={`${organizationType.title}\r\n\r\n${organizationType.description}`}
+                            className={styles.type}
+                        >
+                            { organizationType.title }
+                        </div>
+                    ) }
                 </div>
             </div>
         );

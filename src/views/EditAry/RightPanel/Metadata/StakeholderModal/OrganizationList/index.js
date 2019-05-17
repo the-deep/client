@@ -6,6 +6,7 @@ import {
     _cs,
     caseInsensitiveSubmatch,
     compareStringSearch,
+    listToMap,
 } from '@togglecorp/fujs';
 
 import Modalize from '#rscg/Modalize';
@@ -52,6 +53,20 @@ export default class OrganizationList extends React.PureComponent {
         };
     }
 
+    getOrganizationTypesMap = memoize((sources) => {
+        const {
+            organizationType,
+        } = sources;
+
+        const organizationTypesMap = listToMap(
+            organizationType,
+            d => d.id,
+            d => d,
+        );
+
+        return organizationTypesMap;
+    })
+
     getOrganizationItemRendererParams = (key, d) => ({
         itemKey: key,
         logo: d.logo,
@@ -59,6 +74,8 @@ export default class OrganizationList extends React.PureComponent {
         name: d.label,
         searchValue: this.state.searchValue,
         shortName: d.shortName,
+        type: d.organizationType,
+        organizationTypes: this.getOrganizationTypesMap(this.props.sources),
     })
 
     filterOrganization = memoize((options, value) => {
