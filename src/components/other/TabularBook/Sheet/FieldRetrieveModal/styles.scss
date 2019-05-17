@@ -1,6 +1,10 @@
-
 .container {
     padding: var(--spacing-medium);
+
+    .list {
+        display: flex;
+        flex-direction: column;
+    }
 
     .action-buttons {
         display: flex;

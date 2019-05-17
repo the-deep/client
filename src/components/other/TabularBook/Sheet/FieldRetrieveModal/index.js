@@ -95,6 +95,7 @@ export default class FieldRetrieveModal extends React.PureComponent {
                 showHaze
             >
                 <ListSelection
+                    listClassName={styles.list}
                     label={_ts('tabular.fieldRetrieveModal', 'fieldsLabel')} // Fields to retrieve
                     disabled={disabled}
                     labelSelector={FieldRetrieveModal.labelSelector}
