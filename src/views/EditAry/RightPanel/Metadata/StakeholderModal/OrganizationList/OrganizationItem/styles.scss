@@ -25,22 +25,20 @@
         flex-grow: 1;
         padding: var(--spacing-medium) 0;
 
-        .top {
-            .name {
-                padding: 0 var(--spacing-medium);
-                font-size: var(--font-size-large);
-            }
+        .name {
+            padding: 0 var(--spacing-medium);
+            font-size: var(--font-size-large);
         }
 
-        .bottom {
-            display: flex;
-            align-items: flex-start;
+        .abbr {
+            flex-grow: 1;
+            padding: 0 var(--spacing-medium);
+            color: var(--color-text-label);
+        }
 
-            .abbr {
-                flex-grow: 1;
-                padding: 0 var(--spacing-medium);
-                color: var(--color-text-label);
-            }
+        .type {
+            padding: 0 var(--spacing-medium);
+            font-size: var(--font-size-small);
         }
     }
 
