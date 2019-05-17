@@ -94,11 +94,6 @@ export default class OrganizationItem extends React.PureComponent {
                             text={shortName}
                             highlightText={searchValue}
                         />
-                        { isDonor && (
-                            <div className={styles.donorFlag}>
-                                Donor
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>

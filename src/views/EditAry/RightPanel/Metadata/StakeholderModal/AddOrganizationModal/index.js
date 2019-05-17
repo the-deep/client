@@ -69,7 +69,6 @@ const requests = {
             const newOrganization = {
                 key: response.id,
                 label: response.title,
-                donor: response.donor,
                 shortName: response.shortName,
                 logo: response.logoUrl,
             };
@@ -109,7 +108,6 @@ export default class AddOrganizationModal extends React.PureComponent {
         fields: {
             title: [requiredCondition],
             shortName: [requiredCondition],
-            donor: [],
             // longName: [requiredCondition],
             url: [urlCondition, requiredCondition],
             organizationType: [requiredCondition],
@@ -275,10 +273,6 @@ export default class AddOrganizationModal extends React.PureComponent {
                             options={organizationTypeList}
                             keySelector={idSelector}
                             labelSelector={titleSelector}
-                        />
-                        <Checkbox
-                            faramElementName="donor"
-                            label="Donor"
                         />
                         <Label
                             className={styles.logoTitle}
