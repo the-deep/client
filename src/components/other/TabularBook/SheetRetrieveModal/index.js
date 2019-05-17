@@ -3,8 +3,6 @@ import React from 'react';
 
 import Button from '#rsca/Button';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
-import Modal from '#rscv/Modal';
-import ModalBody from '#rscv/Modal/Body';
 import ListSelection from '#rsci/ListSelection';
 import FloatingContainer from '#rscv/FloatingContainer';
 import {
@@ -95,6 +93,7 @@ export default class SheetRetrieveModal extends React.PureComponent {
                 showHaze
             >
                 <ListSelection
+                    listClassName={styles.retrieveList}
                     label={_ts('tabular.sheetRetrieveModal', 'sheetsLabel')} // Sheets to retrieve
                     disabled={disabled}
                     labelSelector={SheetRetrieveModal.labelSelector}

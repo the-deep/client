@@ -14,6 +14,7 @@ const propTypes = {
     fileName: PropTypes.string,
     format: PropTypes.string,
     notFound: PropTypes.bool,
+    pending: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -22,6 +23,7 @@ const defaultProps = {
     fileName: '',
     format: 'png',
     notFound: false,
+    pending: false,
 };
 
 export default class FilePreview extends React.PureComponent {
@@ -33,9 +35,20 @@ export default class FilePreview extends React.PureComponent {
             className,
             format,
             fileUrl,
+            pending,
             notFound,
             fileName,
         } = this.props;
+
+        if (pending) {
+            return (
+                <div className={_cs(styles.notFound, className)}>
+                    <Message>
+                        {_ts('components.internalGallery', 'loadingFileLabel')}
+                    </Message>
+                </div>
+            );
+        }
 
         if (!notFound && (format === 'png' || format === 'svg')) {
             return (
