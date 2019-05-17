@@ -47,9 +47,6 @@ const getOptions = (sourceType, sources, options) => {
     switch (sourceType) {
         case 'countries':
             return sources.countries;
-        case 'donors':
-            // donor is subset of organization
-            return sources.organizations;
         case 'organizations':
             return sources.organizations;
         default:
@@ -108,7 +105,7 @@ export const renderWidget = (k, data, sources, otherProps) => {
 };
 
 export const isDroppableWidget = (sourceType, fieldType) => (
-    ((sourceType === 'organizations' || sourceType === 'donors') && fieldType === 'multiselect')
+    (sourceType === 'organizations' && fieldType === 'multiselect')
 );
 
 // eslint-disable-next-line import/prefer-default-export

@@ -53,7 +53,6 @@ export default class OrganizationList extends React.PureComponent {
     }
 
     getOrganizationItemRendererParams = (key, d) => ({
-        isDonor: d.donor,
         itemKey: key,
         logo: d.logo,
         longName: d.longName,
