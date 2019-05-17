@@ -25,7 +25,7 @@ const defaultProps = {
 };
 
 @FaramErrorIndicatorElement
-export default class Tab extends React.PureComponent {
+export default class TabTitle extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 

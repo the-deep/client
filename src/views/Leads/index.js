@@ -17,13 +17,14 @@ import Pager from '#rscv/Pager';
 import {
     reverseRoute,
     doesObjectHaveNoData,
+    _cs,
 } from '@togglecorp/fujs';
 import modalize from '#rscg/Modalize';
-import { isBeta as isBetaEnv } from '#config/env';
+import { isBeta } from '#config/env';
 
 import Cloak from '#components/general/Cloak';
 import MultiViewContainer from '#rscv/MultiViewContainer';
-import FixedTabs from '#rscv/FixedTabs';
+import ScrollTabs from '#rscv/ScrollTabs';
 import {
     pathNames,
     viewsAcl,
@@ -53,6 +54,8 @@ import {
 
     removeLeadAction,
     patchLeadAction,
+
+    activeUserSelector,
 } from '#redux';
 import _ts from '#ts';
 import noSearch from '#resources/img/no-search.png';
@@ -76,6 +79,9 @@ const AccentModalButton = modalize(AccentButton);
 const propTypes = {
     filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
+    activeUser: PropTypes.shape({
+        userId: PropTypes.number,
+    }),
     activePage: PropTypes.number.isRequired,
     activeSort: PropTypes.string.isRequired,
     activeProject: PropTypes.number.isRequired,
@@ -96,10 +102,12 @@ const propTypes = {
 
 const defaultProps = {
     totalLeadsCount: 0,
+    activeUser: {},
 };
 
 const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
+    activeUser: activeUserSelector(state),
 
     totalLeadsCount: totalLeadsCountForProjectSelector(state),
     activePage: leadPageActivePageSelector(state),
@@ -131,8 +139,6 @@ const tabsIcons = {
     [GRID_VIEW]: 'grid',
 };
 
-const hideExperimental = ({ isExperimental }) => !isExperimental;
-
 @connect(mapStateToProps, mapDispatchToProps)
 export default class Leads extends React.PureComponent {
     static propTypes = propTypes;
@@ -142,17 +148,14 @@ export default class Leads extends React.PureComponent {
     static sortKeySelector = s => s.key
     static sortLabelSelector = s => s.label
 
-    static tabsModifier = key => (
-        <Icon name={tabsIcons[key]} />
-    );
-
-    static tabs = {
-        [TABLE_VIEW]: TABLE_VIEW,
-        [GRID_VIEW]: GRID_VIEW,
-    };
+    static tabIconRendererParams = key => ({
+        name: tabsIcons[key],
+    })
 
     constructor(props) {
         super(props);
+
+        const { activeUser } = this.props;
 
         this.headers = [
             {
@@ -291,21 +294,42 @@ export default class Leads extends React.PureComponent {
             redirectTo: undefined,
         };
 
-        this.views = {
-            [TABLE_VIEW]: {
-                component: this.renderTableView,
-                wrapContainer: true,
-                mount: true,
-                lazyMount: true,
-            },
+        // FIXME: remove this logic after enabling lead grid view in beta
+        if (this.shouldHideGrid(activeUser)) {
+            this.views = {
+                [TABLE_VIEW]: {
+                    component: this.renderTableView,
+                    wrapContainer: true,
+                    mount: true,
+                    lazyMount: true,
+                },
+            };
 
-            [GRID_VIEW]: {
-                component: this.renderGridView,
-                wrapContainer: true,
-                mount: true,
-                lazyMount: true,
-            },
-        };
+            this.tabs = {
+                [TABLE_VIEW]: TABLE_VIEW,
+            };
+        } else {
+            this.views = {
+                [TABLE_VIEW]: {
+                    component: this.renderTableView,
+                    wrapContainer: true,
+                    mount: true,
+                    lazyMount: true,
+                },
+
+                [GRID_VIEW]: {
+                    component: this.renderGridView,
+                    wrapContainer: true,
+                    mount: true,
+                    lazyMount: true,
+                },
+            };
+
+            this.tabs = {
+                [TABLE_VIEW]: TABLE_VIEW,
+                [GRID_VIEW]: GRID_VIEW,
+            };
+        }
 
         this.lastFilters = {};
         this.lastProject = {};
@@ -318,19 +342,7 @@ export default class Leads extends React.PureComponent {
             filters,
             activePage,
             leadsPerPage,
-            view,
-            setLeadPageView,
         } = this.props;
-
-        // TODO: Remove this after enabling grids view
-        // in beta
-        if (view === GRID_VIEW && !isBetaEnv) {
-            setLeadPageView({ view: GRID_VIEW });
-        } else {
-            setLeadPageView({ view: TABLE_VIEW });
-        }
-
-        window.location.replace(`#/${TABLE_VIEW}`);
 
         const request = new LeadsRequest({
             setState: params => this.setState(params),
@@ -437,6 +449,10 @@ export default class Leads extends React.PureComponent {
             sortKey,
         };
     }
+
+    shouldHideGrid = activeUser => (
+        !activeUser.isExperimental && isBeta
+    )
 
     handleSearchSimilarLead = (row) => {
         this.props.setLeadPageFilter({
@@ -550,19 +566,20 @@ export default class Leads extends React.PureComponent {
         return (
             <React.Fragment>
                 <FilterLeadsForm className={styles.filters} />
-                <Cloak
-                    hide={hideExperimental}
-                    render={
-                        <FixedTabs
-                            tabs={Leads.tabs}
-                            useHash
-                            replaceHistory
-                            className={styles.tabs}
-                            modifier={Leads.tabsModifier}
-                            onClick={this.handleTabClick}
-                            defaultHash={this.props.view}
-                        />
-                    }
+                <ScrollTabs
+                    tabs={this.tabs}
+                    // disabled={this.shouldHideGrid(this.props.activeUser)}
+                    useHash
+                    replaceHistory
+                    className={_cs(
+                        styles.tabs,
+                        this.shouldHideGrid(this.props.activeUser) && styles.hidden,
+                    )}
+                    // FIXME: isActive is passed inside Icon
+                    renderer={Icon}
+                    rendererParams={Leads.tabIconRendererParams}
+                    onClick={this.handleTabClick}
+                    defaultHash={this.props.view}
                 />
                 <Cloak
                     {...viewsAcl.addLeads}
