@@ -67,10 +67,11 @@ export const tabsForTabularBookSelector = createSelector(
 );
 
 export const fieldsMapForTabularBookSelector = createSelector(
-    sheetsForTabularBookSelector,
-    (sheets) => {
+    tabularBookSelector,
+    (book) => {
         // NOTE: don't filter out hidden fields here
         // as exceprt will not be deleted even if field is deleted
+        const sheets = book.sheets || emptyList;
         const fields = sheets
             .map(sheet => sheet.fields)
             .flat();
