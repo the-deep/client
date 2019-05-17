@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import produce from 'immer';
+import memoize from 'memoize-one';
 
 import VirtualizedListView from '#rscv/VirtualizedListView';
 import Field from './Field';
@@ -34,6 +35,8 @@ export default class TabularSheetPreview extends React.PureComponent {
             fieldStates: {},
         };
     }
+
+    getFilteredFields = memoize(fields => fields.filter(field => !field.hidden))
 
     handleFieldStateChange = (fieldKey, value) => {
         this.setState((state) => {
@@ -70,12 +73,14 @@ export default class TabularSheetPreview extends React.PureComponent {
             },
         } = this.props;
 
+        const filteredFields = this.getFilteredFields(fields);
+
         return (
             <VirtualizedListView
                 className={className}
                 keySelector={TabularSheetPreview.keySelector}
                 rendererParams={this.renderParams}
-                data={fields}
+                data={filteredFields}
                 renderer={Field}
             />
         );
