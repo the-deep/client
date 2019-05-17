@@ -23,6 +23,8 @@ const defaultProps = {
     highlights: {},
 };
 
+const emptyArray = [];
+
 export default class TabularSheetPreview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -36,7 +38,7 @@ export default class TabularSheetPreview extends React.PureComponent {
         };
     }
 
-    getFilteredFields = memoize(fields => fields.filter(field => !field.hidden))
+    getFilteredFields = memoize((fields = emptyArray) => fields.filter(field => !field.hidden))
 
     handleFieldStateChange = (fieldKey, value) => {
         this.setState((state) => {
