@@ -1091,10 +1091,10 @@
   resolved "https://registry.yarnpkg.com/@togglecorp/fujs/-/fujs-1.3.0.tgz#c663826e60eea46129ae7531b2f2db527aff59e7"
   integrity sha512-Ymhw3uFTSbJmUcWNfytS75ZAkIR7D9QJKgBuIePVYqNpntmx5Inly7y8Ha5vPH2sOYIzzJ1Pc8qZuk3iNjJ0QA==
 
-"@togglecorp/fujs@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@togglecorp/fujs/-/fujs-1.6.0.tgz#a163bc753094ede61987499f653a71bcde503f1c"
-  integrity sha512-TSAWn6KqkWoeZXeluarY4q2Unz0LQbcG819gHgzBAX0S7O+Hm6Ay8QaD5dnSBEw4BnVeKdLIBzdffYayvnureA==
+"@togglecorp/fujs@^1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@togglecorp/fujs/-/fujs-1.6.1.tgz#a6f93228563cd99491ba09cb8d841af44f503f11"
+  integrity sha512-WgdUxHoG+EOdah/R1hGaKs79ONz5o2ACJ5vsxk624WHNArdxwL3TOGw5KE8n8E3cQX3OjPDi12ms9x21220ruQ==
 
 "@togglecorp/ravl@^1.2.0":
   version "1.2.2"

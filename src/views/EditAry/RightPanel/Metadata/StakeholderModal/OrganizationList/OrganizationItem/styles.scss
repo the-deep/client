@@ -27,19 +27,19 @@
         padding: $spacing-medium 0;
 
         .name {
-            padding: 0 var(--spacing-medium);
-            font-size: var(--font-size-large);
+            padding: 0 $spacing-medium;
+            font-size: $font-size-large;
         }
 
         .abbr {
             flex-grow: 1;
-            padding: 0 var(--spacing-medium);
-            color: var(--color-text-label);
+            padding: 0 $spacing-medium;
+            color: $color-text-label;
         }
 
         .type {
-            padding: 0 var(--spacing-medium);
-            font-size: var(--font-size-small);
+            padding: 0 $spacing-medium;
+            font-size: $font-size-small;
         }
     }
 
