@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import { reverseRoute } from '@togglecorp/fujs';
 
+import Numeral from '#rscv/Numeral';
 import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
@@ -19,7 +20,6 @@ import {
 import _ts from '#ts';
 import { timeFrom } from '#utils/common';
 
-import leadThumbnail from '#resources/img/lead-thumbnail.png';
 import styles from './styles.scss';
 
 const propTypes = {
@@ -56,7 +56,7 @@ export default class GridItem extends React.PureComponent {
         } = props;
         // item is wrapped by masonry
         const imgHeight = Math.max((width * thumbnailHeight) / thumbnailWidth, minHeight);
-        return imgHeight;
+        return imgHeight + 75;
     }
 
     static shouldHideEntryAdd = ({ hasAnalysisFramework, entryPermissions }) => (
@@ -99,22 +99,6 @@ export default class GridItem extends React.PureComponent {
         return icon;
     }
 
-    getThumbnail = () => {
-        const { lead } = this.props;
-
-        let thumbnail = `url(${leadThumbnail})`;
-
-        const imageMimes = [mimeType.png, mimeType.jpg, mimeType.jpeg, mimeType.fig];
-
-        if (lead.thumbnail) {
-            thumbnail = `url(${lead.thumbnail})`;
-        } else if (lead.attachment && imageMimes.includes(lead.attachment.mimeType)) {
-            thumbnail = `url(${lead.attachment.file})`;
-        }
-
-        return thumbnail;
-    }
-
     handleMarkAsProcessedClick = () => {
         this.props.onMarkProcessed(this.props.lead);
     }
@@ -133,6 +117,31 @@ export default class GridItem extends React.PureComponent {
 
     handleLeadClick = () => {
         this.props.onLeadClick(this.props.itemIndex);
+    }
+
+    renderThumbnail = () => {
+        const { lead } = this.props;
+        const mimeIcon = this.getMimeIcon();
+
+        let thumbnailImage;
+
+        const imageMimes = [mimeType.png, mimeType.jpg, mimeType.jpeg, mimeType.fig];
+
+        if (lead.thumbnail) {
+            thumbnailImage = lead.thumbnail;
+        } else if (lead.attachment && imageMimes.includes(lead.attachment.mimeType)) {
+            thumbnailImage = lead.attachment.file;
+        }
+
+        if (thumbnailImage) {
+            return <img alt="thumbnail" src={thumbnailImage} />;
+        }
+        return (
+            <Icon
+                name={mimeIcon}
+                className={styles.mimeIcon}
+            />
+        );
     }
 
     renderMarkAction = () => {
@@ -223,9 +232,7 @@ export default class GridItem extends React.PureComponent {
     render() {
         const { lead, className, style } = this.props;
         const Actions = this.renderActions;
-        const isProcessed = lead.status === 'processed';
-        const thumbnail = this.getThumbnail();
-        const mimeIcon = this.getMimeIcon();
+        const Thumbnail = this.renderThumbnail;
 
         return (
             <div
@@ -234,25 +241,13 @@ export default class GridItem extends React.PureComponent {
             >
                 <div
                     className={styles.thumbnailWrapper}
-                    style={{
-                        backgroundImage: thumbnail,
-                    }}
                     role="button"
                     tabIndex="-1"
                     onKeyDown={noop}
                     onClick={this.handleLeadClick}
-                />
-                <div className={classNames({
-                    [styles.documentTypePending]: !isProcessed,
-                    [styles.documentTypeProcessed]: isProcessed,
-                })}
                 >
-                    <Icon
-                        className={styles.icon}
-                        name={mimeIcon}
-                    />
+                    <Thumbnail />
                 </div>
-
                 <Actions />
 
                 <div className={styles.leadInfo}>
@@ -276,20 +271,38 @@ export default class GridItem extends React.PureComponent {
                         >
                             {_ts('leadsGrid', 'publisherLabel')}: {lead.createdByName}
                         </Link>
+                        <div className={styles.status}>
+                            Status: {lead.status}
+                        </div>
                         <div className={styles.leadInfoCounts}>
                             {
                                 lead.pageCount > 1 ? (
                                     <span>
-                                        {lead.pageCount || 0} {_ts('leadsGrid', 'pagesLabel')}
+                                        <Numeral
+                                            className={styles.numericValue}
+                                            value={lead.pageCount}
+                                            precision={0}
+                                        />
+                                        {_ts('leadsGrid', 'pagesLabel')}
                                     </span>) :
                                     (
                                         <span>
-                                            {lead.wordCount || 0} {_ts('leadsGrid', 'wordsLabel')}
+                                            <Numeral
+                                                className={styles.numericValue}
+                                                value={lead.wordCount}
+                                                precision={0}
+                                            />
+                                            {_ts('leadsGrid', 'wordsLabel')}
                                         </span>
                                     )
                             }
                             <span className={styles.entries}>
-                                {lead.noOfEntries || 0} {_ts('leadsGrid', 'entriesLabel')}
+                                <Numeral
+                                    className={styles.numericValue}
+                                    value={lead.noOfEntries}
+                                    precision={0}
+                                />
+                                {_ts('leadsGrid', 'entriesLabel')}
                             </span>
                             <span className={styles.timeFromBottom}>
                                 {timeFrom(lead.createdAt)}

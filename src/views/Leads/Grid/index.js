@@ -2,13 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Masonry } from '@timilsinabishal/react-components';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import { isListEqual } from '@togglecorp/fujs';
-import Modal from '#rscv/Modal';
+
 import {
     leadsForProjectGridViewSelector,
 } from '#redux';
-
 import LeadItem from '../GridItem';
 import LeadPreview from '../LeadPreview';
 
@@ -95,6 +93,17 @@ export default class LeadGrid extends React.Component {
         });
     }
 
+    renderLoadingAnimation = () => (
+        <div className={styles.loading}>
+            <div className={styles.loader}>
+                <div />
+                <div />
+                <div />
+                <div />
+            </div>
+        </div>
+    );
+
     renderItem = ({ key, style, item, itemIndex }) => (
         <LeadItem
             key={key}
@@ -114,6 +123,7 @@ export default class LeadGrid extends React.Component {
         const { loading, onEndReached, leads, emptyComponent: EmptyComponent } = this.props;
 
         const previewLead = leads[this.state.activeLeadIndex];
+        const LoadingAnimation = this.renderLoadingAnimation;
 
         if (leads.length > 0) {
             return (
@@ -126,9 +136,7 @@ export default class LeadGrid extends React.Component {
                             getItemHeight={LeadItem.getItemHeight}
                             containerClassName={styles.masonry}
                             alignCenter
-                            loadingElement={
-                                <LoadingAnimation large />
-                            }
+                            loadingElement={<LoadingAnimation />}
                             scrollAnchor={this.masonryRef}
                             columnWidth={columnWidth}
                             columnGutter={columnGutter}
