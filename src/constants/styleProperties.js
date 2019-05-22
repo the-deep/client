@@ -7,6 +7,8 @@ const styleProperties = {
         colorNavbarActiveMenuItemBorder: defaultColors.colorAccent,
         colorNavbarActiveMenuItem: defaultColors.colorAccent,
         colorNavbarMenuItemHover: defaultColors.colorAccent,
+        colorHighlight: '#ffff8d',
+        colorTextOnHightlight: defaultColors.colorTextOnLight,
     },
 
     dimens: {

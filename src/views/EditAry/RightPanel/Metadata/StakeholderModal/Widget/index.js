@@ -79,13 +79,12 @@ class Widget extends React.PureComponent {
             if (parsedData && parsedData.organizationId) {
                 const {
                     organizationId,
-                    isDonor,
                     organizationName,
                 } = parsedData;
                 if (!value) {
                     onChange([organizationId]);
                 } else if (value.findIndex(v => v === organizationId) === -1) {
-                    const intercept = !isDonor && this.props.sourceType === 'donors';
+                    const intercept = false;
                     if (intercept) {
                         this.setState({
                             showConfirmation: true,
@@ -143,8 +142,6 @@ class Widget extends React.PureComponent {
                     onClose={this.handleConfirmation}
                 >
                     <p>
-                        {/* FIXME: use strings */}
-                        <b>{droppedOrganizationName}</b> is not a donor organization.
                         Do you want to continue?
                     </p>
                 </Confirm>

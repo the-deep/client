@@ -6,7 +6,9 @@
 
     .highlight {
         display: inline;
-        background-color: yellow;
+        background-color: var(--color-highlight);
+        color: var(--color-text-on-highlight);
+        // background-color: yellow;
     }
 
     .end {
