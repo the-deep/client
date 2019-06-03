@@ -28,7 +28,6 @@ const InputRow = ({ index }) => (
             <TextInput
                 className={styles.input}
                 faramElementName="tooltip"
-                autoFocus
                 label={_ts('widgets.editor.matrix1d', 'unnamedCellTooltip')}
                 selectOnFocus
             />

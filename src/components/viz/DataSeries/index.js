@@ -607,7 +607,7 @@ export default class DataSeries extends React.PureComponent {
                         <LoadingAnimation
                             className={styles.processing}
                             // FIXME: use strings
-                            message="Data processing is in progress"
+                            message="Processing graph..."
                         />
                     </div>
                 }
@@ -615,7 +615,7 @@ export default class DataSeries extends React.PureComponent {
                     <div className={styles.content}>
                         <Message>
                             {/* FIXME: Use strings */}
-                            Data processing has failed
+                            Processing graph failed
                         </Message>
                     </div>
                 }
