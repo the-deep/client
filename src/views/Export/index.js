@@ -187,6 +187,19 @@ export default class Export extends React.PureComponent {
         }
 
         if (oldActiveProject !== newActiveProject) {
+            // Reset everything
+            this.setState({
+                activeExportTypeKey: 'word',
+                previewId: undefined,
+                reportStructure: undefined,
+                decoupledEntries: true,
+
+                selectedLeads: {},
+                pendingLeads: true,
+                pendingAf: true,
+                pendingGeoOptions: true,
+            });
+
             if (this.analysisFrameworkRequest) {
                 this.analysisFrameworkRequest.stop();
             }
