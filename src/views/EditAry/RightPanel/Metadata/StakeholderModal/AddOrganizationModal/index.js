@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Faram, {
     requiredCondition,
-    urlCondition,
+    lenientUrlCondition,
 } from '@togglecorp/faram';
 
 import Modal from '#rscv/Modal';
@@ -109,7 +109,7 @@ export default class AddOrganizationModal extends React.PureComponent {
             title: [requiredCondition],
             shortName: [requiredCondition],
             // longName: [requiredCondition],
-            url: [urlCondition, requiredCondition],
+            url: [lenientUrlCondition, requiredCondition],
             organizationType: [requiredCondition],
             logo: [],
         },

@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import {
     requiredCondition,
-    urlCondition,
+    lenientUrlCondition,
 } from '@togglecorp/faram';
 
 import Message from '#rscv/Message';
@@ -76,7 +76,7 @@ export default class LeadFormItem extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static isUrlValid = url => (requiredCondition(url).ok && urlCondition(url).ok)
+    static isUrlValid = url => (requiredCondition(url).ok && lenientUrlCondition(url).ok)
 
     constructor(props) {
         super(props);
