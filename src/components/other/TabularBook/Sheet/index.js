@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import memoize from 'memoize-one';
 
+import { isValidDateString } from '#rsci/DateInput';
 import Numeral from '#rscv/Numeral';
 import modalize from '#rscg/Modalize';
 import Button from '#rsca/Button';
@@ -49,6 +50,8 @@ import styles from './styles.scss';
 const ModalButton = modalize(Button);
 
 const Taebul = Searchable(Sortable(ColumnWidth(NormalTaebul)));
+
+const isFalsyDate = val => isFalsyStr(val) || !isValidDateString(val);
 
 const getFieldStat = (value) => {
     const invalidCount = value.filter(x => x.invalid).length;
@@ -222,12 +225,12 @@ export default class Sheet extends React.PureComponent {
             } else if (searchTermType === DATA_TYPE.datetime && type === DATA_TYPE.datetime) {
                 const { dateFrom, dateTo } = searchTermForColumn;
                 if (empty || invalid) {
-                    return isFalsyStr(dateFrom) && isFalsyStr(dateTo);
+                    return isFalsyDate(dateFrom) && isFalsyDate(dateTo);
                 }
                 return (
-                    ((isFalsyStr(dateFrom) && isFalsyStr(dateTo)) || isTruthyStr(value)) &&
-                    (isFalsyStr(dateFrom) || new Date(value) >= new Date(dateFrom)) &&
-                    (isFalsyStr(dateTo) || new Date(value) <= new Date(dateTo))
+                    ((isFalsyDate(dateFrom) && isFalsyDate(dateTo)) || isTruthyStr(value)) &&
+                    (isFalsyDate(dateFrom) || new Date(value) >= new Date(dateFrom)) &&
+                    (isFalsyDate(dateTo) || new Date(value) <= new Date(dateTo))
                 );
             } else if (
                 (searchTermType === DATA_TYPE.string || searchTermType === DATA_TYPE.geo) &&
