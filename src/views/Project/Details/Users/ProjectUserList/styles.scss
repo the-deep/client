@@ -14,20 +14,7 @@
 
     .table-wrapper {
         flex-grow: 1;
+        background-color: var(--color-foreground);
         overflow: auto;
-
-        .table {
-            :global {
-                .header {
-                    z-index: 1;
-                    background-color: var(--color-foreground-alt);
-                }
-
-                .row {
-                    border-bottom: var(--width-separator-thin) solid var(--color-separator);
-                    background-color: transparent;
-                }
-            }
-        }
     }
 }

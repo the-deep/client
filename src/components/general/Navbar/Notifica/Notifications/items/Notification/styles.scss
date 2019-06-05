@@ -57,5 +57,9 @@
             margin-top: var(--spacing-medium-alt);
         }
     }
+
+    &:hover {
+        background-color: var(--color-background-hover);
+    }
 }
 

@@ -1,4 +1,3 @@
-
 .project-usergroup-list {
     display: flex;
     position: relative;
@@ -15,16 +14,5 @@
     .table {
         flex-grow: 1;
         overflow-y: auto;
-
-        :global {
-            .header {
-                background-color: var(--color-foreground-alt);
-            }
-
-            .row {
-                border-bottom: var(--width-separator-thin) solid var(--color-separator);
-                background-color: transparent;
-            }
-        }
     }
 }

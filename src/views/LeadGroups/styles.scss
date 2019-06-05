@@ -1,4 +1,3 @@
-
 .lead-groups {
     .header {
         display: flex;
@@ -34,6 +33,7 @@
         .table-container {
             position: relative;
             flex-grow: 1;
+            background-color: var(--color-foreground);
             overflow-y: auto;
 
             .lead-groups-table {
