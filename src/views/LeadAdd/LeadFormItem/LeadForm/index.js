@@ -5,7 +5,7 @@ import memoize from 'memoize-one';
 import { formatDateToString } from '@togglecorp/fujs';
 import Faram, {
     requiredCondition,
-    lenientUrlCondition,
+    urlCondition,
     dateCondition,
 } from '@togglecorp/faram';
 
@@ -155,7 +155,7 @@ export default class LeadForm extends React.PureComponent {
                 },
                 [LEAD_TYPE.website]: {
                     ...commonFields,
-                    url: [requiredCondition, lenientUrlCondition],
+                    url: [requiredCondition, urlCondition],
                     website: [requiredCondition],
                 },
                 [LEAD_TYPE.text]: {
