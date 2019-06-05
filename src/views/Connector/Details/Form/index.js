@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import Faram, { FaramGroup, requiredCondition, lenientUrlCondition } from '@togglecorp/faram';
+import Faram, { FaramGroup, requiredCondition, urlCondition } from '@togglecorp/faram';
 
 import AccentButton from '#rsca/Button/AccentButton';
 import DangerButton from '#rsca/Button/DangerButton';
@@ -452,7 +452,7 @@ export default class ConnectorDetailsForm extends React.PureComponent {
         connectorSource.options.forEach((o) => {
             const validation = [];
             if (o.fieldType === 'url') {
-                validation.push(lenientUrlCondition);
+                validation.push(urlCondition);
             }
             paramFields[o.key] = validation;
         });
