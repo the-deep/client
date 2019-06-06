@@ -272,6 +272,8 @@ export default class FieldEditModal extends React.PureComponent {
                 key={type}
                 className={styles.container}
                 onInvalidate={this.handleInvalidate}
+                closeOnEscape
+                onClose={closeModal}
                 focusTrap
                 showHaze
             >

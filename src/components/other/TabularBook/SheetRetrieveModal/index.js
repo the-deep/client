@@ -85,10 +85,13 @@ export default class SheetRetrieveModal extends React.PureComponent {
             disabled,
         } = this.props;
         const { selectedSheets } = this.state;
+
         return (
             <FloatingContainer
                 className={styles.container}
                 onInvalidate={this.handleInvalidate}
+                closeOnEscape
+                onClose={closeModal}
                 focusTrap
                 showHaze
             >
