@@ -191,6 +191,8 @@ export default class SheetEditModal extends React.PureComponent {
             <FloatingContainer
                 className={styles.container}
                 onInvalidate={this.handleInvalidate}
+                closeOnEscape
+                onClose={closeModal}
                 focusTrap
                 showHaze
             >

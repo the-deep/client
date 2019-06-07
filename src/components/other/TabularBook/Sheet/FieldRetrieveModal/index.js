@@ -91,6 +91,8 @@ export default class FieldRetrieveModal extends React.PureComponent {
             <FloatingContainer
                 className={styles.container}
                 onInvalidate={this.handleInvalidate}
+                closeOnEscape
+                onClose={closeModal}
                 focusTrap
                 showHaze
             >
