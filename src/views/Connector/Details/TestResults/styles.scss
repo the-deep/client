@@ -13,6 +13,7 @@
 
     .table-container {
         flex-grow: 1;
+        background-color: var(--color-foreground);
         overflow-y: auto;
 
         .table {
