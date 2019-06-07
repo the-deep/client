@@ -12,6 +12,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import Icon from '#rscg/Icon';
 import ScrollTabs from '#rscv/ScrollTabs';
 import MultiViewContainer from '#rscv/MultiViewContainer';
+import WordCloud from '#rscz/ReactWordCloud';
 import Modal from '#rscv/Modal';
 import RotatingInput from '#rsci/RotatingInput';
 import ModalBody from '#rscv/Modal/Body';
@@ -20,7 +21,6 @@ import SimpleHorizontalBarChart from '#rscz/SimpleHorizontalBarChart';
 import SimpleVerticalBarChart from '#rscz/SimpleVerticalBarChart';
 import Histogram from '#rscz/Histogram';
 import previewImage from '#resources/img/filler-viz.png';
-import WordCloud from '#rscz/WordCloud';
 import modalize from '#rscg/Modalize';
 import BoundError from '#rscg/BoundError';
 
@@ -69,6 +69,11 @@ const chartMarginsSmall = {
     right: 2,
     bottom: 2,
     left: 2,
+};
+
+const wordCloudOptions = {
+    rotations: 1,
+    rotationAngles: [0],
 };
 
 const sortingLabels = [
@@ -188,6 +193,7 @@ Tab.defaultProps = {
 };
 
 
+// eslint-disable-next-line
 @BoundError(ComponentError)
 export default class DataSeries extends React.PureComponent {
     static propTypes = propTypes;
@@ -237,8 +243,8 @@ export default class DataSeries extends React.PureComponent {
             });
         });
         return Object.keys(tokens).map(key => ({
-            count: tokens[key],
-            value: key,
+            value: tokens[key],
+            text: key,
         }));
     });
 
@@ -334,10 +340,12 @@ export default class DataSeries extends React.PureComponent {
                         } = {},
                     } = {},
                 } = this.props;
+
                 return {
                     className: styles.wordCloud,
 
-                    data: this.getWordCloudData(series),
+                    words: this.getWordCloudData(series),
+                    options: wordCloudOptions,
                     labelSelector: valueSelector,
                     frequencySelector,
                 };
