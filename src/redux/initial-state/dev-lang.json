@@ -944,7 +944,8 @@
         "-58312660": "Mine",
         "-92759559": "Private",
         "-59389": "Public",
-        "-94818927": "Note: Project visibility cannot be changed once the project is created"
+        "-94818927": "Note: Project visibility cannot be changed once the project is created",
+        "-40643314": "Grouped bar chart"
     },
     "links": {
         "browserExtension": {
@@ -2250,7 +2251,8 @@
             "sparklines": 4019,
             "parallelCoordinates": 4020,
             "googleOrgChart": 4022,
-            "clusterForceLayout": 4021
+            "clusterForceLayout": 4021,
+            "groupedBarChart": -40643314
         },
         "stringManagement": {
             "devLangSaveTitle": 12001,
