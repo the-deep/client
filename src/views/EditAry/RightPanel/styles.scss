@@ -30,8 +30,20 @@ $height-tabs: 32px;
         @extend %tab-content;
     }
 
+    .container {
+        display: none;
+        position: relative;
+        height: calc(100% - #{$height-tabs});
+
+        &.active {
+            display: block;
+        }
+    }
+
     .score {
         @extend %tab-content;
+        width: 100%;
+        height: 100%;
     }
 
     .save-button {

@@ -14,6 +14,8 @@ import {
     focusesSelector,
     editArySelectedSectorsSelector,
     editArySelectedFocusesSelector,
+    shouldShowHumanitarianAccess,
+    shouldShowCrossSector,
 } from '#redux';
 import _ts from '#ts';
 import _cs from '#cs';
@@ -79,34 +81,6 @@ export default class Summary extends React.PureComponent {
         return selectedSectors;
     })
 
-    // FIXME: this should be more dynamic later on
-    static shouldShowHumanitarianAccess = memoize((focuses, selectedFocuses) => {
-        const humanitarianAccessFocus = focuses.find(
-            focus => focus.title.toLowerCase().trim() === 'humanitarian access',
-        );
-        if (!humanitarianAccessFocus) {
-            return false;
-        }
-        const index = selectedFocuses.findIndex(
-            focus => String(focus) === String(humanitarianAccessFocus.id),
-        );
-        return index !== -1;
-    })
-
-    // FIXME: this should be more dynamic later on
-    static shouldShowCrossSector = memoize((focuses, selectedFocuses) => {
-        const crossSectorFocus = focuses.find(
-            focus => focus.title.toLowerCase().trim() === 'cross sector',
-        );
-        if (!crossSectorFocus) {
-            return false;
-        }
-        const index = selectedFocuses.findIndex(
-            focus => String(focus) === String(crossSectorFocus.id),
-        );
-        return index !== -1;
-    })
-
     constructor(props) {
         super(props);
         this.state = {
@@ -151,6 +125,10 @@ export default class Summary extends React.PureComponent {
         return undefined;
     })
 
+    shouldShowHumanitarianAccess = memoize(shouldShowHumanitarianAccess)
+
+    shouldShowCrossSector = memoize(shouldShowCrossSector)
+
     handleActiveSectorChange = (key) => {
         const {
             onActiveSectorChange,
@@ -194,11 +172,11 @@ export default class Summary extends React.PureComponent {
         } = this.props;
 
         const sectorTabs = Summary.getSelectedSector(sectors, selectedSectors);
-        const humanitarianAccessVisibility = Summary.shouldShowHumanitarianAccess(
+        const humanitarianAccessVisibility = this.shouldShowHumanitarianAccess(
             focuses,
             selectedFocuses,
         );
-        const crossSectorVisibility = Summary.shouldShowCrossSector(
+        const crossSectorVisibility = this.shouldShowCrossSector(
             focuses,
             selectedFocuses,
         );
