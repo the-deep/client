@@ -11,6 +11,7 @@ import {
     decodeDate,
     isNotDefined,
     isDefined,
+    listToMap,
 } from '@togglecorp/fujs';
 
 import {
@@ -27,6 +28,7 @@ import {
     assessmentMatrixPillarsSelector,
     assessmentScoreScalesSelector,
     assessmentScoreBucketsSelector,
+    assessmentFocusesSelector,
     aryTemplateMetadataSelector,
     aryTemplateMethodologySelector,
 } from '../domainData/props-with-state';
@@ -155,26 +157,6 @@ const createFieldSchema = (field, shouldBeOptional) => {
                 ? [requiredCondition]
                 : [];
     }
-};
-
-const createScoreSchema = (scorePillars = [], scoreMatrixPillars = []) => {
-    const scoreSchema = {
-        fields: {
-            pillars: [],
-            matrixPillars: [],
-
-            finalScore: [],
-        },
-    };
-
-    scorePillars.forEach((pillar) => {
-        scoreSchema.fields[`${pillar.id}-score`] = [];
-    });
-    scoreMatrixPillars.forEach((pillar) => {
-        scoreSchema.fields[`${pillar.id}-matrix-score`] = [];
-    });
-
-    return scoreSchema;
 };
 
 const createAdditionalDocumentsSchema = () => {
@@ -318,7 +300,35 @@ const createMethodologySchema = (aryTemplateMethodology = {}) => {
     return schema;
 };
 
-const createSummarySchema = (sectors = []) => {
+// FIXME: this should be more dynamic later on
+export const shouldShowHumanitarianAccess = (focuses, selectedFocuses) => {
+    const humanitarianAccessFocus = focuses.find(
+        focus => focus.title.toLowerCase().trim() === 'humanitarian access',
+    );
+    if (!humanitarianAccessFocus) {
+        return false;
+    }
+    const index = selectedFocuses.findIndex(
+        focus => String(focus) === String(humanitarianAccessFocus.id),
+    );
+    return index !== -1;
+};
+
+// FIXME: this should be more dynamic later on
+export const shouldShowCrossSector = (focuses, selectedFocuses) => {
+    const crossSectorFocus = focuses.find(
+        focus => focus.title.toLowerCase().trim() === 'cross sector',
+    );
+    if (!crossSectorFocus) {
+        return false;
+    }
+    const index = selectedFocuses.findIndex(
+        focus => String(focus) === String(crossSectorFocus.id),
+    );
+    return index !== -1;
+};
+
+const createSummarySchema = (focuses, selectedSectors = [], selectedFocuses = []) => {
     const schemaForSubRow = {
         fields: {
             moderateAssistancePopulation: [],
@@ -372,48 +382,109 @@ const createSummarySchema = (sectors = []) => {
     };
 
     const schema = {
-        fields: {
-            crossSector: {
+        fields: listToMap(
+            selectedSectors,
+            sector => `sector-${sector}`,
+            () => ({
                 fields: {
-                    prioritySectors: schemaForRow,
+                    outcomes: schemaForRow,
+                    underlyingFactors: schemaForRow,
                     affectedGroups: schemaForRow,
                     specificNeedGroups: schemaForRow,
                 },
-            },
-            humanitarianAccess: {
-                fields: {
-                    priorityIssue: schemaForRow,
-                    affectedLocation: schemaForRow,
-                },
-            },
-        },
+            }),
+        ),
     };
-    sectors.forEach((sector) => {
-        schema.fields[`sector-${sector}`] = {
+
+    // Cross sector needs at least 3 sector before it can be filled
+    if (shouldShowCrossSector(focuses, selectedFocuses) && selectedSectors.length >= 3) {
+        schema.fields.crossSector = {
             fields: {
-                outcomes: schemaForRow,
-                underlyingFactors: schemaForRow,
+                prioritySectors: schemaForRow,
                 affectedGroups: schemaForRow,
                 specificNeedGroups: schemaForRow,
             },
         };
-    });
+    }
+    if (shouldShowHumanitarianAccess(focuses, selectedFocuses)) {
+        schema.fields.humanitarianAccess = {
+            fields: {
+                priorityIssue: schemaForRow,
+                affectedLocation: schemaForRow,
+            },
+        };
+    }
+
     return schema;
 };
 
+const createScoreSchema = (scorePillars = [], scoreMatrixPillars = [], sectors = []) => {
+    const scoreSchema = {
+        fields: {
+            pillars: {
+                fields: listToMap(
+                    scorePillars,
+                    pillar => pillar.id,
+                    pillar => ({
+                        fields: listToMap(
+                            pillar.questions,
+                            question => question.id,
+                            () => [],
+                        ),
+                    }),
+                ),
+            },
+
+            matrixPillars: {
+                fields: listToMap(
+                    scoreMatrixPillars,
+                    pillar => pillar.id,
+                    () => ({
+                        fields: listToMap(
+                            sectors,
+                            sector => sector,
+                            () => [],
+                        ),
+                    }),
+                ),
+            },
+
+            finalScore: [],
+
+            ...listToMap(
+                scorePillars,
+                pillar => `${pillar.id}-score`,
+                () => [],
+            ),
+
+            ...listToMap(
+                scoreMatrixPillars,
+                pillar => `${pillar.id}-matrix-score`,
+                () => [],
+            ),
+
+        },
+    };
+
+    return scoreSchema;
+};
 
 export const assessmentSchemaSelector = createSelector(
     aryTemplateMetadataSelector,
     aryTemplateMethodologySelector,
+    assessmentFocusesSelector,
     assessmentPillarsSelector,
     assessmentMatrixPillarsSelector,
     editArySelectedSectorsSelector,
+    editArySelectedFocusesSelector,
     (
         aryTemplateMetadata,
         aryTemplateMethodology,
+        focuses,
         scorePillars,
         scoreMatrixPillars,
         selectedSectors,
+        selectedFocuses,
     ) => {
         const schema = { fields: {
             metadata: {
@@ -423,8 +494,8 @@ export const assessmentSchemaSelector = createSelector(
                 },
             },
             methodology: createMethodologySchema(aryTemplateMethodology),
-            summary: createSummarySchema(selectedSectors),
-            score: createScoreSchema(scorePillars, scoreMatrixPillars),
+            summary: createSummarySchema(focuses, selectedSectors, selectedFocuses),
+            score: createScoreSchema(scorePillars, scoreMatrixPillars, selectedSectors),
         } };
         return schema;
     },

@@ -94,7 +94,6 @@ export const renderWidget = (k, data, sources, otherProps) => {
     }
 
     const props = getProps(data, sources);
-    // console.warn(otherProps);
 
     return (
         <Component
