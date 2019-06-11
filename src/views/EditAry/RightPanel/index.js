@@ -119,6 +119,11 @@ export default class RightPanel extends React.PureComponent {
                         pending={this.props.pending}
                     />
                 ),
+                // FIXME: this is a quick fix
+                // Need to have a default value for elements in score
+                // Shouldn't use 'defaultValue' prop of input
+                mount: true,
+                wrapContainer: true,
             },
         };
     }
@@ -187,6 +192,8 @@ export default class RightPanel extends React.PureComponent {
                     rendererParams={this.tabRendererParams}
                 />
                 <MultiViewContainer
+                    containerClassName={styles.container}
+                    activeClassName={styles.active}
                     useHash
                     views={this.views}
                 />
