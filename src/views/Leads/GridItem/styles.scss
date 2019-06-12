@@ -58,11 +58,25 @@
     cursor: zoom-in;
 
     .thumbnail-wrapper {
+        display: flex;
         position: absolute;
-        background-repeat: no-repeat;
-        background-size: 100% auto;
+        align-items: center;
+        justify-content: center;
         width: 100%;
-        height: 100%;
+        height:100%;
+
+        img {
+            align-self: start;
+            width: 100%;
+            height: calc(100% - 75px);
+            object-fit: contain;
+        }
+
+        .mimeIcon {
+            margin-bottom: 75px;
+            color: var(--color-accent);
+            font-size: 90px;
+        }
     }
 
     .time-from {
@@ -84,16 +98,15 @@
         margin-top: auto;
         border-bottom-left-radius: var(--radius-lead);
         border-bottom-right-radius: var(--radius-lead);
-        background-color: rgba(60, 60, 60, 0.49);
+        background-color: rgba(70, 70, 70, 1);
         cursor: auto;
         padding: var(--spacing-small-alt);
-        text-shadow: 0 3px 6px rgba(0, 0, 0, 0.8);
         color: white;
 
         .title {
             display: -webkit-box;
             margin: var(--spacing-small-alt) 0;
-            max-height: 2.4em;
+            height: 2.4em;
             overflow: hidden;
             line-height: 1.2em;
             font-size: var(--font-size-large-alt);
@@ -114,6 +127,10 @@
         opacity: 0;
         max-height: 0;
         overflow: hidden;
+
+        .status {
+            margin-bottom: var(--spacing-small-alt);
+        }
     }
 
     .lead-info-counts {
@@ -126,6 +143,10 @@
 
         .time-from-bottom {
             margin-left: auto;
+        }
+
+        .numeric-value {
+            margin-right: var(--spacing-extra-small-alt);
         }
     }
 

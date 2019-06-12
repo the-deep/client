@@ -426,6 +426,9 @@ export default class Leads extends React.PureComponent {
     // UI
 
     onGridEndReached = () => {
+        if (this.state.loadingLeads) {
+            return;
+        }
         const { activePage, leadsPerPage, totalLeadsCount } = this.props;
         if (activePage < Math.ceil(totalLeadsCount / leadsPerPage)) {
             this.props.setLeadPageActivePage({ activePage: activePage + 1 });
