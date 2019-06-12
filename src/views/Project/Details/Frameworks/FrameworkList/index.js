@@ -15,6 +15,7 @@ import Checkbox from '#rsci/Checkbox';
 import ListView from '#rscv/List/ListView';
 import ListItem from '#rscv/List/ListItem';
 import AccentButton from '#rsca/Button/AccentButton';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import modalize from '#rscg/Modalize';
 
 import _ts from '#ts';
@@ -27,7 +28,6 @@ const AccentModalButton = modalize(AccentButton);
 const propTypes = {
     activeFrameworkId: PropTypes.number.isRequired,
     className: PropTypes.string,
-    frameworkList: PropTypes.arrayOf(PropTypes.object),
     onClick: PropTypes.func.isRequired,
     selectedFrameworkId: PropTypes.number,
     projectId: PropTypes.number.isRequired,
@@ -37,7 +37,6 @@ const propTypes = {
 
 const defaultProps = {
     className: '',
-    frameworkList: [],
 
     // Apparently there can be no frameworks in projects
     selectedFrameworkId: undefined,
@@ -91,6 +90,7 @@ FrameworkListItem.defaultProps = {
 
 const getFrameworkKey = framework => framework.id;
 
+// TODO: Move request to ../index.js
 const requests = {
     frameworkListGetRequest: {
         url: '/analysis-frameworks/',
@@ -104,6 +104,9 @@ const requests = {
         },
     },
 };
+
+const emptyObject = {};
+const emptyList = [];
 
 @RequestCoordinator
 @RequestClient(requests)
@@ -170,30 +173,32 @@ export default class FrameworkList extends React.PureComponent {
     render() {
         const {
             className: classNameFromProps,
-            frameworkList,
             projectId,
             setActiveFramework,
             readOnly,
+            frameworkListGetRequest,
         } = this.props;
 
         const { faramValues } = this.state;
 
-
-        if (!frameworkList) {
-            return null;
-        }
-
-        // TODO: Filtered framework list
-        const displayFrameworkList = frameworkList;
+        const {
+            pending: frameworkListPending,
+            response: {
+                results: frameworkList = emptyList,
+            } = emptyObject,
+        } = frameworkListGetRequest;
+        // const displayFrameworkList = frameworkList;
+        // console.warn('framework list', frameworkList);
 
         const className = `
             ${classNameFromProps}
             ${styles.frameworkList}
         `;
 
-
         return (
             <div className={className}>
+                {/* TODO: Move loading animation to the list view only */}
+                { frameworkListPending && <LoadingAnimation /> }
                 <header className={styles.header}>
                     <div className={styles.top}>
                         <h4 className={styles.heading}>
@@ -202,7 +207,7 @@ export default class FrameworkList extends React.PureComponent {
 
                         <AccentModalButton
                             iconName="add"
-                            disabled={readOnly}
+                            disabled={readOnly && frameworkListPending}
                             className={styles.addFrameworkButton}
                             transparent
                             modal={
@@ -220,6 +225,7 @@ export default class FrameworkList extends React.PureComponent {
                         onChange={this.handleFaramChange}
                         schema={this.schema}
                         value={faramValues}
+                        disable={frameworkListPending}
                     >
                         <SearchInput
                             faramElementName="search"
@@ -246,7 +252,7 @@ export default class FrameworkList extends React.PureComponent {
                     </Faram>
                 </header>
                 <ListView
-                    data={displayFrameworkList}
+                    data={frameworkList}
                     className={styles.content}
                     renderer={FrameworkListItem}
                     rendererParams={this.itemRendererParams}
