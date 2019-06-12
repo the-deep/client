@@ -225,6 +225,13 @@ export const assessmentSectorsSelector = createSelector(
     ),
 );
 
+export const assessmentFocusesSelector = createSelector(
+    aryTemplateSelector,
+    aryTemplate => (
+        aryTemplate.focuses || emptyList
+    ),
+);
+
 export const assessmentSourcesSelector = createSelector(
     aryTemplateSelector,
     aryTemplate => (
