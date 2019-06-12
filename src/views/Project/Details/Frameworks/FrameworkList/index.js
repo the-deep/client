@@ -1,14 +1,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import memoize from 'memoize-one';
+import Faram from '@togglecorp/faram';
+
 import {
-    caseInsensitiveSubmatch,
-    compareString,
-    compareStringSearch,
-} from '@togglecorp/fujs';
+    RequestCoordinator,
+    RequestClient,
+    requestMethods,
+} from '#request';
 
 import Icon from '#rscg/Icon';
 import SearchInput from '#rsci/SearchInput';
+import SegmentInput from '#rsci/SegmentInput';
+import Checkbox from '#rsci/Checkbox';
 import ListView from '#rscv/List/ListView';
 import ListItem from '#rscv/List/ListItem';
 import AccentButton from '#rsca/Button/AccentButton';
@@ -40,6 +43,12 @@ const defaultProps = {
     selectedFrameworkId: undefined,
     readOnly: false,
 };
+
+const fameworkActivityOptions = [
+    { key: 'all', label: _ts('project.framework', 'frameworkActivityAllTitle') },
+    { key: 'active', label: _ts('project.framework', 'frameworkActivityActiveTitle') },
+    { key: 'inactive', label: _ts('project.framework', 'frameworkActivityInactiveTitle') },
+];
 
 // TODO: move to separate component
 const FrameworkListItem = ({
@@ -80,24 +89,24 @@ FrameworkListItem.defaultProps = {
     className: '',
 };
 
-
-const filterFrameworks = memoize((frameworkList, searchInputValue) => {
-    const displayFrameworkList = frameworkList
-        .filter(framework => caseInsensitiveSubmatch(framework.title, searchInputValue))
-        .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
-
-    displayFrameworkList.sort(
-        (a, b) => compareString(
-            a.title,
-            b.title,
-        ),
-    );
-
-    return displayFrameworkList;
-});
-
 const getFrameworkKey = framework => framework.id;
 
+const requests = {
+    frameworkListGetRequest: {
+        url: '/analysis-frameworks/',
+        method: requestMethods.POST,
+        body: ({ params: { body } }) => body,
+        onSuccess: ({
+            params: { onSuccess },
+            response,
+        }) => {
+            onSuccess(response);
+        },
+    },
+};
+
+@RequestCoordinator
+@RequestClient(requests)
 export default class FrameworkList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -106,13 +115,49 @@ export default class FrameworkList extends React.PureComponent {
         super(props);
 
         this.state = {
-            searchInputValue: '',
+            // TODO: move to redux
+            faramValues: {
+                activity: 'active',
+                relatedToMe: true,
+                search: '',
+            },
+        };
+
+        this.schema = {
+            fields: {
+                search: [],
+                activity: [],
+                relatedToMe: [],
+            },
         };
     }
 
-    handleSearchInputValueChange = (searchInputValue) => {
-        this.setState({ searchInputValue });
+    componentDidMount() {
+        // FIXME: use common function for onFaramChange,
+        const { frameworkListGetRequest } = this.props;
+        const { faramValues } = this.state;
+
+        frameworkListGetRequest.do({
+            body: faramValues,
+            onSuccess: this.handleFrameworkListGetSuccess,
+        });
     }
+
+    handleFrameworkListGetSuccess = (response) => {
+        console.warn(response);
+    }
+
+    handleFaramChange = (newFaramValues) => {
+        this.setState({ faramValues: newFaramValues });
+
+        const { frameworkListGetRequest } = this.props;
+        const { faramValues } = this.state;
+
+        frameworkListGetRequest.do({
+            body: faramValues,
+            onSuccess: this.handleFrameworkListGetSuccess,
+        });
+    };
 
     itemRendererParams = (key, framework) => ({
         framework,
@@ -131,50 +176,74 @@ export default class FrameworkList extends React.PureComponent {
             readOnly,
         } = this.props;
 
-        const { searchInputValue } = this.state;
+        const { faramValues } = this.state;
+
 
         if (!frameworkList) {
             return null;
         }
 
-        const displayFrameworkList = filterFrameworks(
-            frameworkList,
-            searchInputValue,
-        );
+        // TODO: Filtered framework list
+        const displayFrameworkList = frameworkList;
 
         const className = `
             ${classNameFromProps}
             ${styles.frameworkList}
         `;
 
+
         return (
             <div className={className}>
                 <header className={styles.header}>
-                    <h4 className={styles.heading}>
-                        {_ts('project.framework', 'frameworkListHeading')}
-                    </h4>
+                    <div className={styles.top}>
+                        <h4 className={styles.heading}>
+                            {_ts('project.framework', 'frameworkListHeading')}
+                        </h4>
 
-                    <AccentModalButton
-                        iconName="add"
-                        disabled={readOnly}
-                        modal={
-                            <AddFrameworkModal
-                                projectId={projectId}
-                                setActiveFramework={setActiveFramework}
-                            />
-                        }
+                        <AccentModalButton
+                            iconName="add"
+                            disabled={readOnly}
+                            className={styles.addFrameworkButton}
+                            transparent
+                            modal={
+                                <AddFrameworkModal
+                                    projectId={projectId}
+                                    setActiveFramework={setActiveFramework}
+                                />
+                            }
+                        >
+                            { _ts('project.framework', 'addFrameworkButtonLabel')}
+                        </AccentModalButton>
+                    </div>
+                    <Faram
+                        className={styles.bottom}
+                        onChange={this.handleFaramChange}
+                        schema={this.schema}
+                        value={faramValues}
                     >
-                        { _ts('project.framework', 'addFrameworkButtonLabel')}
-                    </AccentModalButton>
+                        <SearchInput
+                            faramElementName="search"
+                            className={styles.frameworkSearchInput}
+                            placeholder={_ts('project.framework', 'searchFrameworkInputPlaceholder')}
+                            showHintAndError={false}
+                            showLabel={false}
+                        />
 
-                    <SearchInput
-                        className={styles.frameworkSearchInput}
-                        value={searchInputValue}
-                        onChange={this.handleSearchInputValueChange}
-                        placeholder={_ts('project.framework', 'searchFrameworkInputPlaceholder')}
-                        showHintAndError={false}
-                        showLabel={false}
-                    />
+                        <div className={styles.filters}>
+                            <SegmentInput
+                                faramElementName="activity"
+                                className={styles.frameworkActivityInput}
+                                showLabel={false}
+                                showHintAndError={false}
+                                options={fameworkActivityOptions}
+                            />
+                            <Checkbox
+                                faramElementName="relatedToMe"
+                                className={styles.relatedToMe}
+                                label={_ts('project.framework', 'relatedToMeTitle')}
+                            />
+                        </div>
+                    </Faram>
                 </header>
                 <ListView
                     data={displayFrameworkList}

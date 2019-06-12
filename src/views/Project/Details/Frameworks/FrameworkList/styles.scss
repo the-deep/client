@@ -1,23 +1,44 @@
-
 .framework-list {
     display: flex;
     flex-direction: column;
+    overflow: auto;
 
     .header {
-        display: flex;
-        align-items: center;
         flex-shrink: 0;
-        flex-wrap: wrap;
         background-color: var(--color-background-header);
-        padding: var(--spacing-medium);
 
-        .heading {
-            flex-grow: 1;
+        .top {
+            display: flex;
+
+            .heading {
+                flex-grow: 1;
+                padding: var(--spacing-small);
+            }
+
+            .add-framework-button {
+                flex-shrink: 0;
+            }
         }
 
-        .framework-search-input {
-            flex-basis: 100%;
-            margin-top: var(--spacing-small);
+        .bottom {
+            .framework-search-input {
+                flex-basis: 100%;
+                margin: var(--spacing-small);
+            }
+
+            .filters {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .framework-activity-input {
+                    margin: var(--spacing-small);
+                }
+
+                .related-to-me {
+                    margin: var(--spacing-small);
+                }
+            }
         }
     }
 

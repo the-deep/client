@@ -9,9 +9,9 @@
     overflow: auto;
 
     .framework-list {
-        flex-basis: var(--width-framework-list);
         flex-shrink: 0;
         border-right: var(--width-separator-thin) solid var(--color-separator);
+        width: var(--width-framework-list);
     }
 
     .details {
