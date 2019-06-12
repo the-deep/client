@@ -94,8 +94,8 @@ const getFrameworkKey = framework => framework.id;
 const requests = {
     frameworkListGetRequest: {
         url: '/analysis-frameworks/',
-        method: requestMethods.POST,
-        body: ({ params: { body } }) => body,
+        method: requestMethods.GET,
+        query: ({ params: { body } }) => body,
         onSuccess: ({
             params: { onSuccess },
             response,
