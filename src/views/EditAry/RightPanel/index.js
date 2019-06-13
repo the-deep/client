@@ -26,6 +26,9 @@ import Metadata from './Metadata';
 import Summary from './Summary';
 import Score from './Score';
 import Methodology from './Methodology';
+import HNO from './HNO';
+import CNA from './CNA';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -84,6 +87,8 @@ export default class RightPanel extends React.PureComponent {
             methodology: _ts('editAssessment', 'methodologyTabLabel'),
             summary: _ts('editAssessment', 'summaryTabLabel'),
             score: _ts('editAssessment', 'scoreTabLabel'),
+            hno: _ts('editAssessment', 'hnoTabLabel'),
+            cna: _ts('editAssessment', 'cnaTabLabel'),
         };
 
         this.defaultHash = 'metadata';
@@ -122,6 +127,20 @@ export default class RightPanel extends React.PureComponent {
                 // Shouldn't use 'defaultValue' prop of input
                 mount: true,
                 wrapContainer: true,
+            },
+            hno: {
+                rendererParams: () => ({
+                    className: styles.hno,
+                    pending: this.props.pending,
+                }),
+                component: HNO,
+            },
+            cna: {
+                rendererParams: () => ({
+                    className: styles.cna,
+                    pending: this.props.pending,
+                }),
+                component: CNA,
             },
         };
     }
