@@ -204,6 +204,13 @@ export const aryTemplateSelector = createSelector(
     ),
 );
 
+export const aryTemplateQuestionnaireListSelector = createSelector(
+    aryTemplateSelector,
+    aryTemplate => (
+        aryTemplate.questionnaireSector || emptyList
+    ),
+);
+
 export const aryTemplateMetadataSelector = createSelector(
     aryTemplateSelector,
     aryTemplate => (

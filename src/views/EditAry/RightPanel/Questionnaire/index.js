@@ -8,19 +8,24 @@ import {
     aryTemplateQuestionnaireListSelector,
 } from '#redux';
 
-import Questionnaire from '../Questionnaire';
+import ListView from '#rscv/List/ListView';
+import Method from './Method';
+
 import styles from './styles.scss';
 
 const propTypes = {
-    pending: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
+
 };
 
 const mapStateToProps = state => ({
     questionnaireList: aryTemplateQuestionnaireListSelector(state),
 });
+
+const getMethodRendererParams = (_, d) => ({ data: d });
+const methodKeySelector = d => d.id;
 
 @connect(mapStateToProps)
 export default class HNO extends React.PureComponent {
@@ -35,17 +40,17 @@ export default class HNO extends React.PureComponent {
         const {
             pending,
             className,
-            questionnaireList,
+            data,
         } = this.props;
 
-        const hnoQuestionnaireList = this.getHNOQuestionnaireList(questionnaireList);
-
         return (
-            <div className={_cs(className, styles.hno)}>
-                <Questionnaire
-                    data={hnoQuestionnaireList}
-                />
-            </div>
+            <ListView
+                className={className}
+                data={data}
+                renderer={Method}
+                rendererParams={getMethodRendererParams}
+                keySelector={methodKeySelector}
+            />
         );
     }
 }
