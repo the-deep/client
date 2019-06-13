@@ -204,19 +204,18 @@ export default class FrameworkDetail extends React.PureComponent {
         const {
             frameworkId,
             className: classNameFromProps,
+            frameworkListEmpty,
+            frameworkListPending,
         } = this.props;
 
         const {
             pendingFramework,
             error,
-        } = this.state;
-
-        requestFramework(frameworkId, this.frameworkGetRequest);
-
-        const {
             framework,
             activeView,
         } = this.state;
+
+        requestFramework(frameworkId, this.frameworkGetRequest);
 
         const Header = this.renderHeader;
 
@@ -227,7 +226,7 @@ export default class FrameworkDetail extends React.PureComponent {
 
         // FIXME: handle error gracefully
         // When af cannot be pulled, show show error
-        if (pendingFramework) {
+        if (pendingFramework || frameworkListPending) {
             return (
                 <div className={className}>
                     <LoadingAnimation />
@@ -240,6 +239,16 @@ export default class FrameworkDetail extends React.PureComponent {
                 <div className={className}>
                     <Message>
                         {_ts('project.framework', 'errorFrameworkLoad')}
+                    </Message>
+                </div>
+            );
+        }
+
+        if (frameworkListEmpty) {
+            return (
+                <div className={className}>
+                    <Message className={styles.noFrameworkMessage}>
+                        { _ts('project', 'noAfText') }
                     </Message>
                 </div>
             );

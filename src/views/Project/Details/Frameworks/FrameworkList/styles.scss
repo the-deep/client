@@ -45,19 +45,5 @@
     .content {
         flex-grow: 1;
         overflow-y: auto;
-
-        .item {
-            display: flex;
-
-            .title {
-                flex-grow: 1;
-            }
-
-            .check {
-                flex-shrink: 0;
-                padding-left: var(--spacing-small);
-                color: var(--color-success);
-            }
-        }
     }
 }
