@@ -90,35 +90,33 @@ export default class RightPanel extends React.PureComponent {
 
         this.views = {
             metadata: {
-                component: () => (
-                    <Metadata
-                        className={styles.metadata}
-                        pending={this.props.pending}
-                        onUploadPending={this.props.onUploadPending}
-                    />
-                ),
+                rendereParams: () => ({
+                    className: styles.metadata,
+                    pending: this.props.pending,
+                    onUploadPending: this.props.onUploadPending,
+                }),
+                component: Metadata,
             },
             summary: {
-                component: () => (
-                    <Summary
-                        className={styles.summary}
-                        pending={this.props.pending}
-                        onActiveSectorChange={this.props.onActiveSectorChange}
-                    />
-                ),
+                rendereParams: () => ({
+                    className: styles.summary,
+                    pending: this.props.pending,
+                    onActiveSectorChange: this.props.onActiveSectorChange,
+                }),
+                component: Summary,
             },
             methodology: {
-                component: () => (
-                    <Methodology pending={this.props.pending} />
-                ),
+                rendereParams: () => ({
+                    pending: this.props.pending,
+                }),
+                component: Methodology,
             },
             score: {
-                component: () => (
-                    <Score
-                        className={styles.score}
-                        pending={this.props.pending}
-                    />
-                ),
+                rendereParams: () => ({
+                    className: styles.score,
+                    pending: this.props.pending,
+                }),
+                component: Score,
                 // FIXME: this is a quick fix
                 // Need to have a default value for elements in score
                 // Shouldn't use 'defaultValue' prop of input

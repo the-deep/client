@@ -36,7 +36,8 @@ import {
 const emptyObject = {};
 const emptyList = [];
 
-// FIXME: copy this to common place
+// HELPERS
+
 const getNamespacedId = (leadId, leadGroupId) => {
     if (isTruthy(leadGroupId)) {
         return `lead-group-${leadGroupId}`;
@@ -44,6 +45,44 @@ const getNamespacedId = (leadId, leadGroupId) => {
         return `lead-${leadId}`;
     }
     return undefined;
+};
+
+export const MIN_SECTORS_SELECTION_FOR_CROSS_SECTOR = 3;
+
+const FOCUSES__CROSS_SECTOR = '12';
+const FOCUSES__HUMANITARIAN_ACCESS = '8';
+
+const METHODOLOGY_FIELDS__DATA_COLLECTION_TECHNIQUE = 1;
+const DATA_COLLECTION_TECHNIQUE_OPTIONS__SECONDARY_DATA_REVIEW = '1';
+
+export const isDataCollectionTechniqueColumn = field => (
+    field && field.id === METHODOLOGY_FIELDS__DATA_COLLECTION_TECHNIQUE
+);
+
+export const isSecondaryDataReviewOption = option => (
+    option && option.key === DATA_COLLECTION_TECHNIQUE_OPTIONS__SECONDARY_DATA_REVIEW
+);
+
+export const getDataCollectionTechnique = (aryTemplateMethodology) => {
+    const dataCollectionTechnique = aryTemplateMethodology
+        .map(group => group.fields)
+        .flat()
+        .find(isDataCollectionTechniqueColumn);
+    return dataCollectionTechnique;
+};
+
+export const shouldShowHumanitarianAccess = (focuses, selectedFocuses) => {
+    const index = selectedFocuses.findIndex(
+        focus => String(focus) === FOCUSES__HUMANITARIAN_ACCESS,
+    );
+    return index !== -1;
+};
+
+export const shouldShowCrossSector = (focuses, selectedFocuses) => {
+    const index = selectedFocuses.findIndex(
+        focus => String(focus) === FOCUSES__CROSS_SECTOR,
+    );
+    return index !== -1;
 };
 
 // ARY VIEW SELECTORS
@@ -160,34 +199,10 @@ const createFieldSchema = (field, shouldBeOptional) => {
 };
 
 const createAdditionalDocumentsSchema = () => {
-    /*
-    const {
-        bothPageRequiredCondition,
-        validPageRangeCondition,
-        validPageNumbersCondition,
-        pendingCondition,
-    } = Baksa;
-    */
-
     const schema = { fields: {
-        executiveSummary: [
-            /*
-            bothPageRequiredCondition,
-            validPageRangeCondition,
-            validPageNumbersCondition,
-            pendingCondition,
-            */
-        ],
-        assessmentData: [
-        /*
-        pendingCondition
-        */],
-        questionnaire: [/*
-            bothPageRequiredCondition,
-            validPageRangeCondition,
-            validPageNumbersCondition,
-            pendingCondition,
-        */],
+        executiveSummary: [],
+        assessmentData: [],
+        questionnaire: [],
         misc: [],
     } };
     return schema;
@@ -202,33 +217,11 @@ const createBasicInformationSchema = (aryTemplateMetadata = {}) => {
         });
     });
 
-    const schema = { fields: dynamicFields };
+    const schema = {
+        fields: dynamicFields,
+    };
     return schema;
 };
-
-export const isDataCollectionTechniqueColumn = field => (
-    field.title.toLowerCase().trim() === 'data collection technique'
-);
-
-// NOTE:
-export const getDataCollectionTechnique = (aryTemplateMethodology) => {
-    let dataCollectionTechnique;
-    aryTemplateMethodology.some(
-        group => group.fields.some((field) => {
-            if (isDataCollectionTechniqueColumn(field)) {
-                dataCollectionTechnique = field;
-                return true;
-            }
-            return false;
-        }),
-    );
-    return dataCollectionTechnique;
-};
-
-// NOTE:
-export const isSecondaryDataReviewOption = option => (
-    option && option.label.toLowerCase().trim() === 'secondary data review'
-);
 
 const createMethodologySchema = (aryTemplateMethodology = {}) => {
     const dataCollectionTechnique = getDataCollectionTechnique(aryTemplateMethodology);
@@ -300,34 +293,6 @@ const createMethodologySchema = (aryTemplateMethodology = {}) => {
     return schema;
 };
 
-// FIXME: this should be more dynamic later on
-export const shouldShowHumanitarianAccess = (focuses, selectedFocuses) => {
-    const humanitarianAccessFocus = focuses.find(
-        focus => focus.title.toLowerCase().trim() === 'humanitarian access',
-    );
-    if (!humanitarianAccessFocus) {
-        return false;
-    }
-    const index = selectedFocuses.findIndex(
-        focus => String(focus) === String(humanitarianAccessFocus.id),
-    );
-    return index !== -1;
-};
-
-// FIXME: this should be more dynamic later on
-export const shouldShowCrossSector = (focuses, selectedFocuses) => {
-    const crossSectorFocus = focuses.find(
-        focus => focus.title.toLowerCase().trim() === 'cross sector',
-    );
-    if (!crossSectorFocus) {
-        return false;
-    }
-    const index = selectedFocuses.findIndex(
-        focus => String(focus) === String(crossSectorFocus.id),
-    );
-    return index !== -1;
-};
-
 const createSummarySchema = (focuses, selectedSectors = [], selectedFocuses = []) => {
     const schemaForSubRow = {
         fields: {
@@ -397,7 +362,10 @@ const createSummarySchema = (focuses, selectedSectors = [], selectedFocuses = []
     };
 
     // Cross sector needs at least 3 sector before it can be filled
-    if (shouldShowCrossSector(focuses, selectedFocuses) && selectedSectors.length >= 3) {
+    if (
+        shouldShowCrossSector(focuses, selectedFocuses)
+        && selectedSectors.length >= MIN_SECTORS_SELECTION_FOR_CROSS_SECTOR
+    ) {
         schema.fields.crossSector = {
             fields: {
                 prioritySectors: schemaForRow,

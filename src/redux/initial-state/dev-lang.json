@@ -637,7 +637,7 @@
         "9014": "Population in moderate need of assistance (not life threatening)",
         "9015": "Population in severe need of assistance (life threatening)",
         "9016": "Population in need of assistance",
-        "9017": "Select at least 3 sectors in methodology",
+        "9017": "Select at least {count} sectors in methodology",
         "9018": "Cross sector",
         "9019": "Humanitarian access",
         "9020": "Basic information",
