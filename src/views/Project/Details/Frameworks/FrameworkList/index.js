@@ -7,7 +7,6 @@ import SegmentInput from '#rsci/SegmentInput';
 import Checkbox from '#rsci/Checkbox';
 import ListView from '#rscv/List/ListView';
 import AccentButton from '#rsca/Button/AccentButton';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import modalize from '#rscg/Modalize';
 
 import _ts from '#ts';

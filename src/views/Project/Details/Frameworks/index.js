@@ -9,7 +9,6 @@ import {
     requestMethods,
 } from '#request';
 
-
 import {
     analysisFrameworkListSelector,
     projectDetailsSelector,
@@ -54,7 +53,10 @@ const requests = {
     frameworkListGetRequest: {
         url: '/analysis-frameworks/',
         method: requestMethods.GET,
-        query: ({ params: { body } }) => body,
+        query: ({ params: { body } }) => ({
+            ...body,
+            fields: ['id', 'title'],
+        }),
         onSuccess: ({
             props: { setFrameworkList },
             response,
@@ -62,7 +64,7 @@ const requests = {
             const { results } = response;
             setFrameworkList({ analysisFrameworks: results });
         },
-        schemaName: 'analysisFrameworkList',
+        schemaName: 'analysisFrameworkTitleList',
     },
 };
 
