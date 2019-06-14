@@ -26,12 +26,13 @@ import styles from './styles.scss';
 
 const propTypes = {
     aryTemplateMetadata: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    pending: PropTypes.bool.isRequired,
+    pending: PropTypes.bool,
     sources: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     aryTemplateMetadata: [],
+    pending: false,
 };
 
 const mapStateToProps = state => ({

@@ -18,6 +18,8 @@ import {
 
     editAryFaramValuesSelector,
     editAryFaramErrorsSelector,
+    editAryShouldShowHNO,
+    editAryShouldShowCNA,
 } from '#redux';
 import _ts from '#ts';
 import TabTitle from '#components/general/TabTitle';
@@ -43,6 +45,9 @@ const propTypes = {
     pending: PropTypes.bool,
     readOnly: PropTypes.bool,
     editAryIsPristine: PropTypes.bool.isRequired,
+
+    showHNO: PropTypes.bool,
+    showCNA: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -56,6 +61,9 @@ const defaultProps = {
     activeLeadId: undefined,
     activeLeadGroupId: undefined,
     readOnly: false,
+
+    showHNO: false,
+    showCNA: false,
 };
 
 const mapStateToProps = state => ({
@@ -68,6 +76,9 @@ const mapStateToProps = state => ({
 
     schema: assessmentSchemaSelector(state),
     computeSchema: assessmentComputeSchemaSelector(state),
+
+    showHNO: editAryShouldShowHNO(state),
+    showCNA: editAryShouldShowCNA(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -87,8 +98,6 @@ export default class RightPanel extends React.PureComponent {
             methodology: _ts('editAssessment', 'methodologyTabLabel'),
             summary: _ts('editAssessment', 'summaryTabLabel'),
             score: _ts('editAssessment', 'scoreTabLabel'),
-            hno: _ts('editAssessment', 'hnoTabLabel'),
-            cna: _ts('editAssessment', 'cnaTabLabel'),
         };
 
         this.defaultHash = 'metadata';
@@ -145,6 +154,23 @@ export default class RightPanel extends React.PureComponent {
         };
     }
 
+    getTabs = (tabs, showHNO, showCNA) => {
+        if (!showHNO && !showCNA) {
+            return tabs;
+        }
+
+        const newTabs = { ...tabs };
+
+        if (showHNO) {
+            newTabs.hno = _ts('editAssessment', 'hnoTabLabel');
+        }
+        if (showCNA) {
+            newTabs.cna = _ts('editAssessment', 'cnaTabLabel');
+        }
+
+        return newTabs;
+    }
+
     handleFaramChange = (faramValues, faramErrors, faramInfo) => {
         const {
             editAryIsPristine,
@@ -185,7 +211,11 @@ export default class RightPanel extends React.PureComponent {
             computeSchema,
             pending,
             readOnly,
+            showHNO,
+            showCNA,
         } = this.props;
+
+        const tabs = this.getTabs(this.tabs, showHNO, showCNA);
 
         return (
             <Faram
@@ -203,7 +233,7 @@ export default class RightPanel extends React.PureComponent {
                     useHash
                     defaultHash={this.defaultHash}
                     replaceHistory
-                    tabs={this.tabs}
+                    tabs={tabs}
                     itemClassName={styles.tab}
                     renderer={TabTitle}
                     rendererParams={this.tabRendererParams}

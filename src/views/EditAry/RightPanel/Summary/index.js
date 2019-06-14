@@ -36,12 +36,13 @@ const propTypes = {
     sectors: PropTypes.array.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
     focuses: PropTypes.array.isRequired,
-    pending: PropTypes.bool.isRequired,
+    pending: PropTypes.bool,
     onActiveSectorChange: PropTypes.func,
 };
 
 const defaultProps = {
     className: '',
+    pending: false,
     onActiveSectorChange: undefined,
 };
 

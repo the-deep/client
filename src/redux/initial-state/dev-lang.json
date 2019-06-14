@@ -935,7 +935,9 @@
         "-22307298": "Continue",
         "-46932501": "Not all graphs are done generating yet for your tabular data. The export will be generated but you can try again later to get the rest of the graphs.",
         "-5594696": "Looks like there are no data matching your criteria. Try changing what you're looking for and search again.",
-        "-10096447": "Looks like this document doesn't have any tabular data"
+        "-10096447": "Looks like this document doesn't have any tabular data",
+        "-55402838": "CNA",
+        "-61148587": "HNO"
     },
     "links": {
         "browserExtension": {
@@ -1328,7 +1330,9 @@
             "scoreTabLabel": 7004,
             "noAryTemplateForProject": 144,
             "saveButtonTitle": 25,
-            "cancelButtonTitle": 61
+            "cancelButtonTitle": 61,
+            "hnoTabLabel": -61148587,
+            "cnaTabLabel": -55402838
         },
         "editAssessment.entriesListing": {
             "altLabel": 512,

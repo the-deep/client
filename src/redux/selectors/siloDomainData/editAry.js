@@ -5,6 +5,7 @@ import {
 } from '@togglecorp/faram';
 import {
     median,
+    mapToList,
     sum,
     bucket,
     isTruthy,
@@ -52,6 +53,13 @@ export const MIN_SECTORS_SELECTION_FOR_CROSS_SECTOR = 3;
 const FOCUSES__CROSS_SECTOR = '12';
 const FOCUSES__HUMANITARIAN_ACCESS = '8';
 
+const METADATA_FIELDS__FAMILY = 21;
+const FAMILY__HNO = '7';
+
+const METADATA_FIELDS__COORDINATION = 6;
+const COORDINATION__JOINT = '1';
+const COORDINATION__HARMONIZED = '2';
+
 const METHODOLOGY_FIELDS__DATA_COLLECTION_TECHNIQUE = 1;
 const DATA_COLLECTION_TECHNIQUE_OPTIONS__SECONDARY_DATA_REVIEW = '1';
 
@@ -59,16 +67,23 @@ export const isDataCollectionTechniqueColumn = field => (
     field && field.id === METHODOLOGY_FIELDS__DATA_COLLECTION_TECHNIQUE
 );
 
-export const isSecondaryDataReviewOption = option => (
-    option && option.key === DATA_COLLECTION_TECHNIQUE_OPTIONS__SECONDARY_DATA_REVIEW
+export const isSecondaryDataReviewSelected = methodologyRow => (
+    methodologyRow[METHODOLOGY_FIELDS__DATA_COLLECTION_TECHNIQUE] ===
+    DATA_COLLECTION_TECHNIQUE_OPTIONS__SECONDARY_DATA_REVIEW
 );
 
-export const getDataCollectionTechnique = (aryTemplateMethodology) => {
-    const dataCollectionTechnique = aryTemplateMethodology
-        .map(group => group.fields)
-        .flat()
-        .find(isDataCollectionTechniqueColumn);
-    return dataCollectionTechnique;
+export const shouldShowHNO = (basicInformation) => {
+    const familyValue = basicInformation[METADATA_FIELDS__FAMILY];
+    return familyValue === FAMILY__HNO;
+};
+
+export const shouldShowCNA = (basicInformation) => {
+    const coordinationValue = basicInformation[METADATA_FIELDS__COORDINATION];
+    return (
+        (coordinationValue === COORDINATION__HARMONIZED
+            || coordinationValue === COORDINATION__JOINT)
+        && !shouldShowHNO(basicInformation)
+    );
 };
 
 export const shouldShowHumanitarianAccess = (focuses, selectedFocuses) => {
@@ -160,13 +175,12 @@ export const editArySelectedFocusesSelector = createSelector(
 
 // helpers
 
-const createFieldSchema = (field, shouldBeOptional) => {
+const createFieldSchema = (field) => {
     const {
-        isRequired: isRequiredFromField,
+        isRequired,
         fieldType,
         title,
     } = field;
-    const isRequired = isRequiredFromField && !shouldBeOptional;
     switch (fieldType) {
         case 'date':
             return isRequired
@@ -198,56 +212,63 @@ const createFieldSchema = (field, shouldBeOptional) => {
     }
 };
 
-const createAdditionalDocumentsSchema = () => {
-    const schema = { fields: {
+const createAdditionalDocumentsSchema = () => ({
+    fields: {
         executiveSummary: [],
         assessmentData: [],
         questionnaire: [],
         misc: [],
-    } };
-    return schema;
-};
+    },
+});
 
-const createBasicInformationSchema = (aryTemplateMetadata = {}) => {
-    // Dynamic fields from metadataGroup
-    const dynamicFields = {};
-    Object.keys(aryTemplateMetadata).forEach((key) => {
-        aryTemplateMetadata[key].fields.forEach((field) => {
-            dynamicFields[field.id] = createFieldSchema(field);
-        });
-    });
+const createBasicInformationSchema = (aryTemplateMetadata = {}) => ({
+    fields: listToMap(
+        mapToList(aryTemplateMetadata)
+            .map(group => group.fields)
+            .flat(),
+        field => field.id,
+        field => createFieldSchema(field),
+    ),
+});
 
-    const schema = {
-        fields: dynamicFields,
-    };
-    return schema;
-};
-
-const createMethodologySchema = (aryTemplateMethodology = {}) => {
-    const dataCollectionTechnique = getDataCollectionTechnique(aryTemplateMethodology);
-
-    const schema = { fields: {
+const createMethodologySchema = (aryTemplateMethodology = {}) => ({
+    fields: {
         attributes: {
             keySelector: d => d.key,
-            identifier: (value = {}) => {
-                if (!dataCollectionTechnique) {
-                    return 'default';
+            identifier: (value) => {
+                if (isSecondaryDataReviewSelected(value)) {
+                    return 'secondaryDataReview';
                 }
-                const key = value[dataCollectionTechnique.id];
-                if (!key) {
-                    return 'default';
-                }
-                const selectedOption = dataCollectionTechnique.options.find(
-                    option => option.key === key,
-                );
-                return isSecondaryDataReviewOption(selectedOption) ? 'secondaryDataReview' : 'default';
+                return 'default';
             },
             member: {
                 secondaryDataReview: {
-                    fields: {/* NOTE: injected here */},
+                    fields: {
+                        key: [],
+                        ...listToMap(
+                            mapToList(aryTemplateMethodology)
+                                .map(group => group.fields)
+                                .flat()
+                                // Only show data collection technique
+                                .filter(field => (
+                                    field.id === METHODOLOGY_FIELDS__DATA_COLLECTION_TECHNIQUE
+                                )),
+                            field => field.id,
+                            field => createFieldSchema(field),
+                        ),
+                    },
                 },
                 default: {
-                    fields: {/* NOTE: injected here */},
+                    fields: {
+                        key: [],
+                        ...listToMap(
+                            mapToList(aryTemplateMethodology)
+                                .map(group => group.fields)
+                                .flat(),
+                            field => field.id,
+                            field => createFieldSchema(field),
+                        ),
+                    },
                 },
             },
             validation: (value) => {
@@ -269,29 +290,8 @@ const createMethodologySchema = (aryTemplateMethodology = {}) => {
         dataCollectionTechniques: [],
         sampling: [],
         limitations: [],
-    } };
-
-    const dynamicFields = {};
-    Object.keys(aryTemplateMethodology).forEach((key) => {
-        const methodologyGroup = aryTemplateMethodology[key];
-        methodologyGroup.fields.forEach((field) => {
-            dynamicFields[field.id] = createFieldSchema(field);
-        });
-    });
-    schema.fields.attributes.member.default.fields = dynamicFields;
-
-    const anotherDynamicFields = {};
-    Object.keys(aryTemplateMethodology).forEach((key) => {
-        const methodologyGroup = aryTemplateMethodology[key];
-        methodologyGroup.fields.forEach((field) => {
-            const shouldBeOptional = dataCollectionTechnique.id !== anotherDynamicFields.id;
-            anotherDynamicFields[field.id] = createFieldSchema(field, shouldBeOptional);
-        });
-    });
-    schema.fields.attributes.member.secondaryDataReview.fields = anotherDynamicFields;
-
-    return schema;
-};
+    },
+});
 
 const createSummarySchema = (focuses, selectedSectors = [], selectedFocuses = []) => {
     const schemaForSubRow = {
@@ -303,6 +303,11 @@ const createSummarySchema = (focuses, selectedSectors = [], selectedFocuses = []
     };
 
     const schemaForRow = {
+        fields: {
+            rank1: schemaForSubRow,
+            rank2: schemaForSubRow,
+            rank3: schemaForSubRow,
+        },
         validation: (subrows = {}) => {
             const errors = [];
 
@@ -338,11 +343,6 @@ const createSummarySchema = (focuses, selectedSectors = [], selectedFocuses = []
             }
 
             return errors;
-        },
-        fields: {
-            rank1: schemaForSubRow,
-            rank2: schemaForSubRow,
-            rank3: schemaForSubRow,
         },
     };
 
@@ -386,56 +386,52 @@ const createSummarySchema = (focuses, selectedSectors = [], selectedFocuses = []
     return schema;
 };
 
-const createScoreSchema = (scorePillars = [], scoreMatrixPillars = [], sectors = []) => {
-    const scoreSchema = {
-        fields: {
-            pillars: {
-                fields: listToMap(
-                    scorePillars,
-                    pillar => pillar.id,
-                    pillar => ({
-                        fields: listToMap(
-                            pillar.questions,
-                            question => question.id,
-                            () => [],
-                        ),
-                    }),
-                ),
-            },
-
-            matrixPillars: {
-                fields: listToMap(
-                    scoreMatrixPillars,
-                    pillar => pillar.id,
-                    () => ({
-                        fields: listToMap(
-                            sectors,
-                            sector => sector,
-                            () => [],
-                        ),
-                    }),
-                ),
-            },
-
-            finalScore: [],
-
-            ...listToMap(
+const createScoreSchema = (scorePillars = [], scoreMatrixPillars = [], sectors = []) => ({
+    fields: {
+        pillars: {
+            fields: listToMap(
                 scorePillars,
-                pillar => `${pillar.id}-score`,
-                () => [],
+                pillar => pillar.id,
+                pillar => ({
+                    fields: listToMap(
+                        pillar.questions,
+                        question => question.id,
+                        () => [],
+                    ),
+                }),
             ),
-
-            ...listToMap(
-                scoreMatrixPillars,
-                pillar => `${pillar.id}-matrix-score`,
-                () => [],
-            ),
-
         },
-    };
 
-    return scoreSchema;
-};
+        matrixPillars: {
+            fields: listToMap(
+                scoreMatrixPillars,
+                pillar => pillar.id,
+                () => ({
+                    fields: listToMap(
+                        sectors,
+                        sector => sector,
+                        () => [],
+                    ),
+                }),
+            ),
+        },
+
+        finalScore: [],
+
+        ...listToMap(
+            scorePillars,
+            pillar => `${pillar.id}-score`,
+            () => [],
+        ),
+
+        ...listToMap(
+            scoreMatrixPillars,
+            pillar => `${pillar.id}-matrix-score`,
+            () => [],
+        ),
+
+    },
+});
 
 export const assessmentSchemaSelector = createSelector(
     aryTemplateMetadataSelector,
@@ -528,3 +524,26 @@ export const assessmentComputeSchemaSelector = createSelector(
     },
 );
 
+export const editAryShouldShowHNO = createSelector(
+    editAryFaramValuesSelector,
+    (faramValues) => {
+        const {
+            metadata: {
+                basicInformation = emptyObject,
+            } = {},
+        } = faramValues;
+        return shouldShowHNO(basicInformation);
+    },
+);
+
+export const editAryShouldShowCNA = createSelector(
+    editAryFaramValuesSelector,
+    (faramValues) => {
+        const {
+            metadata: {
+                basicInformation = emptyObject,
+            } = {},
+        } = faramValues;
+        return shouldShowCNA(basicInformation);
+    },
+);
