@@ -71,7 +71,11 @@ export default class ProjectAddForm extends React.PureComponent {
         this.state = {
             faramErrors: {},
             faramValues: {
+<<<<<<< HEAD
                 isPrivate: false,
+=======
+                visibility: 'public',
+>>>>>>> Add private project option in the new project modal
             },
             pending: false,
             pristine: false,
@@ -166,6 +170,7 @@ export default class ProjectAddForm extends React.PureComponent {
                     placeholder={_ts('components.addProject', 'addProjectModalPlaceholder')}
                     autoFocus
                 />
+<<<<<<< HEAD
                 <Cloak
                     hide={ProjectAddForm.shouldHidePrivate}
                     render={
@@ -177,6 +182,15 @@ export default class ProjectAddForm extends React.PureComponent {
                             hint={_ts('components.addProject', 'projectVisibilityInputHint')}
                         />
                     }
+=======
+                {/* Cloak according to user permission */}
+                <SegmentInput
+                    options={projectVisibilityOptions}
+                    className={styles.isPrivateCheckbox}
+                    faramElementName="visibility"
+                    label={_ts('components.addProject', 'projectVisibilityInputLabel')}
+                    hint={_ts('components.addProject', 'projectVisibilityInputHint')}
+>>>>>>> Add private project option in the new project modal
                 />
                 <div className={styles.actionButtons}>
                     <DangerButton onClick={this.onModalClose}>
