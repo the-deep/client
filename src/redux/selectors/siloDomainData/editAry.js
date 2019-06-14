@@ -32,6 +32,7 @@ import {
     assessmentFocusesSelector,
     aryTemplateMetadataSelector,
     aryTemplateMethodologySelector,
+    aryTemplateQuestionnaireListSelector,
 } from '../domainData/props-with-state';
 
 const emptyObject = {};
@@ -172,6 +173,29 @@ export const editArySelectedFocusesSelector = createSelector(
     },
 );
 
+export const editAryShouldShowHNO = createSelector(
+    editAryFaramValuesSelector,
+    (faramValues) => {
+        const {
+            metadata: {
+                basicInformation = emptyObject,
+            } = {},
+        } = faramValues;
+        return shouldShowHNO(basicInformation);
+    },
+);
+
+export const editAryShouldShowCNA = createSelector(
+    editAryFaramValuesSelector,
+    (faramValues) => {
+        const {
+            metadata: {
+                basicInformation = emptyObject,
+            } = {},
+        } = faramValues;
+        return shouldShowCNA(basicInformation);
+    },
+);
 
 // helpers
 
@@ -433,22 +457,46 @@ const createScoreSchema = (scorePillars = [], scoreMatrixPillars = [], sectors =
     },
 });
 
+const createQuestionnaireSchema = (aryTemplateQuestionnaire = [], method) => {
+    const questionIds = aryTemplateQuestionnaire
+        .filter(item => item.method === method)
+        .map(item => item.subSectors)
+        .flat()
+        .map(item => item.questions)
+        .flat();
+    return {
+        fields: listToMap(
+            questionIds,
+            item => item.id,
+            () => [],
+        ),
+    };
+};
+
 export const assessmentSchemaSelector = createSelector(
     aryTemplateMetadataSelector,
     aryTemplateMethodologySelector,
+    aryTemplateQuestionnaireListSelector,
+
     assessmentFocusesSelector,
     assessmentPillarsSelector,
     assessmentMatrixPillarsSelector,
+
     editArySelectedSectorsSelector,
     editArySelectedFocusesSelector,
+    editAryShouldShowHNO,
+    editAryShouldShowCNA,
     (
         aryTemplateMetadata,
         aryTemplateMethodology,
+        aryTemplateQuestionnaire,
         focuses,
         scorePillars,
         scoreMatrixPillars,
         selectedSectors,
         selectedFocuses,
+        showHNO,
+        showCNA,
     ) => {
         const schema = { fields: {
             metadata: {
@@ -461,6 +509,15 @@ export const assessmentSchemaSelector = createSelector(
             summary: createSummarySchema(focuses, selectedSectors, selectedFocuses),
             score: createScoreSchema(scorePillars, scoreMatrixPillars, selectedSectors),
         } };
+        console.warn(showHNO, showCNA);
+
+        if (showHNO) {
+            schema.fields.hno = createQuestionnaireSchema(aryTemplateQuestionnaire, 'hno');
+        }
+        if (showCNA) {
+            schema.fields.cna = createQuestionnaireSchema(aryTemplateQuestionnaire, 'cna');
+        }
+        console.warn(schema.fields.hno, schema.fields.cna);
         return schema;
     },
 );
@@ -521,29 +578,5 @@ export const assessmentComputeSchemaSelector = createSelector(
         return { fields: {
             score: { fields: scoreSchema },
         } };
-    },
-);
-
-export const editAryShouldShowHNO = createSelector(
-    editAryFaramValuesSelector,
-    (faramValues) => {
-        const {
-            metadata: {
-                basicInformation = emptyObject,
-            } = {},
-        } = faramValues;
-        return shouldShowHNO(basicInformation);
-    },
-);
-
-export const editAryShouldShowCNA = createSelector(
-    editAryFaramValuesSelector,
-    (faramValues) => {
-        const {
-            metadata: {
-                basicInformation = emptyObject,
-            } = {},
-        } = faramValues;
-        return shouldShowCNA(basicInformation);
     },
 );

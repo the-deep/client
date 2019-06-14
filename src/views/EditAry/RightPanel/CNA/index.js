@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
-import { _cs } from '@togglecorp/fujs';
+import { FaramGroup } from '@togglecorp/faram';
 
 import {
     aryTemplateQuestionnaireListSelector,
@@ -42,9 +42,11 @@ export default class CNA extends React.PureComponent {
 
         return (
             <div className={className}>
-                <Questionnaire
-                    data={cnaQuestionnaireList}
-                />
+                <FaramGroup faramElementName="cna">
+                    <Questionnaire
+                        data={cnaQuestionnaireList}
+                    />
+                </FaramGroup>
             </div>
         );
     }

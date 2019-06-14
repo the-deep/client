@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { _cs } from '@togglecorp/fujs';
+import { FaramGroup } from '@togglecorp/faram';
 
 import SegmentInput from '#rsci/SegmentInput';
 
@@ -38,13 +39,16 @@ export default class Method extends React.PureComponent {
                     { data.text }
                 </div>
                 <div className={styles.options}>
-                    <SegmentInput
-                        options={answerOptions}
-                        keySelector={answerOptionKeySelector}
-                        labelSelector={answerOptionLabelSelector}
-                        showLabel={false}
-                        showHintAndError={false}
-                    />
+                    <FaramGroup faramElementName={String(data.id)}>
+                        <SegmentInput
+                            faramElementName="value"
+                            options={answerOptions}
+                            keySelector={answerOptionKeySelector}
+                            labelSelector={answerOptionLabelSelector}
+                            showLabel={false}
+                            showHintAndError={false}
+                        />
+                    </FaramGroup>
                 </div>
             </div>
         );
