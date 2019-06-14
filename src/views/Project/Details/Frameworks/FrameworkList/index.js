@@ -64,7 +64,6 @@ export default class FrameworkList extends React.PureComponent {
         isActive: this.props.activeFrameworkId === framework.id,
         isSelected: this.props.selectedFrameworkId === framework.id,
         onClick: () => this.props.onClick(framework.id),
-        className: styles.item,
     })
 
     render() {
@@ -112,7 +111,7 @@ export default class FrameworkList extends React.PureComponent {
                         onChange={onFilterChange}
                         schema={this.schema}
                         value={filterValues}
-                        disable={frameworkListPending}
+                        disabled={frameworkListPending}
                     >
                         <SearchInput
                             faramElementName="search"

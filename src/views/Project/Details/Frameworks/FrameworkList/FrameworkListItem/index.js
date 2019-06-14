@@ -15,7 +15,7 @@ const FrameworkListItem = ({
     onClick,
 }) => (
     <ListItem
-        className={_cs(styles.frameworkListImte, className)}
+        className={_cs(styles.frameworkListItem, className)}
         active={isActive}
         onClick={onClick}
     >
