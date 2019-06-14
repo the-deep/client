@@ -9,6 +9,7 @@ import Faram, { requiredCondition } from '@togglecorp/faram';
 
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
+import SegmentInput from '#rsci/SegmentInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -25,6 +26,11 @@ import _ts from '#ts';
 import ProjectCreateRequest from './requests/ProjectCreateRequest';
 
 import styles from './styles.scss';
+
+const projectVisibilityOptions = [
+    { key: 'public', label: _ts('components.addProject', 'visibilityPublicLabel') },
+    { key: 'private', label: _ts('components.addProject', 'visibilityPrivateLabel') },
+];
 
 const propTypes = {
     className: PropTypes.string,
@@ -62,7 +68,9 @@ export default class ProjectAddForm extends React.PureComponent {
 
         this.state = {
             faramErrors: {},
-            faramValues: {},
+            faramValues: {
+                visibility: 'public',
+            },
             pending: false,
             pristine: false,
         };
@@ -70,6 +78,7 @@ export default class ProjectAddForm extends React.PureComponent {
         this.schema = {
             fields: {
                 title: [requiredCondition],
+                isPrivate: [],
             },
         };
 
@@ -147,6 +156,14 @@ export default class ProjectAddForm extends React.PureComponent {
                     label={_ts('components.addProject', 'addProjectModalLabel')}
                     placeholder={_ts('components.addProject', 'addProjectModalPlaceholder')}
                     autoFocus
+                />
+                {/* Cloak according to user permission */}
+                <SegmentInput
+                    options={projectVisibilityOptions}
+                    className={styles.isPrivateCheckbox}
+                    faramElementName="visibility"
+                    label={_ts('components.addProject', 'projectVisibilityInputLabel')}
+                    hint={_ts('components.addProject', 'projectVisibilityInputHint')}
                 />
                 <div className={styles.actionButtons}>
                     <DangerButton onClick={this.onModalClose}>
