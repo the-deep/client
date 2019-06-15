@@ -37,12 +37,13 @@ FrameworkListItem.propTypes = {
     isSelected: PropTypes.bool.isRequired,
     framework: PropTypes.shape({
         title: PropTypes.string,
-    }).isRequired,
+    }),
     onClick: PropTypes.func.isRequired,
 };
 
 FrameworkListItem.defaultProps = {
     className: '',
+    framework: {},
 };
 
 export default FrameworkListItem;

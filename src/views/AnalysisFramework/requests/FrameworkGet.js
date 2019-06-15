@@ -16,7 +16,7 @@ export default class FrameworkGet extends Request {
         this.parent.setState({ pendingFramework: true });
     }
 
-    handleAfterLoad = () => {
+    handlePostLoad = () => {
         this.parent.setState({ pendingFramework: false });
     }
 

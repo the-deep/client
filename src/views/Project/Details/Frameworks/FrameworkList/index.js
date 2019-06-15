@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Faram from '@togglecorp/faram';
+import { isTruthyString } from '@togglecorp/fujs';
 
 import SearchInput from '#rsci/SearchInput';
 import SegmentInput from '#rsci/SegmentInput';
@@ -25,6 +26,15 @@ const propTypes = {
     projectId: PropTypes.number.isRequired,
     setActiveFramework: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
+    // eslint-disable-next-line react/forbid-prop-types
+    frameworkList: PropTypes.array,
+    frameworkListPending: PropTypes.bool,
+    onFilterChange: PropTypes.func.isRequired,
+    filterValues: PropTypes.shape({
+        search: PropTypes.string,
+        activity: PropTypes.string,
+        relatedToMe: PropTypes.bool,
+    }).isRequired,
 };
 
 const defaultProps = {
@@ -33,6 +43,8 @@ const defaultProps = {
     // Apparently there can be no frameworks in projects
     selectedFrameworkId: undefined,
     readOnly: false,
+    frameworkListPending: false,
+    frameworkList: [],
 };
 
 const fameworkActivityOptions = [
@@ -59,6 +71,10 @@ export default class FrameworkList extends React.PureComponent {
         };
     }
 
+    getIsFiltered = ({ search, activity, relatedToMe }) => (
+        isTruthyString(search) || activity !== 'all' || relatedToMe
+    );
+
     itemRendererParams = (key, framework) => ({
         framework,
         isActive: this.props.activeFrameworkId === framework.id,
@@ -83,6 +99,8 @@ export default class FrameworkList extends React.PureComponent {
             ${styles.frameworkList}
         `;
 
+        const isFiltered = this.getIsFiltered(filterValues);
+
         return (
             <div className={className}>
                 <header className={styles.header}>
@@ -93,7 +111,7 @@ export default class FrameworkList extends React.PureComponent {
 
                         <AccentModalButton
                             iconName="add"
-                            disabled={readOnly && frameworkListPending}
+                            disabled={readOnly || frameworkListPending}
                             className={styles.addFrameworkButton}
                             transparent
                             modal={
@@ -111,7 +129,6 @@ export default class FrameworkList extends React.PureComponent {
                         onChange={onFilterChange}
                         schema={this.schema}
                         value={filterValues}
-                        disabled={frameworkListPending}
                     >
                         <SearchInput
                             faramElementName="search"
@@ -144,6 +161,7 @@ export default class FrameworkList extends React.PureComponent {
                     renderer={FrameworkListItem}
                     rendererParams={this.itemRendererParams}
                     keySelector={getFrameworkKey}
+                    isFiltered={isFiltered}
                 />
             </div>
         );

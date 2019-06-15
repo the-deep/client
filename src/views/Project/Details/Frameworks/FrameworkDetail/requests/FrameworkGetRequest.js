@@ -9,7 +9,10 @@ export default class FrameworkGet extends Request {
     schemaName = 'analysisFramework';
 
     handlePreLoad = () => {
-        this.parent.setState({ pendingFramework: true });
+        this.parent.setState({
+            pendingFramework: true,
+            error: false,
+        });
     }
 
     handleAfterLoad = () => {

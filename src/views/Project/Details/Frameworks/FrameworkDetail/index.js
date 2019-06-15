@@ -4,7 +4,11 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 
-import { reverseRoute } from '@togglecorp/fujs';
+import {
+    reverseRoute,
+    isTruthy,
+} from '@togglecorp/fujs';
+
 import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -33,17 +37,20 @@ const AccentModalButton = modalize(AccentButton);
 
 const propTypes = {
     className: PropTypes.string,
-    frameworkId: PropTypes.number.isRequired,
+    frameworkId: PropTypes.number,
     addNewFramework: PropTypes.func.isRequired,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setProjectFramework: PropTypes.func.isRequired,
     setActiveFramework: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
+    isFrameworkListEmpty: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     readOnly: false,
+    frameworkId: undefined,
+    isFrameworkListEmpty: false,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -56,6 +63,9 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const requestFramework = memoize((frameworkId, frameworkGetRequest) => {
+    if (frameworkId === undefined) {
+        return;
+    }
     frameworkGetRequest.stop();
     frameworkGetRequest
         .init(frameworkId)
@@ -69,9 +79,10 @@ export default class FrameworkDetail extends React.PureComponent {
 
     constructor(props) {
         super(props);
+        const { frameworkId } = this.props;
 
         this.state = {
-            pendingFramework: true,
+            pendingFramework: !!frameworkId,
             error: false,
             framework: undefined,
             activeView: 'overview',
@@ -204,8 +215,7 @@ export default class FrameworkDetail extends React.PureComponent {
         const {
             frameworkId,
             className: classNameFromProps,
-            frameworkListEmpty,
-            frameworkListPending,
+            isFrameworkListEmpty,
         } = this.props;
 
         const {
@@ -224,9 +234,17 @@ export default class FrameworkDetail extends React.PureComponent {
             ${styles.frameworkDetails}
         `;
 
-        // FIXME: handle error gracefully
-        // When af cannot be pulled, show show error
-        if (pendingFramework || frameworkListPending) {
+        if (isFrameworkListEmpty) {
+            return (
+                <div className={className}>
+                    <Message className={styles.noFrameworkMessage}>
+                        { _ts('project', 'noAfText') }
+                    </Message>
+                </div>
+            );
+        }
+
+        if (pendingFramework) {
             return (
                 <div className={className}>
                     <LoadingAnimation />
@@ -239,16 +257,6 @@ export default class FrameworkDetail extends React.PureComponent {
                 <div className={className}>
                     <Message>
                         {_ts('project.framework', 'errorFrameworkLoad')}
-                    </Message>
-                </div>
-            );
-        }
-
-        if (frameworkListEmpty) {
-            return (
-                <div className={className}>
-                    <Message className={styles.noFrameworkMessage}>
-                        { _ts('project', 'noAfText') }
                     </Message>
                 </div>
             );

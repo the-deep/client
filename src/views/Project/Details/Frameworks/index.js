@@ -31,6 +31,8 @@ const propTypes = {
 
     // eslint-disable-next-line react/no-unused-prop-types
     setFrameworkList: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    frameworkListGetRequest: PropTypes.object.isRequired,
     readOnly: PropTypes.bool,
 };
 
@@ -73,25 +75,19 @@ const getActiveFrameworkId = memoize((
     frameworkList,
     activeFrameworkIdFromState,
 ) => {
-    if (activeFrameworkIdFromState) {
+    const activeFrameworkId = activeFrameworkIdFromState || activeFrameworkIdFromProject;
+    if (activeFrameworkId) {
         const previouslyActiveFrameworkIndex = frameworkList.findIndex(
-            f => f.id === activeFrameworkIdFromState,
+            f => f.id === activeFrameworkId,
         );
 
         if (previouslyActiveFrameworkIndex !== -1) {
-            return activeFrameworkIdFromState;
+            return activeFrameworkId;
         }
     }
 
-    let activeFrameworkId;
-    if (activeFrameworkIdFromProject) {
-        activeFrameworkId = activeFrameworkIdFromProject;
-    } else {
-        activeFrameworkId = frameworkList.length > 0 ?
-            frameworkList[0].id : undefined;
-    }
-
-    return activeFrameworkId;
+    return frameworkList.length > 0 ?
+        frameworkList[0].id : undefined;
 });
 
 const emptyObject = {};
@@ -105,17 +101,23 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
 
     constructor(props) {
         super(props);
+        const { frameworkListGetRequest } = this.props;
+
+        const filterValues = {
+            activity: 'active',
+            relatedToMe: true,
+            search: '',
+        };
 
         this.state = {
             activeFrameworkId: undefined,
-
             // TODO: move to redux
-            filterValues: {
-                activity: 'active',
-                relatedToMe: true,
-                search: '',
-            },
+            filterValues,
         };
+
+        frameworkListGetRequest.setDefaultParams({
+            body: filterValues,
+        });
     }
 
     componentDidMount() {
@@ -170,6 +172,8 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
             activeFrameworkIdFromState,
         );
 
+        const isFrameworkListEmpty = !frameworkListPending && frameworkList.length === 0;
+
         return (
             <div className={_cs(className, styles.projectAnalysisFramework)}>
                 <FrameworkList
@@ -188,9 +192,8 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
                 <FrameworkDetail
                     className={styles.details}
                     frameworkId={activeFrameworkId}
-                    isFrameworkListEmpty={!frameworkListPending && frameworkList.length === 0}
-                    frameworkListPending={frameworkListPending}
-                    readOnly={readOnly}
+                    isFrameworkListEmpty={isFrameworkListEmpty}
+                    readOnly={readOnly || frameworkListPending}
                     setActiveFramework={this.setActiveFramework}
                 />
             </div>
