@@ -27,9 +27,10 @@ import ProjectCreateRequest from './requests/ProjectCreateRequest';
 
 import styles from './styles.scss';
 
+// Note: Key is set according to is_private option
 const projectVisibilityOptions = [
-    { key: 'public', label: _ts('components.addProject', 'visibilityPublicLabel') },
-    { key: 'private', label: _ts('components.addProject', 'visibilityPrivateLabel') },
+    { key: false, label: _ts('components.addProject', 'visibilityPublicLabel') },
+    { key: true, label: _ts('components.addProject', 'visibilityPrivateLabel') },
 ];
 
 const propTypes = {
@@ -69,7 +70,7 @@ export default class ProjectAddForm extends React.PureComponent {
         this.state = {
             faramErrors: {},
             faramValues: {
-                visibility: 'public',
+                isPrivate: false,
             },
             pending: false,
             pristine: false,
@@ -115,11 +116,18 @@ export default class ProjectAddForm extends React.PureComponent {
         this.setState({ faramErrors });
     };
 
-    successCallback = ({ title }) => {
+    successCallback = ({
+        title,
+        isPrivate,
+    }) => {
         const { userGroups, userId } = this.props;
         this.projectCreateRequest.init(
             userId,
-            { title, userGroups },
+            {
+                title,
+                userGroups,
+                isPrivate,
+            },
         ).start();
     };
 
@@ -157,11 +165,11 @@ export default class ProjectAddForm extends React.PureComponent {
                     placeholder={_ts('components.addProject', 'addProjectModalPlaceholder')}
                     autoFocus
                 />
-                {/* Cloak according to user permission */}
+                {/* TODO: Cloak according to user permission */}
                 <SegmentInput
                     options={projectVisibilityOptions}
                     className={styles.isPrivateCheckbox}
-                    faramElementName="visibility"
+                    faramElementName="isPrivate"
                     label={_ts('components.addProject', 'projectVisibilityInputLabel')}
                     hint={_ts('components.addProject', 'projectVisibilityInputHint')}
                 />
