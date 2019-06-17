@@ -1,56 +1,111 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
-import { _cs } from '@togglecorp/fujs';
+
+import { FaramGroup } from '@togglecorp/faram';
+
+import ListView from '#rscv/List/ListView';
 
 import {
     aryTemplateQuestionnaireListSelector,
+    assessmentMinScaleColorSelector,
+    assessmentMaxScaleColorSelector,
 } from '#redux';
 
-import ListView from '#rscv/List/ListView';
+import styles from './styles.scss';
+import ScoreItem from '../Score/ScoreItem';
 import Method from './Method';
 
-import styles from './styles.scss';
-
 const propTypes = {
+    className: PropTypes.string,
+    minScaleColor: PropTypes.string.isRequired,
+    maxScaleColor: PropTypes.string.isRequired,
+    data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
-
+    className: '',
+    data: [],
 };
 
 const mapStateToProps = state => ({
     questionnaireList: aryTemplateQuestionnaireListSelector(state),
+    minScaleColor: assessmentMinScaleColorSelector(state),
+    maxScaleColor: assessmentMaxScaleColorSelector(state),
 });
 
 const getMethodRendererParams = (_, d) => ({ data: d });
 const methodKeySelector = d => d.id;
 
 @connect(mapStateToProps)
-export default class HNO extends React.PureComponent {
+export default class Questionnaire extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getHNOQuestionnaireList = memoize(questionnaireList => (
-        questionnaireList.filter(d => d.method === 'hno')
-    ))
+    getCriteriaQuestions = memoize(questions => (
+        questions.filter(question => question.subMethod === 'criteria')
+    ));
+
+    scoreItemRendererParams = item => ({
+        faramElementName: `sector-${item.id}`,
+        title: item.title,
+        minValue: 0,
+        maxValue: 100,
+        minColor: this.props.minScaleColor,
+        maxColor: this.props.maxScaleColor,
+    })
 
     render() {
         const {
-            pending,
             className,
             data,
+            minScaleColor,
+            maxScaleColor,
         } = this.props;
 
         return (
-            <ListView
-                className={className}
-                data={data}
-                renderer={Method}
-                rendererParams={getMethodRendererParams}
-                keySelector={methodKeySelector}
-            />
+            <Fragment>
+                <div className={styles.summary}>
+                    <ListView
+                        className={styles.left}
+                        data={this.getCriteriaQuestions(data)}
+                        rendererParams={this.scoreItemRendererParams}
+                        renderer={ScoreItem}
+                    />
+                    <div className={styles.right}>
+                        <ScoreItem
+                            className={styles.minimumRequirement}
+                            // FIXME: use strings
+                            title="Minimum Requirement"
+                            faramElementName="minimum-requirements"
+                            minValue={0}
+                            maxValue={100}
+                            minColor={minScaleColor}
+                            maxColor={maxScaleColor}
+                        />
+                        <ScoreItem
+                            className={styles.allQualityCriteria}
+                            // FIXME: use strings
+                            title="All Quality Criteria"
+                            faramElementName="all-quality-criteria"
+                            minValue={0}
+                            maxValue={100}
+                            minColor={minScaleColor}
+                            maxColor={maxScaleColor}
+                        />
+                    </div>
+                </div>
+                <FaramGroup faramElementName="questions">
+                    <ListView
+                        className={className}
+                        data={data}
+                        renderer={Method}
+                        rendererParams={getMethodRendererParams}
+                        keySelector={methodKeySelector}
+                    />
+                </FaramGroup>
+            </Fragment>
         );
     }
 }

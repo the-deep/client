@@ -4,9 +4,9 @@ import {
     dateCondition,
 } from '@togglecorp/faram';
 import {
+    sum,
     median,
     mapToList,
-    sum,
     bucket,
     isTruthy,
     decodeDate,
@@ -458,18 +458,32 @@ const createScoreSchema = (scorePillars = [], scoreMatrixPillars = [], sectors =
 });
 
 const createQuestionnaireSchema = (aryTemplateQuestionnaire = [], method) => {
-    const questionIds = aryTemplateQuestionnaire
-        .filter(item => item.method === method)
+    const sectors = aryTemplateQuestionnaire
+        .filter(item => item.method === method);
+
+    const questionIds = sectors
         .map(item => item.subSectors)
         .flat()
         .map(item => item.questions)
         .flat();
+
     return {
-        fields: listToMap(
-            questionIds,
-            item => item.id,
-            () => [],
-        ),
+        fields: {
+            questions: {
+                ...listToMap(
+                    sectors,
+                    sector => `sector-${sector.id}`,
+                    () => [],
+                ),
+                'minimum-requirements': [],
+                'all-quality-criteria': [],
+                fields: listToMap(
+                    questionIds,
+                    item => item.id,
+                    () => [],
+                ),
+            },
+        },
     };
 };
 
@@ -509,7 +523,6 @@ export const assessmentSchemaSelector = createSelector(
             summary: createSummarySchema(focuses, selectedSectors, selectedFocuses),
             score: createScoreSchema(scorePillars, scoreMatrixPillars, selectedSectors),
         } };
-        console.warn(showHNO, showCNA);
 
         if (showHNO) {
             schema.fields.hno = createQuestionnaireSchema(aryTemplateQuestionnaire, 'hno');
@@ -517,7 +530,6 @@ export const assessmentSchemaSelector = createSelector(
         if (showCNA) {
             schema.fields.cna = createQuestionnaireSchema(aryTemplateQuestionnaire, 'cna');
         }
-        console.warn(schema.fields.hno, schema.fields.cna);
         return schema;
     },
 );
@@ -527,56 +539,118 @@ export const assessmentComputeSchemaSelector = createSelector(
     assessmentMatrixPillarsSelector,
     assessmentScoreScalesSelector,
     assessmentScoreBucketsSelector,
+    aryTemplateQuestionnaireListSelector,
+    editAryShouldShowHNO,
+    editAryShouldShowCNA,
     (
         scorePillars = [],
         scoreMatrixPillars = [],
         scoreScales = [],
         scoreBuckets = [],
+        aryTemplateQuestionnaire,
+        showHNO,
+        showCNA,
     ) => {
         if (scoreScales.length === 0) {
             return {};
         }
 
-        const scoreSchema = {};
+        const scoreSchema = {
+            ...listToMap(
+                scorePillars,
+                pillar => `${pillar.id}-score`,
+                pillar => (data, score) => {
+                    const getScaleVal = v => scoreScales.find(
+                        s => String(s.value) === String(v),
+                    ).value;
 
-        const getScaleVal = v => scoreScales.find(s => String(s.value) === String(v)).value;
+                    const pillarObj = getObjectChildren(score, ['pillars', pillar.id]) || emptyObject;
+                    const pillarValues = Object.values(pillarObj)
+                        .map(getScaleVal);
+                    return sum(pillarValues);
+                },
+            ),
+            ...listToMap(
+                scoreMatrixPillars,
+                pillar => `${pillar.id}-matrix-score`,
+                pillar => (data, score) => {
+                    const scoreMatrixScales = Object.values(pillar.scales).reduce(
+                        (acc, b) => [...acc, ...Object.values(b)],
+                        [],
+                    );
+                    const getMatrixScaleVal = v => scoreMatrixScales.find(
+                        s => String(s.id) === String(v),
+                    ).value;
 
-        scorePillars.forEach((pillar) => {
-            scoreSchema[`${pillar.id}-score`] = (data, score) => {
-                const pillarObj = getObjectChildren(score, ['pillars', pillar.id]) || emptyObject;
-                const pillarValues = Object.values(pillarObj).map(v => getScaleVal(v));
-                return sum(pillarValues);
-            };
-        });
+                    const pillarObj = getObjectChildren(score, ['matrixPillars', pillar.id]) || emptyObject;
+                    const pillarValues = Object.values(pillarObj)
+                        .map(getMatrixScaleVal);
+                    return median(pillarValues) * 5;
+                },
+            ),
+            finalScore: (data, score) => {
+                const pillarScores = scorePillars.map(
+                    p => (getObjectChildren(score, [`${p.id}-score`]) || 0) * p.weight,
+                );
+                const matrixPillarScores = scoreMatrixPillars.map(
+                    p => (getObjectChildren(score, [`${p.id}-matrix-score`]) || 0) * p.weight,
+                );
 
-        scoreMatrixPillars.forEach((pillar) => {
-            const scales = Object.values(pillar.scales).reduce(
-                (acc, b) => [...acc, ...Object.values(b)],
-                [],
-            );
-            const getMatrixScaleVal = v => scales.find(s => String(s.id) === String(v)).value;
-
-            scoreSchema[`${pillar.id}-matrix-score`] = (data, score) => {
-                const pillarObj = getObjectChildren(score, ['matrixPillars', pillar.id]) || emptyObject;
-                const pillarValues = Object.values(pillarObj).map(v => getMatrixScaleVal(v));
-                return median(pillarValues) * 5;
-            };
-        });
-
-        scoreSchema.finalScore = (data, score) => {
-            const pillarScores = scorePillars.map(
-                p => (getObjectChildren(score, [`${p.id}-score`]) || 0) * p.weight,
-            );
-            const matrixPillarScores = scoreMatrixPillars.map(
-                p => (getObjectChildren(score, [`${p.id}-matrix-score`]) || 0) * p.weight,
-            );
-
-            const average = sum([...pillarScores, ...matrixPillarScores]);
-            return bucket(average, scoreBuckets);
+                const average = sum([...pillarScores, ...matrixPillarScores]);
+                return bucket(average, scoreBuckets);
+            },
         };
 
-        return { fields: {
+        const schema = { fields: {
             score: { fields: scoreSchema },
         } };
+
+        const getSchemaForQuestionnaire = (method) => {
+            const sectors = aryTemplateQuestionnaire.filter(
+                item => item.method === method && item.subMethod === 'criteria',
+            );
+            const allQuestions = sectors
+                .map(item => item.subSectors)
+                .flat()
+                .map(item => item.questions)
+                .flat();
+            const requiredQuestions = allQuestions.filter(item => item.required);
+
+            const getScoreCalculationMethod = questionList => (data, { questions = {} } = {}) => {
+                const answers = questionList
+                    .map(item => item.id)
+                    .map(item => questions[item])
+                    .filter(isDefined)
+                    .filter(item => !!item.value);
+
+                return 100 * (answers.length / questionList.length);
+            };
+
+            return {
+                fields: {
+                    ...listToMap(
+                        sectors,
+                        sector => `sector-${sector.id}`,
+                        (sector) => {
+                            const sectorQuestions = sector.subSectors
+                                .map(item => item.questions)
+                                .flat();
+                            return getScoreCalculationMethod(sectorQuestions);
+                        },
+                    ),
+                    'minimum-requirements': getScoreCalculationMethod(requiredQuestions),
+                    'all-quality-criteria': getScoreCalculationMethod(allQuestions),
+                },
+            };
+        };
+
+        if (showCNA) {
+            schema.fields.cna = getSchemaForQuestionnaire('cna');
+        }
+        if (showHNO) {
+            schema.fields.hno = getSchemaForQuestionnaire('hno');
+        }
+
+        return schema;
     },
 );

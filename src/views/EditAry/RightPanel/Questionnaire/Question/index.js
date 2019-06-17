@@ -16,8 +16,8 @@ const defaultProps = {
 };
 
 const answerOptions = [
-    { key: 'yes', label: 'Yes' },
-    { key: 'no', label: 'No' },
+    { key: true, label: 'Yes' },
+    { key: false, label: 'No' },
 ];
 
 const answerOptionKeySelector = d => d.key;
