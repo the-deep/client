@@ -18,6 +18,8 @@ import {
 
     editAryFaramValuesSelector,
     editAryFaramErrorsSelector,
+    editAryShouldShowHNO,
+    editAryShouldShowCNA,
 } from '#redux';
 import _ts from '#ts';
 import TabTitle from '#components/general/TabTitle';
@@ -26,6 +28,9 @@ import Metadata from './Metadata';
 import Summary from './Summary';
 import Score from './Score';
 import Methodology from './Methodology';
+import HNO from './HNO';
+import CNA from './CNA';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -40,6 +45,9 @@ const propTypes = {
     pending: PropTypes.bool,
     readOnly: PropTypes.bool,
     editAryIsPristine: PropTypes.bool.isRequired,
+
+    showHNO: PropTypes.bool,
+    showCNA: PropTypes.bool,
 };
 
 const defaultProps = {
@@ -53,6 +61,9 @@ const defaultProps = {
     activeLeadId: undefined,
     activeLeadGroupId: undefined,
     readOnly: false,
+
+    showHNO: false,
+    showCNA: false,
 };
 
 const mapStateToProps = state => ({
@@ -65,6 +76,9 @@ const mapStateToProps = state => ({
 
     schema: assessmentSchemaSelector(state),
     computeSchema: assessmentComputeSchemaSelector(state),
+
+    showHNO: editAryShouldShowHNO(state),
+    showCNA: editAryShouldShowCNA(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -90,42 +104,71 @@ export default class RightPanel extends React.PureComponent {
 
         this.views = {
             metadata: {
-                component: () => (
-                    <Metadata
-                        className={styles.metadata}
-                        pending={this.props.pending}
-                        onUploadPending={this.props.onUploadPending}
-                    />
-                ),
+                rendereParams: () => ({
+                    className: styles.metadata,
+                    pending: this.props.pending,
+                    onUploadPending: this.props.onUploadPending,
+                }),
+                component: Metadata,
             },
             summary: {
-                component: () => (
-                    <Summary
-                        className={styles.summary}
-                        pending={this.props.pending}
-                        onActiveSectorChange={this.props.onActiveSectorChange}
-                    />
-                ),
+                rendereParams: () => ({
+                    className: styles.summary,
+                    pending: this.props.pending,
+                    onActiveSectorChange: this.props.onActiveSectorChange,
+                }),
+                component: Summary,
             },
             methodology: {
-                component: () => (
-                    <Methodology pending={this.props.pending} />
-                ),
+                rendereParams: () => ({
+                    pending: this.props.pending,
+                }),
+                component: Methodology,
             },
             score: {
-                component: () => (
-                    <Score
-                        className={styles.score}
-                        pending={this.props.pending}
-                    />
-                ),
+                rendereParams: () => ({
+                    className: styles.score,
+                    pending: this.props.pending,
+                }),
+                component: Score,
                 // FIXME: this is a quick fix
                 // Need to have a default value for elements in score
                 // Shouldn't use 'defaultValue' prop of input
                 mount: true,
                 wrapContainer: true,
             },
+            hno: {
+                rendererParams: () => ({
+                    className: styles.hno,
+                    pending: this.props.pending,
+                }),
+                component: HNO,
+            },
+            cna: {
+                rendererParams: () => ({
+                    className: styles.cna,
+                    pending: this.props.pending,
+                }),
+                component: CNA,
+            },
         };
+    }
+
+    getTabs = (tabs, showHNO, showCNA) => {
+        if (!showHNO && !showCNA) {
+            return tabs;
+        }
+
+        const newTabs = { ...tabs };
+
+        if (showHNO) {
+            newTabs.hno = _ts('editAssessment', 'hnoTabLabel');
+        }
+        if (showCNA) {
+            newTabs.cna = _ts('editAssessment', 'cnaTabLabel');
+        }
+
+        return newTabs;
     }
 
     handleFaramChange = (faramValues, faramErrors, faramInfo) => {
@@ -168,7 +211,11 @@ export default class RightPanel extends React.PureComponent {
             computeSchema,
             pending,
             readOnly,
+            showHNO,
+            showCNA,
         } = this.props;
+
+        const tabs = this.getTabs(this.tabs, showHNO, showCNA);
 
         return (
             <Faram
@@ -186,7 +233,7 @@ export default class RightPanel extends React.PureComponent {
                     useHash
                     defaultHash={this.defaultHash}
                     replaceHistory
-                    tabs={this.tabs}
+                    tabs={tabs}
                     itemClassName={styles.tab}
                     renderer={TabTitle}
                     rendererParams={this.tabRendererParams}

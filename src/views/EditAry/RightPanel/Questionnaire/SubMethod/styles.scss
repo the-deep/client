@@ -1,0 +1,15 @@
+.sub-method {
+    .title {
+        position: sticky;
+        top: 40px;
+        z-index: 1;
+        border-bottom: var(--width-separator-thin) solid var(--color-separator-light);
+        background-color: var(--color-foreground);
+        padding: var(--spacing-medium);
+        color: var(--color-accent);
+    }
+
+    .question-list {
+        // padding: var(--spacing-medium);
+    }
+}

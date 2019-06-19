@@ -11,6 +11,7 @@ import {
     affectedGroupsSelector,
     prioritySectorsSelector,
     specificNeedGroupsSelector,
+    MIN_SECTORS_SELECTION_FOR_CROSS_SECTOR,
 } from '#redux';
 import _ts from '#ts';
 import _cs from '#cs';
@@ -153,9 +154,9 @@ export default class CrossSector extends React.PureComponent {
     render() {
         const { selectedSectors } = this.props;
 
-        if (selectedSectors.length < 3) {
+        if (selectedSectors.length < MIN_SECTORS_SELECTION_FOR_CROSS_SECTOR) {
             const className = this.getClassName(true);
-            const emptyText = _ts('editAssessment.summary', 'crossSectorEmptyText');
+            const emptyText = _ts('editAssessment.summary', 'crossSectorEmptyText', { count: MIN_SECTORS_SELECTION_FOR_CROSS_SECTOR });
 
             return (
                 <div className={className}>

@@ -4,8 +4,9 @@ import {
     dateCondition,
 } from '@togglecorp/faram';
 import {
-    median,
     sum,
+    median,
+    mapToList,
     bucket,
     isTruthy,
     decodeDate,
@@ -31,12 +32,14 @@ import {
     assessmentFocusesSelector,
     aryTemplateMetadataSelector,
     aryTemplateMethodologySelector,
+    aryTemplateQuestionnaireListSelector,
 } from '../domainData/props-with-state';
 
 const emptyObject = {};
 const emptyList = [];
 
-// FIXME: copy this to common place
+// HELPERS
+
 const getNamespacedId = (leadId, leadGroupId) => {
     if (isTruthy(leadGroupId)) {
         return `lead-group-${leadGroupId}`;
@@ -44,6 +47,67 @@ const getNamespacedId = (leadId, leadGroupId) => {
         return `lead-${leadId}`;
     }
     return undefined;
+};
+
+export const MIN_SECTORS_SELECTION_FOR_CROSS_SECTOR = 3;
+
+const FOCUSES__CROSS_SECTOR = '12';
+const FOCUSES__HUMANITARIAN_ACCESS = '8';
+
+const METADATA_FIELDS__FAMILY = 21;
+const FAMILY__HNO = '7';
+
+const METADATA_FIELDS__COORDINATION = 6;
+const COORDINATION__JOINT = '1';
+const COORDINATION__HARMONIZED = '2';
+
+const METHODOLOGY_FIELDS__DATA_COLLECTION_TECHNIQUE = 1;
+const DATA_COLLECTION_TECHNIQUE_OPTIONS__SECONDARY_DATA_REVIEW = '1';
+
+// TODO: correct id
+const CNA__USE_CRITERIA = 21;
+const HNO__USE_CRITERIA = 6;
+
+export const isUseCriteria = (method, sectorId) => (
+    (method === 'cna' && sectorId === CNA__USE_CRITERIA)
+    || (method === 'hno' && sectorId === HNO__USE_CRITERIA)
+);
+
+export const isDataCollectionTechniqueColumn = field => (
+    field && field.id === METHODOLOGY_FIELDS__DATA_COLLECTION_TECHNIQUE
+);
+
+export const isSecondaryDataReviewSelected = methodologyRow => (
+    methodologyRow[METHODOLOGY_FIELDS__DATA_COLLECTION_TECHNIQUE] ===
+    DATA_COLLECTION_TECHNIQUE_OPTIONS__SECONDARY_DATA_REVIEW
+);
+
+export const shouldShowHNO = (basicInformation) => {
+    const familyValue = basicInformation[METADATA_FIELDS__FAMILY];
+    return familyValue === FAMILY__HNO;
+};
+
+export const shouldShowCNA = (basicInformation) => {
+    const coordinationValue = basicInformation[METADATA_FIELDS__COORDINATION];
+    return (
+        (coordinationValue === COORDINATION__HARMONIZED
+            || coordinationValue === COORDINATION__JOINT)
+        && !shouldShowHNO(basicInformation)
+    );
+};
+
+export const shouldShowHumanitarianAccess = (focuses, selectedFocuses) => {
+    const index = selectedFocuses.findIndex(
+        focus => String(focus) === FOCUSES__HUMANITARIAN_ACCESS,
+    );
+    return index !== -1;
+};
+
+export const shouldShowCrossSector = (focuses, selectedFocuses) => {
+    const index = selectedFocuses.findIndex(
+        focus => String(focus) === FOCUSES__CROSS_SECTOR,
+    );
+    return index !== -1;
 };
 
 // ARY VIEW SELECTORS
@@ -118,16 +182,38 @@ export const editArySelectedFocusesSelector = createSelector(
     },
 );
 
+export const editAryShouldShowHNO = createSelector(
+    editAryFaramValuesSelector,
+    (faramValues) => {
+        const {
+            metadata: {
+                basicInformation = emptyObject,
+            } = {},
+        } = faramValues;
+        return shouldShowHNO(basicInformation);
+    },
+);
+
+export const editAryShouldShowCNA = createSelector(
+    editAryFaramValuesSelector,
+    (faramValues) => {
+        const {
+            metadata: {
+                basicInformation = emptyObject,
+            } = {},
+        } = faramValues;
+        return shouldShowCNA(basicInformation);
+    },
+);
 
 // helpers
 
-const createFieldSchema = (field, shouldBeOptional) => {
+const createFieldSchema = (field) => {
     const {
-        isRequired: isRequiredFromField,
+        isRequired,
         fieldType,
         title,
     } = field;
-    const isRequired = isRequiredFromField && !shouldBeOptional;
     switch (fieldType) {
         case 'date':
             return isRequired
@@ -159,102 +245,63 @@ const createFieldSchema = (field, shouldBeOptional) => {
     }
 };
 
-const createAdditionalDocumentsSchema = () => {
-    /*
-    const {
-        bothPageRequiredCondition,
-        validPageRangeCondition,
-        validPageNumbersCondition,
-        pendingCondition,
-    } = Baksa;
-    */
-
-    const schema = { fields: {
-        executiveSummary: [
-            /*
-            bothPageRequiredCondition,
-            validPageRangeCondition,
-            validPageNumbersCondition,
-            pendingCondition,
-            */
-        ],
-        assessmentData: [
-        /*
-        pendingCondition
-        */],
-        questionnaire: [/*
-            bothPageRequiredCondition,
-            validPageRangeCondition,
-            validPageNumbersCondition,
-            pendingCondition,
-        */],
+const createAdditionalDocumentsSchema = () => ({
+    fields: {
+        executiveSummary: [],
+        assessmentData: [],
+        questionnaire: [],
         misc: [],
-    } };
-    return schema;
-};
+    },
+});
 
-const createBasicInformationSchema = (aryTemplateMetadata = {}) => {
-    // Dynamic fields from metadataGroup
-    const dynamicFields = {};
-    Object.keys(aryTemplateMetadata).forEach((key) => {
-        aryTemplateMetadata[key].fields.forEach((field) => {
-            dynamicFields[field.id] = createFieldSchema(field);
-        });
-    });
+const createBasicInformationSchema = (aryTemplateMetadata = {}) => ({
+    fields: listToMap(
+        mapToList(aryTemplateMetadata)
+            .map(group => group.fields)
+            .flat(),
+        field => field.id,
+        field => createFieldSchema(field),
+    ),
+});
 
-    const schema = { fields: dynamicFields };
-    return schema;
-};
-
-export const isDataCollectionTechniqueColumn = field => (
-    field.title.toLowerCase().trim() === 'data collection technique'
-);
-
-// NOTE:
-export const getDataCollectionTechnique = (aryTemplateMethodology) => {
-    let dataCollectionTechnique;
-    aryTemplateMethodology.some(
-        group => group.fields.some((field) => {
-            if (isDataCollectionTechniqueColumn(field)) {
-                dataCollectionTechnique = field;
-                return true;
-            }
-            return false;
-        }),
-    );
-    return dataCollectionTechnique;
-};
-
-// NOTE:
-export const isSecondaryDataReviewOption = option => (
-    option && option.label.toLowerCase().trim() === 'secondary data review'
-);
-
-const createMethodologySchema = (aryTemplateMethodology = {}) => {
-    const dataCollectionTechnique = getDataCollectionTechnique(aryTemplateMethodology);
-
-    const schema = { fields: {
+const createMethodologySchema = (aryTemplateMethodology = {}) => ({
+    fields: {
         attributes: {
             keySelector: d => d.key,
-            identifier: (value = {}) => {
-                if (!dataCollectionTechnique) {
-                    return 'default';
+            identifier: (value) => {
+                if (isSecondaryDataReviewSelected(value)) {
+                    return 'secondaryDataReview';
                 }
-                const key = value[dataCollectionTechnique.id];
-                if (!key) {
-                    return 'default';
-                }
-                const selectedOption = dataCollectionTechnique.options.find(
-                    option => option.key === key,
-                );
-                return isSecondaryDataReviewOption(selectedOption) ? 'secondaryDataReview' : 'default';
+                return 'default';
             },
             member: {
                 secondaryDataReview: {
-                    fields: {/* NOTE: injected here */},
+                    fields: {
+                        key: [],
+                        ...listToMap(
+                            mapToList(aryTemplateMethodology)
+                                .map(group => group.fields)
+                                .flat()
+                                // Only show data collection technique
+                                .filter(field => (
+                                    field.id === METHODOLOGY_FIELDS__DATA_COLLECTION_TECHNIQUE
+                                )),
+                            field => field.id,
+                            field => createFieldSchema(field),
+                        ),
+                    },
                 },
                 default: {
-                    fields: {/* NOTE: injected here */},
+                    fields: {
+                        key: [],
+                        ...listToMap(
+                            mapToList(aryTemplateMethodology)
+                                .map(group => group.fields)
+                                .flat(),
+                            field => field.id,
+                            field => createFieldSchema(field),
+                        ),
+                    },
                 },
             },
             validation: (value) => {
@@ -276,57 +323,8 @@ const createMethodologySchema = (aryTemplateMethodology = {}) => {
         dataCollectionTechniques: [],
         sampling: [],
         limitations: [],
-    } };
-
-    const dynamicFields = {};
-    Object.keys(aryTemplateMethodology).forEach((key) => {
-        const methodologyGroup = aryTemplateMethodology[key];
-        methodologyGroup.fields.forEach((field) => {
-            dynamicFields[field.id] = createFieldSchema(field);
-        });
-    });
-    schema.fields.attributes.member.default.fields = dynamicFields;
-
-    const anotherDynamicFields = {};
-    Object.keys(aryTemplateMethodology).forEach((key) => {
-        const methodologyGroup = aryTemplateMethodology[key];
-        methodologyGroup.fields.forEach((field) => {
-            const shouldBeOptional = dataCollectionTechnique.id !== anotherDynamicFields.id;
-            anotherDynamicFields[field.id] = createFieldSchema(field, shouldBeOptional);
-        });
-    });
-    schema.fields.attributes.member.secondaryDataReview.fields = anotherDynamicFields;
-
-    return schema;
-};
-
-// FIXME: this should be more dynamic later on
-export const shouldShowHumanitarianAccess = (focuses, selectedFocuses) => {
-    const humanitarianAccessFocus = focuses.find(
-        focus => focus.title.toLowerCase().trim() === 'humanitarian access',
-    );
-    if (!humanitarianAccessFocus) {
-        return false;
-    }
-    const index = selectedFocuses.findIndex(
-        focus => String(focus) === String(humanitarianAccessFocus.id),
-    );
-    return index !== -1;
-};
-
-// FIXME: this should be more dynamic later on
-export const shouldShowCrossSector = (focuses, selectedFocuses) => {
-    const crossSectorFocus = focuses.find(
-        focus => focus.title.toLowerCase().trim() === 'cross sector',
-    );
-    if (!crossSectorFocus) {
-        return false;
-    }
-    const index = selectedFocuses.findIndex(
-        focus => String(focus) === String(crossSectorFocus.id),
-    );
-    return index !== -1;
-};
+    },
+});
 
 const createSummarySchema = (focuses, selectedSectors = [], selectedFocuses = []) => {
     const schemaForSubRow = {
@@ -338,6 +336,11 @@ const createSummarySchema = (focuses, selectedSectors = [], selectedFocuses = []
     };
 
     const schemaForRow = {
+        fields: {
+            rank1: schemaForSubRow,
+            rank2: schemaForSubRow,
+            rank3: schemaForSubRow,
+        },
         validation: (subrows = {}) => {
             const errors = [];
 
@@ -374,11 +377,6 @@ const createSummarySchema = (focuses, selectedSectors = [], selectedFocuses = []
 
             return errors;
         },
-        fields: {
-            rank1: schemaForSubRow,
-            rank2: schemaForSubRow,
-            rank3: schemaForSubRow,
-        },
     };
 
     const schema = {
@@ -397,7 +395,10 @@ const createSummarySchema = (focuses, selectedSectors = [], selectedFocuses = []
     };
 
     // Cross sector needs at least 3 sector before it can be filled
-    if (shouldShowCrossSector(focuses, selectedFocuses) && selectedSectors.length >= 3) {
+    if (
+        shouldShowCrossSector(focuses, selectedFocuses)
+        && selectedSectors.length >= MIN_SECTORS_SELECTION_FOR_CROSS_SECTOR
+    ) {
         schema.fields.crossSector = {
             fields: {
                 prioritySectors: schemaForRow,
@@ -418,73 +419,112 @@ const createSummarySchema = (focuses, selectedSectors = [], selectedFocuses = []
     return schema;
 };
 
-const createScoreSchema = (scorePillars = [], scoreMatrixPillars = [], sectors = []) => {
-    const scoreSchema = {
-        fields: {
-            pillars: {
-                fields: listToMap(
-                    scorePillars,
-                    pillar => pillar.id,
-                    pillar => ({
-                        fields: listToMap(
-                            pillar.questions,
-                            question => question.id,
-                            () => [],
-                        ),
-                    }),
-                ),
-            },
-
-            matrixPillars: {
-                fields: listToMap(
-                    scoreMatrixPillars,
-                    pillar => pillar.id,
-                    () => ({
-                        fields: listToMap(
-                            sectors,
-                            sector => sector,
-                            () => [],
-                        ),
-                    }),
-                ),
-            },
-
-            finalScore: [],
-
-            ...listToMap(
+const createScoreSchema = (scorePillars = [], scoreMatrixPillars = [], sectors = []) => ({
+    fields: {
+        pillars: {
+            fields: listToMap(
                 scorePillars,
-                pillar => `${pillar.id}-score`,
-                () => [],
+                pillar => pillar.id,
+                pillar => ({
+                    fields: listToMap(
+                        pillar.questions,
+                        question => question.id,
+                        () => [],
+                    ),
+                }),
             ),
+        },
 
-            ...listToMap(
+        matrixPillars: {
+            fields: listToMap(
                 scoreMatrixPillars,
-                pillar => `${pillar.id}-matrix-score`,
-                () => [],
+                pillar => pillar.id,
+                () => ({
+                    fields: listToMap(
+                        sectors,
+                        sector => sector,
+                        () => [],
+                    ),
+                }),
             ),
+        },
 
+        finalScore: [],
+
+        ...listToMap(
+            scorePillars,
+            pillar => `${pillar.id}-score`,
+            () => [],
+        ),
+
+        ...listToMap(
+            scoreMatrixPillars,
+            pillar => `${pillar.id}-matrix-score`,
+            () => [],
+        ),
+
+    },
+});
+
+const createQuestionnaireSchema = (aryTemplateQuestionnaire = [], method) => {
+    const sectors = aryTemplateQuestionnaire
+        .filter(item => item.method === method);
+
+    const questionIds = sectors
+        .map(item => item.subSectors)
+        .flat()
+        .map(item => item.questions)
+        .flat();
+
+    return {
+        fields: {
+            questions: {
+                ...listToMap(
+                    sectors,
+                    (sector) => {
+                        if (isUseCriteria(method, sector.id)) {
+                            return 'use-criteria';
+                        }
+                        return `sector-${sector.id}`;
+                    },
+                    () => [],
+                ),
+                'minimum-requirements': [],
+                'all-quality-criteria': [],
+                fields: listToMap(
+                    questionIds,
+                    item => item.id,
+                    () => [],
+                ),
+            },
         },
     };
-
-    return scoreSchema;
 };
 
 export const assessmentSchemaSelector = createSelector(
     aryTemplateMetadataSelector,
     aryTemplateMethodologySelector,
+    aryTemplateQuestionnaireListSelector,
+
     assessmentFocusesSelector,
     assessmentPillarsSelector,
     assessmentMatrixPillarsSelector,
+
     editArySelectedSectorsSelector,
     editArySelectedFocusesSelector,
+    editAryShouldShowHNO,
+    editAryShouldShowCNA,
     (
         aryTemplateMetadata,
         aryTemplateMethodology,
+        aryTemplateQuestionnaire,
         focuses,
         scorePillars,
         scoreMatrixPillars,
         selectedSectors,
         selectedFocuses,
+        showHNO,
+        showCNA,
     ) => {
         const schema = { fields: {
             metadata: {
@@ -496,7 +536,17 @@ export const assessmentSchemaSelector = createSelector(
             methodology: createMethodologySchema(aryTemplateMethodology),
             summary: createSummarySchema(focuses, selectedSectors, selectedFocuses),
             score: createScoreSchema(scorePillars, scoreMatrixPillars, selectedSectors),
+            questionnaire: {
+                fields: {},
+            },
         } };
+
+        if (showHNO) {
+            schema.fields.questionnaire.fields.hno = createQuestionnaireSchema(aryTemplateQuestionnaire, 'hno');
+        }
+        if (showCNA) {
+            schema.fields.questionnaire.fields.cna = createQuestionnaireSchema(aryTemplateQuestionnaire, 'cna');
+        }
         return schema;
     },
 );
@@ -506,57 +556,126 @@ export const assessmentComputeSchemaSelector = createSelector(
     assessmentMatrixPillarsSelector,
     assessmentScoreScalesSelector,
     assessmentScoreBucketsSelector,
+    aryTemplateQuestionnaireListSelector,
+    editAryShouldShowHNO,
+    editAryShouldShowCNA,
     (
         scorePillars = [],
         scoreMatrixPillars = [],
         scoreScales = [],
         scoreBuckets = [],
+        aryTemplateQuestionnaire,
+        showHNO,
+        showCNA,
     ) => {
         if (scoreScales.length === 0) {
             return {};
         }
 
-        const scoreSchema = {};
+        const scoreSchema = {
+            ...listToMap(
+                scorePillars,
+                pillar => `${pillar.id}-score`,
+                pillar => (data, score) => {
+                    const getScaleVal = v => scoreScales.find(
+                        s => String(s.value) === String(v),
+                    ).value;
 
-        const getScaleVal = v => scoreScales.find(s => String(s.value) === String(v)).value;
+                    const pillarObj = getObjectChildren(score, ['pillars', pillar.id]) || emptyObject;
+                    const pillarValues = Object.values(pillarObj)
+                        .map(getScaleVal);
+                    return sum(pillarValues);
+                },
+            ),
+            ...listToMap(
+                scoreMatrixPillars,
+                pillar => `${pillar.id}-matrix-score`,
+                pillar => (data, score) => {
+                    const scoreMatrixScales = Object.values(pillar.scales).reduce(
+                        (acc, b) => [...acc, ...Object.values(b)],
+                        [],
+                    );
+                    const getMatrixScaleVal = v => scoreMatrixScales.find(
+                        s => String(s.id) === String(v),
+                    ).value;
 
-        scorePillars.forEach((pillar) => {
-            scoreSchema[`${pillar.id}-score`] = (data, score) => {
-                const pillarObj = getObjectChildren(score, ['pillars', pillar.id]) || emptyObject;
-                const pillarValues = Object.values(pillarObj).map(v => getScaleVal(v));
-                return sum(pillarValues);
-            };
-        });
+                    const pillarObj = getObjectChildren(score, ['matrixPillars', pillar.id]) || emptyObject;
+                    const pillarValues = Object.values(pillarObj)
+                        .map(getMatrixScaleVal);
+                    return median(pillarValues) * 5;
+                },
+            ),
+            finalScore: (data, score) => {
+                const pillarScores = scorePillars.map(
+                    p => (getObjectChildren(score, [`${p.id}-score`]) || 0) * p.weight,
+                );
+                const matrixPillarScores = scoreMatrixPillars.map(
+                    p => (getObjectChildren(score, [`${p.id}-matrix-score`]) || 0) * p.weight,
+                );
 
-        scoreMatrixPillars.forEach((pillar) => {
-            const scales = Object.values(pillar.scales).reduce(
-                (acc, b) => [...acc, ...Object.values(b)],
-                [],
-            );
-            const getMatrixScaleVal = v => scales.find(s => String(s.id) === String(v)).value;
-
-            scoreSchema[`${pillar.id}-matrix-score`] = (data, score) => {
-                const pillarObj = getObjectChildren(score, ['matrixPillars', pillar.id]) || emptyObject;
-                const pillarValues = Object.values(pillarObj).map(v => getMatrixScaleVal(v));
-                return median(pillarValues) * 5;
-            };
-        });
-
-        scoreSchema.finalScore = (data, score) => {
-            const pillarScores = scorePillars.map(
-                p => (getObjectChildren(score, [`${p.id}-score`]) || 0) * p.weight,
-            );
-            const matrixPillarScores = scoreMatrixPillars.map(
-                p => (getObjectChildren(score, [`${p.id}-matrix-score`]) || 0) * p.weight,
-            );
-
-            const average = sum([...pillarScores, ...matrixPillarScores]);
-            return bucket(average, scoreBuckets);
+                const average = sum([...pillarScores, ...matrixPillarScores]);
+                return bucket(average, scoreBuckets);
+            },
         };
 
-        return { fields: {
+        const schema = { fields: {
             score: { fields: scoreSchema },
+            questionnaire: { fields: {} },
         } };
+
+        const getSchemaForQuestionnaire = (method) => {
+            const sectors = aryTemplateQuestionnaire.filter(
+                item => item.method === method && item.subMethod === 'criteria',
+            );
+            const allQuestions = sectors
+                .map(item => item.subSectors)
+                .flat()
+                .map(item => item.questions)
+                .flat();
+            const requiredQuestions = allQuestions.filter(item => item.required);
+
+            const getCalculationMethod = questionList => (data, questionnaire, hnoCna = {}) => {
+                const { questions = {} } = hnoCna;
+
+                const answers = questionList
+                    .map(item => item.id)
+                    .map(item => questions[item])
+                    .filter(isDefined)
+                    .filter(item => !!item.value);
+
+                return 100 * (answers.length / questionList.length);
+            };
+
+            return {
+                fields: {
+                    ...listToMap(
+                        sectors,
+                        (sector) => {
+                            if (isUseCriteria(method, sector.id)) {
+                                return 'use-criteria';
+                            }
+                            return `sector-${sector.id}`;
+                        },
+                        (sector) => {
+                            const sectorQuestions = sector.subSectors
+                                .map(item => item.questions)
+                                .flat();
+                            return getCalculationMethod(sectorQuestions);
+                        },
+                    ),
+                    'minimum-requirements': getCalculationMethod(requiredQuestions),
+                    'all-quality-criteria': getCalculationMethod(allQuestions),
+                },
+            };
+        };
+
+        if (showHNO) {
+            schema.fields.questionnaire.fields.hno = getSchemaForQuestionnaire('hno');
+        }
+        if (showCNA) {
+            schema.fields.questionnaire.fields.cna = getSchemaForQuestionnaire('cna');
+        }
+
+        return schema;
     },
 );
-

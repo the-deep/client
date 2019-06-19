@@ -24,9 +24,8 @@ import {
     projectDetailsSelector,
     geoOptionsForProjectSelector,
 
-    isSecondaryDataReviewOption,
     isDataCollectionTechniqueColumn,
-    getDataCollectionTechnique,
+    isSecondaryDataReviewSelected,
 } from '#redux';
 import OrganigramInput from '#components/input/OrganigramInput/';
 import GeoInput from '#components/input/GeoInput/';
@@ -44,12 +43,13 @@ const propTypes = {
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     sectors: PropTypes.arrayOf(PropTypes.object).isRequired,
     sources: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    pending: PropTypes.bool.isRequired,
+    pending: PropTypes.bool,
 };
 
 const defaultProps = {
     aryTemplateMethodology: [],
     geoOptions: {},
+    pending: false,
 };
 
 const mapStateToProps = state => ({
@@ -102,12 +102,12 @@ export default class Methodology extends React.PureComponent {
         );
     };
 
-    renderAttribute = (key, index, isSecondaryDataReviewSelected) => {
+    renderAttribute = (key, index, secondaryDataReviewSelected) => {
         const { aryTemplateMethodology: attributesTemplate } = this.props;
         const methodologyGroup = attributesTemplate[key];
 
         const renderCustomWidget = (k, data) => {
-            const hide = !isDataCollectionTechniqueColumn(data) && isSecondaryDataReviewSelected;
+            const hide = !isDataCollectionTechniqueColumn(data) && secondaryDataReviewSelected;
             if (hide) {
                 return null;
             }
@@ -133,18 +133,12 @@ export default class Methodology extends React.PureComponent {
         // FIXME: memoize this
         const { aryTemplateMethodology: attributesTemplate } = this.props;
 
-        const dataCollectionTechnique = getDataCollectionTechnique(attributesTemplate);
-        const secondaryDataReview = dataCollectionTechnique.options.find(
-            isSecondaryDataReviewOption,
-        );
-        const isSecondaryDataReviewSelected = (
-            attribute[dataCollectionTechnique.id] === secondaryDataReview.key
-        );
+        const secondaryDataReviewSelected = isSecondaryDataReviewSelected(attribute);
 
         const renderAttribute = (k, key) => this.renderAttribute(
             key,
             index,
-            isSecondaryDataReviewSelected,
+            secondaryDataReviewSelected,
         );
 
         const attributesTemplateKeys = Object.keys(attributesTemplate);
