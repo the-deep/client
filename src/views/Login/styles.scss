@@ -9,6 +9,8 @@
     align-items: center;
     flex-wrap: wrap;
     justify-content: center;
+    height: 100vh;
+    overflow-y: auto;
 
     .deep-container {
         display: flex;

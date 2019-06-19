@@ -74,6 +74,15 @@ const chartMarginsSmall = {
 const wordCloudOptions = {
     rotations: 1,
     rotationAngles: [0],
+    fontSizes: [10, 48],
+    fontFamily: 'Source Sans Pro',
+};
+
+const wordCloudOptionsForLarge = {
+    rotations: 1,
+    rotationAngles: [0],
+    fontSizes: [16, 108],
+    fontFamily: 'Source Sans Pro',
 };
 
 const sortingLabels = [
@@ -345,7 +354,7 @@ export default class DataSeries extends React.PureComponent {
                     className: styles.wordCloud,
 
                     words: this.getWordCloudData(series),
-                    options: wordCloudOptions,
+                    options: isExpandedView ? wordCloudOptionsForLarge : wordCloudOptions,
                     labelSelector: valueSelector,
                     frequencySelector,
                 };
