@@ -33,6 +33,7 @@ export const setAryForEditAryAction = ({
     methodology,
     summary,
     score,
+    questionnaire,
 }) => ({
     type: EDIT_ARY__SET_ARY,
     id: getNamespacedId(leadId, leadGroupId),
@@ -42,6 +43,7 @@ export const setAryForEditAryAction = ({
     methodology,
     summary,
     score,
+    questionnaire,
 });
 
 // NOTE: flagged for removal, may not be used
@@ -101,6 +103,7 @@ const setAry = (state, action) => {
         methodology,
         summary,
         score,
+        questionnaire,
     } = action;
 
     const settings = {
@@ -116,6 +119,7 @@ const setAry = (state, action) => {
                     methodology,
                     summary,
                     score,
+                    questionnaire,
                 } },
             } },
         },
