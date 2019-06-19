@@ -45,8 +45,6 @@ import LeftPanel from './LeftPanel';
 import RightPanel from './RightPanel';
 import styles from './styles.scss';
 
-const emptyObject = {};
-
 const propTypes = {
     routeUrl: PropTypes.string.isRequired,
     projectId: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
@@ -139,6 +137,7 @@ const requests = {
                     metadata: response.metadata,
                     methodology: response.methodology,
                     summary: response.summary,
+                    questionnaire: response.questionnaire,
                     score: response.score,
                 });
             }
@@ -213,6 +212,7 @@ const requests = {
                 methodology: response.methodology,
                 summary: response.summary,
                 score: response.score,
+                questionnaire: response.questionnaire,
             });
 
             // FIXME: use strings
