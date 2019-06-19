@@ -79,8 +79,8 @@ export default class Questionnaire extends React.PureComponent {
             <div className={_cs(className, styles.questionnaire)}>
                 <FaramGroup faramElementName="questionnaire">
                     <div className={styles.summary}>
-                        <FaramGroup faramElementName={method}>
-                            <div className={styles.details}>
+                        <div className={styles.details}>
+                            <FaramGroup faramElementName={method}>
                                 <ListView
                                     className={styles.left}
                                     data={this.getSectors(data, method)}
@@ -88,41 +88,45 @@ export default class Questionnaire extends React.PureComponent {
                                     rendererParams={this.scoreItemRendererParams}
                                     renderer={ScoreItem}
                                 />
-                                <div className={styles.right}>
-                                    <ScoreItem
-                                        className={_cs(styles.rightItem, styles.item)}
-                                        // FIXME: use strings
-                                        title="Minimum Requirement"
-                                        faramElementName="minimum-requirements"
-                                        minValue={0}
-                                        maxValue={100}
-                                        minColor={minScaleColor}
-                                        maxColor={maxScaleColor}
-                                    />
-                                    <ScoreItem
-                                        className={_cs(styles.rightItem, styles.item)}
-                                        // FIXME: use strings
-                                        title="All Quality Criteria"
-                                        faramElementName="all-quality-criteria"
-                                        minValue={0}
-                                        maxValue={100}
-                                        minColor={minScaleColor}
-                                        maxColor={maxScaleColor}
-                                    />
-                                    <ScoreItem
-                                        className={_cs(styles.rightItem, styles.item)}
-                                        // FIXME: use strings
-                                        title="Use"
-                                        faramElementName="use-criteria"
-                                        minValue={0}
-                                        maxValue={100}
-                                        minColor={minScaleColor}
-                                        maxColor={maxScaleColor}
-                                    />
-                                </div>
+                            </FaramGroup>
+                            <div className={styles.right}>
+                                <FaramGroup faramElementName={method}>
+                                    <div className={styles.rightScoreItems}>
+                                        <ScoreItem
+                                            className={_cs(styles.rightItem, styles.item)}
+                                            // FIXME: use strings
+                                            title="Minimum Requirement"
+                                            faramElementName="minimum-requirements"
+                                            minValue={0}
+                                            maxValue={100}
+                                            minColor={minScaleColor}
+                                            maxColor={maxScaleColor}
+                                        />
+                                        <ScoreItem
+                                            className={_cs(styles.rightItem, styles.item)}
+                                            // FIXME: use strings
+                                            title="All Quality Criteria"
+                                            faramElementName="all-quality-criteria"
+                                            minValue={0}
+                                            maxValue={100}
+                                            minColor={minScaleColor}
+                                            maxColor={maxScaleColor}
+                                        />
+                                        <ScoreItem
+                                            className={_cs(styles.rightItem, styles.item)}
+                                            // FIXME: use strings
+                                            title="Use"
+                                            faramElementName="use-criteria"
+                                            minValue={0}
+                                            maxValue={100}
+                                            minColor={minScaleColor}
+                                            maxColor={maxScaleColor}
+                                        />
+                                    </div>
+                                </FaramGroup>
+                                <ScoreMessage faramElementName={method} />
                             </div>
-                        </FaramGroup>
-                        <ScoreMessage faramElementName={method} />
+                        </div>
                     </div>
                     <FaramGroup faramElementName={method}>
                         <FaramGroup faramElementName="questions">

@@ -1,5 +1,6 @@
 .question {
     display: flex;
+    background-color: var(--color-foreground);
 
     &:hover {
         background-color: var(--color-background-hover);
@@ -7,12 +8,16 @@
 
     .title {
         flex-grow: 1;
-        padding: var(--spacing-medium);
+        padding: var(--spacing-small-alt) var(--spacing-large);
     }
 
     .options {
         align-self: flex-start;
         flex-shrink: 0;
-        padding: var(--spacing-medium);
+        padding: var(--spacing-small-alt) var(--spacing-medium);
+    }
+
+    &:last-child {
+        border-bottom: var(--width-separator-thin) solid var(--color-separator-light);
     }
 }

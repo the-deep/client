@@ -1,10 +1,9 @@
 .score-message {
     display: flex;
-    justify-content: flex-end;
     padding-top: var(--spacing-extra-small);
 
     .safe {
-        color: var(--color-success);
+        color: var(--color-text-success);
     }
 
     .warning {

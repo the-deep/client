@@ -24,12 +24,14 @@ export default class ScoreMessage extends React.PureComponent {
 
     getRecommendedMessage = (minimumRequirements, allQualityCriteria) => {
         if (isNotDefined(minimumRequirements) || isNotDefined(allQualityCriteria)) {
-            return undefined;
+            return {
+                message: undefined,
+            };
         }
 
         if (minimumRequirements < 85) {
             return {
-                // Fixme: User strings
+                // FIXME: use strings
                 message: 'Not recommended for use. Use only with caution',
                 style: styles.critical,
             };
@@ -37,14 +39,13 @@ export default class ScoreMessage extends React.PureComponent {
 
         if (allQualityCriteria > 75) {
             return {
-                // Fixme: User strings
+                // FIXME: use strings
                 message: 'Best practice',
                 style: styles.safe,
             };
         }
-        // Fixme: User strings
         return {
-            // Fixme: User strings
+            // FIXME: use strings
             message: 'Recommended for use',
             style: styles.safe,
         };
@@ -52,24 +53,26 @@ export default class ScoreMessage extends React.PureComponent {
 
     getUseMessage = (useCriteria) => {
         if (isNotDefined(useCriteria)) {
-            return undefined;
+            return {
+                message: undefined,
+            };
         }
         if (useCriteria <= 30) {
             return {
-                // Fixme: User strings
+                // FIXME: use strings
                 message: 'Limited Use',
                 style: styles.critical,
             };
         } else if (useCriteria <= 60) {
             return {
-                // Fixme: User strings
+                // FIXME: use strings
                 message: 'Average Use',
                 style: styles.warning,
             };
         }
 
         return {
-            // Fixme: User strings
+            // FIXME: use strings
             message: 'Extensive use',
             style: styles.safe,
         };

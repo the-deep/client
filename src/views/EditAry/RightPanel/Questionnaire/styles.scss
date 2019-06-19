@@ -15,6 +15,7 @@
 
         .details {
             display: flex;
+            align-items: flex-start;
             flex-wrap: wrap;
             justify-content: space-between;
 
@@ -29,11 +30,19 @@
 
             .right {
                 display: flex;
+                align-items: flex-end;
+                flex-direction: column;
                 flex-shrink: 0;
+                margin-top: var(--spacing-extra-small);
+                overflow-y: auto;
 
-                .right-item {
-                    border: var(--width-separator-thin) solid var(--color-foreground);
-                    box-shadow: 0 0 var(--radius-blur-small) var(--color-shadow-light);
+                .right-score-items {
+                    display: flex;
+
+                    .right-item {
+                        border: var(--width-separator-thin) solid var(--color-foreground);
+                        box-shadow: 0 0 var(--radius-blur-small) var(--color-shadow-light);
+                    }
                 }
             }
         }
