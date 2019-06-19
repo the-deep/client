@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import memoize from 'memoize-one';
@@ -11,10 +11,13 @@ import {
     aryTemplateQuestionnaireListSelector,
     assessmentMinScaleColorSelector,
     assessmentMaxScaleColorSelector,
+
+    isUseCriteria,
 } from '#redux';
 
 import styles from './styles.scss';
 import ScoreItem from '../Score/ScoreItem';
+import ScoreMessage from '../Score/ScoreMessage';
 import Method from './Method';
 
 const propTypes = {
@@ -44,8 +47,10 @@ export default class Questionnaire extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getCriteriaQuestions = memoize(questions => (
-        questions.filter(question => question.subMethod === 'criteria')
+    getSectors = memoize((sectors, method) => (
+        sectors.filter(sector => (
+            sector.subMethod === 'criteria' && !isUseCriteria(method, sector.id)
+        ))
     ));
 
     scoreItemKeySelector = item => item.id
@@ -74,14 +79,14 @@ export default class Questionnaire extends React.PureComponent {
                     <div className={styles.summary}>
                         <ListView
                             className={styles.left}
-                            data={this.getCriteriaQuestions(data)}
+                            data={this.getSectors(data, method)}
                             keySelector={this.scoreItemKeySelector}
                             rendererParams={this.scoreItemRendererParams}
                             renderer={ScoreItem}
                         />
                         <div className={styles.right}>
                             <ScoreItem
-                                className={styles.minimumRequirement}
+                                className={styles.minimumRequirements}
                                 // FIXME: use strings
                                 title="Minimum Requirement"
                                 faramElementName="minimum-requirements"
@@ -100,8 +105,21 @@ export default class Questionnaire extends React.PureComponent {
                                 minColor={minScaleColor}
                                 maxColor={maxScaleColor}
                             />
+                            <ScoreItem
+                                className={styles.useCriteria}
+                                // FIXME: use strings
+                                title="Use"
+                                faramElementName="use-criteria"
+                                minValue={0}
+                                maxValue={100}
+                                minColor={minScaleColor}
+                                maxColor={maxScaleColor}
+                            />
                         </div>
                     </div>
+                </FaramGroup>
+                <ScoreMessage faramElementName={method} />
+                <FaramGroup faramElementName={method}>
                     <FaramGroup faramElementName="questions">
                         <ListView
                             className={className}

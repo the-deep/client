@@ -64,6 +64,15 @@ const COORDINATION__HARMONIZED = '2';
 const METHODOLOGY_FIELDS__DATA_COLLECTION_TECHNIQUE = 1;
 const DATA_COLLECTION_TECHNIQUE_OPTIONS__SECONDARY_DATA_REVIEW = '1';
 
+// TODO: correct id
+const CNA__USE_CRITERIA = 21;
+const HNO__USE_CRITERIA = 6;
+
+export const isUseCriteria = (method, sectorId) => (
+    (method === 'cna' && sectorId === CNA__USE_CRITERIA)
+    || (method === 'hno' && sectorId === HNO__USE_CRITERIA)
+);
+
 export const isDataCollectionTechniqueColumn = field => (
     field && field.id === METHODOLOGY_FIELDS__DATA_COLLECTION_TECHNIQUE
 );
@@ -472,7 +481,12 @@ const createQuestionnaireSchema = (aryTemplateQuestionnaire = [], method) => {
             questions: {
                 ...listToMap(
                     sectors,
-                    sector => `sector-${sector.id}`,
+                    (sector) => {
+                        if (isUseCriteria(method, sector.id)) {
+                            return 'use-criteria';
+                        }
+                        return `sector-${sector.id}`;
+                    },
                     () => [],
                 ),
                 'minimum-requirements': [],
@@ -636,7 +650,12 @@ export const assessmentComputeSchemaSelector = createSelector(
                 fields: {
                     ...listToMap(
                         sectors,
-                        sector => `sector-${sector.id}`,
+                        (sector) => {
+                            if (isUseCriteria(method, sector.id)) {
+                                return 'use-criteria';
+                            }
+                            return `sector-${sector.id}`;
+                        },
                         (sector) => {
                             const sectorQuestions = sector.subSectors
                                 .map(item => item.questions)

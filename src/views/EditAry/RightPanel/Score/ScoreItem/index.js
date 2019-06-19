@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FaramOutputElement } from '@togglecorp/faram';
-import { getColorOnBgColor } from '@togglecorp/fujs';
+import { getColorOnBgColor, isNotDefined } from '@togglecorp/fujs';
 
 import Numeral from '#rscv/Numeral';
 
@@ -82,7 +82,9 @@ export default class ScoreItem extends React.PureComponent {
             className: classNameFromProps,
         } = this.props;
 
-        const scale = (value - minValue) / (maxValue - minValue);
+        const safeValue = isNotDefined(value) ? 0 : value;
+
+        const scale = (safeValue - minValue) / (maxValue - minValue);
         const invScale = 1 - scale;
 
         const rgbMinColor = parseColor(minColor);
