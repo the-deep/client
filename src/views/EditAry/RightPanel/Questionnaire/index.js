@@ -22,6 +22,7 @@ const propTypes = {
     minScaleColor: PropTypes.string.isRequired,
     maxScaleColor: PropTypes.string.isRequired,
     data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    method: PropTypes.string.isRequired,
 };
 
 const defaultProps = {
@@ -47,7 +48,9 @@ export default class Questionnaire extends React.PureComponent {
         questions.filter(question => question.subMethod === 'criteria')
     ));
 
-    scoreItemRendererParams = item => ({
+    scoreItemKeySelector = item => item.id
+
+    scoreItemRendererParams = (key, item) => ({
         faramElementName: `sector-${item.id}`,
         title: item.title,
         minValue: 0,
@@ -62,50 +65,54 @@ export default class Questionnaire extends React.PureComponent {
             data,
             minScaleColor,
             maxScaleColor,
+            method,
         } = this.props;
 
         return (
-            <Fragment>
-                <div className={styles.summary}>
-                    <ListView
-                        className={styles.left}
-                        data={this.getCriteriaQuestions(data)}
-                        rendererParams={this.scoreItemRendererParams}
-                        renderer={ScoreItem}
-                    />
-                    <div className={styles.right}>
-                        <ScoreItem
-                            className={styles.minimumRequirement}
-                            // FIXME: use strings
-                            title="Minimum Requirement"
-                            faramElementName="minimum-requirements"
-                            minValue={0}
-                            maxValue={100}
-                            minColor={minScaleColor}
-                            maxColor={maxScaleColor}
+            <FaramGroup faramElementName="questionnaire">
+                <FaramGroup faramElementName={method}>
+                    <div className={styles.summary}>
+                        <ListView
+                            className={styles.left}
+                            data={this.getCriteriaQuestions(data)}
+                            keySelector={this.scoreItemKeySelector}
+                            rendererParams={this.scoreItemRendererParams}
+                            renderer={ScoreItem}
                         />
-                        <ScoreItem
-                            className={styles.allQualityCriteria}
-                            // FIXME: use strings
-                            title="All Quality Criteria"
-                            faramElementName="all-quality-criteria"
-                            minValue={0}
-                            maxValue={100}
-                            minColor={minScaleColor}
-                            maxColor={maxScaleColor}
-                        />
+                        <div className={styles.right}>
+                            <ScoreItem
+                                className={styles.minimumRequirement}
+                                // FIXME: use strings
+                                title="Minimum Requirement"
+                                faramElementName="minimum-requirements"
+                                minValue={0}
+                                maxValue={100}
+                                minColor={minScaleColor}
+                                maxColor={maxScaleColor}
+                            />
+                            <ScoreItem
+                                className={styles.allQualityCriteria}
+                                // FIXME: use strings
+                                title="All Quality Criteria"
+                                faramElementName="all-quality-criteria"
+                                minValue={0}
+                                maxValue={100}
+                                minColor={minScaleColor}
+                                maxColor={maxScaleColor}
+                            />
+                        </div>
                     </div>
-                </div>
-                <FaramGroup faramElementName="questions">
-                    <ListView
-                        className={className}
-                        data={data}
-                        renderer={Method}
-                        rendererParams={getMethodRendererParams}
-                        keySelector={methodKeySelector}
-                    />
+                    <FaramGroup faramElementName="questions">
+                        <ListView
+                            className={className}
+                            data={data}
+                            renderer={Method}
+                            rendererParams={getMethodRendererParams}
+                            keySelector={methodKeySelector}
+                        />
+                    </FaramGroup>
                 </FaramGroup>
-            </Fragment>
+            </FaramGroup>
         );
     }
 }

@@ -7,7 +7,6 @@ import {
     _cs,
     compareNumber,
 } from '@togglecorp/fujs';
-import { FaramGroup } from '@togglecorp/faram';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
@@ -65,12 +64,10 @@ export default class HNOPage extends React.PureComponent {
         return (
             <div className={_cs(className, styles.hno)}>
                 {pending && <LoadingAnimation />}
-                <FaramGroup faramElementName={HNO}>
-                    <Questionnaire
-                        data={questionnaires}
-                        method={HNO}
-                    />
-                </FaramGroup>
+                <Questionnaire
+                    data={questionnaires}
+                    method={HNO}
+                />
             </div>
         );
     }

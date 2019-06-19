@@ -522,13 +522,16 @@ export const assessmentSchemaSelector = createSelector(
             methodology: createMethodologySchema(aryTemplateMethodology),
             summary: createSummarySchema(focuses, selectedSectors, selectedFocuses),
             score: createScoreSchema(scorePillars, scoreMatrixPillars, selectedSectors),
+            questionnaire: {
+                fields: {},
+            },
         } };
 
         if (showHNO) {
-            schema.fields.hno = createQuestionnaireSchema(aryTemplateQuestionnaire, 'hno');
+            schema.fields.questionnaire.fields.hno = createQuestionnaireSchema(aryTemplateQuestionnaire, 'hno');
         }
         if (showCNA) {
-            schema.fields.cna = createQuestionnaireSchema(aryTemplateQuestionnaire, 'cna');
+            schema.fields.questionnaire.fields.cna = createQuestionnaireSchema(aryTemplateQuestionnaire, 'cna');
         }
         return schema;
     },
@@ -603,6 +606,7 @@ export const assessmentComputeSchemaSelector = createSelector(
 
         const schema = { fields: {
             score: { fields: scoreSchema },
+            questionnaire: { fields: {} },
         } };
 
         const getSchemaForQuestionnaire = (method) => {
@@ -616,7 +620,9 @@ export const assessmentComputeSchemaSelector = createSelector(
                 .flat();
             const requiredQuestions = allQuestions.filter(item => item.required);
 
-            const getScoreCalculationMethod = questionList => (data, { questions = {} } = {}) => {
+            const getCalculationMethod = questionList => (data, questionnaire, hnoCna = {}) => {
+                const { questions = {} } = hnoCna;
+
                 const answers = questionList
                     .map(item => item.id)
                     .map(item => questions[item])
@@ -635,20 +641,20 @@ export const assessmentComputeSchemaSelector = createSelector(
                             const sectorQuestions = sector.subSectors
                                 .map(item => item.questions)
                                 .flat();
-                            return getScoreCalculationMethod(sectorQuestions);
+                            return getCalculationMethod(sectorQuestions);
                         },
                     ),
-                    'minimum-requirements': getScoreCalculationMethod(requiredQuestions),
-                    'all-quality-criteria': getScoreCalculationMethod(allQuestions),
+                    'minimum-requirements': getCalculationMethod(requiredQuestions),
+                    'all-quality-criteria': getCalculationMethod(allQuestions),
                 },
             };
         };
 
-        if (showCNA) {
-            schema.fields.cna = getSchemaForQuestionnaire('cna');
-        }
         if (showHNO) {
-            schema.fields.hno = getSchemaForQuestionnaire('hno');
+            schema.fields.questionnaire.fields.hno = getSchemaForQuestionnaire('hno');
+        }
+        if (showCNA) {
+            schema.fields.questionnaire.fields.cna = getSchemaForQuestionnaire('cna');
         }
 
         return schema;

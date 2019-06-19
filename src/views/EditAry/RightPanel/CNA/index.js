@@ -7,7 +7,6 @@ import {
     _cs,
     compareNumber,
 } from '@togglecorp/fujs';
-import { FaramGroup } from '@togglecorp/faram';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
@@ -65,12 +64,10 @@ export default class CNAPage extends React.PureComponent {
         return (
             <div className={_cs(className, styles.cna)}>
                 {pending && <LoadingAnimation />}
-                <FaramGroup faramElementName={CNA}>
-                    <Questionnaire
-                        data={questionnaires}
-                        method={CNA}
-                    />
-                </FaramGroup>
+                <Questionnaire
+                    data={questionnaires}
+                    method={CNA}
+                />
             </div>
         );
     }
