@@ -24,61 +24,94 @@ export default class ScoreMessage extends React.PureComponent {
 
     getRecommendedMessage = (minimumRequirements, allQualityCriteria) => {
         if (isNotDefined(minimumRequirements) || isNotDefined(allQualityCriteria)) {
-            return undefined;
+            return {
+                message: undefined,
+            };
         }
 
         if (minimumRequirements < 85) {
-            return 'Not recommended for use. Use only with caution';
+            return {
+                // FIXME: use strings
+                message: 'Not recommended for use. Use only with caution',
+                style: styles.critical,
+            };
         }
 
         if (allQualityCriteria > 75) {
-            return 'Best practice';
+            return {
+                // FIXME: use strings
+                message: 'Best practice',
+                style: styles.safe,
+            };
         }
-        return 'Recommended for use';
+        return {
+            // FIXME: use strings
+            message: 'Recommended for use',
+            style: styles.safe,
+        };
     }
 
     getUseMessage = (useCriteria) => {
         if (isNotDefined(useCriteria)) {
-            return undefined;
+            return {
+                message: undefined,
+            };
         }
         if (useCriteria <= 30) {
-            return 'Limited Use';
+            return {
+                // FIXME: use strings
+                message: 'Limited Use',
+                style: styles.critical,
+            };
         } else if (useCriteria <= 60) {
-            return 'Average Use';
+            return {
+                // FIXME: use strings
+                message: 'Average Use',
+                style: styles.warning,
+            };
         }
-        return 'Extensive use';
+
+        return {
+            // FIXME: use strings
+            message: 'Extensive use',
+            style: styles.safe,
+        };
     }
 
     render() {
         const {
+            className,
             value,
-            className: classNameFromProps,
         } = this.props;
-
-        const className = _cs(
-            classNameFromProps,
-            styles.scoreItem,
-        );
 
         const minimumRequirements = value['minimum-requirements'];
         const allQualityCriteria = value['all-quality-criteria'];
         const useCriteria = value['use-criteria'];
 
-        const recommendedMessage = this.getRecommendedMessage(
-            minimumRequirements,
-            allQualityCriteria,
-        );
-        const useMessage = this.getUseMessage(useCriteria);
+        const {
+            message: recommendedMessage,
+            style: recommendedMessageClassName,
+        } = this.getRecommendedMessage(minimumRequirements, allQualityCriteria);
+
+        const {
+            message: useMessage,
+            style: useMessageClassName,
+        } = this.getUseMessage(useCriteria);
 
         return (
-            <div
-                className={className}
-            >
+            <div className={_cs(className, styles.scoreMessage)} >
                 { recommendedMessage &&
-                    <div>{recommendedMessage}</div>
+                    <span className={recommendedMessageClassName} >
+                        {recommendedMessage}
+                    </span>
                 }
                 { useMessage &&
-                    <div>{useMessage}</div>
+                    <span className={useMessageClassName} >
+                        {recommendedMessage &&
+                            <span className={styles.separator}>-</span>
+                        }
+                        {useMessage}
+                    </span>
                 }
             </div>
         );

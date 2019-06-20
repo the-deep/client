@@ -1,11 +1,11 @@
 .sub-method {
     .title {
         position: sticky;
-        top: 40px;
+        top: 32px;
         z-index: 1;
         border-bottom: var(--width-separator-thin) solid var(--color-separator-light);
         background-color: var(--color-foreground);
-        padding: var(--spacing-medium);
+        padding: var(--spacing-small) var(--spacing-large);
         color: var(--color-accent);
     }
 

@@ -1,0 +1,20 @@
+.score-message {
+    display: flex;
+    padding-top: var(--spacing-extra-small);
+
+    .safe {
+        color: var(--color-text-success);
+    }
+
+    .warning {
+        color: var(--color-warning);
+    }
+
+    .critical {
+        color: var(--color-danger);
+    }
+
+    .separator {
+        margin: 0 var(--spacing-extra-small);
+    }
+}

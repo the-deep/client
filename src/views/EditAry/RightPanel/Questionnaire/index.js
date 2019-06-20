@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 
 import { FaramGroup } from '@togglecorp/faram';
+import { _cs } from '@togglecorp/fujs';
 
 import ListView from '#rscv/List/ListView';
 
@@ -56,6 +57,7 @@ export default class Questionnaire extends React.PureComponent {
     scoreItemKeySelector = item => item.id
 
     scoreItemRendererParams = (key, item) => ({
+        className: styles.item,
         faramElementName: `sector-${item.id}`,
         title: item.title,
         minValue: 0,
@@ -74,63 +76,71 @@ export default class Questionnaire extends React.PureComponent {
         } = this.props;
 
         return (
-            <FaramGroup faramElementName="questionnaire">
-                <FaramGroup faramElementName={method}>
+            <div className={_cs(className, styles.questionnaire)}>
+                <FaramGroup faramElementName="questionnaire">
                     <div className={styles.summary}>
-                        <ListView
-                            className={styles.left}
-                            data={this.getSectors(data, method)}
-                            keySelector={this.scoreItemKeySelector}
-                            rendererParams={this.scoreItemRendererParams}
-                            renderer={ScoreItem}
-                        />
-                        <div className={styles.right}>
-                            <ScoreItem
-                                className={styles.minimumRequirements}
-                                // FIXME: use strings
-                                title="Minimum Requirement"
-                                faramElementName="minimum-requirements"
-                                minValue={0}
-                                maxValue={100}
-                                minColor={minScaleColor}
-                                maxColor={maxScaleColor}
-                            />
-                            <ScoreItem
-                                className={styles.allQualityCriteria}
-                                // FIXME: use strings
-                                title="All Quality Criteria"
-                                faramElementName="all-quality-criteria"
-                                minValue={0}
-                                maxValue={100}
-                                minColor={minScaleColor}
-                                maxColor={maxScaleColor}
-                            />
-                            <ScoreItem
-                                className={styles.useCriteria}
-                                // FIXME: use strings
-                                title="Use"
-                                faramElementName="use-criteria"
-                                minValue={0}
-                                maxValue={100}
-                                minColor={minScaleColor}
-                                maxColor={maxScaleColor}
-                            />
+                        <div className={styles.details}>
+                            <FaramGroup faramElementName={method}>
+                                <ListView
+                                    className={styles.left}
+                                    data={this.getSectors(data, method)}
+                                    keySelector={this.scoreItemKeySelector}
+                                    rendererParams={this.scoreItemRendererParams}
+                                    renderer={ScoreItem}
+                                />
+                            </FaramGroup>
+                            <div className={styles.right}>
+                                <FaramGroup faramElementName={method}>
+                                    <div className={styles.rightScoreItems}>
+                                        <ScoreItem
+                                            className={_cs(styles.rightItem, styles.item)}
+                                            // FIXME: use strings
+                                            title="Minimum Requirement"
+                                            faramElementName="minimum-requirements"
+                                            minValue={0}
+                                            maxValue={100}
+                                            minColor={minScaleColor}
+                                            maxColor={maxScaleColor}
+                                        />
+                                        <ScoreItem
+                                            className={_cs(styles.rightItem, styles.item)}
+                                            // FIXME: use strings
+                                            title="All Quality Criteria"
+                                            faramElementName="all-quality-criteria"
+                                            minValue={0}
+                                            maxValue={100}
+                                            minColor={minScaleColor}
+                                            maxColor={maxScaleColor}
+                                        />
+                                        <ScoreItem
+                                            className={_cs(styles.rightItem, styles.item)}
+                                            // FIXME: use strings
+                                            title="Use"
+                                            faramElementName="use-criteria"
+                                            minValue={0}
+                                            maxValue={100}
+                                            minColor={minScaleColor}
+                                            maxColor={maxScaleColor}
+                                        />
+                                    </div>
+                                </FaramGroup>
+                                <ScoreMessage faramElementName={method} />
+                            </div>
                         </div>
                     </div>
-                </FaramGroup>
-                <ScoreMessage faramElementName={method} />
-                <FaramGroup faramElementName={method}>
-                    <FaramGroup faramElementName="questions">
-                        <ListView
-                            className={className}
-                            data={data}
-                            renderer={Method}
-                            rendererParams={getMethodRendererParams}
-                            keySelector={methodKeySelector}
-                        />
+                    <FaramGroup faramElementName={method}>
+                        <FaramGroup faramElementName="questions">
+                            <ListView
+                                className={styles.questions}
+                                data={data}
+                                renderer={Method}
+                                rendererParams={getMethodRendererParams}
+                                keySelector={methodKeySelector}
+                            />
+                        </FaramGroup>
                     </FaramGroup>
                 </FaramGroup>
-            </FaramGroup>
+            </div>
         );
     }
 }
