@@ -9,6 +9,7 @@ import Faram, { requiredCondition } from '@togglecorp/faram';
 
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
+import SegmentInput from '#rsci/SegmentInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
@@ -25,6 +26,12 @@ import _ts from '#ts';
 import ProjectCreateRequest from './requests/ProjectCreateRequest';
 
 import styles from './styles.scss';
+
+// Note: Key is set according to is_private option
+const projectVisibilityOptions = [
+    { key: false, label: _ts('components.addProject', 'visibilityPublicLabel') },
+    { key: true, label: _ts('components.addProject', 'visibilityPrivateLabel') },
+];
 
 const propTypes = {
     className: PropTypes.string,
@@ -62,7 +69,9 @@ export default class ProjectAddForm extends React.PureComponent {
 
         this.state = {
             faramErrors: {},
-            faramValues: {},
+            faramValues: {
+                isPrivate: false,
+            },
             pending: false,
             pristine: false,
         };
@@ -70,6 +79,7 @@ export default class ProjectAddForm extends React.PureComponent {
         this.schema = {
             fields: {
                 title: [requiredCondition],
+                isPrivate: [],
             },
         };
 
@@ -106,11 +116,18 @@ export default class ProjectAddForm extends React.PureComponent {
         this.setState({ faramErrors });
     };
 
-    successCallback = ({ title }) => {
+    successCallback = ({
+        title,
+        isPrivate,
+    }) => {
         const { userGroups, userId } = this.props;
         this.projectCreateRequest.init(
             userId,
-            { title, userGroups },
+            {
+                title,
+                userGroups,
+                isPrivate,
+            },
         ).start();
     };
 
@@ -147,6 +164,14 @@ export default class ProjectAddForm extends React.PureComponent {
                     label={_ts('components.addProject', 'addProjectModalLabel')}
                     placeholder={_ts('components.addProject', 'addProjectModalPlaceholder')}
                     autoFocus
+                />
+                {/* TODO: Cloak according to user permission */}
+                <SegmentInput
+                    options={projectVisibilityOptions}
+                    className={styles.isPrivateCheckbox}
+                    faramElementName="isPrivate"
+                    label={_ts('components.addProject', 'projectVisibilityInputLabel')}
+                    hint={_ts('components.addProject', 'projectVisibilityInputHint')}
                 />
                 <div className={styles.actionButtons}>
                     <DangerButton onClick={this.onModalClose}>

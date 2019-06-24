@@ -76,12 +76,17 @@ export const createParamsForUserProjectMembershipPatch = data => ({
     body: JSON.stringify(data),
 });
 
-export const createParamsForProjectCreate = ({ title, userGroups }) => ({
+export const createParamsForProjectCreate = ({
+    title,
+    userGroups,
+    isPrivate,
+}) => ({
     method: POST,
     headers: commonHeaderForPost,
     body: JSON.stringify({
         title,
         userGroups,
+        isPrivate,
     }),
 });
 

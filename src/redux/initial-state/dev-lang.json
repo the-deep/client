@@ -941,7 +941,10 @@
         "-82413232": "All",
         "-57442233": "Active",
         "-80991835": "Inactive",
-        "-58312660": "Mine"
+        "-58312660": "Mine",
+        "-92759559": "Private",
+        "-59389": "Public",
+        "-94818927": "Note: Project visibility cannot be changed once the project is created"
     },
     "links": {
         "browserExtension": {
@@ -2121,7 +2124,12 @@
             "modalCreate": 179,
             "userProjectCreate": 916,
             "userProjectCreateSuccess": 917,
-            "projectCreateFatalError": -77603800
+            "projectCreateFatalError": -77603800,
+            "isPrivateCheckboxLabel": -92759559,
+            "projectVisibilityInputLabel": 1120,
+            "visibilityPrivateLabel": -92759559,
+            "visibilityPublicLabel": -59389,
+            "projectVisibilityInputHint": -94818927
         },
         "components.addRegion": {
             "cancelButtonLabel": 61,
