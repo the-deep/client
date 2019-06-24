@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
+import { mapToMap } from '@togglecorp/fujs';
 
 import {
     activeUserSelector,
@@ -58,7 +60,6 @@ const defaultProps = {
 };
 
 const allAccessibleFeatures = {
-    accessLeadGridView: featureList => featureList.includes('lead_grid_view'),
     accessZoomableImage: featureList => featureList.includes('zoomable_image'),
     accessTabular: featureList => featureList.includes('tabular'),
     accessPrivateProject: featureList => featureList.includes('private_project'),
@@ -69,14 +70,15 @@ export default class Cloak extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    getAccessibleFeatures = (accessibleFeatures) => {
-        const features = {};
+    getAccessibleFeatures = memoize((accessibleFeatures = []) => {
         const featureList = accessibleFeatures.map(f => f.key);
-        Object.keys(allAccessibleFeatures).forEach((f) => {
-            features[f] = allAccessibleFeatures[f](featureList);
-        });
-        return features;
-    };
+
+        return mapToMap(
+            allAccessibleFeatures,
+            k => k,
+            v => v(featureList),
+        );
+    });
 
     render() {
         const {
@@ -100,9 +102,14 @@ export default class Cloak extends React.Component {
             },
         } = this.props;
 
-        const isLoggedIn = !!activeUser.userId;
-        const isAdmin = activeUser.isSuperuser;
-        const { accessibleFeatures } = activeUser;
+        const {
+            accessibleFeatures,
+            userId: activeUserId,
+            isSuperuser,
+        } = activeUser;
+
+        const isLoggedIn = !!activeUserId;
+        const isAdmin = isSuperuser;
 
         const hasProjects = userProjects.length > 0;
         const hasAssessmentTemplate = !!currentUserActiveProject.assessmentTemplate;
@@ -110,7 +117,6 @@ export default class Cloak extends React.Component {
         const pathKey = routePathKey;
 
         const {
-            accessLeadGridView,
             accessZoomableImage,
             accessTabular,
             accessPrivateProject,
@@ -134,7 +140,6 @@ export default class Cloak extends React.Component {
             exportPermissions,
             assessmentPermissions,
 
-            accessLeadGridView,
             accessZoomableImage,
             accessTabular,
             accessPrivateProject,
