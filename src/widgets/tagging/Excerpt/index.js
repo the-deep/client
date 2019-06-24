@@ -46,7 +46,7 @@ export default class Excerpt extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static shouldHideZoomable = ({ isExperimental }) => !isExperimental;
+    static shouldHideZoomable = ({ accessZoomableImage }) => !accessZoomableImage;
 
     constructor(props) {
         super(props);

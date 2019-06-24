@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import memoize from 'memoize-one';
+import { mapToMap } from '@togglecorp/fujs';
 
 import {
     activeUserSelector,
@@ -57,10 +59,26 @@ const defaultProps = {
     renderOnHide: null,
 };
 
+const allAccessibleFeatures = {
+    accessZoomableImage: featureList => featureList.includes('zoomable_image'),
+    accessTabular: featureList => featureList.includes('tabular'),
+    accessPrivateProject: featureList => featureList.includes('private_project'),
+};
+
 @connect(mapStateToProps, undefined)
 export default class Cloak extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    getAccessibleFeatures = memoize((accessibleFeatures = []) => {
+        const featureList = accessibleFeatures.map(f => f.key);
+
+        return mapToMap(
+            allAccessibleFeatures,
+            k => k,
+            v => v(featureList),
+        );
+    });
 
     render() {
         const {
@@ -84,16 +102,25 @@ export default class Cloak extends React.Component {
             },
         } = this.props;
 
-        const isLoggedIn = !!activeUser.userId;
-        const isAdmin = activeUser.isSuperuser;
         const {
-            isExperimental,
-            isEarlyAccess,
+            accessibleFeatures,
+            userId: activeUserId,
+            isSuperuser,
         } = activeUser;
+
+        const isLoggedIn = !!activeUserId;
+        const isAdmin = isSuperuser;
+
         const hasProjects = userProjects.length > 0;
         const hasAssessmentTemplate = !!currentUserActiveProject.assessmentTemplate;
         const hasAnalysisFramework = !!currentUserActiveProject.analysisFramework;
         const pathKey = routePathKey;
+
+        const {
+            accessZoomableImage,
+            accessTabular,
+            accessPrivateProject,
+        } = this.getAccessibleFeatures(accessibleFeatures);
 
         const params = {
             isDevMode: isDev,
@@ -103,8 +130,6 @@ export default class Cloak extends React.Component {
             hasProjects,
             isLoggedIn,
             isAdmin,
-            isExperimental,
-            isEarlyAccess,
             hasAssessmentTemplate,
             hasAnalysisFramework,
             pathKey,
@@ -114,6 +139,10 @@ export default class Cloak extends React.Component {
             setupPermissions,
             exportPermissions,
             assessmentPermissions,
+
+            accessZoomableImage,
+            accessTabular,
+            accessPrivateProject,
         };
 
         const hidden = hide && hide(params);

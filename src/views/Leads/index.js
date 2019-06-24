@@ -17,10 +17,8 @@ import Pager from '#rscv/Pager';
 import {
     reverseRoute,
     doesObjectHaveNoData,
-    _cs,
 } from '@togglecorp/fujs';
 import modalize from '#rscg/Modalize';
-import { isBeta } from '#config/env';
 
 import Cloak from '#components/general/Cloak';
 import MultiViewContainer from '#rscv/MultiViewContainer';
@@ -54,8 +52,6 @@ import {
 
     removeLeadAction,
     patchLeadAction,
-
-    activeUserSelector,
 } from '#redux';
 import _ts from '#ts';
 import noSearch from '#resources/img/no-search.png';
@@ -79,9 +75,6 @@ const AccentModalButton = modalize(AccentButton);
 const propTypes = {
     filters: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 
-    activeUser: PropTypes.shape({
-        userId: PropTypes.number,
-    }),
     activePage: PropTypes.number.isRequired,
     activeSort: PropTypes.string.isRequired,
     activeProject: PropTypes.number.isRequired,
@@ -102,12 +95,10 @@ const propTypes = {
 
 const defaultProps = {
     totalLeadsCount: 0,
-    activeUser: {},
 };
 
 const mapStateToProps = state => ({
     activeProject: activeProjectIdFromStateSelector(state),
-    activeUser: activeUserSelector(state),
 
     totalLeadsCount: totalLeadsCountForProjectSelector(state),
     activePage: leadPageActivePageSelector(state),
@@ -154,8 +145,6 @@ export default class Leads extends React.PureComponent {
 
     constructor(props) {
         super(props);
-
-        const { activeUser } = this.props;
 
         this.headers = [
             {
@@ -294,42 +283,26 @@ export default class Leads extends React.PureComponent {
             redirectTo: undefined,
         };
 
-        // FIXME: remove this logic after enabling lead grid view in beta
-        if (this.shouldHideGrid(activeUser)) {
-            this.views = {
-                [TABLE_VIEW]: {
-                    component: this.renderTableView,
-                    wrapContainer: true,
-                    mount: true,
-                    lazyMount: true,
-                },
-            };
+        this.views = {
+            [TABLE_VIEW]: {
+                component: this.renderTableView,
+                wrapContainer: true,
+                mount: true,
+                lazyMount: true,
+            },
 
-            this.tabs = {
-                [TABLE_VIEW]: TABLE_VIEW,
-            };
-        } else {
-            this.views = {
-                [TABLE_VIEW]: {
-                    component: this.renderTableView,
-                    wrapContainer: true,
-                    mount: true,
-                    lazyMount: true,
-                },
+            [GRID_VIEW]: {
+                component: this.renderGridView,
+                wrapContainer: true,
+                mount: true,
+                lazyMount: true,
+            },
+        };
 
-                [GRID_VIEW]: {
-                    component: this.renderGridView,
-                    wrapContainer: true,
-                    mount: true,
-                    lazyMount: true,
-                },
-            };
-
-            this.tabs = {
-                [TABLE_VIEW]: TABLE_VIEW,
-                [GRID_VIEW]: GRID_VIEW,
-            };
-        }
+        this.tabs = {
+            [TABLE_VIEW]: TABLE_VIEW,
+            [GRID_VIEW]: GRID_VIEW,
+        };
 
         this.lastFilters = {};
         this.lastProject = {};
@@ -453,10 +426,6 @@ export default class Leads extends React.PureComponent {
         };
     }
 
-    shouldHideGrid = activeUser => (
-        !activeUser.isExperimental && isBeta
-    )
-
     handleSearchSimilarLead = (row) => {
         this.props.setLeadPageFilter({
             filters: {
@@ -571,13 +540,9 @@ export default class Leads extends React.PureComponent {
                 <FilterLeadsForm className={styles.filters} />
                 <ScrollTabs
                     tabs={this.tabs}
-                    // disabled={this.shouldHideGrid(this.props.activeUser)}
                     useHash
                     replaceHistory
-                    className={_cs(
-                        styles.tabs,
-                        this.shouldHideGrid(this.props.activeUser) && styles.hidden,
-                    )}
+                    className={styles.tabs}
                     // FIXME: isActive is passed inside Icon
                     renderer={Icon}
                     rendererParams={Leads.tabIconRendererParams}

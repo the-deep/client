@@ -14,8 +14,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
-import {
-} from '#rest';
+import Cloak from '#components/general/Cloak';
 import {
     setProjectAction,
     setUserProjectAction,
@@ -63,6 +62,8 @@ const mapDispatchToProps = dispatch => ({
 export default class ProjectAddForm extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static shouldHidePrivate = ({ accessPrivateProject }) => !accessPrivateProject;
 
     constructor(props) {
         super(props);
@@ -165,13 +166,17 @@ export default class ProjectAddForm extends React.PureComponent {
                     placeholder={_ts('components.addProject', 'addProjectModalPlaceholder')}
                     autoFocus
                 />
-                {/* TODO: Cloak according to user permission */}
-                <SegmentInput
-                    options={projectVisibilityOptions}
-                    className={styles.isPrivateCheckbox}
-                    faramElementName="isPrivate"
-                    label={_ts('components.addProject', 'projectVisibilityInputLabel')}
-                    hint={_ts('components.addProject', 'projectVisibilityInputHint')}
+                <Cloak
+                    hide={ProjectAddForm.shouldHidePrivate}
+                    render={
+                        <SegmentInput
+                            options={projectVisibilityOptions}
+                            className={styles.isPrivateCheckbox}
+                            faramElementName="isPrivate"
+                            label={_ts('components.addProject', 'projectVisibilityInputLabel')}
+                            hint={_ts('components.addProject', 'projectVisibilityInputHint')}
+                        />
+                    }
                 />
                 <div className={styles.actionButtons}>
                     <DangerButton onClick={this.onModalClose}>
