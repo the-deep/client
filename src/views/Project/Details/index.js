@@ -7,7 +7,6 @@ import ScrollTabs from '#rscv/ScrollTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import Cloak from '#components/general/Cloak';
-import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import { getNewActiveProjectId } from '#entities/project';
 import {
     RequestCoordinator,
@@ -15,7 +14,6 @@ import {
     requestMethods,
 } from '#request';
 import {
-    projectDetailsSelector,
     unsetProjectDetailsAction,
     currentUserProjectsSelector,
 } from '#redux';

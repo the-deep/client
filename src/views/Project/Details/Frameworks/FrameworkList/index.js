@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Faram from '@togglecorp/faram';
-import { isTruthyString } from '@togglecorp/fujs';
+import { isTruthyString, _cs } from '@togglecorp/fujs';
 
 import SearchInput from '#rsci/SearchInput';
 import SegmentInput from '#rsci/SegmentInput';
@@ -9,6 +9,11 @@ import Checkbox from '#rsci/Checkbox';
 import ListView from '#rscv/List/ListView';
 import AccentButton from '#rsca/Button/AccentButton';
 import modalize from '#rscg/Modalize';
+
+import {
+    RequestClient,
+    requestMethods,
+} from '#request';
 
 import _ts from '#ts';
 
@@ -21,29 +26,28 @@ const AccentModalButton = modalize(AccentButton);
 const propTypes = {
     activeFrameworkId: PropTypes.number.isRequired,
     className: PropTypes.string,
-    onClick: PropTypes.func.isRequired,
-    selectedFrameworkId: PropTypes.number,
+    usedFrameworkId: PropTypes.number,
     projectId: PropTypes.number.isRequired,
     setActiveFramework: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
     // eslint-disable-next-line react/forbid-prop-types
     frameworkList: PropTypes.array,
-    frameworkListPending: PropTypes.bool,
     onFilterChange: PropTypes.func.isRequired,
     filterValues: PropTypes.shape({
         search: PropTypes.string,
         activity: PropTypes.string,
         relatedToMe: PropTypes.bool,
     }).isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    frameworkListGetRequest: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
     className: '',
 
     // Apparently there can be no frameworks in projects
-    selectedFrameworkId: undefined,
+    usedFrameworkId: undefined,
     readOnly: false,
-    frameworkListPending: false,
     frameworkList: [],
 };
 
@@ -55,9 +59,36 @@ const fameworkActivityOptions = [
 
 const getFrameworkKey = framework => framework.id;
 
+
+const requests = {
+    frameworkListGetRequest: {
+        url: '/analysis-frameworks/',
+        method: requestMethods.GET,
+        query: ({ props: { filterValues } }) => ({
+            ...filterValues,
+            fields: ['id', 'title'],
+        }),
+        onPropsChanged: ['filterValues'],
+        onMount: true,
+        onSuccess: ({
+            props: { setFrameworkList },
+            response,
+        }) => {
+            const { results } = response;
+            setFrameworkList({ analysisFrameworks: results });
+        },
+        schemaName: 'analysisFrameworkTitleList',
+    },
+};
+
+@RequestClient(requests)
 export default class FrameworkList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    static isFiltered = ({ search, activity, relatedToMe }) => (
+        isTruthyString(search) || activity !== 'all' || relatedToMe
+    );
 
     constructor(props) {
         super(props);
@@ -71,15 +102,11 @@ export default class FrameworkList extends React.PureComponent {
         };
     }
 
-    getIsFiltered = ({ search, activity, relatedToMe }) => (
-        isTruthyString(search) || activity !== 'all' || relatedToMe
-    );
-
     itemRendererParams = (key, framework) => ({
         framework,
         isActive: this.props.activeFrameworkId === framework.id,
-        isSelected: this.props.selectedFrameworkId === framework.id,
-        onClick: () => this.props.onClick(framework.id),
+        isSelected: this.props.usedFrameworkId === framework.id,
+        onClick: () => this.props.setActiveFramework(framework.id),
     })
 
     render() {
@@ -90,16 +117,18 @@ export default class FrameworkList extends React.PureComponent {
             readOnly,
             filterValues,
             frameworkList,
-            frameworkListPending,
+            frameworkListGetRequest: {
+                pending,
+            },
             onFilterChange,
         } = this.props;
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.frameworkList}
-        `;
+        const className = _cs(
+            classNameFromProps,
+            styles.frameworkList,
+        );
 
-        const isFiltered = this.getIsFiltered(filterValues);
+        const filtered = FrameworkList.isFiltered(filterValues);
 
         return (
             <div className={className}>
@@ -111,7 +140,7 @@ export default class FrameworkList extends React.PureComponent {
 
                         <AccentModalButton
                             iconName="add"
-                            disabled={readOnly || frameworkListPending}
+                            disabled={readOnly || pending}
                             className={styles.addFrameworkButton}
                             transparent
                             modal={
@@ -137,7 +166,6 @@ export default class FrameworkList extends React.PureComponent {
                             showHintAndError={false}
                             showLabel={false}
                         />
-
                         <div className={styles.filters}>
                             <SegmentInput
                                 faramElementName="activity"
@@ -155,13 +183,13 @@ export default class FrameworkList extends React.PureComponent {
                     </Faram>
                 </header>
                 <ListView
-                    pending={frameworkListPending}
+                    pending={pending}
                     data={frameworkList}
                     className={styles.content}
                     renderer={FrameworkListItem}
                     rendererParams={this.itemRendererParams}
                     keySelector={getFrameworkKey}
-                    isFiltered={isFiltered}
+                    isFiltered={filtered}
                 />
             </div>
         );

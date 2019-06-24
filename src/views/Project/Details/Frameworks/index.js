@@ -1,13 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import memoize from 'memoize-one';
-
-import {
-    RequestCoordinator,
-    RequestClient,
-    requestMethods,
-} from '#request';
 
 import {
     analysisFrameworkListSelector,
@@ -31,8 +24,6 @@ const propTypes = {
 
     // eslint-disable-next-line react/no-unused-prop-types
     setFrameworkList: PropTypes.func.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    frameworkListGetRequest: PropTypes.object.isRequired,
     readOnly: PropTypes.bool,
 };
 
@@ -51,92 +42,31 @@ const mapDispatchToProps = dispatch => ({
     setFrameworkList: params => dispatch(setAnalysisFrameworksAction(params)),
 });
 
-const requests = {
-    frameworkListGetRequest: {
-        url: '/analysis-frameworks/',
-        method: requestMethods.GET,
-        query: ({ params: { body } }) => ({
-            ...body,
-            fields: ['id', 'title'],
-        }),
-        onMount: true,
-        onSuccess: ({
-            props: { setFrameworkList },
-            response,
-        }) => {
-            const { results } = response;
-            setFrameworkList({ analysisFrameworks: results });
-        },
-        schemaName: 'analysisFrameworkTitleList',
-    },
-};
-
-const getActiveFrameworkId = memoize((
-    activeFrameworkIdFromProject,
-    frameworkList,
-    activeFrameworkIdFromState,
-) => {
-    const activeFrameworkId = activeFrameworkIdFromState || activeFrameworkIdFromProject;
-    if (activeFrameworkId) {
-        const previouslyActiveFrameworkIndex = frameworkList.findIndex(
-            f => f.id === activeFrameworkId,
-        );
-
-        if (previouslyActiveFrameworkIndex !== -1) {
-            return activeFrameworkId;
-        }
-    }
-
-    return frameworkList.length > 0 ?
-        frameworkList[0].id : undefined;
-});
-
-const emptyObject = {};
-
 @connect(mapStateToProps, mapDispatchToProps)
-@RequestCoordinator
-@RequestClient(requests)
 export default class ProjectAnalysisFramework extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
-        const { frameworkListGetRequest } = this.props;
-
-        const filterValues = {
-            activity: 'active',
-            relatedToMe: true,
-            search: '',
-        };
 
         this.state = {
             activeFrameworkId: undefined,
-            // TODO: move to redux
-            filterValues,
-        };
 
-        frameworkListGetRequest.setDefaultParams({
-            body: filterValues,
-        });
+            filterValues: {
+                activity: 'active',
+                relatedToMe: true,
+                search: '',
+            },
+        };
     }
 
     setActiveFramework = (id) => {
         this.setState({ activeFrameworkId: id });
     }
 
-    handleFrameworkClick = (id) => {
-        this.setActiveFramework(id);
-    }
-
     handleFilterChange = (filterValues) => {
         this.setState({ filterValues });
-
-        const { frameworkListGetRequest } = this.props;
-
-        frameworkListGetRequest.do({
-            body: filterValues,
-        });
     }
 
     render() {
@@ -147,45 +77,38 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
 
         const {
             frameworkList,
-            frameworkListGetRequest: {
-                pending: frameworkListPending,
-            } = emptyObject,
             projectDetails: {
-                analysisFramework: selectedFrameworkId,
+                analysisFramework: usedFrameworkId,
             },
             projectId,
             readOnly,
             className,
         } = this.props;
 
-        const activeFrameworkId = getActiveFrameworkId(
-            selectedFrameworkId,
-            frameworkList,
-            activeFrameworkIdFromState,
-        );
-
-        const isFrameworkListEmpty = !frameworkListPending && frameworkList.length === 0;
+        const activeFrameworkId = activeFrameworkIdFromState || usedFrameworkId;
 
         return (
             <div className={_cs(className, styles.projectAnalysisFramework)}>
                 <FrameworkList
-                    activeFrameworkId={activeFrameworkId}
                     className={styles.frameworkList}
+
                     filterValues={filterValues}
                     frameworkList={frameworkList}
-                    onClick={this.handleFrameworkClick}
                     onFilterChange={this.handleFilterChange}
-                    frameworkListPending={frameworkListPending}
                     projectId={projectId}
+
+                    activeFrameworkId={activeFrameworkId}
+                    usedFrameworkId={usedFrameworkId}
+
                     readOnly={readOnly}
-                    selectedFrameworkId={selectedFrameworkId}
+
                     setActiveFramework={this.setActiveFramework}
+                    setFrameworkList={this.props.setFrameworkList}
                 />
                 <FrameworkDetail
                     className={styles.details}
                     frameworkId={activeFrameworkId}
-                    isFrameworkListEmpty={isFrameworkListEmpty}
-                    readOnly={readOnly || frameworkListPending}
+                    readOnly={readOnly}
                     setActiveFramework={this.setActiveFramework}
                 />
             </div>
