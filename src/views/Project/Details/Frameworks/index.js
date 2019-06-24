@@ -1,10 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import memoize from 'memoize-one';
-
-import Message from '#rscv/Message';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
     analysisFrameworkListSelector,
@@ -12,24 +8,27 @@ import {
 
     setAnalysisFrameworksAction,
 } from '#redux';
-import _ts from '#ts';
+
 import _cs from '#cs';
 
 import FrameworkDetail from './FrameworkDetail';
 import styles from './styles.scss';
 
-import FrameworkListGetRequest from './requests/FrameworkListGetRequest';
 import FrameworkList from './FrameworkList';
 
 const propTypes = {
+    className: PropTypes.string,
     frameworkList: PropTypes.arrayOf(PropTypes.object).isRequired,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     projectId: PropTypes.number.isRequired,
+
+    // eslint-disable-next-line react/no-unused-prop-types
     setFrameworkList: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
 };
 
 const defaultProps = {
+    className: undefined,
     frameworkList: [],
     readOnly: false,
 };
@@ -43,38 +42,6 @@ const mapDispatchToProps = dispatch => ({
     setFrameworkList: params => dispatch(setAnalysisFrameworksAction(params)),
 });
 
-const requestForFrameworkList = memoize((projectId, frameworkListRequest) => {
-    frameworkListRequest
-        .init()
-        .start();
-});
-
-const getActiveFrameworkId = memoize((
-    activeFrameworkIdFromProject,
-    frameworkList,
-    activeFrameworkIdFromState,
-) => {
-    if (activeFrameworkIdFromState) {
-        const previouslyActiveFrameworkIndex = frameworkList.findIndex(
-            f => f.id === activeFrameworkIdFromState,
-        );
-
-        if (previouslyActiveFrameworkIndex !== -1) {
-            return activeFrameworkIdFromState;
-        }
-    }
-
-    let activeFrameworkId;
-    if (activeFrameworkIdFromProject) {
-        activeFrameworkId = activeFrameworkIdFromProject;
-    } else {
-        activeFrameworkId = frameworkList.length > 0 ?
-            frameworkList[0].id : undefined;
-    }
-
-    return activeFrameworkId;
-});
-
 @connect(mapStateToProps, mapDispatchToProps)
 export default class ProjectAnalysisFramework extends React.PureComponent {
     static propTypes = propTypes;
@@ -84,98 +51,66 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
         super(props);
 
         this.state = {
-            pendingFrameworkList: true,
             activeFrameworkId: undefined,
+
+            filterValues: {
+                activity: 'active',
+                relatedToMe: true,
+                search: '',
+            },
         };
-
-        this.frameworkListRequest = new FrameworkListGetRequest({
-            setState: d => this.setState(d),
-            setFrameworkList: this.props.setFrameworkList,
-        });
-    }
-
-
-    componentWillUnmount() {
-        this.frameworkListRequest.stop();
     }
 
     setActiveFramework = (id) => {
         this.setState({ activeFrameworkId: id });
     }
 
-    handleFrameworkClick = (id) => {
-        this.setActiveFramework(id);
-    }
-
-    renderActiveFrameworkDetails = ({ activeFrameworkId }) => {
-        const {
-            frameworkList,
-            readOnly,
-        } = this.props;
-
-        if (frameworkList.length === 0) {
-            return (
-                <Message className={styles.noFrameworkMessage}>
-                    { _ts('project', 'noAfText') }
-                </Message>
-            );
-        }
-
-        return (
-            <FrameworkDetail
-                className={styles.details}
-                frameworkId={activeFrameworkId}
-                setActiveFramework={this.setActiveFramework}
-                readOnly={readOnly}
-            />
-        );
+    handleFilterChange = (filterValues) => {
+        this.setState({ filterValues });
     }
 
     render() {
         const {
-            pendingFrameworkList,
             activeFrameworkId: activeFrameworkIdFromState,
+            filterValues,
         } = this.state;
 
         const {
             frameworkList,
             projectDetails: {
-                analysisFramework: selectedFrameworkId,
+                analysisFramework: usedFrameworkId,
             },
             projectId,
             readOnly,
             className,
         } = this.props;
 
-        requestForFrameworkList(projectId, this.frameworkListRequest);
-
-        const activeFrameworkId = getActiveFrameworkId(
-            selectedFrameworkId,
-            frameworkList,
-            activeFrameworkIdFromState,
-        );
-
-        const ActiveFrameworkDetails = this.renderActiveFrameworkDetails;
+        const activeFrameworkId = activeFrameworkIdFromState || usedFrameworkId;
 
         return (
             <div className={_cs(className, styles.projectAnalysisFramework)}>
                 <FrameworkList
                     className={styles.frameworkList}
-                    onClick={this.handleFrameworkClick}
-                    activeFrameworkId={activeFrameworkId}
-                    selectedFrameworkId={selectedFrameworkId}
+
+                    filterValues={filterValues}
                     frameworkList={frameworkList}
+                    onFilterChange={this.handleFilterChange}
                     projectId={projectId}
+
+                    activeFrameworkId={activeFrameworkId}
+                    usedFrameworkId={usedFrameworkId}
+
+                    readOnly={readOnly}
+
+                    setActiveFramework={this.setActiveFramework}
+                    setFrameworkList={this.props.setFrameworkList}
+                />
+                <FrameworkDetail
+                    className={styles.details}
+                    frameworkId={activeFrameworkId}
                     readOnly={readOnly}
                     setActiveFramework={this.setActiveFramework}
                 />
-                { pendingFrameworkList ? (
-                    <LoadingAnimation />
-                ) : (
-                    <ActiveFrameworkDetails
-                        activeFrameworkId={activeFrameworkId}
-                    />
-                )}
             </div>
         );
     }

@@ -1,22 +1,24 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import memoize from 'memoize-one';
-import {
-    caseInsensitiveSubmatch,
-    compareString,
-    compareStringSearch,
-} from '@togglecorp/fujs';
+import Faram from '@togglecorp/faram';
+import { isTruthyString, _cs } from '@togglecorp/fujs';
 
-import Icon from '#rscg/Icon';
 import SearchInput from '#rsci/SearchInput';
+import SegmentInput from '#rsci/SegmentInput';
+import Checkbox from '#rsci/Checkbox';
 import ListView from '#rscv/List/ListView';
-import ListItem from '#rscv/List/ListItem';
 import AccentButton from '#rsca/Button/AccentButton';
 import modalize from '#rscg/Modalize';
+
+import {
+    RequestClient,
+    requestMethods,
+} from '#request';
 
 import _ts from '#ts';
 
 import AddFrameworkModal from './AddFrameworkModal';
+import FrameworkListItem from './FrameworkListItem';
 import styles from './styles.scss';
 
 const AccentModalButton = modalize(AccentButton);
@@ -24,164 +26,170 @@ const AccentModalButton = modalize(AccentButton);
 const propTypes = {
     activeFrameworkId: PropTypes.number.isRequired,
     className: PropTypes.string,
-    frameworkList: PropTypes.arrayOf(PropTypes.object),
-    onClick: PropTypes.func.isRequired,
-    selectedFrameworkId: PropTypes.number,
+    usedFrameworkId: PropTypes.number,
     projectId: PropTypes.number.isRequired,
     setActiveFramework: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
+    // eslint-disable-next-line react/forbid-prop-types
+    frameworkList: PropTypes.array,
+    onFilterChange: PropTypes.func.isRequired,
+    filterValues: PropTypes.shape({
+        search: PropTypes.string,
+        activity: PropTypes.string,
+        relatedToMe: PropTypes.bool,
+    }).isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    frameworkListGetRequest: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
     className: '',
-    frameworkList: [],
 
     // Apparently there can be no frameworks in projects
-    selectedFrameworkId: undefined,
+    usedFrameworkId: undefined,
     readOnly: false,
+    frameworkList: [],
 };
 
-// TODO: move to separate component
-const FrameworkListItem = ({
-    className,
-    isActive,
-    isSelected,
-    framework: { title },
-    onClick,
-}) => (
-    <ListItem
-        className={className}
-        active={isActive}
-        onClick={onClick}
-    >
-        <div className={styles.title}>
-            { title }
-        </div>
-        { isSelected &&
-            <Icon
-                name="checkCircle"
-                className={styles.check}
-            />
-        }
-    </ListItem>
-);
-
-FrameworkListItem.propTypes = {
-    className: PropTypes.string,
-    isActive: PropTypes.bool.isRequired,
-    isSelected: PropTypes.bool.isRequired,
-    framework: PropTypes.shape({
-        title: PropTypes.string,
-    }).isRequired,
-    onClick: PropTypes.func.isRequired,
-};
-
-FrameworkListItem.defaultProps = {
-    className: '',
-};
-
-
-const filterFrameworks = memoize((frameworkList, searchInputValue) => {
-    const displayFrameworkList = frameworkList
-        .filter(framework => caseInsensitiveSubmatch(framework.title, searchInputValue))
-        .sort((a, b) => compareStringSearch(a.title, b.title, searchInputValue));
-
-    displayFrameworkList.sort(
-        (a, b) => compareString(
-            a.title,
-            b.title,
-        ),
-    );
-
-    return displayFrameworkList;
-});
+const fameworkActivityOptions = [
+    { key: 'all', label: _ts('project.framework', 'frameworkActivityAllTitle') },
+    { key: 'active', label: _ts('project.framework', 'frameworkActivityActiveTitle') },
+    { key: 'inactive', label: _ts('project.framework', 'frameworkActivityInactiveTitle') },
+];
 
 const getFrameworkKey = framework => framework.id;
 
+
+const requests = {
+    frameworkListGetRequest: {
+        url: '/analysis-frameworks/',
+        method: requestMethods.GET,
+        query: ({ props: { filterValues } }) => ({
+            ...filterValues,
+            fields: ['id', 'title'],
+        }),
+        onPropsChanged: ['filterValues'],
+        onMount: true,
+        onSuccess: ({
+            props: { setFrameworkList },
+            response,
+        }) => {
+            const { results } = response;
+            setFrameworkList({ analysisFrameworks: results });
+        },
+        schemaName: 'analysisFrameworkTitleList',
+    },
+};
+
+@RequestClient(requests)
 export default class FrameworkList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static isFiltered = ({ search, activity, relatedToMe }) => (
+        isTruthyString(search) || activity !== 'all' || relatedToMe
+    );
+
     constructor(props) {
         super(props);
 
-        this.state = {
-            searchInputValue: '',
+        this.schema = {
+            fields: {
+                search: [],
+                activity: [],
+                relatedToMe: [],
+            },
         };
-    }
-
-    handleSearchInputValueChange = (searchInputValue) => {
-        this.setState({ searchInputValue });
     }
 
     itemRendererParams = (key, framework) => ({
         framework,
         isActive: this.props.activeFrameworkId === framework.id,
-        isSelected: this.props.selectedFrameworkId === framework.id,
-        onClick: () => this.props.onClick(framework.id),
-        className: styles.item,
+        isSelected: this.props.usedFrameworkId === framework.id,
+        onClick: () => this.props.setActiveFramework(framework.id),
     })
 
     render() {
         const {
             className: classNameFromProps,
-            frameworkList,
             projectId,
             setActiveFramework,
             readOnly,
+            filterValues,
+            frameworkList,
+            frameworkListGetRequest: {
+                pending,
+            },
+            onFilterChange,
         } = this.props;
 
-        const { searchInputValue } = this.state;
-
-        if (!frameworkList) {
-            return null;
-        }
-
-        const displayFrameworkList = filterFrameworks(
-            frameworkList,
-            searchInputValue,
+        const className = _cs(
+            classNameFromProps,
+            styles.frameworkList,
         );
 
-        const className = `
-            ${classNameFromProps}
-            ${styles.frameworkList}
-        `;
+        const filtered = FrameworkList.isFiltered(filterValues);
 
         return (
             <div className={className}>
                 <header className={styles.header}>
-                    <h4 className={styles.heading}>
-                        {_ts('project.framework', 'frameworkListHeading')}
-                    </h4>
+                    <div className={styles.top}>
+                        <h4 className={styles.heading}>
+                            {_ts('project.framework', 'frameworkListHeading')}
+                        </h4>
 
-                    <AccentModalButton
-                        iconName="add"
-                        disabled={readOnly}
-                        modal={
-                            <AddFrameworkModal
-                                projectId={projectId}
-                                setActiveFramework={setActiveFramework}
-                            />
-                        }
+                        <AccentModalButton
+                            iconName="add"
+                            disabled={readOnly || pending}
+                            className={styles.addFrameworkButton}
+                            transparent
+                            modal={
+                                <AddFrameworkModal
+                                    projectId={projectId}
+                                    setActiveFramework={setActiveFramework}
+                                />
+                            }
+                        >
+                            { _ts('project.framework', 'addFrameworkButtonLabel')}
+                        </AccentModalButton>
+                    </div>
+                    <Faram
+                        className={styles.bottom}
+                        onChange={onFilterChange}
+                        schema={this.schema}
+                        value={filterValues}
                     >
-                        { _ts('project.framework', 'addFrameworkButtonLabel')}
-                    </AccentModalButton>
-
-                    <SearchInput
-                        className={styles.frameworkSearchInput}
-                        value={searchInputValue}
-                        onChange={this.handleSearchInputValueChange}
-                        placeholder={_ts('project.framework', 'searchFrameworkInputPlaceholder')}
-                        showHintAndError={false}
-                        showLabel={false}
-                    />
+                        <SearchInput
+                            faramElementName="search"
+                            className={styles.frameworkSearchInput}
+                            placeholder={_ts('project.framework', 'searchFrameworkInputPlaceholder')}
+                            showHintAndError={false}
+                            showLabel={false}
+                        />
+                        <div className={styles.filters}>
+                            <SegmentInput
+                                faramElementName="activity"
+                                className={styles.frameworkActivityInput}
+                                showLabel={false}
+                                showHintAndError={false}
+                                options={fameworkActivityOptions}
+                            />
+                            <Checkbox
+                                faramElementName="relatedToMe"
+                                className={styles.relatedToMe}
+                                label={_ts('project.framework', 'relatedToMeTitle')}
+                            />
+                        </div>
+                    </Faram>
                 </header>
                 <ListView
-                    data={displayFrameworkList}
+                    pending={pending}
+                    data={frameworkList}
                     className={styles.content}
                     renderer={FrameworkListItem}
                     rendererParams={this.itemRendererParams}
                     keySelector={getFrameworkKey}
+                    isFiltered={filtered}
                 />
             </div>
         );

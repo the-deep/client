@@ -2,15 +2,21 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import memoize from 'memoize-one';
 
-import { reverseRoute } from '@togglecorp/fujs';
+import {
+    reverseRoute,
+} from '@togglecorp/fujs';
+
 import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import AccentButton from '#rsca/Button/AccentButton';
 import modalize from '#rscg/Modalize';
 
+import {
+    RequestClient,
+    requestMethods,
+} from '#request';
 import {
     projectDetailsSelector,
     setProjectAfAction,
@@ -25,25 +31,25 @@ import Preview from './Preview';
 import UseFrameworkButton from './UseFrameworkButton';
 import CloneFrameworkModal from './CloneFrameworkModal';
 
-import FrameworkGetRequest from './requests/FrameworkGetRequest';
-
 import styles from './styles.scss';
 
 const AccentModalButton = modalize(AccentButton);
 
 const propTypes = {
     className: PropTypes.string,
-    frameworkId: PropTypes.number.isRequired,
+    frameworkId: PropTypes.number,
     addNewFramework: PropTypes.func.isRequired,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setProjectFramework: PropTypes.func.isRequired,
     setActiveFramework: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
+    frameworkGetRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 const defaultProps = {
     className: '',
     readOnly: false,
+    frameworkId: undefined,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -55,31 +61,29 @@ const mapDispatchToProps = dispatch => ({
     setProjectFramework: params => dispatch(setProjectAfAction(params)),
 });
 
-const requestFramework = memoize((frameworkId, frameworkGetRequest) => {
-    frameworkGetRequest.stop();
-    frameworkGetRequest
-        .init(frameworkId)
-        .start();
-});
+const emptyObject = {};
+
+const requests = {
+    frameworkGetRequest: {
+        url: ({ props }) => `/analysis-frameworks/${props.frameworkId}`,
+        method: requestMethods.GET,
+        onPropsChanged: ['frameworkId'],
+        onMount: ({ props }) => !!props.frameworkId,
+        schemaName: 'analysisFramework',
+    },
+};
 
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestClient(requests)
 export default class FrameworkDetail extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
     constructor(props) {
         super(props);
-
         this.state = {
-            pendingFramework: true,
-            error: false,
-            framework: undefined,
             activeView: 'overview',
         };
-
-        this.frameworkGetRequest = new FrameworkGetRequest({
-            setState: d => this.setState(d),
-        });
 
         this.tabs = {
             overview: _ts('project.framework', 'entryOverviewTitle'),
@@ -87,46 +91,25 @@ export default class FrameworkDetail extends React.PureComponent {
         };
     }
 
-    componentWillUnmount() {
-        this.frameworkGetRequest.stop();
-    }
-
     handleTabClick = (tabId) => {
         this.setState({ activeView: tabId });
     }
 
-    renderEditFrameworkButton = () => {
+    renderHeader = ({
+        framework,
+    }) => {
         const {
-            framework: {
-                id: frameworkId,
-                isAdmin: isFrameworkAdmin,
-            },
-        } = this.state;
+            id: analysisFrameworkId,
+            title: frameworkTitle,
+            description: frameworkDescription,
+            isAdmin: isFrameworkAdmin,
+        } = framework;
 
-        if (!isFrameworkAdmin) {
-            return null;
-        }
-
-        const editFrameworkButtonTitle = _ts('project.framework', 'editFrameworkButtonTitle');
-
-        const params = { analysisFrameworkId: frameworkId };
-
-        return (
-            <Link
-                className={styles.editFrameworkLink}
-                to={reverseRoute(pathNames.analysisFramework, params)}
-            >
-                { editFrameworkButtonTitle }
-            </Link>
-        );
-    }
-
-    renderHeader = () => {
         const {
             projectDetails: {
                 analysisFramework: currentFrameworkId,
                 id: projectId,
-            },
+            } = emptyObject,
             setProjectFramework,
             addNewFramework,
             setActiveFramework,
@@ -134,16 +117,9 @@ export default class FrameworkDetail extends React.PureComponent {
         } = this.props;
 
         const {
-            framework: {
-                id: frameworkId,
-                title: frameworkTitle,
-                description: frameworkDescription,
-            },
             pending,
             activeView,
         } = this.state;
-
-        const EditFrameworkButton = this.renderEditFrameworkButton;
 
         return (
             <header className={styles.header}>
@@ -164,20 +140,30 @@ export default class FrameworkDetail extends React.PureComponent {
                         <UseFrameworkButton
                             currentFrameworkId={currentFrameworkId}
                             disabled={pending || readOnly}
-                            frameworkId={frameworkId}
+                            frameworkId={analysisFrameworkId}
                             frameworkTitle={frameworkTitle}
                             projectId={projectId}
                             setProjectFramework={setProjectFramework}
                         />
 
-                        <EditFrameworkButton />
+                        { isFrameworkAdmin &&
+                            <Link
+                                className={styles.editFrameworkLink}
+                                to={reverseRoute(
+                                    pathNames.analysisFramework,
+                                    { analysisFrameworkId },
+                                )}
+                            >
+                                { _ts('project.framework', 'editFrameworkButtonTitle') }
+                            </Link>
+                        }
 
                         <AccentModalButton
                             disabled={pending || readOnly}
                             modal={
                                 <CloneFrameworkModal
                                     projectId={projectId}
-                                    frameworkId={frameworkId}
+                                    frameworkId={analysisFrameworkId}
                                     addNewFramework={addNewFramework}
                                     setActiveFramework={setActiveFramework}
                                 />
@@ -202,31 +188,33 @@ export default class FrameworkDetail extends React.PureComponent {
 
     render() {
         const {
-            frameworkId,
             className: classNameFromProps,
+            frameworkGetRequest: {
+                pending: pendingFramework,
+                responseError: errorFramework,
+            },
+            frameworkId,
         } = this.props;
 
         const {
-            pendingFramework,
-            error,
-        } = this.state;
-
-        requestFramework(frameworkId, this.frameworkGetRequest);
-
-        const {
-            framework,
             activeView,
         } = this.state;
-
-        const Header = this.renderHeader;
 
         const className = `
             ${classNameFromProps}
             ${styles.frameworkDetails}
         `;
 
-        // FIXME: handle error gracefully
-        // When af cannot be pulled, show show error
+        if (!frameworkId) {
+            return (
+                <div className={className}>
+                    <Message className={styles.noFrameworkMessage}>
+                        { _ts('project', 'noAfText') }
+                    </Message>
+                </div>
+            );
+        }
+
         if (pendingFramework) {
             return (
                 <div className={className}>
@@ -235,7 +223,7 @@ export default class FrameworkDetail extends React.PureComponent {
             );
         }
 
-        if (error) {
+        if (errorFramework) {
             return (
                 <div className={className}>
                     <Message>
@@ -245,9 +233,19 @@ export default class FrameworkDetail extends React.PureComponent {
             );
         }
 
+        const {
+            frameworkGetRequest: {
+                response: framework,
+            },
+        } = this.props;
+
+        const Header = this.renderHeader;
+
         return (
             <div className={className}>
-                <Header />
+                <Header
+                    framework={framework}
+                />
                 <Preview
                     activeView={activeView}
                     className={styles.preview}
