@@ -41,10 +41,6 @@
             margin-right: var(--spacing-extra-large);
             background-color: transparent;
 
-            &.hidden {
-                display: none;
-            }
-
             :global {
                 .scroll-tab {
                     border-bottom: none;

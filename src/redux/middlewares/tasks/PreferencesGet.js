@@ -44,11 +44,10 @@ export default class PreferencesGet extends AbstractTask {
                         username,
 
                         lastActiveProject,
-                        isExperimental,
-                        isEarlyAccess,
 
                         language,
                         fallbackLanguage,
+                        accessibleFeatures,
                     } = response;
 
                     const activeProjectId = activeProjectIdFromStateSelector(store.getState());
@@ -63,8 +62,7 @@ export default class PreferencesGet extends AbstractTask {
                         email,
                         displayPicture,
                         isSuperuser,
-                        isExperimental,
-                        isEarlyAccess,
+                        accessibleFeatures,
                         displayName,
                         username,
                     }));

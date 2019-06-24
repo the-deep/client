@@ -42,6 +42,22 @@ const userSchema = [];
     };
     userSchema.push({ name, schema });
 }
+
+{
+    const name = 'featureAccess';
+    const schema = {
+        doc: {
+            name: 'Feature Access',
+            description: 'Feature access item',
+        },
+        fields: {
+            title: { type: 'string', required: true },
+            key: { type: 'string', required: true },
+        },
+    };
+    userSchema.push({ name, schema });
+}
+
 {
     const name = 'userPreferences';
     const schema = {
@@ -54,9 +70,8 @@ const userSchema = [];
             displayName: { type: 'string', required: true },
             email: { type: 'string', required: true },
             isSuperuser: { type: 'boolean', required: true },
-            isExperimental: { type: 'boolean', required: true },
-            isEarlyAccess: { type: 'boolean', required: true },
             lastActiveProject: { type: 'uint' },
+            accessibleFeatures: { type: 'array.featureAccess', required: true },
             username: { type: 'string', required: true },
             language: { type: 'string' },
             fallbackLanguage: { type: 'string' },
