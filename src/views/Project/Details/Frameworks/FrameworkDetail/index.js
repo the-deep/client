@@ -6,7 +6,6 @@ import memoize from 'memoize-one';
 
 import {
     reverseRoute,
-    isTruthy,
 } from '@togglecorp/fujs';
 
 import Message from '#rscv/Message';
@@ -72,6 +71,8 @@ const requestFramework = memoize((frameworkId, frameworkGetRequest) => {
         .start();
 });
 
+const emptyObject = {};
+
 @connect(mapStateToProps, mapDispatchToProps)
 export default class FrameworkDetail extends React.PureComponent {
     static propTypes = propTypes;
@@ -111,7 +112,7 @@ export default class FrameworkDetail extends React.PureComponent {
             framework: {
                 id: frameworkId,
                 isAdmin: isFrameworkAdmin,
-            },
+            } = emptyObject,
         } = this.state;
 
         if (!isFrameworkAdmin) {
@@ -137,7 +138,7 @@ export default class FrameworkDetail extends React.PureComponent {
             projectDetails: {
                 analysisFramework: currentFrameworkId,
                 id: projectId,
-            },
+            } = emptyObject,
             setProjectFramework,
             addNewFramework,
             setActiveFramework,
@@ -149,7 +150,7 @@ export default class FrameworkDetail extends React.PureComponent {
                 id: frameworkId,
                 title: frameworkTitle,
                 description: frameworkDescription,
-            },
+            } = emptyObject,
             pending,
             activeView,
         } = this.state;

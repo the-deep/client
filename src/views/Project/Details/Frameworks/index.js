@@ -59,6 +59,7 @@ const requests = {
             ...body,
             fields: ['id', 'title'],
         }),
+        onMount: true,
         onSuccess: ({
             props: { setFrameworkList },
             response,
@@ -116,15 +117,6 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
         };
 
         frameworkListGetRequest.setDefaultParams({
-            body: filterValues,
-        });
-    }
-
-    componentDidMount() {
-        const { filterValues } = this.state;
-        const { frameworkListGetRequest } = this.props;
-
-        frameworkListGetRequest.do({
             body: filterValues,
         });
     }
