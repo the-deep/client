@@ -19,7 +19,7 @@ import ModalBody from '#rscv/Modal/Body';
 import Button from '#rsca/Button';
 import SimpleHorizontalBarChart from '#rscz/SimpleHorizontalBarChart';
 import SimpleVerticalBarChart from '#rscz/SimpleVerticalBarChart';
-import Histogram from '#rscz/Histogram';
+import PlotlyHistogram from '#rscz/PlotlyHistogram';
 import previewImage from '#resources/img/filler-viz.png';
 import modalize from '#rscg/Modalize';
 import BoundError from '#rscg/BoundError';
@@ -319,7 +319,7 @@ export default class DataSeries extends React.PureComponent {
             lazyMount: true,
         },
         [GRAPH.histogram]: {
-            component: Histogram,
+            component: PlotlyHistogram,
             rendererParams: () => {
                 const {
                     value: {
