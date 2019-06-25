@@ -64,6 +64,7 @@ export default class Questionnaire extends React.PureComponent {
         maxValue: 100,
         minColor: this.props.minScaleColor,
         maxColor: this.props.maxScaleColor,
+        suffix: '%',
     })
 
     render() {
@@ -101,6 +102,7 @@ export default class Questionnaire extends React.PureComponent {
                                             maxValue={100}
                                             minColor={minScaleColor}
                                             maxColor={maxScaleColor}
+                                            suffix="%"
                                         />
                                         <ScoreItem
                                             className={_cs(styles.rightItem, styles.item)}
@@ -111,6 +113,7 @@ export default class Questionnaire extends React.PureComponent {
                                             maxValue={100}
                                             minColor={minScaleColor}
                                             maxColor={maxScaleColor}
+                                            suffix="%"
                                         />
                                         <ScoreItem
                                             className={_cs(styles.rightItem, styles.item)}
@@ -121,6 +124,7 @@ export default class Questionnaire extends React.PureComponent {
                                             maxValue={100}
                                             minColor={minScaleColor}
                                             maxColor={maxScaleColor}
+                                            suffix="%"
                                         />
                                     </div>
                                 </FaramGroup>

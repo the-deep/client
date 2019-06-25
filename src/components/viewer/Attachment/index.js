@@ -143,10 +143,10 @@ export default class Attachment extends React.PureComponent {
         return !viewOnly && this.isTabularCompatible(response.fileType);
     }
 
-    shouldHideTabularButton = ({ isEarlyAccess }) => {
+    shouldHideTabularButton = () => {
         const { tabularBook } = this.props;
         const isAlreadyExtracted = !!tabularBook;
-        return !(isEarlyAccess && (isAlreadyExtracted || this.isExtractable()));
+        return !(isAlreadyExtracted || this.isExtractable());
     }
 
     render() {

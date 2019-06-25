@@ -1,6 +1,7 @@
 .score-message {
     display: flex;
     padding-top: var(--spacing-extra-small);
+    font-size: var(--font-size-large);
 
     .safe {
         color: var(--color-text-success);

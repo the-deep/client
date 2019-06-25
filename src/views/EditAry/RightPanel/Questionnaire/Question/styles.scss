@@ -14,7 +14,7 @@
     .options {
         align-self: flex-start;
         flex-shrink: 0;
-        padding: var(--spacing-small-alt) var(--spacing-medium);
+        padding: var(--spacing-small-alt) 0 var(--spacing-small-alt) var(--spacing-large);
     }
 
     &:last-child {
