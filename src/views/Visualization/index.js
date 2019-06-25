@@ -24,6 +24,7 @@ import Sankey from '#rscz/Sankey';
 import ParallelCoordinates from '#rscz/ParallelCoordinates';
 import StreamGraph from '#rscz/StreamGraph';
 import StackedBarChart from '#rscz/StackedBarChart';
+import GroupedBarChart from '#rscz/GroupedBarChart';
 import SparkLines from '#rscz/SparkLines';
 import Organigram from '#rscz/Organigram';
 import GoogleOrgChart from '#rscz/GoogleOrgChart';
@@ -41,6 +42,7 @@ import lineData from './dummydata/lineData';
 import parallelData from './dummydata/parallelData';
 import sankeyData from './dummydata/sankeyData';
 import stackedData from './dummydata/stackedData';
+import groupedData from './dummydata/groupedData';
 import streamData from './dummydata/streamData';
 import orgChartData from './dummydata/orgChartData';
 
@@ -54,14 +56,15 @@ const CorrelationMatrixView = decorate(CorrelationMatrix);
 const RadialDendrogramView = decorate(RadialDendrogram);
 const TreeMapView = decorate(TreeMap);
 const ZoomableTreeMapView = decorate(ZoomableTreeMap);
-const ForceDirectedGraphView = decorate(ForceDirectedGraph);
 const ClusterForceLayoutView = decorate(ClusterForceLayout);
+const ForceDirectedGraphView = decorate(ForceDirectedGraph);
 const CollapsibleTreeView = decorate(CollapsibleTree);
 const OrgChartView = decorate(OrgChart);
 const HorizontalBarView = decorate(HorizontalBar);
 const DendrogramView = decorate(Dendrogram);
 const SparkLinesView = decorate(SparkLines);
 const StackedBarChartView = decorate(StackedBarChart);
+const GroupedBarChartView = decorate(GroupedBarChart);
 const StreamGraphView = decorate(StreamGraph);
 const SankeyView = decorate(Sankey);
 const PieChartView = decorate(PieChart);
@@ -110,6 +113,7 @@ export default class Visualization extends React.PureComponent {
             sankey: _ts('visualization', 'sankey'),
             sparkLines: _ts('visualization', 'sparklines'),
             stackedBarChart: _ts('visualization', 'stackedBarChart'),
+            groupedBarChart: _ts('visualization', 'groupedBarChart'),
             streamGraph: _ts('visualization', 'streamGraph'),
             sunBurst: _ts('visualization', 'sunburst'),
             treemap: _ts('visualization', 'treemap'),
@@ -317,6 +321,16 @@ export default class Visualization extends React.PureComponent {
                         data={stackedData}
                         labelName="month"
                         labelSelector={monthSelector}
+                    />
+                ),
+            },
+            groupedBarChart: {
+                component: () => (
+                    <GroupedBarChartView
+                        className={styles.groupedBarChart}
+                        headerText={_ts('visualization', 'groupedBarChart')}
+                        data={groupedData}
+                        groupSelector={monthSelector}
                     />
                 ),
             },
