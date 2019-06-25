@@ -121,22 +121,27 @@ export default class ProjectPanel extends React.PureComponent {
     }
 
     renderHeader = () => {
-        const { projectDetail } = this.props;
-
-        if (!projectDetail) {
+        if (!this.props.projectDetail) {
             return null;
         }
+
+        const {
+            projectDetail: {
+                title,
+                isPrivate,
+            },
+        } = this.props;
 
         return (
             <div className={styles.header}>
                 <div className={styles.leftContainer}>
                     <h2
                         className={styles.heading}
-                        title={projectDetail.title}
+                        title={title}
                     >
-                        {projectDetail.title}
+                        {title}
                     </h2>
-                    { projectDetail.isPrivate &&
+                    { isPrivate &&
                         <Badge
                             icon="locked"
                             title={_ts('project', 'privateProjectBadgeTitle')}
@@ -153,11 +158,11 @@ export default class ProjectPanel extends React.PureComponent {
                                 onClick={this.handleProjectDelete}
                                 confirmationTitle="Warning!"
                                 confirmationMessage={_ts('project', 'deleteConfirmMessage', {
-                                    title: <strong>{projectDetail.title}</strong>,
+                                    title: <strong>{title}</strong>,
                                 })}
                                 challengeLabel={_ts('project', 'deleteConfirmLabel')}
                                 challengePlaceholder={_ts('project', 'deleteConfirmPlaceholder')}
-                                challengeValue={projectDetail.title}
+                                challengeValue={title}
                                 className={styles.deleteButton}
                             >
                                 {_ts('project', 'deleteButtonTitle')}

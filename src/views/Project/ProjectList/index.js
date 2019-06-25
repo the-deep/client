@@ -53,7 +53,11 @@ export default class ProjectList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    state = { searchInputValue: '' };
+    constructor(props) {
+        super(props);
+
+        this.state = { searchInputValue: '' };
+    }
 
     handleSearchInputChange = (searchInputValue) => {
         this.setState({ searchInputValue });

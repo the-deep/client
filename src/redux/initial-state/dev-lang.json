@@ -947,7 +947,7 @@
         "-94818927": "Note: Project visibility cannot be changed once the project is created",
         "-40643314": "Grouped bar chart",
         "-38465658": "Failed to create tabular.",
-        "-64655622": "This is a private project and is only visible to you."
+        "-64655622": "This is a private project and is only visible to project members."
     },
     "links": {
         "browserExtension": {
