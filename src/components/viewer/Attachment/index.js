@@ -146,7 +146,7 @@ export default class Attachment extends React.PureComponent {
     shouldHideTabularButton = () => {
         const { tabularBook } = this.props;
         const isAlreadyExtracted = !!tabularBook;
-        return !((isAlreadyExtracted || this.isExtractable()));
+        return !isAlreadyExtracted && !this.isExtractable();
     }
 
     render() {
