@@ -61,7 +61,6 @@ const defaultProps = {
 
 const allAccessibleFeatures = {
     accessZoomableImage: featureList => featureList.includes('zoomable_image'),
-    accessTabular: featureList => featureList.includes('tabular'),
     accessPrivateProject: featureList => featureList.includes('private_project'),
 };
 
@@ -118,7 +117,6 @@ export default class Cloak extends React.Component {
 
         const {
             accessZoomableImage,
-            accessTabular,
             accessPrivateProject,
         } = this.getAccessibleFeatures(accessibleFeatures);
 
@@ -141,7 +139,6 @@ export default class Cloak extends React.Component {
             assessmentPermissions,
 
             accessZoomableImage,
-            accessTabular,
             accessPrivateProject,
         };
 

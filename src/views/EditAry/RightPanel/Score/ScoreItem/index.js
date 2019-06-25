@@ -17,11 +17,13 @@ const propTypes = {
     maxColor: PropTypes.string.isRequired,
     title: PropTypes.string,
     className: PropTypes.string,
+    isPercent: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     title: '',
+    isPercent: false,
 };
 
 // TODO: move to utils
@@ -80,6 +82,7 @@ export default class ScoreItem extends React.PureComponent {
             minColor,
             maxColor,
             className: classNameFromProps,
+            ...otherProps
         } = this.props;
 
         const safeValue = isNotDefined(value) ? 0 : value;
@@ -120,6 +123,7 @@ export default class ScoreItem extends React.PureComponent {
                     className={styles.number}
                     value={value}
                     precision={0}
+                    {...otherProps}
                 />
                 <div className={styles.title}>
                     { title }
