@@ -55,7 +55,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
 
             filterValues: {
                 activity: 'active',
-                relatedToMe: true,
+                relatedToMe: false,
                 search: '',
             },
         };

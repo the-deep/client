@@ -19,7 +19,7 @@ import ModalBody from '#rscv/Modal/Body';
 import Button from '#rsca/Button';
 import SimpleHorizontalBarChart from '#rscz/SimpleHorizontalBarChart';
 import SimpleVerticalBarChart from '#rscz/SimpleVerticalBarChart';
-import Histogram from '#rscz/PlotlyHistogram';
+import Histogram from '#rscz/Histogram';
 import previewImage from '#resources/img/filler-viz.png';
 import modalize from '#rscg/Modalize';
 import BoundError from '#rscg/BoundError';
