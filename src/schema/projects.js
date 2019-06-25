@@ -139,8 +139,10 @@ const projectSchema = [];
             role: { type: 'uint' },
             analysisFramework: { type: 'uint', required: false },
             assessmentTemplate: { type: 'uint', required: false },
+            categoryEditor: { type: 'uint', required: false },
             versionId: { type: 'uint', required: true },
             regions: { type: 'array' },
+            isPrivate: { type: 'boolean', required: true },
         },
     };
     projectSchema.push({ name, schema });

@@ -23,6 +23,7 @@ import notify from '#notify';
 import _ts from '#ts';
 
 import Cloak from '#components/general/Cloak';
+import Badge from '#components/viewer/Badge';
 
 import ProjectList from './ProjectList';
 import Details from './Details';
@@ -128,12 +129,21 @@ export default class ProjectPanel extends React.PureComponent {
 
         return (
             <div className={styles.header}>
-                <h4
-                    className={styles.heading}
-                    title={projectDetail.title}
-                >
-                    {projectDetail.title}
-                </h4>
+                <div className={styles.leftContainer}>
+                    <h2
+                        className={styles.heading}
+                        title={projectDetail.title}
+                    >
+                        {projectDetail.title}
+                    </h2>
+                    { projectDetail.isPrivate &&
+                        <Badge
+                            icon="locked"
+                            title={_ts('project', 'privateProjectBadgeTitle')}
+                            tooltip={_ts('project', 'priivateProjectBadgeTooltip')}
+                        />
+                    }
+                </div>
                 <Cloak
                     hide={ProjectPanel.shouldHideProjectDeleteButton}
                     render={

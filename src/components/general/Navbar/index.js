@@ -6,16 +6,19 @@ import {
     Link,
     matchPath,
 } from 'react-router-dom';
-
-import Icon from '#rscg/Icon';
-import Confirm from '#rscv/Modal/Confirm';
-import { BgRestBuilder } from '#rsu/rest';
 import {
+    _cs,
     isTruthy,
     reverseRoute,
     getFirstKeyByValue,
 } from '@togglecorp/fujs';
+
+import Icon from '#rscg/Icon';
+import Confirm from '#rscv/Modal/Confirm';
+import { BgRestBuilder } from '#rsu/rest';
 import SelectInput from '#rsci/SelectInput';
+
+import Badge from '#components/viewer/Badge';
 
 import {
     createUrlForSetUserProject,
@@ -31,6 +34,7 @@ import {
     logoutAction,
 } from '#redux';
 import { stopSiloBackgroundTasksAction } from '#redux/middlewares/siloBackgroundTasks';
+
 import _ts from '#ts';
 
 import {
@@ -232,6 +236,25 @@ export default class Navbar extends React.PureComponent {
         this.setState({ showLogoutConfirm: false });
     }
 
+    optionLabelSelector = (option = {}) => (
+        <div className={styles.selectOption}>
+            {option.isPrivate && (
+                <Badge
+                    icon="locked"
+                    className={
+                        _cs(
+                            styles.badge,
+                            this.props.activeProject === option.id && styles.active,
+                        )
+                    }
+                    noBorder
+                    tooltip={_ts('project', 'priivateProjectBadgeTooltip')}
+                />
+            )}
+            {option.title}
+        </div>
+    )
+
     render() {
         const {
             className,
@@ -280,6 +303,7 @@ export default class Navbar extends React.PureComponent {
                             hideClearButton
                             keySelector={Navbar.projectKeySelector}
                             labelSelector={Navbar.projectLabelSelector}
+                            optionLabelSelector={this.optionLabelSelector}
                             onChange={this.handleProjectChange}
                             options={userProjects}
                             placeholder={_ts('components.navbar', 'selectEventPlaceholder')}

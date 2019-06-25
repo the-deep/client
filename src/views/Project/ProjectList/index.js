@@ -19,10 +19,11 @@ import {
     viewsAcl,
     pathNames,
 } from '#constants';
-import _ts from '#ts';
-import _cs from '#cs';
 
+import _ts from '#ts';
 import AddProjectButton from './AddProjectButton';
+import ProjectListItem from './ProjectListItem';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -47,38 +48,23 @@ const filterProjects = memoize((userProjects, searchInputValue) => {
 });
 
 const keySelector = project => project.id;
-const rendererParams = (key, project) => ({ project });
 
 export default class ProjectList extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
     state = { searchInputValue: '' };
-
-
-    getStyleName = (projectId) => {
-        const { projectId: projectIdFromProps } = this.props;
-
-        return _cs(
-            styles.listItem,
-            'project-list-item',
-            projectId === projectIdFromProps && styles.active,
-        );
-    }
 
     handleSearchInputChange = (searchInputValue) => {
         this.setState({ searchInputValue });
     };
 
-    renderSidebarItem = ({ project }) => (
-        <div className={this.getStyleName(project.id)} >
-            <Link
-                to={reverseRoute(pathNames.projects, { projectId: project.id })}
-                className={styles.link}
-            >
-                {project.title}
-            </Link>
-        </div>
-    )
+    projectRendererParams = (key, project) => ({
+        title: project.title,
+        projectId: project.id,
+        currentProjectId: this.props.projectId,
+        isPrivate: project.isPrivate,
+    });
 
     renderEmptyComponent = () => (
         <Message className={styles.empty}>
@@ -107,9 +93,9 @@ export default class ProjectList extends React.PureComponent {
         return (
             <div className={className}>
                 <header className={styles.header}>
-                    <h2 className={styles.heading}>
+                    <h3 className={styles.heading}>
                         {_ts('project', 'headerProjects')}
-                    </h2>
+                    </h3>
                     <Cloak
                         {...viewsAcl.discoverProjects}
                         render={
@@ -141,8 +127,8 @@ export default class ProjectList extends React.PureComponent {
                     className={styles.projectList}
                     data={displayUserProjects}
                     keySelector={keySelector}
-                    renderer={this.renderSidebarItem}
-                    rendererParams={rendererParams}
+                    renderer={ProjectListItem}
+                    rendererParams={this.projectRendererParams}
                     emptyComponent={this.renderEmptyComponent}
                 />
             </div>

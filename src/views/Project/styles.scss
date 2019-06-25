@@ -4,17 +4,22 @@
         border-right: var(--width-separator-thin) solid var(--color-separator-alt);
         height: 100%;
     }
-
     .header {
         display: flex;
         align-items: center;
 
-        .heading {
+        .left-container {
+            display: flex;
+            align-items: center;
             flex-grow: 1;
-            overflow: hidden;
-            text-transform: none;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+
+            .heading {
+                margin-right: var(--spacing-small);
+                overflow: hidden;
+                text-transform: none;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
         }
 
         .action-buttons {
