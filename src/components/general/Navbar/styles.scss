@@ -104,3 +104,16 @@
         margin-left: var(--spacing-medium);
     }
 }
+
+.select-option {
+    display: flex;
+    justify-content: space-between;
+
+    .badge {
+        padding-right: 0;
+
+        &.active {
+            color: var(--color-text-on-accent);
+        }
+    }
+}

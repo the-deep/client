@@ -15,6 +15,7 @@ import Message from '#rscv/Message';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListView from '#rscv/List/ListView';
 import Pager from '#rscv/Pager';
+import Badge from '#components/viewer/Badge';
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
 import FormattedDate from '#rscv/FormattedDate';
@@ -221,6 +222,21 @@ export default class DiscoverProjects extends React.PureComponent {
 
     dataModifier = (project, columnKey) => {
         switch (columnKey) {
+            case 'title': {
+                return (
+                    <div className={styles.projectTitle} >
+                        {project.title}
+                        {project.isPrivate &&
+                            <Badge
+                                className={styles.badge}
+                                icon="locked"
+                                title={_ts('project', 'privateProjectBadgeTitle')}
+                                tooltip={_ts('project', 'priivateProjectBadgeTooltip')}
+                            />
+                        }
+                    </div>
+                );
+            }
             case 'admins': {
                 const adminsList = project.memberships.filter(d => d.memberStatus === 'admin');
                 const rendererParams = (key, admin) => ({ admin });

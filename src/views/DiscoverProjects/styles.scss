@@ -96,6 +96,11 @@
                 }
             }
 
+            .badge {
+                display: inline-flex;
+                margin-left: var(--spacing-small);
+            }
+
             .admin {
                 @extend %accent-color-link;
 

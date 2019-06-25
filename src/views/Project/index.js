@@ -23,6 +23,7 @@ import notify from '#notify';
 import _ts from '#ts';
 
 import Cloak from '#components/general/Cloak';
+import Badge from '#components/viewer/Badge';
 
 import ProjectList from './ProjectList';
 import Details from './Details';
@@ -120,20 +121,34 @@ export default class ProjectPanel extends React.PureComponent {
     }
 
     renderHeader = () => {
-        const { projectDetail } = this.props;
-
-        if (!projectDetail) {
+        if (!this.props.projectDetail) {
             return null;
         }
 
+        const {
+            projectDetail: {
+                title,
+                isPrivate,
+            },
+        } = this.props;
+
         return (
             <div className={styles.header}>
-                <h4
-                    className={styles.heading}
-                    title={projectDetail.title}
-                >
-                    {projectDetail.title}
-                </h4>
+                <div className={styles.leftContainer}>
+                    <h2
+                        className={styles.heading}
+                        title={title}
+                    >
+                        {title}
+                    </h2>
+                    { isPrivate &&
+                        <Badge
+                            icon="locked"
+                            title={_ts('project', 'privateProjectBadgeTitle')}
+                            tooltip={_ts('project', 'priivateProjectBadgeTooltip')}
+                        />
+                    }
+                </div>
                 <Cloak
                     hide={ProjectPanel.shouldHideProjectDeleteButton}
                     render={
@@ -143,11 +158,11 @@ export default class ProjectPanel extends React.PureComponent {
                                 onClick={this.handleProjectDelete}
                                 confirmationTitle="Warning!"
                                 confirmationMessage={_ts('project', 'deleteConfirmMessage', {
-                                    title: <strong>{projectDetail.title}</strong>,
+                                    title: <strong>{title}</strong>,
                                 })}
                                 challengeLabel={_ts('project', 'deleteConfirmLabel')}
                                 challengePlaceholder={_ts('project', 'deleteConfirmPlaceholder')}
-                                challengeValue={projectDetail.title}
+                                challengeValue={title}
                                 className={styles.deleteButton}
                             >
                                 {_ts('project', 'deleteButtonTitle')}

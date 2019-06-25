@@ -945,7 +945,10 @@
         "-92759559": "Private",
         "-59389": "Public",
         "-94818927": "Note: Project visibility cannot be changed once the project is created",
-        "-40643314": "Grouped bar chart"
+        "-40643314": "Grouped bar chart",
+        "-38465658": "Failed to create tabular.",
+        "-64655622": "This is a private project and is only visible to project members.",
+        "-57055647": "Project Visibility"
     },
     "links": {
         "browserExtension": {
@@ -1934,7 +1937,9 @@
             "noAfText": 359,
             "project": 31,
             "afGetTitle": 379,
-            "afGetFatal": 991
+            "afGetFatal": 991,
+            "privateProjectBadgeTitle": -92759559,
+            "priivateProjectBadgeTooltip": -64655622
         },
         "connector": {
             "noConnectorsLabel": 1115,
@@ -2483,7 +2488,8 @@
             "zendeskLinkTitle": -81583708,
             "regionAdminLevelsInfo": -57170437,
             "regionDetailsFetchFailed": -65526481,
-            "noRegionsInProject": 343
+            "noRegionsInProject": 343,
+            "tabularCreationFailedMessage": -38465658
         },
         "tabular.editModal.editField": {},
         "project.general.dashboard": {
@@ -2500,7 +2506,10 @@
             "entriesActivityNumberModifier": -48325375,
             "leadsActivityNumberModifier": -24966730,
             "activityDateModifier": -47407911,
-            "noRegionForProject": 343
+            "noRegionForProject": 343,
+            "privateVisibilityTitle": -92759559,
+            "projectVisibility": -57055647,
+            "publicVisibilityTitle": -59389
         },
         "components.activityLog": {
             "logDescription": -74417500,
