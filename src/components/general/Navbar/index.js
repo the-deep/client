@@ -238,6 +238,7 @@ export default class Navbar extends React.PureComponent {
 
     optionLabelSelector = (option = {}) => (
         <div className={styles.selectOption}>
+            {option.title}
             {option.isPrivate && (
                 <Badge
                     icon="locked"
@@ -251,7 +252,6 @@ export default class Navbar extends React.PureComponent {
                     tooltip={_ts('project', 'priivateProjectBadgeTooltip')}
                 />
             )}
-            {option.title}
         </div>
     )
 

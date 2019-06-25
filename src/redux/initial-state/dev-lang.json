@@ -947,7 +947,8 @@
         "-94818927": "Note: Project visibility cannot be changed once the project is created",
         "-40643314": "Grouped bar chart",
         "-38465658": "Failed to create tabular.",
-        "-64655622": "This is a private project and is only visible to project members."
+        "-64655622": "This is a private project and is only visible to project members.",
+        "-57055647": "Project Visibility"
     },
     "links": {
         "browserExtension": {
@@ -2505,7 +2506,10 @@
             "entriesActivityNumberModifier": -48325375,
             "leadsActivityNumberModifier": -24966730,
             "activityDateModifier": -47407911,
-            "noRegionForProject": 343
+            "noRegionForProject": 343,
+            "privateVisibilityTitle": -92759559,
+            "projectVisibility": -57055647,
+            "publicVisibilityTitle": -59389
         },
         "components.activityLog": {
             "logDescription": -74417500,

@@ -107,9 +107,10 @@
 
 .select-option {
     display: flex;
+    justify-content: space-between;
 
     .badge {
-        padding-left: 0;
+        padding-right: 0;
 
         &.active {
             color: var(--color-text-on-accent);

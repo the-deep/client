@@ -56,7 +56,7 @@ const emptyList = [];
 const requests = {
     projectRequest: {
         onMount: true,
-        schema: 'projectDashboardGetResponse',
+        schemaName: 'projectDashboardGetResponse',
         onPropsChanged: ['projectId'],
         method: requestMethods.GET,
         url: ({ props }) => `/projects-stat/${props.projectId}/dashboard/`,
@@ -275,10 +275,24 @@ export default class ProjectDashboard extends React.PureComponent {
     }
 
     renderBasicInfo = () => {
-        const { projectDashboard: project } = this.props;
+        const { projectDashboard: {
+            createdAt,
+            createdBy,
+            createdById,
+            status,
+            isPrivate,
+            numberOfLeads,
+            numberOfEntries,
+            numberOfUsers,
+        } } = this.props;
+
         const linkToUser = reverseRoute(pathNames.userProfile, {
-            userId: project.createdById,
+            userId: createdById,
         });
+
+        const projectVisibility = isPrivate
+            ? _ts('project.general.dashboard', 'privateVisibilityTitle')
+            : _ts('project.general.dashboard', 'publicVisibilityTitle');
 
         return (
             <div className={styles.basicInfo}>
@@ -287,7 +301,15 @@ export default class ProjectDashboard extends React.PureComponent {
                         {_ts('project.general.dashboard', 'projectStatusTitle')}
                     </div>
                     <div className={styles.stringValue}>
-                        {project.status}
+                        {status}
+                    </div>
+                </div>
+                <div className={styles.infoItem}>
+                    <div className={styles.label}>
+                        {_ts('project.general.dashboard', 'projectVisibility')}
+                    </div>
+                    <div className={styles.stringValue}>
+                        {projectVisibility}
                     </div>
                 </div>
                 <div className={styles.infoItem}>
@@ -296,7 +318,7 @@ export default class ProjectDashboard extends React.PureComponent {
                     </div>
                     <div className={styles.stringValue}>
                         <a href={linkToUser}>
-                            {project.createdBy}
+                            {createdBy}
                         </a>
                     </div>
                 </div>
@@ -306,7 +328,7 @@ export default class ProjectDashboard extends React.PureComponent {
                     </div>
                     <FormattedDate
                         className={styles.dateValue}
-                        date={project.createdAt}
+                        date={createdAt}
                         mode="dd-MM-yyyy"
                     />
                 </div>
@@ -316,7 +338,7 @@ export default class ProjectDashboard extends React.PureComponent {
                     </div>
                     <Numeral
                         className={styles.numericValue}
-                        value={project.numberOfLeads}
+                        value={numberOfLeads}
                         precision={0}
                     />
                 </div>
@@ -326,7 +348,7 @@ export default class ProjectDashboard extends React.PureComponent {
                     </div>
                     <Numeral
                         className={styles.numericValue}
-                        value={project.numberOfEntries}
+                        value={numberOfEntries}
                         precision={0}
                     />
                 </div>
@@ -336,7 +358,7 @@ export default class ProjectDashboard extends React.PureComponent {
                     </div>
                     <Numeral
                         className={styles.numericValue}
-                        value={project.numberOfUsers}
+                        value={numberOfUsers}
                         precision={0}
                     />
                 </div>

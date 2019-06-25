@@ -181,6 +181,7 @@ const projectSchema = [];
         },
         fields: {
             id: { type: 'uint', required: true },
+            userId: { type: 'uint', required: true },
             count: { type: 'uint', required: true },
             name: { type: 'string', required: true },
         },
@@ -200,7 +201,10 @@ const projectSchema = [];
             topSourcers: { type: 'array.sourcers' },
             topTaggers: { type: 'array.sourcers' },
             createdBy: { type: 'string' },
+            createdById: { type: 'uint' },
+            status: { type: 'string' },
             createdAt: { type: 'string', required: true }, // date
+            isPrivate: { type: 'boolean', required: true },
             regions: { type: 'array.object' },
             activityLog: { type: 'array.object' },
             numberOfUsers: { type: 'uint' },
@@ -208,7 +212,6 @@ const projectSchema = [];
             numberOfEntries: { type: 'uint' },
             entriesActivity: { type: 'array.timevalue' },
             leadsActivity: { type: 'array.timevalue' },
-
         },
     };
     projectSchema.push({ name, schema });
