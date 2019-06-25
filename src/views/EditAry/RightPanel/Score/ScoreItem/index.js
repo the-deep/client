@@ -17,13 +17,11 @@ const propTypes = {
     maxColor: PropTypes.string.isRequired,
     title: PropTypes.string,
     className: PropTypes.string,
-    isPercent: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
     title: '',
-    isPercent: false,
 };
 
 // TODO: move to utils
