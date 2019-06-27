@@ -49,6 +49,10 @@
         flex-grow: 1;
         overflow-y: auto;
 
+        .loading-animation {
+            background-color: var(--color-foreground);
+        }
+
         .content {
             flex-grow: 1;
             overflow-y: auto;

@@ -95,9 +95,12 @@ export default class FrameworkDetail extends React.PureComponent {
         this.setState({ activeView: tabId });
     }
 
-    renderHeader = ({
-        framework,
-    }) => {
+    renderHeader = ({ framework }) => {
+        // FIXME: Remove this check after pending from request is consistent
+        if (!framework) {
+            return null;
+        }
+
         const {
             id: analysisFrameworkId,
             title: frameworkTitle,

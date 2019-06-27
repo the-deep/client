@@ -485,7 +485,9 @@ export default class DiscoverProjects extends React.PureComponent {
                 mainContentClassName={styles.mainContent}
                 mainContent={
                     <React.Fragment>
-                        { pending && <LoadingAnimation /> }
+                        { pending &&
+                            <LoadingAnimation spinnerClassName={styles.spinner} />
+                        }
                         <div className={styles.tableContainer}>
                             <RawTable
                                 data={projectList}
