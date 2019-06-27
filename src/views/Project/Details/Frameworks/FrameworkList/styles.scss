@@ -42,8 +42,16 @@
         }
     }
 
-    .content {
+    .list-container {
+        display: flex;
+        position: relative;
+        flex-direction: column;
         flex-grow: 1;
         overflow-y: auto;
+
+        .content {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
     }
 }

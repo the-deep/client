@@ -5,6 +5,7 @@ import { isTruthyString, _cs } from '@togglecorp/fujs';
 
 import SearchInput from '#rsci/SearchInput';
 import SegmentInput from '#rsci/SegmentInput';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import Checkbox from '#rsci/Checkbox';
 import ListView from '#rscv/List/ListView';
 import AccentButton from '#rsca/Button/AccentButton';
@@ -182,15 +183,17 @@ export default class FrameworkList extends React.PureComponent {
                         </div>
                     </Faram>
                 </header>
-                <ListView
-                    pending={pending}
-                    data={frameworkList}
-                    className={styles.content}
-                    renderer={FrameworkListItem}
-                    rendererParams={this.itemRendererParams}
-                    keySelector={getFrameworkKey}
-                    isFiltered={filtered}
-                />
+                <div className={styles.listContainer}>
+                    {pending && <LoadingAnimation />}
+                    <ListView
+                        data={frameworkList}
+                        className={styles.content}
+                        renderer={FrameworkListItem}
+                        rendererParams={this.itemRendererParams}
+                        keySelector={getFrameworkKey}
+                        isFiltered={filtered}
+                    />
+                </div>
             </div>
         );
     }
