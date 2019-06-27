@@ -1,7 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 import Faram from '@togglecorp/faram';
-import { isTruthyString, _cs } from '@togglecorp/fujs';
+import {
+    isTruthyString,
+    _cs,
+    compareString,
+} from '@togglecorp/fujs';
 
 import SearchInput from '#rsci/SearchInput';
 import SegmentInput from '#rsci/SegmentInput';
@@ -53,9 +58,9 @@ const defaultProps = {
 };
 
 const fameworkActivityOptions = [
-    { key: 'all', label: _ts('project.framework', 'frameworkActivityAllTitle') },
     { key: 'active', label: _ts('project.framework', 'frameworkActivityActiveTitle') },
     { key: 'inactive', label: _ts('project.framework', 'frameworkActivityInactiveTitle') },
+    { key: 'all', label: _ts('project.framework', 'frameworkActivityAllTitle') },
 ];
 
 const getFrameworkKey = framework => framework.id;
@@ -68,6 +73,7 @@ const requests = {
         query: ({ props: { filterValues } }) => ({
             ...filterValues,
             fields: ['id', 'title'],
+            ordering: 'title',
         }),
         onPropsChanged: ['filterValues'],
         onMount: true,
@@ -110,6 +116,9 @@ export default class FrameworkList extends React.PureComponent {
         onClick: () => this.props.setActiveFramework(framework.id),
     })
 
+    sortFrameworkList = memoize(frameworks =>
+        frameworks.sort((a, b) => compareString(a.title, b.title)))
+
     render() {
         const {
             className: classNameFromProps,
@@ -130,6 +139,7 @@ export default class FrameworkList extends React.PureComponent {
         );
 
         const filtered = FrameworkList.isFiltered(filterValues);
+        const sortedFrameworkList = this.sortFrameworkList(frameworkList);
 
         return (
             <div className={className}>
@@ -184,9 +194,13 @@ export default class FrameworkList extends React.PureComponent {
                     </Faram>
                 </header>
                 <div className={styles.listContainer}>
-                    {pending && <LoadingAnimation />}
+                    {pending &&
+                        <LoadingAnimation
+                            className={styles.loadingAnimation}
+                        />
+                    }
                     <ListView
-                        data={frameworkList}
+                        data={sortedFrameworkList}
                         className={styles.content}
                         renderer={FrameworkListItem}
                         rendererParams={this.itemRendererParams}

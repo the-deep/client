@@ -37,6 +37,10 @@
         display: flex;
         flex-direction: column;
 
+        .spinner {
+            font-size: var(--font-size-super-large);
+        }
+
         .table-container {
             display: flex;
             position: relative;
