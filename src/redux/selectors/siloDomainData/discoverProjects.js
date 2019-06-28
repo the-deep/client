@@ -23,7 +23,7 @@ export const discoverProjectsActivePageSelector = createSelector(
 
 export const discoverProjectsActiveSortSelector = createSelector(
     pageSelector,
-    discoverProjects => discoverProjects.activeSort || '-created_at',
+    discoverProjects => discoverProjects.activeSort || '-leads_activity',
 );
 
 export const discoverProjectsProjectsPerPageSelector = createSelector(
