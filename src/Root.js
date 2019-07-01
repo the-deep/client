@@ -40,10 +40,10 @@ export default class Root extends React.Component {
         this.state = { rehydrated: false };
         this.store = store;
 
-        initializeStyles();
-        setStyleProperties(styleProperties.colors);
-        setStyleProperties(styleProperties.dimens);
-
+        initializeStyles({
+            ...styleProperties.colors,
+            ...styleProperties.dimens,
+        });
         console.info('React version:', React.version);
     }
 

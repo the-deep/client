@@ -3,16 +3,11 @@ import React from 'react';
 import { _cs } from '@togglecorp/fujs';
 import { connect } from 'react-redux';
 
-import {
-    themes,
-    setTheme,
-} from '#theme';
-import _ts from '#ts';
+import { themes } from '#theme';
 
 import Button from '#rsca/Button';
 import DropdownMenu from '#rsca/DropdownMenu';
 import List from '#rscv/List';
-import Icon from '#rscg/Icon';
 
 import {
     currentThemeIdSelector,
@@ -23,6 +18,8 @@ import styles from './styles.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    setCurrentTheme: PropTypes.func.isRequired,
+    currentThemeId: PropTypes.string.isRequired,
 };
 
 const defaultProps = {

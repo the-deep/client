@@ -1,4 +1,6 @@
-import { initializeStyles } from '#rsu/styles';
+import {
+    setStyleProperties,
+} from '#rsu/styles';
 
 import purpleAndPinkColors from './purple-and-pink/colors';
 import purpleAndPinkDimens from './purple-and-pink/dimens';
@@ -32,8 +34,9 @@ export const themes = {
 export const setTheme = (themeId) => {
     const theme = themes[themeId];
 
-    initializeStyles({
-        ...theme,
+    setStyleProperties({
+        ...theme.colors,
+        ...theme.dimens,
     });
 };
 
