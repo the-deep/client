@@ -16,8 +16,8 @@ const defaultProps = {
 };
 
 const answerOptions = [
-    { key: true, label: 'Yes' },
     { key: false, label: 'No' },
+    { key: true, label: 'Yes' },
 ];
 
 const answerOptionKeySelector = d => d.key;
@@ -35,9 +35,6 @@ export default class Method extends React.PureComponent {
 
         return (
             <div className={_cs(className, styles.question)}>
-                <div className={styles.title}>
-                    { data.text }
-                </div>
                 <div className={styles.options}>
                     <FaramGroup faramElementName={String(data.id)}>
                         <SegmentInput
@@ -49,6 +46,9 @@ export default class Method extends React.PureComponent {
                             showHintAndError={false}
                         />
                     </FaramGroup>
+                </div>
+                <div className={styles.title}>
+                    { data.text }
                 </div>
             </div>
         );
