@@ -51,6 +51,7 @@ const userSchema = [];
             description: 'Feature access item',
         },
         fields: {
+            featureType: { type: 'string' },
             title: { type: 'string', required: true },
             key: { type: 'string', required: true },
         },

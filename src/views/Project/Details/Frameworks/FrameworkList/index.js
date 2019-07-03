@@ -23,7 +23,7 @@ import {
 
 import _ts from '#ts';
 
-import AddFrameworkModal from './AddFrameworkModal';
+import AddFrameworkModal from '../AddFrameworkModal';
 import FrameworkListItem from './FrameworkListItem';
 import styles from './styles.scss';
 
