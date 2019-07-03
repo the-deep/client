@@ -1,5 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
+import { connect } from 'react-redux';
+import {
+    isFalsy,
+    isTruthy,
+} from '@togglecorp/fujs';
 import memoize from 'memoize-one';
 
 import Icon from '#rscg/Icon';
@@ -13,6 +18,9 @@ import { LEAD_TYPE } from '#entities/lead';
 import { entryAccessor } from '#entities/editEntries';
 import ImagesGrid from '#components/viewer/ImagesGrid';
 import TabularBook from '#components/other/TabularBook';
+import {
+    currentUserActiveProjectSelector,
+} from '#redux';
 import _ts from '#ts';
 
 import AssistedTagging from './AssistedTagging';
@@ -70,6 +78,7 @@ const fileTypeToLeadPaneTypeMap = {
 
 const propTypes = {
     projectRole: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    projectDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     lead: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     onExcerptCreate: PropTypes.func,
     filteredEntries: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -80,6 +89,7 @@ const propTypes = {
 
 const defaultProps = {
     projectRole: {},
+    projectDetails: {},
     filteredEntries: [],
     onExcerptCreate: () => {},
     setSelectedEntryKey: () => {},
@@ -110,7 +120,12 @@ const getPaneType = (lead) => {
     return fileTypeToLeadPaneTypeMap[fileType];
 };
 
+const mapStateToProps = state => ({
+    projectDetails: currentUserActiveProjectSelector(state),
+});
+
 // TODO: use this in assessment as well
+@connect(mapStateToProps)
 export default class LeftPane extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -126,6 +141,7 @@ export default class LeftPane extends React.PureComponent {
         };
 
         const { viewsModifier } = this.props;
+
         this.views = {
             ...this.getViews(styles.container),
             ...(viewsModifier ? viewsModifier(styles.container) : {}),
@@ -141,7 +157,7 @@ export default class LeftPane extends React.PureComponent {
         return tabKeys.length > 0 ? Object.keys(tabs)[0] : undefined;
     })
 
-    getTabs = memoize((lead, images, entryPermissions = {}) => {
+    getTabs = memoize((lead, images, entryPermissions = {}, isPrivate, categoryEditor) => {
         const leadPaneType = getPaneType(lead);
         let tabs = {};
         switch (leadPaneType) {
@@ -192,8 +208,9 @@ export default class LeftPane extends React.PureComponent {
         if (!images || images.length <= 0) {
             delete tabs['images-preview'];
         }
-        // Don't show assisted if no creation permission
-        if (!entryPermissions.create) {
+        // Don't show assisted if no creation permission or
+        // if project is private and doesn't have category editor
+        if (!entryPermissions.create || (isPrivate && isFalsy(categoryEditor))) {
             delete tabs['assisted-tagging'];
         }
 
@@ -248,11 +265,19 @@ export default class LeftPane extends React.PureComponent {
                         id: leadId,
                         project: projectId,
                     },
+                    projectDetails: {
+                        isPrivate,
+                        categoryEditor,
+                    },
                 } = this.props;
+
                 return {
                     className: styles.container,
                     leadId,
                     projectId,
+                    showNlp: !isPrivate,
+                    showNer: !isPrivate,
+                    showCategoryEditor: isTruthy(categoryEditor),
                     onEntryAdd: this.handleEntryAdd,
                 };
             },
@@ -394,6 +419,11 @@ export default class LeftPane extends React.PureComponent {
             projectRole: { entryPermissions },
             lead,
             tabsModifier,
+
+            projectDetails: {
+                isPrivate,
+                categoryEditor,
+            },
         } = this.props;
         const {
             images,
@@ -401,7 +431,7 @@ export default class LeftPane extends React.PureComponent {
             showGraphs,
         } = this.state;
 
-        const tabs = this.getTabs(lead, images, entryPermissions);
+        const tabs = this.getTabs(lead, images, entryPermissions, isPrivate, categoryEditor);
         const modifiedTabs = tabsModifier
             ? tabsModifier(tabs)
             : tabs;

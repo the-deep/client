@@ -1,5 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
+import {
+    getHexFromString,
+    listToMap,
+} from '@togglecorp/fujs';
 
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import SuccessButton from '#rsca/Button/SuccessButton';
@@ -8,7 +13,6 @@ import SegmentInput from '#rsci/SegmentInput';
 import MultiSelectInput from '#rsci/MultiSelectInput';
 import FloatingContainer from '#rscv/FloatingContainer';
 import ListView from '#rscv/List/ListView';
-import { getHexFromString, listToMap } from '@togglecorp/fujs';
 import { FgRestBuilder } from '#rsu/rest';
 
 import _cs from '#cs';
@@ -34,10 +38,16 @@ const propTypes = {
     projectId: PropTypes.number.isRequired,
     onEntryAdd: PropTypes.func.isRequired,
     className: PropTypes.string,
+    showNlp: PropTypes.bool,
+    showNer: PropTypes.bool,
+    showCategoryEditor: PropTypes.bool,
 };
 
 const defaultProps = {
     className: '',
+    showNlp: true,
+    showNer: true,
+    showCategoryEditor: true,
 };
 
 const emptyList = [];
@@ -49,6 +59,20 @@ const NLP = 'nlp';
 const CATEGORY_EDITOR = 'ce';
 const NER = 'ner';
 
+const allAssitedTaggingSources = [
+    {
+        label: _ts('components.assistedTagging', 'nlpLabel'),
+        value: NLP,
+    },
+    {
+        label: _ts('components.assistedTagging', 'entitiesLabel'),
+        value: NER,
+    },
+    {
+        label: _ts('components.assistedTagging', 'ceLabel'),
+        value: CATEGORY_EDITOR,
+    },
+];
 
 export default class AssistedTagging extends React.PureComponent {
     static propTypes = propTypes;
@@ -63,23 +87,10 @@ export default class AssistedTagging extends React.PureComponent {
         d.filter(h => h.start >= 0).sort((a, b) => a.start - b.start)
     );
 
-    static assitedTaggingSources = [
-        {
-            label: _ts('components.assistedTagging', 'nlpLabel'),
-            value: NLP,
-        },
-        {
-            label: _ts('components.assistedTagging', 'entitiesLabel'),
-            value: NER,
-        },
-        {
-            label: _ts('components.assistedTagging', 'ceLabel'),
-            value: CATEGORY_EDITOR,
-        },
-    ];
-
     constructor(props) {
         super(props);
+
+        const { showNlp } = this.props;
 
         this.state = {
             showAssistant: false,
@@ -88,7 +99,7 @@ export default class AssistedTagging extends React.PureComponent {
             activeHighlightRef: undefined,
             activeHighlightDetails: emptyObject,
 
-            selectedAssitedTaggingSource: NLP,
+            selectedAssitedTaggingSource: showNlp ? NLP : CATEGORY_EDITOR,
             ceHighlights: [],
             nerHighlights: [],
             nlpHighlights: [],
@@ -138,6 +149,22 @@ export default class AssistedTagging extends React.PureComponent {
             this.feedbackRequest.stop();
         }
     }
+
+    getValidSources = memoize((showNlp, showNer, showCategoryEditor) => (
+        allAssitedTaggingSources.filter((s) => {
+            if (s.value === NLP && showNlp) {
+                return true;
+            }
+            if (s.value === NER && showNer) {
+                return true;
+            }
+            if (s.value === CATEGORY_EDITOR && showCategoryEditor) {
+                return true;
+            }
+            return false;
+        })
+    ));
+
 
     handleAssitedBoxInvalidate = (popupContainer) => {
         const primaryContainerRect = this.primaryContainerRect || (
@@ -288,7 +315,6 @@ export default class AssistedTagging extends React.PureComponent {
             .params(() => createParamsForFeedback(feedback))
             .success(() => {
                 try {
-                    // console.warn('feedback sent', response);
                     notify.send({
                         title: _ts('components.assistedTagging', 'assitedTaggingFeedbackTitle'),
                         type: notify.type.SUCCESS,
@@ -574,6 +600,12 @@ export default class AssistedTagging extends React.PureComponent {
 
     renderAssistantOptions = () => {
         const {
+            showNer,
+            showNlp,
+            showCategoryEditor,
+        } = this.props;
+
+        const {
             showAssistantOptions,
             nlpSectorOptions,
             nlpSelectedSectors,
@@ -588,11 +620,13 @@ export default class AssistedTagging extends React.PureComponent {
             return null;
         }
 
+        const assistedTaggingSources = this.getValidSources(showNlp, showNer, showCategoryEditor);
+
         return (
             <div className={`assistant-options ${styles.assistantOptions}`}>
                 <SegmentInput
                     className={styles.assistedSourceChangeBtn}
-                    options={AssistedTagging.assitedTaggingSources}
+                    options={assistedTaggingSources}
                     label={_ts('components.assistedTagging', 'sourceSelectionLabel')}
                     value={selectedAssitedTaggingSource}
                     name="source-selection"
