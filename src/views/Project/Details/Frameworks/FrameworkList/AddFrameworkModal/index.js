@@ -8,10 +8,12 @@ import TextInput from '#rsci/TextInput';
 import TextArea from '#rsci/TextArea';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import DangerButton from '#rsca/Button/DangerButton';
+import SegmentInput from '#rsci/SegmentInput';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
+import Cloak from '#components/general/Cloak';
 
 import { addNewAfAction } from '#redux';
 import _ts from '#ts';
@@ -32,18 +34,29 @@ const defaultProps = {
 const mapDispatchToProps = dispatch => ({
     addNewFramework: params => dispatch(addNewAfAction(params)),
 });
+//
+// Note: Key is set according to is_private option
+const frameworkVisibilityOptions = [
+    { key: false, label: _ts('project.framework', 'visibilityPublicLabel') },
+    { key: true, label: _ts('project.framework', 'visibilityPrivateLabel') },
+];
+
 
 @connect(undefined, mapDispatchToProps)
 export default class AddFrameworkModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
+    static shouldHidePrivate = ({ accessPrivateProject }) => !accessPrivateProject;
+
     constructor(props) {
         super(props);
 
         this.state = {
             faramErrors: {},
-            faramValues: {},
+            faramValues: {
+                isPrivate: false,
+            },
             pending: false,
             pristine: true,
         };
@@ -52,6 +65,7 @@ export default class AddFrameworkModal extends React.PureComponent {
             fields: {
                 title: [requiredCondition],
                 description: [],
+                isPrivate: [],
             },
         };
 
@@ -124,6 +138,18 @@ export default class AddFrameworkModal extends React.PureComponent {
                             faramElementName="description"
                             placeholder={_ts('project.framework', 'frameworkDescriptionInputPlaceholder')}
                             rows={3}
+                        />
+                        <Cloak
+                            hide={AddFrameworkModal.shouldHidePrivate}
+                            render={
+                                <SegmentInput
+                                    options={frameworkVisibilityOptions}
+                                    className={styles.isPrivateCheckbox}
+                                    faramElementName="isPrivate"
+                                    label={_ts('project.framework', 'frameworkVisibilityInputLabel')}
+                                    hint={_ts('project.framework', 'frameworkVisibilityInputHint')}
+                                />
+                            }
                         />
                         <div className={styles.actionButtons}>
                             <DangerButton onClick={closeModal}>

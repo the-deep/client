@@ -24,6 +24,10 @@
                 }
             }
 
+            .is-private-checkbox {
+                margin-top: var(--spacing-medium);
+            }
+
             .action-buttons {
                 display: flex;
                 justify-content: flex-end;
