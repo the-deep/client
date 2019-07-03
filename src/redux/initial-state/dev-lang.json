@@ -953,7 +953,8 @@
         "-86428588": "Are you sure you want to export {countLeads} leads to {countProjects} projects?",
         "-81861908": "Extract leads to other projects",
         "-78373067": "Failed to extract leads to other projects.",
-        "-69982235": "Successfully created {leadsCount} leads in {projectsCount} projects."
+        "-69982235": "Successfully created {leadsCount} leads in {projectsCount} projects.",
+        "-59667485": "Note: Framework visibility cannot be changed once the framework is created\t"
     },
     "links": {
         "browserExtension": {
@@ -1840,7 +1841,11 @@
             "frameworkActivityActiveTitle": -57442233,
             "frameworkActivityInactiveTitle": -80991835,
             "relatedToMeTitle": -58312660,
-            "frameworkActivityAllTitle": -82413232
+            "frameworkActivityAllTitle": -82413232,
+            "visibilityPrivateLabel": -92759559,
+            "visibilityPublicLabel": -59389,
+            "frameworkVisibilityInputHint": -59667485,
+            "frameworkVisibilityInputLabel": 1120
         },
         "project.wordCategory": {
             "addWordCategoryButtonLabel": 301,
