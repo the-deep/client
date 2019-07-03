@@ -1,7 +1,5 @@
 import { createSelector } from 'reselect';
-import {
-    userIdFromRoute,
-} from '../domainData';
+import { userIdFromRoute } from '../domainData';
 
 const emptyList = [];
 const emptyObject = {};

@@ -72,7 +72,7 @@ const requests = {
         method: requestMethods.GET,
         query: ({ props: { filterValues } }) => ({
             ...filterValues,
-            fields: ['id', 'title'],
+            fields: ['id', 'title', 'is_private'],
             ordering: 'title',
         }),
         onPropsChanged: ['filterValues'],

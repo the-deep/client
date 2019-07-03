@@ -4,6 +4,9 @@ import Icon from '#rscg/Icon';
 import { _cs } from '@togglecorp/fujs';
 
 import ListItem from '#rscv/List/ListItem';
+import Badge from '#components/viewer/Badge';
+
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
@@ -11,7 +14,10 @@ const FrameworkListItem = ({
     className,
     isActive,
     isSelected,
-    framework: { title },
+    framework: {
+        title,
+        isPrivate,
+    },
     onClick,
 }) => (
     <ListItem
@@ -22,6 +28,14 @@ const FrameworkListItem = ({
         <div className={styles.title}>
             { title }
         </div>
+        { isPrivate &&
+            <Badge
+                className={styles.badge}
+                icon="locked"
+                noBorder
+                tooltip={_ts('framework', 'privateFrameworkBadgeTooltip')}
+            />
+        }
         { isSelected &&
             <Icon
                 name="checkCircle"

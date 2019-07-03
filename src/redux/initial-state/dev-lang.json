@@ -953,8 +953,10 @@
         "-86428588": "Are you sure you want to export {countLeads} leads to {countProjects} projects?",
         "-81861908": "Extract leads to other projects",
         "-78373067": "Failed to extract leads to other projects.",
-        "-69982235": "Successfully created {leadsCount} leads in {projectsCount} projects.",
-        "-59667485": "Note: Framework visibility cannot be changed once the framework is created\t"
+        "-69982235": "Successfully exported {leadsCount} leads to {projectsCount} projects.",
+        "-59667485": "Note: Framework visibility cannot be changed once the framework is created\t",
+        "-13698917": "This is a private framework and is only visible to framework members.",
+        "-8045218": "Successfully cloned the selected framework."
     },
     "links": {
         "browserExtension": {
@@ -1015,7 +1017,9 @@
             "cancelButtonTitle": 61,
             "saveButtonTitle": 25,
             "cancelConfirmDetail": -58972891,
-            "successConfirmDetail": -44183195
+            "successConfirmDetail": -44183195,
+            "privateFrameworkBadgeTitle": -92759559,
+            "privateFrameworkBadgeTooltip": -13698917
         },
         "widgets.editor.date": {
             "informationDateCheckboxLabel": 777,
@@ -1828,7 +1832,6 @@
             "frameworkDescriptionInputPlaceholder": 12501,
             "cloneFrameworkModalTitle": 12502,
             "cloneFrameworkCloneButtonTitle": 353,
-            "cloneFrameworkCancelButtonTitle": 61,
             "addFrameworkFormAddButtonTitle": 301,
             "addFrameworkFormCancelButtonTitle": 61,
             "entryOverviewTitle": 781,
@@ -1953,7 +1956,9 @@
             "afGetTitle": 379,
             "afGetFatal": 991,
             "privateProjectBadgeTitle": -92759559,
-            "priivateProjectBadgeTooltip": -64655622
+            "priivateProjectBadgeTooltip": -64655622,
+            "afClone": 12502,
+            "afCloneSuccess": -8045218
         },
         "connector": {
             "noConnectorsLabel": 1115,
