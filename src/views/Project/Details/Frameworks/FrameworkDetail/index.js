@@ -12,6 +12,7 @@ import ScrollTabs from '#rscv/ScrollTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import AccentButton from '#rsca/Button/AccentButton';
 import modalize from '#rscg/Modalize';
+import Badge from '#components/viewer/Badge';
 
 import {
     RequestClient,
@@ -106,6 +107,7 @@ export default class FrameworkDetail extends React.PureComponent {
             title: frameworkTitle,
             description: frameworkDescription,
             isAdmin: isFrameworkAdmin,
+            isPrivate,
         } = framework;
 
         const {
@@ -127,54 +129,65 @@ export default class FrameworkDetail extends React.PureComponent {
         return (
             <header className={styles.header}>
                 <div className={styles.top}>
-                    <h2
-                        title={frameworkTitle}
-                        className={styles.heading}
-                    >
-                        {frameworkTitle}
-                    </h2>
-                    <ScrollTabs
-                        className={styles.tabs}
-                        tabs={this.tabs}
-                        onClick={this.handleTabClick}
-                        active={activeView}
-                    />
-                    <div className={styles.actionButtons}>
-                        <UseFrameworkButton
-                            currentFrameworkId={currentFrameworkId}
-                            disabled={pending || readOnly}
-                            frameworkId={analysisFrameworkId}
-                            frameworkTitle={frameworkTitle}
-                            projectId={projectId}
-                            setProjectFramework={setProjectFramework}
-                        />
-
-                        { isFrameworkAdmin &&
-                            <Link
-                                className={styles.editFrameworkLink}
-                                to={reverseRoute(
-                                    pathNames.analysisFramework,
-                                    { analysisFrameworkId },
-                                )}
-                            >
-                                { _ts('project.framework', 'editFrameworkButtonTitle') }
-                            </Link>
-                        }
-
-                        <AccentModalButton
-                            disabled={pending || readOnly}
-                            modal={
-                                <AddFrameworkModal
-                                    frameworkId={analysisFrameworkId}
-                                    addNewFramework={addNewFramework}
-                                    setActiveFramework={setActiveFramework}
-                                    isClone
-                                />
-                            }
+                    <div className={styles.leftContainer} >
+                        <h2
+                            title={frameworkTitle}
+                            className={styles.heading}
                         >
-                            { _ts('project.framework', 'cloneButtonTitle') }
-                        </AccentModalButton>
+                            {frameworkTitle}
+                        </h2>
+                        { isPrivate &&
+                            <Badge
+                                className={styles.badge}
+                                icon="locked"
+                                title={_ts('framework', 'privateFrameworkBadgeTitle')}
+                                tooltip={_ts('framework', 'privateFrameworkBadgeTooltip')}
+                            />
+                        }
+                    </div>
+                    <div className={styles.rightContainer} >
+                        <ScrollTabs
+                            className={styles.tabs}
+                            tabs={this.tabs}
+                            onClick={this.handleTabClick}
+                            active={activeView}
+                        />
+                        <div className={styles.actionButtons}>
+                            <UseFrameworkButton
+                                currentFrameworkId={currentFrameworkId}
+                                disabled={pending || readOnly}
+                                frameworkId={analysisFrameworkId}
+                                frameworkTitle={frameworkTitle}
+                                projectId={projectId}
+                                setProjectFramework={setProjectFramework}
+                            />
 
+                            { isFrameworkAdmin &&
+                                <Link
+                                    className={styles.editFrameworkLink}
+                                    to={reverseRoute(
+                                        pathNames.analysisFramework,
+                                        { analysisFrameworkId },
+                                    )}
+                                >
+                                    { _ts('project.framework', 'editFrameworkButtonTitle') }
+                                </Link>
+                            }
+
+                            <AccentModalButton
+                                disabled={pending || readOnly}
+                                modal={
+                                    <AddFrameworkModal
+                                        frameworkId={analysisFrameworkId}
+                                        addNewFramework={addNewFramework}
+                                        setActiveFramework={setActiveFramework}
+                                        isClone
+                                    />
+                                }
+                            >
+                                { _ts('project.framework', 'cloneButtonTitle') }
+                            </AccentModalButton>
+                        </div>
                     </div>
                 </div>
                 { frameworkDescription && (

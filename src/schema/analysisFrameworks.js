@@ -91,4 +91,36 @@ const analysisFrameworkSchema = [];
     analysisFrameworkSchema.push({ name, schema });
 }
 
+{
+    const name = 'analysisFrameworkTitle';
+    const schema = {
+        doc: {
+            name: 'Analysis Framework Title',
+            description: 'Title for Analysis Framework',
+        },
+        fields: {
+            id: { type: 'uint', required: true },
+            title: { type: 'string', required: true },
+            isPrivate: { type: 'boolean', required: true },
+        },
+    };
+    analysisFrameworkSchema.push({ name, schema });
+}
+{
+    const name = 'analysisFrameworkTitleList';
+    const schema = {
+        doc: {
+            name: 'Project Analysis Framework List',
+            description: 'List Analysis Frameworks for listing in project panel',
+        },
+        fields: {
+            count: { type: 'uint', required: true },
+            next: { type: 'string' },
+            previous: { type: 'string' },
+            results: { type: 'array.analysisFrameworkTitle', required: true },
+        },
+    };
+    analysisFrameworkSchema.push({ name, schema });
+}
+
 export default analysisFrameworkSchema;

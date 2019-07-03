@@ -91,6 +91,14 @@ const requests = {
             });
             props.closeModal();
         },
+        onFatal: () => {
+            notify.send({
+                title: _ts('project', 'afCreate'),
+                type: notify.type.ERROR,
+                message: _ts('project', 'afCreateFatal'),
+                duration: notify.duration.SLOW,
+            });
+        },
         schemaName: 'analysisFramework',
     },
 };
@@ -137,7 +145,7 @@ export default class AddFrameworkModal extends React.PureComponent {
         this.setState({ faramErrors });
     };
 
-    handleValidationSuccess = (_, values) => {
+    handleValidationSuccess = (values) => {
         const {
             frameworkId,
             isClone,
@@ -154,6 +162,7 @@ export default class AddFrameworkModal extends React.PureComponent {
 
     render() {
         const {
+            isClone,
             closeModal,
             frameworkCreateRequest: { pending: addPending },
             frameworkCloneRequest: { pending: clonePending },
@@ -166,10 +175,17 @@ export default class AddFrameworkModal extends React.PureComponent {
         } = this.state;
 
         const pending = addPending || clonePending;
+        const modalHeader = isClone
+            ? _ts('project.framework', 'cloneFrameworkModalTitle')
+            : _ts('project.framework', 'addFrameworkModalTitle');
+
+        const successButtonTitle = isClone
+            ? _ts('project.framework', 'cloneFrameworkCloneButtonTitle')
+            : _ts('project.framework', 'addFrameworkFormAddButtonTitle');
 
         return (
             <Modal className={styles.addFrameworkModal}>
-                <ModalHeader title={_ts('project.framework', 'addFrameworkModalTitle')} />
+                <ModalHeader title={modalHeader} />
                 <ModalBody className={styles.modalBody}>
                     <Faram
                         className={styles.addAnalysisFrameworkForm}
@@ -217,7 +233,7 @@ export default class AddFrameworkModal extends React.PureComponent {
                                 disabled={pending || pristine}
                                 type="submit"
                             >
-                                {_ts('project.framework', 'addFrameworkFormAddButtonTitle')}
+                                {successButtonTitle}
                             </PrimaryButton>
                         </div>
                     </Faram>
