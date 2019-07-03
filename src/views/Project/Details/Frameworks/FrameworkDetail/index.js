@@ -29,7 +29,7 @@ import _ts from '#ts';
 import Preview from './Preview';
 
 import UseFrameworkButton from './UseFrameworkButton';
-import CloneFrameworkModal from './CloneFrameworkModal';
+import AddFrameworkModal from '../AddFrameworkModal';
 
 import styles from './styles.scss';
 
@@ -164,11 +164,11 @@ export default class FrameworkDetail extends React.PureComponent {
                         <AccentModalButton
                             disabled={pending || readOnly}
                             modal={
-                                <CloneFrameworkModal
-                                    projectId={projectId}
+                                <AddFrameworkModal
                                     frameworkId={analysisFrameworkId}
                                     addNewFramework={addNewFramework}
                                     setActiveFramework={setActiveFramework}
+                                    isClone
                                 />
                             }
                         >

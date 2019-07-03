@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { isTruthy } from '@togglecorp/fujs';
 import Faram, { requiredCondition } from '@togglecorp/faram';
 
 import NonFieldErrors from '#rsci/NonFieldErrors';
@@ -14,35 +15,90 @@ import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
 import Cloak from '#components/general/Cloak';
+import {
+    RequestClient,
+    requestMethods,
+} from '#request';
 
 import { addNewAfAction } from '#redux';
+import notify from '#notify';
 import _ts from '#ts';
 
-import FrameworkCreateRequest from './requests/FrameworkCreateRequest';
 import styles from './styles.scss';
 
 const propTypes = {
+    frameworkId: PropTypes.number,
+    // eslint-disable-next-line react/no-unused-prop-types
     setActiveFramework: PropTypes.func.isRequired,
     closeModal: PropTypes.func,
+    // eslint-disable-next-line react/no-unused-prop-types
     addNewFramework: PropTypes.func.isRequired,
+    isClone: PropTypes.bool,
+    // eslint-disable-next-line react/forbid-prop-types
+    frameworkCreateRequest: PropTypes.object,
+    // eslint-disable-next-line react/forbid-prop-types
+    frameworkCloneRequest: PropTypes.object,
 };
 
 const defaultProps = {
+    frameworkId: undefined,
     closeModal: () => {},
+    isClone: false,
+    frameworkCreateRequest: {},
+    frameworkCloneRequest: {},
 };
 
 const mapDispatchToProps = dispatch => ({
     addNewFramework: params => dispatch(addNewAfAction(params)),
 });
-//
+
 // Note: Key is set according to is_private option
 const frameworkVisibilityOptions = [
     { key: false, label: _ts('project.framework', 'visibilityPublicLabel') },
     { key: true, label: _ts('project.framework', 'visibilityPrivateLabel') },
 ];
 
+const requests = {
+    frameworkCloneRequest: {
+        url: ({ params }) => `/clone-analysis-framework/${params.frameworkId}/`,
+        method: requestMethods.POST,
+        body: ({ params }) => ({ ...params.values }),
+        onSuccess: ({ response, props }) => {
+            props.addNewFramework({ afDetail: response });
+            props.setActiveFramework(response.id);
+            notify.send({
+                title: _ts('project', 'afClone'),
+                type: notify.type.SUCCESS,
+                message: _ts('project', 'afCloneSuccess'),
+                duration: notify.duration.MEDIUM,
+            });
+            props.closeModal();
+        },
+        schemaName: 'analysisFramework',
+    },
+    frameworkCreateRequest: {
+        url: '/analysis-frameworks/',
+        method: requestMethods.POST,
+        body: ({ params }) => ({ ...params.values }),
+        onSuccess: ({ response, props }) => {
+            props.addNewFramework({ afDetail: response });
+            props.setActiveFramework(response.id);
+            notify.send({
+                title: _ts('project', 'afCreate'),
+                type: notify.type.SUCCESS,
+                message: _ts('project', 'afCreateSuccess'),
+                duration: notify.duration.MEDIUM,
+            });
+            props.closeModal();
+        },
+        schemaName: 'analysisFramework',
+    },
+};
 
+
+// NOTE: This component is used both for cloning and creating new frameworks
 @connect(undefined, mapDispatchToProps)
+@RequestClient(requests)
 export default class AddFrameworkModal extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -57,7 +113,6 @@ export default class AddFrameworkModal extends React.PureComponent {
             faramValues: {
                 isPrivate: false,
             },
-            pending: false,
             pristine: true,
         };
 
@@ -68,17 +123,6 @@ export default class AddFrameworkModal extends React.PureComponent {
                 isPrivate: [],
             },
         };
-
-        this.frameworkCreateRequest = new FrameworkCreateRequest({
-            setState: v => this.setState(v),
-            addNewFramework: this.props.addNewFramework,
-            setActiveFramework: this.props.setActiveFramework,
-            onModalClose: this.props.closeModal,
-        });
-    }
-
-    componentWillUnmount() {
-        this.frameworkCreateRequest.stop();
     }
 
     handleFaramChange = (faramValues, faramErrors) => {
@@ -93,21 +137,35 @@ export default class AddFrameworkModal extends React.PureComponent {
         this.setState({ faramErrors });
     };
 
-    handleValidationSuccess = (data) => {
-        this.frameworkCreateRequest
-            .init(data)
-            .start();
+    handleValidationSuccess = (_, values) => {
+        const {
+            frameworkId,
+            isClone,
+            frameworkCreateRequest,
+            frameworkCloneRequest,
+        } = this.props;
+
+        if (isClone && isTruthy(frameworkId)) {
+            frameworkCloneRequest.do({ values, frameworkId });
+        } else if (!isClone) {
+            frameworkCreateRequest.do({ values });
+        }
     };
 
     render() {
-        const { closeModal } = this.props;
+        const {
+            closeModal,
+            frameworkCreateRequest: { pending: addPending },
+            frameworkCloneRequest: { pending: clonePending },
+        } = this.props;
 
         const {
             faramErrors,
             faramValues,
-            pending,
             pristine,
         } = this.state;
+
+        const pending = addPending || clonePending;
 
         return (
             <Modal className={styles.addFrameworkModal}>
