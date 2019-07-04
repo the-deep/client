@@ -39,7 +39,6 @@ const AccentModalButton = modalize(AccentButton);
 const propTypes = {
     className: PropTypes.string,
     frameworkId: PropTypes.number,
-    addNewFramework: PropTypes.func.isRequired,
     projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setProjectFramework: PropTypes.func.isRequired,
     setActiveFramework: PropTypes.func.isRequired,
@@ -58,7 +57,6 @@ const mapStateToProps = (state, props) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    addNewFramework: params => dispatch(addNewAfAction(params)),
     setProjectFramework: params => dispatch(setProjectAfAction(params)),
 });
 
@@ -116,7 +114,6 @@ export default class FrameworkDetail extends React.PureComponent {
                 id: projectId,
             } = emptyObject,
             setProjectFramework,
-            addNewFramework,
             setActiveFramework,
             readOnly,
         } = this.props;
@@ -179,7 +176,6 @@ export default class FrameworkDetail extends React.PureComponent {
                                 modal={
                                     <AddFrameworkModal
                                         frameworkId={analysisFrameworkId}
-                                        addNewFramework={addNewFramework}
                                         setActiveFramework={setActiveFramework}
                                         isClone
                                     />

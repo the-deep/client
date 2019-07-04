@@ -61,8 +61,19 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
         };
     }
 
-    setActiveFramework = (id) => {
-        this.setState({ activeFrameworkId: id });
+    setActiveFramework = (id, isNewFramwork) => {
+        if (isNewFramwork) {
+            this.setState({
+                activeFrameworkId: id,
+                filterValues: {
+                    activity: 'all',
+                    relatedToMe: true,
+                    search: '',
+                },
+            });
+        } else {
+            this.setState({ activeFrameworkId: id });
+        }
     }
 
     handleFilterChange = (filterValues) => {
