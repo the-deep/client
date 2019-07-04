@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
 import { isTruthy } from '@togglecorp/fujs';
 import Faram, { requiredCondition } from '@togglecorp/faram';
 
@@ -20,7 +19,6 @@ import {
     requestMethods,
 } from '#request';
 
-import { addNewAfAction } from '#redux';
 import notify from '#notify';
 import _ts from '#ts';
 
@@ -31,8 +29,6 @@ const propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     setActiveFramework: PropTypes.func.isRequired,
     closeModal: PropTypes.func,
-    // eslint-disable-next-line react/no-unused-prop-types
-    addNewFramework: PropTypes.func.isRequired,
     isClone: PropTypes.bool,
     // eslint-disable-next-line react/forbid-prop-types
     frameworkCreateRequest: PropTypes.object,
@@ -48,10 +44,6 @@ const defaultProps = {
     frameworkCloneRequest: {},
 };
 
-const mapDispatchToProps = dispatch => ({
-    addNewFramework: params => dispatch(addNewAfAction(params)),
-});
-
 // Note: Key is set according to is_private option
 const frameworkVisibilityOptions = [
     { key: false, label: _ts('project.framework', 'visibilityPublicLabel') },
@@ -64,8 +56,8 @@ const requests = {
         method: requestMethods.POST,
         body: ({ params }) => ({ ...params.values }),
         onSuccess: ({ response, props }) => {
-            props.addNewFramework({ afDetail: response });
-            props.setActiveFramework(response.id);
+            // Second argument is to know that this is a new framework
+            props.setActiveFramework(response.id, true);
             notify.send({
                 title: _ts('project', 'afClone'),
                 type: notify.type.SUCCESS,
@@ -81,8 +73,8 @@ const requests = {
         method: requestMethods.POST,
         body: ({ params }) => ({ ...params.values }),
         onSuccess: ({ response, props }) => {
-            props.addNewFramework({ afDetail: response });
-            props.setActiveFramework(response.id);
+            // Second argument is to know that this is a new framework
+            props.setActiveFramework(response.id, true);
             notify.send({
                 title: _ts('project', 'afCreate'),
                 type: notify.type.SUCCESS,
@@ -105,7 +97,6 @@ const requests = {
 
 
 // NOTE: This component is used both for cloning and creating new frameworks
-@connect(undefined, mapDispatchToProps)
 @RequestClient(requests)
 export default class AddFrameworkModal extends React.PureComponent {
     static propTypes = propTypes;
@@ -145,7 +136,7 @@ export default class AddFrameworkModal extends React.PureComponent {
         this.setState({ faramErrors });
     };
 
-    handleValidationSuccess = (values) => {
+    handleValidationSuccess = (_, values) => {
         const {
             frameworkId,
             isClone,

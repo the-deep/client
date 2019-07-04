@@ -4,7 +4,6 @@ import update from '#rsu/immutable-update';
 
 export const SET_ANALYSIS_FRAMEWORK = 'domainData/SET_ANALYSIS_FRAMEWORK';
 export const SET_ANALYSIS_FRAMEWORKS = 'domainData/SET_ANALYSIS_FRAMEWORKS';
-export const ADD_NEW_AF = 'domainData/ADD_NEW_AF';
 export const SET_PROJECT_AF = 'domainData/SET_PROJECT_AF';
 export const SET_AF_DETAIL = 'domainData/SET_AF_DETAIL';
 
@@ -18,12 +17,6 @@ export const setAnalysisFrameworkAction = ({ analysisFramework }) => ({
 export const setAnalysisFrameworksAction = ({ analysisFrameworks }) => ({
     type: SET_ANALYSIS_FRAMEWORKS,
     analysisFrameworks,
-});
-
-export const addNewAfAction = ({ afDetail, projectId }) => ({
-    type: ADD_NEW_AF,
-    afDetail,
-    projectId,
 });
 
 export const setProjectAfAction = ({ projectId, afId }) => ({
@@ -88,26 +81,6 @@ const setAnalysisFrameworks = (state, action) => {
     return update(state, settings);
 };
 
-const addNewAf = (state, action) => {
-    const { afDetail, projectId } = action;
-    const settings = {
-        analysisFrameworks: { $auto: {
-            [afDetail.id]: { $auto: {
-                $merge: afDetail,
-            } },
-        } },
-    };
-    // TODO: Remove this if not used
-    settings.projects = {
-        [projectId]: { $auto: {
-            analysisFramework: {
-                $set: afDetail.id,
-            },
-        } },
-    };
-    return update(state, settings);
-};
-
 const setProjectAf = (state, action) => {
     const { projectId, afId } = action;
     const settings = {
@@ -137,7 +110,6 @@ const setAfDetail = (state, action) => {
 const reducers = {
     [SET_ANALYSIS_FRAMEWORK]: setAnalysisFramework,
     [SET_ANALYSIS_FRAMEWORKS]: setAnalysisFrameworks,
-    [ADD_NEW_AF]: addNewAf,
     [SET_PROJECT_AF]: setProjectAf,
     [SET_AF_DETAIL]: setAfDetail,
 };
