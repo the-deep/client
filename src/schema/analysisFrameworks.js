@@ -14,6 +14,25 @@ const analysisFrameworkSchema = [];
             exportables: { type: 'array.Exportable' },
             filters: { type: 'array.Filter' },
             members: { type: 'array.uint' },
+            role: {
+                type: {
+                    name: 'mapping of role',
+                    fields: {
+                        '*': {
+                            type: {
+                                id: { type: 'uint', required: true },
+                                title: { type: 'string', required: true },
+                                canAddUser: { type: 'boolean', required: true },
+                                canCloneFramework: { type: 'boolean', required: true },
+                                canEditFramework: { type: 'boolean', required: true },
+                                canUserInOtherProjects: { type: 'boolean', required: true },
+                            },
+                            required: true,
+                        },
+                    },
+                },
+                required: true,
+            },
             isAdmin: { type: 'boolean', required: true },
             isPrivate: { type: 'boolean', required: true },
             description: { type: 'string' },

@@ -21,7 +21,6 @@ import {
 import {
     projectDetailsSelector,
     setProjectAfAction,
-    addNewAfAction,
 } from '#redux';
 
 import { pathNames } from '#constants';
@@ -104,7 +103,11 @@ export default class FrameworkDetail extends React.PureComponent {
             id: analysisFrameworkId,
             title: frameworkTitle,
             description: frameworkDescription,
-            isAdmin: isFrameworkAdmin,
+            role: {
+                canCloneFramework = false,
+                canEditFramework = false,
+                canUseInOtherProjects = false,
+            } = {},
             isPrivate,
         } = framework;
 
@@ -122,6 +125,8 @@ export default class FrameworkDetail extends React.PureComponent {
             pending,
             activeView,
         } = this.state;
+
+        const canUse = canUseInOtherProjects && (currentFrameworkId !== analysisFrameworkId);
 
         return (
             <header className={styles.header}>
@@ -150,16 +155,17 @@ export default class FrameworkDetail extends React.PureComponent {
                             active={activeView}
                         />
                         <div className={styles.actionButtons}>
-                            <UseFrameworkButton
-                                currentFrameworkId={currentFrameworkId}
-                                disabled={pending || readOnly}
-                                frameworkId={analysisFrameworkId}
-                                frameworkTitle={frameworkTitle}
-                                projectId={projectId}
-                                setProjectFramework={setProjectFramework}
-                            />
+                            {canUse &&
+                                <UseFrameworkButton
+                                    disabled={pending || readOnly}
+                                    frameworkId={analysisFrameworkId}
+                                    frameworkTitle={frameworkTitle}
+                                    projectId={projectId}
+                                    setProjectFramework={setProjectFramework}
+                                />
+                            }
 
-                            { isFrameworkAdmin &&
+                            {canEditFramework &&
                                 <Link
                                     className={styles.editFrameworkLink}
                                     to={reverseRoute(
@@ -171,18 +177,20 @@ export default class FrameworkDetail extends React.PureComponent {
                                 </Link>
                             }
 
-                            <AccentModalButton
-                                disabled={pending || readOnly}
-                                modal={
-                                    <AddFrameworkModal
-                                        frameworkId={analysisFrameworkId}
-                                        setActiveFramework={setActiveFramework}
-                                        isClone
-                                    />
-                                }
-                            >
-                                { _ts('project.framework', 'cloneButtonTitle') }
-                            </AccentModalButton>
+                            {canCloneFramework &&
+                                <AccentModalButton
+                                    disabled={pending || readOnly}
+                                    modal={
+                                        <AddFrameworkModal
+                                            frameworkId={analysisFrameworkId}
+                                            setActiveFramework={setActiveFramework}
+                                            isClone
+                                        />
+                                    }
+                                >
+                                    { _ts('project.framework', 'cloneButtonTitle') }
+                                </AccentModalButton>
+                            }
                         </div>
                     </div>
                 </div>
@@ -220,7 +228,7 @@ export default class FrameworkDetail extends React.PureComponent {
         if (!frameworkId) {
             return (
                 <div className={className}>
-                    <Message className={styles.noFrameworkMessage}>
+                    <Message>
                         { _ts('project', 'noAfText') }
                     </Message>
                 </div>
