@@ -1,15 +1,18 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import { reverseRoute } from '@togglecorp/fujs';
 
+import modalize from '#rscg/Modalize';
 import Numeral from '#rscv/Numeral';
 import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 
 import Cloak from '#components/general/Cloak';
+import LeadCopyModal from '#components/general/LeadCopyModal';
 import {
     pathNames,
 } from '#constants';
@@ -21,6 +24,8 @@ import _ts from '#ts';
 import { timeFrom } from '#utils/common';
 
 import styles from './styles.scss';
+
+const ModalButton = modalize(Button);
 
 const propTypes = {
     className: PropTypes.string,
@@ -99,6 +104,9 @@ export default class GridItem extends React.PureComponent {
         return icon;
     }
 
+    // NOTE: This is sent as an array as LeadCopyModal is built for bulk operations
+    getId = memoize(row => [row.id]);
+
     handleMarkAsProcessedClick = () => {
         this.props.onMarkProcessed(this.props.lead);
     }
@@ -175,7 +183,10 @@ export default class GridItem extends React.PureComponent {
     }
 
     renderActions = () => {
+        const { lead } = this.props;
         const MarkAction = this.renderMarkAction;
+
+        const leadIds = this.getId(lead);
 
         return (
             <React.Fragment>
@@ -205,6 +216,15 @@ export default class GridItem extends React.PureComponent {
                         onClick={this.handleSearchLeadClick}
                         transparent
                         iconName="search"
+                    />
+                    <ModalButton
+                        tabIndex="-1"
+                        title={_ts('leads', 'exportToOtherProjectsButtonTitle')}
+                        transparent
+                        iconName="openLink"
+                        modal={
+                            <LeadCopyModal leads={leadIds} />
+                        }
                     />
                     <Link
                         className={styles.actionButton}
