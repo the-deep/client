@@ -48,7 +48,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    userProjects: {},
+    userProjects: [],
     projectId: undefined,
 };
 
