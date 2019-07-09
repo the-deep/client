@@ -138,6 +138,21 @@ const leadSchema = [];
 }
 
 {
+    const name = 'leadsCopy';
+    const schema = {
+        doc: {
+            name: 'leadsCopy',
+            description: 'Response for leads copy to other projects',
+        },
+        fields: {
+            projects: { type: 'array.uint', required: true },
+            leads: { type: 'array.uint', required: true },
+        },
+    };
+    leadSchema.push({ name, schema });
+}
+
+{
     const name = 'leadGroupsGetResponse';
     const schema = {
         doc: {

@@ -15,6 +15,7 @@ import Message from '#rscv/Message';
 
 import Cloak from '#components/general/Cloak';
 import BackLink from '#components/general/BackLink';
+import { RequestCoordinator } from '#request';
 
 import { pathNames } from '#constants/';
 import {
@@ -29,7 +30,6 @@ import {
     addLeadViewAddLeadsAction,
     addLeadViewLeadChangeAction,
     addLeadViewLeadSaveAction,
-    addLeadViewRemoveSavedLeadsAction,
     addLeadViewSetLeadRestsAction,
     addLeadViewButtonStatesSelector,
 
@@ -66,7 +66,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     addLeadViewLeadChange: params => dispatch(addLeadViewLeadChangeAction(params)),
     addLeadViewLeadSave: params => dispatch(addLeadViewLeadSaveAction(params)),
-    addLeadViewRemoveSavedLeads: params => dispatch(addLeadViewRemoveSavedLeadsAction(params)),
     addLeads: leads => dispatch(addLeadViewAddLeadsAction(leads)),
     setLeadRests: params => dispatch(addLeadViewSetLeadRestsAction(params)),
     resetUiState: () => dispatch(addLeadViewResetUiStateAction()),
@@ -84,7 +83,6 @@ const propTypes = {
 
     routeState: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     addLeads: PropTypes.func.isRequired,
-    addLeadViewRemoveSavedLeads: PropTypes.func.isRequired,
 
     history: PropTypes.shape({
         replace: PropTypes.func,
@@ -108,6 +106,7 @@ const defaultProps = {
 
 
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestCoordinator
 export default class LeadAdd extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -164,8 +163,6 @@ export default class LeadAdd extends React.PureComponent {
     }
 
     componentDidMount() {
-        this.props.addLeadViewRemoveSavedLeads();
-
         const { routeState } = this.props;
         const { serverId, faramValues } = routeState;
         if (isTruthy(serverId)) {
