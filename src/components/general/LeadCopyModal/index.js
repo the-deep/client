@@ -6,6 +6,7 @@ import Modal from '#rscv/Modal';
 import ModalHeader from '#rscv/Modal/Header';
 import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
+import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListSelection from '#rsci/ListSelection';
 import TextInput from '#rsci/TextInput';
 
@@ -16,7 +17,6 @@ import {
     currentUserAdminProjectsSelector,
 } from '#redux';
 import {
-    RequestCoordinator,
     RequestClient,
     requestMethods,
 } from '#request';
@@ -57,16 +57,16 @@ const listLabelSelector = d => d.title;
 
 const requests = {
     leadsCopyRequest: {
-        url: '/leads-copy/',
+        url: '/lead-copy/',
         body: ({ params: { body } }) => body,
         method: requestMethods.POST,
-        onSuccess: ({ response: { leads, projects } }) => {
+        onSuccess: ({ response: { leads, projects }, props: { closeModal } }) => {
             const message = _ts(
                 'leads.copyModal',
                 'successNotify',
                 {
-                    leadsCount: leads.count,
-                    projectsCount: projects.count,
+                    leadsCount: leads.length,
+                    projectsCount: projects.length,
                 },
             );
 
@@ -76,6 +76,7 @@ const requests = {
                 message,
                 duration: notify.duration.MEDIUM,
             });
+            closeModal();
         },
         onFailure: () => {
             notify.send({
@@ -98,7 +99,6 @@ const requests = {
 };
 
 @connect(mapStateToProps)
-@RequestCoordinator
 @RequestClient(requests)
 export default class LeadCopyModal extends React.PureComponent {
     static propTypes = propTypes;
@@ -168,47 +168,50 @@ export default class LeadCopyModal extends React.PureComponent {
             <Modal className={_cs(className, styles.leadCopyModal)} >
                 <ModalHeader title={_ts('leads.copyModal', 'leadsCopyTitle')} />
                 <ModalBody className={styles.body} >
+                    {pending && <LoadingAnimation />}
                     <header className={styles.header} >
+                        <div className={styles.inputs} >
+                            <TextInput
+                                className={styles.searchInput}
+                                label={_ts('leads.copyModal', 'searchInputLabel')}
+                                placeholder={_ts('leads.copyModal', 'searchInputPlaceholder')}
+                                value={searchText}
+                                onChange={this.handleSearchTextChange}
+                                showHintAndError={false}
+                            />
+                            <DangerButton
+                                onClick={this.handleClearSelection}
+                                disabled={notSelected}
+                            >
+                                {_ts('leads.copyModal', 'clearSelectionButtonLabel')}
+                            </DangerButton>
+                        </div>
                         <h4>
                             {heading}
                         </h4>
-                        <DangerButton
-                            onClick={this.handleClearSelection}
-                            disabled={notSelected}
-                        >
-                            {_ts('leads.copyModal', 'clearSelectionButtonLabel')}
-                        </DangerButton>
                     </header>
-                    <div className={styles.inputs} >
-                        <TextInput
-                            label={_ts('leads.copyModal', 'searchInputLabel')}
-                            placeholder={_ts('leads.copyModal', 'searchInputPlaceholder')}
-                            value={searchText}
-                            onChange={this.handleSearchTextChange}
-                            showHintAndError={false}
-                        />
-                        <ListSelection
-                            className={styles.projects}
-                            listClassName={styles.projectsList}
-                            value={selectedProjects}
-                            options={userProjects}
-                            searchText={searchText}
-                            onChange={this.handleProjectListChange}
-                            keySelector={listKeySelector}
-                            labelSelector={listLabelSelector}
-                        />
-                    </div>
+                    <ListSelection
+                        className={styles.projects}
+                        listClassName={styles.projectsList}
+                        value={selectedProjects}
+                        options={userProjects}
+                        searchText={searchText}
+                        onChange={this.handleProjectListChange}
+                        keySelector={listKeySelector}
+                        labelSelector={listLabelSelector}
+                    />
                 </ModalBody>
                 <ModalFooter className={styles.footer} >
                     <DangerButton
                         onClick={closeModal}
-                        pending={pending}
+                        disabled={pending}
                     >
                         {_ts('leads.copyModal', 'cancelButtonTitle')}
                     </DangerButton>
                     <SuccessConfirmButton
                         confirmationMessage={confirmMessage}
-                        disabled={notSelected || pending}
+                        disabled={notSelected}
+                        pending={pending}
                         onClick={this.handleExport}
                     >
                         {_ts('leads.copyModal', 'exportButtonTitle')}

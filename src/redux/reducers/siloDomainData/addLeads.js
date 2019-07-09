@@ -11,8 +11,6 @@ import update from '#rsu/immutable-update';
 import {
     createLead,
     leadAccessor,
-    calcLeadState,
-    LEAD_STATUS,
 } from '#entities/lead';
 
 // ACTION-TYPE
@@ -34,7 +32,6 @@ export const LA__LEAD_CHANGE = 'siloDomainData/LA__LEAD_CHANGE';
 export const LA__LEAD_SAVE = 'siloDomainData/LA__LEAD_SAVE';
 
 export const LA__LEAD_REMOVE = 'siloDomainData/LA__LEAD_REMOVE';
-export const LA__LEAD_REMOVE_SAVED = 'siloDomainData/LA__LEAD_REMOVE_SAVED';
 
 export const LA__SET_CONNECTORS = 'siloDomainData/LA__SET_CONNECTORS';
 
@@ -132,11 +129,6 @@ export const addLeadViewLeadRemoveAction = leadIds => ({
     type: LA__LEAD_REMOVE,
     leadIds,
 });
-
-export const addLeadViewRemoveSavedLeadsAction = () => ({
-    type: LA__LEAD_REMOVE_SAVED,
-});
-
 
 export const addLeadViewLeadNextAction = () => ({
     type: LA__LEAD_NEXT,
@@ -299,38 +291,6 @@ const addLeadViewRemoveLead = (state, action) => {
         },
     };
     return update(state, settings);
-};
-
-const addLeadViewRemoveSavedLeads = (state) => {
-    const { addLeadView: { activeLeadId } } = state;
-
-    // Remove all saved
-    const removalSettings = {
-        addLeadView: {
-            leads: {
-                $filter: (lead) => {
-                    const leadState = calcLeadState({ lead });
-                    return leadState !== LEAD_STATUS.complete;
-                },
-            },
-        },
-    };
-    const newState = update(state, removalSettings);
-
-    // Set new active id
-    const { addLeadView: { leads } } = newState;
-    let newActiveLead = leads.find(lead => leadAccessor.getKey(lead) === activeLeadId);
-    if (!newActiveLead && leads.length > 0) {
-        [newActiveLead] = leads;
-    }
-    const newActiveLeadId = newActiveLead ? leadAccessor.getKey(newActiveLead) : undefined;
-
-    const activeIdSettings = {
-        addLeadView: {
-            activeLeadId: { $set: newActiveLeadId },
-        },
-    };
-    return update(newState, activeIdSettings);
 };
 
 const addLeadViewAddNewLeads = (state, action) => {
@@ -599,7 +559,6 @@ const reducers = {
     [LA__SET_ACTIVE_LEAD_ID]: addLeadViewSetActiveLead,
     [LA__COPY_ALL]: addLeadViewCopyAll('all'),
     [LA__COPY_ALL_BELOW]: addLeadViewCopyAll('below'),
-    [LA__LEAD_REMOVE_SAVED]: addLeadViewRemoveSavedLeads,
     [LA__SET_CONNECTORS]: addLeadViewSetConnectors,
     [LA__SET_LEAD_REST]: addLeadViewSetTransient('leadRests', 'pending'),
     [LA__SET_LEAD_UPLOADS]: addLeadViewSetTransient('leadUploads', 'progress'),

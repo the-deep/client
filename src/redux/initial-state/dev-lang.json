@@ -1645,7 +1645,10 @@
             "saveAllButtonTitle": 5552,
             "saveAllFilteredButtonTitle": 5553,
             "saveButtonTitle": 25,
-            "saveCurrentButtonTitle": 5551
+            "saveCurrentButtonTitle": 5551,
+            "exportButtonTitle": 600,
+            "exportCurrentButtonTitle": 5551,
+            "exportAllCompletedButtonTitle": 631
         },
         "addLeads.sourceButtons": {
             "googleDriveLabel": 35,

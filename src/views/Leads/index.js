@@ -19,6 +19,7 @@ import {
     doesObjectHaveNoData,
 } from '@togglecorp/fujs';
 import modalize from '#rscg/Modalize';
+import { RequestCoordinator } from '#request';
 
 import Cloak from '#components/general/Cloak';
 import MultiViewContainer from '#rscv/MultiViewContainer';
@@ -131,6 +132,7 @@ const tabsIcons = {
 };
 
 @connect(mapStateToProps, mapDispatchToProps)
+@RequestCoordinator
 export default class Leads extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;

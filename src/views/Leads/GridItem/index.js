@@ -3,7 +3,10 @@ import React from 'react';
 import memoize from 'memoize-one';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import { reverseRoute } from '@togglecorp/fujs';
+import {
+    reverseRoute,
+    isTruthy,
+} from '@togglecorp/fujs';
 
 import modalize from '#rscg/Modalize';
 import Numeral from '#rscv/Numeral';
@@ -105,7 +108,7 @@ export default class GridItem extends React.PureComponent {
     }
 
     // NOTE: This is sent as an array as LeadCopyModal is built for bulk operations
-    getId = memoize(row => [row.id]);
+    getLeadIds = memoize(row => [row.id]);
 
     handleMarkAsProcessedClick = () => {
         this.props.onMarkProcessed(this.props.lead);
@@ -186,7 +189,7 @@ export default class GridItem extends React.PureComponent {
         const { lead } = this.props;
         const MarkAction = this.renderMarkAction;
 
-        const leadIds = this.getId(lead);
+        const leadIds = this.getLeadIds(lead);
 
         return (
             <React.Fragment>
@@ -250,9 +253,19 @@ export default class GridItem extends React.PureComponent {
     }
 
     render() {
-        const { lead, className, style } = this.props;
+        const {
+            lead = {},
+            className,
+            style,
+        } = this.props;
         const Actions = this.renderActions;
         const Thumbnail = this.renderThumbnail;
+        const {
+            assigneeDetails: {
+                id: assigneeId,
+                displayName: assigneeDisplayName,
+            } = {},
+        } = lead;
 
         return (
             <div
@@ -278,19 +291,26 @@ export default class GridItem extends React.PureComponent {
                         {lead.title}
                     </p>
                     <div className={styles.leadInfoExtra}>
-                        <Link
-                            className={styles.user}
-                            to={reverseRoute(pathNames.userProfile,
-                                { userId: lead.assigneeDetails.id })}
-                        >
-                            {_ts('leads', 'assignee')}: {lead.assigneeDetails.displayName}
-                        </Link>
-                        <Link
-                            className={styles.user}
-                            to={reverseRoute(pathNames.userProfile, { userId: lead.createdBy })}
-                        >
-                            {_ts('leadsGrid', 'publisherLabel')}: {lead.createdByName}
-                        </Link>
+                        {isTruthy(assigneeId) &&
+                            <React.Fragment>
+                                <Link
+                                    className={styles.user}
+                                    to={reverseRoute(pathNames.userProfile,
+                                        { userId: assigneeId })}
+                                >
+                                    {_ts('leads', 'assignee')}: {assigneeDisplayName}
+                                </Link>
+                                <Link
+                                    className={styles.user}
+                                    to={reverseRoute(
+                                        pathNames.userProfile,
+                                        { userId: lead.createdBy },
+                                    )}
+                                >
+                                    {_ts('leadsGrid', 'publisherLabel')}: {lead.createdByName}
+                                </Link>
+                            </React.Fragment>
+                        }
                         <div className={styles.status}>
                             Status: {lead.status}
                         </div>

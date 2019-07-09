@@ -106,7 +106,7 @@ export default class ActionButtons extends React.PureComponent {
     }
 
     // NOTE: This is sent as an array as LeadCopyModal is built for bulk operations
-    getId = memoize(row => [row.id]);
+    getLeadIds = memoize(row => [row.id]);
 
     render() {
         const links = this.getLinks();
@@ -125,7 +125,7 @@ export default class ActionButtons extends React.PureComponent {
             'action-buttons',
         );
 
-        const leadIds = this.getId(row);
+        const leadIds = this.getLeadIds(row);
 
         return (
             <div className={containerClassName}>

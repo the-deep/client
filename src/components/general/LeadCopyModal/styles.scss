@@ -4,28 +4,39 @@
 
         .header {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: space-between;
             padding: var(--spacing-small) var(--spacing-medium) 0 var(--spacing-medium);
+
+            .inputs {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .search-input {
+                    width: 50%;
+                }
+            }
+
+            h4 {
+                padding: var(--spacing-small) 0;
+            }
         }
 
-        .inputs {
+        .projects {
             padding-left: var(--spacing-medium);
+            height: 35vh;
+            overflow-y: auto;
 
-            .projects {
-                height: 35vh;
+            :global .input-label {
+                display: none;
+            }
+
+            .projects-list {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
                 overflow-y: auto;
-
-                :global .input-label {
-                    display: none;
-                }
-
-                .projects-list {
-                    display: flex;
-                    flex-direction: column;
-                    flex-grow: 1;
-                    overflow-y: auto;
-                }
             }
         }
     }
