@@ -948,7 +948,12 @@
         "-40643314": "Grouped bar chart",
         "-38465658": "Failed to create tabular.",
         "-64655622": "This is a private project and is only visible to project members.",
-        "-57055647": "Project Visibility"
+        "-57055647": "Project Visibility",
+        "-16703906": "Export leads to other projects",
+        "-86428588": "Are you sure you want to export {countLeads} leads to {countProjects} projects?",
+        "-81861908": "Extract leads to other projects",
+        "-78373067": "Failed to extract leads to other projects.",
+        "-69982235": "Successfully exported {leadsCount} leads to {projectsCount} projects."
     },
     "links": {
         "browserExtension": {
@@ -1542,7 +1547,8 @@
             "leadsProcessedSuccess": -35157722,
             "emptyWithFilterMessage": -59957290,
             "emptyMessage": -52516388,
-            "Preview": -77224022
+            "Preview": -77224022,
+            "exportToOtherProjectsButtonTitle": -16703906
         },
         "leadsGrid": {
             "publisherLabel": 5,
@@ -2699,6 +2705,18 @@
         "components.viewer.fileImagePreview": {
             "notFoundTitle": 1301,
             "notSupportedTitle": -40341683
+        },
+        "leads.copyModal": {
+            "cancelButtonTitle": 61,
+            "exportButtonTitle": 600,
+            "projectsLabel": 173,
+            "searchInputLabel": 9,
+            "searchInputPlaceholder": 302,
+            "clearSelectionButtonLabel": 528,
+            "successConfirmDetail": -86428588,
+            "leadsCopyTitle": -81861908,
+            "leadsCopyFailureMessage": -78373067,
+            "successNotify": -69982235
         }
     }
 }

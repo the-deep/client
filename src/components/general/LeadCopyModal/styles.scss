@@ -1,0 +1,38 @@
+.lead-copy-modal {
+    .body {
+        padding: 0;
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-small) var(--spacing-medium) 0 var(--spacing-medium);
+        }
+
+        .inputs {
+            padding-left: var(--spacing-medium);
+
+            .projects {
+                height: 35vh;
+                overflow-y: auto;
+
+                :global .input-label {
+                    display: none;
+                }
+
+                .projects-list {
+                    display: flex;
+                    flex-direction: column;
+                    flex-grow: 1;
+                    overflow-y: auto;
+                }
+            }
+        }
+    }
+
+    .footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+}

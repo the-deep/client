@@ -11,8 +11,8 @@ import styles from './styles.scss';
 
 const propTypes = {
     activeSort: PropTypes.string.isRequired,
-    headers: PropTypes.array.isRequired,
-    leads: PropTypes.array.isRequired,
+    headers: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    leads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     loading: PropTypes.bool.isRequired,
     emptyComponent: PropTypes.func.isRequired,
     setLeadPageActiveSort: PropTypes.func.isRequired,
