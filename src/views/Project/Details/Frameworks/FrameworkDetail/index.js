@@ -11,6 +11,7 @@ import Message from '#rscv/Message';
 import ScrollTabs from '#rscv/ScrollTabs';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import AccentButton from '#rsca/Button/AccentButton';
+import WarningButton from '#rsca/Button/WarningButton';
 import modalize from '#rscg/Modalize';
 import Badge from '#components/viewer/Badge';
 
@@ -30,10 +31,12 @@ import Preview from './Preview';
 
 import UseFrameworkButton from './UseFrameworkButton';
 import AddFrameworkModal from '../AddFrameworkModal';
+import EditFrameworkModal from './EditFrameworkModal';
 
 import styles from './styles.scss';
 
 const AccentModalButton = modalize(AccentButton);
+const WarningModalButton = modalize(WarningButton);
 
 const propTypes = {
     className: PropTypes.string,
@@ -166,6 +169,21 @@ export default class FrameworkDetail extends React.PureComponent {
                             }
 
                             {canEditFramework &&
+                                <WarningModalButton
+                                    disabled={pending || readOnly}
+                                    modal={
+                                        <EditFrameworkModal
+                                            frameworkId={analysisFrameworkId}
+                                            title={frameworkTitle}
+                                            description={frameworkDescription}
+                                        />
+                                    }
+                                >
+                                    { _ts('project.framework', 'editFrameworkButtonTitle') }
+                                </WarningModalButton>
+                            }
+
+                            {canEditFramework &&
                                 <Link
                                     className={styles.editFrameworkLink}
                                     to={reverseRoute(
@@ -173,7 +191,7 @@ export default class FrameworkDetail extends React.PureComponent {
                                         { analysisFrameworkId },
                                     )}
                                 >
-                                    { _ts('project.framework', 'editFrameworkButtonTitle') }
+                                    { _ts('project.framework', 'editWidgetsButtonTitle') }
                                 </Link>
                             }
 
