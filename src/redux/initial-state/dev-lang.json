@@ -956,7 +956,8 @@
         "-69982235": "Successfully exported {leadsCount} leads to {projectsCount} projects.",
         "-59667485": "Note: Framework visibility cannot be changed once the framework is created\t",
         "-13698917": "This is a private framework and is only visible to framework members.",
-        "-8045218": "Successfully cloned the selected framework."
+        "-8045218": "Successfully cloned the selected framework.",
+        "-49370702": "Edit widgets"
     },
     "links": {
         "browserExtension": {
@@ -1660,7 +1661,7 @@
             "saveCurrentButtonTitle": 5551,
             "exportButtonTitle": 600,
             "exportCurrentButtonTitle": 5551,
-            "exportAllCompletedButtonTitle": 631
+            "exportAllCompletedButtonTitle": 360
         },
         "addLeads.sourceButtons": {
             "googleDriveLabel": 35,
@@ -1848,7 +1849,10 @@
             "visibilityPrivateLabel": -92759559,
             "visibilityPublicLabel": -59389,
             "frameworkVisibilityInputHint": -59667485,
-            "frameworkVisibilityInputLabel": 1120
+            "frameworkVisibilityInputLabel": 1120,
+            "editFrameworkModalTitle": -59086768,
+            "editFrameworkModalSaveButtonTitle": 25,
+            "editWidgetsButtonTitle": -49370702
         },
         "project.wordCategory": {
             "addWordCategoryButtonLabel": 301,
@@ -2727,7 +2731,7 @@
             "searchInputPlaceholder": 302,
             "clearSelectionButtonLabel": 528,
             "successConfirmDetail": -86428588,
-            "leadsCopyTitle": -81861908,
+            "leadsCopyTitle": -16703906,
             "leadsCopyFailureMessage": -78373067,
             "successNotify": -69982235
         }
