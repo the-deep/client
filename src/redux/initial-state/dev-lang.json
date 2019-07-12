@@ -941,7 +941,12 @@
         "-82413232": "All",
         "-57442233": "Active",
         "-80991835": "Inactive",
-        "-58312660": "Related to me"
+        "-58312660": "Related to me",
+        "-16703906": "Export leads to other projects",
+        "-86428588": "Are you sure you want to export {countLeads} leads to {countProjects} projects?",
+        "-81861908": "Extract leads to other projects",
+        "-78373067": "Failed to extract leads to other projects.",
+        "-69982235": "Successfully exported {leadsCount} leads to {projectsCount} projects."
     },
     "links": {
         "browserExtension": {
@@ -1535,7 +1540,8 @@
             "leadsProcessedSuccess": -35157722,
             "emptyWithFilterMessage": -59957290,
             "emptyMessage": -52516388,
-            "Preview": -77224022
+            "Preview": -77224022,
+            "exportToOtherProjectsButtonTitle": -16703906
         },
         "leadsGrid": {
             "publisherLabel": 5,
@@ -1639,7 +1645,10 @@
             "saveAllButtonTitle": 5552,
             "saveAllFilteredButtonTitle": 5553,
             "saveButtonTitle": 25,
-            "saveCurrentButtonTitle": 5551
+            "saveCurrentButtonTitle": 5551,
+            "exportButtonTitle": 600,
+            "exportCurrentButtonTitle": 5551,
+            "exportAllCompletedButtonTitle": 360
         },
         "addLeads.sourceButtons": {
             "googleDriveLabel": 35,
@@ -2680,6 +2689,18 @@
         "components.viewer.fileImagePreview": {
             "notFoundTitle": 1301,
             "notSupportedTitle": -40341683
+        },
+        "leads.copyModal": {
+            "cancelButtonTitle": 61,
+            "exportButtonTitle": 600,
+            "projectsLabel": 173,
+            "searchInputLabel": 9,
+            "searchInputPlaceholder": 302,
+            "clearSelectionButtonLabel": 528,
+            "successConfirmDetail": -86428588,
+            "leadsCopyTitle": -16703906,
+            "leadsCopyFailureMessage": -78373067,
+            "successNotify": -69982235
         }
     }
 }

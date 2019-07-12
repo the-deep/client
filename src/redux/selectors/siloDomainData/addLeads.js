@@ -4,6 +4,8 @@ import {
     doesObjectHaveNoData,
     compareString,
     caseInsensitiveSubmatch,
+    isDefined,
+    isFalsy,
 } from '@togglecorp/fujs';
 
 import {
@@ -178,12 +180,15 @@ export const addLeadViewLeadStatesSelector = createSelector(
                     !hasPermission
                 );
 
+                const isLeadCopyDisabled = isSaveEnabled || isFalsy(leadServerId);
+
                 acc[leadId] = {
                     leadState,
                     isSaveDisabled,
                     isFormDisabled,
                     isFormLoading,
                     isRemoveDisabled,
+                    isLeadCopyDisabled,
                 };
                 return acc;
             },
@@ -217,6 +222,12 @@ export const addLeadViewCompletedLeadKeysSelector = createSelector(
     addLeadViewCompletedLeadsSelector,
     leads => leads.map(leadAccessor.getKey),
 );
+
+export const addLeadViewCompletedServerIdsSelector = createSelector(
+    addLeadViewCompletedLeadsSelector,
+    leads => leads.map(leadAccessor.getServerId).filter(isDefined),
+);
+
 export const addLeadViewButtonStatesSelector = createSelector(
     addLeadViewIsFilterEmptySelector,
     addLeadViewLeadStatesSelector,
@@ -284,6 +295,11 @@ export const addLeadViewActiveLeadSelector = createSelector(
 export const addLeadViewHasActiveLeadSelector = createSelector(
     addLeadViewActiveLeadSelector,
     lead => lead !== undefined,
+);
+
+export const addLeadViewActiveLeadServerIdSelector = createSelector(
+    addLeadViewActiveLeadSelector,
+    lead => leadAccessor.getServerId(lead),
 );
 
 export const addLeadViewCanNextSelector = createSelector(

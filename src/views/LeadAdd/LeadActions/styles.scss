@@ -22,6 +22,14 @@
             margin-right: var(--spacing-extra-small-alt);
         }
     }
+
+    .export-buttons {
+        @extend %button-basic;
+        border: var(--width-separator-thin) solid var(--color-separator);
+        background-color: var(--color-foreground);
+        color: var(--color-text);
+    }
+
     .save-buttons {
         @extend %button-basic;
         border: var(--width-separator-thin) solid var(--color-success);

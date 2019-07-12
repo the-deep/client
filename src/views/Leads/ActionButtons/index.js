@@ -1,18 +1,23 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import memoize from 'memoize-one';
 import { Link } from 'react-router-dom';
 import { reverseRoute } from '@togglecorp/fujs';
 
+import modalize from '#rscg/Modalize';
 import Icon from '#rscg/Icon';
 import Button from '#rsca/Button';
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 
 import { pathNames } from '#constants/';
 import Cloak from '#components/general/Cloak';
+import LeadCopyModal from '#components/general/LeadCopyModal';
 import _ts from '#ts';
 import _cs from '#cs';
 
 import styles from './styles.scss';
+
+const ModalButton = modalize(Button);
 
 const propTypes = {
     className: PropTypes.string,
@@ -27,7 +32,6 @@ const propTypes = {
 const defaultProps = {
     className: '',
 };
-
 
 export default class ActionButtons extends React.PureComponent {
     static propTypes = propTypes;
@@ -101,6 +105,9 @@ export default class ActionButtons extends React.PureComponent {
         };
     }
 
+    // NOTE: This is sent as an array as LeadCopyModal is built for bulk operations
+    getLeadIds = memoize(row => [row.id]);
+
     render() {
         const links = this.getLinks();
         const {
@@ -117,6 +124,8 @@ export default class ActionButtons extends React.PureComponent {
             styles.actionButtons,
             'action-buttons',
         );
+
+        const leadIds = this.getLeadIds(row);
 
         return (
             <div className={containerClassName}>
@@ -149,6 +158,15 @@ export default class ActionButtons extends React.PureComponent {
                     />
                 </div>
                 <div className={styles.actionGroup}>
+                    <ModalButton
+                        tabIndex="-1"
+                        title={_ts('leads', 'exportToOtherProjectsButtonTitle')}
+                        transparent
+                        iconName="openLink"
+                        modal={
+                            <LeadCopyModal leads={leadIds} />
+                        }
+                    />
                     <Button
                         tabIndex="-1"
                         title={_ts('leads', 'searchSimilarLeadButtonTitle')}
@@ -188,7 +206,7 @@ export default class ActionButtons extends React.PureComponent {
                         hide={ActionButtons.shouldHideAssessmentAdd}
                         render={
                             <Link
-                                className={`${styles.addAssessmentLink}`}
+                                className={styles.addAssessmentLink}
                                 tabIndex="-1"
                                 title={_ts('leads', 'addAssessmentFromLeadButtonTitle')}
                                 to={links.addAssessment}
@@ -201,7 +219,7 @@ export default class ActionButtons extends React.PureComponent {
                         hide={ActionButtons.shouldHideEntryAdd}
                         render={
                             <Link
-                                className={`${styles.addEntryLink}`}
+                                className={styles.addEntryLink}
                                 tabIndex="-1"
                                 title={_ts('leads', 'addEntryFromLeadButtonTitle')}
                                 to={links.editEntries}
