@@ -1,12 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { isTruthy } from '@togglecorp/fujs';
 
 import Button from '#rsca/Button';
 import Checkbox from '#rsci/Checkbox';
 import DropdownMenu from '#rsca/DropdownMenu';
 import Confirm from '#rscv/Modal/Confirm';
 
+import LeadCopyModal from '#components/general/LeadCopyModal';
 import _ts from '#ts';
 import notify from '#notify';
 import {
@@ -22,9 +24,11 @@ import {
     addLeadViewLeadKeysSelector,
     addLeadViewFilteredLeadKeysSelector,
     addLeadViewCompletedLeadKeysSelector,
+    addLeadViewCompletedServerIdsSelector,
     addLeadViewSetRemoveModalStateAction,
     addLeadViewUnsetRemoveModalStateAction,
     addLeadViewRemoveModalStateSelector,
+    addLeadViewActiveLeadServerIdSelector,
 
     addLeadViewHidePreviewSelector,
     addLeadViewSetPreviewAction,
@@ -37,6 +41,7 @@ import styles from './styles.scss';
 const defaultProps = {
     activeLeadId: undefined,
     hidePreview: false,
+    activeLeadServerId: undefined,
 };
 
 const propTypes = {
@@ -52,9 +57,11 @@ const propTypes = {
     activeLeadId: PropTypes.string,
 
     addLeadViewLeadRemove: PropTypes.func.isRequired,
+    activeLeadServerId: PropTypes.number,
     leadKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
     filteredLeadKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
     completedLeadKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
+    completedServerIds: PropTypes.arrayOf(PropTypes.number).isRequired,
 
     setRemoveModalState: PropTypes.func.isRequired,
     unsetRemoveModalState: PropTypes.func.isRequired,
@@ -77,10 +84,12 @@ const mapStateToProps = state => ({
     buttonStates: addLeadViewButtonStatesSelector(state),
     leadStates: addLeadViewLeadStatesSelector(state),
     activeLeadId: addLeadViewActiveLeadIdSelector(state),
+    activeLeadServerId: addLeadViewActiveLeadServerIdSelector(state),
 
     leadKeys: addLeadViewLeadKeysSelector(state),
     filteredLeadKeys: addLeadViewFilteredLeadKeysSelector(state),
     completedLeadKeys: addLeadViewCompletedLeadKeysSelector(state),
+    completedServerIds: addLeadViewCompletedServerIdsSelector(state),
     removeModalState: addLeadViewRemoveModalStateSelector(state),
     hidePreview: addLeadViewHidePreviewSelector(state),
 });
@@ -102,10 +111,21 @@ export const DELETE_MODE = {
     saved: 'saved',
 };
 
+const emptyList = [];
+
 @connect(mapStateToProps, mapDispatchToProps)
 export default class LeadFilter extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            leadsToExport: [],
+            leadCopyModalShow: false,
+        };
+    }
 
     handleNextButtonClick = () => {
         this.props.addLeadViewLeadNext();
@@ -144,6 +164,32 @@ export default class LeadFilter extends React.PureComponent {
         });
     }
 
+    handleExportButtonClick = () => {
+        const { activeLeadServerId } = this.props;
+
+        if (isTruthy(activeLeadServerId)) {
+            this.setState({
+                leadsToExport: [activeLeadServerId],
+                leadCopyModalShow: true,
+            });
+        }
+    }
+
+    handleCompletedExportButtonClick = () => {
+        const { completedServerIds = emptyList } = this.props;
+
+        this.setState({
+            leadCopyModalShow: true,
+            leadsToExport: completedServerIds,
+        });
+    }
+
+    handleLeadCopyClose = () => {
+        this.setState({
+            leadCopyModalShow: false,
+            leadsToExport: [],
+        });
+    }
 
     removeSelected = (leadId) => {
         this.props.uploadCoordinator.remove(leadId);
@@ -268,6 +314,11 @@ export default class LeadFilter extends React.PureComponent {
             removeModalState,
         } = this.props;
 
+        const {
+            leadsToExport,
+            leadCopyModalShow,
+        } = this.state;
+
         const { show } = removeModalState;
 
         const {
@@ -282,6 +333,7 @@ export default class LeadFilter extends React.PureComponent {
         const {
             isSaveDisabled: isSaveDisabledForActive,
             isRemoveDisabled: isRemoveDisabledForActive,
+            isLeadCopyDisabled: isLeadCopyDisabledForActive,
         } = leadStates[activeLeadId] || {};
 
         return (
@@ -317,6 +369,29 @@ export default class LeadFilter extends React.PureComponent {
                         }
                     </p>
                 </Confirm>
+                <DropdownMenu
+                    iconName="openLink"
+                    className={styles.exportButtons}
+                    title={_ts('addLeads.actions', 'exportButtonTitle')}
+                    closeOnClick
+                >
+                    <button
+                        className={styles.dropdownButton}
+                        onClick={this.handleExportButtonClick}
+                        disabled={isLeadCopyDisabledForActive}
+                        type="button"
+                    >
+                        {_ts('addLeads.actions', 'exportCurrentButtonTitle')}
+                    </button>
+                    <button
+                        className={styles.dropdownButton}
+                        onClick={this.handleCompletedExportButtonClick}
+                        disabled={!isRemoveEnabledForCompleted}
+                        type="button"
+                    >
+                        {_ts('addLeads.actions', 'exportAllCompletedButtonTitle')}
+                    </button>
+                </DropdownMenu>
                 <DropdownMenu
                     iconName="delete"
                     className={styles.removeButtons}
@@ -387,6 +462,12 @@ export default class LeadFilter extends React.PureComponent {
                         {_ts('addLeads.actions', 'saveAllButtonTitle')}
                     </button>
                 </DropdownMenu>
+                {leadCopyModalShow &&
+                    <LeadCopyModal
+                        leads={leadsToExport}
+                        closeModal={this.handleLeadCopyClose}
+                    />
+                }
             </div>
         );
     }
