@@ -111,6 +111,9 @@ export default class EditFrameworkUsersActions extends React.PureComponent {
                     labelSelector={rolesLabelSelector}
                     disabled={pending || isActiveUser}
                     label={_ts('project.framework.editModal', 'userRoleSelectTitle')}
+                    placeholder=""
+                    hideClearButton
+                    showHintAndError={false}
                 />
                 <DangerConfirmButton
                     transparent

@@ -24,16 +24,16 @@ import styles from './styles.scss';
 
 const propTypes = {
     frameworkId: PropTypes.number,
-    title: PropTypes.string,
-    description: PropTypes.string,
+    frameworkDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     frameworkPatchRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     closeModal: PropTypes.func,
+    // eslint-disable-next-line react/no-unused-prop-types
+    onFrameworkDetailsChange: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
+    frameworkDetails: {},
     frameworkId: undefined,
-    title: '',
-    description: '',
     frameworkPatchRequest: {},
     closeModal: () => {},
 };
@@ -43,9 +43,16 @@ const requests = {
         url: ({ props }) => `/analysis-frameworks/${props.frameworkId}/`,
         method: requestMethods.PATCH,
         body: ({ params: { body } } = {}) => body,
-        onSuccess: ({ response, props, params }) => {
+        onSuccess: ({
+            params,
+            props,
+            response: {
+                title,
+                description,
+            },
+        }) => {
             params.setPristine();
-            console.warn(response, props);
+            props.onFrameworkDetailsChange({ title, description });
         },
         schemaName: 'analysisFramework',
     },
@@ -60,8 +67,10 @@ export default class EditFrameworkModal extends React.PureComponent {
     constructor(props) {
         super(props);
         const {
-            title,
-            description,
+            frameworkDetails: {
+                title,
+                description,
+            },
         } = this.props;
 
         this.state = {
