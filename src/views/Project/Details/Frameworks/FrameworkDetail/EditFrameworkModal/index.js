@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Faram, { requiredCondition } from '@togglecorp/faram';
+import produce from 'immer';
 
 import NonFieldErrors from '#rsci/NonFieldErrors';
 import TextInput from '#rsci/TextInput';
@@ -64,6 +65,7 @@ export default class EditFrameworkModal extends React.PureComponent {
         } = this.props;
 
         this.state = {
+            users: [],
             faramValues: {
                 title,
                 description,
@@ -105,6 +107,37 @@ export default class EditFrameworkModal extends React.PureComponent {
         });
     }
 
+    handleUsersSet = (users) => {
+        this.setState({ users });
+    }
+
+    handleUserAdd = (user) => {
+        const { users } = this.state;
+        const newUsers = produce(users, (safeUsers) => {
+            safeUsers.push(user);
+        });
+        this.setState({ users: newUsers });
+    }
+
+    handleUserPatch = (memberId, member) => {
+        const { users } = this.state;
+        const newUsers = produce(users, (safeUsers) => {
+            const index = users.findIndex(u => u.id === memberId);
+            // eslint-disable-next-line no-param-reassign
+            safeUsers[index] = member;
+        });
+        this.setState({ users: newUsers });
+    }
+
+    handleUserDelete = (memberId) => {
+        const { users } = this.state;
+        const newUsers = produce(users, (safeUsers) => {
+            const index = users.findIndex(u => u.id === memberId);
+            safeUsers.splice(index, 1);
+        });
+        this.setState({ users: newUsers });
+    }
+
     render() {
         const {
             frameworkPatchRequest: {
@@ -118,6 +151,7 @@ export default class EditFrameworkModal extends React.PureComponent {
             pristine,
             faramValues,
             faramErrors,
+            users,
         } = this.state;
 
         return (
@@ -169,7 +203,14 @@ export default class EditFrameworkModal extends React.PureComponent {
                         </Faram>
                     </div>
                     <div className={styles.editUsersSection} >
-                        <FrameworkUsersTable frameworkId={frameworkId} />
+                        <FrameworkUsersTable
+                            frameworkId={frameworkId}
+                            onSetUsers={this.handleUsersSet}
+                            onAddUser={this.handleUserAdd}
+                            onPatchUser={this.handleUserPatch}
+                            onDeleteUser={this.handleUserDelete}
+                            users={users}
+                        />
                     </div>
                 </ModalBody>
             </Modal>
