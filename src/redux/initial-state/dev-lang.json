@@ -957,7 +957,8 @@
         "-59667485": "Note: Framework visibility cannot be changed once the framework is created.",
         "-13698917": "This is a private framework and is only visible to framework members.",
         "-8045218": "Successfully cloned the selected framework.",
-        "-49370702": "Edit widgets"
+        "-49370702": "Edit widgets",
+        "-22564813": "Are you sure you want to remove membership of {memberName}({memberEmail}) from this framework?"
     },
     "links": {
         "browserExtension": {
@@ -2734,6 +2735,18 @@
             "leadsCopyTitle": -16703906,
             "leadsCopyFailureMessage": -78373067,
             "successNotify": -69982235
+        },
+        "project.framework.editModal": {
+            "actionsTitle": 16,
+            "emailTitle": 184,
+            "joinedAtTitle": 161,
+            "meTitle": -24177081,
+            "nameTitle": 103,
+            "organizationTitle": 154,
+            "removeMembershipConfirmationMessage": -22564813,
+            "userRemoveButtonTitle": 190,
+            "userRoleSelectTitle": 12509,
+            "membersTableHeader": 166
         }
     }
 }

@@ -1,0 +1,21 @@
+.users-table {
+    position: relative;
+    height: 30vh;
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--spacing-small) var(--spacing-medium);
+    }
+
+    .table-container {
+        overflow-y: auto;
+
+        :global {
+            .header {
+                z-index: 1;
+            }
+        }
+    }
+}

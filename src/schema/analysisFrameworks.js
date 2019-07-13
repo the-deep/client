@@ -142,4 +142,72 @@ const analysisFrameworkSchema = [];
     analysisFrameworkSchema.push({ name, schema });
 }
 
+{
+    const name = 'membership';
+    const schema = {
+        doc: {
+            name: {
+                name: 'Framework membership unit',
+            },
+            fields: {
+                id: { type: 'uint', required: true },
+                member: { type: 'uint', required: true },
+                role: { type: 'uint', required: true },
+                memberDetails: { type: 'object', required: true },
+            },
+        },
+    };
+    analysisFrameworkSchema.push({ name, schema });
+}
+
+{
+    const name = 'frameworkMembersList';
+    const schema = {
+        doc: {
+            name: 'Frameworks members list',
+            description: 'List of framework members',
+        },
+        fields: {
+            memberships: { type: 'array.membership', required: true },
+        },
+    };
+    analysisFrameworkSchema.push({ name, schema });
+}
+
+{
+    const name = 'frameworkRole';
+    const schema = {
+        doc: {
+            name: 'Frameworks role',
+            description: 'Framework roles',
+        },
+        fields: {
+            id: { type: 'uint', required: true },
+            title: { type: 'string', required: true },
+            canAddUser: { type: 'boolean', required: true },
+            canCloneFramework: { type: 'boolean', required: true },
+            canUseInOtherProjects: { type: 'boolean', required: true },
+            canEditFramework: { type: 'boolean', required: true },
+        },
+    };
+    analysisFrameworkSchema.push({ name, schema });
+}
+
+{
+    const name = 'frameworkRolesList';
+    const schema = {
+        doc: {
+            name: 'Frameworks roles list',
+            description: 'List of framework roles',
+        },
+        fields: {
+            count: { type: 'uint', required: true },
+            next: { type: 'string' },
+            previous: { type: 'string' },
+            results: { type: 'array.frameworkRole', required: true },
+        },
+    };
+    analysisFrameworkSchema.push({ name, schema });
+}
+
 export default analysisFrameworkSchema;
