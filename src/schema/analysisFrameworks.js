@@ -188,6 +188,7 @@ const analysisFrameworkSchema = [];
             canCloneFramework: { type: 'boolean', required: true },
             canUseInOtherProjects: { type: 'boolean', required: true },
             canEditFramework: { type: 'boolean', required: true },
+            isDefaultRole: { type: 'boolean' },
         },
     };
     analysisFrameworkSchema.push({ name, schema });

@@ -17,12 +17,13 @@ import {
 import { activeUserSelector } from '#redux';
 import _ts from '#ts';
 
+import AddFromSearch from './AddFromSearch';
 import Actions from './Actions';
 
 import styles from './styles.scss';
 
 const propTypes = {
-    frameworkId: PropTypes.number, // eslint-disable-line react/no-unused-prop-types
+    frameworkId: PropTypes.number,
     // eslint-disable-next-line react/no-unused-prop-types
     onSetUsers: PropTypes.func.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
@@ -62,6 +63,7 @@ const requests = {
         url: '/framework-roles/',
         method: requestMethods.GET,
         onMount: true,
+        schemaName: 'frameworkRolesList',
     },
 };
 
@@ -85,6 +87,10 @@ export default class FrameworkUsersTable extends React.PureComponent {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            searchText: '',
+        };
 
         this.headers = [
             {
@@ -171,8 +177,13 @@ export default class FrameworkUsersTable extends React.PureComponent {
         ];
     }
 
+    handleSearchChange = (searchText) => {
+        this.setState({ searchText });
+    }
+
     render() {
         const {
+            frameworkId,
             frameworkRolesRequest: {
                 pending: frameworkRolesPending,
             },
@@ -181,6 +192,10 @@ export default class FrameworkUsersTable extends React.PureComponent {
             },
             users,
         } = this.props;
+
+        const {
+            searchText,
+        } = this.state;
 
         if (frameworkRolesPending || frameworkUsersPending) {
             return (
@@ -196,6 +211,11 @@ export default class FrameworkUsersTable extends React.PureComponent {
                     <h4>
                         {_ts('project.framework.editModal', 'membersTableHeader')}
                     </h4>
+                    <AddFromSearch
+                        frameworkId={frameworkId}
+                        searchText={searchText}
+                        onSearchChange={this.handleSearchChange}
+                    />
                 </header>
                 <div className={styles.tableContainer} >
                     <Table

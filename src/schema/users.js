@@ -30,6 +30,7 @@ const userSchema = [];
             displayName: { type: 'string', required: true },
             displayPicture: { type: 'uint' }, // id
             email: { type: 'string', required: true },
+            emailOptOuts: { type: 'array' },
             firstName: { type: 'string', required: true },
             id: { type: 'uint', required: true },
             lastName: { type: 'string', required: true },
@@ -154,6 +155,23 @@ const userSchema = [];
         fields: {
             users: { type: 'usersGetResponse', required: false },
             'user-groups': { type: 'userGroupsGetResponse', required: true },
+        },
+    };
+    userSchema.push({ name, schema });
+}
+
+{
+    const name = 'usersSearchGetResponse';
+    const schema = {
+        doc: {
+            name: 'Users Search Get Response',
+            description: 'Response for user search',
+        },
+        fields: {
+            count: { type: 'uint', required: true },
+            next: { type: 'string' },
+            previous: { type: 'string' },
+            results: { type: 'array.user', required: true },
         },
     };
     userSchema.push({ name, schema });
