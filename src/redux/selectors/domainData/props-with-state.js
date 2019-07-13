@@ -137,16 +137,6 @@ export const currentUserAdminProjectsSelector = createSelector(
     projects => projects.filter(project => project),
 );
 
-export const currentUserProjectSelector = createSelector(
-    currentUserAdminProjectsSelector,
-    projectIdFromRoute,
-    (projects, projectId) => {
-        const projectIndex = projects.findIndex(p => p.id === projectId);
-        return projects[projectIndex] || emptyObject;
-    },
-);
-
-
 // activeUser, projectIdFromRoute
 export const currentUserActiveProjectSelector = createSelector(
     currentUserProjectsSelector,

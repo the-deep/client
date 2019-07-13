@@ -46,6 +46,7 @@ const propTypes = {
     setActiveFramework: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
     frameworkGetRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    setDefaultRequestParams: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -70,6 +71,13 @@ const requests = {
         method: requestMethods.GET,
         onPropsChanged: ['frameworkId'],
         onMount: ({ props }) => !!props.frameworkId,
+        onSuccess: ({ params, response }) => {
+            const editFrameworkDetails = {
+                title: response.title,
+                description: response.description,
+            };
+            params.handleDetailsChange(editFrameworkDetails);
+        },
         schemaName: 'analysisFramework',
     },
 };
@@ -84,16 +92,28 @@ export default class FrameworkDetail extends React.PureComponent {
         super(props);
         this.state = {
             activeView: 'overview',
+            editFrameworkDetails: {
+                title: '',
+                description: '',
+            },
         };
 
         this.tabs = {
             overview: _ts('project.framework', 'entryOverviewTitle'),
             list: _ts('project.framework', 'entryListTitle'),
         };
+
+        this.props.setDefaultRequestParams({
+            handleDetailsChange: this.handleDetailsChange,
+        });
     }
 
     handleTabClick = (tabId) => {
         this.setState({ activeView: tabId });
+    }
+
+    handleDetailsChange = (editFrameworkDetails) => {
+        this.setState({ editFrameworkDetails });
     }
 
     renderHeader = ({ framework }) => {
@@ -104,8 +124,6 @@ export default class FrameworkDetail extends React.PureComponent {
 
         const {
             id: analysisFrameworkId,
-            title: frameworkTitle,
-            description: frameworkDescription,
             role: {
                 canCloneFramework = false,
                 canEditFramework = false,
@@ -125,9 +143,15 @@ export default class FrameworkDetail extends React.PureComponent {
         } = this.props;
 
         const {
+            editFrameworkDetails,
             pending,
             activeView,
         } = this.state;
+
+        const {
+            title: frameworkTitle,
+            description: frameworkDescription,
+        } = editFrameworkDetails;
 
         const canUse = canUseInOtherProjects && (currentFrameworkId !== analysisFrameworkId);
 
@@ -174,8 +198,8 @@ export default class FrameworkDetail extends React.PureComponent {
                                     modal={
                                         <EditFrameworkModal
                                             frameworkId={analysisFrameworkId}
-                                            title={frameworkTitle}
-                                            description={frameworkDescription}
+                                            frameworkDetails={editFrameworkDetails}
+                                            onFrameworkDetailsChange={this.handleDetailsChange}
                                         />
                                     }
                                 >
@@ -281,9 +305,7 @@ export default class FrameworkDetail extends React.PureComponent {
 
         return (
             <div className={className}>
-                <Header
-                    framework={framework}
-                />
+                <Header framework={framework} />
                 <Preview
                     activeView={activeView}
                     className={styles.preview}
