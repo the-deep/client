@@ -15,46 +15,6 @@
         background-color: var(--color-background-alt);
         width: 70%;
 
-        .header {
-            display: flex;
-            align-items: flex-end;
-            background-color: var(--color-foreground);
-            height: var(--height-header);
-
-            .name-input {
-                flex-shrink: 0;
-                padding: 0 var(--spacing-medium);
-
-                :global {
-                    .input {
-                        padding: 0;
-                    }
-
-                    .empty,
-                    .error {
-                        margin-top: 0;
-                    }
-                }
-            }
-
-            .description-input {
-                flex-grow: 1;
-                padding: 0 var(--spacing-medium);
-
-                :global {
-                    .input {
-                        padding: 0;
-                        resize: none;
-                    }
-
-                    .empty,
-                    .error {
-                        margin-top: 0;
-                    }
-                }
-            }
-        }
-
         .scroll-wrapper {
             width: 100%;
             height: calc(100% - var(--height-header));

@@ -1,17 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import Faram from '@togglecorp/faram';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import TextInput from '#rsci/TextInput';
-import TextArea from '#rsci/TextArea';
 
 import {
     widgetListingVisibility,
     widgetList,
     VIEW,
 } from '#widgets';
-import _ts from '#ts';
 
 import WidgetList from '../WidgetList';
 import WidgetEditor from '../WidgetEditor';
@@ -24,17 +20,10 @@ const overviewWidgets = widgetList.filter(
 
 const propTypes = {
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    faramValues: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    faramErrors: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    faramSchema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    onChange: PropTypes.func.isRequired,
     pending: PropTypes.bool,
 };
 
 const defaultProps = {
-    faramValues: {},
-    faramErrors: {},
-    faramSchema: {},
     pending: false,
 };
 
@@ -56,10 +45,6 @@ export default class Overview extends React.PureComponent {
                 widgets,
             } = {},
             pending,
-            faramValues,
-            faramErrors,
-            faramSchema,
-            onChange,
         } = this.props;
 
         return (
@@ -72,28 +57,6 @@ export default class Overview extends React.PureComponent {
                     analysisFrameworkId={analysisFrameworkId}
                 />
                 <div className={styles.gridLayoutContainer}>
-                    <Faram
-                        className={styles.header}
-                        onChange={onChange}
-                        schema={faramSchema}
-                        value={faramValues}
-                        error={faramErrors}
-                        disabled={pending}
-                    >
-                        <TextInput
-                            className={styles.nameInput}
-                            label={_ts('widgets.editor', 'addAfTitleLabel')}
-                            faramElementName="title"
-                            placeholder={_ts('widgets.editor', 'addAfTitlePlaceholder')}
-                        />
-                        <TextArea
-                            className={styles.descriptionInput}
-                            label={_ts('widgets.editor', 'afDescriptionLabel')}
-                            faramElementName="description"
-                            placeholder={_ts('widgets.editor', 'afDescriptionPlaceholder')}
-                            rows={1}
-                        />
-                    </Faram>
                     <div className={styles.scrollWrapper}>
                         <WidgetEditor
                             widgets={widgets}

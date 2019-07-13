@@ -28,7 +28,6 @@ import {
     activeProjectIdFromStateSelector,
 
     afViewFaramValuesSelector,
-    afViewFaramErrorsSelector,
     setAfViewFaramAction,
     setAfViewGeoOptionsAction,
 
@@ -53,7 +52,6 @@ const propTypes = {
 
     routeUrl: PropTypes.string.isRequired,
     faramValues: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    faramErrors: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     setFaram: PropTypes.func.isRequired,
     setGeoOptions: PropTypes.func.isRequired,
 };
@@ -61,7 +59,6 @@ const propTypes = {
 const defaultProps = {
     analysisFramework: undefined,
     faramValues: {},
-    faramErrors: {},
 };
 
 const mapStateToProps = state => ({
@@ -71,7 +68,6 @@ const mapStateToProps = state => ({
     projectId: activeProjectIdFromStateSelector(state),
     routeUrl: routeUrlSelector(state),
     faramValues: afViewFaramValuesSelector(state),
-    faramErrors: afViewFaramErrorsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -122,12 +118,7 @@ export default class AnalysisFramework extends React.PureComponent {
                 component: Overview,
                 rendererParams: () => ({
                     analysisFramework: this.props.analysisFramework,
-
                     pending: this.state.pendingSaveFramework,
-                    onChange: this.handleFaramChange,
-                    faramSchema: AnalysisFramework.schema,
-                    faramValues: this.props.faramValues,
-                    faramErrors: this.props.faramErrors,
                 }),
                 wrapContainer: true,
                 mount: true,
