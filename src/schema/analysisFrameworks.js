@@ -143,7 +143,7 @@ const analysisFrameworkSchema = [];
 }
 
 {
-    const name = 'membership';
+    const name = 'frameworkMembership';
     const schema = {
         doc: {
             name: {
@@ -168,7 +168,7 @@ const analysisFrameworkSchema = [];
             description: 'List of framework members',
         },
         fields: {
-            memberships: { type: 'array.membership', required: true },
+            memberships: { type: 'array.frameworkMembership', required: true },
         },
     };
     analysisFrameworkSchema.push({ name, schema });

@@ -26,7 +26,6 @@ const propTypes = {
     frameworkId: PropTypes.number,
     // eslint-disable-next-line react/no-unused-prop-types
     onSetUsers: PropTypes.func.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
     onAddUser: PropTypes.func.isRequired,
     onPatchUser: PropTypes.func.isRequired,
     onDeleteUser: PropTypes.func.isRequired,
@@ -184,6 +183,7 @@ export default class FrameworkUsersTable extends React.PureComponent {
     render() {
         const {
             frameworkId,
+            onAddUser,
             frameworkRolesRequest: {
                 pending: frameworkRolesPending,
             },
@@ -212,6 +212,7 @@ export default class FrameworkUsersTable extends React.PureComponent {
                         {_ts('project.framework.editModal', 'membersTableHeader')}
                     </h4>
                     <AddFromSearch
+                        onAddUser={onAddUser}
                         frameworkId={frameworkId}
                         searchText={searchText}
                         onSearchChange={this.handleSearchChange}

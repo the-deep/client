@@ -30,6 +30,7 @@ const requests = {
         }) => {
             onPatchUser(member, response);
         },
+        schemaName: 'frameworkMembership',
     },
 
     removeUserMembershipRequest: {
@@ -98,6 +99,7 @@ export default class EditFrameworkUsersActions extends React.PureComponent {
             },
             isActiveUser,
         } = this.props;
+
         const pending = changePending || removePending;
 
         return (

@@ -34,7 +34,7 @@ const defaultProps = {
     pending: false,
 };
 
-export default class NaiveSearchList extends React.PureComponent {
+export default class NaiveSearchList extends React.Component {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
