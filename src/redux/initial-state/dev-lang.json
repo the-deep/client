@@ -953,7 +953,7 @@
         "-86428588": "Are you sure you want to export {countLeads} leads to {countProjects} projects?",
         "-81861908": "Extract leads to other projects",
         "-78373067": "Failed to extract leads to other projects.",
-        "-69982235": "Successfully exported {leadsCount} leads to {projectsCount} projects."
+        "-69982235": "Successfully created {leadsCount} leads in {projectsCount} projects."
     },
     "links": {
         "browserExtension": {
