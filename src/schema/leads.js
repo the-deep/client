@@ -147,6 +147,14 @@ const leadSchema = [];
         fields: {
             projects: { type: 'array.uint', required: true },
             leads: { type: 'array.uint', required: true },
+            leadsByProjects: {
+                type: {
+                    doc: { name: 'map of leads' },
+                    fields: {
+                        '*': { type: 'array.uint', required: true },
+                    },
+                },
+            },
         },
     };
     leadSchema.push({ name, schema });
