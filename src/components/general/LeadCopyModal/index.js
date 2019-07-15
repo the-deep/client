@@ -8,10 +8,10 @@ import ModalBody from '#rscv/Modal/Body';
 import ModalFooter from '#rscv/Modal/Footer';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ListSelection from '#rsci/ListSelection';
-import TextInput from '#rsci/TextInput';
+import SearchInput from '#rsci/SearchInput';
 
 import DangerButton from '#rsca/Button/DangerButton';
-import SuccessConfirmButton from '#rsca/ConfirmButton/SuccessConfirmButton';
+import PrimaryConfirmButton from '#rsca/ConfirmButton/PrimaryConfirmButton';
 
 import {
     currentUserAdminProjectsSelector,
@@ -60,7 +60,17 @@ const requests = {
         url: '/lead-copy/',
         body: ({ params: { body } }) => body,
         method: requestMethods.POST,
-        onSuccess: ({ response: { leads, projects }, props: { closeModal } }) => {
+        onSuccess: ({
+            response: {
+                leadsByProjects,
+            },
+            props: {
+                closeModal,
+            },
+        }) => {
+            const projects = Object.keys(leadsByProjects);
+            const leads = Object.values(leadsByProjects).flat();
+
             const message = _ts(
                 'leads.copyModal',
                 'successNotify',
@@ -171,7 +181,7 @@ export default class LeadCopyModal extends React.PureComponent {
                     {pending && <LoadingAnimation />}
                     <header className={styles.header} >
                         <div className={styles.inputs} >
-                            <TextInput
+                            <SearchInput
                                 className={styles.searchInput}
                                 label={_ts('leads.copyModal', 'searchInputLabel')}
                                 placeholder={_ts('leads.copyModal', 'searchInputPlaceholder')}
@@ -208,14 +218,14 @@ export default class LeadCopyModal extends React.PureComponent {
                     >
                         {_ts('leads.copyModal', 'cancelButtonTitle')}
                     </DangerButton>
-                    <SuccessConfirmButton
+                    <PrimaryConfirmButton
                         confirmationMessage={confirmMessage}
                         disabled={notSelected}
                         pending={pending}
                         onClick={this.handleExport}
                     >
                         {_ts('leads.copyModal', 'exportButtonTitle')}
-                    </SuccessConfirmButton>
+                    </PrimaryConfirmButton>
                 </ModalFooter>
             </Modal>
         );
