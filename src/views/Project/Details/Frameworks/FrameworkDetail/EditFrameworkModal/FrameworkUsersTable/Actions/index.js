@@ -57,6 +57,7 @@ const propTypes = {
         email: PropTypes.string,
     }),
     isActiveUser: PropTypes.bool.isRequired,
+    canEditMemberships: PropTypes.bool.isRequired,
 };
 
 const defaultProps = {
@@ -98,6 +99,7 @@ export default class EditFrameworkUsersActions extends React.PureComponent {
                 email,
             },
             isActiveUser,
+            canEditMemberships,
         } = this.props;
 
         const pending = changePending || removePending;
@@ -111,7 +113,7 @@ export default class EditFrameworkUsersActions extends React.PureComponent {
                     onChange={this.handleRoleChange}
                     keySelector={rolesKeySelector}
                     labelSelector={rolesLabelSelector}
-                    disabled={pending || isActiveUser}
+                    disabled={pending || isActiveUser || !canEditMemberships}
                     label={_ts('project.framework.editModal', 'userRoleSelectTitle')}
                     placeholder=""
                     hideClearButton
@@ -121,7 +123,7 @@ export default class EditFrameworkUsersActions extends React.PureComponent {
                     transparent
                     iconName="delete"
                     onClick={this.handleUserRemove}
-                    disabled={pending || isActiveUser}
+                    disabled={pending || isActiveUser || !canEditMemberships}
                     title={_ts('project.framework.editModal', 'userRemoveButtonTitle')}
                     confirmationMessage={_ts(
                         'project.framework.editModal',

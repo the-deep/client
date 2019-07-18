@@ -27,6 +27,8 @@ const propTypes = {
     frameworkDetails: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     frameworkPatchRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     closeModal: PropTypes.func,
+    isPrivate: PropTypes.bool.isRequired,
+    canEditMemberships: PropTypes.bool.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     onFrameworkDetailsChange: PropTypes.func.isRequired,
 };
@@ -154,6 +156,8 @@ export default class EditFrameworkModal extends React.PureComponent {
             },
             closeModal,
             frameworkId,
+            isPrivate,
+            canEditMemberships,
         } = this.props;
 
         const {
@@ -214,11 +218,13 @@ export default class EditFrameworkModal extends React.PureComponent {
                     <div className={styles.editUsersSection} >
                         <FrameworkUsersTable
                             frameworkId={frameworkId}
+                            isPrivate={isPrivate}
                             onSetUsers={this.handleUsersSet}
                             onAddUser={this.handleUserAdd}
                             onPatchUser={this.handleUserPatch}
                             onDeleteUser={this.handleUserDelete}
                             users={users}
+                            canEditMemberships={canEditMemberships}
                         />
                     </div>
                 </ModalBody>

@@ -24,6 +24,7 @@ import styles from './styles.scss';
 
 const propTypes = {
     frameworkId: PropTypes.number,
+    canEditMemberships: PropTypes.bool.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     onSetUsers: PropTypes.func.isRequired,
     onAddUser: PropTypes.func.isRequired,
@@ -51,15 +52,20 @@ const requests = {
         method: requestMethods.GET,
         onMount: true,
         onSuccess: ({
-            response: { memberships } = {},
+            response: { results } = {},
             props: { onSetUsers },
         }) => {
-            onSetUsers(memberships);
+            onSetUsers(results);
         },
         schemaName: 'frameworkMembersList',
     },
     frameworkRolesRequest: {
-        url: '/framework-roles/',
+        url: ({ props }) => {
+            if (props.isPrivate) {
+                return '/private-framework-roles/';
+            }
+            return '/public-framework-roles/';
+        },
         method: requestMethods.GET,
         onMount: true,
         schemaName: 'frameworkRolesList',
@@ -157,6 +163,7 @@ export default class FrameworkUsersTable extends React.PureComponent {
                         },
                         onDeleteUser,
                         onPatchUser,
+                        canEditMemberships,
                         activeUser: { userId },
                     } = this.props;
 
@@ -167,6 +174,7 @@ export default class FrameworkUsersTable extends React.PureComponent {
                             role={role}
                             roles={roles}
                             onDeleteUser={onDeleteUser}
+                            canEditMemberships={canEditMemberships}
                             onPatchUser={onPatchUser}
                             isActiveUser={userId === member}
                         />
@@ -191,6 +199,7 @@ export default class FrameworkUsersTable extends React.PureComponent {
                 pending: frameworkUsersPending,
             },
             users,
+            canEditMemberships,
         } = this.props;
 
         const {
@@ -211,12 +220,14 @@ export default class FrameworkUsersTable extends React.PureComponent {
                     <h4>
                         {_ts('project.framework.editModal', 'membersTableHeader')}
                     </h4>
-                    <AddFromSearch
-                        onAddUser={onAddUser}
-                        frameworkId={frameworkId}
-                        searchText={searchText}
-                        onSearchChange={this.handleSearchChange}
-                    />
+                    {canEditMemberships && (
+                        <AddFromSearch
+                            onAddUser={onAddUser}
+                            frameworkId={frameworkId}
+                            searchText={searchText}
+                            onSearchChange={this.handleSearchChange}
+                        />
+                    )}
                 </header>
                 <div className={styles.tableContainer} >
                     <Table

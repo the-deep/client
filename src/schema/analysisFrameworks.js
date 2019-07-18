@@ -168,7 +168,7 @@ const analysisFrameworkSchema = [];
             description: 'List of framework members',
         },
         fields: {
-            memberships: { type: 'array.frameworkMembership', required: true },
+            results: { type: 'array.frameworkMembership', required: true },
         },
     };
     analysisFrameworkSchema.push({ name, schema });
@@ -189,6 +189,7 @@ const analysisFrameworkSchema = [];
             canUseInOtherProjects: { type: 'boolean', required: true },
             canEditFramework: { type: 'boolean', required: true },
             isDefaultRole: { type: 'boolean' },
+            isPrivateRole: { type: 'boolean' },
         },
     };
     analysisFrameworkSchema.push({ name, schema });

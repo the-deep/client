@@ -53,8 +53,8 @@ const requests = {
             onAddUser(response);
             handleUserAdd(response.member);
         },
+        schemaName: 'frameworkMembership',
     },
-    schemaName: 'frameworkMembership',
 };
 
 const listKeySelector = l => l.id;
@@ -117,8 +117,6 @@ export default class AddFrameworkUserFromSearch extends React.PureComponent {
         const membership = {
             member: userId,
             framework: frameworkId,
-            // TODO: Set lowest permission from server
-            role: 2,
         };
 
         this.setState({ selectedUser: userId });

@@ -127,6 +127,7 @@ export default class FrameworkDetail extends React.PureComponent {
             role: {
                 canCloneFramework = false,
                 canEditFramework = false,
+                canAddUser = false,
                 canUseInOtherProjects = false,
             } = {},
             isPrivate,
@@ -199,7 +200,9 @@ export default class FrameworkDetail extends React.PureComponent {
                                         <EditFrameworkModal
                                             frameworkId={analysisFrameworkId}
                                             frameworkDetails={editFrameworkDetails}
+                                            isPrivate={isPrivate}
                                             onFrameworkDetailsChange={this.handleDetailsChange}
+                                            canEditMemberships={canAddUser}
                                         />
                                     }
                                 >
