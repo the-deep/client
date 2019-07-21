@@ -466,7 +466,6 @@
         "1125": "Failed to fetch projects",
         "1126": "Failed to save project.",
         "1127": "Failed to create new category editor.",
-        "1128": "Failed to create new framework.",
         "1129": "Group",
         "1130": "Progress reports of June",
         "1131": "Add lead group",
@@ -951,7 +950,6 @@
         "-57055647": "Project Visibility",
         "-16703906": "Export leads to other projects",
         "-86428588": "Are you sure you want to export {countLeads} leads to {countProjects} projects?",
-        "-81861908": "Extract leads to other projects",
         "-78373067": "Failed to extract leads to other projects.",
         "-69982235": "Successfully created {leadsCount} leads in {projectsCount} projects.",
         "-59667485": "Note: Framework visibility cannot be changed once the framework is created.",
@@ -960,7 +958,16 @@
         "-49370702": "Edit widgets",
         "-22564813": "Are you sure you want to remove membership of {name}({email}) from this framework?",
         "-81392551": "Search and add users",
-        "-68055625": "Type to search"
+        "-68055625": "Type to search",
+        "-48269508": "Cannot clone the analysis framework. Please check your network connection and try again.",
+        "-51115684": "Analysis Framework Edit",
+        "-97955721": "Successfully edited analysis framework's detail.",
+        "-27000743": "Failed to edit analysis framework.",
+        "-49766949": "Failed to get members of analysis framework.",
+        "-86595482": "Failed to get roles of analysis framework.",
+        "-85690459": "Failed to get members of the analysis framework.",
+        "-68606611": "Failed to remove user from analysis framework.",
+        "-14647683": "Failed to change role of member in analysis framework."
     },
     "links": {
         "browserExtension": {
@@ -1907,7 +1914,6 @@
             "addRegionButtonLabel": 301,
             "projectSaveFailure": 1126,
             "categoryEditorCreateFailure": 1127,
-            "frameworkCreateFailure": 1128,
             "headerProjects": 173,
             "addProjectButtonLabel": 301,
             "discoverProjectButtonLabel": 7632,
@@ -1960,12 +1966,11 @@
             "addAfTitleLabel": 379,
             "noAfText": 359,
             "project": 31,
-            "afGetTitle": 379,
-            "afGetFatal": 991,
             "privateProjectBadgeTitle": -92759559,
             "priivateProjectBadgeTooltip": -64655622,
             "afClone": 12502,
-            "afCloneSuccess": -8045218
+            "afCloneSuccess": -8045218,
+            "afCloneFatal": -48269508
         },
         "connector": {
             "noConnectorsLabel": 1115,
@@ -2157,7 +2162,6 @@
             "userProjectCreate": 916,
             "userProjectCreateSuccess": 917,
             "projectCreateFatalError": -77603800,
-            "isPrivateCheckboxLabel": -92759559,
             "projectVisibilityInputLabel": 1120,
             "visibilityPrivateLabel": -92759559,
             "visibilityPublicLabel": -59389,
@@ -2756,6 +2760,23 @@
         },
         "components.addFromSearch": {
             "addFromSearchLabel": -68055625
+        },
+        "project.framework.edit": {
+            "afPatchSuccess": -97955721,
+            "afPatch": -51115684,
+            "afPatchFatal": -27000743,
+            "membersGetFailure": -49766949,
+            "rolesGetFailure": -86595482,
+            "membersGetFatal": -49766949,
+            "rolesGetFatal": -86595482,
+            "membershipAddFailure": 177,
+            "membershipAddFatal": 177,
+            "membershipListFetchFailure": -85690459,
+            "membershipListFetchFatal": -85690459,
+            "membershipRemoveFailure": -68606611,
+            "membershipRemoveFatal": -68606611,
+            "membershipRoleChangeFailure": -14647683,
+            "membershipRoleChangeFatal": -14647683
         }
     }
 }

@@ -8,9 +8,9 @@ import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
 import {
     RequestClient,
     requestMethods,
-    notifyOnFailure,
 } from '#request';
 
+import notify from '#notify';
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -20,7 +20,22 @@ const requests = {
         url: ({ props: { member } }) => `/framework-memberships/${member}/`,
         method: requestMethods.PATCH,
         body: ({ params: { membership } }) => membership,
-        onFailure: notifyOnFailure(_ts('project.users', 'usersTitle')),
+        onFailure: () => {
+            notify.send({
+                title: _ts('project.framework.edit', 'afPatch'),
+                type: notify.type.ERROR,
+                message: _ts('project.framework.edit', 'membershipRoleChangeFailure'),
+                duration: notify.duration.SLOW,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                title: _ts('project.framework.edit', 'afPatch'),
+                type: notify.type.ERROR,
+                message: _ts('project.framework.edit', 'membershipRoleChangeFatal'),
+                duration: notify.duration.SLOW,
+            });
+        },
         onSuccess: ({
             response,
             props: {
@@ -36,7 +51,22 @@ const requests = {
     removeUserMembershipRequest: {
         url: ({ props: { member } }) => `/framework-memberships/${member}/`,
         method: requestMethods.DELETE,
-        onFailure: notifyOnFailure(_ts('project.users', 'usersTitle')),
+        onFailure: () => {
+            notify.send({
+                title: _ts('project.framework.edit', 'afPatch'),
+                type: notify.type.ERROR,
+                message: _ts('project.framework.edit', 'membershipRemoveFailure'),
+                duration: notify.duration.SLOW,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                title: _ts('project.framework.edit', 'afPatch'),
+                type: notify.type.ERROR,
+                message: _ts('project.framework.edit', 'membershipRemoveFatal'),
+                duration: notify.duration.SLOW,
+            });
+        },
         onSuccess: ({ props: {
             onDeleteUser,
             member,

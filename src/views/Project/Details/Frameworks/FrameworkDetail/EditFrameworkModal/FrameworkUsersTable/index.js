@@ -15,7 +15,9 @@ import {
     requestMethods,
 } from '#request';
 import { activeUserSelector } from '#redux';
+
 import _ts from '#ts';
+import notify from '#notify';
 
 import AddFromSearch from './AddFromSearch';
 import Actions from './Actions';
@@ -36,6 +38,10 @@ const propTypes = {
     }),
     frameworkRolesRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     usersGetRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    // Close modal is used here to unmount modal if there is failure to get
+    // memberships or roles
+    // eslint-disable-next-line react/no-unused-prop-types
+    closeModal: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -57,6 +63,24 @@ const requests = {
         }) => {
             onSetUsers(results);
         },
+        onFailure: ({ props: { closeModal } }) => {
+            notify.send({
+                title: _ts('project.framework.edit', 'afPatch'),
+                type: notify.type.ERROR,
+                message: _ts('project.framework.edit', 'membersGetFailure'),
+                duration: notify.duration.SLOW,
+            });
+            closeModal();
+        },
+        onFatal: ({ props: { closeModal } }) => {
+            notify.send({
+                title: _ts('project.framework.edit', 'afPatch'),
+                type: notify.type.ERROR,
+                message: _ts('project.framework.edit', 'membersGetFatal'),
+                duration: notify.duration.SLOW,
+            });
+            closeModal();
+        },
         schemaName: 'frameworkMembersList',
     },
     frameworkRolesRequest: {
@@ -69,6 +93,24 @@ const requests = {
         method: requestMethods.GET,
         onMount: true,
         schemaName: 'frameworkRolesList',
+        onFailure: ({ props: { closeModal } }) => {
+            notify.send({
+                title: _ts('project.framework.edit', 'afPatch'),
+                type: notify.type.ERROR,
+                message: _ts('project.framework.edit', 'rolesGetFailure'),
+                duration: notify.duration.SLOW,
+            });
+            closeModal();
+        },
+        onFatal: ({ props: { closeModal } }) => {
+            notify.send({
+                title: _ts('project.framework.edit', 'afPatch'),
+                type: notify.type.ERROR,
+                message: _ts('project.framework.edit', 'rolesGetFatal'),
+                duration: notify.duration.SLOW,
+            });
+            closeModal();
+        },
     },
 };
 

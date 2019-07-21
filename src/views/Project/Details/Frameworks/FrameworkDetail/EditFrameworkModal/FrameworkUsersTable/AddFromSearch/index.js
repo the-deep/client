@@ -13,6 +13,8 @@ import Message from '#rscv/Message';
 import UserAddItem from '#components/general/UserAddItem';
 
 import _ts from '#ts';
+import notify from '#notify';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -79,6 +81,22 @@ const requests = {
         onSuccess: ({ response, params }) => {
             params.handleUsersPull(response.results);
         },
+        onFailure: () => {
+            notify.send({
+                title: _ts('project.framework.edit', 'afPatch'),
+                type: notify.type.ERROR,
+                message: _ts('project.framework.edit', 'membershipListFetchFailure'),
+                duration: notify.duration.SLOW,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                title: _ts('project.framework.edit', 'afPatch'),
+                type: notify.type.ERROR,
+                message: _ts('project.framework.edit', 'membershipListFetchFatal'),
+                duration: notify.duration.SLOW,
+            });
+        },
         schemaName: 'usersSearchGetResponse',
     },
     userAddRequest: {
@@ -96,6 +114,22 @@ const requests = {
         }) => {
             onAddUser(response);
             handleUserAdd(response.member);
+        },
+        onFailure: () => {
+            notify.send({
+                title: _ts('project.framework.edit', 'afPatch'),
+                type: notify.type.ERROR,
+                message: _ts('project.framework.edit', 'membershipAddFailure'),
+                duration: notify.duration.SLOW,
+            });
+        },
+        onFatal: () => {
+            notify.send({
+                title: _ts('project.framework.edit', 'afPatch'),
+                type: notify.type.ERROR,
+                message: _ts('project.framework.edit', 'membershipAddFatal'),
+                duration: notify.duration.SLOW,
+            });
         },
         schemaName: 'frameworkMembership',
     },

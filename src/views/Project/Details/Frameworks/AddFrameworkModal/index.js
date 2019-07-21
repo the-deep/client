@@ -66,6 +66,20 @@ const requests = {
             });
             props.closeModal();
         },
+        onFailure: ({
+            error: { faramErrors },
+            params: { handleFailure },
+        }) => {
+            handleFailure(faramErrors);
+        },
+        onFatal: () => {
+            notify.send({
+                title: _ts('project', 'afCreate'),
+                type: notify.type.ERROR,
+                message: _ts('project', 'afCloneFatal'),
+                duration: notify.duration.SLOW,
+            });
+        },
         schemaName: 'analysisFramework',
     },
     frameworkCreateRequest: {
@@ -82,6 +96,12 @@ const requests = {
                 duration: notify.duration.MEDIUM,
             });
             props.closeModal();
+        },
+        onFailure: ({
+            error: { faramErrors },
+            params: { handleFailure },
+        }) => {
+            handleFailure(faramErrors);
         },
         onFatal: () => {
             notify.send({
@@ -145,9 +165,16 @@ export default class AddFrameworkModal extends React.PureComponent {
         } = this.props;
 
         if (isClone && isTruthy(frameworkId)) {
-            frameworkCloneRequest.do({ values, frameworkId });
+            frameworkCloneRequest.do({
+                values,
+                frameworkId,
+                handleFailure: this.handleValidationFailure,
+            });
         } else if (!isClone) {
-            frameworkCreateRequest.do({ values });
+            frameworkCreateRequest.do({
+                values,
+                handleFailure: this.handleValidationFailure,
+            });
         }
     };
 

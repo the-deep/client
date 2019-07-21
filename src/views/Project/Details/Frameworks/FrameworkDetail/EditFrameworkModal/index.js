@@ -16,6 +16,8 @@ import {
     RequestClient,
     requestMethods,
 } from '#request';
+
+import notify from '#notify';
 import _ts from '#ts';
 
 import FrameworkUsersTable from './FrameworkUsersTable';
@@ -55,6 +57,26 @@ const requests = {
         }) => {
             params.setPristine();
             props.onFrameworkDetailsChange({ title, description });
+            notify.send({
+                title: _ts('project.framework.edit', 'afPatch'),
+                type: notify.type.SUCCESS,
+                message: _ts('project.framework.edit', 'afPatchSuccess'),
+                duration: notify.duration.MEDIUM,
+            });
+        },
+        onFailure: ({
+            error: { faramErrors },
+            params: { handleFailure },
+        }) => {
+            handleFailure(faramErrors);
+        },
+        onFatal: () => {
+            notify.send({
+                title: _ts('project.framework.edit', 'afPatch'),
+                type: notify.type.ERROR,
+                message: _ts('project.framework.edit', 'afPatchFatal'),
+                duration: notify.duration.SLOW,
+            });
         },
         schemaName: 'analysisFramework',
     },
@@ -115,6 +137,7 @@ export default class EditFrameworkModal extends React.PureComponent {
         frameworkPatchRequest.do({
             body,
             setPristine: this.setPristine,
+            handleFailure: this.handleValidationFailure,
         });
     }
 
@@ -225,6 +248,7 @@ export default class EditFrameworkModal extends React.PureComponent {
                             onDeleteUser={this.handleUserDelete}
                             users={users}
                             canEditMemberships={canEditMemberships}
+                            closeModal={closeModal}
                         />
                     </div>
                 </ModalBody>
