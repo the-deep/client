@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import produce from 'immer';
+import { _cs } from '@togglecorp/fujs';
 
 import {
     RequestClient,
@@ -8,9 +9,14 @@ import {
 } from '#request';
 
 import NaiveSearchList from '#components/general/NaiveSearchList';
+import Message from '#rscv/Message';
 import UserAddItem from '#components/general/UserAddItem';
 
+import _ts from '#ts';
+import styles from './styles.scss';
+
 const propTypes = {
+    className: PropTypes.string,
     frameworkId: PropTypes.number,
     searchText: PropTypes.string,
     onSearchChange: PropTypes.func,
@@ -20,6 +26,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     frameworkId: undefined,
     searchText: '',
     onSearchChange: () => {},
@@ -27,11 +34,48 @@ const defaultProps = {
     userAddRequest: {},
 };
 
+const emptyList = [];
+
+const SearchEmptyComponent = ({ className }) => (
+    <div className={_cs(className, styles.searchEmpty)}>
+        <Message>
+            {_ts('components.addFromSearch', 'addFromSearchLabel')}
+        </Message>
+    </div>
+);
+
+SearchEmptyComponent.propTypes = {
+    className: PropTypes.string,
+};
+
+SearchEmptyComponent.defaultProps = {
+    className: '',
+};
+
+const USER_SEARCH_LIMIT = 25;
+
 const requests = {
     listGetRequest: {
-        url: ({ props }) => `/users/?search=${props.searchText}&members_exclude_framework=${props.frameworkId}`,
+        url: '/users/',
+        query: ({
+            props: {
+                searchText,
+                frameworkId,
+            },
+        }) => ({
+            search: searchText,
+            members_exclude_framework: frameworkId,
+            limit: USER_SEARCH_LIMIT,
+        }),
         method: requestMethods.GET,
-        onPropsChanged: ['searchText', 'frameworkId'],
+        onPropsChanged: {
+            searchText: ({ props: { searchText } }) => (
+                searchText.length > 0
+            ),
+            frameworkId: ({ props, prevProps }) => (
+                props.frameworkId !== prevProps.frameworkId
+            ),
+        },
         onSuccess: ({ response, params }) => {
             params.handleUsersPull(response.results);
         },
@@ -131,24 +175,27 @@ export default class AddFrameworkUserFromSearch extends React.PureComponent {
         const {
             searchText,
             onSearchChange,
+            className: classNameFromProps,
             listGetRequest: {
                 pending,
             },
         } = this.props;
 
-        const {
-            users,
-        } = this.state;
+        const { users } = this.state;
+
+        const usersList = searchText.length > 0 ? users : emptyList;
 
         return (
             <NaiveSearchList
+                className={classNameFromProps}
                 searchText={searchText}
                 onSearchChange={onSearchChange}
-                list={users}
+                list={usersList}
                 listKeySelector={listKeySelector}
                 pending={pending}
                 listRenderer={UserAddItem}
                 listRendererParams={this.listRendererParams}
+                emptyComponent={SearchEmptyComponent}
             />
         );
     }

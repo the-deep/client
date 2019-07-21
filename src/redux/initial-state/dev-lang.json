@@ -959,7 +959,8 @@
         "-8045218": "Successfully cloned the selected framework.",
         "-49370702": "Edit widgets",
         "-22564813": "Are you sure you want to remove membership of {name}({email}) from this framework?",
-        "-81392551": "Search and add users"
+        "-81392551": "Search and add users",
+        "-68055625": "Type to search"
     },
     "links": {
         "browserExtension": {
@@ -2752,6 +2753,9 @@
         "components.naiveSearchList": {
             "searchInputLabel": 9,
             "searchInputPlaceholder": -81392551
+        },
+        "components.addFromSearch": {
+            "addFromSearchLabel": -68055625
         }
     }
 }

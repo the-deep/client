@@ -217,11 +217,12 @@ export default class FrameworkUsersTable extends React.PureComponent {
         return (
             <div className={styles.usersTable} >
                 <header className={styles.header} >
-                    <h4>
+                    <h4 className={styles.heading} >
                         {_ts('project.framework.editModal', 'membersTableHeader')}
                     </h4>
                     {canEditMemberships && (
                         <AddFromSearch
+                            className={styles.addInput}
                             onAddUser={onAddUser}
                             frameworkId={frameworkId}
                             searchText={searchText}

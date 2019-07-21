@@ -1,22 +1,22 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { isTruthyString } from '@togglecorp/fujs';
+import { _cs, isTruthyString } from '@togglecorp/fujs';
 
 import TextInput from '#rsci/TextInput';
-import _ts from '#ts';
 import FloatingContainer from '#rscv/FloatingContainer';
 import ListView from '#rscv/List/ListView';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 
 import {
     calcFloatPositionInMainWindow,
     defaultOffset,
     defaultLimit,
 } from '#rsu/bounds';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     searchText: PropTypes.string,
     onSearchChange: PropTypes.func,
     list: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -27,6 +27,7 @@ const propTypes = {
 };
 
 const defaultProps = {
+    className: '',
     searchText: '',
     onSearchChange: () => {},
     listKeySelector: d => d.id,
@@ -42,6 +43,8 @@ export default class NaiveSearchList extends React.Component {
         super(props);
 
         this.containerRef = React.createRef();
+        this.inputRef = React.createRef();
+        this.state = { showOptionsPopup: false };
     }
 
     componentDidMount() {
@@ -49,6 +52,23 @@ export default class NaiveSearchList extends React.Component {
         if (container) {
             this.boundingClientRect = container.getBoundingClientRect();
         }
+    }
+
+    handleShowOptionsPopup = () => {
+        this.setState({ showOptionsPopup: true });
+    }
+
+    handleFloatingMouseDown = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const { current: input } = this.inputRef;
+        if (input) {
+            input.focus();
+        }
+    }
+
+    handleHideOptionsPopup = () => {
+        this.setState({ showOptionsPopup: false });
     }
 
     handleOptionsInvalidate = (optionsContainer) => {
@@ -82,6 +102,7 @@ export default class NaiveSearchList extends React.Component {
 
     render() {
         const {
+            className,
             list = [],
             listKeySelector,
             listRenderer,
@@ -89,7 +110,10 @@ export default class NaiveSearchList extends React.Component {
             searchText,
             onSearchChange,
             pending: searchPending,
+            ...otherProps
         } = this.props;
+
+        const { showOptionsPopup } = this.state;
 
         const { current: container } = this.containerRef;
         const showList = isTruthyString(searchText);
@@ -97,35 +121,37 @@ export default class NaiveSearchList extends React.Component {
         return (
             <div
                 ref={this.containerRef}
-                className={styles.naiveSearchList}
+                className={_cs(className, styles.naiveSearchList)}
             >
                 <TextInput
+                    elementRef={this.inputRef}
                     className={styles.searchInput}
                     label={_ts('components.naiveSearchList', 'searchInputLabel')}
                     placeholder={_ts('components.naiveSearchList', 'searchInputPlaceholder')}
                     value={searchText}
                     onChange={onSearchChange}
                     showHintAndError={false}
+                    onClick={this.handleShowOptionsPopup}
+                    onFocus={this.handleShowOptionsPopup}
+                    onBlur={this.handleHideOptionsPopup}
                 />
-                {showList &&
+                {showOptionsPopup &&
                     <FloatingContainer
                         onInvalidate={this.handleOptionsInvalidate}
+                        onBlur={this.handleHideOptionsPopup}
+                        onMouseDown={this.handleFloatingMouseDown}
                         parent={container}
                     >
-                        {searchPending && list.length === 0 ? (
-                            <div className={styles.loadingAnimationContainer}>
-                                <LoadingAnimation />
-                            </div>
-                        ) : (
-                            <ListView
-                                className={styles.list}
-                                data={list}
-                                renderer={listRenderer}
-                                rendererParams={listRendererParams}
-                                keySelector={listKeySelector}
-                                isFiltered={showList}
-                            />
-                        )}
+                        <ListView
+                            className={styles.list}
+                            data={list}
+                            pending={searchPending}
+                            renderer={listRenderer}
+                            rendererParams={listRendererParams}
+                            keySelector={listKeySelector}
+                            isFiltered={showList}
+                            {...otherProps}
+                        />
                     </FloatingContainer>
                 }
             </div>

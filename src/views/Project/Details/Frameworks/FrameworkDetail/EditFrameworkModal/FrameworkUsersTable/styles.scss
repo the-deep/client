@@ -11,6 +11,14 @@
         flex-shrink: 0;
         justify-content: space-between;
         padding: var(--spacing-small) var(--spacing-medium);
+
+        .heading {
+            flex-grow: 1;
+        }
+
+        .add-input {
+            flex-shrink: 0;
+        }
     }
 
     .table-container {
