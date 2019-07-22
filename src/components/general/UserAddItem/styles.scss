@@ -9,8 +9,8 @@
 
     .picture {
         margin: 0 var(--spacing-small);
-        width: 30px;
-        height: 30px;
+        width: var(--width-user-item-picture);
+        height: var(--height-user-item-picture);
     }
 
     .top {

@@ -1,16 +1,36 @@
 .edit-framework-modal {
-    width: 960px;
+    width: var(--width-edit-framework-modal);
 
     .modal-body {
         position: relative;
         padding: 0;
 
-        .edit-analysis-framework-form {
-            padding: var(--spacing-small) var(--spacing-medium) var(--spacing-large) var(--spacing-medium);
+        .edit-details-section {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: var(--spacing-super-large);
+            overflow-y: auto;
 
-            .action-buttons {
+            .header {
                 display: flex;
-                justify-content: flex-end;
+                align-items: center;
+                flex-shrink: 0;
+                justify-content: space-between;
+                // border-bottom: var(--width-separator-thin) solid var(--color-separator);
+                padding: var(--spacing-medium);
+
+                .heading {
+                    flex-grow: 1;
+                }
+            }
+
+            .edit-analysis-framework-form {
+                padding: 0 var(--spacing-medium) var(--spacing-large) var(--spacing-medium);
+
+                .action-buttons {
+                    display: flex;
+                    justify-content: flex-end;
+                }
             }
         }
 

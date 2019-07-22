@@ -1,16 +1,11 @@
 .naive-search-list {
     .search-input {
-        width: 214px;
+        width: var(--width-search-input);
     }
 }
 
-.loading-animation-container {
-    position: relative;
-    min-height: 88px;
-}
-
 .list {
-    min-height: 88px;
-    max-height: 280px;
+    min-height: var(--min-height-search-input);
+    max-height: var(--max-height-search-input);
     overflow-y: auto;
 }

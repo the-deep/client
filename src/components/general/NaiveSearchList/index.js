@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { _cs, isTruthyString } from '@togglecorp/fujs';
 
-import TextInput from '#rsci/TextInput';
+import SearchInput from '#rsci/SearchInput';
 import FloatingContainer from '#rscv/FloatingContainer';
 import ListView from '#rscv/List/ListView';
 
@@ -54,7 +54,7 @@ export default class NaiveSearchList extends React.Component {
         }
     }
 
-    handleShowOptionsPopup = () => {
+    handleInputFocus = () => {
         this.setState({ showOptionsPopup: true });
     }
 
@@ -67,7 +67,7 @@ export default class NaiveSearchList extends React.Component {
         }
     }
 
-    handleHideOptionsPopup = () => {
+    handleSearchListBlur = () => {
         this.setState({ showOptionsPopup: false });
     }
 
@@ -103,7 +103,7 @@ export default class NaiveSearchList extends React.Component {
     render() {
         const {
             className,
-            list = [],
+            list,
             listKeySelector,
             listRenderer,
             listRendererParams,
@@ -123,22 +123,22 @@ export default class NaiveSearchList extends React.Component {
                 ref={this.containerRef}
                 className={_cs(className, styles.naiveSearchList)}
             >
-                <TextInput
+                <SearchInput
                     elementRef={this.inputRef}
                     className={styles.searchInput}
-                    label={_ts('components.naiveSearchList', 'searchInputLabel')}
                     placeholder={_ts('components.naiveSearchList', 'searchInputPlaceholder')}
+                    showLabel={false}
                     value={searchText}
                     onChange={onSearchChange}
                     showHintAndError={false}
-                    onClick={this.handleShowOptionsPopup}
-                    onFocus={this.handleShowOptionsPopup}
-                    onBlur={this.handleHideOptionsPopup}
+                    onClick={this.handleInputFocus}
+                    onFocus={this.handleInputFocus}
+                    onBlur={this.handleSearchListBlur}
                 />
                 {showOptionsPopup &&
                     <FloatingContainer
                         onInvalidate={this.handleOptionsInvalidate}
-                        onBlur={this.handleHideOptionsPopup}
+                        onBlur={this.handleSearchListBlur}
                         onMouseDown={this.handleFloatingMouseDown}
                         parent={container}
                     >

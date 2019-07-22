@@ -147,9 +147,12 @@ export default class EditFrameworkModal extends React.PureComponent {
 
     handleUserAdd = (user) => {
         const { users } = this.state;
-        const newUsers = produce(users, (safeUsers) => {
-            safeUsers.push(user);
-        });
+
+        const newUsers = [
+            ...users,
+            user,
+        ];
+
         this.setState({ users: newUsers });
     }
 
@@ -165,10 +168,7 @@ export default class EditFrameworkModal extends React.PureComponent {
 
     handleUserDelete = (memberId) => {
         const { users } = this.state;
-        const newUsers = produce(users, (safeUsers) => {
-            const index = users.findIndex(u => u.id === memberId);
-            safeUsers.splice(index, 1);
-        });
+        const newUsers = users.filter(u => u.id !== memberId);
         this.setState({ users: newUsers });
     }
 
@@ -205,6 +205,11 @@ export default class EditFrameworkModal extends React.PureComponent {
                 <ModalBody className={styles.modalBody} >
                     { pending && <LoadingAnimation /> }
                     <div className={styles.editDetailsSection} >
+                        <header className={styles.header} >
+                            <h4 className={styles.heading} >
+                                {_ts('project.framework.editModal', 'frameworkDetailsHeaderLabel')}
+                            </h4>
+                        </header>
                         <Faram
                             className={styles.editAnalysisFrameworkForm}
                             onChange={this.handleFaramChange}
@@ -233,7 +238,7 @@ export default class EditFrameworkModal extends React.PureComponent {
                                     disabled={pending || pristine}
                                     type="submit"
                                 >
-                                    {_ts('project.framework', 'editFrameworkModalSaveButtonTitle')}
+                                    {_ts('project.framework.editModal', 'editFrameworkModalSaveButtonTitle')}
                                 </PrimaryButton>
                             </div>
                         </Faram>

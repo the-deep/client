@@ -77,8 +77,10 @@ const requests = {
 };
 
 const propTypes = {
-    changeMembershipRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    removeUserMembershipRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    // eslint-disable-next-line react/forbid-prop-types
+    changeMembershipRequest: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    removeUserMembershipRequest: PropTypes.object.isRequired,
     member: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
     role: PropTypes.number.isRequired,
     roles: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -91,8 +93,6 @@ const propTypes = {
 };
 
 const defaultProps = {
-    changeMembershipRequest: {},
-    removeUserMembershipRequest: {},
     memberDetails: {},
 };
 

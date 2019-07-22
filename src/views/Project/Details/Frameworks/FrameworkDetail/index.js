@@ -125,10 +125,10 @@ export default class FrameworkDetail extends React.PureComponent {
         const {
             id: analysisFrameworkId,
             role: {
-                canCloneFramework = false,
-                canEditFramework = false,
-                canAddUser = false,
-                canUseInOtherProjects = false,
+                canCloneFramework,
+                canEditFramework,
+                canAddUser,
+                canUseInOtherProjects,
             } = {},
             isPrivate,
         } = framework;

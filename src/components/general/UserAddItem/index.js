@@ -7,43 +7,7 @@ import _cs from '#cs';
 
 import styles from './styles.scss';
 
-const UserAddItem = ({
-    className,
-    pending,
-    actionButtonTitle,
-    displayPicture,
-    username,
-    firstName,
-    lastName,
-    onAddButtonClick,
-}) => (
-    <div className={_cs(className, styles.user)}>
-        <div className={styles.top}>
-            <DisplayPicture
-                className={styles.picture}
-                galleryId={displayPicture}
-            />
-            <div className={styles.name}>
-                <div className={styles.text}>
-                    {`${firstName} ${lastName}`}
-                </div>
-                <div>
-                    { username }
-                </div>
-            </div>
-        </div>
-        <div className={_cs(styles.actionButtons, pending && styles.pending)}>
-            <PrimaryButton
-                onClick={onAddButtonClick}
-                iconName="add"
-                title={actionButtonTitle}
-                pending={pending}
-            />
-        </div>
-    </div>
-);
-
-UserAddItem.propTypes = {
+const propTypes = {
     className: PropTypes.string,
     pending: PropTypes.bool,
     displayPicture: PropTypes.number,
@@ -52,9 +16,10 @@ UserAddItem.propTypes = {
     firstName: PropTypes.string,
     lastName: PropTypes.string,
     onAddButtonClick: PropTypes.func,
+    userId: PropTypes.number,
 };
 
-UserAddItem.defaultProps = {
+const defaultProps = {
     className: undefined,
     actionButtonTitle: '',
     displayPicture: undefined,
@@ -62,7 +27,59 @@ UserAddItem.defaultProps = {
     firstName: '',
     lastName: '',
     pending: false,
-    onAddButtonClick: () => {},
+    userId: undefined,
+    onAddButtonClick: undefined,
 };
 
-export default UserAddItem;
+export default class UserAddItem extends React.PureComponent {
+    static propTypes = propTypes;
+    static defaultProps = defaultProps;
+
+    handleAddButtonClick = () => {
+        const {
+            userId,
+            onAddButtonClick,
+        } = this.props;
+
+        onAddButtonClick(userId);
+    }
+
+    render() {
+        const {
+            className,
+            pending,
+            actionButtonTitle,
+            displayPicture,
+            username,
+            firstName,
+            lastName,
+        } = this.props;
+
+        return (
+            <div className={_cs(className, styles.user)}>
+                <div className={styles.top}>
+                    <DisplayPicture
+                        className={styles.picture}
+                        galleryId={displayPicture}
+                    />
+                    <div className={styles.name}>
+                        <div className={styles.text}>
+                            {`${firstName} ${lastName}`}
+                        </div>
+                        <div>
+                            { username }
+                        </div>
+                    </div>
+                </div>
+                <div className={_cs(styles.actionButtons, pending && styles.pending)}>
+                    <PrimaryButton
+                        onClick={this.handleAddButtonClick}
+                        iconName="add"
+                        title={actionButtonTitle}
+                        pending={pending}
+                    />
+                </div>
+            </div>
+        );
+    }
+}

@@ -84,12 +84,8 @@ const requests = {
         schemaName: 'frameworkMembersList',
     },
     frameworkRolesRequest: {
-        url: ({ props }) => {
-            if (props.isPrivate) {
-                return '/private-framework-roles/';
-            }
-            return '/public-framework-roles/';
-        },
+        url: ({ props: { isPrivate } }) =>
+            (isPrivate ? '/private-framework-roles/' : '/public-framework-roles/'),
         method: requestMethods.GET,
         onMount: true,
         schemaName: 'frameworkRolesList',
@@ -120,8 +116,8 @@ const mapStateToProps = state => ({
 
 const emptyObject = {};
 const getComparator = (func, key, subKey) => (a = emptyObject, b = emptyObject) => func(
-    isTruthy(subKey) ? (a[key] || emptyObject)[subKey] : a[key],
-    isTruthy(subKey) ? (b[key] || emptyObject)[subKey] : b[key],
+    isTruthy(subKey) && (a[key] ? a[key][subKey] : a[key]),
+    isTruthy(subKey) && (b[key] ? b[key][subKey] : b[key]),
 );
 
 const keySelector = d => d.id;

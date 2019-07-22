@@ -31,17 +31,15 @@ const propTypes = {
     closeModal: PropTypes.func,
     isClone: PropTypes.bool,
     // eslint-disable-next-line react/forbid-prop-types
-    frameworkCreateRequest: PropTypes.object,
+    frameworkCreateRequest: PropTypes.object.isRequired,
     // eslint-disable-next-line react/forbid-prop-types
-    frameworkCloneRequest: PropTypes.object,
+    frameworkCloneRequest: PropTypes.object.isRequired,
 };
 
 const defaultProps = {
     frameworkId: undefined,
     closeModal: () => {},
     isClone: false,
-    frameworkCreateRequest: {},
-    frameworkCloneRequest: {},
 };
 
 // Note: Key is set according to is_private option
@@ -164,15 +162,15 @@ export default class AddFrameworkModal extends React.PureComponent {
             frameworkCloneRequest,
         } = this.props;
 
-        if (isClone && isTruthy(frameworkId)) {
+        if (!isClone) {
+            frameworkCreateRequest.do({
+                values,
+                handleFailure: this.handleValidationFailure,
+            });
+        } else if (isTruthy(frameworkId)) {
             frameworkCloneRequest.do({
                 values,
                 frameworkId,
-                handleFailure: this.handleValidationFailure,
-            });
-        } else if (!isClone) {
-            frameworkCreateRequest.do({
-                values,
                 handleFailure: this.handleValidationFailure,
             });
         }

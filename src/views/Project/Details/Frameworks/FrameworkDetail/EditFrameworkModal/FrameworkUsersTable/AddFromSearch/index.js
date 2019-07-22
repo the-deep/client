@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import produce from 'immer';
 import { _cs } from '@togglecorp/fujs';
 
 import {
@@ -17,27 +16,6 @@ import notify from '#notify';
 
 import styles from './styles.scss';
 
-const propTypes = {
-    className: PropTypes.string,
-    frameworkId: PropTypes.number,
-    searchText: PropTypes.string,
-    onSearchChange: PropTypes.func,
-    listGetRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    userAddRequest: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    setDefaultRequestParams: PropTypes.func.isRequired,
-};
-
-const defaultProps = {
-    className: '',
-    frameworkId: undefined,
-    searchText: '',
-    onSearchChange: () => {},
-    listGetRequest: {},
-    userAddRequest: {},
-};
-
-const emptyList = [];
-
 const SearchEmptyComponent = ({ className }) => (
     <div className={_cs(className, styles.searchEmpty)}>
         <Message>
@@ -53,6 +31,27 @@ SearchEmptyComponent.propTypes = {
 SearchEmptyComponent.defaultProps = {
     className: '',
 };
+
+const propTypes = {
+    className: PropTypes.string,
+    frameworkId: PropTypes.number,
+    searchText: PropTypes.string,
+    onSearchChange: PropTypes.func,
+    listGetRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    userAddRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    setDefaultRequestParams: PropTypes.func.isRequired,
+    // onAddUser adds user to usersTable after successful request to add user
+    onAddUser: PropTypes.func.isRequired,
+};
+
+const defaultProps = {
+    className: '',
+    frameworkId: undefined,
+    searchText: '',
+    onSearchChange: () => {},
+};
+
+const emptyList = [];
 
 const USER_SEARCH_LIMIT = 25;
 
@@ -105,15 +104,10 @@ const requests = {
         body: ({ params }) => params.membership,
         onSuccess: ({
             response,
-            params: {
-                handleUserAdd,
-            },
-            props: {
-                onAddUser,
-            },
+            params: { handleUserAdd },
         }) => {
-            onAddUser(response);
-            handleUserAdd(response.member);
+            // handleUserAdd is called to remove added user from search lsit
+            handleUserAdd(response);
         },
         onFailure: () => {
             notify.send({
@@ -144,6 +138,7 @@ export default class AddFrameworkUserFromSearch extends React.PureComponent {
 
     constructor(props) {
         super(props);
+
         this.state = {
             users: [],
         };
@@ -157,20 +152,20 @@ export default class AddFrameworkUserFromSearch extends React.PureComponent {
         this.setState({ users });
     }
 
-    handleUserAdd = (memberId) => {
+    handleUserAdd = (response) => {
+        const { onAddUser } = this.props;
         const { users } = this.state;
-        const newUsers = produce(users, (safeUsers) => {
-            const index = users.findIndex(u => u.id === memberId);
-            safeUsers.splice(index, 1);
-        });
+
+        const newUsers = users.filter(u => u.id !== response.member);
         this.setState({ users: newUsers });
+        onAddUser(response);
     }
 
     listRendererParams = (_, data) => {
         const {
             userAddRequest: {
                 pending,
-            } = {},
+            },
         } = this.props;
         const {
             selectedUser,
@@ -181,8 +176,9 @@ export default class AddFrameworkUserFromSearch extends React.PureComponent {
 
         return ({
             ...data,
+            userId,
             pending: pending && selectedUser === userId,
-            onAddButtonClick: () => this.handleAddClick(userId),
+            onAddButtonClick: this.handleAddClick,
         });
     }
 
@@ -192,12 +188,12 @@ export default class AddFrameworkUserFromSearch extends React.PureComponent {
             userAddRequest,
         } = this.props;
 
+        this.setState({ selectedUser: userId });
+
         const membership = {
             member: userId,
             framework: frameworkId,
         };
-
-        this.setState({ selectedUser: userId });
 
         userAddRequest.do({
             membership,

@@ -30,14 +30,14 @@ const userSchema = [];
             displayName: { type: 'string', required: true },
             displayPicture: { type: 'uint' }, // id
             email: { type: 'string', required: true },
-            emailOptOuts: { type: 'array' },
+            emailOptOuts: { type: 'array.unknown' },
             firstName: { type: 'string', required: true },
             id: { type: 'uint', required: true },
             lastName: { type: 'string', required: true },
             organization: { type: 'string', required: true },
             username: { type: 'string', required: true },
             language: { type: 'string' },
-            // lastActiveProject: { type: 'uint' },
+            lastActiveProject: { type: 'uint' },
             loginAttempts: { type: 'number' },
         },
     };

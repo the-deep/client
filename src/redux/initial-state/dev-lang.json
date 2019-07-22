@@ -967,7 +967,8 @@
         "-86595482": "Failed to get roles of analysis framework.",
         "-85690459": "Failed to get members of the analysis framework.",
         "-68606611": "Failed to remove user from analysis framework.",
-        "-14647683": "Failed to change role of member in analysis framework."
+        "-14647683": "Failed to change role of member in analysis framework.",
+        "-59215530": "Save details"
     },
     "links": {
         "browserExtension": {
@@ -2752,7 +2753,9 @@
             "removeMembershipConfirmationMessage": -22564813,
             "userRemoveButtonTitle": 190,
             "userRoleSelectTitle": 12509,
-            "membersTableHeader": 166
+            "membersTableHeader": 166,
+            "frameworkDetailsHeaderLabel": 377,
+            "editFrameworkModalSaveButtonTitle": -59215530
         },
         "components.naiveSearchList": {
             "searchInputLabel": 9,
