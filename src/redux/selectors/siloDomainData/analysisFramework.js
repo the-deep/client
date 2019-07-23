@@ -14,16 +14,6 @@ const afViewFrameworkViewForIdSelector = createSelector(
     (afId, afView) => afView[afId] || emptyObject,
 );
 
-export const afViewFaramValuesSelector = createSelector(
-    afViewFrameworkViewForIdSelector,
-    afView => afView.faramValues || emptyObject,
-);
-
-export const afViewFaramErrorsSelector = createSelector(
-    afViewFrameworkViewForIdSelector,
-    afView => afView.faramErrors || emptyObject,
-);
-
 export const afViewPristineSelector = createSelector(
     afViewFrameworkViewForIdSelector,
     afView => !!afView.pristine,

@@ -2,12 +2,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import SelectInput from '#rsci/SelectInput';
 
 import {
     widgetListingVisibility,
     widgetList,
     VIEW,
 } from '#widgets';
+
+import _ts from '#ts';
 
 import WidgetList from '../WidgetList';
 import WidgetEditor from '../WidgetEditor';
@@ -31,13 +35,6 @@ export default class Overview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    static layoutSelector = (widget) => {
-        const { properties: { overviewGridLayout } = {} } = widget;
-        return overviewGridLayout;
-    }
-
-    static keySelector = widget => widget.key;
-
     render() {
         const {
             analysisFramework: {
@@ -57,6 +54,23 @@ export default class Overview extends React.PureComponent {
                     analysisFrameworkId={analysisFrameworkId}
                 />
                 <div className={styles.gridLayoutContainer}>
+                    <div className={styles.header}>
+                        <PrimaryButton
+                            className={styles.button}
+                            iconName="add"
+                            disabled
+                        />
+                        <PrimaryButton
+                            className={styles.button}
+                            iconName="remove"
+                            disabled
+                        />
+                        <SelectInput
+                            className={styles.input}
+                            placeholder={_ts('editFramework', 'dummyExcerptPlaceholder')}
+                            disabled
+                        />
+                    </div>
                     <div className={styles.scrollWrapper}>
                         <WidgetEditor
                             widgets={widgets}

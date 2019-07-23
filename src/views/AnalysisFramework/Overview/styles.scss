@@ -15,6 +15,24 @@
         background-color: var(--color-background-alt);
         width: 70%;
 
+        .header {
+            display: flex;
+            align-items: center;
+            background-color: var(--color-foreground);
+            padding: var(--spacing-small);
+            height: var(--height-header);
+
+            .button {
+                flex-grow: 0;
+                margin-right: var(--spacing-small);
+            }
+
+            .input {
+                flex-grow: 1;
+                margin-left: var(--spacing-small);
+            }
+        }
+
         .scroll-wrapper {
             width: 100%;
             height: calc(100% - var(--height-header));

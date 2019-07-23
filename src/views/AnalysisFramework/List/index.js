@@ -12,6 +12,10 @@ import WidgetEditor from '../WidgetEditor';
 
 import styles from './styles.scss';
 
+const listWidgets = widgetList.filter(
+    w => widgetListingVisibility(w.widgetId, VIEW.list),
+);
+
 const propTypes = {
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     pending: PropTypes.bool,
@@ -21,20 +25,9 @@ const defaultProps = {
     pending: false,
 };
 
-const listWidgets = widgetList.filter(
-    w => widgetListingVisibility(w.widgetId, VIEW.list),
-);
-
 export default class List extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    static layoutSelector = (widget) => {
-        const { properties: { overviewGridLayout } = {} } = widget;
-        return overviewGridLayout;
-    }
-
-    static keySelector = widget => widget.key;
 
     render() {
         const {
