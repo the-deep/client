@@ -152,9 +152,7 @@ export default class RegionMap extends React.PureComponent {
                         error: undefined,
                         selectedAdminLevelId: response.results.length > 0 ? `${response.results[0].id}` : '',
                         adminLevels: response.results,
-                    }, () => {
-                        this.loadGeoJsons();
-                    });
+                    }, this.loadGeoJsons);
                 }
             })
             .failure(() => {
@@ -192,9 +190,11 @@ export default class RegionMap extends React.PureComponent {
     handleAdminLevelSelection = (id) => {
         this.setState({
             selectedAdminLevelId: id,
-        });
+        }, this.loadGeoJsons);
     }
 
+    // NOTE: Is onLocationsChange really necessary?
+    // Assess in detail
     loadLocations = () => {
         const { adminLevels, geoJsons } = this.state;
         let locations = [];
@@ -218,82 +218,85 @@ export default class RegionMap extends React.PureComponent {
 
     loadGeoJsons = () => {
         // FIXME: use coordinator
-        const { adminLevels } = this.state;
-        adminLevels.forEach((adminLevel) => {
-            {
-                const url = createUrlForGeoJsonMap(adminLevel.id);
-                const request = new FgRestBuilder()
-                    .url(url)
-                    .params(createParamsForGet)
-                    .preLoad(() => {
-                        this.setState({
-                            adminLevelPending: {
-                                ...this.state.adminLevelPending,
-                                [adminLevel.id]: true,
-                            },
-                        });
-                    })
-                    .postLoad(() => {
-                        this.setState({
-                            adminLevelPending: {
-                                ...this.state.adminLevelPending,
-                                [adminLevel.id]: false,
-                            },
-                        });
-                    })
-                    .success((response) => {
-                        // FIXME: write schema
-                        const geoJsons = {
-                            [adminLevel.id]: response,
-                            ...this.state.geoJsons,
-                        };
-                        this.setState({ geoJsons }, () => {
-                            this.loadLocations();
-                        });
-                    })
-                    .failure((response) => {
-                        console.log(response);
-                    })
-                    .fatal((response) => {
-                        console.log(response);
-                    })
-                    .build();
-                request.start();
+        const {
+            geoJsons: geoJsonsFromState,
+            geoJsonBounds: geoJsonBoundsFromState,
+            selectedAdminLevelId,
+            adminLevelPending,
+        } = this.state;
 
-                this.geoJsonRequests.push(request);
-            }
-            {
-                const url = createUrlForGeoJsonBounds(adminLevel.id);
-                const request = new FgRestBuilder()
-                    .url(url)
-                    .params(createParamsForGet)
-                    .success((response) => {
-                        // FIXME: write schema
-                        const { bounds } = response;
-                        const geoJsonBounds = {
-                            [adminLevel.id]: bounds && [[
-                                bounds.minX,
-                                bounds.minY,
-                            ], [
-                                bounds.maxX,
-                                bounds.maxY,
-                            ]],
-                            ...this.state.geoJsonBounds,
-                        };
-                        this.setState({ geoJsonBounds });
-                    })
-                    .failure((response) => {
-                        console.log(response);
-                    })
-                    .fatal((response) => {
-                        console.log(response);
-                    })
-                    .build();
-                request.start();
+        if (!geoJsonsFromState[selectedAdminLevelId]) {
+            const url = createUrlForGeoJsonMap(selectedAdminLevelId);
+            const request = new FgRestBuilder()
+                .url(url)
+                .params(createParamsForGet)
+                .preLoad(() => {
+                    this.setState({
+                        adminLevelPending: {
+                            ...adminLevelPending,
+                            [selectedAdminLevelId]: true,
+                        },
+                    });
+                })
+                .postLoad(() => {
+                    this.setState({
+                        adminLevelPending: {
+                            ...adminLevelPending,
+                            [selectedAdminLevelId]: false,
+                        },
+                    });
+                })
+                .success((response) => {
+                    // FIXME: write schema
+                    const geoJsons = {
+                        [selectedAdminLevelId]: response,
+                        ...geoJsonsFromState,
+                    };
+                    this.setState({ geoJsons }, this.loadLocations);
+                })
+                .failure((response) => {
+                    console.log(response);
+                })
+                .fatal((response) => {
+                    console.log(response);
+                })
+                .build();
+            request.start();
 
-                this.geoJsonRequests.push(request);
-            }
-        });
+            this.geoJsonRequests.push(request);
+        }
+
+        if (!geoJsonBoundsFromState[selectedAdminLevelId]) {
+            const url = createUrlForGeoJsonBounds(selectedAdminLevelId);
+            const request = new FgRestBuilder()
+                .url(url)
+                .params(createParamsForGet)
+                .success((response) => {
+                    // FIXME: write schema
+                    const { bounds } = response;
+                    const geoJsonBounds = {
+                        [selectedAdminLevelId]: bounds && [[
+                            bounds.minX,
+                            bounds.minY,
+                        ], [
+                            bounds.maxX,
+                            bounds.maxY,
+                        ]],
+                        ...geoJsonBoundsFromState,
+                    };
+                    this.setState({ geoJsonBounds });
+                })
+                .failure((response) => {
+                    console.log(response);
+                })
+                .fatal((response) => {
+                    console.log(response);
+                })
+                .build();
+            request.start();
+
+            this.geoJsonRequests.push(request);
+        }
     }
 
     handleRefresh = () => {

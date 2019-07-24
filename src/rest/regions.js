@@ -16,8 +16,24 @@ export const createUrlForAdminLevel = adminLevelId => `${wsEndpoint}/admin-level
 export const createUrlForGeoOptions = projectId => `${wsEndpoint}/geo-options/?${p({ project: projectId })}`;
 
 const regionsUrlFields = ['id', 'code', 'title', 'public', 'created_at', 'modified_at', 'version_id'];
+const adminLevelFields = [
+    'code_prop',
+    'geo_shape_file',
+    'id',
+    'level',
+    'name_prop',
+    'parent_code_prop',
+    'parent_name_prop',
+    'region',
+    'stale-geo-areas',
+    'title',
+    'tolerance',
+];
 export const urlForRegions = `${wsEndpoint}/regions/?${p({ fields: regionsUrlFields })}`;
-export const createUrlForAdminLevelsForRegion = regionId => `${wsEndpoint}/admin-levels/?${p({ region: regionId })}`;
+export const createUrlForAdminLevelsForRegion = regionId => `${wsEndpoint}/admin-levels/?${p({
+    region: regionId,
+    fields: adminLevelFields,
+})}`;
 
 export const createUrlForRegionWithField = (regionId, fields) => {
     if (fields) {
