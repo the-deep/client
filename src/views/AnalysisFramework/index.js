@@ -140,9 +140,15 @@ export default class AnalysisFramework extends React.PureComponent {
             if (this.analysisFrameworkSaveRequest) {
                 this.analysisFrameworkSaveRequest.stop();
             }
+            if (this.geoOptionsRequest) {
+                this.geoOptionsRequest.stop();
+            }
 
             this.frameworkGetRequest.init(newAnalysisFrameworkId);
             this.frameworkGetRequest.start();
+
+            this.geoOptionsRequest.init(newAnalysisFrameworkId);
+            this.geoOptionsRequest.start();
         }
     }
 
