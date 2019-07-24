@@ -968,7 +968,8 @@
         "-85690459": "Failed to get members of the analysis framework.",
         "-68606611": "Failed to remove user from analysis framework.",
         "-14647683": "Failed to change role of member in analysis framework.",
-        "-59215530": "Save details"
+        "-59215530": "Save details",
+        "-66973833": "Select Excerpt"
     },
     "links": {
         "browserExtension": {
@@ -2780,6 +2781,9 @@
             "membershipRemoveFatal": -68606611,
             "membershipRoleChangeFailure": -14647683,
             "membershipRoleChangeFatal": -14647683
+        },
+        "editFramework": {
+            "dummyExcerptPlaceholder": -66973833
         }
     }
 }

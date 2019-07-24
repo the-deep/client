@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import Faram from '@togglecorp/faram';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import TextInput from '#rsci/TextInput';
-import TextArea from '#rsci/TextArea';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import SelectInput from '#rsci/SelectInput';
 
 import {
     widgetListingVisibility,
     widgetList,
     VIEW,
 } from '#widgets';
+
 import _ts from '#ts';
 
 import WidgetList from '../WidgetList';
@@ -24,30 +24,16 @@ const overviewWidgets = widgetList.filter(
 
 const propTypes = {
     analysisFramework: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    faramValues: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    faramErrors: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    faramSchema: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    onChange: PropTypes.func.isRequired,
     pending: PropTypes.bool,
 };
 
 const defaultProps = {
-    faramValues: {},
-    faramErrors: {},
-    faramSchema: {},
     pending: false,
 };
 
 export default class Overview extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    static layoutSelector = (widget) => {
-        const { properties: { overviewGridLayout } = {} } = widget;
-        return overviewGridLayout;
-    }
-
-    static keySelector = widget => widget.key;
 
     render() {
         const {
@@ -56,10 +42,6 @@ export default class Overview extends React.PureComponent {
                 widgets,
             } = {},
             pending,
-            faramValues,
-            faramErrors,
-            faramSchema,
-            onChange,
         } = this.props;
 
         return (
@@ -72,28 +54,23 @@ export default class Overview extends React.PureComponent {
                     analysisFrameworkId={analysisFrameworkId}
                 />
                 <div className={styles.gridLayoutContainer}>
-                    <Faram
-                        className={styles.header}
-                        onChange={onChange}
-                        schema={faramSchema}
-                        value={faramValues}
-                        error={faramErrors}
-                        disabled={pending}
-                    >
-                        <TextInput
-                            className={styles.nameInput}
-                            label={_ts('widgets.editor', 'addAfTitleLabel')}
-                            faramElementName="title"
-                            placeholder={_ts('widgets.editor', 'addAfTitlePlaceholder')}
+                    <div className={styles.header}>
+                        <PrimaryButton
+                            className={styles.button}
+                            iconName="add"
+                            disabled
                         />
-                        <TextArea
-                            className={styles.descriptionInput}
-                            label={_ts('widgets.editor', 'afDescriptionLabel')}
-                            faramElementName="description"
-                            placeholder={_ts('widgets.editor', 'afDescriptionPlaceholder')}
-                            rows={1}
+                        <PrimaryButton
+                            className={styles.button}
+                            iconName="remove"
+                            disabled
                         />
-                    </Faram>
+                        <SelectInput
+                            className={styles.input}
+                            placeholder={_ts('editFramework', 'dummyExcerptPlaceholder')}
+                            disabled
+                        />
+                    </div>
                     <div className={styles.scrollWrapper}>
                         <WidgetEditor
                             widgets={widgets}

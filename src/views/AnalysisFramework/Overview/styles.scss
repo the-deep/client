@@ -17,41 +17,19 @@
 
         .header {
             display: flex;
-            align-items: flex-end;
+            align-items: center;
             background-color: var(--color-foreground);
+            padding: var(--spacing-small);
             height: var(--height-header);
 
-            .name-input {
-                flex-shrink: 0;
-                padding: 0 var(--spacing-medium);
-
-                :global {
-                    .input {
-                        padding: 0;
-                    }
-
-                    .empty,
-                    .error {
-                        margin-top: 0;
-                    }
-                }
+            .button {
+                flex-grow: 0;
+                margin-right: var(--spacing-small);
             }
 
-            .description-input {
+            .input {
                 flex-grow: 1;
-                padding: 0 var(--spacing-medium);
-
-                :global {
-                    .input {
-                        padding: 0;
-                        resize: none;
-                    }
-
-                    .empty,
-                    .error {
-                        margin-top: 0;
-                    }
-                }
+                margin-left: var(--spacing-small);
             }
         }
 

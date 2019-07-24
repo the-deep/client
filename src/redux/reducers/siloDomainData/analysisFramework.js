@@ -8,7 +8,6 @@ export const AF__VIEW_ADD_WIDGET = 'siloDomainData/AF__VIEW_ADD_WIDGET';
 export const AF__REMOVE_WIDGET = 'siloDomainData/AF__REMOVE_WIDGET';
 export const AF__VIEW_UPDATE_WIDGET = 'siloDomainData/AF__VIEW_UPDATE_WIDGET';
 export const AF__VIEW_UPDATE_WIDGET_LAYOUT = 'siloDomainData/AF__VIEW_UPDATE_WIDGET_LAYOUT';
-export const AF__SET_FARAM = 'siloDomainData/AF__SET_FARAM';
 export const AF__SET_GEO = 'siloDomainData/AF__SET_GEO';
 
 // CREATOR
@@ -17,13 +16,6 @@ export const setAfViewGeoOptionsAction = ({ analysisFrameworkId, geoOptions }) =
     type: AF__SET_GEO,
     analysisFrameworkId,
     geoOptions,
-});
-
-export const setAfViewFaramAction = ({ analysisFrameworkId, faramValues, faramErrors }) => ({
-    type: AF__SET_FARAM,
-    analysisFrameworkId,
-    faramValues,
-    faramErrors,
 });
 
 export const setAfViewAnalysisFrameworkAction = ({ analysisFramework }) => ({
@@ -260,24 +252,6 @@ const afViewUpdateWidgetLayout = (state, action) => {
     return update(state, settings);
 };
 
-const afViewSetFaram = (state, action) => {
-    const {
-        faramErrors,
-        faramValues,
-        analysisFrameworkId,
-    } = action;
-    const settings = {
-        analysisFrameworkView: { $auto: {
-            [analysisFrameworkId]: {
-                faramValues: { $set: faramValues },
-                faramErrors: { $set: faramErrors },
-                pristine: { $set: false },
-            },
-        } },
-    };
-    return update(state, settings);
-};
-
 const afViewSetGeo = (state, action) => {
     const {
         analysisFrameworkId,
@@ -302,7 +276,6 @@ const reducers = {
     [AF__REMOVE_WIDGET]: afViewRemoveWidget,
     [AF__VIEW_UPDATE_WIDGET]: afViewUpdateWidget,
     [AF__VIEW_UPDATE_WIDGET_LAYOUT]: afViewUpdateWidgetLayout,
-    [AF__SET_FARAM]: afViewSetFaram,
     [AF__SET_GEO]: afViewSetGeo,
 };
 export default reducers;

@@ -2,10 +2,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router-dom';
-import {
-    detachedFaram,
-    requiredCondition,
-} from '@togglecorp/faram';
 import { reverseRoute } from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
@@ -27,9 +23,6 @@ import {
     afViewPristineSelector,
     activeProjectIdFromStateSelector,
 
-    afViewFaramValuesSelector,
-    afViewFaramErrorsSelector,
-    setAfViewFaramAction,
     setAfViewGeoOptionsAction,
 
     routeUrlSelector,
@@ -52,16 +45,11 @@ const propTypes = {
     pristine: PropTypes.bool.isRequired,
 
     routeUrl: PropTypes.string.isRequired,
-    faramValues: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    faramErrors: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    setFaram: PropTypes.func.isRequired,
     setGeoOptions: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
     analysisFramework: undefined,
-    faramValues: {},
-    faramErrors: {},
 };
 
 const mapStateToProps = state => ({
@@ -70,13 +58,10 @@ const mapStateToProps = state => ({
     analysisFrameworkId: afIdFromRoute(state),
     projectId: activeProjectIdFromStateSelector(state),
     routeUrl: routeUrlSelector(state),
-    faramValues: afViewFaramValuesSelector(state),
-    faramErrors: afViewFaramErrorsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
     setAnalysisFramework: params => dispatch(setAfViewAnalysisFrameworkAction(params)),
-    setFaram: params => dispatch(setAfViewFaramAction(params)),
     setGeoOptions: params => dispatch(setAfViewGeoOptionsAction(params)),
 });
 
@@ -84,13 +69,6 @@ const mapDispatchToProps = dispatch => ({
 export default class AnalysisFramework extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-
-    static schema = {
-        fields: {
-            title: [requiredCondition],
-            description: [],
-        },
-    }
 
     constructor(props) {
         super(props);
@@ -122,12 +100,7 @@ export default class AnalysisFramework extends React.PureComponent {
                 component: Overview,
                 rendererParams: () => ({
                     analysisFramework: this.props.analysisFramework,
-
                     pending: this.state.pendingSaveFramework,
-                    onChange: this.handleFaramChange,
-                    faramSchema: AnalysisFramework.schema,
-                    faramValues: this.props.faramValues,
-                    faramErrors: this.props.faramErrors,
                 }),
                 wrapContainer: true,
                 mount: true,
@@ -154,6 +127,7 @@ export default class AnalysisFramework extends React.PureComponent {
     componentWillMount() {
         this.frameworkGetRequest.init(this.props.analysisFrameworkId);
         this.frameworkGetRequest.start();
+
         this.geoOptionsRequest.init(this.props.analysisFrameworkId);
         this.geoOptionsRequest.start();
     }
@@ -166,9 +140,15 @@ export default class AnalysisFramework extends React.PureComponent {
             if (this.analysisFrameworkSaveRequest) {
                 this.analysisFrameworkSaveRequest.stop();
             }
+            if (this.geoOptionsRequest) {
+                this.geoOptionsRequest.stop();
+            }
 
             this.frameworkGetRequest.init(newAnalysisFrameworkId);
             this.frameworkGetRequest.start();
+
+            this.geoOptionsRequest.init(newAnalysisFrameworkId);
+            this.geoOptionsRequest.start();
         }
     }
 
@@ -178,37 +158,14 @@ export default class AnalysisFramework extends React.PureComponent {
         this.geoOptionsRequest.stop();
     }
 
-    handleFaramChange = (faramValues = this.props.faramValues, faramErrors) => {
-        const { analysisFrameworkId } = this.props;
-        this.props.setFaram({
-            faramValues,
-            faramErrors,
-            analysisFrameworkId,
-        });
-    }
-
     handleSave = () => {
         const {
             analysisFrameworkId,
             analysisFramework,
-            faramValues,
         } = this.props;
 
-        detachedFaram({
-            value: faramValues,
-            schema: AnalysisFramework.schema,
-            onValidationFailure: (errors) => {
-                this.handleFaramChange(undefined, errors);
-            },
-            onValidationSuccess: (values) => {
-                const afValues = {
-                    ...analysisFramework,
-                    ...values,
-                };
-                this.frameworkSaveRequest.init(analysisFrameworkId, afValues);
-                this.frameworkSaveRequest.start();
-            },
-        });
+        this.frameworkSaveRequest.init(analysisFrameworkId, analysisFramework);
+        this.frameworkSaveRequest.start();
     }
 
     handleCancel = () => {
