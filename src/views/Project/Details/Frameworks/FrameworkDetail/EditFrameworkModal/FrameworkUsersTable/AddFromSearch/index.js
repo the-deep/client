@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { _cs } from '@togglecorp/fujs';
+import { isTruthy, _cs } from '@togglecorp/fujs';
 
 import {
     RequestClient,
@@ -50,8 +50,6 @@ const defaultProps = {
     searchText: '',
     onSearchChange: () => {},
 };
-
-const emptyList = [];
 
 const USER_SEARCH_LIMIT = 25;
 
@@ -201,10 +199,18 @@ export default class AddFrameworkUserFromSearch extends React.PureComponent {
         });
     }
 
+    handleSearchChnage = (searchText) => {
+        const { onSearchChange } = this.props;
+
+        if (searchText.length === 0) {
+            this.setState({ users: [] });
+        }
+        onSearchChange(searchText);
+    }
+
     render() {
         const {
             searchText,
-            onSearchChange,
             className: classNameFromProps,
             listGetRequest: {
                 pending,
@@ -213,19 +219,18 @@ export default class AddFrameworkUserFromSearch extends React.PureComponent {
 
         const { users } = this.state;
 
-        const usersList = searchText.length > 0 ? users : emptyList;
-
         return (
             <NaiveSearchList
                 className={classNameFromProps}
                 searchText={searchText}
-                onSearchChange={onSearchChange}
-                list={usersList}
+                onSearchChange={this.handleSearchChnage}
+                data={users}
                 listKeySelector={listKeySelector}
                 pending={pending}
                 listRenderer={UserAddItem}
                 listRendererParams={this.listRendererParams}
                 emptyComponent={SearchEmptyComponent}
+                changeDelay={500}
             />
         );
     }

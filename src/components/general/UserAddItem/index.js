@@ -16,7 +16,7 @@ const propTypes = {
     firstName: PropTypes.string,
     lastName: PropTypes.string,
     onAddButtonClick: PropTypes.func,
-    userId: PropTypes.number,
+    userId: PropTypes.number.isRequired,
 };
 
 const defaultProps = {
@@ -27,7 +27,6 @@ const defaultProps = {
     firstName: '',
     lastName: '',
     pending: false,
-    userId: undefined,
     onAddButtonClick: undefined,
 };
 
@@ -41,7 +40,9 @@ export default class UserAddItem extends React.PureComponent {
             onAddButtonClick,
         } = this.props;
 
-        onAddButtonClick(userId);
+        if (onAddButtonClick) {
+            onAddButtonClick(userId);
+        }
     }
 
     render() {

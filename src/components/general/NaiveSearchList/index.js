@@ -19,19 +19,21 @@ const propTypes = {
     className: PropTypes.string,
     searchText: PropTypes.string,
     onSearchChange: PropTypes.func,
-    list: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    data: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     listKeySelector: PropTypes.func,
     listRenderer: PropTypes.func.isRequired,
     listRendererParams: PropTypes.func.isRequired,
     pending: PropTypes.bool,
+    changeDelay: PropTypes.number,
 };
 
 const defaultProps = {
+    changeDelay: undefined,
     className: '',
     searchText: '',
     onSearchChange: () => {},
     listKeySelector: d => d.id,
-    list: [],
+    data: [],
     pending: false,
 };
 
@@ -103,12 +105,13 @@ export default class NaiveSearchList extends React.Component {
     render() {
         const {
             className,
-            list,
+            data,
             listKeySelector,
             listRenderer,
             listRendererParams,
             searchText,
             onSearchChange,
+            changeDelay,
             pending: searchPending,
             ...otherProps
         } = this.props;
@@ -134,6 +137,7 @@ export default class NaiveSearchList extends React.Component {
                     onClick={this.handleInputFocus}
                     onFocus={this.handleInputFocus}
                     onBlur={this.handleSearchListBlur}
+                    changeDelay={changeDelay}
                 />
                 {showOptionsPopup &&
                     <FloatingContainer
@@ -144,7 +148,7 @@ export default class NaiveSearchList extends React.Component {
                     >
                         <ListView
                             className={styles.list}
-                            data={list}
+                            data={data}
                             pending={searchPending}
                             renderer={listRenderer}
                             rendererParams={listRendererParams}
