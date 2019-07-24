@@ -6,7 +6,7 @@ import LoadingAnimation from '#rscv/LoadingAnimation';
 import FormattedDate from '#rscv/FormattedDate';
 import Table from '#rscv/Table';
 import {
-    isTruthy,
+    isDefined,
     compareString,
     compareDate,
 } from '@togglecorp/fujs';
@@ -116,8 +116,8 @@ const mapStateToProps = state => ({
 
 const emptyObject = {};
 const getComparator = (func, key, subKey) => (a = emptyObject, b = emptyObject) => func(
-    isTruthy(subKey) && (a[key] ? a[key][subKey] : a[key]),
-    isTruthy(subKey) && (b[key] ? b[key][subKey] : b[key]),
+    isDefined(subKey) && isDefined(a[key]) ? a[key][subKey] : a[key],
+    isDefined(subKey) && isDefined(b[key]) ? b[key][subKey] : b[key],
 );
 
 const keySelector = d => d.id;
@@ -178,7 +178,7 @@ export default class FrameworkUsersTable extends React.PureComponent {
                 comparator: getComparator(compareDate, 'joinedAt'),
                 modifier: ({ joinedAt }) => (
                     <FormattedDate
-                        date={joinedAt}
+                        value={joinedAt}
                         mode="dd-MM-yyyy"
                     />
                 ),

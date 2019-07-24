@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { isTruthy, _cs } from '@togglecorp/fujs';
+import { _cs } from '@togglecorp/fujs';
 
 import {
     RequestClient,

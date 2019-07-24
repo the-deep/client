@@ -69,6 +69,18 @@ const requests = {
     frameworkGetRequest: {
         url: ({ props }) => `/analysis-frameworks/${props.frameworkId}`,
         method: requestMethods.GET,
+        query: {
+            fields: [
+                'id',
+                'title',
+                'description',
+                'widgets',
+                'members',
+                'role',
+                'is_private',
+                'entries_count',
+            ],
+        },
         onPropsChanged: ['frameworkId'],
         onMount: ({ props }) => !!props.frameworkId,
         onSuccess: ({ params, response }) => {
@@ -78,7 +90,7 @@ const requests = {
             };
             params.handleDetailsChange(editFrameworkDetails);
         },
-        schemaName: 'analysisFramework',
+        schemaName: 'analysisFrameworkView',
     },
 };
 

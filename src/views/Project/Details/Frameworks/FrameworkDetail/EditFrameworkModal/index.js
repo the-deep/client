@@ -47,6 +47,18 @@ const requests = {
         url: ({ props }) => `/analysis-frameworks/${props.frameworkId}/`,
         method: requestMethods.PATCH,
         body: ({ params: { body } } = {}) => body,
+        query: {
+            fields: [
+                'id',
+                'title',
+                'description',
+                'widgets',
+                'members',
+                'role',
+                'is_private',
+                'entries_count',
+            ],
+        },
         onSuccess: ({
             params,
             props,
@@ -78,7 +90,7 @@ const requests = {
                 duration: notify.duration.SLOW,
             });
         },
-        schemaName: 'analysisFramework',
+        schemaName: 'analysisFrameworkView',
     },
 };
 
@@ -203,8 +215,8 @@ export default class EditFrameworkModal extends React.PureComponent {
                     }
                 />
                 <ModalBody className={styles.modalBody} >
-                    { pending && <LoadingAnimation /> }
                     <div className={styles.editDetailsSection} >
+                        { pending && <LoadingAnimation /> }
                         <header className={styles.header} >
                             <h4 className={styles.heading} >
                                 {_ts('project.framework.editModal', 'frameworkDetailsHeaderLabel')}

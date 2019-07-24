@@ -42,6 +42,44 @@ const analysisFrameworkSchema = [];
     analysisFrameworkSchema.push({ name, schema });
 }
 {
+    const name = 'analysisFrameworkView';
+    const schema = {
+        doc: {
+            name: 'Analysis Framework',
+            description: 'One of the main entities',
+        },
+        fields: {
+            id: { type: 'uint', required: true },
+            title: { type: 'string', required: true },
+            description: { type: 'string' },
+            widgets: { type: 'array.Widget' },
+            members: { type: 'array.uint' },
+            role: {
+                type: {
+                    name: 'mapping of role',
+                    fields: {
+                        '*': {
+                            type: {
+                                id: { type: 'uint', required: true },
+                                title: { type: 'string', required: true },
+                                canAddUser: { type: 'boolean', required: true },
+                                canCloneFramework: { type: 'boolean', required: true },
+                                canEditFramework: { type: 'boolean', required: true },
+                                canUserInOtherProjects: { type: 'boolean', required: true },
+                            },
+                            required: true,
+                        },
+                    },
+                },
+                required: true,
+            },
+            isPrivate: { type: 'boolean', required: true },
+            entriesCount: { type: 'uint', required: true },
+        },
+    };
+    analysisFrameworkSchema.push({ name, schema });
+}
+{
     const name = 'analysisFrameworkList';
     const schema = {
         doc: {

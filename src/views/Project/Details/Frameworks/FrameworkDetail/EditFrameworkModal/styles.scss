@@ -2,11 +2,11 @@
     width: var(--width-edit-framework-modal);
 
     .modal-body {
-        position: relative;
         padding: 0;
 
         .edit-details-section {
             display: flex;
+            position: relative;
             flex-direction: column;
             margin-bottom: var(--spacing-super-large);
             overflow-y: auto;
