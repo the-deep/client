@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import memoize from 'memoize-one';
 
 import DangerConfirmButton from '#rsca/ConfirmButton/DangerConfirmButton';
-import notify from '#notify';
 import SelectInput from '#rsci/SelectInput';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import { getNewActiveProjectId } from '#entities/project';

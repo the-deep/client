@@ -30,13 +30,14 @@ const userSchema = [];
             displayName: { type: 'string', required: true },
             displayPicture: { type: 'uint' }, // id
             email: { type: 'string', required: true },
+            emailOptOuts: { type: 'array.unknown' },
             firstName: { type: 'string', required: true },
             id: { type: 'uint', required: true },
             lastName: { type: 'string', required: true },
             organization: { type: 'string', required: true },
             username: { type: 'string', required: true },
             language: { type: 'string' },
-            // lastActiveProject: { type: 'uint' },
+            lastActiveProject: { type: 'uint' },
             loginAttempts: { type: 'number' },
         },
     };
@@ -51,6 +52,7 @@ const userSchema = [];
             description: 'Feature access item',
         },
         fields: {
+            featureType: { type: 'string' },
             title: { type: 'string', required: true },
             key: { type: 'string', required: true },
         },
@@ -153,6 +155,23 @@ const userSchema = [];
         fields: {
             users: { type: 'usersGetResponse', required: false },
             'user-groups': { type: 'userGroupsGetResponse', required: true },
+        },
+    };
+    userSchema.push({ name, schema });
+}
+
+{
+    const name = 'usersSearchGetResponse';
+    const schema = {
+        doc: {
+            name: 'Users Search Get Response',
+            description: 'Response for user search',
+        },
+        fields: {
+            count: { type: 'uint', required: true },
+            next: { type: 'string' },
+            previous: { type: 'string' },
+            results: { type: 'array.user', required: true },
         },
     };
     userSchema.push({ name, schema });

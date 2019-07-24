@@ -6,7 +6,7 @@ import { capitalize } from '@togglecorp/fujs';
 import Icon from '#rscg/Icon';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 
-import DisplayPicture from '#components/viewer/DisplayPicture';
+import UserAddItem from '#components/general/UserAddItem';
 
 import {
     RequestClient,
@@ -200,36 +200,17 @@ export default class SearchListItem extends React.PureComponent {
                 </div>
             );
         } else if (type === USER) {
-            const className = `
-                ${classNameFromProps}
-                ${styles.user}
-            `;
-
             return (
-                <div className={className}>
-                    <div className={styles.top}>
-                        <DisplayPicture
-                            className={styles.picture}
-                            galleryId={displayPicture}
-                        />
-                        <div className={styles.name}>
-                            <div className={styles.text}>
-                                {`${firstName} ${lastName}`}
-                            </div>
-                            <div>
-                                { username }
-                            </div>
-                        </div>
-                    </div>
-                    <div className={actionButtonsClassName}>
-                        <PrimaryButton
-                            onClick={this.handleAddUserButtonClick}
-                            iconName="add"
-                            title={capitalize(_ts('project.users', 'addUserButtonTooltip'))}
-                            pending={userMembershipRequest.pending}
-                        />
-                    </div>
-                </div>
+                <UserAddItem
+                    className={classNameFromProps}
+                    displayPicture={displayPicture}
+                    pending={userMembershipRequest.pending}
+                    firstName={firstName}
+                    lastName={lastName}
+                    username={username}
+                    onAddButtonClick={this.handleAddUserButtonClick}
+                    actionButtonTitle={capitalize(_ts('project.users', 'addUserButtonTooltip'))}
+                />
             );
         }
 

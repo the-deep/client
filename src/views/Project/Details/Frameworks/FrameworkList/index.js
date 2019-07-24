@@ -23,7 +23,7 @@ import {
 
 import _ts from '#ts';
 
-import AddFrameworkModal from './AddFrameworkModal';
+import AddFrameworkModal from '../AddFrameworkModal';
 import FrameworkListItem from './FrameworkListItem';
 import styles from './styles.scss';
 
@@ -72,7 +72,7 @@ const requests = {
         method: requestMethods.GET,
         query: ({ props: { filterValues } }) => ({
             ...filterValues,
-            fields: ['id', 'title'],
+            fields: ['id', 'title', 'is_private'],
             ordering: 'title',
         }),
         onPropsChanged: ['filterValues'],

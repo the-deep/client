@@ -221,7 +221,7 @@ export default class LeadFilter extends React.PureComponent {
         this.props.completedLeadKeys.forEach((leadId) => {
             this.props.uploadCoordinator.remove(leadId);
         });
-        this.props.addLeadViewLeadRemove(this.props.uploadCoordinator);
+        this.props.addLeadViewLeadRemove(this.props.completedLeadKeys);
 
         notify.send({
             title: _ts('addLeads.actions', 'leadsDiscard'),

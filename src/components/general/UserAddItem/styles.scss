@@ -1,4 +1,4 @@
-.usergroup {
+.user {
     display: flex;
     position: relative;
     flex-direction: column;
@@ -6,15 +6,16 @@
     padding: var(--spacing-medium) 0;
     overflow: hidden;
 
+
+    .picture {
+        margin: 0 var(--spacing-small);
+        width: var(--width-user-item-picture);
+        height: var(--height-user-item-picture);
+    }
+
     .top {
         display: flex;
         flex-grow: 1;
-
-        .icon {
-            flex-shrink: 0;
-            padding: 0 var(--spacing-medium);
-            font-size: var(--font-size-extra-large);
-        }
 
         .name {
             display: flex;

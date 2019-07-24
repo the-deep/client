@@ -466,7 +466,6 @@
         "1125": "Failed to fetch projects",
         "1126": "Failed to save project.",
         "1127": "Failed to create new category editor.",
-        "1128": "Failed to create new framework.",
         "1129": "Group",
         "1130": "Progress reports of June",
         "1131": "Add lead group",
@@ -951,9 +950,25 @@
         "-57055647": "Project Visibility",
         "-16703906": "Export leads to other projects",
         "-86428588": "Are you sure you want to export {countLeads} leads to {countProjects} projects?",
-        "-81861908": "Extract leads to other projects",
         "-78373067": "Failed to extract leads to other projects.",
-        "-69982235": "Successfully created {leadsCount} leads in {projectsCount} projects."
+        "-69982235": "Successfully created {leadsCount} leads in {projectsCount} projects.",
+        "-59667485": "Note: Framework visibility cannot be changed once the framework is created.",
+        "-13698917": "This is a private framework and is only visible to framework members.",
+        "-8045218": "Successfully cloned the selected framework.",
+        "-49370702": "Edit widgets",
+        "-22564813": "Are you sure you want to remove membership of {name}({email}) from this framework?",
+        "-81392551": "Search and add users",
+        "-68055625": "Type to search",
+        "-48269508": "Cannot clone the analysis framework. Please check your network connection and try again.",
+        "-51115684": "Analysis Framework Edit",
+        "-97955721": "Successfully edited analysis framework's detail.",
+        "-27000743": "Failed to edit analysis framework.",
+        "-49766949": "Failed to get members of analysis framework.",
+        "-86595482": "Failed to get roles of analysis framework.",
+        "-85690459": "Failed to get members of the analysis framework.",
+        "-68606611": "Failed to remove user from analysis framework.",
+        "-14647683": "Failed to change role of member in analysis framework.",
+        "-59215530": "Save details"
     },
     "links": {
         "browserExtension": {
@@ -1014,7 +1029,9 @@
             "cancelButtonTitle": 61,
             "saveButtonTitle": 25,
             "cancelConfirmDetail": -58972891,
-            "successConfirmDetail": -44183195
+            "successConfirmDetail": -44183195,
+            "privateFrameworkBadgeTitle": -92759559,
+            "privateFrameworkBadgeTooltip": -13698917
         },
         "widgets.editor.date": {
             "informationDateCheckboxLabel": 777,
@@ -1655,7 +1672,7 @@
             "saveCurrentButtonTitle": 5551,
             "exportButtonTitle": 600,
             "exportCurrentButtonTitle": 5551,
-            "exportAllCompletedButtonTitle": 631
+            "exportAllCompletedButtonTitle": 360
         },
         "addLeads.sourceButtons": {
             "googleDriveLabel": 35,
@@ -1827,7 +1844,6 @@
             "frameworkDescriptionInputPlaceholder": 12501,
             "cloneFrameworkModalTitle": 12502,
             "cloneFrameworkCloneButtonTitle": 353,
-            "cloneFrameworkCancelButtonTitle": 61,
             "addFrameworkFormAddButtonTitle": 301,
             "addFrameworkFormCancelButtonTitle": 61,
             "entryOverviewTitle": 781,
@@ -1840,7 +1856,14 @@
             "frameworkActivityActiveTitle": -57442233,
             "frameworkActivityInactiveTitle": -80991835,
             "relatedToMeTitle": -58312660,
-            "frameworkActivityAllTitle": -82413232
+            "frameworkActivityAllTitle": -82413232,
+            "visibilityPrivateLabel": -92759559,
+            "visibilityPublicLabel": -59389,
+            "frameworkVisibilityInputHint": -59667485,
+            "frameworkVisibilityInputLabel": 1120,
+            "editFrameworkModalTitle": -59086768,
+            "editFrameworkModalSaveButtonTitle": 25,
+            "editWidgetsButtonTitle": -49370702
         },
         "project.wordCategory": {
             "addWordCategoryButtonLabel": 301,
@@ -1892,7 +1915,6 @@
             "addRegionButtonLabel": 301,
             "projectSaveFailure": 1126,
             "categoryEditorCreateFailure": 1127,
-            "frameworkCreateFailure": 1128,
             "headerProjects": 173,
             "addProjectButtonLabel": 301,
             "discoverProjectButtonLabel": 7632,
@@ -1945,10 +1967,11 @@
             "addAfTitleLabel": 379,
             "noAfText": 359,
             "project": 31,
-            "afGetTitle": 379,
-            "afGetFatal": 991,
             "privateProjectBadgeTitle": -92759559,
-            "priivateProjectBadgeTooltip": -64655622
+            "priivateProjectBadgeTooltip": -64655622,
+            "afClone": 12502,
+            "afCloneSuccess": -8045218,
+            "afCloneFatal": -48269508
         },
         "connector": {
             "noConnectorsLabel": 1115,
@@ -2140,7 +2163,6 @@
             "userProjectCreate": 916,
             "userProjectCreateSuccess": 917,
             "projectCreateFatalError": -77603800,
-            "isPrivateCheckboxLabel": -92759559,
             "projectVisibilityInputLabel": 1120,
             "visibilityPrivateLabel": -92759559,
             "visibilityPublicLabel": -59389,
@@ -2717,9 +2739,47 @@
             "searchInputPlaceholder": 302,
             "clearSelectionButtonLabel": 528,
             "successConfirmDetail": -86428588,
-            "leadsCopyTitle": -81861908,
+            "leadsCopyTitle": -16703906,
             "leadsCopyFailureMessage": -78373067,
             "successNotify": -69982235
+        },
+        "project.framework.editModal": {
+            "actionsTitle": 16,
+            "emailTitle": 184,
+            "joinedAtTitle": 161,
+            "meTitle": -24177081,
+            "nameTitle": 103,
+            "organizationTitle": 154,
+            "removeMembershipConfirmationMessage": -22564813,
+            "userRemoveButtonTitle": 190,
+            "userRoleSelectTitle": 12509,
+            "membersTableHeader": 166,
+            "frameworkDetailsHeaderLabel": 377,
+            "editFrameworkModalSaveButtonTitle": -59215530
+        },
+        "components.naiveSearchList": {
+            "searchInputLabel": 9,
+            "searchInputPlaceholder": -81392551
+        },
+        "components.addFromSearch": {
+            "addFromSearchLabel": -68055625
+        },
+        "project.framework.edit": {
+            "afPatchSuccess": -97955721,
+            "afPatch": -51115684,
+            "afPatchFatal": -27000743,
+            "membersGetFailure": -49766949,
+            "rolesGetFailure": -86595482,
+            "membersGetFatal": -49766949,
+            "rolesGetFatal": -86595482,
+            "membershipAddFailure": 177,
+            "membershipAddFatal": 177,
+            "membershipListFetchFailure": -85690459,
+            "membershipListFetchFatal": -85690459,
+            "membershipRemoveFailure": -68606611,
+            "membershipRemoveFatal": -68606611,
+            "membershipRoleChangeFailure": -14647683,
+            "membershipRoleChangeFatal": -14647683
         }
     }
 }

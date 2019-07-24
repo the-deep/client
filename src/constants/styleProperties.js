@@ -14,6 +14,12 @@ const styleProperties = {
     },
 
     dimens: {
+        widthEditFrameworkModal: '860px',
+        widthSearchInput: '214px',
+        minHeightSearchInput: '88px',
+        maxHeightSearchInput: '280px',
+        widthUserItemPicture: '30px',
+        heightUserItemPicture: '30px',
     },
 };
 

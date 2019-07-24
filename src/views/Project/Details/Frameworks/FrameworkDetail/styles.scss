@@ -17,29 +17,48 @@
             display: flex;
             align-items: center;
 
-            .heading {
+            .left-container {
+                display: flex;
+                align-items: center;
                 flex-grow: 1;
-                padding: var(--spacing-small) var(--spacing-medium);
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
-            }
 
-            .tabs {
-                flex-shrink: 0;
-            }
-
-            .action-buttons {
-                flex-shrink: 0;
-                padding: var(--spacing-small) var(--spacing-medium);
-
-                button {
-                    margin-left: var(--spacing-small);
+                .heading {
+                    padding: var(--spacing-small) var(--spacing-medium);
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
                 }
 
-                .edit-framework-link {
-                    @include button-like-link(var(--color-warning));
-                    margin-left: var(--spacing-small);
+                .badge {
+                    display: inline-flex;
+                    flex-shrink: 0;
+                }
+            }
+
+            .right-container {
+                display: flex;
+                align-items: center;
+                flex-shrink: 0;
+
+                .tabs {
+                    flex-shrink: 0;
+                }
+
+                .action-buttons {
+                    flex-shrink: 0;
+                    padding: var(--spacing-small) var(--spacing-medium);
+
+                    button {
+                        margin-left: var(--spacing-small);
+                    }
+
+                    .edit-framework-link {
+                        @include button-like-link(var(--color-warning));
+                        margin-left: var(--spacing-small);
+                    }
                 }
             }
         }

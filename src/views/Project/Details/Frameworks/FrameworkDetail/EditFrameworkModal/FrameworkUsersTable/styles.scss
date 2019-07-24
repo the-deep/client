@@ -1,0 +1,34 @@
+.users-table {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    height: 30vh;
+    overflow-y: auto;
+
+    .header {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        justify-content: space-between;
+        padding: var(--spacing-small) var(--spacing-medium);
+
+        .heading {
+            flex-grow: 1;
+        }
+
+        .add-input {
+            flex-shrink: 0;
+        }
+    }
+
+    .table-container {
+        flex-grow: 1;
+        overflow-y: auto;
+
+        :global {
+            .header {
+                z-index: 1;
+            }
+        }
+    }
+}
