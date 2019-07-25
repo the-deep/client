@@ -43,4 +43,7 @@ notifications:
 
 env:
   global:
+    env:
+  global:
     - REACT_STORE_DIR=src/vendor/react-store
+    - DOCKER_TAG_CLIENT=`echo ${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH} | tr / _`

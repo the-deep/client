@@ -104,7 +104,7 @@ export default class RightPanel extends React.PureComponent {
 
         this.views = {
             metadata: {
-                rendereParams: () => ({
+                rendererParams: () => ({
                     className: styles.metadata,
                     pending: this.props.pending,
                     onUploadPending: this.props.onUploadPending,
@@ -112,7 +112,7 @@ export default class RightPanel extends React.PureComponent {
                 component: Metadata,
             },
             summary: {
-                rendereParams: () => ({
+                rendererParams: () => ({
                     className: styles.summary,
                     pending: this.props.pending,
                     onActiveSectorChange: this.props.onActiveSectorChange,
@@ -120,13 +120,13 @@ export default class RightPanel extends React.PureComponent {
                 component: Summary,
             },
             methodology: {
-                rendereParams: () => ({
+                rendererParams: () => ({
                     pending: this.props.pending,
                 }),
                 component: Methodology,
             },
             score: {
-                rendereParams: () => ({
+                rendererParams: () => ({
                     className: styles.score,
                     pending: this.props.pending,
                 }),
