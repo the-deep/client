@@ -28,6 +28,7 @@ const propTypes = {
     aryTemplateMetadata: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     pending: PropTypes.bool,
     sources: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    onUploadPending: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
