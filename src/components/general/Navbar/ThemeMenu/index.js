@@ -67,7 +67,7 @@ export default class ThemeMenu extends React.PureComponent {
             <DropdownMenu
                 className={className}
                 dropdownClassName={styles.themeSelectionDropdown}
-                dropdownIcon="colorPallete"
+                dropdownIcon="colorPalette"
                 dropdownIconClassName={styles.icon}
             >
                 <List
