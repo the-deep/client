@@ -1,7 +1,5 @@
-// export const extensionId = 'nkipfcpknocfnlelgehlealjgknfkfhm'; // fhx
-// export const extensionId = 'caebgfaeglddaliobdbkcphpfegnedmp'; // tnagorra
-// export const extensionId = 'labjbplogbalfabkboldbkmgigdfblbk'; // bd
-export const extensionId = 'kafonkgglonkbldmcigbdojiadfcmcdc'; // extension on store
+const extensionIdOnChromeStore = 'kafonkgglonkbldmcigbdojiadfcmcdc';
+export const extensionId = process.env.REACT_APP_BROWSER_EXTENSION_ID || extensionIdOnChromeStore;
 
 // TODO: make common constant for extension as well
 const EXTENSION_GET_SCREENSHOT = 'get-screenshot';
