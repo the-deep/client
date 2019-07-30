@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { _cs } from '@togglecorp/fujs';
+
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
 import LoadingAnimation from '#rscv/LoadingAnimation';
@@ -10,12 +12,17 @@ import {
 import styles from './styles.scss';
 
 const propTypes = {
+    className: PropTypes.string,
     activeSort: PropTypes.string.isRequired,
     headers: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     leads: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
     loading: PropTypes.bool.isRequired,
     emptyComponent: PropTypes.func.isRequired,
     setLeadPageActiveSort: PropTypes.func.isRequired,
+};
+
+const defaultProps = {
+    className: undefined,
 };
 
 const mapStateToProps = state => ({
@@ -25,6 +32,7 @@ const mapStateToProps = state => ({
 @connect(mapStateToProps)
 export default class Table extends React.Component {
     static propTypes = propTypes;
+    static defaultProps = defaultProps;
     static leadKeyExtractor = lead => String(lead.id)
 
     leadModifier = (lead, columnKey) => {
@@ -75,10 +83,11 @@ export default class Table extends React.Component {
             leads,
             headers,
             emptyComponent,
+            className,
         } = this.props;
 
         return (
-            <div className={styles.tableContainer}>
+            <div className={_cs(className, styles.tableContainer)}>
                 <div className={styles.scrollWrapper}>
                     <RawTable
                         data={leads}

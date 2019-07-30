@@ -1570,7 +1570,8 @@
             "emptyWithFilterMessage": -59957290,
             "emptyMessage": -52516388,
             "Preview": -77224022,
-            "exportToOtherProjectsButtonTitle": -16703906
+            "exportToOtherProjectsButtonTitle": -16703906,
+            "pageCountTitle": -59011405
         },
         "leadsGrid": {
             "publisherLabel": 5,
