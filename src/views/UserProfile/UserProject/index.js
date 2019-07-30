@@ -14,6 +14,7 @@ import Icon from '#rscg/Icon';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import FormattedDate from '#rscv/FormattedDate';
+import Badge from '#components/viewer/Badge';
 import Modal from '#rscv/Modal';
 import ModalBody from '#rscv/Modal/Body';
 import ModalHeader from '#rscv/Modal/Header';
@@ -76,6 +77,19 @@ export default class UserProject extends React.PureComponent {
                 order: 1,
                 sortable: true,
                 comparator: (a, b) => compareString(a.title, b.title),
+                modifier: row => (
+                    <div>
+                        {row.title}
+                        {row.isPrivate &&
+                            <Badge
+                                className={styles.badge}
+                                icon="locked"
+                                title={_ts('project', 'privateProjectBadgeTitle')}
+                                tooltip={_ts('project', 'priivateProjectBadgeTooltip')}
+                            />
+                        }
+                    </div>
+                ),
             },
             {
                 key: 'rights',
@@ -199,7 +213,6 @@ export default class UserProject extends React.PureComponent {
                         {_ts('userProfile', 'headerProjects')}
                     </h2>
                     {
-
                         isCurrentUser && (
                             <PrimaryButton onClick={this.handleAddProjectClick} >
                                 {_ts('userProfile', 'addProjectButtonLabel')}

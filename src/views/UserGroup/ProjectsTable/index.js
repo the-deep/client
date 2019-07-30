@@ -13,6 +13,7 @@ import {
 } from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
+import Badge from '#components/viewer/Badge';
 import FormattedDate from '#rscv/FormattedDate';
 import Table from '#rscv/Table';
 import SearchInput from '#rsci/SearchInput';
@@ -71,6 +72,19 @@ export default class ProjectsTable extends React.PureComponent {
                 order: 1,
                 sortable: true,
                 comparator: (a, b) => compareString(a.title, b.title),
+                modifier: row => (
+                    <div>
+                        {row.title}
+                        {row.isPrivate &&
+                            <Badge
+                                className={styles.badge}
+                                icon="locked"
+                                title={_ts('project', 'privateProjectBadgeTitle')}
+                                tooltip={_ts('project', 'priivateProjectBadgeTooltip')}
+                            />
+                        }
+                    </div>
+                ),
             },
             {
                 key: 'createdAt',

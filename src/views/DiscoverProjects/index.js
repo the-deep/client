@@ -13,7 +13,7 @@ import {
 import Page from '#rscv/Page';
 import Message from '#rscv/Message';
 import LoadingAnimation from '#rscv/LoadingAnimation';
-import ListView from '#rscv/List/ListView';
+import List from '#rscv/List';
 import Pager from '#rscv/Pager';
 import Badge from '#components/viewer/Badge';
 import RawTable from '#rscv/RawTable';
@@ -243,7 +243,7 @@ export default class DiscoverProjects extends React.PureComponent {
                 const EmptyComponent = () => '-';
 
                 return (
-                    <ListView
+                    <List
                         data={adminsList}
                         keySelector={DiscoverProjects.membershipKeySelector}
                         renderer={Admin}
