@@ -149,6 +149,7 @@ export default class FrameworkDetail extends React.PureComponent {
             projectDetails: {
                 analysisFramework: currentFrameworkId,
                 id: projectId,
+                isPrivate: isProjectPrivate,
             } = emptyObject,
             setProjectFramework,
             setActiveFramework,
@@ -166,7 +167,11 @@ export default class FrameworkDetail extends React.PureComponent {
             description: frameworkDescription,
         } = editFrameworkDetails;
 
-        const canUse = canUseInOtherProjects && (currentFrameworkId !== analysisFrameworkId);
+        const canUseFrameworkInProject = !isPrivate || isProjectPrivate;
+
+        const canUse = canUseInOtherProjects
+            && (currentFrameworkId !== analysisFrameworkId)
+            && canUseFrameworkInProject;
 
         return (
             <header className={styles.header}>

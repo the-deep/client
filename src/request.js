@@ -102,6 +102,7 @@ RequestClient.propType = PropTypes.shape({
     error: PropTypes.object,
 });
 
+// TODO: Fix handling of errors both in frontend and backend
 export const notifyOnFailure = title => ({
     error: {
         body,
