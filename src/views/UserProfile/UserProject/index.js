@@ -213,7 +213,6 @@ export default class UserProject extends React.PureComponent {
                         {_ts('userProfile', 'headerProjects')}
                     </h2>
                     {
-
                         isCurrentUser && (
                             <PrimaryButton onClick={this.handleAddProjectClick} >
                                 {_ts('userProfile', 'addProjectButtonLabel')}
