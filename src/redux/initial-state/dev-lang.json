@@ -969,7 +969,9 @@
         "-68606611": "Failed to remove user from analysis framework.",
         "-14647683": "Failed to change role of member in analysis framework.",
         "-59215530": "Save details",
-        "-66973833": "Select Excerpt"
+        "-66973833": "Select Excerpt",
+        "-17456167": "Use Framework",
+        "-56943688": "Edit details"
     },
     "links": {
         "browserExtension": {
@@ -1850,7 +1852,7 @@
             "entryOverviewTitle": 781,
             "entryListTitle": 780,
             "useFrameworkButtonTitle": 362,
-            "editFrameworkButtonTitle": 363,
+            "editFrameworkButtonTitle": -56943688,
             "confirmUseFramework": 365,
             "confirmUseFrameworkText": 366,
             "errorFrameworkLoad": 648,
@@ -1864,7 +1866,8 @@
             "frameworkVisibilityInputLabel": 1120,
             "editFrameworkModalTitle": -59086768,
             "editFrameworkModalSaveButtonTitle": 25,
-            "editWidgetsButtonTitle": -49370702
+            "editWidgetsButtonTitle": -49370702,
+            "frameworkUseNotifyTitle": -17456167
         },
         "project.wordCategory": {
             "addWordCategoryButtonLabel": 301,

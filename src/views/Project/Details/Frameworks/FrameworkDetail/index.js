@@ -149,6 +149,7 @@ export default class FrameworkDetail extends React.PureComponent {
             projectDetails: {
                 analysisFramework: currentFrameworkId,
                 id: projectId,
+                isPrivate: isProjectPrivate,
             } = emptyObject,
             setProjectFramework,
             setActiveFramework,
@@ -166,7 +167,12 @@ export default class FrameworkDetail extends React.PureComponent {
             description: frameworkDescription,
         } = editFrameworkDetails;
 
-        const canUse = canUseInOtherProjects && (currentFrameworkId !== analysisFrameworkId);
+        // NOTE: This is to allow usuage of private framework in private project only
+        const canUseFrameworkInProject = isProjectPrivate || !isPrivate;
+
+        const canUse = canUseInOtherProjects
+            && (currentFrameworkId !== analysisFrameworkId)
+            && canUseFrameworkInProject;
 
         return (
             <header className={styles.header}>
@@ -195,19 +201,18 @@ export default class FrameworkDetail extends React.PureComponent {
                             active={activeView}
                         />
                         <div className={styles.actionButtons}>
-                            {canUse &&
+                            {(canUse || readOnly) &&
                                 <UseFrameworkButton
-                                    disabled={pending || readOnly}
+                                    disabled={pending}
                                     frameworkId={analysisFrameworkId}
                                     frameworkTitle={frameworkTitle}
                                     projectId={projectId}
                                     setProjectFramework={setProjectFramework}
                                 />
                             }
-
                             {canEditFramework &&
                                 <WarningModalButton
-                                    disabled={pending || readOnly}
+                                    disabled={pending}
                                     modal={
                                         <EditFrameworkModal
                                             frameworkId={analysisFrameworkId}
@@ -221,7 +226,6 @@ export default class FrameworkDetail extends React.PureComponent {
                                     { _ts('project.framework', 'editFrameworkButtonTitle') }
                                 </WarningModalButton>
                             }
-
                             {canEditFramework &&
                                 <Link
                                     className={styles.editFrameworkLink}
@@ -233,10 +237,9 @@ export default class FrameworkDetail extends React.PureComponent {
                                     { _ts('project.framework', 'editWidgetsButtonTitle') }
                                 </Link>
                             }
-
                             {canCloneFramework &&
                                 <AccentModalButton
-                                    disabled={pending || readOnly}
+                                    disabled={pending}
                                     modal={
                                         <AddFrameworkModal
                                             frameworkId={analysisFrameworkId}

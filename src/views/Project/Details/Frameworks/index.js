@@ -111,8 +111,6 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
                     activeFrameworkId={activeFrameworkId}
                     usedFrameworkId={usedFrameworkId}
 
-                    readOnly={readOnly}
-
                     setActiveFramework={this.setActiveFramework}
                     setFrameworkList={this.props.setFrameworkList}
                 />

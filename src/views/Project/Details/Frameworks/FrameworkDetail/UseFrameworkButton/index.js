@@ -3,15 +3,23 @@ import React from 'react';
 
 import WarningConfirmButton from '#rsca/ConfirmButton/WarningConfirmButton';
 
+import {
+    RequestClient,
+    requestMethods,
+} from '#request';
 import _ts from '#ts';
-
-import UseFrameworkRequest from './requests/UseFrameworkRequest';
+import notify from '#notify';
 
 const propTypes = {
     disabled: PropTypes.bool,
-    frameworkId: PropTypes.number.isRequired,
     frameworkTitle: PropTypes.string.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    useFrameworkRequest: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
+    frameworkId: PropTypes.number.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     projectId: PropTypes.number.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     setProjectFramework: PropTypes.func.isRequired,
 };
 
@@ -19,40 +27,52 @@ const defaultProps = {
     disabled: false,
 };
 
+const requests = {
+    useFrameworkRequest: {
+        url: ({ props: { projectId } }) => `/projects/${projectId}/`,
+        body: ({ props: { frameworkId: analysisFramework } }) => ({ analysisFramework }),
+        method: requestMethods.PATCH,
+        onSuccess: ({
+            props: {
+                projectId,
+                frameworkId,
+                setProjectFramework,
+            },
+        }) => {
+            setProjectFramework({
+                projectId,
+                afId: frameworkId,
+            });
+        },
+        onFailure: ({ error: { faramErrors = {} } }) => {
+            const message = (faramErrors.$internal || []).join(' ');
+            notify.send({
+                title: _ts('project.framework', 'frameworkUseNotifyTitle'),
+                type: notify.type.ERROR,
+                message,
+                duration: notify.duration.MEDIUM,
+            });
+        },
+    },
+};
+
+@RequestClient(requests)
 export default class UseFrameworkButton extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    constructor(props) {
-        super(props);
-
-        const { setProjectFramework } = this.props;
-
-        this.state = { pendingFrameworkUse: false };
-
-        this.useFrameworkRequest = new UseFrameworkRequest({
-            setState: d => this.setState(d),
-            setProjectFramework,
-        });
-    }
-
     handleFrameworkConfirmClose = () => {
-        const {
-            frameworkId,
-            projectId,
-        } = this.props;
+        const { useFrameworkRequest } = this.props;
 
-        this.useFrameworkRequest
-            .init(frameworkId, projectId)
-            .start();
+        useFrameworkRequest.do();
     }
 
     render() {
         const {
             frameworkTitle,
             disabled,
+            useFrameworkRequest: { pending },
         } = this.props;
-        const { pendingFrameworkUse } = this.state;
 
         const useFrameworkButtonLabel = _ts('project.framework', 'useFrameworkButtonTitle');
         const confirmationMessage = (
@@ -72,7 +92,7 @@ export default class UseFrameworkButton extends React.PureComponent {
             <WarningConfirmButton
                 iconName="check"
                 onClick={this.handleFrameworkConfirmClose}
-                disabled={disabled || pendingFrameworkUse}
+                disabled={disabled || pending}
                 confirmationMessage={confirmationMessage}
             >
                 { useFrameworkButtonLabel }
