@@ -970,7 +970,8 @@
         "-14647683": "Failed to change role of member in analysis framework.",
         "-59215530": "Save details",
         "-66973833": "Select Excerpt",
-        "-17456167": "Use Framework"
+        "-17456167": "Use Framework",
+        "-56943688": "Edit details"
     },
     "links": {
         "browserExtension": {
@@ -1851,7 +1852,7 @@
             "entryOverviewTitle": 781,
             "entryListTitle": 780,
             "useFrameworkButtonTitle": 362,
-            "editFrameworkButtonTitle": 363,
+            "editFrameworkButtonTitle": -56943688,
             "confirmUseFramework": 365,
             "confirmUseFrameworkText": 366,
             "errorFrameworkLoad": 648,

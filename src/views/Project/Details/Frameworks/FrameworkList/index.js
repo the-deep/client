@@ -35,7 +35,6 @@ const propTypes = {
     usedFrameworkId: PropTypes.number,
     projectId: PropTypes.number.isRequired,
     setActiveFramework: PropTypes.func.isRequired,
-    readOnly: PropTypes.bool,
     // eslint-disable-next-line react/forbid-prop-types
     frameworkList: PropTypes.array,
     onFilterChange: PropTypes.func.isRequired,
@@ -53,7 +52,6 @@ const defaultProps = {
 
     // Apparently there can be no frameworks in projects
     usedFrameworkId: undefined,
-    readOnly: false,
     frameworkList: [],
 };
 
@@ -124,7 +122,6 @@ export default class FrameworkList extends React.PureComponent {
             className: classNameFromProps,
             projectId,
             setActiveFramework,
-            readOnly,
             filterValues,
             frameworkList,
             frameworkListGetRequest: {
@@ -151,7 +148,7 @@ export default class FrameworkList extends React.PureComponent {
 
                         <AccentModalButton
                             iconName="add"
-                            disabled={readOnly || pending}
+                            disabled={pending}
                             className={styles.addFrameworkButton}
                             transparent
                             modal={

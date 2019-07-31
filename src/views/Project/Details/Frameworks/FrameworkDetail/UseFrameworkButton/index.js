@@ -32,15 +32,6 @@ const requests = {
         url: ({ props: { projectId } }) => `/projects/${projectId}/`,
         body: ({ props: { frameworkId: analysisFramework } }) => ({ analysisFramework }),
         method: requestMethods.PATCH,
-        onFailure: ({ error: { faramErrors = {} } }) => {
-            const message = (faramErrors.$internal || []).join(' ');
-            notify.send({
-                title: _ts('project.framework', 'frameworkUseNotifyTitle'),
-                type: notify.type.ERROR,
-                message,
-                duration: notify.duration.MEDIUM,
-            });
-        },
         onSuccess: ({
             props: {
                 projectId,
@@ -51,6 +42,15 @@ const requests = {
             setProjectFramework({
                 projectId,
                 afId: frameworkId,
+            });
+        },
+        onFailure: ({ error: { faramErrors = {} } }) => {
+            const message = (faramErrors.$internal || []).join(' ');
+            notify.send({
+                title: _ts('project.framework', 'frameworkUseNotifyTitle'),
+                type: notify.type.ERROR,
+                message,
+                duration: notify.duration.MEDIUM,
             });
         },
     },
