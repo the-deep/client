@@ -170,7 +170,7 @@ export default class FrameworkDetail extends React.PureComponent {
         // NOTE: This is to allow usuage of private framework in private project only
         const canUseFrameworkInProject = isProjectPrivate || !isPrivate;
 
-        const canUse = canUseInOtherProjects
+        const canUse = !!canUseInOtherProjects
             && (currentFrameworkId !== analysisFrameworkId)
             && canUseFrameworkInProject;
 
@@ -201,7 +201,7 @@ export default class FrameworkDetail extends React.PureComponent {
                             active={activeView}
                         />
                         <div className={styles.actionButtons}>
-                            {(canUse || readOnly) &&
+                            {(canUse && !readOnly) &&
                                 <UseFrameworkButton
                                     disabled={pending}
                                     frameworkId={analysisFrameworkId}
