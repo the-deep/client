@@ -110,8 +110,8 @@ const requests = {
         schema: 'aryGetResponse',
         url: ({ props: { activeLeadId, activeLeadGroupId } }) => (
             activeLeadId === undefined
-                ? `/lead-group-assessments/${activeLeadGroupId}`
-                : `/lead-assessments/${activeLeadId}`
+                ? `/lead-group-assessments/${activeLeadGroupId}/`
+                : `/lead-assessments/${activeLeadId}/`
         ),
         onMount: ({ props }) => !!props.activeLeadId || !!props.activeLeadGroupId,
         onPropsChanged: ['activeLeadId', 'activeLeadGroupId'],
@@ -154,14 +154,14 @@ const requests = {
     },
     leadRequest: {
         schema: 'lead',
-        url: ({ props: { activeLeadId } }) => `/leads/${activeLeadId}`,
+        url: ({ props: { activeLeadId } }) => `/leads/${activeLeadId}/`,
         onMount: ({ props: { activeLeadId } }) => !!activeLeadId,
         onPropsChanged: ['activeLeadId'],
         // TODO: check mismatch between project and lead
     },
     leadGroupRequest: {
         schema: 'leadGroup',
-        url: ({ props: { activeLeadGroupId } }) => `/lead-groups/${activeLeadGroupId}`,
+        url: ({ props: { activeLeadGroupId } }) => `/lead-groups/${activeLeadGroupId}/`,
         onMount: ({ props: { activeLeadGroupId } }) => !!activeLeadGroupId,
         onPropsChanged: ['activeLeadGroupId'],
         // TODO: check mismatch between project and leadGroup

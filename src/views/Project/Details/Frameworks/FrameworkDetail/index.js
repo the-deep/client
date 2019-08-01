@@ -67,7 +67,7 @@ const emptyObject = {};
 
 const requests = {
     frameworkGetRequest: {
-        url: ({ props }) => `/analysis-frameworks/${props.frameworkId}`,
+        url: ({ props }) => `/analysis-frameworks/${props.frameworkId}/`,
         method: requestMethods.GET,
         query: {
             fields: [
