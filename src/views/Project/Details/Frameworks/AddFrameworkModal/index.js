@@ -154,7 +154,7 @@ export default class AddFrameworkModal extends React.PureComponent {
         this.setState({ faramErrors });
     };
 
-    handleValidationSuccess = (_, values) => {
+    handleValidationSuccess = (values) => {
         const {
             frameworkId,
             isClone,
@@ -229,18 +229,20 @@ export default class AddFrameworkModal extends React.PureComponent {
                             placeholder={_ts('project.framework', 'frameworkDescriptionInputPlaceholder')}
                             rows={3}
                         />
-                        <Cloak
-                            hide={AddFrameworkModal.shouldHidePrivate}
-                            render={
-                                <SegmentInput
-                                    options={frameworkVisibilityOptions}
-                                    className={styles.isPrivateCheckbox}
-                                    faramElementName="isPrivate"
-                                    label={_ts('project.framework', 'frameworkVisibilityInputLabel')}
-                                    hint={_ts('project.framework', 'frameworkVisibilityInputHint')}
-                                />
-                            }
-                        />
+                        {!isClone &&
+                            <Cloak
+                                hide={AddFrameworkModal.shouldHidePrivate}
+                                render={
+                                    <SegmentInput
+                                        options={frameworkVisibilityOptions}
+                                        className={styles.isPrivateCheckbox}
+                                        faramElementName="isPrivate"
+                                        label={_ts('project.framework', 'frameworkVisibilityInputLabel')}
+                                        hint={_ts('project.framework', 'frameworkVisibilityInputHint')}
+                                    />
+                                }
+                            />
+                        }
                         <div className={styles.actionButtons}>
                             <DangerButton onClick={closeModal}>
                                 {_ts('project.framework', 'addFrameworkFormCancelButtonTitle')}

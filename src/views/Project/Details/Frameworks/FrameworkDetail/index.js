@@ -45,11 +45,14 @@ const propTypes = {
     setProjectFramework: PropTypes.func.isRequired,
     setActiveFramework: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
+    // eslint-disable-next-line react/forbid-prop-types
+    frameworkList: PropTypes.array,
     frameworkGetRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setDefaultRequestParams: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
+    frameworkList: [],
     className: '',
     readOnly: false,
     frameworkId: undefined,
@@ -274,6 +277,7 @@ export default class FrameworkDetail extends React.PureComponent {
                 responseError: errorFramework,
             },
             frameworkId,
+            frameworkList,
         } = this.props;
 
         const {
@@ -285,11 +289,21 @@ export default class FrameworkDetail extends React.PureComponent {
             ${styles.frameworkDetails}
         `;
 
-        if (!frameworkId) {
+        if (!frameworkId && frameworkList.length === 0) {
             return (
                 <div className={className}>
                     <Message>
                         { _ts('project', 'noAfText') }
+                    </Message>
+                </div>
+            );
+        }
+
+        if (!frameworkId && frameworkList.length > 0) {
+            return (
+                <div className={className}>
+                    <Message>
+                        { _ts('project', 'noAfSelectedText') }
                     </Message>
                 </div>
             );
