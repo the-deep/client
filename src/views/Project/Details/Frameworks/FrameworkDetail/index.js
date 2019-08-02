@@ -22,6 +22,7 @@ import {
 import {
     projectDetailsSelector,
     setProjectAfAction,
+    patchAnalysisFrameworkAction,
 } from '#redux';
 
 import { pathNames } from '#constants';
@@ -45,11 +46,15 @@ const propTypes = {
     setProjectFramework: PropTypes.func.isRequired,
     setActiveFramework: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
+    // eslint-disable-next-line react/forbid-prop-types
+    frameworkList: PropTypes.array,
     frameworkGetRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setDefaultRequestParams: PropTypes.func.isRequired,
+    patchAnalysisFramework: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
+    frameworkList: [],
     className: '',
     readOnly: false,
     frameworkId: undefined,
@@ -61,6 +66,7 @@ const mapStateToProps = (state, props) => ({
 
 const mapDispatchToProps = dispatch => ({
     setProjectFramework: params => dispatch(setProjectAfAction(params)),
+    patchAnalysisFramework: params => dispatch(patchAnalysisFrameworkAction(params)),
 });
 
 const emptyObject = {};
@@ -124,8 +130,21 @@ export default class FrameworkDetail extends React.PureComponent {
         this.setState({ activeView: tabId });
     }
 
-    handleDetailsChange = (editFrameworkDetails) => {
-        this.setState({ editFrameworkDetails });
+    handleDetailsChange = (editFrameworkDetails, isPatch = false) => {
+        const {
+            patchAnalysisFramework,
+            frameworkId,
+        } = this.props;
+
+        this.setState({ editFrameworkDetails }, () => {
+            if (isPatch) {
+                const analysisFramework = {
+                    id: frameworkId,
+                    title: editFrameworkDetails.title,
+                };
+                patchAnalysisFramework({ analysisFramework });
+            }
+        });
     }
 
     renderHeader = ({ framework }) => {
@@ -274,6 +293,7 @@ export default class FrameworkDetail extends React.PureComponent {
                 responseError: errorFramework,
             },
             frameworkId,
+            frameworkList,
         } = this.props;
 
         const {
@@ -285,11 +305,21 @@ export default class FrameworkDetail extends React.PureComponent {
             ${styles.frameworkDetails}
         `;
 
-        if (!frameworkId) {
+        if (!frameworkId && frameworkList.length === 0) {
             return (
                 <div className={className}>
                     <Message>
                         { _ts('project', 'noAfText') }
+                    </Message>
+                </div>
+            );
+        }
+
+        if (!frameworkId && frameworkList.length > 0) {
+            return (
+                <div className={className}>
+                    <Message>
+                        { _ts('project', 'noAfSelectedText') }
                     </Message>
                 </div>
             );

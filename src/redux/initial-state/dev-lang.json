@@ -971,7 +971,9 @@
         "-59215530": "Save details",
         "-66973833": "Select Excerpt",
         "-17456167": "Use Framework",
-        "-56943688": "Edit details"
+        "-56943688": "Edit details",
+        "-59011405": "No. of Pages",
+        "-86287086": "No framework is currently selected."
     },
     "links": {
         "browserExtension": {
@@ -1975,7 +1977,8 @@
             "priivateProjectBadgeTooltip": -64655622,
             "afClone": 12502,
             "afCloneSuccess": -8045218,
-            "afCloneFatal": -48269508
+            "afCloneFatal": -48269508,
+            "noAfSelectedText": -86287086
         },
         "connector": {
             "noConnectorsLabel": 1115,

@@ -115,6 +115,7 @@ export default class ProjectAnalysisFramework extends React.PureComponent {
                     setFrameworkList={this.props.setFrameworkList}
                 />
                 <FrameworkDetail
+                    frameworkList={frameworkList}
                     className={styles.details}
                     frameworkId={activeFrameworkId}
                     readOnly={readOnly}
