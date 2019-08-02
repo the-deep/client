@@ -68,7 +68,7 @@ const requests = {
             },
         }) => {
             params.setPristine();
-            props.onFrameworkDetailsChange({ title, description });
+            props.onFrameworkDetailsChange({ title, description }, true);
             notify.send({
                 title: _ts('project.framework.edit', 'afPatch'),
                 type: notify.type.SUCCESS,

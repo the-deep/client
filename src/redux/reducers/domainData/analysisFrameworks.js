@@ -1,8 +1,10 @@
 import update from '#rsu/immutable-update';
+import produce from 'immer';
 
 // TYPE
 
 export const SET_ANALYSIS_FRAMEWORK = 'domainData/SET_ANALYSIS_FRAMEWORK';
+export const PATCH_ANALYSIS_FRAMEWORK = 'domainData/PATCH_ANALYSIS_FRAMEWORK';
 export const SET_ANALYSIS_FRAMEWORKS = 'domainData/SET_ANALYSIS_FRAMEWORKS';
 export const SET_PROJECT_AF = 'domainData/SET_PROJECT_AF';
 export const SET_AF_DETAIL = 'domainData/SET_AF_DETAIL';
@@ -11,6 +13,11 @@ export const SET_AF_DETAIL = 'domainData/SET_AF_DETAIL';
 
 export const setAnalysisFrameworkAction = ({ analysisFramework }) => ({
     type: SET_ANALYSIS_FRAMEWORK,
+    analysisFramework,
+});
+
+export const patchAnalysisFrameworkAction = ({ analysisFramework }) => ({
+    type: PATCH_ANALYSIS_FRAMEWORK,
     analysisFramework,
 });
 
@@ -43,6 +50,21 @@ const setAnalysisFramework = (state, action) => {
         } },
     };
     return update(state, settings);
+};
+
+const patchAnalysisFrameworks = (state, action) => {
+    const { analysisFramework } = action;
+
+    return produce(state, (safeState) => {
+        const { analysisFrameworks } = safeState;
+        if (!analysisFrameworks) {
+            return;
+        }
+        const framework = analysisFrameworks[analysisFramework.id];
+        if (framework) {
+            framework.title = analysisFramework.title;
+        }
+    });
 };
 
 const setAnalysisFrameworks = (state, action) => {
@@ -110,6 +132,7 @@ const setAfDetail = (state, action) => {
 const reducers = {
     [SET_ANALYSIS_FRAMEWORK]: setAnalysisFramework,
     [SET_ANALYSIS_FRAMEWORKS]: setAnalysisFrameworks,
+    [PATCH_ANALYSIS_FRAMEWORK]: patchAnalysisFrameworks,
     [SET_PROJECT_AF]: setProjectAf,
     [SET_AF_DETAIL]: setAfDetail,
 };

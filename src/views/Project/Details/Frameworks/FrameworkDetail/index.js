@@ -22,6 +22,7 @@ import {
 import {
     projectDetailsSelector,
     setProjectAfAction,
+    patchAnalysisFrameworkAction,
 } from '#redux';
 
 import { pathNames } from '#constants';
@@ -49,6 +50,7 @@ const propTypes = {
     frameworkList: PropTypes.array,
     frameworkGetRequest: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     setDefaultRequestParams: PropTypes.func.isRequired,
+    patchAnalysisFramework: PropTypes.func.isRequired,
 };
 
 const defaultProps = {
@@ -64,6 +66,7 @@ const mapStateToProps = (state, props) => ({
 
 const mapDispatchToProps = dispatch => ({
     setProjectFramework: params => dispatch(setProjectAfAction(params)),
+    patchAnalysisFramework: params => dispatch(patchAnalysisFrameworkAction(params)),
 });
 
 const emptyObject = {};
@@ -127,8 +130,21 @@ export default class FrameworkDetail extends React.PureComponent {
         this.setState({ activeView: tabId });
     }
 
-    handleDetailsChange = (editFrameworkDetails) => {
-        this.setState({ editFrameworkDetails });
+    handleDetailsChange = (editFrameworkDetails, isPatch = false) => {
+        const {
+            patchAnalysisFramework,
+            frameworkId,
+        } = this.props;
+
+        this.setState({ editFrameworkDetails }, () => {
+            if (isPatch) {
+                const analysisFramework = {
+                    id: frameworkId,
+                    title: editFrameworkDetails.title,
+                };
+                patchAnalysisFramework({ analysisFramework });
+            }
+        });
     }
 
     renderHeader = ({ framework }) => {
