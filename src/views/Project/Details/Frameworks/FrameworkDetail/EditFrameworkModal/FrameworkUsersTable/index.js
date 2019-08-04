@@ -85,7 +85,11 @@ const requests = {
     },
     frameworkRolesRequest: {
         url: ({ props: { isPrivate } }) =>
-            (isPrivate ? '/private-framework-roles/' : '/public-framework-roles/'),
+            (isPrivate
+                ? '/private-framework-roles/'
+                : '/public-framework-roles/?is_default_role=false'),
+        // FIXME: Query is not used as current behavior of react rest request
+        // remove the query field as its value is false
         method: requestMethods.GET,
         onMount: true,
         schemaName: 'frameworkRolesList',
