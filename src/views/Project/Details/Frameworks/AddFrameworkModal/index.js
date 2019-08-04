@@ -154,7 +154,7 @@ export default class AddFrameworkModal extends React.PureComponent {
         this.setState({ faramErrors });
     };
 
-    handleValidationSuccess = (values) => {
+    handleValidationSuccess = (_, values) => {
         const {
             frameworkId,
             isClone,
