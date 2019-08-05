@@ -17,6 +17,7 @@ const galleryFileSchema = [];
             permittedUsers: { type: 'array.uint' },
             title: { type: 'string', required: true },
             projects: { type: 'array.uint' },
+            uuid: { type: 'string' },
         },
     };
     galleryFileSchema.push({ name, schema });
