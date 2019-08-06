@@ -3,6 +3,7 @@
 :root {
     --width-assignee-column: 96px;
     --mime-column-width: 48px;
+    --width-page-count-leads-page: 98px;
 }
 
 .table-container {
@@ -81,6 +82,13 @@
 
                 .no_of_entries {
                     width: auto;
+                }
+
+                .page_count {
+                    align-items: right;
+                    justify-content: right;
+                    width: var(--width-page-count-leads-page);
+                    text-align: right;
                 }
 
                 .created_at,
