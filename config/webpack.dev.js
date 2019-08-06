@@ -4,9 +4,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const ShellRunPlugin = require('./shellrun-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 
+const ShellRunPlugin = require('./shellrun-plugin');
 const getEnvVariables = require('./env.js');
 
 const appBase = process.cwd();
@@ -40,6 +40,8 @@ module.exports = (env) => {
         },
 
         mode: 'development',
+        devtool: 'cheap-module-eval-source-map',
+
         performance: {
             hints: 'warning',
         },
@@ -50,7 +52,7 @@ module.exports = (env) => {
             errorDetails: true,
             hash: true,
         },
-        devtool: 'cheap-module-eval-source-map',
+
         devServer: {
             host: '0.0.0.0',
             port: 3000,
@@ -132,8 +134,8 @@ module.exports = (env) => {
                 chunksSortMode: 'none',
             }),
             new MiniCssExtractPlugin({
-                filename: 'css/[name].css',
-                chunkFilename: 'css/[id].css',
+                filename: 'css/[name].[hash].css',
+                chunkFilename: 'css/[id].[hash].css',
             }),
             new WebpackPwaManifest({
                 name: 'DEEP',
@@ -154,10 +156,10 @@ module.exports = (env) => {
                 messageBefore: 'Generating language map.',
                 command: `
                     find "${appSrc}/" -name "*.js" |
-                        xargs gawk -f "${appSrc}/utils/finder.awk" > "usage.tmp" &&
+                        xargs gawk -f "${appSrc}/utils/finder.awk" > "${appSrc}/usage.tmp" &&
                         mkdir -p "${appSrc}/generated" &&
-                        rsync -c "usage.tmp" "${appSrc}/generated/usage.js";
-                        rm "usage.tmp";
+                        rsync -c "${appSrc}/usage.tmp" "${appSrc}/generated/usage.js";
+                        rm "${appSrc}/usage.tmp";
                 `,
                 messageAfter: 'Done.',
             }),
