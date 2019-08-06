@@ -1,10 +1,6 @@
 @import '~base-scss/utils';
 @import '~rs-scss/input-label';
 
-:root {
-    --width-page-count-leads-page: 98px;
-}
-
 .leads {
     .header {
         display: flex;
@@ -72,14 +68,6 @@
             flex-direction: column;
             height: 100%;
             overflow: auto;
-        }
-
-        .table {
-            :global {
-                .page_count {
-                    width: var(--width-page-count-leads-page);
-                }
-            }
         }
 
         .empty-message,
