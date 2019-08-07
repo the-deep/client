@@ -8,6 +8,7 @@ import { currentStyle } from '#rsu/styles';
 import Message from '#rscv/Message';
 
 import Map from '#rscz/Map';
+import MapContainer from '#rscz/Map/MapContainer';
 import MapLayer from '#rscz/Map/MapLayer';
 import MapSource from '#rscz/Map/MapSource';
 import Numeral from '#rscv/Numeral';
@@ -16,6 +17,9 @@ import {
     RequestClient,
     RequestCoordinator,
 } from '#request';
+
+import { createUrlForAdminLevelsForRegion } from '#rest';
+
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -27,7 +31,10 @@ const emptyObject = {};
 const propTypes = {
     className: PropTypes.string,
     // eslint-disable-next-line react/no-unused-prop-types
-    regionId: PropTypes.number.isRequired,
+    regionId: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string,
+    ]).isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
     onAdminLevelsFetched: PropTypes.func.isRequired,
     adminLevels: PropTypes.arrayOf(PropTypes.object),
@@ -48,9 +55,9 @@ const requests = {
     regionRequest: {
         onMount: true,
         onPropsChanged: ['regionId'],
-        url: ({ props: { regionId } }) => `/regions/${regionId}/`,
+        url: ({ props: { regionId } }) => createUrlForAdminLevelsForRegion(regionId),
         onSuccess: ({ response, props: { onAdminLevelsFetched } }) => {
-            onAdminLevelsFetched(response.adminLevels);
+            onAdminLevelsFetched(response.results);
         },
     },
 };
@@ -237,20 +244,25 @@ export default class Region extends React.PureComponent {
         });
     }
 
-    renderAdminLevel = adminLevel => (
-        <React.Fragment key={adminLevel.id}>
-            <RequestHandler
-                url={`/admin-levels/${adminLevel.id}/geojson/`}
-                changeParams={adminLevel}
-                onRequestChange={this.handleGeoJsonRequest}
-            />
-            <RequestHandler
-                url={`/admin-levels/${adminLevel.id}/geojson/bounds/`}
-                changeParams={adminLevel}
-                onRequestChange={this.handleGeoBoundsRequest}
-            />
-        </React.Fragment>
-    )
+    renderAdminLevel = (adminLevel) => {
+        const geojsonUrl = adminLevel.geojsonFile || `/admin-levels/${adminLevel.id}/geojson/`;
+        const boundsUrl = adminLevel.boundsFile || `/admin-levels/${adminLevel.id}/geojson/bounds/`;
+
+        return (
+            <React.Fragment key={adminLevel.id}>
+                <RequestHandler
+                    url={geojsonUrl}
+                    changeParams={adminLevel}
+                    onRequestChange={this.handleGeoJsonRequest}
+                />
+                <RequestHandler
+                    url={boundsUrl}
+                    changeParams={adminLevel}
+                    onRequestChange={this.handleGeoBoundsRequest}
+                />
+            </React.Fragment>
+        );
+    }
 
     renderMapLayers = ({ geoJsonRequest, pending, error }) => {
         const {
@@ -328,11 +340,11 @@ export default class Region extends React.PureComponent {
 
         return (
             <Map
-                className={className}
                 bounds={bounds}
                 boundsPadding={8}
                 hideNavControl
             >
+                <MapContainer className={className} />
                 <MapLayers
                     geoJsonRequest={geoJsonRequest}
                     pending={pending}

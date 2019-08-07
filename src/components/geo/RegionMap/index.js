@@ -35,6 +35,8 @@ const defaultProps = {
     onLocationsChange: undefined,
 };
 
+const emptyObject = {};
+
 export default class RegionMap extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
@@ -197,6 +199,7 @@ export default class RegionMap extends React.PureComponent {
     // Assess in detail
     loadLocations = () => {
         const { adminLevels, geoJsons } = this.state;
+
         let locations = [];
         adminLevels.forEach((adminLevel) => {
             const geoJson = geoJsons[adminLevel.id];
@@ -223,10 +226,15 @@ export default class RegionMap extends React.PureComponent {
             geoJsonBounds: geoJsonBoundsFromState,
             selectedAdminLevelId,
             adminLevelPending,
+            adminLevels,
         } = this.state;
 
+        const selectedAdminLevel = adminLevels.find(l => String(l.id) === selectedAdminLevelId)
+            || emptyObject;
+
         if (!geoJsonsFromState[selectedAdminLevelId]) {
-            const url = createUrlForGeoJsonMap(selectedAdminLevelId);
+            const url = selectedAdminLevel.geojsonFile
+                || createUrlForGeoJsonMap(selectedAdminLevelId);
             const request = new FgRestBuilder()
                 .url(url)
                 .params(createParamsForGet)
@@ -267,7 +275,8 @@ export default class RegionMap extends React.PureComponent {
         }
 
         if (!geoJsonBoundsFromState[selectedAdminLevelId]) {
-            const url = createUrlForGeoJsonBounds(selectedAdminLevelId);
+            const url = selectedAdminLevel.boundsFile
+                || createUrlForGeoJsonBounds(selectedAdminLevelId);
             const request = new FgRestBuilder()
                 .url(url)
                 .params(createParamsForGet)
