@@ -4,23 +4,23 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const WebpackPwaManifest = require('webpack-pwa-manifest');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const ShellRunPlugin = require('./shellrun-plugin');
-const WebpackPwaManifest = require('webpack-pwa-manifest');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
+const ShellRunPlugin = require('./shellrun-plugin');
 const getEnvVariables = require('./env.js');
 
 const appBase = process.cwd();
 const eslintFile = path.resolve(appBase, '.eslintrc-loader');
 const appSrc = path.resolve(appBase, 'src/');
 const appDist = path.resolve(appBase, 'build/');
-const staticContent = path.resolve(appBase, 'static/');
 const appIndexJs = path.resolve(appBase, 'src/index.js');
 const appIndexHtml = path.resolve(appBase, 'public/index.html');
 const appFavicon = path.resolve(appBase, 'public/favicon.ico');
 const appLogo = path.resolve(appBase, 'public/favicon.png');
+const staticContent = path.resolve(appBase, 'static/');
 
 module.exports = (env) => {
     const ENV_VARS = getEnvVariables(env);
@@ -44,6 +44,18 @@ module.exports = (env) => {
 
         mode: 'production',
         devtool: 'source-map',
+
+        performance: {
+            hints: 'warning',
+        },
+        stats: {
+            assets: true,
+            colors: true,
+            errors: true,
+            errorDetails: true,
+            hash: true,
+        },
+
         optimization: {
             minimizer: [
                 new UglifyJsPlugin({
@@ -90,6 +102,7 @@ module.exports = (env) => {
                 {
                     test: /\.scss$/,
                     include: appSrc,
+                    sideEffects: true,
                     use: [
                         MiniCssExtractPlugin.loader,
                         {
@@ -99,11 +112,16 @@ module.exports = (env) => {
                                 modules: true,
                                 camelCase: true,
                                 localIdentName: '[name]_[local]_[hash:base64]',
+                                sourceMap: true,
                                 minimize: true,
+                            },
+                        },
+                        {
+                            loader: require.resolve('sass-loader'),
+                            options: {
                                 sourceMap: true,
                             },
                         },
-                        require.resolve('sass-loader'),
                     ],
                 },
                 {
@@ -160,11 +178,11 @@ module.exports = (env) => {
             new ShellRunPlugin({
                 messageBefore: 'Generating language map.',
                 command: `
-                    find ${appSrc} -name *.js |
-                        xargs /usr/bin/gawk -f ${appSrc}/utils/finder.awk > ${appSrc}/usage.tmp &&
-                        mkdir -p ${appSrc}/generated &&
-                        rsync -c ${appSrc}/usage.tmp ${appSrc}/generated/usage.js;
-                        rm ${appSrc}/usage.tmp;
+                    find "${appSrc}/" -name "*.js" |
+                        xargs gawk -f "${appSrc}/utils/finder.awk" > "${appSrc}/usage.tmp" &&
+                        mkdir -p "${appSrc}/generated" &&
+                        rsync -c "${appSrc}/usage.tmp" "${appSrc}/generated/usage.js";
+                        rm "${appSrc}/usage.tmp";
                 `,
                 messageAfter: 'Done.',
             }),
