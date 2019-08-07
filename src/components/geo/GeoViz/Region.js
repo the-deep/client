@@ -18,8 +18,6 @@ import {
     RequestCoordinator,
 } from '#request';
 
-import { createUrlForAdminLevelsForRegion } from '#rest';
-
 import _ts from '#ts';
 
 import styles from './styles.scss';
@@ -55,7 +53,25 @@ const requests = {
     regionRequest: {
         onMount: true,
         onPropsChanged: ['regionId'],
-        url: ({ props: { regionId } }) => createUrlForAdminLevelsForRegion(regionId),
+        url: '/admin-levels/',
+        query: ({ props: { regionId } }) => ({
+            region: regionId,
+            fields: [
+                'code_prop',
+                'geo_shape_file',
+                'id',
+                'level',
+                'name_prop',
+                'parent_code_prop',
+                'parent_name_prop',
+                'geojson_file',
+                'bounds_file',
+                'region',
+                'stale-geo-areas',
+                'title',
+                'tolerance',
+            ],
+        }),
         onSuccess: ({ response, props: { onAdminLevelsFetched } }) => {
             onAdminLevelsFetched(response.results);
         },
