@@ -24,6 +24,8 @@ const adminLevelFields = [
     'name_prop',
     'parent_code_prop',
     'parent_name_prop',
+    'geojson_file',
+    'bounds_file',
     'region',
     'stale-geo-areas',
     'title',
