@@ -88,8 +88,14 @@ const UserItem = ({ user, total }) => {
             </div>
             <Numeral
                 className={styles.value}
+                value={user.count}
+                precision={0}
+            />
+            <Numeral
+                className={styles.value}
                 value={(user.count / total) * 100}
-                suffix="%"
+                prefix="("
+                suffix="%)"
                 precision={0}
             />
         </div>
