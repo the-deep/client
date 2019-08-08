@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { mapToList } from '@togglecorp/fujs';
 import { afIdFromRoute } from '../domainData';
 
 const emptyObject = {};
@@ -6,6 +7,20 @@ const emptyArray = [];
 
 const analysisFrameworkViewSelector = ({ siloDomainData }) => (
     siloDomainData.analysisFrameworkView
+);
+
+const analysisFrameworkPageSelector = ({ siloDomainData }) => (
+    siloDomainData.analysisFrameworksPage || {}
+);
+
+const analysisFrameworkPageFrameworksSelector = createSelector(
+    analysisFrameworkPageSelector,
+    analysisFrameworksPage => analysisFrameworksPage.analysisFrameworks || emptyObject,
+);
+
+export const analysisFrameworkPageFrameworksListSelector = createSelector(
+    analysisFrameworkPageFrameworksSelector,
+    frameworks => mapToList(frameworks, d => d) || emptyObject,
 );
 
 const afViewFrameworkViewForIdSelector = createSelector(

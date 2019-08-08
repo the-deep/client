@@ -3,10 +3,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import {
-    analysisFrameworkListSelector,
+    analysisFrameworkPageFrameworksListSelector,
     projectDetailsSelector,
 
-    setAnalysisFrameworksAction,
+    setAnalysisFrameworksInPageAction,
 } from '#redux';
 
 import _cs from '#cs';
@@ -23,7 +23,7 @@ const propTypes = {
     projectId: PropTypes.number.isRequired,
 
     // eslint-disable-next-line react/no-unused-prop-types
-    setFrameworkList: PropTypes.func.isRequired,
+    setAnalysisFrameworksInPageAction: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
 };
 
@@ -35,11 +35,11 @@ const defaultProps = {
 
 const mapStateToProps = (state, props) => ({
     projectDetails: projectDetailsSelector(state, props),
-    frameworkList: analysisFrameworkListSelector(state),
+    frameworkList: analysisFrameworkPageFrameworksListSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
-    setFrameworkList: params => dispatch(setAnalysisFrameworksAction(params)),
+    setFrameworkList: params => dispatch(setAnalysisFrameworksInPageAction(params)),
 });
 
 @connect(mapStateToProps, mapDispatchToProps)

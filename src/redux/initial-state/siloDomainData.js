@@ -639,6 +639,15 @@ const initialSiloDomainData = {
          * }, */
     },
 
+    analysisFrameworksPage: {
+        analysisFrameworks: {
+            1: {
+                id: 1,
+                title: 'asdas',
+            },
+        },
+    },
+
     usergroupView: {
         // index is usergroupId
         /*
