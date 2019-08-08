@@ -1,4 +1,6 @@
 import update from '#rsu/immutable-update';
+import produce from 'immer';
+import { listToMap } from '@togglecorp/fujs';
 
 // TYPE
 
@@ -10,7 +12,14 @@ export const AF__VIEW_UPDATE_WIDGET = 'siloDomainData/AF__VIEW_UPDATE_WIDGET';
 export const AF__VIEW_UPDATE_WIDGET_LAYOUT = 'siloDomainData/AF__VIEW_UPDATE_WIDGET_LAYOUT';
 export const AF__SET_GEO = 'siloDomainData/AF__SET_GEO';
 
+export const AFP__SET_ANALYSIS_FRAMEWORKS = 'siloDomainData/AFP__SET_ANALYSIS_FRAMEWORKS';
+
 // CREATOR
+
+export const setAnalysisFrameworksInPageAction = ({ analysisFrameworks }) => ({
+    type: AFP__SET_ANALYSIS_FRAMEWORKS,
+    analysisFrameworks,
+});
 
 export const setAfViewGeoOptionsAction = ({ analysisFrameworkId, geoOptions }) => ({
     type: AF__SET_GEO,
@@ -268,10 +277,30 @@ const afViewSetGeo = (state, action) => {
     return update(state, settings);
 };
 
+const setAnalysisFrameworks = (state, action) => {
+    const { analysisFrameworks } = action;
+
+    const newState = produce(state, (safeState) => {
+        if (!safeState.analysisFrameworksPage) {
+            // eslint-disable-next-line no-param-reassign
+            safeState.analysisFrameworksPage = {};
+        }
+        // eslint-disable-next-line no-param-reassign
+        safeState.analysisFrameworksPage.analysisFrameworks = listToMap(
+            analysisFrameworks,
+            af => af.id,
+            af => af,
+        );
+    });
+
+    return newState;
+};
+
 // REDUCER MAP
 
 const reducers = {
     [AF__SET_ANALYSIS_FRAMEWORK]: afViewSetAnalysisFramework,
+    [AFP__SET_ANALYSIS_FRAMEWORKS]: setAnalysisFrameworks,
     [AF__VIEW_ADD_WIDGET]: afViewAddWidget,
     [AF__REMOVE_WIDGET]: afViewRemoveWidget,
     [AF__VIEW_UPDATE_WIDGET]: afViewUpdateWidget,
