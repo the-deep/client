@@ -83,24 +83,25 @@ export default class Table extends React.Component {
             leads,
             headers,
             emptyComponent,
+            loading,
+            isFilterEmpty,
             className,
         } = this.props;
 
         return (
             <div className={_cs(className, styles.tableContainer)}>
-                <div className={styles.scrollWrapper}>
-                    <RawTable
-                        data={leads}
-                        dataModifier={this.leadModifier}
-                        headerModifier={this.headerModifier}
-                        headers={headers}
-                        onHeaderClick={this.handleTableHeaderClick}
-                        keySelector={Table.leadKeyExtractor}
-                        className={styles.leadsTable}
-                        emptyComponent={emptyComponent}
-                    />
-                    { this.props.loading && <LoadingAnimation large /> }
-                </div>
+                <RawTable
+                    data={leads}
+                    dataModifier={this.leadModifier}
+                    headerModifier={this.headerModifier}
+                    headers={headers}
+                    onHeaderClick={this.handleTableHeaderClick}
+                    keySelector={Table.leadKeyExtractor}
+                    className={styles.leadsTable}
+                    emptyComponent={emptyComponent}
+                    pending={loading}
+                    isFiltered={!isFilterEmpty}
+                />
             </div>
         );
     }

@@ -16,104 +16,100 @@
     overflow: auto;
     color: var(--color-text-on-foreground-alt);
 
-    .scroll-wrapper {
+    .leads-table {
         flex-grow: 1;
-        height: 100%;
-        overflow: auto;
 
-        .leads-table {
+        .header {
+            position: sticky;
+            top: 0;
+        }
+
+        :global {
             .header {
-                position: sticky;
-                top: 0;
+                &.created_by,
+                &.assignee {
+                    width: var(--width-assignee-column);
+                }
+
+                >div {
+                    border-top: 0;
+                }
             }
 
-            :global {
-                .header {
-                    &.created_by,
-                    &.assignee {
-                        width: var(--width-assignee-column);
-                    }
+            .row {
+                &:hover {
+                    background-color: var(--color-background-accent-hint);
+                }
+            }
 
-                    >div {
-                        border-top: 0;
-                    }
+            .cell {
+                padding: var(--spacing-small) var(--spacing-medium);
+
+                &.created_by,
+                &.assignee {
+                    color: var(--color-text-label);
                 }
 
-                .row {
-                    &:hover {
-                        background-color: var(--color-background-accent-hint);
-                    }
+                &.actions {
+                    padding: 0;
                 }
+            }
 
-                .cell {
-                    padding: var(--spacing-small) var(--spacing-medium);
+            .attachmentMimeType {
+                width: var(--mime-column-width);
+            }
 
-                    &.created_by,
-                    &.assignee {
-                        color: var(--color-text-label);
-                    }
+            .title {
+                width: auto;
+            }
 
-                    &.actions {
-                        padding: 0;
-                    }
-                }
+            .actions {
+                white-space: nowrap;
+            }
 
-                .attachmentMimeType {
-                    width: var(--mime-column-width);
-                }
-
-                .title {
-                    width: auto;
-                }
-
-                .actions {
+            .created_at {
+                time {
                     white-space: nowrap;
                 }
+            }
 
-                .created_at {
-                    time {
-                        white-space: nowrap;
-                    }
-                }
+            .published_on {
+                white-space: nowrap;
+            }
 
-                .published_on {
-                    white-space: nowrap;
-                }
+            .no_of_entries {
+                width: auto;
+            }
 
-                .no_of_entries {
-                    width: auto;
-                }
+            .page_count {
+                align-items: right;
+                justify-content: right;
+                width: var(--width-page-count-leads-page);
+                text-align: right;
+            }
 
-                .page_count {
-                    align-items: right;
-                    justify-content: right;
-                    width: var(--width-page-count-leads-page);
-                    text-align: right;
-                }
+            .created_at,
+            .published_on,
+            .no_of_entries {
+                align-items: right;
+                justify-content: right;
+                text-align: right;
+            }
 
-                .created_at,
-                .published_on,
-                .no_of_entries {
-                    align-items: right;
-                    justify-content: right;
-                    text-align: right;
-                }
+            .created-by-link,
+            .assignee-link {
+                @extend %accent-color-link;
+                margin-right: var(--spacing-small);
+            }
 
-                .created-by-link,
-                .assignee-link {
-                    @extend %accent-color-link;
-                    margin-right: var(--spacing-small);
-                }
+            .icon-wrapper {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: var(--font-size-large);
 
-                .icon-wrapper {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: var(--font-size-large);
-
-                    button {
-                        color: var(--color-accent);
-                    }
+                button {
+                    color: var(--color-accent);
                 }
             }
         }

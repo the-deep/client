@@ -731,6 +731,7 @@ export default class Leads extends React.PureComponent {
             loading={this.state.loadingLeads}
             setLeadPageActiveSort={this.props.setLeadPageActiveSort}
             emptyComponent={this.renderEmpty}
+            isFilterEmpty={doesObjectHaveNoData(this.props.filters, [''])}
         />
     )
 
