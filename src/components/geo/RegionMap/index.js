@@ -235,9 +235,10 @@ export default class RegionMap extends React.PureComponent {
         if (!geoJsonsFromState[selectedAdminLevelId]) {
             const url = selectedAdminLevel.geojsonFile
                 || createUrlForGeoJsonMap(selectedAdminLevelId);
+            const params = selectedAdminLevel.geojsonFile ? undefined : createParamsForGet;
             const request = new FgRestBuilder()
                 .url(url)
-                .params(createParamsForGet)
+                .params(params)
                 .preLoad(() => {
                     this.setState({
                         adminLevelPending: {
@@ -277,9 +278,10 @@ export default class RegionMap extends React.PureComponent {
         if (!geoJsonBoundsFromState[selectedAdminLevelId]) {
             const url = selectedAdminLevel.boundsFile
                 || createUrlForGeoJsonBounds(selectedAdminLevelId);
+            const params = selectedAdminLevel.boundsFile ? undefined : createParamsForGet;
             const request = new FgRestBuilder()
                 .url(url)
-                .params(createParamsForGet)
+                .params(params)
                 .success((response) => {
                     // FIXME: write schema
                     const { bounds } = response;

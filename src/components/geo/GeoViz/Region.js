@@ -49,6 +49,8 @@ const defaultProps = {
     showLegend: true,
 };
 
+const noAuthBody = { $noAuth: true };
+
 const requests = {
     regionRequest: {
         onMount: true,
@@ -264,16 +266,21 @@ export default class Region extends React.PureComponent {
         const geojsonUrl = adminLevel.geojsonFile || `/admin-levels/${adminLevel.id}/geojson/`;
         const boundsUrl = adminLevel.boundsFile || `/admin-levels/${adminLevel.id}/geojson/bounds/`;
 
+        const geojsonBody = adminLevel.geojsonFile ? noAuthBody : undefined;
+        const boundsBody = adminLevel.boundsFile ? noAuthBody : undefined;
+
         return (
             <React.Fragment key={adminLevel.id}>
                 <RequestHandler
                     url={geojsonUrl}
                     changeParams={adminLevel}
+                    body={geojsonBody}
                     onRequestChange={this.handleGeoJsonRequest}
                 />
                 <RequestHandler
                     url={boundsUrl}
                     changeParams={adminLevel}
+                    body={boundsBody}
                     onRequestChange={this.handleGeoBoundsRequest}
                 />
             </React.Fragment>

@@ -22,6 +22,15 @@ const mapStateToProps = state => ({
 
 const CustomRequestCoordinator = createRequestCoordinator({
     transformParams: (params, props) => {
+        // NOTE: This is a hack to bypass auth for S3 requests
+        // Need to fix this through use of new react-rest-request@2
+        const { body: bodyAsString } = params;
+
+        const body = bodyAsString ? JSON.parse(bodyAsString) : undefined;
+        if (body && body.$noAuth) {
+            return {};
+        }
+
         const { access } = props.token;
         if (!access) {
             return params;
@@ -35,6 +44,7 @@ const CustomRequestCoordinator = createRequestCoordinator({
 
         return update(params, settings);
     },
+
     transformProps: (props) => {
         const {
             token, // eslint-disable-line no-unused-vars
@@ -57,6 +67,7 @@ const CustomRequestCoordinator = createRequestCoordinator({
             method,
             schemaName,
         } = request;
+
         if (schemaName === undefined) {
             // NOTE: usually there is no response body for DELETE
             if (method !== 'DELETE') {
