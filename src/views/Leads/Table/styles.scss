@@ -19,11 +19,6 @@
     .leads-table {
         flex-grow: 1;
 
-        .header {
-            position: sticky;
-            top: 0;
-        }
-
         :global {
             .header {
                 &.created_by,

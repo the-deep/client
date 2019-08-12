@@ -5,23 +5,23 @@ import {
     Link,
     Redirect,
 } from 'react-router-dom';
+import {
+    reverseRoute,
+    doesObjectHaveNoData,
+} from '@togglecorp/fujs';
 
 import Icon from '#rscg/Icon';
 import Page from '#rscv/Page';
-import Message from '#rscv/Message';
 import AccentButton from '#rsca/Button/AccentButton';
 import Button from '#rsca/Button';
 import FormattedDate from '#rscv/FormattedDate';
 import SelectInput from '#rsci/SelectInput';
 import Pager from '#rscv/Pager';
-import {
-    reverseRoute,
-    doesObjectHaveNoData,
-} from '@togglecorp/fujs';
 import modalize from '#rscg/Modalize';
 import { RequestCoordinator } from '#request';
 
 import Cloak from '#components/general/Cloak';
+import TableEmptyComponent from '#components/viewer/TableEmptyComponent';
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import ScrollTabs from '#rscv/ScrollTabs';
 import {
@@ -55,8 +55,6 @@ import {
     patchLeadAction,
 } from '#redux';
 import _ts from '#ts';
-import noSearch from '#resources/img/no-search.png';
-import noFilter from '#resources/img/no-filter.png';
 
 import ActionButtons from './ActionButtons';
 import LeadPreview from './LeadPreview';
@@ -70,6 +68,18 @@ import Table from './Table';
 import Grid from './Grid';
 
 import styles from './styles.scss';
+
+const EmptyComponent = TableEmptyComponent({
+    filteredEmptyText: _ts('leads', 'emptyWithFilterMessage'),
+    emptyText: _ts('leads', 'emptyMessage', {
+        addLeadButtonLabel: (
+            <strong>
+                {_ts('leads', 'addSourcesButtonLabel')}
+            </strong>
+        ),
+    }),
+});
+
 
 const AccentModalButton = modalize(AccentButton);
 
@@ -678,62 +688,26 @@ export default class Leads extends React.PureComponent {
         );
     }
 
-    renderEmpty = () => {
+    renderTableView = () => {
+        const isFilterEmpty = doesObjectHaveNoData(this.props.filters, ['']);
+        const {
+            activeSort,
+            setLeadPageActiveSort,
+        } = this.props;
         const { loadingLeads } = this.state;
 
-        const isFilterEmpty = doesObjectHaveNoData(this.props.filters, ['']);
-
-        if (loadingLeads && isFilterEmpty) {
-            return null;
-        }
-
-        if (!isFilterEmpty) {
-            return (
-                <Message className={styles.emptyFilterMessage}>
-                    <img
-                        className={styles.image}
-                        src={noFilter}
-                        alt=""
-                    />
-                    <div className={styles.text}>
-                        {_ts('leads', 'emptyWithFilterMessage')}
-                    </div>
-                </Message>
-            );
-        }
-
         return (
-            <Message className={styles.emptyMessage}>
-                <img
-                    className={styles.image}
-                    src={noSearch}
-                    alt=""
-                />
-                <div className={styles.text}>
-                    {_ts('leads', 'emptyMessage', {
-                        addLeadButtonLabel: (
-                            <strong>
-                                {_ts('leads', 'addSourcesButtonLabel')}
-                            </strong>
-                        ),
-                    })}
-                </div>
-            </Message>
+            <Table
+                headers={this.headers}
+                activeSort={activeSort}
+                onHeaderClick={this.handleTableHeaderClick}
+                loading={loadingLeads}
+                setLeadPageActiveSort={setLeadPageActiveSort}
+                emptyComponent={EmptyComponent}
+                isFilterEmpty={isFilterEmpty}
+            />
         );
     }
-
-    renderTableView = () => (
-        <Table
-            className={styles.table}
-            headers={this.headers}
-            activeSort={this.props.activeSort}
-            onHeaderClick={this.handleTableHeaderClick}
-            loading={this.state.loadingLeads}
-            setLeadPageActiveSort={this.props.setLeadPageActiveSort}
-            emptyComponent={this.renderEmpty}
-            isFilterEmpty={doesObjectHaveNoData(this.props.filters, [''])}
-        />
-    )
 
     renderGridView = () => (
         <Grid
@@ -746,7 +720,7 @@ export default class Leads extends React.PureComponent {
             onMarkProcessed={this.handleMarkAsProcessed}
             onMarkPending={this.handleMarkAsPending}
             activeProject={this.props.activeProject}
-            emptyComponent={this.renderEmpty}
+            emptyComponent={EmptyComponent}
         />
     )
 

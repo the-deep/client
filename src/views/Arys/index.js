@@ -7,12 +7,11 @@ import {
 } from 'react-router-dom';
 
 import Page from '#rscv/Page';
-import Message from '#rscv/Message';
 import FormattedDate from '#rscv/FormattedDate';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
+import TableEmptyComponent from '#components/viewer/TableEmptyComponent';
 import {
     reverseRoute,
     doesObjectHaveNoData,
@@ -35,12 +34,11 @@ import {
 import { pathNames } from '#constants/';
 import _ts from '#ts';
 
-import noSearch from '#resources/img/no-search.png';
-import noFilter from '#resources/img/no-filter.png';
 import ActionButtons from './ActionButtons';
 import FilterArysForm from './FilterArysForm';
 import ArysGetRequest from './requests/ArysGetRequest';
 import AryDeleteRequest from './requests/AryDeleteRequest';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -269,49 +267,6 @@ export default class Arys extends React.PureComponent {
         this.props.setAryPageActiveSort({ activeSort });
     }
 
-    renderEmpty = () => {
-        const {
-            filters,
-            projectId,
-        } = this.props;
-
-        const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
-
-        if (!isFilterEmpty) {
-            return (
-                <Message
-                    className={styles.emptyFilterMessage}
-                >
-                    <img
-                        className={styles.image}
-                        src={noFilter}
-                        alt=""
-                    />
-                    <span>{_ts('assessments', 'emptyWithFilterMessage')}</span>
-                </Message>
-            );
-        }
-
-        return (
-            <Message
-                className={styles.emptyMessage}
-            >
-                <img
-                    className={styles.image}
-                    src={noSearch}
-                    alt=""
-                />
-                <span>{ _ts('assessments', 'emptyMessage') }</span>
-                <Link
-                    className={styles.emptyLinkMessage}
-                    to={reverseRoute(pathNames.leads, { projectId })}
-                >
-                    { _ts('assessments', 'emptyLinkMessage') }
-                </Link>
-            </Message>
-        );
-    }
-
     render() {
         const {
             loadingArys,
@@ -322,7 +277,9 @@ export default class Arys extends React.PureComponent {
             className,
             arys,
             totalArysCount,
+            filters,
             activePage,
+            projectId,
         } = this.props;
 
         if (redirectTo) {
@@ -333,6 +290,24 @@ export default class Arys extends React.PureComponent {
                 />
             );
         }
+
+        // FIXME: Fix re-rendering
+        const EmptyComponent = TableEmptyComponent({
+            emptyText: (
+                <React.Fragment>
+                    <span>{ _ts('assessments', 'emptyMessage') }</span>
+                    <Link
+                        className={styles.emptyLinkMessage}
+                        to={reverseRoute(pathNames.leads, { projectId })}
+                    >
+                        { _ts('assessments', 'emptyLinkMessage') }
+                    </Link>
+                </React.Fragment>
+            ),
+            filteredEmptyText: _ts('assessments', 'emptyWithFilterMessage'),
+        });
+
+        const isFilterEmpty = doesObjectHaveNoData(filters, ['']);
 
         return (
             <Page
@@ -350,9 +325,10 @@ export default class Arys extends React.PureComponent {
                             onHeaderClick={this.handleTableHeaderClick}
                             keySelector={this.aryKeyExtractor}
                             className={styles.arysTable}
-                            emptyComponent={this.renderEmpty}
+                            emptyComponent={EmptyComponent}
+                            isFiltered={!isFilterEmpty}
+                            pending={loadingArys}
                         />
-                        { loadingArys && <LoadingAnimation /> }
                     </div>
                 }
                 footerClassName={styles.footer}

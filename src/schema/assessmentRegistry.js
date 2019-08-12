@@ -176,7 +176,10 @@ const assessmentRegistrySchema = [];
             name: 'Ary Entry Filter Option GET Reponse',
             description: 'Ary Entry Filter Option GET Reponse',
         },
-        extends: 'aryEntryFilterOptions',
+        fields: {
+            createdBy: { type: 'array.keyValuePair' },
+            project: { type: 'array.keyValuePair' },
+        },
     };
     assessmentRegistrySchema.push({ name, schema });
 }

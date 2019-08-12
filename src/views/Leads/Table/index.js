@@ -5,10 +5,10 @@ import { _cs } from '@togglecorp/fujs';
 
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import {
     leadsForProjectTableViewSelector,
 } from '#redux';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -19,10 +19,12 @@ const propTypes = {
     loading: PropTypes.bool.isRequired,
     emptyComponent: PropTypes.func.isRequired,
     setLeadPageActiveSort: PropTypes.func.isRequired,
+    isFilterEmpty: PropTypes.bool,
 };
 
 const defaultProps = {
     className: undefined,
+    isFilterEmpty: false,
 };
 
 const mapStateToProps = state => ({
