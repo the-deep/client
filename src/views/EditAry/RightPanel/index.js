@@ -24,12 +24,14 @@ import {
 import _ts from '#ts';
 import TabTitle from '#components/general/TabTitle';
 
-import Metadata from './Metadata';
-import Summary from './Summary';
-import Score from './Score';
-import Methodology from './Methodology';
-import HNO from './HNO';
+import AdditionalDocuments from './AdditionalDocuments';
 import CNA from './CNA';
+import Focuses from './Focuses';
+import HNO from './HNO';
+import Metadata from './Metadata';
+import Methodology from './Methodology';
+import Score from './Score';
+import Summary from './Summary';
 
 import styles from './styles.scss';
 
@@ -95,6 +97,8 @@ export default class RightPanel extends React.PureComponent {
 
         this.tabs = {
             metadata: _ts('editAssessment', 'metadataTabLabel'),
+            additionalDocuments: _ts('editAssessment', 'additionalDocumentsTabLabel'),
+            focuses: _ts('editAssessment', 'focusesTabLabel'),
             methodology: _ts('editAssessment', 'methodologyTabLabel'),
             summary: _ts('editAssessment', 'summaryTabLabel'),
             score: _ts('editAssessment', 'scoreTabLabel'),
@@ -107,9 +111,16 @@ export default class RightPanel extends React.PureComponent {
                 rendererParams: () => ({
                     className: styles.metadata,
                     pending: this.props.pending,
-                    onUploadPending: this.props.onUploadPending,
                 }),
                 component: Metadata,
+            },
+            additionalDocuments: {
+                rendererParams: () => ({
+                    className: styles.metadata,
+                    pending: this.props.pending,
+                    onUploadPending: this.props.onUploadPending,
+                }),
+                component: AdditionalDocuments,
             },
             summary: {
                 rendererParams: () => ({
@@ -118,6 +129,12 @@ export default class RightPanel extends React.PureComponent {
                     onActiveSectorChange: this.props.onActiveSectorChange,
                 }),
                 component: Summary,
+            },
+            focuses: {
+                rendererParams: () => ({
+                    pending: this.props.pending,
+                }),
+                component: Focuses,
             },
             methodology: {
                 rendererParams: () => ({

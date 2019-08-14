@@ -1,0 +1,42 @@
+%section-basic {
+    display: flex;
+    flex-direction: column;
+
+    >.header {
+        flex-shrink: 0;
+    }
+
+    >.content {
+        display: flex;
+        flex-grow: 1;
+    }
+}
+
+.additional-documents {
+    display: flex;
+    position: relative;
+    flex-grow: 1;
+    background-color: var(--color-foreground);
+    overflow: auto;
+
+    .container {
+        @extend %section-basic;
+        flex-shrink: 0;
+        height: 100%;
+
+        >.content {
+            display: flex;
+            flex-grow: 1;
+            padding: 0 var(--spacing-medium);
+            overflow: auto;
+
+            .baksa {
+                flex-grow: 0;
+                flex-shrink: 0;
+                padding: var(--spacing-medium);
+                width: 25%;
+            }
+        }
+    }
+}
+

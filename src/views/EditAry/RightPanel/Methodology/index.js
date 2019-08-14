@@ -2,33 +2,24 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FaramList, FaramGroup } from '@togglecorp/faram';
+import { randomString } from '@togglecorp/fujs';
 
-import ResizableV from '#rscv/Resizable/ResizableV';
-import LoadingAnimation from '#rscv/LoadingAnimation';
+import DangerButton from '#rsca/Button/DangerButton';
+import PrimaryButton from '#rsca/Button/PrimaryButton';
+import FormattedTextArea from '#rsci/FormattedTextArea';
 import List from '#rscv/List';
 import ListView from '#rscv/List/ListView';
-import FormattedTextArea from '#rsci/FormattedTextArea';
-import ListSelection from '#rsci/ListSelection';
-import PrimaryButton from '#rsca/Button/PrimaryButton';
-import DangerButton from '#rsca/Button/DangerButton';
-import { randomString } from '@togglecorp/fujs';
+import LoadingAnimation from '#rscv/LoadingAnimation';
+import ResizableV from '#rscv/Resizable/ResizableV';
 
 import _ts from '#ts';
 import {
     aryTemplateMethodologySelector,
-    assessmentSectorsSelector,
     assessmentSourcesSelector,
-    focusesSelector,
-    affectedGroupsSelector,
-
-    projectDetailsSelector,
-    geoOptionsForProjectSelector,
 
     isDataCollectionTechniqueColumn,
     isSecondaryDataReviewSelected,
 } from '#redux';
-import OrganigramInput from '#components/input/OrganigramInput/';
-import GeoInput from '#components/input/GeoInput/';
 
 import Header from '../Header';
 import { renderWidget } from '../widgetUtils';
@@ -36,42 +27,25 @@ import { renderWidget } from '../widgetUtils';
 import styles from './styles.scss';
 
 const propTypes = {
-    affectedGroups: PropTypes.arrayOf(PropTypes.object).isRequired,
     aryTemplateMethodology: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-    focuses: PropTypes.arrayOf(PropTypes.object).isRequired,
-    geoOptions: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-    projectDetails: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    sectors: PropTypes.arrayOf(PropTypes.object).isRequired,
     sources: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     pending: PropTypes.bool,
 };
 
 const defaultProps = {
     aryTemplateMethodology: [],
-    geoOptions: {},
     pending: false,
 };
 
 const mapStateToProps = state => ({
-    affectedGroups: affectedGroupsSelector(state),
     aryTemplateMethodology: aryTemplateMethodologySelector(state),
-    focuses: focusesSelector(state),
-    geoOptions: geoOptionsForProjectSelector(state),
-    projectDetails: projectDetailsSelector(state),
-    sectors: assessmentSectorsSelector(state),
     sources: assessmentSourcesSelector(state),
 });
-
-const idSelector = d => String(d.id);
-const titleSelector = d => d.title;
 
 @connect(mapStateToProps)
 export default class Methodology extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
-    static orgIdSelector = organ => organ.id;
-    static orgLabelSelector = organ => organ.title;
-    static orgChildSelector = organ => organ.children;
 
     static keySelector = d => d.key;
 
@@ -166,18 +140,9 @@ export default class Methodology extends React.PureComponent {
     render() {
         const {
             aryTemplateMethodology: attributesTemplate,
-            sectors,
-            focuses,
-            affectedGroups,
-            projectDetails,
-            geoOptions,
             pending,
         } = this.props;
 
-        const focusesTitle = _ts('editAssessment.methodology', 'focusesTitle');
-        const sectorsTitle = _ts('editAssessment.methodology', 'sectorsTitle');
-        const affectedGroupsTitle = _ts('editAssessment.methodology', 'affectedGroupsTitle');
-        const locationsTitle = _ts('editAssessment.methodology', 'locationsTitle');
         const methodologyContentTitle = _ts('editAssessment.methodology', 'methodologyContentTitle');
 
         const objectivesTitle = _ts('editAssessment.methodology', 'objectivesTitle');
@@ -190,113 +155,18 @@ export default class Methodology extends React.PureComponent {
         const samplingPlaceholder = _ts('editAssessment.methodology', 'samplingPlaceholder');
         const limitationsPlaceholder = _ts('editAssessment.methodology', 'limitationsPlaceholder');
 
+        // FIXME: memoize this
         const attributesTemplateKeys = Object.keys(attributesTemplate);
 
         return (
             <div className={styles.methodology}>
+                {pending && <LoadingAnimation />}
                 <FaramGroup faramElementName="methodology">
-                    {pending && <LoadingAnimation />}
-
                     <ResizableV
-                        className={styles.resizable}
-                        topContainerClassName={styles.top}
-                        bottomContainerClassName={styles.bottom}
+                        className={styles.top}
+                        topContainerClassName={styles.toptop}
+                        bottomContainerClassName={styles.topbottom}
                         topChild={
-                            <ResizableV
-                                className={styles.top}
-                                topContainerClassName={styles.toptop}
-                                bottomContainerClassName={styles.topbottom}
-                                topChild={
-                                    <FaramList
-                                        faramElementName="attributes"
-                                        keySelector={Methodology.keySelector}
-                                    >
-                                        <div className={styles.attributesSection}>
-                                            <Header className={styles.header} />
-                                            <div className={styles.scrollWrap}>
-                                                <div className={styles.attributes}>
-                                                    <div className={styles.header}>
-                                                        <List
-                                                            data={attributesTemplateKeys}
-                                                            modifier={this.renderAttributeHeader}
-                                                        />
-                                                        <div className={styles.actionButtons}>
-                                                            <PrimaryButton
-                                                                faramElementName="add-button"
-                                                                faramAction={
-                                                                    Methodology.addAttribute
-                                                                }
-                                                                iconName="add"
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <List
-                                                        faramElement
-                                                        modifier={this.renderAttributeRow}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </FaramList>
-                                }
-                                bottomChild={
-                                    <section className={styles.middleSection}>
-                                        <div className={styles.middleSectionItem}>
-                                            <Header
-                                                className={styles.header}
-                                                title={focusesTitle}
-                                            />
-                                            <ListSelection
-                                                className={styles.focuses}
-                                                faramElementName="focuses"
-                                                options={focuses}
-                                                keySelector={idSelector}
-                                                labelSelector={titleSelector}
-                                            />
-                                        </div>
-                                        <div className={styles.middleSectionItem}>
-                                            <Header
-                                                className={styles.header}
-                                                title={sectorsTitle}
-                                            />
-                                            <ListSelection
-                                                faramElementName="sectors"
-                                                options={sectors}
-                                                className={styles.sectors}
-                                                keySelector={idSelector}
-                                                labelSelector={titleSelector}
-                                            />
-                                        </div>
-                                        <div className={styles.affectedGroups}>
-                                            <Header
-                                                className={styles.header}
-                                                title={affectedGroupsTitle}
-                                            />
-                                            <OrganigramInput
-                                                faramElementName="affectedGroups"
-                                                data={affectedGroups}
-                                                childSelector={Methodology.orgChildSelector}
-                                                labelSelector={Methodology.orgLabelSelector}
-                                                idSelector={Methodology.orgIdSelector}
-                                            />
-                                        </div>
-                                        <div className={styles.locationSelection}>
-                                            <Header
-                                                className={styles.header}
-                                                title={locationsTitle}
-                                            />
-                                            <GeoInput
-                                                faramElementName="locations"
-                                                title={locationsTitle}
-                                                geoOptionsByRegion={geoOptions}
-                                                regions={projectDetails.regions}
-                                            />
-                                        </div>
-                                    </section>
-                                }
-                            />
-                        }
-                        bottomChild={
                             <div className={styles.methodologyContent}>
                                 <Header
                                     className={styles.header}
@@ -329,6 +199,37 @@ export default class Methodology extends React.PureComponent {
                                     />
                                 </div>
                             </div>
+                        }
+                        bottomChild={
+                            <FaramList
+                                faramElementName="attributes"
+                                keySelector={Methodology.keySelector}
+                            >
+                                <div className={styles.attributesSection}>
+                                    <Header className={styles.header} />
+                                    <div className={styles.scrollWrap}>
+                                        <div className={styles.attributes}>
+                                            <div className={styles.header}>
+                                                <List
+                                                    data={attributesTemplateKeys}
+                                                    modifier={this.renderAttributeHeader}
+                                                />
+                                                <div className={styles.actionButtons}>
+                                                    <PrimaryButton
+                                                        faramElementName="add-button"
+                                                        faramAction={Methodology.addAttribute}
+                                                        iconName="add"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <List
+                                                faramElement
+                                                modifier={this.renderAttributeRow}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </FaramList>
                         }
                     />
                 </FaramGroup>
