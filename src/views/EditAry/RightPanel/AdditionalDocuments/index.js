@@ -4,11 +4,8 @@ import { FaramGroup } from '@togglecorp/faram';
 
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
-import _ts from '#ts';
-
 import MultiDocumentUploader from '#components/input/MultiDocumentUploader';
-
-import Header from '../Header';
+import _ts from '#ts';
 
 import styles from './styles.scss';
 

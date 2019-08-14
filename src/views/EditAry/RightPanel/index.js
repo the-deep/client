@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Faram from '@togglecorp/faram';
+import Faram, { analyzeErrors } from '@togglecorp/faram';
+import memoize from 'memoize-one';
 
 import MultiViewContainer from '#rscv/MultiViewContainer';
 import ScrollTabs from '#rscv/ScrollTabs';
@@ -22,7 +23,9 @@ import {
     editAryShouldShowCNA,
 } from '#redux';
 import _ts from '#ts';
-import TabTitle from '#components/general/TabTitle';
+
+
+import { NormalTabTitle } from '#components/general/TabTitle';
 
 import AdditionalDocuments from './AdditionalDocuments';
 import CNA from './CNA';
@@ -171,7 +174,7 @@ export default class RightPanel extends React.PureComponent {
         };
     }
 
-    getTabs = (tabs, showHNO, showCNA) => {
+    getTabs = memoize((tabs, showHNO, showCNA) => {
         if (!showHNO && !showCNA) {
             return tabs;
         }
@@ -186,6 +189,57 @@ export default class RightPanel extends React.PureComponent {
         }
 
         return newTabs;
+    })
+
+    // NOTE: can be memoized
+    calculateError = (tabKey) => {
+        const {
+            editAryFaramErrors: {
+                metadata: {
+                    additionalDocuments,
+                    ...metadata
+                } = {},
+                methodology: {
+                    focuses,
+                    sectors,
+                    affectedGroups,
+                    locations,
+                    ...methodology
+                } = {},
+                summary,
+                score,
+                questionnaire: {
+                    hno,
+                    cna,
+                } = {},
+            },
+        } = this.props;
+
+        switch (tabKey) {
+            case 'metadata':
+                return analyzeErrors(metadata);
+            case 'additionalDocuments':
+                return analyzeErrors(additionalDocuments);
+            case 'focuses':
+                return analyzeErrors({
+                    focuses,
+                    sectors,
+                    affectedGroups,
+                    locations,
+                });
+            case 'methodology':
+                return analyzeErrors(methodology);
+            case 'summary':
+                return analyzeErrors(summary);
+            case 'score':
+                return analyzeErrors(score);
+            case 'hno':
+                return analyzeErrors(hno);
+            case 'cna':
+                return analyzeErrors(cna);
+            default:
+                return false;
+        }
     }
 
     handleFaramChange = (faramValues, faramErrors, faramInfo) => {
@@ -216,8 +270,8 @@ export default class RightPanel extends React.PureComponent {
     }
 
     tabRendererParams = (tabKey, data) => ({
-        faramElementName: tabKey,
         title: data,
+        hasError: this.calculateError(tabKey),
     });
 
     render() {
@@ -252,7 +306,7 @@ export default class RightPanel extends React.PureComponent {
                     replaceHistory
                     tabs={tabs}
                     itemClassName={styles.tab}
-                    renderer={TabTitle}
+                    renderer={NormalTabTitle}
                     rendererParams={this.tabRendererParams}
                 />
                 <MultiViewContainer

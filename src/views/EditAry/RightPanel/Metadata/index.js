@@ -2,9 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FaramGroup } from '@togglecorp/faram';
+import memoize from 'memoize-one';
 
-import AccentButton from '#rsca/Button/AccentButton';
-import modalize from '#rscg/Modalize';
 import ListView from '#rscv/List/ListView';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 
@@ -13,20 +12,9 @@ import {
     assessmentSourcesSelector,
 } from '#redux';
 
-import { renderWidget } from '../widgetUtils';
+import Column from './Column';
 import Header from '../Header';
-import StakeholderModal from './StakeholderModal';
 import styles from './styles.scss';
-
-const StakeholderButton = props => (
-    <AccentButton
-        iconName="people"
-        transparent
-        {...props}
-    />
-);
-const ModalButton = modalize(StakeholderButton);
-
 
 const propTypes = {
     aryTemplateMetadata: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -49,54 +37,24 @@ export default class Metadata extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
-    renderWidget = (k, data) => renderWidget(k, data, this.props.sources);
+    static columnKeySelector = data => data.id
 
-    renderReadonlyWidget = (k, data) => renderWidget(
-        k,
-        data,
-        this.props.sources, { readOnly: true },
-    );
+    getMetadataGroupList = memoize(metadataGroups => Object.values(metadataGroups))
 
-    renderMetadata = (k, data) => {
+    columnRendererParams = (key, data) => {
         const {
-            fields,
-            id,
             title,
+            fields,
         } = data;
+        const {
+            sources,
+        } = this.props;
 
-        const isStakeholderColumn = title.toLowerCase() === 'stakeholders';
-
-        const fieldValues = Object.values(fields);
-        return (
-            <div
-                key={id}
-                className={styles.widgetGroup}
-            >
-                <h4 className={styles.heading}>
-                    {title}
-                    {isStakeholderColumn &&
-                        <ModalButton
-                            className={styles.showMoreButton}
-                            modal={
-                                <StakeholderModal
-                                    fields={fieldValues}
-                                    sources={this.props.sources}
-                                />
-                            }
-                        />
-                    }
-                </h4>
-                <ListView
-                    className={styles.content}
-                    data={fieldValues}
-                    modifier={
-                        isStakeholderColumn
-                            ? this.renderReadonlyWidget
-                            : this.renderWidget
-                    }
-                />
-            </div>
-        );
+        return {
+            title,
+            fields,
+            sources,
+        };
     }
 
     render() {
@@ -105,8 +63,7 @@ export default class Metadata extends React.PureComponent {
             pending,
         } = this.props;
 
-        // FIXME: use memoize
-        const metadataGroupValues = Object.values(metadataGroups);
+        const metadataGroupValues = this.getMetadataGroupList(metadataGroups);
 
         return (
             <div className={styles.metadata}>
@@ -118,7 +75,9 @@ export default class Metadata extends React.PureComponent {
                             <ListView
                                 className={styles.content}
                                 data={metadataGroupValues}
-                                modifier={this.renderMetadata}
+                                keySelector={Metadata.columnKeySelector}
+                                renderer={Column}
+                                rendererParams={this.columnRendererParams}
                             />
                         </div>
                     </FaramGroup>

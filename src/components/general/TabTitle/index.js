@@ -16,16 +16,17 @@ const propTypes = {
     hasError: PropTypes.bool,
     title: PropTypes.string,
     onClick: PropTypes.func,
+    className: PropTypes.string,
 };
 
 const defaultProps = {
     hasError: false,
     title: '',
     onClick: undefined,
+    className: undefined,
 };
 
-@FaramErrorIndicatorElement
-export default class TabTitle extends React.PureComponent {
+export class NormalTabTitle extends React.PureComponent {
     static propTypes = propTypes;
     static defaultProps = defaultProps;
 
@@ -58,3 +59,5 @@ export default class TabTitle extends React.PureComponent {
         );
     }
 }
+
+export default FaramErrorIndicatorElement(NormalTabTitle);

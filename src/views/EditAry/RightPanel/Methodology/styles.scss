@@ -73,10 +73,6 @@
                         padding: var(--spacing-small) var(--spacing-medium);
                         overflow: auto;
 
-                        .text-area {
-                            overflow: auto;
-                        }
-
                         :global {
                             .label {
                                 flex-shrink: 0;
@@ -133,24 +129,6 @@
                             .action-buttons {
                                 @extend %action-buttons;
                                 @extend %heading;
-                            }
-                        }
-
-                        .row {
-                            display: table-row;
-
-                            .cell {
-                                @extend %cell;
-                            }
-
-                            .action-buttons {
-                                @extend %action-buttons;
-                            }
-
-                            :global {
-                                .widget {
-                                    margin: var(--spacing-small-alt) 0;
-                                }
                             }
                         }
                     }

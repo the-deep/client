@@ -4,11 +4,9 @@ import { connect } from 'react-redux';
 import { FaramList, FaramGroup } from '@togglecorp/faram';
 import { randomString } from '@togglecorp/fujs';
 
-import DangerButton from '#rsca/Button/DangerButton';
 import PrimaryButton from '#rsca/Button/PrimaryButton';
 import FormattedTextArea from '#rsci/FormattedTextArea';
 import List from '#rscv/List';
-import ListView from '#rscv/List/ListView';
 import LoadingAnimation from '#rscv/LoadingAnimation';
 import ResizableV from '#rscv/Resizable/ResizableV';
 
@@ -17,14 +15,22 @@ import {
     aryTemplateMethodologySelector,
     assessmentSourcesSelector,
 
-    isDataCollectionTechniqueColumn,
     isSecondaryDataReviewSelected,
 } from '#redux';
 
+import Row from './Row';
 import Header from '../Header';
-import { renderWidget } from '../widgetUtils';
 
 import styles from './styles.scss';
+
+const ColumnHeader = ({ title }) => (
+    <div className={styles.title}>
+        {title}
+    </div>
+);
+ColumnHeader.propTypes = {
+    title: PropTypes.string.isRequired,
+};
 
 const propTypes = {
     aryTemplateMethodology: PropTypes.array, // eslint-disable-line react/forbid-prop-types
@@ -49,12 +55,6 @@ export default class Methodology extends React.PureComponent {
 
     static keySelector = d => d.key;
 
-    static removeAttribute = (attributes, index) => {
-        const newAttributes = [...attributes];
-        newAttributes.splice(index, 1);
-        return newAttributes;
-    }
-
     static addAttribute = attributes => ([
         ...attributes,
         {
@@ -62,80 +62,18 @@ export default class Methodology extends React.PureComponent {
         },
     ])
 
-    renderAttributeHeader = (k, key) => {
-        const { aryTemplateMethodology: attributesTemplate } = this.props;
-        const methodologyGroup = attributesTemplate[key];
+    headerKeySelector = methodologyGroup => methodologyGroup.id
 
-        return (
-            <div
-                className={styles.title}
-                key={methodologyGroup.id}
-            >
-                {methodologyGroup.title}
-            </div>
-        );
-    };
+    headerRendererParams = (k, methodologyGroup) => ({
+        title: methodologyGroup.title,
+    })
 
-    renderAttribute = (key, index, secondaryDataReviewSelected) => {
-        const { aryTemplateMethodology: attributesTemplate } = this.props;
-        const methodologyGroup = attributesTemplate[key];
-
-        const renderCustomWidget = (k, data) => {
-            const hide = !isDataCollectionTechniqueColumn(data) && secondaryDataReviewSelected;
-            if (hide) {
-                return null;
-            }
-
-            return renderWidget(k, data, this.props.sources);
-        };
-
-        return (
-            <FaramGroup
-                key={key}
-                faramElementName={String(index)}
-            >
-                <ListView
-                    className={styles.cell}
-                    data={methodologyGroup.fields}
-                    modifier={renderCustomWidget}
-                />
-            </FaramGroup>
-        );
-    }
-
-    renderAttributeRow = (rowKey, attribute, index) => {
-        // FIXME: memoize this
-        const { aryTemplateMethodology: attributesTemplate } = this.props;
-
-        const secondaryDataReviewSelected = isSecondaryDataReviewSelected(attribute);
-
-        const renderAttribute = (k, key) => this.renderAttribute(
-            key,
-            index,
-            secondaryDataReviewSelected,
-        );
-
-        const attributesTemplateKeys = Object.keys(attributesTemplate);
-
-        return (
-            <div
-                key={rowKey}
-                className={styles.row}
-            >
-                <List
-                    data={attributesTemplateKeys}
-                    modifier={renderAttribute}
-                />
-                <div className={styles.actionButtons}>
-                    <DangerButton
-                        iconName="delete"
-                        faramElementName={index}
-                        faramAction={Methodology.removeAttribute}
-                    />
-                </div>
-            </div>
-        );
-    }
+    rowRendererParams = (k, attribute, index) => ({
+        attributesTemplate: this.props.aryTemplateMethodology,
+        index,
+        secondaryDataReviewSelected: isSecondaryDataReviewSelected(attribute),
+        sources: this.props.sources,
+    })
 
     render() {
         const {
@@ -154,9 +92,6 @@ export default class Methodology extends React.PureComponent {
         const dataCollectionTechniquesPlaceholder = _ts('editAssessment.methodology', 'dataCollectionTechniquesPlaceholder');
         const samplingPlaceholder = _ts('editAssessment.methodology', 'samplingPlaceholder');
         const limitationsPlaceholder = _ts('editAssessment.methodology', 'limitationsPlaceholder');
-
-        // FIXME: memoize this
-        const attributesTemplateKeys = Object.keys(attributesTemplate);
 
         return (
             <div className={styles.methodology}>
@@ -211,8 +146,10 @@ export default class Methodology extends React.PureComponent {
                                         <div className={styles.attributes}>
                                             <div className={styles.header}>
                                                 <List
-                                                    data={attributesTemplateKeys}
-                                                    modifier={this.renderAttributeHeader}
+                                                    data={attributesTemplate}
+                                                    renderer={ColumnHeader}
+                                                    keySelector={this.headerKeySelector}
+                                                    rendererParams={this.headerRendererParams}
                                                 />
                                                 <div className={styles.actionButtons}>
                                                     <PrimaryButton
@@ -224,7 +161,9 @@ export default class Methodology extends React.PureComponent {
                                             </div>
                                             <List
                                                 faramElement
-                                                modifier={this.renderAttributeRow}
+                                                renderer={Row}
+                                                keySelector={Methodology.keySelector}
+                                                rendererParams={this.rowRendererParams}
                                             />
                                         </div>
                                     </div>
