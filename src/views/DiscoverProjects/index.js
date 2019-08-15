@@ -11,8 +11,6 @@ import {
 } from '@togglecorp/fujs';
 
 import Page from '#rscv/Page';
-import Message from '#rscv/Message';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import List from '#rscv/List';
 import Pager from '#rscv/Pager';
 import Badge from '#components/viewer/Badge';
@@ -22,6 +20,7 @@ import FormattedDate from '#rscv/FormattedDate';
 import SparkLines from '#rscz/SparkLines';
 import Numeral from '#rscv/Numeral';
 import BackLink from '#components/general/BackLink';
+import TableEmptyComponent from '#components/viewer/TableEmptyComponent';
 
 import {
     discoverProjectsTotalProjectsCountSelector,
@@ -39,8 +38,6 @@ import {
 } from '#redux';
 
 import _ts from '#ts';
-import noSearch from '#resources/img/no-search.png';
-import noFilter from '#resources/img/no-filter.png';
 
 import ProjectListRequest from './requests/ProjectListRequest';
 import ProjectJoinRequest from './requests/ProjectJoinRequest';
@@ -49,7 +46,13 @@ import ProjectJoinCancelRequest from './requests/ProjectJoinCancelRequest';
 import FilterProjectsForm from './FilterProjectsForm';
 import headers from './headers';
 import Actions from './Actions';
+
 import styles from './styles.scss';
+
+const TableEmptyComponentWithText = TableEmptyComponent({
+    emptyText: _ts('discoverProjects.table', 'emptyMessage'),
+    filteredEmptyText: _ts('discoverProjects.table', 'emptyWithFilterMessage'),
+});
 
 const Admin = ({ admin }) => (
     <Link
@@ -412,52 +415,6 @@ export default class DiscoverProjects extends React.PureComponent {
         );
     }
 
-    renderEmpty = () => {
-        const {
-            pendingProjectList,
-            pendingProjectJoin,
-            pendingProjectJoinCancel,
-        } = this.state;
-
-        const pending = (
-            pendingProjectList ||
-            pendingProjectJoin ||
-            pendingProjectJoinCancel
-        );
-        if (pending) {
-            return null;
-        }
-        const isFilterEmpty = doesObjectHaveNoData(this.props.filters, ['']);
-
-        if (!isFilterEmpty) {
-            return (
-                <Message
-                    className={styles.emptyFilterMessage}
-                >
-                    <img
-                        className={styles.image}
-                        src={noFilter}
-                        alt=""
-                    />
-                    <span>{_ts('discoverProjects.table', 'emptyWithFilterMessage')}</span>
-                </Message>
-            );
-        }
-
-        return (
-            <Message
-                className={styles.emptyMessage}
-            >
-                <img
-                    className={styles.image}
-                    src={noSearch}
-                    alt=""
-                />
-                <span>{_ts('discoverProjects.table', 'emptyMessage')}</span>
-            </Message>
-        );
-    }
-
     render() {
         const { projectList } = this.props;
         const {
@@ -477,6 +434,8 @@ export default class DiscoverProjects extends React.PureComponent {
         const Header = this.renderHeader;
         const Footer = this.renderFooter;
 
+        const isFilterEmpty = doesObjectHaveNoData(this.props.filters, ['']);
+
         return (
             <Page
                 className={styles.discoverProjects}
@@ -485,9 +444,6 @@ export default class DiscoverProjects extends React.PureComponent {
                 mainContentClassName={styles.mainContent}
                 mainContent={
                     <React.Fragment>
-                        { pending &&
-                            <LoadingAnimation spinnerClassName={styles.spinner} />
-                        }
                         <div className={styles.tableContainer}>
                             <RawTable
                                 data={projectList}
@@ -497,7 +453,9 @@ export default class DiscoverProjects extends React.PureComponent {
                                 onHeaderClick={this.handleTableHeaderClick}
                                 keySelector={projectKeyExtractor}
                                 className={styles.projectsTable}
-                                emptyComponent={this.renderEmpty}
+                                emptyComponent={TableEmptyComponentWithText}
+                                isFiltered={!isFilterEmpty}
+                                pending={pending}
                             />
                         </div>
                     </React.Fragment>

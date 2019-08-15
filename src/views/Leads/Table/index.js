@@ -5,10 +5,10 @@ import { _cs } from '@togglecorp/fujs';
 
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import {
     leadsForProjectTableViewSelector,
 } from '#redux';
+
 import styles from './styles.scss';
 
 const propTypes = {
@@ -19,10 +19,12 @@ const propTypes = {
     loading: PropTypes.bool.isRequired,
     emptyComponent: PropTypes.func.isRequired,
     setLeadPageActiveSort: PropTypes.func.isRequired,
+    isFilterEmpty: PropTypes.bool,
 };
 
 const defaultProps = {
     className: undefined,
+    isFilterEmpty: false,
 };
 
 const mapStateToProps = state => ({
@@ -83,24 +85,25 @@ export default class Table extends React.Component {
             leads,
             headers,
             emptyComponent,
+            loading,
+            isFilterEmpty,
             className,
         } = this.props;
 
         return (
             <div className={_cs(className, styles.tableContainer)}>
-                <div className={styles.scrollWrapper}>
-                    <RawTable
-                        data={leads}
-                        dataModifier={this.leadModifier}
-                        headerModifier={this.headerModifier}
-                        headers={headers}
-                        onHeaderClick={this.handleTableHeaderClick}
-                        keySelector={Table.leadKeyExtractor}
-                        className={styles.leadsTable}
-                        emptyComponent={emptyComponent}
-                    />
-                    { this.props.loading && <LoadingAnimation large /> }
-                </div>
+                <RawTable
+                    data={leads}
+                    dataModifier={this.leadModifier}
+                    headerModifier={this.headerModifier}
+                    headers={headers}
+                    onHeaderClick={this.handleTableHeaderClick}
+                    keySelector={Table.leadKeyExtractor}
+                    className={styles.leadsTable}
+                    emptyComponent={emptyComponent}
+                    pending={loading}
+                    isFiltered={!isFilterEmpty}
+                />
             </div>
         );
     }

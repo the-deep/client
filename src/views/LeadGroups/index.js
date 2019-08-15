@@ -10,11 +10,10 @@ import {
 
 import Page from '#rscv/Page';
 import FormattedDate from '#rscv/FormattedDate';
-import Message from '#rscv/Message';
-import LoadingAnimation from '#rscv/LoadingAnimation';
 import Pager from '#rscv/Pager';
 import RawTable from '#rscv/RawTable';
 import TableHeader from '#rscv/TableHeader';
+import TableEmptyComponent from '#components/viewer/TableEmptyComponent';
 
 import BackLink from '#components/general/BackLink';
 import {
@@ -35,8 +34,6 @@ import { pathNames } from '#constants';
 
 import _ts from '#ts';
 import _cs from '#cs';
-import noSearch from '#resources/img/no-search.png';
-import noFilter from '#resources/img/no-filter.png';
 
 import LeadGroupsGetRequest from './requests/LeadGroupsGetRequest';
 import LeadGroupDeleteRequest from './requests/LeadGroupDeleteRequest';
@@ -44,6 +41,11 @@ import ActionButtons from './ActionButtons';
 import FilterLeadGroupsForm from './FilterLeadGroupsForm';
 
 import styles from './styles.scss';
+
+const EmptyComponent = TableEmptyComponent({
+    emptyText: _ts('leadgroups', 'emptyMessage'),
+    filteredEmptyText: _ts('leadgroups', 'emptyWithFilterMessage'),
+});
 
 const propTypes = {
     className: PropTypes.string,
@@ -293,46 +295,6 @@ export default class LeadGroups extends React.PureComponent {
         );
     }
 
-    renderEmpty = () => {
-        const { loadingLeads } = this.state;
-
-        const isFilterEmpty = doesObjectHaveNoData(this.props.filters, ['']);
-
-        if (loadingLeads && isFilterEmpty) {
-            return null;
-        }
-
-        if (!isFilterEmpty) {
-            return (
-                <Message
-                    className={styles.emptyFilterMessage}
-                >
-                    <img
-                        className={styles.image}
-                        src={noFilter}
-                        alt=""
-                    />
-                    <span>{_ts('leadgroups', 'emptyWithFilterMessage')}</span>
-                </Message>
-            );
-        }
-
-        return (
-            <Message
-                className={styles.emptyMessage}
-            >
-                <img
-                    className={styles.image}
-                    src={noSearch}
-                    alt=""
-                />
-                <span>
-                    {_ts('leadgroups', 'emptyMessage')}
-                </span>
-            </Message>
-        );
-    }
-
     render() {
         const {
             className,
@@ -348,6 +310,8 @@ export default class LeadGroups extends React.PureComponent {
             deleteLeadGroupPending,
             dataLoading,
         } = this.state;
+
+        const isFilterEmpty = doesObjectHaveNoData(this.props.filters, ['']);
 
         const loading = dataLoading || deleteLeadGroupPending;
 
@@ -367,7 +331,6 @@ export default class LeadGroups extends React.PureComponent {
                 mainContentClassName={styles.mainContent}
                 mainContent={
                     <React.Fragment>
-                        {loading && <LoadingAnimation />}
                         <div className={styles.tableContainer}>
                             <RawTable
                                 data={leadGroups}
@@ -377,7 +340,9 @@ export default class LeadGroups extends React.PureComponent {
                                 onHeaderClick={this.handleTableHeaderClick}
                                 keySelector={this.leadGroupKeyExtractor}
                                 className={styles.leadGroupsTable}
-                                emptyComponent={this.renderEmpty}
+                                emptyComponent={EmptyComponent}
+                                isFiltered={!isFilterEmpty}
+                                pending={loading}
                             />
                         </div>
                     </React.Fragment>
